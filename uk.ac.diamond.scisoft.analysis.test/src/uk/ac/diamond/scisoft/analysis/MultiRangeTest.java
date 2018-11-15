@@ -39,13 +39,13 @@ public class MultiRangeTest {
 		printMatch("01");
 		printMatch("1");
 		printMatch("-1");
-		printMatch("1-");
-		printMatch("1-3");
-		printMatch("0-1");
-		printMatch("1--3");
-		printMatch("-3--1");
-		printMatch("003--1");
-		printMatch("0--1");
+		printMatch("1:");
+		printMatch("1:3");
+		printMatch("0:1");
+		printMatch("1:-3");
+		printMatch("-3:-1");
+		printMatch("003:-1");
+		printMatch("0:-1");
 	}
 
 	private void printMatch(String input) {
@@ -92,32 +92,33 @@ public class MultiRangeTest {
 		assertFalse(mr.contains(4, 3));
 		assertFalse(mr.contains(4, 4));
 
-		mr = MultiRange.createMultiRange("1-"); // 1 onwards
+		mr = MultiRange.createMultiRange("1:"); // 1 onwards
 		assertFalse(mr.contains(4, -1));
 		assertFalse(mr.contains(4, 0));
 		assertTrue(mr.contains(4, 3));
 		assertFalse(mr.contains(4, 4));
 
-		mr = MultiRange.createMultiRange("0--2"); // up to second to last
+		mr = MultiRange.createMultiRange("0:-2"); // up to second to last
 		assertFalse(mr.contains(4, -1));
 		assertTrue(mr.contains(4, 0));
 		assertTrue(mr.contains(4, 2));
 		assertFalse(mr.contains(4, 3));
 		assertFalse(mr.contains(4, 4));
 
-		assertEquals(mr, MultiRange.createMultiRange("0 - -2"));
-		assertNotEquals(mr, MultiRange.createMultiRange("0-4"));
+		assertEquals(mr, MultiRange.createMultiRange("0 : -2"));
+		assertNotEquals(mr, MultiRange.createMultiRange("0:4"));
 
-		mr = MultiRange.createMultiRange("0-3,-2");
+		mr = MultiRange.createMultiRange("0:3,-2");
 		assertFalse(mr.contains(8, -1));
 		assertTrue(mr.contains(8, 0));
 		assertTrue(mr.contains(8, 3));
 		assertFalse(mr.contains(8, 5));
 		assertTrue(mr.contains(8, 6));
 		assertFalse(mr.contains(8, 7));
-		assertEquals(mr, MultiRange.createMultiRange("0- 3, -2"));
+		assertEquals(mr, MultiRange.createMultiRange("0: 3, -2"));
+		assertEquals(mr, MultiRange.createMultiRange("0: 3; -2"));
 
-		mr = MultiRange.createMultiRange("3-5");
+		mr = MultiRange.createMultiRange("3:5");
 		assertFalse(mr.contains(3, -1));
 		assertFalse(mr.contains(3, 0));
 		assertFalse(mr.contains(3, 2));
@@ -157,32 +158,33 @@ public class MultiRangeTest {
 		assertTrue(mr.contains(4, 3));
 		assertFalse(mr.contains(4, 4));
 
-		mr = MultiRange.createMultiRange("!1-"); // first only
+		mr = MultiRange.createMultiRange("!1:"); // first only
 		assertFalse(mr.contains(4, -1));
 		assertTrue(mr.contains(4, 0));
 		assertFalse(mr.contains(4, 3));
 		assertFalse(mr.contains(4, 4));
 
-		mr = MultiRange.createMultiRange("!0--2"); // last only
+		mr = MultiRange.createMultiRange("!0:-2"); // last only
 		assertFalse(mr.contains(4, -1));
 		assertFalse(mr.contains(4, 0));
 		assertFalse(mr.contains(4, 2));
 		assertTrue(mr.contains(4, 3));
 		assertFalse(mr.contains(4, 4));
 
-		assertEquals(mr, MultiRange.createMultiRange("!0 - -2"));
-		assertNotEquals(mr, MultiRange.createMultiRange("!0-4"));
+		assertEquals(mr, MultiRange.createMultiRange("!0 : -2"));
+		assertNotEquals(mr, MultiRange.createMultiRange("!0:4"));
 
-		mr = MultiRange.createMultiRange("0-3,!-2");
+		mr = MultiRange.createMultiRange("0:3,!-2");
 		assertFalse(mr.contains(8, -1));
 		assertTrue(mr.contains(8, 0));
 		assertTrue(mr.contains(8, 3));
 		assertTrue(mr.contains(8, 5));
 		assertFalse(mr.contains(8, 6));
 		assertTrue(mr.contains(8, 7));
-		assertEquals(mr, MultiRange.createMultiRange("0- 3, !-2"));
+		assertEquals(mr, MultiRange.createMultiRange("0: 3, !-2"));
+		assertEquals(mr, MultiRange.createMultiRange("0: 3; !-2"));
 
-		mr = MultiRange.createMultiRange("!3-5"); // not 3,4,5
+		mr = MultiRange.createMultiRange("!3:5"); // not 3,4,5
 		assertFalse(mr.contains(3, -1));
 		assertTrue(mr.contains(3, 0));
 		assertTrue(mr.contains(3, 2));
@@ -200,6 +202,6 @@ public class MultiRangeTest {
 
 	@Test(expected=IllegalArgumentException.class)
 	public void testOverlap() {
-		MultiRange.createMultiRange("0-3,3-5");
+		MultiRange.createMultiRange("0:3,3:5");
 	}
 }

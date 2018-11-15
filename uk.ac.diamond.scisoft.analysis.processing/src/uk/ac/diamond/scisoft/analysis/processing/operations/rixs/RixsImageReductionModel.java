@@ -71,15 +71,16 @@ public class RixsImageReductionModel extends RixsBaseModel {
 	@OperationModelField(label = "Normalize spectra by region size", description = "If true, then divide summed spectra by number of constituent spectra")
 	private boolean normalizeByRegionSize = true;
 
-	@OperationModelField(label = "Selection of frames to use", description = "A comma-separated list of sub-ranges.\n"
+	@OperationModelField(label = "Selection of frames to use", description =
+			  "A comma-separated (or semicolon-separated) list of sub-ranges.\n"
 			+ "Each sub-range can be a single integer or two integers (start/end) separated by\n"
-			+ "a minus. Integers can be negative to imply a count from the end of the range.\n"
+			+ "a colon. Integers can be negative to imply a count from the end of the range.\n"
 			+ "The end integer must be greater than the start integer. The end integer of\n"
 			+ "sub-ranges is inclusive. Also the last sub-range can omit the end integer.\n"
 			+ "Finally, each sub-range can be excluded with an exclamation mark prefix; if\n"
 			+ "any exclamation mark appears in a multi-range string then the default is that\n"
 			+ "the entire range is included and specified sub-ranges with \"!\" are excluded.",
-			hint = "E.g. 1 or 2,-1 or 0,2-4 or !3 or !1--2")
+			hint = "E.g. 1 or 2,-1 or 0,2:4 or !3 or !1:-2")
 	private String frameSelection = "";
 
 	// TODO conditional override to fit parameters??

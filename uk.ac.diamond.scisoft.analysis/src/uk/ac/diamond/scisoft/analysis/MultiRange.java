@@ -15,32 +15,32 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * A multi-range is specified by a string comprising comma-separated sub-ranges. Each sub-range can
- * be a single integer or two integers (start/end) separated by a minus. Integers can be negative to
- * imply a count from the end of the range. The end integer must be greater than the start integer.
- * The end integer of sub-ranges is inclusive. Also the last sub-range can omit the end integer.
- * Finally, each sub-range can be excluded with an exclamation mark prefix; if any exclamation mark
- * appears in a multi-range string then the default is that the entire range is included and specified
- * sub-ranges with "!" are excluded.
+ * A multi-range is specified by a string comprising comma-separated (or semicolon-separated)
+ * sub-ranges. Each sub-range can be a single integer or two integers (start/end) separated by a
+ * colon. Integers can be negative to imply a count from the end of the range. The end integer
+ * must be greater than the start integer. The end integer of sub-ranges is inclusive. Also the
+ * last sub-range can omit the end integer. Finally, each sub-range can be excluded with an
+ * exclamation mark prefix; if any exclamation mark appears in a multi-range string then the
+ * default is that the entire range is included and specified sub-ranges with "!" are excluded.
  * <p>
  * Some example sub-ranges:
  * <dl>
  *  <dt>"1"</dt><dd>second item (items are labelled from 0)</dd>
  *  <dt>"-1"</dt><dd>last item</dd>
  *  <dt>"-2"</dt><dd>second last item</dd>
- *  <dt>"2-5" or "2 - 5"</dt><dd>third to sixth inclusive</dd>
- *  <dt>"-3--1" or "-3 - -1"</dt><dd>third last to last inclusive</dd>
+ *  <dt>"2:5" or "2 : 5"</dt><dd>third to sixth inclusive</dd>
+ *  <dt>"-3:-1" or "-3 : -1"</dt><dd>third last to last inclusive</dd>
  *  <dt>"!3"</dt><dd>all bar fourth item</dd>
- *  <dt>"!5--2"</dt><dd>sixth to second last excluded</dd>
+ *  <dt>"!5:-2"</dt><dd>sixth to second last excluded</dd>
  * </dl>
  */
 public class MultiRange {
-	private static final String COMMA = ",";
+	private static final String RANGE_SEPARATOR = "[;,]";
 	private static final String EXCLAIM = "!";
 	private static final String INTEGER_REGEXP = "-?\\d|[1-9]\\d*";
 	private static final String INTEGER_GROUP = "(" + INTEGER_REGEXP + ")";
 	private static final String NOTTABLE_INTEGER_GROUP = "(!?" + INTEGER_REGEXP + ")";
-	static final Pattern SUBRANGE_PATTERN = Pattern.compile(NOTTABLE_INTEGER_GROUP + "\\s*(-\\s*)" + INTEGER_GROUP + "?");
+	static final Pattern SUBRANGE_PATTERN = Pattern.compile(NOTTABLE_INTEGER_GROUP + "\\s*(:\\s*)" + INTEGER_GROUP + "?");
 	static final Pattern SINGLE_PATTERN = Pattern.compile(NOTTABLE_INTEGER_GROUP);
 	private List<Long> limits = new ArrayList<>();
 	private long min;
@@ -153,7 +153,7 @@ public class MultiRange {
 	public void parseMultiRange(String multiRangeSpec) {
 		defStatus = multiRangeSpec.contains(EXCLAIM); // a single "!" will switch default behaviour
 
-		String[] subRanges = multiRangeSpec.split(COMMA);
+		String[] subRanges = multiRangeSpec.split(RANGE_SEPARATOR);
 
 		limits.clear();
 		max = 0;

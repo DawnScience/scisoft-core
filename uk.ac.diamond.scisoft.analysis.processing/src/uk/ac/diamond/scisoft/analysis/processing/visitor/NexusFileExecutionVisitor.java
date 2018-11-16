@@ -704,31 +704,32 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 	 * @throws Exception
 	 */
 	private void appendData(Dataset dataset, GroupNode group, Slice[] oSlice, int[] oShape, NexusFile file, int[] dataDims) throws Exception {
-		
-		if (ShapeUtils.squeezeShape(dataset.getShape(), false).length == 0) {
+		int[] dShape = dataset.getShapeRef();
+		if (ShapeUtils.squeezeShape(dShape, false).length == 0) {
 			//padding slice and shape does not play nice with single values of rank != 0
 			dataset = dataset.getSliceView().squeeze();
-//			dataset.setShape(new int[]{1});
+			dShape = dataset.getShapeRef();
 		}
 		
 		//determine the dimensions of the original data
 		int[] dd = dataDims.clone();
 		Arrays.sort(dd);
 		//update the slice to reflect the new data shape/rank
-		Slice[] sliceOut = getUpdatedSliceArray( oShape, dataset.getShape(), oSlice, dd);
+		Slice[] sliceOut = getUpdatedSliceArray(oShape, dShape, oSlice, dd);
 		//determine shape of full output dataset
-		long[] newShape = getNewShape(oShape, dataset.getShape(), dd);
+		long[] newShape = getNewShape(oShape, dShape, dd);
 		
 		if (dataset.getRank() == 0) {
-//			int[] shape = new int[newShape.length];
-			int[] shape = newShape.length == 0 ? new int[1] : new int[newShape.length];
+			int[] shape = new int[Math.max(1, newShape.length)];
 			Arrays.fill(shape, 1);
 			dataset.setShape(shape);
+			dShape = shape;
 		}
 		
 		//write
 		DataNode dn = null;
-		if (group.containsDataNode(dataset.getName())){
+		boolean append = group.containsDataNode(dataset.getName());
+		if (append) {
 			dn = file.getData(group,dataset.getName());
 		} else {
 			createWriteableLazy(dataset, group);
@@ -736,7 +737,23 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		}
 
 		ILazyWriteableDataset wds = dn.getWriteableDataset();
-		SliceND s = new SliceND(dataset.getShape(),determineMaxShape(dataset),sliceOut);
+		SliceND s = new SliceND(dShape, determineMaxShape(dataset), sliceOut);
+		if (append && dShape.length > 1) {
+			boolean crop = false;
+			int[] mShape = wds.getMaxShape();
+			SliceND nSlice = new SliceND(dShape);
+			for (int i = 0; i < mShape.length; i++) {
+				int l = mShape[i];
+				if (l > 0 && dShape[i] > l) {
+					s.setSlice(i, 0, l, 1);
+					nSlice.setSlice(i, 0, l, 1);
+					crop = true;
+				}
+			}
+			if (crop) {
+				dataset = dataset.getSliceView(nSlice);
+			}
+		}
 		wds.setSlice(null, dataset, s);
 
 
@@ -758,8 +775,6 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			s = new SliceND(e.getShape(),determineMaxShape(e),sliceOut);
 			wdse.setSlice(null, e, s);
 		}
-
-		return;
 	}
 
 

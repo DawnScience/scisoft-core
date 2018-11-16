@@ -1109,13 +1109,24 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		return sum;
 	}
 
-	static List<Dataset> createHistogram(Dataset in) {
-		double min = Math.floor(SubtractFittedBackgroundOperation.findPositiveMin(in));
+	private static double findPositiveMin(Dataset d) {
+		IndexIterator it = d.getIterator();
+		double min = Double.POSITIVE_INFINITY;
+		while (it.hasNext()) {
+			double x = d.getElementDoubleAbs(it.index);
+			if (x > 0 && x < min) {
+				min = x;
+			}
+		}
+		return min;
+	}
+
+	private static List<Dataset> createHistogram(Dataset in) {
+		double min = Math.floor(findPositiveMin(in));
 		double max = Math.ceil(in.max(true).doubleValue());
 		IntegerDataset bins = DatasetFactory.createRange(IntegerDataset.class, min, max+1, 100);
 
 		Histogram histo = new Histogram(bins);
 		return histo.value(in);
 	}
-
 }

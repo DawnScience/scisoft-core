@@ -119,23 +119,11 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		}
 	}
 
-	public static double findPositiveMin(Dataset d) {
-		IndexIterator it = d.getIterator();
-		double min = Double.POSITIVE_INFINITY;
-		while (it.hasNext()) {
-			double x = d.getElementDoubleAbs(it.index);
-			if (x > 0 && x < min) {
-				min = x;
-			}
-		}
-		return min;
-	}
-
 	public static List<Dataset> createHistogram(Dataset in, boolean positive, int delta) {
 		if (delta < 1) {
 			throw new IllegalArgumentException("delta must be greater than 0");
 		}
-		double min = Math.floor(positive ? findPositiveMin(in) : in.min(true).doubleValue());
+		double min = Math.floor(positive ? 1 : in.min(true).doubleValue());
 		if (Double.isInfinite(min)) {
 			return null; // none are above zero
 		}

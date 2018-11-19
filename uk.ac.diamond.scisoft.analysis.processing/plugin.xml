@@ -1515,6 +1515,7 @@
             class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.InvalidateDataUnderMaskOperation"
             description="Set data under the mask as NaN or zero depending on the data type"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.mask.InvalidateDataUnderMaskOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.InvalidateDataUnderMaskModel"
             name="Invalidate Masked Data">
       </operation>
       <operation

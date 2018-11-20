@@ -490,6 +490,7 @@ public abstract class AbstractSliceSystem implements ISliceSystem {
 	@Override
 	public void setSliceActionEnabled(@SuppressWarnings("rawtypes") Enum type, boolean enabled) {
 		final IAction action = getActionByPlotType(type);
+		if (action == null) return;
 		action.setEnabled(enabled);
 		if (sliceToolbar!=null) sliceToolbar.update(true);
 		if (sliceActionEnabledMap==null) sliceActionEnabledMap = new HashMap<Enum<?>, Boolean>();

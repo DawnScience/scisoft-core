@@ -281,9 +281,9 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			//         andorPreampGain:NXcollection/andorPreampGain [1, 2, 4]
 			//         pgmEnergy:NXcollection/ [energy in eV, always single value, even for an energy scan]
 
-			GroupNode entry = (GroupNode) NexusTreeUtils.findFirstNode(root, "NXentry").getDestination();
-			GroupNode instrument = (GroupNode) NexusTreeUtils.findFirstNode(entry, "NXinstrument").getDestination();
-			GroupNode detector = (GroupNode) NexusTreeUtils.findFirstNode(instrument, "NXdetector").getDestination();
+			GroupNode entry = (GroupNode) NexusTreeUtils.requireNode(root, "NXentry");
+			GroupNode instrument = (GroupNode) NexusTreeUtils.requireNode(entry, "NXinstrument");
+			GroupNode detector = (GroupNode) NexusTreeUtils.requireNode(instrument, "NXdetector");
 			currentCountTime = DatasetUtils.sliceAndConvertLazyDataset(detector.getDataNode("count_time").getDataset());
 
 			GroupNode mdg = entry.getGroupNode("before_scan");
@@ -375,12 +375,12 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 
 			GroupNode root = t.getGroupNode();
 			// TODO find photon energy, (decide where it should be recorded)
-			NodeLink beam = NexusTreeUtils.findFirstNode(root, NexusConstants.BEAM);
+			GroupNode beam = (GroupNode) NexusTreeUtils.requireNode(root, NexusConstants.BEAM);
 			DiffractionCrystalEnvironment dce = new DiffractionCrystalEnvironment();
 			NexusTreeUtils.parseBeam(beam, dce);
 
-			NodeLink detector = NexusTreeUtils.findFirstNode(root, NexusConstants.DETECTOR);
-			parseNXrixs((GroupNode) detector.getDestination(), 1e3 * dce.getEnergy());
+			GroupNode detector = (GroupNode) NexusTreeUtils.requireNode(root, NexusConstants.DETECTOR);
+			parseNXrixs(detector, 1e3 * dce.getEnergy());
 		} catch (Exception e) {
 			log.append("Could not parse Nexus file %s:%s", filePath, e);
 			countsPerPhoton = 74;

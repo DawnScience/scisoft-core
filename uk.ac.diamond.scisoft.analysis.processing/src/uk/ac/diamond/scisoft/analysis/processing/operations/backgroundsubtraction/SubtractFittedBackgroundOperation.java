@@ -725,9 +725,9 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 			//         andorPreampGain:NXcollection/andorPreampGain [1, 2, 4]
 			//         pgmEnergy:NXcollection/ [energy in eV, always single value, even for an energy scan]
 
-			GroupNode entry = (GroupNode) NexusTreeUtils.findFirstNode(root, "NXentry").getDestination();
-			GroupNode instrument = (GroupNode) NexusTreeUtils.findFirstNode(entry, "NXinstrument").getDestination();
-			GroupNode detector = (GroupNode) NexusTreeUtils.findFirstNode(instrument, "NXdetector").getDestination();
+			GroupNode entry = (GroupNode) NexusTreeUtils.requireNode(root, "NXentry");
+			GroupNode instrument = (GroupNode) NexusTreeUtils.requireNode(entry, "NXinstrument");
+			GroupNode detector = (GroupNode) NexusTreeUtils.requireNode(instrument, "NXdetector");
 			return DatasetUtils.sliceAndConvertLazyDataset(detector.getDataNode("count_time").getDataset());
 		} catch (Exception e) {
 			throw new OperationException(this, "Could not parse Nexus file " + filePath + " for count time", e);

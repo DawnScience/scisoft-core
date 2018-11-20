@@ -290,12 +290,30 @@ public class HDF5Utils {
 			Arrays.fill(step, 1);
 			data = readDataset(fid, node, start, shape, step, -1, -1, false);
 		} catch (Throwable le) {
-			String msg = String.format("Problem loading dataset %s in %s", node, fid.toString());
-			logger.error(msg, le);
-			throw new ScanFileHolderException(msg, le);
+			logAndThrowSFHException(le, "Problem loading dataset %s in %s", node, fid);
 		}
 
 		return data;
+	}
+
+	private static void logAndThrowSFHException(Throwable e, String format, Object... args) throws ScanFileHolderException {
+		String msg = String.format(format, args);
+		if (e == null) {
+			logger.error(msg);
+			throw new ScanFileHolderException(msg);
+		}
+		logger.error(msg, e);
+		throw new ScanFileHolderException(msg, e);
+	}
+
+	private static void logAndThrowNexusException(Throwable e, String format, Object... args) throws NexusException {
+		String msg = String.format(format, args);
+		if (e == null) {
+			logger.error(msg);
+			throw new NexusException(msg);
+		}
+		logger.error(msg, e);
+		throw new NexusException(msg, e);
 	}
 
 	/**
@@ -343,8 +361,7 @@ public class HDF5Utils {
 
 			data = readDataset(fid, node, start, count, step, dtype, isize, extend);
 		} catch (Throwable le) {
-			logger.error("Problem loading dataset from file", le);
-			throw new ScanFileHolderException("Problem loading file", le);
+			logAndThrowSFHException(le, "Problem loading dataset from file");
 		} finally {
 			HDF5FileFactory.releaseFile(fileName, close);
 		}
@@ -368,8 +385,8 @@ public class HDF5Utils {
 
 			return readDatasetShape(fid, node);
 		} catch (Throwable le) {
-			logger.error("Problem loading dataset shape in file", le);
-			throw new ScanFileHolderException("Problem loading file", le);
+			logAndThrowSFHException(le, "Problem loading dataset shape in file");
+			return null;
 		} finally {
 			HDF5FileFactory.releaseFile(fileName);
 		}
@@ -428,10 +445,9 @@ public class HDF5Utils {
 				}
 			}
 		} catch (HDF5Exception e) {
-			String msg = String.format("Could not read dataset shape for %s in %s", dataPath, f.toString());
-			logger.error(msg, e);
-			throw new NexusException(msg, e);
+			logAndThrowNexusException(e, "Could not read dataset shape for %s in %s", dataPath, f);
 		}
+		return null;
 	}
 
 	/**
@@ -471,17 +487,13 @@ public class HDF5Utils {
 			did = H5.H5Dopen(f.getID(), dataPath, HDF5Constants.H5P_DEFAULT);
 			tid = H5.H5Dget_type(did);
 			if (H5.H5Tequal(tid, HDF5Constants.H5T_STD_REF_OBJ)) {
-				String msg = String.format("Could not handle reference object data for %s in %s", dataPath, f.toString());
-				logger.error(msg);
-				throw new NexusException(msg);
+				logAndThrowNexusException(null, "Could not handle reference object data for %s in %s", dataPath, f);
 			}
 
 			ntid = H5.H5Tget_native_type(tid);
 			DatasetType type = getDatasetType(tid, ntid);
 			if (type == null) {
-				String msg = String.format("Datatype not supported for %s in %s", dataPath, f.toString());
-				logger.error(msg);
-				throw new NexusException(msg);
+				logAndThrowNexusException(null, "Datatype not supported for %s in %s", dataPath, f);
 			}
 			long sid = -1;
 			long msid = -1;
@@ -526,14 +538,10 @@ public class HDF5Utils {
 						data = DatasetUtils.makeUnsigned(data, true);
 					}
 				} catch (HDF5LibraryException e) {
-					String msg = String.format("Could not read data from %s in %s", dataPath, f.toString());
-					logger.error(msg, e);
-					throw new NexusException(msg, e);
+					logAndThrowNexusException(e, "Could not read data from %s in %s", dataPath, f);
 				}
 			} catch (HDF5Exception ex) {
-				String msg = String.format("Could not get data space information from %s in %s", dataPath, f.toString());
-				logger.error(msg, ex);
-				throw new NexusException(msg, ex);
+				logAndThrowNexusException(ex, "Could not get data space information from %s in %s", dataPath, f);
 			} finally {
 				if (msid != -1) {
 					try {
@@ -549,9 +557,7 @@ public class HDF5Utils {
 				}
 			}
 		} catch (HDF5Exception ex) {
-			String msg = String.format("Could not open dataset %s in %s", dataPath, f.toString());
-			logger.error(msg, ex);
-			throw new NexusException(msg, ex);
+			logAndThrowNexusException(ex, "Could not open dataset %s in %s", dataPath, f);
 		} finally {
 			if (ntid != -1) {
 				try {
@@ -632,8 +638,7 @@ public class HDF5Utils {
 			String dataPath = absolutePathToData(parentPath, name);
 			createDataset(fid, NexusFile.COMPRESSION_NONE, dataPath, dtype, initialShape, maxShape, chunking, fill);
 		} catch (Throwable le) {
-			logger.error("Problem creating dataset in file: {}", fileName, le);
-			throw new ScanFileHolderException("Problem creating dataset in file: " + fileName, le);
+			logAndThrowSFHException(le, "Problem creating dataset in file: %s", fileName);
 		} finally {
 			HDF5FileFactory.releaseFile(fileName, close);
 		}
@@ -809,9 +814,7 @@ public class HDF5Utils {
 				}
 			}
 		} catch (HDF5Exception e) {
-			String msg = String.format("Could not create dataset %s in %s", dataPath, f.toString());
-			logger.error(msg, e);
-			throw new NexusException(msg, e);
+			logAndThrowNexusException(e, "Could not create dataset %s in %s", dataPath, f);
 		}
 	}
 
@@ -830,7 +833,7 @@ public class HDF5Utils {
 			String dataPath = absolutePathToData(parentPath, data.getName());
 			writeDataset(fid, dataPath, data);
 		} catch (Throwable le) {
-			throw new ScanFileHolderException("Problem dataset to file: " + fileName, le);
+			logAndThrowSFHException(le, "Problem writing dataset to file: %s", fileName);
 		} finally {
 			HDF5FileFactory.releaseFile(fileName);
 		}
@@ -906,9 +909,7 @@ public class HDF5Utils {
 				}
 			}
 		} catch (HDF5Exception e) {
-			String msg = String.format("Could not write dataset %s in %s", dataPath, f.toString());
-			logger.error(msg, e);
-			throw new NexusException(msg, e);
+			logAndThrowNexusException(e, "Could not write dataset %s in %s", dataPath, f);
 		}
 	}
 
@@ -928,7 +929,7 @@ public class HDF5Utils {
 		try {
 			writeAttributes(fid, path, attributes);
 		} catch (Throwable le) {
-			throw new ScanFileHolderException("Problem writing attribute", le);
+			logAndThrowSFHException(le, "Problem writing attributes in %s", path);
 		} finally {
 			HDF5FileFactory.releaseFile(fileName);
 		}
@@ -955,15 +956,11 @@ public class HDF5Utils {
 					try {
 						H5.H5Adelete_by_name(fileID, path, attrName, HDF5Constants.H5P_DEFAULT);
 					} catch (HDF5Exception e) {
-						String msg = String.format("Could not delete existing attribute %s for %s in %s", attrName, path, f.toString());
-						logger.error(msg, e);
-						throw new NexusException(msg, e);
+						logAndThrowNexusException(e, "Could not delete existing attribute %s for %s in %s", attrName, path, f);
 					}
 				}
 			} catch (HDF5Exception e) {
-				String msg = String.format("Could not check for existing attribute %s for %s in %s", attrName, path, f.toString());
-				logger.error(msg, e);
-				throw new NexusException(msg, e);
+				logAndThrowNexusException(e, "Could not check for existing attribute %s for %s in %s", attrName, path, f);
 			}
 			Dataset attrData = DatasetUtils.convertToDataset(attr);
 			long baseHdf5Type = getHDF5type(attrData.getDType());
@@ -1008,9 +1005,7 @@ public class HDF5Utils {
 
 					H5.H5Awrite(attrID, datatypeID, buffer);
 				} catch (HDF5Exception e) {
-					String msg = String.format("Could not create or write attribute %s for %s in %s", attrName, path, f.toString());
-					logger.error(msg, e);
-					throw new NexusException(msg, e);
+					logAndThrowNexusException(e, "Could not create or write attribute %s for %s in %s", attrName, path, f);
 				} finally {
 					if (attrID != -1) {
 						try {
@@ -1020,9 +1015,7 @@ public class HDF5Utils {
 					}
 				}
 			} catch (HDF5Exception e) {
-				String msg = String.format("Could not make data type or space for attribute %s for %s in %s", attrName, path, f.toString());
-				logger.error(msg, e);
-				throw new NexusException(msg, e);
+				logAndThrowNexusException(e, "Could not make data type or space for attribute %s for %s in %s", attrName, path, f);
 			} finally {
 				if (dataspaceID != -1) {
 					try {
@@ -1100,8 +1093,7 @@ public class HDF5Utils {
 			String dataPath = absolutePathToData(parentPath, name);
 			writeDatasetSlice(fid, dataPath, slice, value);
 		} catch (Throwable le) {
-			logger.error("Problem setting slice of dataset in file: {}", fileName, le);
-			throw new ScanFileHolderException("Problem setting slice of dataset in file: " + fileName, le);
+			logAndThrowSFHException(le, "Problem setting slice of dataset in file: %s", fileName);
 		} finally {
 			HDF5FileFactory.releaseFile(fileName, close);
 		}
@@ -1133,9 +1125,7 @@ public class HDF5Utils {
 
 			hdfDataspaceId = H5.H5Dget_space(hdfDatasetId);
 		} catch (HDF5Exception e) {
-			String msg = String.format("Could not open dataset %s in %s", dataPath, f.toString());
-			logger.error(msg, e);
-			throw new NexusException(msg, e);
+			logAndThrowNexusException(e, "Could not open dataset %s in %s", dataPath, f);
 		}
 
 		return new long[] {hdfDatasetId, hdfDataspaceId};
@@ -1152,8 +1142,7 @@ public class HDF5Utils {
 			try {
 				H5.H5Dflush(id);
 			} catch (HDF5Exception ex) {
-				logger.error("Could not flush data", ex);
-				throw new NexusException("Could not flush data", ex);
+				logAndThrowNexusException(ex, "Could not flush data");
 			}
 		}
 	}
@@ -1182,8 +1171,7 @@ public class HDF5Utils {
 				try {
 					H5.H5Dclose(id);
 				} catch (HDF5Exception ex) {
-					logger.error("Could not close data", ex);
-					throw new NexusException("Could not close data", ex);
+					logAndThrowNexusException(ex, "Could not close data");
 				}
 			}
 		}
@@ -1278,7 +1266,7 @@ public class HDF5Utils {
 						for (String str : (String[]) strings) {
 							//typesize - 1 since we always want to leave room for \0 at the end of the string
 							if (str.length() > typeSize - 1) {
-								logger.warn("String does not fit into space allocated in HDF5 file in " + dataPath + " - string will be truncated");
+								logger.warn("String does not fit into space allocated in HDF5 file in {} - string will be truncated", dataPath);
 							}
 							byte[] src = str.getBytes(ASCII);
 							int length = Math.min(typeSize - 1, src.length);
@@ -1307,11 +1295,9 @@ public class HDF5Utils {
 						throw ex;
 					}
 				}
-			} // "Could not write slice to " + parentPath + Node.SEPARATOR + name + " in " + filePath, 
+			}
 		} catch (HDF5Exception e) {
-			String msg = String.format("Could not write dataset slice to %s in %s", dataPath, f.toString());
-			logger.error(msg, e);
-			throw new NexusException(msg, e);
+			logAndThrowNexusException(e, "Could not write dataset slice (%s) to %s in %s", slice, dataPath, f);
 		} finally {
 			if (!f.containsDataset(dataPath)) {
 				closeDataset(ids);
@@ -1360,7 +1346,7 @@ public class HDF5Utils {
 				}
 			}
 		} catch (HDF5LibraryException e) {
-			throw new NexusException("Could not compare types", e);
+			logAndThrowNexusException(e, "Could not compare types");
 		}
 
 		return -1;
@@ -1451,8 +1437,7 @@ public class HDF5Utils {
 		try {
 			info = H5.H5Oget_info(oid, HDF5Constants.H5O_INFO_NUM_ATTRS);
 		} catch (HDF5LibraryException e) {
-			logger.error("Could not get info from object", e);
-			throw new NexusException("Could not get info from object", e);
+			logAndThrowNexusException(e, "Could not get info from object");
 		}
 
 		int n = (int) info.num_attrs;
@@ -1732,7 +1717,7 @@ public class HDF5Utils {
 					final long nativeTypeId = nativeTypeResource.getResource();
 					DatasetType type = getDatasetType(typeResource.getResource(), nativeTypeId);
 					if (type == null) {
-						throw new NexusException("Unknown data type");
+						logAndThrowNexusException(null, "Unknown data type");
 					}
 					final int nDims = H5.H5Sget_simple_extent_ndims(spaceId);
 					shape = new long[nDims];
@@ -1770,9 +1755,7 @@ public class HDF5Utils {
 				}
 			}
 		} catch (HDF5Exception e) {
-			String msg = String.format("Could not retrieve attribute %s for %s", name, path);
-			logger.error(msg, e);
-			throw new NexusException(msg, e);
+			logAndThrowNexusException(e, "Could not retrieve attribute %s for %s", name, path);
 		}
 		return dataset;
 	}

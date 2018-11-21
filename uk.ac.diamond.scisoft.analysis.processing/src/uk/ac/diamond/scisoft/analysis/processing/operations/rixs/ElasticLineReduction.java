@@ -166,7 +166,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		ILazyDataset ld = smd.getParent();
 		AxesMetadata amd = ld.getFirstMetadata(AxesMetadata.class);
 		ILazyDataset[] firstAxes = amd == null ? null : amd.getAxis(0);
-		if (firstAxes == null) {
+		if (firstAxes == null || firstAxes.length == 0 || firstAxes[0] == null) {
 			return;
 		}
 		positionName = firstAxes[0].getName();
@@ -675,8 +675,8 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		}
 	}
 
+	public final static String LINE_GRADIENT_FORMAT  = "line_%d_m";
 	public final static String LINE_INTERCEPT_FORMAT = "line_%d_c";
-	public final static String LINE_GRADIENT_FORMAT = "line_%d_m";
 	public final static String LINE_RESIDUAL_FORMAT = "line_%d_residual";
 
 	/**

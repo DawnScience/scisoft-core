@@ -25,7 +25,6 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
-import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.impl.Signal;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
@@ -85,6 +84,11 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		updateFromModel(false);
 	}
 
+	/**
+	 * Update internal state from model
+	 * <p>Done when model gets changed by user through GUI or on first slice in process
+	 * @param throwEx
+	 */
 	abstract void updateFromModel(boolean throwEx);
 
 	/**
@@ -271,7 +275,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 
 			if (t == null) {
 				log.append("Could not load tree from file %s", filePath);
-				countsPerPhoton = 74;
+				countsPerPhoton = model.getCountsPerPhoton();
 				return;
 			}
 
@@ -291,18 +295,13 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 				throw new NexusException("File does not contain a before_scan collection");
 			}
 
-			int gain = (int) parseBeforeScanItem(mdg, "andorPreampGain");
-			double speed = parseBeforeScanItem(mdg, "andorADCSpeed");
-
-			double energy = parseBeforeScanItem(mdg, "pgmEnergy");
-			countsPerPhoton = calculateCountsPerPhoton(gain, speed, energy);
-
+			countsPerPhoton = calculateCountsPerPhoton(mdg);
 			drainCurrent = parseBeforeScanItem(mdg, "draincurrent");
 
 			// TODO ring current, other things
 		} catch (Exception e) {
 			log.append("Could not parse Nexus file %s:%s", filePath, e);
-			countsPerPhoton = 74;
+			countsPerPhoton = model.getCountsPerPhoton();
 		}
 
 		log.append("Counts per single photon event = %d", countsPerPhoton);
@@ -326,7 +325,24 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	private static final int[] ANDOR_PREAMP_GAIN = new int[] {1, 2, 4};
 	private static final double[][] ANDOR_SENSITIVITY = new double[][] {{3.5, 1.9, 1.0}, {3.4, 1.8, 1.0}, {3.1, 1.8, 1.0}}; // in electrons per AD count
 
-	private int calculateCountsPerPhoton(int gain, double speed, double energy) {
+	private int calculateCountsPerPhoton(GroupNode mdg) throws NexusException {
+		double energy = parseBeforeScanItem(mdg, "pgmEnergy"); // photon energy in eV
+		try {
+			return (int) Math.floor(energy / andorSensitivity(mdg));
+		} catch (Exception e) {
+			throw new NexusException("Not an Andor detector:", e);
+		}
+	}
+
+	/**
+	 * @param mdg
+	 * @return photon energy sensitivity (eV/AD count)
+	 * @throws NexusException
+	 */
+	private double andorSensitivity(GroupNode mdg) throws NexusException {
+		int gain = (int) parseBeforeScanItem(mdg, "andorPreampGain");
+		double speed = parseBeforeScanItem(mdg, "andorADCSpeed");
+
 		int gi = Arrays.binarySearch(ANDOR_PREAMP_GAIN, gain);
 		if (gi < 0) {
 			throw new OperationException(this, "Gain value not allowed");
@@ -336,7 +352,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			throw new OperationException(this, "Gain value not allowed");
 		}
 
-		return (int) Math.floor(energy / (ANDOR_SENSITIVITY[si][gi] * PAIR_PRODUCTION_ENERGY));
+		return ANDOR_SENSITIVITY[si][gi] * PAIR_PRODUCTION_ENERGY;
 	}
 
 	private double parseBeforeScanItem(GroupNode bsg, String name) throws NexusException {
@@ -352,23 +368,6 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	}
 
 	// TODO work-in-progress on structure of NeXus RIXS application definition
-	/**
-	 * Parse detector and set fields
-	 * @param detector
-	 * @param pEnergy photon energy in eV
-	 */
-	protected void parseNXrixs(GroupNode detector, double pEnergy) {
-		String ed = detector.getDataNode("energy_direction").getString();
-		model.setEnergyDirection(ed.toLowerCase().equals("slow") ? RixsBaseModel.ENERGY_DIRECTION.SLOW : RixsBaseModel.ENERGY_DIRECTION.FAST);
-
-		// energy required for each photoelectron [e^- / eV]
-		double pe = NexusTreeUtils.parseDoubleArray(detector.getDataNode("photoelectrons_energy"))[0];
-		// digitization of photoelectron to AD units [ADu / e^-]
-		double ds = NexusTreeUtils.parseDoubleArray(detector.getDataNode("detector_sensitivity"))[0];
-
-		countsPerPhoton = (int) Math.floor(pEnergy / (pe * ds));
-	}
-
 	protected void parseDesiredNexusFile(String filePath) {
 		try {
 			Tree t = LocalServiceManager.getLoaderService().getData(filePath, null).getTree();
@@ -380,15 +379,20 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			NexusTreeUtils.parseBeam(beam, dce);
 
 			GroupNode detector = (GroupNode) NexusTreeUtils.requireNode(root, NexusConstants.DETECTOR);
-			parseNXrixs(detector, 1e3 * dce.getEnergy());
+			parseDesiredNXrixs(detector, 1e3 * dce.getEnergy());
 		} catch (Exception e) {
 			log.append("Could not parse Nexus file %s:%s", filePath, e);
-			countsPerPhoton = 74;
+			countsPerPhoton = model.getCountsPerPhoton();
 		}
 
 		log.append("Counts per single photon event = %d", countsPerPhoton);
 	}
 
+	/**
+	 * Parse detector and set fields
+	 * @param detector
+	 * @param pEnergy photon energy in eV
+	 */
 	protected void parseDesiredNXrixs(GroupNode detector, double pEnergy) {
 		String ed = detector.getDataNode("energy_direction").getString();
 		model.setEnergyDirection(ed.toLowerCase().equals("slow") ? RixsBaseModel.ENERGY_DIRECTION.SLOW : RixsBaseModel.ENERGY_DIRECTION.FAST);

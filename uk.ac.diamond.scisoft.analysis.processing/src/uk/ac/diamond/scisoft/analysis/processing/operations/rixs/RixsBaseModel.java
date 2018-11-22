@@ -48,6 +48,9 @@ public class RixsBaseModel extends AbstractOperationModel {
 	@OperationModelField(label = "Slope override", description = "Overrides slope value from any processed fit file", hint = "Any non-zero value is used to override the slopes from fit files")
 	private double slopeOverride = 0;
 
+	@OperationModelField(label = "Fallback value for counts per photon", description = "Pixel value of single photon if it is confined in a single pixel; used only if it cannot be determined from file", min = 1)
+	private int countsPerPhoton = 74;
+
 	/**
 	 * @return get first region of interest (can be null to signify the entire image)
 	 */
@@ -151,4 +154,17 @@ public class RixsBaseModel extends AbstractOperationModel {
 	public void setSlopeOverride(double slopeOverride) {
 		firePropertyChange("setSlopeOverride", this.slopeOverride, this.slopeOverride = slopeOverride);
 	}
+
+	/**
+	 * @return number of AD counts per photon
+	 */
+	public int getCountsPerPhoton() {
+		return countsPerPhoton;
+	}
+
+	public void setCountsPerPhoton(int countsPerPhoton) {
+		firePropertyChange("setCountsPerPhoton", this.countsPerPhoton, this.countsPerPhoton = countsPerPhoton);
+	}
+
+	
 }

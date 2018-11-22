@@ -10,14 +10,9 @@
 package org.eclipse.dawnsci.analysis.dataset.slicer;
 
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.dataset.SliceNDIterator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Iteration over views of a (subsampled) ILazyDataset
@@ -34,8 +29,6 @@ import org.slf4j.LoggerFactory;
  * also adds extra metadata.
  */
 public class SliceViewIterator implements ISliceViewIterator{
-	
-	private static final Logger logger = LoggerFactory.getLogger(SliceViewIterator.class);
 	
 	private ILazyDataset lazyDataset;
 	private SliceNDIterator iterator;

@@ -11,9 +11,6 @@ package org.eclipse.dawnsci.nexus;
 
 import java.io.File;
 
-import org.eclipse.dawnsci.hdf5.nexus.NexusFileFactoryHDF5;
-import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
-
 public class TestUtils {
 	
 	/**

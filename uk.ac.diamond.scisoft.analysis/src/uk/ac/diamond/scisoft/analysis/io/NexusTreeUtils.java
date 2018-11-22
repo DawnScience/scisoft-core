@@ -47,6 +47,7 @@ import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.analysis.tree.impl.TreeImpl;
 import org.eclipse.dawnsci.nexus.NexusConstants;
+import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
@@ -97,6 +98,8 @@ public class NexusTreeUtils {
 	private static final String DMOD_FASTPIXELDIRECTION = "fast_pixel_direction";
 	private static final String DMOD_SLOWPIXELDIRECTION = "slow_pixel_direction";
 
+	private static final String ATTR_DEFAULT = "default";
+
 	static {
 		SimpleUnitFormat.getInstance().alias(NonSI.ANGSTROM, "Angstrom");
 		SimpleUnitFormat.getInstance().alias(NonSI.ANGSTROM, "angstrom");
@@ -108,14 +111,61 @@ public class NexusTreeUtils {
 	/**
 	 * Get lazy dataset (augmented with metadata) from first NXdata group
 	 * @param tree
-	 * @return lazy dataset or null 
+	 * @return lazy dataset 
+	 * @throws NexusException if entry or data group is missing
 	 */
-	public static ILazyDataset getFirstNXdata(Tree tree) {
-		NodeLink le = findFirstNode(tree.getGroupNode(), "entry", NexusConstants.ENTRY);
-		NodeLink ld = findFirstNode((GroupNode) le.getDestination(), NexusConstants.DATA);
-		GroupNode g = (GroupNode) ld.getDestination();
+	public static ILazyDataset getFirstNXdata(Tree tree) throws NexusException {
+		GroupNode r = tree.getGroupNode();
+		GroupNode e = getDefaultNXobject(r, "entry", NexusConstants.ENTRY);
+		if (e == null) {
+			throw new NexusException("Could not find default or first NXentry");
+		}
+		GroupNode d = getDefaultNXobject(e, "data", NexusConstants.DATA);
+		if (d == null) {
+			throw new NexusException("Could not find default or first NXdata");
+		}
 
-		return getAugmentedSignalDataset(g);
+		return getAugmentedSignalDataset(d);
+	}
+
+	private static GroupNode getGroup(NodeLink l) {
+		return l == null || !l.isDestinationGroup() ? null : (GroupNode) l.getDestination();
+	}
+
+	/**
+	 * Get first group in group that is either directed by a default attribute, or
+	 * whose name has the given prefix and is the given class. Otherwise get the
+	 * first group of given class, directed by default attribute, or whose name has
+	 * given prefix
+	 * @param g group
+	 * @param prefix prefix of name
+	 * @param nxClass NeXus class
+	 * @return group or null if not found
+	 */
+	public static GroupNode getDefaultNXobject(GroupNode g, String prefix, String nxClass) {
+		Attribute a = g.getAttribute(ATTR_DEFAULT);
+		String eName = null;
+		GroupNode d = null;
+		if (a != null) {
+			eName = getFirstString(a);
+			d = getGroup(g.getNodeLink(eName));
+			if (!isNXClass(d, nxClass)) {
+				d = null;
+			}
+		}
+		if (d == null) {
+			d = getGroup(findFirstNode(g, prefix, nxClass));
+		}
+		if (d == null) {
+			d = getGroup(findFirstNode(g, null, nxClass));
+		}
+		if (d == null && eName != null) {
+			d = g.getGroupNode(eName);
+		}
+		if (d == null) {
+			d = getGroup(findFirstNode(g, prefix, null));
+		}
+		return d;
 	}
 
 	public static void augmentTree(Tree tree) {
@@ -1366,6 +1416,10 @@ public class NexusTreeUtils {
 		}
 	}
 
+	public static void parseBeam(GroupNode group, DiffractionCrystalEnvironment sample, int... pos) {
+		parseForDCE("incident_wavelength", "incident_energy", group, sample, pos);
+	}
+
 	public static void parseBeam(NodeLink link, DiffractionCrystalEnvironment sample, int... pos) {
 		parseForDCE("incident_wavelength", "incident_energy", link, sample, pos);
 	}
@@ -1379,12 +1433,13 @@ public class NexusTreeUtils {
 			logger.warn("'{}' was not a group", link.getName());
 			return;
 		}
+		parseForDCE(wavelengthName, energyName, (GroupNode) link.getDestination(), sample, pos);
+	}
 
-		GroupNode gNode = (GroupNode) link.getDestination();
-
+	public static void parseForDCE(String wavelengthName, String energyName, GroupNode gNode, DiffractionCrystalEnvironment sample, int... pos) {
 		DataNode wavelength = gNode.getDataNode(wavelengthName);
 		if (wavelength == null) {
-			logger.warn("Wavelength was missing in {}", link.getName());
+			logger.warn("Wavelength {} was missing in {}", wavelengthName, gNode);
 		} else {
 			Dataset w = getConvertedData(wavelength, NonSI.ANGSTROM);
 			sample.setWavelength(w.getSize() == 1 ? w.getElementDoubleAbs(0) : w.getDouble(pos));
@@ -1393,7 +1448,7 @@ public class NexusTreeUtils {
 
 		DataNode energy = gNode.getDataNode(energyName);
 		if (energy == null) {
-			logger.warn("Energy was missing in {}", link.getName());
+			logger.warn("Energy {} was missing in {}", energyName, gNode);
 		} else {
 			Dataset e = getConvertedData(energy, MetricPrefix.KILO(NonSI.ELECTRON_VOLT));
 			sample.setWavelengthFromEnergykeV(e.getSize() == 1 ? e.getElementDoubleAbs(0) : e.getDouble(pos));
@@ -1775,6 +1830,35 @@ public class NexusTreeUtils {
 	}
 
 	/**
+	 * Require that a node link in group to be of given Nexus class is found
+	 * @param group
+	 * @param clazz
+	 * @return node link
+	 * @throws NexusException
+	 */
+	public static Node requireNode(GroupNode group, String clazz) throws NexusException {
+		return requireNode(group, null, clazz);
+	}
+
+	/**
+	 * Require that a node link in group with prefix as name to be of given Nexus class is found
+	 * @param group
+	 * @param prefix (can be null)
+	 * @param clazz
+	 * @return node link
+	 * @throws NexusException
+	 */
+	public static Node requireNode(GroupNode group, String prefix, String clazz) throws NexusException {
+		NodeLink link = findFirstNode(group, prefix, clazz);
+		if (link == null) {
+			String msg = String.format("Could not find NeXus class '%s' in %s", clazz, group);
+			logger.error(msg);
+			throw new NexusException(msg);
+		}
+		return link.getDestination();
+	}
+
+	/**
 	 * Find node link to first item in group to be of given Nexus class
 	 * @param group
 	 * @param clazz
@@ -1787,16 +1871,19 @@ public class NexusTreeUtils {
 	/**
 	 * Find node link to first item in group with prefix as name to be of given Nexus class
 	 * @param group
-	 * @param prefix (can be null)
-	 * @param clazz
+	 * @param prefix (can be null but only if clazz is not null)
+	 * @param clazz (can be null but only if prefix is not null)
 	 * @return node link to first 
 	 */
-	public static NodeLink findFirstNode(GroupNode group, String prefix, String clazz) {
+	public static NodeLink findFirstNode(GroupNode group, final String prefix, final String clazz) {
+		if (prefix == null && clazz == null) {
+			throw new IllegalArgumentException("Prefix or clazz must be defined");
+		}
 		for (NodeLink l : group) {
 			if (prefix != null && !l.getName().startsWith(prefix)) {
 				continue;
 			}
-			if (isNXClass(l.getDestination(), clazz)) {
+			if (clazz == null || isNXClass(l.getDestination(), clazz)) {
 				return l;
 			}
 		}

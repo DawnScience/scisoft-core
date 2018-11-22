@@ -9,6 +9,10 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -17,9 +21,11 @@ import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
+import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.nexus.NexusConstants;
+import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.ILazyDataset;
@@ -35,7 +41,7 @@ import uk.ac.diamond.scisoft.analysis.diffraction.MatrixUtils;
 
 public class NexusTreeUtilsTest {
 
-	public static void addNXclass(Node node, String nxClass) {
+	private static void addNXclass(Node node, String nxClass) {
 		node.addAttribute(TreeFactory.createAttribute(NexusConstants.NXCLASS, nxClass));
 	}
 
@@ -276,5 +282,48 @@ public class NexusTreeUtilsTest {
 		Assert.assertEquals(NonSI.ELECTRON_VOLT, NexusTreeUtils.parseUnit("eV"));
 		Assert.assertEquals(MetricPrefix.KILO(NonSI.ELECTRON_VOLT), NexusTreeUtils.parseUnit("keV"));
 		Assert.assertEquals(NonSI.DEGREE_ANGLE, NexusTreeUtils.parseUnit("deg"));
+	}
+
+	@Test
+	public void testFindFirstNode() {
+		GroupNode g = TreeFactory.createGroupNode(0);
+		GroupNode a;
+		a = TreeFactory.createGroupNode(0);
+		addNXclass(a, NexusConstants.NOTE);
+		g.addGroupNode("note", a);
+		a = TreeFactory.createGroupNode(0);
+		addNXclass(a, NexusConstants.MONITOR);
+		g.addGroupNode("monitor", a);
+
+		NodeLink b = NexusTreeUtils.findFirstNode(g, NexusConstants.BEAM);
+		assertNull(b);
+		b = NexusTreeUtils.findFirstNode(g, NexusConstants.NOTE);
+		assertNotNull(b);
+
+		b = NexusTreeUtils.findFirstNode(g, "moon", NexusConstants.MONITOR);
+		assertNull(b);
+
+		Node n = null;
+		try {
+			n = NexusTreeUtils.requireNode(g, NexusConstants.BEAM);
+			fail("Should not have found anything");
+		} catch (NexusException e) {
+			// do nothing
+		}
+
+		try {
+			n = NexusTreeUtils.requireNode(g, NexusConstants.NOTE);
+		} catch (NexusException e) {
+			fail("Should have found something");
+		}
+
+		try {
+			n = NexusTreeUtils.requireNode(g, "moon", NexusConstants.MONITOR);
+			fail("Should not have found anything");
+		} catch (NexusException e) {
+			// do nothing
+		}
+
+		System.out.println(n);
 	}
 }

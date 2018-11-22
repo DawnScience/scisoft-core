@@ -295,6 +295,50 @@ public class HDF5Utils {
 
 		return data;
 	}
+	
+	/**
+	 * Check whether a dataset exists in a file
+	 * @param fileName
+	 * @param node
+	 * @return dataset
+	 * @throws Exception
+	 */
+	public static boolean hasDataset(final String fileName, String node)
+				throws ScanFileHolderException {
+
+		try {
+			HDF5File fid = HDF5FileFactory.acquireFile(fileName, false);
+			
+			StringBuilder build = new StringBuilder();
+			
+			if (node.startsWith(Tree.ROOT)) {
+				node = node.substring(1);
+				build.append(Tree.ROOT);
+			}
+			
+			String[] split = node.split(Node.SEPARATOR);
+			
+			for (String s : split) {
+				build.append(s);
+				if (!H5.H5Lexists(fid.getID(), build.toString(), HDF5Constants.H5P_DEFAULT)) {
+					return false;
+				}
+				build.append(Node.SEPARATOR);
+			}
+			build.deleteCharAt(build.length()-1);
+			
+			String full = build.toString();
+			
+			if (!H5.H5Oexists_by_name(fid.getID(), full, HDF5Constants.H5P_DEFAULT)) {
+				return false;
+			}
+			
+			H5O_info_t info = H5.H5Oget_info_by_name(fid.getID(), full,HDF5Constants.H5O_INFO_BASIC, HDF5Constants.H5P_DEFAULT);
+			return info.type == HDF5Constants.H5O_TYPE_DATASET;
+		} finally {
+			HDF5FileFactory.releaseFile(fileName);
+		}
+	}
 
 	private static void logAndThrowSFHException(Throwable e, String format, Object... args) throws ScanFileHolderException {
 		String msg = String.format(format, args);

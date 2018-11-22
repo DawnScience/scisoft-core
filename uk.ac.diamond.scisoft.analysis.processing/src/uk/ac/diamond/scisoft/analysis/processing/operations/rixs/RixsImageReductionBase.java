@@ -384,7 +384,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			Dataset ax = null;
 			try {
 				ax = DatasetUtils.sliceAndConvertLazyDataset(sp.getFirstMetadata(AxesMetadata.class).getAxis(0)[0]);
-			} catch (DatasetException e) {
+			} catch (Exception e) {
 			}
 
 			RegisterNoisyData1D reg = getCorrelateShifter();
@@ -555,12 +555,25 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 
 	private static Dataset[] toArray(List<Dataset> d) {
 		int imax = d.size();
+		int minSize = Integer.MAX_VALUE;
+		for (Dataset s : d) {
+			if (s != null) {
+				int size = s.getSize();
+				if (size < minSize) {
+					minSize = size;
+				}
+			}
+		}
 		Dataset[] a = new Dataset[imax];
 		int j = 0;
 		for (int i = 0; i < imax; i++) {
 			Dataset di = d.get(i);
 			if (di != null) {
-				a[j++] = di.getView(true).squeeze();
+				di = di.getView(true).squeeze();
+				if (di.getSize() > minSize) {
+					di = di.getSliceView(new Slice(minSize));
+				}
+				a[j++] = di;
 			}
 		}
 		if (j < imax) {

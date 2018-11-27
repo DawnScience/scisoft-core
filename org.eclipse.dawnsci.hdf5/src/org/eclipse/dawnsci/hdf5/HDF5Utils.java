@@ -1288,19 +1288,14 @@ public class HDF5Utils {
 
 				hdfMemspaceId = H5.H5Screate_simple(rank, HDF5Utils.toLongArray(data.getShape()), null);
 				if (dtype == Dataset.STRING) {
+					//use the properties from the existing dataset for a string,
+					//not the memtype of the dataset.
 					boolean vlenString = false;
 					hdfDatatypeId = H5.H5Dget_type(hdfDatasetId);
 					int typeSize = -1;
-					try {
-						typeSize = (int) H5.H5Tget_size(hdfDatatypeId);
-						vlenString = H5.H5Tis_variable_str(hdfDatatypeId);
-					} finally {
-						H5.H5Tclose(hdfDatatypeId);
-						hdfDatatypeId = -1;
-					}
-					hdfDatatypeId = H5.H5Tcopy(memtype);
-					H5.H5Tset_cset(hdfDatatypeId, HDF5Constants.H5T_CSET_ASCII);
-					H5.H5Tset_size(hdfDatatypeId, vlenString ? HDF5Constants.H5T_VARIABLE : typeSize);
+					typeSize = (int) H5.H5Tget_size(hdfDatatypeId);
+					vlenString = H5.H5Tis_variable_str(hdfDatatypeId);
+
 					if (vlenString) {
 						H5.H5Dwrite_VLStrings(hdfDatasetId, hdfDatatypeId, hdfMemspaceId, hdfDataspaceId, HDF5Constants.H5P_DEFAULT, (String[]) buffer);
 					} else {

@@ -39,13 +39,41 @@ import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
  * Read DiffractionMetaData from Nexus file written by DAWN/GDA
  */
 public class NexusDiffractionCalibrationReader {
-	
-	
+
+
 	public static IDiffractionMetadata getDiffractionMetadataFromNexus(final String filePath, final ILazyDataset parent) throws DatasetException {
 		return getDiffractionMetadataFromNexus(filePath, parent, null);
 	}
-	
-	
+
+	/**
+	 * Read detector properties objects from the Nexus tree of the file specified by path.
+	 * 
+	 * @param path
+	 * @param parent
+	 * @param positions
+	 * @return properties
+	 */
+	public static DetectorProperties[] getDetectors(String path, ILazyDataset parent, int... positions) {
+		Tree tree = null;
+		IDataHolder dh;
+		try {
+			dh = LoaderFactory.getData(path);
+			tree = dh.getTree();
+		} catch (Exception e1) {
+			return null;
+		}
+
+		if (tree == null) return null;
+
+		Map<String, NodeLink> dnl = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getFinder(parent), true, null);
+
+		if (dnl.size() != 1) return null;
+
+		String key = dnl.keySet().iterator().next();
+
+		return NexusTreeUtils.parseDetector("/" + key, tree, positions);
+	}
+
 	public static IDiffractionMetadata getDiffractionMetadataFromNexus(final String filePath, final ILazyDataset parent, String datasetName) throws DatasetException {
 
 		Tree tree = null;

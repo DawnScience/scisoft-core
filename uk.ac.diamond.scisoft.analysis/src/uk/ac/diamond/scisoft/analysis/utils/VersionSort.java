@@ -12,8 +12,8 @@ public class VersionSort {
 	
 	private static String getDigitString(String str, final int indexTemp) {
 		final int index = indexTemp >= str.length() ? indexTemp -1 : indexTemp;
-		
-		if (!Character.isDigit(str.charAt(index))) {
+	
+		if (index < 0 || !Character.isDigit(str.charAt(index))) {
 			return null;
 		}
 		

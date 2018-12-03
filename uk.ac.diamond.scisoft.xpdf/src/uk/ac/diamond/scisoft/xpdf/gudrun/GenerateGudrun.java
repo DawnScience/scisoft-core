@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.xpdf.gudrun;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -31,13 +32,18 @@ import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
+import org.eclipse.dawnsci.nexus.NXcontainer;
+import org.eclipse.dawnsci.nexus.NXdata;
+import org.eclipse.dawnsci.nexus.NXdetector;
 import org.eclipse.dawnsci.nexus.NXentry;
+import org.eclipse.dawnsci.nexus.NXinstrument;
 import org.eclipse.dawnsci.nexus.NXprocess;
 import org.eclipse.dawnsci.nexus.NXnote;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusUtils;
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
@@ -58,6 +64,8 @@ import java.nio.file.Files;
  *
  */
 public class GenerateGudrun extends AbstractOperation<GenerateGudrunModel, OperationData>{
+	
+	private final double NORMCONST = Math.pow(10, -9);
 	
 	private static final Logger LOGGER = Logger.getLogger( GenerateGudrun.class.getName());
 	
@@ -161,24 +169,58 @@ public class GenerateGudrun extends AbstractOperation<GenerateGudrunModel, Opera
 				new NodeLink[nodeMap.size()])[0].getDestination();
 		return (NXsample) sampleNode;
 	}
+	
+	
 	/**
-	 * Makes a copy of the background xy file and places it in the same directory as the sample filer
-	 * @param bckFilDir: the directory of the background file
-	 * @param inFilDir: the directory of the sample file.
+	 * Makes a copy of the background xy file and processing xy fileplaces it in the same directory as the sample filer
+	 * @param inputFileDirectory: the directory of the background file
+	 * @param outDirecName: the user's chosen directory.
 	 * @param sB: a SamepleBackground file.
 	 */
-	private void moveFiles(String bckFilDir, String inFilDir, SampleBackground sB){
-	    for (String fileName: sB.getFileNames()) {
+	private void moveFiles(String inputFileDirectory, String outDirecName, SampleBackground sB, String sample_file){
+	    /*
+	     * This for loop is actually only ever run once in the processes' current implementation as there is only one
+		 * background file  
+		 */
+		for (String backgr_file: sB.getFileNames()) {
             try {
-			    Files.copy((new File(bckFilDir + "/" + fileName)).toPath(),(new File(inFilDir + "/" + fileName)).toPath());
+			    Files.copy((new File(inputFileDirectory + "/" + backgr_file)).toPath(),(new File(outDirecName + "/" + backgr_file)).toPath());
+			    Files.copy((new File(inputFileDirectory + "/" + sample_file)).toPath(),(new File(outDirecName + "/" + sample_file)).toPath());
+			    LOGGER.log(Level.INFO, "Files succesfully moved");
 		    } catch (IOException e) {
-			    LOGGER.log(Level.WARNING, "An I/O exception was thrown, does the background file exist?", e);
+			    LOGGER.log(Level.WARNING, "An I/O exception was thrown, do you have the correct permissions?", e);
 		    }
   	    }
 	}
 	
 	/**
-	 * Takes all the names of the nexus files within the directoy and finds the sample background file that they each
+	 * 
+	 * @param confilePath the path to the container file
+	 * @return either 1.0 or the mean of the i0
+	 */
+	private double getContaineri0(String confilePath) {
+		NexusFile conFile;
+		Tree conTree;
+		try {
+			conFile = NexusFileHDF5.openNexusFileReadOnly(confilePath);
+			conTree = NexusUtils.loadNexusTree(conFile);
+		} catch (Exception el) {
+			throw new OperationException(this, el);
+		}
+	    NXdata treei0 = getFirstSomething(conTree, "NXdata");
+	    List<ILazyDataset> listi0 = treei0.getDatasets("data");
+	    ILazyDataset[] lazyi0 = listi0.toArray(new ILazyDataset[listi0.size()]);
+	    try {
+			double meani0 = (double) lazyi0[0].getSlice().mean(true);
+			return meani0;
+		} catch (DatasetException e) {
+			LOGGER.log(Level.WARNING, "couldn't obtain mean of i0");
+		}
+		return 1.0;
+	}
+	
+	/**
+	 * Takes all the names of the nexus files within the directory and finds the sample background file that they each
 	 * use, if there are any that use the same background file, only one of such file is stored to avoid duplicates in the
 	 * autogudrun.txt file
 	 * 
@@ -204,6 +246,9 @@ public class GenerateGudrun extends AbstractOperation<GenerateGudrunModel, Opera
 		    GroupNode containerFileNameNode = getFirstSomething(containerTree, "NXcontainer");
 		    String confilepath = containerFileNameNode.getDataNode("inside_of_file_name").getString();
 		    File confilePathFile = new File(confilepath);
+		    double i0 = getContaineri0(confilepath);
+		    sampleBackground.seti0(i0);
+		    sampleBackground.setDataFactor(NORMCONST/i0);
 		    String xyfilename = (confilePathFile).getName().replace("_pe2AD.hdf5","_tth_det2_0.xy");
 		    /*
 		     *Background files and data files need to all be in the same directory
@@ -240,63 +285,83 @@ public class GenerateGudrun extends AbstractOperation<GenerateGudrunModel, Opera
 	 * @param normaliseTo: A normalising constant for the dataFator
 	 * @return sample: a sample object with the appropriate attributes 
 	 */
+	
 	private Sample getGudrunSample(String filepath, String fileName) {
 		NexusFile containerFile;
 		Tree containerTree;
+		Sample sample = new Sample();
 		try {
 			containerFile = NexusFileHDF5.openNexusFileReadOnly(filepath);
 			containerTree = NexusUtils.loadNexusTree(containerFile);
 		} catch (Exception e1) {
 			throw new OperationException(this, e1);
 		}
+	    NXsample sampleTree = getFirstSomething(containerTree, "NXsample");
+	    NXdata treei0 = getFirstSomething(containerTree, "NXdata");
+	    //data is definitely there	    NXdata
+	    List<ILazyDataset> listi0 = treei0.getDatasets("data");
+	    ILazyDataset[] lazyi0 = listi0.toArray(new ILazyDataset[listi0.size()]);
+	    try {
+			double meani0 = (double) lazyi0[0].getSlice().mean(true);
+			sample.setDataFactor(NORMCONST/meani0);
+		} catch (DatasetException e) {
+			LOGGER.log(Level.WARNING, "couldn't obtain mean of i0");
+		}
+	    
+	    String density  = sampleTree.getString("density");
 		NXsample nxSample= getNXsampleFromTree(null, containerTree, null); 
 		String composition = (nxSample.getChemical_formulaScalar());
 		String name = nxSample.getNameScalar();
-		Sample sample = new Sample();
 		sample.setName(name);
-		sample.setDataFactor(1);
+		sample.setDensity(density);
 		sample.setFileNames(new String[] {fileName.replace(".nxs","_tth_det2_0.xy")});
 		sample.setComposition(composition);
 		return sample;
-	
 	}
 	
 	/**
+	 * gets the name(s) of the file(s) to create. This name follows the pattern (name of file being processed)_gudrun.txt, 
+	 * either the file(s) is/are a completely new so the name(s) are unique or an existing file is being appended to. 
+	 * 
 	 * @param samplesArr
-	 * @return
+	 * @return the name(s) of the file(s)
 	 * @throws IOException
 	 */
-	public String[] getOutFileNames(Sample[] samplesArr) throws IOException {
+	public String[] getOutFileNames(String inputFileDirectory, Sample[] samplesArr, SampleBackground sB) throws IOException {
 
 		String[] outFileArray = new String[2];
 		String outFileName;
-		String outDirecName;
+		String outDirecName = "";
 		if (model.getFilePath() == null) {
 			outFileName = "";
 		} else {
 			outFileName = model.getFilePath();
+			File outFileLoc = new File(outFileName);
+			outDirecName = outFileLoc.getParent();
 		}
-
-		if (model.getFileDirectory() == null) {
-			outDirecName = "";
-		} else {
+		if (!(model.getFileDirectory() == null)) {
 		    outDirecName = model.getFileDirectory();
 		}
-		
+		//Section for a completely new file
 		if (!(outDirecName.isEmpty())) {
 			File oFDFile = new File(outDirecName);
-			File autoTxtFile = new File(outDirecName + "/autogudrun_" + samplesArr[0].getName() + ".txt");
-			if (!(oFDFile.exists())){  
-				outDirecName += "/autogudrun_" + samplesArr[0].getName() + ".txt";
+			File autoTxtFile = new File(outDirecName + "/" + (samplesArr[0].getFileNames())[0].replace("_tth_det2_0.xy","_gudrun.txt"));
+			if (!(oFDFile.exists())){
+				moveFiles(inputFileDirectory, outDirecName, sB, (samplesArr[0].getFileNames())[0]);
+				outDirecName += "/" + (samplesArr[0].getFileNames())[0].replace("_tth_det2_0.xy","_gudrun.txt");
 				oFDFile.mkdirs();
 				autoTxtFile.createNewFile();
 			}else if (!(autoTxtFile.exists())) {
-				outDirecName += "/autogudrun_" + samplesArr[0].getName() + ".txt";
+				moveFiles(inputFileDirectory, outDirecName , sB, (samplesArr[0].getFileNames())[0]);
+				outDirecName += "/" + (samplesArr[0].getFileNames())[0].replace("_tth_det2_0.xy","_gudrun.txt");
 				autoTxtFile.createNewFile();
 			}
 			outFileArray[0] = outDirecName;
 		}
+		//For append section
 		if (!(outFileName.isEmpty())) {
+			System.out.println(outDirecName);
+			moveFiles(inputFileDirectory, outDirecName, sB,(samplesArr[0].getFileNames())[0]);
 			outFileArray[1] = outFileName;
 		} 
 		return outFileArray;
@@ -345,6 +410,20 @@ public class GenerateGudrun extends AbstractOperation<GenerateGudrunModel, Opera
 	}
 	
 	/**
+	 * sets some default attributes for the instrument object to be passed into gudrunInput
+	 * 
+	 * @return an instrument object
+	 */
+	private Instrument getInstrument(){
+		//dataFileDirectory is passed in even though it's unused in case it
+		//Will need to be used in the future
+		Instrument instrument = new Instrument();	
+		instrument.setQMax(25);
+		instrument.setQMin(0.5);
+		return instrument; 
+	}
+	
+	/**
 	 * Calls the main generate() methods from the GudrunInput class that calls the subsequent generate() methods, this function is essentially
 	 * what writes the metadata to the autogudrun text file after the objects of the various classes have been created. 
 	 * @param processedFile the address of the file that was placed on the processing pipeline.
@@ -360,17 +439,15 @@ public class GenerateGudrun extends AbstractOperation<GenerateGudrunModel, Opera
 		//This is what will be used when the operation is actually in operation.
 		String dataFileDirectory= nexusFile.getParent();
 		String inputFileDirectory = getXYFilePath(dataFileDirectory + "/" + xyLocation.getName());
-		Instrument instrument = new Instrument();	
-		
-		instrument.setQMax(25);
-		instrument.setQMin(0.5);
-		instrument.setDataFileDirectory(dataFileDirectory);
-		instrument.setInDirectory(inputFileDirectory);
+
 		File iFDFile = new File(dataFileDirectory);
 		//If the file doesn't exist then it is created here
 		if (!(iFDFile.exists())){
 			iFDFile.mkdirs();
 		}
+		
+		//Instrument instrument = getInstrument();
+		Instrument instrument = getInstrument();
 		
 		Beam beam = new Beam();
 		Normalisation normalisation = new Normalisation();
@@ -382,8 +459,6 @@ public class GenerateGudrun extends AbstractOperation<GenerateGudrunModel, Opera
 		
 		SampleBackground sampleBackground = getGudrunBackground(fileNames);
 		ArrayList<Sample> samplesList = new ArrayList<Sample>();
-		
-		moveFiles(inputFileDirectory, dataFileDirectory, sampleBackground);
 		
 		for (File filePath : fileNames) {
 			String strFilePath = filePath.toString();
@@ -398,12 +473,13 @@ public class GenerateGudrun extends AbstractOperation<GenerateGudrunModel, Opera
 		 * the objects are passed into GudrunInput as parameters to do this 
 		 */
 		try {
-			String[] outArray = getOutFileNames(samplesArr);
-			if (outArray[0] != null && !(outArray[0].equals(""))) {
-				(new GudrunInput(instrument,samplesArr,beam,sampleBackground,normalisation)).generate(outArray[0]);
+			String[] outFileArray = getOutFileNames(inputFileDirectory, samplesArr, sampleBackground);
+			if (outFileArray[0] != null && !(outFileArray[0].equals(""))) {
+				(new GudrunInput(instrument,samplesArr,beam,sampleBackground,normalisation)).generate(outFileArray[0]);
+				LOGGER.log(Level.FINE, "File succesfully written");
 			}
-			if (outArray[1] != null && !(outArray[1].equals(""))) {
-				(new AppendGudrun(instrument,samplesArr,beam,sampleBackground,normalisation)).generate(outArray[1]);
+			if (outFileArray[1] != null && !(outFileArray[1].equals(""))) {
+				(new AppendGudrun(instrument,samplesArr,beam,sampleBackground,normalisation)).generate(outFileArray[1]);
 				LOGGER.log(Level.FINE, "File succesfully written");
 			}
 		} catch (FileNotFoundException e) {

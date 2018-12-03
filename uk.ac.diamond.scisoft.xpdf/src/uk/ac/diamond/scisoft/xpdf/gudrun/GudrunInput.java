@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.xpdf.gudrun;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -52,6 +53,9 @@ public class GudrunInput {
 	 */
 	public void generate(String outFileName) throws FileNotFoundException {
 		StringBuilder entry = new StringBuilder();
+		File outFileDirec = new File(outFileName);
+		instrument.setDataFileDirectory(outFileDirec.getParentFile());
+		instrument.setInDirectory(outFileDirec.getParentFile());
         LOGGER.log(Level.INFO, "Creating Gudrun input file...");
         entry.append("'  '  '          '  '\\'\n\n");
         entry.append(this.instrument.generate());
@@ -80,7 +84,7 @@ public class GudrunInput {
         } catch (IOException x) {
         	System.err.format("IOException: %s%n", x);
         } finally {
-        	LOGGER.log(Level.INFO, outFileName + "was written to!");;
+        	LOGGER.log(Level.INFO, outFileName + " was written to!");;
         }
 	}
 }

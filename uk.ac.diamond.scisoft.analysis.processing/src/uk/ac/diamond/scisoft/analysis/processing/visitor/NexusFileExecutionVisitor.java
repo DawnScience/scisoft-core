@@ -214,7 +214,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 						while(rootgroup.containsNode(updatedName)) {
 							updatedName = key + count;
 						}
-						nexusFile.linkExternal(new URI("nxfile", originalFilePath, key), Tree.ROOT + updatedName, true);
+						nexusFile.linkExternal(new URI("nxfile", "//" + originalFilePath, key), Tree.ROOT + updatedName, true);
 					}
 				}
 			} catch (Exception e) {

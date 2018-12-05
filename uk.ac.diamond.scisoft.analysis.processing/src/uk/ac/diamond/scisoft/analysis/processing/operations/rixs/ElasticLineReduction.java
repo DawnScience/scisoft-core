@@ -467,7 +467,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		log.append("Minimal FWHM at slope of %g ", slopes.getDouble(pmin));
 		fwhm.setName("tilted_profile_width_" + r);
 		MetadataUtils.setAxes(fwhm, slopes);
-		auxData.add(fwhm);
+		auxData.add(fwhm.getView(true));
 		if (r == 0) {
 			displayData.add(fwhm);
 		}
@@ -835,7 +835,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 	protected void generateFitForDisplayAndSummary(IFunction f, Dataset x, Dataset d, String name) {
 		MetadataUtils.setAxes(d, x);
-		displayData.add(d);
+		displayData.add(d.getView(false));
 		summaryData.add(d);
 		if (f == null) {
 			return;
@@ -844,7 +844,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		Dataset fit = DatasetUtils.convertToDataset(f.calculateValues(x));
 		fit.setName(name);
 		MetadataUtils.setAxes(fit, x);
-		displayData.add(fit);
+		displayData.add(fit.getView(false));
 		summaryData.add(fit);
 	}
 

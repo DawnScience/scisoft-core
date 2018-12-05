@@ -202,8 +202,8 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		e.imultiply(-energyDispersion[r]);
 		e.setName(ENERGY_LOSS);
 		MetadataUtils.setAxes(spectrum, e);
-		auxData.add(spectrum.getView(false));
-		allSpectra[r].add(spectrum);
+		auxData.add(spectrum.getView(true));
+		allSpectra[r].add(spectrum.getView(true));
 		return spectrum;
 	}
 

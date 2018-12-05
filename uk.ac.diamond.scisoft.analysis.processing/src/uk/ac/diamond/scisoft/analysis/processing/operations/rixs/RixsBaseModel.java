@@ -18,10 +18,10 @@ import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
  * Base model for processing RIXS images
  */
 public class RixsBaseModel extends AbstractOperationModel {
-	@OperationModelField(label = "Rectangle A", description = "Region to search for elastic peak", enableif = "!(regionsFromFile ?: false)")
+	@OperationModelField(label = "Rectangle A", description = "Region to search for elastic peak", enableif = "!(regionsFromFile ?: false)", expertOnly = true)
 	private IRectangularROI roiA = new RectangularROI(0, 1, 2048, 1600, 0);
 
-	@OperationModelField(label = "Rectangle B", description = "Region to search for elastic peak", enableif = "!(regionsFromFile ?: false)")
+	@OperationModelField(label = "Rectangle B", description = "Region to search for elastic peak", enableif = "!(regionsFromFile ?: false)", expertOnly = true)
 	private IRectangularROI roiB = null;
 
 	public enum ENERGY_DIRECTION {
@@ -30,25 +30,25 @@ public class RixsBaseModel extends AbstractOperationModel {
 	}
 
 	// orientation (given by energy direction)
-	@OperationModelField(label = "Energy direction", description = "Principal direction in which the energy changes", hint = "Slow is vertical; fast is horizontal")
+	@OperationModelField(label = "Energy direction", description = "Principal direction in which the energy changes", hint = "Slow is vertical; fast is horizontal", expertOnly = true)
 	private ENERGY_DIRECTION energyDirection = ENERGY_DIRECTION.SLOW; // in 2D image
 
-	@OperationModelField(label = "Cutoff enable", description = "Use cutoff to remove pixels with high counts")
+	@OperationModelField(label = "Cutoff enable", description = "Use cutoff to remove pixels with high counts", expertOnly = true)
 	private boolean useCutoff = false;
 
-	@OperationModelField(label = "Cutoff for pixels", description = "Cutoff as multiple of single photon count", hint = "Check if peaks are clipped when cutoff is too low", enableif = "useCutoff == true", min = 1.0)
+	@OperationModelField(label = "Cutoff for pixels", description = "Cutoff as multiple of single photon count", hint = "Check if peaks are clipped when cutoff is too low", enableif = "useCutoff == true", min = 1.0, expertOnly = true)
 	private double cutoff = 5.0;
 
-	@OperationModelField(label = "Cutoff window size", description = "Size of window to use for cutoff", hint = "Cuts out a (size, size) window", enableif = "useCutoff == true", min = 1)
+	@OperationModelField(label = "Cutoff window size", description = "Size of window to use for cutoff", hint = "Cuts out a (size, size) window", enableif = "useCutoff == true", min = 1, expertOnly = true)
 	private int cutoffSize = 1;
 
-	@OperationModelField(label = "Clip spectra", description = "Clip spectra to avoid fall-off from slope correction", hint = "Set true when image background is not zero")
+	@OperationModelField(label = "Clip spectra", description = "Clip spectra to avoid fall-off from slope correction", hint = "Set true when image background is not zero", expertOnly = true)
 	private boolean clipSpectra = true;
 
 	@OperationModelField(label = "Slope override", description = "Overrides slope value from any processed fit file", hint = "Any non-zero value is used to override the slopes from fit files")
 	private double slopeOverride = 0;
 
-	@OperationModelField(label = "Fallback value for counts per photon", description = "Pixel value of single photon if it is confined in a single pixel; used only if it cannot be determined from file", min = 1)
+	@OperationModelField(label = "Fallback value for counts per photon", description = "Pixel value of single photon if it is confined in a single pixel; used only if it cannot be determined from file", min = 1, expertOnly = true)
 	private int countsPerPhoton = 74;
 
 	/**

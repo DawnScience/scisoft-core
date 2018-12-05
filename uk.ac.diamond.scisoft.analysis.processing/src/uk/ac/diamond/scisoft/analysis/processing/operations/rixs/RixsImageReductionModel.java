@@ -38,10 +38,10 @@ public class RixsImageReductionModel extends RixsImageReductionBaseModel {
 		firePropertyChange("setFitFile", this.fitFile, this.fitFile = fitFile);
 	}
 
-	@OperationModelField(label = "Read regions from file", description = "Use regions defined in processed fit or calibration file")
+	@OperationModelField(label = "Read regions from file", description = "Use regions defined in processed fit or calibration file", expertOnly = true)
 	private boolean regionsFromFile = true;
 
-	@OperationModelField(label = "Use per frame fits", description = "Use individual fits from each frame (rather than average slope)")
+	@OperationModelField(label = "Use per frame fits", description = "Use individual fits from each frame (rather than average slope)", expertOnly = true)
 	private boolean perFrameFits = false;
 
 	/**

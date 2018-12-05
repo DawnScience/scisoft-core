@@ -20,19 +20,19 @@ public class RixsImageReductionBaseModel extends RixsBaseModel {
 	@OperationModelField(label = "Energy calibration file", description = "This is also used to locate the directory to find processed fit files (when not manually overriden)", file = FileType.EXISTING_FILE, hint = "Energy dispersion value has precedence")
 	private String calibrationFile;
 
-	@OperationModelField(label = "Size of window", description = "Window used to find photon event", min = 3)
+	@OperationModelField(label = "Size of window", description = "Window used to find photon event", min = 3, expertOnly = true)
 	private int window = 3;
 
-	@OperationModelField(label = "Photon event peak: lower threshold", hint = "Multiple of single photon below which to ignore event", min = 0)
+	@OperationModelField(label = "Photon event peak: lower threshold", hint = "Multiple of single photon below which to ignore event", min = 0, expertOnly = true)
 	private double lowThreshold = 0.2;
 
-	@OperationModelField(label = "Photon event peak: upper threshold", hint = "Multiple of single photon above which to ignore event", min = 0)
+	@OperationModelField(label = "Photon event peak: upper threshold", hint = "Multiple of single photon above which to ignore event", min = 0, expertOnly = true)
 	private double highThreshold = 2.0;
 
 	@OperationModelField(label = "Energy dispersion at detector (in eV/pixel)", description = "Overrides the value in calibration file",  hint = "Leave blank or NaN to read from file", min = 0)
 	private double energyDispersion = Double.NaN;
 
-	@OperationModelField(label = "Supersampling for event centroids", description = "Number of sub-divisions per pixel edge", min = 2)
+	@OperationModelField(label = "Supersampling for event centroids", description = "Number of sub-divisions per pixel edge", min = 2, expertOnly = true)
 	private int bins = 2;
 
 	public enum CORRELATE_ORDER {
@@ -40,7 +40,7 @@ public class RixsImageReductionBaseModel extends RixsBaseModel {
 		LAST,  // use last spectrum and work backwards
 	}
 
-	@OperationModelField(label = "Spectrum correlation order", description = "Which spectrum to start correlating from")
+	@OperationModelField(label = "Spectrum correlation order", description = "Which spectrum to start correlating from", expertOnly = true)
 	private CORRELATE_ORDER correlateOrder = CORRELATE_ORDER.LAST;
 
 	public enum CORRELATE_PHOTON {
@@ -49,10 +49,10 @@ public class RixsImageReductionBaseModel extends RixsBaseModel {
 		USE_INTENSITY_SHIFTS, // use shifts from intensity correlations
 	}
 
-	@OperationModelField(label = "Spectrum correlation option", description = "Photon correlation options", hint = "All pairs of spectra; consecutive pairs only; use intensity shifts")
+	@OperationModelField(label = "Spectrum correlation option", description = "Photon correlation options", hint = "All pairs of spectra; consecutive pairs only; use intensity shifts", expertOnly = true)
 	private CORRELATE_PHOTON correlateOption = CORRELATE_PHOTON.USE_INTENSITY_SHIFTS; // in 2D image
 
-	@OperationModelField(label = "Normalize spectra by region size", description = "If true, then divide summed spectra by number of constituent spectra")
+	@OperationModelField(label = "Normalize spectra by region size", description = "If true, then divide summed spectra by number of constituent spectra", expertOnly = true)
 	private boolean normalizeByRegionSize = true;
 
 	@OperationModelField(label = "Selection of frames to use", description = 
@@ -64,7 +64,7 @@ public class RixsImageReductionBaseModel extends RixsBaseModel {
 			+ "Finally, each sub-range can be excluded with an exclamation mark prefix; if\n"
 			+ "any exclamation mark appears in a multi-range string then the default is that\n"
 			+ "the entire range is included and specified sub-ranges with \"!\" are excluded.",
-			hint = "E.g. 1 or 2,-1 or 0,2:4 or !3 or !1:-2")
+			hint = "E.g. 1 or 2,-1 or 0,2:4 or !3 or !1:-2", expertOnly = true)
 	private String frameSelection = "";
 
 	// TODO conditional override to fit parameters??
@@ -75,13 +75,13 @@ public class RixsImageReductionBaseModel extends RixsBaseModel {
 		TURNING_POINT,
 	}
 
-	@OperationModelField(label = "Zero energy offset", description = "Options for how to define the zero energy position", hint = "From elastic line fit; manual override by given values; or from first turning point")
+	@OperationModelField(label = "Zero energy offset", description = "Options for how to define the zero energy position", hint = "From elastic line fit; manual override by given values; or from first turning point", expertOnly = true)
 	private ENERGY_OFFSET energyOffsetOption = ENERGY_OFFSET.FROM_ELASTIC_LINE_FIT;
 
-	@OperationModelField(label = "Zero energy offset A", description = "Offset value for rectangle A", hint = "Position on energy axis in pixels")
+	@OperationModelField(label = "Zero energy offset A", description = "Offset value for rectangle A", hint = "Position on energy axis in pixels", expertOnly = true)
 	private double energyOffsetA = Double.NaN;
 
-	@OperationModelField(label = "Zero energy offset B", description = "Offset value for rectangle B", hint = "Position on energy axis in pixels")
+	@OperationModelField(label = "Zero energy offset B", description = "Offset value for rectangle B", hint = "Position on energy axis in pixels", expertOnly = true)
 	private double energyOffsetB = Double.NaN;
 
 	/**

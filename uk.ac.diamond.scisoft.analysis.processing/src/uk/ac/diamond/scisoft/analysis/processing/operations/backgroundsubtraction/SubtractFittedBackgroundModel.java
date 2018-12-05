@@ -22,22 +22,22 @@ public class SubtractFittedBackgroundModel extends AbstractOperationModel {
 		Gaussian;
 	}
 
-	@OperationModelField(fieldPosition = 0, label = "Background PDF")
+	@OperationModelField(fieldPosition = 0, label = "Background PDF", expertOnly = true)
 	private BackgroundPixelPDF backgroundPDF = BackgroundPixelPDF.Gaussian;
 
-	@OperationModelField(fieldPosition = 1, label = "Positive Only (ignore negative values in data)")
+	@OperationModelField(fieldPosition = 1, label = "Positive Only (ignore negative values in data)", expertOnly = true)
 	private boolean positiveOnly = true;
 
-	@OperationModelField(fieldPosition = 2, label = "Signal to background ratio", min = 1)
+	@OperationModelField(fieldPosition = 2, label = "Signal to background ratio", min = 1, expertOnly = true)
 	private double ratio = 3.0;
 
 	@OperationModelField(fieldPosition = 3, label = "Dark image file", file = FileType.EXISTING_FILE, hint = "Can be empty then uniform background is assumed")
 	private String darkImageFile = null;
 
-	@OperationModelField(fieldPosition = 4, label = "Remove outliers from dark image", hint = "Check to omit cosmic ray events", enableif = "darkImageFile != null")
+	@OperationModelField(fieldPosition = 4, label = "Remove outliers from dark image", hint = "Check to omit cosmic ray events", enableif = "darkImageFile != null", expertOnly = true)
 	private boolean removeOutliers = true;
 
-	@OperationModelField(fieldPosition = 5, label = "Gaussian smoothing length parameter", enableif = "darkImageFile != null")
+	@OperationModelField(fieldPosition = 5, label = "Gaussian smoothing length parameter", enableif = "darkImageFile != null", expertOnly = true)
 	private double gaussianSmoothingLength = 10;
 
 	public static final int HISTOGRAM_MAX_BINS = 1024*1024;

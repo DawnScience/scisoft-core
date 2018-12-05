@@ -93,7 +93,7 @@ public @interface OperationModelField {
 	
 	/**
 	 * Used to specify a dataset from a specific file, or the file being processed if the file
-	 * variable doesnt exist
+	 * variable doesn't exist
 	 * 
 	 * @return the field name the corresponds to file path in the model
 	 */
@@ -115,4 +115,9 @@ public @interface OperationModelField {
 	 * The position of the field in the list, providing a way to override the default alphabetic sorting of fields
 	 */
 	public int fieldPosition() default Integer.MAX_VALUE;
+
+	/**
+	 * Used to hide field by default
+	 */
+	public boolean expertOnly() default false;
 }

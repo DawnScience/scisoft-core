@@ -21,10 +21,9 @@ import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MaskMetadata;
 import org.eclipse.january.metadata.UnitMetadata;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MetadataPlotUtils {
 
@@ -108,17 +107,17 @@ public class MetadataPlotUtils {
 	
 
 	
-	public static IImageTrace buildTrace(String name, IDataset data, IPlottingSystem<Composite> system) {
+	public static IImageTrace buildTrace(String name, IDataset data, IPlottingSystem<?> system) {
 		return buildTrace(name, data, system, -1);
 	
 	}
 	
-	public static IImageTrace buildTrace(IDataset data, IPlottingSystem<Composite> system) {
+	public static IImageTrace buildTrace(IDataset data, IPlottingSystem<?> system) {
 		return buildTrace(data.getName(), data, system, -1);
 	
 	}
 	
-	public static IImageTrace buildTrace(String name, IDataset data, IPlottingSystem<Composite> system, int alpha) {
+	public static IImageTrace buildTrace(String name, IDataset data, IPlottingSystem<?> system, int alpha) {
 		IDataset x = null;
 		IDataset y = null;
 		
@@ -157,7 +156,7 @@ public class MetadataPlotUtils {
 	}
 	
 	
-	public static ILineTrace buildLineTrace(IDataset data, IPlottingSystem<Composite> system) {
+	public static ILineTrace buildLineTrace(IDataset data, IPlottingSystem<?> system) {
 		IDataset x = null;
 
 		

@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.xpdf.gudrun;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -147,7 +148,9 @@ public class AppendGudrun {
 				} catch (IOException e) {
 					LOGGER.log(Level.WARNING, "I/O exception, does this file exist?", e);
 				}
-		
+		File outFileDirec = new File(outFileName);
+		instrument.setDataFileDirectory(outFileDirec.getParentFile());
+		instrument.setInDirectory(outFileDirec.getParentFile());
 		String[] fileArr = fileList.toArray(new String[fileList.size()]);
 		String[] instSection = segmentFile(fileArr, 0, "BEAM");
 		String[] beamSection = segmentFile(fileArr, Integer.parseInt(instSection[instSection.length - 1]), "NORMALISATION");

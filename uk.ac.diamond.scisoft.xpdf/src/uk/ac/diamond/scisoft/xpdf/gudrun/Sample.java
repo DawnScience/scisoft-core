@@ -25,15 +25,15 @@ public class Sample {
 	private String name;
 	private String composition;
     private String geometry="SameAsBeam";
+    private String density = "1.0";
     private double innerRadii= 0.0;
     private double outerRadii = 0.0585;
     private double kAlpha2 = 0.0;
     private double kBeta = 0.0;
-    private double density = 1.0;
     private double tweak = 2.0;
     private double lorchWidth = 0.1;
     private double polarisation = -1.0;
-    private double dataFactor = 1.0;
+    private double dataFactor;
     private double minRadius = 1.0;
     private int height = 5;
     private int topHatWidth = 4;
@@ -49,6 +49,11 @@ public class Sample {
      */
 	public Sample() {
 		//For creating the sample
+	}
+	
+	//Getters
+	public String[] getFileNames() {
+		return this.fileNames;
 	}
 	
 	//Setters 
@@ -84,7 +89,7 @@ public class Sample {
 		this.kBeta = kBe;
 	}
 	
-	public void setDensity(double den) {
+	public void setDensity(String den) {
 		this.density = den;
 	}
 	
@@ -162,7 +167,6 @@ public class Sample {
         
         //Following section is the body of what is written on the file under the Sample header
 		compoundData atomicComp = Xraylib.CompoundParser(this.composition);
-		System.out.println(atomicComp);
 		for (int i = 0; i < atomicComp.nElements ; i++) {
         entry.append(Xraylib.AtomicNumberToSymbol(atomicComp.Elements[i]) +
         	  "  " + Xraylib.AtomicNumberToSymbol(atomicComp.Elements[i]) +
@@ -184,7 +188,7 @@ public class Sample {
         entry.append("1          Sample calibration factor\n");
         entry.append(this.nIterations + "          No. of iterations\n");
         entry.append("0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0           Fluorescence levels\n");
-        entry.append(this.multiScattering + "%s          Factor to modify multiple scattering (0 - 1)\n");
+        entry.append(this.multiScattering + "          Factor to modify multiple scattering (0 - 1)\n");
         entry.append(this.polarisation + "          Incident beam polarization factor (-1 -> +1)\n");
         entry.append(this.compton + "          Factor for Compton scattering\n");
         entry.append(this.bremsstrahlung + "          Bremsstrahlung scattering amplitude\n");

@@ -22,9 +22,9 @@ public class SampleBackground {
 	private static final Logger LOGGER = Logger.getLogger( SampleBackground.class.getName());
 	
 	private String[] filenames;
-	private int sampleBackgroundFactor = 1;
-	private int dataFactor = 1;
-	
+	private double sampleBackgroundFactor = 1;
+	private double i0 = 1;
+	private double dataFactor = 1;
 	public SampleBackground() {
 		
 	}
@@ -42,26 +42,38 @@ public class SampleBackground {
 		this.filenames = filenames;
 	}
 	
-	public void setSBF(int s) {
+	public void setSBF(double s) {
 		this.sampleBackgroundFactor = s;
 	}
 	
-	public void setDataFactor(int d) {
+	public void setDataFactor(double d) {
 		this.dataFactor = d;
 	}
 	
-	public int getBckgrFac() {
+	public double getBckgrFac() {
 		return this.sampleBackgroundFactor;
 	}
 	
-	public int getDataFactor() {
+	public double getDataFactor() {
 		return this.dataFactor;
+	}
+	
+	public void seti0(double newi0) {
+		this.i0 = newi0;
+	}
+	public double getSBF() {
+		return this.sampleBackgroundFactor;
+	}
+	
+	public double geti0() {
+		return this.i0;
 	}
 	
 	//---------------------------------------------------------------------------------
 	//Generates the text to place on the file for the sample background section for the autogudrun file
 	
 	public String generate() {
+		
 		LOGGER.log(Level.INFO, "Creating Sample Background input section...");
 		StringBuilder entry = new StringBuilder();
 		entry.append("SAMPLE BACKGROUND          {\n\n");

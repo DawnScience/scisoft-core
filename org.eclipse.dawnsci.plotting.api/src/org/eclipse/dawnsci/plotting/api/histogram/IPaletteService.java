@@ -8,7 +8,7 @@
  *
  * Contributors:
  *    Matthew Gerring - initial API and implementation and/or initial documentation
- *    Baha El Kassaby - inversion and colour map type
+ *    Baha El Kassaby - inversion and color map type
  *******************************************************************************/
 
 package org.eclipse.dawnsci.plotting.api.histogram;
@@ -20,11 +20,11 @@ import org.eclipse.dawnsci.plotting.api.histogram.functions.FunctionContainer;
 import org.eclipse.swt.graphics.PaletteData;
 
 /**
- * A service for managing colour schemes.
+ * A service for managing color schemes.
  * 
- * The colour schemes are contributed by an extension point contributed by the
+ * The color schemes are contributed by an extension point contributed by the
  * org.dawnsci.plotting.histogram plugin. This plugin also contribute  this service.
- * The service provides the names of at the colour schemes and a way to get the scheme 
+ * The service provides the names of at the color schemes and a way to get the scheme 
  * as a PaletteData object.
  */
 public interface IPaletteService {
@@ -38,10 +38,10 @@ public interface IPaletteService {
 	/**
 	 * 8-bit Palette data from scheme.
 	 * 
-	 * @param colourSchemeName
+	 * @param colorSchemeName
 	 * @return
 	 */
-	public PaletteData getDirectPaletteData(final String colourSchemeName);
+	public PaletteData getDirectPaletteData(final String colorSchemeName);
 
 	/**
 	 * Functions from scheme for 16-bit palette data or more.
@@ -58,24 +58,41 @@ public interface IPaletteService {
 	public void setInverted(boolean inverted);
 
 	/**
-	 * Returns a list of colour of a particular category
+	 * Returns a list of color of a particular category
 	 * 
 	 * @param type
-	 * @return List of colours
+	 * @return List of colors
 	 */
-	public List<String> getColoursByCategory(String category);
+	public List<String> getColorsByCategory(String category);
 
 	/**
-	 * Returns the colour category
+	 * Returns the color category
 	 * 
-	 * @param colour
+	 * @param color
 	 * @return category
 	 */
-	public String getColourCategory(String colour);
+	public String getColorCategory(String color);
 
 	/**
 	 * Names of categories
 	 * @return
 	 */
 	public Collection<String> getColorCategories();
+
+	/**
+	 * Return the application wide current default color scheme name
+	 * @return scheme
+	 */
+	public String getDefaultColorScheme();
+
+	/**
+	 * Set the application wide current default color scheme
+	 * by name
+	 *
+	 * @throws IllegalArgumentException if name is not in the collection returned by {@link #getColorSchemes()}
+	 *
+	 * @param name
+	 */
+	public void setDefaultColorScheme(String name);
+
 }

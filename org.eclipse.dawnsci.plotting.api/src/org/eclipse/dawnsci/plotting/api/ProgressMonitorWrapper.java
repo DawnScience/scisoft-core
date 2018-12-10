@@ -10,7 +10,7 @@
  *    Matthew Gerring - initial API and implementation and/or initial documentation
  *******************************************************************************/ 
 
-package org.eclipse.dawnsci.slicing.api.util;
+package org.eclipse.dawnsci.plotting.api;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.january.IMonitor;

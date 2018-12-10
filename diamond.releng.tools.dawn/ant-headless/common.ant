@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="headless-common" basedir=".">
+	<description>
+Common tasks used in headless tasks. Must be imported in all ant test scripts.
+	</description>
+
+	<!-- Check Ant Version -->
+	<property name="AntVersionCheck.minimum" value="1.8" />
+	<antversion property="AntVersionCheck.actual"/>
+	<fail message="ERROR: Require Ant version at least ${AntVersionCheck.minimum}, but version in use is ${AntVersionCheck.actual}">
+		<condition><not><antversion atleast="${AntVersionCheck.minimum}"/></not></condition>
+	</fail>
+
+	<!-- Check Java Version -->
+	<property name="JavaVersionCheck.pattern" value="(1\.[89]|10).*" />
+	<condition property="java.version.ok">
+		<matches string="version=${java.version}" pattern="version=${JavaVersionCheck.pattern}" />
+	</condition>
+	<fail unless="java.version.ok" message="Java version is invalid. Version=${java.version}, Required=${JavaVersionCheck.pattern}*" />
+	<echo level="verbose">OK Java Version=${java.version}, Required=${JavaVersionCheck.pattern}</echo>
+
+	<tstamp>
+		<format property="START_DATETIME_SHORT" pattern="E d/MMM HH:mm" />
+		<format property="START_DATETIME_LONG" pattern="E, d/MMM/yyyy 'at' HH:mm" />
+	</tstamp>
+
+	<dirname property="common.basedir" file="${ant.file.headless-common}" />
+	<property name="releng.tools.dir" location="${common.basedir}/.." />
+	<basename property="plugin.name" file="${plugin.basedir}" />
+	<pathconvert property="plugin.host.basedir" setonempty="false">
+		<regexpmapper from="(.*).test" to="\1"/>
+		<path><pathelement location="${plugin.basedir}" /></path>
+	</pathconvert>
+
+	<property name="gdaVerboseSetting" value="false" />
+
+	<!-- ======================================================================
+	       Utilities
+	     ====================================================================== -->
+
+	<macrodef name="echo-time" description="Echoes a message, prefixed with a date and time">
+		<attribute name="message" default="" />
+		<attribute name="level" default="warning" />
+		<sequential>
+			<local name="CURRENT_DATETIME"/>
+			<tstamp>
+				<format property="CURRENT_DATETIME" pattern="yyyy/MMM/dd HH:mm:ss" />
+			</tstamp>
+			<echo message="${CURRENT_DATETIME} @{message}" level="@{level}" />
+		</sequential>
+	</macrodef>
+
+	<target name="echoproperties">  <!-- Useful in debugging -->
+		<echoproperties />
+	</target> 
+
+	<target name="dummy">  <!-- useful for testing the build files themselves -->
+		<echo-time message="dummy target called in ${ant.project.name}" />
+	</target>
+
+	<!-- ====================================================================
+	       CORBA Compile
+	     ==================================================================== -->
+
+	<extension-point name="corba-clean" depends="corba-clean_skip" />
+	<extension-point name="corba-make-jar" depends="corba-make-jar_skip" />
+	<extension-point name="corba-validate-jar" depends="corba-validate-jar_skip" />
+
+	<target name="corba-clean_skip" unless="corba-common-included">
+		<echo-time message="corba-clean skipped in ${ant.project.name} (project not set up for corba classes)" />
+	</target>
+	<target name="corba-make-jar_skip" unless="corba-common-included">
+		<echo-time message="corba-make-jar skipped in ${ant.project.name} (project not set up for corba classes)" />
+	</target>
+	<target name="corba-validate-jar_skip" unless="corba-common-included">
+		<echo-time message="corba-validate-jar skipped in ${ant.project.name} (project not set up for corba classes)" />
+	</target>
+
+	<!-- ====================================================================
+	       Testing
+	     ==================================================================== -->
+
+	<extension-point name="tests-clean" depends="tests-clean_skip" />
+	<extension-point name="junit-tests" depends="junit-tests_skip" />
+	<extension-point name="jyunit-tests" depends="jyunit-tests_skip" />
+	<target name="all-tests" depends="tests-clean, junit-tests, jyunit-tests"/>
+
+	<target name="tests-clean_skip" unless="test-common-included">
+		<echo-time message="tests-clean skipped in ${ant.project.name} (project not set up for unit testing)" />
+	</target>
+	<target name="junit-tests_skip" unless="test-common-included">
+		<echo-time message="junit-tests skipped in ${ant.project.name} (project not set up for unit testing)" />
+	</target>
+	<target name="jyunit-tests_skip" unless="test-common-included">
+		<echo-time message="jyunit-tests skipped in ${ant.project.name} (project not set up for unit testing)" />
+	</target>
+
+</project>

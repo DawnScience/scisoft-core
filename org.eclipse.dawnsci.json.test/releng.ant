@@ -7,20 +7,20 @@
 	</pathconvert>
 	<fail message="ERROR: Could not determine workspace.loc" unless="workspace.loc" />
 	<property name="workspace.git.loc" value="${workspace.loc}_git" />
-	<import file="${workspace.git.loc}/diamond-releng.git/diamond.releng.tools/ant-headless/common.ant" />
+	<import file="${workspace.git.loc}/scisoft-core.git/diamond.releng.tools.dawn/ant-headless/common.ant" />
 
 	<!-- ====================================================================
 		   JUnit tests
 		 ==================================================================== -->
 
-	<import file="${workspace.git.loc}/diamond-releng.git/diamond.releng.tools/ant-headless/test-common.ant" />
+	<import file="${workspace.git.loc}/scisoft-core.git/diamond.releng.tools.dawn/ant-headless/test-common.ant" />
 	<target name="junit-tests" depends="set-test-base-GDA">
 		<junit-call description="${ant.project.name} Java JUnit tests">
 			<formatter type="xml" />
 			<classpath>
 				<pathelement location="${junitjar.loc}" />
 				<pathelement location="${plugin.basedir}/bin" />
-				<pathelement location="${workspace.git.loc}/diamond-releng.git/diamond.releng.tools/logging" />  <!-- to pick up logback-test.xml -->
+				<pathelement location="${workspace.git.loc}/scisoft-core.git/diamond.releng.tools.dawn/logging" />  <!-- to pick up logback-test.xml -->
 				<pathelement location="${plugin.host.basedir}/bin" />
 				<pathelement location="${workspace.git.loc}/january.git/org.eclipse.january/bin" />
 				<pathelement location="${workspace.git.loc}/dawnsci.git/org.eclipse.dawnsci.analysis.api/bin" />

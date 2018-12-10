@@ -4,7 +4,7 @@
 	xmlns:bc="http://www.eclipse.org/buckminster/Common-1.0"
 	xmlns="http://www.eclipse.org/buckminster/CSpec-1.0">
 	<dependencies>
-		<dependency name="diamond.releng.tools" componentType="buckminster"/>
+		<dependency name="diamond.releng.tools.dawn" componentType="buckminster"/>
 	</dependencies>
 	<generators>
 		<!-- Place your Generators here -->

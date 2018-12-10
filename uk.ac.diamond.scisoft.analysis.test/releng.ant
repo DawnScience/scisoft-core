@@ -7,13 +7,13 @@
 	</pathconvert>
 	<fail message="ERROR: Could not determine workspace.loc" unless="workspace.loc" />
 	<property name="workspace.git.loc" value="${workspace.loc}_git" />
-	<import file="${workspace.git.loc}/diamond-releng.git/diamond.releng.tools/ant-headless/common.ant" />
+	<import file="${workspace.git.loc}/scisoft-core.git/diamond.releng.tools.dawn/ant-headless/common.ant" />
 
 	<!-- ====================================================================
 		   JUnit tests
 		 ==================================================================== -->
 
-	<import file="${workspace.git.loc}/diamond-releng.git/diamond.releng.tools/ant-headless/test-common.ant" />
+	<import file="${workspace.git.loc}/scisoft-core.git/diamond.releng.tools.dawn/ant-headless/test-common.ant" />
 	<target name="junit-tests" depends="set-test-base-DAWN">
 		<condition property="plugin-uk.ac.diamond.scisoft.analysis.junit-tests.maxmemory" value="1280m">
 			<os family="windows" />
@@ -27,7 +27,7 @@
 				<pathelement location="${junitjar.loc}" />
 				<pathelement location="${jythonjar.loc}"/>
 				<pathelement location="${plugin.basedir}/bin" />
-				<pathelement location="${workspace.git.loc}/diamond-releng.git/diamond.releng.tools/logging" />  <!-- to pick up logback-test.xml -->
+				<pathelement location="${workspace.git.loc}/scisoft-core.git/diamond.releng.tools.dawn/logging" />  <!-- to pick up logback-test.xml -->
 				<pathelement location="${plugin.host.basedir}/bin" />
 				<pathelement location="${plugin.host.basedir}/jars/*" />
 				<pathelement location="${workspace.git.loc}/january.git/org.eclipse.january/bin" />

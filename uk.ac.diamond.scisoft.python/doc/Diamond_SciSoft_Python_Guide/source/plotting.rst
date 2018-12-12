@@ -6,27 +6,23 @@ scalar dataset types. Currently supported scalar plots are:
 
  * multiple 1D scalar as lines
 
-  .. figure:: images/plot1d.png
+  .. figure:: images/1D_scalar_as_lines.png
 
  * multiple 1D scalar as a series of lines in 3D
 
-  .. figure:: images/plot1d_3d.png
+  .. figure:: images/waterfall_plot.png
 
  * multiple 1D scalar as points in 2D
 
-  .. figure:: images/pplot2d.png
-
- * multiple 1D scalar as points in 3D
-
-  .. figure:: images/pplot3d.png
+  .. figure:: images/2D_scalar_points_equal_size.png
 
  * 2D scalar as image
 
-  .. figure:: images/plot2d.png
+  .. figure:: images/2D_scalar_as_image.png
 
  * 2D scalar as 3D surface plot
  
-  .. figure:: images/plot2d_surf.png
+  .. figure:: images/2D_scalar_as_3D_surface.png
 
 
 It is possible to have more than one plot view open and plot to them

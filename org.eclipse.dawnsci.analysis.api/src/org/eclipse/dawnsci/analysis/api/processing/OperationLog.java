@@ -9,6 +9,9 @@
 
 package org.eclipse.dawnsci.analysis.api.processing;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +23,8 @@ public class OperationLog {
 
 	private static final String NEWLINE = "\n";
 	StringBuilder log = new StringBuilder();
+	List<Integer> success = new ArrayList<>(); // contains pairs of start, length
+	List<Integer> failure = new ArrayList<>(); // contains pairs of start, length
 
 	/**
 	 * Name of property to set to "true" to send OperationLog messages to {@link Logger} at DEBUG level
@@ -34,12 +39,59 @@ public class OperationLog {
 	 * @param objs
 	 */
 	public void append(String format, Object... objs) {
+		append(null, format, objs);
+	}
+
+	/**
+	 * Format a string like in {@link String#format(String, Object...)} and append it to the log as a failure
+	 * @param format
+	 * @param objs
+	 */
+	public void appendFailure(String format, Object... objs) {
+		append(failure, format, objs);
+	}
+
+	/**
+	 * Format a string like in {@link String#format(String, Object...)} and append it to the log as a success
+	 * @param format
+	 * @param objs
+	 */
+	public void appendSuccess(String format, Object... objs) {
+		append(success, format, objs);
+	}
+
+	/**
+	 * Format a string like in {@link String#format(String, Object...)} and append it to the log
+	 * @param format
+	 * @param objs
+	 */
+	private void append(List<Integer> list, String format, Object... objs) {
 		String s = String.format(format, objs);
+		if (list != null) {
+			list.add(log.length());
+			list.add(s.length());
+		}
 		log.append(s);
 		log.append(NEWLINE);
 		if (debug) {
 			l.debug(s);
 		}
+	}
+
+	/**
+	 * Get success data
+	 * @return list of pairs of start, length
+	 */
+	public List<Integer> getSuccess() {
+		return success;
+	}
+
+	/**
+	 * Get failure data
+	 * @return list of pairs of start, length
+	 */
+	public List<Integer> getFailure() {
+		return failure;
 	}
 
 	@Override
@@ -59,5 +111,7 @@ public class OperationLog {
 	 */
 	public void clear() {
 		log.setLength(0);
+		success.clear();
+		failure.clear();
 	}
 }

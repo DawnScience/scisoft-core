@@ -34,7 +34,7 @@ public class RixsBaseModel extends AbstractOperationModel {
 	private ENERGY_DIRECTION energyDirection = ENERGY_DIRECTION.SLOW; // in 2D image
 
 	@OperationModelField(label = "Cutoff enable", description = "Use cutoff to remove pixels with high counts", expertOnly = true)
-	private boolean useCutoff = false;
+	private boolean useCutoff = true;
 
 	@OperationModelField(label = "Cutoff for pixels", description = "Cutoff as multiple of single photon count", hint = "Check if peaks are clipped when cutoff is too low", enableif = "useCutoff == true", min = 1.0, expertOnly = true)
 	private double cutoff = 5.0;

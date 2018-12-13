@@ -183,7 +183,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 
 			return NexusTreeUtils.parseDoubleArray(d);
 		} catch (Exception e) {
-			log.append("Could not parse Nexus file %s:%s", elasticLineFile, e);
+			log.appendFailure("Could not parse Nexus file %s:%s", elasticLineFile, e);
 		}
 
 		return new double[] {-1, -1};
@@ -227,14 +227,14 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			events = ImageUtils.findWindowedPeaks(original, model.getWindow(), countsPerPhoton * model.getLowThreshold(), countsPerPhoton * model.getHighThreshold());
 			eSum = events.get(0);
 		} else {
-			log.append("Skipping frame %d", si.getSliceNumber());
+			log.appendFailure("Skipping frame %d", si.getSliceNumber());
 		}
 
 		IntegerDataset bins = null;
 		Dataset a = null;
 		Dataset h = null;
 		if (eSum == null || eSum.getSize() == 0) {
-			log.append("No events found");
+			log.appendFailure("No events found");
 			// need to pad spectra
 			for (int r = 0; r < roiMax; r++) {
 				allSpectra[r].add(null);
@@ -248,7 +248,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			} else {
 				totalSum = DatasetUtils.concatenate(new IDataset[] {totalSum, eSum}, 0);
 			}
-			log.append("Found %d photon events, current total = %s", eSum.getSize(), totalSum.getSize());
+			log.appendSuccess("Found %d photon events, current total = %s", eSum.getSize(), totalSum.getSize());
 			allSums.add(eSum);
 			allPositions.add(events.get(1));
 	
@@ -265,8 +265,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			displayData.add(a);
 		}
 
-		log.append("At frame %d/%d", si.getSliceNumber(), smax);
-		System.err.printf("At frame %d/%d\n", si.getSliceNumber(), smax);
+		log.appendSuccess("At frame %d/%d", si.getSliceNumber(), smax);
 		summaryData.clear(); // do not save anything yet
 
 		if (si.getSliceNumber() == smax - 1) {
@@ -310,7 +309,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			log.append("Histogram derivative zero-crossings = %s", z);
 			single = (int) Math.floor(z.get(0));
 			multiple = single + countsPerPhoton; // (int) Math.floor(z.get(1)); // TODO
-			log.append("Setting limits for single photon as [%d, %d)", single, multiple);
+			log.appendSuccess("Setting limits for single photon as [%d, %d)", single, multiple);
 			summaryData.add(ProcessingUtils.createNamedDataset(single, "single_photon_minimum"));
 			summaryData.add(ProcessingUtils.createNamedDataset(multiple, "multiple_photon_minimum"));
 
@@ -430,7 +429,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 
 			double ts = (Double) ((Number) sEvents.sum()).doubleValue();
 			double tm = (Double) ((Number) mEvents.sum()).doubleValue();
-			log.append("Events: single/total = %g/%g = %g ", ts, tm, ts/(ts + tm));
+			log.appendSuccess("Events: single/total = %g/%g = %g ", ts, tm, ts/(ts + tm));
 			summaryData.add(ProcessingUtils.createNamedDataset(ts/(ts + tm), "total_single_events_fraction_" + r));
 
 			sp = sSpectra.sum(0);

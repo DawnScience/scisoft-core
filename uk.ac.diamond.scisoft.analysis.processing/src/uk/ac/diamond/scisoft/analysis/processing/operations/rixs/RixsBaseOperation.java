@@ -161,7 +161,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		if (model.isUseCutoff()) {
 			int cutoff = (int) Math.floor(countsPerPhoton * model.getCutoff());
 			BooleanDataset hots = Comparisons.greaterThan(in, cutoff);
-			log.append("Number of cut-off pixels = %d", hots.sum());
+			log.appendSuccess("Number of cut-off pixels = %d", hots.sum());
 			int size = model.getCutoffSize();
 			if (size > 1) {
 				double aboveZero = 1./1024;
@@ -170,7 +170,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			in.setByBoolean(0, hots);
 		}
 
-		log.append("Processing region %d", r);
+		log.appendSuccess("Processing region %d", r);
 		return processImageRegion(r, input, in);
 	}
 
@@ -274,7 +274,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			Tree t = LocalServiceManager.getLoaderService().getData(filePath, null).getTree();
 
 			if (t == null) {
-				log.append("Could not load tree from file %s", filePath);
+				log.appendFailure("Could not load tree from file %s", filePath);
 				countsPerPhoton = model.getCountsPerPhoton();
 				return;
 			}
@@ -300,7 +300,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 
 			// TODO ring current, other things
 		} catch (Exception e) {
-			log.append("Could not parse Nexus file %s:%s", filePath, e);
+			log.appendFailure("Could not parse Nexus file %s:%s", filePath, e);
 			countsPerPhoton = model.getCountsPerPhoton();
 		}
 
@@ -381,7 +381,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			GroupNode detector = (GroupNode) NexusTreeUtils.requireNode(root, NexusConstants.DETECTOR);
 			parseDesiredNXrixs(detector, 1e3 * dce.getEnergy());
 		} catch (Exception e) {
-			log.append("Could not parse Nexus file %s:%s", filePath, e);
+			log.appendFailure("Could not parse Nexus file %s:%s", filePath, e);
 			countsPerPhoton = model.getCountsPerPhoton();
 		}
 

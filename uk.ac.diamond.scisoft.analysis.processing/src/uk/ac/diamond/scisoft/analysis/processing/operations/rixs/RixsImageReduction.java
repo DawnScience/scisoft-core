@@ -55,7 +55,7 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 				try {
 					initializeFitLine(file, true, 0, 1);
 				} catch (OperationException e) {
-					log.append("Cannot initialize fit line from '%s': %s", file, e);
+					log.appendFailure("Cannot initialize fit line from '%s': %s", file, e);
 				}
 			}
 		}
@@ -257,7 +257,7 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 		try {
 			return DatasetUtils.sliceAndConvertLazyDataset(g.getDataNode("data").getDataset());
 		} catch (DatasetException e) {
-			log.append("Failed to read %s: %s", name, e);
+			log.appendFailure("Failed to read %s: %s", name, e);
 			return null;
 		}
 	}

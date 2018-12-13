@@ -172,7 +172,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		SliceND slice = new SliceND(h.getShapeRef(), new Slice(b, e + 1, 1));
 
 		residual = fitFunction("Exception in PDF fit", pdf, x.getSliceView(slice), h.getSliceView(slice));
-		log.append("\nFitted PDF in %s: residual = %g\n%s", slice, residual, pdf);
+		log.appendSuccess("\nFitted PDF in %s: residual = %g\n%s", slice, residual, pdf);
 
 		fit = DatasetUtils.convertToDataset(pdf.calculateValues(x));
 		fit.setName("Background fit");
@@ -253,17 +253,17 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		threshold = thr;
 		if (Double.isNaN(thr)) {
 			double min = in.min(true).doubleValue();
-			log.append("No range in data. All finite values are %g", min);
+			log.appendFailure("No range in data. All finite values are %g", min);
 			return DatasetFactory.createFromObject(min);
 		}
 
 		if (!in.hasFloatingPointElements()) {
 			int ithr = (int) Math.floor(thr);
-			log.append("Threshold = %d", ithr);
+			log.appendSuccess("Threshold = %d", ithr);
 			return DatasetUtils.select(Comparisons.lessThan(in, ithr), in, ithr);
 		}
 
-		log.append("Threshold = %g", threshold);
+		log.appendSuccess("Threshold = %g", threshold);
 		return DatasetUtils.select(Comparisons.lessThan(in, thr), in, thr);
 	}
 
@@ -553,7 +553,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		System.err.println("Initial histo peak: " + dpdf);
 
 		double res = fitFunction("Exception in bg histogram fit", dpdf, dx.getSliceView(slice), hd.getSliceView(slice));
-		log.append("\nFitted PDF in %s: residual = %g\n%s", slice, res, dpdf);
+		log.appendSuccess("\nFitted PDF in %s: residual = %g\n%s", slice, res, dpdf);
 		System.err.println("Fitted histo peak: " + dpdf + " in " + slice);
 		if (plot) {
 			IDataset t = dpdf.calculateValues(dx);

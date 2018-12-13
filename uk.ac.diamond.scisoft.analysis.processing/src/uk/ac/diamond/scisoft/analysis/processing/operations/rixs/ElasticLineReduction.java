@@ -210,7 +210,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 		// aggregate aux data???
 		int smax = si.getTotalSlices();
-		log.append("At frame %d/%d", si.getSliceNumber(), smax);
+		log.appendSuccess("At frame %d/%d", si.getSliceNumber(), smax);
 
 		// TODO make this live-friendly by show result per frame
 		// needs to give fake results for first slice
@@ -228,7 +228,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 //					}
 
 				if (goodPosition[r].size() == 0) {
-					log.append("No lines found for ROI %d", r);
+					log.appendFailure("No lines found for ROI %d", r);
 					continue;
 				}
 				List<?>[] coords;
@@ -266,10 +266,10 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 				double[] res = fitIntercepts(r, coords);
 				if (res == null) {
 					dispersion[r] = Double.NaN;
-					log.append("No energy change so cannot find dispersion");
+					log.appendFailure("No energy change so cannot find dispersion");
 				} else {
 					dispersion[r] = 1./res[1];
-					log.append("Dispersion is %g for residual %g", dispersion[r], res[0]);
+					log.appendSuccess("Dispersion is %g for residual %g", dispersion[r], res[0]);
 				}
 			}
 
@@ -428,10 +428,9 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			line.getParameter(STRAIGHT_LINE_C).setValue(peak.getParameterValue(SPECTRA_PEAK_POSN));
 
 			residual = peak.residual(true, sumImageAlongSlope(sin, slope.getValue(), false), null, sx);
-			log.append("Optimized minimal FWHM (%g) at slope of %g", peak.getParameterValue(SPECTRA_PEAK_WIDTH), slope.getValue());
-//			System.err.printf("Optimized minimal FWHM at slope of %g\n", param.getValue());
+			log.appendSuccess("Optimized minimal FWHM (%g) at slope of %g", peak.getParameterValue(SPECTRA_PEAK_WIDTH), slope.getValue());
 		} catch (Exception e) {
-			log.append("Error minimizing FWHM for peak in spectrum: %s", e.getMessage());
+			log.appendFailure("Error minimizing FWHM for peak in spectrum: %s", e.getMessage());
 			throw new OperationException(this, "Error minimizing FWHM for peak in spectrum", e);
 		}
 	}
@@ -1024,6 +1023,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			mask = omask;
 		} while (dev > maxDev);
 
+		log.appendSuccess("Final fitted line is %s", line);
 		return mask;
 	}
 

@@ -115,11 +115,11 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		displayData.clear();
 		auxData.clear();
-		log.clear();
 
 		SliceFromSeriesMetadata smd = input.getFirstMetadata(SliceFromSeriesMetadata.class);
 		SliceInformation si = smd.getSliceInfo();
 		if (si.isFirstSlice()) {
+			log.clear();
 			countTime = 0;
 			currentCountTime = null;
 			resetProcess(input);
@@ -249,7 +249,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		}
 		if (clip) {
 			int b = slope > 0 ? 0 : (int) (Math.ceil(-slope*rows) + 1);
-			int e = cols - (slope > 0 ? (int) Math.floor(slope*rows) : 0);
+			int e = cols - (slope > 0 ? (int) Math.ceil(slope*rows) : 0);
 			Slice s = new Slice(b, e);
 			result = result.getSliceView(s);
 			AxesMetadata am;

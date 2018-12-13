@@ -578,13 +578,13 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 	public OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		auxData.clear();
 		displayData.clear();
-		log.clear();
 		log.append("Subtract Fitted Background");
 		log.append("==========================");
 
 		SliceFromSeriesMetadata ssm = getSliceSeriesMetadata(input);
 		SliceInformation si = ssm.getSliceInfo();
 		if (si.isFirstSlice()) {
+			log.clear();
 			createDarkProfile(ssm);
 
 			if (smoothedDarkProfile != null) {

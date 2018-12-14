@@ -21,19 +21,21 @@ Comparisons package
 import org.eclipse.january.dataset.Comparisons as _cmps
 import org.eclipse.january.dataset.DatasetUtils as _dsutils
 
-from .jycore import _wrap, _argsToArrayType
+from .jycore import _wrap, _argsToArrayType, _keepdims
 from .jycore import asanyarray as _asany
 
+@_keepdims
 @_wrap('a')
-def all(a, axis=None): #@ReservedAssignment
+def all(a, axis=None, keepdims=False): #@ReservedAssignment
     '''Return true if all items are true'''
     if axis:
         return _cmps.allTrue(a, axis)
     else:
         return _cmps.allTrue(a)
 
+@_keepdims
 @_wrap('a')
-def any(a, axis=None): #@ReservedAssignment
+def any(a, axis=None, keepdims=False): #@ReservedAssignment
     '''Return true if any items are true'''
     if axis:
         return _cmps.anyTrue(a, axis)

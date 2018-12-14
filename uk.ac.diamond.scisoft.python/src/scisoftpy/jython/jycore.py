@@ -402,6 +402,27 @@ def asarray(data, dtype=None):
 
 asanyarray = asarray
 
+def _keepdims(func):
+    '''
+    Retain dimensions of output array
+    '''
+    @wraps(func)
+    def new_f(*args, **kwargs):
+        keepdims = kwargs.get('keepdims', False)
+        axis = kwargs.get('axis', None)    
+        if keepdims:
+            if axis is None:
+                dimensionality = (1,) * len(args[0].shape)
+            else:
+                dimensionality = list(args[0].shape)
+                dimensionality[axis] = 1
+            output_array = asarray(func(*args, **kwargs))
+            output_array.shape = dimensionality
+            return output_array
+        else:
+            return func(*args, **kwargs)
+    return new_f
+
 @_wrap('data')
 def asfarray(data, dtype=None):
     jdata = __cvt_jobj(data, copy=False, force=True)
@@ -901,7 +922,8 @@ class ndarray(object):
 
     #  calculation
     @_wrapout
-    def max(self, axis=None, ignore_nans=False): #@ReservedAssignment
+    @_keepdims
+    def max(self, axis=None, ignore_nans=False, keepdims=False): #@ReservedAssignment
         if axis is None:
             if ignore_nans:
                 return self.__dataset.max(_jtrue)
@@ -912,7 +934,8 @@ class ndarray(object):
             return self.__dataset.max(_jint(axis))
 
     @_wrapout
-    def min(self, axis=None, ignore_nans=False): #@ReservedAssignment
+    @_keepdims
+    def min(self, axis=None, ignore_nans=False, keepdims=False): #@ReservedAssignment
         if axis is None:
             if ignore_nans:
                 return self.__dataset.min(_jtrue)
@@ -945,7 +968,8 @@ class ndarray(object):
             return self.__dataset.argMin(_jint(axis))
 
     @_wrapout
-    def ptp(self, axis=None):
+    @_keepdims
+    def ptp(self, axis=None, keepdims=False):
         if axis is None:
             return self.__dataset.peakToPeak(_empty_boolean_array)
         else:
@@ -958,29 +982,32 @@ class ndarray(object):
         return _maths.conj(self)
 
     # MISSING: round, trace
-
-    def sum(self, axis=None, dtype=None):
-        return _maths.sum(self, axis, dtype)
+    @_wrapout
+    def sum(self, axis=None, dtype=None, keepdims=False):
+        return _maths.sum(self, axis, dtype, keepdims=keepdims)
 
     def cumsum(self, axis=None, dtype=None):
-        return _maths.cumsum(self, axis, dtype)
+        return _maths.cumsum(self, axis, dtype, keepdims=keepdims)
 
     @_wrapout
-    def mean(self, axis=None):
+    @_keepdims
+    def mean(self, axis=None, keepdims=False):
         if axis is None:
             return self.__dataset.mean(_empty_boolean_array)
         else:
             return self.__dataset.mean(_jint(axis))
 
     @_wrapout
-    def var(self, axis=None, ddof=0):
+    @_keepdims
+    def var(self, axis=None, ddof=0, keepdims=False):
         is_pop = _jbool(ddof == 0)
         if axis is None:
             return self.__dataset.variance(is_pop)
         return self.__dataset.variance(_jint(axis), is_pop)
 
     @_wrapout
-    def std(self, axis=None, ddof=0):
+    @_keepdims
+    def std(self, axis=None, ddof=0, keepdims=False):
         is_pop = _jbool(ddof == 0)
         if axis is None:
             return self.__dataset.stdDeviation(is_pop)
@@ -992,20 +1019,22 @@ class ndarray(object):
             return self.__dataset.rootMeanSquare()
         return self.__dataset.rootMeanSquare(_jint(axis))
 
-    def prod(self, axis=None, dtype=None):
-        return _maths.prod(self, axis, dtype)
+    def prod(self, axis=None, dtype=None, keepdims=False):
+        return _maths.prod(self, axis, dtype, keepdims=keepdims)
 
     def cumprod(self, axis=None, dtype=None):
         return _maths.cumprod(self, axis, dtype)
 
     @_wrapout
-    def all(self, axis=None): #@ReservedAssignment
+    @_keepdims
+    def all(self, axis=None, keepdims=False): #@ReservedAssignment
         if axis is None:
             return self.__dataset.all()
         return self.__dataset.all(axis)
 
     @_wrapout
-    def any(self, axis=None): #@ReservedAssignment
+    @_keepdims
+    def any(self, axis=None, keepdims=False): #@ReservedAssignment
     
         if axis is None:
             return self.__dataset.any()
@@ -1696,20 +1725,20 @@ def swapaxes(a, axis1, axis2):
     return _dsutils.swapAxes(a, axis1, axis2)
 
 @_argsToArrayType('a')
-def amax(a, axis=None):
-    return a.max(axis)
+def amax(a, axis=None, keepdims=False):
+    return a.max(axis, keepdims=keepdims)
 
 @_argsToArrayType('a')
-def amin(a, axis=None):
-    return a.min(axis)
+def amin(a, axis=None, keepdims=False):
+    return a.min(axis, keepdims=keepdims)
 
 @_argsToArrayType('a')
-def nanmax(a, axis=None):
-    return a.max(axis, ignore_nans=True)
+def nanmax(a, axis=None, keepdims=False):
+    return a.max(axis, ignore_nans=True, keepdims=keepdims)
 
 @_argsToArrayType('a')
-def nanmin(a, axis=None):
-    return a.min(axis, ignore_nans=True)
+def nanmin(a, axis=None, keepdims=False):
+    return a.min(axis, ignore_nans=True, keepdims=keepdims)
 
 @_argsToArrayType('a')
 def argmax(a, axis=None):

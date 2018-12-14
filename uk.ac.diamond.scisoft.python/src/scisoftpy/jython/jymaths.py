@@ -54,11 +54,13 @@ def prod(a, axis=None, dtype=None, keepdims=False):
     if dtype is None:
         if axis is None:
             return a.product(_empty_boolean_array)
-        return a.product(_jint(axis))
+        elif isinstance(axis, int):
+            return a.product(_jint(axis))
+        elif isinstance(axis, tuple):
+            return a.product([_jint(x) for x in axis])
     dtval = _translatenativetype(dtype).value
     if axis is None:
         return _stats.typedProduct(a, dtval)
-        
     return _stats.typedProduct(a, dtval, axis)
 
 @_keepdims
@@ -68,9 +70,13 @@ def sum(a, axis=None, dtype=None, keepdims=False): #@ReservedAssignment
     if dtype is not None:
         dtval = _translatenativetype(dtype).value
         a = a.cast(dtval)
+
     if axis is None:
         return a.sum(_empty_boolean_array)
-    return a.sum(_jint(axis))
+    elif isinstance(axis, int):
+        return a.sum(_jint(axis))
+    elif isinstance(axis, tuple):
+        return a.sum([_jint(x) for x in axis])
 
 @_keepdims
 @_argsToArrayType('a')

@@ -23,7 +23,7 @@ import org.eclipse.dawnsci.analysis.dataset.impl.Signal as _signal
 from .jycore import _wrap
 from .jycore import asfarray as _asf
 
-@_wrap
+@_wrap('f', 'g')
 def correlate(f, g=None, mode='valid', axes=None):
     '''Perform a cross (or auto if g is None) correlation along given axes'''
 
@@ -41,7 +41,7 @@ def correlate(f, g=None, mode='valid', axes=None):
         return _signal.correlate(f, g, axes)
     raise ValueError("mode keyword has unrecognised value")
 
-@_wrap
+@_wrap('f', 'g')
 def phasecorrelate(f, g, axes=None, includeinv=False):
     '''Perform a phase cross correlation along given axes (can include inverse of cross-power spectrum)'''
     ans = _signal.phaseCorrelate(_asf(f)._jdataset(), _asf(g)._jdataset(), axes, includeinv)
@@ -50,7 +50,7 @@ def phasecorrelate(f, g, axes=None, includeinv=False):
     else:
         return ans[0]
 
-@_wrap
+@_wrap('f', 'g')
 def convolve(f, g, mode='full', axes=None):
     '''Perform a convolution along given axes'''
     if mode == 'same':

@@ -41,9 +41,12 @@ import org.apache.commons.math3.complex.Complex as _jcomplex #@UnresolvedImport
 import Jama.Matrix as _matrix #@UnresolvedImport
 
 import types as _types
+import inspect
 
 import java.lang.ArrayIndexOutOfBoundsException as _jarrayindex_exception #@UnresolvedImport
 import java.lang.IllegalArgumentException as _jillegalargument_exception #@UnresolvedImport
+
+from functools import wraps
 
 def quieten_logging(netty_only=True):
     '''
@@ -224,31 +227,112 @@ def _joutput(result): # wrap java output
         return [ Sciwrap(r) for r in result if r is not None ]
     return Sciwrap(result)
 
-from decorator import decorator as _decorator
-
-@_decorator
-def _wrap(func, *args, **kwargs): # strip input and wrap output
-    nargs = [ _jinput(a) for a in args ]
+def _convertjArgs(newargs, newkwargs):
+    nargs = [ _jinput(a) for a in newargs ]
     nkwargs = dict()
-    for k,v in kwargs.iteritems():
-        nkwargs[k] = _jinput(v)
+    for k,v in newkwargs.iteritems():
+        nkwargs[k] = _jinput(v)  
+    return nargs, nkwargs
 
-#    return _joutput(func(*nargs, **nkwargs)) if nkwargs else _joutput(func(*nargs))
-    return _joutput(func(*nargs, **nkwargs))
+def _checkArgnames(argnames, args_to_convert):
+    for inputname in args_to_convert:
+        if not inputname in argnames:
+            raise ValueError('Input name %s is not an argument of the function' % str(inputname))    
 
-@_decorator
-def _wrapin(func, *args, **kwargs): # strip input
-    nargs = [ _jinput(a) for a in args ]
-    nkwargs = dict()
-    for k,v in kwargs.iteritems():
-        nkwargs[k] = _jinput(v)
+def _convertArgsToArray(argnames, args_to_convert, args, kwargs):
+    newkwargs = {}
+    newargs = [array(a) if (n in args_to_convert and not isinstance(a, ndarray)) else a for a, n in zip(args, argnames)]
+    for k, v in kwargs.iteritems():
+        newkwargs[k] = array(v) if (k in args_to_convert and not isinstance(v, ndarray)) else v
+    return newargs, newkwargs
 
-#    return func(*nargs, **nkwargs) if nkwargs else func(*nargs) 
-    return func(*nargs, **nkwargs)
+def _wrap(*args_to_convert):
+    '''
+    Ensure selected arguments are ndarrays by converting to ndarray if they are array_like
+    '''
+    if (len(args_to_convert) == 1 and callable(args_to_convert[0])):
+        def decorator(f):
+            @wraps(f)
+            def new_f(*args, **kwargs):
+                nargs, nkwargs = _convertjArgs(args, kwargs)
+                return _joutput(f(*nargs, **nkwargs))
+            return new_f
+        return decorator(args_to_convert[0])
+    def decorator(f):
+        argnames = inspect.getargspec(f).args
+        _checkArgnames(argnames, args_to_convert)
+        @wraps(f)
+        def new_f(*args, **kwargs):
+            newargs, newkwargs = _convertArgsToArray(argnames, args_to_convert, args, kwargs)
+            nargs, nkwargs = _convertjArgs(newargs, newkwargs)
+            return _joutput(f(*nargs, **nkwargs))
+        return new_f
+    return decorator
 
-@_decorator
-def _wrapout(func, *args, **kwargs): # wrap output only
-    return _joutput(func(*args, **kwargs))
+def _wrapin(*args_to_convert):
+    '''
+    Ensure selected arguments are ndarrays by converting to ndarray if they are array_like
+    '''
+    if (len(args_to_convert) == 1 and callable(args_to_convert[0])):
+        def decorator(f):
+            @wraps(f)
+            def new_f(*args, **kwargs):
+                nargs, nkwargs = _convertjArgs(args, kwargs)
+                return f(*nargs, **nkwargs)
+            return new_f
+        return decorator(args_to_convert[0])
+    def decorator(f):
+        argnames = inspect.getargspec(f).args
+        _checkArgnames(argnames, args_to_convert)
+        @wraps(f)
+        def new_f(*args, **kwargs):
+            newargs, newkwargs = _convertArgsToArray(argnames, args_to_convert, args, kwargs)
+            nargs, nkwargs = _convertjArgs(newargs, newkwargs)
+            return f(*nargs, **nkwargs)
+        return new_f
+    return decorator
+
+def _wrapout(*args_to_convert): # wrap output only
+    '''
+    Ensure selected arguments are ndarrays by converting to ndarray if they are array_like
+    '''
+    if (len(args_to_convert) == 1 and callable(args_to_convert[0])):
+        def decorator(f):
+            @wraps(f)
+            def new_f(*args, **kwargs):
+                return _joutput(f(*args, **kwargs))
+            return new_f
+        return decorator(args_to_convert[0])
+    def decorator(f):
+        argnames = inspect.getargspec(f).args
+        _checkArgnames(argnames, args_to_convert)
+        @wraps(f)
+        def new_f(*args, **kwargs):
+            newargs, newkwargs = _convertArgsToArray(argnames, args_to_convert, args, kwargs)
+            return _joutput(f(*newargs, **newkwargs))
+        return new_f
+    return decorator
+
+def _argsToArrayType(*args_to_convert):
+    '''
+    Ensure selected arguments are ndarrays by converting to ndarray if they are array_like
+    '''
+    if (len(args_to_convert) == 1 and callable(args_to_convert[0])):
+        def decorator(f):
+            @wraps(f)
+            def new_f(*args, **kwargs):
+                return f(*args, **kwargs)
+            return new_f
+        return decorator(args_to_convert[0])
+    def decorator(f):
+        argnames = inspect.getargspec(f).args
+        _checkArgnames(argnames, args_to_convert)
+        @wraps(f)
+        def new_f(*args, **kwargs):
+            newargs, newkwargs = _convertArgsToArray(argnames, args_to_convert, args, kwargs)
+            return f(*newargs, **newkwargs)
+        return new_f
+    return decorator
 
 def asIterable(items):
     '''
@@ -302,7 +386,6 @@ def asDataset(data, dtype=None, force=False):
             if isinstance(data, complex):
                 return _jcomplex(data.real, data.imag)
             return data
-
     return ndarray(buffer=data, dtype=dtype, copy=False)
 
 def iscomplexobj(x):
@@ -313,12 +396,13 @@ def iscomplexobj(x):
 def isrealobj(x):
     return not iscomplexobj(x)
 
+@_argsToArrayType('data')
 def asarray(data, dtype=None):
     return asDataset(data, dtype=dtype, force=True)
 
 asanyarray = asarray
 
-@_wrap
+@_wrap('data')
 def asfarray(data, dtype=None):
     jdata = __cvt_jobj(data, copy=False, force=True)
     if jdata.isComplex():
@@ -922,6 +1006,7 @@ class ndarray(object):
 
     @_wrapout
     def any(self, axis=None): #@ReservedAssignment
+    
         if axis is None:
             return self.__dataset.any()
         return self.__dataset.any(axis)
@@ -1283,7 +1368,7 @@ def ones(shape, dtype=float64):
     dtype = _translatenativetype(dtype)
     return _df.ones(dtype.elements, asIterable(shape), dtype.value)
 
-@_wrap
+@_wrap('a')
 def ones_like(a, dtype=None):
     o = _df.ones(a)
     if dtype is not None:
@@ -1305,7 +1390,7 @@ def zeros(shape, dtype=float64, elements=None):
 
     return _df.zeros(dtype.elements, asIterable(shape), dtype.value)
 
-@_wrap
+@_wrap('a')
 def zeros_like(a, dtype=None):
     z = _df.zeros(a)
     if dtype is not None:
@@ -1333,6 +1418,7 @@ def full(shape, fill_value, dtype=None, elements=None):
 
     return _df.zeros(dtype.elements, asIterable(shape), dtype.value).fill(fill_value)
 
+@_argsToArrayType('a')
 def full_like(a, fill_value, dtype=None, elements=None):
     f = full(a.shape, fill_value, elements=elements)
     if dtype is not None:
@@ -1409,20 +1495,21 @@ def eye(N, M=None, k=0, dtype=float64):
 def identity(n, dtype=float64):
     return eye(n,n,0,dtype)
 
-@_wrap
+@_wrap('v')
 def diag(v, k=0):
     x = asDataset(v)._jdataset()
     return _dsutils.diag(x, k)
 
-@_wrap
+@_wrap('v')
 def diagflat(v, k=0):
     x = asDataset(v).flatten()._jdataset()
     return _dsutils.diag(x, k)
 
+@_argsToArrayType('a', 'indices')
 def take(a, indices, axis=None):
     return a.take(indices, axis)
 
-@_wrap
+@_wrap('indices', 'values')
 def put(a, indices, values):
     return a.put(indices, values)
 
@@ -1502,7 +1589,7 @@ def atleast_3d(*arrays):
     return res if len(res) > 1 else res[0]
 
 
-@_wrap
+@_wrap('a')
 def concatenate(a, axis=0):
     return _dsutils.concatenate(toList(a), axis)
 
@@ -1543,25 +1630,25 @@ def hsplit(ary, indices_or_sections):
 def dsplit(ary, indices_or_sections):
     return split(ary, indices_or_sections, 2)
 
-@_wrap
+@_wrap('a')
 def sort(a, axis=-1):
     if axis is None:
         return _dsutils.sort(a)
     return _dsutils.sort(a, axis)
 
-@_wrap
+@_wrap('a')
 def argsort(a, axis=-1):
     return _dsutils.indexSort(a, axis)
 
-@_wrap
+@_wrap('a', 'reps')
 def tile(a, reps):
     return _dsutils.tile(a, asIterable(reps))
 
-@_wrap
+@_wrap('a')
 def repeat(a, repeats, axis=-1):
     return _dsutils.repeat(a, asIterable(repeats), axis)
 
-@_wrap
+@_wrap('arr', 'values')
 def append(arr, values, axis=None):
     '''Append values to end of array
     Keyword argument:
@@ -1573,61 +1660,72 @@ def append(arr, values, axis=None):
         return _dsutils.append(arr.flatten(), values.flatten(), 0)
     return _dsutils.append(arr, values, axis)
 
-@_wrap
+@_wrap('a')
 def cast(a, dtype):
     return _dsutils.cast(a, dtype.value)
 
-@_wrapout
+@_wrapout('a')
 def copy(a):
     return a.__copy__()
 
+@_argsToArrayType('a')
 def reshape(a, newshape):
     return asDataset(a).reshape(newshape)
 
-@_wrap
+@_wrap('a')
 def resize(a, new_shape):
     return _dsutils.resize(a, new_shape)
 
+@_argsToArrayType('a')
 def ravel(a):
     return asDataset(a).ravel()
 
+@_argsToArrayType('a')
 def squeeze(a):
     a.squeeze()
     return a
 
-@_wrap
+@_wrap('a')
 def transpose(a, axes=None):
     if axes is None:
         axes = ()
     return _dsutils.transpose(a, asIterable(axes))
 
-@_wrap
+@_wrap('a')
 def swapaxes(a, axis1, axis2):
     return _dsutils.swapAxes(a, axis1, axis2)
 
+@_argsToArrayType('a')
 def amax(a, axis=None):
     return a.max(axis)
 
+@_argsToArrayType('a')
 def amin(a, axis=None):
     return a.min(axis)
 
+@_argsToArrayType('a')
 def nanmax(a, axis=None):
-    return a.max(axis, True)
+    return a.max(axis, ignore_nans=True)
 
+@_argsToArrayType('a')
 def nanmin(a, axis=None):
-    return a.min(axis, True)
+    return a.min(axis, ignore_nans=True)
 
+@_argsToArrayType('a')
 def argmax(a, axis=None):
     return a.argmax(axis)
 
+@_argsToArrayType('a')
 def argmin(a, axis=None):
     return a.argmin(axis)
 
+@_argsToArrayType('a')
 def nanargmax(a, axis=None):
-    return a.argmax(axis, True)
+    return a.argmax(axis, ignore_nans=True)
 
+@_argsToArrayType('a')
 def nanargmin(a, axis=None):
-    return a.argmin(axis, True)
+    return a.argmin(axis, ignore_nans=True)
 
 def meshgrid(*a, **kwargs):
     indexing = kwargs.get('indexing', 'xy')
@@ -1679,33 +1777,33 @@ s_ = _slice_translate(2)
 
 # also mgrid, ogrid
 
-@_wrap
+@_wrap('a')
 def fliplr(a):
     return _dsutils.flipLeftRight(a)
 
-@_wrap
+@_wrap('a')
 def flipud(a):
     return _dsutils.flipUpDown(a)
 
-@_wrap
+@_wrap('a')
 def roll(a, shift, axis=None):
     return _dsutils.roll(a, shift, axis)
 
-@_wrap
+@_wrap('a')
 def rot90(a, k=1):
     return _dsutils.rotate90(a, k)
 
-@_wrap
+@_wrap('a')
 def rollaxis(a, axis, start=0):
     return _dsutils.rollAxis(a, axis, start)
 
-@_wrap
+@_wrap('a')
 def compoundarray(a, view=True):
     '''Create a compound array from an nd array by grouping last axis items into compound items
     '''
     return _dsutils.createCompoundDatasetFromLastAxis(a, view)
 
-@_wrap
+@_wrap('a')
 def nan_to_num(a):
     '''Create a copy with infinities replaced by max/min values and NaNs replaced by 0s
     '''
@@ -1713,7 +1811,7 @@ def nan_to_num(a):
     _dsutils.removeNansAndInfinities(c)
     return c
 
-@_wrap
+@_wrap('indices')
 def unravel_index(indices, dims):
     '''Converts a flat index (or array of them) into a tuple of coordinate arrays
     '''
@@ -1725,8 +1823,8 @@ def unravel_index(indices, dims):
 
 
 _prep_mode = {'raise':0, 'wrap':1, 'clip':2}
-    
-@_wrap
+
+@_wrap('multi_index')
 def ravel_multi_index(multi_index, dims, mode='raise'):
     '''Converts a tuple of coordinate arrays to an array of flat indexes
     '''

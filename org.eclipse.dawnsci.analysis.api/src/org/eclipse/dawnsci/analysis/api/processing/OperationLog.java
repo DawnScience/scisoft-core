@@ -9,6 +9,7 @@
 
 package org.eclipse.dawnsci.analysis.api.processing;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,6 +67,25 @@ public class OperationLog {
 	 * @param objs
 	 */
 	private void append(List<Integer> list, String format, Object... objs) {
+		if (objs.length > 0) { // replace throwable at end with all causes
+			Object last = objs[objs.length - 1];
+			if (last instanceof Throwable) {
+				Throwable t = (Throwable) last;
+				StringBuilder s = new StringBuilder();
+				s.append(t.getClass().getName());
+				s.append(": ");
+				s.append(t.getMessage());
+				Throwable c;
+				while ((c = t.getCause()) != null && t != c) {
+					s.append("\n\t");
+					s.append(c.getClass().getName());
+					s.append(": ");
+					s.append(c.getMessage());
+					t = c;
+				}
+				Array.set(objs, objs.length - 1, s.toString());
+			}
+		}
 		String s = String.format(format, objs);
 		if (list != null) {
 			list.add(log.length());

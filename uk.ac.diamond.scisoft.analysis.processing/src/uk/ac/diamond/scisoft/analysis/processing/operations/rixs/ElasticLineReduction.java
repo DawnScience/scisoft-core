@@ -261,17 +261,19 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 				}
 				summaryData.add(ProcessingUtils.createNamedDataset((Serializable) allResidual[r], LINE_RESIDUAL_FORMAT, r));
 
-				if (smax != 1) { // display when there is only one image
-					displayData.clear();
-				}
+				if (positionName.contains("energy")) {
+					if (smax != 1) { // display when there is only one image
+						displayData.clear();
+					}
 
-				double[] res = fitIntercepts(r, coords);
-				if (res == null) {
-					dispersion[r] = Double.NaN;
-					log.appendFailure("No energy change so cannot find dispersion");
-				} else {
-					dispersion[r] = 1./res[1];
-					log.appendSuccess("Dispersion is %g for residual %g", dispersion[r], res[0]);
+					double[] res = fitIntercepts(r, coords);
+					if (res == null) {
+						dispersion[r] = Double.NaN;
+						log.appendFailure("No energy change so cannot find dispersion");
+					} else {
+						dispersion[r] = 1./res[1];
+						log.appendSuccess("Dispersion is %g for residual %g", dispersion[r], res[0]);
+					}
 				}
 			}
 

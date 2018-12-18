@@ -216,10 +216,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		// needs to give fake results for first slice
 		if (si.isLastSlice()) {
 			summaryData.clear();
-			if (smax != 1) { // display when there is only one image
-				displayData.clear();
-			}
-//				odd.setAuxData();
+
 			double[] dispersion = new double[roiMax];
 			for (int r = 0; r < roiMax; r++) {
 //					if (goodPosition[r].size() <= 2) {
@@ -263,6 +260,11 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 					summaryData.add(ProcessingUtils.createNamedDataset((Serializable) posns, LINE_INTERCEPT_FORMAT, r));
 				}
 				summaryData.add(ProcessingUtils.createNamedDataset((Serializable) allResidual[r], LINE_RESIDUAL_FORMAT, r));
+
+				if (smax != 1) { // display when there is only one image
+					displayData.clear();
+				}
+
 				double[] res = fitIntercepts(r, coords);
 				if (res == null) {
 					dispersion[r] = Double.NaN;

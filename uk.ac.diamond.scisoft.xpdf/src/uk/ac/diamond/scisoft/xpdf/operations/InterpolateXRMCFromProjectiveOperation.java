@@ -58,7 +58,11 @@ public class InterpolateXRMCFromProjectiveOperation extends AbstractOperation<In
 		}
 		
 		if (dmeta == null || dmeta.getDetector2DProperties() == null) {
-			throw new OperationException(this, "Could not get detector metadata from file " + detectorFileName);
+		
+			dmeta = getFirstDiffractionMetadata(input);
+			if (dmeta == null) {
+				throw new OperationException(this, "Could not get detector metadata from file " + detectorFileName + ", and no metadata was provided.");
+			}
 		}
 		
 		DetectorProperties detProp = dmeta.getDetector2DProperties();

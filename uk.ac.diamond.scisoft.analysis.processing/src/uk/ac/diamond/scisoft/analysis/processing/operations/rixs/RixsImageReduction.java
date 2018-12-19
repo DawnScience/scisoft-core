@@ -82,7 +82,9 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 		SliceInformation si = smd.getSliceInfo();
 		if (si.isFirstSlice()) {
 			String filePath = smd.getSourceInfo().getFilePath();
-			if (model.getFitFileOption() != FIT_FILE_OPTION.MANUAL_OVERRIDE  && !filePath.equals(currentDataFile)) {
+			if (model.getFitFileOption() == FIT_FILE_OPTION.MANUAL_OVERRIDE) {
+				initializeFitLine(null, false, 0, 0);
+			} else if (!filePath.equals(currentDataFile)) {
 				currentDataFile = filePath;
 
 				File file = new File(filePath);
@@ -175,7 +177,9 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 	private void initializeFitLine(String elasticLineFile, boolean useAverage, int slice, int size) {
 		if (elasticLineFile == null) {
 			lines[0] = new StraightLine();
+			lines[0].setParameterValues(model.getSlopeOverride());
 			lines[1] = new StraightLine();
+			lines[1].setParameterValues(model.getSlopeOverride());
 			return;
 		}
 

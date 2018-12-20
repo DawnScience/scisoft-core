@@ -23,8 +23,6 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.dawnsci.analysis.api.EventTracker;
-import org.eclipse.dawnsci.plotting.api.EventTrackerServiceLoader;
 import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
 import org.eclipse.dawnsci.plotting.api.trace.IImageTrace;
 import org.eclipse.dawnsci.plotting.api.trace.ILineStackTrace;
@@ -129,13 +127,9 @@ public abstract class AbstractToolPage extends Page implements IToolPage, IAdapt
 	 */
 	@Override
 	public void createControl(Composite parent) {
-		// track Tool launch with tool name
-		EventTracker tracker = EventTrackerServiceLoader.getService();
-		try {
-			if (tracker != null)
-				tracker.trackToolEvent(getTitle());
-		} catch (Exception e) {
-			e.printStackTrace();
+		logger.info("Toolpage created of class {}", this.getClass().getName());
+		if (title != null && !title.isEmpty()) {
+			logger.info("Toolpage created with title {}", title);
 		}
 	}
 

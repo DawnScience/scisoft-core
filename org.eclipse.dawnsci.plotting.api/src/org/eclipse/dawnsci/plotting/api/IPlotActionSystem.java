@@ -110,5 +110,24 @@ public interface IPlotActionSystem extends ITraceActionProvider{
 	 * @return if actions are shown (default is true)
 	 */
 	public boolean isShowCustomPlotActions();
+	
+	/**
+	 * Add an action to the plot popup menu.
+	 * <p>
+	 * If the action implements {@link IAcceptLocationInfo} a {@link PlotLocationInfo} we be set in the action.
+	 * 
+	 * @param action
+	 */
+	public void addPopupAction(IAction action);
+	
+	/**
+	 * Fill the manager with the popup actions.
+	 * <p>
+	 * The {@link PlotLocationInfo} can be used to add location information to the actions.
+	 * 
+	 * @param manager
+	 * @param bean
+	 */
+	public void fillPopupActions(IContributionManager manager, PlotLocationInfo bean);
 
 }

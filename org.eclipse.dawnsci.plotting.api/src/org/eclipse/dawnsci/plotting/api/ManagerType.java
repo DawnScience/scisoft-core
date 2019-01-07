@@ -12,5 +12,5 @@
 package org.eclipse.dawnsci.plotting.api;
 
 public enum ManagerType {
-    TOOLBAR, MENUBAR;
+    TOOLBAR, MENUBAR, POPUP;
 }

@@ -109,6 +109,8 @@ NOTE: When you implement the command which is referenced by this action, the app
                   </enumeration>
                   <enumeration value="MENUBAR">
                   </enumeration>
+                  <enumeration value="POPUP">
+                  </enumeration>
                </restriction>
             </simpleType>
          </attribute>

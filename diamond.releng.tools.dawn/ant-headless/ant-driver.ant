@@ -81,22 +81,6 @@
 	</target>
 
 	<!-- ====================================================================
-	       CORBA Compile
-	     ==================================================================== -->
-
-	<target name="corba-clean" description="Delete work folders used when generating CORBA jars" depends="select-projects-for-subant">
-		<iterate_projects target="corba-clean" project-releng-files="${project-releng-files}" echo.level="debug" />
-	</target>
-
-	<target name="corba-make-jar" description="Builds the jar containing CORBA classes for all or selected projects" depends="select-projects-for-subant">
-		<iterate_projects target="corba-make-jar" project-releng-files="${project-releng-files}" />
-	</target>
-
-	<target name="corba-validate-jar" description="Validates the jar containing CORBA classes for all or selected projects" depends="select-projects-for-subant">
-		<iterate_projects target="corba-validate-jar" project-releng-files="${project-releng-files}" />
-	</target>
-
-	<!-- ====================================================================
 	       Testing
 	     ==================================================================== -->
 

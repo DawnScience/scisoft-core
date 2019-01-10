@@ -461,9 +461,8 @@ class XPDFPhase {
 			double unitCellCGSDensity = unitCellSIDensity * 1e3 / 1e6;
 
 			return (!atoms.isEmpty()) ? unitCellCGSDensity : 0.0;
-		} else {
-			return density;
 		}
+		return density;
 
 	}
 	
@@ -650,8 +649,7 @@ class XPDFPhase {
 		}
 		if (hall.length() != 0)
 			return hall;
-		else
-			return (useSubscripts) ? "-" : "";
+		return (useSubscripts) ? "-" : "";
 	}
 	
 	// Format the atom multiplicity as nicely as we can

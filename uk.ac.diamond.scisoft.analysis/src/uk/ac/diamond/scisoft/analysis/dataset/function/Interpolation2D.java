@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.dataset.function;
 
+import java.util.Arrays;
+
 import org.apache.commons.math3.analysis.BivariateFunction;
 import org.apache.commons.math3.analysis.interpolation.BicubicInterpolator;
 import org.apache.commons.math3.analysis.interpolation.BivariateGridInterpolator;
@@ -21,6 +23,7 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IndexIterator;
 
 /** Two-dimensional interpolations of IDatasets.
  *  
@@ -106,7 +109,7 @@ public class Interpolation2D {
 		if (newx.getRank() != 1)
 			throw new IllegalArgumentException("newx Shape must be 1D");
 		if (newy.getRank() != 1)
-			throw new IllegalArgumentException("newx Shape must be 1D");
+			throw new IllegalArgumentException("newy Shape must be 1D");
 		if (output_type == BicubicInterpolationOutput.ONED && newy.getSize() != newx.getSize())
 			throw new IllegalArgumentException("newx and newy Size must be identical when expecting a rank 1 dataset result");
 		
@@ -157,14 +160,78 @@ public class Interpolation2D {
 		return rv;
 	}
 	
+	/** Perform a two-dimensional interpolation, where the new coordinates take the form x(x', y') & y(x',y')
+	 * 
+	 * @param oldx an IDataset containing a 1D array of X-values, sorted in increasing order, corresponding to the first dimension of <code>oldxy</code>
+	 * @param oldy an IDataset containing a 1D array of Y-values, sorted in increasing order, corresponding to the second dimension of <code>oldxy</code>
+	 * @param oldxy an IDataset containing a 2D grid of interpolation points
+	 * @param newx an IDataset containing a 2D array of X-values that will be sent to the interpolating function
+	 * @param newy an IDataset containing a 2D array of Y-values that will be sent to the interpolating function
+	 * @param interpolator an instance of {@link org.apache.commons.math3.analysis.interpolation.BivariateGridInterpolator}
+	 * @return rank 1 or 2 Dataset, depending on <code>output_type}</code>
+	 * @throws NonMonotonicSequenceException
+	 * @throws NumberIsTooSmallException
+	 */
+	public static Dataset interpolate2d(IDataset oldx, IDataset oldy, IDataset oldxy, IDataset newx, IDataset newy, BivariateGridInterpolator interpolator) throws NonMonotonicSequenceException, NumberIsTooSmallException {
+
+		//check shapes
+		if (oldx.getRank() != 1)
+			throw new IllegalArgumentException("oldx Shape must be 1D");
+		if (oldy.getRank() != 1)
+			throw new IllegalArgumentException("oldy Shape must be 1D");
+		if (oldxy.getRank() != 2)
+			throw new IllegalArgumentException("oldxy Shape must be 2D");
+		if (oldx.getShape()[0] != oldxy.getShape()[0])
+			throw new IllegalArgumentException("oldx Shape must match oldxy Shape[0]");
+		if (oldy.getShape()[0] != oldxy.getShape()[1])
+			throw new IllegalArgumentException("oldy Shape must match oldxy Shape[1]");
+		if (newx.getRank() != 2)
+			throw new IllegalArgumentException("newx Shape must be 2D");
+		if (newy.getRank() != 2)
+			throw new IllegalArgumentException("newy Shape must be 2D");
+		if (!Arrays.equals(newy.getShape(), newx.getShape()))
+			throw new IllegalArgumentException("newx and newy shapes must be identical");
+		
+		// Convert the input Datasets to DoubleDatasets
+		DoubleDataset oldx_dd = DatasetUtils.cast(DoubleDataset.class, oldx);
+		DoubleDataset oldy_dd = DatasetUtils.cast(DoubleDataset.class, oldy);
+		DoubleDataset oldxy_dd = DatasetUtils.cast(DoubleDataset.class, oldxy);
+
+		DoubleDataset newx_dd = DatasetUtils.cast(DoubleDataset.class, newx);
+		DoubleDataset newy_dd = DatasetUtils.cast(DoubleDataset.class, newy);
+		
+		BivariateFunction func = interpolator.interpolate(oldx_dd.getData(), oldy_dd.getData(), convertDoubleDataset2DtoPrimitive(oldxy_dd));
+		
+		// Allocate the return value Dataset
+		Dataset rv = DatasetFactory.zeros(newx_dd);
+		
+		IndexIterator iter = newx_dd.getIterator();
+		
+		while(iter.hasNext()) {
+			double val = 0.0;
+			try {
+				val = func.value(newx_dd.getElementDoubleAbs(iter.index), newy_dd.getElementDoubleAbs(iter.index));
+			} catch (OutOfRangeException e) {
+				val = Double.NaN;
+			}
+			rv.setObjectAbs(iter.index, val);
+		}
+		
+		rv.setName(oldxy.getName()+"_interpolated");
+		
+		return rv;
+	}
+	
 	private static double[][] convertDoubleDataset2DtoPrimitive(DoubleDataset dataset) {
+
+		int[] shape = dataset.getShapeRef();
 		if (dataset.getRank() != 2)
 			throw new IllegalArgumentException("dataset Shape must be 2D");
 		
-		double[][] rv = new double[dataset.getShape()[0]][dataset.getShape()[1]];
+		double[][] rv = new double[shape[0]][shape[1]];
 		
 		for (int row = 0 ; row < dataset.getShape()[0] ; row++) {
-			System.arraycopy(dataset.getData(), row * dataset.getShape()[1], rv[row], 0, dataset.getShape()[1]);
+			System.arraycopy(dataset.getData(), row * shape[1], rv[row], 0, shape[1]);
 		}
 		
 		return rv;

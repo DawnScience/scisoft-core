@@ -9,7 +9,6 @@
 
 package uk.ac.diamond.scisoft.xpdf.xrmc;
 
-import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
 

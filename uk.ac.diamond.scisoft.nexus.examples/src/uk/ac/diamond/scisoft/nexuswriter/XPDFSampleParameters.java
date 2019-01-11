@@ -147,8 +147,7 @@ class XPDFSampleParameters {
 	public double getPhaseWeighting(XPDFPhase phase) {
 		if (phases.contains(phase))
 			return fractions.get(phases.indexOf(phase));
-		else
-			return 0.0;
+		return 0.0;
 	}
 	
 	/**
@@ -195,22 +194,20 @@ class XPDFSampleParameters {
 		if (phases.isEmpty()) {
 			if (component.getForm() == null || component.getForm().getSubstance().getComposition() == null)
 				return "-";
-			else
-				return component.getForm().getSubstance().getComposition().getHallNotation(true);
-		} else {
-			List<XPDFComposition> phaseCompositions = new ArrayList<XPDFComposition>();
-			for (XPDFPhase phase : phases)
-				phaseCompositions.add(phase.getComposition());
-			double totalWeight = 0.0;
-			for (double weight : fractions)
-				totalWeight += weight;
-			for (XPDFComposition compo : phaseCompositions)
-				compo.weight(fractions.get(phaseCompositions.indexOf(compo))/totalWeight);
-			XPDFComposition totalComposition = new XPDFComposition("");
-			for (XPDFComposition compo : phaseCompositions)
-				totalComposition.add(compo);
-			return totalComposition.getHallNotation(true);
+			return component.getForm().getSubstance().getComposition().getHallNotation(true);
 		}
+		List<XPDFComposition> phaseCompositions = new ArrayList<XPDFComposition>();
+		for (XPDFPhase phase : phases)
+			phaseCompositions.add(phase.getComposition());
+		double totalWeight = 0.0;
+		for (double weight : fractions)
+			totalWeight += weight;
+		for (XPDFComposition compo : phaseCompositions)
+			compo.weight(fractions.get(phaseCompositions.indexOf(compo))/totalWeight);
+		XPDFComposition totalComposition = new XPDFComposition("");
+		for (XPDFComposition compo : phaseCompositions)
+			totalComposition.add(compo);
+		return totalComposition.getHallNotation(true);
 	}
 	/**
 	 * @param compoString
@@ -230,19 +227,17 @@ class XPDFSampleParameters {
 		if (phases.isEmpty()) {
 			if (component != null && component.getForm() != null)
 				return component.getForm().getDensity();
-			else
-				return 0.0;
-		} else {
-			// Weighted density of all phases
-			// TODO: check the weighting
-			double overallDensity = 0;
-			double totalWeight = 0.0;
-			for (double weight : fractions)
-				totalWeight += weight;
-			for (XPDFPhase phase : phases)
-				overallDensity += phase.getDensity()*getPhaseWeighting(phase)/totalWeight;
-			return overallDensity;
+			return 0.0;
 		}
+		// Weighted density of all phases
+		// TODO: check the weighting
+		double overallDensity = 0;
+		double totalWeight = 0.0;
+		for (double weight : fractions)
+			totalWeight += weight;
+		for (XPDFPhase phase : phases)
+			overallDensity += phase.getDensity()*getPhaseWeighting(phase)/totalWeight;
+		return overallDensity;
 	}
 	/**
 	 * @param density
@@ -306,8 +301,7 @@ class XPDFSampleParameters {
 	public double[] getDimensions() {
 		if (getForm().getGeom() == null)
 			return null;
-		else
-			return getForm().getGeom().getDistances();
+		return getForm().getGeom().getDistances();
 	}
 
 	/**

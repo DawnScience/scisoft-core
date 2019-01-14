@@ -239,7 +239,17 @@ public class Rebinning1DOperation extends AbstractOperation<Rebinning1DModel, Op
 		
 		intensity.idivide(histo);
 		DatasetUtils.makeFinite(intensity);
-		if (eb != null) intensity.setErrorBuffer(eb);
+		
+		if (eb != null) {
+			it = error.getIterator();
+
+			while (it.hasNext()) {
+				eb[it.index] = Math.sqrt(eb[it.index]) / histo.getElementDoubleAbs(it.index);
+			}
+			
+			intensity.setErrors(eb);
+		}
+		
 		intensity.setName(data.getName() + "_integrated");
 		
 		return intensity;

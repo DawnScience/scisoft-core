@@ -16,3 +16,4 @@ Require-Bundle: org.apache.commons.math3,
  uk.ac.diamond.scisoft.analysis.processing,
  uk.ac.diamond.scisoft.analysis,
  com.github.tschoonj.xraylib;bundle-version="3.3.0"
+Automatic-Module-Name: uk.ac.diamond.scisoft.nexus.examples

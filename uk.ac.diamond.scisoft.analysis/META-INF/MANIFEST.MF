@@ -52,3 +52,4 @@ Important-Note: This plugin SHOULD NOT be lazy activated because we always want 
  plugin to be loaded to contribute the service.
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/*.xml
+Automatic-Module-Name: uk.ac.diamond.scisoft.analysis

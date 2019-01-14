@@ -44,3 +44,4 @@ Export-Package: uk.ac.diamond.scisoft.analysis.processing,
  uk.ac.diamond.scisoft.analysis.processing.operations.utils,
  uk.ac.diamond.scisoft.analysis.processing.runner,
  uk.ac.diamond.scisoft.analysis.processing.visitor
+Automatic-Module-Name: uk.ac.diamond.scisoft.analysis.processing

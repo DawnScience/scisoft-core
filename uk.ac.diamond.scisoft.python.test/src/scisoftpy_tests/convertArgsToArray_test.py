@@ -96,6 +96,33 @@ class Test(unittest.TestCase):
         self.assertTrue(isinstance(returned_keyword_args[2], dnp.ndarray))
         self.checkitems(returned_keyword_args[2], dnp.array([6, 7]))
 
+    def testConcatenate(self):
+        
+        list1 = [[1, 2, 3], [4, 5, 6]]
+        list2 = [[13, 14, 15], [16, 17, 18]]        
+        arr1 = dnp.array([[0, 1, 2], [3, 4, 5]])
+        arr2 = dnp.array([[6, 7, 8], [9, 10, 11]])
+        arr3 = dnp.array([1, 2, 3])
+        arr4 = dnp.array([13, 14, 15])
+
+        a = dnp.concatenate(list1)
+        self.assertEquals(a.shape, (6,))
+
+        b = dnp.concatenate(arr1)
+        self.assertEquals(b.shape, (2, 3))
+
+        c = dnp.concatenate((arr1, arr2))
+        self.assertEquals(c.shape, (4, 3))
+
+        d = dnp.concatenate((arr3, arr4))
+        self.assertEquals(d.shape, (6, ))
+
+        e = dnp.concatenate((list1, list2))
+        self.assertEquals(e.shape, (4, 3))
+
+        f = dnp.concatenate([list1, list2])
+        self.assertEquals(f.shape, (4, 3))
+
 
 def suite():
     suite = unittest.TestSuite()

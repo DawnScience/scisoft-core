@@ -1638,10 +1638,11 @@ def atleast_3d(*arrays):
     res = _jatleast_3d(arrays)
     return res if len(res) > 1 else res[0]
 
-
-@_wrap('a')
+@_wrapout
 def concatenate(a, axis=0):
-    return _dsutils.concatenate(toList(a), axis)
+    a = [array(arr_like) if (not isinstance(arr_like, ndarray)) else arr_like for arr_like in a]
+    a = [_jinput(arr) for arr in a]
+    return _dsutils.concatenate(a, axis)
 
 @_wrapout
 def vstack(tup):

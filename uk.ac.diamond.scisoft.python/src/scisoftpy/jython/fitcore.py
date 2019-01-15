@@ -32,7 +32,7 @@ _toList = _dnp.toList
 _asDS = _dnp.asDataset
 _sciwrap = _dnp.Sciwrap
 
-from scisoftpy.jython.jycore import _wrap, _wrapin, _wrapout, __cvt_jobj, _jinput
+from scisoftpy.jython.jycore import _wrap, _wrapin, _wrapout, __cvt_jobj, _jinput, _argsToArrayType
 
 from . import function
 
@@ -500,7 +500,7 @@ class poly1d(object):
             return v.getDouble(_empty_int_array)
         return _asDS(v)
 
-@_wrapin
+@_wrapin('x', 'y')
 def polyfit(x, y, deg, rcond=None, full=False):
     '''Linear least squares polynomial fit
 
@@ -525,7 +525,7 @@ def polyfit(x, y, deg, rcond=None, full=False):
     else:
         return fr.parameters
 
-@_wrapout
+@_wrapout('p', 'x')
 def polyval(p, x):
     '''Evaluate polynomial at given points
     If p is of length N, this function returns the value:
@@ -535,6 +535,7 @@ def polyval(p, x):
     d = _asDS(x, _dnp.float, force=True)._jdataset()
     return poly.calculateValues([d])
 
+@_argsToArrayType('coeffs')
 def roots(coeffs):
     '''Find roots of polynomial specified by coefficients
     '''

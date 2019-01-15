@@ -21,10 +21,10 @@ Comparisons package
 import org.eclipse.january.dataset.Comparisons as _cmps
 import org.eclipse.january.dataset.DatasetUtils as _dsutils
 
-from .jycore import _wrap
+from .jycore import _wrap, _argsToArrayType
 from .jycore import asanyarray as _asany
 
-@_wrap
+@_wrap('a')
 def all(a, axis=None): #@ReservedAssignment
     '''Return true if all items are true'''
     if axis:
@@ -32,7 +32,7 @@ def all(a, axis=None): #@ReservedAssignment
     else:
         return _cmps.allTrue(a)
 
-@_wrap
+@_wrap('a')
 def any(a, axis=None): #@ReservedAssignment
     '''Return true if any items are true'''
     if axis:
@@ -40,60 +40,60 @@ def any(a, axis=None): #@ReservedAssignment
     else:
         return _cmps.anyTrue(a)
 
-@_wrap
+@_wrap('a', 'b')
 def greater(a, b):
     '''Return true if a > b, itemwise'''
     return _cmps.greaterThan(a, b)
 
-@_wrap
+@_wrap('a', 'b')
 def greater_equal(a, b):
     '''Return true if a >= b, itemwise'''
     return _cmps.greaterThanOrEqualTo(a, b)
 
-@_wrap
+@_wrap('a', 'b')
 def less(a, b):
     '''Return true if a < b, itemwise'''
     return _cmps.lessThan(a, b)
 
-@_wrap
+@_wrap('a', 'b')
 def less_equal(a, b):
     '''Return true if a <= b, itemwise'''
     return _cmps.lessThanOrEqualTo(a, b)
 
-@_wrap
+@_wrap('a', 'b')
 def equal(a, b):
     '''Return true if a == b, itemwise'''
     if a is None or b is None:
         return False
     return _cmps.equalTo(a, b)
 
-@_wrap
+@_wrap('a', 'b')
 def not_equal(a, b):
     '''Return true if a != b, itemwise'''
     return _cmps.logicalNot(_cmps.equalTo(a, b))
 
-@_wrap
+@_wrap('a')
 def logical_not(a):
     '''Return true if a == 0, itemwise'''
     return _cmps.logicalNot(a)
 
-@_wrap
+@_wrap('a')
 def logical_and(a, b, out=None):
     '''Return true if a != 0 && b != 0, itemwise'''
     return _cmps.logicalAnd(a, b, out)
 
-@_wrap
+@_wrap('a')
 def logical_or(a, b, out=None):
     '''Return true if a != 0 || b != 0, itemwise'''
     return _cmps.logicalOr(a, b, out)
 
-@_wrap
+@_wrap('a')
 def logical_xor(a, b, out=None):
     '''Return true if a != 0 ^ b != 0, itemwise'''
     return _cmps.logicalXor(a, b, out)
 
 
-@_wrap
+@_wrap('a', 'b')
 def allclose(a, b, rtol=1e-05, atol=1e-08, axis=None):
     '''Return true if all items are equal within given tolerances
     
@@ -106,12 +106,12 @@ def allclose(a, b, rtol=1e-05, atol=1e-08, axis=None):
     else:
         return _cmps.allTrue(_cmps.almostEqualTo(a, b, rtol, atol))
 
-@_wrap
+@_wrap('a')
 def nonzero(a):
     '''Return the indices for items that are non-zero'''
     return _cmps.nonZero(a)
 
-@_wrap
+@_wrap('condition', 'x', 'y')
 def where(condition, x=None, y=None):
     '''Return items from x or y depending on condition'''
     if x and y:
@@ -121,34 +121,36 @@ def where(condition, x=None, y=None):
     else:
         raise ValueError("Both x and y must be specified")
 
-@_wrap
+@_wrap('a')
 def isnan(a):
     '''Return true if a is a NaN, itemwise'''
     return _cmps.isNaN(a)
 
-@_wrap
+@_wrap('a')
 def isinf(a):
     '''Return true if a is infinite, itemwise'''
     return _cmps.isInfinite(a)
 
-@_wrap
+@_wrap('a')
 def isposinf(a):
     '''Return true if a is positive infinite, itemwise'''
     return _cmps.isPositiveInfinite(a)
 
-@_wrap
+@_wrap('a')
 def isneginf(a):
     '''Return true if a is negative infinite, itemwise'''
     return _cmps.isNegativeInfinite(a)
 
-@_wrap
+@_wrap('a')
 def isfinite(a):
     '''Return true if a is not infinite and not a NaN, itemwise'''
     return _cmps.isFinite(a)
 
+@_argsToArrayType('x')
 def iscomplex(x):
     return not_equal(_asany(x).imag, 0)
 
+@_argsToArrayType('x')
 def isreal(x):
     return equal(_asany(x).imag, 0)
 

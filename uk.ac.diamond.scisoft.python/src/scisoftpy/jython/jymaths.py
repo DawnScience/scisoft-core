@@ -41,15 +41,15 @@ nan = _jnan
 
 floatmax = _jmax # maximum float value (use sys.float_info.max for 2.6+)
 
-from .jycore import _wrap, _jint, _argsToArrayType
+from .jycore import _wrap, _jint, _argsToArrayType, _keepdims
 from .jycore import asarray as _asarray
 from .jycore import float64 as _f64
 from .jycore import _translatenativetype, _empty_boolean_array
 
 # these functions can call (wrapped) instance methods
+@_keepdims
 @_wrap('a')
-def prod(a, axis=None, dtype=None):
-    
+def prod(a, axis=None, dtype=None, keepdims=False):
     '''Product of input'''
     if dtype is None:
         if axis is None:
@@ -61,8 +61,9 @@ def prod(a, axis=None, dtype=None):
         
     return _stats.typedProduct(a, dtval, axis)
 
+@_keepdims
 @_wrap('a')
-def sum(a, axis=None, dtype=None): #@ReservedAssignment
+def sum(a, axis=None, dtype=None, keepdims=False): #@ReservedAssignment
     '''Sum of input'''
     if dtype is not None:
         dtval = _translatenativetype(dtype).value
@@ -71,33 +72,39 @@ def sum(a, axis=None, dtype=None): #@ReservedAssignment
         return a.sum(_empty_boolean_array)
     return a.sum(_jint(axis))
 
+@_keepdims
 @_argsToArrayType('a')
-def mean(a, axis=None):
+def mean(a, axis=None, keepdims=False):
     '''Arithmetic mean of input'''
     return a.mean(axis)
 
+@_keepdims
 @_argsToArrayType('a')
-def std(a, axis=None, ddof=0):
+def std(a, axis=None, ddof=0, keepdims=False):
     '''Standard deviation of input'''
     return a.std(axis, ddof)
 
+@_keepdims
 @_argsToArrayType('a')
-def var(a, axis=None, ddof=0):
+def var(a, axis=None, ddof=0, keepdims=False):
     '''Variance of input'''
     return a.var(axis, ddof)
 
+@_keepdims
 @_argsToArrayType('a')
-def ptp(a, axis=None):
+def ptp(a, axis=None, keepdims=False):
     '''Peak-to-peak of input'''
     return a.ptp(axis)
 
+@_keepdims
 @_argsToArrayType('a')
-def amax(a, axis=None):
+def amax(a, axis=None, keepdims=False):
     '''Maximum of input'''
     return a.max(axis)
 
+@_keepdims
 @_argsToArrayType('a')
-def amin(a, axis=None):
+def amin(a, axis=None, keepdims=False):
     '''Minimum of input'''
     return a.min(axis)
 
@@ -386,8 +393,9 @@ def minimum(a, b, out=None):
     '''Item-wise minimum'''
     return _maths.minimum(a, b)
 
+@_keepdims
 @_wrap('a')
-def median(a, axis=None):
+def median(a, axis=None, keepdims=False):
     '''Median of input'''
     if axis is None:
         return _stats.median(a)

@@ -2,7 +2,7 @@
 import os
 
 suites = []
-from scisoftpy_tests import dataset_test, scisoft_test, random_test, linalg_test, nx_test, array_zeros_like_test
+from scisoftpy_tests import dataset_test, scisoft_test, random_test, linalg_test, nx_test, array_zeros_like_test, keepdims_test
 suites.append(dataset_test.suite())
 
 suites.append(scisoft_test.suite())
@@ -10,6 +10,7 @@ suites.append(random_test.suite())
 suites.append(linalg_test.suite())
 suites.append(nx_test.suite())
 suites.append(array_zeros_like_test.suite())
+suites.append(keepdims_test.suite())
 
 from scisoftpy_tests import fft_test, signal_test, image_test, roi_test, io_test
 suites.append(fft_test.suite())

@@ -31,12 +31,17 @@ class Test(unittest.TestCase):
         self.assertEqual(dnp.mean(a, axis=0).shape, (2, 3))
         self.checkitems(dnp.mean(a, axis=2), dnp.array([[2, 5], [4, 7]]))
         self.assertEqual(dnp.mean(a, axis=2).shape, (2, 2))
+        self.checkitems(dnp.mean(a, axis=2), dnp.array([[2, 5], [4, 7]]))
+        self.assertEqual(dnp.mean(a, axis=(0, 2)).shape, (2,))
+        self.checkitems(dnp.mean(a, axis=(0, 2)), dnp.array([3, 6]))
 
         self.assertEqual(dnp.mean(a, keepdims=True).shape, (1, 1, 1))
         self.checkitems(dnp.mean(a, axis=0, keepdims=True), dnp.array([[[2, 3, 4], [5, 6, 7]]]))
         self.assertEqual(dnp.mean(a, axis=0, keepdims=True).shape, (1, 2, 3))
         self.assertEqual(dnp.mean(a, axis=1, keepdims=True).shape, (2, 1, 3))
         self.assertEqual(dnp.mean(a, axis=2, keepdims=True).shape, (2, 2, 1))
+        self.assertEqual(dnp.mean(a, axis=(0,2), keepdims=True).shape, (1, 2, 1))
+        self.checkitems(dnp.mean(a, axis=(0,2), keepdims=True), dnp.array([[[3], [6]]]))
 
     def testStd(self):
         a = dnp.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])
@@ -47,6 +52,12 @@ class Test(unittest.TestCase):
         a = dnp.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])
         self.assertEquals(dnp.sum(a, keepdims=True).shape, (1, 1, 1))
         self.checkitems(dnp.sum(a, keepdims=True), dnp.array([[[36]]]))
+
+    def testAmin(self):
+        a = dnp.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])
+        self.assertEquals(dnp.amin(a, axis=(0, 1)).shape, (2,))
+        self.assertEquals(dnp.amin(a, axis=(0, 1), keepdims=True).shape, (1, 1, 2))
+        self.checkitems(dnp.amin(a, axis = (0, 1), keepdims=True), dnp.array([[[1, 2]]]))
 
 
 def suite():

@@ -413,9 +413,13 @@ def _keepdims(func):
         if keepdims:
             if axis is None:
                 dimensionality = (1,) * len(args[0].shape)
-            else:
+            elif isinstance(axis, int):
                 dimensionality = list(args[0].shape)
                 dimensionality[axis] = 1
+            elif isinstance(axis, tuple):
+                dimensionality = list(args[0].shape)
+                for a in axis:
+                    dimensionality[a] = 1
             output_array = asarray(func(*args, **kwargs))
             output_array.shape = dimensionality
             return output_array
@@ -928,10 +932,14 @@ class ndarray(object):
             if ignore_nans:
                 return self.__dataset.max(_jtrue)
             return self.__dataset.max(_empty_boolean_array)
-        else:
+        elif isinstance(axis, int):
             if ignore_nans:
                 return self.__dataset.max(_jint(axis), _jtrue)
             return self.__dataset.max(_jint(axis))
+        elif isinstance(axis, tuple):
+            if ignore_nans:
+                return self.__dataset.max(asarray([_jint(x) for x in axis]), _jtrue)
+            return self.__dataset.max(asarray([_jint(x) for x in axis]))
 
     @_wrapout
     @_keepdims
@@ -940,10 +948,14 @@ class ndarray(object):
             if ignore_nans:
                 return self.__dataset.min(_jtrue)
             return self.__dataset.min(_empty_boolean_array)
-        else:
+        elif isinstance(axis, int):
             if ignore_nans:
                 return self.__dataset.min(_jint(axis), _jtrue)
             return self.__dataset.min(_jint(axis))
+        elif isinstance(axis, tuple):
+            if ignore_nans:
+                return self.__dataset.min(asarray([_jint(x) for x in axis]), _jtrue)
+            return self.__dataset.min(asarray([_jint(x) for x in axis]))
 
     @_wrapout
     def argmax(self, axis=None, ignore_nans=False):
@@ -972,8 +984,10 @@ class ndarray(object):
     def ptp(self, axis=None, keepdims=False):
         if axis is None:
             return self.__dataset.peakToPeak(_empty_boolean_array)
-        else:
+        elif isinstance(axis, int):
             return self.__dataset.peakToPeak(_jint(axis))
+        elif isinstance(axis, tuple):
+            return self.__dataset.peakToPeak(asarray([_jint(x) for x in axis]))
 
     def clip(self, a_min, a_max):
         return _maths.clip(self, a_min, a_max)
@@ -994,8 +1008,10 @@ class ndarray(object):
     def mean(self, axis=None, keepdims=False):
         if axis is None:
             return self.__dataset.mean(_empty_boolean_array)
-        else:
+        elif isinstance(axis, int):
             return self.__dataset.mean(_jint(axis))
+        elif isinstance(axis, tuple):
+            return self.__dataset.mean(asarray([_jint(x) for x in axis]))
 
     @_wrapout
     @_keepdims
@@ -1003,7 +1019,10 @@ class ndarray(object):
         is_pop = _jbool(ddof == 0)
         if axis is None:
             return self.__dataset.variance(is_pop)
-        return self.__dataset.variance(_jint(axis), is_pop)
+        elif isinstance(axis, int):
+            return self.__dataset.variance(_jint(axis), is_pop)
+        elif isinstance(axis, tuple):
+            return self.__dataset.variance(asarray([_jint(x) for x in axis]), is_pop)
 
     @_wrapout
     @_keepdims
@@ -1011,7 +1030,10 @@ class ndarray(object):
         is_pop = _jbool(ddof == 0)
         if axis is None:
             return self.__dataset.stdDeviation(is_pop)
-        return self.__dataset.stdDeviation(_jint(axis), is_pop)
+        elif isinstance(axis, int):
+            return self.__dataset.stdDeviation(_jint(axis), is_pop)
+        elif isinstance(axis, tuple):
+            return self.__dataset.stdDeviation(asarray([_jint(x) for x in axis]), is_pop)
 
     @_wrapout
     def rms(self, axis=None):
@@ -1035,7 +1057,6 @@ class ndarray(object):
     @_wrapout
     @_keepdims
     def any(self, axis=None, keepdims=False): #@ReservedAssignment
-    
         if axis is None:
             return self.__dataset.any()
         return self.__dataset.any(axis)

@@ -2,8 +2,6 @@
 import unittest
 import scisoftpy as dnp
 import inspect
-import java.lang.Integer as _jint
-import java.lang.reflect.Array as _jarray
 
 class Test(unittest.TestCase):
 

@@ -26,6 +26,10 @@ public class XRMCEnergyIntegrator {
 	private Dataset energies;
 	// scattering angles
 	private Dataset twoTheta, phi;
+	private int[] limits = null;
+	
+	private boolean doTransmissionCorrection = true;
+	
 	/**
 	 * Sets the data output my XRMC
 	 * @param data
@@ -59,13 +63,31 @@ public class XRMCEnergyIntegrator {
 	}
 	
 	/**
+	 * Changes whether to perform the energy-dependent transmission correction or not.
+	 * @param doTransCorr
+	 * 					if true, perform the detector transmission correction.
+	 */
+	public void setDoTransmissionCorrection(boolean doTransCorr) {
+		this.doTransmissionCorrection = doTransCorr;
+	}
+	
+	/**
+	 * Sets the limits of the energy integration in bin index values
+	 * @param limits
+	 * 				limits to apply
+	 */
+	public void setLimits(int[] limits) {
+		this.limits = limits;
+	}
+	
+	/**
 	 * Gets a two dimensional {@link Dataset} of counts for the defined detector.
 	 * @return two dimensional {@link Dataset} of counts.
 	 */
 	public Dataset getDetectorCounts() {
 		
-		if (det == null)
-			return xrmcData.sum(0);
+		if (det == null || !doTransmissionCorrection)
+			return sumWithLimits(xrmcData);
 		else
 			return integrateEnergy(correctTransmission(xrmcData));
 	}
@@ -173,7 +195,15 @@ public class XRMCEnergyIntegrator {
 	}
 	
 	private Dataset integrateEnergy(Dataset energyResolved) {
-		return energyResolved.sum(0); // no dE term, the values are photons per bin, with no per unit of bandwidth term.
+		return sumWithLimits(energyResolved); // no dE term, the values are photons per bin, with no per unit of bandwidth term.
 	}
 	
+	private Dataset sumWithLimits(Dataset summand) {
+		if (this.limits == null) {
+			return summand.sum(0);
+		} else {
+			int[] shape = summand.getShape();
+			return summand.getSliceView(new int[] {this.limits[0], 0, 0}, new int[] {this.limits[1], shape[1], shape[2]}, new int[] {1, 1, 1}).sum(0);
+		}
+	}
 }

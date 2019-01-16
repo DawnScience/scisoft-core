@@ -12,7 +12,6 @@ package uk.ac.diamond.scisoft.xpdf.operations;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
@@ -24,7 +23,7 @@ import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 import uk.ac.diamond.scisoft.xpdf.metadata.XRMCMetadata;
 import uk.ac.diamond.scisoft.xpdf.xrmc.XRMCEnergyIntegrator;
 
-public class XRMCEnergyIntegration extends AbstractOperation<EmptyModel, OperationData> {
+public class XRMCEnergyIntegration extends AbstractOperation<XRMCEnergyIntegrationModel, OperationData> {
 
 	@Override
 	public String getId() {
@@ -66,7 +65,10 @@ public class XRMCEnergyIntegration extends AbstractOperation<EmptyModel, Operati
 		integrator.setXRMCData(lastScattering);
 		integrator.setDetector(xpdfMetadata.getDetector());
 		integrator.setXRMCDetector(xrmcMetadata.getDetector(), xrmcMetadata.getSource());
-
+		if (model.getIntegrationLimits() != null) integrator.setLimits(model.getIntegrationLimits());
+		
+		integrator.setDoTransmissionCorrection(model.isTransmissionCorrection());
+		
 		Dataset counts = integrator.getDetectorCounts();
 		
 		// Copy metadata: XPDF and XRMC

@@ -689,8 +689,11 @@ class ndarray(object):
                 iterator = d.getPositionIterator(axes)
                 pos = iterator.getPos()
                 hit = iterator.getOmit()
+                shape = self.shape[1:]
                 while iterator.hasNext():
-                    yield _joutput(d.getSlice(d.getSliceIteratorFromAxes(pos, hit)))
+                    result = Sciwrap(d.getSlice(d.getSliceIteratorFromAxes(pos, hit)))
+                    result.shape = shape
+                    yield result
         return ndgen(self.__dataset)
 
     # attributes

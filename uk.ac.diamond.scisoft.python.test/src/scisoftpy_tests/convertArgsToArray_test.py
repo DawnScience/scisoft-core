@@ -36,14 +36,14 @@ class Test(unittest.TestCase):
         array1 = dnp.array([[10, 11, 12], [13, 14, 15]])
         returned_args = check3Args(list1, list2, tuple1, integer1, array1)
         self.assertTrue(isinstance(returned_args[0], dnp.ndarray))
-        self.checkitems(returned_args[0], dnp.array(list1))
+        self.checkitems(list1, returned_args[0])
         self.assertTrue(isinstance(returned_args[1], list))
         self.assertEquals(returned_args[1], list2)
         self.assertTrue(isinstance(returned_args[2], dnp.ndarray))
-        self.checkitems(returned_args[2], dnp.array(tuple1))
+        self.checkitems(tuple1, returned_args[2])
         self.assertTrue(isinstance(returned_args[3], int))
         self.assertTrue(isinstance(returned_args[4], dnp.ndarray))
-        self.checkitems(returned_args[4], array1)
+        self.checkitems(array1, returned_args[4])
 
     def testWrongArgName(self):
 
@@ -64,7 +64,7 @@ class Test(unittest.TestCase):
         self.assertTrue(isinstance(returned_args[0], list))
         self.assertEquals(returned_args[0], list1)
         self.assertTrue(isinstance(returned_args[1], dnp.ndarray))
-        self.checkitems(returned_args[1], array1)
+        self.checkitems(array1, returned_args[1])
 
     def testDocString(self):
 
@@ -74,7 +74,7 @@ class Test(unittest.TestCase):
             return (args)
 
         self.assertEquals(inspect.getdoc(checkArgs), '''Return arguments unmodified''')
-        
+
     def testKeywordArgName(self):
 
         @_argsToArrayType('second_array', 'third_array')
@@ -86,42 +86,67 @@ class Test(unittest.TestCase):
         list2 = [6, 7]
         returned_args = checkKeywordArgName(array1, second_array=list1, third_array=list2)
         self.assertTrue(isinstance(returned_args[1], dnp.ndarray))
-        self.checkitems(returned_args[1], dnp.array(list1))
+        self.checkitems(list1, returned_args[1])
         self.assertTrue(isinstance(returned_args[2], dnp.ndarray))
-        self.checkitems(returned_args[2], dnp.array(list2))
-        
+        self.checkitems(list2, returned_args[2])
+
         returned_keyword_args = checkKeywordArgName(array1, third_array=list2)
         self.assertTrue(isinstance(returned_keyword_args[1], dnp.ndarray))
-        self.checkitems(returned_keyword_args[1], dnp.array([8, 9]))
+        self.checkitems([8, 9], returned_keyword_args[1])
         self.assertTrue(isinstance(returned_keyword_args[2], dnp.ndarray))
-        self.checkitems(returned_keyword_args[2], dnp.array([6, 7]))
+        self.checkitems([6, 7], returned_keyword_args[2])
 
-    def testConcatenate(self):
-        
+    def testConcatenateSingleList(self):
+
+        b = dnp.concatenate([[1,2],[2,3],[3,4]])
+        self.assertEquals(b.shape, (6,))
+        self.checkitems([1, 2, 2, 3, 3, 4], b)
+
+        c = dnp.concatenate([[[1, 2], [3, 4], [5, 6]]])
+        self.assertEquals(c.shape, (3, 2))
+        self.checkitems([[1, 2], [3, 4], [5, 6]], c)
+
+    def testConcatenateLists(self):
+
         list1 = [[1, 2, 3], [4, 5, 6]]
-        list2 = [[13, 14, 15], [16, 17, 18]]        
+        list2 = [[13, 14, 15], [16, 17, 18]]     
+
+        a = dnp.concatenate((list1, list2))
+        self.assertEquals(a.shape, (4, 3))
+
+    def testConcatenateSingleArray(self):
+
+        b = dnp.concatenate(dnp.array([[1,2],[2,3],[3,4]]))
+        self.assertEquals(b.shape, (6,))
+        self.checkitems([1, 2, 2, 3, 3, 4], b)
+
+        c = (dnp.arange(120)).reshape(2, 3, 4, 5)
+        d = dnp.concatenate(c)
+        self.assertEquals(d.shape, (6, 4, 5))
+
+        e = dnp.concatenate(c, axis=1)
+        self.assertEquals(e.shape, (3, 8, 5))
+
+        f = dnp.concatenate(c, axis=2)
+        self.assertEquals(f.shape, (3, 4, 10))
+
+    def testConcatenateArrays(self):
+
         arr1 = dnp.array([[0, 1, 2], [3, 4, 5]])
         arr2 = dnp.array([[6, 7, 8], [9, 10, 11]])
         arr3 = dnp.array([1, 2, 3])
         arr4 = dnp.array([13, 14, 15])
 
-        a = dnp.concatenate(list1)
-        self.assertEquals(a.shape, (6,))
+        a = dnp.concatenate((arr1, arr2))
+        self.assertEquals(a.shape, (4, 3))
+        self.checkitems([[ 0,  1,  2], [ 3,  4,  5], [ 6,  7,  8], [ 9, 10, 11]], a)
 
-        b = dnp.concatenate(arr1)
-        self.assertEquals(b.shape, (2, 3))
+        b = dnp.concatenate((arr1, arr2), axis=1)
+        self.assertEquals(b.shape, (2, 6))
+        self.checkitems([[ 0,  1,  2,  6,  7,  8], [ 3,  4,  5,  9, 10, 11]], b)
 
-        c = dnp.concatenate((arr1, arr2))
-        self.assertEquals(c.shape, (4, 3))
-
-        d = dnp.concatenate((arr3, arr4))
-        self.assertEquals(d.shape, (6, ))
-
-        e = dnp.concatenate((list1, list2))
-        self.assertEquals(e.shape, (4, 3))
-
-        f = dnp.concatenate([list1, list2])
-        self.assertEquals(f.shape, (4, 3))
+        c = dnp.concatenate((arr3, arr4))
+        self.assertEquals(c.shape, (6, ))
 
 
 def suite():

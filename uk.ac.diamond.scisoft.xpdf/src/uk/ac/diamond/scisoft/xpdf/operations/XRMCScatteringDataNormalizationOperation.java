@@ -34,7 +34,7 @@ import uk.ac.diamond.scisoft.xpdf.xrmc.XRMCSpectrum.IUnpolarizedComponent;
 import uk.ac.diamond.scisoft.xpdf.xrmc.XRMCSpectrum.SpectrumComponent;
 import uk.ac.diamond.scisoft.xpdf.xrmc.XRMCToDetectorProperties;
 
-public class XRMCScatteringDataNormalizationOperation extends AbstractOperation<EmptyModel, OperationData> {
+public class XRMCScatteringDataNormalizationOperation extends AbstractOperation<XRMCScatteringNormalizationModel, OperationData> {
 
 	@Override
 	public String getId() {
@@ -62,8 +62,10 @@ public class XRMCScatteringDataNormalizationOperation extends AbstractOperation<
 		
 		DetectorProperties detProp = XRMCToDetectorProperties.get(xrmcDet, xrmcSource);
 
-		// convert from photons to photons per unit area
-		Dataset saCorrected = correctSolidAngle(DatasetUtils.convertToDataset(input), detProp);
+		// convert from photons to photons per unit solid angle
+		Dataset saCorrected = model.isNormalizeOmega() ? 
+					correctSolidAngle(DatasetUtils.convertToDataset(input), detProp) :
+					DatasetUtils.convertToDataset(input);
 
 		XRMCSpectrum xrmcSpec = xrmcMetadata.getSpectrum();
 

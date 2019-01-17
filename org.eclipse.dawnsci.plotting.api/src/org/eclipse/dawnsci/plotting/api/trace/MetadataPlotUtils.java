@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
+import org.eclipse.dawnsci.plotting.api.metadata.Plot1DMetadata;
+import org.eclipse.dawnsci.plotting.api.trace.ILineTrace.TraceType;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
@@ -21,6 +23,8 @@ import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MaskMetadata;
 import org.eclipse.january.metadata.UnitMetadata;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,11 +95,58 @@ public class MetadataPlotUtils {
 				system.clearTraces();
 				system.resetAxes();
 			}
-			system.updatePlot1D(x,Arrays.asList(new IDataset[]{data}),null);
+			ITrace t = system.updatePlot1D(x,Arrays.asList(new IDataset[]{data}),null).get(0);
+			Plot1DMetadata pm = data.getFirstMetadata(Plot1DMetadata.class);
+			if (pm != null && t instanceof ILineTrace) {
+				Display d = Display.getDefault();
+				d.asyncExec(() -> customizePlot(d, system, pm, (ILineTrace) t));
+			}
 		}
-		
 	}
-	
+
+	private static void customizePlot(Display d, final IPlottingSystem<?> system, Plot1DMetadata pm, ILineTrace lt) {
+		lt.setLineWidth(pm.getLineWidth());
+		lt.setPointSize(pm.getPointSize());
+		lt.setPointStyle(pm.getPointStyle());
+		TraceType ts;
+		switch (pm.getLineStyle()) {
+		case DASHED:
+			ts = TraceType.DASH_LINE;
+			break;
+		case NONE:
+			ts = TraceType.POINT;
+			break;
+		case SOLID:
+		default:
+			ts = TraceType.SOLID_LINE;
+			break;
+		}
+		lt.setTraceType(ts);
+		int[] c = pm.getRGBColor();
+		if (c != null) {
+			RGB rgb = new RGB(c[0], c[1], c[2]);
+			lt.setTraceColor(new Color(d, rgb));
+		}
+		String n;
+		n = pm.getPlotTitle();
+		if (n != null) {
+			system.setTitle(n);
+		}
+		n = pm.getXAxisName();
+		if (n != null) {
+			system.getSelectedXAxis().setTitle(n);
+		}
+		n = pm.getYAxisName();
+		if (n != null) {
+			system.getSelectedYAxis().setTitle(n);
+		}
+
+		n = pm.getLegendEntry();
+		if (n != null) {
+			lt.setName(n);
+		}
+	}
+
 	private static String getUnit(IDataset ds) {
 		
 		UnitMetadata um = ds.getFirstMetadata(UnitMetadata.class);

@@ -45,9 +45,8 @@ public enum PlotType {
 	private final int dimensions;
 
 	/**
-	 * 
-	 * @param rank
-	 * @param dimensions
+	 * @param rank total number of dimensions supported
+	 * @param dimensions number of independent axes in plot
 	 */
 	private PlotType(int rank, int dimensions) {
 	   	this.rank       = rank;

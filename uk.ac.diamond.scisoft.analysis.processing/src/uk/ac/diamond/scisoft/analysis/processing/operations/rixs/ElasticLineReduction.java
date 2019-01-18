@@ -23,6 +23,9 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationLog;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
+import org.eclipse.dawnsci.plotting.api.metadata.Plot1DMetadata;
+import org.eclipse.dawnsci.plotting.api.metadata.Plot1DMetadataImpl;
+import org.eclipse.dawnsci.plotting.api.trace.ILineTrace.PointStyle;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.MetadataException;
@@ -377,6 +380,12 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 				coords[1] = coords[1].getByBoolean(mask);
 				coords[0].setName("row0");
 				coords[1].setName("col0");
+				Plot1DMetadataImpl pm = new Plot1DMetadataImpl(Plot1DMetadata.LineStyle.NONE, 0, PointStyle.CIRCLE, 4);
+				pm.setPlotTitle("Slope fitting");
+				pm.setLegendEntry("Elastic maxima");
+				pm.setXAxisName("y");
+				pm.setYAxisName("x");
+				coords[1].addMetadata(pm);
 				generateFitForDisplayAndSummary(getStraightLine(0), coords[0], coords[1], "line_0_fit");
 			}
 		} catch (OperationException e) {
@@ -847,8 +856,18 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		Dataset fit = DatasetUtils.convertToDataset(f.calculateValues(x));
 		fit.setName(name);
 		MetadataUtils.setAxes(fit, x);
-		displayData.add(fit.getView(false));
 		summaryData.add(fit);
+		fit = fit.getView(false);
+
+		// set plot title again as more lines will overwrite it
+		Plot1DMetadata pm = d.getFirstMetadata(Plot1DMetadata.class);
+		String pt = pm == null ? null : pm.getPlotTitle();
+		if (pt != null) {
+			pm = new Plot1DMetadataImpl();
+			pm.setPlotTitle(pt);
+			fit.setMetadata(pm);
+		}
+		displayData.add(fit);
 	}
 
 	/**

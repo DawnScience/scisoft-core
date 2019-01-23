@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.metadata;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
@@ -55,19 +56,24 @@ public class OperationMetadataImpl implements OperationMetadata {
 		return process(filename, datasetName, metadata, null, null);
 	}
 	
-	@SuppressWarnings("unchecked")
+	@Override
 	public Dataset process(String filename, String datasetName, SliceFromSeriesMetadata metadata, Integer start, Integer stop) {
-		
+		AveragingOutputExecutionVisitor vis = new AveragingOutputExecutionVisitor();
+		process(filename, datasetName, metadata, start, stop, vis);
+		return vis.getAverage();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void process(String filename, String datasetName, SliceFromSeriesMetadata metadata, Integer start, Integer stop, IExecutionVisitor vis) {
 		SliceND sampling = null;
 		
 		ILazyDataset lz = ProcessingUtils.getLazyDataset(current, filename, datasetName);
 		lz = lz.getSliceView();
-		IOperation[] pOps = getPreviousOperations();
+		IOperation[] pOps = getPriorOperations();
 		
 		SourceInformation si = new SourceInformation(filename, datasetName, lz);
 		lz.setMetadata(new SliceFromSeriesMetadata(si));
-		
-		AveragingOutputExecutionVisitor vis = new AveragingOutputExecutionVisitor();
 		
 		IOperationService opServ = LocalServiceManager.getOperationService();
 		IOperationContext context = opServ.createContext();
@@ -92,10 +98,8 @@ public class OperationMetadataImpl implements OperationMetadata {
 		
 		context.setSlicing(sampling);
 		opServ.execute(context);
-		
-		return vis.getAverage();
 	}
-	
+
 	@Override
 	public OperationMetadata clone() {
 
@@ -112,15 +116,16 @@ public class OperationMetadataImpl implements OperationMetadata {
 		return dd;
 		
 	}
-	
-	private IOperation[] getPreviousOperations(){
+
+	@Override
+	public IOperation<?, ?>[] getPriorOperations() {
 		int i = 0;
 		for (;i<operations.length;i++) if (operations[i] == current) break;
 		IOperation[] ops = new IOperation[i];
-		for (int j = 0 ; j < ops.length; j++) ops[j] = cloneOperation(operations[j]);
+		for (int j = 0; j < ops.length; j++) ops[j] = cloneOperation(operations[j]);
 		return ops;
 	}
-	
+
 	private IOperation cloneOperation(IOperation op) {
 		
 		IOperation clone = null;

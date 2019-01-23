@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.RGBDataset;
 import org.eclipse.swt.graphics.PaletteData;
 
 /**
@@ -308,6 +309,10 @@ public class ImageServiceBean {
 
 	public void setLogColorScale(boolean logColorScale) {
 		this.logColorScale = logColorScale;
+		if (image instanceof RGBDataset) {
+			//colour scale doesn't mean anything for an RGB image
+			return;
+		}
 		if (logColorScale) { // shift by fraction of range
 			logOffset = image.min(true).doubleValue();
 			double delta = 1e-6 * image.peakToPeak(true).doubleValue();

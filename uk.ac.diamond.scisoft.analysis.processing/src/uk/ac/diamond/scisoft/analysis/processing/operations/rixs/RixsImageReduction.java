@@ -124,7 +124,7 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 		}
 	}
 
-	private String getElasticFitFromFile(File currentDir, String prefix) {
+	private String getElasticFitFromFile(final File currentDir, final String prefix) {
 		log.append("Looking for processed elastic line fit of scan with prefix %s", prefix);
 
 		FilenameFilter filter = new FilenameFilter() {
@@ -137,13 +137,13 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 		String fitFile = null;
 		if (model.getCalibrationFile() != null) { // try in calibration file's directory
 			File calibDir = new File(model.getCalibrationFile()).getParentFile();
-			fitFile = findLatestFitFile(filter, calibDir, prefix);
+			fitFile = findLatestFitFile(filter, calibDir);
 		}
 
 		if (fitFile == null) {
-			fitFile = findLatestFitFile(filter, currentDir, prefix);
+			fitFile = findLatestFitFile(filter, currentDir);
 			if (fitFile == null) {
-				fitFile = findLatestFitFile(filter, new File(currentDir, PROCESSING), prefix);
+				fitFile = findLatestFitFile(filter, new File(currentDir, PROCESSING));
 				if (fitFile == null) {
 					throw new OperationException(this, "Could not find fit file in data, calibration or processing directories");
 				}
@@ -155,7 +155,7 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 	}
 
 	// find any processed fit file with scan number
-	private String findLatestFitFile(FilenameFilter filter, File cwd, final String prefix) {
+	private String findLatestFitFile(FilenameFilter filter, File cwd) {
 		File[] files = cwd.listFiles(filter);
 		if (files == null) {
 			return null;
@@ -265,4 +265,23 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 			return null;
 		}
 	}
+
+	protected void addSummaryData() {
+		super.addSummaryData();
+
+		if (useSummaryFits || summaryStore == null) {
+			for (int r = 0; r < 2; r++) {
+				StraightLine l = getStraightLine(r);
+				summaryData.add(ProcessingUtils.createNamedDataset(l.getParameterValue(0), ElasticLineReduction.LINE_GRADIENT_FORMAT, r));
+				summaryData.add(ProcessingUtils.createNamedDataset(l.getParameterValue(1), ElasticLineReduction.LINE_INTERCEPT_FORMAT, r));
+			}
+		} else {
+			for (int r = 0; r < 2; r++) {
+				summaryData.add(ProcessingUtils.createNamedDataset(summaryStore[2*r], ElasticLineReduction.LINE_GRADIENT_FORMAT, r));
+				summaryData.add(ProcessingUtils.createNamedDataset(summaryStore[2*r + 1], ElasticLineReduction.LINE_INTERCEPT_FORMAT, r));
+			}
+			
+		}
+	}
+
 }

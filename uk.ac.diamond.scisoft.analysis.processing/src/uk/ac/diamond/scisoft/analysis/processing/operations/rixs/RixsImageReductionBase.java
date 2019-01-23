@@ -217,7 +217,6 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		Dataset original = DatasetUtils.convertToDataset(input);
 		SliceFromSeriesMetadata ssm = getSliceSeriesMetadata(input);
 		SliceInformation si = ssm.getSliceInfo();
-		int smax = si.getTotalSlices();
 
 		OperationData od = super.process(original, monitor);
 		List<Dataset> events = null;
@@ -265,16 +264,16 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			displayData.add(a);
 		}
 
-		log.appendSuccess("At frame %d/%d", si.getSliceNumber(), smax);
+		log.appendSuccess("At frame %d/%d", si.getSliceNumber(), si.getTotalSlices());
 		summaryData.clear(); // do not save anything yet
 
-		if (si.getSliceNumber() == smax - 1) {
+		if (si.isLastSlice()) {
 			addSummaryData();
 			if (a != null) {
 				summaryData.add(a);
 			}
 
-			processAccumulatedDataOnLastSlice(original, smax, bins, h);
+			processAccumulatedDataOnLastSlice(original, si.getTotalSlices(), bins, h);
 		}
 
 		OperationDataForDisplay odd;

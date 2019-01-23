@@ -256,11 +256,19 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 						}
 					}
 				}
+
 				auxData.add(ProcessingUtils.createNamedDataset(aveM/n, LINE_GRADIENT_FORMAT, r).reshape(1));
 				auxData.add(ProcessingUtils.createNamedDataset(goodC, LINE_INTERCEPT_FORMAT, r));
+
+				Dataset posData = DatasetFactory.createFromList(coords[0]);
+				posData.setName(positionName);
 				if (n > 1) {
-					summaryData.add(ProcessingUtils.createNamedDataset((Serializable) slopes, LINE_GRADIENT_FORMAT, r));
-					summaryData.add(ProcessingUtils.createNamedDataset((Serializable) posns, LINE_INTERCEPT_FORMAT, r));
+					Dataset d = ProcessingUtils.createNamedDataset((Serializable) slopes, LINE_GRADIENT_FORMAT, r);
+					MetadataUtils.setAxes(d, posData);
+					summaryData.add(d);
+					d = ProcessingUtils.createNamedDataset((Serializable) posns, LINE_INTERCEPT_FORMAT, r);
+					MetadataUtils.setAxes(d, posData);
+					summaryData.add(d);
 				}
 				summaryData.add(ProcessingUtils.createNamedDataset((Serializable) allResidual[r], LINE_RESIDUAL_FORMAT, r));
 
@@ -269,7 +277,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 						displayData.clear();
 					}
 
-					double[] res = fitIntercepts(r, coords);
+					double[] res = fitIntercepts(r, posData.getView(false), coords[1]);
 					if (res == null) {
 						dispersion[r] = Double.NaN;
 						log.appendFailure("No energy change so cannot find dispersion");
@@ -694,16 +702,16 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	/**
 	 * Fit to intercepts of elastic lines
 	 * @param r
+	 * @param energy 
 	 * @param coords
 	 * @return residual and gradient or null if energy does not change
 	 */
-	private double[] fitIntercepts(int r, List<?>[] coords) {
-		if (coords[0].size() <= 2) {
+	private double[] fitIntercepts(int r, Dataset energy, List<?> coords) {
+		if (coords.size() <= 2) {
 			return null;
 		}
 
-		Dataset energy = DatasetFactory.createFromList(coords[0]);
-		Dataset intercept = DatasetFactory.createFromList(coords[1]);
+		Dataset intercept = DatasetFactory.createFromList(coords);
 		String name = "intercept_fit_" + r;
 		energy.setName("Energy");
 		intercept.setName("intercept_" + r);

@@ -1506,6 +1506,15 @@
             visible="true">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.rixs"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageCombinedReduction"
+            description="Combined elastic and RIXS image reduction to spectra"
+            icon="icons/stairs.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageCombinedReduction"
+            name="Combined RIXS image reduction"
+            visible="true">
+      </operation>
+      <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.ExtractRingIntensitiesOperation"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.ExtractRingIntensitiesOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.DiffractionEllipseFitModel"

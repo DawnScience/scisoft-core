@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.rixs;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
@@ -698,6 +699,8 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	public final static String LINE_GRADIENT_FORMAT  = "line_%d_m";
 	public final static String LINE_INTERCEPT_FORMAT = "line_%d_c";
 	public final static String LINE_RESIDUAL_FORMAT = "line_%d_residual";
+
+	public final static Pattern LINE_REGEXP = Pattern.compile("line_(\\d+)_([mc])");
 
 	/**
 	 * Fit to intercepts of elastic lines

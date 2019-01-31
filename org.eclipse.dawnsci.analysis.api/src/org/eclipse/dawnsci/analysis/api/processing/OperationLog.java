@@ -134,4 +134,22 @@ public class OperationLog {
 		success.clear();
 		failure.clear();
 	}
+
+	/**
+	 * Append log onto this log
+	 * @param log
+	 */
+	public void append(OperationLog log) {
+		int offset = this.log.length();
+		this.log.append(log.toString());
+		appendList(offset, failure, log.getFailure());
+		appendList(offset, success, log.getSuccess());
+	}
+
+	private void appendList(int offset, List<Integer> current, List<Integer> other) {
+		for (int i = 0, imax = other.size(); i < imax; i += 2) {
+			current.add(other.get(i) + offset);
+			current.add(other.get(i+1));
+		}
+	}
 }

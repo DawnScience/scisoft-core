@@ -12,6 +12,7 @@
 package org.eclipse.dawnsci.plotting.api.trace;
 
 
+import org.eclipse.dawnsci.plotting.api.axis.IAxis;
 import org.eclipse.january.INameable;
 import org.eclipse.january.dataset.IDataset;
 
@@ -24,7 +25,13 @@ import org.eclipse.january.dataset.IDataset;
  *
  */
 public interface ITrace extends INameable {
-		
+
+	/**
+	 * Initialize with given axes
+	 * @param axes
+	 */
+	public void initialize(IAxis... axes);
+
 	/**
 	 * The name of the original data that this trace was plotted from or null
 	 * @return

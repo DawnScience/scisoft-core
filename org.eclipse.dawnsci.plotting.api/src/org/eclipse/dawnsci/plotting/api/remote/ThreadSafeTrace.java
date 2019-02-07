@@ -74,6 +74,11 @@ class ThreadSafeTrace extends ThreadSafeObject implements ITrace,
 		this.trace = delegate;
 	}
 
+	@Override
+	public void initialize(IAxis... axes) {
+		call(getMethodName(Thread.currentThread().getStackTrace()), (Object[]) axes);
+	}
+
 	public String getName() {
 		return (String)call(getMethodName(Thread.currentThread().getStackTrace()));
 	}

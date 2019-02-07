@@ -169,4 +169,11 @@ public interface IDataHolder extends IDataAnalysisObject {
 	 * @param tree
 	 */
 	public void setTree(Tree tree);
+	
+	/**
+	 * Get a map with the dataset names as keys and the dataset shapes as values
+	 * 
+	 * @return shapes
+	 */
+	public Map<String, int[]> getDatasetShapes();
 }

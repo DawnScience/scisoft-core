@@ -103,6 +103,6 @@ public interface IRemoteDatasetService {
 	 */
 	public Executor getExecutor();
 	
-	public IDataHolder createRemoteDataHolder(String path, String serverName, int port);
+	public IRemoteDataHolder createRemoteDataHolder(String path, String serverName, int port, boolean failForSymbolic);
 
 }

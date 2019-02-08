@@ -237,53 +237,6 @@ public class GenerateGudrun extends AbstractOperation<GenerateGudrunModel, Opera
 	}
 	
 	/**
-	 * 
-	 * @param i0filepath: the path to the container file
-	 * @param getSamplei0: a boolean that is true for when we want to get the i0 of the sample file
-	 * @return either 1.0 or the mean of the i0
-	 */
-	private double getContaineri0(String i0filepath, boolean getSamplei0) {
-		NexusFile i0File;
-		Tree i0Tree;
-		try {
-			i0File = NexusFileHDF5.openNexusFileReadOnly(i0filepath);
-			i0Tree = NexusUtils.loadNexusTree(i0File);
-		} catch (Exception el) {
-			throw new OperationException(this, el);
-		}
-		if (getSamplei0) {
-		    NXdata treei0 = getFirstSomething(i0Tree, "NXdata");
-		    List<ILazyDataset> listi0 = treei0.getDatasets("data");
-		    ILazyDataset[] lazyi0 = listi0.toArray(new ILazyDataset[listi0.size()]);
-		    try {
-				double meani0 = (double) lazyi0[0].getSlice().mean(true);
-				return meani0;
-			} catch (DatasetException e) {
-				LOGGER.log(Level.WARNING, "couldn't obtain mean of i0");
-			}
-		}
-		else {
-			/*
-			 * Some code stuff to get the i0 of the background from the i0file. This value should be stored
-			 * in Instrument (NXInstrument) -> detector (NXDetector) -> data (ILazyDataset)
-			 */
-			NXinstrument treei0 = getFirstSomething(i0Tree, "NXinstrument");
-			NXdetector deteci0 = (NXdetector) treei0.getNode("detector");
-		    List<ILazyDataset> listi0 = deteci0.getDatasets("data");
-		    ILazyDataset[] lazyi0 = listi0.toArray(new ILazyDataset[listi0.size()]);
-		    try {
-				double meani0 = (double) lazyi0[0].getSlice().mean(true);
-				return meani0;
-			} catch (DatasetException e) {
-				LOGGER.log(Level.WARNING, "couldn't obtain mean of i0");
-			}
-		}
-	    
-		return 1.0;
-	}
-	
-	
-	/**
 	 * Takes all the names of the nexus files within the directory and finds the sample background file that they each
 	 * use, if there are any that use the same background file, only one of such file is stored to avoid duplicates in the
 	 * autogudrun.txt file

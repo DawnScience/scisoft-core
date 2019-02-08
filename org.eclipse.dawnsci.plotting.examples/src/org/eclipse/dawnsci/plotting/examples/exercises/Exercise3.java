@@ -99,10 +99,12 @@ public class Exercise3 extends Exercise2 {
 		return new ITraceListener.Stub() {
 			@Override
 			public void traceUpdated(TraceEvent evt) {
-				// In reality use a Job queue to do this or the UI goes slow...
-				IImageTrace trace = (IImageTrace)evt.getSource();
-				createThreasholdMask(trace);
-				createImageFile(trace);
+				if (evt.getSource() instanceof IImageTrace) {
+					// In reality use a Job queue to do this or the UI goes slow...
+					IImageTrace trace = (IImageTrace) evt.getSource();
+					createThresholdMask(trace);
+					createImageFile(trace);
+				}
 			}
 		};
 	}

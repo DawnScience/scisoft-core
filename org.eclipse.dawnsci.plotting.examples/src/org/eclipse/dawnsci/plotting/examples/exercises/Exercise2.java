@@ -13,8 +13,9 @@ import org.eclipse.dawnsci.plotting.api.trace.IImageTrace;
 import org.eclipse.dawnsci.plotting.api.trace.ITraceListener;
 import org.eclipse.dawnsci.plotting.api.trace.TraceEvent;
 import org.eclipse.january.dataset.BooleanDataset;
+import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.dataset.PositionIterator;
+import org.eclipse.january.dataset.IDataset;
 import org.eclipse.swt.widgets.Composite;
 
 public class Exercise2 extends Exercise1 {
@@ -34,27 +35,24 @@ public class Exercise2 extends Exercise1 {
 		return new ITraceListener.Stub() {
 			@Override
 			public void traceUpdated(TraceEvent evt) {
-				IImageTrace trace = (IImageTrace)evt.getSource();
-				createThreasholdMask(trace);
+				if (evt.getSource() instanceof IImageTrace) {
+					IImageTrace trace = (IImageTrace) evt.getSource();
+					createThresholdMask(trace);
+				}
  			}
 		};
 	}
 
-	protected void createThreasholdMask(IImageTrace trace) {
+	protected void createThresholdMask(IImageTrace trace) {
 		// Lets do some masking...
-		if (mask==null) mask = DatasetFactory.zeros(BooleanDataset.class, trace.getData().getShape());
+		IDataset image = trace.getData();
+		if (mask==null) mask = DatasetFactory.zeros(BooleanDataset.class, image.getShape());
 
 		// Start off with everything true (true = not-masked!)
 		mask.fill(true);
 
-		// Iterate everything - yes this is slowish now. In Java8 we are
-		// implementing parallel streams with Datasets but this was not available
-		// when these examples were being written.
-		PositionIterator it = new PositionIterator(mask.getShape());
-		while(it.hasNext()) {
-			int[] pos = it.getPos();
-			if (trace.getData().getInt(pos)<=-1) mask.set(false, pos);
-		}
+		// converse of setting everything <= -1 false
+		Comparisons.greaterThan(image, -1, mask);
 
 		trace.setMask(mask);
 	}

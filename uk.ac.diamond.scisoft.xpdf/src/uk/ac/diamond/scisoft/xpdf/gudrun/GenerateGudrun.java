@@ -11,13 +11,12 @@ package uk.ac.diamond.scisoft.xpdf.gudrun;
 
 import java.util.ArrayList;
 import java.util.Arrays;
- import java.util.HashSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -46,10 +45,8 @@ import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
-
 import uk.ac.diamond.scisoft.xpdf.XPDFMetadataImpl;
 import java.io.File;
-
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -138,7 +135,7 @@ public class GenerateGudrun extends AbstractOperation<GenerateGudrunModel, Opera
 				}
 			}
 			else {
-
+				LOGGER.log(Level.WARNING, "Either the directory .../processed/ does not exist or the processed file is not inside it");
 			}
 			//The location of the cluster processing file
 			File clstrLocation = new File(thisFile.getParent());
@@ -202,7 +199,6 @@ public class GenerateGudrun extends AbstractOperation<GenerateGudrunModel, Opera
 				new NodeLink[nodeMap.size()])[0].getDestination();
 		return (NXsample) sampleNode;
 	}
-	
 	
 	/**
 	 * Makes a copy of the background xy file and processing xy fileplaces it in the same directory as the sample filer
@@ -447,7 +443,6 @@ public class GenerateGudrun extends AbstractOperation<GenerateGudrunModel, Opera
 	 */
 	private void getGudrun(File[] fileNames, String operationFile, File clstrLocation) throws IOException {
 		
-		
 		//os.path.basename() = tail of the path so the "arts" in mixed/martial/arts
 		//os.path.dirname() = the head and body of the path so the "mixed/martial" in mixed/martial/arts
 
@@ -476,7 +471,6 @@ public class GenerateGudrun extends AbstractOperation<GenerateGudrunModel, Opera
 		 */
 		
 		ArrayList<Sample> samplesList = new ArrayList<Sample>();
-		
 		String i0filepath = geti0File(sampleName, sampleDirec, targetDirec);
 		for (File filePath : fileNames) {
 			String strFilePath = filePath.toString();

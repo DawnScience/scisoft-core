@@ -349,6 +349,9 @@ def asIterable(items):
         items = (items,)
     return items
 
+def _asjarray(items, dtype): # get java array
+    return items.cast(dtype.value).getBuffer()
+
 def toList(listdata):
     '''Convert a list or tuple to list of datasets'''
     return [ d for d in asIterable(listdata) ]
@@ -907,8 +910,6 @@ class ndarray(object):
         _dsutils.put(self.__dataset, inds, vals)
 
     def repeat(self, repeats, axis=None):
-        if axis is None:
-            axis = -1
         return repeat(self, repeats, axis=axis)
 
     def choose(self, choices, mode='raise'):
@@ -1696,10 +1697,14 @@ def argsort(a, axis=-1):
 
 @_wrap('a', 'reps')
 def tile(a, reps):
-    return _dsutils.tile(a, asIterable(reps))
+    return _dsutils.tile(a, _asjarray(reps, int32))
 
 @_wrap('a')
-def repeat(a, repeats, axis=-1):
+def repeat(a, repeats, axis=None):
+    if axis is None:
+        axis = -1
+    if a.getRank() == 0:
+        a = a.reshape(1)
     return _dsutils.repeat(a, asIterable(repeats), axis)
 
 @_wrap('arr', 'values')

@@ -88,6 +88,22 @@ class Test(unittest.TestCase):
         self.checkitems([[0, 0, 1, 1, 2, 2], [3, 3, 4, 4, 5, 5]], a.repeat(2, axis=1))
 #        print a.sort()
 
+    def testRepeat(self):
+        self.checkitems([3,3,3,3], np.repeat(3, 4))
+        self.checkitems([1,1,1,2,2,2,3,3,3], np.repeat([1,2,3], 3))
+        self.checkitems([1,1,2,2,3,3,4,4,5,5,6,6], np.repeat([[1,2,3],[4,5,6]], 2))
+        self.checkitems([[1,2,3],[1,2,3],[4,5,6],[4,5,6]], np.repeat([[1,2,3],[4,5,6]], 2, 0))
+        self.checkitems([[1,1,2,2,3,3],[4,4,5,5,6,6]], np.repeat([[1,2,3],[4,5,6]], 2, 1))
+
+    def testTile(self):
+        self.checkitems([3,3,3,3], np.tile(3, 4))
+        self.checkitems([1,2,3,1,2,3,1,2,3], np.tile([1,2,3], 3))
+        self.checkitems([[1,2,3],[1,2,3],[1,2,3]], np.tile([1,2,3], [3,1]))
+        self.checkitems([[1,2,1,2],[1,2,1,2]], np.tile([1,2], [2,2]))
+        self.checkitems([[[1,2,1,2]],[[1,2,1,2]]], np.tile([1,2], [2,1,2]))
+        self.checkitems([[1,2,1,2],[3,4,3,4]], np.tile([[1,2],[3,4]], 2))
+        self.checkitems([[1,2],[3,4],[1,2],[3,4]], np.tile([[1,2],[3,4]], [2,1]))
+
     def testScisoft(self):
         a = np.ones([3,4])
         print(a.shape)
@@ -448,6 +464,7 @@ class Test(unittest.TestCase):
         self.checkitems([False, True], np.array([2.-3.5j, 3]) == 3)
         self.assertTrue(np.array(-2.+3.5j) == -2+3.5j)
         self.assertFalse(np.array(-2.) == -2+3.5j)
+        self.assertFalse(np.array([1,2,3] == None))
 
     def testIndexesAndPositions(self):
         print('Indexes testing')

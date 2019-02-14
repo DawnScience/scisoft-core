@@ -349,8 +349,18 @@ def asIterable(items):
         items = (items,)
     return items
 
-def _asjarray(items, dtype): # get java array
-    return items.cast(dtype.value).getBuffer()
+def _as_int_array(items): # get integer array or list
+    
+    if isinstance(items, ndarray):
+        items = items._jdataset()
+    if isinstance(items, _ds):
+        if not _dtutils.isDTypeInteger(items.getDType()):
+            raise TypeError("Shape must be an integer array or list")
+        if items.getRank() > 1:
+            raise TypeError("Shape must not be an array with rank > 1")
+        return items.getBuffer()
+
+    return asIterable(items)
 
 def toList(listdata):
     '''Convert a list or tuple to list of datasets'''
@@ -1420,7 +1430,7 @@ def array(obj, dtype=None, copy=True):
 def ones(shape, dtype=float64):
     '''Create a dataset filled with 1'''
     dtype = _translatenativetype(dtype)
-    return _df.ones(dtype.elements, asIterable(shape), dtype.value)
+    return _df.ones(dtype.elements,  _as_int_array(shape), dtype.value)
 
 @_wrap('a')
 def ones_like(a, dtype=None):
@@ -1442,7 +1452,7 @@ def zeros(shape, dtype=float64, elements=None):
     elif type(dtype) is _types.FunctionType:
         raise ValueError("Given data-type is a function and needs elements defining")
 
-    return _df.zeros(dtype.elements, asIterable(shape), dtype.value)
+    return _df.zeros(dtype.elements, _as_int_array(shape), dtype.value)
 
 @_wrap('a')
 def zeros_like(a, dtype=None):
@@ -1697,13 +1707,13 @@ def argsort(a, axis=-1):
 
 @_wrap('a', 'reps')
 def tile(a, reps):
-    return _dsutils.tile(a, _asjarray(reps, int32))
+    return _dsutils.tile(a, _as_int_array(reps))
 
 @_wrap('a')
 def repeat(a, repeats, axis=None):
     if axis is None:
         axis = -1
-    if a.getRank() == 0:
+    if a.getRank() == 0: # FIXME bug in january 2.2
         a = a.reshape(1)
     return _dsutils.repeat(a, asIterable(repeats), axis)
 

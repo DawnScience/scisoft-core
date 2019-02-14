@@ -98,6 +98,12 @@ class Test(unittest.TestCase):
         self.assertEquals(2, dds.shape[0])
         self.assertEquals(3, dds.shape[1])
         self.assertEquals(0, dds[0,0])
+        dds = np.zeros(np.array([1,2]), dtype=np.float)
+        self.assertEqual((1,2), dds.shape)
+        self.assertEquals(0, dds[0,0])
+        dds = np.zeros_like(np.array([1,2]), dtype=np.float)
+        self.assertEquals((2,), dds.shape)
+        self.assertEquals(0, dds[0])
 
     def testOnes(self): # make new datasets with ones
         print("test ones")
@@ -121,6 +127,12 @@ class Test(unittest.TestCase):
         self.assertEquals(2, dds.shape[0])
         self.assertEquals(3, dds.shape[1])
         self.assertEquals(1, dds[0,0])
+        dds = np.ones(np.array([1,2]), dtype=np.float)
+        self.assertEqual((1,2), dds.shape)
+        self.assertEquals(1, dds[0,0])
+        dds = np.ones_like(np.array([1,2]), dtype=np.float)
+        self.assertEquals((2,), dds.shape)
+        self.assertEquals(1, dds[0])
 
     def testTwos(self): # make new datasets with twos
         print("test twos")
@@ -171,6 +183,12 @@ class Test(unittest.TestCase):
         self.assertEquals(2, dds.shape[0])
         self.assertEquals(3, dds.shape[1])
         self.assertEquals(2., dds[0,0])
+        dds = np.full(np.array([1,2]), 2, dtype=np.float)
+        self.assertEqual((1,2), dds.shape)
+        self.assertEquals(2, dds[0,0])
+        dds = np.full_like(np.array([1,2]), 2, dtype=np.float)
+        self.assertEquals((2,), dds.shape)
+        self.assertEquals(2, dds[0])
 
     def testCompound(self): # make new datasets with ones
         print("test compound")

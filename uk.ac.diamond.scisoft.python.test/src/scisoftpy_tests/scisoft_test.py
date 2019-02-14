@@ -464,7 +464,6 @@ class Test(unittest.TestCase):
         self.checkitems([False, True], np.array([2.-3.5j, 3]) == 3)
         self.assertTrue(np.array(-2.+3.5j) == -2+3.5j)
         self.assertFalse(np.array(-2.) == -2+3.5j)
-        self.assertFalse(np.array([1,2,3] == None))
 
     def testIndexesAndPositions(self):
         print('Indexes testing')

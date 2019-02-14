@@ -113,7 +113,8 @@ ones_like = _np.ones_like
 
 def zeros(shape, dtype=float, order='C', elements=None):
     '''Create a dataset filled with 0'''
-    shape = asIterable(shape)
+    if not isinstance(shape, ndarray):
+        shape = asIterable(shape)
     if type(dtype) is _types.FunctionType:
         if elements is not None:
             dtype = dtype(elements)

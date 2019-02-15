@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.rixs;
 
 import org.eclipse.dawnsci.analysis.api.processing.model.FileType;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
+import org.eclipse.dawnsci.analysis.api.processing.model.RangeType;
 
 /**
  * Model for reducing RIXS images to spectra
@@ -51,6 +52,9 @@ public class RixsImageReductionBaseModel extends RixsBaseModel {
 
 	@OperationModelField(label = "Spectrum correlation option", description = "Photon correlation options", hint = "All pairs of spectra; consecutive pairs only; use intensity shifts", expertOnly = true)
 	private CORRELATE_PHOTON correlateOption = CORRELATE_PHOTON.USE_INTENSITY_SHIFTS; // in 2D image
+
+	@OperationModelField(label = "Correlation energy range", description = "Energy range to use correlate spectra", hint = "Start and end energies", rangevalue = RangeType.XRANGE, expertOnly = true)
+	private double[] energyRange = null;
 
 	@OperationModelField(label = "Normalize spectra by region size", description = "If true, then divide summed spectra by number of constituent spectra", expertOnly = true)
 	private boolean normalizeByRegionSize = true;
@@ -225,5 +229,16 @@ public class RixsImageReductionBaseModel extends RixsBaseModel {
 
 	public void setFrameSelection(String frameSelection) {
 		firePropertyChange("setFrameSelection", this.frameSelection, this.frameSelection = frameSelection);
+	}
+
+	/**
+	 * @return start and end energies to use to correlate spectra. Can be null
+	 */
+	public double[] getEnergyRange() {
+		return energyRange;
+	}
+
+	public void setEnergyRange(double[] energyRange) {
+		firePropertyChange("setEnergyRange", this.energyRange, this.energyRange = energyRange);
 	}
 }

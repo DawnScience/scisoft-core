@@ -27,11 +27,14 @@ import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
+import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Comparisons;
+import org.eclipse.january.dataset.Comparisons.Monotonicity;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -386,6 +389,24 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			}
 
 			RegisterNoisyData1D reg = getCorrelateShifter();
+			double[] eRange = model.getEnergyRange();
+			if (eRange != null && ax != null) {
+				Arrays.sort(eRange);
+				Monotonicity m = Comparisons.findMonotonicity(ax);
+				RectangularROI rect = null;
+				if (m == Monotonicity.NONDECREASING || m == Monotonicity.STRICTLY_INCREASING) {
+					int beg = DatasetUtils.findIndexGreaterThanOrEqualTo(ax, eRange[0]);
+					int end = DatasetUtils.findIndexGreaterThan(ax, eRange[1]);
+					rect = new RectangularROI(beg, 0, end - beg, 0, 0);
+				} else if (m == Monotonicity.STRICTLY_DECREASING || m == Monotonicity.NONINCREASING) {
+					int beg = DatasetUtils.findIndexLessThanOrEqualTo(ax, eRange[1]);
+					int end = DatasetUtils.findIndexLessThan(ax, eRange[0]);
+					rect = new RectangularROI(beg, 0, end - beg, 0, 0);
+				}
+
+				reg.setRectangle(rect);
+			}
+
 			List<Double> shift = new ArrayList<>();
 			correlateSpectra("", r, reg, shift, ax, sArray);
 
@@ -493,7 +514,12 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	}
 
 	private void correlateSpectra(String prefix, int r, RegisterNoisyData1D reg, List<Double> shift, Dataset energies, Dataset[] sArray) {
-		List<Dataset> results = reg.value(sArray);
+		List<Dataset> results;
+		try {
+			results = reg.value(sArray);
+		} catch (Exception e) {
+			throw new OperationException(this, "Could not correlate spectra", e);
+		}
 		for (int i = 0; i < sArray.length; i++) {
 			sArray[i] = results.get(2*i + 1);
 		}

@@ -300,7 +300,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 
 			// TODO ring current, other things
 		} catch (Exception e) {
-			log.appendFailure("Could not parse Nexus file %s:%s", filePath, e);
+			log.appendFailure("Could not parse Nexus file %s: %s", filePath, e);
 			countsPerPhoton = model.getCountsPerPhoton();
 		}
 

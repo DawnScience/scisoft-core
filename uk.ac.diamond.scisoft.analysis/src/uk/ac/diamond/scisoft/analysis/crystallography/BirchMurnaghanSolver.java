@@ -1,4 +1,4 @@
-/*
+/*-
  * Copyright (c) 2017 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.crystallography;
  * A mathematics class to solve the Birch-Murnaghan equation of state for
  * either p as a function of v/v0 (direct evaluation) or v/v0 as a function of
  * p (Newton's method)
+ * 
  * @author Timothy Spain, timothy.spain@diamond.ac.uk
  *
  */

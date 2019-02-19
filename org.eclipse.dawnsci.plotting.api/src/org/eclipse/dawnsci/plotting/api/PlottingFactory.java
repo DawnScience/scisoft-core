@@ -124,9 +124,12 @@ public class PlottingFactory {
 		if (plottingSystems==null) return null;
 		
 		IPlottingSystem<T> ret = plottingSystems.remove(plotName);
-		if (listeners!=null) for (IPlotRegistrationListener l : listeners) {
-			if (l.getPlottingSystemName()==null || plotName.equals(plotName)) {
-				l.plottingSystemRegistered(new PlotRegistrationEvent(ret));
+		if (ret != null && listeners != null) {
+			for (IPlotRegistrationListener l : listeners) {
+				String name = l.getPlottingSystemName();
+				if (name == null || plotName.equals(name)) {
+					l.plottingSystemUnregistered(new PlotRegistrationEvent(ret));
+				}
 			}
 		}
 		return ret;

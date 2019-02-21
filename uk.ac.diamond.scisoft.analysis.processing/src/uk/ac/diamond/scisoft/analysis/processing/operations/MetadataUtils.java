@@ -77,7 +77,7 @@ public class MetadataUtils {
 		return axes;
 	}
 
-	public static void setAxes(ILazyDataset d, Dataset... axes) {
+	public static void setAxes(ILazyDataset d, ILazyDataset... axes) {
 		if (d.getRank() == 0) {
 			return;
 		}
@@ -87,12 +87,12 @@ public class MetadataUtils {
 			d.clearMetadata(AxesMetadata.class);
 			AxesMetadata am = MetadataFactory.createMetadata(AxesMetadata.class, r);
 			for (int i = 0; i < r; i++) {
-				Dataset a = i < axes.length ? axes[i] : null;
+				ILazyDataset a = i < axes.length ? axes[i] : null;
 				if (a != null) {
 					try {
 						am.setAxis(i, a);
 					} catch (Exception e) {
-						System.err.println(Arrays.toString(a.getShapeRef()) + " cf " + Arrays.toString(d.getShape()));
+						logger.error("{} cf {}", Arrays.toString(a.getShape()), Arrays.toString(d.getShape()));
 					}
 				}
 				

@@ -40,6 +40,9 @@ public class SubtractFittedBackgroundModel extends AbstractOperationModel {
 	@OperationModelField(fieldPosition = 5, label = "Gaussian smoothing length parameter", enableif = "darkImageFile != null", expertOnly = true)
 	private double gaussianSmoothingLength = 10;
 
+	@OperationModelField(fieldPosition = 6, label = "Use dark image in 2D", hint = "Leave unchecked to use 1D", description = "Use 2D smoothed dark image rather than a summed 1D profile", enableif = "darkImageFile != null", expertOnly = true)
+	private boolean mode2D = true;
+
 	public static final int HISTOGRAM_MAX_BINS = 1024*1024;
 
 	/**
@@ -121,5 +124,18 @@ public class SubtractFittedBackgroundModel extends AbstractOperationModel {
 
 	public void setGaussianSmoothingLength(double gaussianSmoothingLength) {
 		firePropertyChange(GAUSSIAN_PROPERTY, this.gaussianSmoothingLength, this.gaussianSmoothingLength = gaussianSmoothingLength);
+	}
+
+	/**
+	 * @return true if a smoothed 2D dark image is to be used
+	 */
+	public boolean isMode2D() {
+		return mode2D;
+	}
+
+	public static final String MODE_2D_PROPERTY = "setMode2D";
+
+	public void setMode2D(boolean mode2D) {
+		firePropertyChange(MODE_2D_PROPERTY, this.mode2D, this.mode2D = mode2D);
 	}
 }

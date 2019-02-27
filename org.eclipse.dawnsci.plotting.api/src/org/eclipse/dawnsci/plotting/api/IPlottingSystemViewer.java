@@ -22,6 +22,7 @@ import org.eclipse.dawnsci.plotting.api.axis.IAxis;
 import org.eclipse.dawnsci.plotting.api.axis.IAxisSystem;
 import org.eclipse.dawnsci.plotting.api.axis.IClickListener;
 import org.eclipse.dawnsci.plotting.api.axis.IPositionListener;
+import org.eclipse.dawnsci.plotting.api.histogram.ImageServiceBean.ImageOrigin;
 import org.eclipse.dawnsci.plotting.api.region.IRegion;
 import org.eclipse.dawnsci.plotting.api.region.IRegion.RegionType;
 import org.eclipse.dawnsci.plotting.api.region.IRegionListener;
@@ -251,8 +252,12 @@ public interface IPlottingSystemViewer<T> extends IAxisSystem, IRegionSystem, IA
 
 	public void setRescale(boolean rescale);
 
-	
-	
+	/**
+	 * Set location of origin in plot
+	 * @param origin
+	 */
+	public void setOrigin(ImageOrigin origin);
+
 	public abstract class Stub<T> implements IPlottingSystemViewer<T> {
 
 
@@ -640,6 +645,10 @@ public interface IPlottingSystemViewer<T> extends IAxisSystem, IRegionSystem, IA
 		public void setRescale(boolean rescale) {
 			
 			
+		}
+
+		@Override
+		public void setOrigin(ImageOrigin origin) {
 		}
 
 		@Override

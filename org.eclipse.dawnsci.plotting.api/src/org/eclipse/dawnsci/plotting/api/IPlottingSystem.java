@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dawnsci.plotting.api.annotation.IAnnotationSystem;
 import org.eclipse.dawnsci.plotting.api.axis.IAxisSystem;
+import org.eclipse.dawnsci.plotting.api.histogram.ImageServiceBean.ImageOrigin;
 import org.eclipse.dawnsci.plotting.api.region.IRegionSystem;
 import org.eclipse.dawnsci.plotting.api.trace.ColorOption;
 import org.eclipse.dawnsci.plotting.api.trace.ITrace;
@@ -520,7 +521,13 @@ public interface IPlottingSystem<T> extends IAdaptable, ITraceSystem, IRegionSys
 	 * @param rescale
 	 */
 	public void setRescale(boolean rescale);
-	
+
+	/**
+	 * Set where the origin appears
+	 * @param origin
+	 */
+	public void setOrigin(ImageOrigin origin);
+
 	/**
 	 * May be called to ensure the widget doing the plotting has focus.
 	 */

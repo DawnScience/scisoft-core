@@ -168,6 +168,24 @@ public class ImageServiceBean {
 	public void setOrigin(ImageOrigin origin) {
 		this.origin = origin;
 	}
+
+
+	private boolean transposed = false;
+
+	/**
+	 * @return true if the image is transposed
+	 */
+	public boolean isTransposed() {
+		return transposed;
+	}
+
+	/**
+	 * Set whether the image should be transposed
+	 * @param transposed
+	 */
+	public void setTransposed(boolean transposed) {
+		this.transposed = transposed;
+	}
 	/**
 	 * The max valid value for the 
 	 * @return
@@ -398,22 +416,14 @@ public class ImageServiceBean {
     }
 
     /**
-     * Enumeration of image origin in anti-clockwise order
+     * Enumeration of image origin in anti-clockwise order. This order is required as
+     * the ordinal is used to rotate an image
      */
 	public enum ImageOrigin {
 		TOP_LEFT("Top left"),
 		BOTTOM_LEFT("Bottom left"),
 		BOTTOM_RIGHT("Bottom right"),
 		TOP_RIGHT("Top right");
-
-		public static List<ImageOrigin> origins;
-		static {
-			origins = new ArrayList<ImageOrigin>();
-			origins.add(TOP_LEFT);
-			origins.add(TOP_RIGHT);
-			origins.add(BOTTOM_LEFT);
-			origins.add(BOTTOM_RIGHT);
-		}
 
 		private String label;
 		public String getLabel() {
@@ -425,7 +435,7 @@ public class ImageServiceBean {
 		}
 
 		public static ImageOrigin forLabel(String label) {
-			for (ImageOrigin o : origins) {
+			for (ImageOrigin o : values()) {
 				if (o.label.equals(label)) return o;
 			}
 			return null;

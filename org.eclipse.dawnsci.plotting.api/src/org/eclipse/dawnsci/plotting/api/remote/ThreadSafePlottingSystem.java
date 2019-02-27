@@ -24,6 +24,7 @@ import org.eclipse.dawnsci.plotting.api.annotation.IAnnotation;
 import org.eclipse.dawnsci.plotting.api.axis.IAxis;
 import org.eclipse.dawnsci.plotting.api.axis.IClickListener;
 import org.eclipse.dawnsci.plotting.api.axis.IPositionListener;
+import org.eclipse.dawnsci.plotting.api.histogram.ImageServiceBean.ImageOrigin;
 import org.eclipse.dawnsci.plotting.api.region.IRegion;
 import org.eclipse.dawnsci.plotting.api.region.IRegion.RegionType;
 import org.eclipse.dawnsci.plotting.api.region.IRegionListener;
@@ -558,6 +559,11 @@ public class ThreadSafePlottingSystem<T> extends ThreadSafeObject implements IPl
 	@Override
 	public void setRescale(boolean rescale) {
 		call(getMethodName(Thread.currentThread().getStackTrace()), new Class[] { boolean.class }, rescale);
+	}
+
+	@Override
+	public void setOrigin(ImageOrigin origin) {
+		call(getMethodName(Thread.currentThread().getStackTrace()), new Class[] { ImageOrigin.class }, origin);
 	}
 
 	@Override

@@ -20,6 +20,15 @@ public class FunctionFittingModel extends AbstractOperationModel {
 	@OperationModelField(hint="Enter the path to the function file", file = FileType.EXISTING_FILE, label = "Function File")
 	private String filePath = "";
 	
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		firePropertyChange("filePath", this.filePath, this.filePath = filePath);
+	}
+
+	@OperationModelField(hint="Select the optimiser to use for data fitting", label = "Optimisation algorithm")
 	private FIT_ALGORITHMS optimiser = FIT_ALGORITHMS.APACHELEVENBERGMAQUARDT;
 
 	public FIT_ALGORITHMS getOptimiser() {
@@ -28,14 +37,6 @@ public class FunctionFittingModel extends AbstractOperationModel {
 
 	public void setOptimiser(FIT_ALGORITHMS optimiser) {
 		firePropertyChange("optimiser", this.optimiser, this.optimiser = optimiser);
-	}
-
-	public String getFilePath() {
-		return filePath;
-	}
-
-	public void setFilePath(String filePath) {
-		firePropertyChange("filePath", this.filePath, this.filePath = filePath);
 	}
 	
 }

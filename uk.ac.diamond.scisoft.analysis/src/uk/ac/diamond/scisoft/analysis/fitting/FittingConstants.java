@@ -59,5 +59,10 @@ public class FittingConstants {
 		public static FIT_ALGORITHMS fromId(int id) {
 			return idMap.get(id);
 		}
+		
+		@Override
+		public String toString() {
+			return NAME;
+		}
 	}
 }

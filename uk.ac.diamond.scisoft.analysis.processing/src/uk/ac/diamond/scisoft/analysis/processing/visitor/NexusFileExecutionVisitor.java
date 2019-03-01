@@ -83,8 +83,8 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 	private static final String FINISHED = "finished";
 	public static final String DATA_NAME = "data";
 
-	private Map<IOperation, AtomicBoolean> firstNotifyMap;
-	private Map<IOperation, Integer> positionMap;
+	private Map<IOperation<?, ?>, AtomicBoolean> firstNotifyMap;
+	private Map<IOperation<?, ?>, Integer> positionMap;
 	private AtomicBoolean firstNonNullExecution = new AtomicBoolean(true);
 	private AtomicBoolean nullReturnSWMRMode = new AtomicBoolean(false);
 
@@ -104,8 +104,8 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 	
 	public NexusFileExecutionVisitor(String filePath, boolean swmr, String originalFilePath) {
 		this.filePath = filePath;
-		firstNotifyMap = new ConcurrentHashMap<IOperation, AtomicBoolean>();
-		positionMap = new ConcurrentHashMap<IOperation, Integer>();
+		firstNotifyMap = new ConcurrentHashMap<>();
+		positionMap = new ConcurrentHashMap<>();
 		this.swmring = swmr;
 		this.originalFilePath = originalFilePath;
 	}
@@ -562,7 +562,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 
 				int rank = axes.length;
 
-				for (int i = 0; i< rank; i++) {
+				for (int i = 0; i < rank; i++) {
 					ILazyDataset[] axis = am.getAxis(i);
 					if (axis == null) {
 						continue;
@@ -606,9 +606,11 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 								}
 								DataNode dn = nexusFile.createData(gn, axDataset);
 								dn.addAttribute(TreeFactory.createAttribute(NexusConstants.DATA_AXIS, String.valueOf(i + 1))); // FIXME needed???
+								Dataset indices = axDataset.getRank() <= 1 ? DatasetFactory.createFromObject(i) :
+									DatasetFactory.createRange(IntegerDataset.class, axDataset.getRank());
 								nexusFile.addAttribute(nexusFile.getGroup(groupName, true),
 										TreeFactory.createAttribute(names[j] + NexusConstants.DATA_INDICES_SUFFIX,
-												DatasetFactory.createFromObject(i)));
+												indices));
 								UnitMetadata unit = axDataset.getFirstMetadata(UnitMetadata.class);
 								if (unit != null) {
 									nexusFile.addAttribute(dn,
@@ -833,8 +835,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 	}
 
 	private void appendSingleValueAxis(Dataset dataset, String group, Slice[] oSlice, int[] oShape, NexusFile file, int axisDim) throws Exception{
-		dataset = dataset.getSliceView();
-		dataset.setShape(1);
+		dataset = dataset.reshape(1);
 		DataNode dn = null;
 		try {
 			dn = file.getData(group+Node.SEPARATOR+dataset.getName());

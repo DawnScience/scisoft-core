@@ -26,6 +26,7 @@ import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
+import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
@@ -276,7 +277,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 				summaryData.add(a);
 			}
 
-			processAccumulatedDataOnLastSlice(original, si.getTotalSlices(), bins, h);
+			processAccumulatedDataOnLastSlice(ssm.getFilePath(), original, si.getTotalSlices(), bins, h);
 		}
 
 		OperationDataForDisplay odd;
@@ -293,7 +294,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		return odd;
 	}
 
-	protected void processAccumulatedDataOnLastSlice(Dataset original, int smax, IntegerDataset bins, Dataset h) {
+	protected void processAccumulatedDataOnLastSlice(String filePath, Dataset original, int smax, IntegerDataset bins, Dataset h) {
 		int[][][] allSingle = null;
 		int[][][] allMultiple = null;
 		int bin = 0;
@@ -408,7 +409,16 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			}
 
 			List<Double> shift = new ArrayList<>();
-			correlateSpectra("", r, reg, shift, ax, sArray);
+			Dataset cSpectrum = correlateSpectra("", r, reg, shift, ax, sArray);
+			String normPath = model.getNormalizationPath();
+			if (normPath != null) {
+				Dataset nSpectrum = normalizeSpectrum(filePath, normPath, cSpectrum);
+				if (nSpectrum != null) {
+					nSpectrum.setName("normalized_correlated_spectrum_" + r);
+					MetadataUtils.setAxes(nSpectrum, ax);
+					summaryData.add(nSpectrum);
+				}
+			}
 
 			if (bins == null) {
 				continue; // no photon events!!!
@@ -489,6 +499,24 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		}
 	}
 
+	protected Dataset normalizeSpectrum(String filePath, String dataPath, Dataset spectrum) {
+		try {
+			Tree t = LocalServiceManager.getLoaderService().getData(filePath, null).getTree();
+			NodeLink l = t.findNodeLink(dataPath);
+			if (l.isDestinationData()) {
+				Dataset n = DatasetUtils.sliceAndConvertLazyDataset(((DataNode) l.getDestination()).getDataset());
+				if (n == null) {
+					throw new OperationException(this, "Could not read normalization dataset at " + dataPath + " in " + filePath);
+				}
+				return Maths.divide(spectrum, n.sum(true));
+			}
+		} catch (Exception e) {
+			log.appendFailure("Could not read normalization dataset %s from file %s: %s", dataPath, filePath, e);
+		}
+
+		return null;
+	}
+
 	// make summary data for spectra and sum up for spectrum
 	private void summarizePhotonSpectra(String prefix, int[][][] allPhotonCounts, int r, Dataset energies) {
 		prefix = "correlated_" + prefix;
@@ -513,7 +541,8 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		correlateSpectra(prefix, r, reg, shift, energies, sArray);
 	}
 
-	private void correlateSpectra(String prefix, int r, RegisterNoisyData1D reg, List<Double> shift, Dataset energies, Dataset[] sArray) {
+	private Dataset correlateSpectra(String prefix, int r, RegisterNoisyData1D reg, List<Double> shift, Dataset energies, Dataset[] sArray) {
+
 		List<Dataset> results;
 		try {
 			results = reg.value(sArray);
@@ -540,6 +569,8 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			shift.add(results.get(2*i).getDouble());
 		}
 		summaryData.add(ProcessingUtils.createNamedDataset((Serializable) shift, prefix + "shift_" + r));
+
+		return sp;
 	}
 
 	// bins photons according to their locations

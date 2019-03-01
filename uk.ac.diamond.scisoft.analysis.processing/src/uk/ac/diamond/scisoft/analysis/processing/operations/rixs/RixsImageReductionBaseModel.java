@@ -53,11 +53,14 @@ public class RixsImageReductionBaseModel extends RixsBaseModel {
 	@OperationModelField(label = "Spectrum correlation option", description = "Photon correlation options", hint = "All pairs of spectra; consecutive pairs only; use intensity shifts", expertOnly = true)
 	private CORRELATE_PHOTON correlateOption = CORRELATE_PHOTON.USE_INTENSITY_SHIFTS; // in 2D image
 
-	@OperationModelField(label = "Correlation energy range", description = "Energy range to use correlate spectra", hint = "Start and end energies", rangevalue = RangeType.XRANGE, expertOnly = true)
+	@OperationModelField(label = "Correlation energy range", description = "Energy range to use correlate spectra", hint = "Start and end energies (separated by a comma)", rangevalue = RangeType.XRANGE, expertOnly = true)
 	private double[] energyRange = null;
 
 	@OperationModelField(label = "Normalize spectra by region size", description = "If true, then divide summed spectra by number of constituent spectra", expertOnly = true)
 	private boolean normalizeByRegionSize = true;
+
+	@OperationModelField(label = "Normalization dataset", description = "Use named dataset to normalize spectra", expertOnly = true, dataset = "currentFilePath")
+	private String normalizationPath = null;
 
 	@OperationModelField(label = "Selection of frames to use", description = 
 			"A comma-separated (or semicolon-separated) list of sub-ranges.\n"
@@ -217,7 +220,18 @@ public class RixsImageReductionBaseModel extends RixsBaseModel {
 	}
 
 	public void setNormalizeByRegionSize(boolean normalizeByRegionSize) {
-		firePropertyChange("setNnormalizeByRegionSize", this.normalizeByRegionSize, this.normalizeByRegionSize = normalizeByRegionSize);
+		firePropertyChange("setNormalizeByRegionSize", this.normalizeByRegionSize, this.normalizeByRegionSize = normalizeByRegionSize);
+	}
+
+	/**
+	 * @return path to normalization dataset, can be null
+	 */
+	public String getNormalizationPath() {
+		return normalizationPath;
+	}
+
+	public void setNormalizationPath(String normalizationPath) {
+		firePropertyChange("setNormalizationPath", this.normalizationPath, this.normalizationPath = normalizationPath);
 	}
 
 	/**

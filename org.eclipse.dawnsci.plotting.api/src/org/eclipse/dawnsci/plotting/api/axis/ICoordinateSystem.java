@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.plotting.api.axis;
 
+import org.eclipse.dawnsci.plotting.api.trace.IImageTrace;
 
 /**
  * Interface for converting between index value and coordinate in plotting system
@@ -163,4 +164,11 @@ public interface ICoordinateSystem {
 	 */
 	public boolean isDisposed();
 
+	/**
+	 * Update with new info
+	 * @param imageTrace
+	 * @param x
+	 * @param y
+	 */
+	public void update(IImageTrace imageTrace, IAxis x, IAxis y);
 }

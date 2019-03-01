@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.dawnsci.analysis.api.metadata.MetadataUtils;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -53,7 +54,10 @@ public abstract class AbstractOperation<T extends IOperationModel, D extends Ope
 	@Override
 	public D execute(IDataset slice, IMonitor monitor) throws OperationException {
 		
-		IDataset view = slice.getSliceView().squeeze();
+		IDataset view = slice.getSliceView();
+		MetadataUtils.sliceAxesMetadata(view);
+		
+		view.squeeze();
 		
 		//check mandatory metadata
 		SliceFromSeriesMetadata ssm = getSliceSeriesMetadata(view);

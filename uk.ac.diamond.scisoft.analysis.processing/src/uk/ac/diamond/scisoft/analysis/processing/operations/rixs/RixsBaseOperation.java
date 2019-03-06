@@ -187,7 +187,6 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		return roi;
 	}
 
-
 	/**
 	 * Override to reset state of processing object. This is called for the first slice of data only.
 	 * @param original
@@ -219,6 +218,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		Dataset spectrum;
 		if (Double.isFinite(slope)) {
 			spectrum = sumImageAlongSlope(in, slope, clip);
+			Maths.clip(spectrum, spectrum, 0, Double.POSITIVE_INFINITY);
 		} else {
 			int rows = in.getShapeRef()[0];
 			spectrum = DatasetFactory.zeros(rows).fill(Double.NaN);

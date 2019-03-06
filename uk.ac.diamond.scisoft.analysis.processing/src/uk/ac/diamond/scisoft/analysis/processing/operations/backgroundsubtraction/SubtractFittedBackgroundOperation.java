@@ -223,31 +223,39 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 		if (smoothedDarkData != null) {
 			h = null;
-			// fit dark to current??? (scale and offset)
+			// fit dark to current with offset
 			Dataset subtractImage = null;
 
 			if (model.isMode2D()) {
-				// TODO fit shadow region???
-				subtractImage = DatasetUtils.select(Comparisons.lessThan(in, smoothedDarkData), in, smoothedDarkData);
-				displayData.add(smoothedDarkData);
+				double offset = findDarkDataOffset(in, smoothedDarkData);
+				auxData.add(ProcessingUtils.createNamedDataset(offset, "dark_offset"));
+				subtractImage = Maths.add(smoothedDarkData, offset);
+
+				Dataset darkFit = subtractImage.sum(1, true).getSliceView(new Slice(1, -1));
+				auxData.add(ProcessingUtils.createNamedDataset(darkFit, "profile_fit_dark"));
+				Dataset profile = in.sum(1, true).getSliceView(new Slice(1, -1));;
+				cleanUpProfile(profile);
+				profile.setName("profile");
+				displayData.add(profile);
+
+				Dataset diff = Maths.subtract(profile, darkFit);
+				auxData.add(ProcessingUtils.createNamedDataset(diff, "profile_diff"));
+				displayData.add(darkFit);
 			} else {
 				Dataset profile = in.hasFloatingPointElements() ? in.sum(1, true) :
 					in.cast(LongDataset.class).sum(1, true); // avoid integer overflows
-				if (profile.getDouble() == 0) {
-					profile.set(0.5*(profile.getDouble(1) + profile.getDouble(2)), 0); // ensure 1st entry is non-zero
-				}
-	
+				cleanUpProfile(profile);
 				profile.setName("profile");
 				auxData.add(profile);
-				Dataset darkFit = fitDarkProfile(profile);
-	
+
+				double offset = findDarkDataOffset(profile.reshape(-1), smoothedDarkData.reshape(-1));
+				auxData.add(ProcessingUtils.createNamedDataset(offset, "dark_offset"));
+				Dataset darkFit = Maths.add(smoothedDarkData, offset);
+
 				auxData.add(ProcessingUtils.createNamedDataset(darkFit, "profile_fit_dark"));
 				Dataset diff = Maths.subtract(profile, darkFit);
 				auxData.add(ProcessingUtils.createNamedDataset(diff, "profile_diff"));
-//				displayData.add(diff);
-				Dataset scaledFit = Maths.multiply(darkFit.reshape(darkFit.getSize(), 1), 1./in.getShapeRef()[1]);
-
-				subtractImage = DatasetUtils.select(Comparisons.lessThan(in, scaledFit), in, scaledFit);
+				subtractImage = Maths.multiply(darkFit.reshape(darkFit.getSize(), 1), 1./in.getShapeRef()[1]);
 
 				displayData.add(darkData);
 				displayData.add(smoothedDarkData);
@@ -276,20 +284,27 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		return DatasetUtils.select(Comparisons.lessThan(in, thr), in, thr);
 	}
 
+	private void cleanUpProfile(Dataset profile) {
+		if (profile.getDouble() == 0) {
+			profile.set(0.5*(profile.getDouble(1) + profile.getDouble(2)), 0); // ensure 1st entry is non-zero
+		}
+	}
+
 	private static final int CLIP_END = -10; // clip end off
 
-	private Dataset fitDarkProfile(Dataset in) {
-		in = in.reshape(in.getSize());
-
-//		ScaleAndOffset so = new ScaleAndOffset(smoothedDarkProfile);
-//		so.setParameterValues(1, 0);
-//		double res = fitFunction(so, DatasetFactory.zeros(in.getShapeRef()), in);
-//		System.err.printf("Scale and offset results: res=%g\n%s\n", res, so);
-//		return Maths.multiply(smoothedDarkProfile, so.getParameterValue(0)).iadd(so.getParameterValue(1));
-
+	private double findDarkDataOffset(Dataset in, Dataset smooth) {
 		// find extent of shadow region on right by looking for trough
-		Dataset smooth = smoothedDarkData.reshape(smoothedDarkData.getSize());
-		Dataset d = Maths.derivative(DatasetFactory.createRange(smooth.getSize()), smooth, 1);
+		Dataset y;
+		if (smooth.getRank() == 2) {
+			y = smooth.hasFloatingPointElements() ? smooth.sum(1, true) :
+				smooth.cast(LongDataset.class).sum(1, true); // avoid integer overflows
+			y.squeezeEnds();
+			cleanUpProfile(y);
+		} else {
+			y = smooth;
+		}
+
+		Dataset d = Maths.derivative(DatasetFactory.createRange(y.getSize()), y, 1);
 		int r = d.argMin(true);
 		double dmin = d.getDouble(r);
 		List<Double> z = DatasetUtils.crossings(d, dmin/2);
@@ -302,9 +317,9 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 		Offset so = new Offset(smooth);
 		so.setParameterValues(0);
-		double res = fitFunction("Exception in dark profile fit", so, DatasetFactory.zeros(in.getShapeRef()), in);
+		double res = fitFunction("Exception in dark data fit", so, DatasetFactory.zeros(in.getShapeRef()), in);
 		System.err.printf("Offset results: res=%g\n%s\n", res, so);
-		return Maths.add(smoothedDarkData, so.getParameterValue(0));
+		return so.getParameterValue(0);
 	}
 
 	class Offset extends AFunction {

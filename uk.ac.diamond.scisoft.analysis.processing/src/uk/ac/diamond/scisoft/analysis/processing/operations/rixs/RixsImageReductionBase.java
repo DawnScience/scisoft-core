@@ -227,6 +227,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		Dataset eSum = null;
 		if (od != null) {
 			// find photon events in entire image
+			Maths.clip(original, original, 0, Double.POSITIVE_INFINITY);
 			events = ImageUtils.findWindowedPeaks(original, model.getWindow(), countsPerPhoton * model.getLowThreshold(), countsPerPhoton * model.getHighThreshold());
 			eSum = events.get(0);
 		} else {
@@ -277,7 +278,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 				summaryData.add(a);
 			}
 
-			processAccumulatedDataOnLastSlice(ssm.getFilePath(), original, si.getTotalSlices(), bins, h);
+			processAccumulatedDataOnLastSlice(ssm.getFilePath(), original.getShapeRef(), si.getTotalSlices(), bins, h);
 		}
 
 		OperationDataForDisplay odd;
@@ -294,7 +295,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		return odd;
 	}
 
-	protected void processAccumulatedDataOnLastSlice(String filePath, Dataset original, int smax, IntegerDataset bins, Dataset h) {
+	protected void processAccumulatedDataOnLastSlice(String filePath, int[] shape, int smax, IntegerDataset bins, Dataset h) {
 		int[][][] allSingle = null;
 		int[][][] allMultiple = null;
 		int bin = 0;
@@ -317,7 +318,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			summaryData.add(ProcessingUtils.createNamedDataset(multiple, "multiple_photon_minimum"));
 
 			bin = model.getBins();
-			bmax = bin * original.getShapeRef()[model.getEnergyIndex()];
+			bmax = bin * shape[model.getEnergyIndex()];
 
 			// per image, separate by sum
 			allSingle = new int[roiMax][smax][];

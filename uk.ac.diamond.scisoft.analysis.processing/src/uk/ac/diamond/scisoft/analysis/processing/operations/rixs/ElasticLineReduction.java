@@ -331,13 +331,14 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		}
 
 		if (model.getSlopeOverride() != 0) {
-			findIntercept(r, original, in);
+			findIntercept(r, in);
 		} else {
 			int delta = model.getDelta();
+			int[] shape = original.getShape();
 			if (delta != 0) {
-				extractPointsAndFitLine(r, original, in, delta, true);
+				extractPointsAndFitLine(r, shape, in, delta, true);
 			} else {
-				minimizeFWHMForSpectrum(r, original, in);
+				minimizeFWHMForSpectrum(r, shape, in);
 			}
 		}
 		StraightLine line = getStraightLine(r);
@@ -345,7 +346,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		return original;
 	}
 
-	private void findIntercept(int r, IDataset original, Dataset in) {
+	private void findIntercept(int r, Dataset in) {
 		Add peak = new Add();
 		peak.addFunction(new Gaussian());
 		peak.addFunction(new Offset());
@@ -363,7 +364,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		residual = 0;
 	}
 
-	private void extractPointsAndFitLine(int r, IDataset original, Dataset in, int delta, boolean display) {
+	private void extractPointsAndFitLine(int r, int[] shape, Dataset in, int delta, boolean display) {
 		Dataset[] coords = null;
 
 		try {
@@ -381,7 +382,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			coords[1].iadd(offset[1]);
 
 			// fit, prune and refit
-			int ymax = original.getShape()[model.getEnergyIndex()];
+			int ymax = shape[model.getEnergyIndex()];
 			BooleanDataset mask;
 			mask = fitStraightLine(getStraightLine(r), ymax, minPoints, model.getMaxDev(), coords[0], coords[1]);
 			if (display && r == 0) {
@@ -409,7 +410,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 	private static boolean USE_EVAL = false;
 
-	private void minimizeFWHMForSpectrum(int r, IDataset original, Dataset in) {
+	private void minimizeFWHMForSpectrum(int r, int[] shape, Dataset in) {
 		Add peak = new Add();
 		peak.addFunction(new Gaussian());
 		peak.addFunction(new Offset());
@@ -438,7 +439,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		if (USE_EVAL) {
 			setSlopeFitParametersByEval(r, peak, opt, factor, sin, sx, slope);
 		} else {
-			setSlopeFitParametersByFittingLine(r, peak, opt, factor, sin, sx, slope, original, sin);
+			setSlopeFitParametersByFittingLine(r, peak, opt, factor, sin, sx, slope, shape, sin);
 		}
 
 		log.append("Initial parameter settings: %g [%g, %g]", slope.getValue(), slope.getLowerLimit(), slope.getUpperLimit());
@@ -531,8 +532,8 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	}
 
 	private void setSlopeFitParametersByFittingLine(int r, Add peak, ApacheOptimizer opt, double factor, Dataset sin, Dataset sx,
-			IParameter slope, IDataset original, Dataset in) {
-		extractPointsAndFitLine(r, original, in, 1, false);
+			IParameter slope, int[] shape, Dataset in) {
+		extractPointsAndFitLine(r, shape, in, 1, false);
 		StraightLine line = getStraightLine(r);
 
 		double s = line.getParameterValue(STRAIGHT_LINE_M);
@@ -1126,7 +1127,6 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			// width of base line noise PDF
 			double bd = SubtractFittedBackgroundOperation.findFWHMPostMax(hs.get(1).getSliceView(new Slice(-1)), hs.get(0), 0);
 			p.setValue(base);
-//			p.setLimits(-Double.MAX_VALUE, Double.MAX_VALUE);
 			p.setLimits(-Double.MAX_VALUE, base + bd);
 		}
 	}

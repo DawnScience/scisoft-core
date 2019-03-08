@@ -272,6 +272,9 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			if (fNNE){
 				GroupNode group = nexusFile.getGroup(results,false);
 				nexusFile.addAttribute(group, TreeFactory.createAttribute(NexusConstants.DATA_SIGNAL,integrated.getName()));
+				nexusFile.addAttribute(Tree.ROOT, TreeFactory.createAttribute(NexusConstants.DEFAULT,ENTRY));
+				nexusFile.addAttribute(Tree.ROOT + Node.SEPARATOR + ENTRY, TreeFactory.createAttribute(NexusConstants.DEFAULT,RESULTS_GROUP));
+				
 				if (swmring) {
 					nexusFile.activateSwmrMode();
 					logger.debug("SWMR-ING");

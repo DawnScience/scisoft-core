@@ -18,38 +18,49 @@ import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 
 // @author Tim Snow
 
+// Implements the self-absorption equation given in https://arxiv.org/pdf/1306.0637.pdf (Equation 29)
+
 
 public class SelfAbsorptionCorrectionModel extends AbstractOperationModel {
 
 
 	// First an enum to determine what geometry our input data is
 	enum GeometryType {
-		PLATE(1),
-		CYLINDER(2);
+		PLATE("Plate");
 		
-		private final int geometry;
+		private final String name;
 		
-		GeometryType(int geometry) {
-			this.geometry = geometry;
-		}
-		
-		public int getGeometryType() {
-			return this.geometry;
+		private GeometryType(String typeName) {
+			name = typeName;
 		}
 		
 		@Override
 		public String toString() {
-			switch (this.geometry) {
-				case 1:		return String.format("Plate geometry");
-				case 2:		return String.format(" ");
-				default:	return String.format("Error!");
-			}
+			return name;
 		}
 	}
-
-
+	
+	
+	// Next, an enum to determine whether we have a transmission factor (lab sources) or I0 and It values (synchrotrons)
+	enum CorrectionType {
+		INTENSITIES("Diode intensities"),
+		TRANSMISSION("Transmission factor");
+		
+		private final String name;
+		
+		private CorrectionType(String typeName) {
+			name = typeName;
+		}
+		
+		@Override
+		public String toString() {
+			return name;
+		}
+	}
+	
+	
 	// Ask the user what the sample geometry is as this will affect the mathematics required for this correction
-	@OperationModelField(label = "Sample geometry type", hint = "Plate or cylindrical sample type", fieldPosition = 1)
+	@OperationModelField(label = "Sample geometry type", hint = "Plate or cylindrical sample type", fieldPosition = 1, visible = false)
 	private GeometryType geometry = GeometryType.PLATE;
 
 	// Now the getters and setters
@@ -62,23 +73,22 @@ public class SelfAbsorptionCorrectionModel extends AbstractOperationModel {
 	}
 
 
-	// Get the internal filepath of the sample thickness
-	@OperationModelField(dataset = "filePath", label = "Thickness path", fieldPosition = 2)
-	private String thicknessPath = "/entry1/sample/thickness";
+	// Ask the user what values they have to correct the data against
+	@OperationModelField(label = "Correction value format", hint = "Correct for self-absorption using an I0 and It value, or just a transmssion factor value", fieldPosition = 3)
+	private CorrectionType correctionType = CorrectionType.INTENSITIES;
+		
+	// Now the getters and setters
+	public CorrectionType getCorrectionType() {
+		return correctionType;
+	}
+
+	public void setCorrectionType(CorrectionType correctionType) {
+		firePropertyChange("CorrectionType", this.correctionType, this.correctionType = correctionType);
+	}
+
 	
-	// Set up the getter...
-	public String getThicknessPath() {
-		return thicknessPath;
-	}
-
-	// and setter.
-	public void setThicknessPath(String thicknessPath) {
-		firePropertyChange("thicknessPath", this.thicknessPath, this.thicknessPath = thicknessPath);
-	}
-
-
 	// Get the internal filepath of the incoming intensity
-	@OperationModelField(dataset = "filePath", label = "I0 readout path", fieldPosition = 3)
+	@OperationModelField(dataset = "filePath", label = "I0 NeXus path", fieldPosition = 4, enableif = "correctionType == 'INTENSITIES'")
 	private String i0Path = "/entry1/I0/data";
 	
 	// Set up the getter...
@@ -93,7 +103,7 @@ public class SelfAbsorptionCorrectionModel extends AbstractOperationModel {
 
 
 	// Get the internal filepath of the transmitted intensity
-	@OperationModelField(dataset = "filePath", label = "It readout path", fieldPosition = 4)
+	@OperationModelField(dataset = "filePath", label = "It NeXus path", fieldPosition = 5, enableif = "correctionType == 'INTENSITIES'")
 	private String itPath = "/entry1/It/data";
 	
 	// Set up the getter...
@@ -104,5 +114,20 @@ public class SelfAbsorptionCorrectionModel extends AbstractOperationModel {
 	// and setter.
 	public void setItPath(String itPath) {
 		firePropertyChange("itPath", this.itPath, this.itPath = itPath);
+	}
+	
+	
+	// Get the internal filepath of the incoming intensity
+	@OperationModelField(dataset = "filePath", label = "Transmission factor NeXus path", fieldPosition = 6, enableif = "correctionType == 'TRANSMISSION'")
+	private String transmissionPath = "/entry1/transmission/data";
+	
+	// Set up the getter...
+	public String getTransmissionPath() {
+		return transmissionPath;
+	}
+
+	// and setter.
+	public void setTransmissionPath(String transmissionPath) {
+		firePropertyChange("transmissionPath", this.transmissionPath, this.transmissionPath = transmissionPath);
 	}
 }

@@ -13,11 +13,10 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.saxs;
 
 // Imports from org.eclipse.january
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IndexIterator;
-import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 
@@ -40,6 +39,8 @@ import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationUtils;
 
 
 // @author Tim Snow
+
+//Implements the self-absorption equation given in https://arxiv.org/pdf/1306.0637.pdf (Equation 29)
 
 
 public class SelfAbsorptionCorrectionOperation extends AbstractOperation<SelfAbsorptionCorrectionModel, OperationData>{
@@ -107,24 +108,28 @@ public class SelfAbsorptionCorrectionOperation extends AbstractOperation<SelfAbs
 		SliceFromSeriesMetadata sliceMetadata = getSliceSeriesMetadata(inputDataset);
 		String filePath = sliceMetadata.getFilePath();
 		
-		ILazyDataset lazyI0 = ProcessingUtils.getLazyDataset(this, filePath, model.getI0Path());
-		ILazyDataset lazyIT = ProcessingUtils.getLazyDataset(this, filePath, model.getItPath());
-		ILazyDataset lazyThickness = ProcessingUtils.getDataset(this, filePath, model.getThicknessPath());
+		IDataset transmissionFactor = null;
 		
-		IDataset i0, iT, sampleThickness = null;
-		
-		try {
-			// Next up, for any one given frame we should only have one value for these so let's extract these values
-			i0 = sliceMetadata.getMatchingSlice(lazyI0);
-			iT = sliceMetadata.getMatchingSlice(lazyIT);
-			sampleThickness = sliceMetadata.getMatchingSlice(lazyThickness);
-		} catch (Exception e) {
-			throw new OperationException(this, e);
+		switch (model.getCorrectionType()) {
+			case INTENSITIES:	try {
+									IDataset i0 = sliceMetadata.getMatchingSlice(ProcessingUtils.getDataset(this, filePath, model.getI0Path()));
+									IDataset iT = sliceMetadata.getMatchingSlice(ProcessingUtils.getDataset(this, filePath, model.getItPath()));
+									transmissionFactor = Maths.divide(iT, i0);
+								} catch (Exception e) {
+										throw new OperationException(this, e);
+								}
+								
+								break;
+								
+			case TRANSMISSION:	try {
+									transmissionFactor = sliceMetadata.getMatchingSlice(ProcessingUtils.getDataset(this, filePath, model.getTransmissionPath()));
+								} catch (Exception e) {
+										throw new OperationException(this, e);
+								}
+								break;
+								
+			default: logger.error("Performing analysis using the input format requested is not implemented");
 		}
-
-		// Do some further mathematics
-		Dataset linearAbsoprtionCoefficient = Maths.log(Maths.divide(i0, iT));
-		Dataset absorptionFactor = Maths.multiply(linearAbsoprtionCoefficient, sampleThickness);
 		
 		// Get out input dataset in a useful format
 		Dataset inputData = DatasetUtils.cast(DoubleDataset.class, DatasetUtils.convertToDataset(inputDataset));
@@ -133,9 +138,7 @@ public class SelfAbsorptionCorrectionOperation extends AbstractOperation<SelfAbs
 		Dataset outputDataset = null;
 		
 		if (model.getGeometry() == GeometryType.PLATE) {
-			outputDataset = plateCorrection(inputData, absorptionFactor);
-		} else if (model.getGeometry() == GeometryType.CYLINDER) {
-			outputDataset = cylinderCorrection(inputData, absorptionFactor);
+			outputDataset = plateCorrection(inputData, DatasetUtils.cast(DoubleDataset.class, DatasetUtils.convertToDataset(transmissionFactor)));
 		} else {
 			logger.error("The geometry selected does not have the required mathematics implemented");
 		}
@@ -147,25 +150,18 @@ public class SelfAbsorptionCorrectionOperation extends AbstractOperation<SelfAbs
 	}
 
 
-	private Dataset plateCorrection(Dataset inputData, Dataset absorptionFactor) {
+	private Dataset plateCorrection(Dataset inputData, Dataset transmissionFactor) {
 		IndexIterator loopIterator = inputData.getIterator();
-		double absFac = absorptionFactor.getDouble();
+		double transFac = transmissionFactor.getDouble();
 		
 		while (loopIterator.hasNext()) {
 			int index = loopIterator.index;
-			Double topFraction = -Math.exp(-absFac) + Math.exp(-absFac / Math.cos(this.twoThetaArray.getElementDoubleAbs(index)));
-			Double bottomFraction = absFac - (absFac / Math.cos(this.twoThetaArray.getElementDoubleAbs(index)));
-			Double correctedValue = inputData.getElementDoubleAbs(index) * Math.exp(absFac) * (topFraction / bottomFraction);
+			double inverseCosTwoTheta = 1 / Math.cos(this.twoThetaArray.getElementDoubleAbs(index));
+			double fractionNumerator = 1 - transFac * (inverseCosTwoTheta - 1);
+			double fractionDenominator = Math.log(transFac) - (inverseCosTwoTheta * Math.log(transFac));
+			double correctedValue = fractionNumerator / fractionDenominator;
 			inputData.setObjectAbs(index, correctedValue);
 		}
-		
-		return inputData;
-	}
-
-
-	private Dataset cylinderCorrection(Dataset inputData, Dataset absorptionFactor) {
-		// First let's unwrap the thickness information from its dataset
-		
 		
 		return inputData;
 	}

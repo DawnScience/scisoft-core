@@ -73,7 +73,9 @@ public interface IPlottingSystem<T> extends IAdaptable, ITraceSystem, IRegionSys
 
 	public final static String RMI_PREFIX = "PlottingSystem:"; // Hard coded into jyplottingsystem.py as well.
 	public final static String RESCALE_ID = "org.dawb.common.ui.plot.rescale";
-	
+
+	public final static String PREFERENCE_STORE = "org.dawnsci.plotting";
+
 	public static final int NORMAL_CURSOR = 0;
 	public static final int CROSS_CURSOR  = 1;
 	public static final int WAIT_CURSOR   = 2;

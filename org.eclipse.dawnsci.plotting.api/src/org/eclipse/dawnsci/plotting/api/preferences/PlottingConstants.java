@@ -107,4 +107,8 @@ public class PlottingConstants extends BasePlottingConstants {
 	 */
 	public static final String ALWAYS_DOWNSAMPLE_PROFILES = "org.dawnsci.plotting.tools.profile.alwaysDownsample";
 
+	/**
+	 * Property to store whether to show value on image pixels when zoomed in
+	 */
+	public static final String SHOW_VALUE_LABELS = "org.dawnsci.plotting.showValueLabels";
 }

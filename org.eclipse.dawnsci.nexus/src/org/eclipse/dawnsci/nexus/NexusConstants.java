@@ -85,6 +85,7 @@ public class NexusConstants {
 	public static final String USER = "NXuser";
 	public static final String VELOCITYSELECTOR = "NXvelocity_selector";
 	public static final String XRAYLENS = "NXxraylens";
+	public static final String DEFAULT = "default";
 
 	/**
 	 * NXdata default data name

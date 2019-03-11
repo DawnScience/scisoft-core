@@ -156,6 +156,30 @@ public interface IVectorTrace extends ITrace {
 	 * @return
 	 */
 	public void setArrowHistogram(ArrowHistogram arrowHistogram);
+	
+	/**
+	 * Get the percentage threshold for clipping outliers in the magnitude
+	 * 
+	 * @return percentages
+	 */
+    public double[] getPercentageThreshold();
+    
+    /**
+	 * Set the percentage threshold for clipping outliers in the magnitude
+	 * 
+	 */
+	public void setPercentageThreshold(double[] percentageThreshold);
+	
+	/**
+	 * Is direction data in radians
+	 * @return
+	 */
+	public boolean isRadians();
 
+	/**
+	 * Set whether the direction data is radians (false for degrees)
+	 * @param isRadians
+	 */
+	public void setRadians(boolean isRadians);
 
 }

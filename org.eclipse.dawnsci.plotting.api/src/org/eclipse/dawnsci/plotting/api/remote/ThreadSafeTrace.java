@@ -787,5 +787,27 @@ class ThreadSafeTrace extends ThreadSafeObject implements ITrace,
 	public boolean hasTrueAxes() {
 		return (boolean)call(getMethodName(Thread.currentThread().getStackTrace()));
 	}
+
+	@Override
+	public double[] getPercentageThreshold() {
+		return (double[])call(getMethodName(Thread.currentThread().getStackTrace()));
+	}
+
+	@Override
+	public void setPercentageThreshold(double[] percentageThreshold) {
+		call(getMethodName(Thread.currentThread().getStackTrace()), percentageThreshold);
+		
+	}
+
+	@Override
+	public boolean isRadians() {
+		return (boolean)call(getMethodName(Thread.currentThread().getStackTrace()));
+	}
+
+	@Override
+	public void setRadians(boolean isRadians) {
+		call(getMethodName(Thread.currentThread().getStackTrace()), isRadians);
+		
+	}
 	
 }

@@ -11,9 +11,7 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.plotting.api.trace;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Arrays;
 
 import org.eclipse.dawnsci.plotting.api.axis.IAxis;
 import org.eclipse.january.dataset.IDataset;
@@ -32,131 +30,103 @@ public interface ILineTrace extends ITrace {
 	public enum TraceType {
 		/** Solid Line */
 		SOLID_LINE("Solid Line", true),
-		
+
 		/** Dash Line */
 		DASH_LINE("Dash Line", true),
-		
-		/** Only draw point whose style is defined by pointStyle. 
+
+		/** Only draw point whose style is defined by pointStyle.
 		 * Its size is defined by pointSize. */
 		POINT("Point", true),
-		
+
 		/** Draw each data point as a bar whose width is defined by lineWidth.
-		 *  The data point is in the middle of the bar on X direction. 
-		 *  The bottom of the bar depends on the baseline.
-		 *  The alpha of the bar is defined by areaAlpha. */
+		 * The data point is in the middle of the bar on X direction.
+		 * The bottom of the bar depends on the baseline.
+		 * The alpha of the bar is defined by areaAlpha. */
 		HISTO("Histogram", true),
 		
-		/** Fill the area under the trace.  
+		/** Fill the area under the trace.
 		 * The bottom of the filled area depends on the baseline.
-		 *  The alpha of the filled area is defined by areaAlpha. */ 
+		 *  The alpha of the filled area is defined by areaAlpha. */
 		AREA("Area", true),
+
 		/**
 		 * Solid line in step. It looks like the y value(on vertical direction) changed firstly.
 		 */
 		STEP_VERTICALLY("Step Vertically", true),
-		
+
 		/**
 		 * Solid line in step. It looks like the x value(on horizontal direction) changed firstly.
 		 */
 		STEP_HORIZONTALLY("Step Horizontally", true);
-		
-				
+
 		private boolean is1D;
-		public static final List<TraceType> ALL;
-		static {
-			List<ILineTrace.TraceType> tmp = new ArrayList<ILineTrace.TraceType>();
-			tmp.add(SOLID_LINE);
-			tmp.add(DASH_LINE);
-			tmp.add(POINT);
-			tmp.add(HISTO);
-			tmp.add(AREA);
-			tmp.add(STEP_VERTICALLY);
-			tmp.add(STEP_HORIZONTALLY);
-			ALL = Collections.unmodifiableList(tmp);
-		}
-	
-		private TraceType(String description, boolean is1D) {
-			 this.description = description;
-			 this.is1D        = is1D;
-		}
 		private String description;
-		
+
+		private TraceType(String description, boolean is1D) {
+			this.description = description;
+			this.is1D = is1D;
+		}
+
 		@Override
 		public String toString() {
 			return description;
 		}
+
 		/**
-		 * defines if the TraceType is applicable to
-		 * 1D only.
+		 * defines if the TraceType is applicable to 1D only
 		 * @return
 		 */
 		public boolean is1D() {
 			return is1D;
 		}
+
+		public static String[] stringValues() {
+			return Arrays.stream(values()).map(TraceType::toString).toArray(String[]::new);
+		}
 	}
 
 	public enum PointStyle{
 		NONE("None"),
-		POINT("point(" + (char)7 + ")"),
-		CIRCLE("Circle(o)"),
-		FILLED_CIRCLE("Filled Circle"),
-		TRIANGLE("Triangle"),
-		FILLED_TRIANGLE("Filled Triangle"),
-		SQUARE("Square"),
-		FILLED_SQUARE("Filled Square"),
-		DIAMOND("Diamond"),
-		FILLED_DIAMOND("Filled Diamond"),
-		XCROSS("XCross(x)"),
+		POINT("Point(\u00b7)"),
+		CIRCLE("Circle(\u25cb)"),
+		FILLED_CIRCLE("Filled Circle(\u25cf)"),
+		TRIANGLE("Triangle(\u25b3)"),
+		FILLED_TRIANGLE("Filled Triangle(\u25b2)"),
+		SQUARE("Square(\u25a1)"),
+		FILLED_SQUARE("Filled Square(\u25a0)"),
+		DIAMOND("Diamond(\u25c7)"),
+		FILLED_DIAMOND("Filled Diamond(\u25c6)"),
+		XCROSS("XCross(\u00d7)"),
 		CROSS("Cross(+)"),
 		BAR("Bar(|)");
-		
-		public static final List<PointStyle> ALL;
-		static {
-			List<PointStyle> tmp = new ArrayList<ILineTrace.PointStyle>();
-			tmp.add(NONE);
-			tmp.add(POINT);
-			tmp.add(CIRCLE);
-			tmp.add(FILLED_CIRCLE);
-			tmp.add(TRIANGLE);
-			tmp.add(FILLED_TRIANGLE);
-			tmp.add(SQUARE);
-			tmp.add(FILLED_SQUARE);
-			tmp.add(DIAMOND);
-			tmp.add(FILLED_DIAMOND);
-			tmp.add(XCROSS);
-			tmp.add(CROSS);
-			tmp.add(BAR);
-			ALL = Collections.unmodifiableList(tmp);
-		}
-		
+
 		private PointStyle(String description) {
 			 this.description = description;
 		}
+
 		private String description;
-		
+
 		@Override
 		public String toString() {
 			return description;
+		}
+
+		public static String[] stringValues() {
+			return Arrays.stream(values()).map(PointStyle::toString).toArray(String[]::new);
 		}
 	}
 
 	public enum ErrorBarType{
 		NONE,
-		PLUS,		
+		PLUS,
 		MINUS,
 		BOTH;
-		
-		
-		public static final List<ErrorBarType> ALL;
-		static {
-			List<ErrorBarType> tmp = new ArrayList<ErrorBarType>(4);
-			tmp.add(NONE);
-			tmp.add(PLUS);
-			tmp.add(MINUS);
-			tmp.add(BOTH);
-			ALL = Collections.unmodifiableList(tmp);
+
+		public static String[] stringValues() {
+			return Arrays.stream(values()).map(ErrorBarType::toString).toArray(String[]::new);
 		}
 	}
+
 	public int getErrorBarWidth();
 	/**
 	 * The size of the error bar in pixels not real coordinates.

@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.plotting.api;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.dawnsci.plotting.api.tool.IToolPageSystem;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.part.ViewPart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,11 +47,9 @@ public class VanillaPlottingSystemView extends ViewPart implements IAdaptable {
 
 	@Override
 	public void createPartControl(Composite parent) {
-
 		system.createPlotPart(parent, getPartName(), getViewSite().getActionBars(), PlotType.IMAGE, this);  
-
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Object getAdapter(Class adapter) {
@@ -69,5 +68,9 @@ public class VanillaPlottingSystemView extends ViewPart implements IAdaptable {
 		if (system!=null) system.dispose();
 		super.dispose();
 	}
-	
+
+	@Override
+	public void saveState(IMemento memento) {
+		system.savePreferences(memento);
+	}
 }

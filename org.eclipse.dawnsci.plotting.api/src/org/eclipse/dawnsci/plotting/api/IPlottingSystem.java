@@ -22,11 +22,13 @@ import org.eclipse.dawnsci.plotting.api.region.IRegionSystem;
 import org.eclipse.dawnsci.plotting.api.trace.ColorOption;
 import org.eclipse.dawnsci.plotting.api.trace.ITrace;
 import org.eclipse.dawnsci.plotting.api.trace.ITraceSystem;
+import org.eclipse.dawnsci.plotting.api.trace.LineTracePreferences;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPart;
 
 
@@ -558,4 +560,20 @@ public interface IPlottingSystem<T> extends IAdaptable, ITraceSystem, IRegionSys
 	 */
 	public Control setControl(Control alternative, boolean showPlotToolbar);
 
+	/**
+	 * @return preferences for line traces
+	 */
+	public LineTracePreferences getLineTracePreferences();
+
+	/**
+	 * Restore some preferences from given memento
+	 * @param memento
+	 */
+	public void restorePreferences(IMemento memento);
+
+	/**
+	 * Save some preferences in given memento
+	 * @param memento
+	 */
+	public void savePreferences(IMemento memento);
 }

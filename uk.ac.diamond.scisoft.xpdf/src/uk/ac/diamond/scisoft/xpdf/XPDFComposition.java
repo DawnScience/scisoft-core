@@ -69,7 +69,7 @@ public class XPDFComposition {
 		asciified = asciified.replace("-", "");
 		
 		// Get xraylib to do the heavy lifting
-		compoundData cD = Xraylib.CompoundParser(materialFormula);
+		compoundData cD = Xraylib.CompoundParser(materialFormula.trim());
 		// cD has a list of elements and mass fractions
 		double[] numberFractions = new double[cD.nElements];
 		double sumNum = 0;

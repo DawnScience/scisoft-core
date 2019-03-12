@@ -83,7 +83,7 @@ public class Container {
 		for (String filename: this.filenames ) {
 			entry.append(filename + "          CONTAINER " + this.name + " data files\n");
 		}
-		compoundData atomicComp = Xraylib.CompoundParser(this.composition);
+		compoundData atomicComp = Xraylib.CompoundParser(this.composition.trim());
 		for (int i = 0; i < atomicComp.nElements ; i++) {
 	        entry.append(Xraylib.AtomicNumberToSymbol(atomicComp.Elements[i]) +
 	            	  "  " + Xraylib.AtomicNumberToSymbol(atomicComp.Elements[i]) +

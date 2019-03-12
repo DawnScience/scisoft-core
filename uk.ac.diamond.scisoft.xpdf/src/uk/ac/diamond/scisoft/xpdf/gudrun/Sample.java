@@ -166,7 +166,7 @@ public class Sample {
         
         
         //Following section is the body of what is written on the file under the Sample header
-		compoundData atomicComp = Xraylib.CompoundParser(this.composition);
+		compoundData atomicComp = Xraylib.CompoundParser(this.composition.trim());
 		for (int i = 0; i < atomicComp.nElements ; i++) {
         entry.append(Xraylib.AtomicNumberToSymbol(atomicComp.Elements[i]) +
         	  "  " + Xraylib.AtomicNumberToSymbol(atomicComp.Elements[i]) +

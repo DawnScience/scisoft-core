@@ -264,7 +264,7 @@ class PalladateNexusWriter {
 		palladateData.setField("start_time", DatasetFactory.createFromObject(new Date[] {startTime}, new int[]{nScans}));
 		palladateData.setField("end_time", DatasetFactory.createFromObject(new Date[] {endTime}, new int[]{nScans}));
 		// Only one scan, one detector
-		palladateData.setField("count_time", DatasetFactory.createFromObject(new double[] {(double) countTime}, new int[]{nScans, nDetectors}));
+		palladateData.setField("count_time", DatasetFactory.createFromObject(new double[] {countTime}, new int[]{nScans, nDetectors}));
 		palladateData.setAttribute("count_time", "units", "s");
 		
 		// The actual data

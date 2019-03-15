@@ -4,6 +4,8 @@ import javax.vecmath.Vector2d;
 
 public class XRMCSource extends XRMCFile {
 
+	private static final long serialVersionUID = 6667679497138999829L;
+
 	protected XRMCSource(String fileName) {
 		super(fileName);
 	}

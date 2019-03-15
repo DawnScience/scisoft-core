@@ -8,6 +8,8 @@ import java.util.Scanner;
 
 public class XRMCSpectrum extends XRMCFile {
 
+	private static final long serialVersionUID = 130988962458555638L;
+
 	public XRMCSpectrum(String fileName) {
 		super(fileName);
 	}

@@ -12,6 +12,8 @@ import uk.ac.diamond.scisoft.xpdf.metadata.XRMCMetadata;
 
 public class XRMCMetadataImpl implements XRMCMetadata {
 
+	private static final long serialVersionUID = 8707073189187293611L;
+
 	private String inputFileName;
 	private EnumMap<XRMCDevice, Boolean> readDeviceType;
 	private XRMCDetector savedDetector;

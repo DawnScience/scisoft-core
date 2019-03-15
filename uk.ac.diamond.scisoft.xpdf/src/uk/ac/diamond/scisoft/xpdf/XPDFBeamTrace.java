@@ -11,8 +11,6 @@ package uk.ac.diamond.scisoft.xpdf;
 
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.Maths;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Beam trace data for XPDF processing
@@ -31,9 +29,7 @@ public class XPDFBeamTrace {
 	private double monitorRelativeFlux;
 	private boolean isNormalized, isBackgroundSubtracted;
 	private boolean isAxisAngle;
-	
-	private final static Logger logger = LoggerFactory.getLogger(XPDFBeamTrace.class);
-	
+
 	/**
 	 * Empty constructor to create an empty beam.
 	 */

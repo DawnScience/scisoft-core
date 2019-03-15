@@ -118,7 +118,7 @@ public class MarshallerService implements IMarshallerService {
 	private boolean platformIsRunning;
 
 	static {
-		System.out.println("Started " + IMarshallerService.class.getSimpleName());
+		logger.info("Started {}", IMarshallerService.class.getSimpleName());
 	}
 
 	/**

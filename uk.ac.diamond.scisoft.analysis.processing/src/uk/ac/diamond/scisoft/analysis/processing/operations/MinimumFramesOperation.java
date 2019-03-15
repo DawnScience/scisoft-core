@@ -18,7 +18,6 @@ public class MinimumFramesOperation extends AbstractFramesOperation {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.MinimumFramesOperation";
 	}
 
-	@SuppressWarnings("restriction")
 	public MinimumFramesOperation() {
 		super(Maths::minimum);
 	}

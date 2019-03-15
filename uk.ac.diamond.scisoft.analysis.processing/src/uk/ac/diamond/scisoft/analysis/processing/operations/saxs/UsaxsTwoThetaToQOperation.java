@@ -77,7 +77,6 @@ public class UsaxsTwoThetaToQOperation extends AbstractOperation<UsaxsTwoThetaTo
 	}
 	
 	
-	@SuppressWarnings("restriction")
 	@Override
 	protected OperationData process(IDataset input, IMonitor monitor) {
 		// First, find the filepath and then the units of yaw

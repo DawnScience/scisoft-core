@@ -18,7 +18,6 @@ public class MaximumFramesOperation extends AbstractFramesOperation {
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.MaximumFramesOperation";
 	}
 
-	@SuppressWarnings("restriction")
 	public MaximumFramesOperation() {
 		super(Maths::maximum);
 	}

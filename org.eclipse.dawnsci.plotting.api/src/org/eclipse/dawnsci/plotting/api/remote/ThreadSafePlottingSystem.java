@@ -42,6 +42,7 @@ import org.eclipse.dawnsci.plotting.api.trace.ITrace;
 import org.eclipse.dawnsci.plotting.api.trace.ITraceListener;
 import org.eclipse.dawnsci.plotting.api.trace.IVectorTrace;
 import org.eclipse.dawnsci.plotting.api.trace.IVolumeRenderTrace;
+import org.eclipse.dawnsci.plotting.api.trace.LineTracePreferences;
 import org.eclipse.dawnsci.plotting.api.trace.TraceEvent;
 import org.eclipse.dawnsci.plotting.api.trace.TraceWillPlotEvent;
 import org.eclipse.january.dataset.IDataset;
@@ -49,6 +50,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPart;
 /**
  * Will be a thread safe version of all the plotting system methods.
@@ -684,4 +686,18 @@ public class ThreadSafePlottingSystem<T> extends ThreadSafeObject implements IPl
 		return delegate.getRegisteredTraceClasses();
 	}
 
+	@Override
+	public LineTracePreferences getLineTracePreferences() {
+		return delegate.getLineTracePreferences();
+	}
+
+	@Override
+	public void restorePreferences(IMemento memento) {
+		delegate.restorePreferences(memento);
+	}
+
+	@Override
+	public void savePreferences(IMemento memento) {
+		delegate.savePreferences(memento);
+	}
 }

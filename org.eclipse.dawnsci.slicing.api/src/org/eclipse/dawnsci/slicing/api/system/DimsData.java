@@ -185,7 +185,6 @@ public class DimsData implements Serializable {
 		return expand(size, null);
 	}
 
-	@SuppressWarnings("unchecked")
 	public List<DimsData> expand(final int size, ISliceRangeSubstituter substituter) {
 		
 		final List<DimsData> ret = new ArrayList<DimsData>(7);

@@ -904,6 +904,41 @@ public class NexusFileExecutionVisitorTest {
 			
 	}
 	
+	@Test
+	public void Process3DStackAs2DTo2DSlowAxis() throws Exception {
+		
+		int[] inputShape = new int[] {64,64,100};
+		
+		ILazyDataset lazy = getLazyDataset(inputShape,1);
+		final IOperationContext context = service.createContext();
+//		context.setSlicing("all");
+		context.setDataDimensions(new int[]{0,1});
+		context.setData(lazy);
+		
+		Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
+		op22.setModel(new Junk2Dto2Dmodel());
+		context.setSeries(op22);
+		
+		final File tmp = File.createTempFile("Test", ".h5");
+		tmp.deleteOnExit();
+		tmp.createNewFile();
+		context.setVisitor(new NexusFileExecutionVisitor(tmp.getAbsolutePath()));
+		context.setExecutionType(type);
+		service.execute(context);
+		
+		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
+		assertTrue(dh.contains(PROCESS_DATA_PATH));
+		assertTrue(dh.contains(PROCESS_PATH + OperationsTestConstants.AXIS2));
+		assertTrue(dh.contains(PROCESS_PATH + "Junk2Dto2DAx2"));
+		assertTrue(dh.contains(PROCESS_PATH + "Junk2Dto2DAx1"));
+		
+		assertArrayEquals(new int[]{op22.getModel().getxDim(),op22.getModel().getyDim(),inputShape[2]}, dh.getLazyDataset(PROCESS_DATA_PATH).getShape());
+		assertArrayEquals(new int[]{inputShape[2]}, dh.getLazyDataset(PROCESS_PATH + OperationsTestConstants.AXIS2).getShape());
+		assertArrayEquals(new int[]{op22.getModel().getxDim()}, dh.getLazyDataset(PROCESS_PATH + "Junk2Dto2DAx1").getShape());
+		assertArrayEquals(new int[]{op22.getModel().getyDim()}, dh.getLazyDataset(PROCESS_PATH + "Junk2Dto2DAx2").getShape());
+
+	}
+	
 	private void testDataset(ITestOperation op, String slice, ILazyDataset lz) throws DatasetException {
 		Slice[] slices = Slice.convertFromString(slice);
 		IDataset data = op.getTestData().getData();

@@ -428,7 +428,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		}
 
 		int[] dsShape = data.getShape();
-		if (dsShape.length > dataDims.length) {
+		if (dsShape.length > oShape.length) {
 			//1D to 2D
 			setDims.add(dsShape.length-1);
 		}

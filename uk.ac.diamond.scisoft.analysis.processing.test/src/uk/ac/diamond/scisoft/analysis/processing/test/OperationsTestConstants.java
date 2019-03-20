@@ -23,6 +23,7 @@ public class OperationsTestConstants {
 	public static final String DATA = NexusFileExecutionVisitor.DATA_NAME;
 	public static final String  PROCESSED_RESULTS_DATA_PATH = PROCESSED_RESULTS_PATH + DATA;
 	public static final String AXIS0 = "Axis_0";
+	public static final String AXIS2 = "Axis_2";
 	public static final String JUNK_AXIS1D = "Junk1Dax";
 	
 }

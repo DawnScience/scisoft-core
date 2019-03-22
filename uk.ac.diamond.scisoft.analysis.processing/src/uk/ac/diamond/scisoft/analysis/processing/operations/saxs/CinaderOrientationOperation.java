@@ -113,7 +113,7 @@ public class CinaderOrientationOperation extends AbstractOperation<CinaderOrient
 		if (parentaxis[0] < 0.00) {
 			correctionValue = Math.abs(parentaxis[0]);
 		} else if (parentaxis[0] > 0.00) {
-			correctionValue = parentaxis[0];
+			correctionValue = -parentaxis[0];
 		}
 		
 		for (int i = 0; i < parentaxis.length; i++) {
@@ -139,14 +139,9 @@ public class CinaderOrientationOperation extends AbstractOperation<CinaderOrient
 			float cos2mean = (float) integrator.integrate(INTEGRATION_POINTS, cos2Function, myaxis[0], myaxis[myaxis.length - 1]);
 			float sin2mean = (float) integrator.integrate(INTEGRATION_POINTS, sin2Function, myaxis[0], myaxis[myaxis.length - 1]);
 			float sincosmean = (float) integrator.integrate(INTEGRATION_POINTS, sincosFunction, myaxis[0], myaxis[myaxis.length - 1]);
-			float norm = (float) integrator.integrate(INTEGRATION_POINTS, function, myaxis[0], myaxis[myaxis.length - 1]);
-			
-			cos2mean /= norm;
-			sin2mean /= norm;
-			sincosmean /= norm;
 			
 			float result =  (float) Math.sqrt(Math.pow(cos2mean - sin2mean, 2) + Math.pow(2d * sincosmean, 2));
-			double angle = Math.atan2(2d * sincosmean, cos2mean - sin2mean) / symmetryFolds;
+			double angle = 0.5 * Math.atan2(2d * sincosmean, cos2mean - sin2mean);
 			
 			Object[] output = new Object[] {
 					new float[] { result },

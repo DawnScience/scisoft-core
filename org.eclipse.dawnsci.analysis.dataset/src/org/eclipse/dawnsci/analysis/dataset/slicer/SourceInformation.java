@@ -52,7 +52,7 @@ public class SourceInformation {
 	
 	@Override
 	public SourceInformation clone() {
-		return new SourceInformation(new String(filePath), new String (datasetName), parent);
+		return new SourceInformation(new String(filePath), new String (datasetName), parent, isLive);
 	}
 
 	public boolean isLive() {

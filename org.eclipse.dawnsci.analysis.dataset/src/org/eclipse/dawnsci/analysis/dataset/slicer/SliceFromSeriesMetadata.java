@@ -186,8 +186,8 @@ public class SliceFromSeriesMetadata implements OriginMetadata {
 		
 		boolean isLive = sourceInfo.isLive();
 		
-		if (isLive) {
-			if (ds instanceof IDynamicDataset) ((IDynamicDataset)ds).refreshShape();
+		if (isLive && ds instanceof IDynamicDataset) {
+			((IDynamicDataset)ds).refreshShape();
 		}
 		
 		int[] oShape = getParent().getShape();
@@ -206,18 +206,45 @@ public class SliceFromSeriesMetadata implements OriginMetadata {
 				slices[i] = null;
 			} else {
 				
-				if (isLive && shape[i] >= oSlices[i].getStart()) {
-					slices[i] = oSlices[i];
-				} else if (shape[i] != oShape[i]) {
-					return null;
+				if (isLive) {
+					Slice s = getLiveSliceForDim(shape, oShape, i, oSlices);
+					if (s == null) return null;
+					slices[i] = s;
 				} else {
-					slices[i] = oSlices[i];
+					Slice s = getSliceForDim(shape, oShape, i, oSlices);
+					if (s == null) return null;
+					slices[i] = s;
 				}
-				
 			}
 		}
 		
 		return ds.getSlice(slices);
+	}
+	
+	private Slice getLiveSliceForDim(int[] shape, int[] oShape, int i, Slice[] oSlice) {
+		
+		if (shape[i] == oShape[i]) return getSliceForDim(shape, oShape, i, oSlice);
+		
+		if (shape[i] < oSlice[i].getStop()) {
+			return null;
+		}
+		
+		Slice s = oSlice[i].clone();
+		
+		try {
+			s.setLength(shape[i]);
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
+		
+		return s;
+		
+	}
+	
+	
+	private Slice getSliceForDim(int[] shape, int[] oShape, int i, Slice[] oSlice) {
+		if (shape[i] != oShape[i]) return null;
+		return oSlice[i].clone();
 	}
 	
 	public void setSliceDimensionToFull(int dim) {

@@ -8,6 +8,9 @@
  */
 package org.eclipse.dawnsci.plotting.api.trace;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.dawnsci.plotting.api.preferences.PlottingConstants;
 import org.eclipse.dawnsci.plotting.api.trace.ILineTrace.ErrorBarType;
 import org.eclipse.dawnsci.plotting.api.trace.ILineTrace.PointStyle;
@@ -30,6 +33,14 @@ public class LineTracePreferences {
 
 	IPreferenceStore global;
 	XMLMemento local;
+
+	private static final Map<String, Integer> DEFAULTS;
+	static {
+		DEFAULTS = new HashMap<>();
+		DEFAULTS.put(AREA_ALPHA, 100);
+		DEFAULTS.put(POINT_SIZE, 4);
+		DEFAULTS.put(LINE_WIDTH, 1);
+	}
 
 	private String xmlifyClass(Class<?> clazz) {
 		String name = clazz.getName();
@@ -84,7 +95,11 @@ public class LineTracePreferences {
 	public int getInteger(String key) {
 		Integer value = local.getInteger(key);
 		if (value == null) {
-			value = global.getInt(key);
+			if (global.contains(key)) {
+				value = global.getInt(key);
+			} else {
+				value = DEFAULTS.getOrDefault(key, 0);
+			}
 		}
 		return value;
 	}

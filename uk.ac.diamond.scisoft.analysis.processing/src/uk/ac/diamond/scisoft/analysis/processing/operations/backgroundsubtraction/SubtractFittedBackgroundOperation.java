@@ -27,6 +27,7 @@ import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.impl.Signal;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
+import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.BroadcastSelfIterator;
@@ -793,13 +794,12 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 			//         andorPreampGain:NXcollection/andorPreampGain [1, 2, 4]
 			//         pgmEnergy:NXcollection/ [energy in eV, always single value, even for an energy scan]
 
-			GroupNode entry = (GroupNode) NexusTreeUtils.requireNode(root, "NXentry");
-			GroupNode instrument = (GroupNode) NexusTreeUtils.requireNode(entry, "NXinstrument");
-			GroupNode detector = (GroupNode) NexusTreeUtils.requireNode(instrument, "NXdetector");
+			GroupNode entry = (GroupNode) NexusTreeUtils.requireNode(root, NexusConstants.ENTRY);
+			GroupNode instrument = (GroupNode) NexusTreeUtils.requireNode(entry, NexusConstants.INSTRUMENT);
+			GroupNode detector = (GroupNode) NexusTreeUtils.requireNode(instrument, NexusConstants.DETECTOR);
 			return DatasetUtils.sliceAndConvertLazyDataset(detector.getDataNode("count_time").getDataset());
 		} catch (Exception e) {
 			throw new OperationException(this, "Could not parse Nexus file " + filePath + " for count time", e);
 		}
 	}
-
 }

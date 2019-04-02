@@ -285,9 +285,9 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			//         andorPreampGain:NXcollection/andorPreampGain [1, 2, 4]
 			//         pgmEnergy:NXcollection/ [energy in eV, always single value, even for an energy scan]
 
-			GroupNode entry = (GroupNode) NexusTreeUtils.requireNode(root, "NXentry");
-			GroupNode instrument = (GroupNode) NexusTreeUtils.requireNode(entry, "NXinstrument");
-			GroupNode detector = (GroupNode) NexusTreeUtils.requireNode(instrument, "NXdetector");
+			GroupNode entry = (GroupNode) NexusTreeUtils.requireNode(root, NexusConstants.ENTRY);
+			GroupNode instrument = (GroupNode) NexusTreeUtils.requireNode(entry, NexusConstants.INSTRUMENT);
+			GroupNode detector = (GroupNode) NexusTreeUtils.requireNode(instrument, NexusConstants.DETECTOR);
 			currentCountTime = DatasetUtils.sliceAndConvertLazyDataset(detector.getDataNode("count_time").getDataset());
 
 			GroupNode mdg = entry.getGroupNode("before_scan");

@@ -213,10 +213,6 @@ public class NexusTreeUtils {
 			return;
 		}
 
-//		if (!isNXClass(dNode, SDS)) {
-//			logger.trace("Data node does not have {} attribute: {}", NexusConstants.DATA_CLASS, link);
-//		}
-
 		ILazyDataset cData = dNode.getDataset();
 		if (cData == null || cData.getSize() == 0) {
 			logger.info("Chosen data {}, has zero size", dNode);
@@ -300,7 +296,7 @@ public class NexusTreeUtils {
 		int[] shape = cData.getShape();
 		int rank = shape.length;
 
-		// scan children for SDS as possible axes (could be referenced by @axes)
+		// scan children for datasets as possible axes (could be referenced by @axes)
 		List<AxisChoice> choices = new ArrayList<AxisChoice>();
 		for (NodeLink l : gNode) {
 			if (!l.isDestinationData())

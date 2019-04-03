@@ -1480,7 +1480,7 @@ def full(shape, fill_value, dtype=None, elements=None):
     elif type(dtype) is _types.FunctionType:
         raise ValueError("Given data-type is a function and needs elements defining")
 
-    return _df.zeros(dtype.elements, asIterable(shape), dtype.value).fill(fill_value)
+    return _df.zeros(dtype.elements, _as_int_array(shape), dtype.value).fill(fill_value)
 
 @_argsToArrayType('a')
 def full_like(a, fill_value, dtype=None, elements=None):

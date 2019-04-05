@@ -297,7 +297,7 @@ public class JavaImageLoader extends AbstractFileLoader {
 				data = channels[0];
 			} else {
 				if (input.getColorModel().getColorSpace().getType() != ColorSpace.TYPE_RGB) {
-					throw new ScanFileHolderException("File does not contain RGB data");					
+					throw new ScanFileHolderException("File does not contain RGB data");
 				}
 				if (bands < 3) {
 					throw new ScanFileHolderException("Number of colour channels is less than three so cannot load and convert");
@@ -306,7 +306,7 @@ public class JavaImageLoader extends AbstractFileLoader {
 				data = DatasetUtils.createCompoundDataset(Dataset.RGB, channels);
 
 				if (asGrey)
-					data = ((RGBDataset) data).createGreyDataset(channels[0].getDType());
+					data = ((RGBDataset) data).createGreyDataset(channels[0].getClass());
 			}
 		} catch (Exception e) {
 			throw new ScanFileHolderException("There was a problem loading the image", e);

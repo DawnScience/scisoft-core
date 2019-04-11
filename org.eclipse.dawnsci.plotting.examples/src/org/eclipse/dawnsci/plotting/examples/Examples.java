@@ -13,7 +13,6 @@ package org.eclipse.dawnsci.plotting.examples;
 
 import org.eclipse.dawnsci.analysis.api.conversion.IConversionSchemeService;
 import org.eclipse.dawnsci.analysis.api.conversion.IConversionService;
-import org.eclipse.dawnsci.analysis.api.dataset.IDatasetMathsService;
 import org.eclipse.dawnsci.analysis.api.downsample.IDownsampleService;
 import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
 import org.eclipse.dawnsci.plotting.api.IPlottingService;
@@ -27,7 +26,6 @@ import org.osgi.service.component.ComponentContext;
  */
 public class Examples {
 	
-	private IDatasetMathsService datasetMathsService;
 	private ILoaderService       loaderService;
 	private IPlottingService     plottingService;
 	private IPaletteService      paletteService;
@@ -60,12 +58,7 @@ public class Examples {
 	public void setPaletteService(IPaletteService paletteService) {
 		this.paletteService = paletteService;
 	}
-	public IDatasetMathsService getDatasetMathsService() {
-		return datasetMathsService;
-	}
-	public void setDatasetMathsService(IDatasetMathsService datasetMathsService) {
-		this.datasetMathsService = datasetMathsService;
-	}
+	
 	public ILoaderService getLoaderService() {
 		return loaderService;
 	}

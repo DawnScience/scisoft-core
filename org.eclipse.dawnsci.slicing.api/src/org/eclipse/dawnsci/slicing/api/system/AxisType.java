@@ -14,10 +14,11 @@ package org.eclipse.dawnsci.slicing.api.system;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.dataset.IDatasetMathsService;
 import org.eclipse.dawnsci.plotting.api.PlotType;
-import org.eclipse.dawnsci.slicing.api.Activator;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Stats;
 
 public enum AxisType {
 
@@ -103,19 +104,20 @@ public enum AxisType {
 		
 		if (!isAdvanced()) throw new Exception("Cannot process non-advanced axes!");
 		
-		final IDatasetMathsService service = (IDatasetMathsService)Activator.getService(IDatasetMathsService.class);
+		Dataset d = DatasetUtils.convertToDataset(slice);
+		
 		if (this==MEAN) { // TODO The other types!
-			return service.mean(slice, i);
+			return d.mean(i);
 		} else if (this==MAX) { // TODO The other types!
-			return service.max(slice, i);
+			return d.max(i);
 		} else if (this==MIN) { // TODO The other types!
-			return service.min(slice, i);
+			return d.min(i);
 		} else if (this==MEDIAN) { // TODO The other types!
-			return service.median(slice, i);
+			return Stats.median(d,i);
 //		} else if (this==MODE) { // TODO The other types!
 //			return service.mode(slice, i);
 		} else if (this==SUM) { // TODO The other types!
-			return service.sum(slice, i);
+			return d.sum(i);
 		}
 
 		

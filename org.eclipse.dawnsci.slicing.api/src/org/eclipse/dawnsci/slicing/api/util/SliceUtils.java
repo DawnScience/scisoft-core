@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.dawnsci.analysis.api.dataset.IDatasetMathsService;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
 import org.eclipse.dawnsci.analysis.api.io.SliceObject;
@@ -40,9 +39,12 @@ import org.eclipse.dawnsci.slicing.api.system.DimsDataList;
 import org.eclipse.dawnsci.slicing.api.system.ISliceRangeSubstituter;
 import org.eclipse.dawnsci.slicing.api.system.SliceSource;
 import org.eclipse.january.DatasetException;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.richbeans.annot.DOEUtils;
@@ -108,15 +110,14 @@ public class SliceUtils {
     			}
     		}
 
-    		final IDatasetMathsService service = (IDatasetMathsService)Activator.getService(IDatasetMathsService.class);
     		if (dimsData.getPlotAxis()==AxisType.X) {
-    			x = service.createRange(dataShape[i], Integer.class);
+    			x = DatasetFactory.createRange(IntegerDataset.class,dataShape[i]);
     			x.setName("Dimension "+(dimsData.getDimension()+1));
     			currentSlice.setX(dimsData.getDimension());
     			currentSlice.setxSize(x.getSize());
     		}
     		if (dimsData.getPlotAxis()==AxisType.Y || dimsData.getPlotAxis()==AxisType.Y_MANY) {
-       			y = service.createRange(dataShape[i], Integer.class);
+       			y = DatasetFactory.createRange(IntegerDataset.class,dataShape[i]);
     			y.setName("Dimension "+(dimsData.getDimension()+1));
     			currentSlice.setY(dimsData.getDimension());
     			final int count = DOEUtils.getSize(dimsData.getSliceRange(true), null);
@@ -322,10 +323,9 @@ public class SliceUtils {
 		
 		
 		String axisName = currentSlice.getAxisName(iAxis);
-		final IDatasetMathsService service = (IDatasetMathsService)Activator.getService(IDatasetMathsService.class);
 		if ("indices".equals(axisName) || axisName==null) {
 			if (requireIndicesOnError) {
-				IDataset indices = service.createRange(length, Integer.class); // Save time
+				IDataset indices = DatasetFactory.createRange(IntegerDataset.class,length); // Save time
 				indices.setName("");
 				return indices;
 			} else {
@@ -335,7 +335,7 @@ public class SliceUtils {
 		
 		if (axisName.endsWith("[Expression]")) {
 			final IDataset set = currentSlice.getExpressionAxis(axisName);
-			return service.convertToDataset(set);
+			return DatasetUtils.convertToDataset(set);
 		}
 		
 		try {
@@ -360,7 +360,7 @@ public class SliceUtils {
 				}
 			} catch (Exception ignored) {
 				// This is a late on fix, if we cannot get the axes, we set no axis.
-				x = service.createRange(length, Integer.class); // Save time
+				x = DatasetFactory.createRange(IntegerDataset.class,length); // Save time
 				x.setName("Indices");
 			}
 			if (x.getRank()==2) {
@@ -369,7 +369,7 @@ public class SliceUtils {
 			}
 
 			if (x.getRank()!=1) {
-				x = service.createRange(length, Integer.class); // Save time
+				x = DatasetFactory.createRange(IntegerDataset.class,length); // Save time
 				x.setName("Indices");
 			}
             return x;
@@ -377,7 +377,7 @@ public class SliceUtils {
 		} catch (Throwable ne) {
 			logger.error("Cannot get nexus axis during slice!", ne);
 			if (requireIndicesOnError) {
-				IDataset indices = service.createRange(length, Integer.class); // Save time
+				IDataset indices = DatasetFactory.createRange(IntegerDataset.class, length); // Save time
 				indices.setName("");
 				return indices;
 
@@ -426,8 +426,7 @@ public class SliceUtils {
 		final String dataPath = currentSlice.getName();
 		if (dataPath.endsWith("[Expression]")) {
 			final IDataset set = currentSlice.getExpressionAxis(dataPath);
-			final IDatasetMathsService service = (IDatasetMathsService)Activator.getService(IDatasetMathsService.class);
-			return service.convertToDataset(set);
+			return DatasetUtils.convertToDataset(set);
 		}
 		
 		if (requireUnit) { // Slower
@@ -531,16 +530,15 @@ public class SliceUtils {
 		
 		final DimsDataList ddl = (DimsDataList)currentSlice.getDimensionalData();
 		
-		final IDatasetMathsService service = (IDatasetMathsService)Activator.getService(IDatasetMathsService.class);
 		if (currentSlice.isRange()) {
 			// We sum the data in the dimensions that are not axes
-			IDataset sum    = slice;
+			Dataset sum    =  DatasetUtils.convertToDataset(slice);
 			final int       len    = dataShape.length;
 			for (int i = len-1; i >= 0; i--) {
-				if (!currentSlice.isAxis(i) && dataShape[i]>1) sum = service.sum(sum, i);
+				if (!currentSlice.isAxis(i) && dataShape[i]>1) sum = sum.sum(i);
 			}
 
-			if (currentSlice.getX() > currentSlice.getY()) sum = service.transpose(sum);
+			if (currentSlice.getX() > currentSlice.getY()) sum = sum.transpose();
 			
 			sum = sum.squeeze();
 			sum.setName(slice.getName());
@@ -577,7 +575,7 @@ public class SliceUtils {
 			slice = slice.squeeze();		
 			if (currentSlice.getX() > currentSlice.getY() && slice.getShape().length==2) {
 				// transpose clobbers name
-				slice = service.transpose(slice);
+				slice = DatasetUtils.convertToDataset(slice).transpose();
 				if (name!=null) slice.setName(name);
 			}
 		}

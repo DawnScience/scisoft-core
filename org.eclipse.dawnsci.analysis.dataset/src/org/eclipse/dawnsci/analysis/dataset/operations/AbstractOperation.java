@@ -16,7 +16,6 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.dawnsci.analysis.api.metadata.MetadataUtils;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -54,10 +53,7 @@ public abstract class AbstractOperation<T extends IOperationModel, D extends Ope
 	@Override
 	public D execute(IDataset slice, IMonitor monitor) throws OperationException {
 		
-		IDataset view = slice.getSliceView();
-		MetadataUtils.sliceAxesMetadata(view);
-		
-		view.squeeze();
+		IDataset view = slice.getSliceView().squeeze();
 		
 		//check mandatory metadata
 		SliceFromSeriesMetadata ssm = getSliceSeriesMetadata(view);
@@ -185,8 +181,6 @@ public abstract class AbstractOperation<T extends IOperationModel, D extends Ope
 				throw new OperationException(this, e);
 			}
 			
-			AxesMetadata inMeta = ometadata.get(0);
-			
 			AxesMetadata axOut = null;
 			if (metaout != null && !metaout.isEmpty()) axOut = metaout.get(0);
 			if (axOut == null) {
@@ -198,8 +192,8 @@ public abstract class AbstractOperation<T extends IOperationModel, D extends Ope
 			}
 			
 			//Clone to get copies of lazy datasets
-			AxesMetadata cloneMeta = (AxesMetadata) inMeta.clone();
-			
+			AxesMetadata cloneMeta = (AxesMetadata) ometadata.get(0).clone();
+
 			if (rankDif == 0) {
 				
 				for (int i = 0; i< original.getRank(); i++) {

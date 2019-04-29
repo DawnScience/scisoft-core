@@ -9,10 +9,11 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations;
 
+import org.eclipse.january.dataset.BroadcastIterator;
+import org.eclipse.january.dataset.BroadcastPairIterator;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
-import org.eclipse.january.dataset.IndexIterator;
 
 import uk.ac.diamond.scisoft.analysis.utils.SimpleUncertaintyPropagationMath;
 
@@ -93,60 +94,63 @@ public class ErrorPropagationUtils {
 		return operateWithUncertainty(a, b, new Divide());
 	}
 	
-	private static DoubleDataset operateWithUncertainty(Dataset input, Dataset oprahend, UncertaintyOperator operator) {
+	private static DoubleDataset operateWithUncertainty(Dataset input, Dataset operand, UncertaintyOperator operator) {
 
-		if (oprahend.getSize() != 1 && input.getSize() != oprahend.getSize()) throw new IllegalArgumentException("Cannot process datasets of these shapes!");
+		if (operand.getSize() != 1 && input.getSize() != operand.getSize()) throw new IllegalArgumentException("Cannot process datasets of these shapes!");
 		
 		Dataset inputUncert = input.getErrors();
-		Dataset oprahendUncert = oprahend.getErrors();
+		Dataset operandUncert = operand.getErrors();
 		DoubleDataset output = (DoubleDataset) DatasetFactory.zeros(input.getShapeRef());
-		DoubleDataset outputUncert = (inputUncert == null) ? null : DatasetFactory.zeros(inputUncert.getShapeRef());
-		//assume data and errors are either not views or common views
-		IndexIterator iter = input.getIterator();
+		DoubleDataset outputUncert = (DoubleDataset) DatasetFactory.zeros(input.getShapeRef());
 		
-		if (oprahend.getSize() == 1) {
-			double val = oprahend.getDouble();
-			if (inputUncert != null) {
-				double[] out = new double[2];
-				while(iter.hasNext()) {
-					operator.operate(input.getElementDoubleAbs(iter.index), val, inputUncert.getElementDoubleAbs(iter.index), out);
-					output.setAbs(iter.index, out[0]);
-					outputUncert.setAbs(iter.index, out[1]);
+		double[] out = new double[2];
+
+		if (inputUncert != null) {
+			// If everyone has errors
+			if (operandUncert != null) {
+				BroadcastIterator iter = BroadcastPairIterator.createIterator(input, operand, output);
+				BroadcastIterator itererr = BroadcastPairIterator.createIterator(inputUncert, operandUncert, outputUncert);
+				while (iter.hasNext() && itererr.hasNext()) {
+					operator.operate(iter.aDouble, iter.bDouble, itererr.aDouble, itererr.bDouble, out);
+					output.setAbs(iter.oIndex, out[0]);
+					outputUncert.setAbs(itererr.oIndex, out[1]);
 				}
-				output.setErrors(outputUncert);
-			} else {
-				while (iter.hasNext())
-					output.setAbs(iter.index, operator.operate(input.getElementDoubleAbs(iter.index), val));
 			}
-			
-			return output;
-		}
-		
-		if (inputUncert != null && oprahendUncert == null) {
-			double[] out = new double[2];
-			while(iter.hasNext()) {
-				operator.operate(input.getElementDoubleAbs(iter.index), oprahend.getElementDoubleAbs(iter.index), inputUncert.getElementDoubleAbs(iter.index), out);
-				output.setAbs(iter.index, out[0]);
-				outputUncert.setAbs(iter.index, out[1]);
+			// If only the input has errors
+			else {
+				BroadcastIterator iter = BroadcastPairIterator.createIterator(input, operand, output);
+				BroadcastIterator itererr = BroadcastPairIterator.createIterator(input, inputUncert, outputUncert);
+				while (iter.hasNext() && itererr.hasNext()) {
+					operator.operate(iter.aDouble, iter.bDouble, itererr.bDouble, out);
+					output.setAbs(iter.oIndex, out[0]);
+					outputUncert.setAbs(iter.oIndex, out[1]);
+				}
 			}
-			output.setErrors(outputUncert);
-		} else if  (inputUncert != null && oprahendUncert != null) {
-			double[] out = new double[2];
-			while(iter.hasNext()) {
-				operator.operate(input.getElementDoubleAbs(iter.index), oprahend.getElementDoubleAbs(iter.index), inputUncert.getElementDoubleAbs(iter.index),oprahendUncert.getElementDoubleAbs(iter.index), out);
-				output.setAbs(iter.index, out[0]);
-				outputUncert.setAbs(iter.index, out[1]);
-			}
-			output.setErrors(outputUncert);
 		} else {
-			while (iter.hasNext()){
-				output.setAbs(iter.index, operator.operate(input.getElementDoubleAbs(iter.index), oprahend.getElementDoubleAbs(iter.index)));
+			// If only the operand has errors
+			if (operandUncert != null) {
+				BroadcastIterator iter = BroadcastPairIterator.createIterator(input, operand, output);
+				BroadcastIterator itererr = BroadcastPairIterator.createIterator(operand, operandUncert, outputUncert);
+				while (iter.hasNext() && itererr.hasNext()) {
+					operator.operate(iter.aDouble, iter.bDouble, 0, itererr.bDouble, out);
+					output.setAbs(iter.oIndex, out[0]);
+					outputUncert.setAbs(itererr.oIndex, out[1]);
+				}
+			}
+			// If no one has errors
+			else {
+				BroadcastIterator iter = BroadcastPairIterator.createIterator(input, operand, output);
+				while (iter.hasNext()) {
+					out[0] = operator.operate(iter.aDouble, iter.bDouble);
+					output.setAbs(iter.oIndex, out[0]);
+				}
 			}
 		}
+		output.setErrors(outputUncert);
 		return output;
 	}
-
 }
+
 
 interface UncertaintyOperator {
 	void operate(double a, double b, double ae, double be, double[] out);

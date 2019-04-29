@@ -23,7 +23,7 @@ public class SimpleUncertaintyPropagationMath {
 	
 	public static void multiply(double a, double b, double ae, double be, double[] out) {
 		out[0] = a * b;
-		out[1] = Math.abs(out[0])*Math.hypot(ae/a, be/b);
+		out[1] = Math.hypot(ae*b, be*a);
 	}
 	
 	public static void multiply(double a, double b, double ae, double[] out) {
@@ -33,7 +33,7 @@ public class SimpleUncertaintyPropagationMath {
 	
 	public static void divide(double a, double b, double ae, double be, double[] out) {
 		out[0] = a/b;
-		out[1] = Math.abs(out[0])*Math.hypot(ae/a, be/b);
+		out[1] = Math.hypot(ae/b, be*a/(b*b));
 	}
 	
 	public static void divide(double a, double b, double ae, double[] out) {

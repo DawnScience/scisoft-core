@@ -876,6 +876,14 @@
             name="Add Scalar">
       </operation>
       <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.scalar.XAxisAddScalarOperation"
+            description="Shift the x-axis by a scalar with an associated uncertainty"
+            icon="icons/plus.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.scalar.XAxisAddScalarOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.scalar.ScalarUncertaintyModel"
+            name="x-Axis Shift">
+  </operation>
+      <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxMeanOperation"
             description="Returns mean values within a Box"
             icon="icons/box.png"

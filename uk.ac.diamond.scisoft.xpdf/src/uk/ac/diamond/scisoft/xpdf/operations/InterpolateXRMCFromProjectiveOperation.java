@@ -52,7 +52,11 @@ public class InterpolateXRMCFromProjectiveOperation extends AbstractOperation<In
 		IDiffractionMetadata dmeta = null;
 		String detectorFileName = model.getDetectorFileName();
 		try {
-			dmeta = NexusDiffractionCalibrationReader.getDiffractionMetadataFromNexus(detectorFileName, null);
+			if (model.getDetectorDataset() == null) {
+				dmeta = NexusDiffractionCalibrationReader.getDiffractionMetadataFromNexus(detectorFileName, null);
+			} else {
+				dmeta = NexusDiffractionCalibrationReader.getDiffractionMetadataFromNexus(detectorFileName, null, model.getDetectorDataset());
+			}
 		} catch (DatasetException dSE) {
 			throw new OperationException(this, "Could not get diffraction metadata from " + detectorFileName + ": " + dSE.toString());
 		}

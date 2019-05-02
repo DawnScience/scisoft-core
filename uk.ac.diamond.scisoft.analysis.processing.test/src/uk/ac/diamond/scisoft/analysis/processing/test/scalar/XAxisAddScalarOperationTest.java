@@ -11,31 +11,27 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.test.scalar;
 
-//Import from org.junit
 import static org.junit.Assert.assertEquals;
+
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.MetadataException;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
-import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
-import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
 import org.junit.Test;
 
-//Imports from uk.ac.diamond
-import uk.ac.diamond.scisoft.analysis.processing.scalar.XAxisAddScalarOperation;
-import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 import uk.ac.diamond.scisoft.analysis.processing.scalar.ScalarUncertaintyModel;
+import uk.ac.diamond.scisoft.analysis.processing.scalar.XAxisAddScalarOperation;
 
-//Now the testing class
 public class XAxisAddScalarOperationTest {
 	
 	// Numbers that will be used in the test

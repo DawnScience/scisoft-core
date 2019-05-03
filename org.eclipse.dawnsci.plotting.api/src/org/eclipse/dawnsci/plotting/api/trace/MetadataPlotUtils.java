@@ -17,6 +17,7 @@ import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
 import org.eclipse.dawnsci.plotting.api.metadata.Plot1DMetadata;
 import org.eclipse.dawnsci.plotting.api.trace.ILineTrace.TraceType;
 import org.eclipse.january.DatasetException;
+import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Slice;
@@ -265,9 +266,6 @@ public class MetadataPlotUtils {
 	
 	
 	public static IDataset[] getAxesFromMetadata(ILazyDataset data) {
-		IDataset x = null;
-		IDataset y = null;
-		
 		data = data.getSliceView();
 		
 		List<AxesMetadata> amd = null;
@@ -289,22 +287,18 @@ public class MetadataPlotUtils {
 					out = new IDataset[2];
 					lz1 = axes[1];
 				}else {
-					out= new IDataset[1];
+					out = new IDataset[1];
 				}
 				
-				if (lz0 != null){
-	//				lz0.clearMetadata(null);
+				if (lz0 != null) {
 					try {
-						x = lz0.getSlice().squeeze();
-						out[0] = x;
+						out[0] = DatasetUtils.sliceAndConvertLazyDataset(lz0).squeeze();
 					} catch (DatasetException e) {
 					}
 				}
 				if (lz1 != null) {
-	//				lz1.clearMetadata(null);
 					try {
-						y = lz1.getSlice().squeeze();
-						out[1] = y;
+						out[1] = DatasetUtils.sliceAndConvertLazyDataset(lz1).squeeze();
 					} catch (DatasetException e) {
 					}
 				}

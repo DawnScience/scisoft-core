@@ -66,12 +66,11 @@ class Maths3d {
 	public Double dot(Maths3d b) {
 		return this.dot(b.value);
 	}
-	
+
 	public Double dot(Vector3d b) {
-		return new Double(this.value.dot(b));
+		return Double.valueOf(this.value.dot(b));
 	}
-	
-	
+
 	public Maths3d cross(Maths3d b) {
 		return this.cross(b.value);
 	}

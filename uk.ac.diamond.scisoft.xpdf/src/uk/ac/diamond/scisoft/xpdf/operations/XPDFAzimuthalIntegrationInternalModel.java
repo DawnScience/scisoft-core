@@ -26,7 +26,7 @@ public class XPDFAzimuthalIntegrationInternalModel extends
 		this.azimuthRange = (azimuthalRange != null) ? Arrays.copyOf(azimuthalRange, 2) : null;
 		this.radialRange = (radialRange != null) ? Arrays.copyOf(radialRange, 2) : null;
 		this.pixelSplitting = pixelSplitting;
-		this.nBins = (nBins != null) ? new Integer(nBins) : null;
+		this.nBins = (nBins != null) ? nBins : null;
 	}
 	
 	@Override

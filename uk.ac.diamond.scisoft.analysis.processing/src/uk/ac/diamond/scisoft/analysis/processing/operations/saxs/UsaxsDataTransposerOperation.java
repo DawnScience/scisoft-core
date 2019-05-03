@@ -132,7 +132,7 @@ public class UsaxsDataTransposerOperation extends AbstractOperation<EmptyModel, 
 		
 		Dataset output = longerDataset.clone();
 		IndexIterator datasetIterator = longerDataset.getIterator();
-		Dataset datasetTwo = DatasetFactory.createFromObject(new Double(2.0));
+		Dataset datasetTwo = DatasetFactory.createFromObject(2.0);
 		
 		while (datasetIterator.hasNext()) {
 			int index = datasetIterator.index;

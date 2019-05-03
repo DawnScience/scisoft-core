@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IOperator;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
 import org.eclipse.dawnsci.analysis.dataset.impl.Signal;
+import org.eclipse.january.dataset.CompoundDoubleDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -39,7 +40,7 @@ public class Convolve extends ABinaryOperator implements IOperator {
 
 	@Override
 	public double val(double... values) {
-		DoubleDataset v = calculateValues(DatasetFactory.createFromObject(values.length, Dataset.ARRAYFLOAT64, values, 1));
+		DoubleDataset v = calculateValues(DatasetFactory.createFromObject(values.length, CompoundDoubleDataset.class, values, 1));
 		return v.getAbs(0);
 	}
 

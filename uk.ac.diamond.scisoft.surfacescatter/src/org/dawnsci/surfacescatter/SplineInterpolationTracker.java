@@ -183,8 +183,6 @@ public class SplineInterpolationTracker {
 		
 		
 		try{
-		@SuppressWarnings("deprecation")
-
 			Dataset higherExtrapolationRange = DatasetFactory.createRange(DoubleDataset.class,
 																		  (highestValueOfXValues - (20*highEndLastStepIncrement)),
 																		  highestValueOfXValues,

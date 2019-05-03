@@ -2,7 +2,6 @@ package uk.ac.diamond.scisoft.analysis.powder.indexer.indexers;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,9 +10,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
-import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.eclipse.january.dataset.IDataset;
 import org.slf4j.Logger;
@@ -236,7 +234,7 @@ public class Ntreor extends AbstractPowderIndexerProcess {
 			// Extract & set figure of merit
 			double merit = (Double) raw.get("M(20)");
 
-			CellParameter cell = new CellParameter(a, b, c, al, be, ga, merit,this.ID);
+			CellParameter cell = new CellParameter(a, b, c, al, be, ga, merit, ID);
 
 			plausibleCells.add(cell);
 		}
@@ -295,11 +293,11 @@ public class Ntreor extends AbstractPowderIndexerProcess {
 	@Override
 	public Map<String, IPowderIndexerParam> getInitialParamaters() {
 		Map<String, IPowderIndexerParam> intialParams = new TreeMap<String, IPowderIndexerParam>();
-		intialParams.put(StandardConstantParameters.wavelength, new PowderIndexerParam("wave", new Double(0.49481)));
-		intialParams.put(StandardConstantParameters.maxVolume, new PowderIndexerParam("VOL", new Double(5000)));
-		// intialParams.put("limit", new NtreorParam("LIMIT", new Double(1)));
-		intialParams.put("Merit Limit", new PowderIndexerParam("merit", new Double(10)));
-		intialParams.put("Choice", new PowderIndexerParam("choice", new Integer(3))); //
+		intialParams.put(StandardConstantParameters.wavelength, new PowderIndexerParam("wave", Double.valueOf(0.49481)));
+		intialParams.put(StandardConstantParameters.maxVolume, new PowderIndexerParam("VOL", Double.valueOf(5000)));
+		// intialParams.put("limit", new NtreorParam("LIMIT", Double.valueOf(1)));
+		intialParams.put("Merit Limit", new PowderIndexerParam("merit", Double.valueOf(10)));
+		intialParams.put("Choice", new PowderIndexerParam("choice", Integer.valueOf(3))); //
 
 		// TODO: crystal search intial paramters
 		// Cant pass all the crystal choices... only cancel triclinic search

@@ -215,7 +215,7 @@ public class PseudoVoigt extends APeak {
 			calcCachedParameters();
 
 		double w = 2*(halfwl + halfwg);
-		Dataset x = DatasetFactory.createLinearSpace(pos - w, pos + w, 200, Dataset.FLOAT64);
+		Dataset x = DatasetFactory.createLinearSpace(DoubleDataset.class, pos - w, pos + w, 200);
 		DoubleDataset data = calculateValues(x);
 		data = (DoubleDataset) Maths.abs(data);
 		List<Double> crossings = DatasetUtils.crossings(x, data, height / 2);

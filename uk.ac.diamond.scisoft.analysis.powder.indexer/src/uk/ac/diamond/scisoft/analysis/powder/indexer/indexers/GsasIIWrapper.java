@@ -137,7 +137,7 @@ public class GsasIIWrapper extends AbstractPowderIndexer {
 			Double be = Double.valueOf(cells[val++]);
 			Double ga = Double.valueOf(cells[val]);
 
-			CellParameter cell = new CellParameter(a, b, c, al, be, ga, merit, this.ID);
+			CellParameter cell = new CellParameter(a, b, c, al, be, ga, merit, ID);
 
 			pC.add(cell);
 		}
@@ -248,7 +248,7 @@ public class GsasIIWrapper extends AbstractPowderIndexer {
 		// TODO Auto-generated method stub
 		Map<String, IPowderIndexerParam> intialParams = new TreeMap<String, IPowderIndexerParam>();
 		//TODO: wavelength should be grabbed from the service constant file
-		intialParams.put("wavelength", new PowderIndexerParam("Wavelength", new Double(1.5405981)));
+		intialParams.put("wavelength", new PowderIndexerParam("Wavelength", Double.valueOf(1.5405981)));
 
 		// Controls UNKNOWN_UNUSED,zero=0,ncno = 4 ,volume=25, - these are deafult
 		intialParams.put("Zero Point Error", new PowderIndexerParam("zero", 0));

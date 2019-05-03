@@ -46,7 +46,7 @@ public class FittingOperation extends AbstractOperationBase<FittingModel, Operat
 					                                                                  model.getThreshold(), 
 					                                                                  model.isAutostopping(), model.isBackgrounddominated(), monitor);
 			
-	        // Same original data but with some fitted peaks added to auxillary data.
+	        // Same original data but with some fitted peaks added to auxiliary data.
 			return new OperationData(d, (Serializable)fittedPeakList);
 		} catch (Exception ne) {
 			throw new OperationException(this, ne);

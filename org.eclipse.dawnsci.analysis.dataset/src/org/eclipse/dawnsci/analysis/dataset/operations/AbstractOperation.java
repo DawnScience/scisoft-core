@@ -64,7 +64,7 @@ public abstract class AbstractOperation<T extends IOperationModel, D extends Ope
 
 		if (output == null || output.getData() == null) return (D) output;
 		
-		return updateOutputToFullRank(output, slice);
+		return (D) updateOutputToFullRank(output, slice);
 	}
 	
 	/**
@@ -73,10 +73,10 @@ public abstract class AbstractOperation<T extends IOperationModel, D extends Ope
 	 * 
 	 * @param output
 	 * @param original
-	 * @return <D>
+	 * @return operationData
 	 * @throws OperationException
 	 */
-	private D updateOutputToFullRank(OperationData output, IDataset original) throws OperationException {
+	private OperationData updateOutputToFullRank(OperationData output, IDataset original) throws OperationException {
 		int outr = output.getData().getRank();
 		int inr = original.getRank();
 	
@@ -98,8 +98,16 @@ public abstract class AbstractOperation<T extends IOperationModel, D extends Ope
 		}
 		
 		//Single image/line case, nothing to alter
-		if (inr == outr) return (D)output;
+		if (inr == outr) return output;
 		
+		updateDataset(output.getData(), original, inr, outr, rankDif);
+		
+		updateAuxData(output.getAuxData(), original);
+
+		return output;
+	}
+	
+	private void updateDataset(IDataset output, IDataset original, int inr, int outr, int rankDif) {
 		List<AxesMetadata> metadata = null;
 		
 		try {
@@ -120,11 +128,8 @@ public abstract class AbstractOperation<T extends IOperationModel, D extends Ope
 		}
 		
 		//Update rank of dataset (will automatically update rank of axes)
-		updateOutputDataShape(output.getData(), inr-rankDif, datadims, rankDif);
-		updateAxes(output.getData(),original,metadata,rankDif, datadims, oddims);
-		updateAuxData(output.getAuxData(), original);
-
-		return (D)output;
+		updateOutputDataShape(output, inr-rankDif, datadims, rankDif);
+		updateAxes(output,original,metadata,rankDif, datadims, oddims);
 	}
 	
 	/**
@@ -235,14 +240,6 @@ public abstract class AbstractOperation<T extends IOperationModel, D extends Ope
 		
 		if (auxData == null || auxData.length == 0 || auxData[0] == null) return;
 		
-		List<AxesMetadata> metadata = null;
-		
-		try {
-			metadata = original.getMetadata(AxesMetadata.class);
-		} catch (Exception e) {
-			throw new OperationException(this, e);
-		}
-		
 		for (int i = 0; i < auxData.length; i++) {
 			if (!(auxData[i] instanceof IDataset)) {
 				continue;
@@ -263,18 +260,7 @@ public abstract class AbstractOperation<T extends IOperationModel, D extends Ope
 				}
 			}
 			
-			int[] datadims = getOriginalDataDimensions(original).clone();
-			int[] oddims = datadims.clone();
-			
-			if (datadims.length > outr) {
-				datadims = new int[]{datadims[0]};
-			}
-			Arrays.sort(datadims);
-			Arrays.sort(oddims);
-			
-			updateOutputDataShape(ds, inr-rankDif, datadims, rankDif);
-			updateAxes(ds,original,metadata,rankDif, datadims, oddims);
-			
+			updateDataset(ds, original, inr, outr, rankDif);
 		}
 	}
 

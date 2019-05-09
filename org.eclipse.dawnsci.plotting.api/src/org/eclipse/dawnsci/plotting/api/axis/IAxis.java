@@ -219,14 +219,14 @@ public interface IAxis {
 	/**
 	 * The position in pixels of a given value.
 	 * @param value
-	 * @return
+	 * @return position
 	 */
 	public int getValuePosition(double value);
 	
 	/**
 	 * The value for a position in pixels.
-	 * @param value
-	 * @return
+	 * @param position
+	 * @return value
 	 */
 	public double getPositionValue(int position);
 

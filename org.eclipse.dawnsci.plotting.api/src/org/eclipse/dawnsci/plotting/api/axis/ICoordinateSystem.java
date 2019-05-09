@@ -126,7 +126,7 @@ public interface ICoordinateSystem {
 	 * a point in the coordinates of the axes labels rather
 	 * than the indices. If no axes are set, then the original point is
 	 * returned. If the plot is 1D then the original values are returned.
-	 * 
+	 * <p>
 	 * NOTE the double[] passed in is not the pixel coordinates point from
 	 * events like a mouse click (int[]). It is the data point (indices of
 	 * real data the case of the image). The return value is

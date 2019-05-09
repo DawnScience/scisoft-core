@@ -106,19 +106,34 @@ public class TraceUtils {
 		return axis.getDouble(0) != 0 && axis.getDouble(length) != length;
 	}
 
+	public final static void transform(IDataset label, int index, double[] point) {
+		if (label!=null) {
+			internalTransform(label, index, point);
+		}
+	}
+
+	public final static void transform(IDataset label, int index, double[] pointA, double[] pointB) {
+		if (label!=null) {
+			internalTransform(label, index, pointA);
+			internalTransform(label, index, pointB);
+		}
+	}
+
 	public final static void transform(IDataset label, int index, double[]... points) {
 		if (label!=null) {
 			for (double[] ds : points) {
-				double dataIndex = ds[index];
-				
-				double floor = Math.floor(dataIndex);
-				double lo    = label.getDouble((int)floor);
-				double hi    = label.getDouble((int)Math.ceil(dataIndex));
-
-				double frac = dataIndex-floor;
-				ds[index] = (1-frac)*lo + frac*hi;
-			
+				internalTransform(label, index, ds);
 			}
-		}		
+		}
+	}
+
+	private final static void internalTransform(IDataset label, int index, double[] point) {
+		double lIndex = point[index];
+		double floor  = Math.floor(lIndex);
+		double frac   = lIndex - floor;
+		int    iFloor = (int) floor;
+		double lo     = label.getDouble(iFloor);
+
+		point[index] = frac == 0 ? lo : (1 - frac) * lo + frac * label.getDouble(iFloor + 1);
 	}
 }

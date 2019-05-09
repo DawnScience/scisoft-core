@@ -45,8 +45,8 @@ public class RixsBaseModel extends AbstractOperationModel {
 	@OperationModelField(label = "Clip spectra", description = "Clip spectra to avoid fall-off from slope correction", hint = "Set true when image background is not zero", expertOnly = true)
 	private boolean clipSpectra = true;
 
-	@OperationModelField(label = "Slope override", description = "Overrides slope value from any processed fit file", hint = "Any non-zero value is used to override the slopes from fit files")
-	private double slopeOverride = 0;
+	@OperationModelField(label = "Slope override", description = "Overrides slope value from any processed fit file", hint = "A value used to override the slopes from fit files")
+	private Double slopeOverride = null;
 
 	@OperationModelField(label = "Fallback value for counts per photon", description = "Pixel value of single photon if it is confined in a single pixel; used only if it cannot be determined from file", min = 1, expertOnly = true)
 	private int countsPerPhoton = 74;
@@ -147,11 +147,11 @@ public class RixsBaseModel extends AbstractOperationModel {
 	/**
 	 * @return slope of elastic line. Non-zero values are used to override values from elastic fit files
 	 */
-	public double getSlopeOverride() {
+	public Double getSlopeOverride() {
 		return slopeOverride;
 	}
 
-	public void setSlopeOverride(double slopeOverride) {
+	public void setSlopeOverride(Double slopeOverride) {
 		firePropertyChange("setSlopeOverride", this.slopeOverride, this.slopeOverride = slopeOverride);
 	}
 

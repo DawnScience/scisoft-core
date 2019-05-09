@@ -680,14 +680,14 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	 * @param clip if true, clip columns where rows contribute from outside image 
 	 * @return elastic line position and spectrum datasets
 	 */
-	public Dataset[] makeSpectrum(int r, Dataset in, double slope, boolean clip) {
+	public Dataset[] makeSpectrum(int r, Dataset in, Double slope, boolean clip) {
 		// shift and accumulate spectra
 		int rows = in.getShapeRef()[0];
 		Dataset y = DatasetFactory.createRange(rows);
 		y.iadd(offset[0]);
 		StraightLine line = getStraightLine(r);
 		Dataset elastic;
-		if (slope == 0) {
+		if (slope == null) {
 			slope = line.getParameterValue(STRAIGHT_LINE_M);
 			elastic = line.calculateValues(y); // absolute position of elastic line to use a zero point
 		} else {

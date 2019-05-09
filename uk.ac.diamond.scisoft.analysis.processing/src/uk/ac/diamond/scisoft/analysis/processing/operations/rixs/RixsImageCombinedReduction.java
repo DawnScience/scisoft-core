@@ -79,7 +79,7 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 
 		updateROICount();
 
-		if (model.getSlopeOverride() != 0) {
+		if (model.getSlopeOverride() != null) {
 			lines[0].setParameterValues(model.getSlopeOverride());
 			lines[1].setParameterValues(model.getSlopeOverride());
 			return;

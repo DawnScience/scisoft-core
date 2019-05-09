@@ -176,10 +176,14 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 
 	private void initializeFitLine(String elasticLineFile, boolean useAverage, int slice, int size) {
 		if (elasticLineFile == null) {
+			Double override = model.getSlopeOverride();
+			if (override == null) {
+				override = 0.;
+			}
 			lines[0] = new StraightLine();
-			lines[0].setParameterValues(model.getSlopeOverride());
+			lines[0].setParameterValues(override);
 			lines[1] = new StraightLine();
-			lines[1].setParameterValues(model.getSlopeOverride());
+			lines[1].setParameterValues(override);
 			return;
 		}
 

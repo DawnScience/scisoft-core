@@ -330,8 +330,9 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			return original;
 		}
 
-		if (model.getSlopeOverride() != 0) {
-			findIntercept(r, in);
+		Double slope = model.getSlopeOverride();
+		if (slope != null) {
+			findIntercept(r, in, slope);
 		} else {
 			int delta = model.getDelta();
 			int[] shape = original.getShape();
@@ -346,13 +347,12 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		return original;
 	}
 
-	private void findIntercept(int r, Dataset in) {
+	private void findIntercept(int r, Dataset in, double slope) {
 		Add peak = new Add();
 		peak.addFunction(new Gaussian());
 		peak.addFunction(new Offset());
 
 		ApacheOptimizer opt = new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT);
-		double slope = model.getSlopeOverride();
 		Dataset s = sumImageAlongSlope(in, slope, false);
 		DoubleDataset x = DatasetFactory.createRange(s.getSize());
 		double factor = model.getPeakFittingFactor();

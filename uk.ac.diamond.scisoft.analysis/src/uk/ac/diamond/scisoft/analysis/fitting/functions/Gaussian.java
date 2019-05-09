@@ -76,6 +76,16 @@ public class Gaussian extends APeak {
 
 	private transient double pos, fr;
 
+	/**
+	 * Calculate height of Gausssian
+	 * @param area
+	 * @param fwhm
+	 * @return height of Gaussian
+	 */
+	public static double calcHeight(double area, double fwhm) {
+		return CONST_A * CONST_B * area / fwhm;
+	}
+
 	@Override
 	protected void calcCachedParameters() {
 		pos = getParameterValue(POSN);

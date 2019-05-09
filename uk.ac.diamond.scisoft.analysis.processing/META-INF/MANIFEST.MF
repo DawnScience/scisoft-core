@@ -13,7 +13,8 @@ Require-Bundle: org.eclipse.january;bundle-version="2.2.0",
  org.eclipse.dawnsci.hdf5,
  org.eclipse.scanning.api,
  com.googlecode.efficient-java-matrix-library.core,
- org.eclipse.dawnsci.plotting.api;bundle-version="1.2.0"
+ org.eclipse.dawnsci.plotting.api;bundle-version="1.2.0",
+ org.eclipse.dawnsci.analysis.dataset
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.vecmath,

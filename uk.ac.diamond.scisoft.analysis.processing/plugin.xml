@@ -882,7 +882,15 @@
             id="uk.ac.diamond.scisoft.analysis.processing.scalar.XAxisAddScalarOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.scalar.ScalarUncertaintyModel"
             name="x-Axis Shift">
-  </operation>
+ 	  </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.scalar.SliceAxisAddScalarOperation"
+            description="Shift the slice-axis by a scalar with an associated uncertainty"
+            icon="icons/plus.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.scalar.SliceAxisAddScalarOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.scalar.ScalarUncertaintyModel"
+            name="Slice Shift">
+ 	  </operation>
       <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.roiprofile.BoxMeanOperation"
             description="Returns mean values within a Box"

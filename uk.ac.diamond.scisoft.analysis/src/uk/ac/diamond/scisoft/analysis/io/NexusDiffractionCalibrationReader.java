@@ -87,15 +87,19 @@ public class NexusDiffractionCalibrationReader {
 		
 		if (tree == null) return null;
 
-		Map<String, NodeLink> dnl = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getFinder(parent), true, null);
+		// Search for all NXdetectors related to parent. If parent is null, then this results in finding all NXdetectors
+		Map<String, NodeLink> dnl = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getFinder(parent), false, null);
 		
+		// If the above did not find exactly one NXdetector, try searching again, this time keying from the provided dataset name
 		if (dnl.size() != 1 && datasetName != null){
 			String s = stripDataName(datasetName);
 			dnl = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getFinder(s), true, null);
 		}
 		
+		// If the above did not find exactly one NX detector, try again, without filtering, and only get the first found
 		if (dnl.size() != 1 && parent != null) dnl = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getFinder((ILazyDataset)null), true, null);
 		
+		// If the above did not find exactly one NX detector, fail
 		if (dnl.size() != 1) return null;
 		
 		String key = dnl.keySet().iterator().next();

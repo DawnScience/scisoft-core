@@ -112,7 +112,7 @@ public class SubtractIntegratedXRegionsOperation extends AbstractOperation<Subtr
 		}
 		
 		System.out.println(m2/m);
-		Dataset ratio = DatasetFactory.createFromObject(new Double(m2/m));
+		Dataset ratio = DatasetFactory.createFromObject(m2/m);
 		ratio.setName("ratio");
 		
 		return new OperationData(signal, ratio);

@@ -272,7 +272,7 @@ abstract public class FlatteningTestAbstract {
 	public void testMap() {
 		HashMap<String, Double> hashMap = new HashMap<String, Double>();
 		hashMap.put("pi", Math.PI);
-		hashMap.put("One", new Double(1));
+		hashMap.put("One", Double.valueOf(1));
 		flattenAndUnflatten(hashMap, hashMap, Map.class);
 
 		TreeMap<String, Double> treeMap = new TreeMap<String, Double>(hashMap);
@@ -293,7 +293,7 @@ abstract public class FlatteningTestAbstract {
 	public void testOrderedMap() {
 		Map<String, Double> hashMap = new LinkedHashMap<>();
 		hashMap.put("pi", Math.PI);
-		hashMap.put("One", new Double(1));
+		hashMap.put("One", Double.valueOf(1));
 		flattenAndUnflatten(hashMap, hashMap, Map.class);
 
 		Map<String, Object> hashMap2 = new LinkedHashMap<>();
@@ -309,7 +309,7 @@ abstract public class FlatteningTestAbstract {
 
 	@Test
 	public void testObjectArrays() {
-		flattenAndUnflatten(new Object[] { new Double(1.2), new Integer(2) });
+		flattenAndUnflatten(new Object[] { Double.valueOf(1.2), Integer.valueOf(2) });
 
 		// arrays of things which look like arrays of integers, double or booleans come out as such
 		flattenAndUnflatten(new Object[] { 0, 1, 2, 3 }, new int[] { 0, 1, 2, 3 });
@@ -332,10 +332,10 @@ abstract public class FlatteningTestAbstract {
 				createRectangularROI(), createRectangularROI() }); // Object[] --> RectangularROI[]
 		flattenAndUnflatten(new Object[] { createRectangularROI(), new LinearROI() }, new IROI[] {
 				createRectangularROI(), new LinearROI() }); // ROIBase[] --> ROIBase[]
-		flattenAndUnflatten(new Object[] { new Integer(0), createRectangularROI(), new LinearROI() }, new Object[] {
-				new Integer(0), createRectangularROI(), new LinearROI() }); // Object[] --> Object[]
-		flattenAndUnflatten(new Object[] { createRectangularROI(), new LinearROI(), new Integer(0) }, new Object[] {
-				createRectangularROI(), new LinearROI(), new Integer(0) }); // Object[] --> Object[]
+		flattenAndUnflatten(new Object[] { Integer.valueOf(0), createRectangularROI(), new LinearROI() }, new Object[] {
+				Integer.valueOf(0), createRectangularROI(), new LinearROI() }); // Object[] --> Object[]
+		flattenAndUnflatten(new Object[] { createRectangularROI(), new LinearROI(), Integer.valueOf(0) }, new Object[] {
+				createRectangularROI(), new LinearROI(), Integer.valueOf(0) }); // Object[] --> Object[]
 
 		// arrays with some (but not all) nulls follow the rule above
 		flattenAndUnflatten(new String[] { null, "two" }, new String[] { null, "two" }); // String[] --> String[]
@@ -370,8 +370,8 @@ abstract public class FlatteningTestAbstract {
 		flattenAndUnflatten(rects, rects.toArray(new RectangularROI[0]));
 
 		ArrayList<Number> nums = new ArrayList<Number>();
-		nums.add(new Double(0.0));
-		nums.add(new Integer(1));
+		nums.add(Double.valueOf(0.0));
+		nums.add(Integer.valueOf(1));
 
 		// ...otherwise they unflatten to an array of Object[]
 		flattenAndUnflatten(nums, nums.toArray(new Object[0]));

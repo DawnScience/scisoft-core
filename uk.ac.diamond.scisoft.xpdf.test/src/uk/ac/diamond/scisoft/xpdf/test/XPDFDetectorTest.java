@@ -14,7 +14,6 @@ import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
 import uk.ac.diamond.scisoft.xpdf.XPDFDetector;
 import uk.ac.diamond.scisoft.xpdf.XPDFSubstance;
 
-@SuppressWarnings("deprecation")
 public class XPDFDetectorTest extends TestCase {
 
 	public boolean doTestApplyCorrection(XPDFDetector tect, String photonEnergyeV) throws DatasetException {

@@ -493,8 +493,8 @@ public class ROIProfile {
 		Dataset[] profiles = new Dataset[] { null, null };
 
 		// get the left and right side line profile of the rectangle
-		double[] righttoppt = { new Double(endpt[0]), new Double(startpt[1]) };
-		double[] leftbottompt = { new Double(startpt[0]), new Double(endpt[1]) };
+		double[] righttoppt = { endpt[0], startpt[1] };
+		double[] leftbottompt = { startpt[0], endpt[1] };
 		LinearROI line1 = null, line2 = null;
 		
 		if (isVertical) {

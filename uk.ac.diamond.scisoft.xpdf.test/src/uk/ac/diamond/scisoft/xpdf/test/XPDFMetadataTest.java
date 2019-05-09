@@ -24,7 +24,6 @@ import uk.ac.diamond.scisoft.xpdf.XPDFSubstance;
 import uk.ac.diamond.scisoft.xpdf.XPDFTargetComponent;
 import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
-@SuppressWarnings("deprecation")
 public class XPDFMetadataTest extends TestCase {
 
 	public void testReorderContainers() {

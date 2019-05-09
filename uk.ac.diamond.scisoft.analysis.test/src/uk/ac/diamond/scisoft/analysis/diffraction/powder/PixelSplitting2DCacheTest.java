@@ -39,25 +39,25 @@ public class PixelSplitting2DCacheTest extends AbstractPixelIntegrationTestBase 
 		IPixelIntegrationCache info = new PixelIntegrationCache(meta, bean);
 		
 		//first pass
-		double firstTime = testWholeImage(data,null,info);
+		testWholeImage(data,null,info);
 		//second pass
-		double secondTime = testWholeImage(data,null,info);
+		testWholeImage(data,null,info);
 		
 		bean.setAzimuthalRange(new double[]{-180,-170});
 		info = new PixelIntegrationCache(meta, bean);
 		//first pass
-		firstTime =testSectionImageAzimuthal(data,null,info);
-		//first pass
-		secondTime =testSectionImageAzimuthal(data,null,info);
+		testSectionImageAzimuthal(data,null,info);
+		//second pass
+		testSectionImageAzimuthal(data,null,info);
 		
 		//similar time
 		
 		bean.setRadialRange(new double[]{1,5});
 		info = new PixelIntegrationCache(meta, bean);
 		//first pass
-		firstTime =testSectionLimitedImageAzimuthal(data,null,info);
+		testSectionLimitedImageAzimuthal(data,null,info);
 		//second pass
-		secondTime =testSectionLimitedImageAzimuthal(data,null,info);;
+		testSectionLimitedImageAzimuthal(data,null,info);
 		
 		//probably should take a similar time
 		//Test different size axes
@@ -66,12 +66,12 @@ public class PixelSplitting2DCacheTest extends AbstractPixelIntegrationTestBase 
 		bean.setUsePixelSplitting(true);
 		bean.setTo1D(false);
 		bean.setNumberOfBinsAzimuthal(360);
-		bean.setNumberOfBinsRadial(1592);;
+		bean.setNumberOfBinsRadial(1592);
 		info = new PixelIntegrationCache(meta, bean);
 		//first pass
-		firstTime =testDifferentSizeAxis(data,null,info);
-		//first pass
-		secondTime =testDifferentSizeAxis(data,null,info);
+		testDifferentSizeAxis(data,null,info);
+		//second pass
+		testDifferentSizeAxis(data,null,info);
 
 	}
 	

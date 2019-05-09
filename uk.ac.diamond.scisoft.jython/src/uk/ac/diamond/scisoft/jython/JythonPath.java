@@ -129,8 +129,7 @@ public class JythonPath {
 			if (isRunningInEclipse) {
 				scisoftParent = scisoftParent.getParentFile();
 			}
-			// Need to include a logging statement
-			return scisoftParent;
+			return scisoftParent.getCanonicalFile();
 		} catch (Exception e) {
 			logger.error("Could not find Scisoft Python plugin", e);
 		}

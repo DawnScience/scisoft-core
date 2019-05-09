@@ -4,11 +4,15 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.function.BiConsumer;
 
 import org.eclipse.january.dataset.IDataset;
@@ -17,12 +21,6 @@ import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.powder.indexer.IPowderIndexerParam;
 import uk.ac.diamond.scisoft.analysis.powder.indexer.PowderIndexerParam;
-import uk.ac.diamond.scisoft.analysis.powder.indexer.crystal.Lattice;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  *
@@ -197,7 +195,7 @@ public class Dicvol extends AbstractPowderIndexerProcess implements IPowderProce
 			String[] out = rawFigureMerit.get(i).split("=");
 			double merit = Double.parseDouble(out[1]);
 			
-			CellParameter cell = new CellParameter(a, b, c, al, be, ga, merit, this.ID);
+			CellParameter cell = new CellParameter(a, b, c, al, be, ga, merit, ID);
 
 			this.plausibleCells.add(cell);
 		}
@@ -328,7 +326,7 @@ public class Dicvol extends AbstractPowderIndexerProcess implements IPowderProce
 	@Override
 	public Map<String, IPowderIndexerParam> getInitialParamaters() {
 		Map<String, IPowderIndexerParam> intialParams = new TreeMap<String, IPowderIndexerParam>();
-		//intialParams.put("WAVE", new DicvolParam("WAVE", new Double(1.0)));
+		//intialParams.put("WAVE", new DicvolParam("WAVE", Double.valueOf(1.0)));
 		
 		Iterator<Entry<String, String>> itr = stdKeyval.entrySet().iterator();
 		
@@ -336,14 +334,14 @@ public class Dicvol extends AbstractPowderIndexerProcess implements IPowderProce
 		while(itr.hasNext()){
 			Entry<String, String> kv = itr.next();
 			
-			Number val = new Double(kv.getValue());
+			Number val = Double.valueOf(kv.getValue());
 			
 			try{
 				  val = Integer.parseInt(kv.getValue());
 				  // is an integer!
 			} catch (NumberFormatException e) {
 			  // not an integer!
-				//val = new Double(kv.getValue());
+				//val = Double.valueOf(kv.getValue());
 			}
 			
 			intialParams.put(kv.getKey(), new PowderIndexerParam(kv.getKey(), val));

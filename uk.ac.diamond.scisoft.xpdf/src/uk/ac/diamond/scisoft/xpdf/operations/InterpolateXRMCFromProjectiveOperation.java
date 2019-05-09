@@ -28,6 +28,7 @@ import org.eclipse.january.metadata.AxesMetadata;
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.Interpolation2D;
 import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionCalibrationReader;
+import uk.ac.diamond.scisoft.diffraction.powder.PowderCalibration;
 
 public class InterpolateXRMCFromProjectiveOperation extends AbstractOperation<InterpolateXRMCFromGDModel, OperationData> {
 
@@ -71,6 +72,11 @@ public class InterpolateXRMCFromProjectiveOperation extends AbstractOperation<In
 		
 		DetectorProperties detProp = dmeta.getDetector2DProperties();
 
+		// Apply fixed roll, if defined
+		if (model.getFixedRoll() != null) {
+			PowderCalibration.setDetectorFastAxisAngle(detProp, model.getFixedRoll());
+		}
+		
 		// Axes of the source data
 		AxesMetadata axMet = input.getFirstMetadata(AxesMetadata.class);
 		ILazyDataset[] allAxes = axMet.getAxes();

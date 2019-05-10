@@ -74,6 +74,8 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	public static final String ES_PREFIX = "elastic_spectrum_";
 	public static final String ESF_PREFIX = ES_PREFIX + "fit_";
 	public static final String ESFWHM_PREFIX = ES_PREFIX + "fwhm_";
+	public static final String ESAREA_PREFIX = ES_PREFIX + "area_";
+	public static final String ESHEIGHT_PREFIX = ES_PREFIX + "height_";
 
 	/**
 	 * Auxiliary subentry. This must match the name field defined in the plugin extension
@@ -751,6 +753,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		List<Double> gPosition = new ArrayList<>();
 		List<Double> gPosn = new ArrayList<>();
 		List<Double> gFWHM = new ArrayList<>();
+		List<Double> gArea = new ArrayList<>();
 		List<Double> positions = goodPosition[r];
 
 		List<Dataset> gSpectra = goodSpectra[r];
@@ -803,6 +806,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 				gPosition.add(positions.get(i));
 				gPosn.add(peak.getParameterValue(SPECTRA_PEAK_POSN));
 				gFWHM.add(peak.getParameterValue(SPECTRA_PEAK_WIDTH));
+				gArea.add(peak.getParameterValue(SPECTRA_PEAK_AREA));
 				DoubleDataset fit = peak.calculateValues(tx);
 				if (gSpectrum == null) {
 					if (tx != x) {
@@ -845,6 +849,19 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			gf.setName(ESFWHM_PREFIX + r);
 			MetadataUtils.setAxes(gf, ge);
 			summaryData.add(gf);
+			Dataset ga = DatasetFactory.createFromList(gArea);
+			ga.setName(ESAREA_PREFIX + r);
+			MetadataUtils.setAxes(ga, ge);
+			summaryData.add(ga);
+
+			List<Double> gHeight = new ArrayList<>();
+			for (int i = 0, imax = ga.getSize(); i < imax; i++) {
+				gHeight.add(Gaussian.calcHeight(ga.getDouble(i), gf.getDouble(i)));
+			}
+			Dataset gh = DatasetFactory.createFromList(gHeight);
+			gh.setName(ESHEIGHT_PREFIX + r);
+			MetadataUtils.setAxes(gh, ge);
+			summaryData.add(gh);
 		}
 		if (bPosition.size() > 0) {
 			Dataset be = DatasetFactory.createFromList(bPosition);

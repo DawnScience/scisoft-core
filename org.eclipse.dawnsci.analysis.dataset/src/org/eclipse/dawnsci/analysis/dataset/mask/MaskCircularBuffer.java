@@ -173,6 +173,14 @@ public class MaskCircularBuffer {
 		nextBitMask();
 	}
 	
+	public void maskPixel(int x, int y) {
+		
+		int i = mask.get(y, x);
+		mask.set(i | bitMask, y, x);
+		
+		nextBitMask();
+	}
+	
 	private void updateArray(IntegerDataset section) {
 		IndexIterator iterator = section.getIterator();
 		while (iterator.hasNext()) {

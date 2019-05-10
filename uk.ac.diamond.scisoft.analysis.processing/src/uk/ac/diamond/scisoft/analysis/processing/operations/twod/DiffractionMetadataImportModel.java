@@ -17,12 +17,21 @@ public class DiffractionMetadataImportModel extends AbstractOperationModel {
 	@OperationModelField(hint="Path to the calibration NeXus file", file = FileType.EXISTING_FILE, label = "Calibration File:")
 	private String filePath = "";
 
+	@OperationModelField(hint="Enter the dataset name for the calibration of the target detector", dataset = "detectorFileName", label = "Target detector dataset")
+	private String detectorDataset = null;
+
 	public String getFilePath() {
 		return filePath;
+	}
+	public String getDetectorDataset() {
+		return this.detectorDataset;
 	}
 
 	public void setFilePath(String filePath) {
 		firePropertyChange("filePath", this.filePath, this.filePath = filePath);
 	}
-	
+	public void setDetectorDataset(String dataset) {
+		firePropertyChange("detectorDataset", this.detectorDataset, this.detectorDataset = dataset);
+	}
+
 }

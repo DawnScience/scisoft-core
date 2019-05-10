@@ -44,7 +44,10 @@ public class DiffractionMetadataImportOperation extends AbstractOperationBase<Di
 		
 		SliceFromSeriesMetadata ssm = slice.getFirstMetadata(SliceFromSeriesMetadata.class);
 
-		slice.setMetadata(getMeta(model, ssm.getParent(), ssm.getDatasetName()));
+			// Look for the user defined detector dataset, if present
+		String datasetName = (model.getDetectorDataset() != null) ? model.getDetectorDataset() : ssm.getDatasetName();
+		
+		slice.setMetadata(getMeta(model, ssm.getParent(), datasetName));
 		return new OperationData(slice);
 	}
 	

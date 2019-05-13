@@ -59,7 +59,7 @@ public class GaussianND extends AFunction {
 
 		// check if correct number of parameters given
 		int guess = -1;
-		for (rank = 0; guess < nparams; ) {
+		for (rank = 0; guess < nparams; rank++) {
 			guess = 1 + (rank * (rank + 3)) / 2;
 		}
 		if (guess != nparams) {

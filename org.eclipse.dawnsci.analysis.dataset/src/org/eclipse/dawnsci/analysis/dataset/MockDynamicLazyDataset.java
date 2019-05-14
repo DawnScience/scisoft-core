@@ -29,30 +29,37 @@ public class MockDynamicLazyDataset extends LazyDynamicDataset {
 		shapeArrays = shapes;
 		this.maxShape = parent.getShape();
 	}
-	
-	
+
+	MockDynamicLazyDataset(MockDynamicLazyDataset other) {
+		super(other);
+
+		shapeArrays = other.shapeArrays;
+		count = other.count;
+		parent = other.parent;
+		allowIncrement = other.allowIncrement;
+	}
+
 	public void setAllowIncrement(boolean allow) {
 		allowIncrement = allow;
 	}
-	
+
 	public Dataset getParent() {
 		return parent;
 	}
-	
+
 	@Override
 	public IDynamicDataset getDataset() {
 		return this;
 	}
 
-
 	@Override
 	public void setMaxShape(int... maxShape) {
-		//do nothing
+		// do nothing
 	}
 
 	@Override
 	public void startUpdateChecker(int milliseconds, IDatasetChangeChecker checker) {
-		//do nothing
+		// do nothing
 	}
 
 	@Override
@@ -73,36 +80,22 @@ public class MockDynamicLazyDataset extends LazyDynamicDataset {
 
 	@Override
 	public void addDataListener(IDataListener l) {
-		//do nothing
+		// do nothing
 	}
 
 	@Override
 	public void removeDataListener(IDataListener l) {
-		//do nothing
+		// do nothing
 	}
 
 	@Override
 	public void fireDataListeners() {
-		//do nothing
+		// do nothing
 	}
 
 	@Override
 	public MockDynamicLazyDataset clone() {
-		MockDynamicLazyDataset ret = new MockDynamicLazyDataset(shapeArrays, this.parent);
-		ret.loader = this.loader;
-		ret.oShape = oShape;
-		ret.shape = shape;
-		ret.size = size;
-		ret.prepShape = prepShape;
-		ret.postShape = postShape;
-		ret.begSlice = begSlice;
-		ret.delSlice = delSlice;
-		ret.map = map;
-		ret.base = base;
-		ret.metadata = copyMetadata();
-		ret.oMetadata = oMetadata;
-		ret.name = this.name;
-		return ret;
+		return new MockDynamicLazyDataset(this);
 	}
 
 	private class DynamicLazyLoader implements ILazyLoader {
@@ -116,12 +109,8 @@ public class MockDynamicLazyDataset extends LazyDynamicDataset {
 
 		@Override
 		public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
-			
 			return parent.getSlice(slice);
-
 		}
-
 	}
-
 }
 

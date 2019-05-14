@@ -18,6 +18,7 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.PositionIterator;
 
 public class FunctionTestUtils {
 
@@ -73,6 +74,28 @@ public class FunctionTestUtils {
 		IndexIterator it = coord.getIterator();
 		while (it.hasNext()) {
 			individual.setObjectAbs(it.index, f.val(coord.getAbs(it.index)));
+		}
+		TestUtils.assertDatasetEquals(actual, individual, AFunction.R_TOLERANCE, AFunction.A_TOLERANCE);
+	}
+	
+	public static void checkValuesND(AFunction f, DoubleDataset...datasets) {
+		Dataset actual = f.calculateValues(datasets);
+		Dataset individual = DatasetFactory.zeros(actual);
+		
+		int d = datasets.length;
+		int[] shape = new int[d];
+		for (int i = 0; i < d; i++) {
+			shape[i] = datasets[i].getSize();
+		}
+		
+		PositionIterator it = new PositionIterator(shape);
+		final int[] pos = it.getPos();
+		final double[] coords = new double[d];
+		while (it.hasNext()) {
+			for (int i = 0; i < d; i++) {
+				coords[i] = datasets[i].getAbs(pos[i]);
+			}
+			individual.set(f.val(coords), pos);
 		}
 		TestUtils.assertDatasetEquals(actual, individual, AFunction.R_TOLERANCE, AFunction.A_TOLERANCE);
 	}

@@ -29,7 +29,7 @@ public class RegisterNoisyData1DTest extends RegisterData1DTest {
 	public void testRegisterSynthetic() {
 		testRegisterSynthetic(0.15, 0);
 		testRegisterSynthetic(0.8, 0.05); // 10% noise
-		testRegisterSynthetic(1.02, 0.1); // 20% noise
+		testRegisterSynthetic(2.1, 0.1); // 20% noise
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class RegisterNoisyData1DTest extends RegisterData1DTest {
 	public void testRegisterSyntheticWithROI() {
 		testRegisterSyntheticWithROI(0.05, 0);
 		testRegisterSyntheticWithROI(1.2, 0.05); // 10% noise
-		testRegisterSyntheticWithROI(2.07, 0.1); // 20% noise
+		testRegisterSyntheticWithROI(2.2, 0.1); // 20% noise
 	}
 
 	@Override

@@ -204,6 +204,10 @@ public class RegisterNoisyData1D implements DatasetToDatasetFunction {
 			}
 		}
 
+		if (!dirty && n > 0 && !Arrays.equals(datasets[0].getShape(), shape)) {
+			dirty = true;
+		}
+
 		if (dirty) {
 			IDataset image = datasets[0];
 			if (image.getRank() != 1) {
@@ -443,15 +447,14 @@ public class RegisterNoisyData1D implements DatasetToDatasetFunction {
 				sum0 += vr*right;
 			}
 		} while (bl || br);
-//		System.out.println("Width used to find centroid = " + (right - left));
 
-		int hs = (cc.getShapeRef()[0] + 1)/2;
+		int hs = cc.getShapeRef()[0]/2;
 		return sum0/sum - hs;
 	}
 
 	/**
-	 * @param fim
-	 * @param imb
+	 * @param fim transformed dataset
+	 * @param imb untransformed dataset
 	 * @return return central region of cross-correlation
 	 */
 	public Dataset crossCorrelate(IDataset fim, IDataset imb) {

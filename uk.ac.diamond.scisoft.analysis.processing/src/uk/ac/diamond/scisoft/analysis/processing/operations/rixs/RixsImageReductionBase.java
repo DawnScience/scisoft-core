@@ -390,7 +390,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			} catch (Exception e) {
 			}
 
-			RegisterNoisyData1D reg = getCorrelateShifter();
+			RegisterNoisyData1D reg = createCorrelateShifter();
 			double[] eRange = model.getEnergyRange();
 			if (eRange != null && ax != null) {
 				Arrays.sort(eRange);
@@ -412,7 +412,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			List<Double> shift = new ArrayList<>();
 			Dataset cSpectrum = correlateSpectra("", r, reg, shift, ax, sArray);
 			String normPath = model.getNormalizationPath();
-			if (normPath != null) {
+			if (normPath != null && !normPath.isEmpty()) {
 				Dataset nSpectrum = normalizeSpectrum(filePath, normPath, cSpectrum);
 				if (nSpectrum != null) {
 					nSpectrum.setName("normalized_correlated_spectrum_" + r);
@@ -550,11 +550,13 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		} catch (Exception e) {
 			throw new OperationException(this, "Could not correlate spectra", e);
 		}
-		for (int i = 0; i < sArray.length; i++) {
-			sArray[i] = results.get(2*i + 1);
+
+		Dataset[] msArray = new Dataset[sArray.length];
+		for (int i = 0; i < msArray.length; i++) {
+			msArray[i] = results.get(2*i + 1);
 		}
 
-		Dataset sp = stack(sArray);
+		Dataset sp = stack(msArray);
 		prefix = "correlated_" + prefix;
 		sp.setName(prefix + "spectra_" + r);
 		MetadataUtils.setAxes(sp, null, energies);
@@ -664,7 +666,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		return DatasetUtils.concatenate(nd.toArray(new Dataset[nd.size()]), 0);
 	}
 
-	private RegisterNoisyData1D getCorrelateShifter() {
+	private RegisterNoisyData1D createCorrelateShifter() {
 		RegisterNoisyData1D reg = new RegisterNoisyData1D();
 		reg.setFilter(DatasetFactory.ones(5).imultiply(1./5));
 		reg.setPeakCentroidThresholdFraction(0.85);

@@ -351,17 +351,17 @@ public class RegisterData1D implements DatasetToDatasetFunction {
 	 * @param shift
 	 * @return shifted data
 	 */
-	public static Dataset shiftData(Dataset im, double shift) {
+	public static DoubleDataset shiftData(Dataset im, double shift) {
 		if (im.getRank() != 1) {
 			throw new IllegalArgumentException("Dataset must be 1d");
 		}
-		Dataset newImage = DatasetFactory.zeros(im, DoubleDataset.class);
+		DoubleDataset newImage = DatasetFactory.zeros(im, DoubleDataset.class);
 		int[] shape = im.getShapeRef();
 
 		double cx0;
 		for (int x0 = 0; x0 < shape[0]; x0++) {
 			cx0 = x0 + shift;
-			newImage.set(Maths.interpolate(im, cx0), x0);
+			newImage.setAbs(x0, Maths.interpolate(im, cx0));
 		}
 
 		return newImage;

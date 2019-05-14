@@ -42,9 +42,9 @@ public class RegisterData1DTest {
 
 	@Test
 	public void testRegisterSynthetic() {
-		testRegisterSynthetic(0.17, 0);
-		testRegisterSynthetic(163, 0.05); // 10% noise
-		testRegisterSynthetic(151, 0.1); // 20% noise
+		testRegisterSynthetic(0.18, 0);
+		testRegisterSynthetic(179, 0.05); // 10% noise
+		testRegisterSynthetic(169, 0.1); // 20% noise
 	}
 
 	@Test
@@ -55,7 +55,8 @@ public class RegisterData1DTest {
 	}
 
 	void testRegisterSynthetic(double delta, double noise) {
-		testRegisterSynthetic(null, delta, noise);
+		testRegisterSynthetic(null, delta, noise, true);
+		testRegisterSynthetic(null, delta, noise, false);
 	}
 
 	void testRegisterSyntheticWithROI(double delta, double noise) {
@@ -65,7 +66,8 @@ public class RegisterData1DTest {
 		end[1] = 1; // to get around auto-adjustment of start and angle
 		RectangularROI roi = new RectangularROI(start, end);
 		System.err.println(roi);
-		testRegisterSynthetic(roi, delta, noise);
+		testRegisterSynthetic(roi, delta, noise, true);
+		testRegisterSynthetic(roi, delta, noise, false);
 	}
 
 	DatasetToDatasetFunction createFunction(IDataset[] data, IRectangularROI roi, boolean useFirst) {
@@ -81,10 +83,15 @@ public class RegisterData1DTest {
 		return reg;
 	}
 
-	void testRegisterSynthetic(IRectangularROI roi, double delta, double noise) {
+	void testRegisterSynthetic(IRectangularROI roi, double delta, double noise, boolean evenShape) {
 		double[] shifts = generateShifts(MAX);
 		System.err.println(Arrays.toString(shifts));
-		IDataset[] data = createTestData(shifts, X_SIZE, noise);
+		int xSize = X_SIZE;
+		if (evenShape ^ (xSize % 2 == 0)) {
+			xSize++;
+		}
+
+		IDataset[] data = createTestData(shifts, xSize, noise);
 
 		DatasetToDatasetFunction function = createFunction(data, roi, true);
 		List<? extends IDataset> coords = function.value(data);

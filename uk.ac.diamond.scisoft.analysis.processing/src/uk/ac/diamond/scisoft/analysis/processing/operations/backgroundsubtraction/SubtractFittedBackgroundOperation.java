@@ -120,6 +120,10 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 			darkData = null;
 			smoothedDarkData = null;
 			break;
+		case SubtractFittedBackgroundModel.DARK_FILE_PROPERTY:
+			darkData = null;
+			smoothedDarkData = null;
+			break;
 		default:
 			break;
 		}
@@ -183,7 +187,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		fit = DatasetUtils.convertToDataset(pdf.calculateValues(x));
 		fit.setName("Background fit");
 
-		return cx;
+		return x.getDouble((int) p.getValue());
 	}
 
 	protected double calculateThreshold(Dataset in, boolean positive) throws OperationException {
@@ -227,8 +231,9 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 			// fit dark to current with offset
 			Dataset subtractImage = null;
 
+			Double darkOffset = model.getDarkOffset();
 			if (model.isMode2D()) {
-				double offset = findDarkDataOffset(in, smoothedDarkData);
+				double offset = notValid(darkOffset) ? findDarkDataOffset(in, smoothedDarkData) : darkOffset;
 				auxData.add(ProcessingUtils.createNamedDataset(offset, "dark_offset"));
 				subtractImage = Maths.add(smoothedDarkData, offset);
 
@@ -249,7 +254,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 				profile.setName("profile");
 				auxData.add(profile);
 
-				double offset = findDarkDataOffset(profile.reshape(-1), smoothedDarkData.reshape(-1));
+				double offset = notValid(darkOffset) ? findDarkDataOffset(profile.reshape(-1), smoothedDarkData.reshape(-1)) : darkOffset;
 				auxData.add(ProcessingUtils.createNamedDataset(offset, "dark_offset"));
 				Dataset darkFit = Maths.add(smoothedDarkData, offset);
 
@@ -259,7 +264,9 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 				subtractImage = Maths.multiply(darkFit.reshape(darkFit.getSize(), 1), 1./in.getShapeRef()[1]);
 
 				displayData.add(darkData);
-				displayData.add(smoothedDarkData);
+				if (smoothedDarkData != darkData) {
+					displayData.add(smoothedDarkData);
+				}
 				displayData.add(darkFit);
 				displayData.add(profile);
 			}
@@ -286,7 +293,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 	}
 
 	private void cleanUpProfile(Dataset profile) {
-		if (profile.getDouble() == 0) {
+		if (profile.getSize() > 0 && profile.getDouble() == 0) {
 			profile.set(0.5*(profile.getDouble(1) + profile.getDouble(2)), 0); // ensure 1st entry is non-zero
 		}
 	}
@@ -314,8 +321,16 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 		Slice s = new Slice(b, CLIP_END);
 		smooth = smooth.getSliceView(s);
-		in = in.getSliceView(s);
+		if (smooth.getSize() == 0) { // no trough
+			return 0;
+		}
 
+		if (in.getRank() == 2) {
+			in = in.getSlice(s);
+			removeBlips2D(in);
+		} else {
+			in = in.getSliceView(s);
+		}
 		Offset so = new Offset(smooth);
 		so.setParameterValues(0);
 		double res = fitFunction("Exception in dark data fit", so, DatasetFactory.zeros(in.getShapeRef()), in);
@@ -425,8 +440,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		}
 	}
 
-	private Dataset createFilter() {
-		double l = model.getGaussianSmoothingLength();
+	private Dataset createFilter(double l) {
 		int n = (int) Math.ceil(3*l);
 		int m = 2*n + 1;
 		Dataset x = DatasetFactory.createRange(m);
@@ -434,8 +448,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		return Operations.operate(new GaussianOperation(l), x, null);
 	}
 
-	private Dataset smoothFilter1D(Dataset darkProfile) {
-		Dataset g = createFilter();
+	private Dataset smoothFilter1D(Dataset darkProfile, Dataset g) {
 		int n = g.getSize() / 2;
 		g.imultiply(1./((Number) g.sum(true)).doubleValue());
 		Dataset smoothed = Signal.convolveToSameShape(darkProfile.cast(DoubleDataset.class), g, null);
@@ -444,8 +457,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		return smoothed;
 	}
 
-	private Dataset smoothFilter2D(Dataset darkImage) {
-		Dataset g = createFilter();
+	private Dataset smoothFilter2D(Dataset darkImage, Dataset g) {
 		int n = g.getSize() / 2;
 		g = LinearAlgebra.outerProduct(g, g);
 		g.imultiply(1./((Number) g.sum(true)).doubleValue());
@@ -496,7 +508,9 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 			if (model.isMode2D()) {
 				darkData = d;
-				removeBlips2D();
+				if (model.isRemoveOutliers()) {
+					removeBlips2D(darkData);
+				}
 			} else {
 				// sum all so that only profile along row is left
 				if (model.isRemoveOutliers()) {
@@ -514,32 +528,42 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 			}
 		}
 
-		if (model.isMode2D()) {
-			smoothedDarkData = smoothFilter2D(darkData);
-			smoothedDarkData.setName("dark_smoothed_image");
+		Double smoothingLength = model.getGaussianSmoothingLength();
+		if (notValid(smoothingLength)) {
+			smoothedDarkData = darkData;
 		} else {
-			smoothedDarkData = smoothFilter1D(darkData);
-			smoothedDarkData.setName("dark_smoothed_profile");
+			Dataset g = createFilter(Math.abs(smoothingLength));
+			if (model.isMode2D()) {
+				smoothedDarkData = smoothFilter2D(darkData, g);
+				smoothedDarkData.setName("dark_smoothed_image");
+			} else {
+				smoothedDarkData = smoothFilter1D(darkData, g);
+				smoothedDarkData.setName("dark_smoothed_profile");
+			}
 		}
 	}
 
-	private void removeBlips2D() {
-		fitImageHistogram(darkData, true);
+	private final static boolean notValid(Double v) {
+		return v == null || !Double.isFinite(v);
+	}
 
-		IndexIterator it = darkData.getIterator(true);
+	private void removeBlips2D(Dataset data) {
+		fitImageHistogram(data, true);
+
+		IndexIterator it = data.getIterator(true);
 		double thr = pdf.getParameterValue(0) + 2 * pdf.getParameterValue(1);
 		log.append("Blip removal using threshold = %g", thr);
 		int blips = 0;
 		while (it.hasNext()) {
 			int i = it.index;
-			if (darkData.getElementDoubleAbs(i) >= thr) {
+			if (data.getElementDoubleAbs(i) >= thr) {
 				blips++;
-				while (it.hasNext() && darkData.getElementDoubleAbs(it.index) >= thr) {
+				while (it.hasNext() && data.getElementDoubleAbs(it.index) >= thr) {
 				}
 				int imax = it.index;
-				double d = 0.5*(darkData.getElementDoubleAbs(i - 1) + darkData.getElementDoubleAbs(imax));
+				double d = 0.5*(data.getElementDoubleAbs(i - 1) + data.getElementDoubleAbs(imax));
 				while (i < imax) {
-					darkData.setObjectAbs(i++, d);
+					data.setObjectAbs(i++, d);
 				}
 			}
 		}
@@ -700,7 +724,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		}
 		od.setAuxData(auxData.toArray(new Serializable[auxData.size()]));
 
-		if (si.isLastSlice() && smoothedDarkData != null) {
+		if (si.isLastSlice() && smoothedDarkData != null && smoothedDarkData != darkData) {
 			if (model.isMode2D()) {
 				od.setSummaryData(smoothedDarkData);
 			} else {

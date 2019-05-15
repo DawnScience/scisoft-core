@@ -37,11 +37,14 @@ public class SubtractFittedBackgroundModel extends AbstractOperationModel {
 	@OperationModelField(fieldPosition = 4, label = "Remove outliers from dark image", hint = "Check to omit cosmic ray events", enableif = "darkImageFile != null", expertOnly = true)
 	private boolean removeOutliers = true;
 
-	@OperationModelField(fieldPosition = 5, label = "Gaussian smoothing length parameter", enableif = "darkImageFile != null", expertOnly = true)
-	private double gaussianSmoothingLength = 10;
+	@OperationModelField(fieldPosition = 5, label = "Gaussian smoothing length parameter", hint = "Can be empty to disable smooth", enableif = "darkImageFile != null", expertOnly = true)
+	private Double gaussianSmoothingLength = 10.;
 
 	@OperationModelField(fieldPosition = 6, label = "Use dark image in 2D", hint = "Leave unchecked to use 1D", description = "Use 2D smoothed dark image rather than a summed 1D profile", enableif = "darkImageFile != null", expertOnly = true)
 	private boolean mode2D = true;
+
+	@OperationModelField(fieldPosition = 7, label = "Offset dark image", hint = "Leave empty for operation to finding from shadow region", description = "Override offset value to add to dark image", enableif = "darkImageFile != null", expertOnly = true)
+	private Double darkOffset = null;
 
 	public static final int HISTOGRAM_MAX_BINS = 1024*1024;
 
@@ -98,8 +101,10 @@ public class SubtractFittedBackgroundModel extends AbstractOperationModel {
 		return darkImageFile;
 	}
 
+	public static final String DARK_FILE_PROPERTY = "setDarkImageFile";
+
 	public void setDarkImageFile(String darkImageFile) {
-		firePropertyChange("setDarkImageFile", this.darkImageFile, this.darkImageFile = darkImageFile);
+		firePropertyChange(DARK_FILE_PROPERTY, this.darkImageFile, this.darkImageFile = darkImageFile);
 	}
 
 //	/**
@@ -114,15 +119,15 @@ public class SubtractFittedBackgroundModel extends AbstractOperationModel {
 //	}
 //
 	/**
-	 * @return length parameter used for Gaussian smoothing filter
+	 * @return length parameter used for Gaussian smoothing filter. If null or NaN then no smoothing
 	 */
-	public double getGaussianSmoothingLength() {
+	public Double getGaussianSmoothingLength() {
 		return gaussianSmoothingLength;
 	}
 
 	public static final String GAUSSIAN_PROPERTY = "setGaussianSmoothingLength";
 
-	public void setGaussianSmoothingLength(double gaussianSmoothingLength) {
+	public void setGaussianSmoothingLength(Double gaussianSmoothingLength) {
 		firePropertyChange(GAUSSIAN_PROPERTY, this.gaussianSmoothingLength, this.gaussianSmoothingLength = gaussianSmoothingLength);
 	}
 
@@ -137,5 +142,16 @@ public class SubtractFittedBackgroundModel extends AbstractOperationModel {
 
 	public void setMode2D(boolean mode2D) {
 		firePropertyChange(MODE_2D_PROPERTY, this.mode2D, this.mode2D = mode2D);
+	}
+
+	/**
+	 * @return offset to add to dark image. If null or NaN then determine from shadow region
+	 */
+	public Double getDarkOffset() {
+		return darkOffset;
+	}
+
+	public void setDarkOffset(Double darkOffset) {
+		firePropertyChange("setDarkOffset", this.darkOffset, this.darkOffset = darkOffset);
 	}
 }

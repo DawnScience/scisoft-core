@@ -12,7 +12,6 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
-import org.apache.commons.math3.linear.NonSquareMatrixException;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.slf4j.Logger;
@@ -62,6 +61,7 @@ public class GaussianND extends AFunction {
 		for (rank = 0; guess < nparams; rank++) {
 			guess = 1 + (rank * (rank + 3)) / 2;
 		}
+		rank = rank - 1;
 		if (guess != nparams) {
 			logger.error("Given number of parameters {} is not equal to {}", nparams, guess);
 			throw new IllegalArgumentException("Given number of parameters " + nparams + " is not equal to" + guess);
@@ -143,6 +143,7 @@ public class GaussianND extends AFunction {
 		for (int i = 0; i < rank; i++) {
 			getParameter(i).setValue(pos[i]);
 		}
+		setDirty(true);
 	}
 
 	/**
@@ -151,6 +152,7 @@ public class GaussianND extends AFunction {
 	 */
 	public void setVolume(double volume) {
 		getParameter(rank).setValue(volume);
+		setDirty(true);
 	}
 
 	/**
@@ -166,7 +168,7 @@ public class GaussianND extends AFunction {
 	private transient double norm;
 
 	private void calcCachedParameters() {
-		if (pos == null || pos.length != rank) {
+		if (pos == null) {
 			pos = new double[rank];
 		}
 		int n = 0;
@@ -194,19 +196,9 @@ public class GaussianND extends AFunction {
 				n++;
 			}
 		}
-//		logger.info("New cov {}", covar);
-		LUDecomposition decomp = null;
-		try {
-			decomp = new LUDecomposition(covar);
-		} catch (NonSquareMatrixException e) {
-			logger.error("Non-square covariance matrix");
-			throw new IllegalArgumentException("Non-square covariance matrix");
-		}
-
+		LUDecomposition decomp = new LUDecomposition(covar, 1e-18);
 		invcov = (Array2DRowRealMatrix) decomp.getSolver().getInverse();
-//		logger.info("Inverse covariance matrix is {}", invcov);
 		norm /= Math.sqrt(Math.pow(2.*Math.PI, rank) * decomp.getDeterminant());
-//		logger.info("Normalization factor is {}", norm);
 
 		setDirty(false);
 	}

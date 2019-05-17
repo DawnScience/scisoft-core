@@ -238,6 +238,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 				cleanUpProfile(profile);
 				profile.setName("profile");
 				displayData.add(profile);
+				auxData.add(profile);
 
 				Dataset diff = Maths.subtract(profile, darkFit);
 				auxData.add(ProcessingUtils.createNamedDataset(diff, "profile_diff"));

@@ -636,7 +636,9 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		od.setDisplayData(displayData.toArray(new IDataset[displayData.size()]));
 
 		if (h != null) {
-			setDisplayData(od, x, h, fit);
+			if (model.getDarkImageFile() == null) {
+				setDisplayData(od, x, h, fit);
+			}
 
 			// switch to use display data and record fit parameters as [1]-shape datasets
 			// need two plots...

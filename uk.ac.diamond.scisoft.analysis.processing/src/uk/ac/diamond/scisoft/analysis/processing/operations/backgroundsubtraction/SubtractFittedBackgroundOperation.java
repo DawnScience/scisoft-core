@@ -227,11 +227,13 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 			Dataset subtractImage = null;
 
 			Double darkOffset = model.getDarkOffset();
+			double scale = model.getDarkScaling();
 			if (model.isMode2D()) {
 				double offset = notValid(darkOffset) ? findDarkDataOffset(in, smoothedDarkData) : darkOffset;
 				auxData.add(ProcessingUtils.createNamedDataset(offset, "dark_offset"));
-				subtractImage = Maths.add(smoothedDarkData, offset);
+				auxData.add(ProcessingUtils.createNamedDataset(scale, "dark_scale"));
 
+				subtractImage = scale == 1 ? Maths.add(smoothedDarkData, offset) : Maths.multiply(smoothedDarkData, scale).iadd(offset);
 				Dataset darkFit = subtractImage.sum(1, true).getSliceView(new Slice(1, -1));
 				auxData.add(ProcessingUtils.createNamedDataset(darkFit, "profile_fit_dark"));
 				Dataset profile = in.sum(1, true).getSliceView(new Slice(1, -1));;
@@ -252,8 +254,9 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 				double offset = notValid(darkOffset) ? findDarkDataOffset(profile.reshape(-1), smoothedDarkData.reshape(-1)) : darkOffset;
 				auxData.add(ProcessingUtils.createNamedDataset(offset, "dark_offset"));
-				Dataset darkFit = Maths.add(smoothedDarkData, offset);
+				auxData.add(ProcessingUtils.createNamedDataset(scale, "dark_scale"));
 
+				Dataset darkFit = scale == 1 ? Maths.add(smoothedDarkData, offset) : Maths.multiply(smoothedDarkData, scale).iadd(offset);
 				auxData.add(ProcessingUtils.createNamedDataset(darkFit, "profile_fit_dark"));
 				Dataset diff = Maths.subtract(profile, darkFit);
 				auxData.add(ProcessingUtils.createNamedDataset(diff, "profile_diff"));

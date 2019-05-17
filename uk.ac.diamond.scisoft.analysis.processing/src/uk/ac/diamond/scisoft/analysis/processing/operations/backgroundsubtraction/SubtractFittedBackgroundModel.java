@@ -46,6 +46,9 @@ public class SubtractFittedBackgroundModel extends AbstractOperationModel {
 	@OperationModelField(fieldPosition = 7, label = "Offset dark image", hint = "Leave empty for operation to finding from shadow region", description = "Override offset value to add to dark image", enableif = "darkImageFile != null", expertOnly = true)
 	private Double darkOffset = null;
 
+	@OperationModelField(fieldPosition = 8, label = "Scale dark image", hint = "This factor is applied before the offset is added", description = "Override scaling of dark image", enableif = "darkOffset != null", expertOnly = true)
+	private double darkScaling = 1;
+
 	public static final int HISTOGRAM_MAX_BINS = 1024*1024;
 
 	/**
@@ -153,5 +156,16 @@ public class SubtractFittedBackgroundModel extends AbstractOperationModel {
 
 	public void setDarkOffset(Double darkOffset) {
 		firePropertyChange("setDarkOffset", this.darkOffset, this.darkOffset = darkOffset);
+	}
+
+	/**
+	 * @return scaling factor to multiply dark image before an offset is applied
+	 */
+	public double getDarkScaling() {
+		return darkScaling;
+	}
+
+	public void setDarkScaling(double darkScaling) {
+		firePropertyChange("setDarkScaling", this.darkScaling, this.darkScaling = darkScaling);
 	}
 }

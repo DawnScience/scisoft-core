@@ -13,7 +13,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
@@ -30,8 +29,6 @@ import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
 import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.BroadcastSelfIterator;
-import org.eclipse.january.dataset.BroadcastSingleIterator;
 import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -51,8 +48,6 @@ import org.eclipse.january.dataset.Stats;
 import org.eclipse.january.dataset.UnaryOperation;
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.Histogram;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.CoordinatesIterator;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
@@ -293,7 +288,10 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 	}
 
 	private void cleanUpProfile(Dataset profile) {
-		if (profile.getSize() > 0 && profile.getDouble() == 0) {
+		if (profile.getSize() == 0) {
+			return;
+		}
+		if (profile.getDouble() == 0) {
 			profile.set(0.5*(profile.getDouble(1) + profile.getDouble(2)), 0); // ensure 1st entry is non-zero
 		}
 	}
@@ -301,109 +299,41 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 	private static final int CLIP_END = -10; // clip end off
 
 	private double findDarkDataOffset(Dataset in, Dataset smooth) {
-		// find extent of shadow region on right by looking for trough
-		Dataset y;
-		if (smooth.getRank() == 2) {
-			y = smooth.hasFloatingPointElements() ? smooth.sum(1, true) :
-				smooth.cast(LongDataset.class).sum(1, true); // avoid integer overflows
-			y.squeezeEnds();
-			cleanUpProfile(y);
-		} else {
-			y = smooth;
-		}
-
-		Dataset d = Maths.derivative(DatasetFactory.createRange(y.getSize()), y, 1);
-		int r = d.argMin(true);
-		double dmin = d.getDouble(r);
-		List<Double> z = DatasetUtils.crossings(d, dmin/2);
-		int b = r + (int) Math.ceil(2.5 * (z.get(1) - z.get(0)));
-		System.err.println("Crossings: " + z + " give start of " + b);
-
-		Slice s = new Slice(b, CLIP_END);
-		smooth = smooth.getSliceView(s);
-		if (smooth.getSize() == 0) { // no trough
-			return 0;
-		}
-
-		if (in.getRank() == 2) {
-			in = in.getSlice(s);
-			removeBlips2D(in);
-		} else {
-			in = in.getSliceView(s);
-		}
-		Offset so = new Offset(smooth);
-		so.setParameterValues(0);
-		double res = fitFunction("Exception in dark data fit", so, DatasetFactory.zeros(in.getShapeRef()), in);
-		System.err.printf("Offset results: res=%g\n%s\n", res, so);
-		return so.getParameterValue(0);
-	}
-
-	class Offset extends AFunction {
-		private static final long serialVersionUID = -5259488500375549641L;
-		private Dataset in;
-
-		public Offset(Dataset in) {
-			super(1);
-			this.in = in;
-		}
-
-		@Override
-		public double val(double... values) {
-			return 0;
-		}
-
-		@Override
-		protected void setNames() {
-		}
-
-		@Override
-		public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
-			Maths.add(in, getParameterValue(0), data);
-		}
-
-		@Override
-		public void fillWithPartialDerivativeValues(IParameter parameter, DoubleDataset data, CoordinatesIterator it) {
-			data.fill(1);
-		}
-	}
-
-	class ScaleAndOffset extends AFunction {
-		private static final long serialVersionUID = -5789700891337976334L;
-		private Dataset in;
-		private BroadcastSelfIterator bit;
-		private int[] shape;
-
-		public ScaleAndOffset(Dataset in) {
-			super(2);
-			this.in = in;
-		}
-
-		@Override
-		public double val(double... values) {
-			return 0;
-		}
-
-		@Override
-		protected void setNames() {
-		}
-
-		@Override
-		public void fillWithValues(DoubleDataset data, CoordinatesIterator it) {
-			double a = getParameterValue(0);
-			double b = getParameterValue(1);
-
-			int[] dshape = data.getShapeRef();
-			if (bit == null || !Arrays.equals(shape, dshape)) {
-				shape = dshape;
-				bit = BroadcastSingleIterator.createIterator(data, in);
+		if (notValid(model.getGaussianSmoothingLength())) { // don't bother to find shadow region
+			in = in.clone();
+		} else { // find extent of shadow region on right by looking for trough
+			Dataset y;
+			if (smooth.getRank() == 2) {
+				y = smooth.hasFloatingPointElements() ? smooth.sum(1, true) :
+					smooth.cast(LongDataset.class).sum(1, true); // avoid integer overflows
+				y.squeezeEnds();
+				cleanUpProfile(y);
 			} else {
-				bit.reset();
+				y = smooth;
 			}
-			bit.setOutputDouble(true);
-			while (bit.hasNext()) {
-				data.setAbs(bit.aIndex, a * bit.bDouble + b);
+
+			Dataset d = Maths.derivative(DatasetFactory.createRange(y.getSize()), y, 1);
+			int r = d.argMin(true);
+			double dmin = d.getDouble(r);
+			List<Double> z = DatasetUtils.crossings(d, dmin/2);
+			int b = r + (int) Math.ceil(2.5 * (z.get(1) - z.get(0)));
+			System.err.println("Crossings: " + z + " give start of " + b);
+	
+			Slice s = new Slice(b, CLIP_END);
+			smooth = smooth.getSliceView(s);
+			if (smooth.getSize() == 0) { // no trough
+				log.appendFailure("No shadow region found to calculate offset for dark image");
+				return 0;
 			}
+			in = in.getSlice(s);
 		}
+		if (in.getRank() == 2) { // remove pixels cosmic ray events before fit
+			removeBlips2D(in);
+		}
+
+		double offset = ((Number) in.isubtract(smooth).mean()).doubleValue();
+		log.append("Dark image offset = %g", offset);
+		return offset;
 	}
 
 	class GaussianOperation implements UnaryOperation {
@@ -441,7 +371,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 	}
 
 	private Dataset createFilter(double l) {
-		int n = (int) Math.ceil(3*l);
+		int n = Math.max((int) Math.ceil(3*l), 2);
 		int m = 2*n + 1;
 		Dataset x = DatasetFactory.createRange(m);
 		x.isubtract(n);
@@ -508,7 +438,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 			if (model.isMode2D()) {
 				darkData = d;
-				if (model.isRemoveOutliers()) {
+				if (model.isRemoveOutliers()) { // remove pixels cosmic ray events
 					removeBlips2D(darkData);
 				}
 			} else {

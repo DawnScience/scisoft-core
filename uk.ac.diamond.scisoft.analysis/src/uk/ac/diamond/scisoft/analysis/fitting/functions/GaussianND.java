@@ -99,29 +99,29 @@ public class GaussianND extends AFunction {
 		IParameter p;
 		for (int i = 0; i < rank; i++) {
 			p = getParameter(n++);
+			p.setValue((minPeakPosition[i] + maxPeakPosition[i]) / 2.0);
 			p.setLowerLimit(minPeakPosition[i]);
 			p.setUpperLimit(maxPeakPosition[i]);
-			p.setValue((minPeakPosition[i] + maxPeakPosition[i]) / 2.0);
 		}
 
 		p = getParameter(n++);
+		p.setValue(maxVol / 2.0);
 		p.setLowerLimit(0);
 		p.setUpperLimit(maxVol);
-		p.setValue(maxVol / 2.0);
 
 		double sigmasq = maxSigma * maxSigma;
 		for (int i = 0; i < rank; i++) {
 			p = getParameter(n++);
+			p.setValue(sigmasq/100.);
 			p.setLowerLimit(0);
 			p.setUpperLimit(sigmasq);
-			p.setValue(sigmasq/100.);
 		}
 		for (int i = 0; i < rank; i++) {
 			for (int j = i + 1; j < rank; j++) {
 				p = getParameter(n++);
+				p.setValue(0);
 				p.setLowerLimit(-1);
 				p.setUpperLimit(1);
-				p.setValue(0);
 			}
 		}
 	}
@@ -147,12 +147,28 @@ public class GaussianND extends AFunction {
 	}
 
 	/**
-	 * Setting volume of Gaussian (the integrated value)
-	 * @param volume
+	 * Set the minimum and maximum volume of the Gaussian
+	 * @param minVol
+	 * @param maxVol
 	 */
-	public void setVolume(double volume) {
-		getParameter(rank).setValue(volume);
-		setDirty(true);
+	public void setVolumeLimits(double minVol, double maxVol) {
+		getParameter(rank).setLowerLimit(minVol);
+		getParameter(rank).setUpperLimit(maxVol);
+	}
+	
+	/**
+	 * Set the minimum and maximum variance
+	 * @param minS
+	 * @param maxS
+	 */
+	public void setSigmaLimits(double minS, double maxS) {
+		int n = rank + 1;
+		IParameter p;
+		for (int i = 0; i < rank; i++) {
+			p = getParameter(n++);
+			p.setLowerLimit(minS);
+			p.setUpperLimit(maxS);
+		}
 	}
 
 	/**
@@ -164,6 +180,15 @@ public class GaussianND extends AFunction {
 		return norm;
 	}
 
+	/**
+	 * Setting volume of Gaussian (the integrated value)
+	 * @param volume
+	 */
+	public void setVolume(double volume) {
+		getParameter(rank).setValue(volume);
+		setDirty(true);
+	}
+	
 	private transient Array2DRowRealMatrix invcov; // inverse of covariance matrix
 	private transient double norm;
 
@@ -196,7 +221,7 @@ public class GaussianND extends AFunction {
 				n++;
 			}
 		}
-		LUDecomposition decomp = new LUDecomposition(covar, 1e-18);
+		LUDecomposition decomp = new LUDecomposition(covar, 1e-100);
 		invcov = (Array2DRowRealMatrix) decomp.getSolver().getInverse();
 		norm /= Math.sqrt(Math.pow(2.*Math.PI, rank) * decomp.getDeterminant());
 

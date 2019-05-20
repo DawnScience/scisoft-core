@@ -17,12 +17,14 @@ import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MaskMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
@@ -75,7 +77,15 @@ public class ImageIntegration extends AbstractOperation<ImageIntegrationModel, O
 		// Sum or mean along the axis, according to the Model selections
 		int axis = (model.getDirection() == Direction.X) ? 0 : 1;
 		Dataset output = (model.isDoAverage()) ? nannyInput.mean(axis, true) : nannyInput.sum(axis, true);
+		Dataset outputErrors = DatasetFactory.zeros(nannyInput);
 		
+		if (model.isDoAverage()) {
+			outputErrors = nannyInput.getErrors().rootMeanSquare(axis, true);
+		} else {
+			outputErrors = Maths.multiply(nannyInput.getErrors().rootMeanSquare(axis, true), nannyInput.getShapeRef()[axis]);
+		}
+		output.setErrors(outputErrors);
+				
 		// copy axes to the new data
 		ILazyDataset[] oldAxes = AbstractOperation.getFirstAxes(input);
 		AxesMetadata newAxes;

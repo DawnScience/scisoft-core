@@ -122,7 +122,7 @@ public class XRMCScatteringDataNormalizationOperation extends AbstractOperation<
 
 		double areaFlux = totalIntensity / beamArea; // Area flux: photons per square metre
 		
-		return Maths.divide(unnormed, areaFlux);
+		return Maths.divide(unnormed, totalFlux);
 
 	}
 

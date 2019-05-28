@@ -562,6 +562,7 @@ public class ErrorPropagationUtilsTest {
 		DoubleDataset testResult = ErrorPropagationUtils.divideWithUncertainty(TESTINPUT, TESTOPERANDVECTOR);
 		TestUtils.assertDatasetEquals(DIVISIONRESULT, testResult);
 	} 
+
 	
 	// This will be an division where neither the input nor operand have an error and 
 	// and the operand is a vector the same length as the input

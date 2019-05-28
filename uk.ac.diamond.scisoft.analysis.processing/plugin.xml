@@ -1298,6 +1298,14 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.Polynomial2DReflectivityModel"
             name="Geometric Corrections">
       </operation>
+            <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.Reflectivity"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SpillOverCorrectionOperation"
+            icon="icons/template.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SpillOverCorrectionOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SpillOverCorrectionModel"
+            name="Spill Over Correction">
+      </operation>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.Reflectivity"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.ReflectivityFluxCorrectionOperation"

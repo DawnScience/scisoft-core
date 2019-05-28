@@ -40,5 +40,10 @@ public class SimpleUncertaintyPropagationMath {
 		out[0] = a/b;
 		out[1] = Math.abs(ae)/b;
 	}
+	
+	public static void arcsin(double a, double ae, double[] out) {
+		out[0] = Math.asin(a);
+		out[1] = ae / (Math.sqrt(1 - (a * a)));
+	}
 
 }

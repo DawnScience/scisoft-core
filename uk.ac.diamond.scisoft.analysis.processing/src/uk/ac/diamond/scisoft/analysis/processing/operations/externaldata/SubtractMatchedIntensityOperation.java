@@ -113,7 +113,7 @@ public class SubtractMatchedIntensityOperation extends AbstractOperation<Subtrac
 		Dataset meanDifferenceFactor = DatasetFactory.createFromObject(differenceFactorDataset.mean(null), 1);
 
 		// Then do the multiplication and subtraction
-		Dataset subtractedFrame = ErrorPropagationUtils.subtractWithUncertainty(ErrorPropagationUtils.multiplyWithUncertainty(processedExternalData, meanDifferenceFactor), processedInternalData);
+		Dataset subtractedFrame = ErrorPropagationUtils.subtractWithUncertainty(processedInternalData, ErrorPropagationUtils.multiplyWithUncertainty(processedExternalData, meanDifferenceFactor));
 		copyMetadata(input, subtractedFrame);
 		
 		// Before returning the result

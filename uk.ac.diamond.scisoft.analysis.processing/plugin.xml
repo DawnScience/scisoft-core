@@ -176,6 +176,14 @@
             name="Background Filter"
             visible="true">
       </operation>
+	  <operation
+			category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
+			class="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.GaussianBackgroundSubtractionOperation"
+			icon="icons/template.png"
+			id="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.GaussianBackgroundSubtractionOperation"
+			model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+			name="Gaussian Background Subtraction">
+      </operation>
       <category
             id="uk.ac.diamond.scisoft.analysis.processing.imagefilterCategory"
             name="Image Filter">

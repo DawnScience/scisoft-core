@@ -20,7 +20,8 @@ public class SimpleUncertaintlyPropagationMathsTest {
 	private static final double xe1 = 0.3;
 	private static final double x2 = 9.3;
 	private static final double xe2 = 0.2;
-	
+	private static final double x3 = 0.146;
+	private static final double xe3 = 0.0124;
 	
 	
 	@Test
@@ -94,4 +95,13 @@ public class SimpleUncertaintlyPropagationMathsTest {
 		
 	}
 	
+	@Test 
+	public void arcsinTest() {
+	
+		double[] out = new double[2];
+	
+		SimpleUncertaintyPropagationMath.arcsin(x3, xe3, out);
+		Assert.assertEquals(Math.asin(x3), out[0], 1e-7);
+		Assert.assertEquals(0.012534310273722801, out[1], 1e-7);
+	}	
 }

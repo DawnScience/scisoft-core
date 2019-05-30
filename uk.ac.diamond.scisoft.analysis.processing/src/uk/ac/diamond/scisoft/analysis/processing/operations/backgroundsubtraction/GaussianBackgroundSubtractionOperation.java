@@ -91,11 +91,13 @@ public class GaussianBackgroundSubtractionOperation extends AbstractOperation<Em
 	
 	// Fitting for a 1D dataset
 	private OperationData fit1DGaussianOffset (IDataset data) {
-		Dataset axis;
 		// Assess if an axis is present and if it isn't make one
 		// in the event of no defined axis the created one will be 
 		// from 0 to the length of the data
 		ILazyDataset[] ax = getFirstAxes(data);
+		if (ax == null) {
+			ax = new ILazyDataset[data.getRank()];
+		}
 		Dataset[] axes = getAxes(ax, data);
 		
 		Add gaussWithOffsetFit = getCombinedFunctions(data);
@@ -109,9 +111,7 @@ public class GaussianBackgroundSubtractionOperation extends AbstractOperation<Em
 
 		OperationDataForDisplay returnDataWithDisplay = new OperationDataForDisplay();
 		OperationLog log = new OperationLog();
-		
-		List<Double> gaussianWithOffsetData = new ArrayList<>();
-		
+				
 		IDataset fineAxis = DatasetFactory.createLinearSpace(DoubleDataset.class, axes[0].min(true).doubleValue(), axes[0].max(true).doubleValue(), 1000);
 		
 		IDataset gaussianWithOffsetShape = gaussWithOffsetFit.calculateValues(fineAxis);
@@ -167,12 +167,9 @@ public class GaussianBackgroundSubtractionOperation extends AbstractOperation<Em
 	
 	// Fitting for a 2D dataset
 	private OperationData fit2DGaussianOffset(IDataset data) {
-		Dataset xAxis;
-		Dataset yAxis;
-		
 		// Assess if an x- and/or y-axis is present and if they aren't make them
 		// in the event of no defined axis the created one will be 
-		// from 0 to the length of the data in the appropraite dimension
+		// from 0 to the length of the data in the appropriate dimension
 		ILazyDataset[] ax = getFirstAxes(data);
 		Dataset[] axes = getAxes(ax, data);
 		
@@ -189,8 +186,8 @@ public class GaussianBackgroundSubtractionOperation extends AbstractOperation<Em
 	}
 	
 	private Dataset[] getAxes(ILazyDataset[] ax, IDataset data) {
-		Dataset[] axes = new Dataset[ax.length];
-		for (int i = 0; i < ax.length; i++) {
+		Dataset[] axes = new Dataset[data.getRank()];
+		for (int i = 0; i < data.getRank(); i++) {
 			if (ax[i] == null) {
 				axes[i] = DatasetFactory.createRange(data.getShape()[i]);
 			} else {
@@ -209,7 +206,7 @@ public class GaussianBackgroundSubtractionOperation extends AbstractOperation<Em
 	private Add getCombinedFunctions(IDataset data) {
 		if (data.getShape().length == 1) {
 			// Set some maximum and minimum values for things
-			double maxA = data.max(true).doubleValue();
+			double maxA = data.max(true).doubleValue() * 2;
 			double mins = (double) data.maxPos(true)[0] - 20.;
 			double maxs = (double) data.maxPos(true)[0] + 20.;
 
@@ -226,7 +223,7 @@ public class GaussianBackgroundSubtractionOperation extends AbstractOperation<Em
 			return gaussWithOffsetFit;
 		} else {
 			// Set some maximum and minimum values for things
-			double maxV = (double) data.max(true).doubleValue();
+			double maxV = (double) data.max(true).doubleValue() * 2;
 			double[] mins = {data.maxPos(true)[0]-20, data.maxPos(true)[1]-20};
 			double[] maxs = {data.maxPos(true)[0]+20, data.maxPos(true)[1]+20};
 			

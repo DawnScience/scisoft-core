@@ -40,6 +40,11 @@ public class SimpleUncertaintyPropagationMath {
 		out[0] = a/b;
 		out[1] = Math.abs(ae)/b;
 	}
+
+	public static void sin(double a, double ae, double[] out) {
+		out[0] = Math.sin(a);
+		out[1] = ae * Math.cos(a);
+	}
 	
 	public static void arcsin(double a, double ae, double[] out) {
 		out[0] = Math.asin(a);

@@ -1306,13 +1306,21 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.Polynomial2DReflectivityModel"
             name="Geometric Corrections">
       </operation>
-            <operation
+      <operation
             category="uk.ac.diamond.scisoft.analysis.processing.Reflectivity"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SpillOverCorrectionOperation"
             icon="icons/template.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SpillOverCorrectionOperation"
-            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SpillOverCorrectionModel"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.GeometricCorrectionModel"
             name="Spill Over Correction">
+      </operation>
+            <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.Reflectivity"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.AreaCorrectionOperation"
+            icon="icons/template.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.AreaCorrectionOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.GeometricCorrectionModel"
+            name="Area Correction">
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.Reflectivity"

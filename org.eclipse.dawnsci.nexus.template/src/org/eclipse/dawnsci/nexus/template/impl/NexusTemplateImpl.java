@@ -7,6 +7,9 @@ import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.template.NexusTemplate;
+import org.eclipse.dawnsci.nexus.template.impl.tree.NexusContext;
+import org.eclipse.dawnsci.nexus.template.impl.tree.OnDiskNexusContext;
+import org.eclipse.dawnsci.nexus.template.impl.tree.InMemoryNexusContext;
 
 class NexusTemplateImpl implements NexusTemplate {
 
@@ -19,19 +22,25 @@ class NexusTemplateImpl implements NexusTemplate {
 	protected Map<String, Object> getMapping() {
 		return yamlMapping;
 	}
-
+	
 	@Override
 	public void apply(NXroot nexusRoot) throws NexusException {
-		ApplyNexusTemplateTask applyTemplateTask = new ApplyNexusTemplateTask(this, nexusRoot);
-		applyTemplateTask.run();
+		final NexusContext nexusContext = new InMemoryNexusContext(nexusRoot);
+		applyTemplate(nexusContext);
 	}
 
 	@Override
 	public void apply(String nexusFilePath) throws NexusException {
 		try (NexusFile nexusFile = ServiceHolder.getNexusFileFactory().newNexusFile(nexusFilePath)) {
-			nexusFile.openToRead();
-			throw new UnsupportedOperationException("Not yet implemented");
+			nexusFile.openToWrite(false);
+			final NexusContext nexusContext = new OnDiskNexusContext(nexusFile);
+			applyTemplate(nexusContext);
 		}
+	}
+
+	private void applyTemplate(NexusContext nexusContext) throws NexusException {
+		ApplyNexusTemplateTask applyTemplateTask = new ApplyNexusTemplateTask(this, nexusContext);
+		applyTemplateTask.run();
 	}
 
 }

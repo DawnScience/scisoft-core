@@ -22,6 +22,7 @@ import org.eclipse.dawnsci.nexus.NXroot;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusUtils;
+import org.eclipse.dawnsci.nexus.ServiceHolder;
 
 public class NexusTestUtils {
 
@@ -29,6 +30,11 @@ public class NexusTestUtils {
 	
 	private static INexusFileFactory getNexusFileFactory() {
 		return nexusFileFactory;
+	}
+	
+	public static void setUpServices() {
+		ServiceHolder serviceHolder = new ServiceHolder();
+		serviceHolder.setNexusFileFactory(nexusFileFactory);
 	}
 	
 	/**

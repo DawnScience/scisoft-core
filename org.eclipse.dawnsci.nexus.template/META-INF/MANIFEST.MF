@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Nexus Templates Plug-in
+Bundle-SymbolicName: org.eclipse.dawnsci.nexus.template;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Diamond Light Source Ltd.
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.dawnsci.nexus;bundle-version="1.0.0",
+ org.eclipse.dawnsci.analysis.api,
+ org.eclipse.dawnsci.analysis.tree,
+ org.yaml.snakeyaml
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Automatic-Module-Name: org.eclipse.dawnsci.nexus.template
+Bundle-ActivationPolicy: lazy
+Export-Package: org.eclipse.dawnsci.nexus.template,
+ org.eclipse.dawnsci.nexus.template.impl

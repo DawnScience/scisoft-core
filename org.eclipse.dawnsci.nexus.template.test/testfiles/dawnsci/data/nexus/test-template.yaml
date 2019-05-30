@@ -1,0 +1,23 @@
+scan/:
+  NX_class@: NXentry # the '@' has to come at the end as 
+  start_time: /entry/start_time
+  end_time: /entry/end_time
+  definition: NXscan
+  program_name:
+    value: gda
+    version@: "9.13" # yaml syntax for 9.13 to be read as a string, !!str 9.13 would also work
+    configuration@: dummy
+  instrument/:
+    NX_class@: NXinstrument
+    detector: /entry/instrument/mandelbrot
+  sample/:
+    NX_class@: NXsample
+    beam/:
+      NX_class@: NXbeam
+      extent: /entry/sample/beam/extent
+  somemonitor/:
+    NX_class@: NXmonitor
+    data: /entry/instrument/stagex/value
+  data/: # or link to group
+    NX_class@: NXdata
+    data: /entry/instrument/mandelbrot/data

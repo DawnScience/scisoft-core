@@ -84,6 +84,7 @@ public class SpillOverCorrectionOperation extends AbstractOperationBase<Geometri
 		Dataset two = DatasetFactory.createFromObject(2.);
 		Dataset twoSliceAxis = ErrorPropagationUtils.multiplyWithUncertainty(sliceAxis, two);
 		
+		IDataset correctedData = data;
 		if (Math.toRadians(twoSliceAxis.getDouble()) < thetaSpillOver[0]) {
 			
 			double[] correction = new double[2];
@@ -94,9 +95,9 @@ public class SpillOverCorrectionOperation extends AbstractOperationBase<Geometri
 			Dataset correctionD = DatasetFactory.createFromObject(correction[0]);
 			Dataset correctionErr = DatasetFactory.createFromObject(correction[1]);			
 			correctionD.setErrors(correctionErr);
-			data = ErrorPropagationUtils.multiplyWithUncertainty((Dataset) data, correctionD); 
+			correctedData = ErrorPropagationUtils.multiplyWithUncertainty((Dataset) data, correctionD); 
+			copyMetadata(data, correctedData);
 		}
-		
-		return new OperationData(data);
+		return new OperationData(correctedData);
 	}
 }

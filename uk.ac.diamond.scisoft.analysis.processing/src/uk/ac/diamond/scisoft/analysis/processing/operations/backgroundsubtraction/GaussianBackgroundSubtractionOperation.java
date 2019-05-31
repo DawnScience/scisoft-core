@@ -106,7 +106,7 @@ public class GaussianBackgroundSubtractionOperation extends AbstractOperation<Em
 		
 		// ParameterValue[3] is the offset variable
 		IDataset subtractedData = Maths.subtract(data, gaussWithOffsetFit.getParameterValues()[3]);
-
+		copyMetadata(data, subtractedData);
 		removeNegatives(subtractedData);
 
 		OperationDataForDisplay returnDataWithDisplay = new OperationDataForDisplay();

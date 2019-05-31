@@ -83,7 +83,7 @@ public class AreaCorrectionOperation extends AbstractOperationBase<GeometricCorr
 		areaCorrectionDataset.setErrors(areaCorrectionError);
 		
 		IDataset correctedData = ErrorPropagationUtils.divideWithUncertainty((Dataset) data, areaCorrectionDataset);
-		
+		copyMetadata(data, correctedData);
 		return new OperationData(correctedData);
 	}
 }

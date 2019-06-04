@@ -49,6 +49,7 @@ import org.eclipse.january.dataset.UnaryOperation;
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.Histogram;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
@@ -227,16 +228,20 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 			Dataset subtractImage = null;
 
 			Double darkOffset = model.getDarkOffset();
-			double scale = model.getDarkScaling();
+			double[] scaleOffset;
 			if (model.isMode2D()) {
-				double offset = notValid(darkOffset) ? findDarkDataOffset(in, smoothedDarkData) : darkOffset;
-				auxData.add(ProcessingUtils.createNamedDataset(offset, "dark_offset"));
-				auxData.add(ProcessingUtils.createNamedDataset(scale, "dark_scale"));
+				if (notValid(darkOffset)) {
+					scaleOffset = findDarkDataScaleAndOffset(in, smoothedDarkData);
+				} else {
+					scaleOffset = new double[] {model.getDarkScaling(), darkOffset};
+				}
+				auxData.add(ProcessingUtils.createNamedDataset(scaleOffset[1], "dark_offset"));
+				auxData.add(ProcessingUtils.createNamedDataset(scaleOffset[0], "dark_scale"));
 
-				subtractImage = scale == 1 ? Maths.add(smoothedDarkData, offset) : Maths.multiply(smoothedDarkData, scale).iadd(offset);
-				Dataset darkFit = subtractImage.sum(1, true).getSliceView(new Slice(1, -1));
+				subtractImage = scaleOffset[0] == 1 ? Maths.add(smoothedDarkData, scaleOffset[1]) : Maths.multiply(smoothedDarkData, scaleOffset[0]).iadd(scaleOffset[1]);
+				Dataset darkFit = subtractImage.mean(1, true).getSliceView(new Slice(1, -1));
 				auxData.add(ProcessingUtils.createNamedDataset(darkFit, "profile_fit_dark"));
-				Dataset profile = in.sum(1, true).getSliceView(new Slice(1, -1));;
+				Dataset profile = in.mean(1, true).getSliceView(new Slice(1, -1));;
 				cleanUpProfile(profile);
 				profile.setName("profile");
 				displayData.add(profile);
@@ -246,21 +251,24 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 				auxData.add(ProcessingUtils.createNamedDataset(diff, "profile_diff"));
 				displayData.add(darkFit);
 			} else {
-				Dataset profile = in.hasFloatingPointElements() ? in.sum(1, true) :
-					in.cast(LongDataset.class).sum(1, true); // avoid integer overflows
+				Dataset profile = in.mean(1, true);
 				cleanUpProfile(profile);
 				profile.setName("profile");
 				auxData.add(profile);
 
-				double offset = notValid(darkOffset) ? findDarkDataOffset(profile.reshape(-1), smoothedDarkData.reshape(-1)) : darkOffset;
-				auxData.add(ProcessingUtils.createNamedDataset(offset, "dark_offset"));
-				auxData.add(ProcessingUtils.createNamedDataset(scale, "dark_scale"));
+				if (notValid(darkOffset)) {
+					scaleOffset = findDarkDataScaleAndOffset(profile.reshape(-1), smoothedDarkData.reshape(-1));
+				} else {
+					scaleOffset = new double[] {model.getDarkScaling(), darkOffset};
+				}
+				auxData.add(ProcessingUtils.createNamedDataset(scaleOffset[1], "dark_offset"));
+				auxData.add(ProcessingUtils.createNamedDataset(scaleOffset[0], "dark_scale"));
 
-				Dataset darkFit = scale == 1 ? Maths.add(smoothedDarkData, offset) : Maths.multiply(smoothedDarkData, scale).iadd(offset);
+				Dataset darkFit = scaleOffset[0] == 1 ? Maths.add(smoothedDarkData, scaleOffset[1]) : Maths.multiply(smoothedDarkData, scaleOffset[0]).iadd(scaleOffset[1]);
 				auxData.add(ProcessingUtils.createNamedDataset(darkFit, "profile_fit_dark"));
 				Dataset diff = Maths.subtract(profile, darkFit);
 				auxData.add(ProcessingUtils.createNamedDataset(diff, "profile_diff"));
-				subtractImage = Maths.multiply(darkFit.reshape(darkFit.getSize(), 1), 1./in.getShapeRef()[1]);
+				subtractImage = darkFit.reshape(darkFit.getSize(), 1);
 
 				displayData.add(darkData);
 				if (smoothedDarkData != darkData) {
@@ -302,14 +310,17 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 	private static final int CLIP_END = -50; // clip end off
 
-	private double findDarkDataOffset(Dataset in, Dataset smooth) {
-		if (notValid(model.getGaussianSmoothingLength())) { // don't bother to find shadow region
+	private double[] findDarkDataScaleAndOffset(Dataset in, Dataset smooth) {
+		boolean noShadow = notValid(model.getGaussianSmoothingLength());
+		if (noShadow) { // don't bother to find shadow region
 			in = in.clone();
+			SliceND s = new SliceND(in.getShapeRef(), new Slice(1, CLIP_END));
+			smooth = smooth.getSlice(s);
+			in = in.getSlice(s);
 		} else { // find extent of shadow region on right by looking for trough
 			Dataset y;
 			if (smooth.getRank() == 2) {
-				y = smooth.hasFloatingPointElements() ? smooth.sum(1, true) :
-					smooth.cast(LongDataset.class).sum(1, true); // avoid integer overflows
+				y = smooth.mean(1, true);
 				y.squeezeEnds();
 				cleanUpProfile(y);
 			} else {
@@ -323,22 +334,35 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 			double w = z.get(1) - z.get(0);
 			int b = r + (int) Math.ceil(2.5 * w); // start slice at so many widths into shadow region
 			System.err.println("Crossings: " + z + " give start of " + b);
-	
+
 			Slice s = new Slice(b, CLIP_END);
 			smooth = smooth.getSliceView(s);
 			if (smooth.getSize() == 0) { // no trough
 				log.appendFailure("No shadow region found to calculate offset for dark image");
-				return 0;
+				return new double[] {1, 0};
 			}
-			in = in.getSlice(s);
+			in = in.getSliceView(s);
 		}
 		if (in.getRank() == 2) { // remove pixels cosmic ray events before fit
 			removeBlips2D(in);
 		}
 
-		double offset = ((Number) in.isubtract(smooth).mean()).doubleValue();
+		double offset = ((Number) in.mean()).doubleValue() - ((Number) smooth.mean()).doubleValue();
+
+		if (noShadow && in.getRank() == 2) { // force to 1D to fit scale too
+			smooth = smooth.mean(1, true);
+			in = in.mean(1, true);
+		}
+		IFunction f = new StraightLine();
+		f.setParameterValues(1, offset);
+		auxData.add(ProcessingUtils.createNamedDataset(smooth, "bg_smooth"));
+		auxData.add(ProcessingUtils.createNamedDataset(in, "bg_cleaned"));
+		if (in.getRank() == 1) { // don't fit image as there's too many points for optimizer
+			fitFunction("Exception in dark data fit", f, smooth, in);
+		}
+		System.err.println("Fit: " + f + " cf " + offset);
 		log.append("Dark image offset = %g", offset);
-		return offset;
+		return f.getParameterValues();
 	}
 
 	class GaussianOperation implements UnaryOperation {
@@ -447,16 +471,15 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 					removeBlips2D(darkData);
 				}
 			} else {
-				// sum all so that only profile along row is left
+				// average all so that only profile along row is left
 				if (model.isRemoveOutliers()) {
 					darkData = createProfileWithoutOutliers(d);
 				} else {
-					darkData = d.sum(1, true).cast(LongDataset.class);
+					darkData = d.mean(1, true);
 				}
 				if (darkData.getDouble() == 0) {
 					darkData.set(0.5*(darkData.getDouble(1) + darkData.getDouble(2)), 0); // ensure 1st entry is non-zero
 				}
-				darkData.imultiply(1./dark.getShape()[0]); // assume 3D
 				darkData.setName("dark_profile");
 		
 				removeBlips1D();
@@ -543,32 +566,31 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		int[] shape = d.getShapeRef();
 		SliceND s = new SliceND(shape);
 		int imax = shape[0];
-		int jmax = shape[1];
-		LongDataset p = DatasetFactory.zeros(LongDataset.class, imax);
+		DoubleDataset p = DatasetFactory.zeros(imax);
 		for (int i = 0; i < imax; i++) {
 			s.setSlice(0, i, i+1, 1);
 			Dataset r = d.getSliceView(s);
-			double q = (Double) Stats.quantile(r, Q_UPPER);
+			double q = Stats.quantile(r, Q_UPPER);
 			double c = (Double) Stats.median(r);
 			q -= c;
-			int u = (int) Math.ceil((Double) c + Q_FACTOR * q);
-			int max = r.max(true).intValue();
-			long v = 0;
+			double u = Math.ceil((Double) c + Q_FACTOR * q);
+			double max = r.max(true).doubleValue();
+			double v = 0;
 			if (u >= max) {
-				v = ((Number) r.sum(true)).longValue();
+				v = ((Number) r.mean(true)).doubleValue();
 			} else {
 //				System.err.printf("Upper threshold of row %d is %d (cf %d) [%g, %g]\n", i, u, max, c, q);
 				IndexIterator it = r.getIterator();
 				int j = 0;
 				while (it.hasNext()) {
-					long x = r.getElementLongAbs(it.index);
+					double x = r.getElementDoubleAbs(it.index);
 					if (x < u) {
 						j++;
 						v += x;
 					}
 				}
-				if (j > 0 && j < jmax) { // scale up by omitted fraction
-					v = (long) (v * ((double) jmax / j));
+				if (j > 0) { // new mean
+					v /= j;
 				}
 			}
 			p.setAbs(i, v);

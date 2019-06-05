@@ -12,7 +12,6 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 import org.eclipse.january.dataset.BroadcastIterator;
 import org.eclipse.january.dataset.BroadcastPairIterator;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 
 import uk.ac.diamond.scisoft.analysis.utils.SimpleUncertaintyPropagationMath;
@@ -100,57 +99,67 @@ public class ErrorPropagationUtils {
 		
 		Dataset inputUncert = input.getErrors();
 		Dataset operandUncert = operand.getErrors();
-		DoubleDataset output = (DoubleDataset) DatasetFactory.zeros(input.getShapeRef());
-		DoubleDataset outputUncert = (DoubleDataset) DatasetFactory.zeros(input.getShapeRef());
-		
+		DoubleDataset output;
+		DoubleDataset outputUncert;
+
+		Dataset biggest = input.getSize() > operand.getSize() ? input : (input.getSize() < operand.getSize() ? operand :
+			input.getRank() > operand.getRank() ? input : operand);
+
 		double[] out = new double[2];
 
 		if (inputUncert != null) {
-			// If everyone has errors
-			if (operandUncert != null) {
-				BroadcastIterator iter = BroadcastPairIterator.createIterator(input, operand, output);
-				BroadcastIterator itererr = BroadcastPairIterator.createIterator(inputUncert, operandUncert, outputUncert);
+			if (operandUncert != null) { // If everyone has errors
+				BroadcastIterator iter = BroadcastPairIterator.createIterator(input, operand, null, true);
+				BroadcastIterator itererr = BroadcastPairIterator.createIterator(inputUncert, operandUncert, null, true);
+				iter.setOutputDouble(true);
+				itererr.setOutputDouble(true);
+				output = iter.getOutput().cast(DoubleDataset.class);
+				outputUncert = itererr.getOutput().cast(DoubleDataset.class);
 				while (iter.hasNext() && itererr.hasNext()) {
 					operator.operate(iter.aDouble, iter.bDouble, itererr.aDouble, itererr.bDouble, out);
 					output.setAbs(iter.oIndex, out[0]);
 					outputUncert.setAbs(itererr.oIndex, out[1]);
 				}
-			}
-			// If only the input has errors
-			else {
-				BroadcastIterator iter = BroadcastPairIterator.createIterator(input, operand, output);
-				BroadcastIterator itererr = BroadcastPairIterator.createIterator(input, inputUncert, outputUncert);
+			} else { // If only the input has errors
+				BroadcastIterator iter = BroadcastPairIterator.createIterator(input, operand, null, true);
+				BroadcastIterator itererr = BroadcastPairIterator.createIterator(biggest, inputUncert, null, true);
+				iter.setOutputDouble(true);
+				itererr.setOutputDouble(true);
+				output = iter.getOutput().cast(DoubleDataset.class);
+				outputUncert = itererr.getOutput().cast(DoubleDataset.class);
 				while (iter.hasNext() && itererr.hasNext()) {
 					operator.operate(iter.aDouble, iter.bDouble, itererr.bDouble, out);
 					output.setAbs(iter.oIndex, out[0]);
 					outputUncert.setAbs(iter.oIndex, out[1]);
 				}
 			}
-		} else {
-			// If only the operand has errors
-			if (operandUncert != null) {
-				BroadcastIterator iter = BroadcastPairIterator.createIterator(input, operand, output);
-				BroadcastIterator itererr = BroadcastPairIterator.createIterator(operand, operandUncert, outputUncert);
-				while (iter.hasNext() && itererr.hasNext()) {
-					operator.operate(iter.aDouble, iter.bDouble, 0, itererr.bDouble, out);
-					output.setAbs(iter.oIndex, out[0]);
-					outputUncert.setAbs(itererr.oIndex, out[1]);
-				}
+		} else if (operandUncert != null) { // If only the operand has errors
+			BroadcastIterator iter = BroadcastPairIterator.createIterator(input, operand, null, true);
+			BroadcastIterator itererr = BroadcastPairIterator.createIterator(biggest, operandUncert, null, true);
+			iter.setOutputDouble(true);
+			itererr.setOutputDouble(true);
+			output = iter.getOutput().cast(DoubleDataset.class);
+			outputUncert = itererr.getOutput().cast(DoubleDataset.class);
+			while (iter.hasNext() && itererr.hasNext()) {
+				operator.operate(iter.aDouble, iter.bDouble, 0, itererr.bDouble, out);
+				output.setAbs(iter.oIndex, out[0]);
+				outputUncert.setAbs(itererr.oIndex, out[1]);
 			}
-			// If no one has errors
-			else {
-				BroadcastIterator iter = BroadcastPairIterator.createIterator(input, operand, output);
-				while (iter.hasNext()) {
-					out[0] = operator.operate(iter.aDouble, iter.bDouble);
-					output.setAbs(iter.oIndex, out[0]);
-				}
+		} else { // If no one has errors
+			BroadcastIterator iter = BroadcastPairIterator.createIterator(input, operand, null, true);
+			iter.setOutputDouble(true);
+			output = iter.getOutput().cast(DoubleDataset.class);
+			outputUncert = null;
+			while (iter.hasNext()) {
+				out[0] = operator.operate(iter.aDouble, iter.bDouble);
+				output.setAbs(iter.oIndex, out[0]);
 			}
 		}
+
 		output.setErrors(outputUncert);
 		return output;
 	}
 }
-
 
 interface UncertaintyOperator {
 	void operate(double a, double b, double ae, double be, double[] out);

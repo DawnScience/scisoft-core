@@ -16,10 +16,16 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.IMetadata;
+
+import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
+import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 
 @Atomic
 public class FileMetadataNormalisation extends AbstractOperation<FileMetadataModel, OperationData> {
@@ -42,23 +48,25 @@ public class FileMetadataNormalisation extends AbstractOperation<FileMetadataMod
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		
 		IDataset output = null;
-		
 		try {
+			Serializable metaValue;
 			IMetadata metadata = input.getFirstMetadata(IMetadata.class);
-			Serializable metaValue = metadata.getMetaValue(model.getMetadataName());
-			double parseDouble = Double.parseDouble(metaValue.toString());
-			output = Maths.divide(input, parseDouble);
-			if (input.getErrors() != null) {
-				IDataset error = input.getErrors().getSlice();
-				output.setErrors(Maths.divide(error, parseDouble));
+			if (metadata != null && metadata.getMetaNames().contains(model.getMetadataName())) {
+				metaValue = metadata.getMetaValue(model.getMetadataName());
 			}
+			else {
+				SliceFromSeriesMetadata oMetadata = input.getFirstMetadata(SliceFromSeriesMetadata.class);
+				String filePath = oMetadata.getFilePath();
+				metadata = LocalServiceManager.getLoaderService().getMetadata(filePath, null);
+				metaValue = metadata.getMetaValue(model.getMetadataName());
+			}
+			Dataset parseDouble = DatasetFactory.createFromObject(Double.parseDouble(metaValue.toString()));
+			output = ErrorPropagationUtils.divideWithUncertainty(DatasetUtils.convertToDataset(input), parseDouble);
 			copyMetadata(input, output);
-		} catch (Exception e) {
+		} catch (Exception e1) {
 			throw new OperationException(this, "Could not read metadata");
 		}
-		
 		return new OperationData(output);
-		
 	}
-	
+
 }

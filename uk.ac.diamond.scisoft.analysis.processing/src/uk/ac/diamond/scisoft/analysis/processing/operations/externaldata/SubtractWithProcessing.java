@@ -56,10 +56,17 @@ public class SubtractWithProcessing extends FrameMathsOperation<SubtractWithProc
 					try {
 						IDataHolder dh = LocalServiceManager.getLoaderService().getData(filePath, null);
 						if (!dh.contains(datasetName)){
-							return null;
+							if (datasetName == null || datasetName.isEmpty()) {
+								throw new OperationException(this, "Dataset name not set!");
+							}
+							throw new OperationException(this, "File does not contain: " + datasetName);
 						}
 					} catch (Exception e) {
-						throw new OperationException(this, "Can't load data!");
+						if (e instanceof OperationException) {
+							throw (OperationException)e;
+						} 
+						
+						throw new OperationException(this, "Can't load data!", e);
 					}
 
 					Dataset processed = om.process(filePath,

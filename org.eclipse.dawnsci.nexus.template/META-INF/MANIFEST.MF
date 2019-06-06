@@ -14,3 +14,5 @@ Automatic-Module-Name: org.eclipse.dawnsci.nexus.template
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.dawnsci.nexus.template,
  org.eclipse.dawnsci.nexus.template.impl
+Import-Package: org.slf4j;version="1.7.25"
+Service-Component: OSGI-INF/*.xml

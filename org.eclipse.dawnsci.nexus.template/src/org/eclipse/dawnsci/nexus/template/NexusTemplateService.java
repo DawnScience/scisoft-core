@@ -3,13 +3,18 @@ package org.eclipse.dawnsci.nexus.template;
 import org.eclipse.dawnsci.nexus.NexusException;
 
 /**
- * TODO javadoc
+ * A service load and apply templates to nexus files.
  * 
- * @author wgp76868
- *
+ * @author Matthew Dickie
  */
 public interface NexusTemplateService {
 	
-	public NexusTemplate loadTemplate(String templateFile) throws NexusException;
+	/**
+	 * Load a template from the given file path
+	 * @param templateFilePath template file path
+	 * @return the template
+	 * @throws NexusException if the template could not be loaded for any reason
+	 */
+	public NexusTemplate loadTemplate(String templateFilePath) throws NexusException;
 	
 }

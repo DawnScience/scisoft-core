@@ -16,12 +16,17 @@ import org.eclipse.dawnsci.nexus.template.NexusTemplate;
 import org.eclipse.dawnsci.nexus.template.NexusTemplateService;
 import org.yaml.snakeyaml.Yaml;
 
+/**
+ * Implementation of the template service, uses SnakeYaml to read the template file internally.
+ * 
+ * @author Matthew Dickie
+ */
 public class NexusTemplateServiceImpl implements NexusTemplateService {
 
 	private final Yaml yaml = new Yaml(); // note should only be used by one thread
 	
 	@Override
-	public NexusTemplate loadTemplate(String templateFilePath) throws NexusException {
+	public synchronized NexusTemplate loadTemplate(String templateFilePath) throws NexusException {
 		try (Reader reader = Files.newBufferedReader(Paths.get(templateFilePath))) {
 			return createTemplate(yaml.load(reader));
 		} catch (IOException e) {
@@ -33,15 +38,13 @@ public class NexusTemplateServiceImpl implements NexusTemplateService {
 		return new NexusTemplateImpl(yamlMapping);
 	}
 	
-	public void applyTemplate(String templateFilePath, String sourceFilePath, String destinationFilePath) throws NexusException {
+	public void applyTemplate(String templateFilePath, String sourceFilePath) throws NexusException {
 		final NXroot root = loadNexusTree(sourceFilePath);
-		
 		final NexusTemplate template = loadTemplate(templateFilePath);
 		template.apply(root);
-//		saveNexusTree(root, destinationFilePath);
 	}
 	
-	public NexusTemplate loadTemplateFromString(String templateString) throws NexusException {
+	public synchronized NexusTemplate loadTemplateFromString(String templateString) {
 		// load a nexus template directly from a string. method for testing
 		return createTemplate(yaml.load(templateString));
 	}
@@ -55,13 +58,4 @@ public class NexusTemplateServiceImpl implements NexusTemplateService {
 		}
 	}
 	
-	private void saveNexusTree(NXroot root, String destinationFilePath) throws NexusException {
-		// TODO move this method to NexusUtils or remove if not required
-		try (NexusFile nexusFile = ServiceHolder.getNexusFileFactory().newNexusFile(destinationFilePath, true)) {
-			nexusFile.createAndOpenToWrite();
-			nexusFile.addNode("/", root);
-			nexusFile.flush();
-		}
-	}
-
 }

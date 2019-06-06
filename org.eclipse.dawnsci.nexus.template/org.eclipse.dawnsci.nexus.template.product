@@ -3,6 +3,7 @@
 
 <product name="org.eclipse.dawnsci.nexus.template.product" uid="org.eclipse.dawnsci.nexus.template.product" id="org.eclipse.dawnsci.nexus.template.product" application="org.eclipse.dawnsci.nexus.template.application" useFeatures="true" includeLaunchers="true">
 
+
    <configIni use="default">
    </configIni>
 
@@ -10,6 +11,20 @@
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
    </launcherArgs>
+
+   <windowImages/>
+
+
+   <launcher name="apply-template">
+      <win useIco="false">
+         <bmp/>
+      </win>
+   </launcher>
+
+
+   <vm>
+   </vm>
+
 
    <plugins>
       <plugin id="org.eclipse.core.runtime"/>
@@ -21,5 +36,12 @@
       <feature id="org.eclipse.dawnsci.nexus.template.feature" version="1.0.0.qualifier"/>
    </features>
 
+
+   <preferencesInfo>
+      <targetfile overwrite="false"/>
+   </preferencesInfo>
+
+   <cssInfo>
+   </cssInfo>
 
 </product>

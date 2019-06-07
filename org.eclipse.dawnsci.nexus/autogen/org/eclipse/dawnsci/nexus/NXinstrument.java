@@ -26,7 +26,6 @@ import org.eclipse.january.dataset.IDataset;
  * This device allows the unique identification of beamline components in a way
  * that is valid for both reactor and pulsed instrumentation.
  * 
- * @version 1.0
  */
 public interface NXinstrument extends NXobject {
 

@@ -24,7 +24,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * This is a definition for reflection data from diffraction experiments
  * 
- * @version 1.0
  */
 public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 

@@ -22,7 +22,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * legacy class - (used by :ref:`NXgeometry`) - general spatial location of a component.
  * 
- * @version 1.0
  */
 public class NXtranslationImpl extends NXobjectImpl implements NXtranslation {
 

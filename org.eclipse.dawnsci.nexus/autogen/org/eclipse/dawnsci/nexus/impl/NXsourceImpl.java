@@ -24,7 +24,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * The neutron or x-ray storage ring/facility.
  * 
- * @version 1.0
  */
 public class NXsourceImpl extends NXobjectImpl implements NXsource {
 

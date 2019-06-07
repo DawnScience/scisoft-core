@@ -22,7 +22,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * A neutron velocity selector
  * 
- * @version 1.0
  */
 public class NXvelocity_selectorImpl extends NXobjectImpl implements NXvelocity_selector {
 

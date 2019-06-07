@@ -25,7 +25,6 @@ import org.eclipse.january.dataset.IDataset;
  * <li><b>m</b> 
  * number of experiments</li></ul></p>
  * 
- * @version 1.0
  */
 public interface NXreflections extends NXobject {
 

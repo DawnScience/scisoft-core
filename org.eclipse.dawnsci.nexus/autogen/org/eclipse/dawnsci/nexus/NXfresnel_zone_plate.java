@@ -20,7 +20,6 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * A fresnel zone plate
  * 
- * @version 1.0
  */
 public interface NXfresnel_zone_plate extends NXobject {
 

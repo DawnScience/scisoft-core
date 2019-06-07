@@ -26,7 +26,6 @@ import org.eclipse.january.dataset.IDataset;
  * integrals, or scalar monitor counts, which are often used in both in both
  * pulsed and steady-state instrumentation.
  * 
- * @version 1.0
  */
 public interface NXmonitor extends NXobject {
 

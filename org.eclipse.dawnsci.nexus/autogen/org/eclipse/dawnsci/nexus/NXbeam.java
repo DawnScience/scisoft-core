@@ -27,7 +27,6 @@ import org.eclipse.january.dataset.IDataset;
  * its most likely use is in the :ref:`NXsample` group in which it defines the results of the neutron
  * scattering by the sample, e.g., energy transfer, polarizations.
  * 
- * @version 1.0
  */
 public interface NXbeam extends NXobject {
 

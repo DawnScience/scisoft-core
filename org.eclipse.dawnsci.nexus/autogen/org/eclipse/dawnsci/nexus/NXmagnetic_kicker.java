@@ -18,7 +18,6 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * definition for a magnetic kicker.
  * 
- * @version 1.0
  */
 public interface NXmagnetic_kicker extends NXobject {
 

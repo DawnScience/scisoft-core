@@ -48,16 +48,11 @@ import org.eclipse.dawnsci.nexus.*;
  * specification.
  * For a chain of three transformations, where :math:`T_1` depends on :math:`T_2`
  * and that in turn depends on :math:`T_3`, the final transformation :math:`T_f` is
- * .. math::
- * T_f = T_3 T_2 T_1
+ * .. math:: T_f = T_3 T_2 T_1
  * In explicit terms, the transformations are a subset of affine transformations
  * expressed as 4x4 matrices that act on homogeneous coordinates, :math:`w=(x,y,z,1)^T`.
  * For rotation and translation,
- * .. math::
- * T_r &= \left( \begin{matrix} R & o \\
- * 0_3 & 1 \end{matrix} \right) \\
- * T_t &= \left( \begin{matrix} I_3 & t + o \\
- * 0_3 & 1 \end{matrix} \right)
+ * .. math:: T_r &= \begin{pmatrix} R & o \\ 0_3 & 1 \end{pmatrix} \\ T_t &= \begin{pmatrix} I_3 & t + o \\ 0_3 & 1 \end{pmatrix}
  * where :math:`R` is the usual 3x3 rotation matrix, :math:`o` is an offset vector,
  * :math:`0_3` is a row of 3 zeros, :math:`I_3` is the 3x3 identity matrix and
  * :math:`t` is the translation vector.
@@ -65,7 +60,6 @@ import org.eclipse.dawnsci.nexus.*;
  * attribute multiplied by the field value, and :math:`R` is defined as a rotation
  * about an axis in the direction of ``vector``, of angle of the field value.
  * 
- * @version 1.1
  */
 public class NXtransformationsImpl extends NXobjectImpl implements NXtransformations {
 

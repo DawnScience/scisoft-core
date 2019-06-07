@@ -23,7 +23,6 @@ import org.eclipse.dawnsci.nexus.*;
  * A simple slit.
  * For more complex geometries, :ref:`NXaperture` should be used.
  * 
- * @version 1.0
  */
 public class NXslitImpl extends NXobjectImpl implements NXslit {
 

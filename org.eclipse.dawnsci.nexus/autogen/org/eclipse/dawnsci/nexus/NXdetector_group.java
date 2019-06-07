@@ -31,7 +31,6 @@ import org.eclipse.january.dataset.IDataset;
  * A ``group_index`` array in
  * ``NXdetector`` gives the base group for a detector element.
  * 
- * @version 1.0
  */
 public interface NXdetector_group extends NXobject {
 

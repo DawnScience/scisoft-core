@@ -41,7 +41,6 @@ import org.eclipse.dawnsci.nexus.*;
  * it was recognized the application definitions must be entered in the NeXus
  * data file tree as children of :ref:`NXentry`.
  * 
- * @version 1.0
  */
 public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 

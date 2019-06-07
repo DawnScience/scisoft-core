@@ -18,7 +18,6 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * definition for a quadrupole magnet.
  * 
- * @version 1.0
  */
 public interface NXquadrupole_magnet extends NXobject {
 

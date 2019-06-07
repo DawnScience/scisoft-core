@@ -25,7 +25,6 @@ import org.eclipse.dawnsci.nexus.*;
  * legacy class - recommend to use :ref:`NXtransformations` now
  * Description for a general orientation of a component - used by :ref:`NXgeometry`
  * 
- * @version 1.0
  */
 public class NXorientationImpl extends NXobjectImpl implements NXorientation {
 

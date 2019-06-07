@@ -28,7 +28,6 @@ import org.eclipse.dawnsci.nexus.*;
  * Anything (groups, fields, or attributes) placed in
  * an :ref:`NXcollection` group will not be validated.
  * 
- * @version 1.0
  */
 public class NXcollectionImpl extends NXobjectImpl implements NXcollection {
 

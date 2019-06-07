@@ -22,7 +22,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * A spin flipper.
  * 
- * @version 1.0
  */
 public class NXflipperImpl extends NXobjectImpl implements NXflipper {
 

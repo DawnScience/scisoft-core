@@ -24,7 +24,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * A beamline aperture.
  * 
- * @version 1.0
  */
 public class NXapertureImpl extends NXobjectImpl implements NXaperture {
 

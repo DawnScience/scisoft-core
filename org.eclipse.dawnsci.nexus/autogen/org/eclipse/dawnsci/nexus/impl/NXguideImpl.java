@@ -44,7 +44,6 @@ import org.eclipse.dawnsci.nexus.*;
  * comments for revision and improvement of
  * this definition of :ref:`NXguide`.
  * 
- * @version 1.0
  */
 public class NXguideImpl extends NXobjectImpl implements NXguide {
 

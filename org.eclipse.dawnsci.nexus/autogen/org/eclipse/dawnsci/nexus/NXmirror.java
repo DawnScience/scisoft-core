@@ -20,7 +20,6 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * A beamline mirror or supermirror.
  * 
- * @version 1.0
  */
 public interface NXmirror extends NXobject {
 

@@ -27,7 +27,6 @@ import org.eclipse.january.dataset.IDataset;
  * Also, in HDF, linked items must share the same name.
  * However, it might not be possible or practical in all situations.
  * 
- * @version 1.0
  * @deprecated as decided at 2014 NIAC meeting, convert to use :ref:`NXtransformations`
  */
 @Deprecated

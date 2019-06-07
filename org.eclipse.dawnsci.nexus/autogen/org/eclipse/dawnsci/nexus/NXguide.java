@@ -45,7 +45,6 @@ import org.eclipse.january.dataset.IDataset;
  * <li><b>nwl</b> 
  * number of wavelengths</li></ul></p>
  * 
- * @version 1.0
  */
 public interface NXguide extends NXobject {
 

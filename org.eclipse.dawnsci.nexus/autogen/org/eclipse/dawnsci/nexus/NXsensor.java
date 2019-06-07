@@ -19,7 +19,6 @@ import org.eclipse.january.dataset.IDataset;
  * A sensor used to monitor an external condition
  * The condition itself is described in :ref:`NXenvironment`.
  * 
- * @version 1.0
  */
 public interface NXsensor extends NXobject {
 

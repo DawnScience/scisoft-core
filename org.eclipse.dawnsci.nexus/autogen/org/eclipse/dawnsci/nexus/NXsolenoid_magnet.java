@@ -18,7 +18,6 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * definition for a solenoid magnet.
  * 
- * @version 1.0
  */
 public interface NXsolenoid_magnet extends NXobject {
 

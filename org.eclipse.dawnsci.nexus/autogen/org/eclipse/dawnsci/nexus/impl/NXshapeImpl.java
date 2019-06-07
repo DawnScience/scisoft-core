@@ -25,7 +25,6 @@ import org.eclipse.dawnsci.nexus.*;
  * component, which may be made up of ``numobj`` separate
  * elements - it is used by the :ref:`NXgeometry` class
  * 
- * @version 1.0
  */
 public class NXshapeImpl extends NXobjectImpl implements NXshape {
 

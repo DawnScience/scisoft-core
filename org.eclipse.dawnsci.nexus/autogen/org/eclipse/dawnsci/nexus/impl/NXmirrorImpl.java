@@ -24,7 +24,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * A beamline mirror or supermirror.
  * 
- * @version 1.0
  */
 public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 

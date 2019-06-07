@@ -21,7 +21,6 @@ import org.eclipse.january.dataset.IDataset;
  * component, which may be made up of ``numobj`` separate
  * elements - it is used by the :ref:`NXgeometry` class
  * 
- * @version 1.0
  */
 public interface NXshape extends NXobject {
 

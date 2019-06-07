@@ -22,7 +22,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * Container for parameters, usually used in processing or analysis.
  * 
- * @version 1.0
  */
 public class NXparametersImpl extends NXobjectImpl implements NXparameters {
 

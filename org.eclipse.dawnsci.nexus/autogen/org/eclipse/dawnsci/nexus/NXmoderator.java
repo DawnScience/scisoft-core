@@ -20,7 +20,6 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * A neutron moderator
  * 
- * @version 1.0
  */
 public interface NXmoderator extends NXobject {
 

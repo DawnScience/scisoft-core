@@ -22,7 +22,6 @@ import org.eclipse.january.dataset.IDataset;
  * The idea would be to include this in the relevant NeXus object:
  * :ref:`NXdetector` for detectors, :ref:`NXinstrument` for instruments, etc.
  * 
- * @version 1.0
  */
 public interface NXcite extends NXobject {
 

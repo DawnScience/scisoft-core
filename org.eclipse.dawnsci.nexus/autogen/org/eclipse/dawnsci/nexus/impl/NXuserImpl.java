@@ -26,7 +26,6 @@ import org.eclipse.dawnsci.nexus.*;
  * but a second :ref:`NXuser` group should be used if they have different
  * affiliations, etc.
  * 
- * @version 1.0
  */
 public class NXuserImpl extends NXobjectImpl implements NXuser {
 

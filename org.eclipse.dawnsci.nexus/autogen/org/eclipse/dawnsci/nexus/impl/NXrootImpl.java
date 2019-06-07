@@ -23,7 +23,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * Definition of the root NeXus group.
  * 
- * @version 1.0
  */
 public class NXrootImpl extends NXobjectImpl implements NXroot {
 

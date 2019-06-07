@@ -25,7 +25,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * Document an event of data processing, reconstruction, or analysis for this data.
  * 
- * @version 1.0
  */
 public class NXprocessImpl extends NXobjectImpl implements NXprocess {
 

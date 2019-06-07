@@ -32,7 +32,6 @@ import org.eclipse.dawnsci.nexus.*;
  * parallel to beam incident on crystal before rotation, and lies in
  * vertical plane.
  * 
- * @version 1.0
  */
 public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 

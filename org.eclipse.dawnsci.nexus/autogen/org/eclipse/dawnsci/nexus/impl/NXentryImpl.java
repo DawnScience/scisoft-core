@@ -29,7 +29,6 @@ import org.eclipse.dawnsci.nexus.*;
  * It is mandatory that there is at least one
  * group of this type in the NeXus file.
  * 
- * @version 1.0
  */
 public class NXentryImpl extends NXobjectImpl implements NXentry {
 

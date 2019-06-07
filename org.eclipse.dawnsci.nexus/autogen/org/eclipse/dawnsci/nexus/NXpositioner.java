@@ -18,7 +18,6 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * A generic positioner such as a motor or piezo-electric transducer.
  * 
- * @version 1.0
  */
 public interface NXpositioner extends NXobject {
 

@@ -24,7 +24,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * A fresnel zone plate
  * 
- * @version 1.0
  */
 public class NXfresnel_zone_plateImpl extends NXobjectImpl implements NXfresnel_zone_plate {
 

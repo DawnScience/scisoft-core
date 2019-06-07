@@ -24,7 +24,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * A beamline collimator.
  * 
- * @version 1.0
  */
 public class NXcollimatorImpl extends NXobjectImpl implements NXcollimator {
 

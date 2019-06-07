@@ -20,7 +20,6 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * A beamline collimator.
  * 
- * @version 1.0
  */
 public interface NXcollimator extends NXobject {
 

@@ -20,7 +20,6 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * A Fermi chopper, possibly with curved slits.
  * 
- * @version 1.0
  */
 public interface NXfermi_chopper extends NXobject {
 

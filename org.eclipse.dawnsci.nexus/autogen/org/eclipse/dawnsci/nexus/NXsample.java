@@ -38,7 +38,6 @@ import org.eclipse.january.dataset.IDataset;
  * <li><b>n_sField</b> 
  * number of values in applied stress field</li></ul></p>
  * 
- * @version 1.0
  */
 public interface NXsample extends NXobject {
 

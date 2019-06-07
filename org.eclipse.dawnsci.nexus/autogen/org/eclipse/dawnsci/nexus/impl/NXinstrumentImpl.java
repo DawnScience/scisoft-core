@@ -30,7 +30,6 @@ import org.eclipse.dawnsci.nexus.*;
  * This device allows the unique identification of beamline components in a way
  * that is valid for both reactor and pulsed instrumentation.
  * 
- * @version 1.0
  */
 public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 

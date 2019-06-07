@@ -21,7 +21,6 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * Document an event of data processing, reconstruction, or analysis for this data.
  * 
- * @version 1.0
  */
 public interface NXprocess extends NXobject {
 

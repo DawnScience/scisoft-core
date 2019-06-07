@@ -34,7 +34,6 @@ import org.eclipse.january.dataset.IDataset;
  * <li><b>i</b> 
  * number of wavelengths</li></ul></p>
  * 
- * @version 1.0
  */
 public interface NXcrystal extends NXobject {
 

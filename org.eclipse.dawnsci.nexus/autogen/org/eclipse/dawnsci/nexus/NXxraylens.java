@@ -19,7 +19,6 @@ import org.eclipse.january.dataset.IDataset;
  * An X-ray lens, typically at a synchrotron X-ray beam line.
  * Based on information provided by Gerd Wellenreuther (DESY).
  * 
- * @version 1.0
  */
 public interface NXxraylens extends NXobject {
 

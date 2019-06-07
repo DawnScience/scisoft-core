@@ -23,7 +23,6 @@ import org.eclipse.january.dataset.DatasetFactory;
  * This class can be used to store additional information in a
  * NeXus file e.g. pictures, movies, audio, additional text logs
  * 
- * @version 1.0
  */
 public interface NXnote extends NXobject {
 

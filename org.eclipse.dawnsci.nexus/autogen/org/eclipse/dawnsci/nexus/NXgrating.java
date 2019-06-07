@@ -20,7 +20,6 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * A diffraction grating, as could be used in a soft X-ray monochromator
  * 
- * @version 1.0
  */
 public interface NXgrating extends NXobject {
 

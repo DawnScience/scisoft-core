@@ -31,7 +31,6 @@ import org.eclipse.dawnsci.nexus.*;
  * * wavelength: angstrom
  * * energy: eV
  * 
- * @version 1.0
  */
 public class NXmonochromatorImpl extends NXobjectImpl implements NXmonochromator {
 

@@ -20,7 +20,6 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * An insertion device, as used in a synchrotron light source.
  * 
- * @version 1.0
  */
 public interface NXinsertion_device extends NXobject {
 

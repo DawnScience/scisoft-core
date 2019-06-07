@@ -22,7 +22,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * definition for an electrostatic separator.
  * 
- * @version 1.0
  */
 public class NXseparatorImpl extends NXobjectImpl implements NXseparator {
 

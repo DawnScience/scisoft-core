@@ -24,7 +24,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * A bending magnet
  * 
- * @version 1.0
  */
 public class NXbending_magnetImpl extends NXobjectImpl implements NXbending_magnet {
 

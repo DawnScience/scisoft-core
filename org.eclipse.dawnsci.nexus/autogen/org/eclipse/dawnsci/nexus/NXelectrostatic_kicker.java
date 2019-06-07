@@ -18,7 +18,6 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * definition for a electrostatic kicker.
  * 
- * @version 1.0
  */
 public interface NXelectrostatic_kicker extends NXobject {
 

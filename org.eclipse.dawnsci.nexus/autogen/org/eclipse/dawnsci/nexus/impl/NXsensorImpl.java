@@ -23,7 +23,6 @@ import org.eclipse.dawnsci.nexus.*;
  * A sensor used to monitor an external condition
  * The condition itself is described in :ref:`NXenvironment`.
  * 
- * @version 1.0
  */
 public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 

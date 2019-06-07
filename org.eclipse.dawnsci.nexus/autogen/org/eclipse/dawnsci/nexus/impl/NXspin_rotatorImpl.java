@@ -22,7 +22,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * definition for a spin rotator.
  * 
- * @version 1.0
  */
 public class NXspin_rotatorImpl extends NXobjectImpl implements NXspin_rotator {
 

@@ -18,7 +18,6 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * legacy class - (used by :ref:`NXgeometry`) - general spatial location of a component.
  * 
- * @version 1.0
  */
 public interface NXtranslation extends NXobject {
 

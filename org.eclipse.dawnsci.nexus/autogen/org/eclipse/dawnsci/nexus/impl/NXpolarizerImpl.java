@@ -22,7 +22,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * A spin polarizer.
  * 
- * @version 1.0
  */
 public class NXpolarizerImpl extends NXobjectImpl implements NXpolarizer {
 

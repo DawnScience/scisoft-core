@@ -18,7 +18,6 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * definition for an electrostatic separator.
  * 
- * @version 1.0
  */
 public interface NXseparator extends NXobject {
 

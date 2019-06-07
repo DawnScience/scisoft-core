@@ -20,7 +20,6 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * Parameters for controlling external conditions
  * 
- * @version 1.0
  */
 public interface NXenvironment extends NXobject {
 

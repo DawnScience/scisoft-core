@@ -23,7 +23,6 @@ import org.eclipse.dawnsci.nexus.*;
  * An X-ray lens, typically at a synchrotron X-ray beam line.
  * Based on information provided by Gerd Wellenreuther (DESY).
  * 
- * @version 1.0
  */
 public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 

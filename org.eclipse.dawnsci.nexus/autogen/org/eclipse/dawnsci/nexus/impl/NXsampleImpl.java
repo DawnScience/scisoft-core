@@ -28,7 +28,6 @@ import org.eclipse.dawnsci.nexus.*;
  * are associated with one of the data dimensions, e.g. the magnetic field, or
  * logged data, e.g. monitored temperature vs elapsed time.
  * 
- * @version 1.0
  */
 public class NXsampleImpl extends NXobjectImpl implements NXsample {
 

@@ -18,7 +18,6 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * Container for parameters, usually used in processing or analysis.
  * 
- * @version 1.0
  */
 public interface NXparameters extends NXobject {
 

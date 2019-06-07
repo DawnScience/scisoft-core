@@ -37,7 +37,6 @@ import org.eclipse.january.dataset.IDataset;
  * it was recognized the application definitions must be entered in the NeXus
  * data file tree as children of :ref:`NXentry`.
  * 
- * @version 1.0
  */
 public interface NXsubentry extends NXobject {
 

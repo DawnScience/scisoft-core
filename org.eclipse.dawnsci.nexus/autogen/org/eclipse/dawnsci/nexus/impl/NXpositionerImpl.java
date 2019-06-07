@@ -22,7 +22,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * A generic positioner such as a motor or piezo-electric transducer.
  * 
- * @version 1.0
  */
 public class NXpositionerImpl extends NXobjectImpl implements NXpositioner {
 

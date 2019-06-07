@@ -22,7 +22,6 @@ import org.eclipse.january.dataset.IDataset;
  * Beamstops and their positions are important for SANS
  * and SAXS experiments.
  * 
- * @version 1.0
  */
 public interface NXbeam_stop extends NXobject {
 

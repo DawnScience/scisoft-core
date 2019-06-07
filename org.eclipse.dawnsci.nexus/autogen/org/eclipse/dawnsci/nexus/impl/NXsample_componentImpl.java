@@ -22,7 +22,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * One group like this per component can be recorded For a sample consisting of multiple components.
  * 
- * @version 1.0
  */
 public class NXsample_componentImpl extends NXobjectImpl implements NXsample_component {
 

@@ -222,10 +222,9 @@ public class NXiqprocValidator extends AbstractNexusValidator implements NexusAp
 		validateFieldRank("data", data, 3);
 		validateFieldDimensions("data", data, null, "NE", "NQX", "NQY");
 
-		// validate field 'variable' of unknown type.
-		final IDataset variable = group.getVariable();
+		// validate field 'variable' of unknown type. Note: field not defined in base class.
+		final IDataset variable = group.getDataset("variable");
 		validateFieldNotNull("variable", variable);
-		validateFieldType("variable", variable, NX_NUMBER);
 		validateFieldRank("variable", variable, 1);
 		validateFieldDimensions("variable", variable, null, "NE");
 		// validate attribute 'varied_variable' of field 'variable'

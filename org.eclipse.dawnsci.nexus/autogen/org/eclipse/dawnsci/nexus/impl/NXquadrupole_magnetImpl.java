@@ -22,7 +22,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * definition for a quadrupole magnet.
  * 
- * @version 1.0
  */
 public class NXquadrupole_magnetImpl extends NXobjectImpl implements NXquadrupole_magnet {
 

@@ -19,7 +19,6 @@ import org.eclipse.january.dataset.IDataset;
  * A capillary lens to focus the X-ray beam.
  * Based on information provided by Gerd Wellenreuther (DESY).
  * 
- * @version 1.0
  */
 public interface NXcapillary extends NXobject {
 

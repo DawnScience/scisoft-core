@@ -25,7 +25,6 @@ import org.eclipse.dawnsci.nexus.*;
  * A device blocking the beam in a temporal periodic pattern.
  * TODO: need documentation
  * 
- * @version 1.0
  */
 public class NXdisk_chopperImpl extends NXobjectImpl implements NXdisk_chopper {
 

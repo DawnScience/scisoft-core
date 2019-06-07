@@ -24,7 +24,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * An insertion device, as used in a synchrotron light source.
  * 
- * @version 1.0
  */
 public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_device {
 

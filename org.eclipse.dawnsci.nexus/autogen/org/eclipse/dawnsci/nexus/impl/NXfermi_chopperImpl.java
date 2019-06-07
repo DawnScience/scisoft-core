@@ -24,7 +24,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * A Fermi chopper, possibly with curved slits.
  * 
- * @version 1.0
  */
 public class NXfermi_chopperImpl extends NXobjectImpl implements NXfermi_chopper {
 

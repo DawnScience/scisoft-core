@@ -33,7 +33,6 @@ import org.eclipse.january.dataset.IDataset;
  * <li><b>tof</b> 
  * number of bins in the time-of-flight histogram</li></ul></p>
  * 
- * @version 1.1
  */
 public interface NXdetector extends NXobject {
 
@@ -56,10 +55,15 @@ public interface NXdetector extends NXobject {
 	public static final String NX_Y_PIXEL_OFFSET_ATTRIBUTE_AXIS = "axis";
 	public static final String NX_Y_PIXEL_OFFSET_ATTRIBUTE_PRIMARY = "primary";
 	public static final String NX_Y_PIXEL_OFFSET_ATTRIBUTE_LONG_NAME = "long_name";
+	public static final String NX_Z_PIXEL_OFFSET = "z_pixel_offset";
+	public static final String NX_Z_PIXEL_OFFSET_ATTRIBUTE_AXIS = "axis";
+	public static final String NX_Z_PIXEL_OFFSET_ATTRIBUTE_PRIMARY = "primary";
+	public static final String NX_Z_PIXEL_OFFSET_ATTRIBUTE_LONG_NAME = "long_name";
 	public static final String NX_DISTANCE = "distance";
 	public static final String NX_POLAR_ANGLE = "polar_angle";
 	public static final String NX_AZIMUTHAL_ANGLE = "azimuthal_angle";
 	public static final String NX_DESCRIPTION = "description";
+	public static final String NX_SERIAL_NUMBER = "serial_number";
 	public static final String NX_LOCAL_NAME = "local_name";
 	public static final String NX_SOLID_ANGLE = "solid_angle";
 	public static final String NX_X_PIXEL_SIZE = "x_pixel_size";
@@ -277,10 +281,10 @@ public interface NXdetector extends NXobject {
 	public void setRaw_time_of_flightAttributeFrequency(Number frequency);
 
 	/**
-	 * Identifier for detector
+	 * Identifier for detector (pixels)
+	 * Can be multidimensional, if needed
 	 * <p>
 	 * <b>Type:</b> NX_INT
-	 * <b>Dimensions:</b> 1: i; 2: j;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -288,10 +292,10 @@ public interface NXdetector extends NXobject {
 	public IDataset getDetector_number();
 	
 	/**
-	 * Identifier for detector
+	 * Identifier for detector (pixels)
+	 * Can be multidimensional, if needed
 	 * <p>
 	 * <b>Type:</b> NX_INT
-	 * <b>Dimensions:</b> 1: i; 2: j;
 	 * </p>
 	 * 
 	 * @param detector_number the detector_number
@@ -299,10 +303,10 @@ public interface NXdetector extends NXobject {
 	public DataNode setDetector_number(IDataset detector_number);
 
 	/**
-	 * Identifier for detector
+	 * Identifier for detector (pixels)
+	 * Can be multidimensional, if needed
 	 * <p>
 	 * <b>Type:</b> NX_INT
-	 * <b>Dimensions:</b> 1: i; 2: j;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -310,10 +314,10 @@ public interface NXdetector extends NXobject {
 	public Long getDetector_numberScalar();
 
 	/**
-	 * Identifier for detector
+	 * Identifier for detector (pixels)
+	 * Can be multidimensional, if needed
 	 * <p>
 	 * <b>Type:</b> NX_INT
-	 * <b>Dimensions:</b> 1: i; 2: j;
 	 * </p>
 	 * 
 	 * @param detector_number the detector_number
@@ -458,7 +462,6 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
-	 * <b>Dimensions:</b> 1: i; 2: j;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -471,7 +474,6 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
-	 * <b>Dimensions:</b> 1: i; 2: j;
 	 * </p>
 	 * 
 	 * @param x_pixel_offset the x_pixel_offset
@@ -484,7 +486,6 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
-	 * <b>Dimensions:</b> 1: i; 2: j;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -497,7 +498,6 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
-	 * <b>Dimensions:</b> 1: i; 2: j;
 	 * </p>
 	 * 
 	 * @param x_pixel_offset the x_pixel_offset
@@ -572,7 +572,6 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
-	 * <b>Dimensions:</b> 1: i; 2: j;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -585,7 +584,6 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
-	 * <b>Dimensions:</b> 1: i; 2: j;
 	 * </p>
 	 * 
 	 * @param y_pixel_offset the y_pixel_offset
@@ -598,7 +596,6 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
-	 * <b>Dimensions:</b> 1: i; 2: j;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -611,7 +608,6 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
-	 * <b>Dimensions:</b> 1: i; 2: j;
 	 * </p>
 	 * 
 	 * @param y_pixel_offset the y_pixel_offset
@@ -679,6 +675,116 @@ public interface NXdetector extends NXobject {
 	 * @param long_name the long_name
 	 */
 	public void setY_pixel_offsetAttributeLong_name(String long_name);
+
+	/**
+	 * Offset from the detector center in the z-direction.
+	 * Can be multidimensional when different values are required for each pixel.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_LENGTH
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public IDataset getZ_pixel_offset();
+	
+	/**
+	 * Offset from the detector center in the z-direction.
+	 * Can be multidimensional when different values are required for each pixel.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_LENGTH
+	 * </p>
+	 * 
+	 * @param z_pixel_offset the z_pixel_offset
+	 */
+	public DataNode setZ_pixel_offset(IDataset z_pixel_offset);
+
+	/**
+	 * Offset from the detector center in the z-direction.
+	 * Can be multidimensional when different values are required for each pixel.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_LENGTH
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public Double getZ_pixel_offsetScalar();
+
+	/**
+	 * Offset from the detector center in the z-direction.
+	 * Can be multidimensional when different values are required for each pixel.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_LENGTH
+	 * </p>
+	 * 
+	 * @param z_pixel_offset the z_pixel_offset
+	 */
+	public DataNode setZ_pixel_offsetScalar(Double z_pixel_offset);
+
+	/**
+	 * <p>
+	 * <p><b>Enumeration:</b><ul>
+	 * <li><b>3</b> </li></ul></p>
+	 * </p>
+	 * 
+	 * @deprecated see: https://github.com/nexusformat/definitions/issues/436
+	 * @return  the value.
+	 */
+	@Deprecated
+	public Long getZ_pixel_offsetAttributeAxis();
+	
+	/**
+	 * <p>
+	 * <p><b>Enumeration:</b><ul>
+	 * <li><b>3</b> </li></ul></p>
+	 * </p>
+	 * 
+	 * @deprecated see: https://github.com/nexusformat/definitions/issues/436
+	 * @param axis the axis
+	 */
+	@Deprecated
+	public void setZ_pixel_offsetAttributeAxis(Long axis);
+
+	/**
+	 * <p>
+	 * <p><b>Enumeration:</b><ul>
+	 * <li><b>1</b> </li></ul></p>
+	 * </p>
+	 * 
+	 * @deprecated see: https://github.com/nexusformat/definitions/issues/436
+	 * @return  the value.
+	 */
+	@Deprecated
+	public Long getZ_pixel_offsetAttributePrimary();
+	
+	/**
+	 * <p>
+	 * <p><b>Enumeration:</b><ul>
+	 * <li><b>1</b> </li></ul></p>
+	 * </p>
+	 * 
+	 * @deprecated see: https://github.com/nexusformat/definitions/issues/436
+	 * @param primary the primary
+	 */
+	@Deprecated
+	public void setZ_pixel_offsetAttributePrimary(Long primary);
+
+	/**
+	 * y-axis offset from detector center
+	 * 
+	 * @return  the value.
+	 */
+	public String getZ_pixel_offsetAttributeLong_name();
+	
+	/**
+	 * y-axis offset from detector center
+	 * 
+	 * @param long_name the long_name
+	 */
+	public void setZ_pixel_offsetAttributeLong_name(String long_name);
 
 	/**
 	 * This is the distance to the previous component in the
@@ -923,6 +1029,34 @@ public interface NXdetector extends NXobject {
 	 * @param description the description
 	 */
 	public DataNode setDescriptionScalar(String description);
+
+	/**
+	 * Serial number for the detector
+	 * 
+	 * @return  the value.
+	 */
+	public IDataset getSerial_number();
+	
+	/**
+	 * Serial number for the detector
+	 * 
+	 * @param serial_number the serial_number
+	 */
+	public DataNode setSerial_number(IDataset serial_number);
+
+	/**
+	 * Serial number for the detector
+	 * 
+	 * @return  the value.
+	 */
+	public String getSerial_numberScalar();
+
+	/**
+	 * Serial number for the detector
+	 * 
+	 * @param serial_number the serial_number
+	 */
+	public DataNode setSerial_numberScalar(String serial_number);
 
 	/**
 	 * Local name for the detector
@@ -1757,6 +1891,7 @@ public interface NXdetector extends NXobject {
 	 * example) a tomography experiment, a sequence number is stored with each
 	 * image.
 	 * <p>
+	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: nBrightFrames;
 	 * </p>
 	 * 
@@ -1769,6 +1904,7 @@ public interface NXdetector extends NXobject {
 	 * example) a tomography experiment, a sequence number is stored with each
 	 * image.
 	 * <p>
+	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: nBrightFrames;
 	 * </p>
 	 * 
@@ -1781,24 +1917,26 @@ public interface NXdetector extends NXobject {
 	 * example) a tomography experiment, a sequence number is stored with each
 	 * image.
 	 * <p>
+	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: nBrightFrames;
 	 * </p>
 	 * 
 	 * @return  the value.
 	 */
-	public String getSequence_numberScalar();
+	public Long getSequence_numberScalar();
 
 	/**
 	 * In order to properly sort the order of the images taken in (for
 	 * example) a tomography experiment, a sequence number is stored with each
 	 * image.
 	 * <p>
+	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: nBrightFrames;
 	 * </p>
 	 * 
 	 * @param sequence_number the sequence_number
 	 */
-	public DataNode setSequence_numberScalar(String sequence_number);
+	public DataNode setSequence_numberScalar(Long sequence_number);
 
 	/**
 	 * This is the x position where the direct beam would hit the detector.
@@ -3281,5 +3419,7 @@ public interface NXdetector extends NXobject {
 	
 	public void setAllDetector_module(Map<String, NXdetector_module> detector_module);
 	
+	// Unprocessed choice: pixel_shape
+	// Unprocessed choice: detector_shape
 
 }

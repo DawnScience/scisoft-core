@@ -24,7 +24,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * Parameters for controlling external conditions
  * 
- * @version 1.0
  */
 public class NXenvironmentImpl extends NXobjectImpl implements NXenvironment {
 

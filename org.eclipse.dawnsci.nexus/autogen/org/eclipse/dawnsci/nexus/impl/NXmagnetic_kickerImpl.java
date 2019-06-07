@@ -22,7 +22,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * definition for a magnetic kicker.
  * 
- * @version 1.0
  */
 public class NXmagnetic_kickerImpl extends NXobjectImpl implements NXmagnetic_kicker {
 

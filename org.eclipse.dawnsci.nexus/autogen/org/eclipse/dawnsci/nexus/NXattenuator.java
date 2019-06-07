@@ -23,7 +23,6 @@ import org.eclipse.january.dataset.IDataset;
  * or :ref:`NXattenuator` (reduces beam intensity), then choose
  * :ref:`NXattenuator`.
  * 
- * @version 1.0
  */
 public interface NXattenuator extends NXobject {
 

@@ -24,7 +24,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * A neutron moderator
  * 
- * @version 1.0
  */
 public class NXmoderatorImpl extends NXobjectImpl implements NXmoderator {
 

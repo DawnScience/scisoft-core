@@ -29,7 +29,7 @@ import org.eclipse.dawnsci.nexus.*;
  * - When data is taken in streaming mode data acquisition,
  * i.e. just timestamp, value pairs are stored and
  * correlated later in data reduction with other data,
- * It both cases NXlog contains
+ * In both cases, NXlog contains
  * the logged or streamed values and the times at which they were measured as elapsed time since a starting
  * time recorded in ISO8601 format. The time units are
  * specified in the units attribute. An optional scaling attribute
@@ -45,7 +45,6 @@ import org.eclipse.dawnsci.nexus.*;
  * index into the time,value pair of arrays for that
  * coarser ``cue_timestamp_zero``.
  * 
- * @version 1.1
  */
 public class NXlogImpl extends NXobjectImpl implements NXlog {
 
@@ -84,8 +83,8 @@ public class NXlogImpl extends NXobjectImpl implements NXlog {
 	}
 
 	@Override
-	public Double getTimeScalar() {
-		return getDouble(NX_TIME);
+	public Number getTimeScalar() {
+		return getNumber(NX_TIME);
 	}
 
 	@Override
@@ -94,7 +93,7 @@ public class NXlogImpl extends NXobjectImpl implements NXlog {
 	}
 
 	@Override
-	public DataNode setTimeScalar(Double time) {
+	public DataNode setTimeScalar(Number time) {
 		return setField(NX_TIME, time);
 	}
 
@@ -109,13 +108,13 @@ public class NXlogImpl extends NXobjectImpl implements NXlog {
 	}
 
 	@Override
-	public Number getTimeAttributeScaling() {
-		return getAttrNumber(NX_TIME, NX_TIME_ATTRIBUTE_SCALING);
+	public Number getTimeAttributeScaling_factor() {
+		return getAttrNumber(NX_TIME, NX_TIME_ATTRIBUTE_SCALING_FACTOR);
 	}
 
 	@Override
-	public void setTimeAttributeScaling(Number scaling) {
-		setAttribute(NX_TIME, NX_TIME_ATTRIBUTE_SCALING, scaling);
+	public void setTimeAttributeScaling_factor(Number scaling_factor) {
+		setAttribute(NX_TIME, NX_TIME_ATTRIBUTE_SCALING_FACTOR, scaling_factor);
 	}
 
 	@Override
@@ -284,8 +283,8 @@ public class NXlogImpl extends NXobjectImpl implements NXlog {
 	}
 
 	@Override
-	public Date getCue_timestamp_zeroScalar() {
-		return getDate(NX_CUE_TIMESTAMP_ZERO);
+	public Number getCue_timestamp_zeroScalar() {
+		return getNumber(NX_CUE_TIMESTAMP_ZERO);
 	}
 
 	@Override
@@ -294,8 +293,8 @@ public class NXlogImpl extends NXobjectImpl implements NXlog {
 	}
 
 	@Override
-	public DataNode setCue_timestamp_zeroScalar(Date cue_timestamp_zero) {
-		return setDate(NX_CUE_TIMESTAMP_ZERO, cue_timestamp_zero);
+	public DataNode setCue_timestamp_zeroScalar(Number cue_timestamp_zero) {
+		return setField(NX_CUE_TIMESTAMP_ZERO, cue_timestamp_zero);
 	}
 
 	@Override
@@ -306,6 +305,16 @@ public class NXlogImpl extends NXobjectImpl implements NXlog {
 	@Override
 	public void setCue_timestamp_zeroAttributeStart(Date start) {
 		setAttribute(NX_CUE_TIMESTAMP_ZERO, NX_CUE_TIMESTAMP_ZERO_ATTRIBUTE_START, start);
+	}
+
+	@Override
+	public Number getCue_timestamp_zeroAttributeScaling_factor() {
+		return getAttrNumber(NX_CUE_TIMESTAMP_ZERO, NX_CUE_TIMESTAMP_ZERO_ATTRIBUTE_SCALING_FACTOR);
+	}
+
+	@Override
+	public void setCue_timestamp_zeroAttributeScaling_factor(Number scaling_factor) {
+		setAttribute(NX_CUE_TIMESTAMP_ZERO, NX_CUE_TIMESTAMP_ZERO_ATTRIBUTE_SCALING_FACTOR, scaling_factor);
 	}
 
 	@Override

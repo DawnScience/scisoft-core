@@ -30,7 +30,6 @@ import org.eclipse.dawnsci.nexus.*;
  * integrals, or scalar monitor counts, which are often used in both in both
  * pulsed and steady-state instrumentation.
  * 
- * @version 1.0
  */
 public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 

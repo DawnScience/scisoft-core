@@ -35,7 +35,6 @@ import org.eclipse.dawnsci.nexus.*;
  * A ``group_index`` array in
  * ``NXdetector`` gives the base group for a detector element.
  * 
- * @version 1.0
  */
 public class NXdetector_groupImpl extends NXobjectImpl implements NXdetector_group {
 

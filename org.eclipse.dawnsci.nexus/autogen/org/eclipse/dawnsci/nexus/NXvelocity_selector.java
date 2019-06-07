@@ -18,7 +18,6 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * A neutron velocity selector
  * 
- * @version 1.0
  */
 public interface NXvelocity_selector extends NXobject {
 

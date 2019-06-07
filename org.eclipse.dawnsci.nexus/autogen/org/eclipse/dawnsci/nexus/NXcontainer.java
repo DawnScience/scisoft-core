@@ -51,7 +51,6 @@ import org.eclipse.january.dataset.IDataset;
  * container with nothing inside, to allow data corrections (at a specific
  * beam energy/measurement time) to be made.
  * 
- * @version 1.0
  */
 public interface NXcontainer extends NXobject {
 

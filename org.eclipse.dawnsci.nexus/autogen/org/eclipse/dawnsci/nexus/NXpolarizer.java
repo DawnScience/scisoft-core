@@ -18,7 +18,6 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * A spin polarizer.
  * 
- * @version 1.0
  */
 public interface NXpolarizer extends NXobject {
 

@@ -31,7 +31,6 @@ import org.eclipse.dawnsci.nexus.*;
  * its most likely use is in the :ref:`NXsample` group in which it defines the results of the neutron
  * scattering by the sample, e.g., energy transfer, polarizations.
  * 
- * @version 1.0
  */
 public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 

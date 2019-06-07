@@ -20,7 +20,6 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * A bending magnet
  * 
- * @version 1.0
  */
 public interface NXbending_magnet extends NXobject {
 

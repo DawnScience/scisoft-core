@@ -27,7 +27,6 @@ import org.eclipse.january.dataset.IDataset;
  * * wavelength: angstrom
  * * energy: eV
  * 
- * @version 1.0
  */
 public interface NXmonochromator extends NXobject {
 

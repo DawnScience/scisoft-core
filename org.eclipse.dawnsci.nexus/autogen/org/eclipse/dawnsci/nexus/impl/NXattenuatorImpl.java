@@ -27,7 +27,6 @@ import org.eclipse.dawnsci.nexus.*;
  * or :ref:`NXattenuator` (reduces beam intensity), then choose
  * :ref:`NXattenuator`.
  * 
- * @version 1.0
  */
 public class NXattenuatorImpl extends NXobjectImpl implements NXattenuator {
 

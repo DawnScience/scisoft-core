@@ -55,7 +55,6 @@ import org.eclipse.dawnsci.nexus.*;
  * container with nothing inside, to allow data corrections (at a specific
  * beam energy/measurement time) to be made.
  * 
- * @version 1.0
  */
 public class NXcontainerImpl extends NXobjectImpl implements NXcontainer {
 

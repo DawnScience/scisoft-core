@@ -20,7 +20,6 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * The neutron or x-ray storage ring/facility.
  * 
- * @version 1.0
  */
 public interface NXsource extends NXobject {
 

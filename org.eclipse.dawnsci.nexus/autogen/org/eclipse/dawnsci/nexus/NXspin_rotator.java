@@ -18,7 +18,6 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * definition for a spin rotator.
  * 
- * @version 1.0
  */
 public interface NXspin_rotator extends NXobject {
 

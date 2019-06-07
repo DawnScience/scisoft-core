@@ -25,7 +25,6 @@ import org.eclipse.january.dataset.IDataset;
  * It is mandatory that there is at least one
  * group of this type in the NeXus file.
  * 
- * @version 1.0
  */
 public interface NXentry extends NXsubentry {
 

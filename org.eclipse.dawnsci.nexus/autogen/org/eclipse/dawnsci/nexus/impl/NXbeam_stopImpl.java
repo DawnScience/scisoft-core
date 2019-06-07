@@ -26,7 +26,6 @@ import org.eclipse.dawnsci.nexus.*;
  * Beamstops and their positions are important for SANS
  * and SAXS experiments.
  * 
- * @version 1.0
  */
 public class NXbeam_stopImpl extends NXobjectImpl implements NXbeam_stop {
 

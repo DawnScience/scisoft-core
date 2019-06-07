@@ -24,7 +24,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * A diffraction grating, as could be used in a soft X-ray monochromator
  * 
- * @version 1.0
  */
 public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 

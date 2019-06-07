@@ -21,7 +21,6 @@ import org.eclipse.january.dataset.IDataset;
  * A device blocking the beam in a temporal periodic pattern.
  * TODO: need documentation
  * 
- * @version 1.0
  */
 public interface NXdisk_chopper extends NXobject {
 

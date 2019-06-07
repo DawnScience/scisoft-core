@@ -25,7 +25,7 @@ import org.eclipse.january.dataset.IDataset;
  * - When data is taken in streaming mode data acquisition,
  * i.e. just timestamp, value pairs are stored and
  * correlated later in data reduction with other data,
- * It both cases NXlog contains
+ * In both cases, NXlog contains
  * the logged or streamed values and the times at which they were measured as elapsed time since a starting
  * time recorded in ISO8601 format. The time units are
  * specified in the units attribute. An optional scaling attribute
@@ -41,13 +41,12 @@ import org.eclipse.january.dataset.IDataset;
  * index into the time,value pair of arrays for that
  * coarser ``cue_timestamp_zero``.
  * 
- * @version 1.1
  */
 public interface NXlog extends NXobject {
 
 	public static final String NX_TIME = "time";
 	public static final String NX_TIME_ATTRIBUTE_START = "start";
-	public static final String NX_TIME_ATTRIBUTE_SCALING = "scaling";
+	public static final String NX_TIME_ATTRIBUTE_SCALING_FACTOR = "scaling_factor";
 	public static final String NX_VALUE = "value";
 	public static final String NX_RAW_VALUE = "raw_value";
 	public static final String NX_DESCRIPTION = "description";
@@ -58,14 +57,18 @@ public interface NXlog extends NXobject {
 	public static final String NX_DURATION = "duration";
 	public static final String NX_CUE_TIMESTAMP_ZERO = "cue_timestamp_zero";
 	public static final String NX_CUE_TIMESTAMP_ZERO_ATTRIBUTE_START = "start";
+	public static final String NX_CUE_TIMESTAMP_ZERO_ATTRIBUTE_SCALING_FACTOR = "scaling_factor";
 	public static final String NX_CUE_INDEX = "cue_index";
 	/**
 	 * Time of logged entry. The times are relative to the "start" attribute
 	 * and in the units specified in the "units"
 	 * attribute. Please note that absolute
 	 * timestamps under unix are relative to ``1970-01-01T:00:00``.
+	 * The scaling_factor, when present, has to be applied to the time values in order
+	 * to arrive at the units specified in the units attribute. The scaling_factor allows
+	 * for arbitrary time units such as ticks of some hardware clock.
 	 * <p>
-	 * <b>Type:</b> NX_FLOAT
+	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
 	 * 
@@ -78,8 +81,11 @@ public interface NXlog extends NXobject {
 	 * and in the units specified in the "units"
 	 * attribute. Please note that absolute
 	 * timestamps under unix are relative to ``1970-01-01T:00:00``.
+	 * The scaling_factor, when present, has to be applied to the time values in order
+	 * to arrive at the units specified in the units attribute. The scaling_factor allows
+	 * for arbitrary time units such as ticks of some hardware clock.
 	 * <p>
-	 * <b>Type:</b> NX_FLOAT
+	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
 	 * 
@@ -92,28 +98,34 @@ public interface NXlog extends NXobject {
 	 * and in the units specified in the "units"
 	 * attribute. Please note that absolute
 	 * timestamps under unix are relative to ``1970-01-01T:00:00``.
+	 * The scaling_factor, when present, has to be applied to the time values in order
+	 * to arrive at the units specified in the units attribute. The scaling_factor allows
+	 * for arbitrary time units such as ticks of some hardware clock.
 	 * <p>
-	 * <b>Type:</b> NX_FLOAT
+	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
 	 * 
 	 * @return  the value.
 	 */
-	public Double getTimeScalar();
+	public Number getTimeScalar();
 
 	/**
 	 * Time of logged entry. The times are relative to the "start" attribute
 	 * and in the units specified in the "units"
 	 * attribute. Please note that absolute
 	 * timestamps under unix are relative to ``1970-01-01T:00:00``.
+	 * The scaling_factor, when present, has to be applied to the time values in order
+	 * to arrive at the units specified in the units attribute. The scaling_factor allows
+	 * for arbitrary time units such as ticks of some hardware clock.
 	 * <p>
-	 * <b>Type:</b> NX_FLOAT
+	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
 	 * 
 	 * @param time the time
 	 */
-	public DataNode setTimeScalar(Double time);
+	public DataNode setTimeScalar(Number time);
 
 	/**
 	 * 
@@ -131,13 +143,13 @@ public interface NXlog extends NXobject {
 	 * 
 	 * @return  the value.
 	 */
-	public Number getTimeAttributeScaling();
+	public Number getTimeAttributeScaling_factor();
 	
 	/**
 	 * 
-	 * @param scaling the scaling
+	 * @param scaling_factor the scaling_factor
 	 */
-	public void setTimeAttributeScaling(Number scaling);
+	public void setTimeAttributeScaling_factor(Number scaling_factor);
 
 	/**
 	 * Array of logged value, such as temperature. If this is
@@ -483,7 +495,7 @@ public interface NXlog extends NXobject {
 	 * Timestamps matching the corresponding cue_index into the
 	 * time, value pair.
 	 * <p>
-	 * <b>Type:</b> NX_DATE_TIME
+	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
 	 * 
@@ -495,7 +507,7 @@ public interface NXlog extends NXobject {
 	 * Timestamps matching the corresponding cue_index into the
 	 * time, value pair.
 	 * <p>
-	 * <b>Type:</b> NX_DATE_TIME
+	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
 	 * 
@@ -507,37 +519,53 @@ public interface NXlog extends NXobject {
 	 * Timestamps matching the corresponding cue_index into the
 	 * time, value pair.
 	 * <p>
-	 * <b>Type:</b> NX_DATE_TIME
+	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
 	 * 
 	 * @return  the value.
 	 */
-	public Date getCue_timestamp_zeroScalar();
+	public Number getCue_timestamp_zeroScalar();
 
 	/**
 	 * Timestamps matching the corresponding cue_index into the
 	 * time, value pair.
 	 * <p>
-	 * <b>Type:</b> NX_DATE_TIME
+	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
 	 * 
 	 * @param cue_timestamp_zero the cue_timestamp_zero
 	 */
-	public DataNode setCue_timestamp_zeroScalar(Date cue_timestamp_zero);
+	public DataNode setCue_timestamp_zeroScalar(Number cue_timestamp_zero);
 
 	/**
+	 * If missing start is assumed to be the same as for "time".
 	 * 
 	 * @return  the value.
 	 */
 	public Date getCue_timestamp_zeroAttributeStart();
 	
 	/**
+	 * If missing start is assumed to be the same as for "time".
 	 * 
 	 * @param start the start
 	 */
 	public void setCue_timestamp_zeroAttributeStart(Date start);
+
+	/**
+	 * If missing start is assumed to be the same as for "time".
+	 * 
+	 * @return  the value.
+	 */
+	public Number getCue_timestamp_zeroAttributeScaling_factor();
+	
+	/**
+	 * If missing start is assumed to be the same as for "time".
+	 * 
+	 * @param scaling_factor the scaling_factor
+	 */
+	public void setCue_timestamp_zeroAttributeScaling_factor(Number scaling_factor);
 
 	/**
 	 * Index into the time, value pair matching the corresponding

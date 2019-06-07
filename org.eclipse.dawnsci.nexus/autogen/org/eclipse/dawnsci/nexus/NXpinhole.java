@@ -19,7 +19,6 @@ import org.eclipse.january.dataset.IDataset;
  * A simple pinhole.
  * For more complex geometries, :ref:`NXaperture` should be used.
  * 
- * @version 1.0
  */
 public interface NXpinhole extends NXobject {
 

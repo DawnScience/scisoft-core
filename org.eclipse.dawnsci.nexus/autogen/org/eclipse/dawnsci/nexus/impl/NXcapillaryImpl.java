@@ -23,7 +23,6 @@ import org.eclipse.dawnsci.nexus.*;
  * A capillary lens to focus the X-ray beam.
  * Based on information provided by Gerd Wellenreuther (DESY).
  * 
- * @version 1.0
  */
 public class NXcapillaryImpl extends NXobjectImpl implements NXcapillary {
 

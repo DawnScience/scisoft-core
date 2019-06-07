@@ -20,7 +20,6 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * A beamline aperture.
  * 
- * @version 1.0
  */
 public interface NXaperture extends NXobject {
 

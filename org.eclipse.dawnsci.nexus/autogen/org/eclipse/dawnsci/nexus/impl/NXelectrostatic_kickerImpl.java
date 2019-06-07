@@ -22,7 +22,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * definition for a electrostatic kicker.
  * 
- * @version 1.0
  */
 public class NXelectrostatic_kickerImpl extends NXobjectImpl implements NXelectrostatic_kicker {
 

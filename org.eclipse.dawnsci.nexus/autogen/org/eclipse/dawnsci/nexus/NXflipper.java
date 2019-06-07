@@ -18,7 +18,6 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * A spin flipper.
  * 
- * @version 1.0
  */
 public interface NXflipper extends NXobject {
 

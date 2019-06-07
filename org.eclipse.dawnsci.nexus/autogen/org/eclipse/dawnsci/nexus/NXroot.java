@@ -19,7 +19,6 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 /**
  * Definition of the root NeXus group.
  * 
- * @version 1.0
  */
 public interface NXroot extends NXobject {
 

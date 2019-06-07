@@ -6,7 +6,9 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyString;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.fail;
 
@@ -19,7 +21,10 @@ import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
+import org.eclipse.dawnsci.analysis.api.tree.SymbolicNode;
+import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
+import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.nexus.INexusFileFactory;
 import org.eclipse.dawnsci.nexus.NXbeam;
 import org.eclipse.dawnsci.nexus.NXdata;
@@ -90,10 +95,18 @@ public class NexusTemplateTest {
 		templateService = new NexusTemplateServiceImpl();
 	}
 	
+	private NXroot applyTemplateStringToTree(String templateString, NXroot root) throws Exception {
+		final NexusTemplate template = templateService.loadTemplateFromString(templateString);
+		template.apply(root);
+		return root;
+	}
+	
 	private NXroot applyTemplateStringToEmptyTree(String templateString) throws Exception {
 		final NexusTemplate template = templateService.loadTemplateFromString(templateString);
 		if (applicationMode == ApplicationMode.IN_MEMORY) {
+			Tree tree = TreeFactory.createTree(0, null);
 			final NXroot root = NexusNodeFactory.createNXroot();
+			tree.setGroupNode(root);
 			template.apply(root);
 			return root;
 		} else {
@@ -103,7 +116,8 @@ public class NexusTemplateTest {
 			file.close();
 
 			template.apply(filePath);
-			return loadNexusFile(filePath);
+			TreeFile treeFile = loadNexusFile(filePath);
+			return (NXroot) treeFile.getGroupNode();
 		}
 	}
 	
@@ -114,22 +128,24 @@ public class NexusTemplateTest {
 	private NXroot applyTemplateString(String templateString, String nexusFilePath) throws Exception {
 		final NexusTemplate template = templateService.loadTemplateFromString(templateString);
 		if (applicationMode == ApplicationMode.IN_MEMORY) {
-			final NXroot root = loadNexusFile(nexusFilePath);
+			final Tree tree = loadNexusFile(nexusFilePath);
+			final NXroot root = (NXroot) tree.getGroupNode();
 			template.apply(root);
 			return root;
 		} else {
 			final String tempFilePath = testFilesDirName + "test-" + UUID.randomUUID().toString() + ".nxs";
 			Files.copy(Paths.get(nexusFilePath), Paths.get(tempFilePath));
 			template.apply(tempFilePath);
-			return loadNexusFile(tempFilePath);
+			TreeFile treeFile = loadNexusFile(tempFilePath);
+			return (NXroot) treeFile.getGroupNode();
 		}
 	}
 	
-	private NXroot loadNexusFile(String fileName) throws Exception {
+	private TreeFile loadNexusFile(String fileName) throws Exception {
 		// Arrange - load the nexus file and set up the template
 		final TreeFile sourceTree = NexusTestUtils.loadNexusFile(fileName, true);
 		assertThat(sourceTree, is(notNullValue()));
-		return (NXroot) sourceTree.getGroupNode();
+		return sourceTree;
 	}
 
 	@Test
@@ -316,13 +332,6 @@ public class NexusTemplateTest {
 //		beamflux.getAttribute("newattr");
 	}
 	
-	@Test
-	@Ignore
-	public void testAddSymbolicNodeLink() throws Exception {
-		// TODO add a test with a SymbolicNode link to an external file
-		Assert.fail();
-	}
-	
 	@Test(expected = NexusException.class)
 	public void testBrokenLink() throws Exception {
 		applyTemplateStringToTestFile(BASIC_TEMPLATE 
@@ -330,10 +339,45 @@ public class NexusTemplateTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testExternalLink() throws Exception {
-		Assert.fail(); // TODO
-		fail("Add appropriate assertions");
+		// External links can only exist in memory, when a file is read from disk they are automatically resolved
+		if (applicationMode != ApplicationMode.IN_MEMORY) return;
+		
+		final String externalFilePath = "/scratch/tmp/mydetetor.hdf";
+		final String nodePath = "/entry/mydetector";
+		
+		// create a nexus tree structure with an external link
+		Tree tree = TreeFactory.createTree(0, null);
+		NXroot root = NexusNodeFactory.createNXroot();
+		tree.setGroupNode(root);
+		NXentry entry = NexusNodeFactory.createNXentry();
+		root.setEntry(entry);
+		NXinstrument instrument = NexusNodeFactory.createNXinstrument();
+		entry.setInstrument(instrument);
+		NXdetector detector = NexusNodeFactory.createNXdetector();
+		instrument.setDetector(detector);
+		SymbolicNode externalLinkNode = NexusNodeFactory.createSymbolicNode(new File(externalFilePath).toURI(), nodePath); 
+		detector.addSymbolicNode(NXdetector.NX_DATA, externalLinkNode);
+		
+		applyTemplateStringToTree(BASIC_TEMPLATE 
+				+ "  data/:\n"
+				+ "    NX_class@: NXdata\n"
+				+ "    data: /entry/instrument/detector/data", root); 
+		
+		NXentry scanEntry = root.getEntry("scan");
+		assertThat(scanEntry, is(notNullValue()));
+		NXdata data = scanEntry.getData();
+		assertThat(data, is(notNullValue()));
+		Node dataNode = data.getNode(NXdata.NX_DATA);
+		assertThat(dataNode, is(notNullValue()));
+		assertThat(dataNode.isSymbolicNode(), is(true));
+		
+		// get the newly created link node. Note it has to be a copy, as NexusFileHDF5 cannot create a
+		// link to a symbolic node when saving the tree
+		SymbolicNode newExternalLinkNode = (SymbolicNode) dataNode;
+		assertThat(newExternalLinkNode, is(not(sameInstance(externalLinkNode))));
+		assertThat(newExternalLinkNode.getSourceURI(), is(equalTo(externalLinkNode.getSourceURI())));
+		assertThat(newExternalLinkNode.getPath(), is(equalTo(externalLinkNode.getPath())));
 	}
 	
 	@Test
@@ -347,7 +391,8 @@ public class NexusTemplateTest {
 	@Ignore
 	public void testApplyLargeTemplate() throws Exception {
 		final NexusTemplate template = templateService.loadTemplate(TEMPLATE_FILE_PATH);
-		final NXroot root = loadNexusFile(P45_EXAMPLE_NEXUS_FILE_PATH);
+		final TreeFile nexusTree = loadNexusFile(P45_EXAMPLE_NEXUS_FILE_PATH); 
+		final NXroot root = (NXroot) nexusTree.getGroupNode();
 		
 		// apply template
 		template.apply(root);

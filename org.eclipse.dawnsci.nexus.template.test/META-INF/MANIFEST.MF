@@ -13,4 +13,5 @@ Require-Bundle: org.junit,
  org.eclipse.dawnsci.nexus,
  org.eclipse.dawnsci.nexus.template,
  org.eclipse.dawnsci.analysis.api,
- org.eclipse.dawnsci.nexus.test
+ org.eclipse.dawnsci.nexus.test,
+ org.eclipse.dawnsci.analysis.tree

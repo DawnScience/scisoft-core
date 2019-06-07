@@ -43,7 +43,6 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * This file was auto-generated from the NXDL XML definition.
- * Generated at: <xsl:value-of select="current-dateTime()"/>
  *******************************************************************************/
 </xsl:variable>
 

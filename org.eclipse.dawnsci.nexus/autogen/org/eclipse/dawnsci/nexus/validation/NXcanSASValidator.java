@@ -134,10 +134,12 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		// This is due to NXcanSAS.nxdl.xml having two unnamed child group entries under NXentry.
 		// We should decide what to do about this. Commenting out for now as validator are not currently used.
 		// See http://jira.diamond.ac.uk/browse/DAQ-720
-//		final Map<String, NXdata> allData = group.getAllData();
-//		for (final NXdata data : allData.values()) {
-//			validateGroup_NXentry_NXdata(data);
-//		}
+	/*
+		final Map<String, NXdata> allData = group.getAllData();
+		for (final NXdata data : allData.values()) {
+			validateGroup_NXentry_NXdata(data);
+		}
+	 */
 	}
 
 	/**
@@ -773,62 +775,64 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 	// This is due to NXcanSAS.nxdl.xml having two unnamed child group entries under NXentry.
 	// We should decide what to do about this. Commenting out for now as validator are not currently used.
 	// See http://jira.diamond.ac.uk/browse/DAQ-720
-//	/**
-//	 * Validate optional unnamed group of type NXdata.
-//	 */
-//	private void validateGroup_NXentry_NXdata(final NXdata group) throws NexusValidationException {
-//		// validate that the group is not null
-//		validateGroupNotNull(null, NXdata.class, group);
-//		clearLocalGroupDimensionPlaceholderValues();
-//
-//		// validate attribute 'canSAS_class'
-//		final Attribute canSAS_class_attr = group.getAttribute("canSAS_class");
-//		validateAttributeNotNull("canSAS_class", canSAS_class_attr);
-//		validateAttributeEnumeration("canSAS_class", canSAS_class_attr,
-//				"SAStransmission_spectrum");
-//
-//		// validate attribute 'signal'
-//		final Attribute signal_attr = group.getAttribute("signal");
-//		validateAttributeNotNull("signal", signal_attr);
-//		validateAttributeType("signal", signal_attr, NX_CHAR);
-//		validateAttributeEnumeration("signal", signal_attr,
-//				"T");
-//
-//		// validate attribute 'T_axes'
-//		final Attribute T_axes_attr = group.getAttribute("T_axes");
-//		validateAttributeNotNull("T_axes", T_axes_attr);
-//		validateAttributeEnumeration("T_axes", T_axes_attr,
-//				"T");
-//
-//		// validate attribute 'name'
-//		final Attribute name_attr = group.getAttribute("name");
-//		validateAttributeNotNull("name", name_attr);
-//
-//		// validate attribute 'timestamp'
-//		final Attribute timestamp_attr = group.getAttribute("timestamp");
-//		validateAttributeNotNull("timestamp", timestamp_attr);
-//		validateAttributeType("timestamp", timestamp_attr, NX_DATE_TIME);
-//
-//		// validate field 'lambda' of type NX_NUMBER. Note: field not defined in base class.
-//		final IDataset lambda = group.getDataset("lambda");
-//		validateFieldNotNull("lambda", lambda);
-//		validateFieldType("lambda", lambda, NX_NUMBER);
-//		validateFieldUnits("lambda", lambda, NX_WAVELENGTH);
-//
-//		// validate field 'T' of type NX_NUMBER. Note: field not defined in base class.
-//		final IDataset T = group.getDataset("T");
-//		validateFieldNotNull("T", T);
-//		validateFieldType("T", T, NX_NUMBER);
-//		validateFieldUnits("T", T, NX_DIMENSIONLESS);
-//		// validate attribute 'uncertainties' of field 'T'
-//		final Attribute T_attr_uncertainties = group.getAttribute("uncertainties");
-//		validateAttributeNotNull("uncertainties", T_attr_uncertainties);
-//
-//
-//		// validate field 'Tdev' of type NX_NUMBER. Note: field not defined in base class.
-//		final IDataset Tdev = group.getDataset("Tdev");
-//		validateFieldNotNull("Tdev", Tdev);
-//		validateFieldType("Tdev", Tdev, NX_NUMBER);
-//		validateFieldUnits("Tdev", Tdev, NX_DIMENSIONLESS);
-//	}
+	/**
+	 * Validate optional unnamed group of type NXdata.
+	 */
+/*
+	private void validateGroup_NXentry_NXdata(final NXdata group) throws NexusValidationException {
+		// validate that the group is not null
+		validateGroupNotNull(null, NXdata.class, group);
+		clearLocalGroupDimensionPlaceholderValues();
+
+		// validate attribute 'canSAS_class'
+		final Attribute canSAS_class_attr = group.getAttribute("canSAS_class");
+		validateAttributeNotNull("canSAS_class", canSAS_class_attr);
+		validateAttributeEnumeration("canSAS_class", canSAS_class_attr,
+				"SAStransmission_spectrum");
+
+		// validate attribute 'signal'
+		final Attribute signal_attr = group.getAttribute("signal");
+		validateAttributeNotNull("signal", signal_attr);
+		validateAttributeType("signal", signal_attr, NX_CHAR);
+		validateAttributeEnumeration("signal", signal_attr,
+				"T");
+
+		// validate attribute 'T_axes'
+		final Attribute T_axes_attr = group.getAttribute("T_axes");
+		validateAttributeNotNull("T_axes", T_axes_attr);
+		validateAttributeEnumeration("T_axes", T_axes_attr,
+				"T");
+
+		// validate attribute 'name'
+		final Attribute name_attr = group.getAttribute("name");
+		validateAttributeNotNull("name", name_attr);
+
+		// validate attribute 'timestamp'
+		final Attribute timestamp_attr = group.getAttribute("timestamp");
+		validateAttributeNotNull("timestamp", timestamp_attr);
+		validateAttributeType("timestamp", timestamp_attr, NX_DATE_TIME);
+
+		// validate field 'lambda' of type NX_NUMBER. Note: field not defined in base class.
+		final IDataset lambda = group.getDataset("lambda");
+		validateFieldNotNull("lambda", lambda);
+		validateFieldType("lambda", lambda, NX_NUMBER);
+		validateFieldUnits("lambda", lambda, NX_WAVELENGTH);
+
+		// validate field 'T' of type NX_NUMBER. Note: field not defined in base class.
+		final IDataset T = group.getDataset("T");
+		validateFieldNotNull("T", T);
+		validateFieldType("T", T, NX_NUMBER);
+		validateFieldUnits("T", T, NX_DIMENSIONLESS);
+		// validate attribute 'uncertainties' of field 'T'
+		final Attribute T_attr_uncertainties = group.getAttribute("uncertainties");
+		validateAttributeNotNull("uncertainties", T_attr_uncertainties);
+
+
+		// validate field 'Tdev' of type NX_NUMBER. Note: field not defined in base class.
+		final IDataset Tdev = group.getDataset("Tdev");
+		validateFieldNotNull("Tdev", Tdev);
+		validateFieldType("Tdev", Tdev, NX_NUMBER);
+		validateFieldUnits("Tdev", Tdev, NX_DIMENSIONLESS);
+	}
+ */
 }

@@ -4,6 +4,7 @@ import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
+import org.eclipse.dawnsci.analysis.api.tree.SymbolicNode;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NXroot;
@@ -81,6 +82,12 @@ public class InMemoryNexusContext implements NexusContext {
 			if (node == null) {
 				throw new NexusException("Cannot link to path '" + linkPath + "', no such element '" + pathSegments[i] + "'");
 			}
+		}
+		
+		if (node.isSymbolicNode()) {
+			// create a copy of the symbolic node
+			SymbolicNode existingLinkNode = (SymbolicNode) node;
+			node = NexusNodeFactory.createSymbolicNode(existingLinkNode.getSourceURI(), existingLinkNode.getPath());
 		}
 		
 		parent.addNode(name, node);

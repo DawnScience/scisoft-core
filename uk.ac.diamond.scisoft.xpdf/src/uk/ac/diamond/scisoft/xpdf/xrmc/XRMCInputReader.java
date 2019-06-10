@@ -186,10 +186,7 @@ public class XRMCInputReader {
 		private String devicename;
 		private String dataname;
 		private String filename;
-		
-		private SaveInfo() {
-		}
-	
+
 		public SaveInfo(String saveLine) {
 			XRMCInputReader.createRegex();
 			

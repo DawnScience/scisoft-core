@@ -43,8 +43,7 @@ public class ErrorPropagationUtilsTest {
 	static final Dataset SUBTRACTIONRESULT = DatasetFactory.createLinearSpace(DoubleDataset.class, -0.1, 4.9, LENGTH);
 	static final Dataset MULTIPLICATIONRESULT = DatasetFactory.createLinearSpace(DoubleDataset.class, 0, 0.5, LENGTH);
 	static final Dataset DIVISIONRESULT = DatasetFactory.createLinearSpace(DoubleDataset.class, 0, 50, LENGTH);
-
-
+	
 	// Thirty-two different iterations of this test must be created
 	
 	// START ADDITIONS
@@ -53,7 +52,7 @@ public class ErrorPropagationUtilsTest {
 	@Test
 	public void testAddWithUncertaintyA() {
 		Dataset testInputWithErrors = TESTINPUT.clone();
-		testInputWithErrors.setErrors(TESTIERROR);
+		testInputWithErrors.setErrors(TESTIERROR.clone());
 		
 		Dataset resultError = DatasetFactory.createLinearSpace(DoubleDataset.class, 0.1, 0.6, LENGTH);
 		ADDITIONRESULT.setErrors(resultError);
@@ -68,7 +67,7 @@ public class ErrorPropagationUtilsTest {
 	@Test
 	public void testAddWithUncertaintyB() {
 		Dataset testInputWithErrors = TESTINPUT.clone();
-		testInputWithErrors.setErrors(TESTIERROR);
+		testInputWithErrors.setErrors(TESTIERROR.clone());
 		
 		Dataset resultError = DatasetFactory.createLinearSpace(DoubleDataset.class, 0.1, 0.6, LENGTH);
 		ADDITIONRESULT.setErrors(resultError);
@@ -83,7 +82,7 @@ public class ErrorPropagationUtilsTest {
 	@Test
 	public void testAddWithUncertaintyC() {
 		Dataset testOperandScalarWithErrors = TESTOPERANDSCALAR.clone();
-		testOperandScalarWithErrors.setErrors(TESTOERRORSCALAR);
+		testOperandScalarWithErrors.setErrors(TESTOERRORSCALAR.clone());
 
 		Dataset resultError = DatasetFactory.zeros(DoubleDataset.class, 1);
 		resultError = Maths.add(resultError, 0.01);
@@ -99,7 +98,7 @@ public class ErrorPropagationUtilsTest {
 	@Test
 	public void testAddWithUncertaintyD() {
 		Dataset testOperandVectorWithErrors = TESTOPERANDVECTOR.clone();
-		testOperandVectorWithErrors.setErrors(TESTOERRORVECTOR);
+		testOperandVectorWithErrors.setErrors(TESTOERRORVECTOR.clone());
 		
 		Dataset resultError = DatasetFactory.zeros(DoubleDataset.class, 1);
 		resultError = Maths.add(resultError, 0.01);
@@ -115,10 +114,10 @@ public class ErrorPropagationUtilsTest {
 	@Test
 	public void testAddWithUncertaintyE() {
 		Dataset testInputWithErrors = TESTINPUT.clone();
-		testInputWithErrors.setErrors(TESTIERROR);
+		testInputWithErrors.setErrors(TESTIERROR.clone());
 		
 		Dataset testOperandScalarWithErrors = TESTOPERANDSCALAR.clone();
-		testOperandScalarWithErrors.setErrors(TESTOERRORSCALAR);
+		testOperandScalarWithErrors.setErrors(TESTOERRORSCALAR.clone());
 		
 		List<Double> resultError = new ArrayList<Double>();
 		resultError.add(0.1004987562112089);
@@ -139,10 +138,10 @@ public class ErrorPropagationUtilsTest {
 	@Test
 	public void testAddWithUncertaintyF() {
 		Dataset testInputWithErrors = TESTINPUT.clone();
-		testInputWithErrors.setErrors(TESTIERROR);
+		testInputWithErrors.setErrors(TESTIERROR.clone());
 		
 		Dataset testOperandVectorWithErrors = TESTOPERANDVECTOR.clone();
-		testOperandVectorWithErrors.setErrors(TESTOERRORVECTOR);
+		testOperandVectorWithErrors.setErrors(TESTOERRORVECTOR.clone());
 		
 		List<Double> resultError = new ArrayList<Double>();
 		resultError.add(0.1004987562112089);
@@ -180,7 +179,7 @@ public class ErrorPropagationUtilsTest {
 	@Test
 	public void testSubtractWithUncertaintyA() {
 		Dataset testInputWithErrors = TESTINPUT.clone();
-		testInputWithErrors.setErrors(TESTIERROR);
+		testInputWithErrors.setErrors(TESTIERROR.clone());
 		
 		Dataset resultError = DatasetFactory.createLinearSpace(DoubleDataset.class, 0.1, 0.6, LENGTH);
 		SUBTRACTIONRESULT.setErrors(resultError);
@@ -195,7 +194,7 @@ public class ErrorPropagationUtilsTest {
 	@Test
 	public void testSubtractWithUncertaintyB() {
 		Dataset testInputWithErrors = TESTINPUT.clone();
-		testInputWithErrors.setErrors(TESTIERROR);
+		testInputWithErrors.setErrors(TESTIERROR.clone());
 		
 		Dataset resultError = DatasetFactory.createLinearSpace(DoubleDataset.class, 0.1, 0.6, LENGTH);
 		SUBTRACTIONRESULT.setErrors(resultError);
@@ -210,7 +209,7 @@ public class ErrorPropagationUtilsTest {
 	@Test
 	public void testSubtractWithUncertaintyC() {
 		Dataset testOperandScalarWithErrors = TESTOPERANDSCALAR.clone();
-		testOperandScalarWithErrors.setErrors(TESTOERRORSCALAR);
+		testOperandScalarWithErrors.setErrors(TESTOERRORSCALAR.clone());
 		
 		Dataset resultError = DatasetFactory.zeros(DoubleDataset.class, 1);
 		resultError = Maths.add(resultError, 0.01);
@@ -226,7 +225,7 @@ public class ErrorPropagationUtilsTest {
 	@Test
 	public void testSubtractWithUncertaintyD() {
 		Dataset testOperandVectorWithErrors = TESTOPERANDVECTOR.clone();
-		testOperandVectorWithErrors.setErrors(TESTOERRORVECTOR);
+		testOperandVectorWithErrors.setErrors(TESTOERRORVECTOR.clone());
 		
 		Dataset resultError = DatasetFactory.zeros(DoubleDataset.class, 1);
 		resultError = Maths.add(resultError, 0.01);
@@ -242,10 +241,10 @@ public class ErrorPropagationUtilsTest {
 	@Test
 	public void testSubtractWithUncertaintyE() {
 		Dataset testInputWithErrors = TESTINPUT.clone();
-		testInputWithErrors.setErrors(TESTIERROR);
+		testInputWithErrors.setErrors(TESTIERROR.clone());
 		
 		Dataset testOperandScalarWithErrors = TESTOPERANDSCALAR.clone();
-		testOperandScalarWithErrors.setErrors(TESTOERRORSCALAR);
+		testOperandScalarWithErrors.setErrors(TESTOERRORSCALAR.clone());
 		
 		List<Double> resultError = new ArrayList<Double>();
 		resultError.add(0.1004987562112089);
@@ -266,10 +265,10 @@ public class ErrorPropagationUtilsTest {
 	@Test
 	public void testSubtractWithUncertaintyF() {
 		Dataset testInputWithErrors = TESTINPUT.clone();
-		testInputWithErrors.setErrors(TESTIERROR);
+		testInputWithErrors.setErrors(TESTIERROR.clone());
 		
 		Dataset testOperandVectorWithErrors = TESTOPERANDVECTOR.clone();
-		testOperandVectorWithErrors.setErrors(TESTOERRORVECTOR);
+		testOperandVectorWithErrors.setErrors(TESTOERRORVECTOR.clone());
 		
 		List<Double> resultError = new ArrayList<Double>();
 		resultError.add(0.1004987562112089);
@@ -307,7 +306,7 @@ public class ErrorPropagationUtilsTest {
 	@Test
 	public void testMultiplyWithUncertaintyA() {
 		Dataset testInputWithErrors = TESTINPUT.clone();
-		testInputWithErrors.setErrors(TESTIERROR);
+		testInputWithErrors.setErrors(TESTIERROR.clone());
 		
 		Dataset resultError = DatasetFactory.createLinearSpace(DoubleDataset.class, 0.01, 0.06, LENGTH);
 		MULTIPLICATIONRESULT.setErrors(resultError);
@@ -322,7 +321,7 @@ public class ErrorPropagationUtilsTest {
 	@Test
 	public void testMultiplyWithUncertaintyB() {
 		Dataset testInputWithErrors = TESTINPUT.clone();
-		testInputWithErrors.setErrors(TESTIERROR);
+		testInputWithErrors.setErrors(TESTIERROR.clone());
 		
 		Dataset resultError = DatasetFactory.createLinearSpace(DoubleDataset.class, 0.01, 0.06, LENGTH);
 		MULTIPLICATIONRESULT.setErrors(resultError);
@@ -337,7 +336,7 @@ public class ErrorPropagationUtilsTest {
 	@Test
 	public void testMultiplyWithUncertaintyC() {
 		Dataset testOperandScalarWithErrors = TESTOPERANDSCALAR.clone();
-		testOperandScalarWithErrors.setErrors(TESTOERRORSCALAR);
+		testOperandScalarWithErrors.setErrors(TESTOERRORSCALAR.clone());
 		
 		Dataset resultError = DatasetFactory.createLinearSpace(DoubleDataset.class, 0, 0.05, LENGTH);
 		MULTIPLICATIONRESULT.setErrors(resultError);
@@ -352,7 +351,7 @@ public class ErrorPropagationUtilsTest {
 	@Test
 	public void testMultiplyWithUncertaintyD() {
 		Dataset testOperandVectorWithErrors = TESTOPERANDVECTOR.clone();
-		testOperandVectorWithErrors.setErrors(TESTOERRORVECTOR);
+		testOperandVectorWithErrors.setErrors(TESTOERRORVECTOR.clone());
 		
 		Dataset resultError = DatasetFactory.createLinearSpace(DoubleDataset.class, 0, 0.05, LENGTH);
 		MULTIPLICATIONRESULT.setErrors(resultError);
@@ -367,10 +366,10 @@ public class ErrorPropagationUtilsTest {
 	@Test
 	public void testMultiplyWithUncertaintyE() {
 		Dataset testInputWithErrors = TESTINPUT.clone();
-		testInputWithErrors.setErrors(TESTIERROR);
+		testInputWithErrors.setErrors(TESTIERROR.clone());
 		
 		Dataset testOperandScalarWithErrors = TESTOPERANDSCALAR.clone();
-		testOperandScalarWithErrors.setErrors(TESTOERRORSCALAR);
+		testOperandScalarWithErrors.setErrors(TESTOERRORSCALAR.clone());
 		
 		List<Double> resultError = new ArrayList<Double>();
 		resultError.add(0.010000000000000002);
@@ -391,10 +390,10 @@ public class ErrorPropagationUtilsTest {
 	@Test
 	public void testMultiplyWithUncertaintyF() {
 		Dataset testInputWithErrors = TESTINPUT.clone();
-		testInputWithErrors.setErrors(TESTIERROR);
+		testInputWithErrors.setErrors(TESTIERROR.clone());
 		
 		Dataset testOperandVectorWithErrors = TESTOPERANDVECTOR.clone();
-		testOperandVectorWithErrors.setErrors(TESTOERRORVECTOR);
+		testOperandVectorWithErrors.setErrors(TESTOERRORVECTOR.clone());
 		
 		List<Double> resultError = new ArrayList<Double>();
 		resultError.add(0.010000000000000002);
@@ -432,7 +431,7 @@ public class ErrorPropagationUtilsTest {
 	@Test
 	public void testDivideWithUncertaintyA() {
 		Dataset testInputWithErrors = TESTINPUT.clone();
-		testInputWithErrors.setErrors(TESTIERROR);
+		testInputWithErrors.setErrors(TESTIERROR.clone());
 		
 		Dataset resultError = DatasetFactory.createLinearSpace(DoubleDataset.class, 1, 6, LENGTH);
 		DIVISIONRESULT.setErrors(resultError);
@@ -447,7 +446,7 @@ public class ErrorPropagationUtilsTest {
 	@Test
 	public void testDivideWithUncertaintyB() {
 		Dataset testInputWithErrors = TESTINPUT.clone();
-		testInputWithErrors.setErrors(TESTIERROR);
+		testInputWithErrors.setErrors(TESTIERROR.clone());
 		
 		Dataset resultError = DatasetFactory.createLinearSpace(DoubleDataset.class, 1, 6, LENGTH);
 		DIVISIONRESULT.setErrors(resultError);
@@ -462,7 +461,7 @@ public class ErrorPropagationUtilsTest {
 	@Test
 	public void testDivideWithUncertaintyC() {
 		Dataset testOperandScalarWithErrors = TESTOPERANDSCALAR.clone();
-		testOperandScalarWithErrors.setErrors(TESTOERRORSCALAR);
+		testOperandScalarWithErrors.setErrors(TESTOERRORSCALAR.clone());
 		
 		List<Double> resultError = new ArrayList<Double>();
 		resultError.add(0.0);
@@ -483,7 +482,7 @@ public class ErrorPropagationUtilsTest {
 	@Test
 	public void testDivideWithUncertaintyD() {
 		Dataset testOperandVectorWithErrors = TESTOPERANDVECTOR.clone();
-		testOperandVectorWithErrors.setErrors(TESTOERRORVECTOR);
+		testOperandVectorWithErrors.setErrors(TESTOERRORVECTOR.clone());
 		
 		List<Double> resultError = new ArrayList<Double>();
 		resultError.add(0.0);
@@ -504,10 +503,10 @@ public class ErrorPropagationUtilsTest {
 	@Test
 	public void testDivideWithUncertaintyE() {
 		Dataset testInputWithErrors = TESTINPUT.clone();
-		testInputWithErrors.setErrors(TESTIERROR);
+		testInputWithErrors.setErrors(TESTIERROR.clone());
 		
 		Dataset testOperandScalarWithErrors = TESTOPERANDSCALAR.clone();
-		testOperandScalarWithErrors.setErrors(TESTOERRORSCALAR);
+		testOperandScalarWithErrors.setErrors(TESTOERRORSCALAR.clone());
 		
 		List<Double> resultError = new ArrayList<Double>();
 		resultError.add(1.0);
@@ -528,10 +527,10 @@ public class ErrorPropagationUtilsTest {
 	@Test
 	public void testDivideWithUncertaintyF() {
 		Dataset testInputWithErrors = TESTINPUT.clone();
-		testInputWithErrors.setErrors(TESTIERROR);
+		testInputWithErrors.setErrors(TESTIERROR.clone());
 		
 		Dataset testOperandVectorWithErrors = TESTOPERANDVECTOR.clone();
-		testOperandVectorWithErrors.setErrors(TESTOERRORVECTOR);
+		testOperandVectorWithErrors.setErrors(TESTOERRORVECTOR.clone());
 		
 		List<Double> resultError = new ArrayList<Double>();
 		resultError.add(1.0);
@@ -571,6 +570,96 @@ public class ErrorPropagationUtilsTest {
 		Dataset testOperandDifferentLength = DatasetFactory.createLinearSpace(DoubleDataset.class, 0, 0.5, LENGTH-1);
 		ErrorPropagationUtils.addWithUncertainty(TESTINPUT, testOperandDifferentLength);
 	} 
+	
+	// START SINES
+	// The first is where the input has an error that is so be propagated
+	@Test
+	public void testSineWithUnceratintyA() {
+		Dataset testInputWithErrors = TESTINPUT.clone();
+		testInputWithErrors.setErrors(TESTIERROR.clone());
+		
+		List<Double> result = new ArrayList<Double>();
+		result.add(0.0);
+		result.add(0.9489846193555862);
+		result.add(0.5984721441039565); 
+		result.add(-0.5715613187423437);
+		result.add(-0.9589242746631385);
+		List<Double> resultError = new ArrayList<Double>();
+		resultError.add(0.1);
+		resultError.add(0.07094753153893546);
+		resultError.add(0.28040026544142677); 
+		resultError.add(0.38976569473629136);
+		resultError.add(0.17019731127793575);
+		Dataset resultData = DatasetFactory.createFromList(result);
+		Dataset resultErrorD = DatasetFactory.createFromList(resultError);
+		resultData.setErrors(resultErrorD);
+
+		DoubleDataset testResult = ErrorPropagationUtils.sineWithUncertainty(testInputWithErrors);
+		TestUtils.assertDatasetEquals(resultData, testResult);
+		TestUtils.assertDatasetEquals(resultData.getErrors(), testResult.getErrors());
+	}
+	
+	// Where the input has no error
+	@Test
+	public void testSineWithUnceratintyB() {
+		Dataset testInput = TESTINPUT.clone();
+		
+		List<Double> result = new ArrayList<Double>();
+		result.add(0.0);
+		result.add(0.9489846193555862);
+		result.add(0.5984721441039565); 
+		result.add(-0.5715613187423437);
+		result.add(-0.9589242746631385);
+		Dataset resultData = DatasetFactory.createFromList(result);
+
+		DoubleDataset testResult = ErrorPropagationUtils.sineWithUncertainty(testInput);
+		TestUtils.assertDatasetEquals(resultData, testResult);
+	}
+	
+	// START ARCSINES
+	// The first is where the input has an error that is so be propagated
+	@Test
+	public void testArcSineWithUnceratintyA() {
+		Dataset testInputWithErrors = Maths.multiply(TESTINPUT.clone(), 0.1);
+		testInputWithErrors.setErrors(Maths.multiply(TESTIERROR.clone(), 0.1));
+		
+		List<Double> result = new ArrayList<Double>();
+		result.add(0.0);
+		result.add(0.1253278311680654);
+		result.add(0.25268025514207865); 
+		result.add(0.3843967744956391);
+		result.add(0.5235987755982989);
+		List<Double> resultError = new ArrayList<Double>();
+		resultError.add(0.01);
+		resultError.add(0.02267786838055363);
+		resultError.add(0.03614784456460255); 
+		resultError.add(0.051239189547206396);
+		resultError.add(0.06928203230275509);
+		Dataset resultData = DatasetFactory.createFromList(result);
+		Dataset resultErrorD = DatasetFactory.createFromList(resultError);
+		resultData.setErrors(resultErrorD);
+
+		DoubleDataset testResult = ErrorPropagationUtils.arcSineWithUncertainty(testInputWithErrors);
+		TestUtils.assertDatasetEquals(resultData, testResult);
+		TestUtils.assertDatasetEquals(resultData.getErrors(), testResult.getErrors());
+	}
+	
+	// Where the input has no error
+	@Test
+	public void testArcSineWithUnceratintyB() {
+		Dataset testInput = Maths.multiply(TESTINPUT.clone(), 0.1);
+		
+		List<Double> result = new ArrayList<Double>();
+		result.add(0.0);
+		result.add(0.1253278311680654);
+		result.add(0.25268025514207865); 
+		result.add(0.3843967744956391);
+		result.add(0.5235987755982989);
+		Dataset resultData = DatasetFactory.createFromList(result);
+
+		DoubleDataset testResult = ErrorPropagationUtils.arcSineWithUncertainty(testInput);
+		TestUtils.assertDatasetEquals(resultData, testResult);
+	}
 }
 
 

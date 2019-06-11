@@ -1308,6 +1308,14 @@
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.Reflectivity"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.ConvertToQOperation"
+            icon="icons/template.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.ConvertToQOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            name="Convert from DCD Theta to Q">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.Reflectivity"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SpillOverCorrectionOperation"
             icon="icons/template.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.SpillOverCorrectionOperation"

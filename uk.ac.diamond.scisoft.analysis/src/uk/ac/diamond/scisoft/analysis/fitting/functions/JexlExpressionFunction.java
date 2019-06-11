@@ -25,8 +25,6 @@ import org.eclipse.january.dataset.IDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// no serial to be consistent with rest of AFunction hierarchy
-@SuppressWarnings("serial")
 public class JexlExpressionFunction extends AFunction {
 	private static Logger logger = LoggerFactory.getLogger(JexlExpressionFunction.class);
 	/**

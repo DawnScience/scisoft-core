@@ -43,7 +43,7 @@ public class SimpleUncertaintyPropagationMath {
 
 	public static void sin(double a, double ae, double[] out) {
 		out[0] = Math.sin(a);
-		out[1] = ae * Math.cos(a);
+		out[1] = Math.abs(ae * Math.cos(a));
 	}
 	
 	public static void arcsin(double a, double ae, double[] out) {

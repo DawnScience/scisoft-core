@@ -12,7 +12,9 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 import org.eclipse.january.dataset.BroadcastIterator;
 import org.eclipse.january.dataset.BroadcastPairIterator;
 import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IndexIterator;
 
 import uk.ac.diamond.scisoft.analysis.utils.SimpleUncertaintyPropagationMath;
 
@@ -93,7 +95,32 @@ public class ErrorPropagationUtils {
 		return operateWithUncertainty(a, b, new Divide());
 	}
 	
-	private static DoubleDataset operateWithUncertainty(Dataset input, Dataset operand, UncertaintyOperator operator) {
+	/**
+	 * Finds the sine of a Dataset, propagating uncertainties.
+	 * @param a
+	 * 			Dataset operand
+	 * @return Dataset of the sine of a, with correctly propagated
+	 * 			uncertainties.
+	 */
+	
+	public static DoubleDataset sineWithUncertainty(Dataset a) {
+		return operateWithUncertainty(a, new Sin());
+	}
+	
+	
+	/**
+	 * Finds the arcsine of a Dataset, propagating uncertainties.
+	 * @param a
+	 * 			Dataset operand
+	 * @return Dataset of the arcsine of a, with correctly propagated
+	 * 			uncertainties.
+	 */
+	
+	public static DoubleDataset arcSineWithUncertainty(Dataset a) {
+		return operateWithUncertainty(a, new ArcSin());
+	}
+	
+	private static DoubleDataset operateWithUncertainty(Dataset input, Dataset operand, BinaryUncertaintyOperator operator) {
 
 		if (operand.getSize() != 1 && input.getSize() != operand.getSize()) throw new IllegalArgumentException("Cannot process datasets of these shapes!");
 		
@@ -159,9 +186,39 @@ public class ErrorPropagationUtils {
 		output.setErrors(outputUncert);
 		return output;
 	}
+	
+	private static DoubleDataset operateWithUncertainty(Dataset input, UnaryUncertaintyOperator operator) {
+		
+		Dataset inputUncert = input.getErrors();
+		DoubleDataset output;
+		DoubleDataset outputUncert;
+	
+		double[] out = new double[2];
+	
+		if (inputUncert != null) {
+			output = DatasetFactory.zeros(input.getShape());
+			outputUncert = DatasetFactory.zeros(input.getShape());
+			BroadcastIterator iter = BroadcastIterator.createIterator(input, inputUncert, output, true);
+			while (iter.hasNext()) {
+				operator.operate(iter.aDouble, iter.bDouble, out);
+				output.setAbs(iter.oIndex, out[0]);
+				outputUncert.setAbs(iter.oIndex, out[1]);
+			}
+		} else { // If no errors
+			IndexIterator iter = input.getIterator();
+			output = DatasetFactory.zeros(input.getShape());
+			outputUncert = null;
+			while (iter.hasNext()) {
+				out[0] = operator.operate(input.getElementDoubleAbs(iter.index));
+				output.setAbs(iter.index, out[0]);
+			}
+		}
+		output.setErrors(outputUncert);
+		return output;
+	}
 }
 
-interface UncertaintyOperator {
+interface BinaryUncertaintyOperator {
 	void operate(double a, double b, double ae, double be, double[] out);
 	
 	void operate(double a, double b, double ae, double[] out);
@@ -169,7 +226,13 @@ interface UncertaintyOperator {
 	double operate(double a, double b);
 }
 
-class Add implements UncertaintyOperator {
+interface UnaryUncertaintyOperator {
+	void operate(double a, double ae, double[] out);
+		
+	double operate(double a);
+}
+
+class Add implements BinaryUncertaintyOperator {
 
 	@Override
 	public void operate(double a, double b, double ae, double be, double[] out) {
@@ -186,16 +249,13 @@ class Add implements UncertaintyOperator {
 	public double operate(double a, double b) {
 		return a+b;
 	}
-
-
 }
 
-class Subtract implements UncertaintyOperator {
+class Subtract implements BinaryUncertaintyOperator {
 
 	@Override
 	public void operate(double a, double b, double ae, double be, double[] out) {
 		SimpleUncertaintyPropagationMath.subtract(a, b, ae, be, out);
-		
 	}
 
 	@Override
@@ -208,47 +268,66 @@ class Subtract implements UncertaintyOperator {
 	public double operate(double a, double b) {
 		return a-b;
 	}
-
 }
 
-class Multiply implements UncertaintyOperator {
+class Multiply implements BinaryUncertaintyOperator {
 
 	@Override
 	public void operate(double a, double b, double ae, double be, double[] out) {
 		SimpleUncertaintyPropagationMath.multiply(a, b, ae, be, out);
-		
 	}
 
 	@Override
 	public void operate(double a, double b, double ae, double[] out) {
 		SimpleUncertaintyPropagationMath.multiply(a, b, ae, out);
-		
 	}
 
 	@Override
 	public double operate(double a, double b) {
 		return a*b;
 	}
-
 }
 
-class Divide implements UncertaintyOperator {
+class Divide implements BinaryUncertaintyOperator {
 
 	@Override
 	public void operate(double a, double b, double ae, double be, double[] out) {
 		SimpleUncertaintyPropagationMath.divide(a, b, ae, be, out);
-		
 	}
 
 	@Override
 	public void operate(double a, double b, double ae, double[] out) {
 		SimpleUncertaintyPropagationMath.divide(a, b, ae, out);
-		
 	}
 
 	@Override
 	public double operate(double a, double b) {
 		return a/b;
 	}
+}
+	
+class Sin implements UnaryUncertaintyOperator {
 
+	@Override
+	public void operate(double a, double ae, double[] out) {
+		SimpleUncertaintyPropagationMath.sin(a, ae, out);
+	}
+
+	@Override
+	public double operate(double a) {
+		return Math.sin(a);
+	}
+}
+
+class ArcSin implements UnaryUncertaintyOperator {
+
+	@Override
+	public void operate(double a, double ae, double[] out) {
+		SimpleUncertaintyPropagationMath.arcsin(a, ae, out);
+	}
+
+	@Override
+	public double operate(double a) {
+		return Math.asin(a);
+	}
 }

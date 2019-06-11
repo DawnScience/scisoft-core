@@ -43,6 +43,7 @@ import org.eclipse.dawnsci.nexus.template.NexusTemplateConstants.ApplicationMode
 import org.eclipse.dawnsci.nexus.template.impl.NexusTemplateServiceImpl;
 import org.eclipse.dawnsci.nexus.test.util.NexusTestUtils;
 import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -330,6 +331,34 @@ public class NexusTemplateTest {
 //		assertThat(beamflux, is(notNullValue()));
 //		assertThat(beamflux, is(sameInstance(getNode(root, "/entry/sample/beam/flux"))));
 //		beamflux.getAttribute("newattr");
+	}
+	
+	@Test
+	public void testAddLinkToAttribute() throws Exception {
+		final String linkRoot = "/entry/mandelbrot/";
+		final NXroot root = applyTemplateStringToTestFile(BASIC_TEMPLATE +
+				"  data/:\n"
+				+ "    NX_class@: NXdata\n"
+				+ "    signal@: data\n"
+				+ "    data: /entry/mandelbrot/data\n"
+				+ "    x_indices: " + linkRoot + "stagex_value_set_indices@\n"
+				+ "    y_indices: " + linkRoot + "stagey_value_set_indices@\n"
+				+ "    x: " + linkRoot + "stagex_value_set\n"
+				+ "    y: " + linkRoot + "stagey_value_set\n");
+		
+		NXentry entry = root.getEntry("scan");
+		assertThat(entry, is(notNullValue()));
+		NXdata data = entry.getData("data");
+		assertThat(data, is(notNullValue()));
+		assertThat(data.getAttribute(NXdata.NX_ATTRIBUTE_SIGNAL).getValue().getString(), is(equalTo("data")));
+		assertThat(data.getDataNode("x"), is(sameInstance(getNode(root, linkRoot + "stagex_value_set"))));
+		assertThat(data.getDataNode("y"), is(sameInstance(getNode(root, linkRoot + "stagey_value_set"))));
+		assertThat(data.getAttribute("x_indices").getValue(), is(equalTo(
+				getNode(root, linkRoot).getAttribute("stagex_value_set_indices").getValue())));
+		assertThat(data.getAttribute("x_indices").getValue(), is(equalTo(DatasetFactory.createFromObject(new int[] { 1 } ))));
+		assertThat(data.getAttribute("y_indices").getValue(), is(equalTo(
+				getNode(root, linkRoot).getAttribute("stagey_value_set_indices").getValue())));
+		assertThat(data.getAttribute("y_indices").getValue(), is(equalTo(DatasetFactory.createFromObject(new int[] { 0 } ))));
 	}
 	
 	@Test(expected = NexusException.class)

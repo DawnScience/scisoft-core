@@ -7,7 +7,6 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * This file was auto-generated from the NXDL XML definition.
- * Generated at: 2017-06-23T10:28:44.471+01:00
  *******************************************************************************/
 
 package org.eclipse.dawnsci.nexus.impl;
@@ -32,7 +31,6 @@ import org.eclipse.dawnsci.nexus.*;
  * Also, in HDF, linked items must share the same name.
  * However, it might not be possible or practical in all situations.
  * 
- * @version 1.0
  * @deprecated as decided at 2014 NIAC meeting, convert to use :ref:`NXtransformations`
  */
 @Deprecated

@@ -7,7 +7,6 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * This file was auto-generated from the NXDL XML definition.
- * Generated at: 2017-06-23T10:28:44.471+01:00
  *******************************************************************************/
 
 package org.eclipse.dawnsci.nexus.impl;
@@ -29,7 +28,6 @@ import org.eclipse.dawnsci.nexus.*;
  * are associated with one of the data dimensions, e.g. the magnetic field, or
  * logged data, e.g. monitored temperature vs elapsed time.
  * 
- * @version 1.0
  */
 public class NXsampleImpl extends NXobjectImpl implements NXsample {
 

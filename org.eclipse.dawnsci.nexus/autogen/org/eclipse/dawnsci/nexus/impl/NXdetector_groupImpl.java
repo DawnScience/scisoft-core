@@ -7,7 +7,6 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * This file was auto-generated from the NXDL XML definition.
- * Generated at: 2017-06-23T10:28:44.471+01:00
  *******************************************************************************/
 
 package org.eclipse.dawnsci.nexus.impl;
@@ -36,7 +35,6 @@ import org.eclipse.dawnsci.nexus.*;
  * A ``group_index`` array in
  * ``NXdetector`` gives the base group for a detector element.
  * 
- * @version 1.0
  */
 public class NXdetector_groupImpl extends NXobjectImpl implements NXdetector_group {
 

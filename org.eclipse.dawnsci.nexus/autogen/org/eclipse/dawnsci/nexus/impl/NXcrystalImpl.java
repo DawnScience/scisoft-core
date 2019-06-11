@@ -7,7 +7,6 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * This file was auto-generated from the NXDL XML definition.
- * Generated at: 2017-06-23T10:28:44.471+01:00
  *******************************************************************************/
 
 package org.eclipse.dawnsci.nexus.impl;
@@ -33,7 +32,6 @@ import org.eclipse.dawnsci.nexus.*;
  * parallel to beam incident on crystal before rotation, and lies in
  * vertical plane.
  * 
- * @version 1.0
  */
 public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 

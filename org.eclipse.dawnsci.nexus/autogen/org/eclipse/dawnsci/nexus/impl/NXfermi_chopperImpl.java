@@ -7,7 +7,6 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * This file was auto-generated from the NXDL XML definition.
- * Generated at: 2017-06-23T10:28:44.471+01:00
  *******************************************************************************/
 
 package org.eclipse.dawnsci.nexus.impl;
@@ -25,7 +24,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * A Fermi chopper, possibly with curved slits.
  * 
- * @version 1.0
  */
 public class NXfermi_chopperImpl extends NXobjectImpl implements NXfermi_chopper {
 

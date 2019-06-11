@@ -7,7 +7,6 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * This file was auto-generated from the NXDL XML definition.
- * Generated at: 2017-06-23T10:28:44.471+01:00
  *******************************************************************************/
 
 package org.eclipse.dawnsci.nexus.impl;
@@ -26,7 +25,6 @@ import org.eclipse.dawnsci.nexus.*;
  * A device blocking the beam in a temporal periodic pattern.
  * TODO: need documentation
  * 
- * @version 1.0
  */
 public class NXdisk_chopperImpl extends NXobjectImpl implements NXdisk_chopper {
 

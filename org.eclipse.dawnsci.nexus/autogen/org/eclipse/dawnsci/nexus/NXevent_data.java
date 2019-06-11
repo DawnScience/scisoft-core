@@ -7,7 +7,6 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * This file was auto-generated from the NXDL XML definition.
- * Generated at: 2017-06-23T10:28:44.471+01:00
  *******************************************************************************/
 
 package org.eclipse.dawnsci.nexus;
@@ -41,7 +40,6 @@ import org.eclipse.january.dataset.IDataset;
  * index into the event_id,event_time_offset pair of arrays for that
  * courser cue_timestamp_zero.
  * 
- * @version 1.1
  */
 public interface NXevent_data extends NXobject {
 
@@ -57,7 +55,7 @@ public interface NXevent_data extends NXobject {
 	/**
 	 * A list of timestamps for each event as it comes in.
 	 * <p>
-	 * <b>Type:</b> NX_INT
+	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME_OF_FLIGHT
 	 * <b>Dimensions:</b> 1: i;
 	 * </p>
@@ -69,7 +67,7 @@ public interface NXevent_data extends NXobject {
 	/**
 	 * A list of timestamps for each event as it comes in.
 	 * <p>
-	 * <b>Type:</b> NX_INT
+	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME_OF_FLIGHT
 	 * <b>Dimensions:</b> 1: i;
 	 * </p>
@@ -81,26 +79,26 @@ public interface NXevent_data extends NXobject {
 	/**
 	 * A list of timestamps for each event as it comes in.
 	 * <p>
-	 * <b>Type:</b> NX_INT
+	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME_OF_FLIGHT
 	 * <b>Dimensions:</b> 1: i;
 	 * </p>
 	 * 
 	 * @return  the value.
 	 */
-	public Long getEvent_time_offsetScalar();
+	public Number getEvent_time_offsetScalar();
 
 	/**
 	 * A list of timestamps for each event as it comes in.
 	 * <p>
-	 * <b>Type:</b> NX_INT
+	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME_OF_FLIGHT
 	 * <b>Dimensions:</b> 1: i;
 	 * </p>
 	 * 
 	 * @param event_time_offset the event_time_offset
 	 */
-	public DataNode setEvent_time_offsetScalar(Long event_time_offset);
+	public DataNode setEvent_time_offsetScalar(Number event_time_offset);
 
 	/**
 	 * There will be extra information in the NXdetector to convert
@@ -157,7 +155,7 @@ public interface NXevent_data extends NXobject {
 	/**
 	 * The time that each pulse started with respect to the offset
 	 * <p>
-	 * <b>Type:</b> NX_INT
+	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * <b>Dimensions:</b> 1: j;
 	 * </p>
@@ -169,7 +167,7 @@ public interface NXevent_data extends NXobject {
 	/**
 	 * The time that each pulse started with respect to the offset
 	 * <p>
-	 * <b>Type:</b> NX_INT
+	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * <b>Dimensions:</b> 1: j;
 	 * </p>
@@ -181,26 +179,26 @@ public interface NXevent_data extends NXobject {
 	/**
 	 * The time that each pulse started with respect to the offset
 	 * <p>
-	 * <b>Type:</b> NX_INT
+	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * <b>Dimensions:</b> 1: j;
 	 * </p>
 	 * 
 	 * @return  the value.
 	 */
-	public Long getEvent_time_zeroScalar();
+	public Number getEvent_time_zeroScalar();
 
 	/**
 	 * The time that each pulse started with respect to the offset
 	 * <p>
-	 * <b>Type:</b> NX_INT
+	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * <b>Dimensions:</b> 1: j;
 	 * </p>
 	 * 
 	 * @param event_time_zero the event_time_zero
 	 */
-	public DataNode setEvent_time_zeroScalar(Long event_time_zero);
+	public DataNode setEvent_time_zeroScalar(Number event_time_zero);
 
 	/**
 	 * ISO8601

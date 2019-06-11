@@ -7,7 +7,6 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * This file was auto-generated from the NXDL XML definition.
- * Generated at: 2017-06-23T10:28:44.471+01:00
  *******************************************************************************/
 
 package org.eclipse.dawnsci.nexus;
@@ -24,7 +23,6 @@ import org.eclipse.january.dataset.DatasetFactory;
  * This class can be used to store additional information in a
  * NeXus file e.g. pictures, movies, audio, additional text logs
  * 
- * @version 1.0
  */
 public interface NXnote extends NXobject {
 

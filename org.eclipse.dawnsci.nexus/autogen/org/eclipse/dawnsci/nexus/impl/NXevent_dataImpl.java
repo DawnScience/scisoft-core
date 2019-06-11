@@ -7,7 +7,6 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * This file was auto-generated from the NXDL XML definition.
- * Generated at: 2017-06-23T10:28:44.471+01:00
  *******************************************************************************/
 
 package org.eclipse.dawnsci.nexus.impl;
@@ -45,7 +44,6 @@ import org.eclipse.dawnsci.nexus.*;
  * index into the event_id,event_time_offset pair of arrays for that
  * courser cue_timestamp_zero.
  * 
- * @version 1.1
  */
 public class NXevent_dataImpl extends NXobjectImpl implements NXevent_data {
 
@@ -84,8 +82,8 @@ public class NXevent_dataImpl extends NXobjectImpl implements NXevent_data {
 	}
 
 	@Override
-	public Long getEvent_time_offsetScalar() {
-		return getLong(NX_EVENT_TIME_OFFSET);
+	public Number getEvent_time_offsetScalar() {
+		return getNumber(NX_EVENT_TIME_OFFSET);
 	}
 
 	@Override
@@ -94,7 +92,7 @@ public class NXevent_dataImpl extends NXobjectImpl implements NXevent_data {
 	}
 
 	@Override
-	public DataNode setEvent_time_offsetScalar(Long event_time_offset) {
+	public DataNode setEvent_time_offsetScalar(Number event_time_offset) {
 		return setField(NX_EVENT_TIME_OFFSET, event_time_offset);
 	}
 
@@ -124,8 +122,8 @@ public class NXevent_dataImpl extends NXobjectImpl implements NXevent_data {
 	}
 
 	@Override
-	public Long getEvent_time_zeroScalar() {
-		return getLong(NX_EVENT_TIME_ZERO);
+	public Number getEvent_time_zeroScalar() {
+		return getNumber(NX_EVENT_TIME_ZERO);
 	}
 
 	@Override
@@ -134,7 +132,7 @@ public class NXevent_dataImpl extends NXobjectImpl implements NXevent_data {
 	}
 
 	@Override
-	public DataNode setEvent_time_zeroScalar(Long event_time_zero) {
+	public DataNode setEvent_time_zeroScalar(Number event_time_zero) {
 		return setField(NX_EVENT_TIME_ZERO, event_time_zero);
 	}
 

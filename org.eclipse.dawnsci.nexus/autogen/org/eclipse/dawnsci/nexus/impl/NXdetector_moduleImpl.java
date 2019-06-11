@@ -7,7 +7,6 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * This file was auto-generated from the NXDL XML definition.
- * Generated at: 2017-06-23T10:28:44.471+01:00
  *******************************************************************************/
 
 package org.eclipse.dawnsci.nexus.impl;
@@ -26,8 +25,8 @@ import org.eclipse.dawnsci.nexus.*;
  * smaller modules. Sometimes it is important to know the exact position of such
  * modules.
  * This is the purpose of this group. It is a child group to NXdetector.
+ * Note, the pixel size is given as values in the array fast_pixel_direction and slow_pixel_direction.
  * 
- * @version 1.0
  */
 public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_module {
 

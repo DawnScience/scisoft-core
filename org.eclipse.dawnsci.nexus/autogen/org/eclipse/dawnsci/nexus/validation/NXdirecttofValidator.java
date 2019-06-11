@@ -7,7 +7,6 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * This file was auto-generated from the NXDL XML definition.
- * Generated at: 2017-06-22T16:43:44.279+01:00
  *******************************************************************************/
 
 package org.eclipse.dawnsci.nexus.validation;
@@ -23,6 +22,7 @@ import org.eclipse.dawnsci.nexus.NXsubentry;
 import org.eclipse.dawnsci.nexus.NXentry;
 import org.eclipse.dawnsci.nexus.NXinstrument;
 import org.eclipse.dawnsci.nexus.NXfermi_chopper;
+import org.eclipse.dawnsci.nexus.NXdisk_chopper;
 
 /**
  * Validator for the application definition 'NXdirecttof'.
@@ -82,12 +82,19 @@ public class NXdirecttofValidator extends AbstractNexusValidator implements Nexu
 		// validate that the group is not null
 		validateGroupNotNull(null, NXinstrument.class, group);
 
-		// validate child group 'fermi_chopper' of type NXfermi_chopper
-		validateGroup_entry_NXinstrument_fermi_chopper(group.getFermi_chopper());
+		// validate optional child group 'fermi_chopper' of type NXfermi_chopper
+		if (group.getFermi_chopper() != null) {
+			validateGroup_entry_NXinstrument_fermi_chopper(group.getFermi_chopper());
+		}
+
+		// validate optional child group 'disk_chopper' of type NXdisk_chopper
+		if (group.getDisk_chopper() != null) {
+			validateGroup_entry_NXinstrument_disk_chopper(group.getDisk_chopper());
+		}
 	}
 
 	/**
-	 * Validate group 'fermi_chopper' of type NXfermi_chopper.
+	 * Validate optional group 'fermi_chopper' of type NXfermi_chopper.
 	 */
 	private void validateGroup_entry_NXinstrument_fermi_chopper(final NXfermi_chopper group) throws NexusValidationException {
 		// validate that the group is not null
@@ -101,6 +108,27 @@ public class NXdirecttofValidator extends AbstractNexusValidator implements Nexu
 
 		// validate field 'energy' of type NX_FLOAT.
 		final IDataset energy = group.getEnergy();
+		validateFieldNotNull("energy", energy);
+		validateFieldType("energy", energy, NX_FLOAT);
+		validateFieldUnits("energy", energy, NX_ENERGY);
+	}
+
+	/**
+	 * Validate optional group 'disk_chopper' of type NXdisk_chopper.
+	 */
+	private void validateGroup_entry_NXinstrument_disk_chopper(final NXdisk_chopper group) throws NexusValidationException {
+		// validate that the group is not null
+		validateGroupNotNull("disk_chopper", NXdisk_chopper.class, group);
+		clearLocalGroupDimensionPlaceholderValues();
+
+		// validate field 'rotation_speed' of type NX_FLOAT.
+		final IDataset rotation_speed = group.getRotation_speed();
+		validateFieldNotNull("rotation_speed", rotation_speed);
+		validateFieldType("rotation_speed", rotation_speed, NX_FLOAT);
+		validateFieldUnits("rotation_speed", rotation_speed, NX_FREQUENCY);
+
+		// validate field 'energy' of type NX_FLOAT. Note: field not defined in base class.
+		final IDataset energy = group.getDataset("energy");
 		validateFieldNotNull("energy", energy);
 		validateFieldType("energy", energy, NX_FLOAT);
 		validateFieldUnits("energy", energy, NX_ENERGY);

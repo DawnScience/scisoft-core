@@ -7,7 +7,6 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * This file was auto-generated from the NXDL XML definition.
- * Generated at: 2017-06-22T16:43:44.279+01:00
  *******************************************************************************/
 
 package org.eclipse.dawnsci.nexus.validation;
@@ -223,10 +222,9 @@ public class NXiqprocValidator extends AbstractNexusValidator implements NexusAp
 		validateFieldRank("data", data, 3);
 		validateFieldDimensions("data", data, null, "NE", "NQX", "NQY");
 
-		// validate field 'variable' of unknown type.
-		final IDataset variable = group.getVariable();
+		// validate field 'variable' of unknown type. Note: field not defined in base class.
+		final IDataset variable = group.getDataset("variable");
 		validateFieldNotNull("variable", variable);
-		validateFieldType("variable", variable, NX_NUMBER);
 		validateFieldRank("variable", variable, 1);
 		validateFieldDimensions("variable", variable, null, "NE");
 		// validate attribute 'varied_variable' of field 'variable'

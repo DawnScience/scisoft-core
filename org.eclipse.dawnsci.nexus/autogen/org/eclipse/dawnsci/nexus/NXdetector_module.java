@@ -7,7 +7,6 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * This file was auto-generated from the NXDL XML definition.
- * Generated at: 2017-06-23T10:28:44.471+01:00
  *******************************************************************************/
 
 package org.eclipse.dawnsci.nexus;
@@ -22,8 +21,8 @@ import org.eclipse.january.dataset.IDataset;
  * smaller modules. Sometimes it is important to know the exact position of such
  * modules.
  * This is the purpose of this group. It is a child group to NXdetector.
+ * Note, the pixel size is given as values in the array fast_pixel_direction and slow_pixel_direction.
  * 
- * @version 1.0
  */
 public interface NXdetector_module extends NXobject {
 
@@ -260,8 +259,10 @@ public interface NXdetector_module extends NXobject {
 	public void setModule_offsetAttributeDepends_on(String depends_on);
 
 	/**
-	 * Values along the direction of fastest varying pixel direction.The direction
-	 * itself is given through the vector attribute
+	 * Values along the direction of fastest varying pixel direction. Each value in this
+	 * array is the size of a pixel in the units specified. Alternatively, if only one
+	 * value is given, all pixels in this direction have the same value. The direction
+	 * itself is given through the vector attribute.
 	 * <p>
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Type:</b> NX_NUMBER
@@ -272,8 +273,10 @@ public interface NXdetector_module extends NXobject {
 	public IDataset getFast_pixel_direction();
 	
 	/**
-	 * Values along the direction of fastest varying pixel direction.The direction
-	 * itself is given through the vector attribute
+	 * Values along the direction of fastest varying pixel direction. Each value in this
+	 * array is the size of a pixel in the units specified. Alternatively, if only one
+	 * value is given, all pixels in this direction have the same value. The direction
+	 * itself is given through the vector attribute.
 	 * <p>
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Type:</b> NX_NUMBER
@@ -284,8 +287,10 @@ public interface NXdetector_module extends NXobject {
 	public DataNode setFast_pixel_direction(IDataset fast_pixel_direction);
 
 	/**
-	 * Values along the direction of fastest varying pixel direction.The direction
-	 * itself is given through the vector attribute
+	 * Values along the direction of fastest varying pixel direction. Each value in this
+	 * array is the size of a pixel in the units specified. Alternatively, if only one
+	 * value is given, all pixels in this direction have the same value. The direction
+	 * itself is given through the vector attribute.
 	 * <p>
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Type:</b> NX_NUMBER
@@ -296,8 +301,10 @@ public interface NXdetector_module extends NXobject {
 	public Number getFast_pixel_directionScalar();
 
 	/**
-	 * Values along the direction of fastest varying pixel direction.The direction
-	 * itself is given through the vector attribute
+	 * Values along the direction of fastest varying pixel direction. Each value in this
+	 * array is the size of a pixel in the units specified. Alternatively, if only one
+	 * value is given, all pixels in this direction have the same value. The direction
+	 * itself is given through the vector attribute.
 	 * <p>
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Type:</b> NX_NUMBER
@@ -384,8 +391,10 @@ public interface NXdetector_module extends NXobject {
 	public void setFast_pixel_directionAttributeDepends_on(String depends_on);
 
 	/**
-	 * Values along the direction of slow varying pixel direction. The direction
-	 * itself is given through the vector attribute
+	 * Values along the direction of fastest varying pixel direction. Each value in this
+	 * array is the size of a pixel in the units specified. Alternatively, if only one
+	 * value is given, all pixels in this direction have the same value. The direction
+	 * itself is given through the vector attribute.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_LENGTH
@@ -396,8 +405,10 @@ public interface NXdetector_module extends NXobject {
 	public IDataset getSlow_pixel_direction();
 	
 	/**
-	 * Values along the direction of slow varying pixel direction. The direction
-	 * itself is given through the vector attribute
+	 * Values along the direction of fastest varying pixel direction. Each value in this
+	 * array is the size of a pixel in the units specified. Alternatively, if only one
+	 * value is given, all pixels in this direction have the same value. The direction
+	 * itself is given through the vector attribute.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_LENGTH
@@ -408,8 +419,10 @@ public interface NXdetector_module extends NXobject {
 	public DataNode setSlow_pixel_direction(IDataset slow_pixel_direction);
 
 	/**
-	 * Values along the direction of slow varying pixel direction. The direction
-	 * itself is given through the vector attribute
+	 * Values along the direction of fastest varying pixel direction. Each value in this
+	 * array is the size of a pixel in the units specified. Alternatively, if only one
+	 * value is given, all pixels in this direction have the same value. The direction
+	 * itself is given through the vector attribute.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_LENGTH
@@ -420,8 +433,10 @@ public interface NXdetector_module extends NXobject {
 	public Number getSlow_pixel_directionScalar();
 
 	/**
-	 * Values along the direction of slow varying pixel direction. The direction
-	 * itself is given through the vector attribute
+	 * Values along the direction of fastest varying pixel direction. Each value in this
+	 * array is the size of a pixel in the units specified. Alternatively, if only one
+	 * value is given, all pixels in this direction have the same value. The direction
+	 * itself is given through the vector attribute.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_LENGTH

@@ -7,7 +7,6 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * This file was auto-generated from the NXDL XML definition.
- * Generated at: 2017-06-23T10:28:44.471+01:00
  *******************************************************************************/
 
 package org.eclipse.dawnsci.nexus.impl;
@@ -26,7 +25,6 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * A detector, detector bank, or multidetector.
  * 
- * @version 1.1
  */
 public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 
@@ -338,6 +336,60 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
+	public IDataset getZ_pixel_offset() {
+		return getDataset(NX_Z_PIXEL_OFFSET);
+	}
+
+	@Override
+	public Double getZ_pixel_offsetScalar() {
+		return getDouble(NX_Z_PIXEL_OFFSET);
+	}
+
+	@Override
+	public DataNode setZ_pixel_offset(IDataset z_pixel_offset) {
+		return setDataset(NX_Z_PIXEL_OFFSET, z_pixel_offset);
+	}
+
+	@Override
+	public DataNode setZ_pixel_offsetScalar(Double z_pixel_offset) {
+		return setField(NX_Z_PIXEL_OFFSET, z_pixel_offset);
+	}
+
+	@Override
+	@Deprecated
+	public Long getZ_pixel_offsetAttributeAxis() {
+		return getAttrLong(NX_Z_PIXEL_OFFSET, NX_Z_PIXEL_OFFSET_ATTRIBUTE_AXIS);
+	}
+
+	@Override
+	@Deprecated
+	public void setZ_pixel_offsetAttributeAxis(Long axis) {
+		setAttribute(NX_Z_PIXEL_OFFSET, NX_Z_PIXEL_OFFSET_ATTRIBUTE_AXIS, axis);
+	}
+
+	@Override
+	@Deprecated
+	public Long getZ_pixel_offsetAttributePrimary() {
+		return getAttrLong(NX_Z_PIXEL_OFFSET, NX_Z_PIXEL_OFFSET_ATTRIBUTE_PRIMARY);
+	}
+
+	@Override
+	@Deprecated
+	public void setZ_pixel_offsetAttributePrimary(Long primary) {
+		setAttribute(NX_Z_PIXEL_OFFSET, NX_Z_PIXEL_OFFSET_ATTRIBUTE_PRIMARY, primary);
+	}
+
+	@Override
+	public String getZ_pixel_offsetAttributeLong_name() {
+		return getAttrString(NX_Z_PIXEL_OFFSET, NX_Z_PIXEL_OFFSET_ATTRIBUTE_LONG_NAME);
+	}
+
+	@Override
+	public void setZ_pixel_offsetAttributeLong_name(String long_name) {
+		setAttribute(NX_Z_PIXEL_OFFSET, NX_Z_PIXEL_OFFSET_ATTRIBUTE_LONG_NAME, long_name);
+	}
+
+	@Override
 	public IDataset getDistance() {
 		return getDataset(NX_DISTANCE);
 	}
@@ -415,6 +467,26 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	@Override
 	public DataNode setDescriptionScalar(String description) {
 		return setString(NX_DESCRIPTION, description);
+	}
+
+	@Override
+	public IDataset getSerial_number() {
+		return getDataset(NX_SERIAL_NUMBER);
+	}
+
+	@Override
+	public String getSerial_numberScalar() {
+		return getString(NX_SERIAL_NUMBER);
+	}
+
+	@Override
+	public DataNode setSerial_number(IDataset serial_number) {
+		return setDataset(NX_SERIAL_NUMBER, serial_number);
+	}
+
+	@Override
+	public DataNode setSerial_numberScalar(String serial_number) {
+		return setString(NX_SERIAL_NUMBER, serial_number);
 	}
 
 	@Override
@@ -823,8 +895,8 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public String getSequence_numberScalar() {
-		return getString(NX_SEQUENCE_NUMBER);
+	public Long getSequence_numberScalar() {
+		return getLong(NX_SEQUENCE_NUMBER);
 	}
 
 	@Override
@@ -833,8 +905,8 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public DataNode setSequence_numberScalar(String sequence_number) {
-		return setString(NX_SEQUENCE_NUMBER, sequence_number);
+	public DataNode setSequence_numberScalar(Long sequence_number) {
+		return setField(NX_SEQUENCE_NUMBER, sequence_number);
 	}
 
 	@Override
@@ -1386,5 +1458,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	public void setAllDetector_module(Map<String, NXdetector_module> detector_module) {
 		setChildren(detector_module);
 	}
+	// Unprocessed choice: pixel_shape
+	// Unprocessed choice: detector_shape
 
 }

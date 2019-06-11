@@ -7,7 +7,6 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * This file was auto-generated from the NXDL XML definition.
- * Generated at: 2017-06-23T10:28:44.471+01:00
  *******************************************************************************/
 
 package org.eclipse.dawnsci.nexus;
@@ -23,7 +22,6 @@ import org.eclipse.january.dataset.IDataset;
  * The idea would be to include this in the relevant NeXus object:
  * :ref:`NXdetector` for detectors, :ref:`NXinstrument` for instruments, etc.
  * 
- * @version 1.0
  */
 public interface NXcite extends NXobject {
 

@@ -1437,16 +1437,18 @@ def ones_like(a, dtype=None):
         o = o.cast(dtype.value)
     return o
 
+from types import FunctionType as _fntype
+
 @_wrapout
 def zeros(shape, dtype=float64, elements=None):
     '''Create a dataset filled with 0'''
     dtype = _translatenativetype(dtype)
     if elements is not None:
-        if type(dtype) is _types.FunctionType:
+        if type(dtype) is _fntype:
             dtype = dtype(elements)
         else:
             dtype.elements = elements
-    elif type(dtype) is _types.FunctionType:
+    elif type(dtype) is _fntype:
         raise ValueError("Given data-type is a function and needs elements defining")
 
     return _df.zeros(dtype.elements, _as_int_array(shape), dtype.value)
@@ -1470,11 +1472,11 @@ def full(shape, fill_value, dtype=None, elements=None):
     if dtype is None:
         dtype = _getdtypefromobj(fill_value)
     if elements is not None:
-        if type(dtype) is _types.FunctionType:
+        if type(dtype) is _fntype:
             dtype = dtype(elements)
         else:
             dtype.elements = elements
-    elif type(dtype) is _types.FunctionType:
+    elif type(dtype) is _fntype:
         raise ValueError("Given data-type is a function and needs elements defining")
 
     return _df.zeros(dtype.elements, _as_int_array(shape), dtype.value).fill(fill_value)

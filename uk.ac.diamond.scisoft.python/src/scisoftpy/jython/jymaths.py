@@ -22,12 +22,6 @@ import org.eclipse.january.dataset.Dataset as _ds
 import org.eclipse.january.dataset.Maths as _maths
 import org.eclipse.january.dataset.Stats as _stats
 
-import types as _types
-
-from jarray import array as _array
-
-_arraytype = type(_array([0], 'f')) # this is used for testing if returned object is a Java array
-
 from math import pi as _ppi
 from math import e as _e
 from java.lang.Double import POSITIVE_INFINITY as _jinf #@UnresolvedImport
@@ -597,8 +591,7 @@ def tensordot(a, b, axes=2):
         ao = a.getRank() - axes
         ax = [ ao + i for i in bx ]
     else:
-        t = type(axes)
-        if t is _types.ListType or t is _types.TupleType:
+        if isinstance(axes, (list, tuple)):
             if len(axes) == 0:
                 raise ValueError("Given axes sequence should be non-empty")
 
@@ -609,10 +602,8 @@ def tensordot(a, b, axes=2):
                 ax = axes[0]
                 bx = axes[1]
 
-            ta = type(ax)
-            tal = ta is _types.ListType or ta is _types.TupleType
-            tb = type(bx)
-            tbl = tb is _types.ListType or tb is _types.TupleType
+            tal = isinstance(ax, (list, tuple))
+            tbl = isinstance(bx, (list, tuple))
             if tal != tbl:
                 if tal:
                     bx = list(bx)

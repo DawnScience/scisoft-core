@@ -40,7 +40,6 @@ import org.apache.commons.math3.complex.Complex as _jcomplex #@UnresolvedImport
 
 import Jama.Matrix as _matrix #@UnresolvedImport
 
-import types as _types
 import inspect
 
 import java.lang.ArrayIndexOutOfBoundsException as _jarrayindex_exception #@UnresolvedImport
@@ -195,14 +194,14 @@ def Sciwrap(a):
     return a
 
 def _jinput(arg): # strip for java input
-    if type(arg) is _types.DictType:
+    if isinstance(arg, dict):
         d = dict()
         for k,v in arg.items():
             d[_jinput(k)] = _jinput(v)
         return d
-    elif type(arg) is _types.ListType:
+    elif isinstance(arg, list):
         return [ _jinput(a) for a in arg ]
-    elif type(arg) is _types.TupleType:
+    elif isinstance(arg, tuple):
         return tuple([ _jinput(a) for a in arg ])
     elif isinstance(arg, _jlist):
         return [ _jinput(a) for a in arg ]
@@ -220,10 +219,9 @@ def _jinput(arg): # strip for java input
     return arg
 
 def _joutput(result): # wrap java output
-    t = type(result)
-    if t is _types.ListType or t is _types.TupleType or isinstance(result, _jlist):
+    if isinstance(result, (list, tuple, _jlist)):
         return tuple([ Sciwrap(r) for r in result ])
-    elif t is _arraytype:
+    elif type(result) is _arraytype:
         return [ Sciwrap(r) for r in result if r is not None ]
     return Sciwrap(result)
 
@@ -338,10 +336,9 @@ def asIterable(items):
     '''
     Ensure entity is an iterable by making it a tuple if not
     '''
-    t = type(items)
-    if t is _types.ListType or t is _types.TupleType or t is _arraytype:
+    if isinstance(items, (list, tuple)) or type(items) is _arraytype:
         pass
-    elif t is _types.DictType or t is _jmap:
+    elif isinstance(items, (dict, _jmap)):
         items = [ i for i in items.items() ]
     elif isinstance(items, _jlist):
         pass
@@ -404,7 +401,7 @@ def asDataset(data, dtype=None, force=False):
 def iscomplexobj(x):
     if isinstance(x, ndarray):
         return x.dtype == complex64 or x.dtype == complex128
-    return type(x) is _types.ComplexType
+    return isinstance(x, complex)
 
 def isrealobj(x):
     return not iscomplexobj(x)
@@ -1409,11 +1406,11 @@ def arange(start, stop=None, step=1, dtype=None):
         start = 0
     dtype = _translatenativetype(dtype)
     if dtype is None:
-        if type(start) is _types.ComplexType or type(stop) is _types.ComplexType or type(step) is _types.ComplexType: 
+        if isinstance(start, complex) or isinstance(stop, complex) or isinstance(step, complex):
             dtype = complex128
-        elif type(start) is _types.FloatType or type(stop) is _types.FloatType or type(step) is _types.FloatType: 
+        elif isinstance(start, float) or isinstance(stop, float) or isinstance(step, float):
             dtype = float64
-        elif type(start) is _types.IntType or type(stop) is _types.IntType or type(step) is _types.IntType: 
+        elif isinstance(start, int) or isinstance(stop, int) or isinstance(step, int):
             dtype = int32
         else:
             raise ValueError("Unknown or invalid type of input value")
@@ -1512,9 +1509,9 @@ def linspace(start, stop, num=50, endpoint=True, retstep=False, dtype=None):
     if dtype.value >= complex64.value:
         dtype = complex128
 
-        if type(start) is _types.IntType:
+        if isinstance(start, int):
             start = start+0j
-        if type(stop) is _types.IntType:
+        if isinstance(stop, int):
             stop = stop+0j
         rresult = _df.createLinearSpace(start.real, stop.real, num, float64.value)
         iresult = _df.createLinearSpace(start.imag, stop.imag, num, float64.value)

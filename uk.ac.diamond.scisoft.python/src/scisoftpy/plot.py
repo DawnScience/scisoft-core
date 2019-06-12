@@ -164,8 +164,6 @@ _DEF_NAMES = {'x':'X-Axis', 'y':'Y-Axis'}
 
 _AXES_NAMES = { 'x':{}, 'y':{} }
 
-import types as _types
-
 def _parselinearg(x, y, title, name):
     '''x and y can be lists of arrays, tuples or single-item dicts
     (each tuple comprises an array and label)
@@ -191,13 +189,13 @@ def _parselinearg(x, y, title, name):
             xl = _toList(x)
         if len(xl) == 1:
             x = xl[0]
-            if type(x) is _types.DictType: # has axis name
+            if isinstance(x, dict): # has axis name
                 x = list(x.values())[0]
             xLength = x.shape[0]
             for i in yl:
-                if type(i) is _types.DictType: # has axis name
+                if isinstance(i, dict): # has axis name
                     i = list(i.values())[0]
-                if type(i) is _types.ListType or type(i) is _types.TupleType: # has y dataset labelling
+                if isinstance(i, (list, tuple)): # has y dataset labelling
                     i = i[0]
                 if xLength != i.shape[0]:
                     raise AttributeError("length of y does not match the length of x" )
@@ -207,11 +205,11 @@ def _parselinearg(x, y, title, name):
             for n in range(len(xl)):
                 i = xl[n]
                 j = yl[n]
-                if type(i) is _types.DictType: # has axis name
+                if isinstance(i, dict): # has axis name
                     i = list(i.values())[0]
-                if type(j) is _types.DictType: # has axis name
+                if isinstance(j, dict): # has axis name
                     j = list(j.values())[0]
-                if type(j) is _types.ListType or type(j) is _types.TupleType: # has y dataset labelling
+                if isinstance(j, (list, tuple)): # has y dataset labelling
                     j = j[0]
                 if i is None:
                     i = _core.arange(j.size, dtype=_core.int)
@@ -228,9 +226,9 @@ _AXES_SIDES = { 'x':{'default':_plot.axis_bottom, 'top':_plot.axis_top, 'bottom'
 def _setup_axes(al, dirn, name, allow_rename):
     c = 0 # count use of default axis
     for a in al:
-        if type(a) is _types.DictType: # has axis name
+        if isinstance(a, dict): # has axis name
             n = list(a.keys())[0]
-            if type(n) is _types.TupleType: # has side info
+            if isinstance(n, tuple): # has side info
                 n = n[0]
             if n == _DEF_NAMES[dirn]:
                 c += 1
@@ -240,7 +238,7 @@ def _setup_axes(al, dirn, name, allow_rename):
     rename = c == 0 and allow_rename
     an = []
     for a in al:
-        if type(a) is _types.DictType: # has axis name
+        if isinstance(a, dict): # has axis name
             n = list(a.keys())[0]
             rename, n = _setup_axis(rename, n, dirn, name)
             an.append(n)
@@ -252,7 +250,7 @@ def _setup_axis(rename, n, dirn, name):
     '''
     n is axis name (or axis name and side)
     '''
-    if type(n) is _types.TupleType: # has side info
+    if isinstance(n, tuple): # has side info
         s = _AXES_SIDES[dirn][n[1]]
         n = n[0]
     else:
@@ -301,7 +299,7 @@ def _process_line(x, y, title, name, mode):
     for i in range(len(yl)):
         if xl is not None:
             xi = xl[0] if len(xl) == 1 else xl[i]
-            if type(xi) is _types.DictType: # has axis name
+            if isinstance(xi, dict): # has axis name
                 _, xi = list(xi.items())[0]
             if len(xl) == 1:
                 if i == 0:
@@ -311,9 +309,9 @@ def _process_line(x, y, title, name, mode):
 
         yi = yl[i]
         yt = None
-        if type(yi) is _types.DictType: # has axis name
+        if isinstance(yi, dict): # has axis name
             _, yi = list(yi.items())[0]
-        if type(yi) is _types.ListType or type(yi) is _types.TupleType: # has y dataset labelling
+        if isinstance(yi, (list, tuple)): # has y dataset labelling
             yi, yt = yi[0], yi[1] 
         ys.append(yi)
         yn.append(yt)
@@ -416,13 +414,13 @@ def _checkimagearg(x, y, im):
     '''
 
     if x is not None:
-        if type(x) is _types.DictType: # has axis name
+        if isinstance(x, dict): # has axis name
             x = list(x.values())[0]
         if x is not None and x.shape[0] != im.shape[1]:
             raise AttributeError("Width of image does not match the length of x" )
 
     if y is not None:
-        if type(y) is _types.DictType: # has axis name
+        if isinstance(y, dict): # has axis name
             y = list(y.values())[0]
         if y is not None and y.shape[0] != im.shape[0]:
             raise AttributeError("Height of image does not match the length of y" )
@@ -443,10 +441,10 @@ def _process_image(x, y, im, name, resetaxes):
     else:
         ay = None
 
-    if type(x) is _types.DictType: # has axis name
+    if isinstance(x, dict): # has axis name
         _, x = list(x.items())[0]
 
-    if type(y) is _types.DictType: # has axis name
+    if isinstance(y, dict): # has axis name
         _, y = list(y.items())[0]
 
     _plot_image(name, x, y, im, ax, ay)

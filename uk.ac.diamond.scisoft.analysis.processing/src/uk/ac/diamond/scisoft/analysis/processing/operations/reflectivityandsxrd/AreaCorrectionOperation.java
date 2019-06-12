@@ -69,7 +69,7 @@ public class AreaCorrectionOperation extends AbstractOperationBase<GeometricCorr
 			throw new OperationException(this, sliceAxisError);
 		}
 		
-		NormalDistribution footprint  = new NormalDistribution(0, (model.getSlitHeight() / (2 * Math.sqrt(2 * Math.log(2)))));
+		NormalDistribution footprint  = new NormalDistribution(0, (model.getBeamHeight() / (2 * Math.sqrt(2 * Math.log(2)))));
 		double areaCorrection = 2 * (footprint.cumulativeProbability(model.getSampleSize() * Math.sin(Math.toRadians(sliceAxis.getDouble()))));
 		double[] thetaRadian = new double[2];
 		SimpleUncertaintyPropagationMath.sin(Math.toRadians(sliceAxis.getDouble()), Math.toRadians(sliceAxis.getError()), thetaRadian);

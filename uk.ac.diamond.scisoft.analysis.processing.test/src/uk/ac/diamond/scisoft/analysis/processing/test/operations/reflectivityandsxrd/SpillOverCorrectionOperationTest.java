@@ -83,7 +83,7 @@ public class SpillOverCorrectionOperationTest {
 		// Now we tell the ScalarUncertaintyModel what is happening, that we want to shift the x-axis by 10\pm0.1
 		GeometricCorrectionModel spillOverCorrectionModel = new GeometricCorrectionModel();
 		spillOverCorrectionModel.setSampleSize(100);
-		spillOverCorrectionModel.setSlitHeight(0.1);
+		spillOverCorrectionModel.setBeamHeight(0.1);
 		spillOverCorrectionOperation.setModel(spillOverCorrectionModel);
 		
 		IMonitor monitor = new IMonitor.Stub();
@@ -118,7 +118,7 @@ public class SpillOverCorrectionOperationTest {
 		// Now we tell the ScalarUncertaintyModel what is happening, that we want to shift the x-axis by 10\pm0.1
 		GeometricCorrectionModel spillOverCorrectionModel = new GeometricCorrectionModel();
 		spillOverCorrectionModel.setSampleSize(100);
-		spillOverCorrectionModel.setSlitHeight(0.1);
+		spillOverCorrectionModel.setBeamHeight(0.1);
 		spillOverCorrectionOperation.setModel(spillOverCorrectionModel);
 		
 		IMonitor monitor = new IMonitor.Stub();

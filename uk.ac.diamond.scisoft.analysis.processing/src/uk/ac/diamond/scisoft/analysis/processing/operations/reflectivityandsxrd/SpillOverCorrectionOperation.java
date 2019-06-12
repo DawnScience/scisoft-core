@@ -59,12 +59,12 @@ public class SpillOverCorrectionOperation extends AbstractOperationBase<Geometri
 		// J. Appl. Crystallogr. 40(5), 813--819. 
 		// DOI: 10.1107/S0021889807030403		
 		double sampleSize = model.getSampleSize();
-		double slitHeight = model.getSlitHeight();
+		double beamHeight = model.getBeamHeight();
 		double sampleSizeErr = model.getSampleSizeErr();
-		double slitHeightErr = model.getSlitHeightErr();
+		double beamHeightErr = model.getBeamHeightErr();
 		
 		double[] ratio = new double[2];
-		SimpleUncertaintyPropagationMath.divide(slitHeight, sampleSize, slitHeightErr, sampleSizeErr, ratio);
+		SimpleUncertaintyPropagationMath.divide(beamHeight, sampleSize, beamHeightErr, sampleSizeErr, ratio);
 		double[] thetaSpillOver = new double[2];
 		SimpleUncertaintyPropagationMath.arcsin(ratio[0], ratio[1], thetaSpillOver);
 		

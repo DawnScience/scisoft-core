@@ -16,30 +16,30 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 /**
  * The model for generally performing geometric corrections on reflectometry measurements.
- * It is necessary to have knowledge of the sample and slit size. 
+ * It is necessary to have knowledge of the sample and beam size. 
  */
 public class GeometricCorrectionModel extends AbstractOperationModel {
 
-	@OperationModelField(label = "Slit Height", hint="Distance between the pre-sample slits (mm). This should be less than the sample width.", fieldPosition = 1)
-	private double slitHeight = 10;
+	@OperationModelField(label = "Beam Height", hint="The height of the incoming beam (mm). This should be less than the sample width.", fieldPosition = 1)
+	private double beamHeight = 10;
 	
-	public double getSlitHeight() {
-		return slitHeight;
+	public double getBeamHeight() {
+		return beamHeight;
 	}
 	
-	public void setSlitHeight(double slitHeight) {
-		firePropertyChange("slitHeight", this.slitHeight, this.slitHeight = slitHeight);
+	public void setBeamHeight(double beamHeight) {
+		firePropertyChange("beamHeight", this.beamHeight, this.beamHeight = beamHeight);
 	}
 	
-	@OperationModelField(label = "Uncertainty in Slit Height", hint="Uncertainity in slit height (mm)", fieldPosition = 2)
-	private double slitHeightErr = 0;
+	@OperationModelField(label = "Uncertainty in Beam Height", hint="Uncertainity in beam height (mm)", fieldPosition = 2)
+	private double beamHeightErr = 0;
 	
-	public double getSlitHeightErr() {
-		return slitHeightErr; 
+	public double getBeamHeightErr() {
+		return beamHeightErr; 
 	}
 	
-	public void setSlitHeightErr(double slitHeightErr) {
-		firePropertyChange("slitHeightErr", this.slitHeightErr, this.slitHeightErr = slitHeightErr);
+	public void setBeamHeightErr(double beamHeightErr) {
+		firePropertyChange("beamHeightErr", this.beamHeightErr, this.beamHeightErr = beamHeightErr);
 	}
 	
 	@OperationModelField(label = "Sample Width", hint="Length of sample in beam direction (mm)", fieldPosition = 3)
@@ -60,7 +60,7 @@ public class GeometricCorrectionModel extends AbstractOperationModel {
 		return sampleSizeErr; 
 	}
 	
-	public void setSampleSizeErr(double slitHeightErr) {
+	public void setSampleSizeErr(double sampleSizeErr) {
 		firePropertyChange("sampleSizeErr", this.sampleSizeErr, this.sampleSizeErr = sampleSizeErr);
 	}
 }

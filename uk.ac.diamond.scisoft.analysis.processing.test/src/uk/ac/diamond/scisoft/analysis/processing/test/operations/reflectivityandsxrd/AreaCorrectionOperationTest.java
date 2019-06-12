@@ -75,7 +75,7 @@ public class AreaCorrectionOperationTest {
 		testData.setMetadata(ssm2);
 		GeometricCorrectionModel areaCorrectionModel = new GeometricCorrectionModel();
 		areaCorrectionModel.setSampleSize(100);
-		areaCorrectionModel.setSlitHeight(0.1);
+		areaCorrectionModel.setBeamHeight(0.1);
 		areaCorrectionOperation.setModel(areaCorrectionModel);
 		
 		IMonitor monitor = new IMonitor.Stub();

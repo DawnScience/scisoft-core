@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.oned;
 
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.AbstractCropOperation;
 
@@ -33,7 +34,7 @@ public class Crop1DOperation extends AbstractCropOperation<Crop1DModel> {
 	}
 
 	@Override
-	protected Double[][] getUserVals() {
+	protected Double[][] getUserVals(IDataset input) {
 		//Get user crop values from the model
 		Double[][] userVals = new Double[getOutputRank().getRank()][2];
 		userVals[0][0] = model.getMin();

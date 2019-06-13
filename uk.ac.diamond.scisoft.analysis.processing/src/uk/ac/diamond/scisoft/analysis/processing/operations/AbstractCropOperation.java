@@ -35,7 +35,7 @@ public abstract class AbstractCropOperation<T extends IOperationModel> extends A
 		int cropRank = getOutputRank().getRank();
 		
 		//Get the user crop limits from the model
-		Double[][] userVals = getUserVals();
+		Double[][] userVals = getUserVals(input);
 		
 		//Return: array of arrays [[min/max][dimension]]
 		int[][] indices = new int[2][cropRank];
@@ -82,6 +82,6 @@ public abstract class AbstractCropOperation<T extends IOperationModel> extends A
 	 * Returns user defined crop values from the model.
 	 * @return userVals
 	 */
-	protected abstract Double[][] getUserVals();
+	protected abstract Double[][] getUserVals(IDataset input);
 	
 }

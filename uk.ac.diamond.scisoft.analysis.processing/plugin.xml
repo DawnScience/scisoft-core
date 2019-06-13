@@ -459,6 +459,14 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.Crop2DModel"
             name="Crop Data [2D]">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.CropAroundPeak2DOperation"
+            description="Crop an image such that the present peak is the focus"
+            icon="icons/Crop_nD.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.twod.CropAroundPeak2DOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.CropAroundPeak2DModel"
+            name="Crop Around Peak [2D]">
+      </operation>
       <runner
             class="uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner">
       </runner>

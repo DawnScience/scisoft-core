@@ -41,4 +41,10 @@ public interface OperationMetadata extends MetadataType {
 	 */
 	void process(String filename, String datasetName, SliceFromSeriesMetadata metadata, Integer start,
 			Integer stop, IExecutionVisitor visitor);
+	
+	/**
+	 * Get the position of the current operation in the sequence
+	 * @return position
+	 */
+	public int getCurrentOperationPosition();
 }

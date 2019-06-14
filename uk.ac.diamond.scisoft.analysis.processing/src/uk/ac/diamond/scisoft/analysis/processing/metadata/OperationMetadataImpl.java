@@ -119,11 +119,17 @@ public class OperationMetadataImpl implements OperationMetadata {
 
 	@Override
 	public IOperation<?, ?>[] getPriorOperations() {
-		int i = 0;
-		for (;i<operations.length;i++) if (operations[i] == current) break;
+		int i = getCurrentOperationPosition();
 		IOperation[] ops = new IOperation[i];
 		for (int j = 0; j < ops.length; j++) ops[j] = cloneOperation(operations[j]);
 		return ops;
+	}
+	
+	@Override
+	public int getCurrentOperationPosition() {
+		int i = 0;
+		for (;i<operations.length;i++) if (operations[i] == current) break;
+		return i;
 	}
 
 	private IOperation cloneOperation(IOperation op) {

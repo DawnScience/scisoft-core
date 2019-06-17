@@ -207,13 +207,14 @@ public class GaussianBackgroundSubtractionOperation extends AbstractOperation<Em
 		if (data.getShape().length == 1) {
 			// Set some maximum and minimum values for things
 			double maxA = data.max(true).doubleValue() * 2;
-			double mins = (double) data.maxPos(true)[0] - 20.;
-			double maxs = (double) data.maxPos(true)[0] + 20.;
+			double mins = (double) data.maxPos(true)[0] - 5.;
+			double maxs = (double) data.maxPos(true)[0] + 5.;
 
 			// Set up the Gaussian and offset fitting functions
 			Gaussian gaussFit = new Gaussian(mins, maxs, 50, maxA);
 			Offset offsetFit = new Offset(0, data.max(true).doubleValue());
 			offsetFit.setParameterValues(0);
+			gaussFit.setParameterValues(data.maxPos(true)[0], 2., data.max(true).doubleValue());
 			
 			// Then link the two fitting functions together
 			Add gaussWithOffsetFit = new Add();

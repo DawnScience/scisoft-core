@@ -56,8 +56,9 @@ public class GaussianBackgroundSubtractionOperationTest {
 	public void testProcess1D() {
 		GaussianBackgroundSubtractionOperation gaussianBackgroundSubtractionOperation = new GaussianBackgroundSubtractionOperation();
 	
-		double[] calculated = {1.48671951e-06, 2.07440309e-04, 8.42153448e-03, 9.94771388e-02, 3.41892294e-01, 
-				3.41892294e-01, 9.94771388e-02, 8.42153448e-03, 2.07440309e-04, 1.48671951e-06};
+		double[] calculated = {1.761689277319789E-4, 3.821225172220277E-4, 0.00859621668822208, 
+				0.09965182100822201, 0.342066976208222, 0.342066976208222, 0.09965182100822201, 
+				0.00859621668822208, 3.821225172220277E-4, 1.761689277319789E-4};
 		// The Offset is assigned as 1
 		IDataset testData = Maths.add(DatasetFactory.createFromObject(calculated), 1);
 		// The uncertainties are on a similar scale to the data.

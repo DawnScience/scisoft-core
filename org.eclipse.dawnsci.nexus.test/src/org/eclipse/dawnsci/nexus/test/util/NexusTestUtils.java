@@ -11,8 +11,18 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.nexus.test.util;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.arrayWithSize;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyString;
+import static org.hamcrest.Matchers.notNullValue;
+
 import java.io.File;
 
+import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
+import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.analysis.tree.impl.TreeFileImpl;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFileFactoryHDF5;
@@ -144,6 +154,20 @@ public class NexusTestUtils {
 				throw new Exception("Could not delete file " + file);
 			}
 		}
+	}
+	
+	public static Node getNode(NXroot root, String path) {
+		final String[] pathSegments = path.split(Node.SEPARATOR);
+		assertThat(pathSegments, arrayWithSize(greaterThan(1)));
+		assertThat(pathSegments[0], isEmptyString());
+		
+		Node node = root;
+		for (int i = 1; i < pathSegments.length; i++) {
+			assertThat(node, is(instanceOf(GroupNode.class)));
+			node = ((GroupNode) node).getNode(pathSegments[i]);
+		}
+		assertThat(node, is(notNullValue()));
+		return node;
 	}
 
 }

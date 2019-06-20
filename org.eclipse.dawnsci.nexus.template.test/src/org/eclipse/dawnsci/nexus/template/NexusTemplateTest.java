@@ -1,5 +1,6 @@
 package org.eclipse.dawnsci.nexus.template;
 
+import static org.eclipse.dawnsci.nexus.test.util.NexusTestUtils.getNode;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.equalTo;
@@ -245,20 +246,6 @@ public class NexusTemplateTest {
 //				+ "  foo: "); // TODO fix
 	}
 	
-	private Node getNode(NXroot root, String path) {
-		final String[] pathSegments = path.split(Node.SEPARATOR);
-		assertThat(pathSegments, Matchers.arrayWithSize(Matchers.greaterThan(1)));
-		assertThat(pathSegments[0], isEmptyString());
-	
-		Node node = root;
-		for (int i = 1; i < pathSegments.length; i++) {
-			assertThat(node, is(instanceOf(GroupNode.class)));
-			node = ((GroupNode) node).getNode(pathSegments[i]);
-		}
-		assertThat(node, is(notNullValue()));
-		return node;
-	}
-
 	@Test
 	public void testAddLinkToGroupNode() throws Exception {
 		final String linkPath = "/entry/mandelbrot";

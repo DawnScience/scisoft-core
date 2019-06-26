@@ -97,10 +97,10 @@ public class NexusTemplateTest {
 		templateService = new NexusTemplateServiceImpl();
 	}
 	
-	private NXroot applyTemplateStringToTree(String templateString, NXroot root) throws Exception {
+	private Tree applyTemplateStringToTree(String templateString, Tree tree) throws Exception {
 		final NexusTemplate template = templateService.loadTemplateFromString(templateString);
-		template.apply(root);
-		return root;
+		template.apply(tree);
+		return tree;
 	}
 	
 	private NXroot applyTemplateStringToEmptyTree(String templateString) throws Exception {
@@ -109,7 +109,7 @@ public class NexusTemplateTest {
 			Tree tree = TreeFactory.createTree(0, null);
 			final NXroot root = NexusNodeFactory.createNXroot();
 			tree.setGroupNode(root);
-			template.apply(root);
+			template.apply(tree);
 			return root;
 		} else {
 			// create a new empty nexus file
@@ -124,22 +124,23 @@ public class NexusTemplateTest {
 	}
 	
 	private NXroot applyTemplateStringToTestFile(String templateString) throws Exception {
-		return applyTemplateString(templateString, P45_EXAMPLE_NEXUS_FILE_PATH);
+		final Tree tree = applyTemplateString(templateString, P45_EXAMPLE_NEXUS_FILE_PATH);
+		return (NXroot) tree.getGroupNode();
 	}
 	
-	private NXroot applyTemplateString(String templateString, String nexusFilePath) throws Exception {
+	private Tree applyTemplateString(String templateString, String nexusFilePath) throws Exception {
 		final NexusTemplate template = templateService.loadTemplateFromString(templateString);
 		if (applicationMode == ApplicationMode.IN_MEMORY) {
 			final Tree tree = loadNexusFile(nexusFilePath);
 			final NXroot root = (NXroot) tree.getGroupNode();
-			template.apply(root);
-			return root;
+			template.apply(tree);
+			return tree;
 		} else {
 			final String tempFilePath = testFilesDirName + "test-" + UUID.randomUUID().toString() + ".nxs";
 			Files.copy(Paths.get(nexusFilePath), Paths.get(tempFilePath));
 			template.apply(tempFilePath);
 			TreeFile treeFile = loadNexusFile(tempFilePath);
-			return (NXroot) treeFile.getGroupNode();
+			return treeFile;
 		}
 	}
 	
@@ -378,7 +379,7 @@ public class NexusTemplateTest {
 		applyTemplateStringToTree(BASIC_TEMPLATE 
 				+ "  data/:\n"
 				+ "    NX_class@: NXdata\n"
-				+ "    data: /entry/instrument/detector/data", root); 
+				+ "    data: /entry/instrument/detector/data", tree); 
 		
 		NXentry scanEntry = root.getEntry("scan");
 		assertThat(scanEntry, is(notNullValue()));
@@ -407,11 +408,11 @@ public class NexusTemplateTest {
 	@Ignore
 	public void testApplyLargeTemplate() throws Exception {
 		final NexusTemplate template = templateService.loadTemplate(TEMPLATE_FILE_PATH);
-		final TreeFile nexusTree = loadNexusFile(P45_EXAMPLE_NEXUS_FILE_PATH); 
-		final NXroot root = (NXroot) nexusTree.getGroupNode();
+		final TreeFile tree = loadNexusFile(P45_EXAMPLE_NEXUS_FILE_PATH); 
+		final NXroot root = (NXroot) tree.getGroupNode();
 		
 		// apply template
-		template.apply(root);
+		template.apply(tree);
 		
 		// The template used is roughly based on the NXscan application definition, but for a mapping scan
 		checkNexusTree(root);

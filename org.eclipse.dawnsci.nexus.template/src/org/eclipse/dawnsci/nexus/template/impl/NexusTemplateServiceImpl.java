@@ -39,9 +39,9 @@ public class NexusTemplateServiceImpl implements NexusTemplateService {
 	}
 	
 	public void applyTemplate(String templateFilePath, String sourceFilePath) throws NexusException {
-		final NXroot root = loadNexusTree(sourceFilePath);
+		final TreeFile treeFile = loadNexusTree(sourceFilePath);
 		final NexusTemplate template = loadTemplate(templateFilePath);
-		template.apply(root);
+		template.apply(treeFile);
 	}
 	
 	public synchronized NexusTemplate loadTemplateFromString(String templateString) {
@@ -49,12 +49,11 @@ public class NexusTemplateServiceImpl implements NexusTemplateService {
 		return createTemplate(yaml.load(templateString));
 	}
 
-	private NXroot loadNexusTree(String filePath) throws NexusException {
+	private TreeFile loadNexusTree(String filePath) throws NexusException {
 		// TODO move this method to NexusUtils
 		try (NexusFile nexusFile = ServiceHolder.getNexusFileFactory().newNexusFile(filePath)) {
 			nexusFile.openToRead(); 
-			TreeFile treeFile = NexusUtils.loadNexusTree(nexusFile);
-			return (NXroot) treeFile.getGroupNode();
+			return NexusUtils.loadNexusTree(nexusFile);
 		}
 	}
 	

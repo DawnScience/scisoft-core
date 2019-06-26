@@ -13,12 +13,16 @@ import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.template.NexusTemplateConstants.ApplicationMode;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link NexusContext} to abstract adding nodes to an existing nexus file on disk.
  */
 public class OnDiskNexusContext implements NexusContext {
 
+	private static final Logger logger = LoggerFactory.getLogger(OnDiskNexusContext.class); 
+	
 	private final NexusFile nexusFile;
 	
 	public OnDiskNexusContext(NexusFile nexusFile) {
@@ -34,14 +38,30 @@ public class OnDiskNexusContext implements NexusContext {
 	public GroupNode getNexusRoot() throws NexusException {
 		return nexusFile.getGroup("/", false);
 	}
+	
+	private void logDebug(String pattern, Object... arguments) {
+		if (logger.isDebugEnabled()) {
+			// replace any nodes with their paths within the nexus file
+			// getting the path uses a breadth-first search, so we only do it if we have to
+			for (int i = 0; i < arguments.length; i++) {
+				if (arguments[i] instanceof Node) {
+					arguments[i] = nexusFile.getPath((Node) arguments[i]);
+				}
+			}
+			logger.debug(pattern, arguments);
+		}
+	}
+	
 
 	@Override
 	public GroupNode addGroupNode(GroupNode parent, String name, NexusBaseClass nexusBaseClass) throws NexusException {
+		logDebug("Creating new group node with name '{}' and nexus class '{}' to parent group '{}'", name, nexusBaseClass, parent);
 		return nexusFile.getGroup(parent, name, nexusBaseClass.toString(), true);
 	}
 
 	@Override
 	public DataNode addDataNode(GroupNode parent, String name, Object value) throws NexusException {
+		logDebug("Creating new data node with name '{}' and value '{}' to parent group '{}'", name, value, parent);
 		final IDataset dataset = DatasetFactory.createFromObject(value);
 		return nexusFile.createData(parent, name, dataset);
 	}
@@ -51,13 +71,19 @@ public class OnDiskNexusContext implements NexusContext {
 		if (linkPath.endsWith(String.valueOf(ATTRIBUTE_SUFFIX))) {
 			linkAttribute(parent, name, linkPath);
 		} else {
-			final String parentPath = nexusFile.getPath(parent);
-			final String destinationPath = parentPath + Node.SEPARATOR + name;
-			nexusFile.link(linkPath, destinationPath);
+			linkNode(parent, name, linkPath);
 		}
+	}
+
+	private void linkNode(GroupNode parent, String name, String linkPath) throws NexusException {
+		logDebug("Linking node at path '{}' to parent '{}' with name '{}'", linkPath, parent, name); 
+		final String parentPath = nexusFile.getPath(parent); // parent path already ends with path separator '/'
+		final String destinationPath = parentPath + name;
+		nexusFile.link(linkPath, destinationPath);
 	}
 	
 	private void linkAttribute(GroupNode parent, String name, String linkPath) throws NexusException {
+		logDebug("Copying attribute at path '{}' to parent '{}' with name '{}'", linkPath, parent, name);
 		final Attribute currentAttr = findAttribute(linkPath);
 		final IDataset data = currentAttr.getValue().clone();
 		final Attribute newAttr = TreeFactory.createAttribute(name, data);

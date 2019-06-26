@@ -2,6 +2,7 @@ package org.eclipse.dawnsci.nexus.template.impl;
 
 import java.util.Map;
 
+import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.nexus.NXroot;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
@@ -24,8 +25,8 @@ class NexusTemplateImpl implements NexusTemplate {
 	}
 	
 	@Override
-	public void apply(NXroot nexusRoot) throws NexusException {
-		final NexusContext nexusContext = new InMemoryNexusContext(nexusRoot);
+	public void apply(Tree tree) throws NexusException {
+		final NexusContext nexusContext = new InMemoryNexusContext(tree);
 		applyTemplate(nexusContext);
 	}
 

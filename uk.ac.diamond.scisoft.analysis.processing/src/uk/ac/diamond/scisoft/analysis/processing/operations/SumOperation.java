@@ -46,7 +46,17 @@ public class SumOperation extends AbstractOperation<EmptyModel, OperationData> {
 		Dataset sqrt = Maths.sqrt(in);
 		Dataset inputSum = DatasetFactory.createFromObject(in.sum());
 		Dataset sqrtSum = DatasetFactory.createFromObject(sqrt.sum());
+		Dataset inputSumError = null;
+		Dataset inputSqrtSumError = null;
+		if (in.hasErrors()) {
+			inputSumError = Maths.multiply(in.getErrors().rootMeanSquare(true), Math.sqrt(in.getSize()));
+			inputSumError.setName("dsum");
+			inputSqrtSumError = Maths.sqrt(DatasetFactory.createFromObject(in.getErrors().sum()));
+			inputSqrtSumError.setName("dsum_of_sqrt");
+		}
+		inputSum.setErrors(inputSumError);
 		inputSum.setName("sum");
+		sqrtSum.setErrors(inputSqrtSumError);
 		sqrtSum.setName("sum_of_sqrt");
 	
 		return new OperationData(input, inputSum, sqrtSum);

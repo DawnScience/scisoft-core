@@ -1,32 +1,29 @@
 package org.eclipse.dawnsci.nexus.template;
 
+import static org.eclipse.dawnsci.nexus.template.NexusTemplateConstants.ApplicationMode.IN_MEMORY;
+import static org.eclipse.dawnsci.nexus.template.NexusTemplateConstants.ApplicationMode.ON_DISK;
 import static org.eclipse.dawnsci.nexus.test.util.NexusTestUtils.getNode;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
-import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.SymbolicNode;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
-import org.eclipse.dawnsci.nexus.INexusFileFactory;
 import org.eclipse.dawnsci.nexus.NXbeam;
 import org.eclipse.dawnsci.nexus.NXdata;
 import org.eclipse.dawnsci.nexus.NXdetector;
@@ -38,7 +35,6 @@ import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
-import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.TestUtils;
 import org.eclipse.dawnsci.nexus.template.NexusTemplateConstants.ApplicationMode;
 import org.eclipse.dawnsci.nexus.template.impl.NexusTemplateServiceImpl;
@@ -46,7 +42,6 @@ import org.eclipse.dawnsci.nexus.test.util.NexusTestUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
-import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -65,6 +60,7 @@ public class NexusTemplateTest {
 	private static final String NEXUS_TESTFILES_DIR = "testfiles/dawnsci/data/nexus/";
 	private static final String P45_EXAMPLE_NEXUS_FILE_PATH = NEXUS_TESTFILES_DIR + "p45-example.nxs";
 	private static final String TEMPLATE_FILE_PATH = NEXUS_TESTFILES_DIR + "test-template.yaml";
+	private static final String EXTERNAL_LINK_FILE_PATH = NEXUS_TESTFILES_DIR + "";
 	
 	private static final String BASIC_TEMPLATE = "scan/:\n  NX_class@: NXentry\n";
 	private NexusTemplateServiceImpl templateService;
@@ -113,7 +109,7 @@ public class NexusTemplateTest {
 			return root;
 		} else {
 			// create a new empty nexus file
-			final String filePath = testFilesDirName + "test-" + UUID.randomUUID().toString() + ".nxs";
+			final String filePath = testFilesDirName + "test-" + UUID.randomUUID() + ".nxs";
 			NexusFile file = NexusTestUtils.createNexusFile(filePath);
 			file.close();
 
@@ -124,11 +120,11 @@ public class NexusTemplateTest {
 	}
 	
 	private NXroot applyTemplateStringToTestFile(String templateString) throws Exception {
-		final Tree tree = applyTemplateString(templateString, P45_EXAMPLE_NEXUS_FILE_PATH);
+		final Tree tree = applyTemplateStringToFile(templateString, P45_EXAMPLE_NEXUS_FILE_PATH);
 		return (NXroot) tree.getGroupNode();
 	}
 	
-	private Tree applyTemplateString(String templateString, String nexusFilePath) throws Exception {
+	private Tree applyTemplateStringToFile(String templateString, String nexusFilePath) throws Exception {
 		final NexusTemplate template = templateService.loadTemplateFromString(templateString);
 		if (applicationMode == ApplicationMode.IN_MEMORY) {
 			final Tree tree = loadNexusFile(nexusFilePath);
@@ -357,44 +353,74 @@ public class NexusTemplateTest {
 	
 	@Test
 	public void testExternalLink() throws Exception {
-		// External links can only exist in memory, when a file is read from disk they are automatically resolved
-		if (applicationMode != ApplicationMode.IN_MEMORY) return;
-		
-		final String externalFilePath = "/scratch/tmp/mydetetor.hdf";
-		final String nodePath = "/entry/mydetector";
-		
-		// create a nexus tree structure with an external link
-		Tree tree = TreeFactory.createTree(0, null);
-		NXroot root = NexusNodeFactory.createNXroot();
-		tree.setGroupNode(root);
-		NXentry entry = NexusNodeFactory.createNXentry();
-		root.setEntry(entry);
-		NXinstrument instrument = NexusNodeFactory.createNXinstrument();
-		entry.setInstrument(instrument);
-		NXdetector detector = NexusNodeFactory.createNXdetector();
-		instrument.setDetector(detector);
-		SymbolicNode externalLinkNode = NexusNodeFactory.createSymbolicNode(new File(externalFilePath).toURI(), nodePath); 
-		detector.addSymbolicNode(NXdetector.NX_DATA, externalLinkNode);
-		
-		applyTemplateStringToTree(BASIC_TEMPLATE 
+		final String template = BASIC_TEMPLATE
 				+ "  data/:\n"
 				+ "    NX_class@: NXdata\n"
-				+ "    data: /entry/instrument/detector/data", tree); 
+				+ "    data: /entry/instrument/detector/data";
+
+		// create a nexus tree structure with an external link
+		final String filePath = testFilesDirName + "external-links.nxs";
+		final String linkedFilePath = testFilesDirName + "linked.h5";
+		final String nodePath = "/entry/data";
+		final TreeFile treeFile = TreeFactory.createTreeFile(filePath.hashCode(), filePath);
+		final NXroot root = NexusNodeFactory.createNXroot();
+		treeFile.setGroupNode(root);
+		final NXentry entry = NexusNodeFactory.createNXentry();
+		root.setEntry(entry);
+		final NXinstrument instrument = NexusNodeFactory.createNXinstrument();
+		entry.setInstrument(instrument);
+		final NXdetector detector = NexusNodeFactory.createNXdetector();
+		instrument.setDetector(detector);
+		final SymbolicNode externalLinkNode = NexusNodeFactory.createSymbolicNode(
+				new File(linkedFilePath).toURI(), nodePath); 
+		detector.addSymbolicNode(NXdetector.NX_DATA, externalLinkNode);
 		
-		NXentry scanEntry = root.getEntry("scan");
+		final Tree treeWithTemplate;
+		if (applicationMode == IN_MEMORY) {
+			treeWithTemplate = applyTemplateStringToTree(template, treeFile);
+		} else if (applicationMode == ON_DISK) {
+			// if we're testing on disk, save the nexus file with the link
+			// and create the file to link to
+			NexusTestUtils.saveNexusFile(treeFile);
+			
+			final TreeFile linkedFile = TreeFactory.createTreeFile(linkedFilePath.hashCode(), linkedFilePath);
+			final NXroot root2 = NexusNodeFactory.createNXroot();
+			linkedFile.setGroupNode(root2);
+			final NXentry entry2 = NexusNodeFactory.createNXentry();
+			root2.setEntry(entry2);
+			entry2.setDataset("data", DatasetFactory.createFromObject(IntStream.range(0, 10).toArray()));
+			NexusTestUtils.saveNexusFile(linkedFile);
+			
+			treeWithTemplate = applyTemplateStringToFile(template, filePath);
+		} else {
+			throw new IllegalArgumentException(); // unknown application mode
+		}
+		
+		final NXroot root2 = (NXroot) treeWithTemplate.getGroupNode();
+		final NXentry scanEntry = root2.getEntry("scan");
 		assertThat(scanEntry, is(notNullValue()));
-		NXdata data = scanEntry.getData();
+		final NXdata data = scanEntry.getData();
 		assertThat(data, is(notNullValue()));
-		Node dataNode = data.getNode(NXdata.NX_DATA);
+		final Node dataNode = data.getNode(NXdata.NX_DATA);
 		assertThat(dataNode, is(notNullValue()));
-		assertThat(dataNode.isSymbolicNode(), is(true));
 		
-		// get the newly created link node. Note it has to be a copy, as NexusFileHDF5 cannot create a
-		// link to a symbolic node when saving the tree
-		SymbolicNode newExternalLinkNode = (SymbolicNode) dataNode;
-		assertThat(newExternalLinkNode, is(not(sameInstance(externalLinkNode))));
-		assertThat(newExternalLinkNode.getSourceURI(), is(equalTo(externalLinkNode.getSourceURI())));
-		assertThat(newExternalLinkNode.getPath(), is(equalTo(externalLinkNode.getPath())));
+		if (applicationMode == IN_MEMORY) {
+			assertThat(dataNode.isSymbolicNode(), is(true));
+			
+			// get the newly created link node. Note it has to be a copy, as NexusFileHDF5 cannot create a
+			// link to a symbolic node when saving the tree
+			final SymbolicNode newExternalLinkNode = (SymbolicNode) dataNode;
+			assertThat(newExternalLinkNode, is(not(sameInstance(externalLinkNode))));
+			assertThat(newExternalLinkNode.getSourceURI(), is(equalTo(externalLinkNode.getSourceURI())));
+			assertThat(newExternalLinkNode.getPath(), is(equalTo(externalLinkNode.getPath())));
+		} else if (applicationMode == ON_DISK) {
+			assertThat(dataNode.isDataNode(), is(true));
+			IDataset dataset = ((DataNode) dataNode).getDataset().getSlice();
+			assertThat(dataset.getRank(), is(1));
+			assertThat(dataset.getShape(), is(equalTo(new int[] { 10 })));
+			assertThat(dataset.getElementClass(), is(equalTo(Integer.class)));
+			IntStream.range(0, 10).forEach(i -> assertThat(dataset.getInt(i), is(i)));
+		}
 	}
 	
 	@Test

@@ -463,9 +463,8 @@ public class NexusFileHDF5 implements NexusFile {
 					H5L_info_t linkInfo = H5.H5Lget_info_by_idx(objId, ".", HDF5Constants.H5_INDEX_NAME,
 							HDF5Constants.H5_ITER_INC, i, HDF5Constants.H5P_DEFAULT);
 					if (linkInfo.type == HDF5Constants.H5L_TYPE_EXTERNAL) {
-						String[] value = new String[2];
-						H5.H5Lget_value(objId, linkName, value, HDF5Constants.H5P_DEFAULT);
-						String extFilePath = value[1];
+						String[] linkTarget = getExternalLinkTarget(objId, linkName);
+						String extFilePath = linkTarget[1];
 						if (!new File(extFilePath).exists()) {
 							// link may be relative
 							extFilePath = fileDir + Node.SEPARATOR + extFilePath;
@@ -1488,7 +1487,22 @@ public class NexusFileHDF5 implements NexusFile {
 	@Override
 	public void link(String source, String destination) throws NexusException {
 		assertCanWrite();
-		createHardLink(NexusUtils.stripAugmentedPath(source), NexusUtils.stripAugmentedPath(destination));
+		// we cannot hardlink over an external link, so check for an external link on the source path
+		String sourcePath = NexusUtils.stripAugmentedPath(source);
+		String destinationPath = NexusUtils.stripAugmentedPath(destination);
+		String externalLinkPath = findExternalLink(sourcePath);
+		if (externalLinkPath == null) {
+			createHardLink(sourcePath, destinationPath);
+		} else {
+			int index = destinationPath.lastIndexOf(Node.SEPARATOR);
+			String linkName = destinationPath.substring(index + 1);
+			String linkParent = destinationPath.substring(0, index);
+			if (linkParent.isEmpty()) linkParent = Tree.ROOT;
+			String[] externalLinkTarget = getExternalLinkTarget(externalLinkPath);
+			String externalObjectPath = externalLinkTarget[0];
+			String externalFileName = externalLinkTarget[1];
+			createExternalLink(externalFileName, linkParent, linkName, externalObjectPath);
+		}
 	}
 
 	@Override
@@ -1604,8 +1618,16 @@ public class NexusFileHDF5 implements NexusFile {
 	private static final long IS_EXTERNAL_LINK = -4370;
 	private static final long NO_LINK = -3422;
 
-	private boolean testForExternalLink(String path) throws NexusException {
-		//TODO: might want to cache results
+
+	/**
+	 * Walks the provided path until an external link is found,
+	 * returning the path of the link (or null if no link is found).
+	 * @param path
+	 * @return path of the external link (or null)
+	 * @throws NexusException
+	 */
+	private String findExternalLink(String path) throws NexusException {
+		if (Tree.ROOT.equals(path)) return null;
 		ParsedNode[] parsedNodes = parseAugmentedPath(path);
 		StringBuilder currentPath = new StringBuilder(Tree.ROOT);
 		try {
@@ -1617,14 +1639,43 @@ public class NexusFileHDF5 implements NexusFile {
 				currentPath.append(node.name);
 				H5L_info_t linkInfo = H5.H5Lget_info(fileId, currentPath.toString(), HDF5Constants.H5P_DEFAULT);
 				if (linkInfo.type == HDF5Constants.H5L_TYPE_EXTERNAL) {
-					return true;
+					return currentPath.toString();
 				}
 			}
 		} catch (HDF5LibraryException e) {
 			throw new NexusException("Error checking for external links: " + path, e);
 		}
-		return false;
+		return null;
 	}
+
+	private boolean testForExternalLink(String path) throws NexusException {
+		return findExternalLink(path) != null;
+	}
+
+
+	/**
+	 *
+	 * Return the external link value referred to by the provided path from the reference object.
+	 * The output is the two element String array {objectPath, fileName}
+	 * @param objId
+	 * @param path
+	 * @return String[2] {objectPath, fileName}
+	 * @throws NexusException
+	 */
+	private String[] getExternalLinkTarget(long objId, String path) throws NexusException {
+		H5L_info_t linkInfo = H5.H5Lget_info(objId, path, HDF5Constants.H5P_DEFAULT);
+		if (linkInfo.type != HDF5Constants.H5L_TYPE_EXTERNAL) {
+			throw new NexusException("Path '" + path + "' does not refer to external link");
+		}
+		String[] value = new String[2];
+		H5.H5Lget_value(objId, path, value, HDF5Constants.H5P_DEFAULT);
+		return value;
+	}
+
+	private String[] getExternalLinkTarget(String path) throws NexusException {
+		return getExternalLinkTarget(fileId, path);
+	}
+
 	private long getLinkTarget(String path) throws NexusException {
 		try {
 			//The H5 library doesn't consider the "root" node to really be a group but NAPI does,

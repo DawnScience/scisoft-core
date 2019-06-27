@@ -581,6 +581,29 @@ public class NexusFileTest {
 		assertEquals(externalData, linkedData);
 	}
 
+	@Test
+	public void testLinkOverExternalLink() throws Exception {
+		IDataset externalData = DatasetFactory.createRange(10.0, Dataset.FLOAT64);
+		externalData.setName("data");
+		try (NexusFile ef = NexusTestUtils.createNexusFile(FILE2_NAME)) {
+			ef.createData("/a/b", externalData, true);
+		}
+		nf.getGroup("/group",  true);
+		nf.linkExternal(new URI("nxfile://" + FILE2_NAME + "#a/b/data"), "/group/ext_data", false);
+		nf.linkExternal(new URI("nxfile://" + FILE2_NAME + "#a/b"), "/group/ext_group", true);
+
+		nf.getGroup("/other_group", true);
+		nf.link("/group/ext_data", "/other_group/ext_data");
+		nf.link("/group/ext_group", "/other_group/ext_group");
+
+		assertEquals(externalData, nf.getData("/other_group/ext_data").getDataset().getSlice());
+		assertEquals(externalData, nf.getData("/other_group/ext_group/data").getDataset().getSlice());
+
+		nf.close();
+		nf = NexusTestUtils.openNexusFileReadOnly(FILE_NAME);
+		assertEquals(externalData, nf.getData("/other_group/ext_data").getDataset().getSlice());
+		assertEquals(externalData, nf.getData("/other_group/ext_group/data").getDataset().getSlice());
+	}
 
 	@Test
 	public void testIsPathValid() throws Exception {

@@ -24,6 +24,7 @@ import org.eclipse.dawnsci.nexus.TestUtils;
 import org.eclipse.dawnsci.nexus.test.util.NexusTestUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.FloatDataset;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -61,7 +62,7 @@ public class NexusFileLinkTest {
 
 	@Test
 	public void testExternalLinks() throws Exception {
-		Dataset a = DatasetFactory.createRange(10, Dataset.FLOAT32).reshape(2, 5);
+		Dataset a = DatasetFactory.createRange(FloatDataset.class, 10).reshape(2, 5);
 		a.setName("value");
 
 		String ename;

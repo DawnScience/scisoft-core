@@ -22,7 +22,6 @@ import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.SymbolicNode;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.nexus.test.util.NexusTestUtils;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
@@ -128,7 +127,7 @@ public class NexusFileExternalLinkTest extends AbstractNexusFileTestBase {
 		NXdata extData = NexusNodeFactory.createNXdata();
 		extEntry.setData(extData);
 		
-		linkedDataset = DatasetFactory.createRange(10.0, Dataset.FLOAT64).reshape(2, 5);
+		linkedDataset = DatasetFactory.createRange(10.0).reshape(2, 5);
 		extData.setData(linkedDataset);
 		
 		NexusTestUtils.saveNexusFile(externalFileTree);

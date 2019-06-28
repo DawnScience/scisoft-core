@@ -25,10 +25,12 @@ import org.eclipse.dawnsci.nexus.test.util.NexusTestUtils;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
 import org.eclipse.january.dataset.LazyWriteableDataset;
+import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
 import org.junit.BeforeClass;
@@ -69,7 +71,7 @@ public class NexusFileIntegrationTest {
 		LazyWriteableDataset t = new LazyWriteableDataset("t", Dataset.STRING, shape, mshape, null, null);
 		nf.createData(g, t);
 
-		a = DatasetFactory.createRange(10, Dataset.FLOAT32).reshape(2, 5);
+		a = DatasetFactory.createRange(FloatDataset.class, 10).reshape(2, 5);
 		a.setName("value");
 		nf.createData("/entry", a, true);
 		a.iadd(1);
@@ -83,10 +85,10 @@ public class NexusFileIntegrationTest {
 		nf.close();
 
 		SliceND slice = new SliceND(shape, new Slice(2), new Slice(10, 11));
-		d.setSlice(DatasetFactory.zeros(slice.getShape(), Dataset.INT16).fill(-5), slice);
+		d.setSlice(DatasetFactory.zeros(ShortDataset.class, slice.getShape()).fill(-5), slice);
 
 		SliceND eSlice = SliceND.createSlice(e, new int[] {2, 3}, new int[] {4, 34});
-		e.setSlice(DatasetFactory.zeros(eSlice.getShape(), Dataset.INT16).fill(-9), eSlice);
+		e.setSlice(DatasetFactory.zeros(ShortDataset.class, eSlice.getShape()).fill(-9), eSlice);
 
 		t.setSlice(DatasetFactory.createFromObject(new String[] {"Hello", "World"}).reshape(2, 1),
 				SliceND.createSlice(t, new int[] {2, 3}, new int[] {4, 4}));

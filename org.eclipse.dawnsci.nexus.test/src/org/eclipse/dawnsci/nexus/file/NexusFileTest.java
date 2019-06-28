@@ -40,6 +40,7 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
 import org.eclipse.january.dataset.LazyWriteableDataset;
+import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.dataset.Random;
 import org.eclipse.january.dataset.SliceND;
 import org.junit.After;
@@ -195,7 +196,7 @@ public class NexusFileTest {
 		//Test that the properties on a retrieved node match expectations without having traversed to children
 		nf.getGroup("/a/b/c", true);
 		nf.getGroup("/a/b/x", true);
-		IDataset dataset = DatasetFactory.createRange(10.0, Dataset.FLOAT64).reshape(2, 5);
+		IDataset dataset = DatasetFactory.createRange(10.0).reshape(2, 5);
 		dataset.setName("d");
 		nf.createData("/a/b", dataset, false);
 		IDataset attr = DatasetFactory.createFromObject(new int[] {1, 2, 3});
@@ -226,7 +227,7 @@ public class NexusFileTest {
 
 	@Test
 	public void testDataNodeProperties() throws Exception {
-		IDataset dataset = DatasetFactory.createRange(10.0, Dataset.FLOAT64).reshape(2, 5);
+		IDataset dataset = DatasetFactory.createRange(10.0).reshape(2, 5);
 		dataset.setName("d");
 		nf.createData("/a/b", dataset, true);
 		IDataset attr = DatasetFactory.createFromObject(new int[] {12, 3});
@@ -270,7 +271,7 @@ public class NexusFileTest {
 
 	@Test
 	public void testCreateDataPathDataset() throws Exception {
-		Dataset dataset = DatasetFactory.createRange(10.0, Dataset.FLOAT64).reshape(2, 5);
+		Dataset dataset = DatasetFactory.createRange(10.0).reshape(2, 5);
 		dataset.setName("data");
 		DataNode dataNode = nf.createData("/a/b/c", dataset, true);
 		assertNotNull(dataNode);
@@ -284,7 +285,7 @@ public class NexusFileTest {
 	public void testCreateDataGroupNodeDataset() throws Exception {
 		GroupNode parentGroup = nf.getGroup("/a/b/c", true);
 
-		Dataset dataset = DatasetFactory.createRange(10.0, Dataset.FLOAT64).reshape(2, 5);
+		Dataset dataset = DatasetFactory.createRange(10.0).reshape(2, 5);
 		dataset.setName("data");
 		DataNode dataNode = nf.createData(parentGroup, dataset);
 		assertNotNull(dataNode);
@@ -296,7 +297,7 @@ public class NexusFileTest {
 	@Test
 	public void testGetDataWithAugmentedPath() throws Exception {
 		GroupNode parentNode = nf.getGroup("/entry1:NXentry/instrument:NXinstrument/detector:NXdetector", true);
-		IDataset dataset = DatasetFactory.createRange(10.0, Dataset.FLOAT64).reshape(2, 5);
+		IDataset dataset = DatasetFactory.createRange(10.0).reshape(2, 5);
 		dataset.setName("data");
 		nf.createData(parentNode, dataset);
 		nf.close();
@@ -312,7 +313,7 @@ public class NexusFileTest {
 
 	@Test
 	public void testAddAttributeNode() throws Exception {
-		Dataset attribDataset = DatasetFactory.createRange(10.0, Dataset.FLOAT64).reshape(2, 5);
+		Dataset attribDataset = DatasetFactory.createRange(10.0).reshape(2, 5);
 		attribDataset.setName("testAttribute");
 
 		GroupNode node = nf.getGroup("/a/b/c", true);
@@ -326,9 +327,9 @@ public class NexusFileTest {
 
 	@Test
 	public void testAddAttributePath() throws Exception {
-		Dataset attribDataset = DatasetFactory.createRange(10.0, Dataset.FLOAT64).reshape(2, 5);
+		Dataset attribDataset = DatasetFactory.createRange(10.0).reshape(2, 5);
 		attribDataset.setName("testAttribute");
-		Dataset attrib2Dataset = DatasetFactory.createRange(6, Dataset.INT64).reshape(3, 2);
+		Dataset attrib2Dataset = DatasetFactory.createRange(LongDataset.class, 6).reshape(3, 2);
 		attrib2Dataset.setName("testAttribute2");
 
 		GroupNode node = nf.getGroup("/a/b/c", true);
@@ -347,7 +348,7 @@ public class NexusFileTest {
 	@Test
 	public void testReadbackDoubleArrayAttribute() throws Exception {
 		GroupNode group = nf.getGroup("/a/b", true);
-		IDataset attrData = DatasetFactory.createRange(12.0, Dataset.FLOAT64).reshape(3, 4);
+		IDataset attrData = DatasetFactory.createRange(12.0).reshape(3, 4);
 		attrData.setName("attribute");
 		nf.addAttribute(group, nf.createAttribute(attrData));
 		nf.close();
@@ -432,7 +433,7 @@ public class NexusFileTest {
 
 	@Test
 	public void testHardLinkDataset() throws Exception {
-		IDataset dataset = DatasetFactory.createRange(10.0, Dataset.FLOAT64).reshape(2, 5);
+		IDataset dataset = DatasetFactory.createRange(10.0).reshape(2, 5);
 		dataset.setName("data");
 		nf.createData("/a/", dataset, true);
 		nf.link("/a/data", "/x/data");
@@ -502,7 +503,7 @@ public class NexusFileTest {
 
 	@Test
 	public void testLinkExternalDatasetUseGivenName() throws Exception {
-		IDataset externalData = DatasetFactory.createRange(10.0, Dataset.FLOAT64).reshape(2, 5);
+		IDataset externalData = DatasetFactory.createRange(10.0).reshape(2, 5);
 		externalData.setName("data");
 		try (NexusFile ef = NexusTestUtils.createNexusFile(FILE2_NAME)) {
 			ef.createData("/a/b/c", externalData, true);
@@ -516,7 +517,7 @@ public class NexusFileTest {
 
 	@Test
 	public void testLinkExternalDatasetUseSourceName() throws Exception {
-		IDataset externalData = DatasetFactory.createRange(10.0, Dataset.FLOAT64).reshape(2, 5);
+		IDataset externalData = DatasetFactory.createRange(10.0).reshape(2, 5);
 		externalData.setName("data");
 		try (NexusFile ef = NexusTestUtils.createNexusFile(FILE2_NAME)) {
 			ef.createData("/a/b/c", externalData, true);
@@ -541,7 +542,7 @@ public class NexusFileTest {
 
 	@Test
 	public void testSoftLinkDataset() throws Exception {
-		IDataset dataset = DatasetFactory.createRange(10.0, Dataset.FLOAT64).reshape(2, 5);
+		IDataset dataset = DatasetFactory.createRange(10.0).reshape(2, 5);
 		dataset.setName("data");
 		nf.createData("/a/", dataset, true);
 		nf.linkExternal(new URI("#/a/data"), "/x/", false);
@@ -552,7 +553,7 @@ public class NexusFileTest {
 
 	@Test
 	public void testRelativeExternalLink() throws Exception {
-		IDataset externalData = DatasetFactory.createRange(10.0, Dataset.FLOAT64).reshape(2, 5);
+		IDataset externalData = DatasetFactory.createRange(10.0).reshape(2, 5);
 		externalData.setName("data");
 		try (NexusFile ef = NexusTestUtils.createNexusFile(FILE2_NAME)) {
 			ef.createData("/a/b/c", externalData, true);
@@ -566,7 +567,7 @@ public class NexusFileTest {
 
 	@Test
 	public void testRelativeExternalLinkPopulateGroup() throws Exception {
-		IDataset externalData = DatasetFactory.createRange(10.0, Dataset.FLOAT64).reshape(2, 5);
+		IDataset externalData = DatasetFactory.createRange(10.0).reshape(2, 5);
 		externalData.setName("data");
 		try (NexusFile ef = NexusTestUtils.createNexusFile(FILE2_NAME)) {
 			ef.createData("/a/b/c", externalData, true);
@@ -971,7 +972,7 @@ public class NexusFileTest {
 				new int[] {ILazyWriteableDataset.UNLIMITED, 1000}, null, null);
 		lazy.setChunking(chunking);
 		nf.createData("/a", lazy, true);
-		lazy.setSlice(null, DatasetFactory.createRange(1, 1000000, Dataset.FLOAT64).reshape(1000, 1000),
+		lazy.setSlice(null, DatasetFactory.createRange(1000000).reshape(1000, 1000),
 				new int[] {0, 0}, new int[] {1000, 1000}, null);
 		nf.close();
 		try (NexusFile cf = NexusTestUtils.createNexusFile(FILE2_NAME)) {
@@ -979,7 +980,7 @@ public class NexusFileTest {
 					new int[] {ILazyWriteableDataset.UNLIMITED, 1000}, null, null);
 			lazy.setChunking(chunking);
 			cf.createData("/a", lazy, NexusFile.COMPRESSION_LZW_L1, true);
-			lazy.setSlice(null, DatasetFactory.createRange(1, 1000000, Dataset.FLOAT64).reshape(1000, 1000),
+			lazy.setSlice(null, DatasetFactory.createRange(1000000).reshape(1000, 1000),
 					new int[] {0, 0}, new int[] {1000, 1000}, null);
 		}
 		File uncompressed = new File(FILE_NAME);
@@ -995,7 +996,7 @@ public class NexusFileTest {
 		lazy.setChunking(chunking);
 		nf.createData("/a/", lazy, true);
 		assertArrayEquals(chunking, lazy.getChunking());
-		lazy.setSlice(null, DatasetFactory.createRange(1, 1024 * 1024 * 8, Dataset.FLOAT64).reshape(8, 1024, 1024),
+		lazy.setSlice(null, DatasetFactory.createRange(1024 * 1024 * 8).reshape(8, 1024, 1024),
 				new int[] {0, 0, 0}, new int[] {8, 1024, 1024}, null);
 		nf.close();
 
@@ -1044,7 +1045,7 @@ public class NexusFileTest {
 	public void testAddGroupNode() throws Exception {
 		GroupNode groupNode = new GroupNodeImpl("/base/g".hashCode());
 		DataNode dataNode = new DataNodeImpl("/base/g/d".hashCode());
-		Dataset dataset = DatasetFactory.createRange(10.0, Dataset.FLOAT64).reshape(2, 5);
+		Dataset dataset = DatasetFactory.createRange(10.0).reshape(2, 5);
 		dataset.setName("d");
 		dataNode.setDataset(dataset);
 		groupNode.addDataNode(dataset.getName(), dataNode);
@@ -1065,7 +1066,7 @@ public class NexusFileTest {
 	@Test
 	public void testUpdateNodes() throws Exception {
 		nf.getGroup("/a/b/c", true);
-		Dataset attrData = DatasetFactory.createRange(10.0, Dataset.FLOAT64).reshape(2, 5);
+		Dataset attrData = DatasetFactory.createRange(10.0).reshape(2, 5);
 		attrData.setName("atr");
 		Attribute attr = nf.createAttribute(attrData);
 		GroupNode base = nf.getGroup("/a", false);
@@ -1181,7 +1182,7 @@ public class NexusFileTest {
 				throw new Exception("Could not delete previous external file");
 			}
 		}
-		IDataset data = DatasetFactory.createRange(10.0, Dataset.FLOAT64).reshape(2, 5);
+		IDataset data = DatasetFactory.createRange(10.0).reshape(2, 5);
 		data.setName("d");
 		nf.linkExternal(new URI("nxfile://" + FILE2_NAME + "#a/"), "/x", true);
 		nf.linkExternal(new URI("nxfile://" + FILE2_NAME + "#g/d"), "/l/d", false);
@@ -1213,7 +1214,7 @@ public class NexusFileTest {
 
 	@Test
 	public void testAddExternalLinkNode() throws Exception {
-		IDataset data = DatasetFactory.createRange(10.0, Dataset.FLOAT64).reshape(2, 5);
+		IDataset data = DatasetFactory.createRange(10.0).reshape(2, 5);
 		data.setName("data");
 		try (NexusFile nf2 = NexusTestUtils.createNexusFile(FILE2_NAME)) {
 			nf2.getGroup("/ext/group/a", true);

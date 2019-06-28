@@ -16,6 +16,7 @@ import org.eclipse.january.asserts.TestUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.junit.Test;
 
@@ -31,20 +32,12 @@ public class FFTTest {
 
 	@Test
 	public void test1D() {
-		testfft1d(Dataset.FLOAT32);
-		testfft1d(Dataset.FLOAT64);
+		testfft1d(FloatDataset.class);
+		testfft1d(DoubleDataset.class);
 	}
 
-	private void testfft1d(int dtype) {
-		double abstol = 0;
-		switch (dtype) {
-		case Dataset.FLOAT32:
-			abstol = fabstol;
-			break;
-		case Dataset.FLOAT64:
-			abstol = dabstol;
-			break;
-		}
+	private void testfft1d(Class<? extends Dataset> clazz) {
+		double abstol = clazz.equals(FloatDataset.class) ? fabstol : dabstol;
 
 		double[] or = { 66., -6., -6., -6., -6., -6., -6., -6., -6., -6., -6., -6. };
 		double[] oi = { 0., 22.39230485, 10.39230485, 6., 3.46410162, 1.60769515, 0., -1.60769515, -3.46410162, -6.,
@@ -53,7 +46,7 @@ public class FFTTest {
 		Dataset a, f, g;
 		IndexIterator it;
 
-		a = DatasetFactory.createRange(12, dtype);
+		a = DatasetFactory.createRange(clazz, 12);
 		f = FFT.fft(a);
 		i = 0;
 		it = f.getIterator();
@@ -89,8 +82,8 @@ public class FFTTest {
 		a.setShape(3, 4);
 		f = FFT.fft(a);
 		assertEquals("1D double: rank", 2, f.getRank());
-		assertEquals("1D double: shape", 3, f.getShape()[0]);
-		assertEquals("1D double: shape", 4, f.getShape()[1]);
+		assertEquals("1D double: shape", 3, f.getShapeRef()[0]);
+		assertEquals("1D double: shape", 4, f.getShapeRef()[1]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -111,10 +104,10 @@ public class FFTTest {
 		double[] ar = { 12., 15., 18., 21., -6., -6., -6., -6., -6., -6., -6., -6. };
 		double[] ai = { 0., 0., 0., 0., 3.46410162, 3.46410162, 3.46410162, 3.46410162, -3.46410162, -3.46410162,
 				-3.46410162, -3.46410162 };
-		f = FFT.fft(a, a.getShape()[0], 0);
+		f = FFT.fft(a, a.getShapeRef()[0], 0);
 		assertEquals("1D double: rank", 2, f.getRank());
-		assertEquals("1D double: shape", 3, f.getShape()[0]);
-		assertEquals("1D double: shape", 4, f.getShape()[1]);
+		assertEquals("1D double: shape", 3, f.getShapeRef()[0]);
+		assertEquals("1D double: shape", 4, f.getShapeRef()[1]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -123,7 +116,7 @@ public class FFTTest {
 			i++;
 		}
 
-		g = FFT.ifft(f, f.getShape()[0], 0);
+		g = FFT.ifft(f, f.getShapeRef()[0], 0);
 		i = 0;
 		it = g.getIterator();
 		while (it.hasNext()) {
@@ -132,10 +125,10 @@ public class FFTTest {
 			i++;
 		}
 
-		f = FFT.fft(a, a.getShape()[1], 1);
+		f = FFT.fft(a, a.getShapeRef()[1], 1);
 		assertEquals("1D double: rank", 2, f.getRank());
-		assertEquals("1D double: shape", 3, f.getShape()[0]);
-		assertEquals("1D double: shape", 4, f.getShape()[1]);
+		assertEquals("1D double: shape", 3, f.getShapeRef()[0]);
+		assertEquals("1D double: shape", 4, f.getShapeRef()[1]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -144,7 +137,7 @@ public class FFTTest {
 			i++;
 		}
 
-		g = FFT.ifft(f, f.getShape()[1], 1);
+		g = FFT.ifft(f, f.getShapeRef()[1], 1);
 		i = 0;
 		it = g.getIterator();
 		while (it.hasNext()) {
@@ -160,7 +153,7 @@ public class FFTTest {
 		double[] ci = { 0., 8.51685189, -13.54095942, -3.57971208, 6.94525397, 3.46410162, -4.84103929, -3.88832857,
 				3.88832857, 4.84103929, -3.46410162, -6.94525397, 3.57971208, 13.54095942, -8.51685189 };
 		f = FFT.fft(a, 15, -1);
-		assertEquals("1D double: shape", 15, f.getShape()[0]);
+		assertEquals("1D double: shape", 15, f.getShapeRef()[0]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -187,8 +180,8 @@ public class FFTTest {
 		a.setShape(3, 4);
 		f = FFT.fft(a, 5, 0);
 		assertEquals("1D double: rank", 2, f.getRank());
-		assertEquals("1D double: shape", 5, f.getShape()[0]);
-		assertEquals("1D double: shape", 4, f.getShape()[1]);
+		assertEquals("1D double: shape", 5, f.getShapeRef()[0]);
+		assertEquals("1D double: shape", 4, f.getShapeRef()[1]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -197,7 +190,7 @@ public class FFTTest {
 			i++;
 		}
 
-		g = FFT.ifft(f, f.getShape()[0], 0);
+		g = FFT.ifft(f, f.getShapeRef()[0], 0);
 		i = 0;
 		it = g.getIterator();
 		while (it.hasNext()) {
@@ -209,20 +202,12 @@ public class FFTTest {
 
 	@Test
 	public void test2D() {
-		testfft2d(Dataset.FLOAT32);
-		testfft2d(Dataset.FLOAT64);
+		testfft2d(FloatDataset.class);
+		testfft2d(DoubleDataset.class);
 	}
 
-	private void testfft2d(int dtype) {
-		double abstol = 0;
-		switch (dtype) {
-		case Dataset.FLOAT32:
-			abstol = fabstol;
-			break;
-		case Dataset.FLOAT64:
-			abstol = dabstol;
-			break;
-		}
+	private void testfft2d(Class<? extends Dataset> clazz) {
+		double abstol = clazz.equals(FloatDataset.class) ? fabstol : dabstol;
 
 		int i;
 		Dataset a, f, g;
@@ -230,12 +215,12 @@ public class FFTTest {
 
 		double[] ar = { 66., -6., -6., -6., -24., 0., 0., 0., -24., 0., 0., 0. };
 		double[] ai = { 0., 6., 0., -6., 13.85640646, 0., 0., 0., -13.85640646, 0., 0., 0. };
-		a = DatasetFactory.createRange(12, dtype);
+		a = DatasetFactory.createRange(clazz, 12);
 		a.setShape(3, 4);
 		f = FFT.fft2(a, null, null);
 		assertEquals("2D double: rank", 2, f.getRank());
-		assertEquals("2D double: shape", 3, f.getShape()[0]);
-		assertEquals("2D double: shape", 4, f.getShape()[1]);
+		assertEquals("2D double: shape", 3, f.getShapeRef()[0]);
+		assertEquals("2D double: shape", 4, f.getShapeRef()[1]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -272,13 +257,13 @@ public class FFTTest {
 				-12.99678785, 0., 0., 0., -55.05527682, 0., 0., 0., 0., 10., 0., -10., 55.05527682, 0., 0., 0.,
 				12.99678785, 0., 0., 0., -12.99678785, 0., 0., 0., -55.05527682, 0., 0., 0. };
 
-		a = DatasetFactory.createRange(60, Dataset.FLOAT64);
+		a = DatasetFactory.createRange(clazz, 60);
 		a.setShape(3, 5, 4);
 		f = FFT.fft2(a, null, null);
 		assertEquals("2D double: rank", 3, f.getRank());
-		assertEquals("2D double: shape", 3, f.getShape()[0]);
-		assertEquals("2D double: shape", 5, f.getShape()[1]);
-		assertEquals("2D double: shape", 4, f.getShape()[2]);
+		assertEquals("2D double: shape", 3, f.getShapeRef()[0]);
+		assertEquals("2D double: shape", 5, f.getShapeRef()[1]);
+		assertEquals("2D double: shape", 4, f.getShapeRef()[2]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -305,9 +290,9 @@ public class FFTTest {
 				-69.2820323, 0., 0., 0., -69.2820323, 0., 0., 0. };
 		f = FFT.fft2(a, null, new int[] { 0, 2 });
 		assertEquals("2D double: rank", 3, f.getRank());
-		assertEquals("2D double: shape", 3, f.getShape()[0]);
-		assertEquals("2D double: shape", 5, f.getShape()[1]);
-		assertEquals("2D double: shape", 4, f.getShape()[2]);
+		assertEquals("2D double: shape", 3, f.getShapeRef()[0]);
+		assertEquals("2D double: shape", 5, f.getShapeRef()[1]);
+		assertEquals("2D double: shape", 4, f.getShapeRef()[2]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -378,9 +363,9 @@ public class FFTTest {
 				-6.91040239 };
 		f = FFT.fft2(a, new int[] { 7, 5 }, new int[] { 0, 2 });
 		assertEquals("2D double: rank", 3, f.getRank());
-		assertEquals("2D double: shape", 7, f.getShape()[0]);
-		assertEquals("2D double: shape", 5, f.getShape()[1]);
-		assertEquals("2D double: shape", 5, f.getShape()[2]);
+		assertEquals("2D double: shape", 7, f.getShapeRef()[0]);
+		assertEquals("2D double: shape", 5, f.getShapeRef()[1]);
+		assertEquals("2D double: shape", 5, f.getShapeRef()[2]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -391,7 +376,7 @@ public class FFTTest {
 
 		g = FFT.ifft2(f, null, new int[] { 0, 2 });
 		i = 0;
-		it = g.getSliceIterator(null, a.getShape(), null);
+		it = g.getSliceIterator(null, a.getShapeRef(), null);
 		while (it.hasNext()) {
 			assertEquals("2D double: real", i, g.getElementDoubleAbs(it.index), abstol);
 			assertEquals("2D double: imag", 0, g.getElementDoubleAbs(it.index+1), abstol);
@@ -401,20 +386,12 @@ public class FFTTest {
 
 	@Test
 	public void test3D() {
-		testfft3d(Dataset.FLOAT32);
-		testfft3d(Dataset.FLOAT64);
+		testfft3d(FloatDataset.class);
+		testfft3d(DoubleDataset.class);
 	}
 
-	private void testfft3d(int dtype) {
-		double abstol = 0;
-		switch (dtype) {
-		case Dataset.FLOAT32:
-			abstol = fabstol;
-			break;
-		case Dataset.FLOAT64:
-			abstol = dabstol;
-			break;
-		}
+	private void testfft3d(Class<? extends Dataset> clazz) {
+		double abstol = clazz.equals(FloatDataset.class) ? fabstol : dabstol;
 
 		int i;
 		Dataset a, f, g;
@@ -443,13 +420,13 @@ public class FFTTest {
 				0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 2.46139224e-14, 0.00000000e+00, 0.00000000e+00,
 				0.00000000e+00 };
 
-		a = DatasetFactory.createRange(60, Dataset.FLOAT64);
+		a = DatasetFactory.createRange(clazz, 60);
 		a.setShape(3, 5, 4);
 		f = FFT.fftn(a, null, null);
 		assertEquals("3D double: rank", 3, f.getRank());
-		assertEquals("3D double: shape", 3, f.getShape()[0]);
-		assertEquals("3D double: shape", 5, f.getShape()[1]);
-		assertEquals("3D double: shape", 4, f.getShape()[2]);
+		assertEquals("3D double: shape", 3, f.getShapeRef()[0]);
+		assertEquals("3D double: shape", 5, f.getShapeRef()[1]);
+		assertEquals("3D double: shape", 4, f.getShapeRef()[2]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -536,9 +513,9 @@ public class FFTTest {
 				-6.33042245e+00, -5.22704111e-01, 5.28501422e+00 };
 		f = FFT.fftn(a, new int[] { 5, 7, 4 }, null);
 		assertEquals("3D double: rank", 3, f.getRank());
-		assertEquals("3D double: shape", 5, f.getShape()[0]);
-		assertEquals("3D double: shape", 7, f.getShape()[1]);
-		assertEquals("3D double: shape", 4, f.getShape()[2]);
+		assertEquals("3D double: shape", 5, f.getShapeRef()[0]);
+		assertEquals("3D double: shape", 7, f.getShapeRef()[1]);
+		assertEquals("3D double: shape", 4, f.getShapeRef()[2]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -549,7 +526,7 @@ public class FFTTest {
 
 		g = FFT.ifftn(f, new int[] { 5, 7, 4 }, null);
 		i = 0;
-		it = g.getSliceIterator(null, a.getShape(), null);
+		it = g.getSliceIterator(null, a.getShapeRef(), null);
 		while (it.hasNext()) {
 			assertEquals("3D double: real", i, g.getElementDoubleAbs(it.index), abstol);
 			assertEquals("3D double: imag", 0, g.getElementDoubleAbs(it.index+1), abstol);
@@ -598,13 +575,13 @@ public class FFTTest {
 				0.00000000e+00, 2.46139224e-14, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 2.46139224e-14,
 				0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00,
 				0.00000000e+00 };
-		Dataset b = DatasetFactory.createRange(120, Dataset.FLOAT64).reshape(2, 3, 5, 4);
+		Dataset b = DatasetFactory.createRange(clazz, 120).reshape(2, 3, 5, 4);
 		f = FFT.fftn(b, null, new int[] { -3, -2, -1 });
 		assertEquals("3D double: rank", 4, f.getRank());
-		assertEquals("3D double: shape", 2, f.getShape()[0]);
-		assertEquals("3D double: shape", 3, f.getShape()[1]);
-		assertEquals("3D double: shape", 5, f.getShape()[2]);
-		assertEquals("3D double: shape", 4, f.getShape()[3]);
+		assertEquals("3D double: shape", 2, f.getShapeRef()[0]);
+		assertEquals("3D double: shape", 3, f.getShapeRef()[1]);
+		assertEquals("3D double: shape", 5, f.getShapeRef()[2]);
+		assertEquals("3D double: shape", 4, f.getShapeRef()[3]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -615,7 +592,7 @@ public class FFTTest {
 
 		g = FFT.ifftn(f, null, new int[] { -3, -2, -1 });
 		i = 0;
-		it = g.getSliceIterator(null, b.getShape(), null);
+		it = g.getSliceIterator(null, b.getShapeRef(), null);
 		while (it.hasNext()) {
 			assertEquals("3D double: real", i, g.getElementDoubleAbs(it.index), abstol);
 			assertEquals("3D double: imag", 0, g.getElementDoubleAbs(it.index+1), abstol);
@@ -788,10 +765,10 @@ public class FFTTest {
 				-1.10559629e+02, 1.30940497e+02, -2.11600772e+02, 2.99869397e+01, -6.32818675e+02 };
 		f = FFT.fftn(b, new int[] { 5, 7, 7 }, null);
 		assertEquals("3D double: rank", 4, f.getRank());
-		assertEquals("3D double: shape", 2, f.getShape()[0]);
-		assertEquals("3D double: shape", 5, f.getShape()[1]);
-		assertEquals("3D double: shape", 7, f.getShape()[2]);
-		assertEquals("3D double: shape", 7, f.getShape()[3]);
+		assertEquals("3D double: shape", 2, f.getShapeRef()[0]);
+		assertEquals("3D double: shape", 5, f.getShapeRef()[1]);
+		assertEquals("3D double: shape", 7, f.getShapeRef()[2]);
+		assertEquals("3D double: shape", 7, f.getShapeRef()[3]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -802,7 +779,7 @@ public class FFTTest {
 
 		g = FFT.ifftn(f, null, new int[] { -3, -2, -1 });
 		i = 0;
-		it = g.getSliceIterator(null, b.getShape(), null);
+		it = g.getSliceIterator(null, b.getShapeRef(), null);
 		while (it.hasNext()) {
 			assertEquals("3D double: real", i, g.getElementDoubleAbs(it.index), abstol);
 			assertEquals("3D double: imag", 0, g.getElementDoubleAbs(it.index+1), abstol);
@@ -815,7 +792,7 @@ public class FFTTest {
 		Dataset a;
 		Dataset t;
 
-		a = DatasetFactory.createRange(6, Dataset.FLOAT64);
+		a = DatasetFactory.createRange(6);
 		t = FFT.fftshift(a, null);
 		TestUtils.assertDatasetEquals(DatasetFactory.createFromObject(new double[] {3, 4, 5, 0, 1, 2}), t, 1e-12, 1e-12);
 		System.out.println(t.toString(true));
@@ -854,7 +831,7 @@ public class FFTTest {
 		System.out.println(t.toString(true));
 		TestUtils.assertDatasetEquals(a, t, 1e-12, 1e-12);
 
-		a = DatasetFactory.createRange(7, Dataset.FLOAT64);
+		a = DatasetFactory.createRange(7);
 		t = FFT.fftshift(a, null);
 		TestUtils.assertDatasetEquals(DatasetFactory.createFromObject(new double[] {4, 5, 6, 0, 1, 2, 3}), t, 1e-12, 1e-12);
 		System.out.println(t.toString(true));

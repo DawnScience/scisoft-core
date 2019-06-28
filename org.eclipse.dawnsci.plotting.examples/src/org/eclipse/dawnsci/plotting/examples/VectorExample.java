@@ -16,6 +16,7 @@ import org.eclipse.dawnsci.plotting.api.trace.IVectorTrace;
 import org.eclipse.dawnsci.plotting.api.trace.IVectorTrace.ArrowConfiguration;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.swt.widgets.Composite;
 
@@ -32,7 +33,7 @@ public class VectorExample extends PlotExample {
 		// We create a basic plot
 		system.createPlotPart(parent, "Vector Example", getViewSite().getActionBars(), PlotType.IMAGE, this);
 		
-		Dataset vectors = DatasetFactory.zeros(new int[]{20, 20, 2}, Dataset.FLOAT32);
+		Dataset vectors = DatasetFactory.zeros(FloatDataset.class, 20, 20, 2);
 		
 		for (int x = 0; x < 20; x++) {
 			for (int y = 0; y < 20; y++) {
@@ -41,8 +42,8 @@ public class VectorExample extends PlotExample {
 			}
 		}
 		
-		final IDataset xAxis = DatasetFactory.zeros(new int[]{20}, Dataset.FLOAT32);
-		final IDataset yAxis = DatasetFactory.zeros(new int[]{20}, Dataset.FLOAT32);
+		final IDataset xAxis = DatasetFactory.zeros(FloatDataset.class, 20);
+		final IDataset yAxis = DatasetFactory.zeros(FloatDataset.class, 20);
 		for (int i = 0; i < 20; i++) {
 			xAxis.set(i*5, i);
 			yAxis.set(i*5, i);

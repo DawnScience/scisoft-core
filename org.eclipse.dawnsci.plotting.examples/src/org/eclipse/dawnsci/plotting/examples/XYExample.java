@@ -24,6 +24,7 @@ import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -63,7 +64,7 @@ public class XYExample extends PlotExample {
 			ILineTrace trace = system.createLineTrace(data.getName());
 			
 			// We make some indices (null would also suffice because the trace can make the x values
-			Dataset   indices = DatasetFactory.createRange(data.getSize(), Dataset.INT32);
+			Dataset   indices = DatasetFactory.createRange(IntegerDataset.class, data.getSize());
 			
 			// Transpose the x position a little for fun
 			indices.iadd(5);

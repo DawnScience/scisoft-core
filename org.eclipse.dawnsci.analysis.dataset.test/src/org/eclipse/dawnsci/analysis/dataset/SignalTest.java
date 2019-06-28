@@ -27,8 +27,8 @@ public class SignalTest {
 	 */
 	@Test
 	public void testSimpleConvolveFilters() {
-		Dataset f = DatasetFactory.zeros(new int[] {10,10}, Dataset.ARRAYFLOAT64);
-		Dataset g = DatasetFactory.zeros(new int[] {3,3}, Dataset.ARRAYFLOAT64);
+		Dataset f = DatasetFactory.zeros(10,10);
+		Dataset g = DatasetFactory.zeros(3,3);
 		
 		
 		// test against a null filter
@@ -59,8 +59,8 @@ public class SignalTest {
 	 */
 	@Test
 	public void testConvolveFilters() {
-		Dataset f = DatasetFactory.zeros(new int[] {10,10}, Dataset.ARRAYFLOAT64);
-		Dataset g = DatasetFactory.zeros(new int[] {3,3}, Dataset.ARRAYFLOAT64);
+		Dataset f = DatasetFactory.zeros(10,10);
+		Dataset g = DatasetFactory.zeros(3, 3);
 		
 		// test against a null filter
 		f.iadd(1);
@@ -105,9 +105,9 @@ public class SignalTest {
 	 */
 	@Test
 	public void testConvolve() {
-		Dataset one_d = DatasetFactory.zeros(new int[] {10}, Dataset.ARRAYFLOAT64);
-		Dataset two_d = DatasetFactory.zeros(new int[] {10,10}, Dataset.ARRAYFLOAT64);
-		Dataset three_d = DatasetFactory.zeros(new int[] {10,10,10}, Dataset.ARRAYFLOAT64);
+		Dataset one_d = DatasetFactory.zeros(10);
+		Dataset two_d = DatasetFactory.zeros(10,10);
+		Dataset three_d = DatasetFactory.zeros(10,10,10);
 		
 		@SuppressWarnings("unused")
 		Dataset result;
@@ -172,8 +172,8 @@ public class SignalTest {
 
 	@Test
 	public void testConvolveAll() {
-		Dataset d = DatasetFactory.createRange(20, Dataset.FLOAT64);
-		Dataset k = DatasetFactory.ones(new int[] {5}, Dataset.FLOAT64);
+		Dataset d = DatasetFactory.createRange(20);
+		Dataset k = DatasetFactory.ones(5);
 		Dataset c;
 
 		Dataset e = DatasetFactory.createFromObject(new double[] {0, 1, 3, 6, 10, 15, 20,
@@ -194,7 +194,7 @@ public class SignalTest {
 		c = Signal.convolveForOverlap(k, d, null);
 		TestUtils.assertDatasetEquals(e.getSlice(new Slice(4, 20)), c, 1e-7, 1e-9);
 
-		d = DatasetFactory.createRange(19, Dataset.FLOAT64);
+		d = DatasetFactory.createRange(19);
 		e = DatasetFactory.createFromObject(new double[] {0, 1, 3, 6, 10, 15, 20,
 				25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 66, 51, 35, 18});
 
@@ -216,8 +216,8 @@ public class SignalTest {
 
 	@Test
 	public void testCorrelateAll() {
-		Dataset d = DatasetFactory.createRange(20, Dataset.FLOAT64);
-		Dataset k = DatasetFactory.ones(new int[] {5}, Dataset.FLOAT64);
+		Dataset d = DatasetFactory.createRange(20);
+		Dataset k = DatasetFactory.ones(5);
 		Dataset c;
 
 		Dataset e = DatasetFactory.createFromObject(new double[] {0, 1, 3, 6, 10, 15, 20, 25,
@@ -241,7 +241,7 @@ public class SignalTest {
 		c = Signal.correlateForOverlap(k, d, null);
 		TestUtils.assertDatasetEquals(e.getSlice(new Slice(19, 3, -1)), c, 1e-7, 1e-9);
 		
-		d = DatasetFactory.createRange(19, Dataset.FLOAT64);
+		d = DatasetFactory.createRange(19);
 		e = DatasetFactory.createFromObject(new double[] {0, 1, 3, 6, 10, 15, 20,
 				25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 66, 51, 35, 18});
 

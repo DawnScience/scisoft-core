@@ -14,6 +14,8 @@ import static org.junit.Assert.assertEquals;
 import org.eclipse.dawnsci.analysis.dataset.impl.DCT;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.junit.Test;
 
@@ -29,20 +31,12 @@ public class DCTTest {
 
 	@Test
 	public void test1D() {
-		testdct1d(Dataset.FLOAT32);
-		testdct1d(Dataset.FLOAT64);
+		testdct1d(FloatDataset.class);
+		testdct1d(DoubleDataset.class);
 	}
 
-	private void testdct1d(int dtype) {
-		double abstol = 0;
-		switch (dtype) {
-		case Dataset.FLOAT32:
-			abstol = fabstol;
-			break;
-		case Dataset.FLOAT64:
-			abstol = dabstol;
-			break;
-		}
+	private void testdct1d(Class<? extends Dataset> clazz) {
+		double abstol = clazz.equals(FloatDataset.class) ? fabstol : dabstol;
 
 		double[] or = { 19.05255888, -11.87866427, 0.0, -1.287746576, 0.0, -0.4369852500, 0.0, -0.1974277508, 0.0,
 				-0.09151733141, 0.0, -0.02710534351 };
@@ -50,7 +44,7 @@ public class DCTTest {
 		Dataset a, f, g;
 		IndexIterator it;
 
-		a = DatasetFactory.createRange(12, dtype);
+		a = DatasetFactory.createRange(clazz, 12);
 		f = DCT.dct(a);
 		i = 0;
 		it = f.getIterator();
@@ -74,8 +68,8 @@ public class DCTTest {
 		a.setShape(3, 4);
 		f = DCT.dct(a);
 		assertEquals("1D double: rank", 2, f.getRank());
-		assertEquals("1D double: shape", 3, f.getShape()[0]);
-		assertEquals("1D double: shape", 4, f.getShape()[1]);
+		assertEquals("1D double: shape", 3, f.getShapeRef()[0]);
+		assertEquals("1D double: shape", 4, f.getShapeRef()[1]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -94,10 +88,10 @@ public class DCTTest {
 		double[] ar = { 6.928203230e+00,   8.660254038e+00,   1.039230485e+01,   1.212435565e+01,
 				-5.656854249e+00,  -5.656854249e+00,  -5.656854249e+00,  -5.656854249e+00,
 				0.000000000e+00,   0.000000000e+00,   0.000000000e+00,   0.000000000e+00 };
-		f = DCT.dct(a, a.getShape()[0], 0);
+		f = DCT.dct(a, a.getShapeRef()[0], 0);
 		assertEquals("1D double: rank", 2, f.getRank());
-		assertEquals("1D double: shape", 3, f.getShape()[0]);
-		assertEquals("1D double: shape", 4, f.getShape()[1]);
+		assertEquals("1D double: shape", 3, f.getShapeRef()[0]);
+		assertEquals("1D double: shape", 4, f.getShapeRef()[1]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -105,7 +99,7 @@ public class DCTTest {
 			i++;
 		}
 
-		g = DCT.idct(f, f.getShape()[0], 0);
+		g = DCT.idct(f, f.getShapeRef()[0], 0);
 		i = 0;
 		it = g.getIterator();
 		while (it.hasNext()) {
@@ -113,10 +107,10 @@ public class DCTTest {
 			i++;
 		}
 
-		f = DCT.dct(a, a.getShape()[1], 1);
+		f = DCT.dct(a, a.getShapeRef()[1], 1);
 		assertEquals("1D double: rank", 2, f.getRank());
-		assertEquals("1D double: shape", 3, f.getShape()[0]);
-		assertEquals("1D double: shape", 4, f.getShape()[1]);
+		assertEquals("1D double: shape", 3, f.getShapeRef()[0]);
+		assertEquals("1D double: shape", 4, f.getShapeRef()[1]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -124,7 +118,7 @@ public class DCTTest {
 			i++;
 		}
 
-		g = DCT.idct(f, f.getShape()[1], 1);
+		g = DCT.idct(f, f.getShapeRef()[1], 1);
 		i = 0;
 		it = g.getIterator();
 		while (it.hasNext()) {
@@ -138,7 +132,7 @@ public class DCTTest {
 				0.000000000e+00,   1.712904806e+00,  -3.088928010e+00, 2.610589007e+00,  -1.673755844e+00,
 				0.000000000e+00,   1.270424726e+00,  -2.121153097e+00, 2.027744726e+00,  -1.258366124e+00 };
 		f = DCT.dct(a, 15, -1);
-		assertEquals("1D double: shape", 15, f.getShape()[0]);
+		assertEquals("1D double: shape", 15, f.getShapeRef()[0]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -162,8 +156,8 @@ public class DCTTest {
 		a.setShape(3, 4);
 		f = DCT.dct(a, 5, 0);
 		assertEquals("1D double: rank", 2, f.getRank());
-		assertEquals("1D double: shape", 5, f.getShape()[0]);
-		assertEquals("1D double: shape", 4, f.getShape()[1]);
+		assertEquals("1D double: shape", 5, f.getShapeRef()[0]);
+		assertEquals("1D double: shape", 4, f.getShapeRef()[1]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -171,7 +165,7 @@ public class DCTTest {
 			i++;
 		}
 
-		g = DCT.idct(f, f.getShape()[0], 0);
+		g = DCT.idct(f, f.getShapeRef()[0], 0);
 		i = 0;
 		it = g.getIterator();
 		while (it.hasNext()) {
@@ -182,20 +176,12 @@ public class DCTTest {
 
 	// This test is currently disabled
 	public void test2D() {
-		testdct2d(Dataset.FLOAT32);
-		testdct2d(Dataset.FLOAT64);
+		testdct2d(FloatDataset.class);
+		testdct2d(DoubleDataset.class);
 	}
 
-	private void testdct2d(int dtype) {
-		double abstol = 0;
-		switch (dtype) {
-		case Dataset.FLOAT32:
-			abstol = fabstol;
-			break;
-		case Dataset.FLOAT64:
-			abstol = dabstol;
-			break;
-		}
+	private void testdct2d(Class<? extends Dataset> clazz) {
+		double abstol = clazz.equals(FloatDataset.class) ? fabstol : dabstol;
 
 		int i;
 		Dataset a, f, g;
@@ -203,12 +189,12 @@ public class DCTTest {
 
 		double[] ar = { 1.905255888e+01,  -3.863239729e+00,   0.000000000e+00,  -2.745519942e-01, -1.131370850e+01,
 				0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-		a = DatasetFactory.createRange(12, dtype);
+		a = DatasetFactory.createRange(clazz, 12);
 		a.setShape(3, 4);
 		f = DCT.dct2(a, null, null);
 		assertEquals("2D double: rank", 2, f.getRank());
-		assertEquals("2D double: shape", 3, f.getShape()[0]);
-		assertEquals("2D double: shape", 4, f.getShape()[1]);
+		assertEquals("2D double: shape", 3, f.getShapeRef()[0]);
+		assertEquals("2D double: shape", 4, f.getShapeRef()[1]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -232,13 +218,13 @@ public class DCTTest {
 				-12.99678785, 0., 0., 0., -55.05527682, 0., 0., 0., 0., 10., 0., -10., 55.05527682, 0., 0., 0.,
 				12.99678785, 0., 0., 0., -12.99678785, 0., 0., 0., -55.05527682, 0., 0., 0. };
 
-		a = DatasetFactory.createRange(60, Dataset.FLOAT64);
+		a = DatasetFactory.createRange(clazz, 60);
 		a.setShape(3, 5, 4);
 		f = DCT.dct2(a, null, null);
 		assertEquals("2D double: rank", 3, f.getRank());
-		assertEquals("2D double: shape", 3, f.getShape()[0]);
-		assertEquals("2D double: shape", 5, f.getShape()[1]);
-		assertEquals("2D double: shape", 4, f.getShape()[2]);
+		assertEquals("2D double: shape", 3, f.getShapeRef()[0]);
+		assertEquals("2D double: shape", 5, f.getShapeRef()[1]);
+		assertEquals("2D double: shape", 4, f.getShapeRef()[2]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -265,9 +251,9 @@ public class DCTTest {
 				-69.2820323, 0., 0., 0., -69.2820323, 0., 0., 0. };
 		f = DCT.dct2(a, null, new int[] { 0, 2 });
 		assertEquals("2D double: rank", 3, f.getRank());
-		assertEquals("2D double: shape", 3, f.getShape()[0]);
-		assertEquals("2D double: shape", 5, f.getShape()[1]);
-		assertEquals("2D double: shape", 4, f.getShape()[2]);
+		assertEquals("2D double: shape", 3, f.getShapeRef()[0]);
+		assertEquals("2D double: shape", 5, f.getShapeRef()[1]);
+		assertEquals("2D double: shape", 4, f.getShapeRef()[2]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -336,9 +322,9 @@ public class DCTTest {
 				-6.91040239 };
 		f = DCT.dct2(a, new int[] { 7, 5 }, new int[] { 0, 2 });
 		assertEquals("2D double: rank", 3, f.getRank());
-		assertEquals("2D double: shape", 7, f.getShape()[0]);
-		assertEquals("2D double: shape", 5, f.getShape()[1]);
-		assertEquals("2D double: shape", 5, f.getShape()[2]);
+		assertEquals("2D double: shape", 7, f.getShapeRef()[0]);
+		assertEquals("2D double: shape", 5, f.getShapeRef()[1]);
+		assertEquals("2D double: shape", 5, f.getShapeRef()[2]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -349,7 +335,7 @@ public class DCTTest {
 
 		g = DCT.idct2(f, null, new int[] { 0, 2 });
 		i = 0;
-		it = g.getSliceIterator(null, a.getShape(), null);
+		it = g.getSliceIterator(null, a.getShapeRef(), null);
 		while (it.hasNext()) {
 			assertEquals("2D double: real", i, g.getElementDoubleAbs(it.index), abstol);
 			assertEquals("2D double: imag", 0, g.getElementDoubleAbs(it.index+1), abstol);
@@ -359,20 +345,12 @@ public class DCTTest {
 
 	// This test is currently disabled
 	public void test3D() {
-		testdct3d(Dataset.FLOAT32);
-		testdct3d(Dataset.FLOAT64);
+		testdct3d(FloatDataset.class);
+		testdct3d(DoubleDataset.class);
 	}
 
-	private void testdct3d(int dtype) {
-		double abstol = 0;
-		switch (dtype) {
-		case Dataset.FLOAT32:
-			abstol = fabstol;
-			break;
-		case Dataset.FLOAT64:
-			abstol = dabstol;
-			break;
-		}
+	private void testdct3d(Class<? extends Dataset> clazz) {
+		double abstol = clazz.equals(FloatDataset.class) ? fabstol : dabstol;
 
 		int i;
 		Dataset a, f, g;
@@ -401,13 +379,13 @@ public class DCTTest {
 				0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 2.46139224e-14, 0.00000000e+00, 0.00000000e+00,
 				0.00000000e+00 };
 
-		a = DatasetFactory.createRange(60, Dataset.FLOAT64);
+		a = DatasetFactory.createRange(clazz, 60);
 		a.setShape(3, 5, 4);
 		f = DCT.dctn(a, null, null);
 		assertEquals("3D double: rank", 3, f.getRank());
-		assertEquals("3D double: shape", 3, f.getShape()[0]);
-		assertEquals("3D double: shape", 5, f.getShape()[1]);
-		assertEquals("3D double: shape", 4, f.getShape()[2]);
+		assertEquals("3D double: shape", 3, f.getShapeRef()[0]);
+		assertEquals("3D double: shape", 5, f.getShapeRef()[1]);
+		assertEquals("3D double: shape", 4, f.getShapeRef()[2]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -475,9 +453,9 @@ public class DCTTest {
 				-6.33042245e+00, -5.22704111e-01, 5.28501422e+00 };
 		f = DCT.dctn(a, new int[] { 5, 7, 4 }, null);
 		assertEquals("3D double: rank", 3, f.getRank());
-		assertEquals("3D double: shape", 5, f.getShape()[0]);
-		assertEquals("3D double: shape", 7, f.getShape()[1]);
-		assertEquals("3D double: shape", 4, f.getShape()[2]);
+		assertEquals("3D double: shape", 5, f.getShapeRef()[0]);
+		assertEquals("3D double: shape", 7, f.getShapeRef()[1]);
+		assertEquals("3D double: shape", 4, f.getShapeRef()[2]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -488,7 +466,7 @@ public class DCTTest {
 
 		g = DCT.idctn(f, new int[] { 5, 7, 4 }, null);
 		i = 0;
-		it = g.getSliceIterator(null, a.getShape(), null);
+		it = g.getSliceIterator(null, a.getShapeRef(), null);
 		while (it.hasNext()) {
 			assertEquals("3D double: real", i, g.getElementDoubleAbs(it.index), abstol);
 			assertEquals("3D double: imag", 0, g.getElementDoubleAbs(it.index+1), abstol);
@@ -537,13 +515,13 @@ public class DCTTest {
 				0.00000000e+00, 2.46139224e-14, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 2.46139224e-14,
 				0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00, 0.00000000e+00,
 				0.00000000e+00 };
-		Dataset b = DatasetFactory.createRange(120, Dataset.FLOAT64).reshape(2, 3, 5, 4);
+		Dataset b = DatasetFactory.createRange(clazz, 120).reshape(2, 3, 5, 4);
 		f = DCT.dctn(b, null, new int[] { -3, -2, -1 });
 		assertEquals("3D double: rank", 4, f.getRank());
-		assertEquals("3D double: shape", 2, f.getShape()[0]);
-		assertEquals("3D double: shape", 3, f.getShape()[1]);
-		assertEquals("3D double: shape", 5, f.getShape()[2]);
-		assertEquals("3D double: shape", 4, f.getShape()[3]);
+		assertEquals("3D double: shape", 2, f.getShapeRef()[0]);
+		assertEquals("3D double: shape", 3, f.getShapeRef()[1]);
+		assertEquals("3D double: shape", 5, f.getShapeRef()[2]);
+		assertEquals("3D double: shape", 4, f.getShapeRef()[3]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -554,7 +532,7 @@ public class DCTTest {
 
 		g = DCT.idctn(f, null, new int[] { -3, -2, -1 });
 		i = 0;
-		it = g.getSliceIterator(null, b.getShape(), null);
+		it = g.getSliceIterator(null, b.getShapeRef(), null);
 		while (it.hasNext()) {
 			assertEquals("3D double: real", i, g.getElementDoubleAbs(it.index), abstol);
 			assertEquals("3D double: imag", 0, g.getElementDoubleAbs(it.index+1), abstol);
@@ -727,10 +705,10 @@ public class DCTTest {
 				-1.10559629e+02, 1.30940497e+02, -2.11600772e+02, 2.99869397e+01, -6.32818675e+02 };
 		f = DCT.dctn(b, new int[] { 5, 7, 7 }, null);
 		assertEquals("3D double: rank", 4, f.getRank());
-		assertEquals("3D double: shape", 2, f.getShape()[0]);
-		assertEquals("3D double: shape", 5, f.getShape()[1]);
-		assertEquals("3D double: shape", 7, f.getShape()[2]);
-		assertEquals("3D double: shape", 7, f.getShape()[3]);
+		assertEquals("3D double: shape", 2, f.getShapeRef()[0]);
+		assertEquals("3D double: shape", 5, f.getShapeRef()[1]);
+		assertEquals("3D double: shape", 7, f.getShapeRef()[2]);
+		assertEquals("3D double: shape", 7, f.getShapeRef()[3]);
 		i = 0;
 		it = f.getIterator();
 		while (it.hasNext()) {
@@ -741,7 +719,7 @@ public class DCTTest {
 
 		g = DCT.idctn(f, null, new int[] { -3, -2, -1 });
 		i = 0;
-		it = g.getSliceIterator(null, b.getShape(), null);
+		it = g.getSliceIterator(null, b.getShapeRef(), null);
 		while (it.hasNext()) {
 			assertEquals("3D double: real", i, g.getElementDoubleAbs(it.index), abstol);
 			assertEquals("3D double: imag", 0, g.getElementDoubleAbs(it.index+1), abstol);
@@ -751,7 +729,7 @@ public class DCTTest {
 
 	@Test
 	public void testShift() {
-		Dataset a = DatasetFactory.createRange(12, Dataset.FLOAT64);
+		Dataset a = DatasetFactory.createRange(12);
 		Dataset t;
 
 		t = DCT.dctshift(a, null);

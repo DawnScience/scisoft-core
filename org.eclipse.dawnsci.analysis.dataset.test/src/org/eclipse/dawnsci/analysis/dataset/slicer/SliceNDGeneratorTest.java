@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceNDGenerator;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
 import org.junit.Test;
@@ -30,7 +31,7 @@ public class SliceNDGeneratorTest {
 		int[] dd = {3,4};
 		
 		Dataset p = DatasetFactory.createFromObject(new int[]{1,3});
-		Dataset r = DatasetFactory.createRange(3, Dataset.INT);
+		Dataset r = DatasetFactory.createRange(IntegerDataset.class, 3);
 		
 		SliceNDGenerator gen = new SliceNDGenerator(shape, dd, null,null,null,null,null);
 		

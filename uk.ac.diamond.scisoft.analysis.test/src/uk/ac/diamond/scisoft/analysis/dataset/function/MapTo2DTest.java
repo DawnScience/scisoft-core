@@ -19,7 +19,7 @@ import org.junit.Test;
  *
  */
 public class MapTo2DTest {
-	Dataset d = DatasetFactory.createRange(200, Dataset.FLOAT64).reshape(20, 10);
+	Dataset d = DatasetFactory.createRange(200).reshape(20, 10);
 
 	/**
 	 * 

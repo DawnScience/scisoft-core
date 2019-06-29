@@ -24,14 +24,14 @@ public class PowderDataUtils {
 	protected static final Logger logger = LoggerFactory.getLogger(PowderDataUtils.class);
 	
 	public static Dataset convert1DDataset(Dataset axisData, XAxis inAxisType, XAxis outAxisType, double lambda) throws Exception {
-		int[] shape = axisData.getShape();
+		int[] shape = axisData.getShapeRef();
 		int rank = shape.length;
 		
 		if (rank > 1) {
 			throw new Exception("Cannot convert dataset with more than one dimension.");
 		}
 		
-		Dataset result = DatasetFactory.zeros(shape, Dataset.FLOAT64);
+		Dataset result = DatasetFactory.zeros(shape);
 		
 		//TODO FIXME Change the names given to the axis labels to use the ones in the enum.
 		if (outAxisType.equals(XAxis.ANGLE)) {

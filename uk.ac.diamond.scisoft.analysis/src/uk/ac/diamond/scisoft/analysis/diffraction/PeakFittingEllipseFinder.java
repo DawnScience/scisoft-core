@@ -23,6 +23,7 @@ import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.Stats;
 import org.slf4j.Logger;
@@ -141,7 +142,7 @@ public class PeakFittingEllipseFinder {
 			double min = sub.min(true).doubleValue();
 			sub = sub.setByBoolean(min, badVals);
 			
-			Dataset xAx = DatasetFactory.createRange(sub.getSize(), Dataset.INT32);
+			Dataset xAx = DatasetFactory.createRange(IntegerDataset.class, sub.getSize());
 			
 			sub.isubtract(min);
 			
@@ -189,8 +190,8 @@ public class PeakFittingEllipseFinder {
 		
 		if (gaussianList.isEmpty()) return polyline;
 		
-		Dataset heights = DatasetFactory.zeros(new int[] {gaussianList.size()}, Dataset.FLOAT64);
-		Dataset widths = DatasetFactory.zeros(new int[] {gaussianList.size()}, Dataset.FLOAT64);
+		Dataset heights = DatasetFactory.zeros(gaussianList.size());
+		Dataset widths = DatasetFactory.zeros(gaussianList.size());
 		
 		for (int i = 0; i < gaussianList.size(); i++) {
 			heights.set(gaussianList.get(i).getHeight(), i);

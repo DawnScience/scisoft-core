@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.python;
 
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.FloatDataset;
 import org.junit.Test;
 import org.python.core.PyFloat;
 import org.python.core.PyObjectDerived;
@@ -44,7 +45,7 @@ public class JythonInterpreterUtilsTest {
 		if (fred==null) throw new Exception("Cannot read object 'fred'!");
 		if (!(fred instanceof PyFloat)) throw new Exception("Fred should be a float!");
 		
-		final Dataset set = DatasetFactory.createRange(0, 100, 1, Dataset.FLOAT32);
+		final Dataset set = DatasetFactory.createRange(FloatDataset.class, 0, 100, 1);
 		interpreter.set("x", set);
 		interpreter.exec("x = dnp.Sciwrap(x)");
 		final Object x = interpreter.get("x");

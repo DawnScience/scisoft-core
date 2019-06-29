@@ -13,18 +13,20 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
+import org.eclipse.january.dataset.ByteDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.FloatDataset;
 import org.junit.Test;
 
 /**
  *
  */
 public class MapToPolarAndIntegrateTest {
-	int[] shape = new int[] {500,500}; 
-	Dataset d = DatasetFactory.ones(shape, Dataset.FLOAT32);
-	Dataset a = DatasetFactory.ones(shape, Dataset.FLOAT32);
-	
+	int[] shape = new int[] {500,500};
+	Dataset d = DatasetFactory.ones(FloatDataset.class, shape);
+	Dataset a = DatasetFactory.ones(FloatDataset.class, shape);
+
 	double racc = 1e-3; // set relative accuracy within 0.1%
 	double dpp = 10.;
 
@@ -40,11 +42,11 @@ public class MapToPolarAndIntegrateTest {
 		double sphi = 0.;
 		double ephi = 45.;
 		MapToPolarAndIntegrate mp = new MapToPolarAndIntegrate(xcentre,ycentre,rmin,sphi,rmax,ephi,dpp,true); // eighth of annulus
-		Dataset mask = DatasetFactory.ones(new int[] {500,500}, Dataset.INT8);
+		Dataset mask = DatasetFactory.ones(ByteDataset.class, 500, 500);
 		mask.setSlice(0, new int[] {260,310}, new int[] {270, 320}, new int[] {1,1});
 		mp.setMask(mask);
 		List<? extends Dataset> dsets = mp.value(d);
-        
+
 		double answer = Math.PI*(200.*200. - 50.*50.)/8. - 100.;
 		assertEquals(answer, ((Number) dsets.get(0).sum()).doubleValue(), answer*racc);
 		assertEquals(answer, ((Number) dsets.get(1).sum()).doubleValue(), answer*racc);
@@ -121,7 +123,7 @@ public class MapToPolarAndIntegrateTest {
 	@Test
 	public void testMapToPolarAndIntegrate2() {
 		MapToPolarAndIntegrate mp = new MapToPolarAndIntegrate(360,360,50.,0.,200.,45., dpp, true); // eighth of annulus
-		Dataset mask = DatasetFactory.ones(new int[] {500,500}, Dataset.INT8);
+		Dataset mask = DatasetFactory.ones(ByteDataset.class, 500, 500);
 		mask.setSlice(0, new int[] {370,480}, new int[] {380, 490}, new int[] {1,1});
 		mp.setMask(mask);
 		List<? extends Dataset> dsets = mp.value(d);
@@ -137,7 +139,7 @@ public class MapToPolarAndIntegrateTest {
 	@Test
 	public void testMapToPolarAndIntegrate3() {
 		MapToPolarAndIntegrate mp = new MapToPolarAndIntegrate(250,250,50.,22.5,200.,-22.5, dpp, true); // eighth of annulus
-		Dataset mask = DatasetFactory.ones(new int[] {500,500}, Dataset.INT8);
+		Dataset mask = DatasetFactory.ones(ByteDataset.class, 500, 500);
 		mask.setSlice(0, new int[] {245,410}, new int[] {255, 420}, new int[] {1,1});
 		mp.setMask(mask);
 		List<? extends Dataset> dsets = mp.value(d);

@@ -24,7 +24,7 @@ import org.junit.Test;
  *
  */
 public class MapToShiftedCartesianTest {
-	Dataset d = DatasetFactory.zeros(new int[] {10, 20}, Dataset.FLOAT64);
+	Dataset d = DatasetFactory.zeros(10, 20);
 
 	/**
 	 */

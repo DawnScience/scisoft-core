@@ -21,6 +21,7 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Random;
+import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
@@ -770,9 +771,9 @@ public class NexusFileExecutionVisitorTest {
 		ILazyDataset lazy = getLazyDataset(inputShape,1);
 		
 		AxesMetadata ax = lazy.getMetadata(AxesMetadata.class).get(0);
-		IDataset ae1 = DatasetFactory.createRange(10, Dataset.INT16);
+		IDataset ae1 = DatasetFactory.createRange(ShortDataset.class, 10);
 		ae1.setShape(new int[] {10,1,1});
-		IDataset ae2 = DatasetFactory.createRange(30, Dataset.INT16);
+		IDataset ae2 = DatasetFactory.createRange(ShortDataset.class, 30);
 		ae2.setShape(new int[] {1,30,1});
 		
 		ax.getAxis(0)[0].setErrors(ae1);
@@ -973,7 +974,7 @@ public class NexusFileExecutionVisitorTest {
 
 				for (int j = 0; j < withAxes; j++) {
 					for (int i = 0; i < dsShape.length; i++) {
-						Dataset ax = DatasetFactory.createRange(0, dsShape[i], 1, Dataset.INT16);
+						Dataset ax = DatasetFactory.createRange(ShortDataset.class, 0, dsShape[i], 1);
 						ax.iadd(j);
 						int[] shape = new int[dsShape.length];
 						Arrays.fill(shape, 1);

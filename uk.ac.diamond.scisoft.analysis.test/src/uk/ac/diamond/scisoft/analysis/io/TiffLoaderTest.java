@@ -16,6 +16,7 @@ import org.eclipse.january.DatasetException;
 import org.eclipse.january.asserts.TestUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Slice;
@@ -115,7 +116,7 @@ public class TiffLoaderTest {
 
 	@Test
 	public void testSaveFile() throws ScanFileHolderException {
-		Dataset a = DatasetFactory.createRange(128 * 128, Dataset.FLOAT32).reshape(128, 128);
+		Dataset a = DatasetFactory.createRange(FloatDataset.class, 128 * 128).reshape(128, 128);
 		DataHolder d = new DataHolder();
 		a.idivide(10000);
 		d.addDataset("a", a);

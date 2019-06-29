@@ -32,13 +32,13 @@ public class NumPySpecialsTest {
 		for (int i = 0; i < shape.length; i++) {
 			shape[i] = 1;
 		}
-		Dataset ds = DatasetFactory.ones(shape, Dataset.FLOAT64);
+		Dataset ds = DatasetFactory.ones(shape);
 		NumPyTest.saveNumPyFile(ds, NumPyTest.getTempFile(), false);
 	}
 
 	@Test(expected = ScanFileHolderException.class)
 	public void testExceptionOnEmptyFile() throws Exception {
-		Dataset ds = DatasetFactory.ones(new int[] { 2, 3 }, Dataset.FLOAT64);
+		Dataset ds = DatasetFactory.ones(2, 3);
 		final DataHolder dh = new DataHolder();
 		dh.addDataset("", ds);
 		new NumPyFileSaver("").saveFile(dh);
@@ -46,7 +46,7 @@ public class NumPySpecialsTest {
 
 	@Test(expected = ScanFileHolderException.class)
 	public void testExceptionOnNullFile() throws Exception {
-		Dataset ds = DatasetFactory.ones(new int[] { 2, 3 }, Dataset.FLOAT64);
+		Dataset ds = DatasetFactory.ones(2, 3);
 		final DataHolder dh = new DataHolder();
 		dh.addDataset("", ds);
 		new NumPyFileSaver(null).saveFile(dh);
@@ -54,8 +54,8 @@ public class NumPySpecialsTest {
 
 	@Test
 	public void testSaveMultipleFiles() throws Exception {
-		Dataset ds1 = DatasetFactory.zeros(new int[] { 20 }, Dataset.FLOAT64);
-		Dataset ds2 = DatasetFactory.ones(new int[] { 20 }, Dataset.FLOAT64);
+		Dataset ds1 = DatasetFactory.zeros(20);
+		Dataset ds2 = DatasetFactory.ones(20);
 		final DataHolder dh = new DataHolder();
 		dh.addDataset("a", ds1);
 		dh.addDataset("b", ds2);

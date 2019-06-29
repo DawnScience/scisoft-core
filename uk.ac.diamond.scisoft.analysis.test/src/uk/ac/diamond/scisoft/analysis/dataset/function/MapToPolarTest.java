@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.dawnsci.analysis.dataset.impl.function.Sum;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.Maths;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +25,7 @@ import org.junit.Test;
  *
  */
 public class MapToPolarTest {
-	Dataset d = DatasetFactory.zeros(new int[] {500,500}, Dataset.FLOAT32);
+	Dataset d = DatasetFactory.zeros(FloatDataset.class, 500, 500);
 
 	/**
 	 */

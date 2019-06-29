@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.LongDataset;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +31,7 @@ abstract public class SDAPlotterTestAbstract {
 	
 	@Test
 	public void testLinePlot() throws Exception {
-		Dataset ds = DatasetFactory.createRange(100, Dataset.INT64);
+		Dataset ds = DatasetFactory.createRange(LongDataset.class, 100);
 
 		sdaPlotterImplUnderTest.plot("MyTest Line", null, null, new IDataset[] {ds}, null, null, null);
 	
@@ -41,7 +42,7 @@ abstract public class SDAPlotterTestAbstract {
 
 	@Test
 	public void testImagePlot() throws Exception {
-		Dataset ds = DatasetFactory.createRange(100, Dataset.INT64);
+		Dataset ds = DatasetFactory.createRange(LongDataset.class, 100);
 		ds.setShape(10, 10);
 
 		sdaPlotterImplUnderTest.imagePlot("MyTest Image", null, null, ds, null, null);
@@ -53,7 +54,7 @@ abstract public class SDAPlotterTestAbstract {
 
 	@Test
 	public void testImagesPlot() throws Exception {
-		Dataset ds = DatasetFactory.createRange(100, Dataset.INT64);
+		Dataset ds = DatasetFactory.createRange(LongDataset.class, 100);
 		ds.setShape(10, 10);
 
 		sdaPlotterImplUnderTest.imagesPlot("MyTest Images", null, null, new IDataset[] {ds, ds});

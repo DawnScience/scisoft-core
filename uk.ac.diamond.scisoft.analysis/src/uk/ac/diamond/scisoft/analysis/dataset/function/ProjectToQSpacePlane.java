@@ -20,6 +20,7 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.dataset.ShortDataset;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 
@@ -68,9 +69,9 @@ public class ProjectToQSpacePlane implements DatasetToDatasetFunction {
 	/**
 	 * 
 	 */
-	public void createDataset(int dType) {
-		image = DatasetFactory.zeros(pshape, dType);
-		count = DatasetFactory.zeros(pshape, Dataset.INT16);
+	public void createDataset(Class<? extends Dataset> clazz) {
+		image = DatasetFactory.zeros(clazz, pshape);
+		count = DatasetFactory.zeros(ShortDataset.class, pshape);
 	}
 
 	/**

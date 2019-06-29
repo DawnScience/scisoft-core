@@ -70,7 +70,7 @@ public class PixelIntegrationUtils {
 	
 	public static Dataset generateAzimuthalArray(double[] beamCentre, int[] shape, boolean radians) {
 		
-		Dataset out = DatasetFactory.zeros(shape, Dataset.FLOAT64);
+		Dataset out = DatasetFactory.zeros(shape);
 		PositionIterator iter = out.getPositionIterator();
 
 		int[] pos = iter.getPos();
@@ -90,7 +90,7 @@ public class PixelIntegrationUtils {
 		int n = (int)Math.floor((min+180)/360);
 		double minInBase = (min - (360*n));
 		
-		Dataset out = DatasetFactory.zeros(shape, Dataset.FLOAT64);
+		Dataset out = DatasetFactory.zeros(shape);
 		PositionIterator iter = out.getPositionIterator();
 
 		int[] pos = iter.getPos();
@@ -110,8 +110,8 @@ public class PixelIntegrationUtils {
 		//Number of circles
 		int n = (int)Math.floor((min+180)/360);
 		double minInBase = (min - (360*n));
-		Dataset aMax = DatasetFactory.zeros(shape, Dataset.FLOAT64);
-		Dataset aMin = DatasetFactory.zeros(shape, Dataset.FLOAT64);
+		Dataset aMax = DatasetFactory.zeros(shape);
+		Dataset aMin = DatasetFactory.zeros(shape);
 
 		PositionIterator iter = aMax.getPositionIterator();
 		int[] pos = iter.getPos();
@@ -160,8 +160,8 @@ public class PixelIntegrationUtils {
 	
 	public static Dataset[] generateMinMaxAzimuthalArray(double[] beamCentre, int[] shape, boolean radians) {
 		
-		Dataset aMax = DatasetFactory.zeros(shape, Dataset.FLOAT64);
-		Dataset aMin = DatasetFactory.zeros(shape, Dataset.FLOAT64);
+		Dataset aMax = DatasetFactory.zeros(shape);
+		Dataset aMin = DatasetFactory.zeros(shape);
 
 		PositionIterator iter = aMax.getPositionIterator();
 		int[] pos = iter.getPos();
@@ -216,8 +216,8 @@ public class PixelIntegrationUtils {
 		
 		double[] beamCentre = qSpace.getDetectorProperties().getBeamCentreCoords();
 
-		Dataset radialArrayMax = DatasetFactory.zeros(shape, Dataset.FLOAT64);
-		Dataset radialArrayMin = DatasetFactory.zeros(shape, Dataset.FLOAT64);
+		Dataset radialArrayMax = DatasetFactory.zeros(shape);
+		Dataset radialArrayMin = DatasetFactory.zeros(shape);
 
 		PositionIterator iter = radialArrayMax.getPositionIterator();
 		int[] pos = iter.getPos();
@@ -404,7 +404,7 @@ public class PixelIntegrationUtils {
 		
 		SplineInterpolator si = new SplineInterpolator();
 		PolynomialSplineFunction poly = si.interpolate(inXy1D[0].getData(),inXy1D[1].getData());
-		Dataset image = DatasetFactory.zeros(array2Dx.getShape(),Dataset.FLOAT64);
+		Dataset image = DatasetFactory.zeros(array2Dx.getShapeRef());
 		double[] buf = (double[])image.getBuffer();
 		
 		IndexIterator iterator = array2Dx.getIterator();

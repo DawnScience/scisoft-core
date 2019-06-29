@@ -31,9 +31,9 @@ public class MapTo2DUtils {
 	public static Dataset remap2Dto2DNonSplitting(Dataset original, Dataset xO, Dataset yO, double[] xRange, int xNumber, double[] yRange, int yNumber) {
 		
 		double shift = (xRange[1]- xRange[0])/(2*xNumber);
-		DoubleDataset xBins =  (DoubleDataset) DatasetFactory.createLinearSpace(xRange[0]-shift, xRange[1]+shift, xNumber + 1, Dataset.FLOAT64);
+		DoubleDataset xBins =  DatasetFactory.createLinearSpace(DoubleDataset.class, xRange[0]-shift, xRange[1]+shift, xNumber + 1);
 		shift = (yRange[1]- yRange[0])/(2*yNumber);
-		DoubleDataset yBins =  (DoubleDataset) DatasetFactory.createLinearSpace(yRange[0]-shift, yRange[1]+shift, yNumber + 1, Dataset.FLOAT64);
+		DoubleDataset yBins =  DatasetFactory.createLinearSpace(DoubleDataset.class, yRange[0]-shift, yRange[1]+shift, yNumber + 1);
 		
 		final double[] edgesQ = xBins.getData();
 		final double loQ = edgesQ[0];
@@ -45,8 +45,8 @@ public class MapTo2DUtils {
 		final double hiChi = edgesChi[yNumber];
 		final double spanChi = (hiChi - loChi)/yNumber;
 		
-		IntegerDataset histo = (IntegerDataset)DatasetFactory.zeros(new int[]{yNumber,xNumber}, Dataset.INT32);
-		FloatDataset intensity = (FloatDataset)DatasetFactory.zeros(new int[]{yNumber,xNumber},Dataset.FLOAT32);
+		IntegerDataset histo = DatasetFactory.zeros(IntegerDataset.class, yNumber, xNumber);
+		FloatDataset intensity = DatasetFactory.zeros(FloatDataset.class, yNumber, xNumber);
 
 		Dataset a = DatasetUtils.convertToDataset(xO);
 		Dataset b = DatasetUtils.convertToDataset(original);
@@ -89,9 +89,9 @@ public class MapTo2DUtils {
 	public static Dataset remap2Dto2DSplitting(IDataset original, IDataset xO, IDataset yO, double[] xRange, int xNumber, double[] yRange, int yNumber) {
 		
 		double shift = (xRange[1]- xRange[0])/(2*xNumber);
-		DoubleDataset xBins =  (DoubleDataset) DatasetFactory.createLinearSpace(xRange[0]-shift, xRange[1]+shift, xNumber + 1, Dataset.FLOAT64);
+		DoubleDataset xBins =  DatasetFactory.createLinearSpace(DoubleDataset.class, xRange[0]-shift, xRange[1]+shift, xNumber + 1);
 		shift = (yRange[1]- yRange[0])/(2*yNumber);
-		DoubleDataset yBins =  (DoubleDataset) DatasetFactory.createLinearSpace(yRange[0]-shift, yRange[1]+shift, yNumber + 1, Dataset.FLOAT64);
+		DoubleDataset yBins =  DatasetFactory.createLinearSpace(DoubleDataset.class, yRange[0]-shift, yRange[1]+shift, yNumber + 1);
 		
 		final double[] edgesQ = xBins.getData();
 		final double loQ = edgesQ[0];
@@ -103,8 +103,8 @@ public class MapTo2DUtils {
 		final double hiChi = edgesChi[yNumber];
 		final double spanChi = (hiChi - loChi)/yNumber;
 		
-		FloatDataset histo = (FloatDataset)DatasetFactory.zeros(new int[]{yNumber,xNumber}, Dataset.FLOAT32);
-		FloatDataset intensity = (FloatDataset)DatasetFactory.zeros(new int[]{yNumber,xNumber},Dataset.FLOAT32);
+		FloatDataset histo = DatasetFactory.zeros(FloatDataset.class, yNumber,xNumber);
+		FloatDataset intensity = DatasetFactory.zeros(FloatDataset.class, yNumber,xNumber);
 
 		Dataset[] radialArray = getPixelRange(xO,1);
 		Dataset[] azimuthalArray = getPixelRange(yO,0);

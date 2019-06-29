@@ -103,7 +103,7 @@ public class ROIProfile {
 		// normalise plot for case when region is clipped to size of image
 		// and/or when a mask is specified
 		if (mask == null) {
-			mask = DatasetFactory.ones(data.getShape(), Dataset.BOOL);
+			mask = DatasetFactory.ones(BooleanDataset.class, data.getShape());
 		}
 
 		List<? extends IDataset> dsets = map.value(mask);

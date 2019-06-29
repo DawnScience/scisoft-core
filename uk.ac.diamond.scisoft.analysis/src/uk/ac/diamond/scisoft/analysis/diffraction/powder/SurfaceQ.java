@@ -185,7 +185,7 @@ public class SurfaceQ {
 	// Extract out all the common boilerplate for looping over the pixels in the detector
 	private DoubleDataset qPerpPara(DiffractionMetadata dm, boolean isPerpendicular) {
 		// For diffraction metadata, we can assume that the beam is on the +ve z-axis
-		DoubleDataset incidentBeam = (DoubleDataset) DatasetFactory.createFromList(Dataset.FLOAT64, Arrays.asList(0.0, 0.0, 1.0));
+		DoubleDataset incidentBeam = DatasetFactory.createFromList(DoubleDataset.class, Arrays.asList(0.0, 0.0, 1.0));
 		DetectorProperties dp = dm.getDetector2DProperties();
 		double beamEnergy = 2*Math.PI*hBarC/dm.getDiffractionCrystalEnvironment().getWavelength();
 		
@@ -207,7 +207,7 @@ public class SurfaceQ {
 	// Extract all the common boilerplate for getting the min and max values of the coordinate out of a pixel
 	private DoubleDataset[] qPerpParaMinMax(DiffractionMetadata dm, int[] shape, boolean isPerpendicular) {
 		// For diffraction metadata, we can assume that the beam is on the +ve z-axis
-		DoubleDataset incidentBeam = (DoubleDataset) DatasetFactory.createFromList(Dataset.FLOAT64, Arrays.asList(0.0, 0.0, 1.0));
+		DoubleDataset incidentBeam = DatasetFactory.createFromList(DoubleDataset.class, Arrays.asList(0.0, 0.0, 1.0));
 		DetectorProperties dp = dm.getDetector2DProperties();
 		double beamEnergy = 2*Math.PI*hBarC/dm.getDiffractionCrystalEnvironment().getWavelength();
 
@@ -263,10 +263,10 @@ public class SurfaceQ {
 		surface.normalize();
 		
 		// Generate the arrays before the per-pixel iteration
-		Dataset perArrayMax = DatasetFactory.zeros(shape, Dataset.FLOAT64);
-		Dataset perArrayMin = DatasetFactory.zeros(shape, Dataset.FLOAT64);
-		Dataset parArrayMax = DatasetFactory.zeros(shape, Dataset.FLOAT64);
-		Dataset parArrayMin = DatasetFactory.zeros(shape, Dataset.FLOAT64);
+		Dataset perArrayMax = DatasetFactory.zeros(shape);
+		Dataset perArrayMin = DatasetFactory.zeros(shape);
+		Dataset parArrayMax = DatasetFactory.zeros(shape);
+		Dataset parArrayMin = DatasetFactory.zeros(shape);
 
 		// define iterators
 		PositionIterator iter = perArrayMax.getPositionIterator();

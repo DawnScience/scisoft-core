@@ -125,9 +125,10 @@ public class Interpolation2D {
 		BivariateFunction func = interpolator.interpolate(oldx_dd.getData(), oldy_dd.getData(), convertDoubleDataset2DtoPrimitive(oldxy_dd));
 		
 		Dataset rv = null;
-				
-		if (output_type == BicubicInterpolationOutput.ONED) {
-			rv = DatasetFactory.zeros(new int[]{newx.getSize()}, Dataset.FLOAT64);
+
+		switch (output_type) {
+		case ONED:
+			rv = DatasetFactory.zeros(newx.getSize());
 
 			for (int i = 0 ; i < newx.getSize() ; i++) {
 				double val = 0.0;
@@ -138,8 +139,10 @@ public class Interpolation2D {
 					rv.set(0.0, i);
 				}
 			}
-		} else if (output_type == BicubicInterpolationOutput.TWOD) {
-			rv = DatasetFactory.zeros(new int[]{newx.getSize(), newy.getSize()}, Dataset.FLOAT64);
+			break;
+		case TWOD:
+		default:
+			rv = DatasetFactory.zeros(newx.getSize(), newy.getSize());
 
 			for (int i = 0 ; i < newx.getSize() ; i++) {
 				for (int j = 0 ; j < newy.getSize() ; j++) {
@@ -152,9 +155,8 @@ public class Interpolation2D {
 					}
 				}
 			}
-			
+			break;
 		}
-		
 		rv.setName(oldxy.getName()+"_interpolated");
 		
 		return rv;

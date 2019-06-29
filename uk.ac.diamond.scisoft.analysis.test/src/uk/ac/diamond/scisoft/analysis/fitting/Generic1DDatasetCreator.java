@@ -10,7 +10,6 @@
 package uk.ac.diamond.scisoft.analysis.fitting;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 
@@ -39,7 +38,7 @@ public class Generic1DDatasetCreator {
 	
 	static final double accuracy = 0.0001;
 	
-	static final DoubleDataset xAxis = (DoubleDataset) DatasetFactory.createRange(0, dataRange, 1, Dataset.FLOAT64);
+	static final DoubleDataset xAxis = DatasetFactory.createRange(0, dataRange, 1.);
 
 	private static DoubleDataset createDataset(IFunction f) {
 		CompositeFunction comp = new CompositeFunction();

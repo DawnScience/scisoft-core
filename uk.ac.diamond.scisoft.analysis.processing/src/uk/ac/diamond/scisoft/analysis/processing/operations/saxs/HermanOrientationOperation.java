@@ -134,7 +134,7 @@ public class HermanOrientationOperation extends AbstractOperation<HermanOrientat
 		int dataSize = reducedData.getSize();
 
 		// For plotting later, we should prepare to have the x axis values to hand...
-		Dataset xAxisValues = DatasetFactory.createRange(dataSize, Dataset.FLOAT64);
+		Dataset xAxisValues = DatasetFactory.createRange(dataSize);
 		xAxisValues.setName("Angle (°)");
 
 		// Set up the data value array
@@ -165,7 +165,7 @@ public class HermanOrientationOperation extends AbstractOperation<HermanOrientat
 		// Must move the HoF into a dataset for DAWN
 		// First up, let's create a one element dataset of a zero
 		int[] datasetSize = {1};
-		Dataset hermanOrientationDataset = DatasetFactory.zeros(1, datasetSize, Dataset.FLOAT64);
+		Dataset hermanOrientationDataset = DatasetFactory.zeros(datasetSize);
 		
 		hermanOrientationDataset.setName("Herman Orientation Factor");
 		// Now we can stick in the calculated factor
@@ -181,12 +181,12 @@ public class HermanOrientationOperation extends AbstractOperation<HermanOrientat
 			} catch (MetadataException e) {
 				throw new OperationException(this, e);
 			}
-			metadata.setAxis(0, DatasetFactory.createRange(dataSize, Dataset.FLOAT64));
+			metadata.setAxis(0, DatasetFactory.createRange(dataSize));
 		}
 		
 		// If there's no data, or if it's of zero length, let's correct that
 		if (metadata.getAxis(0) == null || metadata.getAxis(0).length == 0) {
-			metadata.setAxis(0, DatasetFactory.createRange(dataSize, Dataset.FLOAT64));
+			metadata.setAxis(0, DatasetFactory.createRange(dataSize));
 		}
 		
 		// Now we can set the axis values to those calculated

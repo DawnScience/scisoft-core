@@ -376,8 +376,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			}
 		}
 		
-		Dataset rAxis = DatasetFactory.createLinearSpace(vmin, vmax, nr, Dataset.FLOAT32);
-		Dataset angAxis = DatasetFactory.createLinearSpace(sphi, ephi, np, Dataset.FLOAT32);
+		Dataset rAxis = DatasetFactory.createLinearSpace(FloatDataset.class, vmin, vmax, nr);
+		Dataset angAxis = DatasetFactory.createLinearSpace(FloatDataset.class, sphi, ephi, np);
 		return new Dataset[] {rAxis, angAxis};
 	}
 	
@@ -806,8 +806,8 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 				final int dtype = DTypeUtils.getBestFloatDType(ids.getDType());
 				Dataset sump = DatasetFactory.zeros(new int[] { nr }, dtype);
 				Dataset sumr = DatasetFactory.zeros(new int[] { np }, dtype);
-				Dataset errsump = DatasetFactory.zeros(new int[] { nr }, Dataset.FLOAT64);
-				Dataset errsumr = DatasetFactory.zeros(new int[] { np }, Dataset.FLOAT64);
+				Dataset errsump = DatasetFactory.zeros(nr);
+				Dataset errsumr = DatasetFactory.zeros(np);
 				
 				Map<Point2i, Map<Integer, Double>> pvarmap = new HashMap<Point2i, Map<Integer,Double>>();
 				

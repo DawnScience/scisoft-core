@@ -10,9 +10,9 @@
 package uk.ac.diamond.scisoft.analysis.rpc.sdaplotter;
 
 import org.eclipse.dawnsci.analysis.api.rpc.IAnalysisRpcHandler;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -66,7 +66,7 @@ public class ChangeSDAPlotterPort extends SDAPlotterTestsUsingLoopbackTestAbstra
 		
 		// make sure by default we arrive at the default port (the one provided in AnalysisRpcServerProvider)
 		receivedAtAlternatePortHandler[0] = receivedAtDefaultHandler[0] = false;
-		redirectPlotter.plot("Plot 1", null, null, new IDataset[] {DatasetFactory.createRange(100, Dataset.INT)},
+		redirectPlotter.plot("Plot 1", null, null, new IDataset[] {DatasetFactory.createRange(IntegerDataset.class, 100)},
 				null, null, null);
 		Assert.assertTrue(receivedAtDefaultHandler[0]);
 		Assert.assertFalse(receivedAtAlternatePortHandler[0]);
@@ -77,7 +77,7 @@ public class ChangeSDAPlotterPort extends SDAPlotterTestsUsingLoopbackTestAbstra
 		
 		// make sure we arrive at the alternate handler
 		receivedAtAlternatePortHandler[0] = receivedAtDefaultHandler[0] = false;
-		redirectPlotter.plot("Plot 1", null, null, new IDataset[] {DatasetFactory.createRange(100, Dataset.INT)},
+		redirectPlotter.plot("Plot 1", null, null, new IDataset[] {DatasetFactory.createRange(IntegerDataset.class, 100)},
 				null, null, null);
 		Assert.assertFalse(receivedAtDefaultHandler[0]);
 		Assert.assertTrue(receivedAtAlternatePortHandler[0]);
@@ -88,7 +88,7 @@ public class ChangeSDAPlotterPort extends SDAPlotterTestsUsingLoopbackTestAbstra
 		
 		// make sure by default we arrive at the default port (the one provided in AnalysisRpcServerProvider)
 		receivedAtAlternatePortHandler[0] = receivedAtDefaultHandler[0] = false;
-		redirectPlotter.plot("Plot 1", null, null, new IDataset[] {DatasetFactory.createRange(100, Dataset.INT)},
+		redirectPlotter.plot("Plot 1", null, null, new IDataset[] {DatasetFactory.createRange(IntegerDataset.class, 100)},
 				null, null, null);
 		Assert.assertTrue(receivedAtDefaultHandler[0]);
 		Assert.assertFalse(receivedAtAlternatePortHandler[0]);

@@ -218,9 +218,7 @@ class PalladateNexusWriter {
 	private static void addTheoreticalPDF(NXsample nxample) {
 		// TODO Add real data
 		NXdata pdfData = NexusNodeFactory.createNXdata();
-//		Dataset q = DoubleDataset.createRange(0, 25.0, 0.01);
-		Dataset q = DatasetFactory.createRange(0, 25.0, 0.01, Dataset.FLOAT64);
-//		Dataset trace = DoubleDataset.zeros(q);
+		Dataset q = DatasetFactory.createRange(0, 25.0, 0.01);
 		Dataset trace = DatasetFactory.zeros(q);
 		pdfData.setX(q);
 		pdfData.setAttribute("x", "long_name", "Q");

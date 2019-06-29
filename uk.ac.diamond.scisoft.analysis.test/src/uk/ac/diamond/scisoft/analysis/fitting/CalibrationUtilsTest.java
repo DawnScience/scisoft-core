@@ -48,7 +48,7 @@ public class CalibrationUtilsTest {
 	@Test
 	public void selectSpecifiedPeaks() {
 		
-		Dataset testpoints = DatasetFactory.createRange(0, 19, 2.2, Dataset.FLOAT64);
+		Dataset testpoints = DatasetFactory.createRange(0, 19, 2.2);
 		
 		Dataset calibPoints = CalibrationUtils.selectSpecifiedPeaks(testpoints, peaks);
 		

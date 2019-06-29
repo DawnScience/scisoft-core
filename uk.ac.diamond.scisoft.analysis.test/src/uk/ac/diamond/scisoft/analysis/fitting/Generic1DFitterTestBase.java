@@ -45,7 +45,7 @@ public abstract class Generic1DFitterTestBase {
 	static final double threshold = 0.10;
 	static final int numPeaks = -1;
 	static final int smoothing = 5;
-	static final DoubleDataset xAxis = (DoubleDataset) DatasetFactory.createRange(0, dataRange, 1, Dataset.FLOAT64);
+	static final DoubleDataset xAxis = DatasetFactory.createRange(0, dataRange, 1.);
 
 	static final long seed = 12357L;
 

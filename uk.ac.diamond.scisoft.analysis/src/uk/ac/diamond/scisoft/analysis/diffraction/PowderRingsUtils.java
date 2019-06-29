@@ -38,6 +38,7 @@ import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Stats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -469,7 +470,7 @@ public class PowderRingsUtils {
 		rroi.setClippingCompensation(true);
 		Dataset profile = ROIProfile.maxInBox(image, mask, rroi)[0];
 
-		List<IdentifiedPeak> peaks = Generic1DFitter.findPeaks(DatasetFactory.createRange(profile.getSize(), Dataset.INT), profile, PEAK_SMOOTHING);
+		List<IdentifiedPeak> peaks = Generic1DFitter.findPeaks(DatasetFactory.createRange(IntegerDataset.class, profile.getSize()), profile, PEAK_SMOOTHING);
 		if (mon != null)
 			mon.worked(profile.getSize());
 

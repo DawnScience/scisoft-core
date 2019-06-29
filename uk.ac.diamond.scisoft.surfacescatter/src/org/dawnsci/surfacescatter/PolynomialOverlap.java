@@ -2,7 +2,9 @@ package org.dawnsci.surfacescatter;
 
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.Maths;
+
 import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
 
@@ -28,9 +30,7 @@ public class PolynomialOverlap {
 		
 		return correction;
 	}
-	
-	
-	@SuppressWarnings("deprecation")
+
 	public static double[] extrapolatedLocation(double desiredl, 
 												Dataset lValues, 
 												Dataset xValues,
@@ -40,7 +40,7 @@ public class PolynomialOverlap {
 		
 		
 		Dataset[] lValuesHolder = new Dataset[1];
-		Dataset lValuesNullHolder = DatasetFactory.zeros(lValues, Dataset.ARRAYFLOAT64);
+		Dataset lValuesNullHolder = DatasetFactory.zeros(lValues, DoubleDataset.class);
 		Dataset[] lValuesHolder2 = new Dataset[1];		
 		
 		for(int t = 0; t<lValues.getSize(); t++){

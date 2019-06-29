@@ -112,7 +112,7 @@ public class NexusLoaderTest {
 		GroupNode g = file.getGroup("/dummy:dummy", true);
 		{
 			int totalLength = NexusExtractor.calcTotalLength(dims);
-			Dataset data = DatasetFactory.createRange(totalLength, Dataset.FLOAT64).reshape(dims);
+			Dataset data = DatasetFactory.createRange(totalLength).reshape(dims);
 			data.setName("heading1");
 			file.createData(g, data);
 		}
@@ -120,13 +120,13 @@ public class NexusLoaderTest {
 		g = file.getGroup("/ScanFileHolder:NXentry/datasets:NXdata", true);
 		{
 			int totalLength = NexusExtractor.calcTotalLength(dims);
-			Dataset data = DatasetFactory.createRange(totalLength, Dataset.FLOAT64).reshape(dims);
+			Dataset data = DatasetFactory.createRange(totalLength).reshape(dims);
 			data.setName("heading1");
 			file.createData(g, data);
 		}
 		{
 			int totalLength = NexusExtractor.calcTotalLength(dims);
-			Dataset data = DatasetFactory.createRange(totalLength, Dataset.FLOAT64).reshape(dims);
+			Dataset data = DatasetFactory.createRange(totalLength).reshape(dims);
 			data.imultiply(2);
 			data.setName("heading2");
 			file.createData(g, data);

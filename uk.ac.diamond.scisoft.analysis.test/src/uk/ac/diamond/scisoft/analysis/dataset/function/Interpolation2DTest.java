@@ -30,16 +30,16 @@ import uk.ac.diamond.scisoft.analysis.dataset.function.Interpolation2D.BicubicIn
 public class Interpolation2DTest {
 
 	private static Dataset x, y, xy;
-	private static Dataset testX = DatasetFactory.createFromObject(Dataset.FLOAT64, new double[]{1.33, 2.65, 55.05, 90.09});
-	private static Dataset testY = DatasetFactory.createFromObject(Dataset.FLOAT64, new double[]{-36.789, 43.0652, 0.00006, 18.34});
+	private static Dataset testX = DatasetFactory.createFromObject(new double[]{1.33, 2.65, 55.05, 90.09});
+	private static Dataset testY = DatasetFactory.createFromObject(new double[]{-36.789, 43.0652, 0.00006, 18.34});
 	private static Dataset testXY1D = testFunction1D(testX, testY);
 	private static Dataset testXY2D = testFunction2D(testX, testY);
 	
 	@BeforeClass
 	public static void initTest() {
-		x = DatasetFactory.createRange(0.0, 100.0, 2.0, Dataset.FLOAT64);
-		y = DatasetFactory.createRange(-50.0, 50.0, 1.0, Dataset.FLOAT64);
-		xy = DatasetFactory.zeros(new int[]{x.getSize(),  y.getSize()}, Dataset.FLOAT64);
+		x = DatasetFactory.createRange(0.0, 100.0, 2.0);
+		y = DatasetFactory.createRange(-50.0, 50.0, 1.0);
+		xy = DatasetFactory.zeros(x.getSize(),  y.getSize());
 		for (int i = 0 ; i < x.getSize() ; i++) {
 			for (int j = 0 ; j < y.getSize() ; j++) {
 				double value = testFunction(x.getDouble(i), y.getDouble(j));
@@ -90,7 +90,7 @@ public class Interpolation2DTest {
 	
 	public static Dataset testFunction2D(Dataset datax, Dataset datay) {
 		// x*x + 3*x*y - y*y;
-		Dataset rv = DatasetFactory.zeros(new int[]{datax.getSize(), datay.getSize()}, Dataset.FLOAT64);
+		Dataset rv = DatasetFactory.zeros(datax.getSize(), datay.getSize());
 	
 		for (int i = 0 ; i < datax.getSize() ; i++) {
 			for (int j = 0 ; j < datay.getSize() ; j++) {

@@ -21,7 +21,7 @@ import org.junit.Test;
  *
  */
 public class MapToRotatedCartesianAndIntegrateTest {
-	Dataset d = DatasetFactory.zeros(new int[] {500, 500}, Dataset.FLOAT64);
+	Dataset d = DatasetFactory.zeros(500, 500);
 
 	/**
 	 */

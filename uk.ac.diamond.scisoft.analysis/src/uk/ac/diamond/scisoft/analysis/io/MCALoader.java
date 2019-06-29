@@ -166,7 +166,7 @@ public class MCALoader extends AbstractFileLoader {
 			scanner.close();
 			
 			if (zero != Double.NaN) {
-				final Dataset energies = DatasetFactory.createRange(nchannels, Dataset.FLOAT64);
+				final Dataset energies = DatasetFactory.createRange(nchannels);
 				energies.imultiply(gain).iadd(zero);
 				energies.setName("Energy_" + scan_number);
 				result.addDataset("Energy_" + scan_number, energies);

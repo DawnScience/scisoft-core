@@ -10,9 +10,9 @@
 package uk.ac.diamond.scisoft.analysis.rpc.sdaplotter;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -65,12 +65,12 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		// create some data sets and other objects to use, this test does not use
 		// the contents of the data set, except they are flattened
 		// and unflattened. The type of the object is more important
-		xCoords = yCoords = zCoords = xAxis = yAxis = zAxis = DatasetFactory.createRange(10, Dataset.INT);
-		data = image = DatasetFactory.createRange(100, Dataset.INT).reshape(10, 10);
-		xAxes = yAxes = new IDataset[] { xAxis, DatasetFactory.createRange(10, Dataset.FLOAT) };
-		images = new IDataset[] { image, DatasetFactory.createRange(100, Dataset.FLOAT) };
+		xCoords = yCoords = zCoords = xAxis = yAxis = zAxis = DatasetFactory.createRange(IntegerDataset.class, 10);
+		data = image = DatasetFactory.createRange(IntegerDataset.class, 100).reshape(10, 10);
+		xAxes = yAxes = new IDataset[] { xAxis, DatasetFactory.createRange(10) };
+		images = new IDataset[] { image, DatasetFactory.createRange(100) };
+		sizes = DatasetFactory.createRange(IntegerDataset.class, 100);
 		plotName = "Plot 1";
-		sizes = DatasetFactory.createRange(100, Dataset.INT);
 		bean = new GuiBean();
 		dataBean = new DataBean();
 		guiNames = new String[] { "Plot 1", "Plot 2" };

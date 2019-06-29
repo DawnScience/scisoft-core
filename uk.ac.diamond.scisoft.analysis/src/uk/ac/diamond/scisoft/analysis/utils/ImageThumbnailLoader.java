@@ -16,6 +16,7 @@ import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.dataset.function.Downsample;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.BooleanDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
@@ -146,7 +147,7 @@ public class ImageThumbnailLoader {
 			IDataset ds = scan.getDataset(0);
 			return getSingleFromDataset(path, createThumbnail, ds);
 		}
-		Dataset ds_null = DatasetFactory.zeros(new int[] {DOWNSAMPLE_SIZE_IN_PIXELS, DOWNSAMPLE_SIZE_IN_PIXELS}, Dataset.BOOL);
+		Dataset ds_null = DatasetFactory.zeros(BooleanDataset.class, DOWNSAMPLE_SIZE_IN_PIXELS, DOWNSAMPLE_SIZE_IN_PIXELS);
 		ds_null.setName("Invalid Image");
 		return ds_null;
 	}
@@ -193,7 +194,7 @@ public class ImageThumbnailLoader {
 				return ds;
 			}
 		}
-		Dataset ds_null = DatasetFactory.zeros(new int[] {DOWNSAMPLE_SIZE_IN_PIXELS, DOWNSAMPLE_SIZE_IN_PIXELS}, Dataset.BOOL);
+		Dataset ds_null = DatasetFactory.zeros(BooleanDataset.class, DOWNSAMPLE_SIZE_IN_PIXELS, DOWNSAMPLE_SIZE_IN_PIXELS);
 		ds_null.setName("Invalid Image");
 		return ds_null;
 	}

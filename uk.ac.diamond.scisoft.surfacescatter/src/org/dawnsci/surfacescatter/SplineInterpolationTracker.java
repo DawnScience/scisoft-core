@@ -1,10 +1,12 @@
 package org.dawnsci.surfacescatter;
 
 import java.util.ArrayList;
+
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
+
 import uk.ac.diamond.scisoft.analysis.dataset.function.Interpolation1D;
 import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
@@ -16,12 +18,12 @@ public class SplineInterpolationTracker {
 										Dataset xValues
 										){
 		
-		Dataset xpts = DatasetFactory.zeros(new int[] {boxes.size()}, Dataset.ARRAYFLOAT64);
-		Dataset ypts = DatasetFactory.zeros(new int[] {boxes.size()}, Dataset.ARRAYFLOAT64);
-		Dataset xlens = DatasetFactory.zeros(new int[] {boxes.size()}, Dataset.ARRAYFLOAT64);
-		Dataset ylens = DatasetFactory.zeros(new int[] {boxes.size()}, Dataset.ARRAYFLOAT64);
-		Dataset xVals = DatasetFactory.zeros(new int[] {boxes.size()}, Dataset.ARRAYFLOAT64);
-		
+		Dataset xpts = DatasetFactory.zeros(boxes.size());
+		Dataset ypts = DatasetFactory.zeros(boxes.size());
+		Dataset xlens = DatasetFactory.zeros(boxes.size());
+		Dataset ylens = DatasetFactory.zeros(boxes.size());
+		Dataset xVals = DatasetFactory.zeros(boxes.size());
+
 		for(int ty = 0; ty<boxes.size(); ty++){
 
 			double[][] consideredBox = boxes.get(ty);
@@ -68,11 +70,11 @@ public class SplineInterpolationTracker {
 											Dataset xValues
 											){
 			
-			Dataset xpts = DatasetFactory.zeros(new int[] {boxes.size()}, Dataset.ARRAYFLOAT64);
-			Dataset ypts = DatasetFactory.zeros(new int[] {boxes.size()}, Dataset.ARRAYFLOAT64);
-			Dataset xlens = DatasetFactory.zeros(new int[] {boxes.size()}, Dataset.ARRAYFLOAT64);
-			Dataset ylens = DatasetFactory.zeros(new int[] {boxes.size()}, Dataset.ARRAYFLOAT64);
-			Dataset xVals = DatasetFactory.zeros(new int[] {boxes.size()}, Dataset.ARRAYFLOAT64);
+			Dataset xpts = DatasetFactory.zeros(boxes.size());
+			Dataset ypts = DatasetFactory.zeros(boxes.size());
+			Dataset xlens = DatasetFactory.zeros(boxes.size());
+			Dataset ylens = DatasetFactory.zeros(boxes.size());
+			Dataset xVals = DatasetFactory.zeros(boxes.size());
 			
 			for(int ty = 0; ty<boxes.size(); ty++){
 
@@ -170,7 +172,7 @@ public class SplineInterpolationTracker {
 			
 		}
 		
-		Dataset inRangeOutput = DatasetFactory.zeros(inRangeInput, Dataset.ARRAYFLOAT64);
+		Dataset inRangeOutput = DatasetFactory.zeros(inRangeInput, DoubleDataset.class);
 		
 		try{
 			inRangeOutput = Interpolation1D.splineInterpolation( xValues, yValues,  inRangeInput);

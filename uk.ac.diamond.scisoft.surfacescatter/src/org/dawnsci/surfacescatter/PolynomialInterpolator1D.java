@@ -61,7 +61,7 @@ public class PolynomialInterpolator1D {
 		SplineInterpolator si = new SplineInterpolator();
 		PolynomialSplineFunction poly = si.interpolate(sortedx,sortedy);
 		
-		Dataset newy = DatasetFactory.zeros(newx.getShape(), Dataset.FLOAT64);
+		Dataset newy = DatasetFactory.zeros(newx.getShape());
 		count = newy.getSize();
 		newy.setName(oldy.getName()+"_interpolated");
 		

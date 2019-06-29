@@ -19,7 +19,6 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.metadata.Metadata;
@@ -65,9 +64,7 @@ public class UViewDatLoader extends AbstractFileLoader {
 			int pos = readMetadata(in);
 			int width = (int) headers.get(BinaryKey.WIDTH.toString());
 			int height = (int) headers.get(BinaryKey.HEIGHT.toString());
-			IntegerDataset imagedata = (IntegerDataset) DatasetFactory.zeros(
-					new int[] { width, height },
-					Dataset.INT32);
+			IntegerDataset imagedata = DatasetFactory.zeros(IntegerDataset.class, width, height); // TODO check transposition
 
 			Utils.readLeShort(in, imagedata, pos, false);
 			result.addDataset(DEF_IMAGE_NAME, imagedata);

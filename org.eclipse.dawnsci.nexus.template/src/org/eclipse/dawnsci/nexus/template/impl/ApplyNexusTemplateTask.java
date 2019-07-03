@@ -1,12 +1,12 @@
 package org.eclipse.dawnsci.nexus.template.impl;
 
-import static java.util.Objects.requireNonNull;
+import static org.eclipse.dawnsci.nexus.template.NexusTemplateConstants.ATTRIBUTE_SUFFIX;
 import static org.eclipse.dawnsci.nexus.template.NexusTemplateConstants.MAPPING_NAME_VALUE;
 import static org.eclipse.dawnsci.nexus.template.NexusTemplateConstants.PATH_SEPARATOR;
 
 import java.text.MessageFormat;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
 
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
@@ -22,7 +22,7 @@ import org.eclipse.dawnsci.nexus.template.impl.tree.NexusContext;
 public class ApplyNexusTemplateTask  {
 	
 	private enum NexusNodeType {
-		GROUP, DATA, ATTRIBUTE, LINK
+		GROUP, DATA, ATTRIBUTE
 	}
 	
 	private static final String ERROR_MESSAGE_PATTERN_DATA_NODE_ILLEGAL_MAPPING_ENTRY_NAME =
@@ -52,9 +52,6 @@ public class ApplyNexusTemplateTask  {
 				case DATA:
 					addDataNode(parentGroup, nodeName, nodeValue);
 					break;
-				case LINK:
-					addLinkNode(parentGroup, nodeName, nodeValue);
-					break;
 				case ATTRIBUTE:
 					addAttribute(parentGroup, nodeName, nodeValue);
 					break;
@@ -63,32 +60,29 @@ public class ApplyNexusTemplateTask  {
 	}
 	
 	private void addGroupNode(GroupNode parentGroup, String nodeName, Object nodeValue) throws NexusException {
-		final GroupNode childGroup = nexusContext.addGroupNode(parentGroup, nodeName, getNexusClass(nodeName, nodeValue));
-		
-		if (nodeValue instanceof Map) {
+		final Optional<String> linkPath = getLinkPath(nodeValue);
+		if (linkPath.isPresent()) {
+			addLinkNode(parentGroup, nodeName, linkPath.get());
+		} else if (nodeValue instanceof Map) {
+			final GroupNode childGroup = nexusContext.createGroupNode(parentGroup, nodeName, getNexusClass(nodeName, nodeValue));
 			@SuppressWarnings("unchecked")
 			final Map<String, Object> mapping = (Map<String, Object>) nodeValue;
 			// recursively apply the mapping to the child group
 			applyMappingToGroupNode(childGroup, mapping);
 		} else {
-			throw new AssertionError("The value of a group node must be a mapping"); // Impossible due to the way yaml is parsed?
+			throw new NexusException("The value of a group node must be a mapping"); // Impossible due to the way yaml is parsed?
 		}
 	}
 	
-	private void addLinkNode(GroupNode parentGroup, String nodeName, Object nodeValue) throws NexusException {
-		if (!(nodeValue instanceof String)) throw new AssertionError("");
-			
-		final String linkPath = getLinkPath(nodeValue);
-		Objects.requireNonNull(linkPath, "linkPath not expected to be null"); // sanity check
-
-		nexusContext.addLink(parentGroup, nodeName, linkPath);
+	private void addLinkNode(GroupNode parentGroup, String nodeName, String linkPath) throws NexusException {
+		nexusContext.createNodeLink(parentGroup, nodeName, linkPath);
 	}
 	
-	private String getLinkPath(Object nodeValue) {
+	private Optional<String> getLinkPath(Object nodeValue) {
 		if (nodeValue instanceof String && ((String) nodeValue).charAt(0) == PATH_SEPARATOR) {
-			return (String) nodeValue;
+			return Optional.of((String) nodeValue);
 		}
-		return null;
+		return Optional.empty();
 	}
 	
 	private NexusBaseClass getNexusClass(String nodeName, Object nodeValue) throws NexusException {
@@ -114,18 +108,21 @@ public class ApplyNexusTemplateTask  {
 	}
 	
 	private void addDataNode(GroupNode parentGroup, String nodeName, Object nodeValue) throws NexusException {
-		if (nodeValue instanceof Map) {
+		final Optional<String> linkPath = getLinkPath(nodeValue);
+		if (linkPath.isPresent()) {
+			addLinkNode(parentGroup, nodeName, linkPath.get());
+		} else if (nodeValue instanceof Map) {
 			@SuppressWarnings("unchecked")
 			final Map<String, Object> mapping = (Map<String, Object>) nodeValue;
 			final Object value = mapping.get(MAPPING_NAME_VALUE);
 			if (value == null) {
-				throw new NexusException("");
+				throw new NexusException("The mapping for a data node must specify a value: " + nodeName);
 			}
 			
-			DataNode dataNode = nexusContext.addDataNode(parentGroup, nodeName, value);
+			DataNode dataNode = nexusContext.createDataNode(parentGroup, nodeName, value);
 			applyMappingToDataNode(dataNode, nodeName, mapping);
 		} else {
-			nexusContext.addDataNode(parentGroup, nodeName, nodeValue);
+			nexusContext.createDataNode(parentGroup, nodeName, nodeValue);
 		}
 	}
 	
@@ -152,12 +149,18 @@ public class ApplyNexusTemplateTask  {
 
 	
 	private void addAttribute(Node node, String attributeName, Object attributeValue) throws NexusException {
-		if (attributeValue instanceof Map) {
+		final Optional<String> linkPath = getLinkPath(attributeValue);
+		if (linkPath.isPresent()) {
+			if (!linkPath.get().endsWith(String.valueOf(ATTRIBUTE_SUFFIX))) {
+				throw new NexusException("Link path must be to attribute (i.e. it must end with '@'), for attribute with name " + attributeName + " and link path " + linkPath);
+			}
+			nexusContext.copyAttribute(node, attributeName, linkPath.get());
+		} else if (attributeValue instanceof Map) {
 			throw new NexusException("The value for an attribute node cannot be a mapping: " + attributeName);
-		}
-		
-		if (!attributeName.equals(NexusTemplateConstants.ATTRIBUTE_NAME_NX_CLASS)) { // ignore, this was already dealt with 
-			nexusContext.addAttribute(node, attributeName, attributeValue);
+		} else if (attributeName.equals(NexusTemplateConstants.ATTRIBUTE_NAME_NX_CLASS)) {
+			// ignore NX_class attribute, it has already been dealt with 
+		} else {
+			nexusContext.createAttribute(node, attributeName, attributeValue);
 		}
 	}
 	
@@ -170,10 +173,6 @@ public class ApplyNexusTemplateTask  {
 	}
 	
 	private NexusNodeType getNodeType(Map.Entry<String, Object> templateEntry) {
-		if (getLinkPath(templateEntry.getValue()) != null) {
-			return NexusNodeType.LINK;
-		}
-		
 		final String nodeName = templateEntry.getKey();
 		final char finalChar = nodeName.charAt(nodeName.length() - 1);
 		if (finalChar == '/') {

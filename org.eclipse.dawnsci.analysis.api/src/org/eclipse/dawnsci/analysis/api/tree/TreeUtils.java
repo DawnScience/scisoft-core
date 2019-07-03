@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 
@@ -48,7 +49,33 @@ public class TreeUtils {
 		}
 		return p;
 	}
-
+	
+	/**
+	 * Returns the node at the given path in the tree, or <code>null</code> if there is no such node.
+	 * The path given must be an absolute path, i.e. start with '/'.
+	 * @param tree tree
+	 * @param path path
+	 * @return node, or <code>null</code>
+	 */
+	public static Node getNode(Tree tree, String path) {
+		final String[] pathSegments = path.split(Node.SEPARATOR);
+		if (!"".equals(pathSegments[0])) {
+			// first character must be '/'
+			throw new IllegalArgumentException("Invalid path, must be absolute, was: " + path);
+		}
+		
+		Node node = tree.getGroupNode();
+		for (int i = 1; i < pathSegments.length; i++) {
+			if (!(node instanceof GroupNode)) {
+				return null;
+			}
+			
+			node = ((GroupNode) node).getNode(pathSegments[i]);
+		}
+		
+		return node;
+	}
+	
 	private static String getPathDepthFirst(final String parent, final GroupNode group, final Node node) {
 		for (NodeLink l : group) {
 			String current = parent + l.getName();

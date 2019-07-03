@@ -60,7 +60,6 @@ public class NexusTemplateTest {
 	private static final String NEXUS_TESTFILES_DIR = "testfiles/dawnsci/data/nexus/";
 	private static final String P45_EXAMPLE_NEXUS_FILE_PATH = NEXUS_TESTFILES_DIR + "p45-example.nxs";
 	private static final String TEMPLATE_FILE_PATH = NEXUS_TESTFILES_DIR + "test-template.yaml";
-	private static final String EXTERNAL_LINK_FILE_PATH = NEXUS_TESTFILES_DIR + "";
 	
 	private static final String BASIC_TEMPLATE = "scan/:\n  NX_class@: NXentry\n";
 	private NexusTemplateServiceImpl templateService;
@@ -128,7 +127,6 @@ public class NexusTemplateTest {
 		final NexusTemplate template = templateService.loadTemplateFromString(templateString);
 		if (applicationMode == ApplicationMode.IN_MEMORY) {
 			final Tree tree = loadNexusFile(nexusFilePath);
-			final NXroot root = (NXroot) tree.getGroupNode();
 			template.apply(tree);
 			return tree;
 		} else {
@@ -256,6 +254,19 @@ public class NexusTemplateTest {
 		assertThat(data, is(sameInstance(getNode(root, linkPath))));
 	}
 	
+	@Test
+	public void testAddLinkToGroupNodeWithTrailingSlash() throws Exception {
+		final String linkPath = "/entry/mandelbrot/"; // trailing slash
+		final NXroot root = applyTemplateStringToTestFile(BASIC_TEMPLATE
+				+ "  data/: " + linkPath);
+		NXentry entry = root.getEntry("scan");
+		assertThat(entry, is(notNullValue()));
+		
+		NXdata data = entry.getData("data");
+		assertThat(data, is(notNullValue()));
+		assertThat(data, is(sameInstance(getNode(root, linkPath))));
+	}
+	
 	@Test(expected = NexusException.class)
 	public void testAddLinkToGroupNodeWithAddedAttributes() throws Exception {
 		NXroot root = applyTemplateStringToTestFile(BASIC_TEMPLATE
@@ -281,7 +292,7 @@ public class NexusTemplateTest {
 	
 	@Test(expected = NexusException.class)
 	public void testAddGroupNodeLinkWithIllegalChildMapping() throws Exception {
-		final NXroot root = applyTemplateStringToTestFile(BASIC_TEMPLATE
+		applyTemplateStringToTestFile(BASIC_TEMPLATE
 				+ "  data:\n"
 				+ "    link: /entry/data\n"
 				+ "    foo: bar");
@@ -325,8 +336,8 @@ public class NexusTemplateTest {
 				+ "    NX_class@: NXdata\n"
 				+ "    signal@: data\n"
 				+ "    data: /entry/mandelbrot/data\n"
-				+ "    x_indices: " + linkRoot + "stagex_value_set_indices@\n"
-				+ "    y_indices: " + linkRoot + "stagey_value_set_indices@\n"
+				+ "    x_indices@: " + linkRoot + "stagex_value_set_indices@\n"
+				+ "    y_indices@: " + linkRoot + "stagey_value_set_indices@\n"
 				+ "    x: " + linkRoot + "stagex_value_set\n"
 				+ "    y: " + linkRoot + "stagey_value_set\n");
 		
@@ -343,6 +354,37 @@ public class NexusTemplateTest {
 		assertThat(data.getAttribute("y_indices").getValue(), is(equalTo(
 				getNode(root, linkRoot).getAttribute("stagey_value_set_indices").getValue())));
 		assertThat(data.getAttribute("y_indices").getValue(), is(equalTo(DatasetFactory.createFromObject(new int[] { 0 } ))));
+	}
+	
+	@Test(expected = NexusException.class)
+	public void testAddLinkFieldToAttribute() throws Exception {
+		// an field cannot be linked to an attribute,
+		// i.e. there must be an '@' at the end of both the new attribute name and attribute link path
+		final String linkRoot = "/entry/mandelbrot/";
+		applyTemplateStringToTestFile(BASIC_TEMPLATE +
+				"  data/:\n"
+				+ "    NX_class@: NXdata\n"
+				+ "    signal@: data\n"
+				+ "    data: /entry/mandelbrot/data\n"
+				+ "    x_indices: " + linkRoot + "stagex_value_set_indices@\n" // missing '@' at end of new attr names
+				+ "    y_indices: " + linkRoot + "stagey_value_set_indices@\n" // should be 'x_indices@'
+				+ "    x: " + linkRoot + "stagex_value_set\n"
+				+ "    y: " + linkRoot + "stagey_value_set\n");
+	}
+	
+	@Test(expected = NexusException.class)
+	public void testAddLinkAttributeToField() throws Exception {
+		// Cannot link an attribute to a field 
+		final String linkRoot = "/entry/mandelbrot/";
+		applyTemplateStringToTestFile(BASIC_TEMPLATE +
+				"  data/:\n"
+				+ "    NX_class@: NXdata\n"
+				+ "    signal@: data\n"
+				+ "    data: /entry/mandelbrot/data\n"
+				+ "    x_indices@: " + linkRoot + "stagex_value_set\n"
+				+ "    y_indices@: " + linkRoot + "stagey_value_set\n"
+				+ "    x: " + linkRoot + "stagex_value_set\n"
+				+ "    y: " + linkRoot + "stagey_value_set\n");
 	}
 	
 	@Test(expected = NexusException.class)

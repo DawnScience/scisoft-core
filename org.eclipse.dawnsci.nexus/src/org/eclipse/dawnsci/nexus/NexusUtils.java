@@ -372,7 +372,7 @@ public class NexusUtils {
 			}
 		}
 	}
-
+	
 	private static int[] estimateChunkingBalanced(int[] expectedMaxShape,
 			int dataByteSize,
 			int[] fixedChunkDimensions,

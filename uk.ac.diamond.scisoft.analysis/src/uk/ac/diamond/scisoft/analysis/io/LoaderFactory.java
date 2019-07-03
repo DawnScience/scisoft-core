@@ -114,76 +114,71 @@ public class LoaderFactory {
 		dataCache = new DataCache<IDataHolder>();
 		IGNORE_EXTS   = new HashSet<String>(3);
 		
-		try {
-		    registerLoader("npy",  NumPyFileLoader.class);
-		    registerLoader("img",  ADSCImageLoader.class);
-		    registerLoader("osc",  RAxisImageLoader.class);
-		    registerLoader("cbf",  CBFLoader.class);
-		    registerLoader("img",  CrysalisLoader.class);
-		    registerLoader("tif",  PixiumLoader.class);
-		    registerLoader("jpeg", JPEGLoader.class);
-		    registerLoader("jpg",  JPEGLoader.class);
-		    registerLoader("gif",  GIFLoader.class);
-		    registerLoader("mccd", MARLoader.class);
-		    registerLoader("mar3450", MAR345Loader.class);
-		    registerLoader("pck3450", MAR345Loader.class);
-		    registerLoader("mrc", MRCImageStackLoader.class);
+		registerLoaderWithException("npy", NumPyFileLoader.class);
+		registerLoaderWithException("img", ADSCImageLoader.class);
+		registerLoaderWithException("osc", RAxisImageLoader.class);
+		registerLoaderWithException("cbf", CBFLoader.class);
+		registerLoaderWithException("img", CrysalisLoader.class);
+		registerLoaderWithException("tif", PixiumLoader.class);
+		registerLoaderWithException("jpeg", JPEGLoader.class);
+		registerLoaderWithException("jpg", JPEGLoader.class);
+		registerLoaderWithException("gif", GIFLoader.class);
+		registerLoaderWithException("mccd", MARLoader.class);
+		registerLoaderWithException("mar3450", MAR345Loader.class);
+		registerLoaderWithException("pck3450", MAR345Loader.class);
+		registerLoaderWithException("mrc", MRCImageStackLoader.class);
 
-		    // There is some disagreement about the proper nexus/hdf5 
-		    // file extension at different facilities
-		    registerLoader("nxs",  NexusHDF5Loader.class);
-		    registerLoader("nexus",NexusHDF5Loader.class);
-		    registerLoader("h5",   HDF5Loader.class);
-		    registerLoader("hdf",  HDF5Loader.class);
-		    registerLoader("hdf5", HDF5Loader.class);
-		    registerLoader("hd5",  HDF5Loader.class);
-		    registerLoader("mat",  HDF5Loader.class);
-		    registerLoader("nc",   HDF5Loader.class);
+		// There is some disagreement about the proper nexus/hdf5
+		// file extension at different facilities
+		registerLoaderWithException("nxs", NexusHDF5Loader.class);
+		registerLoaderWithException("nexus", NexusHDF5Loader.class);
+		registerLoaderWithException("h5", HDF5Loader.class);
+		registerLoaderWithException("hdf", HDF5Loader.class);
+		registerLoaderWithException("hdf5", HDF5Loader.class);
+		registerLoaderWithException("hd5", HDF5Loader.class);
+		registerLoaderWithException("mat", HDF5Loader.class);
+		registerLoaderWithException("nc", HDF5Loader.class);
 
-		    registerLoader("tif",  PilatusTiffLoader.class);
-		    registerLoader("png",  PNGLoader.class);
-		    registerLoader("raw",  RawBinaryLoader.class);
-		    registerLoader("raw",  DatLoader.class);
-		    registerLoader("srs",  ExtendedSRSLoader.class);
-		    registerLoader("srs",  SRSLoader.class);
-		    registerLoader("dat",  DatLoader.class);
-		    registerLoader("xy",   DatLoader.class);
-		    registerLoader("xye",  DatLoader.class);
-		    registerLoader("dat",  ExtendedSRSLoader.class);
-		    registerLoader("dat",  ExtendedSRSLoader2.class);
-		    registerLoader("dat",  SRSLoader.class);
-		    registerLoader("dat",  UViewDatLoader.class);
-		    registerLoader("csv",  CSVLoader.class);
-		    registerLoader("rgb",  RGBTextLoader.class);
-		    registerLoader("txt",  DatLoader.class);
-		    registerLoader("txt",  SRSLoader.class);
-		    registerLoader("mca",  MCALoader.class);
-		    registerLoader("mca",  DatLoader.class);
-		    registerLoader("mca",  SRSLoader.class);
-		    registerLoader("tif",  TIFFImageLoader.class);
-		    registerLoader("tiff", TIFFImageLoader.class);
-		    registerLoader("zip",  XMapLoader.class);
-		    registerLoader("edf",  PilatusEdfLoader.class);
-		    registerLoader("pgm",  PgmLoader.class);
-		    registerLoader("f2d",  Fit2DLoader.class);
-		    registerLoader("msk",  Fit2DMaskLoader.class);
-		    registerLoader("mib",  MerlinLoader.class);
-		    registerLoader("bmp",  BitmapLoader.class);
-		    registerLoader("spe",  SpeLoader.class);
-		    registerLoader("xmso", XMSOLoader.class);
-		    registerLoader("alba", AlbaLinkFileLoader.class);
-		    registerLoader("dawn", DAWNLinkLoader.class);
-		    registerLoader("jcpds", JCPDSLoader.class);
-		    registerLoader("xrmc", XRMCLoader.class);
-		    registerLoader("xdi", XDILoader.class);
+		registerLoaderWithException("tif", PilatusTiffLoader.class);
+		registerLoaderWithException("png", PNGLoader.class);
+		registerLoaderWithException("raw", RawBinaryLoader.class);
+		registerLoaderWithException("raw", DatLoader.class);
+		registerLoaderWithException("srs", ExtendedSRSLoader.class);
+		registerLoaderWithException("srs", SRSLoader.class);
+		registerLoaderWithException("dat", DatLoader.class);
+		registerLoaderWithException("xy", DatLoader.class);
+		registerLoaderWithException("xye", DatLoader.class);
+		registerLoaderWithException("dat", ExtendedSRSLoader.class);
+		registerLoaderWithException("dat", ExtendedSRSLoader2.class);
+		registerLoaderWithException("dat", SRSLoader.class);
+		registerLoaderWithException("dat", UViewDatLoader.class);
+		registerLoaderWithException("csv", CSVLoader.class);
+		registerLoaderWithException("rgb", RGBTextLoader.class);
+		registerLoaderWithException("txt", DatLoader.class);
+		registerLoaderWithException("txt", SRSLoader.class);
+		registerLoaderWithException("mca", MCALoader.class);
+		registerLoaderWithException("mca", DatLoader.class);
+		registerLoaderWithException("mca", SRSLoader.class);
+		registerLoaderWithException("tif", TIFFImageLoader.class);
+		registerLoaderWithException("tiff", TIFFImageLoader.class);
+		registerLoaderWithException("zip", XMapLoader.class);
+		registerLoaderWithException("edf", PilatusEdfLoader.class);
+		registerLoaderWithException("pgm", PgmLoader.class);
+		registerLoaderWithException("f2d", Fit2DLoader.class);
+		registerLoaderWithException("msk", Fit2DMaskLoader.class);
+		registerLoaderWithException("mib", MerlinLoader.class);
+		registerLoaderWithException("bmp", BitmapLoader.class);
+		registerLoaderWithException("spe", SpeLoader.class);
+		registerLoaderWithException("xmso", XMSOLoader.class);
+		registerLoaderWithException("alba", AlbaLinkFileLoader.class);
+		registerLoaderWithException("dawn", DAWNLinkLoader.class);
+		registerLoaderWithException("jcpds", JCPDSLoader.class);
+		registerLoaderWithException("xrmc", XRMCLoader.class);
+		registerLoaderWithException("xdi", XDILoader.class);
 
-		    registerUnzip("gz",  GZIPInputStream.class);
-		    registerUnzip("zip", ZipInputStream.class);
-		    registerUnzip("bz2", CBZip2InputStream.class);
-
-		} catch (Exception ne) {
-			logger.error("Cannot register loader - ALL loader registration aborted!", ne);
-		}
+		registerUnzip("gz", GZIPInputStream.class);
+		registerUnzip("zip", ZipInputStream.class);
+		registerUnzip("bz2", CBZip2InputStream.class);
 
 		// Ignore these extensions for loading dataset or metadata
 		// but can be overridden by the registered loaders
@@ -464,8 +459,8 @@ public class LoaderFactory {
 		final Object cachedObject = dataCache.getSoftReference(key);
 		IDataHolder holder = null;
 		if (cachedObject!=null && cachedObject instanceof IDataHolder) holder = (IDataHolder)cachedObject;
-        if (holder!=null) return holder;
-		
+		if (holder!=null) return holder;
+
 		IFileLoader loader;
 		try {
 			loader = getLoader(clazz, path);
@@ -914,6 +909,14 @@ public class LoaderFactory {
 		// Since not using set of loaders anymore must use contains to ensure
 		// that a memory leak does not occur.
 		if (!list.contains(loader)) list.add(position, loader);
+	}
+
+	private static void registerLoaderWithException(String extension, Class<? extends IFileLoader> clazz) {
+		try {
+			registerLoader(extension, clazz);
+		} catch (Throwable t) {
+			logger.error("Could not register loader {}", clazz, t);
+		}
 	}
 
 	private static List<Class<? extends IFileLoader>> prepareRegistration(String extension, Class<? extends IFileLoader> loader) throws Exception {

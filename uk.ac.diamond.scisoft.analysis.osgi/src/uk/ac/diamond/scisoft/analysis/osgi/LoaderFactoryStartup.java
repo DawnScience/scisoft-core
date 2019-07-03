@@ -44,18 +44,18 @@ public class LoaderFactoryStartup implements IStartup {
 	public static boolean isStarted() {
 		return started;
 	}
-	
+
 	private void registerExtensionPoints() {
 		try {
-		    final IConfigurationElement[] ele = Platform.getExtensionRegistry().getConfigurationElementsFor("uk.ac.diamond.scisoft.analysis.io.loader");
-	        for (IConfigurationElement i : ele) {
-	        	registerLoader(i);
-	        }
-		     
-		} catch (Exception ne) {
-			logger.error("Cannot notify model listeners");
-		}
+			final IConfigurationElement[] ele = Platform.getExtensionRegistry()
+					.getConfigurationElementsFor("uk.ac.diamond.scisoft.analysis.io.loader");
+			for (IConfigurationElement i : ele) {
+				registerLoader(i);
+			}
 
+		} catch (Exception ne) {
+			logger.error("Cannot register all loaders");
+		}
 	}
 
 	/**

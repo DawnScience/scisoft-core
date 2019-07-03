@@ -54,40 +54,33 @@ public class OnDiskNexusContext implements NexusContext {
 	
 
 	@Override
-	public GroupNode addGroupNode(GroupNode parent, String name, NexusBaseClass nexusBaseClass) throws NexusException {
+	public GroupNode createGroupNode(GroupNode parent, String name, NexusBaseClass nexusBaseClass) throws NexusException {
 		logDebug("Creating new group node with name '{}' and nexus class '{}' to parent group '{}'", name, nexusBaseClass, parent);
 		return nexusFile.getGroup(parent, name, nexusBaseClass.toString(), true);
 	}
 
 	@Override
-	public DataNode addDataNode(GroupNode parent, String name, Object value) throws NexusException {
+	public DataNode createDataNode(GroupNode parent, String name, Object value) throws NexusException {
 		logDebug("Creating new data node with name '{}' and value '{}' to parent group '{}'", name, value, parent);
 		final IDataset dataset = DatasetFactory.createFromObject(value);
 		return nexusFile.createData(parent, name, dataset);
 	}
 
 	@Override
-	public void addLink(GroupNode parent, String name, String linkPath) throws NexusException {
-		if (linkPath.endsWith(String.valueOf(ATTRIBUTE_SUFFIX))) {
-			linkAttribute(parent, name, linkPath);
-		} else {
-			linkNode(parent, name, linkPath);
-		}
-	}
-
-	private void linkNode(GroupNode parent, String name, String linkPath) throws NexusException {
+	public void createNodeLink(GroupNode parent, String name, String linkPath) throws NexusException {
 		logDebug("Linking node at path '{}' to parent '{}' with name '{}'", linkPath, parent, name); 
 		final String parentPath = nexusFile.getPath(parent); // parent path already ends with path separator '/'
 		final String destinationPath = parentPath + name;
 		nexusFile.link(linkPath, destinationPath);
 	}
 	
-	private void linkAttribute(GroupNode parent, String name, String linkPath) throws NexusException {
-		logDebug("Copying attribute at path '{}' to parent '{}' with name '{}'", linkPath, parent, name);
+	@Override
+	public void copyAttribute(Node node, String name, String linkPath) throws NexusException {
+		logDebug("Copying attribute at path '{}' to node '{}' with name '{}'", linkPath, node, name);
 		final Attribute currentAttr = findAttribute(linkPath);
 		final IDataset data = currentAttr.getValue().clone();
 		final Attribute newAttr = TreeFactory.createAttribute(name, data);
-		nexusFile.addAttribute(parent, newAttr);
+		nexusFile.addAttribute(node, newAttr);
 	}
 	
 	private Attribute findAttribute(String path) throws NexusException {
@@ -110,7 +103,7 @@ public class OnDiskNexusContext implements NexusContext {
 	}
 
 	@Override
-	public void addAttribute(Node parent, String name, Object value) throws NexusException {
+	public void createAttribute(Node parent, String name, Object value) throws NexusException {
 		nexusFile.addAttribute(parent, TreeFactory.createAttribute(name, value));
 	}
 

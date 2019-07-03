@@ -1,7 +1,5 @@
 package org.eclipse.dawnsci.nexus.template.impl.tree;
 
-import static org.eclipse.dawnsci.nexus.template.NexusTemplateConstants.ATTRIBUTE_SUFFIX;
-
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
@@ -11,11 +9,10 @@ import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.nexus.NXobject;
-import org.eclipse.dawnsci.nexus.NXroot;
 import org.eclipse.dawnsci.nexus.NexusBaseClass;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
-import org.eclipse.dawnsci.nexus.NexusUtils;
+import org.eclipse.dawnsci.nexus.template.NexusTemplateConstants;
 import org.eclipse.dawnsci.nexus.template.NexusTemplateConstants.ApplicationMode;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
@@ -65,7 +62,7 @@ public class InMemoryNexusContext implements NexusContext {
 	 * @see org.eclipse.dawnsci.nexus.template.impl.tree.NexusContext#addGroupNode(org.eclipse.dawnsci.analysis.api.tree.GroupNode, java.lang.String, org.eclipse.dawnsci.nexus.NexusBaseClass)
 	 */
 	@Override
-	public GroupNode addGroupNode(GroupNode parent, String name, NexusBaseClass nexusBaseClass) {
+	public GroupNode createGroupNode(GroupNode parent, String name, NexusBaseClass nexusBaseClass) {
 		logDebug("Creating new group node with name '{}' and nexus class '{}' to parent group '{}'", name, nexusBaseClass, parent);
 		NXobject group = NexusNodeFactory.createNXobjectForClass(nexusBaseClass);
 		parent.addGroupNode(name, group);
@@ -76,7 +73,7 @@ public class InMemoryNexusContext implements NexusContext {
 	 * @see org.eclipse.dawnsci.nexus.template.impl.tree.NexusContext#addDataNode(org.eclipse.dawnsci.analysis.api.tree.GroupNode, java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public DataNode addDataNode(GroupNode parent, String name, Object value) {
+	public DataNode createDataNode(GroupNode parent, String name, Object value) {
 		logDebug("Creating new data node with name '{}' and value '{}' to parent group '{}'", name, value, parent);
 		final DataNode dataNode = NexusNodeFactory.createDataNode();
 		parent.addDataNode(name, dataNode);
@@ -88,60 +85,66 @@ public class InMemoryNexusContext implements NexusContext {
 	 * @see org.eclipse.dawnsci.nexus.template.impl.tree.NexusContext#addLink(org.eclipse.dawnsci.analysis.api.tree.GroupNode, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void addLink(GroupNode parent, String name, String linkPath) throws NexusException {
-		logDebug("Linking node or attribute at path '{}' to parent '{}' with name '{}'", linkPath, parent, name); 
-		final Object nodeOrAttr = getNodeOrAttribute(linkPath);
-		if (nodeOrAttr == null) {
+	public void createNodeLink(GroupNode parent, String name, String linkPath) throws NexusException {
+		logDebug("Linking node '{}' with name '{}' to parent '{}'", linkPath, name, parent);
+		final Node node = TreeUtils.getNode(tree, linkPath);
+		if (node == null) {
 			throw new NexusException("Invalid link path, no such node: " + linkPath);
-		} else if (nodeOrAttr instanceof Attribute) {
-			logDebug("Copying attribute '{}' with name '{}' to parent '{}'", linkPath, name, parent); 
-			final IDataset data = ((Attribute) nodeOrAttr).getValue();
-			final Attribute newAttr = TreeFactory.createAttribute(name, data.clone());
-			parent.addAttribute(newAttr);
-		} else if (((Node) nodeOrAttr).isSymbolicNode()) { // must a Node if not an Attribute
-			logDebug("Linking node '{}' with name '{}' to parent '{}'", linkPath, name, parent); 
-			final SymbolicNode existingLinkNode = (SymbolicNode) nodeOrAttr;
+		} else if (node.isSymbolicNode()) {
+			final SymbolicNode existingLinkNode = (SymbolicNode) node;
 			final SymbolicNode newLinkNode = NexusNodeFactory.createSymbolicNode(
 					existingLinkNode.getSourceURI(), existingLinkNode.getPath());
 			parent.addSymbolicNode(name, newLinkNode);
 		} else {
-			logDebug("Linking node at path '{}' to parent '{}' with name '{}'", linkPath, parent, name); 
-			parent.addNode(name, (Node) nodeOrAttr);
+			parent.addNode(name, (Node) node);
 		}
-	}
-	
-	private Object getNodeOrAttribute(String linkPath) throws NexusException {
-		final String[] pathSegments = linkPath.split(Node.SEPARATOR);
-		if (pathSegments.length < 2 || !pathSegments[0].equals("")) {
-			// since the link path starts with '/' the first segment will be the empty string
-			// there must be at least one other segment
-			throw new NexusException("Invalid link path: " + linkPath);
-		}
-		
-		Node node = tree.getGroupNode();
-		for (int i = 1; i < pathSegments.length; i++) {
-			final String pathSegment = pathSegments[i];
-			if (i == pathSegments.length - 1 && pathSegment.endsWith(String.valueOf(ATTRIBUTE_SUFFIX))) {
-				// if we're looking for an attribute and this is the last segment use getAttribute instead of getNode
-				final String attrName = pathSegment.substring(0, pathSegment.length() - 1);
-				return node.getAttribute(attrName);
-			} else if (!(node instanceof GroupNode)) {
-				throw new NexusException("Invalid link path, no such node: " + linkPath);
-			}
-			
-			// get the next node
-			node = ((GroupNode) node).getNode(pathSegments[i]);
-		}
-		return node;
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.dawnsci.nexus.template.impl.tree.NexusContext#addAttribute(org.eclipse.dawnsci.analysis.api.tree.Node, java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public void addAttribute(Node parent, String name, Object value) throws NexusException {
+	public void createAttribute(Node parent, String name, Object value) throws NexusException {
 		final Attribute attribute = TreeFactory.createAttribute(name, value);
 		parent.addAttribute(attribute);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.dawnsci.nexus.template.impl.tree.NexusContext#copyAttribute(org.eclipse.dawnsci.analysis.api.tree.Node, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void copyAttribute(Node node, String name, String linkPath) throws NexusException {
+		logDebug("Copying attribute '{}' with name '{}' to node '{}'", linkPath, name, node); 
+		final int index = linkPath.lastIndexOf(Node.SEPARATOR);
+		if (index < 3 || index > linkPath.length() - 2) { // shorted path is "/g/@a"
+			throw new NexusException("Not a valid attribute path: " + linkPath);
+		}
+		
+		final String nodePath = linkPath.substring(0, index);
+		
+		// extract the attribute name
+		final String attrSegment = linkPath.substring(index + 1);
+		if (!attrSegment.endsWith(String.valueOf(NexusTemplateConstants.ATTRIBUTE_SUFFIX))) {
+			throw new NexusException("Not a valid attribute path: " + linkPath);
+		}
+		final String attrName = attrSegment.substring(0, attrSegment.length() - 1);
+		
+		// get the node that the existing attribute is on
+		final Node currentNode = TreeUtils.getNode(tree, nodePath);
+		if (currentNode == null) {
+			throw new NexusException("No such attribute: " + nodePath);
+		}
+		
+		// get the existing attribute
+		final Attribute attribute = currentNode.getAttribute(attrName);
+		if (attribute == null) {
+			throw new NexusException("No such attribute: " + nodePath);
+		}
+		
+		// create a new attribute with a clone of the existing dataset
+		final IDataset data = attribute.getValue();
+		final Attribute newAttr = TreeFactory.createAttribute(name, data.clone());
+		node.addAttribute(newAttr);
 	}
 	
 }

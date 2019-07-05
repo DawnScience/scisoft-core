@@ -41,6 +41,7 @@ public class FioLoaderTest {
 	public void testCachedLazyLoader() throws Exception {
 		String file = "resources/some.fio";
 		LoaderFactory.clear(file);
+		LoaderFactory.registerLoader("fio", FioLoader.class);
 		LoaderFactory.cacheData(LoaderFactory.getData(file, false, true, true, null));
 		FioLoader loader = new FioLoader(file);
 		loader.setLoadAllLazily(true);

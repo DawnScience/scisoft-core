@@ -348,8 +348,7 @@ public class LoaderFactory {
 			if (!file.exists()) throw new FileNotFoundException(path);	
 		}
 		if (file.isFile()) {
-		    return getFileData(path, willLoadMetadata, loadImageStacks, lazily, mon);
-		    
+			return getFileData(path, willLoadMetadata, loadImageStacks, lazily, mon);
 		} else if (file.isDirectory()) {
 			final IDataHolder holder = new DataHolder();
 			final Map<String, ILazyDataset> stack = getImageStack(file, holder, mon, LOADERS.keySet());
@@ -384,7 +383,15 @@ public class LoaderFactory {
 			// returns the data from this loader.
 			while (it.hasNext()) {
 				final Class<? extends IFileLoader> clazz = it.next();
-				final IFileLoader loader = getLoader(clazz, path);
+				IFileLoader loader = null;
+				try {
+					loader = getLoader(clazz, path);
+				} catch (Throwable t) {
+					// do nothing
+				}
+				if (loader == null) {
+					continue;
+				}
 				loader.setLoadMetadata(willLoadMetadata);
 				loader.setLoadAllLazily(lazily);
 				try {

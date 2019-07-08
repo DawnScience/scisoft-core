@@ -131,6 +131,14 @@ public class Utils {
 		return ((b1 & 0xff) << 24)| ((b2 & 0xff) << 16) | ((b3 & 0xff) << 8) | (b4 & 0xff);
 	}
 
+	private static int getByte(InputStream is) throws IOException {
+		int b = is.read();
+		if (b == -1) {
+			throw new IOException("Unexpected EOF when reading byte in stream");
+		}
+		return b;
+	}
+
 	/**
 	 * @param is
 	 *            input stream
@@ -138,10 +146,10 @@ public class Utils {
 	 * @throws IOException
 	 */
 	public static int readLeInt(InputStream is) throws IOException {
-		int a = is.read();
-		int b = is.read();
-		int c = is.read();
-		int d = is.read();
+		int a = getByte(is);
+		int b = getByte(is);
+		int c = getByte(is);
+		int d = getByte(is);
 		return leInt(a, b, c, d);
 	}
 
@@ -152,10 +160,10 @@ public class Utils {
 	 * @throws IOException
 	 */
 	public static int readBeInt(InputStream is) throws IOException {
-		int a = is.read();
-		int b = is.read();
-		int c = is.read();
-		int d = is.read();
+		int a = getByte(is);
+		int b = getByte(is);
+		int c = getByte(is);
+		int d = getByte(is);
 		return beInt(a, b, c, d);
 	}
 
@@ -166,8 +174,8 @@ public class Utils {
 	 * @throws IOException
 	 */
 	public static int readLeShort(InputStream is) throws IOException {
-		int a = is.read();
-		int b = is.read();
+		int a = getByte(is);
+		int b = getByte(is);
 		return leInt(a, b);
 	}
 
@@ -178,8 +186,8 @@ public class Utils {
 	 * @throws IOException
 	 */
 	public static int readBeShort(InputStream is) throws IOException {
-		int a = is.read();
-		int b = is.read();
+		int a = getByte(is);
+		int b = getByte(is);
 		return beInt(a, b);
 	}
 

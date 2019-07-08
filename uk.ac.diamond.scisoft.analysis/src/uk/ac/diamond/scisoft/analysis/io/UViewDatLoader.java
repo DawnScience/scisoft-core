@@ -13,6 +13,9 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,6 +55,8 @@ public class UViewDatLoader extends AbstractFileLoader {
 		return loadFile((IMonitor) null);
 	}
 
+	private static final int IMAGE_LIMIT = 16*1024*1024; // 4k*4k pixels at most
+
 	@Override
 	public IDataHolder loadFile(final IMonitor mon) throws ScanFileHolderException {
 		// first instantiate the return object.
@@ -64,7 +69,12 @@ public class UViewDatLoader extends AbstractFileLoader {
 			int pos = readMetadata(in);
 			int width = (int) headers.get(BinaryKey.WIDTH.toString());
 			int height = (int) headers.get(BinaryKey.HEIGHT.toString());
-			IntegerDataset imagedata = DatasetFactory.zeros(IntegerDataset.class, width, height); // TODO check transposition
+			int size = width * height;
+			if (size > IMAGE_LIMIT) {
+				logger.error("UViewDatLoader: {} has too many pixels {}x{} = {} > {}", fileName, width, height, size, IMAGE_LIMIT);
+				throw new ScanFileHolderException("UViewDatLoader: " + fileName + " has too many pixels " + width + "x" + height + " > " + IMAGE_LIMIT);
+			}
+			IntegerDataset imagedata = DatasetFactory.zeros(IntegerDataset.class, height, width);
 
 			Utils.readLeShort(in, imagedata, pos, false);
 			result.addDataset(DEF_IMAGE_NAME, imagedata);
@@ -87,34 +97,6 @@ public class UViewDatLoader extends AbstractFileLoader {
 		}
 	}
 
-	private int getShort(BufferedInputStream f) throws IOException {
-		int b0 = getByte(f);
-		int b1 = getByte(f);
-		return ((b1 << 8) + b0);
-	}
-
-	private int getByte(BufferedInputStream f) throws IOException {
-		int b = f.read();
-		if (b == -1)
-			throw new IOException("unexpected EOF");
-		return b;
-	}
-
-	@SuppressWarnings("unused")
-	private int getUnsignedShort(BufferedInputStream f) throws IOException {
-		int high = f.read();
-		int low = f.read();
-
-		return (((high & 0xFF) << 8) | (low & 0xFF));
-	}
-
-	@SuppressWarnings("unused")
-	private int getInt(BufferedInputStream f) throws IOException {
-		int b0 = getShort(f);
-		int b1 = getShort(f);
-		return ((b1 << 16) + b0);
-	}
-
 	private int readMetadata(BufferedInputStream bi) throws IOException {
 		int pos = readHeader(bi);
 		metadata = new Metadata();
@@ -126,11 +108,13 @@ public class UViewDatLoader extends AbstractFileLoader {
 		headers.clear();
 		int[] sizeAndStart = new int[3];
 		boolean hasRecipe = false, hasAttachedMarkup = false;
-		int line = 0, idx = 0, ukVersion = 0, attachedRecipeSize = 0, filePointer = 0, attachedMarkupSize = 0,
+		int line = 0, ukVersion = 0, attachedRecipeSize = 0, filePointer = 0, attachedMarkupSize = 0,
 				imageWidth = 0, imageHeight = 0, leemDataVersion = 0;
 		int totalHeaderSize = 0;
-		
-		while ((line = getShort(bis)) != -1) {
+
+		int idx = checkHeaderForMagicString(bis);
+		while ((line = Utils.readLeShort(bis)) != -1) {
+			System.err.println(line);
 			if (idx == 11) { // UK version
 				ukVersion = line;
 			}
@@ -210,6 +194,22 @@ public class UViewDatLoader extends AbstractFileLoader {
 				headers.put(k.toString(), s);
 		}
 		return totalHeaderSize - (idx * 2);
+	}
+
+	private static final String MAGIC_STRING = "UKSOFT";
+	private static final byte[] MAGIC_VALUES = MAGIC_STRING.getBytes(StandardCharsets.US_ASCII);
+
+	private int checkHeaderForMagicString(BufferedInputStream is) throws IOException {
+		assert MAGIC_VALUES.length % 2 == 0; // length must be even as shorts are read after
+		byte[] magic = new byte[MAGIC_VALUES.length];
+		if (is.read(magic) != magic.length) {
+			throw new IOException("Could not read magic string at start of file");
+		}
+
+		if (!Arrays.equals(MAGIC_VALUES, magic)) {
+			throw new IOException("Magic string at start of file |" + StandardCharsets.US_ASCII.decode(ByteBuffer.wrap(magic)) + "| does not match " + MAGIC_STRING);
+		}
+		return magic.length / 2; // number of shorts read
 	}
 
 	@Override

@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -88,7 +89,7 @@ public class LoaderFactory {
 		
 	}
 
-	private static final Map<String, List<Class<? extends IFileLoader>>> LOADERS;
+	private static final Map<String, CachedListIterator<Class<? extends IFileLoader>>> LOADERS;
 	private static final Map<String, Class<? extends InputStream>>     UNZIPPERS;
 	private static final DataCache<IDataHolder> dataCache;
 	private static final Set<String> IGNORE_EXTS;
@@ -109,7 +110,7 @@ public class LoaderFactory {
 	 */
 	static {
 		
-		LOADERS   = new HashMap<String, List<Class<? extends IFileLoader>>>(19);
+		LOADERS   = new HashMap<String, CachedListIterator<Class<? extends IFileLoader>>>(19);
 		UNZIPPERS = new HashMap<String, Class<? extends InputStream>>(3);
 		dataCache = new DataCache<IDataHolder>();
 		IGNORE_EXTS   = new HashSet<String>(3);
@@ -357,12 +358,9 @@ public class LoaderFactory {
 		}
 		throw new Exception(path+" is not valid!");
 	}
-	
-	private static /*THIS IS REQUIRED:*/ synchronized  IDataHolder getFileData(final String   path,
-																				final boolean willLoadMetadata, 
-																				final boolean loadImageStacks, 
-																				final boolean lazily, 
-																				final IMonitor mon) throws Exception {
+
+	private static IDataHolder getFileData(final String path, final boolean willLoadMetadata,
+			final boolean loadImageStacks, final boolean lazily, final IMonitor mon) throws Exception {
 
 		// IMPORTANT: DO NOT USE loadImageStacks in Key. 
 		// Instead when loadImageStacks=true, we add the stack to the already
@@ -740,22 +738,25 @@ public class LoaderFactory {
 	 * @param path
 	 * @return true if can load metadata without all data being loaded.
 	 */
-	public boolean isMetaLoader(final String path) throws Exception {
+	public static synchronized boolean isMetaLoader(final String path) throws Exception {
 
 		return isInstanceSupported(path, IMetaLoader.class);
 	}
 
-	private boolean isInstanceSupported(String path, Class<?> interfaceClass) throws Exception {
+	private static boolean isInstanceSupported(String path, Class<?> interfaceClass) throws Exception {
 
 		final String extension = FileUtils.getFileExtension(path).toLowerCase();
 
 		if (LOADERS.containsKey(extension)) {
-			final Collection<Class<? extends IFileLoader>> loaders = LOADERS.get(extension);
+			final CachedListIterator<Class<? extends IFileLoader>> loaders = LOADERS.get(extension);
+			loaders.reset();
 
-			for (Class<? extends IFileLoader> clazz : loaders) {
+			while (loaders.hasNext()) {
+				Class<? extends IFileLoader> clazz = loaders.next();
 				final IFileLoader loader = getLoader(clazz, path);
-				if (interfaceClass.isInstance(loader))
+				if (interfaceClass.isInstance(loader)) {
 					return true;
+				}
 			}
 		}
 		return false;
@@ -795,9 +796,13 @@ public class LoaderFactory {
 	 * @param extension
 	 * @return loader class
 	 */
-	public static Class<? extends IFileLoader> getLoaderClass(String extension) {
-		List<Class<? extends IFileLoader>> loader = LOADERS.get(extension); 
-		return (loader!=null) ? loader.get(0) : null;
+	public static synchronized Class<? extends IFileLoader> getLoaderClass(String extension) {
+		CachedListIterator<Class<? extends IFileLoader>> list = LOADERS.get(extension);
+		if (list == null) {
+			return null;
+		}
+		list.reset();
+		return list.next();
 	}
 
 	private static Iterator<Class<? extends IFileLoader>> getIterator(String path) throws IllegalAccessException {
@@ -807,9 +812,11 @@ public class LoaderFactory {
 
 		final String extension = FileUtils.getFileExtension(path).toLowerCase();
 		Iterator<Class<? extends IFileLoader>> it = null;
+		CachedListIterator<Class<? extends IFileLoader>> list = null;
 
 		if (LOADERS.containsKey(extension)) {
-			it = LOADERS.get(extension).iterator();
+			it = list = LOADERS.get(extension);
+			list.reset();
 		} else if (!IGNORE_EXTS.contains(extension)) {
 			// We may have a zipped file type that we support
 			final File file = new File(path);
@@ -819,15 +826,20 @@ public class LoaderFactory {
 			if (m.matches()) {
 				final String realExt = m.group(1);
 				if (LOADERS.keySet().contains(realExt)) {
-					final Collection<Class<? extends IFileLoader>> ret = new ArrayList<Class<? extends IFileLoader>>(1);
-					ret.add(CompressedLoader.class);
-					return ret.iterator();
+					list = new CachedListIterator<Class<? extends IFileLoader>>();
+					list.add(CompressedLoader.class);
+					return list;
 				}
 			}
 
 			final Set<Class<? extends IFileLoader>> all = new HashSet<Class<? extends IFileLoader>>();
-			for (String ext : LOADERS.keySet())
-				all.addAll(LOADERS.get(ext));
+			for (String ext : LOADERS.keySet()) {
+				list = LOADERS.get(ext);
+				list.reset();
+				while (list.hasNext()) {
+					all.add(list.next());
+				}
+			}
 			it = all.iterator();
 		}
 		return it;
@@ -886,7 +898,7 @@ public class LoaderFactory {
 	 */
 	public static void registerLoader(final String extension, final Class<? extends IFileLoader> loader) throws Exception {
 
-		List<Class<? extends IFileLoader>> list = prepareRegistration(extension, loader);
+		CachedListIterator<Class<? extends IFileLoader>> list = prepareRegistration(extension, loader);
 
 		// Since not using set of loaders anymore must use contains to ensure
 		// that a memory leak does not occur.
@@ -912,7 +924,7 @@ public class LoaderFactory {
 	 */
 	public static void registerLoader(final String extension, final Class<? extends IFileLoader> loader, final int position) throws Exception {
 
-		List<Class<? extends IFileLoader>> list = prepareRegistration(extension, loader);
+		CachedListIterator<Class<? extends IFileLoader>> list = prepareRegistration(extension, loader);
 		// Since not using set of loaders anymore must use contains to ensure
 		// that a memory leak does not occur.
 		if (!list.contains(loader)) list.add(position, loader);
@@ -926,7 +938,7 @@ public class LoaderFactory {
 		}
 	}
 
-	private static List<Class<? extends IFileLoader>> prepareRegistration(String extension, Class<? extends IFileLoader> loader) throws Exception {
+	private static CachedListIterator<Class<? extends IFileLoader>> prepareRegistration(String extension, Class<? extends IFileLoader> loader) throws Exception {
 		try {
 			loader.getConstructor(String.class);
 		} catch (NoSuchMethodException e) {
@@ -937,29 +949,108 @@ public class LoaderFactory {
 				throw new Exception("Loaders must have a no argument constructor!");
 		}
 
-		List<Class<? extends IFileLoader>> list = LOADERS.get(extension);
+		CachedListIterator<Class<? extends IFileLoader>> list = LOADERS.get(extension);
 		if (list == null) {
-			list = new ArrayList<Class<? extends IFileLoader>>();
+			list = new CachedListIterator<Class<? extends IFileLoader>>();
 			LOADERS.put(extension, list);
 		}
 		return list;
 	}
 
 	/**
+	 * Caches the last thing returned by iterator so that once it is reset, the
+	 * iteration returns the cached value first
+	 *
+	 * @param <T>
+	 */
+	private static class CachedListIterator<T> implements Iterator<T> {
+		private List<T> list;
+		private T last; // last thing returned by iterator
+		private Iterator<T> it;
+
+		public CachedListIterator() {
+			last = null;
+			list = new LinkedList<>();
+			reset();
+		}
+
+		/**
+		 * @param e element must not be null
+		 * @return true if list contains element
+		 */
+		public boolean contains(T e) {
+			if (e == null) {
+				throw new IllegalArgumentException("Null value not allowed");
+			}
+			return list.contains(e);
+		}
+
+		/**
+		 * Add element to list
+		 * @param e element must not be null
+		 * @return true if was added
+		 */
+		public boolean add(T e) {
+			if (e == null) {
+				throw new IllegalArgumentException("Null value not allowed");
+			}
+			return list.add(e);
+		}
+
+		/**
+		 * Add element to list in given position
+		 * @param position
+		 * @param e element must not be null
+		 */
+		public void add(int position, T e) {
+			if (e == null) {
+				throw new IllegalArgumentException("Null value not allowed");
+			}
+			list.add(position, e);
+		}
+
+		@Override
+		public boolean hasNext() {
+			return it.hasNext();
+		}
+
+		@Override
+		public T next() {
+			last = it.next();
+			return last;
+		}
+
+		/**
+		 * Must call before re-use
+		 */
+		public void reset() {
+			T cached = list.size() > 1 ? last : null;
+
+			if (cached != null) {
+				LinkedList<T> nl = new LinkedList<>(list);
+				if (nl.remove(cached)) { // in case cached item has been removed
+					nl.addFirst(cached);
+				}
+				it = nl.iterator();
+			} else {
+				it = list.iterator();
+			}
+		}
+	}
+
+	/**
 	 * Call to clear all the loaders registered for a given extension.
 	 * 
 	 * @param extension
-	 * @return the old loader list, now removed, if any.
 	 */
-	public static List<Class<? extends IFileLoader>> clearLoader(final String extension) {
-		return LOADERS.remove(extension);
+	public static void clearLoader(final String extension) {
+		LOADERS.remove(extension);
 	}
 
 	protected static Class<? extends InputStream> getZipStream(final String extension) {
 		return UNZIPPERS.get(extension);
 	}
 
-	
 	private static IMetadata lockedMetaData;
 
 	/**

@@ -473,7 +473,6 @@ public class NexusTemplateTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testApplyLargeTemplate() throws Exception {
 		final NexusTemplate template = templateService.loadTemplate(TEMPLATE_FILE_PATH);
 		final TreeFile tree = loadNexusFile(P45_EXAMPLE_NEXUS_FILE_PATH); 
@@ -483,18 +482,11 @@ public class NexusTemplateTest {
 		template.apply(tree);
 		
 		// The template used is roughly based on the NXscan application definition, but for a mapping scan
-		checkNexusTree(root);
-	}
-	
-	private void checkNexusTree(final NXroot root) {
 		final NXentry entry = root.getEntry("scan");
 		assertThat(entry, is(notNullValue()));
 
-//		final Date startTime = entry.getStart_timeScalar(); // TODO start/end time are currently written as strings
-//		assertThat(startTime, is(equalTo(Date.from(Instant.now()))));
-//		final Date endTime = entry.getStart_timeScalar();
-//		assertThat(endTime, is(equalTo(Date.from(Instant.now())))); // TODO fix date
-		
+		// Note: we can't use entry.getStart_timeScalar as this expects a java.util.Date,
+		// whereas the nexus file actually contains a string 
 		IDataset startTime = entry.getDataset(NXentry.NX_START_TIME);
 		assertThat(startTime, is(notNullValue()));
 		assertThat(((Dataset) startTime).getDType(), is(Dataset.STRING));
@@ -519,7 +511,6 @@ public class NexusTemplateTest {
 				is(Dataset.STRING));
 		assertThat(entry.getProgram_nameAttributeConfiguration(), is(equalTo("dummy")));
 		
-		// TODO add some attributes
 		NXinstrument instrument = entry.getInstrument();
 		assertThat(instrument, is(notNullValue()));
 		

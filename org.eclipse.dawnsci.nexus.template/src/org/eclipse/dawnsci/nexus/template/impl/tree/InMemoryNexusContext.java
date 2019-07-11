@@ -58,6 +58,11 @@ public class InMemoryNexusContext implements NexusContext {
 		return tree.getGroupNode();
 	}
 
+	@Override
+	public Node getNode(String path) throws NexusException {
+		return TreeUtils.getNode(tree, path);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.dawnsci.nexus.template.impl.tree.NexusContext#addGroupNode(org.eclipse.dawnsci.analysis.api.tree.GroupNode, java.lang.String, org.eclipse.dawnsci.nexus.NexusBaseClass)
 	 */

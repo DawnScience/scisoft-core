@@ -3,14 +3,13 @@ package org.eclipse.dawnsci.nexus.template.impl;
 import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
-import org.eclipse.dawnsci.nexus.NXroot;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.template.NexusTemplate;
+import org.eclipse.dawnsci.nexus.template.impl.tree.InMemoryNexusContext;
 import org.eclipse.dawnsci.nexus.template.impl.tree.NexusContext;
 import org.eclipse.dawnsci.nexus.template.impl.tree.OnDiskNexusContext;
-import org.eclipse.dawnsci.nexus.template.impl.tree.InMemoryNexusContext;
 
 class NexusTemplateImpl implements NexusTemplate {
 

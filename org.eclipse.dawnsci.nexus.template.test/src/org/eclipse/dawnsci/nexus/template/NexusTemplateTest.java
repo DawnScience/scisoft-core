@@ -14,6 +14,8 @@ import static org.hamcrest.Matchers.sameInstance;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
@@ -265,6 +267,68 @@ public class NexusTemplateTest {
 		NXdata data = entry.getData("data");
 		assertThat(data, is(notNullValue()));
 		assertThat(data, is(sameInstance(getNode(root, linkPath))));
+	}
+	
+	@Test
+	public void testCopyNxDataGroupWithAxisSubstitutions() throws Exception {
+		final String linkPath = "/entry/mandelbrot";
+		final Map<String, String> axisSubstibutions = new HashMap<>();
+		axisSubstibutions.put("stagex_value", "x");
+		axisSubstibutions.put("stagey_value", "y");
+		
+		final StringBuilder templateBuilder = new StringBuilder();
+		templateBuilder.append(BASIC_TEMPLATE);
+		templateBuilder.append("  data*:\n");
+		templateBuilder.append("    nodePath: ");
+		templateBuilder.append(linkPath);
+		templateBuilder.append("\n");
+		templateBuilder.append("    axisSubstitutions:\n");
+		for (Map.Entry<String, String> axisSubstitution : axisSubstibutions.entrySet()) {
+			templateBuilder.append("      ");
+			templateBuilder.append(axisSubstitution.getKey());
+			templateBuilder.append(": ");
+			templateBuilder.append(axisSubstitution.getValue());
+			templateBuilder.append("\n");
+		}
+		
+		final NXroot root = applyTemplateStringToTestFile(templateBuilder.toString());
+		
+		final NXentry entry = root.getEntry("scan");
+		assertThat(entry, is(notNullValue()));
+		
+		final NXdata newData = entry.getData("data");
+		assertThat(newData, is(notNullValue()));
+		
+		final NXdata origData = (NXdata) getNode(root, linkPath);
+		assertThat(newData.getNumberOfAttributes(), is(equalTo(origData.getNumberOfAttributes())));
+		assertThat(newData.getNumberOfDataNodes(), is(equalTo(origData.getNumberOfDataNodes())));
+		
+		// check that the new NXdata has the same data nodes, with axis substitutions applied to their names 
+		for (Map.Entry<String, DataNode> dataNodeEntry : origData.getDataNodeMap().entrySet()) {
+			final String origDataNodeName = dataNodeEntry.getKey();
+			final DataNode origDataNode = dataNodeEntry.getValue();
+			String destDataNodeName = origDataNodeName;
+			
+			for (Map.Entry<String, String> axisSubstitution : axisSubstibutions.entrySet()) {
+				if (destDataNodeName.contains(axisSubstitution.getKey())) {
+					destDataNodeName = destDataNodeName.replace(axisSubstitution.getKey(), axisSubstitution.getValue());
+					break;
+				}
+			}
+			
+			assertThat(newData.getDataNode(destDataNodeName), is(sameInstance(origDataNode)));
+			
+			if (!destDataNodeName.equals("data")) {
+				// all axes dataset (i.e. all except 'data' - the signal field) will have a _indices attribute
+				assertThat(newData.getAttribute(destDataNodeName + "_indices").getValue(),
+						is(equalTo(origData.getAttribute(origDataNodeName + "_indices").getValue())));
+			}
+		}
+		
+		assertThat(newData.getAttribute("signal").getValue().getString(), is(equalTo("data")));
+		
+		assertThat(newData.getAttribute("axes").getValue(), is(equalTo(
+				DatasetFactory.createFromObject(new String[] { "y_set", "x_set", "real", "imaginary" }))));
 	}
 	
 	@Test(expected = NexusException.class)

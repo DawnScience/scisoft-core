@@ -39,6 +39,11 @@ public class OnDiskNexusContext implements NexusContext {
 		return nexusFile.getGroup("/", false);
 	}
 	
+	@Override
+	public Node getNode(String path) throws NexusException {
+		return nexusFile.getNode(path);
+	}
+
 	private void logDebug(String pattern, Object... arguments) {
 		if (logger.isDebugEnabled()) {
 			// replace any nodes with their paths within the nexus file
@@ -51,7 +56,6 @@ public class OnDiskNexusContext implements NexusContext {
 			logger.debug(pattern, arguments);
 		}
 	}
-	
 
 	@Override
 	public GroupNode createGroupNode(GroupNode parent, String name, NexusBaseClass nexusBaseClass) throws NexusException {

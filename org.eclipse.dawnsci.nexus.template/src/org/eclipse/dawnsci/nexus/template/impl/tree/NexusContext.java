@@ -31,6 +31,15 @@ public interface NexusContext {
 	 * @throws NexusException if the root node could not be returned for any reason
 	 */
 	public GroupNode getNexusRoot() throws NexusException;
+	
+	/**
+	 * Returns the {@link Node} at the given path within the nexus tree, or <code>null</code>
+	 * if no such node exists.
+	 * @param path path to node
+	 * @return the node at the given path, or <code>null</code>
+	 * @throws NexusException if an error occurs, e.g. reading the nexus file
+	 */
+	public Node getNode(String path) throws NexusException;
 
 	/**
 	 * Creates and returns a new {@link GroupNode} as a child node of the given parent group node,

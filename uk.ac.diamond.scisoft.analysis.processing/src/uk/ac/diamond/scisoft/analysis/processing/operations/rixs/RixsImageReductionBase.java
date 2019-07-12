@@ -655,7 +655,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		return sp;
 	}
 
-	private static Dataset stack(Dataset... d) {
+	protected static Dataset stack(Dataset... d) {
 		List<Dataset> nd = new ArrayList<>();
 		for (Dataset s : d) {
 			if (s != null) {

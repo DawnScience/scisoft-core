@@ -20,7 +20,7 @@ public class RixsImageCombinedReductionModel extends RixsImageReductionBaseModel
 		PREVIOUS_SCAN,
 	}
 
-	@OperationModelField(label = "Scan option", hint = "Use next (or same or previous) scan")
+	@OperationModelField(label = "Elastic line scan", description = "Used to work out which scan file to find an elastic line", hint = "Use next (or same or previous) scan")
 	private SCAN_OPTION scanOption = SCAN_OPTION.NEXT_SCAN;
 
 	/**

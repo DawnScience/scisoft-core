@@ -13,7 +13,10 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
@@ -24,19 +27,22 @@ import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.processing.metadata.OperationMetadata;
 import uk.ac.diamond.scisoft.analysis.processing.metadata.OperationMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageCombinedReductionModel.SCAN_OPTION;
-import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImageCombinedReductionModel> {
 
 	private String elasticScanPath;
 	private ElasticLineReduction eop;
 	private boolean useSingleFit; // true if using fit from first image only
+	private boolean usePriorOps; // flag to check if prior operations will be used
+	private List<IDataset> iSummaryData = new ArrayList<>();
 
 	public RixsImageCombinedReduction() {
 		lines[0] = new StraightLine();
@@ -70,6 +76,9 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 
 		em.setDelta(model.getDelta());
 		// TODO maybe other ERM fields...
+
+		usePriorOps = true; // reset
+		iSummaryData.clear();
 	}
 
 	@Override
@@ -120,25 +129,43 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 		}
 
 		if (!useSingleFit) {
-			// extract operation chain to apply to elastic line images
-			OperationMetadata omd = original.getFirstMetadata(OperationMetadata.class);
-			List<IOperation<?, ?>> ops = new ArrayList<>();
+			OperationData edata = null;
+			try {
+				edata = fitElasticLine(original, smd);
+			} catch (OperationException e) { // if elastic line count time does not match dark image time
+				usePriorOps = false;
+				log.append("Could not use prior operations: %s", e.toString());
+				edata = fitElasticLine(original, smd);
+			}
+
+			if (edata != null) {
+				for (Serializable s : edata.getSummaryData()) {
+					iSummaryData.add(DatasetFactory.createFromObject(s));
+				}
+			}
+
+			SliceInformation si = smd.getSliceInfo();
+			useSingleFit = extractFitData(si.getTotalSlices(), si.getSliceNumber(), edata.getAuxData());
+		}
+	}
+
+	private OperationData fitElasticLine(IDataset original, SliceFromSeriesMetadata smd) {
+		// extract operation chain to apply to elastic line images
+		OperationMetadata omd = original.getFirstMetadata(OperationMetadata.class);
+		List<IOperation<?, ?>> ops = new ArrayList<>();
+		if (usePriorOps) {
 			for (IOperation<?, ?> o : omd.getPriorOperations()) {
 				ops.add(o);
 			}
-			ops.add(eop);
-	
-			// do all fits at once (TODO cannot do this for integrated case, especially with live processing)
-			OperationMetadata om = new OperationMetadataImpl(getClass().getName(), ops.toArray(new IOperation[ops.size()]), null);
-			MyVisitor vis = new MyVisitor();
-			om.process(elasticScanPath, smd.getDatasetName(), smd, null, null, vis);
-			log.append(vis.operationResult.getLog());
-
-			// TODO record fit results when using NFExecutionVisitor
-
-			SliceInformation si = smd.getSliceInfo();
-			useSingleFit = extractFitData(si.getTotalSlices(), si.getSliceNumber(), vis.operationResult.getAuxData());
 		}
+		ops.add(eop);
+
+		// do all fits at once (TODO cannot do this for integrated case, especially with live processing)
+		OperationMetadata om = new OperationMetadataImpl(getClass().getName(), ops.toArray(new IOperation[ops.size()]), null);
+		MyVisitor vis = new MyVisitor();
+		om.process(elasticScanPath, smd.getDatasetName(), smd, null, null, vis);
+		log.append(vis.operationResult.getLog());
+		return vis.operationResult;
 	}
 
 	static class MyVisitor extends IExecutionVisitor.Stub {
@@ -149,8 +176,6 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 			operationResult = result;
 		}
 	};
-
-	private double[][] fitStore = null;
 
 	private boolean extractFitData(int size, int n, Serializable[] data) {
 		boolean isSingle = false;
@@ -187,22 +212,6 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 		lines[0].setParameterValues(fit[i], fit[i+1]);
 		lines[1].setParameterValues(fit[j], fit[j+1]);
 
-		if (n == 0) { // create store for elastic line fits
-			fitStore = new double[4][isSingle ? 1 : size];
-			if (isSingle) {
-				for (int r = 0; r < 2; r++) {
-					fitStore[2*r][0] = lines[r].getParameterValue(0);
-					fitStore[2*r + 1][0] = lines[r].getParameterValue(1);
-				}
-			}
-		}
-		if (!isSingle) {
-			for (int r = 0; r < 2; r++) {
-				fitStore[2*r][n] = lines[r].getParameterValue(0);
-				fitStore[2*r + 1][n] = lines[r].getParameterValue(1);
-			}
-		}
-
 		return isSingle;
 	}
 
@@ -210,9 +219,22 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 	protected void addSummaryData() {
 		super.addSummaryData();
 
-		for (int r = 0; r < 2; r++) {
-			summaryData.add(ProcessingUtils.createNamedDataset(fitStore[2*r], ElasticLineReduction.LINE_GRADIENT_FORMAT, r));
-			summaryData.add(ProcessingUtils.createNamedDataset(fitStore[2*r + 1], ElasticLineReduction.LINE_INTERCEPT_FORMAT, r));
+		// collate and, if necessary, stack summary data from elastic fits
+		Map<String, List<Dataset>> namedSummary = new LinkedHashMap<>();
+		for (IDataset i : iSummaryData) {
+			Dataset d = DatasetUtils.convertToDataset(i);
+			String n = d.getName();
+			List<Dataset> l = namedSummary.get(n);
+			if (l == null) {
+				l = new ArrayList<>();
+				namedSummary.put(n, l);
+			}
+			l.add(d);
+		}
+		for (Entry<String, List<Dataset>> e: namedSummary.entrySet()) {
+			List<Dataset> l = e.getValue();
+			int n = l.size();
+			summaryData.add(n == 1 ? l.get(0) : stack(l.toArray(new Dataset[n])));
 		}
 	}
 }

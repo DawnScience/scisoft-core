@@ -228,6 +228,7 @@ public class MarshallerService implements IMarshallerService {
 					if (oldMapper == null) oldMapper = createOldMapper();
 					return oldMapper.readValue(string, beanClass);
 				} catch (Exception withoutTypeException) {
+					logger.error("Json deserialize failed", withoutTypeException);
 					throw ex;
 				}
 			}

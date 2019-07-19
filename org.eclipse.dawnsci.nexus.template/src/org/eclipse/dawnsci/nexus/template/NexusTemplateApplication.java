@@ -23,8 +23,8 @@ public class NexusTemplateApplication implements IApplication {
 		System.err.println("Running Nexus Template Application");
 		final Map<?, ?> args = context.getArguments();
 		final String[] configuration = (String[]) args.get("application.args");
-		if (configuration.length != 2) {
-			System.err.println("Usage: run-template <templateName> <nexusFileName>");
+		if (configuration.length != 2 || configuration[0].equals("-h")) {
+			printUsage();
 			return null;
 		}
 
@@ -49,6 +49,11 @@ public class NexusTemplateApplication implements IApplication {
 		}
 		
 		return null;
+	}
+	
+	private void printUsage() {
+		System.err.println("Usage: run-template <templateName> <nexusFileName>");
+		System.err.println("    For guidance on how to write a nexus template file, see: https://confluence.diamond.ac.uk/display/CT/Nexus+Template+Engine");
 	}
 	
 	private NexusTemplateService getNexusTemplateService() {

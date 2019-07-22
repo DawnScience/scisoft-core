@@ -22,7 +22,7 @@ import hdf.hdf5lib.HDF5Constants;
 import hdf.hdf5lib.exceptions.HDF5Exception;
 import hdf.hdf5lib.exceptions.HDF5LibraryException;
 
-public class TestSWMR {
+public class SWMRTest {
 
 	private final static String filename = "test-scratch/testSWMR.h5";
 

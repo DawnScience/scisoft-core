@@ -72,6 +72,8 @@ public class OperationServiceImpl implements IOperationService {
 	private Map<String, Collection<IOperation<? extends IOperationModel, ? extends OperationData>>>  categoryOp;
 	private Map<String, String>                                                                      opIdCategory;
 	
+	private static final int NBYTES = 1024 * 1024;
+	
 	private final static Logger logger = LoggerFactory.getLogger(OperationServiceImpl.class);
 	
 	public OperationServiceImpl() {
@@ -93,6 +95,8 @@ public class OperationServiceImpl implements IOperationService {
 			throw new OperationException(null, "No operation list defined, call setSeries(...) with something meaningful please!");
 		}
 		
+		logmem();
+
 		try {
 			
 			SourceInformation ssource = context.getData().getMetadata(SliceFromSeriesMetadata.class).get(0).getSourceInfo();
@@ -197,9 +201,20 @@ public class OperationServiceImpl implements IOperationService {
 			
 			for (IOperation op : context.getSeries()) op.dispose();
 		}
-
+		
+		logmem();
 	}
 	
+	private void logmem() {
+		if (logger.isInfoEnabled()) {
+			long totalMemory = Runtime.getRuntime().totalMemory();
+			long maxMemory = Runtime.getRuntime().maxMemory();
+			long freeMemory = Runtime.getRuntime().freeMemory();
+
+			logger.info("Max memory of {} MB, current total {} MB, with {} MB free", maxMemory/NBYTES, totalMemory/NBYTES, freeMemory/NBYTES);
+		}
+	}
+
 //	private void modify1DImageContext(IOperationContext context) throws Exception{
 //		
 //		ILazyDataset data = context.getData();

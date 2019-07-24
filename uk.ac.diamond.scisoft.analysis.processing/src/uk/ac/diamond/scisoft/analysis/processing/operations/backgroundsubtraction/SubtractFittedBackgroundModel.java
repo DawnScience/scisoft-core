@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtracti
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.FileType;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
+import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 
 /**
  * Model for fitting of the PDF of background pixels then subtracting
@@ -43,10 +44,13 @@ public class SubtractFittedBackgroundModel extends AbstractOperationModel {
 	@OperationModelField(fieldPosition = 6, label = "Use dark image in 2D", hint = "Leave unchecked to use 1D", description = "Use 2D smoothed dark image rather than a summed 1D profile", enableif = "darkImageFile != null", expertOnly = true)
 	private boolean mode2D = true;
 
-	@OperationModelField(fieldPosition = 7, label = "Offset dark image", hint = "Leave empty for operation to finding from shadow region", description = "Override offset value to add to dark image", enableif = "darkImageFile != null", expertOnly = true)
+	@OperationModelField(fieldPosition = 7, label = "Rectangle to match", description = "Image area of dark image to fit", hint = "Leave empty to automatically find shadow region", enableif = "darkImageFile != null", expertOnly = true)
+	private IRectangularROI fitRegion = null;
+
+	@OperationModelField(fieldPosition = 8, label = "Offset dark image", hint = "Leave empty for operation to finding from shadow region", description = "Override offset value to add to dark image", enableif = "darkImageFile != null", expertOnly = true)
 	private Double darkOffset = null;
 
-	@OperationModelField(fieldPosition = 8, label = "Scale dark image", hint = "This factor is applied before the offset is added", description = "Override scaling of dark image", enableif = "darkOffset != null", expertOnly = true)
+	@OperationModelField(fieldPosition = 9, label = "Scale dark image", hint = "This factor is applied before the offset is added", description = "Override scaling of dark image", enableif = "darkOffset != null", expertOnly = true)
 	private double darkScaling = 1;
 
 	public static final int HISTOGRAM_MAX_BINS = 1024*1024;
@@ -145,6 +149,17 @@ public class SubtractFittedBackgroundModel extends AbstractOperationModel {
 
 	public void setMode2D(boolean mode2D) {
 		firePropertyChange(MODE_2D_PROPERTY, this.mode2D, this.mode2D = mode2D);
+	}
+
+	/**
+	 * @return region to fit (instead of finding shadow region)
+	 */
+	public IRectangularROI getFitRegion() {
+		return fitRegion;
+	}
+
+	public void setFitRegion(IRectangularROI fitRegion) {
+		firePropertyChange("setFitRegion", this.fitRegion, this.fitRegion = fitRegion);
 	}
 
 	/**

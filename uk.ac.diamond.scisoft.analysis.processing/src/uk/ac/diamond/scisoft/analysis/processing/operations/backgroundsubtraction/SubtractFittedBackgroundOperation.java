@@ -21,6 +21,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationDataForDisplay;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationLog;
+import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.impl.Signal;
@@ -309,11 +310,31 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 	private static final int CLIP_END = -50; // clip end off
 
+	public static final Slice createSlice(double start, double length, int max) {
+		int lo = Math.max(0, (int) Math.floor(start));
+		int hi = Math.min(max, (int) Math.ceil(start + length));
+		return lo <= 0 && hi >= max ? null : new Slice(lo, hi);
+	}
+
 	private double[] findDarkDataScaleAndOffset(Dataset in, Dataset smooth) {
 		boolean noShadow = notValid(model.getGaussianSmoothingLength());
-		if (noShadow) { // don't bother to find shadow region
+		IRectangularROI roi = model.getFitRegion();
+		if (noShadow || roi != null) { // don't bother to find shadow region
 			in = in.clone();
-			SliceND s = new SliceND(in.getShapeRef(), new Slice(1, CLIP_END));
+			int[] shape = in.getShapeRef();
+			SliceND s;
+			if (roi == null) {
+				s = new SliceND(shape, new Slice(1, CLIP_END));
+			} else {
+				if (shape.length == 1) {
+					Slice s0 = createSlice(roi.getPointY(), roi.getLength(1), shape[0]);
+					s = new SliceND(shape, s0);
+				} else {
+					Slice s0 = createSlice(roi.getPointX(), roi.getLength(0), shape[1]);
+					Slice s1 = createSlice(roi.getPointY(), roi.getLength(1), shape[0]);
+					s = new SliceND(shape, s1, s0);
+				}
+			}
 			smooth = smooth.getSlice(s);
 			in = in.getSlice(s);
 		} else { // find extent of shadow region on right by looking for trough

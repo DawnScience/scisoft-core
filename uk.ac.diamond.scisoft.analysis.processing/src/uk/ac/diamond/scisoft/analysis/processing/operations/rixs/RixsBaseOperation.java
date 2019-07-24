@@ -50,6 +50,7 @@ import org.eclipse.january.metadata.MetadataFactory;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
+import uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractFittedBackgroundOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 /**
@@ -405,12 +406,6 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		countsPerPhoton = (int) Math.floor(pEnergy / (pe * ds));
 	}
 
-	public static final Slice createSlice(double start, double length, int max) {
-		int lo = Math.max(0, (int) Math.floor(start));
-		int hi = Math.min(max, (int) Math.ceil(start + length));
-		return lo <= 0 && hi >= max ? null : new Slice(lo, hi);
-	}
-
 	/**
 	 * Slice and transpose image as necessary
 	 * @param image
@@ -437,8 +432,8 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	}
 
 	protected Slice[] getSlice(int[] shape, int axis, IRectangularROI r) {
-		Slice s0 = createSlice(r.getPointX(), r.getLength(0), shape[axis]);
-		Slice s1 = createSlice(r.getPointY(), r.getLength(1), shape[1 - axis]);
+		Slice s0 = SubtractFittedBackgroundOperation.createSlice(r.getPointX(), r.getLength(0), shape[axis]);
+		Slice s1 = SubtractFittedBackgroundOperation.createSlice(r.getPointY(), r.getLength(1), shape[1 - axis]);
 
 		offset[0] = s0 == null ? 0 : s0.getStart();
 		offset[1] = s1 == null ? 0 : s1.getStart();

@@ -26,7 +26,7 @@ import uk.ac.diamond.scisoft.xpdf.metadata.XPDFMetadata;
 
 public class SubtractXRMCOperation extends AbstractOperation<SubtractXRMCModel, OperationData> {
 
-	private static final Logger logger = LoggerFactory.getLogger(XPDFCalibration.class);
+	private static final Logger logger = LoggerFactory.getLogger(SubtractXRMCOperation.class);
 	
 	@Override
 	public String getId() {

@@ -38,7 +38,7 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.FileMet
 
 public class FileMetadataNormalisationTest {
 	
-	private static transient final Logger logger = LoggerFactory.getLogger(FileMetadataNormalisation.class);
+	private static transient final Logger logger = LoggerFactory.getLogger(FileMetadataNormalisationTest.class);
 	
 	@Test
 	public void testGetId() {

@@ -51,7 +51,7 @@ public class SubtractMatchedIntensityOperation extends AbstractOperation<Subtrac
 	
 	// First, set up a logger
 	@SuppressWarnings("unused")
-	private static final Logger logger = LoggerFactory.getLogger(UsaxsTwoThetaToQOperation.class);
+	private static final Logger logger = LoggerFactory.getLogger(SubtractMatchedIntensityOperation.class);
 	
 	
 	// Some things to hold on to

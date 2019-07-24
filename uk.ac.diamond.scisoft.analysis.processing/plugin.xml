@@ -47,6 +47,16 @@
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.maskingCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.InterallySaveMaskOperation"
+            description="Saves the currently generated mask in the output HDF file"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.mask.InterallySaveMaskOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            name="Internally Save Mask"
+            visible="true">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.maskingCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.DilateMaskOperation"
             description="Increase the size of masked regions by dilating the mask by a set number of pixels"
             icon="icons/mask.png"

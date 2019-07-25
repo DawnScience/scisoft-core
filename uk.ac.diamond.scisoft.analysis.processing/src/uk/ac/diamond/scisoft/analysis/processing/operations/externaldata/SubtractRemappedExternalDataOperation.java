@@ -30,10 +30,10 @@ import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationCache;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationUtils;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
-import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.SubtractRemappedExternalDataModel.DataType;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 import uk.ac.diamond.scisoft.analysis.roi.XAxis;
+import uk.ac.diamond.scisoft.analysis.utils.ErrorPropagationUtils;
 
 public class SubtractRemappedExternalDataOperation extends AbstractOperation<SubtractRemappedExternalDataModel, OperationData> {
 

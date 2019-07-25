@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package uk.ac.diamond.scisoft.analysis.processing.operations;
+package uk.ac.diamond.scisoft.analysis.utils;
 
 import org.eclipse.january.dataset.BroadcastIterator;
 import org.eclipse.january.dataset.BroadcastPairIterator;
@@ -15,8 +15,6 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IndexIterator;
-
-import uk.ac.diamond.scisoft.analysis.utils.SimpleUncertaintyPropagationMath;
 
 /**
  * A class providing error propagating static methods

@@ -27,8 +27,8 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.metadata.AxesMetadata;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.GeometricCorrectionModel;
+import uk.ac.diamond.scisoft.analysis.utils.ErrorPropagationUtils;
 import uk.ac.diamond.scisoft.analysis.utils.SimpleUncertaintyPropagationMath;
-import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 
 @Atomic
 public class SpillOverCorrectionOperation extends AbstractOperationBase<GeometricCorrectionModel, OperationData>  {

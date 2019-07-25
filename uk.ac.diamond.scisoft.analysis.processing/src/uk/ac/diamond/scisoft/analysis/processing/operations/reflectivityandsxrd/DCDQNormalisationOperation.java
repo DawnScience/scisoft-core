@@ -32,7 +32,7 @@ import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
-import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
+import uk.ac.diamond.scisoft.analysis.utils.ErrorPropagationUtils;
 
 public class DCDQNormalisationOperation extends AbstractOperationBase<DCDQNormalisationModel, OperationData> implements PropertyChangeListener  {
 	

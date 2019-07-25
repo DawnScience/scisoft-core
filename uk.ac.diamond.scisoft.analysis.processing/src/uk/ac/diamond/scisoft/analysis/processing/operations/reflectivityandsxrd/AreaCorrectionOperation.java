@@ -24,8 +24,9 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
-import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
+
 import uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd.GeometricCorrectionModel;
+import uk.ac.diamond.scisoft.analysis.utils.ErrorPropagationUtils;
 import uk.ac.diamond.scisoft.analysis.utils.SimpleUncertaintyPropagationMath;
 /**
  * This operation performs the area geometric correction for 

@@ -9,7 +9,7 @@
 
 // @author Andrew McCluskey
 
-package uk.ac.diamond.scisoft.analysis.processing.test.operations;
+package uk.ac.diamond.scisoft.analysis.utils;
 
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.Maths;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
+import uk.ac.diamond.scisoft.analysis.utils.ErrorPropagationUtils;
 
 //Now the testing class
 public class ErrorPropagationUtilsTest {
@@ -251,7 +251,7 @@ public class ErrorPropagationUtilsTest {
 		resultError.add(0.22522211259110417);
 		resultError.add(0.3501428280002319); 
 		resultError.add(0.4751052514969709);
-		resultError.add(0.6000833275470999);;
+		resultError.add(0.6000833275470999);
 		Dataset resultErrorD = DatasetFactory.createFromList(resultError);
 		SUBTRACTIONRESULT.setErrors(resultErrorD);
 		

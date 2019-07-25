@@ -25,7 +25,7 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.metadata.IMetadata;
 
 import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
-import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
+import uk.ac.diamond.scisoft.analysis.utils.ErrorPropagationUtils;
 
 @Atomic
 public class FileMetadataNormalisation extends AbstractOperation<FileMetadataModel, OperationData> {

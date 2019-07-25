@@ -37,9 +37,9 @@ import uk.ac.diamond.scisoft.analysis.diffraction.powder.IPixelIntegrationCache;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegration;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationBean;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationCache;
-import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsTwoThetaToQOperation;
 import uk.ac.diamond.scisoft.analysis.roi.XAxis;
+import uk.ac.diamond.scisoft.analysis.utils.ErrorPropagationUtils;
 
 // Imports from org.slf4j
 import org.slf4j.Logger;

@@ -32,11 +32,11 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
-import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 
 // Imports from uk.ac.diamond
 import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.SelfAbsorptionCorrectionModel.GeometryType;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
+import uk.ac.diamond.scisoft.analysis.utils.ErrorPropagationUtils;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegrationUtils;
 
 

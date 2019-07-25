@@ -12,7 +12,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.internaldata;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.january.dataset.Dataset;
 
-import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
+import uk.ac.diamond.scisoft.analysis.utils.ErrorPropagationUtils;
 
 @Atomic
 public class SubtractInternalDataOperation extends AbstractInternalDataOperation {

@@ -23,8 +23,8 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 
-import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
 import uk.ac.diamond.scisoft.analysis.processing.operations.SelectedFramesModel;
+import uk.ac.diamond.scisoft.analysis.utils.ErrorPropagationUtils;
 
 public abstract class FrameMathsOperation<T extends SelectedFramesModel> extends AbstractOperation<T, OperationData> {
 

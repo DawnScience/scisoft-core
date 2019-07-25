@@ -20,7 +20,7 @@ import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.metadata.OperationMetadata;
-import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
+import uk.ac.diamond.scisoft.analysis.utils.ErrorPropagationUtils;
 
 @Atomic
 public class SubtractWithProcessing extends FrameMathsOperation<SubtractWithProcessingModel> {

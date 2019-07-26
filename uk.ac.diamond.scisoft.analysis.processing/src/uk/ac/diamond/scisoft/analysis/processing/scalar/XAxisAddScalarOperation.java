@@ -26,7 +26,7 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.metadata.AxesMetadata;
 
 import uk.ac.diamond.scisoft.analysis.processing.scalar.ScalarUncertaintyModel;
-import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
+import uk.ac.diamond.scisoft.analysis.utils.ErrorPropagationUtils;
 
 @Atomic
 public class XAxisAddScalarOperation extends AbstractOperation<ScalarUncertaintyModel, OperationData>  {

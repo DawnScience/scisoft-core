@@ -29,13 +29,11 @@ import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.InterpolatorUtils;
-
-// Imports from uk.ac.diamond.scisoft.analysis
-import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
-
 // Imports from org.slf4j
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import uk.ac.diamond.scisoft.analysis.utils.ErrorPropagationUtils;
 
 
 public class UsaxsDataTransposerOperation extends AbstractOperation<EmptyModel, OperationData> {

@@ -27,6 +27,7 @@ import org.eclipse.january.IMonitor;
 
 // Imports from uk.ac.diamond.scisoft
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
+import uk.ac.diamond.scisoft.analysis.utils.ErrorPropagationUtils;
 import uk.ac.diamond.scisoft.analysis.processing.operations.MultipleDetectorScalerModel;
 
 

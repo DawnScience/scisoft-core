@@ -13,7 +13,7 @@ import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 
-import uk.ac.diamond.scisoft.analysis.processing.operations.ErrorPropagationUtils;
+import uk.ac.diamond.scisoft.analysis.utils.ErrorPropagationUtils;
 
 @Atomic
 public class MultiplyInternalFrameOperation extends AbstractInternalFrameOperation {

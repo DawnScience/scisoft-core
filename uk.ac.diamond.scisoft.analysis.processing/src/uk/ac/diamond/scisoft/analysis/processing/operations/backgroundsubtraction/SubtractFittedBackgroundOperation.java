@@ -13,6 +13,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
@@ -39,9 +40,11 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.LazyMaths;
 import org.eclipse.january.dataset.LinearAlgebra;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.Operations;
+import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.dataset.Stats;
@@ -473,16 +476,22 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 			darkImageCountTime = getCountTime(file).getDouble();
 
+			dark.squeezeEnds();
 			Dataset d;
-			try {
-				d = DatasetUtils.sliceAndConvertLazyDataset(dark);
-			} catch (DatasetException e) {
-				throw new OperationException(this, "Could not read in dark image", e);
-			}
-
-			d.squeezeEnds();
-			if (d.getRank() != 2) { // TODO implement averaging
-				throw new OperationException(this, "Can only handle single frame in dark image");
+			if (dark.getRank() == 2) {
+				try {
+					d = DatasetUtils.sliceAndConvertLazyDataset(dark);
+				} catch (DatasetException e) {
+					throw new OperationException(this, "Could not read in dark image", e);
+				}
+			} else {
+				try {
+					d = LazyMaths.mean(dark, -2, -1);
+					int[] extra = ShapeUtils.getRemainingAxes(dark.getRank(), -2, -1);
+					log.append("Taken average over %s-axes of dark image data", Arrays.toString(extra));
+				} catch (DatasetException e) {
+					throw new OperationException(this, "Could not take average of dark image", e);
+				}
 			}
 
 			if (model.isMode2D()) {

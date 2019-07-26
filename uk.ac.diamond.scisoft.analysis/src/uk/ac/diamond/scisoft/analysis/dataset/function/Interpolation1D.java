@@ -76,7 +76,7 @@ public class Interpolation1D {
 		
 		UnivariateFunction func = interpolator.interpolate(sortedx,sortedy);
 		
-		Dataset newy = DatasetFactory.zeros(newx.getShape(), Dataset.FLOAT64);
+		Dataset newy = DatasetFactory.zeros(DoubleDataset.class, newx.getShape());
 		newy.setName(oldy.getName()+"_interpolated");
 		count = newy.getSize();
 		double val = 0;

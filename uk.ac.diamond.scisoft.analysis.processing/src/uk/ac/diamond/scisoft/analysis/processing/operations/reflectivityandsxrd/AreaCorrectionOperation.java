@@ -45,13 +45,13 @@ public class AreaCorrectionOperation extends AbstractOperationBase<GeometricCorr
 	// We should have two dimensions going in 
 	@Override 
 	public OperationRank getInputRank() {
-		return OperationRank.TWO;
+		return OperationRank.ANY;
 	}
 	
 	// and two coming out
 	@Override 
 	public OperationRank getOutputRank() {
-		return OperationRank.TWO;
+		return OperationRank.SAME;
 	}
 	
 	// This is the fun bit

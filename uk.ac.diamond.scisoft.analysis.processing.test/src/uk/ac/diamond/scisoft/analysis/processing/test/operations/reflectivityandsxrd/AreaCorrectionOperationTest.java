@@ -44,12 +44,12 @@ public class AreaCorrectionOperationTest {
 	
 	@Test
 	public void testGetInputRank() {
-		assertEquals(OperationRank.TWO, new AreaCorrectionOperation().getInputRank());
+		assertEquals(OperationRank.ANY, new AreaCorrectionOperation().getInputRank());
 	}
 	
 	@Test
 	public void testGetOutputRank() {
-		assertEquals(OperationRank.TWO, new AreaCorrectionOperation().getOutputRank());
+		assertEquals(OperationRank.SAME, new AreaCorrectionOperation().getOutputRank());
 	}
 		
 	// Test when the angle is below that required for spill over the data should not change

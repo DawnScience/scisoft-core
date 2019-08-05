@@ -171,7 +171,7 @@ public class OperationBean extends StatusBean implements IOperationBean {
 			int[] dd = new int[detectorRank];
 			
 			for (int i = 0; i < detectorRank; i++) {
-				dd[i] = -(detectorRank-i);
+				dd[i] = rank-(detectorRank-i);
 			}
 			
 			return dd;

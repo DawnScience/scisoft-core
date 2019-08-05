@@ -57,6 +57,16 @@
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.maskingCategory"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.ImportMaskInternalFilepathOperation"
+            description="Import a Mask from .nxs or fit2d mask file from a filepath specificed within the data file"
+            icon="icons/mask.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.ImportMaskInternalFilepathOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.mask.ImportMaskInternalFilepathModel"
+            name="Import Mask From Internal Filepath"
+            visible="true">
+      </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.maskingCategory"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.DilateMaskOperation"
             description="Increase the size of masked regions by dilating the mask by a set number of pixels"
             icon="icons/mask.png"

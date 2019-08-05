@@ -42,13 +42,13 @@ public class SpillOverCorrectionOperation extends AbstractOperationBase<Geometri
 	// Before we start, let's make sure we know how many dimensions of data are going in...
 	@Override
 	public OperationRank getInputRank() {
-		return OperationRank.TWO;
+		return OperationRank.ANY;
 	}
 	
 	// ...and out
 	@Override
 	public OperationRank getOutputRank() {
-		return OperationRank.TWO;
+		return OperationRank.SAME;
 	}
 	
 	@Override

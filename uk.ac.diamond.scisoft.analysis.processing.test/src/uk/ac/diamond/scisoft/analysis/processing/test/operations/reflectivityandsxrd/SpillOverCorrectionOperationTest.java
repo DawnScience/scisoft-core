@@ -50,12 +50,12 @@ public class SpillOverCorrectionOperationTest {
 	
 	@Test
 	public void testGetInputRank() {
-		assertEquals(OperationRank.TWO, new SpillOverCorrectionOperation().getInputRank());
+		assertEquals(OperationRank.ANY, new SpillOverCorrectionOperation().getInputRank());
 	}
 	
 	@Test
 	public void testGetOutputRank() {
-		assertEquals(OperationRank.TWO, new SpillOverCorrectionOperation().getOutputRank());
+		assertEquals(OperationRank.SAME, new SpillOverCorrectionOperation().getOutputRank());
 	}
 		
 	// Test when the angle is below that required for spill over the data should not change

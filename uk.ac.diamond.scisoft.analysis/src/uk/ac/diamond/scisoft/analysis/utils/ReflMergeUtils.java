@@ -77,12 +77,16 @@ public class ReflMergeUtils {
 		Dataset newXE = null;
 		Dataset newY = DatasetFactory.createFromList(y);
 		Dataset newX = DatasetFactory.createFromList(x);
+		newX.setName("q");
+		newY.setName("R");
 		if (!xE.isEmpty()) {
 			newXE = DatasetFactory.createFromList(xE);
+			newXE.setName("dq");
 			newX.setErrors(newXE);
 		}
 		if (!yE.isEmpty()) {
 			newYE = DatasetFactory.createFromList(yE);
+			newYE.setName("dR");
 			newY.setErrors(newYE);
 		}
 		return setXAxis(newY, newX);

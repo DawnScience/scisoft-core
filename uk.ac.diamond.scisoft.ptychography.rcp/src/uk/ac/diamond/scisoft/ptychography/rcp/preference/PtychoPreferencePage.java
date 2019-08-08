@@ -31,6 +31,9 @@ public class PtychoPreferencePage extends FieldEditorPreferencePage implements I
 		FileFieldEditor scriptToRun = new FileFieldEditor(PtychoPreferenceConstants.RECON_SCRIPT_PATH, "Path to recon script:",
 				getFieldEditorParent());
 		addField(scriptToRun);
+		FileFieldEditor alternateScriptToRun = new FileFieldEditor(PtychoPreferenceConstants.ALTERNATE_SCRIPT_PATH, "Path to alternate script:",
+				getFieldEditorParent());
+		addField(alternateScriptToRun);
 		// Add a file field
 		FileFieldEditor savedFilePath = new FileFieldEditor(PtychoPreferenceConstants.FILE_SAVE_PATH, "Parameter file saved path:",
 				getFieldEditorParent());

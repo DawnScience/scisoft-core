@@ -52,6 +52,9 @@ public abstract class AbstractPtychoEditor {
 
 	private static final Logger logger = LoggerFactory.getLogger(AbstractPtychoEditor.class);
 	private static final String ENABLE_TEXT_BOXES = "enableTextBoxes";
+	static final String ALTERNATE_SCRIPT = "Alternate Script";
+	static final String RECON_SCRIPT = "Recon Script";
+	private String defaultScript;
 
 	protected List<PtychoData> levels;
 	protected List<PtychoNode> tree;
@@ -129,7 +132,7 @@ public abstract class AbstractPtychoEditor {
 		}
 	}
 
-	protected void createPythonRunCommand(Composite parent) {
+	protected void createPythonRunCommand(Composite parent) { 
 		
 		final Composite scriptBuilder = new Composite(parent, SWT.NONE);
 		scriptBuilder.setLayout(new GridLayout(8, false));
@@ -214,7 +217,11 @@ public abstract class AbstractPtychoEditor {
 		StringBuilder pythonCmd = new StringBuilder();
 		pythonCmd.append("run ");
 		IPreferenceStore store = Activator.getPtychoPreferenceStore();
-		pythonCmd.append(store.getString(PtychoPreferenceConstants.RECON_SCRIPT_PATH) + " ");
+		
+		if(defaultScript != null && defaultScript.startsWith(ALTERNATE_SCRIPT))
+			pythonCmd.append(store.getString(PtychoPreferenceConstants.ALTERNATE_SCRIPT_PATH) + " ");
+		else
+			pythonCmd.append(store.getString(PtychoPreferenceConstants.RECON_SCRIPT_PATH) + " ");
 		pythonCmd.append(jsonSavedPath);
 		pythonCmd.append("\n");
 		return pythonCmd.toString();
@@ -323,5 +330,9 @@ public abstract class AbstractPtychoEditor {
 	private String getFileSavePathPreference() {
 		IPreferenceStore store = Activator.getPtychoPreferenceStore();
 		return store.getString(PtychoPreferenceConstants.FILE_SAVE_PATH);
+	}
+
+	void setDefaultScript(String defaultScript) {
+		this.defaultScript = defaultScript;
 	}
 }

@@ -8,17 +8,34 @@ import javax.inject.Inject;
 
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.SubContributionItem;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.console.IConsoleConstants;
+import org.python.pydev.shared_interactive_console.console.ui.internal.actions.CloseScriptConsoleAction;
 
+import uk.ac.diamond.scisoft.ptychography.rcp.Activator;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoNode;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoTreeUtils;
+import uk.ac.diamond.scisoft.ptychography.rcp.preference.PtychoPreferenceConstants;
 
 public class SimplePtychoEditor extends AbstractPtychoEditor {
 
@@ -51,6 +68,58 @@ public class SimplePtychoEditor extends AbstractPtychoEditor {
 		subComp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		createLabelAndText(subComp, "path");
+		
+		SelectionAdapter scriptSelector = new SelectionAdapter(){
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Button source = (Button) e.getSource();
+				setDefaultScript(source.getText());
+				
+				IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+				IViewPart part = page.findView(IConsoleConstants.ID_CONSOLE_VIEW);
+				IContributionItem[] items = part.getViewSite().getActionBars().getToolBarManager().getItems();
+
+				int count = 0;
+				
+				for(IContributionItem c : items) {
+					if(c instanceof SubContributionItem) {
+						IContributionItem subItem = ((SubContributionItem) c).getInnerItem();
+						if(subItem instanceof ActionContributionItem && ((ActionContributionItem) subItem).getAction() instanceof CloseScriptConsoleAction) {
+							if(source.getText().startsWith(ALTERNATE_SCRIPT))
+								items[count].setVisible(false);
+							else 
+								items[count].setVisible(true);
+							part.getViewSite().getActionBars().updateActionBars();
+							break;
+						}
+					}
+					count++;
+				}
+			}
+		};
+		
+		Group scriptSelect = new Group(subComp, SWT.NONE);
+		scriptSelect.setLayout(new RowLayout(SWT.VERTICAL));
+		scriptSelect.setText("Select Script");
+		final Button reconScript = new Button(scriptSelect, SWT.RADIO);
+		reconScript.setText(RECON_SCRIPT + ": " + Activator.getPtychoPreferenceStore().getString(PtychoPreferenceConstants.RECON_SCRIPT_PATH));
+		reconScript.addSelectionListener(scriptSelector);
+		final Button alternateScript = new Button(scriptSelect, SWT.RADIO);
+		alternateScript.setText(ALTERNATE_SCRIPT + ": " + Activator.getPtychoPreferenceStore().getString(PtychoPreferenceConstants.ALTERNATE_SCRIPT_PATH));
+		alternateScript.addSelectionListener(scriptSelector);
+		
+		
+		IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				if(event.getProperty() == PtychoPreferenceConstants.ALTERNATE_SCRIPT_PATH) {
+					alternateScript.setText(ALTERNATE_SCRIPT + ": " + event.getNewValue());
+				} else if(event.getProperty() == PtychoPreferenceConstants.RECON_SCRIPT_PATH) {
+					reconScript.setText(RECON_SCRIPT + ": " + event.getNewValue());
+				}
+			}
+		};
+		Activator.getPtychoPreferenceStore().addPropertyChangeListener(propertyListener);
 
 		createPythonRunCommand(container);
 	}

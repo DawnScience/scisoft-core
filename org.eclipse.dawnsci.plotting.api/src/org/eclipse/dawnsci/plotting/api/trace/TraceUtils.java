@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
+import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 
 /**
@@ -67,7 +68,7 @@ public class TraceUtils {
 			return false;
 		}
 
-		List<IDataset> axes = trace.getAxes();
+		List<? extends IDataset> axes = trace.getAxes();
 		if (axes == null || axes.isEmpty()) {
 			return false;
 		}
@@ -91,49 +92,54 @@ public class TraceUtils {
 	 * @return true if it is custom
 	 */
 	public static boolean isAxisCustom(IDataset axis, int length) {
-		if (axis == null)
+		if (axis == null) {
 			return false;
+		}
 
 		final Class<?> clazz = axis.getElementClass();
 		if (clazz != Integer.class) {
 			return true;
 		}
 
-		if (axis.getSize() != length)
+		if (axis.getSize() != length) {
 			return true;
+		}
 
 		length--;
 		return axis.getDouble(0) != 0 && axis.getDouble(length) != length;
 	}
 
-	public final static void transform(IDataset label, int index, double[] point) {
-		if (label!=null) {
+	public final static void transform(Dataset label, int index, double[] point) {
+		if (label != null) {
 			internalTransform(label, index, point);
 		}
 	}
 
-	public final static void transform(IDataset label, int index, double[] pointA, double[] pointB) {
-		if (label!=null) {
+	public final static void transform(Dataset label, int index, double[] pointA, double[] pointB) {
+		if (label != null) {
 			internalTransform(label, index, pointA);
 			internalTransform(label, index, pointB);
 		}
 	}
 
-	public final static void transform(IDataset label, int index, double[]... points) {
-		if (label!=null) {
+	public final static void transform(Dataset label, int index, double[]... points) {
+		if (label != null) {
 			for (double[] ds : points) {
 				internalTransform(label, index, ds);
 			}
 		}
 	}
 
-	private final static void internalTransform(IDataset label, int index, double[] point) {
+	private final static void internalTransform(Dataset label, int index, double[] point) {
 		double lIndex = point[index];
 		double floor  = Math.floor(lIndex);
 		double frac   = lIndex - floor;
 		int    iFloor = (int) floor;
-		double lo     = label.getDouble(iFloor);
-
-		point[index] = frac == 0 ? lo : (1 - frac) * lo + frac * label.getDouble(iFloor + 1);
+		double lo     = iFloor >= label.getSize() ? 0 : label.getDouble(iFloor++);
+		if (iFloor >= label.getSize()) {
+			point[index] = Double.NaN;
+		} else {
+			point[index] = frac == 0 ? lo : (1 - frac) * lo + frac * label.getDouble(iFloor);
+		}
 	}
 }

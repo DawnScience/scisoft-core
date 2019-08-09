@@ -47,9 +47,24 @@ public class BasePlottingConstants {
 	public static final String ORIGIN_PREF = "org.dawb.plotting.system.originChoice";
 
 	/**
+	 * Used to store transpose preference, do not change string
+	 */
+	public static final String TRANSPOSE_PREF = "org.dawb.plotting.system.transposeChoice";
+
+	/**
 	 * Image origin menu id
 	 */
 	public static final String IMAGE_ORIGIN_MENU_ID = "org.dawnsci.plotting.system.imageOriginMenu";
+
+	/**
+	 * Image transforms group id
+	 */
+	public static final String IMAGE_TRANSFORMS_ID = "org.dawnsci.plotting.system.imageTransforms.group";
+
+	/**
+	 * Image origin menu id
+	 */
+	public static final String IMAGE_TRANSPOSE_ID = "org.dawnsci.plotting.system.imageTranspose";
 
 	/**
 	 * id for XY plot menu

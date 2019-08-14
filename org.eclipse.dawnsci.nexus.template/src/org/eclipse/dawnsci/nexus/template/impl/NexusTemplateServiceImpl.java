@@ -38,23 +38,9 @@ public class NexusTemplateServiceImpl implements NexusTemplateService {
 		return new NexusTemplateImpl(yamlMapping);
 	}
 	
-	public void applyTemplate(String templateFilePath, String sourceFilePath) throws NexusException {
-		final TreeFile treeFile = loadNexusTree(sourceFilePath);
-		final NexusTemplate template = loadTemplate(templateFilePath);
-		template.apply(treeFile);
-	}
-	
 	public synchronized NexusTemplate loadTemplateFromString(String templateString) {
 		// load a nexus template directly from a string. method for testing
 		return createTemplate(yaml.load(templateString));
 	}
 
-	private TreeFile loadNexusTree(String filePath) throws NexusException {
-		// TODO move this method to NexusUtils
-		try (NexusFile nexusFile = ServiceHolder.getNexusFileFactory().newNexusFile(filePath)) {
-			nexusFile.openToRead(); 
-			return NexusUtils.loadNexusTree(nexusFile);
-		}
-	}
-	
 }

@@ -11,8 +11,17 @@ import org.eclipse.dawnsci.nexus.template.impl.tree.InMemoryNexusContext;
 import org.eclipse.dawnsci.nexus.template.impl.tree.NexusContext;
 import org.eclipse.dawnsci.nexus.template.impl.tree.OnDiskNexusContext;
 
+/**
+ * The implementation of a NexusTemplate. Essentially this just holds the YAML content as a {@link Map}. 
+ * @author Matthew Dickie
+ */
 class NexusTemplateImpl implements NexusTemplate {
 
+	/**
+	 * The YAML as a {@link Map} from {@link String} property names to {@link Object} values,
+	 * where the values may either a child mapping, if the value is a {@link Map}, or the
+	 * value of that property whether as a scalar or some collection type.
+	 */
 	private final Map<String, Object> yamlMapping;
 	
 	NexusTemplateImpl(Map<String, Object> yamlMapping) {

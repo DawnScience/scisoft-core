@@ -6,12 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
 
-import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
-import org.eclipse.dawnsci.nexus.NXroot;
 import org.eclipse.dawnsci.nexus.NexusException;
-import org.eclipse.dawnsci.nexus.NexusFile;
-import org.eclipse.dawnsci.nexus.NexusUtils;
-import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.template.NexusTemplate;
 import org.eclipse.dawnsci.nexus.template.NexusTemplateService;
 import org.yaml.snakeyaml.Yaml;
@@ -23,6 +18,9 @@ import org.yaml.snakeyaml.Yaml;
  */
 public class NexusTemplateServiceImpl implements NexusTemplateService {
 
+	/**
+	 * The SnakeYAML Yaml object, essentially a Facade to the snakeyaml API.
+	 */
 	private final Yaml yaml = new Yaml(); // note should only be used by one thread
 	
 	@Override

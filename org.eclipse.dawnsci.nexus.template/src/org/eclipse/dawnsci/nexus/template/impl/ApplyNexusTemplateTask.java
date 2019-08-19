@@ -25,6 +25,8 @@ import org.eclipse.dawnsci.nexus.template.NexusTemplateConstants;
 import org.eclipse.dawnsci.nexus.template.impl.tree.NexusContext;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.PositionIterator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A task to apply a nexus template to a nexus tree.
@@ -40,6 +42,8 @@ public class ApplyNexusTemplateTask  {
 		ATTRIBUTE,
 		GROUP_COPY
 	}
+	
+	private static final Logger logger = LoggerFactory.getLogger(ApplyNexusTemplateTask.class);
 	
 	private static final String ERROR_MESSAGE_PATTERN_DATA_NODE_ILLEGAL_MAPPING_ENTRY_NAME =
 			"Illegal yaml property name ''{0}'' in data node ''{1}''. "
@@ -72,7 +76,9 @@ public class ApplyNexusTemplateTask  {
 		for (Map.Entry<String, Object> mappingEntry : mapping.entrySet()) {
 			final String nodeName = getNodeName(mappingEntry.getKey()); 
 			final Object nodeValue = mappingEntry.getValue();
-			switch (getNodeType(mappingEntry.getKey())) {
+			final NexusNodeType nodeType = getNodeType(mappingEntry.getKey());
+			logger.debug("Processing mapping {} of type {}", nodeName, nodeType);
+			switch (nodeType) {
 				case GROUP:
 					addGroupNode(parentGroup, nodeName, nodeValue);
 					break;
@@ -86,7 +92,7 @@ public class ApplyNexusTemplateTask  {
 					copyGroupNode(parentGroup, nodeName, nodeValue);
 					break;
 				default:
-					throw new IllegalArgumentException(getNodeType(mappingEntry.getKey()).toString());
+					throw new IllegalArgumentException("Unknown node type: " + nodeType.toString());
 			}
 		}
 	}
@@ -103,6 +109,7 @@ public class ApplyNexusTemplateTask  {
 	private void addGroupNode(GroupNode parentGroup, String nodeName, Object nodeValue) throws NexusException {
 		final Optional<String> linkPath = getLinkPath(nodeValue);
 		if (linkPath.isPresent()) {
+			logger.debug("Adding link {} to group node path {}", nodeName, linkPath);
 			addLinkNode(parentGroup, nodeName, linkPath.get());
 		} else if (nodeValue instanceof Map) {
 			final GroupNode childGroup = nexusContext.createGroupNode(parentGroup, nodeName, getNexusClass(nodeName, nodeValue));
@@ -192,12 +199,14 @@ public class ApplyNexusTemplateTask  {
 					MAPPING_NAME_NODE_PATH + " and " + MAPPING_NAME_AXIS_SUBSTITUTIONS);
 		}
 		
+		
 		// find the NXdata group to copy - TODO allow more general copying of nodes? is there a use case?
 		final String nodePath = (String) mapping.get(MAPPING_NAME_NODE_PATH);
 		if (nodePath == null) {
 			throw new NexusException("The mapping for copied NXdata group '" + nodeName + "' must specify a nodePath");
 		}
 		
+		logger.debug("Copying group node {} from {}", nodeName, nodePath);
 		Node node = nexusContext.getNode(nodePath);
 		if (node == null) {
 			throw new NexusException("Cannot create group '" + nodeName + "', no such group: " + nodePath);
@@ -221,6 +230,7 @@ public class ApplyNexusTemplateTask  {
 			final String childNodeName = nodeNameIter.next();
 			final String childNodePath = nodePath + Node.SEPARATOR + childNodeName; 
 			final String destName = axesSubstititionFunction.apply(childNodeName);
+			logger.debug("Adding link {} to path {}", destName, childNodePath);
 			nexusContext.createNodeLink(dest, destName, childNodePath); 
 		}
 
@@ -266,9 +276,11 @@ public class ApplyNexusTemplateTask  {
 			final Attribute attribute = source.getAttribute(attrName);
 			final String destName = axesSubstition.apply(attrName);
 			IDataset attrDataset = attribute.getValue();
+			logger.debug("Copying attribute {} from attribute {}", destName, attrName);  
 			
 			// special case for the axes attribute, we need to apply the substitution to the values in the dataset as well
 			if (attrName.equals(NXdata.NX_ATTRIBUTE_AXES)) {
+				logger.debug("Applying axes substitions to axes attribute");
 				attrDataset = attribute.getValue().clone();
 				final PositionIterator iter = new PositionIterator(attrDataset.getShape());
 				int[] pos;
@@ -307,6 +319,7 @@ public class ApplyNexusTemplateTask  {
 		final Optional<String> linkPath = getLinkPath(nodeValue);
 		if (linkPath.isPresent()) {
 			// link the node at the given path to the parent group
+			logger.debug("Adding link {} to data node at path {}", nodeName, linkPath);
 			addLinkNode(parentGroup, nodeName, linkPath.get());
 		} else if (nodeValue instanceof Map) {
 			// the value is a map, with a 'value' entry giving the value, and attributes
@@ -315,6 +328,7 @@ public class ApplyNexusTemplateTask  {
 			addDataNodeForMapping(parentGroup, nodeName, mapping);
 		} else {
 			// create a new data node with the given value
+			logger.debug("Adding data node {} with value {}", nodeName, nodeValue);
 			nexusContext.createDataNode(parentGroup, nodeName, nodeValue);
 		}
 	}
@@ -333,6 +347,7 @@ public class ApplyNexusTemplateTask  {
 			throw new NexusException("The mapping for a data node must specify a value: " + nodeName);
 		}
 		
+		logger.debug("Adding data node {} with value {}", nodeName, value);
 		final DataNode dataNode = nexusContext.createDataNode(parentGroup, nodeName, value);
 		for (Map.Entry<String, Object> yamlMappingEntry : mapping.entrySet()) {
 			final String childNodeName = getNodeName(yamlMappingEntry.getKey());
@@ -369,12 +384,14 @@ public class ApplyNexusTemplateTask  {
 			if (!linkPath.get().endsWith(String.valueOf(ATTRIBUTE_SUFFIX))) {
 				throw new NexusException("Link path must be to attribute (i.e. it must end with '@'), for attribute with name " + name + " and link path " + linkPath);
 			}
+			logger.debug("Copying attribute {} from {}", name, linkPath.get());  
 			nexusContext.copyAttribute(node, name, linkPath.get());
 		} else if (value instanceof Map) {
 			throw new NexusException("The value for an attribute node cannot be a mapping: " + name);
 		} else if (name.equals(NexusTemplateConstants.ATTRIBUTE_NAME_NX_CLASS)) {
 			// ignore NX_class attribute, it has already been dealt with 
 		} else {
+			logger.debug("Creating attribute {} with value {}", name, value);
 			nexusContext.createAttribute(node, name, value);
 		}
 	}

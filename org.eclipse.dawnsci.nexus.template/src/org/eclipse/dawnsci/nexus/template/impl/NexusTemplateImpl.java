@@ -10,6 +10,8 @@ import org.eclipse.dawnsci.nexus.template.NexusTemplate;
 import org.eclipse.dawnsci.nexus.template.impl.tree.InMemoryNexusContext;
 import org.eclipse.dawnsci.nexus.template.impl.tree.NexusContext;
 import org.eclipse.dawnsci.nexus.template.impl.tree.OnDiskNexusContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The implementation of a NexusTemplate. Essentially this just holds the YAML content as a {@link Map}. 
@@ -17,6 +19,8 @@ import org.eclipse.dawnsci.nexus.template.impl.tree.OnDiskNexusContext;
  */
 class NexusTemplateImpl implements NexusTemplate {
 
+	private static final Logger logger = LoggerFactory.getLogger(NexusTemplateImpl.class);
+	
 	/**
 	 * The YAML as a {@link Map} from {@link String} property names to {@link Object} values,
 	 * where the values may either a child mapping, if the value is a {@link Map}, or the
@@ -24,7 +28,10 @@ class NexusTemplateImpl implements NexusTemplate {
 	 */
 	private final Map<String, Object> yamlMapping;
 	
-	NexusTemplateImpl(Map<String, Object> yamlMapping) {
+	private final String templateName;
+	
+	NexusTemplateImpl(String templateName, Map<String, Object> yamlMapping) {
+		this.templateName = templateName;
 		this.yamlMapping = yamlMapping;
 	}
 	
@@ -34,12 +41,14 @@ class NexusTemplateImpl implements NexusTemplate {
 	
 	@Override
 	public void apply(Tree tree) throws NexusException {
+		logger.debug("Applying template {} to in-memory nexus tree", templateName);
 		final NexusContext nexusContext = new InMemoryNexusContext(tree);
 		applyTemplate(nexusContext);
 	}
 
 	@Override
 	public void apply(String nexusFilePath) throws NexusException {
+		logger.debug("Applying template {} to nexus file {}", templateName, nexusFilePath);
 		try (NexusFile nexusFile = ServiceHolder.getNexusFileFactory().newNexusFile(nexusFilePath)) {
 			nexusFile.openToWrite(false);
 			final NexusContext nexusContext = new OnDiskNexusContext(nexusFile);

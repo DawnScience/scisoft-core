@@ -3,12 +3,15 @@ package org.eclipse.dawnsci.nexus.template.impl;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.template.NexusTemplate;
 import org.eclipse.dawnsci.nexus.template.NexusTemplateService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 /**
@@ -18,6 +21,8 @@ import org.yaml.snakeyaml.Yaml;
  */
 public class NexusTemplateServiceImpl implements NexusTemplateService {
 
+	private static final Logger logger = LoggerFactory.getLogger(NexusTemplateServiceImpl.class);
+	
 	/**
 	 * The SnakeYAML Yaml object, essentially a Facade to the snakeyaml API.
 	 */
@@ -25,20 +30,27 @@ public class NexusTemplateServiceImpl implements NexusTemplateService {
 	
 	@Override
 	public synchronized NexusTemplate loadTemplate(String templateFilePath) throws NexusException {
-		try (Reader reader = Files.newBufferedReader(Paths.get(templateFilePath))) {
-			return createTemplate(yaml.load(reader));
+		final Path filePath = Paths.get(templateFilePath);
+		try (Reader reader = Files.newBufferedReader(filePath)) {
+			logger.debug("Creating template from file: {}", templateFilePath);
+			return createTemplate(filePath.getFileName().toString(), yaml.load(reader));
 		} catch (IOException e) {
 			throw new NexusException("Could not read template file " + templateFilePath);
 		}
 	}
 	
-	private NexusTemplate createTemplate(Map<String, Object> yamlMapping) {
-		return new NexusTemplateImpl(yamlMapping);
+	private NexusTemplate createTemplate(String fileName, Map<String, Object> yamlMapping) {
+		return new NexusTemplateImpl(fileName, yamlMapping);
 	}
 	
+	/**
+	 * Load a template from a String. This method is used for testing and is not public API.
+	 * @param templateString
+	 * @return
+	 */
 	public synchronized NexusTemplate loadTemplateFromString(String templateString) {
-		// load a nexus template directly from a string. method for testing
-		return createTemplate(yaml.load(templateString));
+		logger.debug("Creating template from string: {}", templateString);
+		return createTemplate("<string>", yaml.load(templateString));
 	}
 
 }

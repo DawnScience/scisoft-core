@@ -112,9 +112,15 @@ public class NexusTemplateTest {
 			// create a new empty nexus file
 			final String filePath = testFilesDirName + "test-" + UUID.randomUUID() + ".nxs";
 			NexusFile file = NexusTestUtils.createNexusFile(filePath);
-			file.close();
 
-			template.apply(filePath);
+			// uncomment the two lines below to test template.apply(String filePath)
+//			file.close();
+//			template.apply(filePath);
+			
+			// uncomment the two lines below to test template.apply(NexusFile nexusFile)
+			template.apply(file);
+			file.close();
+			
 			TreeFile treeFile = loadNexusFile(filePath);
 			return (NXroot) treeFile.getGroupNode();
 		}

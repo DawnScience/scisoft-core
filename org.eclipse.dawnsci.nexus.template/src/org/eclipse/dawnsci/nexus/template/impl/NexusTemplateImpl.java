@@ -51,11 +51,22 @@ class NexusTemplateImpl implements NexusTemplate {
 		logger.debug("Applying template {} to nexus file {}", templateName, nexusFilePath);
 		try (NexusFile nexusFile = ServiceHolder.getNexusFileFactory().newNexusFile(nexusFilePath)) {
 			nexusFile.openToWrite(false);
-			final NexusContext nexusContext = new OnDiskNexusContext(nexusFile);
-			applyTemplate(nexusContext);
+			applyToNexusFile(nexusFile);
 		}
 	}
 
+	@Override
+	public void apply(NexusFile nexusFile) throws NexusException {
+		logger.debug("Applying template {} to nexus file {}", templateName, nexusFile.getFilePath());
+		applyToNexusFile(nexusFile);
+	}
+
+	private void applyToNexusFile(NexusFile nexusFile) throws NexusException {
+		final NexusContext nexusContext = new OnDiskNexusContext(nexusFile);
+		applyTemplate(nexusContext);
+		nexusFile.flush();
+	}
+	
 	private void applyTemplate(NexusContext nexusContext) throws NexusException {
 		ApplyNexusTemplateTask applyTemplateTask = new ApplyNexusTemplateTask(this, nexusContext);
 		applyTemplateTask.run();

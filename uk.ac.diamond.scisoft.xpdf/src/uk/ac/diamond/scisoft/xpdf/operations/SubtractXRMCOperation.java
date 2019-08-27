@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.xpdf.XPDFAbsorptionMaps;
-import uk.ac.diamond.scisoft.xpdf.XPDFCalibration;
 import uk.ac.diamond.scisoft.xpdf.XPDFCoordinates;
 import uk.ac.diamond.scisoft.xpdf.XPDFElectronCrossSections;
 import uk.ac.diamond.scisoft.xpdf.XPDFQSquaredIntegrator;

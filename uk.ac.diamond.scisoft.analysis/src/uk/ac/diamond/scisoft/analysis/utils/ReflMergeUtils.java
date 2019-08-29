@@ -234,12 +234,9 @@ public class ReflMergeUtils {
 	}
 	
 	public static Dataset rebinDatapoints(Dataset data) throws DatasetException {
+		
 		Dataset dataX = getXAxis(data);
-		// A quarter of the width of the distances between the last two datapoints
-		// appears to be a suitable value to ensure that the total external 
-		// reflection drop off is caught
-		double separation = dataX.getDouble(-1) - dataX.getDouble(-2);
-		separation /= 4.;
+		double separation = dataX.getDouble(1) - dataX.getDouble(0);
 		double bottom = dataX.getDouble(0);
 		int size = (int) (((dataX.getDouble(-1) + separation) - (bottom)) / separation); 
 		Dataset newY = DatasetFactory.zeros(DoubleDataset.class, size);

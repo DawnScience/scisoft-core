@@ -10,7 +10,6 @@
 package uk.ac.diamond.scisoft.analysis.utils;
 
 import org.eclipse.january.dataset.BroadcastIterator;
-import org.eclipse.january.dataset.BroadcastPairIterator;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
@@ -134,8 +133,8 @@ public class ErrorPropagationUtils {
 
 		if (inputUncert != null) {
 			if (operandUncert != null) { // If everyone has errors
-				BroadcastIterator iter = BroadcastPairIterator.createIterator(input, operand, null, true);
-				BroadcastIterator itererr = BroadcastPairIterator.createIterator(inputUncert, operandUncert, null, true);
+				BroadcastIterator iter = BroadcastIterator.createIterator(input, operand, null, true);
+				BroadcastIterator itererr = BroadcastIterator.createIterator(inputUncert, operandUncert, null, true);
 				iter.setOutputDouble(true);
 				itererr.setOutputDouble(true);
 				output = iter.getOutput().cast(DoubleDataset.class);
@@ -146,8 +145,8 @@ public class ErrorPropagationUtils {
 					outputUncert.setAbs(itererr.oIndex, out[1]);
 				}
 			} else { // If only the input has errors
-				BroadcastIterator iter = BroadcastPairIterator.createIterator(input, operand, null, true);
-				BroadcastIterator itererr = BroadcastPairIterator.createIterator(biggest, inputUncert, null, true);
+				BroadcastIterator iter = BroadcastIterator.createIterator(input, operand, null, true);
+				BroadcastIterator itererr = BroadcastIterator.createIterator(biggest, inputUncert, null, true);
 				iter.setOutputDouble(true);
 				itererr.setOutputDouble(true);
 				output = iter.getOutput().cast(DoubleDataset.class);
@@ -159,8 +158,8 @@ public class ErrorPropagationUtils {
 				}
 			}
 		} else if (operandUncert != null) { // If only the operand has errors
-			BroadcastIterator iter = BroadcastPairIterator.createIterator(input, operand, null, true);
-			BroadcastIterator itererr = BroadcastPairIterator.createIterator(biggest, operandUncert, null, true);
+			BroadcastIterator iter = BroadcastIterator.createIterator(input, operand, null, true);
+			BroadcastIterator itererr = BroadcastIterator.createIterator(biggest, operandUncert, null, true);
 			iter.setOutputDouble(true);
 			itererr.setOutputDouble(true);
 			output = iter.getOutput().cast(DoubleDataset.class);
@@ -171,7 +170,7 @@ public class ErrorPropagationUtils {
 				outputUncert.setAbs(itererr.oIndex, out[1]);
 			}
 		} else { // If no one has errors
-			BroadcastIterator iter = BroadcastPairIterator.createIterator(input, operand, null, true);
+			BroadcastIterator iter = BroadcastIterator.createIterator(input, operand, null, true);
 			iter.setOutputDouble(true);
 			output = iter.getOutput().cast(DoubleDataset.class);
 			outputUncert = null;

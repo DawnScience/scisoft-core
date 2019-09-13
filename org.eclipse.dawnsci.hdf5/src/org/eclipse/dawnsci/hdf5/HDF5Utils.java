@@ -863,17 +863,22 @@ public class HDF5Utils {
 	}
 
 	/**
-	 * write a dataset in HDF5 file. Create the file if necessary
+	 * Write a dataset in HDF5 file. Create the file if necessary
 	 * @param fileName
 	 * @param parentPath path to group containing dataset
 	 * @param data
-	 * @throws ScanFileHolderException 
+	 * @throws ScanFileHolderException
+	 * @throws IllegalArgumentException when data has null or empty name
 	 */
 	public static void writeDataset(String fileName, String parentPath, IDataset data) throws ScanFileHolderException {
 		HDF5File fid = HDF5FileFactory.acquireFile(fileName, true);
 
 		try {
 			requireDestination(fid, parentPath);
+			String dataName = data.getName();
+			if (dataName == null || dataName.isEmpty()) {
+				throw new IllegalArgumentException("Dataset must have a name");
+			}
 			String dataPath = absolutePathToData(parentPath, data.getName());
 			writeDataset(fid, dataPath, data);
 		} catch (Throwable le) {
@@ -985,12 +990,13 @@ public class HDF5Utils {
 	 * @param path
 	 * @param attributes
 	 * @throws NexusException
+	 * @throws IllegalArgumentException when any attribute has null or empty name
 	 */
 	public static void writeAttributes(HDF5File f, String path, IDataset... attributes) throws NexusException {
 		for (IDataset attr : attributes) {
 			String attrName = attr.getName();
 			if (attrName == null || attrName.isEmpty()) {
-				throw new NullPointerException("Attribute must have a name");
+				throw new IllegalArgumentException("Attribute must have a name");
 			}
 
 			long fileID = f.getID();

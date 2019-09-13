@@ -727,6 +727,13 @@ public class HDF5Utils {
 		createDataset(fileName, parentPath, name, initialShape, maxShape, chunking, dtype, fill, asUnsigned, true);
 	}
 
+	/**
+	 * Check if group exists in file and create group if not
+	 * @param file
+	 *            id
+	 * @param group
+	 * @throws HDF5Exception
+	 */
 	private static void requireDestination(HDF5File fid, String group) throws HDF5Exception {
 		boolean exists = false;
 		long gid = -1;
@@ -966,17 +973,24 @@ public class HDF5Utils {
 	private static final Charset ASCII = Charset.forName("US-ASCII");
 
 	/**
-	 * Write attributes to a group or dataset in given file
+	 * Write attributes to a group or dataset in given file. When writing to group,
+	 * this checks if group exists in file and creates group if not
+	 * 
 	 * @param fileName
 	 * @param path
+	 * @param isGroup
 	 * @param attributes
-	 * @throws ScanFileHolderException 
+	 * @throws ScanFileHolderException
 	 */
-	public static void writeAttributes(String fileName, String path, IDataset... attributes) throws ScanFileHolderException {
-		HDF5File fid = HDF5FileFactory.acquireFile(fileName, true);
+	public static void writeAttributes(String fileName, String path, boolean isGroup, IDataset... attributes)
+			throws ScanFileHolderException {
 
+		HDF5File f = HDF5FileFactory.acquireFile(fileName, true);
+		if (isGroup) {
+			requireDestination(f, path);
+		}
 		try {
-			writeAttributes(fid, path, attributes);
+			writeAttributes(f, path, attributes);
 		} catch (Throwable le) {
 			logAndThrowSFHException(le, "Problem writing attributes in %s", path);
 		} finally {
@@ -1476,6 +1490,31 @@ public class HDF5Utils {
 	}
 
 	private static final String HERE = ".";
+
+	/**
+	 * Read attributes from group or dataset in given file
+	 * 
+	 * @param fileName
+	 * @param groupPath
+	 * @throws ScanFileHolderException
+	 */
+	public static Dataset[] readAttributes(String fileName, String path)
+			throws NexusException, ScanFileHolderException {
+		long id = -1;
+		try {
+			HDF5File fid = HDF5FileFactory.acquireFile(fileName, false);
+			id = H5.H5Oopen(fid.getID(), path, HDF5Constants.H5P_DEFAULT);
+			return readAttributes(id);
+		} finally {
+			if (id != -1) {
+				try {
+					H5.H5Oclose(id);
+				} catch (HDF5Exception ex) {
+				}
+			}
+			HDF5FileFactory.releaseFile(fileName);
+		}
+	}
 
 	public static Dataset[] readAttributes(long oid, String path) throws NexusException {
 		H5O_info_t info = null;

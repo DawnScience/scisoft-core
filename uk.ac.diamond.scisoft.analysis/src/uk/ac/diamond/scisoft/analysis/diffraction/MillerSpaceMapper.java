@@ -1424,7 +1424,7 @@ public class MillerSpaceMapper {
 			attrs.add(a);
 		}
 
-		HDF5Utils.writeAttributes(file, volPath, attrs.toArray(new Dataset[attrs.size()]));
+		HDF5Utils.writeAttributes(file, volPath, true, attrs.toArray(new Dataset[attrs.size()]));
 	}
 
 	/**

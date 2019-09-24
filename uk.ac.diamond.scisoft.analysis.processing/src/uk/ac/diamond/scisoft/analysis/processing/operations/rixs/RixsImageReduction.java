@@ -45,29 +45,27 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 		super.updateFromModel(throwEx);
 
 		// done regardless of fit file option but gets overwrite when not manual override
-		String file = model.getFitFile();
 		useSummaryFits = model.isPerFrameFits();
 		summaryStore = null;
 
+		boolean isCalibration = false;
+		String file = model.getFitFile();
 		if (file == null) {
 			file = model.getCalibrationFile();
-			if (file != null && !useSummaryFits) {
-				try {
-					initializeFitLine(file, true, 0, 1);
-				} catch (OperationException e) {
-					log.appendFailure("Cannot initialize fit line from '%s': %s", file, e);
+			if (file != null) {
+				isCalibration = true;
+				if (!useSummaryFits) {
+					try {
+						initializeFitLine(file, true, 0, 1);
+					} catch (OperationException e) {
+						log.appendFailure("Cannot initialize fit line from '%s': %s", file, e);
+					}
 				}
 			}
 		}
 
-		if (model.isRegionsFromFile()) {
-			file = model.getFitFile();
-			if (file == null) {
-				file = model.getCalibrationFile();
-				if (file != null) { // only in case of calibration only
-					initializeROIsFromFile(file);
-				}
-			}
+		if (isCalibration && model.isRegionsFromFile()) {
+			initializeROIsFromFile(file);
 		}
 
 		updateROICount();
@@ -83,7 +81,12 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 		if (si.isFirstSlice()) {
 			String filePath = smd.getSourceInfo().getFilePath();
 			if (model.getFitFileOption() == FIT_FILE_OPTION.MANUAL_OVERRIDE) {
-				initializeFitLine(null, false, 0, 0);
+				initializeFitLine(model.getFitFile(), !useSummaryFits, 0, 0);
+
+				if (model.isRegionsFromFile()) {
+					initializeROIsFromFile(model.getFitFile());
+					updateROICount();
+				}
 			} else if (!filePath.equals(currentDataFile)) {
 				currentDataFile = filePath;
 
@@ -198,24 +201,14 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 
 			ProcessingUtils.checkForProcess(this, entry, ElasticLineReduction.PROCESS_NAME);
 
-			// find /entry/[groupName]/*-RIXS elastic line reduction/line?_[cm]
+			// find /processed/[groupName]/*-RIXS elastic line reduction/line?_[cm]
 			Dataset[] store = new Dataset[4];
 			GroupNode g = (GroupNode) entry.getGroupNode(useAverage ? NexusFileExecutionVisitor.AUX_GROUP :
 				NexusFileExecutionVisitor.SUM_GROUP);
-			int r = 0;
-			for (NodeLink n : g) {
-				if (n.getName().endsWith(ElasticLineReduction.PROCESS_NAME) && n.isDestinationGroup()) {
-					GroupNode fg = (GroupNode) n.getDestination();
-					for (r = 0; r < 2; r++) {
-						Dataset d = getDataset(ElasticLineReduction.LINE_GRADIENT_FORMAT, fg, r);
-						if (d == null) {
-							break;
-						}
-						store[2*r]     = d;
-						store[2*r + 1] = getDataset(ElasticLineReduction.LINE_INTERCEPT_FORMAT, fg, r);
-					}
-					break;
-				}
+			int r = extractFitParameters(store, g, 0);
+			if (r == 0 && !useAverage) { // fallback in case summary data is missing when only one frame
+				g = (GroupNode) entry.getGroupNode(NexusFileExecutionVisitor.AUX_GROUP);
+				r = extractFitParameters(store, g, 0);
 			}
 			readFitFromStore(slice, store);
 			if (!useAverage) {
@@ -234,6 +227,24 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 		} catch (Exception e) {
 			throw new OperationException(this, "Cannot load file with elastic line fit", e);
 		}
+	}
+
+	private int extractFitParameters(Dataset[] store, GroupNode g, int r) {
+		for (NodeLink n : g) {
+			if (n.getName().endsWith(ElasticLineReduction.PROCESS_NAME) && n.isDestinationGroup()) {
+				GroupNode fg = (GroupNode) n.getDestination();
+				for (r = 0; r < 2; r++) {
+					Dataset d = getDataset(ElasticLineReduction.LINE_GRADIENT_FORMAT, fg, r);
+					if (d == null) {
+						break;
+					}
+					store[2*r]     = d;
+					store[2*r + 1] = getDataset(ElasticLineReduction.LINE_INTERCEPT_FORMAT, fg, r);
+				}
+				break;
+			}
+		}
+		return r;
 	}
 
 	private void readFitFromStore(int slice, Dataset[] store) {
@@ -276,8 +287,8 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 		if (useSummaryFits || summaryStore == null) {
 			for (int r = 0; r < 2; r++) {
 				StraightLine l = getStraightLine(r);
-				summaryData.add(ProcessingUtils.createNamedDataset(l.getParameterValue(0), ElasticLineReduction.LINE_GRADIENT_FORMAT, r));
-				summaryData.add(ProcessingUtils.createNamedDataset(l.getParameterValue(1), ElasticLineReduction.LINE_INTERCEPT_FORMAT, r));
+				summaryData.add(ProcessingUtils.createNamedDataset(l.getParameterValue(STRAIGHT_LINE_M), ElasticLineReduction.LINE_GRADIENT_FORMAT, r));
+				summaryData.add(ProcessingUtils.createNamedDataset(l.getParameterValue(STRAIGHT_LINE_C), ElasticLineReduction.LINE_INTERCEPT_FORMAT, r));
 			}
 		} else {
 			for (int r = 0; r < 2; r++) {

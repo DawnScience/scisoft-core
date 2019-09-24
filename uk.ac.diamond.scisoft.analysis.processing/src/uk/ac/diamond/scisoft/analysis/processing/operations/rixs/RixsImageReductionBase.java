@@ -693,7 +693,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			slope = line.getParameterValue(STRAIGHT_LINE_M);
 			elastic = line.calculateValues(y); // absolute position of elastic line to use a zero point
 		} else {
-			elastic = DatasetFactory.createRange(rows);
+			elastic = y;
 			elastic.imultiply(slope);
 			elastic.iadd(line.getParameterValue(STRAIGHT_LINE_C));
 		}

@@ -682,26 +682,44 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	 * @param clip if true, clip columns where rows contribute from outside image 
 	 * @return elastic line position and spectrum datasets
 	 */
-	public Dataset[] makeSpectrum(int r, Dataset in, Double slope, boolean clip) {
-		// shift and accumulate spectra
-		int rows = in.getShapeRef()[0];
-		Dataset y = DatasetFactory.createRange(rows);
-		y.iadd(offset[0]);
+	private Dataset[] makeSpectrum(int r, Dataset in, Double slope, boolean clip) {
 		StraightLine line = getStraightLine(r);
-		Dataset elastic;
+
 		if (slope == null) {
 			slope = line.getParameterValue(STRAIGHT_LINE_M);
-			elastic = line.calculateValues(y); // absolute position of elastic line to use a zero point
-		} else {
-			elastic = y;
-			elastic.imultiply(slope);
-			elastic.iadd(line.getParameterValue(STRAIGHT_LINE_C));
 		}
-		if (model.getEnergyOffsetOption() == ENERGY_OFFSET.MANUAL_OVERRIDE) {
-			double offset = r == 0 ? model.getEnergyOffsetA() : model.getEnergyOffsetB();
-			if (Double.isFinite(offset)) {
-				elastic.iadd(offset - line.getParameterValue(STRAIGHT_LINE_C));
-			}
+		double intercept = model.getEnergyOffsetOption() != ENERGY_OFFSET.MANUAL_OVERRIDE
+				? line.getParameterValue(STRAIGHT_LINE_C)
+				: r == 0 ? model.getEnergyOffsetA() : model.getEnergyOffsetB();
+
+		Dataset[] results = makeSpectrum(in, offset[0], slope, intercept, clip);
+
+		if (model.getEnergyOffsetOption() == ENERGY_OFFSET.TURNING_POINT) {
+			results[0].isubtract(findTurningPoint(false, results[1]));
+		}
+		return results;
+	}
+
+	/**
+	 * Make spectrum from image by summing along line
+	 * @param in (usually transposed)
+	 * @param rOffset ROI offset
+	 * @param slope line slope
+	 * @param intercept line intercept
+	 * @param clip if true, clip columns where rows contribute from outside image 
+	 * @return elastic line position and spectrum datasets
+	 */
+	public static Dataset[] makeSpectrum(Dataset in, double rOffset, double slope, double intercept, boolean clip) {
+		int rows = in.getShapeRef()[0];
+		Dataset elastic = DatasetFactory.createRange(rows);
+		if (rOffset != 0) {
+			elastic.iadd(rOffset);
+		}
+		if (slope != 1) {
+			elastic.imultiply(slope);
+		}
+		if (intercept != 0) {
+			elastic.iadd(intercept);
 		}
 	
 		Dataset spectrum = makeSpectrum(in, slope, clip);
@@ -715,14 +733,10 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			}
 		}
 
-		if (model.getEnergyOffsetOption() == ENERGY_OFFSET.TURNING_POINT) {
-			int offset = findTurningPoint(false, spectrum);
-			elastic.isubtract(offset);
-		}
 		return new Dataset[] {elastic, spectrum};
 	}
 
-	private int findTurningPoint(boolean fromFirst, Dataset y) {
+	private static int findTurningPoint(boolean fromFirst, Dataset y) {
 		int n = y.getSize();
 		Dataset diff = Maths.derivative(DatasetFactory.createRange(n), y, 3);
 		List<Double> cs = DatasetUtils.crossings(diff, 0);

@@ -74,8 +74,6 @@ public class RixsImageReductionBaseModel extends RixsBaseModel {
 			hint = "E.g. 1 or 2,-1 or 0,2:4 or !3 or !1:-2", expertOnly = true)
 	private String frameSelection = "";
 
-	// TODO conditional override to fit parameters??
-
 	public enum ENERGY_OFFSET {
 		FROM_ELASTIC_LINE_FIT, // use value of intercept in fit
 		MANUAL_OVERRIDE, // override if values are available

@@ -60,7 +60,7 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtil
  */
 public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends AbstractOperation<T, OperationData> implements PropertyChangeListener {
 
-	protected int[] offset = new int[2];
+	protected int[] offset = new int[2]; // ROI origin
 	protected List<IDataset> displayData = new ArrayList<>();
 	protected List<IDataset> auxData = new ArrayList<>();
 	protected List<IDataset> summaryData = new ArrayList<>();
@@ -215,7 +215,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		return lines[r >= lines.length ? 0 : r]; // in case number of ROIs have increased
 	}
 
-	protected Dataset makeSpectrum(Dataset in, double slope, boolean clip) {
+	protected static Dataset makeSpectrum(Dataset in, double slope, boolean clip) {
 		Dataset spectrum;
 		if (Double.isFinite(slope)) {
 			spectrum = sumImageAlongSlope(in, slope, clip);
@@ -232,7 +232,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	 * @param image
 	 * @param slope
 	 * @param clip if true, clip columns where rows contribute from outside image 
-	 * @return summed image
+	 * @return summed image (when clipped, an axis is added that gives the clipped indices)
 	 */
 	public static Dataset sumImageAlongSlope(Dataset image, double slope, boolean clip) {
 		int[] shape = image.getShapeRef();

@@ -24,7 +24,6 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.january.dataset.LazyDataset;
 
 public class AlbaLinkFileLoader extends AbstractFileLoader {
 
@@ -81,7 +80,7 @@ public class AlbaLinkFileLoader extends AbstractFileLoader {
 					
 					String[] split = line.split("\t");
 					
-					if (cols.length != split.length) throw new ScanFileHolderException("Headers do not match data!");
+					if (cols == null || cols.length != split.length) throw new ScanFileHolderException("Headers do not match data!");
 					Map<String, List<String>> mapString = new HashMap<String, List<String>>();
 					Map<String, List<Double>> mapDouble = new HashMap<String, List<Double>>();
 					
@@ -158,7 +157,7 @@ public class AlbaLinkFileLoader extends AbstractFileLoader {
 					for (String key : mapString.keySet()){
 						try {
 							ImageStackLoader l = new ImageStackLoader(mapString.get(key), null);
-							ILazyDataset lz = new LazyDataset(key, l.getDType(), l.getShape(), l);
+							ILazyDataset lz = l.createLazyDataset(key);
 							result.addDataset(key, lz);
 						} catch (Exception e) {
 						}

@@ -760,7 +760,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			}
 
 			ILazyWriteableDataset wdse = dn.getWriteableDataset();
-			s = new SliceND(e.getShape(),determineMaxShape(e),sliceOut);
+			s = new SliceND(e.getShapeRef(), determineMaxShape(e), sliceOut);
 			wdse.setSlice(null, e, s);
 		}
 	}
@@ -849,7 +849,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		}
 	
 		ILazyWriteableDataset wds = dn.getWriteableDataset();
-		SliceND s = new SliceND(dataset.getShape(),determineMaxShape(dataset),new Slice[]{oSlice[axisDim]});
+		SliceND s = new SliceND(dataset.getShapeRef(), determineMaxShape(dataset), oSlice[axisDim]);
 		wds.setSlice(null, dataset, s);
 	}
 
@@ -980,7 +980,8 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		Dataset d = DatasetUtils.convertToDataset(dataset);
 		int[] mx = determineMaxShape(d);
 
-		ILazyWriteableDataset lwds = new LazyWriteableDataset(d.getName(), d.getDType(), d.getShape(), mx, d.getShape(), null);
+		ILazyWriteableDataset lwds = new LazyWriteableDataset(d.getName(), d.getElementClass(),
+				d.getShape(), mx, d.getShape(), null);
 		
 		DataNode dn = nexusFile.createData(group, lwds, NexusFile.COMPRESSION_NONE);
 		

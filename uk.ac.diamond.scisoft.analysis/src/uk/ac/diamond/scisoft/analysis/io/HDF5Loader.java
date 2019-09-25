@@ -49,7 +49,6 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.january.dataset.LazyDataset;
 import org.eclipse.january.dataset.LazyDynamicDataset;
 import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.dataset.StringDataset;
@@ -872,7 +871,7 @@ public class HDF5Loader extends AbstractFileLoader {
 
 		if (rank == 0 || (trueShape.length == 1 && trueShape[0] == 1 && maxShape.length == 1 && maxShape[0] == 1)) { // special case for single values
 			try {
-				Dataset d = DatasetFactory.zeros(type.isize, trueShape, type.dtype);
+				Dataset d = DatasetFactory.zeros(type.isize, type.clazz, trueShape);
 				Object data = d.getBuffer();
 
 				if (type.isVariableLength) {
@@ -897,7 +896,7 @@ public class HDF5Loader extends AbstractFileLoader {
 		final boolean extendUnsigned = !keepBitWidth && type.unsigned;
 
 		// cope with external files specified in a non-standard way and which may not be HDF5 either
-		if (type.dtype == Dataset.STRING && useExternalFiles) {
+		if (StringDataset.class.isAssignableFrom(type.clazz) && useExternalFiles) {
 			// interpret set of strings as the full path names to a group of external files that are stacked together
 
 			StringDataset ef = extractExternalFileNames(did, tid, type.isVariableLength, trueShape);
@@ -913,7 +912,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			// set dataset information again as loader now has correct shapes
 			node.setMaxShape(loader.getMaxShape());
 			node.setChunkShape(loader.getChunkShape());
-			node.setDataset(new LazyDataset(name, loader.getDType(), loader.getShape(), loader));
+			node.setDataset(loader.createLazyDataset(name));
 			return true;
 		}
 
@@ -926,9 +925,9 @@ public class HDF5Loader extends AbstractFileLoader {
 			}
 		}
 
-		HDF5LazyLoader l = new HDF5LazyLoader(file.getHostname(), file.getFilename(), nodePath, name, trueShape, type.isize, type.dtype, extendUnsigned);
+		HDF5LazyLoader l = new HDF5LazyLoader(file.getHostname(), file.getFilename(), nodePath, name, trueShape, type.isize, type.clazz, extendUnsigned);
 
-		node.setDataset(new LazyDynamicDataset(name, type.dtype, type.isize, trueShape.clone(), maxShape, l));
+		node.setDataset(new LazyDynamicDataset(name, DTypeUtils.getDType(type.clazz), type.isize, trueShape.clone(), maxShape, l));
 		return true;
 	}
 

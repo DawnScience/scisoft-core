@@ -19,7 +19,6 @@ import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.january.dataset.LazyDataset;
 
 /**
  * This class loads an SRS data file and also images from a Dectris Pilatus detector
@@ -60,7 +59,7 @@ public class ExtendedSRSLoader extends SRSLoader {
 		}
 
 		if (loader != null) {
-			LazyDataset lazyDataset = new LazyDataset(DATA_NAME, loader.getDType(), loader.getShape(), loader);
+			ILazyDataset lazyDataset = loader.createLazyDataset(DATA_NAME);
 			currentDataHolder.addDataset(lazyDataset.getName(), lazyDataset);
 			datasetNames.add(lazyDataset.getName());
 			dataShapes.put(lazyDataset.getName(), lazyDataset.getShape());

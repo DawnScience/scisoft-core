@@ -164,9 +164,9 @@ public class ROIProfile {
 		if (ang == 0.0) {
 			
 			final int xstart  = Math.max(0,  spt[0]);
-			final int xend   = Math.min(spt[0] + len[0],  data.getShape()[1]);
+			final int xend   = Math.min(spt[0] + len[0],  data.getShapeRef()[1]);
 			final int ystart = Math.max(0,  spt[1]);
-			final int yend   = Math.min(spt[1] + len[1],  data.getShape()[0]);
+			final int yend   = Math.min(spt[1] + len[1],  data.getShapeRef()[0]);
 			
 			// We slice down data to reduce the work the masking and the integrate needs to do.
 			// TODO Does this always work? This makes large images profile better...
@@ -204,7 +204,7 @@ public class ROIProfile {
 			}
 
 			
-			Integrate2D int2d = new Integrate2D(0, 0, Math.min(len[0], data.getShape()[1]), Math.min(len[1], data.getShape()[0]));
+			Integrate2D int2d = new Integrate2D(0, 0, Math.min(len[0], data.getShapeRef()[1]), Math.min(len[1], data.getShapeRef()[0]));
 
 			List<? extends Dataset> dsets = int2d.value(slicedData);
 			if (dsets == null) return null;
@@ -278,9 +278,9 @@ public class ROIProfile {
 		if (ang == 0.0) {
 			
 			final int xtart  = Math.max(0,  spt[1]);
-			final int xend   = Math.min(spt[1] + len[1],  data.getShape()[0]);
+			final int xend   = Math.min(spt[1] + len[1],  data.getShapeRef()[0]);
 			final int ystart = Math.max(0,  spt[0]);
-			final int yend   = Math.min(spt[0] + len[0],  data.getShape()[1]);
+			final int yend   = Math.min(spt[0] + len[0],  data.getShapeRef()[1]);
 			
 			// We slice down data to reduce the work the masking and the integrate needs to do.
 			// TODO Does this always work? This makes large images profile better...
@@ -314,7 +314,7 @@ public class ROIProfile {
 				slicedData = data;
 			}
 
-			Integrate2D int2d = new Integrate2D(0, 0, Math.min(len[0], data.getShape()[1]), Math.min(len[1], data.getShape()[0]));
+			Integrate2D int2d = new Integrate2D(0, 0, Math.min(len[0], data.getShapeRef()[1]), Math.min(len[1], data.getShapeRef()[0]));
 
 			List<? extends Dataset> dsets = int2d.value(slicedData);
 			if (dsets == null) return null;
@@ -391,9 +391,9 @@ public class ROIProfile {
 		if (ang == 0.0) {
 			
 			final int xtart  = Math.max(0,  spt[1]);
-			final int xend   = Math.min(spt[1] + len[1],  data.getShape()[0]);
+			final int xend   = Math.min(spt[1] + len[1],  data.getShapeRef()[0]);
 			final int ystart = Math.max(0,  spt[0]);
-			final int yend   = Math.min(spt[0] + len[0],  data.getShape()[1]);
+			final int yend   = Math.min(spt[0] + len[0],  data.getShapeRef()[1]);
 			
 			// We slice down data to reduce the work the masking and the integrate needs to do.
 			// TODO Does this always work? This makes large images profile better...
@@ -531,7 +531,7 @@ public class ROIProfile {
 	 */
 	public static FloatDataset nanalize(Dataset data, BooleanDataset mask) {
 		
-		FloatDataset nanalized = DatasetFactory.zeros(FloatDataset.class, data.getShape());
+		FloatDataset nanalized = DatasetFactory.zeros(FloatDataset.class, data.getShapeRef());
 		float[]      buffer    = nanalized.getData();
 		IndexIterator it        = data.getIterator();
 		for (int i = 0; it.hasNext(); i++) {
@@ -547,7 +547,7 @@ public class ROIProfile {
 		
 		
         MAIN_LOOP: for (int i = 0; i < cols.getSize(); i++) {
-			for (int j = 0, jmax = data.getShape()[0]; j < jmax; j++) {
+			for (int j = 0, jmax = data.getShapeRef()[0]; j < jmax; j++) {
 				if (!Float.isNaN(data.getFloat(j, i))) continue MAIN_LOOP; 
 			}
 			cols.set(Float.NaN, i);
@@ -559,7 +559,7 @@ public class ROIProfile {
 		
 		
         MAIN_LOOP: for (int i = 0; i < rows.getSize(); i++) {
-			for (int j = 0, jmax = data.getShape()[1]; j < jmax; j++) {
+			for (int j = 0, jmax = data.getShapeRef()[1]; j < jmax; j++) {
 				if (!Float.isNaN(data.getFloat(i, j))) continue MAIN_LOOP; 
 			}
 			rows.set(Float.NaN, i);

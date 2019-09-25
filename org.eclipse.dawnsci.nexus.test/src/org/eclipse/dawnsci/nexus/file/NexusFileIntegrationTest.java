@@ -58,17 +58,17 @@ public class NexusFileIntegrationTest {
 
 		int[] shape = new int[] {2, 34};
 		int[] mshape = new int[] {ILazyWriteableDataset.UNLIMITED, 34};
-		LazyWriteableDataset d = new LazyWriteableDataset("d", Dataset.INT16, shape, mshape, null, null);
+		LazyWriteableDataset d = new LazyWriteableDataset("d", Short.class, shape, mshape, null, null);
 		nf.createData(g, d);
 
-		LazyWriteableDataset e = new LazyWriteableDataset("e", Dataset.FLOAT64, shape, mshape, null, null);
+		LazyWriteableDataset e = new LazyWriteableDataset("e", Double.class, shape, mshape, null, null);
 		nf.createData(g, e);
 
 		a = DatasetFactory.createFromObject(-1.5);
 		a.setName("value");
 		nf.addAttribute(g.getDataNode(d.getName()), nf.createAttribute(a));
 
-		LazyWriteableDataset t = new LazyWriteableDataset("t", Dataset.STRING, shape, mshape, null, null);
+		LazyWriteableDataset t = new LazyWriteableDataset("t", String.class, shape, mshape, null, null);
 		nf.createData(g, t);
 
 		a = DatasetFactory.createRange(FloatDataset.class, 10).reshape(2, 5);

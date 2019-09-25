@@ -533,7 +533,7 @@ public class Image {
 	public static Dataset align(Dataset input) throws Exception {
 		if (input.getRank() != 3)
 			throw new Exception("Error: input dataset rank expected is 3");
-		int[] size = input.getShape();
+		int[] size = input.getShapeRef();
 		List<IDataset> images = new ArrayList<IDataset>(size[0]);
 
 		for (int i = 0; i < size[0]; i ++) {

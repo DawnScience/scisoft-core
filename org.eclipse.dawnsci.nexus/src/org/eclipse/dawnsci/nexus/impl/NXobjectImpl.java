@@ -39,6 +39,7 @@ import org.eclipse.january.dataset.DateDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
+import org.eclipse.january.dataset.InterfaceUtils;
 import org.eclipse.january.dataset.LazyWriteableDataset;
 import org.eclipse.january.dataset.StringDataset;
 
@@ -181,8 +182,8 @@ public abstract class NXobjectImpl extends GroupNodeImpl implements NXobject {
 	
 	@Override
 	public ILazyWriteableDataset initializeLazyDataset(String name,
-			int[] maxShape, Class<?> dtype) {
-		ILazyWriteableDataset dataset = new LazyWriteableDataset(name, dtype, maxShape, null, null, null);
+			int[] maxShape, Class<?> eClass) {
+		ILazyWriteableDataset dataset = new LazyWriteableDataset(name, eClass, maxShape, null, null, null);
 		createDataNode(name, dataset);
 		
 		return dataset;
@@ -190,8 +191,8 @@ public abstract class NXobjectImpl extends GroupNodeImpl implements NXobject {
 	
 	@Override
 	public ILazyWriteableDataset initializeFixedSizeLazyDataset(String name, int[] shape,
-			Class<?> dtype) {
-		ILazyWriteableDataset dataset = new LazyWriteableDataset(name, dtype, shape, shape, null, null);
+			Class<?> eClass) {
+		ILazyWriteableDataset dataset = new LazyWriteableDataset(name, eClass, shape, shape, null, null);
 		createDataNode(name, dataset);
 		
 		return dataset;

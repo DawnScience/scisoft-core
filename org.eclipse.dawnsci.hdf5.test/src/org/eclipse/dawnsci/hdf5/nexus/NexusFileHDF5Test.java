@@ -19,7 +19,6 @@ import org.eclipse.dawnsci.hdf5.HDF5DatatypeResource;
 import org.eclipse.dawnsci.hdf5.HDF5FileResource;
 import org.eclipse.dawnsci.hdf5.HDF5Resource;
 import org.eclipse.dawnsci.nexus.NexusException;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
@@ -39,11 +38,10 @@ public class NexusFileHDF5Test {
 		try (NexusFileHDF5 nf = new NexusFileHDF5(FILE_NAME, true)) {
 			nf.createAndOpenToWrite();
 			ILazyWriteableDataset lds = new LazyWriteableDataset("data",
-					Dataset.STRING,
+					String.class,
 					new int[] {0},
 					new int[] {ILazyWriteableDataset.UNLIMITED},
-					new int[] {3},
-					null);
+					new int[] {3}, null);
 			nf.createData("/test", lds, true);
 			nf.flush();
 		}
@@ -72,11 +70,10 @@ public class NexusFileHDF5Test {
 			IDataset ds = DatasetFactory.createFromObject(new int[] {1, 2, 3, 4, 5, 6, 7, 8});
 			ds.setName("data");
 			ILazyWriteableDataset lds = new LazyWriteableDataset("data",
-					Dataset.INT32,
+					Integer.class,
 					new int[] {0},
 					new int[] {ILazyWriteableDataset.UNLIMITED},
-					new int[] {64},
-					null);
+					new int[] {64}, null);
 			nf.createData("/a/b/", lds, true);
 			nf.link("/a/b", "/a/d");
 

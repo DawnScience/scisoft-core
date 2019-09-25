@@ -180,7 +180,7 @@ public class NexusFileStressTest {
 			NexusFile file = null;
 			try {
 				file = NexusTestUtils.createNexusFile(filename);
-				ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset(null, Dataset.FLOAT64, stop, dimArray, stop);
+				ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset(null, Double.class, stop, dimArray, stop);
 				file.createData("/entry1:NXentry", lazy, true);
 	
 				// write the slabs

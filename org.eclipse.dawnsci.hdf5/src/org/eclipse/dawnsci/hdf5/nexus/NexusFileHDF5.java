@@ -51,15 +51,16 @@ import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.NexusUtils;
-import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
+import org.eclipse.january.dataset.InterfaceUtils;
 import org.eclipse.january.dataset.LazyDataset;
 import org.eclipse.january.dataset.LazyWriteableDataset;
+import org.eclipse.january.dataset.StringDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -736,7 +737,7 @@ public class NexusFileHDF5 implements NexusFile {
 	}
 
 	private DataNode createDataNode(GroupNode parentNode, String path, String name,
-			long[] shape, int datasetType, boolean unsigned, long[] maxShape, long[] chunks) throws NexusException {
+			long[] shape, final Class<? extends Dataset> clazz, boolean unsigned, long[] maxShape, long[] chunks) throws NexusException {
 		int[] iShape = shape == null ? null : HDF5Utils.toIntArray(shape);
 		int[] iMaxShape = maxShape == null ? null : HDF5Utils.toIntArray(maxShape);
 		int[] iChunks = chunks == null ? null : HDF5Utils.toIntArray(chunks);
@@ -747,20 +748,19 @@ public class NexusFileHDF5 implements NexusFile {
 		ILazyDataset lazyDataset = null;
 		int itemSize = 1;
 		boolean extendUnsigned = false;
-		Object[] fill = getFillValue(datasetType);
+		Object[] fill = NexusUtils.getFillValue(InterfaceUtils.getElementClass(clazz));
 		if (writeable) {
 			HDF5LazySaver saver = new HDF5LazySaver(null, fileName, path, name, iShape, itemSize,
-					datasetType, extendUnsigned, iMaxShape, iChunks, fill);
-			lazyDataset = new LazyWriteableDataset(name, datasetType, iShape, iMaxShape, iChunks, saver);
+					clazz, extendUnsigned, iMaxShape, iChunks, fill);
+			lazyDataset = new LazyWriteableDataset(name, InterfaceUtils.getElementClass(clazz), itemSize, iShape, iMaxShape, iChunks, saver);
 			saver.setAlreadyCreated();
 			if (writeAsync) {
 				saver.setAsyncWriteableDataset((LazyWriteableDataset) lazyDataset);
 			}
 			((ILazyWriteableDataset) lazyDataset).setWritingAsync(writeAsync);
 		} else {
-			lazyDataset = new LazyDataset(name, datasetType, iShape,
-					new HDF5LazyLoader(null, fileName, path, name, iShape, itemSize,
-							datasetType, extendUnsigned));
+			lazyDataset = new LazyDataset(new HDF5LazyLoader(null, fileName, path, name, iShape,
+					itemSize, clazz, extendUnsigned), name, clazz, iShape);
 		}
 		dataNode.setDataset(lazyDataset);
 		if (!testForExternalLink(path)) {
@@ -807,7 +807,7 @@ public class NexusFileHDF5 implements NexusFile {
 		} catch (HDF5Exception e) {
 			throw new NexusException("Error reading dataspace", e);
 		}
-		return createDataNode(parentNode, path, dataName, shape, type.dtype, type.unsigned, maxShape, chunks);
+		return createDataNode(parentNode, path, dataName, shape, type.clazz, type.unsigned, maxShape, chunks);
 	}
 
 	@Override
@@ -950,11 +950,11 @@ public class NexusFileHDF5 implements NexusFile {
 		}
 
 		int itemSize = 1;
-		int dataType = DTypeUtils.getDType(data);
+		Class<? extends Dataset> clazz = InterfaceUtils.getInterfaceFromClass(data.getElementsPerItem(), data.getElementClass());
 		int[] iShape = data.getShape();
 		int[] iMaxShape = data.getMaxShape();
 		int[] iChunks = data.getChunking();
-		Object[] fillValue = getFillValue(data.getElementClass());
+		Object[] fillValue = NexusUtils.getFillValue(data.getElementClass());
 		Object providedFillValue = data.getFillValue();
 		if (providedFillValue != null) {
 			fillValue[0] = providedFillValue;
@@ -1025,7 +1025,7 @@ public class NexusFileHDF5 implements NexusFile {
 		}
 
 		HDF5LazySaver saver = new HDF5LazySaver(null, fileName, parentPath + Node.SEPARATOR + name,
-				name, iShape, itemSize, dataType, false, iMaxShape, iChunks, fillValue);
+				name, iShape, itemSize, clazz, false, iMaxShape, iChunks, fillValue);
 
 		saver.setAlreadyCreated();
 		if (writeAsync) {
@@ -1318,10 +1318,10 @@ public class NexusFileHDF5 implements NexusFile {
 			} catch (HDF5LibraryException e) {
 				throw new NexusException("Error inspecting existing attributes", e);
 			}
-			IDataset attrData = attr.getValue();
+			Dataset attrData = DatasetUtils.convertToDataset(attr.getValue());
 			long baseHdf5Type = getHDF5Type(attrData);
 			final boolean isScalar = attrData.getRank() == 0;
-			final long[] shape = HDF5Utils.toLongArray(attrData.getShape());
+			final long[] shape = HDF5Utils.toLongArray(attrData.getShapeRef());
 			try {
 				try (HDF5Resource typeResource = new HDF5DatatypeResource(H5.H5Tcopy(baseHdf5Type));
 						HDF5Resource spaceResource = new HDF5DataspaceResource(isScalar ?
@@ -1330,7 +1330,7 @@ public class NexusFileHDF5 implements NexusFile {
 
 					long datatypeId = typeResource.getResource();
 					long dataspaceId = spaceResource.getResource();
-					boolean stringDataset = attrData.getElementClass().equals(String.class);
+					boolean stringDataset = attrData instanceof StringDataset;
 					Serializable buffer = DatasetUtils.serializeDataset(attrData);
 					if (stringDataset) {
 						String[] strings = (String[]) buffer;
@@ -1745,50 +1745,7 @@ public class NexusFileHDF5 implements NexusFile {
 		throw new IllegalArgumentException("Invalid datatype requested: " + clazz.getName());
 	}
 
-	private static Object[] getFillValue(Class<?> clazz) {
-		if (clazz == Integer.class) {
-			return new Integer[] {0};
-		} else if (clazz == Long.class) {
-			return new Long[] {0L};
-		} else if (clazz == Double.class) {
-			return new Double[] {Double.NaN};
-		} else if (clazz == Float.class) {
-			return new Float[] {Float.NaN};
-		} else if (clazz == Short.class) {
-			return new Short[] {0};
-		} else if (clazz == Byte.class) {
-			return new Byte[] {0};
-		} else if (clazz == String.class) {
-			//TODO: change to "" when HDF supports strings as fill value
-			return null;
-		}
-		return null;
-	}
-
-	private static Object[] getFillValue(int datasetType) {
-		switch(datasetType) {
-		case Dataset.FLOAT64:
-			return new Double[] {Double.NaN};
-		case Dataset.FLOAT32:
-			return new Float[] {Float.NaN};
-		case Dataset.INT32:
-			return new Integer[] {0};
-		case Dataset.INT64:
-			return new Long[] {0L};
-		case Dataset.INT16:
-			return new Short[] {0};
-		case Dataset.INT8:
-			return new Byte[] {0};
-		case Dataset.STRING:
-			//TODO: support string fill when HDF5 library does
-			return null;
-		default:
-			return null;
-		}
-	}
-
 	public void setCacheDataset(boolean cacheDataset) {
 		file.setDatasetIDsCaching(cacheDataset);
 	}
-
 }

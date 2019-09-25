@@ -19,6 +19,8 @@ import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.DTypeUtils;
+import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
@@ -57,10 +59,31 @@ public class HDF5LazySaver extends HDF5LazyLoader implements ILazyAsyncSaver, Se
 	 * @param maxShape
 	 * @param chunks
 	 * @param fill null, a String or single value array
+	 * @deprecated Use {@link #HDF5LazySaver(String, String, String, String, int[], int, Class, boolean, int[], int[], Object)}
 	 */
+	@Deprecated
 	public HDF5LazySaver(String hostname, String filename, String node, String name, int[] trueShape, int isize,
 			int dtype, boolean extendUnsigned, int[] maxShape, int[] chunks, Object fill) {
-		super(hostname, filename, node, name, trueShape, isize, dtype, extendUnsigned);
+		this(hostname, filename, node, name, trueShape, isize, DTypeUtils.getInterface(dtype), extendUnsigned, maxShape, chunks, fill);
+	}
+
+	/**
+	 * 
+	 * @param hostname
+	 * @param filename
+	 * @param node
+	 * @param name
+	 * @param trueShape
+	 * @param isize
+	 * @param clazz
+	 * @param extendUnsigned
+	 * @param maxShape
+	 * @param chunks
+	 * @param fill null, a String or single value array
+	 */;
+	public HDF5LazySaver(String hostname, String filename, String node, String name, int[] trueShape, int isize,
+			final Class<? extends Dataset> clazz, boolean extendUnsigned, int[] maxShape, int[] chunks, Object fill) {
+		super(hostname, filename, node, name, trueShape, isize, clazz, extendUnsigned);
 		int i = node.lastIndexOf(Node.SEPARATOR);
 		if (i > 0) {
 			parentPath = node.substring(0, i);
@@ -111,7 +134,7 @@ public class HDF5LazySaver extends HDF5LazyLoader implements ILazyAsyncSaver, Se
 			init = true;
 			if (create) {
 				try {
-					HDF5Utils.createDataset(filePath, parentPath, name, trueShape, maxShape, chunks, dtype, fill, false);
+					HDF5Utils.createDataset(filePath, parentPath, name, trueShape, maxShape, chunks, clazz, fill, false);
 				} catch (ScanFileHolderException e) {
 					throw new IOException(e);
 				}
@@ -140,7 +163,7 @@ public class HDF5LazySaver extends HDF5LazyLoader implements ILazyAsyncSaver, Se
 		}
 
 		// higher level API does not cope with differing data types
-		data = DatasetUtils.cast(data, dtype);
+		data = DatasetUtils.cast(clazz, data);
 		try {
 			if (!create) { // ensure create on first use
 				HDF5Utils.setDatasetSlice(filePath, parentPath, name, slice, data);

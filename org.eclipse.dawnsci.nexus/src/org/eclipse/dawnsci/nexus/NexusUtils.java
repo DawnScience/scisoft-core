@@ -26,6 +26,7 @@ import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.january.DatasetException;
+import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -137,14 +138,29 @@ public class NexusUtils {
 	/**
 	 * Create a lazy writeable dataset
 	 * @param name
-	 * @param dtype
+	 * @param clazz dataset element class
 	 * @param shape
 	 * @param maxShape
 	 * @param chunks
 	 * @return lazy writeable dataset
 	 */
+	public static ILazyWriteableDataset createLazyWriteableDataset(String name, Class<?> clazz, int[] shape, int[] maxShape, int[] chunks) {
+		return new LazyWriteableDataset(name, clazz, shape, maxShape, chunks, null);
+	}
+
+	/**
+	 * Create a lazy writeable dataset
+	 * @param name
+	 * @param dtype
+	 * @param shape
+	 * @param maxShape
+	 * @param chunks
+	 * @return lazy writeable dataset
+	 * @deprecated Use {@link #createLazyWriteableDataset(String, Class, int[], int[], int[])}
+	 */
+	@Deprecated
 	public static ILazyWriteableDataset createLazyWriteableDataset(String name, int dtype, int[] shape, int[] maxShape, int[] chunks) {
-		return new LazyWriteableDataset(name, dtype, shape, maxShape, chunks, null);
+		return new LazyWriteableDataset(name, DTypeUtils.getElementClass(dtype), shape, maxShape, chunks, null);
 	}
 
 	/**
@@ -855,5 +871,25 @@ public class NexusUtils {
 				}
 			}
 		}
+	}
+
+	public static Object[] getFillValue(Class<?> clazz) {
+		if (clazz == Integer.class) {
+			return new Integer[] {0};
+		} else if (clazz == Long.class) {
+			return new Long[] {0L};
+		} else if (clazz == Double.class) {
+			return new Double[] {Double.NaN};
+		} else if (clazz == Float.class) {
+			return new Float[] {Float.NaN};
+		} else if (clazz == Short.class) {
+			return new Short[] {0};
+		} else if (clazz == Byte.class) {
+			return new Byte[] {0};
+		} else if (clazz == String.class) {
+			//TODO: change to "" when HDF supports strings as fill value
+			return null;
+		}
+		return null;
 	}
 }

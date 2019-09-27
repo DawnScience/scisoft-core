@@ -986,10 +986,11 @@ public class HDF5Utils {
 			throws ScanFileHolderException {
 
 		HDF5File f = HDF5FileFactory.acquireFile(fileName, true);
-		if (isGroup) {
-			requireDestination(f, path);
-		}
 		try {
+			if (isGroup) {
+				requireDestination(f, path);
+			}
+
 			writeAttributes(f, path, attributes);
 		} catch (Throwable le) {
 			logAndThrowSFHException(le, "Problem writing attributes in %s", path);
@@ -1538,11 +1539,82 @@ public class HDF5Utils {
 	}
 
 	/**
-	 * 
+	 * Create a link to a source node in an external file
+	 * @param fileName file name where link will be created
+	 * @param destination path of created link
+	 * @param externalFileName external file
+	 * @param source path of source node
+	 * @throws ScanFileHolderException
+	 */
+	public static void createExternalLink(String fileName, String destination, String externalFileName, String source) throws ScanFileHolderException {
+		try {
+			HDF5File fid = HDF5FileFactory.acquireFile(fileName, false);
+			createExternalLink(fid, destination, externalFileName, source);
+		} catch (Throwable t) {
+			logAndThrowSFHException(t, "Could not create external link in %s", fileName);
+		} finally {
+			HDF5FileFactory.releaseFile(fileName);
+		}
+	}
+
+	/**
+	 * Create a link to a source node in an external file
+	 * @param f
+	 * @param destination path of created link (if ends with {@value Node#SEPARATOR} then use name from source)
+	 * @param externalFileName external file
+	 * @param source path of source node
+	 * @throws ScanFileHolderException
+	 */
+	public static void createExternalLink(HDF5File f, String destination, String externalFileName, String source) throws NexusException {
+		String parent;
+		if (destination.endsWith(Node.SEPARATOR)) { // use name from source
+			parent = destination.substring(0, destination.length() - 1);
+			if (source.endsWith(Node.SEPARATOR)) {
+				source = source.substring(0, source.length() - 1);
+			}
+			int l = source.lastIndexOf(Node.SEPARATOR);
+			if (l < 0) {
+				// no group left!
+			} else {
+				destination = destination.concat(source.substring(l));
+			}
+		} else {
+			int l = destination.lastIndexOf(Node.SEPARATOR);
+			parent = l <= 0 ? Tree.ROOT : destination.substring(0, l);
+		}
+
+		long fapl = -1;
+		long lapl = -1;
+		try {
+			if (!Tree.ROOT.equals(parent)) {
+				requireDestination(f, parent);
+			}
+
+			fapl = H5.H5Pcreate(HDF5Constants.H5P_FILE_ACCESS);
+			lapl = H5.H5Pcreate(HDF5Constants.H5P_LINK_ACCESS);
+
+			H5.H5Pset_libver_bounds(fapl, HDF5Constants.H5F_LIBVER_LATEST, HDF5Constants.H5F_LIBVER_LATEST);
+			H5.H5Pset_elink_fapl(lapl, fapl);
+			H5.H5Pset_elink_acc_flags(lapl, HDF5Constants.H5F_ACC_RDONLY | HDF5Constants.H5F_ACC_SWMR_READ);
+			H5.H5Lcreate_external(externalFileName, source, f.getID(), destination, HDF5Constants.H5P_DEFAULT, lapl);
+		} catch (Throwable le) {
+			logAndThrowNexusException(le, "Problem creating external link (%s) to %s in file: %s", source, destination, f);
+		} finally {
+			if (lapl != -1) {
+				H5.H5Pclose(lapl);
+			}
+			if (fapl != -1) {
+				H5.H5Pclose(fapl);
+			}
+		}
+	}
+
+	/**
+	 * Find classes in composite data type
 	 * @param tid
 	 * @return
 	 * @throws HDF5LibraryException
-	 * @throws NexusException 
+	 * @throws NexusException
 	 */
 	public static DatasetType findClassesInComposite(long tid) throws HDF5LibraryException, NexusException {
 		List<String> names = new ArrayList<String>();

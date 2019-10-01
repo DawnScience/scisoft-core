@@ -99,7 +99,7 @@ public class TomoApplicationBuilderTest {
 			@Override
 			protected NXsource createNexusObject() {
 				NXsource source = NexusNodeFactory.createNXsource();
-				source.setTypeScalar("Synchotron X-Ray source");
+				source.setTypeScalar("Synchrotron X-ray source");
 				source.setNameScalar("DLS");
 				source.setProbeScalar("x-ray");
 				return source;
@@ -109,7 +109,7 @@ public class TomoApplicationBuilderTest {
 		tomoBuilder.setSource(sourceProvider);
 		NXsource source = subentry.getInstrument().getSource();
 		assertThat(source, is(notNullValue()));
-		assertThat(source.getTypeScalar(), is("Synchotron X-Ray source"));
+		assertThat(source.getTypeScalar(), is("Synchrotron X-ray source"));
 		assertThat(source.getNameScalar(), is("DLS"));
 	}
 	

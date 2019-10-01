@@ -212,10 +212,10 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 				"Spallation Neutron Source",
 				"Pulsed Reactor Neutron Source",
 				"Reactor Neutron Source",
-				"Synchrotron X-Ray Source",
+				"Synchrotron X-ray Source",
 				"Pulsed Muon Source",
-				"Rotating Anode X-Ray",
-				"Fixed Tube X-Ray");
+				"Rotating Anode X-ray",
+				"Fixed Tube X-ray");
 
 		// validate field 'name' of unknown type.
 		final IDataset name = group.getName();

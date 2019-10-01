@@ -71,8 +71,8 @@ public class ComplexNexusFileTest extends AbstractNexusFileTestBase {
 		testData.put("current", createDoubleDataset(-1.0));
 		testData.put("energy", createDoubleDataset(-1.0));
 		testData.put("sourceName", "DLS");
-		testData.put("sourceProbe", "X-ray");
-		testData.put("sourceType", "Synchotron X-Ray Source");
+		testData.put("sourceProbe", "x-ray");
+		testData.put("sourceType", "Synchrotron X-ray Source");
 
 		testData.put("imageNumber", DatasetFactory.createRange(9.0));
 		testData.put("image_key", createDoubleDataset(2.0, 2.0, 2.0, 2.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0));
@@ -98,10 +98,6 @@ public class ComplexNexusFileTest extends AbstractNexusFileTestBase {
 		return DatasetFactory.createFromObject(values);
 	}
 
-	private static IDataset createIntegerDataset(int... values) {
-		return DatasetFactory.createFromObject(values);
-	}
-
 	private static IDataset createLongDataset(long... values) {
 		return DatasetFactory.createFromObject(values);
 	}
@@ -114,10 +110,6 @@ public class ComplexNexusFileTest extends AbstractNexusFileTestBase {
 	}
 
 	private static Dataset create2DIntDataset(final int[][] values) {
-		return DatasetFactory.createFromObject(values);
-	}
-
-	private static Dataset create2DFloatDataset(final float[][] values) {
 		return DatasetFactory.createFromObject(values);
 	}
 

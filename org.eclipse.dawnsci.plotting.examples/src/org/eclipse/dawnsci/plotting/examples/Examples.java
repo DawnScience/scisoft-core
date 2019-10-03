@@ -26,7 +26,7 @@ import org.osgi.service.component.ComponentContext;
  */
 public class Examples {
 	
-	private ILoaderService       loaderService;
+	private static ILoaderService       loaderService;
 	private IPlottingService     plottingService;
 	private IPaletteService      paletteService;
 	private IImageService        imageService;
@@ -59,11 +59,11 @@ public class Examples {
 		this.paletteService = paletteService;
 	}
 	
-	public ILoaderService getLoaderService() {
+	public static ILoaderService getLoaderService() {
 		return loaderService;
 	}
 	public void setLoaderService(ILoaderService loaderService) {
-		this.loaderService = loaderService;
+		Examples.loaderService = loaderService;
 	}
 	public IPlottingService getPlottingService() {
 		return plottingService;

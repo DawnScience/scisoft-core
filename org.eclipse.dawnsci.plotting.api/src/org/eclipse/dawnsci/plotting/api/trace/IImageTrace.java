@@ -54,7 +54,7 @@ import org.eclipse.january.dataset.ILazyDataset;
  * ----------------++------------**--------+----------**----+---------------**+---------------++
  * </pre>
  */
-public interface IImageTrace extends IPaletteTrace, IDownsampledTrace, ICoordinateSystemTrace{
+public interface IImageTrace extends IPaletteTrace, IDownsampledTrace, ICoordinateSystemTrace {
 
 		
 	public enum DownsampleType {
@@ -128,11 +128,6 @@ public interface IImageTrace extends IPaletteTrace, IDownsampledTrace, ICoordina
 	 * @param performAutoScale
 	 */
 	public void setAxes(List<? extends IDataset> axes, boolean performAutoScale);
-	
-	/**
-	 * @return the axes if they were set - may be null
-	 */
-	public List<IDataset> getAxes();
 	
 	/**
 	 * 

@@ -35,11 +35,12 @@ public class ImageServiceBean {
 	private HistogramBound   maximumCutBound = HistogramBound.DEFAULT_MAXIMUM;
 	private HistogramBound   minimumCutBound = HistogramBound.DEFAULT_MINIMUM;
 	private HistogramBound   nanBound        = HistogramBound.DEFAULT_NAN;
-	private Dataset         image;
-	private Dataset         value; // values used to map colour
-	private Dataset         mask;
+	private Dataset          image;
+	private Dataset          value; // values used to map colour
+	private Dataset          mask;
 	private PaletteData      palette;
 	private ImageOrigin      origin;
+	private boolean          transposed = false; // With origin at top-left so that x is rightwards and y is downwards, then image is not transposed
 	private Number           min;
 	private Number           max;
 	private int              alpha=-1; // Meaning no alpha
@@ -83,14 +84,20 @@ public class ImageServiceBean {
 		ret.minimumCutBound = cloneBound(minimumCutBound);
 		ret.nanBound        = cloneBound(nanBound);
 		ret.origin          = origin;
-		
+		ret.transposed      = transposed;
+		ret.depth           = depth;
+		ret.image           = image == null ? null : image.getView(false);
+		ret.value           = value == null ? null : value.getView(false);
+		ret.mask            = mask == null ? null : mask.getView(false);
+		ret.functionObject  = functionObject;
+
 		if (getPalette()!=null) {
-		    ret.palette = new PaletteData(getPalette().getRGBs());
+			ret.palette = new PaletteData(getPalette().getRGBs());
 		}
 		return ret;
 	}
-	
-    private HistogramBound cloneBound(HistogramBound clone) {
+
+	private HistogramBound cloneBound(HistogramBound clone) {
 		return new HistogramBound(clone.getBound(), clone.getColor());
 	}
 
@@ -165,12 +172,10 @@ public class ImageServiceBean {
 	public ImageOrigin getOrigin() {
 		return origin;
 	}
+
 	public void setOrigin(ImageOrigin origin) {
 		this.origin = origin;
 	}
-
-
-	private boolean transposed = false;
 
 	/**
 	 * @return true if the image is transposed

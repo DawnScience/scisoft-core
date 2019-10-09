@@ -12,8 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.processing.IOperationBean;
-import org.eclipse.scanning.api.event.IdBean;
-import org.eclipse.scanning.api.event.status.StatusBean;
 
 /**
  * Bean to serialise with JSON and be sent to the server,
@@ -23,9 +21,7 @@ import org.eclipse.scanning.api.event.status.StatusBean;
  * a python server, and JSON files allow the headless runner input file
  * to be built by hand
  */
-public class OperationBean extends StatusBean implements IOperationBean {
-
-	private static final long serialVersionUID = -7528050805167164964L;
+public class OperationBean implements IOperationBean {
 
 	private String               filePath;              
 	private String               datasetPath; // can be to NXdata node
@@ -63,25 +59,8 @@ public class OperationBean extends StatusBean implements IOperationBean {
 	
 	private boolean linkEntry = true;
 
-	@Override
-	public <T extends IdBean> void merge(T with) {
-        super.merge(with);
-        OperationBean db = (OperationBean)with;
-        this.filePath             = db.filePath;
-        this.datasetPath          = db.datasetPath;
-        this.slicing              = db.slicing;
-        this.axesNames 		      = db.axesNames == null ? null : db.axesNames.clone();
-        this.outputFilePath       = db.outputFilePath;
-        this.dataDimensions       = db.axesNames == null ? null : db.dataDimensions.clone(); 
-        this.processingPath       = db.processingPath;
-        this.xmx 			      = db.xmx;
-        this.numberOfCores		  = db.numberOfCores;
-        this.readable 		 	  = db.readable;
-        this.dataKey         	  = db.dataKey;
-        this.deleteProcessingFile = db.deleteProcessingFile;
-        this.publisherURI         = db.publisherURI;
-        this.timeOut 			  = db.timeOut;
-	}
+	private String runDirectory;
+	private String name;
 	
 	public String getDataKey() {
 		return dataKey;
@@ -259,98 +238,24 @@ public class OperationBean extends StatusBean implements IOperationBean {
 	public boolean isMonitorForOverwrite(){
 		return monitorForOverwrite;
 	}
- 
+
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + Arrays.hashCode(axesNames);
-		result = prime * result + Arrays.hashCode(dataDimensions);
-		result = prime * result + ((dataKey == null) ? 0 : dataKey.hashCode());
-		result = prime * result + ((datasetPath == null) ? 0 : datasetPath.hashCode());
-		result = prime * result + (deleteProcessingFile ? 1231 : 1237);
-		result = prime * result + ((filePath == null) ? 0 : filePath.hashCode());
-		result = prime * result + (linkEntry ? 1231 : 1237);
-		result = prime * result + numberOfCores;
-		result = prime * result + ((outputFilePath == null) ? 0 : outputFilePath.hashCode());
-		result = prime * result + ((processingPath == null) ? 0 : processingPath.hashCode());
-		result = prime * result + ((publisherURI == null) ? 0 : publisherURI.hashCode());
-		result = prime * result + (readable ? 1231 : 1237);
-		result = prime * result + ((scanRank == null) ? 0 : scanRank.hashCode());
-		result = prime * result + ((slicing == null) ? 0 : slicing.hashCode());
-		result = prime * result + timeOut;
-		result = prime * result + ((xmx == null) ? 0 : xmx.hashCode());
-		return result;
+	public void setName(String name) {
+		this.name = name;
+		
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		OperationBean other = (OperationBean) obj;
-		if (!Arrays.equals(axesNames, other.axesNames))
-			return false;
-		if (!Arrays.equals(dataDimensions, other.dataDimensions))
-			return false;
-		if (dataKey == null) {
-			if (other.dataKey != null)
-				return false;
-		} else if (!dataKey.equals(other.dataKey))
-			return false;
-		if (datasetPath == null) {
-			if (other.datasetPath != null)
-				return false;
-		} else if (!datasetPath.equals(other.datasetPath))
-			return false;
-		if (deleteProcessingFile != other.deleteProcessingFile)
-			return false;
-		if (filePath == null) {
-			if (other.filePath != null)
-				return false;
-		} else if (!filePath.equals(other.filePath))
-			return false;
-		if (linkEntry != other.linkEntry)
-			return false;
-		if (numberOfCores != other.numberOfCores)
-			return false;
-		if (outputFilePath == null) {
-			if (other.outputFilePath != null)
-				return false;
-		} else if (!outputFilePath.equals(other.outputFilePath))
-			return false;
-		if (processingPath == null) {
-			if (other.processingPath != null)
-				return false;
-		} else if (!processingPath.equals(other.processingPath))
-			return false;
-		if (publisherURI == null) {
-			if (other.publisherURI != null)
-				return false;
-		} else if (!publisherURI.equals(other.publisherURI))
-			return false;
-		if (readable != other.readable)
-			return false;
-		if (scanRank == null) {
-			if (other.scanRank != null)
-				return false;
-		} else if (!scanRank.equals(other.scanRank))
-			return false;
-		if (slicing == null) {
-			if (other.slicing != null)
-				return false;
-		} else if (!slicing.equals(other.slicing))
-			return false;
-		if (timeOut != other.timeOut)
-			return false;
-		if (xmx == null) {
-			if (other.xmx != null)
-				return false;
-		} else if (!xmx.equals(other.xmx))
-			return false;
-		return true;
+	public void setRunDirectory(String runDirectory) {
+		this.runDirectory = runDirectory;
+		
+	}
+	
+	public String getRunDirectory() {
+		return runDirectory;
+	}
+
+	public String getName() {
+		return name;
 	}
 }

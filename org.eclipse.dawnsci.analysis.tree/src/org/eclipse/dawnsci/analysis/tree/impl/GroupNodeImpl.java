@@ -91,7 +91,7 @@ public class GroupNodeImpl extends NodeImpl implements GroupNode, Serializable {
 				}
 			}
 			Node n = link.getDestination();
-			if (n instanceof GroupNode) {
+			if (n instanceof GroupNode || (n instanceof SymbolicNode && name.endsWith(SEPARATOR))) {
 				numGroupNodes++;
 			} else {
 				numDataNodes++;
@@ -135,11 +135,11 @@ public class GroupNodeImpl extends NodeImpl implements GroupNode, Serializable {
 	public GroupNode getGroupNode(final String name) {
 		if (nodes.containsKey(name)) {
 			Node n = nodes.get(name).getDestination();
-			if (n instanceof SymbolicNode) {
+			while (n instanceof SymbolicNode) {
 				n = ((SymbolicNode) n).getNode();
-				if (n == null) {
-					throw new NullPointerException("A symbolic node exists with the given name which cannot be resolved to a group node: " + name);
-				}
+			}
+			if (n == null) {
+				throw new NullPointerException("A symbolic node exists with the given name which cannot be resolved to a group node: " + name);
 			}
 			if (!(n instanceof GroupNode)) {
 				throw new IllegalArgumentException("Existing node with given name is not a group node: " + name);
@@ -157,7 +157,7 @@ public class GroupNodeImpl extends NodeImpl implements GroupNode, Serializable {
 		final Iterator<String> nodeNameIter = getNodeNameIterator();
 		while (nodeNameIter.hasNext()) {
 			Node node = getNode(nodeNameIter.next());
-			if (node instanceof SymbolicNode) {
+			while (node instanceof SymbolicNode) {
 				node = ((SymbolicNode) node).getNode();
 			}
 			if (node instanceof GroupNode) {
@@ -175,7 +175,7 @@ public class GroupNodeImpl extends NodeImpl implements GroupNode, Serializable {
 		while (nodeNameIter.hasNext()) {
 			final String nodeName = nodeNameIter.next();
 			Node node = getNode(nodeName);
-			if (node instanceof SymbolicNode) {
+			while (node instanceof SymbolicNode) {
 				node = ((SymbolicNode) node).getNode();
 			}
 			if (node instanceof GroupNode) {
@@ -210,18 +210,17 @@ public class GroupNodeImpl extends NodeImpl implements GroupNode, Serializable {
 		}
 
 		Node n = nodes.get(name).getDestination();
-		if (n instanceof SymbolicNode) {
+		while (n instanceof SymbolicNode) {
 			n = ((SymbolicNode) n).getNode();
-			if (n == null) {
-				throw new NullPointerException("A symbolic node exists with the given name which cannot be resolved to a group node: " + name);
-			}
 		}
-		if (n instanceof DataNode) {
+		if (n == null) {
+			throw new NullPointerException("A symbolic node exists with the given name which cannot be resolved to a group node: " + name);
+		}
+		if (!(n instanceof GroupNode)) {
 			throw new IllegalArgumentException("Group of given name does not exist in this group: " + name);
 		}
 
-		nodes.remove(name);
-		numGroupNodes--;
+		removeNode(name, true);
 	}
 
 	@Override
@@ -229,8 +228,7 @@ public class GroupNodeImpl extends NodeImpl implements GroupNode, Serializable {
 		for (String n : nodes.keySet()) {
 			NodeLink l = nodes.get(n);
 			if (l.getDestination().equals(g)) {
-				nodes.remove(n);
-				numGroupNodes--;
+				removeNode(n, true);
 				return;
 			}
 		}
@@ -251,11 +249,11 @@ public class GroupNodeImpl extends NodeImpl implements GroupNode, Serializable {
 	public DataNode getDataNode(final String name) {
 		if (nodes.containsKey(name)) {
 			Node n = nodes.get(name).getDestination();
-			if (n instanceof SymbolicNode) {
+			while (n instanceof SymbolicNode) {
 				n = ((SymbolicNode) n).getNode();
-				if (n == null) {
-					throw new NullPointerException("A symbolic node exists with the given name which cannot be resolved to a data node: " + name);
-				}
+			}
+			if (n == null) {
+				throw new NullPointerException("A symbolic node exists with the given name which cannot be resolved to a data node: " + name);
 			}
 			if (!(n instanceof DataNode)) {
 				throw new IllegalArgumentException("Existing node with given name is not a data node: " + name);
@@ -330,6 +328,18 @@ public class GroupNodeImpl extends NodeImpl implements GroupNode, Serializable {
 		return new NodeLinkImpl(name, this, n);
 	}
 
+	private void removeNode(String name, boolean isGroup) {
+		nodes.remove(name);
+
+		if (isGroup) {
+			numGroupNodes--;
+		} else {
+			numDataNodes--;
+		}
+		assert numGroupNodes >= 0 && numDataNodes >= 0;
+		populated = numDataNodes > 0 || numGroupNodes > 0;
+	}
+
 	@Override
 	public void removeDataNode(final String name) {
 		if (!nodes.containsKey(name)) {
@@ -337,18 +347,17 @@ public class GroupNodeImpl extends NodeImpl implements GroupNode, Serializable {
 		}
 
 		Node n = nodes.get(name).getDestination();
-		if (n instanceof SymbolicNode) {
+		while (n instanceof SymbolicNode) {
 			n = ((SymbolicNode) n).getNode();
-			if (n == null) {
-				throw new NullPointerException("A symbolic node exists with the given name which cannot be resolved to a data node: " + name);
-			}
 		}
-		if (n instanceof GroupNode) {
+		if (n == null) {
+			throw new NullPointerException("A symbolic node exists with the given name which cannot be resolved to a data node: " + name);
+		}
+		if (!(n instanceof DataNode)) {
 			throw new IllegalArgumentException("Dataset of given name does not exist in this group: " + name);
 		}
 
-		nodes.remove(name);
-		numDataNodes--;
+		removeNode(name, false);
 	}
 
 	@Override
@@ -356,8 +365,7 @@ public class GroupNodeImpl extends NodeImpl implements GroupNode, Serializable {
 		for (String n : nodes.keySet()) {
 			NodeLink l = nodes.get(n);
 			if (l.getDestination().equals(d)) {
-				nodes.remove(n);
-				numDataNodes--;
+				removeNode(n, false);
 				return;
 			}
 		}
@@ -380,6 +388,7 @@ public class GroupNodeImpl extends NodeImpl implements GroupNode, Serializable {
 				}
 			}
 			nodes.put(name, createNodeLink(name, s));
+			populated = true;
 		}
 	}
 
@@ -413,7 +422,7 @@ public class GroupNodeImpl extends NodeImpl implements GroupNode, Serializable {
 			throw new IllegalArgumentException("The node with the given name is not a symbolic node: " + name);
 		}
 
-		nodes.remove(name);
+		removeNode(name, name.endsWith(SEPARATOR));
 	}
 
 	@Override
@@ -421,7 +430,7 @@ public class GroupNodeImpl extends NodeImpl implements GroupNode, Serializable {
 		for (String n : nodes.keySet()) {
 			NodeLink l = nodes.get(n);
 			if (l.getDestination().equals(s)) {
-				nodes.remove(n);
+				removeNode(n, n.endsWith(SEPARATOR));
 				return;
 			}
 		}
@@ -486,16 +495,13 @@ public class GroupNodeImpl extends NodeImpl implements GroupNode, Serializable {
 		return list;
 	}
 
-	private void findDatasets(final String name, final List<ILazyDataset> list, final NodeLink link) {
-		Node n = null;
-		if (link.isDestinationSymbolic()) {
-			SymbolicNode slink = (SymbolicNode) link.getDestination();
-			if (slink.isData()) {
-				n = slink.getNode();
-			}
-		} else {
-			n = link.getDestination();
+	private void findDatasets(final String name, final List<ILazyDataset> list, NodeLink link) {
+		String oName = link.getName();
+		while (link != null && link.isDestinationSymbolic()) {
+			SymbolicNode s = (SymbolicNode) link.getDestination();
+			link = s.getNodeLink();
 		}
+		Node n = link == null ? null : link.getDestination();
 
 		if (n == null) {
 			return;
@@ -506,7 +512,7 @@ public class GroupNodeImpl extends NodeImpl implements GroupNode, Serializable {
 				findDatasets(name, list, l);
 			}
 		} else if (n instanceof DataNode) {
-			if (link.getName().equals(name)) {
+			if (oName.equals(name)) {
 				ILazyDataset dataset = ((DataNode) n).getDataset();
 				if (dataset != null && !list.contains(dataset)) {
 					list.add(dataset);
@@ -531,7 +537,7 @@ public class GroupNodeImpl extends NodeImpl implements GroupNode, Serializable {
 			if (i < 0) {
 				return node;
 			}
-			if (node.isDestinationSymbolic()) {
+			while (node != null && node.isDestinationSymbolic()) {
 				node = ((SymbolicNode) node.getDestination()).getNodeLink();
 			}
 			if (node.isDestinationGroup()) {

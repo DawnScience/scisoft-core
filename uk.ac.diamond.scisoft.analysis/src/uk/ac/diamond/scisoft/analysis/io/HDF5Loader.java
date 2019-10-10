@@ -1043,6 +1043,11 @@ public class HDF5Loader extends AbstractFileLoader {
 			}
 		}
 
+		while (node instanceof SymbolicNode) {
+			SymbolicNode s = (SymbolicNode) node;
+			link = s.getNodeLink();
+			node = link == null ? null : link.getDestination();
+		}
 		if (node instanceof DataNode) {
 			ILazyDataset dataset = ((DataNode) node).getDataset();
 			if (dataset == null)

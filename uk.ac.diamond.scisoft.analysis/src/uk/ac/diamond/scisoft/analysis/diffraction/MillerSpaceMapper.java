@@ -117,8 +117,9 @@ public class MillerSpaceMapper {
 	private static final String[] Q_VOLUME_AXES = new String[] { "x-axis", "y-axis", "z-axis" };
 
 	private static final String ENTRY = "processed";
+	private static final String PROCESS = "process";
 	private static final String PROCESSED = Tree.ROOT + ENTRY;
-	private static final String PROCESS = PROCESSED + Node.SEPARATOR + "process";
+	private static final String PROCESSPATH = PROCESSED + Node.SEPARATOR + "process";
 
 	private static final String INDICES_NAME = "hkli_list";
 
@@ -1242,7 +1243,7 @@ public class MillerSpaceMapper {
 			Arrays.fill(sMax, -1);
 		}
 		String volName = mapQ ? "q_space" : "reciprocal_space";
-		String volPath = PROCESS + Node.SEPARATOR + volName;
+		String volPath = PROCESSPATH + Node.SEPARATOR + volName;
 
 		try {
 			DoubleDataset map = DatasetFactory.zeros(vShape);
@@ -1278,10 +1279,10 @@ public class MillerSpaceMapper {
 			}
 
 			createAndWriteAttribute(output, PROCESSED, NexusConstants.NXCLASS, NexusConstants.ENTRY);
-			createAndWriteAttribute(output, PROCESS, NexusConstants.NXCLASS, NexusConstants.PROCESS);
+			createAndWriteAttribute(output, PROCESSPATH, NexusConstants.NXCLASS, NexusConstants.PROCESS);
 
 			saveVolume(output, bean, entryPath, volPath, map, a);
-			writeDefaultAttributes(output,volPath);
+			writeDefaultAttributes(output, volName);
 		} catch (IllegalArgumentException | OutOfMemoryError e) {
 			System.err.println("There is not enough memory to do this all at once!");
 			System.err.println("Now attempting to segment volume");
@@ -1332,12 +1333,12 @@ public class MillerSpaceMapper {
 		}
 	}
 
-	private static void writeDefaultAttributes(String file, String volPath) throws ScanFileHolderException {
-		Dataset x = DatasetFactory.createFromObject(PROCESSED);
+	private static void writeDefaultAttributes(String file, String volName) throws ScanFileHolderException {
+		Dataset x = DatasetFactory.createFromObject(ENTRY);
 		x.setName(NexusConstants.DEFAULT);
 		HDF5Utils.writeAttributes(file, Tree.ROOT, false, x);
 
-		Dataset y = DatasetFactory.createFromObject(volPath);
+		Dataset y = DatasetFactory.createFromObject(PROCESS + Node.SEPARATOR + volName);
 		y.setName(NexusConstants.DEFAULT);
 		HDF5Utils.writeAttributes(file, PROCESSED, false, y);
 	}
@@ -1431,10 +1432,10 @@ public class MillerSpaceMapper {
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonString = mapper.writeValueAsString(bean);
 
-			writeData(file, PROCESS, jsonString, "parameters");
-			writeData(file, PROCESS, program, "program");
-			writeData(file, PROCESS, timeStamp, "date");
-			writeData(file, PROCESS, VERSION, "version");
+			writeData(file, PROCESSPATH, jsonString, "parameters");
+			writeData(file, PROCESSPATH, program, "program");
+			writeData(file, PROCESSPATH, timeStamp, "date");
+			writeData(file, PROCESSPATH, VERSION, "version");
 
 			String[] inputs = bean.inputs;
 			for (int i = 0; i < inputs.length; i++) {
@@ -1659,7 +1660,7 @@ public class MillerSpaceMapper {
 		}
 
 		// Each pixel => HKL (3 doubles) plus corrected intensity (1 double)
-		String millerIndicesPath = PROCESS + Node.SEPARATOR + "indices";
+		String millerIndicesPath = PROCESSPATH + Node.SEPARATOR + "indices";
 		LazyWriteableDataset lazy = HDF5Utils.createLazyDataset(output, millerIndicesPath, INDICES_NAME, new int[] {0,4}, new int[] {-1,4}, new int[] {1024, 4}, Dataset.FLOAT64, null, false);
 		for (int i = 0; i < trees.length; i++) {
 			Tree tree = trees[i];

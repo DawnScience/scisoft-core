@@ -131,7 +131,7 @@ public class I16NexusTest {
 		boolean found = false;
 		for (Dataset dataset : a) {
 			if (dataset.getName().equals("default")) {
-				Assert.assertEquals("/processed", dataset.getString());
+				Assert.assertEquals("processed", dataset.getString());
 				found = true;
 				break;
 			}
@@ -141,7 +141,7 @@ public class I16NexusTest {
 		found = false;
 		for (Dataset dataset : b) {
 			if (dataset.getName().equals("default")) {
-				Assert.assertEquals("/processed/process/reciprocal_space", dataset.getString());
+				Assert.assertEquals("process/reciprocal_space", dataset.getString());
 				found = true;
 				break;
 			}

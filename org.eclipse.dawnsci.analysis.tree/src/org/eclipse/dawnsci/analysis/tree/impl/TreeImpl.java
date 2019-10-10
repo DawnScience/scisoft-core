@@ -19,6 +19,7 @@ import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
+import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
 
 /**
  * A tree has a link to the top group node
@@ -29,7 +30,6 @@ public class TreeImpl implements Tree, Serializable {
 	protected final URI source;
 	protected String host;
 	private NodeLink link;
-	private static final String UPDIR = "/..";
 
 	/**
 	 * Construct a tree with given object ID and URI 
@@ -85,64 +85,31 @@ public class TreeImpl implements Tree, Serializable {
 
 	@Override
 	public NodeLink findNodeLink(final String pathname) {
-			final String path = canonicalizePath(pathname);
-			if (path.indexOf(Node.SEPARATOR) != 0)
-				return null;
-	
-			if (path.length() == 1) {
-				return link;
-			}
-	
-			// check if group is empty - this indicates an external link created this
-			final GroupNodeImpl g = (GroupNodeImpl) link.getDestination();
-//			if ((g.getNumberOfGroupNodes() + g.getNumberOfDataNodes() + g.getNumberOfAttributes()) == 0) {
-//				
-//			}
-			// check if root attribute is needed
-			final String spath = path.substring(1);
-			if (!spath.startsWith(Node.ATTRIBUTE)) {
-				return g.findNodeLink(spath);
-			}
-	
-			if (g.containsAttribute(spath.substring(1)))
-				return link;
-	
+		final String path = TreeUtils.canonicalizePath(pathname);
+		if (path.indexOf(Node.SEPARATOR) != 0) {
 			return null;
 		}
 
-	private static final String CURDIR = "/.";
+		if (path.length() == 1) {
+			return link;
+		}
 
-	/**
-	 * Remove ".." and "." from pathname
-	 * @param pathname
-	 * @return canonical form of pathname
-	 */
-	public static String canonicalizePath(final String pathname) {
-		if (!pathname.contains(UPDIR) && !pathname.contains(CURDIR))
-			return pathname;
-	
-		StringBuilder path = new StringBuilder(pathname);
-		int i = 0;
-		while ((i = path.indexOf(UPDIR)) >= 0) {
-			int k;
-			int j = i;
-			do {
-				k = j;
-				j = path.lastIndexOf(Node.SEPARATOR, k - 1);
-				if (j <= 0) {
-					// can not find SEPARATOR or preserve ROOT
-					path.insert(0, ROOT);
-					i++;
-					j++;
-				}
-			} while (path.substring(j, k).equals(CURDIR));
-			path.delete(j, i + UPDIR.length());
+		// check if group is empty - this indicates an external link created this
+		final GroupNode g = (GroupNode) link.getDestination();
+//		if (!g.isPopulated() && g.getNumberOfAttributes() == 0) {
+//			
+//		}
+
+		// check if root attribute is needed
+		final String spath = path.substring(1);
+		if (!spath.startsWith(Node.ATTRIBUTE)) {
+			return g.findNodeLink(spath);
 		}
-	
-		while ((i = path.indexOf(CURDIR)) >= 0) {
-			path.delete(i, i + CURDIR.length());
+
+		if (g.containsAttribute(spath.substring(1))) {
+			return link;
 		}
-	
-		return path.toString();
+
+		return null;
 	}
 }

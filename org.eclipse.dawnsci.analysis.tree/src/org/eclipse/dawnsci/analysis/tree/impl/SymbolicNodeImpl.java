@@ -57,7 +57,7 @@ public class SymbolicNodeImpl extends NodeImpl implements SymbolicNode, Serializ
 		super(oid);
 		this.uri = uri;
 		group = groupWithNode;
-		path = TreeImpl.canonicalizePath(pathToNode);
+		path = TreeUtils.canonicalizePath(pathToNode);
 		if (!path.startsWith(Tree.ROOT) && group == null) {
 			throw new IllegalArgumentException("A group node must be given when creating a symbolic node with a relative path");
 		}
@@ -72,7 +72,7 @@ public class SymbolicNodeImpl extends NodeImpl implements SymbolicNode, Serializ
 		if (path.startsWith(Tree.ROOT)) {
 			return tree.findNodeLink(path);
 		}
-		return tree.findNodeLink(TreeImpl.canonicalizePath(TreeUtils.getPath(tree, group) + path));
+		return tree.findNodeLink(TreeUtils.canonicalizePath(TreeUtils.getPath(tree, group) + path));
 	}
 
 	@Override

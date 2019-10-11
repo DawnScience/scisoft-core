@@ -523,42 +523,51 @@ public class GroupNodeImpl extends NodeImpl implements GroupNode, Serializable {
 
 	@Override
 	public NodeLink findNodeLink(String pathname) {
+		String attr = null;
+		int a = pathname.lastIndexOf(ATTRIBUTE);
+		if (a == 0) {
+			throw new IllegalArgumentException("Attribute only path not allowed");
+		} else if (a > 0) {
+			attr = pathname.substring(a + 1);
+			pathname = pathname.substring(0, a);
+		}
+
 		int i = pathname.indexOf(SEPARATOR);
-	
 		if (i == 0) {
 			pathname = pathname.substring(1);
 			i = pathname.indexOf(SEPARATOR);
 		}
 
 		String link = i < 0 ? pathname : pathname.substring(0, i);
-
 		if (nodes.containsKey(link)) {
-			NodeLink node = nodes.get(link);
+			NodeLink nl = nodes.get(link);
+			while (nl != null && nl.isDestinationSymbolic()) {
+				nl = ((SymbolicNode) nl.getDestination()).getNodeLink();
+			}
+			if (nl == null) {
+				return null;
+			}
 			if (i < 0) {
-				return node;
-			}
-			while (node != null && node.isDestinationSymbolic()) {
-				node = ((SymbolicNode) node.getDestination()).getNodeLink();
-			}
-			if (node.isDestinationGroup()) {
+				return checkAttribute(nl, attr);
+			} else if (nl.isDestinationGroup()) {
 				String path = pathname.substring(i + 1);
 				if (path.isEmpty()) { // pathname ended in SEPARATOR
-					return node;
+					return checkAttribute(nl, attr);
 				}
-				return ((GroupNode) node.getDestination()).findNodeLink(path);
+				return checkAttribute(((GroupNode) nl.getDestination()).findNodeLink(path), attr);
 			}
-		} else { // is attribute?
-			i = link.indexOf(ATTRIBUTE);
-			if (i > 0) {
-				link = pathname.substring(0, i);
-				String attr = pathname.substring(i + 1);
-				if (nodes.containsKey(link)) {
-					NodeLink node = nodes.get(link);
-					if (node.getDestination().containsAttribute(attr)) {
-						return node;
-					}
-				}
-			}
+		}
+		return null;
+	}
+
+	static NodeLink checkAttribute(NodeLink nl, String attr) {
+		if (attr == null || nl == null) {
+			return nl;
+		}
+
+		Node n = nl.getDestination();
+		if (n != null && n.containsAttribute(attr)) {
+			return nl;
 		}
 		return null;
 	}

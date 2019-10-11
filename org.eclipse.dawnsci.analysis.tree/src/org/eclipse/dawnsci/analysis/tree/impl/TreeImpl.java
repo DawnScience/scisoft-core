@@ -85,31 +85,30 @@ public class TreeImpl implements Tree, Serializable {
 
 	@Override
 	public NodeLink findNodeLink(final String pathname) {
-		final String path = TreeUtils.canonicalizePath(pathname);
-		if (path.indexOf(Node.SEPARATOR) != 0) {
+		String path = TreeUtils.canonicalizePath(pathname);
+
+		String attr = null;
+		int a = path.lastIndexOf(Node.ATTRIBUTE);
+		if (a == 0) {
+			throw new IllegalArgumentException("Attribute only path not allowed");
+		} else if (a > 0) {
+			attr = path.substring(a + 1);
+			path = path.substring(0, a);
+		}
+
+		if (!path.startsWith(Node.SEPARATOR)) {
 			return null;
 		}
 
 		if (path.length() == 1) {
-			return link;
+			return GroupNodeImpl.checkAttribute(link, attr);
 		}
-
+	
 		// check if group is empty - this indicates an external link created this
-		final GroupNode g = (GroupNode) link.getDestination();
+		final GroupNodeImpl g = (GroupNodeImpl) link.getDestination();
 //		if (!g.isPopulated() && g.getNumberOfAttributes() == 0) {
-//			
+//		TODO consider loading tree
 //		}
-
-		// check if root attribute is needed
-		final String spath = path.substring(1);
-		if (!spath.startsWith(Node.ATTRIBUTE)) {
-			return g.findNodeLink(spath);
-		}
-
-		if (g.containsAttribute(spath.substring(1))) {
-			return link;
-		}
-
-		return null;
+		return GroupNodeImpl.checkAttribute(g.findNodeLink(path.substring(Node.SEPARATOR.length())), attr);
 	}
 }

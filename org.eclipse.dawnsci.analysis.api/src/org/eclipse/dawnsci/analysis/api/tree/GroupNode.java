@@ -251,9 +251,10 @@ public interface GroupNode extends Node, Iterable<NodeLink> {
 	public List<ILazyDataset> getDatasets(String name);
 
 	/**
-	 * Recursively find link to node given by path name 
-	 * @param pathname
+	 * Recursively find link to node given by path name
+	 * @param pathname which can include attribute (prefixed with {@link Node#ATTRIBUTE})
 	 * @return node or null if not found
+	 * @throws IllegalArgumentException if only an attribute name is given
 	 */
 	public NodeLink findNodeLink(String pathname);
 

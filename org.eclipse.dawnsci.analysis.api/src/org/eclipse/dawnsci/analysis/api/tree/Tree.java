@@ -60,8 +60,8 @@ public interface Tree {
 	public NodeLink getNodeLink();
 
 	/**
-	 * @param pathname
-	 * @return node link to given path (needs to be absolute) or null if not found
+	 * @param pathname absolute path which can include an attribute (prefixed with {@link Node#ATTRIBUTE})
+	 * @return node link to given path or null if not found
 	 * @throws NullPointerException if pathname is null
 	 */
 	public NodeLink findNodeLink(String pathname);

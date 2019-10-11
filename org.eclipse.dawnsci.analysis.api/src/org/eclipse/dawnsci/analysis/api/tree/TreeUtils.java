@@ -43,7 +43,7 @@ public class TreeUtils {
 			return Tree.ROOT;
 		}
 		String p = getPathDepthFirst(Tree.ROOT, g, node);
-		if (node instanceof GroupNode && !p.endsWith(Node.SEPARATOR)) {
+		if (node instanceof GroupNode && p != null && !p.endsWith(Node.SEPARATOR)) {
 			p = p + Node.SEPARATOR;
 		}
 		return p;
@@ -261,5 +261,73 @@ public class TreeUtils {
 			this.link = link;
 		}
 		
+	}
+
+	private static final String UPDIR = "/..";
+	private static final String CURDIR = "/.";
+
+	/**
+	 * Remove ".." and "." from pathname
+	 * @param pathname
+	 * @return canonical form of pathname
+	 */
+	public static String canonicalizePath(final String pathname) {
+		if (!pathname.contains(UPDIR) && !pathname.contains(CURDIR))
+			return pathname;
+	
+		StringBuilder path = new StringBuilder(pathname);
+		int i = 0;
+		while ((i = path.indexOf(UPDIR)) >= 0) {
+			int k;
+			int j = i;
+			do {
+				k = j;
+				j = path.lastIndexOf(Node.SEPARATOR, k - 1);
+				if (j <= 0) {
+					// can not find SEPARATOR or preserve ROOT
+					path.insert(0, Tree.ROOT);
+					i++;
+					j++;
+				}
+			} while (path.substring(j, k).equals(CURDIR));
+			path.delete(j, i + UPDIR.length());
+		}
+	
+		while ((i = path.indexOf(CURDIR)) >= 0) {
+			path.delete(i, i + CURDIR.length());
+		}
+	
+		return path.toString();
+	}
+
+	/**
+	 * Join together parent and given path
+	 * @param parent
+	 * @param path
+	 * @return joined path
+	 */
+	public static String join(String parent, String path) {
+		if (!parent.endsWith(Node.SEPARATOR)) {
+			parent = parent.concat(Node.SEPARATOR);
+		}
+		return parent.concat(path);
+	}
+
+	/**
+	 * Join together parent and given path components
+	 * @param parent
+	 * @param paths path components
+	 * @return joined path
+	 */
+	public static String join(String parent, String... paths) {
+		StringBuilder all = new StringBuilder(parent);
+		if (parent.endsWith(Node.SEPARATOR)) {
+			all.setLength(parent.length() - Node.SEPARATOR.length());
+		}
+		for (String p : paths) {
+			all.append(Node.SEPARATOR);
+			all.append(p);
+		}
+		return all.toString();
 	}
 }

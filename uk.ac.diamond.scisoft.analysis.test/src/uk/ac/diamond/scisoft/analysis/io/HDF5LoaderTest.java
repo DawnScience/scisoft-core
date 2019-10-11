@@ -35,7 +35,6 @@ import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.SymbolicNode;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
-import org.eclipse.dawnsci.analysis.tree.impl.TreeImpl;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.eclipse.january.dataset.ComplexDoubleDataset;
 import org.eclipse.january.dataset.Dataset;
@@ -383,7 +382,7 @@ public class HDF5LoaderTest {
 		String[] after = { "./foo", "/asd/gfd", "/asd/as", "/asd/bad", "/", "/abal", "", "../blah", "/asd/ds", "/ds" };
 
 		for (int i = 0; i < before.length; i++) {
-			assertEquals("Path", after[i], TreeImpl.canonicalizePath(before[i]));
+			assertEquals("Path", after[i], TreeUtils.canonicalizePath(before[i]));
 		}
 	}
 

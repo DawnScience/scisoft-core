@@ -104,6 +104,7 @@ public class NexusTreeUtils {
 		SimpleUnitFormat.getInstance().alias(NonSI.ANGSTROM, "Angstrom");
 		SimpleUnitFormat.getInstance().alias(NonSI.ANGSTROM, "angstrom");
 		SimpleUnitFormat.getInstance().alias(MetricPrefix.KILO(NonSI.ELECTRON_VOLT), "keV");
+		SimpleUnitFormat.getInstance().alias(NonSI.DEGREE_ANGLE, "degree");
 	}
 
 	private static final Unit<Length> MILLIMETRE = MetricPrefix.MILLI(Units.METRE);
@@ -527,8 +528,8 @@ public class NexusTreeUtils {
 		
 		while (it.hasNext()) {
 			String name = it.next();
-			if (gn.containsDataNode(name)) {
-				DataNode dataNode = gn.getDataNode(name);
+			DataNode dataNode = gn.getDataNode(name);
+			if (dataNode != null) {
 				Attribute attribute = dataNode.getAttribute(NexusConstants.DATA_SIGNAL);
 				if (attribute != null) {
 					if (parseFirstInt(attribute) == 1 && signal == null) {
@@ -791,12 +792,13 @@ public class NexusTreeUtils {
 			logger.info("Signal is null, defaulting to {}", NexusConstants.DATA_DATA);
 			signal = NexusConstants.DATA_DATA;
 		}
-		if (!gn.containsDataNode(signal)) {
+
+		DataNode dNode = gn.getDataNode(signal);
+		if (dNode == null) {
 			logger.warn("Group node does not contain {}", signal);
 			return null;
 		}
 
-		DataNode dNode = gn.getDataNode(signal);
 		ILazyDataset cData = dNode.getDataset();
 		if (cData == null || cData.getSize() == 0) {
 			logger.warn("Chosen data '{}', has zero size", signal);
@@ -1192,7 +1194,7 @@ public class NexusTreeUtils {
 			switch(name) {
 			case DMOD_FASTPIXELDIRECTION:
 			case DMOD_SLOWPIXELDIRECTION:
-				shape = parseNodeShape(TreeUtils.join(path, l.getName()), tree, l, shape);
+				shape = parseNodeShape(path, tree, l, shape);
 				break;
 			default:
 				break;
@@ -1480,7 +1482,7 @@ public class NexusTreeUtils {
 
 	/**
 	 * Parse data node's shape and its transformation ancestors
-	 * @param path
+	 * @param path parent path of link
 	 * @param tree
 	 * @param link
 	 * @param shape existing shape to check against
@@ -1501,13 +1503,28 @@ public class NexusTreeUtils {
 
 		int[] nshape = dataset.getShape();
 
-		String dep = canonicalizeDependsOn(path, tree, getFirstString(dNode.getAttribute(TRANSFORMATIONS_DEPENDSON)));
-
-		if (dep.equals(TRANSFORMATIONS_ROOT)) {
+		String dep = getFirstString(dNode.getAttribute(TRANSFORMATIONS_DEPENDSON));
+		if (dep == null || dep.equals(TRANSFORMATIONS_ROOT)) {
 			return nshape;
 		}
 
-		int[] dshape = parseNodeShape(path, tree, tree.findNodeLink(dep), shape);
+		NodeLink l = null;
+		if (!dep.startsWith(Tree.ROOT)) { // try local group
+			Node n = link.getSource();
+			if (n instanceof GroupNode) {
+				l = ((GroupNode) n).getNodeLink(dep);
+			}
+		}
+		if (l == null) {
+			dep = canonicalizeDependsOn(path, tree, dep);
+	
+			if (dep.equals(TRANSFORMATIONS_ROOT)) {
+				return nshape;
+			}
+			l = tree.findNodeLink(dep);
+			path = dep.substring(0, dep.lastIndexOf(Node.SEPARATOR));
+		}
+		int[] dshape = parseNodeShape(path, tree, l, shape);
 
 		return checkShapes(nshape, dshape);
 	}
@@ -1576,7 +1593,15 @@ public class NexusTreeUtils {
 		return parseNodeShape(path, tree, tree.findNodeLink(dep), shape);
 	}
 
-	public static DiffractionSample parseSample(String path, Tree tree, boolean old, int... pos) {
+	/**
+	 * 
+	 * @param path
+	 * @param tree
+	 * @param useOMatrixAsUB if true, then interpret orientation matrix as UB matrix 
+	 * @param pos
+	 * @return diffraction sample
+	 */
+	public static DiffractionSample parseSample(String path, Tree tree, boolean useOMatrixAsUB, int... pos) {
 		NodeLink link = tree.findNodeLink(path);
 		if (link == null) {
 			logger.warn("'{}' could not be found", path);
@@ -1647,9 +1672,9 @@ public class NexusTreeUtils {
 		NodeLink l = gNode.getNodeLink("orientation_matrix");
 		if (l == null) {
 			l = gNode.getNodeLink("ub_matrix");
-			old = true;
+			useOMatrixAsUB = true;
 		}
-		if (old) {
+		if (useOMatrixAsUB) {
 			// Historic i16 files have orientation_matrix was really ub_matrix
 			Matrix3d ub = parse3DMatrix(l);
 			// remove orthogonalization to find orientation

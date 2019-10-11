@@ -16,6 +16,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.vecmath.Vector3d;
@@ -28,11 +29,13 @@ import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
+import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.hdf5.HDF5FileFactory;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.eclipse.dawnsci.nexus.NexusConstants;
+import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -52,6 +55,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import tec.units.indriya.unit.Units;
 import uk.ac.diamond.scisoft.analysis.crystallography.MillerSpace;
+import uk.ac.diamond.scisoft.analysis.crystallography.VersionUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.function.BicubicInterpolator;
 import uk.ac.diamond.scisoft.analysis.io.ImageStackLoader;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
@@ -110,6 +114,11 @@ public class MillerSpaceMapper {
 	private boolean hasDeleted;
 	private boolean listMillerEntries;
 	private String entryPath;
+	private Dataset imageWeight;
+	private int begX;
+	private int endX;
+	private int begY;
+	private int endY;
 
 	private static final String VOLUME_NAME = "volume";
 	private static final String[] MILLER_VOLUME_AXES = new String[] { "h-axis", "k-axis", "l-axis" };
@@ -421,7 +430,7 @@ public class MillerSpaceMapper {
 			Arrays.fill(vMax, Double.NEGATIVE_INFINITY);
 
 			findBoundingBoxes(tree, iters);
-
+			roundLimitsAndFindShapes();
 			System.err.println("Extent of the space was found to be " + Arrays.toString(vMin) + " to " + Arrays.toString(vMax));
 			System.err.println("with shape = " + Arrays.toString(vShape));
 		}
@@ -434,6 +443,8 @@ public class MillerSpaceMapper {
 
 		DoubleDataset map = DatasetFactory.zeros(vShape);
 		DoubleDataset weight = DatasetFactory.zeros(vShape);
+
+		createImageWeight(tree, iters[0]);
 
 		try {
 			mapToASpace(mapQ, tree, iters, map, weight);
@@ -460,7 +471,10 @@ public class MillerSpaceMapper {
 
 	private void mapToASpace(boolean mapQ, Tree tree, PositionIterator[] iters, DoubleDataset map, DoubleDataset weight) throws ScanFileHolderException, DatasetException {
 		int[] dshape = iters[0].getShape();
-	
+
+		if (tree instanceof TreeFile) {
+			System.out.println("Mapping " + ((TreeFile) tree).getFilename() + " ...");
+		}
 		Dataset trans = NexusTreeUtils.parseAttenuator(attenuatorPath, tree);
 		if (trans != null && trans.getSize() != 1) {
 			int[] tshape = trans.getShapeRef();
@@ -543,6 +557,29 @@ public class MillerSpaceMapper {
 		doImages(tree, trans, images, iters, lazy, ishape, upSampler);
 	}
 
+	private boolean isOLDI16GDA(Tree t) {
+		NodeLink nl = t.findNodeLink(entryPath);
+		GroupNode g = (GroupNode) nl.getDestination();
+		DataNode d = g.getDataNode("program_name");
+		if (d != null) {
+			String program = NexusTreeUtils.parseStringArray(d, 1)[0];
+			if (program != null && program.startsWith("GDA")) {
+				try {
+					g = (GroupNode) NexusTreeUtils.requireNode(g, NexusConstants.USER);
+					String user = NexusTreeUtils.parseStringArray(g.getDataNode("username"), 1)[0];
+					if (user != null && user.equals("i16user")) {
+						// program name given as "GDA 9.14.0", need version 9.15+
+						String version = program.substring(program.indexOf(" ")).trim();
+						return VersionUtils.isOldVersion("9.14.0", version);
+					}
+				} catch (NexusException e) {
+					// do nothing
+				}
+			}
+		}
+		return false;
+	}
+
 	/**
 	 * Find bounding boxes in reciprocal space and q-space
 	 * @param tree
@@ -552,16 +589,11 @@ public class MillerSpaceMapper {
 		PositionIterator diter = iters[0];
 		PositionIterator iter = iters[1];
 		int[] dpos = diter.getPos();
-		int[] pos = iter.getPos();
-		int[] stop = iter.getStop().clone();
-		int srank = pos.length - 2;
 
+		boolean isOldGDA = isOLDI16GDA(tree);
 		while (iter.hasNext() && diter.hasNext()) {
 			DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
-			for (int i = 0; i < srank; i++) {
-				stop[i] = pos[i] + 1;
-			}
-			DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, true, dpos);
+			DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, dpos);
 			DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 			QSpace qspace = new QSpace(dp, env);
 			if (qDel != null) {
@@ -573,7 +605,9 @@ public class MillerSpaceMapper {
 				calcVolume(hMin, hMax, qspace, mspace);
 			}
 		}
+	}
 
+	private void roundLimitsAndFindShapes() {
 		if (qDel != null) {
 			for (int i = 0; i < 3; i++) {
 				qMin[i] = qDel[i] * Math.floor(qMin[i] / qDel[i]);
@@ -591,74 +625,73 @@ public class MillerSpaceMapper {
 		}
 	}
 
-	private static void calcVolume(double[] vBeg, double[] vEnd, QSpace qspace, MillerSpace mspace) {
+	private void calcVolume(double[] vBeg, double[] vEnd, QSpace qspace, MillerSpace mspace) {
 		Vector3d q = new Vector3d();
 		Vector3d m = new Vector3d();
-		DetectorProperties dp = qspace.getDetectorProperties();
-		int x = dp.getPx();
-		int y = dp.getPy();
+		int halfX = (begX + endX)/2;
+		int halfY = (begY + endY)/2;
 
 		if (mspace == null) {
-			qspace.qFromPixelPosition(0, 0, q);
+			qspace.qFromPixelPosition(begX, begY, q);
 			minMax(vBeg, vEnd, q);
 		
-			qspace.qFromPixelPosition(x/2, 0, q);
+			qspace.qFromPixelPosition(halfX, begY, q);
 			minMax(vBeg, vEnd, q);
 		
-			qspace.qFromPixelPosition(x, 0, q);
+			qspace.qFromPixelPosition(endX, begY, q);
 			minMax(vBeg, vEnd, q);
 		
-			qspace.qFromPixelPosition(0, y/2, q);
+			qspace.qFromPixelPosition(begX, halfY, q);
 			minMax(vBeg, vEnd, q);
 		
-			qspace.qFromPixelPosition(x/2, y/2, q);
+			qspace.qFromPixelPosition(halfX, halfY, q);
 			minMax(vBeg, vEnd, q);
 		
-			qspace.qFromPixelPosition(x, y/2, q);
+			qspace.qFromPixelPosition(endX, halfY, q);
 			minMax(vBeg, vEnd, q);
 		
-			qspace.qFromPixelPosition(0, y, q);
+			qspace.qFromPixelPosition(begX, endY, q);
 			minMax(vBeg, vEnd, q);
 		
-			qspace.qFromPixelPosition(x/2, y, q);
+			qspace.qFromPixelPosition(halfX, endY, q);
 			minMax(vBeg, vEnd, q);
 		
-			qspace.qFromPixelPosition(x, y, q);
+			qspace.qFromPixelPosition(endX, endY, q);
 			minMax(vBeg, vEnd, q);
 		} else {
-			qspace.qFromPixelPosition(0, 0, q);
+			qspace.qFromPixelPosition(begX, begY, q);
 			mspace.h(q, null, m);
 			minMax(vBeg, vEnd, m);
 
-			qspace.qFromPixelPosition(x / 2, 0, q);
+			qspace.qFromPixelPosition(halfX, begY, q);
 			mspace.h(q, null, m);
 			minMax(vBeg, vEnd, m);
 
-			qspace.qFromPixelPosition(x, 0, q);
+			qspace.qFromPixelPosition(endX, begY, q);
 			mspace.h(q, null, m);
 			minMax(vBeg, vEnd, m);
 
-			qspace.qFromPixelPosition(0, y / 2, q);
+			qspace.qFromPixelPosition(begX, halfY, q);
 			mspace.h(q, null, m);
 			minMax(vBeg, vEnd, m);
 
-			qspace.qFromPixelPosition(x / 2, y / 2, q);
+			qspace.qFromPixelPosition(halfX, halfY, q);
 			mspace.h(q, null, m);
 			minMax(vBeg, vEnd, m);
 
-			qspace.qFromPixelPosition(x, y / 2, q);
+			qspace.qFromPixelPosition(endX, halfY, q);
 			mspace.h(q, null, m);
 			minMax(vBeg, vEnd, m);
 
-			qspace.qFromPixelPosition(0, y, q);
+			qspace.qFromPixelPosition(begX, endY, q);
 			mspace.h(q, null, m);
 			minMax(vBeg, vEnd, m);
 
-			qspace.qFromPixelPosition(x / 2, y, q);
+			qspace.qFromPixelPosition(halfX, endY, q);
 			mspace.h(q, null, m);
 			minMax(vBeg, vEnd, m);
 
-			qspace.qFromPixelPosition(x, y, q);
+			qspace.qFromPixelPosition(endX, endY, q);
 			mspace.h(q, null, m);
 			minMax(vBeg, vEnd, m);
 		}
@@ -681,11 +714,12 @@ public class MillerSpaceMapper {
 
 		int end = ShapeUtils.calcSize(diter.getShape()) - 1;
 		int n = 0;
+		boolean isOldGDA = isOLDI16GDA(tree);
 		while (iter.hasNext() && diter.hasNext()) {
 			if (!endsOnly || n == 0 || n == end) {
 				System.out.println("Image " + n);
 				DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
-				DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, true, dpos);
+				DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, dpos);
 				DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 				QSpace qspace = new QSpace(dp, env);
 				MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
@@ -695,28 +729,20 @@ public class MillerSpaceMapper {
 		}
 	}
 
-	private static void printCorners(QSpace qspace, MillerSpace mspace) {
+	private void printCorners(QSpace qspace, MillerSpace mspace) {
+		printCorner(qspace, mspace, begX, begY);
+		printCorner(qspace, mspace, endX, begY);
+		printCorner(qspace, mspace, begX, endY);
+		printCorner(qspace, mspace, endX, endY);
+	}
+
+	private static void printCorner(QSpace qspace, MillerSpace mspace, int x, int y) {
 		Vector3d q = new Vector3d();
 		Vector3d m = new Vector3d();
-		DetectorProperties dp = qspace.getDetectorProperties();
-		int x = dp.getPx();
-		int y = dp.getPy();
-
-		qspace.qFromPixelPosition(0, 0, q);
-		mspace.h(q, null, m);
-		System.out.println("0,0: " + m.toString());
-
-		qspace.qFromPixelPosition(x, 0, q);
-		mspace.h(q, null, m);
-		System.out.println("x,0: " + m.toString());
-
-		qspace.qFromPixelPosition(0, y, q);
-		mspace.h(q, null, m);
-		System.out.println("0,y: " + m.toString());
 
 		qspace.qFromPixelPosition(x, y, q);
 		mspace.h(q, null, m);
-		System.out.println("x,y: " + m.toString());
+		System.out.printf("%d,%d: %s", x, y, m.toString());
 	}
 
 	private void mapImages(boolean mapQ, Tree tree, Dataset trans, ILazyDataset images, PositionIterator[] iters,
@@ -732,6 +758,16 @@ public class MillerSpaceMapper {
 		int srank = rank - 2;
 		MillerSpace mspace = null;
 
+		int[] region = new int[] {(int) (begX*scale), (int) (endX*scale), (int) (begY*scale), (int) (endY*scale)};
+		Dataset iWeight = imageWeight;
+		if (iWeight != null && upSampler != null) {
+			iWeight = upSampler.value(iWeight).get(0);
+			if (!Arrays.equals(iWeight.getShapeRef(), ishape)) {
+				String msg = String.format("Image weight shape %s does not match image shape %s", Arrays.toString(iWeight.getShapeRef()), Arrays.toString(ishape));
+				throw new IllegalArgumentException(msg);
+			}
+		}
+		boolean isOldGDA = isOLDI16GDA(tree);
 		while (iter.hasNext() && diter.hasNext()) {
 			DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
 			dp.setHPxSize(dp.getHPxSize() / scale);
@@ -743,7 +779,7 @@ public class MillerSpaceMapper {
 			for (int i = 0; i < srank; i++) {
 				stop[i] = pos[i] + 1;
 			}
-			DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, true, dpos);
+			DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, dpos);
 			DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 			QSpace qspace = new QSpace(dp, env);
 			if (!mapQ) {
@@ -751,23 +787,24 @@ public class MillerSpaceMapper {
 			}
 			Dataset image = DatasetUtils.convertToDataset(images.getSlice(pos, stop, null));
 			if (trans != null) {
-				if (trans.getSize() == 1) {
-					image.idivide(trans.getElementDoubleAbs(0));
+				double t = trans.getSize() == 1 ? trans.getElementDoubleAbs(0) : trans.getDouble(dpos); 
+				if (image.hasFloatingPointElements()) {
+					image.idivide(t);
 				} else {
-					image.idivide(trans.getDouble(dpos));
+					image = Maths.divide(image, t);
 				}
 			}
 			int[] s = Arrays.copyOfRange(image.getShapeRef(), srank, rank);
 			image.setShape(s);
 			if (image.max().doubleValue() <= 0) {
-				System.err.println("Skipping image at " + Arrays.toString(pos));
+				String n = tree instanceof TreeFile ? " in " + ((TreeFile) tree).getFilename() : "";
+				System.err.println("Skipping image at " + Arrays.toString(pos) + n);
 				continue;
 			}
 			if (upSampler != null) {
 				image = upSampler.value(image).get(0);
-				s = ishape;
 			}
-			mapImage(s, qspace, mspace, image, map, weight);
+			mapImage(region, qspace, mspace, image, iWeight, map, weight);
 		}
 	}
 
@@ -780,17 +817,20 @@ public class MillerSpaceMapper {
 		max[2] = Math.max(max[2], v.z);
 	}
 
-	private void mapImage(int[] s, QSpace qspace, MillerSpace mspace, Dataset image, DoubleDataset map, DoubleDataset weight) {
-		int[] pos = new int[3]; // voxel position
-		Vector3d q = new Vector3d();
+	private void mapImage(final int[] region, final QSpace qspace, final MillerSpace mspace, final Dataset image, final Dataset iWeight, final DoubleDataset map, final DoubleDataset weight) {
+		final int[] pos = new int[3]; // voxel position
+		final Vector3d q = new Vector3d();
 		double value;
 
 		if (mspace == null) {
-			Vector3d dq = new Vector3d(); // delta in q
+			final Vector3d dq = new Vector3d(); // delta in q
 
-			for (int y = 0; y < s[0]; y++) {
-				for (int x = 0; x < s[1]; x++) {
+			for (int y = region[2]; y < region[3]; y++) {
+				for (int x = region[0]; x < region[1]; x++) {
 					value = image.getDouble(y, x);
+					if (iWeight != null) {
+						value *= iWeight.getDouble(y, x);
+					}
 					if (value > 0) {
 						qspace.qFromPixelPosition(x + 0.5, y + 0.5, q);
 	
@@ -805,12 +845,15 @@ public class MillerSpaceMapper {
 				}
 			}
 		} else {
-			Vector3d h = new Vector3d();
-			Vector3d dh = new Vector3d(); // delta in h
+			final Vector3d h = new Vector3d();
+			final Vector3d dh = new Vector3d(); // delta in h
 
-			for (int y = 0; y < s[0]; y++) {
-				for (int x = 0; x < s[1]; x++) {
+			for (int y = region[2]; y < region[3]; y++) {
+				for (int x = region[0]; x < region[1]; x++) {
 					value = image.getDouble(y, x);
+					if (iWeight != null) {
+						value *= iWeight.getDouble(y, x);
+					}
 					if (value > 0) {
 						qspace.qFromPixelPosition(x + 0.5, y + 0.5, q);
 	
@@ -895,6 +938,7 @@ public class MillerSpaceMapper {
 		MillerSpace mspace = null;
 		DoubleDataset list = null;
 
+		boolean isOldGDA = isOLDI16GDA(tree);
 		while (iter.hasNext() && diter.hasNext()) {
 			DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
 			dp.setHPxSize(dp.getHPxSize() / scale);
@@ -906,7 +950,7 @@ public class MillerSpaceMapper {
 			for (int i = 0; i < srank; i++) {
 				stop[i] = pos[i] + 1;
 			}
-			DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, true, dpos);
+			DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, dpos);
 			DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 			QSpace qspace = new QSpace(dp, env);
 			mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
@@ -1034,6 +1078,9 @@ public class MillerSpaceMapper {
 		String dataName = bean.getDataName();
 		if (dataName == null || dataName.isEmpty()) {
 			link = NexusTreeUtils.findFirstSignalDataNode(detector);
+			if (link == null) {
+				link = detector.getNodeLink(NexusConstants.DATA_DATA);
+			}
 			System.out.println("Data found: " + link);
 		} else {
 			link = detector.getNodeLink(dataName);
@@ -1188,6 +1235,9 @@ public class MillerSpaceMapper {
 			trees[i] = getTreeFromNexusFile(inputs[i]);
 			allIters[i] = getPositionIterators(trees[i]);
 		}
+
+		createImageWeight(trees[0], allIters[0][0]);
+
 		if (findImageBB) {
 			if (qDel != null) {
 				Arrays.fill(qMin, Double.POSITIVE_INFINITY);
@@ -1201,6 +1251,7 @@ public class MillerSpaceMapper {
 			for (int i = 0; i < n; i++) {
 				findBoundingBoxes(trees[i], allIters[i]);
 			}
+			roundLimitsAndFindShapes();
 
 			if (qDel != null) {
 				System.err.println("Extent of q space was found to be " + Arrays.toString(qMin) + " to " + Arrays.toString(qMax));
@@ -1214,15 +1265,15 @@ public class MillerSpaceMapper {
 
 		try {
 			if (qDel != null) {
-				processTrees(true, trees, allIters, bean, a[0]);
+				processTrees(true, trees, allIters, a[0]);
 			}
 
 			if (hDel != null) {
-				processTrees(false, trees, allIters, bean, a[1]);
+				processTrees(false, trees, allIters, a[1]);
 			}
 
 			if (listMillerEntries) {
-				processTreesForList(trees, allIters, bean);
+				processTreesForList(trees, allIters);
 			}
 		} catch (ScanFileHolderException sfhe) {
 			throw sfhe;
@@ -1231,8 +1282,39 @@ public class MillerSpaceMapper {
 		}
 	}
 
-	private void processTrees(boolean mapQ, Tree[] trees, PositionIterator[][] allIters, MillerSpaceMapperBean bean,
-			Dataset[] a) throws ScanFileHolderException, DatasetException {
+	private void createImageWeight(Tree tree, PositionIterator dIter) {
+		String wFile = bean.getWeightFilePath();
+		if (wFile != null) {
+			try {
+				imageWeight = DatasetUtils.convertToDataset(LoaderFactory.getData(wFile).getDataset(0));
+			} catch (Exception e1) {
+				System.err.println("Could not load image weight dataset from " + wFile);
+			} 
+		}
+		int[] dpos = dIter.getPos();
+		DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
+
+		begX = 0;
+		endX = dp.getPx();
+		begY = 0;
+		endY = dp.getPy();
+
+		int[] region = bean.getRegion();
+		if (region != null) {
+			begX = Math.max(region[0], begX);
+			endX = Math.min(region[1], endX);
+			if (begX >= endX) { // no width
+				return;
+			}
+			begY = Math.max(region[2], begY);
+			endY = Math.min(region[3], endY);
+			if (begY >= endY) { // no height
+				return;
+			}
+		}
+	}
+
+	private void processTrees(boolean mapQ, Tree[] trees, PositionIterator[][] allIters, Dataset[] a) throws ScanFileHolderException, DatasetException {
 		int[] vShape = copyParameters(mapQ);
 		String output = bean.getOutput();
 
@@ -1650,7 +1732,7 @@ public class MillerSpaceMapper {
 		}
 	}
 
-	private void processTreesForList(Tree[] trees, PositionIterator[][] allIters, MillerSpaceMapperBean bean)
+	private void processTreesForList(Tree[] trees, PositionIterator[][] allIters)
 			throws ScanFileHolderException, DatasetException {
 		String output = bean.getOutput();
 		if (!hasDeleted) {
@@ -1976,6 +2058,9 @@ public class MillerSpaceMapper {
 		private double[] qStart;
 		private double[] qStep;
 
+		private int[] region; // masking ROI where only point within its bounds contribute to volume
+		private String weightFilePath; // file path to image weight 
+
 		public MillerSpaceMapperBean() {
 		}
 
@@ -2229,6 +2314,33 @@ public class MillerSpaceMapper {
 			this.qStep = qStep;
 		}
 
+		/**
+		 * Set rectangular region that defines the area with its bounds that contribute to volume
+		 * @param sx start x
+		 * @param ex end x (exclusive)
+		 * @param sy start y
+		 * @param ey end y (exclusive)
+		 */
+		public void setRegion(int sx, int ex, int sy, int ey) {
+			this.region = new int[] {sx, ex, sy, ey};
+		}
+
+		public int[] getRegion() {
+			return region;
+		}
+
+		/**
+		 * Set the file path to a weight dataset that will be applied to each pixel in image
+		 * @param weight file path
+		 */
+		public void setWeightFilePath(String weight) {
+			this.weightFilePath = weight;
+		}
+
+		public String getWeightFilePath() {
+			return weightFilePath;
+		}
+
 		@Override
 		protected MillerSpaceMapperBean clone() {
 			MillerSpaceMapperBean copy = null;
@@ -2236,12 +2348,14 @@ public class MillerSpaceMapper {
 				copy = (MillerSpaceMapperBean) super.clone();
 				copy.inputs = Arrays.copyOf(inputs, inputs.length);
 				copy.otherPaths = otherPaths == null ? null : Arrays.copyOf(otherPaths, otherPaths.length);
-				copy.millerShape = millerShape == null ? null : Arrays.copyOf(millerShape, millerShape.length);
-				copy.millerStart = millerStart == null ? null : Arrays.copyOf(millerStart, millerStart.length);
-				copy.millerStep = millerStep == null ? null : Arrays.copyOf(millerStep, millerStep.length);
-				copy.qShape = qShape == null ? null : Arrays.copyOf(qShape, qShape.length);
-				copy.qStart = qStart == null ? null : Arrays.copyOf(qStart, qStart.length);
-				copy.qStep = qStep == null ? null : Arrays.copyOf(qStep, qStep.length);
+				copy.millerShape = millerShape == null ? null : millerShape.clone();
+				copy.millerStart = millerStart == null ? null : millerStart.clone();
+				copy.millerStep = millerStep == null ? null : millerStep.clone();
+				copy.qShape = qShape == null ? null : qShape.clone();
+				copy.qStart = qStart == null ? null : qStart.clone();
+				copy.qStep = qStep == null ? null : qStep.clone();
+				copy.region = region == null ? null : region.clone();
+				copy.weightFilePath = weightFilePath;
 			} catch (CloneNotSupportedException e) {
 			}
 			return copy;
@@ -2274,6 +2388,8 @@ public class MillerSpaceMapper {
 			result = prime * result + ((splitterName == null) ? 0 : splitterName.hashCode());
 			temp = Double.doubleToLongBits(splitterParameter);
 			result = prime * result + (int) (temp ^ (temp >>> 32));
+			result = prime * result + ((region == null) ? 0 : Arrays.hashCode(region));
+			result = prime * result + ((weightFilePath == null) ? 0 : weightFilePath.hashCode());
 			return result;
 		}
 
@@ -2379,6 +2495,12 @@ public class MillerSpaceMapper {
 				return false;
 			}
 			if (Double.doubleToLongBits(splitterParameter) != Double.doubleToLongBits(other.splitterParameter)) {
+				return false;
+			}
+			if (!Arrays.equals(region, other.region)) {
+				return false;
+			}
+			if (!Objects.equals(weightFilePath, other.weightFilePath)) {
 				return false;
 			}
 			return true;

@@ -94,7 +94,8 @@ public class JythonPath {
 		"org.boofcv.ip",
 		"org.boofcv.sfm",
 		"org.ddogleg",
-		"org.dawnsci.persistence" // Required for I11 LDE script
+		"org.dawnsci.persistence", // Required for I11 LDE script
+		"com.fasterxml.jackson.core", // Required for MillerSpaceMapper
 	};
 
 	/*

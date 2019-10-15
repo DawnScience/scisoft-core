@@ -12,7 +12,10 @@ package uk.ac.diamond.scisoft.analysis.io;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +31,7 @@ import javax.vecmath.Vector4d;
 import org.apache.commons.math3.complex.Complex;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
@@ -202,7 +206,58 @@ public class HDF5LoaderTest {
 		assertEquals("Value of " + name, 1., dataset.getDouble(0, 1), 1e-8);
 		assertEquals("Value of " + name, 9., dataset.getDouble(1, 4), 1e-8);
 
+		// attributes
+		name = "a1";
+		group = (GroupNode) tree.findNodeLink("/entry1/to/this/level").getDestination();
+		try {
+			link = group.findNodeLink(Node.ATTRIBUTE + name);
+			fail("IAE expected");
+		} catch (IllegalArgumentException e) {
+			// do nothing
+		}
+
+		group = (GroupNode) tree.findNodeLink("/entry1/to/this").getDestination();
+		link = group.findNodeLink("level" + Node.ATTRIBUTE + name);
+		checkLink(link, "level", name, "hello");
+
+		link = tree.findNodeLink("/entry1/to/this/level" + Node.ATTRIBUTE + name);
+		checkLink(link, "level", name, "hello");
+
+		group = (GroupNode) tree.findNodeLink("/entry1/to").getDestination();
+		link = group.findNodeLink("this/level" + Node.ATTRIBUTE + name);
+		checkLink(link, "level", name, "hello");
+
+		group = (GroupNode) tree.findNodeLink("/entry1/to").getDestination();
+		link = group.findNodeLink("this/level1" + Node.ATTRIBUTE + name);
+		assertNull("Group found", link);
+
+		name = "b1";
+		link = tree.findNodeLink("/entry1/to/this/level" + Node.ATTRIBUTE + name);
+		assertNull("Group's attribute found", link);
+
+		link = tree.findNodeLink("this/level" + Node.ATTRIBUTE + name);
+		assertNull("Group's attribute found", link);
+
+		link = tree.findNodeLink(Tree.ROOT + Node.ATTRIBUTE + name);
+		assertNull("Root group's attribute found", link);
+
+		name = "NeXus_version";
+		link = tree.findNodeLink(Tree.ROOT + Node.ATTRIBUTE + name);
+		checkLink(link, Tree.ROOT, name, "4.3.0");
+
 		System.out.println(tree.findNodeLink("/entry1/to/this/level"));
+	}
+
+	private void checkLink(NodeLink link, String lName, String aName, String value) {
+		IDataset dataset;
+		assertNotNull("Group's attribute not found", link);
+		assertTrue("Group not found", link.isDestinationGroup());
+		assertEquals("Group not found", lName, link.getName());
+		GroupNode g = (GroupNode) link.getDestination();
+		Attribute a = g.getAttribute(aName);
+		assertNotNull("Attribute not found " + aName, a);
+		dataset = a.getValue();
+		assertEquals(value, dataset.getString());
 	}
 
 	@Test

@@ -229,8 +229,6 @@ public class MetadataPlotUtils {
 		
 		List<AxesMetadata> amd = null;
 		
-		data = data.getSliceView().squeezeEnds();
-		
 		try {
 			amd = data.getMetadata(AxesMetadata.class);
 		} catch (Exception e) {

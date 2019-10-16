@@ -37,7 +37,6 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.january.dataset.LazyDataset;
 import org.eclipse.january.io.IMetaLoader;
 import org.eclipse.january.metadata.IMetadata;
 import org.slf4j.Logger;
@@ -621,7 +620,7 @@ public class LoaderFactory {
 				
 				if (files==null || files.size()<2) continue;
 	 			ImageStackLoader loader = new ImageStackLoader(files, holder, mon);
-				LazyDataset lazyDataset = new LazyDataset(name, loader.getDType(), loader.getShape(), loader);
+				ILazyDataset lazyDataset = loader.createLazyDataset(name);
 				ret.put(name, lazyDataset);
 			}
 			

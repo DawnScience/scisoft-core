@@ -29,7 +29,7 @@ import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
-import org.eclipse.january.dataset.LazyDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.StringDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -286,7 +286,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver {
 						try {
 							loader = new ImageStackLoader(sds, fileDirectory);
 							name += "_image";
-							LazyDataset lazyDataset = new LazyDataset(name, loader.getDType(), loader.getShape(), loader);
+							ILazyDataset lazyDataset = loader.createLazyDataset(name);
 							holder.addDataset(name, lazyDataset);
 							if (dataShapes!=null) dataShapes.put(name, lazyDataset.getShape());
 						} catch (Exception ex) {

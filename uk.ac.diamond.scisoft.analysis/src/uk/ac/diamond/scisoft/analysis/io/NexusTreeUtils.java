@@ -919,11 +919,11 @@ public class NexusTreeUtils {
 			throw new IllegalArgumentException("Axis '" + a + "' dataset is empty");
 		}
 
-		int[] ashape = aData.getShape();
+		int arank = aData.getRank();
 		int[] indices = parseIntArray(gn.getAttribute(a + NexusConstants.DATA_INDICES_SUFFIX));
 		if (indices == null) {
 			throw new IllegalArgumentException("No indices attribute for axis '" + a + "' in " + gn);
-		} else if (indices.length != ashape.length) {
+		} else if (indices.length != arank) {
 			throw new IllegalArgumentException("Indices array of axis '" + a + "' must have same length equal to its rank");
 		}
 		for (int i : indices) {
@@ -931,7 +931,6 @@ public class NexusTreeUtils {
 				throw new IllegalArgumentException("Index value (" + i + ") for axis '" + a + "' is out of bounds");
 			}
 		}
-		int arank = ashape.length;
 		if (arank != rank) { // broadcast axis dataset
 			int[] nshape = new int[rank];
 			Arrays.fill(nshape, 1);

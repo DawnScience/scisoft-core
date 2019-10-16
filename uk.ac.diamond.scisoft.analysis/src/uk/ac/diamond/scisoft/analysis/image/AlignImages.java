@@ -27,6 +27,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
@@ -284,7 +285,8 @@ public class AlignImages {
 			return alignLazyWithROI(data, shifts, roi, monitor);
 		}
 
-		int nsets = data.getShape()[0] / mode;
+		int[] shape = data.getShape();
+		int nsets = shape[0] / mode;
 
 		RectangularROIList rois = new RectangularROIList();
 		rois.add(roi);
@@ -307,10 +309,9 @@ public class AlignImages {
 			tmpFile.delete();
 		}
 
-		int[] shape = data.getShape();
 		int[] chunking = new int[] {1, shape[1], shape[2]};
 		ILazyWriteableDataset lazy = HDF5Utils.createLazyDataset(file, path, name, shape, null,
-				chunking, Dataset.FLOAT32, null, false);
+				chunking, FloatDataset.class, null, false);
 
 		int nr = rois.size();
 		if (nr > 0) {
@@ -466,7 +467,7 @@ public class AlignImages {
 		int[] shape = data.getShape();
 		int[] chunking = new int[] {1, shape[1], shape[2]};
 		ILazyWriteableDataset lazy = HDF5Utils.createLazyDataset(file, path, name, shape, null,
-				chunking, Dataset.FLOAT32, null, false);
+				chunking, FloatDataset.class, null, false);
 
 		IDataset[] tImages = new IDataset[nsets];
 		List<Dataset> shifted = new ArrayList<>(nsets);

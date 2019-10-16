@@ -40,7 +40,6 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
-import org.eclipse.january.dataset.LazyDataset;
 import org.eclipse.january.dataset.LazyWriteableDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.PositionIterator;
@@ -1164,7 +1163,7 @@ public class MillerSpaceMapper {
 		loader.squeeze();
 		node.setMaxShape(loader.getMaxShape());
 		node.setChunkShape(loader.getChunkShape());
-		node.setDataset(new LazyDataset(I16_IMAGE_DATA, loader.getDType(), loader.getShape(), loader));
+		node.setDataset(loader.createLazyDataset(I16_IMAGE_DATA));
 		detector.addDataNode(I16_IMAGE_DATA, node);
 		return detector.getNodeLink(I16_IMAGE_DATA);
 	}
@@ -1326,7 +1325,7 @@ public class MillerSpaceMapper {
 
 			int[] cShape = vShape.clone();
 			cShape[0] = 1;
-			LazyWriteableDataset lazy = HDF5Utils.createLazyDataset(output, volPath, VOLUME_NAME, vShape, null, cShape, Dataset.FLOAT64, null, false);
+			LazyWriteableDataset lazy = HDF5Utils.createLazyDataset(output, volPath, VOLUME_NAME, vShape, null, cShape, DoubleDataset.class, null, false);
 			mapAndSaveInParts(mapQ, trees, allIters, lazy, parts, map, weight);
 
 			saveAxesAndAttributes(output, volPath, a);
@@ -1661,7 +1660,7 @@ public class MillerSpaceMapper {
 
 		// Each pixel => HKL (3 doubles) plus corrected intensity (1 double)
 		String millerIndicesPath = PROCESSPATH + Node.SEPARATOR + "indices";
-		LazyWriteableDataset lazy = HDF5Utils.createLazyDataset(output, millerIndicesPath, INDICES_NAME, new int[] {0,4}, new int[] {-1,4}, new int[] {1024, 4}, Dataset.FLOAT64, null, false);
+		LazyWriteableDataset lazy = HDF5Utils.createLazyDataset(output, millerIndicesPath, INDICES_NAME, new int[] {0,4}, new int[] {-1,4}, new int[] {1024, 4}, DoubleDataset.class, null, false);
 		for (int i = 0; i < trees.length; i++) {
 			Tree tree = trees[i];
 			listToASpace(tree, allIters[i], lazy);

@@ -26,7 +26,6 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.january.dataset.LazyDataset;
 import org.eclipse.january.dataset.StringDataset;
 import org.eclipse.january.metadata.Metadata;
 
@@ -170,7 +169,7 @@ public class DAWNLinkLoader extends AbstractFileLoader {
 					for (String key : datasetSet){
 							StringDataset ds = DatasetFactory.createFromObject(StringDataset.class,filename, shape);
 							ImageStackLoader l = new ImageStackLoader(ds, null,null,key);
-							ILazyDataset lz = new LazyDataset(key, l.getDType(), l.getShape(), l);
+							ILazyDataset lz = l.createLazyDataset(key);
 							result.addDataset(key, lz);
 							m.addDataInfo(key, lz.getShape());
 					}

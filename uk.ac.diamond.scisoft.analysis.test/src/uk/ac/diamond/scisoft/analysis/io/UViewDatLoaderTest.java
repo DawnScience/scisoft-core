@@ -20,7 +20,6 @@ import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.january.dataset.LazyDataset;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.metadata.IMetadata;
 import org.junit.Test;
@@ -66,7 +65,7 @@ public class UViewDatLoaderTest {
 			paths.add(i, "testfiles/gda/analysis/io/UViewDatLoaderTest/movie_22_00000" + (i+1) + ".dat");
 		}
 		ImageStackLoader loader = new ImageStackLoader(paths, null);
-		ILazyDataset lazy = new LazyDataset("Image stack", loader.getDType(), loader.getShape(), loader);
+		ILazyDataset lazy = loader.createLazyDataset("Image stack");
 
 		assertArrayEquals("Shapes are the same", loader.getShape(), lazy.getShape());
 		IDataset slice = lazy.getSlice(new Slice(1)).squeeze();

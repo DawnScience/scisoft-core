@@ -398,7 +398,7 @@ public class XPDFCalibration extends XPDFCalibrationBase {
 			// The azimuthal dependence or the mean value thereof, f(φ)
 			Dataset azimuthalFactor;
 			
-			if (absCor.getShape().length == 1) {
+			if (absCor.getRank() == 1) {
 				// One dimensional: f(φ) = c/2 sin² 2θ
 				azimuthalFactor = Maths.multiply(polarizationFraction, Maths.square(coords.getSinTwoTheta()));
 			} else {

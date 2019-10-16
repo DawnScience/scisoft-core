@@ -301,20 +301,20 @@ public class NexusFileBenchmarkTest {
 				detector[d] = dt;
 
 				String dg = String.format(DETECTOR_LOCATION, d);
-				ILazyWriteableDataset lds = new LazyWriteableDataset("data", Dataset.FLOAT64, tShape, null, null, null);
+				ILazyWriteableDataset lds = new LazyWriteableDataset("data", Double.class, tShape, null, null, null);
 				dt.data = lds;
 				nf.createData(dg + "data", lds, true);
 
 				for (int p = 0; p < scanRank; p++) {
 					String pd = String.format(POSN_LOCATION, p);
-					lds = new LazyWriteableDataset(pd, Dataset.FLOAT64, pShape, null, null, null);
+					lds = new LazyWriteableDataset(pd, Double.class, pShape, null, null, null);
 					dt.posn[p] = lds;
 					nf.createData(dg + pd, lds, true);
 				}
 
 				for (int r = 0; r < rois; r++) {
 					String rd = String.format(ROI_LOCATION, r);
-					lds = new LazyWriteableDataset(rd, Dataset.FLOAT64, rShape, null, null, null);
+					lds = new LazyWriteableDataset(rd, Double.class, rShape, null, null, null);
 					dt.roi[r] = lds;
 					nf.createData(dg + rd, lds, true);
 				}

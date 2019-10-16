@@ -16,6 +16,7 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.PositionIterator;
 import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.dataset.SliceND;
@@ -184,8 +185,8 @@ public class AccessSpeedTest {
 		if (f.exists()) {
 			f.delete();
 		}
-		HDF5Utils.createDatasetWithClose(file, "/entry", "data1", chunk, mshape, chunk, Dataset.FLOAT64, null, false);
-		HDF5Utils.createDatasetWithClose(file, "/entry", "data2", chunk, mshape, chunk, Dataset.FLOAT64, null, false);
+		HDF5Utils.createDatasetWithClose(file, "/entry", "data1", chunk, mshape, chunk, DoubleDataset.class, null, false);
+		HDF5Utils.createDatasetWithClose(file, "/entry", "data2", chunk, mshape, chunk, DoubleDataset.class, null, false);
 	}
 
 	@Test

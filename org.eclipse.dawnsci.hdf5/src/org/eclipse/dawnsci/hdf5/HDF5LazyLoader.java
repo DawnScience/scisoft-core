@@ -16,6 +16,7 @@ import java.util.Arrays;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.io.ILazyDynamicLoader;
@@ -35,7 +36,7 @@ public class HDF5LazyLoader implements ILazyLoader, ILazyDynamicLoader, Serializ
 	protected String filePath;
 	protected String nodePath;
 	protected int[] trueShape;
-	protected int dtype;
+	protected Class<? extends Dataset> clazz;
 	private int isize;
 	private boolean extendUnsigned;
 	protected String name;
@@ -50,8 +51,25 @@ public class HDF5LazyLoader implements ILazyLoader, ILazyDynamicLoader, Serializ
 	 * @param isize
 	 * @param dtype
 	 * @param extendUnsigned
+	 * @deprecated Use {@link #HDF5LazyLoader(String, String, String, String, int[], int, Class, boolean)}
 	 */
+	@Deprecated
 	public HDF5LazyLoader(String hostname, String filename, String node, String name, int[] trueShape, int isize, int dtype,
+			boolean extendUnsigned) {
+		this(hostname, filename, node, name, trueShape, isize, DTypeUtils.getInterface(dtype), extendUnsigned);
+	}
+
+	/**
+	 * @param hostname
+	 * @param filename
+	 * @param node
+	 * @param name
+	 * @param trueShape
+	 * @param isize
+	 * @param dtype
+	 * @param extendUnsigned
+	 */
+	public HDF5LazyLoader(String hostname, String filename, String node, String name, int[] trueShape, int isize, final Class<? extends Dataset> clazz,
 			boolean extendUnsigned) {
 		isRemote = hostname != null && hostname.length() > 0 && !hostname.equals(HDF5Utils.getLocalHostName());
 		filePath = filename;
@@ -60,7 +78,7 @@ public class HDF5LazyLoader implements ILazyLoader, ILazyDynamicLoader, Serializ
 		this.name = name;
 		this.trueShape = trueShape;
 		this.isize = isize;
-		this.dtype = dtype;
+		this.clazz = clazz;
 		this.extendUnsigned = extendUnsigned;
 	}
 
@@ -132,10 +150,10 @@ public class HDF5LazyLoader implements ILazyLoader, ILazyDynamicLoader, Serializ
 					}
 				}
 
-				d = HDF5Utils.loadDataset(filePath, nodePath, tstart, tsize, tstep, dtype, isize, extendUnsigned);
+				d = HDF5Utils.loadDataset(filePath, nodePath, tstart, tsize, tstep, isize, clazz, extendUnsigned);
 				d.setShape(newShape); // squeeze shape back
 			} else {
-				d = HDF5Utils.loadDataset(filePath, nodePath, lstart, newShape, lstep, dtype, isize, extendUnsigned);
+				d = HDF5Utils.loadDataset(filePath, nodePath, lstart, newShape, lstep, isize, clazz, extendUnsigned);
 			}
 			if (d != null) {
 				d.setName(name);

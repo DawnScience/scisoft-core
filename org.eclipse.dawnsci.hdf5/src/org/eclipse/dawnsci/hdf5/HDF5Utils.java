@@ -35,13 +35,23 @@ import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
+import org.eclipse.january.dataset.ByteDataset;
+import org.eclipse.january.dataset.ComplexDoubleDataset;
+import org.eclipse.january.dataset.ComplexFloatDataset;
 import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.InterfaceUtils;
 import org.eclipse.january.dataset.LazyWriteableDataset;
+import org.eclipse.january.dataset.LongDataset;
+import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.dataset.SliceND;
+import org.eclipse.january.dataset.StringDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,10 +126,25 @@ public class HDF5Utils {
 	 * @param dtype
 	 * @param extend true dataset for unsigned types 
 	 * @return dataset
+	 * @deprecated Use {@link #createDataset(Object, int[], Class, boolean)}
 	 */
+	@Deprecated
 	public static Dataset createDataset(final Object data, final int[] shape, final int dtype,
 			final boolean extend) {
-		Dataset ds = DatasetFactory.createFromObject(dtype, data);
+		return createDataset(data, shape, DTypeUtils.getInterface(dtype), extend);
+	}
+
+	/**
+	 * Create a dataset from the given data object
+	 * @param data
+	 * @param shape
+	 * @param clazz
+	 * @param extend true dataset for unsigned types 
+	 * @return dataset
+	 */
+	public static Dataset createDataset(final Object data, final int[] shape,final Class<? extends Dataset> clazz,
+			final boolean extend) {
+		Dataset ds = DatasetFactory.createFromObject(clazz, data);
 	
 		if (extend) {
 			ds = DatasetUtils.makeUnsigned(ds);
@@ -171,11 +196,12 @@ public class HDF5Utils {
 	}
 
 	/**
-	 * Get HDF5 data type constants for boxed primitives
-	 * @param clazz
+	 * Get HDF5 data type constants for dataset interface
+	 * @param dClazz
 	 * @return
 	 */
-	public static long getHDF5type(Class<?> clazz) {
+	public static long getHDF5type(final Class<? extends Dataset> dClazz) {
+		Class<?> clazz = InterfaceUtils.getElementClass(dClazz);
 		if (clazz.equals(String.class)) {
 			return HDF5Constants.H5T_C_S1;
 		} else if (clazz.equals(Boolean.class)) {
@@ -197,38 +223,26 @@ public class HDF5Utils {
 	}
 
 	/**
-	 * Get HDF5 data type constants for dataset types
+	 * Load dataset from given file
+	 * @param fileName
+	 * @param node
+	 * @param start
+	 * @param count
+	 * @param step
 	 * @param dtype
-	 * @return
+	 * @param isize
+	 * @param extend
+	 * @return dataset
+	 * @throws Exception
+	 * @deprecated Use {@link #loadDatasetWithClose(String, String, int[], int[], int[], int, Class, boolean)}
 	 */
-	public static long getHDF5type(int dtype) {
-		switch (dtype) {
-		case Dataset.STRING:
-			return HDF5Constants.H5T_C_S1;
-		case Dataset.BOOL:
-		case Dataset.INT8:
-		case Dataset.ARRAYINT8:
-			return HDF5Constants.H5T_NATIVE_INT8;
-		case Dataset.INT16:
-		case Dataset.ARRAYINT16:
-			return HDF5Constants.H5T_NATIVE_INT16;
-		case Dataset.INT32:
-		case Dataset.ARRAYINT32:
-			return HDF5Constants.H5T_NATIVE_INT32;
-		case Dataset.INT64:
-		case Dataset.ARRAYINT64:
-			return HDF5Constants.H5T_NATIVE_INT64;
-		case Dataset.FLOAT32:
-		case Dataset.ARRAYFLOAT32:
-		case Dataset.COMPLEX64:
-			return HDF5Constants.H5T_NATIVE_FLOAT;
-		case Dataset.FLOAT64:
-		case Dataset.ARRAYFLOAT64:
-		case Dataset.COMPLEX128:
-			return HDF5Constants.H5T_NATIVE_DOUBLE;
-		default:
-			throw new IllegalArgumentException("Invalid datatype requested");
-		}
+	@Deprecated
+	public static Dataset loadDatasetWithClose(final String fileName, final String node,
+				final int[] start, final int[] count, final int[] step,
+				final int dtype, final int isize, final boolean extend)
+				throws ScanFileHolderException {
+
+		return loadDataset(fileName, node, start, count, step, isize, DTypeUtils.getInterface(dtype), extend, true);
 	}
 
 	/**
@@ -246,10 +260,10 @@ public class HDF5Utils {
 	 */
 	public static Dataset loadDatasetWithClose(final String fileName, final String node,
 				final int[] start, final int[] count, final int[] step,
-				final int dtype, final int isize, final boolean extend)
+				final int isize, final Class<? extends Dataset> clazz, final boolean extend)
 				throws ScanFileHolderException {
 
-		return loadDataset(fileName, node, start, count, step, dtype, isize, extend, true);
+		return loadDataset(fileName, node, start, count, step, isize, clazz, extend, true);
 	}
 
 	/**
@@ -372,13 +386,36 @@ public class HDF5Utils {
 	 * @param extend
 	 * @return dataset
 	 * @throws Exception
+	 * @deprecated Use {@link #loadDataset(String, String, int[], int[], int[], int, Class, boolean)}
 	 */
+	@Deprecated
 	public static Dataset loadDataset(final String fileName, final String node,
 				final int[] start, final int[] count, final int[] step,
 				final int dtype, final int isize, final boolean extend)
 				throws ScanFileHolderException {
 
-		return loadDataset(fileName, node, start, count, step, dtype, isize, extend, false);
+		return loadDataset(fileName, node, start, count, step, isize, DTypeUtils.getInterface(dtype), extend);
+	}
+
+	/**
+	 * Load dataset from given file
+	 * @param fileName
+	 * @param node
+	 * @param start
+	 * @param count
+	 * @param step
+	 * @param isize
+	 * @param clazz
+	 * @param extend
+	 * @return dataset
+	 * @throws Exception
+	 */
+	public static Dataset loadDataset(final String fileName, final String node,
+				final int[] start, final int[] count, final int[] step,
+				final int isize, final Class<? extends Dataset> clazz, final boolean extend)
+				throws ScanFileHolderException {
+
+		return loadDataset(fileName, node, start, count, step, isize, clazz, extend, false);
 	}
 
 	/**
@@ -396,14 +433,14 @@ public class HDF5Utils {
 	 */
 	private static Dataset loadDataset(final String fileName, final String node,
 				final int[] start, final int[] count, final int[] step,
-				final int dtype, final int isize, final boolean extend, final boolean close)
+				final int isize, final Class<? extends Dataset> clazz, final boolean extend, final boolean close)
 				throws ScanFileHolderException {
 
 		Dataset data = null;
 		try {
 			HDF5File fid = HDF5FileFactory.acquireFile(fileName, false);
 
-			data = readDataset(fid, node, start, count, step, dtype, isize, extend);
+			data = readDataset(fid, node, start, count, step, isize, clazz, extend);
 		} catch (Throwable le) {
 			logAndThrowSFHException(le, "Problem loading dataset from file");
 		} finally {
@@ -506,9 +543,30 @@ public class HDF5Utils {
 	 * @param extend
 	 * @return dataset
 	 * @throws NexusException
+	 * @deprecated Use {@link #readDataset(HDF5File, String, int[], int[], int[], int, Class, boolean)}
 	 */
+	@Deprecated
 	public static Dataset readDataset(HDF5File f, final String dataPath, final int[] start, final int[] count,
 			final int[] step, final int dtype, final int isize, final boolean extend)
+					throws NexusException {
+		return readDataset(f, dataPath, start, count, step, isize, DTypeUtils.getInterface(dtype), extend);
+	}
+
+	/**
+	 * Read dataset from given file ID
+	 * @param f
+	 * @param dataPath
+	 * @param start
+	 * @param count
+	 * @param step
+	 * @param dtype (can be -1 for dataset type from file)
+	 * @param isize (can be -1 for item size from file)
+	 * @param extend
+	 * @return dataset
+	 * @throws NexusException
+	 */
+	public static Dataset readDataset(HDF5File f, final String dataPath, final int[] start, final int[] count,
+			final int[] step, final int isize, final Class<? extends Dataset> clazz, final boolean extend)
 					throws NexusException {
 		Dataset data = null;
 
@@ -565,15 +623,15 @@ public class HDF5Utils {
 					msid = H5.H5Screate_simple(rank, dsize, null);
 					H5.H5Sselect_all(msid);
 				}
-				final int ldtype = dtype >= 0 ? dtype : type.dtype;
+				Class<? extends Dataset> lClass = clazz == null ? type.clazz : clazz;
 				final int lisize = isize >= 0 ? isize : type.isize;
-				data = DatasetFactory.zeros(lisize, count, ldtype);
+				data = DatasetFactory.zeros(lisize, lClass, count);
 				Object odata = data.getBuffer();
 
 				try {
 					if (type.isVariableLength) {
 						H5.H5Dread_VLStrings(did, tid, msid, sid, HDF5Constants.H5P_DEFAULT, (Object[]) odata);
-					} else if (type.dtype == Dataset.STRING) {
+					} else if (StringDataset.class.isAssignableFrom(type.clazz)) {
 						H5.H5Dread_string(did, tid, msid, sid, HDF5Constants.H5P_DEFAULT, (String[]) odata);
 					} else {
 						H5.H5Dread(did, tid, msid, sid, HDF5Constants.H5P_DEFAULT, odata);
@@ -654,9 +712,11 @@ public class HDF5Utils {
 	 * @param fill
 	 * @param asUnsigned
 	 * @throws ScanFileHolderException
+	 * @deprecated Use {@link #createDataset(String, String, String, int[], int[], int[], Class, Object, boolean)}
 	 */
+	@Deprecated
 	public static void createDataset(final String fileName, final String parentPath, final String name, final int[] initialShape, final int[] maxShape, final int[] chunking, final int dtype, final Object fill, final boolean asUnsigned) throws ScanFileHolderException {
-		createDataset(fileName, parentPath, name, initialShape, maxShape, chunking, dtype, fill, asUnsigned, false);
+		createDataset(fileName, parentPath, name, initialShape, maxShape, chunking, DTypeUtils.getInterface(dtype), fill, asUnsigned, false);
 	}
 
 	/**
@@ -667,20 +727,37 @@ public class HDF5Utils {
 	 * @param initialShape
 	 * @param maxShape
 	 * @param chunking
-	 * @param dtype dataset type
+	 * @param clazz dataset interface
+	 * @param fill
+	 * @param asUnsigned
+	 * @throws ScanFileHolderException
+	 */
+	public static void createDataset(final String fileName, final String parentPath, final String name, final int[] initialShape, final int[] maxShape, final int[] chunking, final Class<? extends Dataset> clazz, final Object fill, final boolean asUnsigned) throws ScanFileHolderException {
+		createDataset(fileName, parentPath, name, initialShape, maxShape, chunking, clazz, fill, asUnsigned, false);
+	}
+
+	/**
+	 * Create a dataset in HDF5 file. Create the file if necessary
+	 * @param fileName
+	 * @param parentPath path to group containing dataset
+	 * @param name name of dataset
+	 * @param initialShape
+	 * @param maxShape
+	 * @param chunking
+	 * @param clazz dataset interface
 	 * @param fill
 	 * @param asUnsigned
 	 * @param close
 	 * @throws ScanFileHolderException
 	 */
-	private static void createDataset(final String fileName, final String parentPath, final String name, final int[] initialShape, final int[] maxShape, final int[] chunking, final int dtype, final Object fill, final boolean asUnsigned, final boolean close) throws ScanFileHolderException {
+	private static void createDataset(final String fileName, final String parentPath, final String name, final int[] initialShape, final int[] maxShape, final int[] chunking, final Class<? extends Dataset> clazz, final Object fill, final boolean asUnsigned, final boolean close) throws ScanFileHolderException {
 
 		try {
 			HDF5File fid = HDF5FileFactory.acquireFile(fileName, true);
 
 			requireDestination(fid, parentPath);
 			String dataPath = absolutePathToData(parentPath, name);
-			createDataset(fid, NexusFile.COMPRESSION_NONE, dataPath, dtype, initialShape, maxShape, chunking, fill);
+			createDataset(fid, NexusFile.COMPRESSION_NONE, dataPath, clazz, initialShape, maxShape, chunking, fill);
 		} catch (Throwable le) {
 			logAndThrowSFHException(le, "Problem creating dataset in file: %s", fileName);
 		} finally {
@@ -699,13 +776,32 @@ public class HDF5Utils {
 	 * @param dtype
 	 * @param fill
 	 * @param asUnsigned
+	 * @return lazy dataset
+	 * @deprecated Use {@link #createLazyDataset(String, String, String, int[], int[], int[], Class, Object, boolean)}
+	 */
+	@Deprecated
+	public static LazyWriteableDataset createLazyDataset(final String fileName, final String parentPath, final String name, final int[] initialShape, final int[] maxShape, final int[] chunking, final int dtype, final Object fill, final boolean asUnsigned) {
+		return createLazyDataset(fileName, parentPath, name, initialShape, maxShape, chunking, DTypeUtils.getInterface(dtype), fill, asUnsigned);
+	}
+
+	/**
+	 * Create a lazy dataset in HDF5 file
+	 * @param fileName
+	 * @param parentPath
+	 * @param name
+	 * @param initialShape
+	 * @param maxShape
+	 * @param chunking
+	 * @param clazz
+	 * @param fill
+	 * @param asUnsigned
 	 * @return
 	 */
-	public static LazyWriteableDataset createLazyDataset(final String fileName, final String parentPath, final String name, final int[] initialShape, final int[] maxShape, final int[] chunking, final int dtype, final Object fill, final boolean asUnsigned) {
+	public static LazyWriteableDataset createLazyDataset(final String fileName, final String parentPath, final String name, final int[] initialShape, final int[] maxShape, final int[] chunking, final Class<? extends Dataset> clazz, final Object fill, final boolean asUnsigned) {
 		HDF5LazySaver saver = new HDF5LazySaver(null, fileName,
-				parentPath + Node.SEPARATOR + name, name, initialShape, 1, dtype, asUnsigned, maxShape, chunking, fill);
+				parentPath + Node.SEPARATOR + name, name, initialShape, 1, clazz, asUnsigned, maxShape, chunking, fill);
 		saver.setCreateOnInitialization(true);
-		LazyWriteableDataset lazy = new LazyWriteableDataset(name, dtype, initialShape, maxShape, chunking, saver);
+		LazyWriteableDataset lazy = new LazyWriteableDataset(name, InterfaceUtils.getElementClass(clazz), initialShape, maxShape, chunking, saver);
 		lazy.setFillValue(fill);
 		return lazy;
 	}
@@ -718,13 +814,13 @@ public class HDF5Utils {
 	 * @param initialShape
 	 * @param maxShape
 	 * @param chunking
-	 * @param dtype dataset type
+	 * @param clazz dataset interface
 	 * @param fill
 	 * @param asUnsigned
 	 * @throws ScanFileHolderException
 	 */
-	static void createDatasetWithClose(final String fileName, final String parentPath, final String name, final int[] initialShape, final int[] maxShape, final int[] chunking, final int dtype, final Object fill, final boolean asUnsigned) throws ScanFileHolderException {
-		createDataset(fileName, parentPath, name, initialShape, maxShape, chunking, dtype, fill, asUnsigned, true);
+	static void createDatasetWithClose(final String fileName, final String parentPath, final String name, final int[] initialShape, final int[] maxShape, final int[] chunking, final Class<? extends Dataset> clazz, final Object fill, final boolean asUnsigned) throws ScanFileHolderException {
+		createDataset(fileName, parentPath, name, initialShape, maxShape, chunking, clazz, fill, asUnsigned, true);
 	}
 
 	/**
@@ -791,14 +887,33 @@ public class HDF5Utils {
 	 * @param iChunks
 	 * @param fillValue
 	 * @throws NexusException
+	 * @deprecated Use {@link #createDataset(HDF5File, int, String, Class, int[], int[], int[], Object)}
 	 */
+	@Deprecated
 	public static void createDataset(HDF5File f, int compression, String dataPath, int dtype, int[] iShape, int[] iMaxShape, int[] iChunks,
+			Object fillValue) throws NexusException {
+		
+	}
+
+	/**
+	 * Create a dataset in given file
+	 * @param f
+	 * @param compression
+	 * @param dataPath
+	 * @param dtype
+	 * @param iShape
+	 * @param iMaxShape
+	 * @param iChunks
+	 * @param fillValue
+	 * @throws NexusException
+	 */
+	public static void createDataset(HDF5File f, int compression, String dataPath, final Class<? extends Dataset> clazz, int[] iShape, int[] iMaxShape, int[] iChunks,
 			Object fillValue) throws NexusException {
 		long[] shape = toLongArray(iShape);
 		long[] maxShape = toLongArray(iMaxShape);
 		long[] chunks = toLongArray(iChunks);
-		boolean stringDataset = dtype == Dataset.STRING;
-		long hdfType = getHDF5type(dtype);
+		boolean stringDataset = StringDataset.class.equals(clazz);
+		long hdfType = getHDF5type(clazz);
 		try {
 			long hdfDatatypeId = -1;
 			long hdfDataspaceId = -1;
@@ -907,9 +1022,8 @@ public class HDF5Utils {
 
 		long[] shape = toLongArray(dataset.getShapeRef());
 
-		int dtype = dataset.getDType();
-		boolean stringDataset = dtype == Dataset.STRING;
-		long hdfType = getHDF5type(dtype);
+		boolean stringDataset = dataset instanceof StringDataset;
+		long hdfType = getHDF5type(dataset.getClass());
 
 		try {
 			long hdfDatatypeId = -1;
@@ -1028,7 +1142,7 @@ public class HDF5Utils {
 				logAndThrowNexusException(e, "Could not check for existing attribute %s for %s in %s", attrName, path, f);
 			}
 			Dataset attrData = DatasetUtils.convertToDataset(attr);
-			long baseHdf5Type = getHDF5type(attrData.getDType());
+			long baseHdf5Type = getHDF5type(attrData.getClass());
 
 			final boolean isScalar = attrData.getRank() == 0;
 			final long[] shape = toLongArray(attrData.getShapeRef());
@@ -1291,8 +1405,7 @@ public class HDF5Utils {
 				}
 
 				Dataset data = DatasetUtils.convertToDataset(value);
-				int dtype = data.getDType();
-				long memtype = getHDF5type(dtype);
+				long memtype = getHDF5type(data.getClass());
 				Serializable buffer = DatasetUtils.serializeDataset(data);
 
 				// convert boolean[] data to byte[]
@@ -1308,7 +1421,7 @@ public class HDF5Utils {
 				}
 
 				hdfMemspaceId = H5.H5Screate_simple(rank, HDF5Utils.toLongArray(data.getShape()), null);
-				if (dtype == Dataset.STRING) {
+				if (data instanceof StringDataset) {
 					//use the properties from the existing dataset for a string,
 					//not the memtype of the dataset.
 					boolean vlenString = false;
@@ -1393,7 +1506,7 @@ public class HDF5Utils {
 		return H5.H5Fopen(filePath, flags, fapl);
 	}
 
-	private static final Map<Long, Integer> HDF_TYPES_TO_DATASET_TYPES;
+	private static final Map<Long, Class<? extends Dataset>> HDF_TYPES_TO_DATASET_TYPES;
 	private static final Map<Integer, Long> DATASET_TYPES_TO_HDF_TYPES;
 	private static final Map<Long, Long> ENUM_SIZE_TO_HDF_TYPES;
 	private static final Set<Long> UNSIGNED_HDF_TYPES;
@@ -1413,69 +1526,64 @@ public class HDF5Utils {
 	}
 
 	static {
-		HDF_TYPES_TO_DATASET_TYPES = new HashMap<Long, Integer>();
+		HDF_TYPES_TO_DATASET_TYPES = new HashMap<Long, Class<? extends Dataset>>();
 		DATASET_TYPES_TO_HDF_TYPES = new HashMap<Integer, Long>();
 		ENUM_SIZE_TO_HDF_TYPES = new HashMap<Long, Long>();
 		UNSIGNED_HDF_TYPES = new HashSet<Long>();
 
-		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_INT8, Dataset.INT8);
+		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_INT8, ByteDataset.class);
 		DATASET_TYPES_TO_HDF_TYPES.put(Dataset.INT8, HDF5Constants.H5T_NATIVE_INT8);
 		ENUM_SIZE_TO_HDF_TYPES.put(1l, HDF5Constants.H5T_NATIVE_INT8);
 
-		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_INT16, Dataset.INT16);
+		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_INT16, ShortDataset.class);
 		DATASET_TYPES_TO_HDF_TYPES.put(Dataset.INT16, HDF5Constants.H5T_NATIVE_INT16);
 		ENUM_SIZE_TO_HDF_TYPES.put(2l, HDF5Constants.H5T_NATIVE_INT16);
 
-		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_INT32, Dataset.INT32);
+		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_INT32, IntegerDataset.class);
 		DATASET_TYPES_TO_HDF_TYPES.put(Dataset.INT32, HDF5Constants.H5T_NATIVE_INT32);
 		ENUM_SIZE_TO_HDF_TYPES.put(4l, HDF5Constants.H5T_NATIVE_INT32);
 
-		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_B8, Dataset.INT8);
-		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_B16, Dataset.INT16);
-		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_B32, Dataset.INT32);
-		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_B64, Dataset.INT8);
-
-		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_INT64, Dataset.INT64);
+		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_INT64, LongDataset.class);
 		DATASET_TYPES_TO_HDF_TYPES.put(Dataset.INT64, HDF5Constants.H5T_NATIVE_INT64);
 		ENUM_SIZE_TO_HDF_TYPES.put(8l, HDF5Constants.H5T_NATIVE_INT64);
 
 
-		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_UINT8, Dataset.INT8);
+		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_UINT8, ByteDataset.class);
 		UNSIGNED_HDF_TYPES.add(HDF5Constants.H5T_NATIVE_UINT8);
 
-		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_UINT16, Dataset.INT16);
+		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_UINT16, ShortDataset.class);
 		UNSIGNED_HDF_TYPES.add(HDF5Constants.H5T_NATIVE_UINT16);
 
-		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_UINT32, Dataset.INT32);
+		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_UINT32, IntegerDataset.class);
 		UNSIGNED_HDF_TYPES.add(HDF5Constants.H5T_NATIVE_UINT32);
 
-		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_UINT64, Dataset.INT64);
+		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_UINT64, LongDataset.class);
 		UNSIGNED_HDF_TYPES.add(HDF5Constants.H5T_NATIVE_UINT64);
 
-		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_FLOAT, Dataset.FLOAT32);
+		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_FLOAT, FloatDataset.class);
 		DATASET_TYPES_TO_HDF_TYPES.put(Dataset.FLOAT32, HDF5Constants.H5T_NATIVE_FLOAT);
 
-		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_DOUBLE, Dataset.FLOAT64);
+		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_DOUBLE, DoubleDataset.class);
 		DATASET_TYPES_TO_HDF_TYPES.put(Dataset.FLOAT64, HDF5Constants.H5T_NATIVE_DOUBLE);
 
-		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_C_S1, Dataset.STRING);
+		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_C_S1, StringDataset.class);
 		DATASET_TYPES_TO_HDF_TYPES.put(Dataset.STRING, HDF5Constants.H5T_C_S1);
 
-		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_B8, Dataset.INT8);
+		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_B8, ByteDataset.class);
 		UNSIGNED_HDF_TYPES.add(HDF5Constants.H5T_NATIVE_B8);
 
-		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_B16, Dataset.INT16);
+		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_B16, ShortDataset.class);
 		UNSIGNED_HDF_TYPES.add(HDF5Constants.H5T_NATIVE_B16);
 
-		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_B32, Dataset.INT32);
+		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_B32, IntegerDataset.class);
 		UNSIGNED_HDF_TYPES.add(HDF5Constants.H5T_NATIVE_B32);
 
-		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_B64, Dataset.INT64);
+		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_B64, LongDataset.class);
 		UNSIGNED_HDF_TYPES.add(HDF5Constants.H5T_NATIVE_B64);
 	}
 
 	public static class DatasetType {
-		public int dtype = -1; // dataset type number 
+		public Class<? extends Dataset> clazz = null; // dataset interface
 		public int isize = 1; // number of elements per item
 		public long size; // size of string in bytes
 		public int bits = -1; // max number of bits for bit-fields (-1 for other types)
@@ -1617,12 +1725,12 @@ public class HDF5Utils {
 	 * @throws NexusException
 	 */
 	public static DatasetType findClassesInComposite(long tid) throws HDF5LibraryException, NexusException {
-		List<String> names = new ArrayList<String>();
-		List<Integer> classes = new ArrayList<Integer>();
-		List<Integer> dtypes = new ArrayList<Integer>();
-		List<Integer> widths = new ArrayList<Integer>();
-		List<Boolean> signs = new ArrayList<Boolean>();
-		flattenCompositeDatasetType(tid, "", names, classes, dtypes, widths, signs);
+		List<String> names = new ArrayList<>();
+		List<Integer> classes = new ArrayList<>();
+		List<Class< ? extends Dataset>> iClass = new ArrayList<>();
+		List<Integer> widths = new ArrayList<>();
+		List<Boolean> signs = new ArrayList<>();
+		flattenCompositeDatasetType(tid, "", names, classes, iClass, widths, signs);
 		DatasetType comp = new DatasetType();
 		comp.isize = classes.size();
 		if (comp.isize > 0) {
@@ -1633,15 +1741,15 @@ public class HDF5Utils {
 					return null;
 				}
 			}
-			comp.dtype = dtypes.get(0);
+			comp.clazz = iClass.get(0);
 			if (comp.isize == 2 && tclass == HDF5Constants.H5T_FLOAT) {
 				if (getLastComponent(names.get(0)).toLowerCase().startsWith("r") && getLastComponent(names.get(1)).toLowerCase().startsWith("i")) {
 					comp.isComplex = true;
-					comp.dtype = comp.dtype == Dataset.FLOAT32 ? Dataset.COMPLEX64 : Dataset.COMPLEX128;
+					comp.clazz = FloatDataset.class.equals(comp.clazz) ? ComplexFloatDataset.class: ComplexDoubleDataset.class;
 				}
 			}
 			if (!comp.isComplex) {
-				comp.dtype *= Dataset.ARRAYMUL;
+				comp.clazz = InterfaceUtils.getInterfaceFromClass(comp.isize, InterfaceUtils.getElementClass(comp.clazz));
 			}
 
 			StringBuilder name = new StringBuilder(comp.isComplex ? "Complex = {" : "Composite of {");
@@ -1694,13 +1802,13 @@ public class HDF5Utils {
 	 * @param prefix
 	 * @param names
 	 * @param classes
-	 * @param dtypes
+	 * @param iClazzes
 	 * @param widths bits (positive) or bytes (negative)
 	 * @param signs
 	 * @throws HDF5LibraryException
 	 * @throws NexusException 
 	 */
-	private static void flattenCompositeDatasetType(long tid, String prefix, List<String> names, List<Integer> classes, List<Integer> dtypes, List<Integer> widths, List<Boolean> signs) throws HDF5LibraryException, NexusException {
+	private static void flattenCompositeDatasetType(long tid, String prefix, List<String> names, List<Integer> classes, List<Class<? extends Dataset>> iClazzes, List<Integer> widths, List<Boolean> signs) throws HDF5LibraryException, NexusException {
 		int tclass = H5.H5Tget_class(tid);
 		if (tclass == HDF5Constants.H5T_ARRAY) {
 			long btid = -1;
@@ -1709,7 +1817,7 @@ public class HDF5Utils {
 				tclass = H5.H5Tget_class(btid);
 				// deal with array of composite
 				if (tclass == HDF5Constants.H5T_COMPOUND || tclass == HDF5Constants.H5T_ARRAY) {
-					flattenCompositeDatasetType(btid, prefix, names, classes, dtypes, widths, signs);
+					flattenCompositeDatasetType(btid, prefix, names, classes, iClazzes, widths, signs);
 					return;
 				}
 				int r = H5.H5Tget_array_ndims(tid);
@@ -1769,7 +1877,7 @@ public class HDF5Utils {
 					mname += H5.H5Tget_member_name(tid, i);
 					if (mclass == HDF5Constants.H5T_COMPOUND || mclass == HDF5Constants.H5T_ARRAY) {
 						// deal with composite
-						flattenCompositeDatasetType(mtype, mname, names, classes, dtypes, widths, signs);
+						flattenCompositeDatasetType(mtype, mname, names, classes, iClazzes, widths, signs);
 					} else if (mclass == HDF5Constants.H5T_VLEN) {
 						continue;
 					} else {
@@ -1807,7 +1915,7 @@ public class HDF5Utils {
 								signs.add(true);
 							}
 						}
-						dtypes.add(HDF_TYPES_TO_DATASET_TYPES.get(getTypeRepresentation(mtype)));
+						iClazzes.add(HDF_TYPES_TO_DATASET_TYPES.get(getTypeRepresentation(mtype)));
 					}
 				} finally {
 					if (mtype != -1) {
@@ -1844,9 +1952,9 @@ public class HDF5Utils {
 				type.isVariableLength = tclass == HDF5Constants.H5T_VLEN;
 				typeRepresentation = getTypeRepresentation(nativeTypeId);
 			}
-			type.dtype = HDF_TYPES_TO_DATASET_TYPES.get(typeRepresentation);
+			type.clazz = HDF_TYPES_TO_DATASET_TYPES.get(typeRepresentation);
 			type.unsigned = UNSIGNED_HDF_TYPES.contains(typeRepresentation);
-			type.name = DTypeUtils.getDTypeName(type.dtype, type.isize);
+			type.name = DTypeUtils.getDTypeName(DTypeUtils.getDType(type.clazz), type.isize);
 			if (type.unsigned) {
 				type.name = "U" + type.name;
 			}
@@ -1884,7 +1992,7 @@ public class HDF5Utils {
 					for (int d : iShape) {
 						strCount *= d;
 					}
-					if (type.dtype == Dataset.STRING) {
+					if (type.clazz.isAssignableFrom(StringDataset.class)) {
 						if (type.isVariableLength) {
 							String[] buffer = new String[strCount];
 							H5.H5AreadVL(attrId, nativeTypeId, buffer);
@@ -1903,7 +2011,7 @@ public class HDF5Utils {
 							dataset = DatasetFactory.createFromObject(strings).reshape(iShape);
 						}
 					} else {
-						dataset = DatasetFactory.zeros(iShape, type.dtype);
+						dataset = DatasetFactory.zeros(type.clazz, iShape);
 						Serializable buffer = dataset.getBuffer();
 						H5.H5Aread(attrId, nativeTypeId, buffer);
 					}

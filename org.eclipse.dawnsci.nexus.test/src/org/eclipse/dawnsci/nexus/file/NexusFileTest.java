@@ -247,7 +247,7 @@ public class NexusFileTest {
 	@Test
 	public void testCreateDataPathLazyDataset() throws Exception {
 		int[] shape = { 5, 5 };
-		ILazyWriteableDataset dataset = new LazyWriteableDataset("data", Dataset.INT32, shape, shape, null, null);
+		ILazyWriteableDataset dataset = new LazyWriteableDataset("data", Integer.class, shape, shape, null, null);
 		DataNode dataNode = nf.createData("/a/b/c", dataset, true);
 		assertNotNull(dataNode);
 		assertSame(dataset, dataNode.getDataset());
@@ -261,7 +261,7 @@ public class NexusFileTest {
 		GroupNode parentGroup = nf.getGroup("/a/b/c", true);
 
 		int[] shape = { 5, 5 };
-		ILazyWriteableDataset dataset = new LazyWriteableDataset("data", Dataset.INT32, shape, shape, null, null);
+		ILazyWriteableDataset dataset = new LazyWriteableDataset("data", Integer.class, shape, shape, null, null);
 		DataNode dataNode = nf.createData(parentGroup, dataset);
 		assertNotNull(dataNode);
 		assertSame(dataset, dataNode.getDataset());
@@ -584,7 +584,7 @@ public class NexusFileTest {
 
 	@Test
 	public void testLinkOverExternalLink() throws Exception {
-		IDataset externalData = DatasetFactory.createRange(10.0, Dataset.FLOAT64);
+		IDataset externalData = DatasetFactory.createRange(10.0);
 		externalData.setName("data");
 		try (NexusFile ef = NexusTestUtils.createNexusFile(FILE2_NAME)) {
 			ef.createData("/a/b", externalData, true);
@@ -661,7 +661,7 @@ public class NexusFileTest {
 		int nPoints = 10;
 
 		GroupNode g = nf.getGroup("/test:NXnote", true);
-		ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset("stringarray", Dataset.STRING,
+		ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset("stringarray", String.class,
 				new int[] {ILazyWriteableDataset.UNLIMITED}, null, null);
 		nf.createData(g, lazy);
 		nf.close();
@@ -684,7 +684,7 @@ public class NexusFileTest {
 	@Test
 	public void testLazyWrite2DInt32Array() throws Exception {
 		GroupNode g = nf.getGroup("/test:NXnote", true);
-		ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset("intarray", Dataset.INT32,
+		ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset("intarray", Integer.class,
 				new int[] {ILazyWriteableDataset.UNLIMITED, 10}, null, null);
 		nf.createData(g, lazy);
 		lazy.setSlice(null, DatasetFactory.createFromObject(new int[] {-1, -1, -1, -1}).reshape(2, 2), new int[] {0, 0}, new int[] {2, 2}, null);
@@ -698,7 +698,7 @@ public class NexusFileTest {
 	@Test
 	public void testLazyWrite2DBoolArray() throws Exception {
 		GroupNode g = nf.getGroup("/test:NXnote", true);
-		ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset("boolarray", Dataset.BOOL,
+		ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset("boolarray", Boolean.class,
 				new int[] {ILazyWriteableDataset.UNLIMITED, 10}, null, null);
 		nf.createData(g, lazy);
 		lazy.setSlice(null, DatasetFactory.createFromObject(new int[] {1, 1, 1, 1}).reshape(2, 2), new int[] {0, 0}, new int[] {2, 2}, null);
@@ -712,7 +712,7 @@ public class NexusFileTest {
 	@Test
 	public void testLazyWrite2DDoubleArray() throws Exception {
 		GroupNode g = nf.getGroup("/test:NXnote", true);
-		ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset("doublearray", Dataset.FLOAT64,
+		ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset("doublearray", Double.class,
 				new int[] {ILazyWriteableDataset.UNLIMITED, 10}, null, null);
 		nf.createData(g, lazy);
 		lazy.setSlice(null, DatasetFactory.createFromObject(new double[] {1, 2, 3, 4}).reshape(2, 2), new int[] {0, 0}, new int[] {2, 2}, null);
@@ -781,7 +781,7 @@ public class NexusFileTest {
 		chunk[max.length-2] = 1024;
 		chunk[max.length-1] = 1024;
 		
-		final ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset("doublearray", Dataset.FLOAT64, max, null, chunk);
+		final ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset("doublearray", Double.class, max, null, chunk);
 		nf.createData(group, lazy);
 		return lazy;
 	}
@@ -789,7 +789,7 @@ public class NexusFileTest {
 	@Test
 	public void testLazyWrite2DStringArray() throws Exception {
 		GroupNode g = nf.getGroup("/test:NXnote", true);
-		ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset("stringarray", Dataset.STRING,
+		ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset("stringarray", String.class,
 				new int[] {2, 10}, new int[] {ILazyWriteableDataset.UNLIMITED, 10}, null);
 		nf.createData(g, lazy);
 		lazy.setSlice(null, DatasetFactory.createFromObject(new String[] {"Value1", "Value2"}).reshape(2, 1), new int[] {2, 0}, new int[] {4, 1}, null);
@@ -803,7 +803,7 @@ public class NexusFileTest {
 	@Test
 	public void testLazyDatasetMaxShape() throws Exception {
 		int[] maxShape = new int[] {ILazyWriteableDataset.UNLIMITED, 10, 100};
-		ILazyWriteableDataset lazyData = NexusUtils.createLazyWriteableDataset("data", Dataset.INT32,
+		ILazyWriteableDataset lazyData = NexusUtils.createLazyWriteableDataset("data", Integer.class,
 				new int[] {10, 10, 10}, maxShape, null);
 		nf.createData("/a/", lazyData, true);
 		nf.close();
@@ -818,7 +818,7 @@ public class NexusFileTest {
 	public void testWriteAfterHardLink() throws Exception {
 		//Have had bugs where writing created a "new" dataset, leaving previously
 		//hard linked nodes un-updated
-		ILazyWriteableDataset lazyData = NexusUtils.createLazyWriteableDataset("c", Dataset.INT32,
+		ILazyWriteableDataset lazyData = NexusUtils.createLazyWriteableDataset("c", Integer.class,
 				new int[] {ILazyWriteableDataset.UNLIMITED}, null, null);
 		GroupNode g = nf.getGroup("/a/b", true);
 		nf.createData(g, lazyData);
@@ -968,7 +968,7 @@ public class NexusFileTest {
 	public void testCreateCompressedDataDeflate() throws Exception {
 		//Not a very elegant test
 		int[] chunking = new int[] {200, 200};
-		ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset("d", Dataset.FLOAT64,
+		ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset("d", Double.class,
 				new int[] {ILazyWriteableDataset.UNLIMITED, 1000}, null, null);
 		lazy.setChunking(chunking);
 		nf.createData("/a", lazy, true);
@@ -976,7 +976,7 @@ public class NexusFileTest {
 				new int[] {0, 0}, new int[] {1000, 1000}, null);
 		nf.close();
 		try (NexusFile cf = NexusTestUtils.createNexusFile(FILE2_NAME)) {
-			lazy = NexusUtils.createLazyWriteableDataset("d", Dataset.FLOAT64,
+			lazy = NexusUtils.createLazyWriteableDataset("d", Double.class,
 					new int[] {ILazyWriteableDataset.UNLIMITED, 1000}, null, null);
 			lazy.setChunking(chunking);
 			cf.createData("/a", lazy, NexusFile.COMPRESSION_LZW_L1, true);
@@ -991,7 +991,7 @@ public class NexusFileTest {
 	@Test
 	public void testChunking() throws Exception {
 		int[] chunking = new int[] {1, 256, 256};
-		ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset("data", Dataset.FLOAT64,
+		ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset("data", Double.class,
 				new int[] {1 ,100, 100}, new int[] {ILazyWriteableDataset.UNLIMITED, 1024, 1024}, null);
 		lazy.setChunking(chunking);
 		nf.createData("/a/", lazy, true);
@@ -1008,7 +1008,7 @@ public class NexusFileTest {
 
 	@Test
 	public void testDefaultChunking() throws Exception {
-		ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset("data", Dataset.FLOAT64,
+		ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset("data", Double.class,
 				new int[] {1 ,100, 100}, new int[] {ILazyWriteableDataset.UNLIMITED, 1000, 1000}, null);
 		nf.createData("/a", lazy, true);
 		int[] newChunking = lazy.getChunking();
@@ -1027,7 +1027,7 @@ public class NexusFileTest {
 	@Test
 	public void testSensibleChunkingOverride() throws Exception {
 		int[] originalChunking = new int[] {1, 1, 1};
-		ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset("data", Dataset.FLOAT64,
+		ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset("data", Double.class,
 				new int[] {1 ,100, 100}, new int[] {ILazyWriteableDataset.UNLIMITED, 1000, 1000}, null);
 		lazy.setChunking(originalChunking);
 		nf.createData("/a", lazy, true);
@@ -1087,7 +1087,7 @@ public class NexusFileTest {
 	public void testAddLazyDataNode() throws Exception {
 		GroupNode g = new GroupNodeImpl("/base/g".hashCode());
 		DataNode lazyDataNode = new DataNodeImpl("/base/g/intarray".hashCode());
-		ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset("intarray", Dataset.INT32,
+		ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset("intarray", Integer.class,
 				new int[] { ILazyWriteableDataset.UNLIMITED, 10 }, null, null);
 		lazyDataNode.setDataset(lazy);
 		g.addDataNode("intarray", lazyDataNode);
@@ -1160,11 +1160,10 @@ public class NexusFileTest {
 		IDataset ods = DatasetFactory.createFromObject(new int[] {10, 20, 30});
 		try (NexusFile nf2 = NexusTestUtils.createNexusFile(FILE_NAME)) {
 			ILazyWriteableDataset lds = new LazyWriteableDataset("data",
-					Dataset.INT32,
+					Integer.class,
 					new int[] {0},
 					new int[] {ILazyWriteableDataset.UNLIMITED},
-					new int[] {3},
-					null);
+					new int[] {3}, null);
 			nf2.createData("/test/", lds, true);
 			nf2.flush();
 		}

@@ -26,6 +26,7 @@ public class QSpace {
 	private DetectorProperties detProps;
 	private double kmod; // wave number
 	private Vector3d ki; // initial wave vector
+	private Vector3d mki; // minus initial wave vector
 	private double qScale;
 	private double residual; // fitting mean of squared residuals
 
@@ -42,6 +43,8 @@ public class QSpace {
 	private void calculateInitalWavevector() {
 		ki = new Vector3d(detProps.getBeamVector());
 		ki.scale(kmod);
+		mki = new Vector3d(ki);
+		mki.negate();
 	}
 
 	public void setDiffractionCrystalEnvironment(DiffractionCrystalEnvironment diffexp) {
@@ -77,9 +80,7 @@ public class QSpace {
 	 */
 	public void qFromPixelPosition(final double x, final double y, Vector3d q) {
 		detProps.pixelPosition(x, y, q);
-		q.normalize();
-		q.scale(kmod);
-		q.sub(ki);
+		q.scaleAdd(kmod/q.length(), mki);
 	}
 
 	/**

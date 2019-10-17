@@ -187,6 +187,13 @@ public class MillerSpace {
 	}
 
 	/**
+	 * @return matrix to transform to Miller space
+	 */
+	public Matrix3d getMillerTransform( ) {
+		return new Matrix3d(toMiller);
+	}
+
+	/**
 	 * Calculate Miller indices from a q vector
 	 * @param q
 	 * @param rotation can be null but overrides internal rotation state

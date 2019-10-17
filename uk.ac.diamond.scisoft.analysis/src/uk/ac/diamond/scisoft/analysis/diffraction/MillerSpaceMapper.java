@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
@@ -819,52 +820,29 @@ public class MillerSpaceMapper {
 
 	private void mapImage(final int[] region, final QSpace qspace, final MillerSpace mspace, final Dataset image, final Dataset iWeight, final DoubleDataset map, final DoubleDataset weight) {
 		final int[] pos = new int[3]; // voxel position
-		final Vector3d q = new Vector3d();
-		double value;
+		final Matrix3d mTransform = mspace == null ? null : mspace.getMillerTransform();
+		final Vector3d v = new Vector3d();
+		final Vector3d dv = new Vector3d(); // delta in h
 
-		if (mspace == null) {
-			final Vector3d dq = new Vector3d(); // delta in q
-
-			for (int y = region[2]; y < region[3]; y++) {
-				for (int x = region[0]; x < region[1]; x++) {
-					value = image.getDouble(y, x);
-					if (iWeight != null) {
-						value *= iWeight.getDouble(y, x);
-					}
-					if (value > 0) {
-						qspace.qFromPixelPosition(x + 0.5, y + 0.5, q);
-	
-						if (convertToVoxel(q, dq, pos)) {
-							value /= qspace.calculateSolidAngle(x, y);
-							if (reduceToNonZeroBB) {
-								minMax(sMin, sMax, pos);
-							}
-							splitter.splitValue(map, weight, vDel, dq, pos, value);
-						}
-					}
+		for (int y = region[2]; y < region[3]; y++) {
+			for (int x = region[0]; x < region[1]; x++) {
+				double value = image.getDouble(y, x);
+				if (iWeight != null) {
+					value *= iWeight.getDouble(y, x);
 				}
-			}
-		} else {
-			final Vector3d h = new Vector3d();
-			final Vector3d dh = new Vector3d(); // delta in h
+				if (value > 0) {
+					qspace.qFromPixelPosition(x + 0.5, y + 0.5, v);
 
-			for (int y = region[2]; y < region[3]; y++) {
-				for (int x = region[0]; x < region[1]; x++) {
-					value = image.getDouble(y, x);
-					if (iWeight != null) {
-						value *= iWeight.getDouble(y, x);
+					if (mTransform != null) {
+						mTransform.transform(v);
 					}
-					if (value > 0) {
-						qspace.qFromPixelPosition(x + 0.5, y + 0.5, q);
-	
-						mspace.h(q, null, h);
-						if (convertToVoxel(h, dh, pos)) {
-							value /= qspace.calculateSolidAngle(x, y);
-							if (reduceToNonZeroBB) {
-								minMax(sMin, sMax, pos);
-							}
-							splitter.splitValue(map, weight, vDel, dh, pos, value);
+
+					if (convertToVoxel(v, dv, pos)) {
+						value /= qspace.calculateSolidAngle(x, y);
+						if (reduceToNonZeroBB) {
+							minMax(sMin, sMax, pos);
 						}
+						splitter.splitValue(map, weight, vDel, dv, pos, value);
 					}
 				}
 			}

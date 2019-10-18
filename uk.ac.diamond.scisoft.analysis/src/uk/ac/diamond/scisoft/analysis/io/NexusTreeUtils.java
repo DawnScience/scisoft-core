@@ -1505,7 +1505,7 @@ public class NexusTreeUtils {
 
 		String dep = getFirstString(dNode.getAttribute(TRANSFORMATIONS_DEPENDSON));
 		if (dep == null || dep.equals(TRANSFORMATIONS_ROOT)) {
-			return nshape;
+			return checkShapes(shape, nshape);
 		}
 
 		NodeLink l = null;
@@ -1517,19 +1517,18 @@ public class NexusTreeUtils {
 		}
 		if (l == null) {
 			dep = canonicalizeDependsOn(path, tree, dep);
-	
-			if (dep.equals(TRANSFORMATIONS_ROOT)) {
-				return nshape;
-			}
 			l = tree.findNodeLink(dep);
 			path = dep.substring(0, dep.lastIndexOf(Node.SEPARATOR));
 		}
 		int[] dshape = parseNodeShape(path, tree, l, shape);
 
-		return checkShapes(nshape, dshape);
+		return checkShapes(dshape, nshape);
 	}
 
 	private static int[] checkShapes(int[] nshape, int[] dshape) {
+		if (nshape == null) {
+			return dshape;
+		}
 		int nsize = ShapeUtils.calcSize(nshape);
 		int dsize = ShapeUtils.calcSize(dshape);
 		if (nsize != 1 && dsize != 1) {

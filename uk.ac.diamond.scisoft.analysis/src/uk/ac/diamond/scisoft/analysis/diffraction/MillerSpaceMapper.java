@@ -743,7 +743,7 @@ public class MillerSpaceMapper {
 
 		qspace.qFromPixelPosition(x, y, q);
 		mspace.h(q, null, m);
-		System.out.printf("%d,%d: %s", x, y, m.toString());
+		System.out.printf("%d,%d: %s\n", x, y, m.toString());
 	}
 
 	private void mapImages(boolean mapQ, Tree tree, Dataset trans, ILazyDataset images, PositionIterator[] iters,

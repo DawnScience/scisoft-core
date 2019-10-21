@@ -10,6 +10,7 @@
 package org.eclipse.dawnsci.plotting.api.trace;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -17,12 +18,14 @@ import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
 import org.eclipse.dawnsci.plotting.api.metadata.Plot1DMetadata;
 import org.eclipse.dawnsci.plotting.api.trace.ILineTrace.TraceType;
 import org.eclipse.january.DatasetException;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MaskMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 import org.eclipse.january.metadata.UnitMetadata;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
@@ -339,5 +342,28 @@ public class MetadataPlotUtils {
 		}
 		
 		return out;
+	}
+	
+	public static IDataset getDataFromImageTrace(IPlottingSystem<?> system) {
+		Collection<IImageTrace> ts = system.getTracesByClass(IImageTrace.class);
+		
+		if (ts.isEmpty()) return null;
+		
+		IImageTrace t = ts.iterator().next();
+		
+		List<IDataset> axes = t.getAxes();
+		IDataset d = t.getData();
+		
+		try {
+			AxesMetadata am = MetadataFactory.createMetadata(AxesMetadata.class, 2);
+			
+			am.setAxis(0, axes.get(1));
+			am.setAxis(1, axes.get(0));
+			d.setMetadata(am);
+		} catch (MetadataException e) {
+			logger.error("Could not create Axes metadata", e);
+		}
+		
+		return d;
 	}
 }

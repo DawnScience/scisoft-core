@@ -164,6 +164,12 @@ public class ROISliceUtils {
 			result.iadd(datasetStart);
 			datasetStart = datasetEnd;
 		}
+		
+		double[] roiStart = roi.getPoint();
+		double[] roiLength = roi.getLengths();
+		
+		result.setName("sum_" + Double.toString(roiStart[0]) +"_" + Double.toString(roiStart[0] + roiLength[0]));
+		
 		return result.squeeze();
 	}
 	
@@ -190,11 +196,11 @@ public class ROISliceUtils {
 		
 		sl[dim].setStop(start+1);
 		if (monitor != null && monitor.isCancelled()) return null;
-		Dataset dataStart = DatasetUtils.cast(lz.getSlice(monitor, sl),Dataset.FLOAT32);
+		Dataset dataStart = DatasetUtils.cast(FloatDataset.class,lz.getSlice(monitor, sl));
 		sl[dim].setStart(end);
 		sl[dim].setStop(end+1);
 		if (monitor != null && monitor.isCancelled()) return null;
-		dataStart.iadd(DatasetUtils.cast(lz.getSlice(monitor, sl),Dataset.FLOAT32));
+		dataStart.iadd(DatasetUtils.cast(FloatDataset.class,lz.getSlice(monitor, sl)));
 		dataStart.idivide(2.0);
 		if (monitor != null && monitor.isCancelled()) return null;
 		dataStart.imultiply(Maths.abs(axis.getDouble(end)-axis.getDouble(start)));
@@ -223,6 +229,10 @@ public class ROISliceUtils {
 			if (monitor != null && monitor.isCancelled()) return null;
 			final Dataset datasetBasline = getTrapiziumArea( lz,  axis,  roi,  slices,  dim,  step, monitor);
 			output.isubtract(datasetBasline);
+			
+			if (output.getName() != null) {
+				output.setName(output.getName() + "_baseline");
+			}
 		}
 
 		return output;

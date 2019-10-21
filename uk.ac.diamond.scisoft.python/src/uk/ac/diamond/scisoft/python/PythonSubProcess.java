@@ -30,12 +30,12 @@ public class PythonSubProcess {
 		"-c",
 		"import sys\n" +
 		"while True:\n" +
-		"  print 'READY'\n" +
+		"  print('READY')\n" +
 		"  sys.stdout.flush()\n" +
 		"  l = sys.stdin.readline()\n" +
 		"  if not l:\n" +
 		"    break\n" +
-		"  exec l\n",
+		"  exec(l)\n",
 	};
 
 	private Process p;
@@ -43,6 +43,7 @@ public class PythonSubProcess {
 	private StreamHandler ebr;
 	private OutputStreamWriter stdin;
 
+	private static final String PYTHONPATH = "PYTHONPATH";
 	private static final String READY = "READY";
 	private static final int TIMEOUT = 5;
 
@@ -66,11 +67,17 @@ public class PythonSubProcess {
 			cmds.add(a);
 		}
 		ProcessBuilder pb = new ProcessBuilder(cmds);
-		if (env != null && env.size() > 0) {
+		if (env != null) {
 			pb.environment().putAll(env);
+		} else {
+			env = pb.environment();
+			if (env.containsKey(PYTHONPATH)) {
+				System.err.printf("Removing %s from environment: %s\n", PYTHONPATH, env.remove(PYTHONPATH));
+			}
 		}
 		try {
 			p = pb.start();
+
 			stdin = new OutputStreamWriter(p.getOutputStream());
 			// wrap output streams to ensure process does not deadlock
 			obr = new StreamHandler(p.getInputStream());
@@ -78,6 +85,7 @@ public class PythonSubProcess {
 
 			obr.start();
 			ebr.start();
+
 			// make sure it's ready
 			String l = obr.readLine();
 			if (!READY.equals(l)) {

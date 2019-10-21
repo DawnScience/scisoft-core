@@ -50,8 +50,17 @@ import sys
 py3 = sys.hexversion >= 0x03000000
 if py3:
     from pickle import dump as _psave, load as _pload
+    import subprocess as sub
 else:
     from cPickle import dump as _psave, load as _pload
+    import os
+    if os.name == 'posix':
+        try:
+            import subprocess32 as sub
+        except ImportError:
+            import subprocess as sub
+    else:
+        import subprocess as sub
 
 _PICKLE_PROTOCOL=2
 def save_args(arg, dir=None): #@ReservedAssignment
@@ -256,7 +265,6 @@ def get_dls_module(module='python/anaconda', module_init='/etc/profile.d/modules
 def get_python(py3=False):
     env = dict(_env)
     env.pop(_PYTHONPATH, None)
-    import subprocess as sub
     pyexe = 'python2' if not py3 else 'python3'
     p = sub.Popen(pyexe, env=env, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE, universal_newlines=True)
     p.stdin.write('import sys\n')
@@ -321,7 +329,6 @@ else:
     else:
         from Queue import Queue, Empty
     from threading import Thread
-    from subprocess import Popen, PIPE
     cmds='''from __future__ import print_function
 # Started by create_function with keep=True (default),
 # this is a kept-alive process to serve an external function
@@ -389,11 +396,11 @@ while True:
             if env is None:
                 import os
                 env = dict(os.environ)
-                env.pop(_PYTHONPATH, None)
+                env.pop(_PYTHONPATH)
 #             print('PyExe: %s' % exe, file=sys.stderr)
 #             if _PYTHONPATH in env:
 #                 print('PyEnv: %s' % env[_PYTHONPATH], file=sys.stderr)
-            self.proc = Popen([exe, '-c', cmds], bufsize=1, env=env, stdin=PIPE, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+            self.proc = sub.Popen([exe, '-c', cmds], bufsize=1, env=env, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE, universal_newlines=True)
 #             self.out = StreamHandler(self.proc.stdout, 'out')
 #             self.err = StreamHandler(self.proc.stderr, 'err')
             self.out = StreamHandler(self.proc.stdout)

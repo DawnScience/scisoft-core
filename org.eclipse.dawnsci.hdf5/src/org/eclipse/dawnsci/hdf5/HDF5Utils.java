@@ -252,8 +252,8 @@ public class HDF5Utils {
 	 * @param start
 	 * @param count
 	 * @param step
-	 * @param dtype
-	 * @param isize
+	 * @param isize can be -1 for item size from file
+	 * @param clazz can be null for dataset interface from file
 	 * @param extend
 	 * @return dataset
 	 * @throws Exception
@@ -404,8 +404,8 @@ public class HDF5Utils {
 	 * @param start
 	 * @param count
 	 * @param step
-	 * @param isize
-	 * @param clazz
+	 * @param isize can be -1 for item size from file
+	 * @param clazz can be null for dataset interface from file
 	 * @param extend
 	 * @return dataset
 	 * @throws Exception
@@ -559,8 +559,8 @@ public class HDF5Utils {
 	 * @param start
 	 * @param count
 	 * @param step
-	 * @param dtype (can be -1 for dataset type from file)
-	 * @param isize (can be -1 for item size from file)
+	 * @param isize can be -1 for item size from file
+	 * @param clazz can be null for dataset interface from file
 	 * @param extend
 	 * @return dataset
 	 * @throws NexusException
@@ -1285,7 +1285,7 @@ public class HDF5Utils {
 				mshape = slice.getShape();
 			}
 			createDataset(fileName, parentPath, name, slice.getStart(), mshape, slice.getShape(),
-					DTypeUtils.getDType(value), null, false);
+					InterfaceUtils.getInterface(value), null, false);
 		}
 	}
 

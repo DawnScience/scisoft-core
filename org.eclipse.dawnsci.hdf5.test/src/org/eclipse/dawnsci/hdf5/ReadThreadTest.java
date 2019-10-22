@@ -16,6 +16,7 @@ import org.eclipse.dawnsci.hdf5.HDF5FileFactory;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.PositionIterator;
 import org.eclipse.january.dataset.ShapeUtils;
 import org.junit.Test;
@@ -63,7 +64,7 @@ public class ReadThreadTest extends AbstractThreadTestBase {
 		now = -System.nanoTime();
 		while (iter.hasNext()) {
 			stop[0] = start[0] + 1;
-			HDF5Utils.loadDataset(file, dataName, start, nshape, step, Dataset.FLOAT64, 1, false);
+			HDF5Utils.loadDataset(file, dataName, start, nshape, step, 1, DoubleDataset.class, false);
 		}
 		HDF5FileFactory.releaseFile(file);
 		now += System.nanoTime();

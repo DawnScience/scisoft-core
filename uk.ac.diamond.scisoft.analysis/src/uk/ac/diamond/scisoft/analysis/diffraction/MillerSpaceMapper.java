@@ -102,8 +102,8 @@ public class MillerSpaceMapper {
 
 	private boolean findImageBB; // find bounding box for image
 	private boolean reduceToNonZeroBB; // reduce data non-zero only
-	private int[] sMin; // shape min and max 
-	private int[] sMax;
+	private int[] sMin = new int[3]; // volume shape min and max 
+	private int[] sMax = new int[3];
 	private double scale; // image upsampling factor
 
 	private PixelSplitter splitter;
@@ -414,6 +414,11 @@ public class MillerSpaceMapper {
 		}
 	}
 
+	private static void initializeVolumeBoundingBox(int[] vShape, int[] min, int[] max) {
+		System.arraycopy(vShape, 0, min, 0, vShape.length);
+		Arrays.fill(max, -1);
+	}
+
 	/**
 	 * Map images from given Nexus file to a volume in q space
 	 * @param mapQ
@@ -437,9 +442,7 @@ public class MillerSpaceMapper {
 		}
 
 		if (reduceToNonZeroBB) {
-			sMin = vShape.clone();
-			sMax = new int[3];
-			Arrays.fill(sMax, -1);
+			initializeVolumeBoundingBox(vShape, sMin, sMax);
 		}
 
 		DoubleDataset map = DatasetFactory.zeros(vShape);
@@ -720,6 +723,9 @@ public class MillerSpaceMapper {
 			if (!endsOnly || n == 0 || n == end) {
 				System.out.println("Image " + n);
 				DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
+				if (n == 0) {
+					initializeImageLimits(dp);
+				}
 				DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, dpos);
 				DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 				QSpace qspace = new QSpace(dp, env);
@@ -1269,9 +1275,13 @@ public class MillerSpaceMapper {
 				System.err.println("Could not load image weight dataset from " + wFile);
 			} 
 		}
+
 		int[] dpos = dIter.getPos();
 		DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
+		initializeImageLimits(dp);
+	}
 
+	private void initializeImageLimits(DetectorProperties dp) {
 		begX = 0;
 		endX = dp.getPx();
 		begY = 0;
@@ -1297,10 +1307,9 @@ public class MillerSpaceMapper {
 		String output = bean.getOutput();
 
 		if (reduceToNonZeroBB) {
-			sMin = vShape.clone();
-			sMax = new int[3];
-			Arrays.fill(sMax, -1);
+			initializeVolumeBoundingBox(vShape, sMin, sMax);
 		}
+
 		String volName = mapQ ? "q_space" : "reciprocal_space";
 		String volPath = PROCESSPATH + Node.SEPARATOR + volName;
 

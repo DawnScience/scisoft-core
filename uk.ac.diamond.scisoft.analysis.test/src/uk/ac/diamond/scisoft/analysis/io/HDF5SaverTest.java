@@ -29,6 +29,7 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IDynamicDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.ShapeUtils;
+import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.dataset.SliceNDIterator;
@@ -44,20 +45,20 @@ public class HDF5SaverTest {
 		String name = "d";
 		int[] shape = new int[] {2, 34};
 		int[] mshape = new int[] {IDynamicDataset.UNLIMITED, 34};
-		int dtype = Dataset.INT16;
+		Class<? extends Dataset> clazz = ShortDataset.class;
 
 		File f = new File(file);
 		if (f.exists())
 			f.delete();
 
 		int value = -1;
-		HDF5Utils.createDataset(file, path, name, shape, mshape, new int[] {1, 34}, dtype, new int[] {value}, false);
+		HDF5Utils.createDataset(file, path, name, shape, mshape, new int[] {1, 34}, clazz, new int[] {value}, false);
 
 		assertEquals(value, checkOutput(file, path, name, shape).getShort(0, 0));
 
 		SliceND slice = new SliceND(shape, mshape, new Slice(1, 3), new Slice(null, null, 2));
 		System.out.println(slice);
-		IDataset data = DatasetFactory.createRange(1, ShapeUtils.calcSize(slice.getShape()) + 1, 1, dtype);
+		IDataset data = DatasetFactory.createRange(clazz, 1, ShapeUtils.calcSize(slice.getShape()) + 1, 1);
 		System.out.println(data);
 		data.setShape(slice.getShape());
 		HDF5Utils.setDatasetSlice(file, path, name, slice, data);
@@ -94,13 +95,13 @@ public class HDF5SaverTest {
 		String name = "f";
 		int[] shape = new int[] {1, 34};
 		int[] mshape = new int[] {20, 34};
-		int dtype = Dataset.INT16;
+		Class<? extends Dataset> clazz = ShortDataset.class;
 
 		HDF5FileFactory.deleteFile(file);
 
 		int value = initialize ? -1 : 0;
 		if (initialize) {
-			HDF5Utils.createDataset(file, path, name, shape, mshape, shape, dtype, new int[] {value}, false);
+			HDF5Utils.createDataset(file, path, name, shape, mshape, shape, clazz, new int[] {value}, false);
 
 			assertEquals(value, checkOutput(file, path, name, shape).getShort(0, 0));
 		}
@@ -108,7 +109,7 @@ public class HDF5SaverTest {
 		SliceND slice = new SliceND(mshape, new Slice(null, null, 2));
 		SliceNDIterator it = new SliceNDIterator(slice, 1);
 
-		Dataset data = DatasetFactory.createRange(1, shape[1]+1, 1, dtype);
+		Dataset data = DatasetFactory.createRange(clazz, 1, shape[1]+1, 1);
 		data.setShape(shape);
 		slice = it.getCurrentSlice();
 		while (it.hasNext()) {

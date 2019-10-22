@@ -24,6 +24,7 @@ import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.hdf5.HDF5FileFactory;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.eclipse.dawnsci.nexus.NexusException;
+import org.eclipse.january.dataset.ByteDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -41,8 +42,8 @@ import uk.ac.diamond.scisoft.analysis.crystallography.UnitCell;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionSample;
 import uk.ac.diamond.scisoft.analysis.diffraction.MatrixUtils;
 import uk.ac.diamond.scisoft.analysis.diffraction.MillerSpaceMapper;
-import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 import uk.ac.diamond.scisoft.analysis.diffraction.MillerSpaceMapper.MillerSpaceMapperBean;
+import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 
 public class I16NexusTest {
 	static String testFileFolder = "testfiles/gda/analysis/io/";
@@ -76,9 +77,10 @@ public class I16NexusTest {
 		String if2Path = if2.getAbsolutePath();
 		String dstPath = dst.getAbsolutePath();
 		int[] shape0 = new int[] { 3, 2 };
-		HDF5Utils.createDataset(if1Path, "/group0", "data0", shape0, shape0, shape0, Dataset.INT8, new short[] { 130 },
+		Class<? extends Dataset> clazz = ByteDataset.class;
+		HDF5Utils.createDataset(if1Path, "/group0", "data0", shape0, shape0, shape0, clazz, new short[] { 130 },
 				true);
-		HDF5Utils.createDataset(if2Path, "/group0", "data0", shape0, shape0, shape0, Dataset.INT8, new short[] { 100 },
+		HDF5Utils.createDataset(if2Path, "/group0", "data0", shape0, shape0, shape0, clazz, new short[] { 100 },
 				true);
 		Dataset a = DatasetFactory.createFromObject("NXentry");
 		a.setName("NX_class");

@@ -424,7 +424,7 @@ public class HDF5LoaderTest {
 		long timeAtStartms = System.currentTimeMillis();
 
 		HDF5Utils.loadDataset(n, "entry/instrument/detector/data", new int[] { 0, 0, 0 }, new int[] { 1, 1795, 2069 },
-				new int[] { 1, 1, 1 }, -1, 1, false);
+				new int[] { 1, 1, 1 }, 1, null, false);
 		long timeTaken = System.currentTimeMillis() - timeAtStartms;
 		System.out.printf("Time taken = %d ms\n", timeTaken);
 		assertTrue("Time taken " + timeTaken + " < 12000", timeTaken < 12000);

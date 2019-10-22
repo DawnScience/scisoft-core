@@ -1277,6 +1277,6 @@ public class HDF5Loader extends AbstractFileLoader {
 			}
 		}
 
-		return HDF5Utils.loadDataset(object.getPath(), object.getName(), lstart, newShape, lstep, -1, 1, true);
+		return HDF5Utils.loadDataset(object.getPath(), object.getName(), lstart, newShape, lstep, 1, null, true);
 	}
 }

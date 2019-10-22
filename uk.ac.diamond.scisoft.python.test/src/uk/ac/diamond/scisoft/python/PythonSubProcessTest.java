@@ -18,9 +18,9 @@ public class PythonSubProcessTest {
 	public void testSubProcessComms() {
 		PythonSubProcess p = new PythonSubProcess();
 
-		assertArrayEquals(new String[] {"Hello World!\n", null}, p.communicate("print \"Hello World!\"\n"));
-		assertArrayEquals(new String[] {"Hello World2!\n", null}, p.communicate("print \"Hello World2!\"\n"));
+		assertArrayEquals(new String[] {"Hello World!\n", null}, p.communicate("print(\"Hello World!\")\n"));
+		assertArrayEquals(new String[] {"Hello World2!\n", null}, p.communicate("print(\"Hello World2!\")\n"));
 
-		assertArrayEquals(new String[] {"0\n1\n2\n3\n", null}, p.communicate("for i in range(4): print i\n"));
+		assertArrayEquals(new String[] {"0\n1\n2\n3\n", null}, p.communicate("for i in range(4): print(i)\n"));
 	}
 }

@@ -91,7 +91,11 @@ class Test(unittest.TestCase):
         print(dnp.external.get_python())
 
     def testExternal(self):
-        from .external_functions import fun, funadd, fundec#, funexception
+        try:
+            from .external_functions import fun, funadd, fundec#, funexception
+        except: # so this file can run when not part of all_tests
+            from external_functions import fun, funadd, fundec#, funexception
+
         a = fun()
         efun = dnp.external.create_function(fun, dls_module=True)
         print(a, self.equals(efun(), a))

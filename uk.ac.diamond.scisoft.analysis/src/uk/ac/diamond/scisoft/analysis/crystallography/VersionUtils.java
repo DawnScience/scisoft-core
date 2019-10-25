@@ -15,9 +15,14 @@ import java.util.StringTokenizer;
 
 public class VersionUtils {
 
-	public static boolean isOldVersion(String versionCompare, String versionWith) {
-		Version compare = new Version(versionCompare);
-		Version with    = new Version(versionWith);
+	/**
+	 * @param old
+	 * @param version
+	 * @return true if version < old
+	 */
+	public static boolean isOldVersion(String old, String version) {
+		Version compare = new Version(old);
+		Version with    = new Version(version);
 		int c    =  compare.compareTo(with);
 		return c > 0;
 	}

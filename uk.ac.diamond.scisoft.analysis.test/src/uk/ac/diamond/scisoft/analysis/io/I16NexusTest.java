@@ -9,6 +9,9 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -39,6 +42,7 @@ import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 import uk.ac.diamond.scisoft.analysis.crystallography.MillerSpace;
 import uk.ac.diamond.scisoft.analysis.crystallography.ReciprocalCell;
 import uk.ac.diamond.scisoft.analysis.crystallography.UnitCell;
+import uk.ac.diamond.scisoft.analysis.crystallography.VersionUtils;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionSample;
 import uk.ac.diamond.scisoft.analysis.diffraction.MatrixUtils;
 import uk.ac.diamond.scisoft.analysis.diffraction.MillerSpaceMapper;
@@ -492,5 +496,13 @@ public class I16NexusTest {
 	public void testI16NexusCorners() throws ScanFileHolderException {
 		String n = testFileFolder + "588193.nxs";
 		MillerSpaceMapper.printCorners(n, true);
+	}
+
+	@Test
+	public void testVersion() {
+		String old = "9.15.0";
+		assertTrue(VersionUtils.isOldVersion(old, "9.14.0"));
+		assertFalse(VersionUtils.isOldVersion(old, "9.15.0"));
+		assertFalse(VersionUtils.isOldVersion(old, "9.16.0"));
 	}
 }

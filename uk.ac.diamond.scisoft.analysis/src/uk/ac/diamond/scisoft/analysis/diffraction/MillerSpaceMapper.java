@@ -574,7 +574,7 @@ public class MillerSpaceMapper {
 					if (user != null && user.equals("i16user")) {
 						// program name given as "GDA 9.14.0", need version 9.15+
 						String version = program.substring(program.indexOf(" ")).trim();
-						return VersionUtils.isOldVersion("9.14.0", version);
+						return VersionUtils.isOldVersion("9.15.0", version);
 					}
 				} catch (NexusException e) {
 					// do nothing

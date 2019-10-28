@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.processing.visitor;
 import java.io.File;
 import java.io.Serializable;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -195,6 +196,9 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			createWriteableLazy(dataset, group);
 		}
 		if (originalFilePath != null) {
+			
+			String relativePath = "Not created!";
+			
 			try {
 				ILoaderService loaderService = LocalServiceManager.getLoaderService();
 				IDataHolder dh = loaderService.getData(originalFilePath, null);
@@ -205,6 +209,9 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 				Node d = nl.getDestination();
 				GroupNode rootgroup = nexusFile.getGroup(Tree.ROOT, false);
 				if (d instanceof GroupNode) {
+					relativePath = Paths.get(filePath).getParent().relativize(Paths.get(originalFilePath)).toString();
+					
+					
 					GroupNode gn = (GroupNode)d;
 					Map<String, GroupNode> groupNodeMap = gn.getGroupNodeMap();
 					Set<String> keys = groupNodeMap.keySet();
@@ -214,11 +221,11 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 						while(rootgroup.containsNode(updatedName)) {
 							updatedName = key + count;
 						}
-						nexusFile.linkExternal(new URI("nxfile", "//" + originalFilePath, key), Tree.ROOT + updatedName, true);
+						nexusFile.linkExternal(new URI("nxfile", "//" + relativePath, key), Tree.ROOT + updatedName, true);
 					}
 				}
 			} catch (Exception e) {
-				logger.error("Could not link original file: {}", originalFilePath, e);
+				logger.error("Could not link original file: {} using relative {}", originalFilePath, relativePath, e);
 			}
 
 		}

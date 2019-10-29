@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.vecmath.Matrix3d;
@@ -66,7 +69,7 @@ import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 /**
  * Intensity value splitter that splits an image pixel value and adds the pieces to close-by voxels
  */
-interface PixelSplitter {
+interface PixelSplitter extends Cloneable {
 	/**
 	 * Spread a pixel intensity value over voxels near position
 	 * @param volume dataset that holds the voxel values
@@ -77,6 +80,8 @@ interface PixelSplitter {
 	 * @param value pixel intensity to split
 	 */
 	public void splitValue(DoubleDataset volume, DoubleDataset weight, final double[] vsize, final Vector3d dh, final int[] pos, final double value);
+
+	public PixelSplitter clone();
 }
 
 /**
@@ -120,6 +125,7 @@ public class MillerSpaceMapper {
 	private int endX;
 	private int begY;
 	private int endY;
+	private ForkJoinPool pool;
 
 	private static final String VOLUME_NAME = "volume";
 	private static final String[] MILLER_VOLUME_AXES = new String[] { "h-axis", "k-axis", "l-axis" };
@@ -134,6 +140,29 @@ public class MillerSpaceMapper {
 
 	private static final String VERSION = "1.0";
 
+	private static final int CORES;
+	private static int cores;
+
+	static {
+		// Xeon E5-1630v3 has 4 cores/8 HTs
+		CORES = Runtime.getRuntime().availableProcessors();
+		cores = CORES;
+		System.out.printf("This computer has %d processors\n", cores);
+	}
+
+	/**
+	 * Set number of cores to use
+	 * @param numberOfCores must be greater than zero, otherwise it is set to the number found by the JVM
+	 */
+	public static void setCores(int numberOfCores) {
+		if (numberOfCores <= 0) {
+			System.err.println("Warning number of cores must be > 0; setting to that found by JVM");
+			numberOfCores = CORES;
+		}
+		cores = numberOfCores;
+		System.out.printf("Cores set to %d\n", cores);
+	}
+
 	/**
 	 * This does not split pixel but places its value in the nearest voxel
 	 */
@@ -142,6 +171,11 @@ public class MillerSpaceMapper {
 		public void splitValue(DoubleDataset volume, DoubleDataset weight, final double[] vsize, Vector3d dh, int[] pos, double value) {
 			addToDataset(volume, pos, value);
 			addToDataset(weight, pos, 1);
+		}
+
+		@Override
+		public NonSplitter clone() {
+			return new NonSplitter();
 		}
 	}
 
@@ -193,6 +227,11 @@ public class MillerSpaceMapper {
 				weights[0] = 1e3 * tw; // make voxel an arbitrary factor larger 
 			}
 			factor = 1./(weights[0] + tw);
+		}
+
+		@Override
+		public InverseSplitter clone() {
+			return new InverseSplitter();
 		}
 
 		@Override
@@ -287,6 +326,13 @@ public class MillerSpaceMapper {
 		}
 
 		@Override
+		public GaussianSplitter clone() {
+			GaussianSplitter c = new GaussianSplitter(1);
+			c.f = this.f;
+			return c;
+		}
+
+		@Override
 		protected double calcWeight(double ds) {
 			return Math.exp(-ds*f);
 		}
@@ -303,6 +349,13 @@ public class MillerSpaceMapper {
 		}
 
 		@Override
+		public ExponentialSplitter clone() {
+			ExponentialSplitter c = new ExponentialSplitter(1);
+			c.f = this.f;
+			return c;
+		}
+
+		@Override
 		protected double calcWeight(double ds) {
 			return Math.exp(-Math.sqrt(ds)*f);
 		}
@@ -313,6 +366,7 @@ public class MillerSpaceMapper {
 	 */
 	public MillerSpaceMapper(MillerSpaceMapperBean bean) {
 		this.bean = bean.clone();
+		pool = new ForkJoinPool(cores);
 	}
 
 	/**
@@ -811,7 +865,7 @@ public class MillerSpaceMapper {
 			if (upSampler != null) {
 				image = upSampler.value(image).get(0);
 			}
-			mapImage(region, qspace, mspace, image, iWeight, map, weight);
+			mapImageMultiThreaded(mapQ, region, qspace, mspace, image, iWeight, map, weight);
 		}
 	}
 
@@ -824,9 +878,8 @@ public class MillerSpaceMapper {
 		max[2] = Math.max(max[2], v.z);
 	}
 
-	private void mapImage(final int[] region, final QSpace qspace, final MillerSpace mspace, final Dataset image, final Dataset iWeight, final DoubleDataset map, final DoubleDataset weight) {
+	private void mapImage(PixelSplitter splitter, int[] sMinLocal, int[] sMaxLocal, final int[] region, final QSpace qspace, Matrix3d mTransform, final Dataset image, final Dataset iWeight, final DoubleDataset map, final DoubleDataset weight) {
 		final int[] pos = new int[3]; // voxel position
-		final Matrix3d mTransform = mspace == null ? null : mspace.getMillerTransform();
 		final Vector3d v = new Vector3d();
 		final Vector3d dv = new Vector3d(); // delta in h
 
@@ -846,13 +899,57 @@ public class MillerSpaceMapper {
 					if (convertToVoxel(v, dv, pos)) {
 						value /= qspace.calculateSolidAngle(x, y);
 						if (reduceToNonZeroBB) {
-							minMax(sMin, sMax, pos);
+							minMax(sMinLocal, sMaxLocal, pos);
 						}
 						splitter.splitValue(map, weight, vDel, dv, pos, value);
 					}
 				}
 			}
 		}
+	}
+
+	private void mapImageMultiThreaded(boolean mapQ, final int[] region, final QSpace qspace, final MillerSpace mspace,
+			final Dataset image, final Dataset iWeight, final DoubleDataset map, final DoubleDataset weight) {
+		int size = pool.getParallelism();
+		final Matrix3d mTransform = mspace == null ? null : mspace.getMillerTransform();
+		double regionSize = region[3] - region[2];
+		int chunk = (int) Math.ceil(regionSize / size);
+
+		final List<JobConfig> jobs = new ArrayList<>(size);
+		int[] vshape = copyParameters(mapQ);
+		for (int i = 0; i < size; i++) {
+			int s = i * chunk + region[2];
+			int e = Math.min(s + chunk, region[3]);
+			jobs.add(new JobConfig(splitter.clone(), s, e, vshape));
+		}
+
+		Consumer<JobConfig> subTask = job -> {
+			int[] sMinLocal = job.getSMinLocal();
+			int[] sMaxLocal = job.getSMaxLocal();
+			int[] regionSlice = new int[] { region[0], region[1], job.getStart(), job.getEnd() };
+
+			mapImage(job.getSplitter(), sMinLocal, sMaxLocal, regionSlice, qspace, mTransform, image, iWeight, map, weight);
+		};
+
+		long timeElapsed = -1;
+		try {
+			timeElapsed = pool.submit(() -> {
+				long start = System.currentTimeMillis();
+				jobs.parallelStream().forEach(subTask);
+				return System.currentTimeMillis() - start;
+			}).get();
+		} catch (InterruptedException | ExecutionException e) {
+			throw new RuntimeException("Multithreaded jobs did not finish sucessfully", e);
+		}
+
+		if (reduceToNonZeroBB) {
+			for (JobConfig j : jobs) {
+				minMax(sMin, sMax, j.getSMinLocal());
+				minMax(sMin, sMax, j.getSMaxLocal());
+			}
+		}
+
+		System.out.printf("For %d threads, took %dms\n", size, (int) (timeElapsed));
 	}
 
 	private static void minMax(final int[] min, final int[] max, final int[] p) {
@@ -1201,10 +1298,13 @@ public class MillerSpaceMapper {
 
 	/**
 	 * Map images from given Nexus files to a volume in Miller (aka HKL) space and save to a HDF5 file
+	 * @return Datasets
 	 * @throws ScanFileHolderException
 	 */
-	public void mapToVolumeFile() throws ScanFileHolderException {
+	public Dataset[][] mapToVolumeFile() throws ScanFileHolderException {
 		hasDeleted = false; // reset state
+		Dataset[] datasetA = null;
+		Dataset[] datasetB = null;
 
 		Dataset[][] a = processBean(bean.getInputs()[0]);
 		if (qDel == null && hDel == null && !listMillerEntries) {
@@ -1249,11 +1349,11 @@ public class MillerSpaceMapper {
 
 		try {
 			if (qDel != null) {
-				processTrees(true, trees, allIters, a[0]);
+				datasetA = processTrees(true, trees, allIters, a[0]);
 			}
 
 			if (hDel != null) {
-				processTrees(false, trees, allIters, a[1]);
+				datasetB = processTrees(false, trees, allIters, a[1]);
 			}
 
 			if (listMillerEntries) {
@@ -1264,6 +1364,8 @@ public class MillerSpaceMapper {
 		} catch (DatasetException e) {
 			throw new ScanFileHolderException("Could not get data from lazy dataset", e);
 		}
+
+		return new Dataset[][] {datasetA, datasetB};
 	}
 
 	private void createImageWeight(Tree tree, PositionIterator dIter) {
@@ -1302,7 +1404,7 @@ public class MillerSpaceMapper {
 		}
 	}
 
-	private void processTrees(boolean mapQ, Tree[] trees, PositionIterator[][] allIters, Dataset[] a) throws ScanFileHolderException, DatasetException {
+	private Dataset[] processTrees(boolean mapQ, Tree[] trees, PositionIterator[][] allIters, Dataset[] a) throws ScanFileHolderException, DatasetException {
 		int[] vShape = copyParameters(mapQ);
 		String output = bean.getOutput();
 
@@ -1399,6 +1501,7 @@ public class MillerSpaceMapper {
 
 			saveAxesAndAttributes(output, volPath, a);
 		}
+		return a;
 	}
 
 	private static void writeDefaultAttributes(String file, String volName) throws ScanFileHolderException {
@@ -1649,8 +1752,8 @@ public class MillerSpaceMapper {
 			try {
 				output.setSlice(map, slice);
 			} catch (DatasetException e) {
-				System.err.println("Could not saving part of volume");
-				throw new ScanFileHolderException("Could not saving part of volume", e);
+				System.err.println("Could not save part of volume");
+				throw new ScanFileHolderException("Could not save part of volume", e);
 			}
 			map.fill(0);
 			weight.fill(0);
@@ -2491,6 +2594,48 @@ public class MillerSpaceMapper {
 				return false;
 			}
 			return true;
+		}
+	}
+
+	class JobConfig {
+		private PixelSplitter pSplitter;
+		private int start;
+		private int end;
+		private Dataset data;
+		private int[] sMinLocal;
+		private int[] sMaxLocal;
+
+		public JobConfig(PixelSplitter splitter, int start, int end, int[] vshape) {
+			this.pSplitter = splitter;
+			this.start = start;
+			this.end = end;
+			this.sMinLocal = new int[vshape.length];
+			this.sMaxLocal = new int[vshape.length];
+			initializeVolumeBoundingBox(vshape, sMinLocal, sMaxLocal);
+		}
+
+		public PixelSplitter getSplitter() {
+			return pSplitter;
+		}
+
+		public Dataset getData() {
+			return data;
+		}
+
+		public int getStart() {
+			return start;
+		}
+
+		public int getEnd() {
+			return end;
+		}
+
+		public int[] getSMinLocal() {
+			return sMinLocal;
+		}
+
+		public int[] getSMaxLocal() {
+			return sMaxLocal;
 		}
 	}
 }

@@ -12,6 +12,8 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1485,8 +1487,8 @@ public class MillerSpaceMapper {
 	 * @param axes axes Datasets
 	 * @throws ScanFileHolderException
 	 */
-	public static void saveVolume(String file, MillerSpaceMapperBean bean, String entryPath, String volPath,
-			Dataset v, Dataset... axes) throws ScanFileHolderException {
+	public static void saveVolume(String file, MillerSpaceMapperBean bean, String entryPath, String volPath, Dataset v,
+			Dataset... axes) throws ScanFileHolderException {
 
 		v.setName(VOLUME_NAME);
 		HDF5Utils.writeDataset(file, volPath, v);
@@ -1506,11 +1508,17 @@ public class MillerSpaceMapper {
 			writeData(file, PROCESSPATH, VERSION, "version");
 
 			String[] inputs = bean.inputs;
+			Path fileParent = Paths.get(file).toAbsolutePath().getParent();
 			for (int i = 0; i < inputs.length; i++) {
 				String destination = String.format("/entry%d", i);
-				HDF5Utils.createExternalLink(file, destination, inputs[i], entryPath);
+				try {
+					String relativePath = fileParent.relativize(Paths.get(inputs[i])).toString();
+					HDF5Utils.createExternalLink(file, destination, relativePath, entryPath);
+				} catch (IllegalArgumentException e) {
+					System.err.println("Could not create relative path between: " + file + " and " + inputs[i]);
+					HDF5Utils.createExternalLink(file, destination, inputs[i], entryPath);
+				}
 			}
-
 		} catch (JsonProcessingException e) {
 			throw new ScanFileHolderException("Could not process JSON file", e);
 		}

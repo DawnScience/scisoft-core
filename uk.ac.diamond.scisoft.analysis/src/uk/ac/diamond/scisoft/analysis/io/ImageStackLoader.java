@@ -172,25 +172,19 @@ public class ImageStackLoader implements ILazyLoader {
 		return dataset;
 	}
 
-	private static final boolean isWindows = System.getProperty("os.name").startsWith("Windows");
-
-	private static final String DLS_PREFIX = "/dls/";
-
 	/**
 	 * 
 	 * @param f
 	 * @return file in windows format.
 	 */
 	private static File getDLSWindowsPath(File f) {
-		if (!isWindows || f == null) {
+		if (f == null) {
 			return f;
 		}
 
-		String dlsPath = f.getPath();
-		if (dlsPath.startsWith(DLS_PREFIX)) {
-			return new File( "\\\\Data.diamond.ac.uk", dlsPath.substring(DLS_PREFIX.length()));
-		}
-		return f;
+		String p = f.getPath();
+		String np = Utils.translateDLSFilePath(p);
+		return np == p ? f : new File(np);
 	}
 
 	@Override

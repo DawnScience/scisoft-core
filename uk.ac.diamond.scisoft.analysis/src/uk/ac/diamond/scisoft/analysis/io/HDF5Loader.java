@@ -567,49 +567,8 @@ public class HDF5Loader extends AbstractFileLoader {
 						logger.error("Could not get value of link for {} in {}", oname, name);
 					}
 
-					String eName = linkName[1];
-					boolean exists = false;
+					String eName = Utils.findExternalFilePath(logger, f.getParentDirectory(), linkName[1]);
 					if (eName != null) {
-						String parent = f.getParentDirectory();
-						File ef = new File(eName);
-						logger.trace("Looking for external file {}", eName);
-						if (!ef.isAbsolute()) {
-							exists = ef.exists();
-							if (!exists) { // use directory of linking file
-								logger.trace("Could not find external relative file, now trying in {}", parent);
-								File ref = new File(parent, ef.getName());
-								exists = ref.exists();
-								if (!exists) {
-									// append to directory of linking file
-									File ref2 = new File(parent, eName);
-									if (!ref2.equals(ref)) {
-										logger.trace("Could not find external relative file, finally trying {}", ref2);
-										ref = ref2;
-									}
-								}
-								eName = ref.getAbsolutePath();
-								ef = ref;
-							}
-						} else {
-							// first try to find in directory of current file
-							File ref = new File(parent, ef.getName());
-							exists = ref.exists();
-							if (exists) {
-								eName = ref.getAbsolutePath();
-								ef = ref;
-								logger.trace("Found external file {} in {}", ef.getName(), parent);
-							}
-						}
-
-						if (!exists) {
-							exists = ef.exists();
-							eName = ef.getAbsolutePath();
-							if (exists) {
-								logger.trace("Finally found external file {}", eName);
-							}
-						}
-					}
-					if (exists) {
 						group.addNode(oname, getExternalNode(pool, f.getHostname(), eName, linkName[0], keepBitWidth));
 					} else {
 						eName = linkName[1];
@@ -704,7 +663,6 @@ public class HDF5Loader extends AbstractFileLoader {
 
 	private static final String NAPIMOUNT = "napimount";
 	private static final String NAPISCHEME = "nxfile";
-
 
 	// return true when attributes contain a NAPI mount - dodgy external linking for HDF5 version < 1.8
 	private static boolean copyAttributes(final String name, final Node nn, final long id) {

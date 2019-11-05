@@ -332,7 +332,7 @@ public class LoaderFactory {
 	 * @return DataHolder
 	 * @throws Exception
 	 */
-	public static /*THIS IS REQUIRED:*/ synchronized  IDataHolder getData(final String   path,
+	public static /*THIS IS REQUIRED:*/ synchronized  IDataHolder getData(String path,
 																		  final boolean willLoadMetadata, 
 																		  final boolean loadImageStacks, 
 																		  final boolean lazily, 
@@ -341,11 +341,11 @@ public class LoaderFactory {
 		if (path.toLowerCase().startsWith("http")) {
 			throw new Exception("Data from URL not yet supported!");
 		}
-		
+		path = Utils.translateDLSFilePath(path);
 		final File file = new File(path);
 		if (!file.exists()) {
 			new File(file.getParent()).list();
-			if (!file.exists()) throw new FileNotFoundException(path);	
+			if (!file.exists()) throw new FileNotFoundException(path);
 		}
 		if (file.isFile()) {
 			return getFileData(path, willLoadMetadata, loadImageStacks, lazily, mon);
@@ -355,7 +355,7 @@ public class LoaderFactory {
 			if (stack!=null) for (String name : stack.keySet()) holder.addDataset(name, stack.get(name));
 			return holder;
 		}
-		throw new Exception(path+" is not valid!");
+		throw new Exception(path + " is not valid!");
 	}
 
 	private static IDataHolder getFileData(final String path, final boolean willLoadMetadata,
@@ -451,7 +451,7 @@ public class LoaderFactory {
 						                         String path, 
 			                                     boolean willLoadMetadata, 
 			                                     IMonitor mon) throws Exception {
-		
+		path = Utils.translateDLSFilePath(path);
 		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
 
 		// IMPORTANT: DO NOT USE loadImageStacks in Key. 
@@ -485,7 +485,7 @@ public class LoaderFactory {
 			
 			key.setMetadata(holder.getMetadata()!=null);
 			boolean cached = dataCache.recordSoftReference(key, holder);
-			if (!cached) System.err.println("Loader factory failed to cache "+path);
+			if (!cached) System.err.println("Loader factory failed to cache " + path);
 			return holder;
 			
 		} catch (OutOfMemoryError ome) {
@@ -525,6 +525,7 @@ public class LoaderFactory {
 	 * @return data or null if not in cache
 	 */
 	public static IDataHolder fetchData(String path, boolean willLoadMetadata) {
+		path = Utils.translateDLSFilePath(path);
 		return dataCache.fetchData(path, willLoadMetadata);
 	}
 
@@ -537,6 +538,7 @@ public class LoaderFactory {
 	 * @return data or null if not in cache
 	 */
 	public static IDataHolder fetchData(String path, boolean willLoadMetadata, int imageNumber) {
+		path = Utils.translateDLSFilePath(path);
 		return dataCache.fetchData(path, willLoadMetadata, imageNumber);
 	}
 
@@ -561,10 +563,11 @@ public class LoaderFactory {
 	 * @return and image stack for 
 	 * @throws Exception
 	 */
-	public static final Map<String,ILazyDataset> getImageStack(final String filePath, IDataHolder holder, IMonitor mon) throws Exception {
+	public static final Map<String,ILazyDataset> getImageStack(String filePath, IDataHolder holder, IMonitor mon) throws Exception {
 		
 		if (filePath==null) return null;
-				
+
+		filePath = Utils.translateDLSFilePath(filePath);
 		final File   file  = new File(filePath);
 		final String ext   = FileUtils.getFileExtension(file.getName());
 		final File   dir   = file.getParentFile();
@@ -642,9 +645,9 @@ public class LoaderFactory {
 	 * @return IMetadata
 	 * @throws Exception
 	 */
-	public static synchronized IMetadata getMetadata(final String path, final IMonitor mon) throws Exception {
+	public static synchronized IMetadata getMetadata(String path, final IMonitor mon) throws Exception {
 
-		
+		path = Utils.translateDLSFilePath(path);
 		if (!(new File(path)).exists()) throw new FileNotFoundException(path);
 		final CacheKey key = dataCache.createCacheKey(path, true);
 		
@@ -1097,7 +1100,8 @@ public class LoaderFactory {
 		dataCache.clear();
 	}
 	
-	public static void clear(final String filePath) {
+	public static void clear(String filePath) {
+		filePath = Utils.translateDLSFilePath(filePath);
 		dataCache.clear(filePath);
 	}
 

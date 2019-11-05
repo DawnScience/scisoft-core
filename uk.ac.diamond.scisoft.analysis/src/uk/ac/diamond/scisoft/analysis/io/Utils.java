@@ -262,7 +262,7 @@ public class Utils {
 			}
 		}
 
-		stats.setMaximumMinimum(max, min);
+		stats.setMaximumMinimumSum(max, min, null);
 		stats.setHash(hash*19 + data.getDType()*17 + data.getElementsPerItem());
 		data.addMetadata(stats);
 	}
@@ -672,11 +672,109 @@ public class Utils {
 		}
 	
 		if (keepBitWidth||amax < (1 << 15)) {
-			data = DatasetUtils.cast(data, Dataset.INT16);
+			data = DatasetUtils.cast(ShortDataset.class, data);
 		}
 
 		storeStats(data, amax, amin, hash);
 	
 		return data;
+	}
+
+	private static final String DLS_PREFIX = "/dls/";
+	private static final String DLS_DATA_WIN_DIR = "\\\\data.diamond.ac.uk";
+	private static final String DLS_SCIENCE_PREFIX = "/dls/science/";
+	private static final String DLS_SCIENCE_WIN_DIR = "\\\\dls-science\\science";
+	private static final boolean IS_WINDOWS = System.getProperty("os.name").startsWith("Windows");
+
+	/**
+	 * Translate Diamond specific file paths to their Windows equivalent on Windows
+	 * @param filePath
+	 * @return Windows file path if on Windows and starts with Diamond absolute paths
+	 */
+	public static String translateDLSFilePath(String filePath) {
+		return translateDLSFilePath(filePath, IS_WINDOWS);
+	}
+
+	static String translateDLSFilePath(String filePath, boolean isWindows) {
+		if (isWindows) {
+			if (filePath == null) {
+				return null;
+			} else if (filePath.startsWith(DLS_SCIENCE_PREFIX)) {
+				return new File(DLS_SCIENCE_WIN_DIR, filePath.substring(DLS_SCIENCE_PREFIX.length())).getPath();
+			} else if (filePath.startsWith(DLS_PREFIX)) {
+				return new File(DLS_DATA_WIN_DIR, filePath.substring(DLS_PREFIX.length())).getPath();
+			}
+		}
+		return filePath;
+	}
+
+	/**
+	 * Find external file by checking parent's directory
+	 * @param logger
+	 * @param parent
+	 * @param ePath external file path
+	 * @return absolute file path or null if not found
+	 */
+	public static String findExternalFilePath(final Logger logger, final String parent, String ePath) {
+		if (ePath == null) {
+			return null;
+		}
+
+		boolean exists = false;
+		ePath = translateDLSFilePath(ePath);
+		File ef = new File(ePath);
+		if (logger != null) {
+			logger.trace("Looking for external file {}", ePath);
+		}
+		if (!ef.isAbsolute()) {
+			exists = ef.exists();
+			if (!exists) { // use directory of linking file
+				if (logger != null) {
+					logger.trace("Could not find external relative file, now trying in {}", parent);
+				}
+				File ref = new File(parent, ef.getName());
+				exists = ref.exists();
+				if (!exists) {
+					// append to directory of linking file
+					File ref2 = new File(parent, ePath);
+					if (!ref2.equals(ref)) {
+						if (logger != null) {
+							logger.trace("Could not find external relative file, finally trying {}", ref2);
+						}
+						ref = ref2;
+					}
+				}
+				ePath = ref.getAbsolutePath();
+				ef = ref;
+			}
+		} else {
+			// first try to find in directory of current file
+			File ref = new File(parent, ef.getName());
+			exists = ref.exists();
+			if (exists) {
+				ePath = ref.getAbsolutePath();
+				ef = ref;
+				if (logger != null) {
+					logger.trace("Found external file {} in {}", ef.getName(), parent);
+				}
+			}
+		}
+
+		if (!exists) {
+			exists = ef.exists();
+			ePath = ef.getAbsolutePath();
+			if (exists) {
+				if (logger != null) {
+					logger.trace("Finally found external file {}", ePath);
+				}
+			} else {
+				ePath = null;
+			}
+		}
+		return ePath;
+	}
+
+	static String findExternalFilePath(final String parent, String ePath) {
+		return findExternalFilePath(null, parent, ePath);
 	}
 }

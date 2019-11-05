@@ -11,10 +11,12 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -402,5 +404,39 @@ public class UtilsTest {
 		Assert.assertTrue(Utils.isNumber("0.e+0"));
 		Assert.assertTrue(Utils.isNumber("0.e-0"));
 		Assert.assertFalse(Utils.isNumber("."));
+	}
+
+	@Test
+	public void testTranslateWindows() {
+		assertNull(Utils.translateDLSFilePath(null, false));
+		assertNull(Utils.translateDLSFilePath(null, true));
+
+		assertEquals("blah", Utils.translateDLSFilePath("blah", false));
+		assertEquals("blah", Utils.translateDLSFilePath("blah", true));
+		assertEquals("/blah/foo", Utils.translateDLSFilePath("/blah/foo", true));
+
+		boolean IS_WINDOWS = System.getProperty("os.name").startsWith("Windows");
+		assertEquals(IS_WINDOWS ? "\\\\data.diamond.ac.uk\\blah\\foo" : "\\\\data.diamond.ac.uk/blah/foo",
+				Utils.translateDLSFilePath("/dls/blah/foo", true));
+		assertEquals(IS_WINDOWS ? "\\\\dls-science\\science\\blah\\foo" : "\\\\dls-science\\science/blah/foo",
+				Utils.translateDLSFilePath("/dls/science/blah/foo", true));
+	}
+
+	@Test
+	public void testFindingExternalFile() {
+		File p = new File("testfiles/gda/analysis/io/i21");
+		String t0 = new File(p.getAbsolutePath(), "target0").getPath();
+		String t1 = new File(p.getAbsolutePath(), "processing/target1").getPath();
+
+		assertEquals(t0, Utils.findExternalFilePath(p.getAbsolutePath(), t0));
+		assertEquals(t0, Utils.findExternalFilePath(p.getAbsolutePath(), "blah/target0"));
+		assertEquals(t0, Utils.findExternalFilePath(p.getAbsolutePath(), "../i21/target0"));
+		assertEquals(t1, Utils.findExternalFilePath(p.getAbsolutePath(), t1));
+		assertEquals(t1, Utils.findExternalFilePath(p.getAbsolutePath(), "processing/target1"));
+
+		assertEquals("testfiles", Utils.findExternalFilePath(p.getAbsolutePath(), "testfiles"));
+
+		assertNull(Utils.findExternalFilePath(p.getAbsolutePath(), null));
+		assertNull(Utils.findExternalFilePath(p.getAbsolutePath(), "target"));
 	}
 }

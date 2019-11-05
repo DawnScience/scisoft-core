@@ -12,7 +12,7 @@ if py2 and os.name == 'posix':
 
 setup(
     name="scisoftpy",
-    version="2.16.0",
+    version="2.17.0",
     description="DAWN Python Extensions",
     author="Peter Chang",
     author_email="scientificsoftware@diamond.ac.uk",

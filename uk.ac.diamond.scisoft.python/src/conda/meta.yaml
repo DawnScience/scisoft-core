@@ -1,0 +1,43 @@
+{% set name = "scisoftpy" %}
+{% set version = "2.16.0" %}
+
+package:
+  name: {{ name }}
+  version: {{ version }}
+
+source:
+  path: ../
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . --no-deps --ignore-installed -vv "
+
+requirements:
+  host:
+    - pip
+    - python
+    - setuptools
+
+  run:
+    - h5py
+    - numpy
+    - pillow
+    - py4j
+    - python
+    - six
+    - subprocess32  # [unix and py2k]
+
+test:
+  imports:
+    - scisoftpy
+
+about:
+  home: https://gerrit.diamond.ac.uk/admin/repos/scisoft/scisoft-core
+  license: "Apache-2.0"
+  license_family: "APACHE"
+  summary: Dawn Python Extensions
+
+extra:
+  recipe-maintainers:
+    - tschoonj

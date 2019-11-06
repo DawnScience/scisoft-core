@@ -40,6 +40,7 @@ import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.ShapeUtils;
+import org.eclipse.january.dataset.StringDataset;
 import org.eclipse.january.metadata.Metadata;
 import org.eclipse.january.metadata.MetadataFactory;
 import org.eclipse.january.metadata.StatisticsMetadata;
@@ -107,7 +108,7 @@ public class CBFLoader extends AbstractFileLoader {
 		imageOrien = readImageOrientation(chs, imageOrien);
 
 		if (loadLazily) {
-			data = createLazyDataset(DEF_IMAGE_NAME, imageOrien.getDType(), imageOrien.getShape(), new CBFLoader(fileName));
+			data = createLazyDataset(new CBFLoader(fileName), DEF_IMAGE_NAME, imageOrien.getInterface(), imageOrien.getShape());
 		} else {
 			data = readCBFBinaryData(chs, imageOrien);
 		}
@@ -196,8 +197,13 @@ public class CBFLoader extends AbstractFileLoader {
 							if (!PLACE_HOLDER.equals(v) && !MISSING.equals(v)) {
 								Number num = Utils.parseValue(v);
 								if (column == null) {
-									int dt = num == null ? Dataset.STRING : (num instanceof Float || num instanceof Double ? Dataset.FLOAT64 : Dataset.INT32);
-									Dataset ds = DatasetFactory.zeros(new int[] {r}, dt);
+									Class<? extends Dataset> dc = StringDataset.class;
+									if (num instanceof Float || num instanceof Double) {
+										dc = DoubleDataset.class;
+									} else if (num != null) {
+										dc = IntegerDataset.class;
+									}
+									Dataset ds = DatasetFactory.zeros(dc, r);
 									column = TreeFactory.createAttribute(colName, ds, false);
 									category.addAttribute(column);
 								}
@@ -595,7 +601,7 @@ _diffrn_radiation_wavelength.wt 1.0
 		CBFError.errorChecker(cbf.cbf_rewind_column(chs));
 		CBFError.errorChecker(cbf.cbf_find_column(chs, "data"));
 
-		Dataset data = DatasetFactory.zeros(shape, imageOrien.getDType());
+		Dataset data = DatasetFactory.zeros(imageOrien.getInterface(), shape);
 		StatisticsMetadata<Number> stats = null;
 		try {
 			stats = MetadataFactory.createMetadata(StatisticsMetadata.class, data);
@@ -647,7 +653,7 @@ _diffrn_radiation_wavelength.wt 1.0
 				}
 				hash = (int) dhash;
 
-				stats.setMaximumMinimum(amax, amin);
+				stats.setMaximumMinimumSum(amax, amin, null);
 				ddata = null;
 			}
 		} else {
@@ -690,7 +696,7 @@ _diffrn_radiation_wavelength.wt 1.0
 					start += rstep;
 				}
 
-				stats.setMaximumMinimum(amax, amin);
+				stats.setMaximumMinimumSum(amax, amin, null);
 				idata = null;
 			}
 		}
@@ -775,12 +781,13 @@ _diffrn_radiation_wavelength.wt 1.0
 			isRowsX = areRowsX;
 		}
 
-		public int getDType() {
+		public Class<? extends Dataset> getInterface() {
 			if (isReal == -1)
-				return -1;
+				return null;
 			if (isReal == 0)
-				return Dataset.INT32;
-			return Dataset.FLOAT64;
+				return IntegerDataset.class;
+			return DoubleDataset.class;
+			
 		}
 
 		public int[] getShape() {

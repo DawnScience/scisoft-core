@@ -92,7 +92,7 @@ public class XasAsciiLoader extends SRSLoader {
 			DataHolder result = new DataHolder();
 			if (loadLazily) {
 				for (String n : datasetNames) {
-					result.addDataset(n, createLazyDataset(n, -1, new int[] {count}, new XasAsciiLoader(fileName)));
+					result.addDataset(n, createLazyDataset(new XasAsciiLoader(fileName), n, null, count));
 				}
 			} else {
 				try {

@@ -19,6 +19,7 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Slice;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -135,7 +136,7 @@ public class TiffLoaderTest {
 		s.saveFile(d);
 
 		in = new TIFFImageLoader(oname).loadFile();
-		checkDataset(a.cast(Dataset.INT32), in.getDataset(0));
+		checkDataset(a.cast(IntegerDataset.class), in.getDataset(0));
 	}
 
 	@Test

@@ -17,6 +17,8 @@ import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.FloatDataset;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,17 +37,17 @@ public class NumPyNanTest {
 	@Parameters
 	public static Collection<Object[]> configs() {
 		List<Object[]> params = new LinkedList<Object[]>();
-		params.add(new Object[] { "'<f4'", Dataset.FLOAT32});
-		params.add(new Object[] { "'<f8'", Dataset.FLOAT64});
+		params.add(new Object[] { "'<f4'", FloatDataset.class});
+		params.add(new Object[] { "'<f8'", DoubleDataset.class});
 		return params;
 	}
 
 	private String numpyDataType;
-	private int dtype;
+	private Class<? extends Dataset> clazz;
 
-	public NumPyNanTest(String numpyDataType, int dtype) {
+	public NumPyNanTest(String numpyDataType, Class<? extends Dataset> clazz) {
 		this.numpyDataType = numpyDataType;
-		this.dtype = dtype;
+		this.clazz = clazz;
 	}
 
 	@Test
@@ -59,14 +61,14 @@ public class NumPyNanTest {
 
 		Dataset loadedFile = NumPyFileLoader.loadFileHelper(loc.toString());
 		Assert.assertTrue(ArrayUtils.isEquals(new int[] {2}, loadedFile.getShape()));
-		Assert.assertEquals(dtype, loadedFile.getDType());
+		Assert.assertEquals(clazz, loadedFile.getClass());
 		Assert.assertTrue(Double.isNaN(loadedFile.getDouble(0)));
 		Assert.assertTrue(Double.isNaN(loadedFile.getDouble(1)));
 	}
 
 	@Test
 	public void testSave() throws Exception {
-		Dataset ds = DatasetFactory.createFromObject(dtype, new double[] {Double.NaN, Double.NaN});
+		Dataset ds = DatasetFactory.createFromObject(clazz, new double[] {Double.NaN, Double.NaN});
 		File loc = NumPyTest.getTempFile();
 		NumPyTest.saveNumPyFile(ds, loc, false);
 		StringBuilder script = new StringBuilder();

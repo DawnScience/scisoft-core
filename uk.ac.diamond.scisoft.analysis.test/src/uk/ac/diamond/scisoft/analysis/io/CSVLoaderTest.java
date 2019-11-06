@@ -10,7 +10,6 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import org.eclipse.january.dataset.IDataset;
 import org.junit.Test;

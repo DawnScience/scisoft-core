@@ -36,6 +36,7 @@ import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.SliceND;
 import org.slf4j.Logger;
@@ -171,7 +172,7 @@ public class FioLoader extends AbstractFileLoader {
 				int i = 0;
 				for (final String n : columns.keySet()) {
 					final int num = i++;
-					result.addDataset(n, createLazyDataset(n, Dataset.FLOAT64, new int[] {count}, new LazyLoaderStub(new FioLoader(fileName), n) {
+					result.addDataset(n, createLazyDataset(new LazyLoaderStub(new FioLoader(fileName), n) {
 						private static final long serialVersionUID = LazyLoaderStub.serialVersionUID;
 
 						@Override
@@ -212,7 +213,7 @@ public class FioLoader extends AbstractFileLoader {
 								throw new IOException(e);
 							}
 						}
-					}));
+					}, n, DoubleDataset.class, count));
 				}		
 			} else {
 				boolean readingFooter = false;

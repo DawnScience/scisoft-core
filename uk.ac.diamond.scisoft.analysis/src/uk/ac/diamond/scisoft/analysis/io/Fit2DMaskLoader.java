@@ -18,7 +18,6 @@ import java.nio.ByteOrder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.BooleanDataset;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.Metadata;
@@ -61,7 +60,7 @@ public class Fit2DMaskLoader extends AbstractFileLoader {
 			int[] shape = readHeader(fi);
 
 			if (loadLazily) {
-				data = createLazyDataset(DATA_NAME, Dataset.BOOL, shape, new Fit2DMaskLoader(fileName));
+				data = createLazyDataset(new Fit2DMaskLoader(fileName), DATA_NAME, BooleanDataset.class, shape);
 			} else {
 				//hope there is nothing important here...
 				fi.skip(1000);

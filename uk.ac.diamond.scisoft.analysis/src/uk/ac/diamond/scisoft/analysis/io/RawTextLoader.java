@@ -74,8 +74,7 @@ public class RawTextLoader extends AbstractFileLoader {
 					l = br.readLine();
 				}
 				shape[0] = rows;
-				data = createLazyDataset(DEF_IMAGE_NAME, -1, ShapeUtils.squeezeShape(shape, false),
-						new RawTextLoader(fileName));
+				data = createLazyDataset(new RawTextLoader(fileName), DEF_IMAGE_NAME, null, ShapeUtils.squeezeShape(shape, false));
 			} else {
 				List<Object[]> rows = new ArrayList<Object[]>();
 				rows.add(parseRow(values));

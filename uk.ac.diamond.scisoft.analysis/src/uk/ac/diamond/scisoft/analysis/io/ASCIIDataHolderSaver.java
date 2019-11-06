@@ -18,7 +18,6 @@ import java.nio.DoubleBuffer;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileSaver;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
@@ -81,7 +80,7 @@ public class ASCIIDataHolderSaver implements IFileSaver {
 		for (int i = 0; i < inner_shape.length; i++) {
 			inner_shape[i] = shape[(inner_shape.length - 1) - i];
 		}
-		double[] data = ((DoubleDataset) DatasetUtils.cast(ds, Dataset.FLOAT64)).getData();
+		double[] data = DatasetUtils.cast(DoubleDataset.class, ds).getData();
 		DoubleBuffer db = DoubleBuffer.wrap(data, 0, data.length);
 		writeData(inner_shape, db);
 	}

@@ -158,7 +158,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver {
 
 			if (loadLazily) {
 				for (String n : vals) {
-					result.addDataset(n, createLazyDataset(n, -1, new int[] {count}, new SRSLoader(fileName)));
+					result.addDataset(n, createLazyDataset(new SRSLoader(fileName), n, null, count));
 				}
 			} else {
 				convertToDatasets(result, vals, columns, isStoreStringValues(), isUseImageLoaderForStrings(), (new File(fileName)).getParent());

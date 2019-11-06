@@ -193,10 +193,10 @@ public class JavaImageLoader extends AbstractFileLoader {
 				int[] shape = new int[] {reader.getHeight(i), reader.getWidth(i)};
 				Iterator<ImageTypeSpecifier> it = reader.getImageTypes(i);
 				SampleModel sm = it.next().getSampleModel();
-				int dtype = AWTImageUtils.getDTypeFromImage(sm, keepBitWidth)[0];
+				Class<? extends Dataset> clazz = AWTImageUtils.getInterface(sm, keepBitWidth);
 				final String name = String.format(IMAGE_NAME_FORMAT, i + 1);
 				final int num = i;
-				LazyDataset lazy = createLazyDataset(name, dtype, shape, new LazyLoaderStub() {
+				LazyDataset lazy = createLazyDataset(new LazyLoaderStub() {
 					@Override
 					public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
 						try {
@@ -206,7 +206,7 @@ public class JavaImageLoader extends AbstractFileLoader {
 							throw new IOException(e);
 						}
 					}
-				});
+				}, name, clazz, shape);
 				output.addDataset(name, lazy);
 //				IIOMetadata imd = reader.getImageMetadata(i);
 //				imd.getAsTree(imd.getNativeMetadataFormatName()).toString();
@@ -303,7 +303,7 @@ public class JavaImageLoader extends AbstractFileLoader {
 					throw new ScanFileHolderException("Number of colour channels is less than three so cannot load and convert");
 				}
 
-				data = DatasetUtils.createCompoundDataset(Dataset.RGB, channels);
+				data = DatasetUtils.createCompoundDataset(RGBDataset.class, channels);
 
 				if (asGrey)
 					data = ((RGBDataset) data).createGreyDataset(channels[0].getClass());

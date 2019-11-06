@@ -20,6 +20,9 @@ import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.ByteDataset;
+import org.eclipse.january.dataset.ComplexFloatDataset;
+import org.eclipse.january.dataset.CompoundShortDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.FloatDataset;
@@ -27,6 +30,8 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.LazyDataset;
+import org.eclipse.january.dataset.RGBDataset;
+import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.io.ILazyLoader;
 import org.eclipse.january.metadata.IMetadata;
@@ -107,14 +112,14 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 
 	private ILazyDataset createDataset(final long pos, final int mode, final int width, final int height, final int depth) throws ScanFileHolderException {
 		final int[] trueShape = new int[] {depth, height, width};
-		final int type = modeToDtype.get(mode);
-		if (type != Dataset.INT16 && type != Dataset.FLOAT32) { // TODO support other modes
+		final Class<? extends Dataset> clazz = modeToDtype.get(mode);
+		if (!ShortDataset.class.equals(clazz) && !FloatDataset.class.equals(clazz)) { // TODO support other modes
 			throw new ScanFileHolderException("Only 16-bit integers and 32-bit floats are currently supported");
 		}
 
 		final int dsize = modeToDsize.get(mode);
 		final boolean signExtend = !modeToUnsigned.get(mode);
-		final int dtype = signExtend ? type : Dataset.INT32;
+		final Class<? extends Dataset> dClazz = signExtend ? clazz : IntegerDataset.class;
 
 		ILazyLoader l = new ILazyLoader() {
 			
@@ -172,10 +177,10 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 							}
 						}
 
-						d = loadData(mon, fileName, pos, isLittleEndian, dsize, dtype, signExtend, trueShape, tstart, tsize, tstep);
+						d = loadData(mon, fileName, pos, isLittleEndian, dsize, dClazz, signExtend, trueShape, tstart, tsize, tstep);
 						d.setShape(newShape); // squeeze shape back
 					} else {
-						d = loadData(mon, fileName, pos, isLittleEndian, dsize, dtype, signExtend, trueShape, lstart, newShape, lstep);
+						d = loadData(mon, fileName, pos, isLittleEndian, dsize, dClazz, signExtend, trueShape, lstart, newShape, lstep);
 					}
 				} catch (ScanFileHolderException e) {
 					throw new IOException("Problem with loading data", e);
@@ -185,10 +190,10 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 
 		};
 
-		return new LazyDataset(STACK_NAME, dtype, 1, trueShape.clone(), l);
+		return new LazyDataset(l, STACK_NAME, 1, dClazz, trueShape.clone());
 	}
 
-	private static Dataset loadData(IMonitor mon, String filename, long pos, boolean isLE, int dsize, int dtype, boolean signExtend, int[] shape, int[] start, int[] count, int[] step) throws ScanFileHolderException {
+	private static Dataset loadData(IMonitor mon, String filename, long pos, boolean isLE, int dsize, Class<? extends Dataset> dClazz, boolean signExtend, int[] shape, int[] start, int[] count, int[] step) throws ScanFileHolderException {
 		File f = null;
 		BufferedInputStream bi = null;
 
@@ -197,10 +202,10 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 			throw new ScanFileHolderException("Cannot find " + filename);
 		}
 
-		Dataset d = DatasetFactory.zeros(count, dtype);
+		Dataset d = DatasetFactory.zeros(dClazz, count);
 
-		int idtype = dtype == Dataset.FLOAT32 ? Dataset.FLOAT32 : Dataset.INT32;
-		Dataset image = DatasetFactory.zeros(new int[] {shape[1], shape[2]}, idtype);
+		Class<? extends Dataset> iClazz = FloatDataset.class.equals(dClazz) ? dClazz : IntegerDataset.class;
+		Dataset image = DatasetFactory.zeros(iClazz, shape[1], shape[2]);
 		try {
 			bi = new BufferedInputStream(new FileInputStream(f));
 
@@ -218,13 +223,13 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 			bi.skip(pos);
 			pos = (step[0] - 1) * imageSize;
 			do { // TODO maybe read smaller chunk of image...
-				if (dtype == Dataset.INT16) {
+				if (ShortDataset.class.equals(dClazz)) {
 					if (isLE) {
 						Utils.readLeShort(bi, (IntegerDataset) image, 0, signExtend);
 					} else {
 						Utils.readBeShort(bi, (IntegerDataset) image, 0, signExtend);
 					}
-				} else if (dtype == Dataset.FLOAT32) {
+				} else if (Float.class.equals(dClazz)) {
 					if (isLE) {
 						Utils.readLeFloat(bi, (FloatDataset) image, 0);
 					} else {
@@ -354,17 +359,17 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 		}
 	}
 
-	private static final Map<Integer, Integer> modeToDtype = new HashMap<>(); // destination dataset type
+	private static final Map<Integer, Class<? extends Dataset>> modeToDtype = new HashMap<>(); // destination dataset type
 	private static final Map<Integer, Integer> modeToDsize = new HashMap<>(); // source data size
 	private static final Map<Integer, Boolean> modeToUnsigned= new HashMap<>(); // source data unsignedness
 	static {
-		modeToDtype.put(0, Dataset.INT8);
-		modeToDtype.put(1, Dataset.INT16);
-		modeToDtype.put(2, Dataset.FLOAT32);
-		modeToDtype.put(3, Dataset.ARRAYINT16); // complex short
-		modeToDtype.put(4, Dataset.COMPLEX64);
-		modeToDtype.put(6, Dataset.INT16); // unsigned shorts
-		modeToDtype.put(16, Dataset.RGB); // three unsigned bytes
+		modeToDtype.put(0, ByteDataset.class);
+		modeToDtype.put(1, ShortDataset.class);
+		modeToDtype.put(2, FloatDataset.class);
+		modeToDtype.put(3, CompoundShortDataset.class); // complex short
+		modeToDtype.put(4, ComplexFloatDataset.class);
+		modeToDtype.put(6, ShortDataset.class); // unsigned shorts
+		modeToDtype.put(16, RGBDataset.class); // three unsigned bytes
 
 		modeToDsize.put(0, 1);
 		modeToDsize.put(1, 2);

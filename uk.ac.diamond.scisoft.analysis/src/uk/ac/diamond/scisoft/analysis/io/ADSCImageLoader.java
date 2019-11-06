@@ -30,6 +30,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.metadata.IMetadata;
 import org.slf4j.Logger;
@@ -129,7 +130,7 @@ public class ADSCImageLoader extends AbstractFileLoader {
 			int[] shape = { height, width };
 			ILazyDataset data;
 			if (loadLazily) {
-				data = createLazyDataset(DEF_IMAGE_NAME, Dataset.INT32, shape, new LazyLoaderStub() {
+				data = createLazyDataset(new LazyLoaderStub() {
 					@Override
 					public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
 						try {
@@ -139,7 +140,7 @@ public class ADSCImageLoader extends AbstractFileLoader {
 							throw new IOException(e);
 						}
 					}
-				});
+				}, DEF_IMAGE_NAME, IntegerDataset.class, shape);
 			} else {
 				raf.seek(pointer);
 				data = Utils.createDataset(raf, shape, keepBitWidth);

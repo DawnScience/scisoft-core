@@ -127,7 +127,7 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver {
 			int[] shape = new int[] { nx, ny };
 
 			if (loadLazily) {
-				data = createLazyDataset(DEF_IMAGE_NAME, Dataset.INT32, shape, new LazyLoaderStub() {
+				data = createLazyDataset(new LazyLoaderStub() {
 					@Override
 					public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
 						try {
@@ -137,7 +137,7 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver {
 							throw new IOException(e);
 						}
 					}
-				});
+				}, DEF_IMAGE_NAME, IntegerDataset.class, shape);
 			} else {
 				data = DatasetFactory.zeros(IntegerDataset.class, shape);
 				Utils.readLeInt(fi, (IntegerDataset) data, 0);

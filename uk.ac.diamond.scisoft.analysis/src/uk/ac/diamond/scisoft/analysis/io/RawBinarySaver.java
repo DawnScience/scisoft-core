@@ -30,6 +30,7 @@ import org.eclipse.january.dataset.BooleanDataset;
 import org.eclipse.january.dataset.ByteDataset;
 import org.eclipse.january.dataset.ComplexDoubleDataset;
 import org.eclipse.january.dataset.ComplexFloatDataset;
+import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
@@ -106,25 +107,8 @@ public class RawBinarySaver implements IFileSaver {
 
 			Dataset sdata = DatasetUtils.convertToDataset(dh.getDataset(i));
 			int dtype = sdata.getDType();
-			switch (dtype) {
-			case Dataset.ARRAYINT8:
-				dtype = Dataset.INT8;
-				break;
-			case Dataset.ARRAYINT16:
-				dtype = Dataset.INT16;
-				break;
-			case Dataset.ARRAYINT32:
-				dtype = Dataset.INT32;
-				break;
-			case Dataset.ARRAYINT64:
-				dtype = Dataset.INT64;
-				break;
-			case Dataset.ARRAYFLOAT32:
-				dtype = Dataset.FLOAT32;
-				break;
-			case Dataset.ARRAYFLOAT64:
-				dtype = Dataset.FLOAT64;
-				break;
+			if (!DTypeUtils.isDTypeComplex(dtype)) {
+				dtype = DTypeUtils.getElementalDType(dtype);
 			}
 
 			int is = sdata.getElementsPerItem();
@@ -174,7 +158,8 @@ public class RawBinarySaver implements IFileSaver {
 				while (hdrBuffer.hasRemaining())
 					fc.write(hdrBuffer);
 
-				ByteBuffer dbBuffer = saveRawDataset(sdata, dtype, isize);
+				Class<? extends Dataset> clazz = DTypeUtils.getInterface(dtype);
+				ByteBuffer dbBuffer = saveRawDataset(isize, clazz, sdata);
 				dbBuffer.rewind();
 				while (dbBuffer.hasRemaining())
 					fc.write(dbBuffer);
@@ -189,24 +174,23 @@ public class RawBinarySaver implements IFileSaver {
 	/**
 	 * Saves the dataset to the ByteBuffer provided in a raw format, ie no headers
 	 * @param sdata Dataset to save
-	 * @param dtype Dataset type for save purpose
+	 * @param clazz Dataset interfacetype for save purpose
 	 * @param isize Each entry item size
 	 * @return the allocated ByteBuffer where the data is saved
 	 */
-	public static ByteBuffer saveRawDataset(Dataset sdata, int dtype, byte isize) {
+	public static ByteBuffer saveRawDataset(byte isize, Class<? extends Dataset> clazz, Dataset sdata) {
 		ByteBuffer dbBuffer = ByteBuffer.allocateDirect(sdata.getNbytes());
 		dbBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
-		switch (dtype) {
-		case Dataset.BOOL:
+		IndexIterator iter;
+		if (BooleanDataset.class.equals(clazz)) {
 			BooleanDataset b = (BooleanDataset) sdata;
 			boolean[] dataBln = b.getData();
-			IndexIterator iter = b.getIterator();
+			iter = b.getIterator();
 			while (iter.hasNext()) {
 				dbBuffer.put((byte) (dataBln[iter.index] ? 1 : 0));
 			}
-			break;
-		case Dataset.INT8:
+		} else if (ByteDataset.class.equals(clazz)) {
 			ByteDataset i8 = (ByteDataset) sdata;
 			byte[] dataB = i8.getData();
 			iter = i8.getIterator();
@@ -220,8 +204,7 @@ public class RawBinarySaver implements IFileSaver {
 						dbBuffer.put(dataB[iter.index+j]);
 				}
 			}
-			break;
-		case Dataset.INT16:
+		} else if (ShortDataset.class.equals(clazz)) {
 			ShortDataset i16 = (ShortDataset) sdata;
 			ShortBuffer sDataBuffer = dbBuffer.asShortBuffer();
 			short[] dataS = i16.getData();
@@ -236,8 +219,7 @@ public class RawBinarySaver implements IFileSaver {
 						sDataBuffer.put(dataS[iter.index+j]);
 				}
 			}
-			break;
-		case Dataset.INT32:
+		} else if (IntegerDataset.class.equals(clazz)) {
 			IntegerDataset i32 = (IntegerDataset) sdata;
 			IntBuffer iDataBuffer = dbBuffer.asIntBuffer();
 			int[] dataI = i32.getData();
@@ -252,8 +234,7 @@ public class RawBinarySaver implements IFileSaver {
 						iDataBuffer.put(dataI[iter.index+j]);
 				}
 			}
-			break;
-		case Dataset.INT64:
+		} else if (LongDataset.class.equals(clazz)) {
 			LongDataset i64 = (LongDataset) sdata;
 			LongBuffer lDataBuffer = dbBuffer.asLongBuffer();
 			long[] dataL = i64.getData();
@@ -268,8 +249,7 @@ public class RawBinarySaver implements IFileSaver {
 						lDataBuffer.put(dataL[iter.index+j]);
 				}
 			}
-			break;
-		case Dataset.FLOAT32:
+		} else if (FloatDataset.class.equals(clazz)) {
 			FloatDataset f32 = (FloatDataset) sdata;
 			FloatBuffer fDataBuffer = dbBuffer.asFloatBuffer();
 			float[] dataFlt = f32.getData();
@@ -284,8 +264,7 @@ public class RawBinarySaver implements IFileSaver {
 						fDataBuffer.put(dataFlt[iter.index+j]);
 				}
 			}
-			break;
-		case Dataset.FLOAT64:
+		} else if (DoubleDataset.class.equals(clazz)) {
 			DoubleDataset f64 = (DoubleDataset) sdata;
 			DoubleBuffer dataBuffer = dbBuffer.asDoubleBuffer();
 			double[] dataDbl = f64.getData();
@@ -300,27 +279,24 @@ public class RawBinarySaver implements IFileSaver {
 						dataBuffer.put(dataDbl[iter.index+j]);
 				}
 			}
-			break;
-		case Dataset.COMPLEX64:
+		} else if (ComplexFloatDataset.class.equals(clazz)) {
 			ComplexFloatDataset c64 = (ComplexFloatDataset) sdata;
-			fDataBuffer = dbBuffer.asFloatBuffer();
-			dataFlt = c64.getData();
+			FloatBuffer fDataBuffer = dbBuffer.asFloatBuffer();
+			float[] dataFlt = c64.getData();
 			iter = c64.getIterator();
 			while (iter.hasNext()) {
 				fDataBuffer.put(dataFlt[iter.index]);
 				fDataBuffer.put(dataFlt[iter.index+1]);
 			}
-			break;
-		case Dataset.COMPLEX128:
+		} else if (ComplexDoubleDataset.class.equals(clazz)) {
 			ComplexDoubleDataset c128 = (ComplexDoubleDataset) sdata;
-			dataBuffer = dbBuffer.asDoubleBuffer();
-			dataDbl = c128.getData();
+			DoubleBuffer dataBuffer = dbBuffer.asDoubleBuffer();
+			double[] dataDbl = c128.getData();
 			iter = c128.getIterator();
 			while (iter.hasNext()) {
 				dataBuffer.put(dataDbl[iter.index]);
 				dataBuffer.put(dataDbl[iter.index+1]);
 			}
-			break;
 		}
 		return dbBuffer;
 	}

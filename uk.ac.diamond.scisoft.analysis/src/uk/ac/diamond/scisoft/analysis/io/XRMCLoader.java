@@ -41,9 +41,9 @@ public class XRMCLoader extends AbstractFileLoader {
 		MAXENERGY("maxEnergy", Double.class);
 		
 		private final String name;
-		private Class datatype;
+		private Class<?> datatype;
 		
-		XRMCMetadata(String name, Class datatype) {
+		XRMCMetadata(String name, Class<?> datatype) {
 			this.name = name;
 			this.datatype = datatype;
 		}

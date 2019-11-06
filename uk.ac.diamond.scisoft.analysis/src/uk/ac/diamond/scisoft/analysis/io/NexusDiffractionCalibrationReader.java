@@ -17,6 +17,7 @@ import javax.vecmath.Matrix3d;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
@@ -27,12 +28,10 @@ import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
 import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.january.DatasetException;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 
 
 /**
@@ -190,7 +189,7 @@ public class NexusDiffractionCalibrationReader {
 			GroupNode gn = (GroupNode)n;
 			if (gn.containsDataNode("detector_orientation")) {
 				IDataset slice = gn.getDataNode("detector_orientation").getDataset().getSlice();
-				DoubleDataset dd = (DoubleDataset)DatasetUtils.cast(slice, Dataset.FLOAT64);
+				DoubleDataset dd = DatasetUtils.cast(DoubleDataset.class, slice);
 				double[] bcc = dp.getBeamCentreCoords();
 				dp.setBeamCentreCoords(new double[]{0,0});
 				dp.setOrientation(new Matrix3d(dd.getData()));

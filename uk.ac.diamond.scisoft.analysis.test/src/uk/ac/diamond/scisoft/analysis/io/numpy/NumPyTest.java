@@ -17,8 +17,18 @@ import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.january.dataset.BooleanDataset;
+import org.eclipse.january.dataset.ByteDataset;
+import org.eclipse.january.dataset.ComplexDoubleDataset;
+import org.eclipse.january.dataset.ComplexFloatDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.FloatDataset;
+import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.InterfaceUtils;
+import org.eclipse.january.dataset.LongDataset;
+import org.eclipse.january.dataset.ShortDataset;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,12 +73,13 @@ public class NumPyTest {
 	}
 
 	static int[][] shapesToTest = { { 1 }, { 100 }, { 1000000 }, { 10, 10 }, { 5, 6, 7, 8 } };
-	static Object[][] types = new Object[][] { { "'|b1'", Dataset.BOOL }, { "'|i1'", Dataset.INT8 },
-		{ "'<i2'", Dataset.INT16 }, { "'<i4'", Dataset.INT32 }, { "'<i8'", Dataset.INT64 },
-		{ "'|u1'", Dataset.INT8, true }, { "'<u2'", Dataset.INT16, true }, { "'<u4'", Dataset.INT32, true },
-		{ "'<f4'", Dataset.FLOAT32 }, { "'<f8'", Dataset.FLOAT64 },
-		{ "'<c8'", Dataset.COMPLEX64 }, { "'<c16'", Dataset.COMPLEX128 },};
+	static Object[][] types = new Object[][] { { "'|b1'", BooleanDataset.class}, { "'|i1'", ByteDataset.class},
+		{ "'<i2'", ShortDataset.class}, { "'<i4'", IntegerDataset.class}, { "'<i8'", LongDataset.class},
+		{ "'|u1'", ByteDataset.class, true }, { "'<u2'", ShortDataset.class, true }, { "'<u4'", IntegerDataset.class, true },
+		{ "'<f4'", FloatDataset.class}, { "'<f8'", DoubleDataset.class},
+		{ "'<c8'", ComplexFloatDataset.class}, { "'<c16'", ComplexDoubleDataset.class},};
 
+	@SuppressWarnings("unchecked")
 	@Parameters
 	public static Collection<Object[]> configs() {
 		List<Object[]> params = new LinkedList<Object[]>();
@@ -78,9 +89,7 @@ public class NumPyTest {
 			boolean unsigned = type.length > 2;
 			for (int j = 0; j < shapesToTest.length; j++) {
 				params.add(new Object[] { index++, type[0], type[1], shapesToTest[j], false, unsigned });
-				switch ((Integer) type[1]) {
-				case Dataset.FLOAT32:
-				case Dataset.FLOAT64:
+				if (InterfaceUtils.isFloating((Class<? extends Dataset>) type[1])) {
 					// Add some Inf values
 					params.add(new Object[] { index++, type[0], type[1], shapesToTest[j], true, unsigned });
 				}
@@ -91,17 +100,17 @@ public class NumPyTest {
 
 	private int index = 0;
 	private String numpyDataType;
-	private int abstractDatasetDataType;
+	private Class<? extends Dataset> clazz;
 	private int[] shape;
 	private String shapeStr;
 	private int len;
 	private boolean addInf;
 	private boolean unsigned;
 
-	public NumPyTest(int index, String numpyDataType, int abstractDatasetDataType, int[] shape, boolean addInf, boolean unsigned) {
+	public NumPyTest(int index, String numpyDataType, Class<? extends Dataset> clazz, int[] shape, boolean addInf, boolean unsigned) {
 		this.index = index;
 		this.numpyDataType = numpyDataType;
-		this.abstractDatasetDataType = abstractDatasetDataType;
+		this.clazz = clazz;
 		this.shape = shape;
 		this.addInf = addInf;
 		this.unsigned = unsigned;
@@ -116,14 +125,14 @@ public class NumPyTest {
 
 	@Override
 	public String toString() {
-		return String.format("TEST %d: numpyType=%s datasetType=%d len=%d shape=%s", index, numpyDataType,
-				abstractDatasetDataType, len, ArrayUtils.toString(shape));
+		return String.format("TEST %d: numpyType=%s datasetType=%s len=%d shape=%s", index, numpyDataType,
+				clazz, len, ArrayUtils.toString(shape));
 	}
 
 	private Dataset createDataset() {
 		final Dataset ds;
-		if (abstractDatasetDataType != Dataset.BOOL) {
-			ds = DatasetFactory.createRange(len, abstractDatasetDataType);
+		if (!BooleanDataset.class.equals(clazz)) {
+			ds = DatasetFactory.createRange(clazz, len);
 		} else {
 			// creates an array of all False, so make two entries True if the array is big enough
 			boolean[] boolarr = new boolean[len];
@@ -131,7 +140,7 @@ public class NumPyTest {
 				boolarr[0] = true;
 			if (len > 100)
 				boolarr[100] = true;
-			ds = DatasetFactory.createFromObject(abstractDatasetDataType, boolarr);
+			ds = DatasetFactory.createFromObject(clazz, boolarr);
 		}
 		if (addInf && len > 3) {
 			ds.set(Double.POSITIVE_INFINITY, 2);
@@ -144,7 +153,7 @@ public class NumPyTest {
 	private String createNumPyArray(String postCommands) {
 		StringBuilder script = new StringBuilder();
 		script.append("import numpy; ");
-		if (abstractDatasetDataType != Dataset.BOOL) {
+		if (!BooleanDataset.class.equals(clazz)) {
 			script.append("exp=numpy.arange(" + len + ", dtype=" + numpyDataType + "); ");
 		} else {
 			script.append("exp=numpy.array([False] * " + len + ", dtype=" + numpyDataType + "); ");

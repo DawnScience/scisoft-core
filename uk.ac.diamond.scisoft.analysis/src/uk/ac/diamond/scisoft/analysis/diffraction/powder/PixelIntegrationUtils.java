@@ -396,8 +396,8 @@ public class PixelIntegrationUtils {
 	public static Dataset generate2Dfrom1D(IDataset[] xy1d, Dataset array2Dx) {
 		
 		DoubleDataset[] inXy1D = new DoubleDataset[2];
-		inXy1D[0] = (DoubleDataset) DatasetUtils.cast(xy1d[0], Dataset.FLOAT64);
-		inXy1D[1] = (DoubleDataset) DatasetUtils.cast(xy1d[1], Dataset.FLOAT64);
+		inXy1D[0] = DatasetUtils.cast(DoubleDataset.class, xy1d[0]);
+		inXy1D[1] = DatasetUtils.cast(DoubleDataset.class, xy1d[1]);
 		
 		double min = inXy1D[0].min().doubleValue();
 		double max = inXy1D[0].max().doubleValue();

@@ -212,7 +212,7 @@ public class DatLoader extends AbstractFileLoader {
 			for (final String n : vals.keySet()) {
 				ILazyDataset data;
 				if (loadLazily) {
-					data = createLazyDataset(n, -1, new int[] { count }, new DatLoader(fileName));
+					data = createLazyDataset(new DatLoader(fileName), n, null, count);
 				} else {
 					data = DatasetFactory.createFromList(vals.get(n));
 					data.setName(n);

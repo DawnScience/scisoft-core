@@ -136,7 +136,6 @@ public class MerlinLoader extends AbstractFileLoader {
 		List<MetaListHolder> metaHolder = new ArrayList<MetaListHolder>();
 		int x;
 		int y;
-		int dtype;
 		try {
 			f = new File(fileName);
 			char[] cbuf = new char[INITIAL_LENGTH];
@@ -212,6 +211,7 @@ public class MerlinLoader extends AbstractFileLoader {
 			char[] cbufRemainder;
 			
 			long imageReadStart = 0;
+			Class< ? extends Dataset> clazz = null;
 			do {
 				head = new String(cbuf).split(",");
 
@@ -227,15 +227,15 @@ public class MerlinLoader extends AbstractFileLoader {
 				switch (head[6]) { // TODO support other formats like U01, U64
 				case "U08":
 					itemSize = 1;
-					dtype = Dataset.INT16;
+					clazz = ShortDataset.class;
 					break;
 				case "U16":
 					itemSize = 2;
-					dtype = Dataset.INT32;
+					clazz = IntegerDataset.class;
 					break;
 				case "U32":
 					itemSize = 4;
-					dtype = Dataset.INT32;
+					clazz = LongDataset.class;
 					break;
 				default:
 					throw new ScanFileHolderException("Binary number format not supported");
@@ -264,8 +264,8 @@ public class MerlinLoader extends AbstractFileLoader {
 			
 			int[] frameShape = new int[] {y, x};
 			int[] shape = ArrayUtils.addAll(this.mapShape, frameShape);
-			lazy = createLazyDataset(DATA_NAME, dtype, shape,
-					new MerlinFrameLazyDataset(f, offsetList.toArray(new Long[0]), dtype, frameShape, this.droppedFrames, this.mapShape));
+			lazy = createLazyDataset(new MerlinFrameLazyDataset(f, offsetList.toArray(new Long[0]), clazz, frameShape, this.droppedFrames, this.mapShape),
+					DATA_NAME, clazz, shape);
 
 		} catch (Exception e) {
 			throw new ScanFileHolderException("File failed to load " + fileName, e);
@@ -349,15 +349,15 @@ public class MerlinLoader extends AbstractFileLoader {
 		
 		private File file;
 		private Long[] frameOffsets;
-		private int dtype;
+		private Class< ? extends Dataset> clazz;
 		private int[] frameShape;
 		private int droppedFramesInt;
 		private int[] mapShapeInt;
 		
-		public MerlinFrameLazyDataset(File file, Long[] frameOffsets, int dtype, int[] frameShape, int droppedFrames, int[] mapShape) {
+		public MerlinFrameLazyDataset(File file, Long[] frameOffsets, Class< ? extends Dataset> clazz, int[] frameShape, int droppedFrames, int[] mapShape) {
 			this.file = file;
 			this.frameOffsets = frameOffsets;
-			this.dtype = dtype;
+			this.clazz = clazz;
 			this.frameShape = frameShape;
 			this.droppedFramesInt = droppedFrames;
 			this.mapShapeInt = mapShape;
@@ -367,26 +367,20 @@ public class MerlinLoader extends AbstractFileLoader {
 		public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
 			Dataset loaded = null;
 			Dataset temp = null;
-			Class<? extends Dataset> clazz = null;
-			switch (dtype) {
-			case Dataset.INT16:
-				clazz = ShortDataset.class;
-				break;
-			case Dataset.INT32:
-			case Dataset.INT64:
-				clazz = IntegerDataset.class;
-				break;
+			Class<? extends Dataset> iclazz = this.clazz;
+			if (LongDataset.class.equals(iclazz)) {
+				iclazz = IntegerDataset.class;
 			}
-			
-			loaded = DatasetFactory.zeros(clazz, slice.getShape());
-			temp = DatasetFactory.zeros(clazz, frameShape);
-			
+
+			loaded = DatasetFactory.zeros(iclazz, slice.getShape());
+			temp = DatasetFactory.zeros(iclazz, frameShape);
+
 			LongDataset lookup = DatasetFactory.createRange(LongDataset.class, (long) DatasetFactory.createFromObject(mapShapeInt).product(true));
 			lookup.iadd(droppedFramesInt);
 			lookup.setShape(mapShapeInt);
 			
 			Slice[] mapSlice = Arrays.copyOf(slice.convertToSlice(), slice.convertToSlice().length-2);
-			lookup = (LongDataset) lookup.getSliceView(mapSlice);				
+			lookup = (LongDataset) lookup.getSliceView(mapSlice);
 			
 			IndexIterator iter = lookup.getPositionIterator(null);
 			
@@ -396,19 +390,15 @@ public class MerlinLoader extends AbstractFileLoader {
 				try {
 					fis = new FileInputStream(file);
 					long position = frameOffsets[(int) lookup.get(pos)];
-					switch (dtype) {
-					case Dataset.INT16:
+					if (ShortDataset.class.equals(clazz)) {
 						Utils.readByte(fis, (ShortDataset) temp, position);
-						break;
-					case Dataset.INT32:
-						Utils.readBeShort(fis, (IntegerDataset) temp, position, false);			
-						break;
-					case Dataset.INT64:
+					} else if (IntegerDataset.class.equals(clazz)) {
+						Utils.readBeShort(fis, (IntegerDataset) temp, position, false);
+					} else if (LongDataset.class.equals(clazz)) {
 						Utils.readBeInt(fis, (IntegerDataset) temp, position);
-						break;
 					}
 				} catch (Exception e) {
-					throw new IOException(e);				
+					throw new IOException(e);
 				} finally {
 					if (fis != null) {
 						fis.close();

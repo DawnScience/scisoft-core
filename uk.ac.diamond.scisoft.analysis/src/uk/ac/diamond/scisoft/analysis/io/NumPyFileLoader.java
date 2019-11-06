@@ -116,7 +116,7 @@ public class NumPyFileLoader extends AbstractFileLoader {
 		fBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
 		DataTypeInfo dataTypeInfo = getDataInfo(fBuffer);
-		int dtype = dataTypeInfo .dType;
+		Class<? extends Dataset> clazz = dataTypeInfo.clazz;
 		int isize = dataTypeInfo.iSize;
 		boolean unsigned = dataTypeInfo.unsigned;
 		int[] shape = dataTypeInfo.getShape();
@@ -127,13 +127,13 @@ public class NumPyFileLoader extends AbstractFileLoader {
 
 		ILazyDataset data;
 		if (loadLazily) {
-			data = createLazyDataset(NUMPY_NAME, dtype, shape, new NumPyFileLoader(fileName));
+			data = createLazyDataset(new NumPyFileLoader(fileName), NUMPY_NAME, clazz, shape);
 		} else {
 			int tSize = isize;
 			for (int j = 0; j < rank; j++) {
 				tSize *= shape[j];
 			}
-			data = RawBinaryLoader.loadRawDataset(fBuffer, dtype, isize, tSize, shape);
+			data = RawBinaryLoader.loadRawDataset(fBuffer, isize, clazz, tSize, shape);
 			if (unsigned)
 				data = DatasetFactory.createFromObject(unsigned, data);
 		}

@@ -15,11 +15,15 @@ import java.io.FileNotFoundException;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.january.dataset.ByteDataset;
 import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.FloatDataset;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.dataset.ShortDataset;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -62,7 +66,7 @@ public class JPEGTest {
 	public void testSaveFile() throws Exception {
 		String filePath = "testSaveFile.jpg";
 		DataHolder dha = new DataHolder();
-		data = DatasetFactory.createLinearSpace(0, 255, range, Dataset.INT16);
+		data = DatasetFactory.createLinearSpace(ShortDataset.class, 0, 255, range);
 		data.setShape(sizex, sizey);
 		dha.addDataset("testing data", data);
 		new JPEGScaledSaver(testScratchDirectoryName + filePath).saveFile(dha);
@@ -86,7 +90,7 @@ public class JPEGTest {
 	public void testLoaderFactory() throws Exception {
 		String filePath = "testLoaderFactory.jpg";
 		DataHolder dha = new DataHolder();
-		data = DatasetFactory.createLinearSpace(0, 255, range, Dataset.INT16);
+		data = DatasetFactory.createLinearSpace(ShortDataset.class, 0, 255, range);
 		data.setShape(sizex, sizey);
 		dha.addDataset("testing data", data);
 		new JPEGScaledSaver(testScratchDirectoryName + filePath).saveFile(dha);
@@ -104,7 +108,7 @@ public class JPEGTest {
 	public void manyImages() throws ScanFileHolderException {
 		String filePath = "manyImages.jpg";
 		DataHolder dha = new DataHolder();
-		data = DatasetFactory.createLinearSpace(0, 255, range, Dataset.INT16);
+		data = DatasetFactory.createLinearSpace(ShortDataset.class, 0, 255, range);
 		data.setShape(sizex, sizey);
 		for (int i = 0; i < 5; i++) {
 			dha.addDataset("testing data " + i, data);
@@ -121,7 +125,7 @@ public class JPEGTest {
 	public void manyImagesScaled() throws ScanFileHolderException {
 		String filePath = "manyImagesScaled.jpg";
 		DataHolder dha = new DataHolder();
-		data = DatasetFactory.createLinearSpace(0, 250000, range, Dataset.INT32);
+		data = DatasetFactory.createLinearSpace(IntegerDataset.class, 0, 250000, range);
 		data.setShape(sizex, sizey);
 		for (int i = 0; i < 5; i++) {
 			dha.addDataset("testing data " + i, data);
@@ -139,7 +143,7 @@ public class JPEGTest {
 	public void compareDataset() throws ScanFileHolderException {
 		String filePath = "compareDataset.jpg";
 		DataHolder dha = new DataHolder();
-		data = DatasetFactory.createLinearSpace(0, 255, range, Dataset.INT16);
+		data = DatasetFactory.createLinearSpace(ShortDataset.class, 0, 255, range);
 		data.setShape(sizex, sizey);
 		dha.addDataset("testing data", data);
 		new JPEGSaver(testScratchDirectoryName + filePath).saveFile(dha);
@@ -162,7 +166,7 @@ public class JPEGTest {
 	public void compareScaledDataset() throws ScanFileHolderException {
 		String filePath = "compareScaledDataset.jpg";
 		DataHolder dha = new DataHolder();
-		data = DatasetFactory.createLinearSpace(0, 250000, range, Dataset.FLOAT32);
+		data = DatasetFactory.createLinearSpace(FloatDataset.class, 0, 250000, range);
 		data.setShape(sizex, sizey);
 		dha.addDataset("testing data", data);
 		new JPEGScaledSaver(testScratchDirectoryName + filePath).saveFile(dha);
@@ -182,7 +186,7 @@ public class JPEGTest {
 	@Test
 	public void noEnding() throws Exception {
 		DataHolder dha = new DataHolder();
-		data = DatasetFactory.createLinearSpace(0, 250000, range, Dataset.FLOAT32);
+		data = DatasetFactory.createLinearSpace(FloatDataset.class, 0, 250000, range);
 		data.setShape(sizex, sizey);
 		dha.addDataset("testing data", data);
 		new JPEGScaledSaver(testScratchDirectoryName + "noEnding.jpg").saveFile(dha);
@@ -200,7 +204,7 @@ public class JPEGTest {
 	public void incorrectEnding() throws Exception {
 		String filePath = "incorrectEnding.txt";
 		String filePath1 = "incorrectEnding1.txt";
-		data = DatasetFactory.createLinearSpace(0, 126, range, Dataset.INT8);
+		data = DatasetFactory.createLinearSpace(ByteDataset.class, 0, 126, range);
 		data.setShape(sizex, sizey);
 		DataHolder dha = new DataHolder();
 		dha.addDataset("testing data", data);

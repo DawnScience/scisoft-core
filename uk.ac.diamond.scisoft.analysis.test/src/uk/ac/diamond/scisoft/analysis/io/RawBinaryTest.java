@@ -16,7 +16,10 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ShortDataset;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -53,7 +56,7 @@ public class RawBinaryTest {
 	public void test2DSaveFile() throws ScanFileHolderException {
 		String filePath2D = "test2DSaveFile.raw";
 		DataHolder dh = new DataHolder();
-		data = DatasetFactory.createLinearSpace(0, range, range, Dataset.FLOAT64);
+		data = DatasetFactory.createLinearSpace(DoubleDataset.class, 0, range, range);
 		data.setShape(sizex, sizey);
 		data.setName("test 2D");
 		testValue1 = data.getDouble(sizex-1, 0);
@@ -91,7 +94,7 @@ public class RawBinaryTest {
 	public void test1DSaveFile() throws ScanFileHolderException {
 		String filePath1D = "test1DSaveFile.raw";
 		DataHolder dh = new DataHolder();
-		data = DatasetFactory.createLinearSpace(0, range, range, Dataset.FLOAT32);
+		data = DatasetFactory.createLinearSpace(FloatDataset.class, 0, range, range);
 		data.setName("test 1D");
 		try {
 			dh.addDataset("testing data", data);
@@ -118,7 +121,7 @@ public class RawBinaryTest {
 	public void testLoaderFactory() throws Exception {
 		String filePath1D = "testLoaderFactory.raw";
 		IDataHolder dh = new DataHolder();
-		data = DatasetFactory.createLinearSpace(0, range, range, Dataset.INT16);
+		data = DatasetFactory.createLinearSpace(ShortDataset.class, 0, range, range);
 		data.setName("test factory");
 		try {
 			dh.addDataset("testing data", data);

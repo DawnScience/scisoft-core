@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.ILazyDataset;
@@ -86,8 +85,8 @@ public class PilatusEdfLoader extends AbstractFileLoader {
 				String dataType = textMetadata.get("DataType");
 				if (loadLazily) {
 					// This does not provide support for 64-bit datatypes, which may be present in EDF files.
-					data = createLazyDataset(DEF_IMAGE_NAME, DATA_NAME, dataType.equals("Float") ? Dataset.FLOAT32 : Dataset.INT32,
-							shape, new PilatusEdfLoader(fileName));
+					data = createLazyDataset(new PilatusEdfLoader(fileName), DEF_IMAGE_NAME, DATA_NAME, dataType.equals("Float") ? FloatDataset.class : IntegerDataset.class,
+							shape);
 				} else {
 					boolean le = "LowByteFirst".equals(textMetadata.get("ByteOrder"));
 					boolean signed = dataType.startsWith("Signed");

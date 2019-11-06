@@ -163,11 +163,12 @@ public class TIFFImageLoader extends JavaImageLoader {
 				}
 			}
 		}
-		int dtype = AWTImageUtils.getDTypeFromImage(its.getSampleModel(), keepBitWidth)[0];
+
+		Class<? extends Dataset> clazz = AWTImageUtils.getInterface(its.getSampleModel(), keepBitWidth);
 		if (n == 1) {
 			ILazyDataset image;
 			if (loadLazily) {
-				image = createLazyDataset(dtype, height, width);
+				image = createLazyDataset(clazz, height, width);
 			} else {
 				image = createDataset(reader.read(0));
 			}
@@ -176,7 +177,7 @@ public class TIFFImageLoader extends JavaImageLoader {
 				mergeMetadata(image);
 			output.addDataset(DEF_IMAGE_NAME, image);
 		} else if (allSame) {
-			ILazyDataset ld = createLazyDataset(dtype, n, height, width);
+			ILazyDataset ld = createLazyDataset(clazz, n, height, width);
 			ld.setMetadata(metadata);
 			output.addDataset(STACK_NAME, ld);
 		} else {
@@ -211,7 +212,7 @@ public class TIFFImageLoader extends JavaImageLoader {
 		}
 	}
 
-	private ILazyDataset createLazyDataset(final int dtype, final int... trueShape) {
+	private ILazyDataset createLazyDataset(Class<? extends Dataset> clazz, final int... trueShape) {
 		LazyLoaderStub l = new LazyLoaderStub() {
 			@Override
 			public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
@@ -262,10 +263,10 @@ public class TIFFImageLoader extends JavaImageLoader {
 							}
 						}
 
-						d = loadData(mon, fileName, asGrey, keepBitWidth, dtype, shape, tstart, tsize, tstep);
+						d = loadData(clazz, mon, fileName, asGrey, keepBitWidth, shape, tstart, tsize, tstep);
 						d.setShape(newShape); // squeeze shape back
 					} else {
-						d = loadData(mon, fileName, asGrey, keepBitWidth, dtype, shape, lstart, newShape, lstep);
+						d = loadData(clazz, mon, fileName, asGrey, keepBitWidth, shape, lstart, newShape, lstep);
 					}
 				} catch (ScanFileHolderException e) {
 					throw new IOException("Problem with TIFF loading", e);
@@ -275,11 +276,11 @@ public class TIFFImageLoader extends JavaImageLoader {
 
 		};
 
-		return createLazyDataset(STACK_NAME, dtype, trueShape.clone(), l);
+		return createLazyDataset(l, STACK_NAME, clazz, trueShape.clone());
 	}
 
-	private static Dataset loadData(IMonitor mon, String filename, boolean asGrey, boolean keepBitWidth,
-			int dtype, int[] oshape, int[] start, int[] count, int[] step) throws ScanFileHolderException {
+	private static Dataset loadData(Class<? extends Dataset> clazz, IMonitor mon, String filename, boolean asGrey, boolean keepBitWidth,
+			int[] oshape, int[] start, int[] count, int[] step) throws ScanFileHolderException {
 		ImageInputStream iis = null;
 		ImageReader reader = null;
 
@@ -296,7 +297,7 @@ public class TIFFImageLoader extends JavaImageLoader {
 				nstep);
 		SliceND dSlice = new SliceND(count);
 
-		Dataset d = is2D || count[0] == 1 ? null : DatasetFactory.zeros(count, dtype);
+		Dataset d = is2D || count[0] == 1 ? null : DatasetFactory.zeros(clazz, count);
 
 		try {
 			// test to see if the filename passed will load

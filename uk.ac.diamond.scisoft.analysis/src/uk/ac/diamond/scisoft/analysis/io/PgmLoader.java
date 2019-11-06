@@ -84,7 +84,7 @@ public class PgmLoader extends AbstractFileLoader {
 			int maxval = vals[3];
 
 			if (loadLazily) {
-				data = createLazyDataset(DEF_IMAGE_NAME, maxval < 256 ? Dataset.INT16 : Dataset.INT32, new int[] {height, width}, new LazyLoaderStub() {
+				data = createLazyDataset(new LazyLoaderStub() {
 					@Override
 					public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
 						try {
@@ -94,7 +94,7 @@ public class PgmLoader extends AbstractFileLoader {
 							throw new IOException(e);
 						}
 					}
-				});
+				}, DEF_IMAGE_NAME, maxval < 256 ? ShortDataset.class: IntegerDataset.class, height, width);
 			} else {
 				// Now read the data
 				if (maxval < 256) {

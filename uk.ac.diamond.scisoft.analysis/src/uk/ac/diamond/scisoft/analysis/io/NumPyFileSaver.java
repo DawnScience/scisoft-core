@@ -87,11 +87,11 @@ public class NumPyFileSaver implements IFileSaver {
 				throw new ScanFileHolderException("Dataset null at index " + i + " unsupported");
 			}
 			Dataset sdata = DatasetUtils.convertToDataset(dataset);
-			int dtype = sdata.getDType();
+			Class<? extends Dataset> clazz = sdata.getClass();
 			DataTypeInfo dataTypeInfo;
-			dataTypeInfo = unsigned ? NumPyFile.unsignedNumPyTypeMap.get(dtype) : NumPyFile.numPyTypeMap.get(dtype);
+			dataTypeInfo = unsigned ? NumPyFile.unsignedNumPyTypeMap.get(clazz) : NumPyFile.numPyTypeMap.get(clazz);
 			if (dataTypeInfo == null) { // ignore unsigned flag if not found
-				dataTypeInfo = NumPyFile.numPyTypeMap.get(dtype);
+				dataTypeInfo = NumPyFile.numPyTypeMap.get(clazz);
 			}
 			if (dataTypeInfo == null) {
 				throw new ScanFileHolderException("Unsupported data types for NumPy File Saver");
@@ -102,8 +102,8 @@ public class NumPyFileSaver implements IFileSaver {
 				throw new ScanFileHolderException("Number of elements in each item exceeds allowed maximum of 255");
 			}
 			if (unsigned) {
-				dtype = dataTypeInfo.dType;
-				sdata = DatasetUtils.cast(sdata, dtype);
+				clazz = dataTypeInfo.clazz;
+				sdata = sdata.cast(clazz);
 			}
 
 			byte isize = (byte) is;
@@ -165,7 +165,7 @@ public class NumPyFileSaver implements IFileSaver {
 				while (hdrBuffer.hasRemaining())
 					fc.write(hdrBuffer);
 
-				ByteBuffer dbBuffer = RawBinarySaver.saveRawDataset(sdata, dtype, isize);
+				ByteBuffer dbBuffer = RawBinarySaver.saveRawDataset(isize, clazz, sdata);
 				dbBuffer.rewind();
 				while (dbBuffer.hasRemaining())
 					fc.write(dbBuffer);

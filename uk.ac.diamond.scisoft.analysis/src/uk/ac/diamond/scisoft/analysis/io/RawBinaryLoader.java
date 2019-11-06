@@ -37,6 +37,7 @@ import org.eclipse.january.dataset.CompoundFloatDataset;
 import org.eclipse.january.dataset.CompoundIntegerDataset;
 import org.eclipse.january.dataset.CompoundLongDataset;
 import org.eclipse.january.dataset.CompoundShortDataset;
+import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
@@ -69,7 +70,6 @@ import org.eclipse.january.metadata.StatisticsMetadata;
 public class RawBinaryLoader extends AbstractFileLoader {
 	private String dName;
 	private int[] shape;
-	private int dtype;
 	private int isize;
 	
 	public RawBinaryLoader() {
@@ -102,7 +102,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			MappedByteBuffer fBuffer = fc.map(MapMode.READ_ONLY, 0, fc.size());
 			fBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
-			readHeader(fBuffer);
+			int dtype = readHeader(fBuffer);
 
 			while (fBuffer.position() % 4 != 0) // move past any padding
 				fBuffer.get();
@@ -129,17 +129,18 @@ public class RawBinaryLoader extends AbstractFileLoader {
 					break;
 				}
 			}
+			Class<? extends Dataset> clazz = DTypeUtils.getInterface(dtype);
 
 			ILazyDataset data;
 			if (loadLazily) {
-				data = createLazyDataset(dName, dtype, shape, new RawBinaryLoader(fileName));
+				data = createLazyDataset(new RawBinaryLoader(fileName), dName, clazz, shape);
 			} else {
 				int tSize = isize;
 				for (int j = 0; j < shape.length; j++) {
 					tSize *= shape[j];
 				}
 
-				data = loadRawDataset(fBuffer, dtype, isize, tSize, shape);
+				data = loadRawDataset(fBuffer, isize, clazz, tSize, shape);
 				data.setName(dName);
 			}
 			fc.close();
@@ -163,11 +164,11 @@ public class RawBinaryLoader extends AbstractFileLoader {
 		return output;
 	}
 
-	void readHeader(ByteBuffer fBuffer) throws ScanFileHolderException, UnsupportedEncodingException {
+	int readHeader(ByteBuffer fBuffer) throws ScanFileHolderException, UnsupportedEncodingException {
 		if (RawBinarySaver.getFormatTag() != fBuffer.getInt()) {
 			throw new ScanFileHolderException("File does not start with a Diamond format tag " + String.format("%x", fBuffer.getInt()));
 		}
-		dtype = fBuffer.get();
+		byte dtype = fBuffer.get();
 		isize = fBuffer.get();
 		if (isize < 0) isize += 256;
 		int rank = fBuffer.get();
@@ -186,8 +187,9 @@ public class RawBinaryLoader extends AbstractFileLoader {
 		if (nlen > 0) {
 			dName = new String(name, "UTF-8");
 		} else {
-		    dName = "RAW file";			
+			dName = "RAW file";
 		}
+		return dtype;
 	}
 
 	@Override
@@ -232,11 +234,11 @@ public class RawBinaryLoader extends AbstractFileLoader {
 	 * @param fBuffer
 	 *            buffer to load data set from, must by in LITTLE_ENDIAN and current position be the first byte of the
 	 *            raw data with the remaining number of bytes being the total size in bytes.
-	 * @param dtype
-	 *            Data type of the data to load, see {@link Dataset} for list of types (e.g. @link
-	 *            {@link Dataset#FLOAT64}
 	 * @param isize
 	 *            Data item size
+	 * @param clazz
+	 *            Data interface type of the data to load, see sub-interfaces of {@link Dataset} (e.g. @link
+	 *            {@link DoubleDataset})
 	 * @param tSize
 	 *            Data total size in element size
 	 * @param shape
@@ -245,15 +247,14 @@ public class RawBinaryLoader extends AbstractFileLoader {
 	 * @throws ScanFileHolderException
 	 *             if a detected error is encountered, or wraps an underlying exception
 	 */
-	public static Dataset loadRawDataset(ByteBuffer fBuffer, int dtype, int isize, int tSize, int[] shape)
+	public static Dataset loadRawDataset(ByteBuffer fBuffer, int isize, Class<? extends Dataset> clazz, int tSize, int[] shape)
 			throws ScanFileHolderException {
 		Dataset data = null;
 		@SuppressWarnings("rawtypes")
 		StatisticsMetadata stats = null;
 		int hash = 0;
 		double dhash = 0;
-		switch (dtype) {
-		case Dataset.BOOL:
+		if (BooleanDataset.class.equals(clazz)) {
 			BooleanDataset b = DatasetFactory.zeros(BooleanDataset.class, shape);
 			if (fBuffer.remaining() != tSize) {
 				throw new ScanFileHolderException("Data size, " + fBuffer.remaining()
@@ -273,8 +274,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			}
 			data = b;
 			stats = storeStats(data, maxA ? 1 : 0, minA ? 1 : 0);
-			break;
-		case Dataset.INT8:
+		} else if (ByteDataset.class.equals(clazz)) {
 			ByteDataset i8 = DatasetFactory.zeros(ByteDataset.class, shape);
 			if (fBuffer.remaining() != tSize) {
 				throw new ScanFileHolderException("Data size, " + fBuffer.remaining()
@@ -294,8 +294,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			}
 			data = i8;
 			stats = storeStats(data, maxB, minB);
-			break;
-		case Dataset.INT16:
+		} else if (ShortDataset.class.equals(clazz)) {
 			ShortDataset i16 = DatasetFactory.zeros(ShortDataset.class, shape);
 			ShortBuffer sDataBuffer = fBuffer.asShortBuffer();
 			if (sDataBuffer.remaining() != tSize) {
@@ -316,8 +315,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			}
 			data = i16;
 			stats = storeStats(data, maxS, minS);
-			break;
-		case Dataset.INT32:
+		} else if (IntegerDataset.class.equals(clazz)) {
 			IntegerDataset i32 = DatasetFactory.zeros(IntegerDataset.class, shape);
 			IntBuffer iDataBuffer = fBuffer.asIntBuffer();
 			if (iDataBuffer.remaining() != tSize) {
@@ -338,8 +336,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			}
 			data = i32;
 			stats = storeStats(data, maxI, minI);
-			break;
-		case Dataset.INT64:
+		} else if (LongDataset.class.equals(clazz)) {
 			LongDataset i64 = DatasetFactory.zeros(LongDataset.class, shape);
 			LongBuffer lDataBuffer = fBuffer.asLongBuffer();
 			if (lDataBuffer.remaining() != tSize) {
@@ -360,67 +357,62 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			}
 			data = i64;
 			stats = storeStats(data, maxL, minL);
-			break;
-		case Dataset.ARRAYINT8:
+		} else if (CompoundByteDataset.class.equals(clazz)) {
 			CompoundByteDataset ci8 = DatasetFactory.zeros(isize, CompoundByteDataset.class, shape);
 			if (fBuffer.remaining() != tSize) {
 				throw new ScanFileHolderException("Data size, " + fBuffer.remaining()
 						+ ", does not match expected, " + tSize);
 			}
-			dataB = ci8.getData();
+			byte[] dataB = ci8.getData();
 			for (int j = 0; j < tSize; j++) {
 				byte v = fBuffer.get();
 				hash = hash * 19 + v;
 				dataB[j] = v;
 			}
 			data = ci8;
-			break;
-		case Dataset.ARRAYINT16:
+		} else if (CompoundShortDataset.class.equals(clazz)) {
 			CompoundShortDataset ci16 = DatasetFactory.zeros(isize, CompoundShortDataset.class, shape);
-			sDataBuffer = fBuffer.asShortBuffer();
+			ShortBuffer sDataBuffer = fBuffer.asShortBuffer();
 			if (sDataBuffer.remaining() != tSize) {
 				throw new ScanFileHolderException("Data size, " + sDataBuffer.remaining()
 						+ ", does not match expected, " + tSize);
 			}
-			dataS = ci16.getData();
+			short[] dataS = ci16.getData();
 			for (int j = 0; j < tSize; j++) {
 				short v = sDataBuffer.get();
 				hash = hash * 19 + v;
 				dataS[j] = v;
 			}
 			data = ci16;
-			break;
-		case Dataset.ARRAYINT32:
+		} else if (CompoundIntegerDataset.class.equals(clazz)) {
 			CompoundIntegerDataset ci32 = DatasetFactory.zeros(isize, CompoundIntegerDataset.class, shape);
-			iDataBuffer = fBuffer.asIntBuffer();
+			IntBuffer iDataBuffer = fBuffer.asIntBuffer();
 			if (iDataBuffer.remaining() != tSize) {
 				throw new ScanFileHolderException("Data size, " + iDataBuffer.remaining()
 						+ ", does not match expected, " + tSize);
 			}
-			dataI = ci32.getData();
+			int[] dataI = ci32.getData();
 			for (int j = 0; j < tSize; j++) {
 				int v = iDataBuffer.get();
 				hash = hash * 19 + v;
 				dataI[j] = v;
 			}
 			data = ci32;
-			break;
-		case Dataset.ARRAYINT64:
+		} else if (CompoundLongDataset.class.equals(clazz)) {
 			CompoundLongDataset ci64 = DatasetFactory.zeros(isize, CompoundLongDataset.class, shape);
-			lDataBuffer = fBuffer.asLongBuffer();
+			LongBuffer lDataBuffer = fBuffer.asLongBuffer();
 			if (lDataBuffer.remaining() != tSize) {
 				throw new ScanFileHolderException("Data size, " + lDataBuffer.remaining()
 						+ ", does not match expected, " + tSize);
 			}
-			dataL = ci64.getData();
+			long[] dataL = ci64.getData();
 			for (int j = 0; j < tSize; j++) {
 				long v = lDataBuffer.get();
 				hash = hash * 19 + (int) v;
 				dataL[j] = v;
 			}
 			data = ci64;
-			break;
-		case Dataset.FLOAT32:
+		} else if (FloatDataset.class.equals(clazz)) {
 			FloatBuffer fltDataBuffer = fBuffer.asFloatBuffer();
 			FloatDataset f32 = DatasetFactory.zeros(FloatDataset.class, shape);
 			if (fltDataBuffer.remaining() != tSize) {
@@ -452,15 +444,14 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			data = f32;
 			stats = storeStats(data, maxF, minF);
 			hash = (int) dhash;
-			break;
-		case Dataset.ARRAYFLOAT32:
+		} else if (CompoundFloatDataset.class.equals(clazz)) {
 			CompoundFloatDataset cf32 = DatasetFactory.zeros(isize, CompoundFloatDataset.class, shape);
-			fltDataBuffer = fBuffer.asFloatBuffer();
+			FloatBuffer fltDataBuffer = fBuffer.asFloatBuffer();
 			if (fltDataBuffer.remaining() != tSize) {
 				throw new ScanFileHolderException("Data size, " + fltDataBuffer.remaining()
 						+ ", does not match expected, " + tSize);
 			}
-			dataFlt = cf32.getData();
+			float[] dataFlt = cf32.getData();
 			for (int j = 0; j < tSize; j++) {
 				float v = fltDataBuffer.get();
 				if (Float.isInfinite(v) || Float.isNaN(v))
@@ -472,15 +463,14 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			}
 			data = cf32;
 			hash = (int) dhash;
-			break;
-		case Dataset.COMPLEX64:
+		} else if (ComplexFloatDataset.class.equals(clazz)) {
 			ComplexFloatDataset c64 = DatasetFactory.zeros(ComplexFloatDataset.class, shape);
-			fltDataBuffer = fBuffer.asFloatBuffer();
+			FloatBuffer fltDataBuffer = fBuffer.asFloatBuffer();
 			if (fltDataBuffer.remaining() != tSize) {
 				throw new ScanFileHolderException("Data size, " + fltDataBuffer.remaining()
 						+ ", does not match expected, " + tSize);
 			}
-			dataFlt = c64.getData();
+			float[] dataFlt = c64.getData();
 			dhash = 0;
 			for (int j = 0; j < tSize; j++) {
 				float v = fltDataBuffer.get();
@@ -493,9 +483,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			}
 			data = c64;
 			hash = (int) dhash;
-			break;
-		case -1: // old dataset
-		case Dataset.FLOAT64:
+		} else if (clazz == null || DoubleDataset.class.equals(clazz)) {
 			DoubleDataset f64 = DatasetFactory.zeros(DoubleDataset.class, shape);
 			DoubleBuffer dblDataBuffer = fBuffer.asDoubleBuffer();
 			if (dblDataBuffer.remaining() != tSize) {
@@ -528,15 +516,14 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			data = f64;
 			stats = storeStats(data, maxD, minD);
 			hash = (int) dhash;
-			break;
-		case Dataset.ARRAYFLOAT64:
+		} else if (CompoundDoubleDataset.class.equals(clazz)) {
 			CompoundDoubleDataset cf64 = DatasetFactory.zeros(isize, CompoundDoubleDataset.class, shape);
-			dblDataBuffer = fBuffer.asDoubleBuffer();
+			DoubleBuffer dblDataBuffer = fBuffer.asDoubleBuffer();
 			if (dblDataBuffer.remaining() != tSize) {
 				throw new ScanFileHolderException("Data size, " + dblDataBuffer.remaining()
 						+ ", does not match expected, " + tSize);
 			}
-			dataDbl = cf64.getData();
+			double[] dataDbl = cf64.getData();
 			for (int j = 0; j < tSize; j++) {
 				double v = dblDataBuffer.get();
 				if (Double.isInfinite(v) || Double.isNaN(v))
@@ -548,15 +535,14 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			}
 			data = cf64;
 			hash = (int) dhash;
-			break;
-		case Dataset.COMPLEX128:
+		} else if (ComplexDoubleDataset.class.equals(clazz)) {
 			ComplexDoubleDataset c128 = DatasetFactory.zeros(ComplexDoubleDataset.class, shape);
-			dblDataBuffer = fBuffer.asDoubleBuffer();
+			DoubleBuffer dblDataBuffer = fBuffer.asDoubleBuffer();
 			if (dblDataBuffer.remaining() != tSize) {
 				throw new ScanFileHolderException("Data size, " + dblDataBuffer.remaining()
 						+ ", does not match expected, " + tSize);
 			}
-			dataDbl = c128.getData();
+			double[] dataDbl = c128.getData();
 			for (int j = 0; j < tSize; j++) {
 				double v = dblDataBuffer.get();
 				if (Double.isInfinite(v) || Double.isNaN(v))
@@ -568,9 +554,8 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			}
 			data = c128;
 			hash = (int) dhash;
-			break;
-		default:
-			throw new ScanFileHolderException("Dataset type not supported");				
+		} else {
+			throw new ScanFileHolderException("Dataset type not supported");
 		}
 
 		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
@@ -598,7 +583,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			}
 		}
 
-		stats.setMaximumMinimum(max, min);
+		stats.setMaximumMinimumSum(max, min, null);
 		data.addMetadata(stats);
 		return stats;
 	}

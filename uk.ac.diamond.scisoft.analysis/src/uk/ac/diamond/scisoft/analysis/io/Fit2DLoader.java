@@ -19,7 +19,6 @@ import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.ILazyDataset;
@@ -82,7 +81,7 @@ public class Fit2DLoader extends AbstractFileLoader {
 			// Now read the data
 			int[] shape = new int[] {Integer.parseInt(textMetadata.get("Dim_2")), Integer.parseInt(textMetadata.get("Dim_1"))};
 			if (loadLazily) {
-				data = createLazyDataset(DATA_NAME, Dataset.FLOAT32, shape, new Fit2DLoader(fileName));
+				data = createLazyDataset(new Fit2DLoader(fileName), DATA_NAME, FloatDataset.class, shape);
 			} else {
 				data = DatasetFactory.zeros(FloatDataset.class, shape);
 				Utils.readLeFloat(fi, (FloatDataset) data, index);

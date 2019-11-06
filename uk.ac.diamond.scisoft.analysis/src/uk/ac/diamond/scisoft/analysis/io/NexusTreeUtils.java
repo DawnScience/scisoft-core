@@ -1354,7 +1354,7 @@ public class NexusTreeUtils {
 			throw new IllegalArgumentException("Geometry subnode is missing dataset");
 		}
 		DataNode dNode = (DataNode) l.getDestination();
-		DoubleDataset ds = (DoubleDataset) getCastAndCacheData(dNode, Dataset.FLOAT64);
+		DoubleDataset ds = (DoubleDataset) getCastAndCacheData(dNode, DoubleDataset.class);
 		if (ds == null) {
 			logger.warn("Geometry subnode {} has an empty dataset", link.getName());
 			return;
@@ -1981,7 +1981,7 @@ public class NexusTreeUtils {
 			return null;
 
 		return attr.getSize() == 1 ? parseString(attr.getFirstElement()) :
-			((StringDataset) DatasetUtils.cast(attr.getValue(), Dataset.STRING)).getData();
+			DatasetUtils.cast(StringDataset.class, attr.getValue()).getData();
 	}
 
 	/**
@@ -1993,7 +1993,7 @@ public class NexusTreeUtils {
 		if (n == null || !(n instanceof DataNode))
 			return null;
 
-		StringDataset id = (StringDataset) getCastAndCacheData((DataNode) n, Dataset.STRING);
+		StringDataset id = (StringDataset) getCastAndCacheData((DataNode) n, StringDataset.class);
 		return id.getData();
 	}
 
@@ -2053,13 +2053,13 @@ public class NexusTreeUtils {
 		int[] array;
 		if (attr.isString()) {
 			String[] str = attr.getSize() == 1 ? parseString(attr.getFirstElement()) :
-				((StringDataset) DatasetUtils.cast(attr.getValue(), Dataset.STRING)).getData();
+				DatasetUtils.cast(StringDataset.class, attr.getValue()).getData();
 			array = new int[str.length];
 			for (int i = 0; i < str.length; i++) {
 				array[i] = Integer.parseInt(str[i]);
 			}
 		} else {
-			IntegerDataset id = (IntegerDataset) DatasetUtils.cast(attr.getValue(), Dataset.INT32);
+			IntegerDataset id = DatasetUtils.cast(IntegerDataset.class, attr.getValue());
 			array = id.getData().clone();
 		}
 		return array;
@@ -2089,7 +2089,7 @@ public class NexusTreeUtils {
 		if (n == null || !(n instanceof DataNode))
 			return null;
 
-		IntegerDataset id = (IntegerDataset) getCastAndCacheData((DataNode) n, Dataset.INT32);
+		IntegerDataset id = (IntegerDataset) getCastAndCacheData((DataNode) n, IntegerDataset.class);
 		if (id == null) {
 			return null;
 		}
@@ -2137,13 +2137,13 @@ public class NexusTreeUtils {
 		double[] array;
 		if (attr.isString()) {
 			String[] str = attr.getSize() == 1 ? parseString(attr.getFirstElement()) :
-				((StringDataset) DatasetUtils.cast(attr.getValue(), Dataset.STRING)).getData();
+				DatasetUtils.cast(StringDataset.class, attr.getValue()).getData();
 			array = new double[str.length];
 			for (int i = 0; i < str.length; i++) {
 				array[i] = Double.parseDouble(str[i]);
 			}
 		} else {
-			DoubleDataset dd = (DoubleDataset) DatasetUtils.cast(attr.getValue(), Dataset.FLOAT64);
+			DoubleDataset dd = DatasetUtils.cast(DoubleDataset.class, attr.getValue());
 			array = dd.getData().clone();
 		}
 		return array;
@@ -2174,7 +2174,7 @@ public class NexusTreeUtils {
 			return null;
 		}
 
-		DoubleDataset dd = (DoubleDataset) getCastAndCacheData((DataNode) n, Dataset.FLOAT64);
+		DoubleDataset dd = (DoubleDataset) getCastAndCacheData((DataNode) n, DoubleDataset.class);
 		if (dd == null) {
 			return null;
 		}
@@ -2210,10 +2210,10 @@ public class NexusTreeUtils {
 	}
 
 	private static Dataset getAndCacheData(DataNode dNode) {
-		return getCastAndCacheData(dNode, -1);
+		return getCastAndCacheData(dNode, null);
 	}
 
-	private static Dataset getCastAndCacheData(DataNode dNode, int dtype) {
+	private static Dataset getCastAndCacheData(DataNode dNode, Class<? extends Dataset> clazz) {
 		ILazyDataset ld = dNode.getDataset();
 		Dataset dataset;
 		if (ld == null) {
@@ -2230,15 +2230,15 @@ public class NexusTreeUtils {
 			}
 			dNode.setDataset(dataset);
 		}
-		if (dtype >= 0 && dataset.getDType() != dtype) {
-			dataset = DatasetUtils.cast(dataset, dtype);
+		if (clazz != null && !dataset.getClass().equals(clazz)) {
+			dataset = dataset.cast(clazz);
 			dNode.setDataset(dataset);
 		}
 		return dataset;
 	}
 
 	private static DoubleDataset getConvertedData(DataNode data, Unit<? extends Quantity<?>> unit) {
-		DoubleDataset values = (DoubleDataset) getCastAndCacheData(data, Dataset.FLOAT64);
+		DoubleDataset values = (DoubleDataset) getCastAndCacheData(data, DoubleDataset.class);
 		if (values != null) {
 			values = values.clone(); // necessary to stop clobbering cached values
 			convertIfNecessary(unit, getFirstString(data.getAttribute(NexusConstants.UNITS)), values.getData());

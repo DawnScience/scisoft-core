@@ -107,7 +107,7 @@ public class RAxisImageLoader extends AbstractFileLoader implements Serializable
 
 			ILazyDataset data;
 			if (loadLazily) {
-				data = createLazyDataset(DEF_IMAGE_NAME, DATA_NAME, -1, shape, new RAxisImageLoader(fileName));
+				data = createLazyDataset(new RAxisImageLoader(fileName), DEF_IMAGE_NAME, DATA_NAME, null, shape);
 			} else {
 				data = Utils.createDataset(raf, shape, keepBitWidth);
 				data.setName(DEF_IMAGE_NAME);

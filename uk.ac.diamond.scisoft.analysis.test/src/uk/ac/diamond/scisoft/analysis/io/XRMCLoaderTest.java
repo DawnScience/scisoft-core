@@ -26,7 +26,7 @@ public class XRMCLoaderTest {
 	static final String testFileName = "testfiles/images/image.xrmc";
 	XRMCLoader loader;
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() {
 		loader = new XRMCLoader(testFileName);
 	}
 

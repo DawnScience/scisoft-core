@@ -16,7 +16,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
@@ -128,8 +127,7 @@ public class XMapLoader extends AbstractFileLoader {
 
 			if (loadLazily) {
 				for (int c = 0; c < CHANNELS; c++) {
-					data[c] = createLazyDataset("Channel" + c, Dataset.INT16, new int[] { count[c], size[c] },
-							new XMapLoader(fileName));
+					data[c] = createLazyDataset(new XMapLoader(fileName), "Channel" + c, ShortDataset.class, count[c], size[c]);
 				}
 			}
 		} catch (Exception e) {

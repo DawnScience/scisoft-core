@@ -28,13 +28,16 @@ import javax.media.jai.PlanarImage;
 import javax.media.jai.RasterFactory;
 import javax.media.jai.TiledImage;
 
+import org.eclipse.january.dataset.ByteDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.RGBDataset;
+import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.metadata.IMetadata;
 import org.eclipse.january.metadata.Metadata;
 
@@ -49,23 +52,23 @@ public class AWTImageUtils {
 	 * Create datasets from a Raster
 	 * @param r raster
 	 * @param data array to output datasets
-	 * @param dtype dataset type
+	 * @param clazz dataset interface
 	 */
-	static public void createDatasets(Raster r, Dataset[] data, final int dtype) {
+	public static void createDatasets(Raster r, Dataset[] data, Class <? extends Dataset> clazz) {
 		final int bands = data.length;
 		final int height = r.getHeight();
 		final int width = r.getWidth();
 		Dataset tmp;
 
 		for (int i = 0; i < bands; i++) {
-			if (dtype == Dataset.FLOAT32) {
+			if (FloatDataset.class.equals(clazz)) {
 				tmp =  DatasetFactory.createFromObject(r.getSamples(0, 0, width, height, i, (float[]) null), height, width);
-			} else if (dtype == Dataset.FLOAT64) {
+			} else if (DoubleDataset.class.equals(clazz)) {
 				tmp = DatasetFactory.createFromObject(r.getSamples(0, 0, width, height, i, (double[]) null), height, width);
-			} else if (dtype == Dataset.INT32) {
+			} else if (IntegerDataset.class.equals(clazz)) {
 				tmp = DatasetFactory.createFromObject(r.getSamples(0, 0, width, height, i, (int[]) null), height, width);
 			} else {
-				tmp = DatasetFactory.createFromObject(dtype, r.getSamples(0, 0, width, height, i, (int[]) null), height, width);
+				tmp = DatasetFactory.createFromObject(clazz, r.getSamples(0, 0, width, height, i, (int[]) null), height, width);
 			}
 			data[i] = tmp;
 		}
@@ -81,13 +84,15 @@ public class AWTImageUtils {
 		// make raster from buffered image
 		final Raster ras = image.getData();
 		final SampleModel sm = ras.getSampleModel();
-		int[] dtype = getDTypeFromImage(sm, keepBitWidth);
+		int dbType = reduceDataBufferType(sm);
+		Class<? extends Dataset> clazz = getInterfaceFromDataBufferType(dbType, keepBitWidth);
 
 		final int bands = ras.getNumBands();
 		Dataset[] data = new Dataset[bands];
 
-		createDatasets(ras, data, dtype[0]);
-		if (dtype[1] == 1) {
+		createDatasets(ras, data, clazz);
+
+		if (dbType == DataBuffer.TYPE_USHORT && !keepBitWidth) {
 			for (int i = 0; i < bands; i++) {
 				tagIntForShortDataset(data[i]);
 			}
@@ -103,7 +108,32 @@ public class AWTImageUtils {
 		ret.setMetadata(metadata);
 	}
 
-	static public int[] getDTypeFromImage(final SampleModel sm, boolean keepBitWidth) {
+	/**
+	 * Get dataset interface from data buffer type
+	 * @param dbtype
+	 * @param keepBitWidth
+	 * @return dataset interface
+	 */
+	private static Class<? extends Dataset> getInterfaceFromDataBufferType(final int dbtype, boolean keepBitWidth) {
+		switch (dbtype) {
+		case DataBuffer.TYPE_BYTE:
+			return keepBitWidth ? ByteDataset.class : ShortDataset.class;
+		case DataBuffer.TYPE_SHORT:
+			return ShortDataset.class;
+		case DataBuffer.TYPE_USHORT:
+			return keepBitWidth ? ShortDataset.class : IntegerDataset.class;
+		case DataBuffer.TYPE_INT:
+			return IntegerDataset.class;
+		case DataBuffer.TYPE_FLOAT:
+			return FloatDataset.class;
+		case DataBuffer.TYPE_DOUBLE:
+			return DoubleDataset.class;
+		}
+
+		return null;
+	}
+
+	private static int reduceDataBufferType(final SampleModel sm) {
 		int dbtype = sm.getDataType();
 		final int bits = sm.getSampleSize(0);
 		if (dbtype == DataBuffer.TYPE_INT) {
@@ -125,29 +155,17 @@ public class AWTImageUtils {
 				dbtype = DataBuffer.TYPE_BYTE;
 			}
 		}
-		int dtype = -1;
-		switch (dbtype) {
-		case DataBuffer.TYPE_BYTE:
-			dtype = keepBitWidth ? Dataset.INT8 : Dataset.INT16;
-			break;
-		case DataBuffer.TYPE_SHORT:
-			dtype = Dataset.INT16;
-			break;
-		case DataBuffer.TYPE_USHORT:
-			dtype = keepBitWidth ? Dataset.INT16 : Dataset.INT32;
-			break;
-		case DataBuffer.TYPE_INT:
-			dtype = Dataset.INT32;
-			break;
-		case DataBuffer.TYPE_DOUBLE:
-			dtype = Dataset.FLOAT64;
-			break;
-		case DataBuffer.TYPE_FLOAT:
-			dtype = Dataset.FLOAT32;
-			break;
-		}
+		return dbtype;
+	}
 
-		return new int[] {dtype, dbtype == DataBuffer.TYPE_USHORT && !keepBitWidth ? 1 : 0};
+	/**
+	 * Get dataset interface from given sample model
+	 * @param sm
+	 * @param keepBitWidth
+	 * @return dataset interface
+	 */
+	public static Class<? extends Dataset> getInterface(final SampleModel sm, boolean keepBitWidth) {
+		return getInterfaceFromDataBufferType(reduceDataBufferType(sm), keepBitWidth);
 	}
 
 	/**
@@ -202,7 +220,7 @@ public class AWTImageUtils {
 			// reconcile data with output format
 
 			// populate data buffer using sample model
-			IntegerDataset tmp = (IntegerDataset) DatasetUtils.cast(data, Dataset.INT32);
+			IntegerDataset tmp = DatasetUtils.cast(IntegerDataset.class, data);
 
 			if (bits <= 8) {
 				buffer = new DataBufferByte(size);
@@ -284,14 +302,14 @@ public class AWTImageUtils {
 				sampleModel = RasterFactory.createBandedSampleModel(DataBuffer.TYPE_INT,
 								width, height, 1);
 
-				IntegerDataset tmp = (IntegerDataset) data.cast(Dataset.INT32);
+				IntegerDataset tmp = data.cast(IntegerDataset.class);
 				sampleModel.setPixels(0, 0, width, height, tmp.getData(), buffer);
 			} else { // Only TIFF supports floats (so far)
 				buffer = new DataBufferFloat(size);
 				sampleModel = RasterFactory.createBandedSampleModel(DataBuffer.TYPE_FLOAT,
 								width, height, 1);
 
-				FloatDataset ftmp = (FloatDataset) data.cast(Dataset.FLOAT32);
+				FloatDataset ftmp = data.cast(FloatDataset.class);
 				sampleModel.setPixels(0, 0, width, height, ftmp.getData(), buffer);
 			}
 

@@ -226,7 +226,7 @@ public class MillerSpaceMapper {
 
 			double tw = weights[1] + weights[2] + weights[3] + weights[4] + weights[5] + weights[6] + weights[7];
 			if (Double.isInfinite(weights[0])) {
-				weights[0] = 1e3 * tw; // make voxel an arbitrary factor larger 
+				weights[0] = 1e3 * tw; // make voxel an arbitrary factor larger
 			}
 			factor = 1./(weights[0] + tw);
 		}
@@ -248,8 +248,8 @@ public class MillerSpaceMapper {
 			addToDataset(volume, lpos, w * value);
 			addToDataset(weight, lpos, w);
 
-			lpos[0]++;
-			if (lpos[0] >= 0 && lpos[0] < vShape[0]) {
+			int l = ++lpos[0];
+			if (l >= 0 && l < vShape[0]) {
 				w = factor * weights[1];
 				if (w > 0) {
 					addToDataset(volume, lpos, w * value);
@@ -258,16 +258,16 @@ public class MillerSpaceMapper {
 			}
 			lpos[0]--;
 
-			lpos[1]++;
-			if (lpos[1] >= 0 && lpos[1] < vShape[1]) {
+			int m = ++lpos[1];
+			if (m >= 0 && m < vShape[1]) {
 				w = factor * weights[2];
 				if (w > 0) {
 					addToDataset(volume, lpos, w * value);
 					addToDataset(weight, lpos, w);
 				}
 
-				lpos[0]++;
-				if (lpos[0] >= 0 && lpos[0] < vShape[0]) {
+				l = ++lpos[0];
+				if (l >= 0 && l < vShape[0]) {
 					w = factor * weights[3];
 					if (w > 0) {
 						addToDataset(volume, lpos, w * value);
@@ -278,16 +278,16 @@ public class MillerSpaceMapper {
 			}
 			lpos[1]--;
 
-			lpos[2]++;
-			if (lpos[2] >= 0 && lpos[2] < vShape[2]) {
+			int n = ++lpos[2];
+			if (n >= 0 && n < vShape[2]) {
 				w = factor * weights[4];
 				if (w > 0) {
 					addToDataset(volume, lpos, w * value);
 					addToDataset(weight, lpos, w);
 				}
 
-				lpos[0]++;
-				if (lpos[0] >= 0 && lpos[0] < vShape[0]) {
+				l = ++lpos[0];
+				if (l >= 0 && l < vShape[0]) {
 					w = factor * weights[5];
 					if (w > 0) {
 						addToDataset(volume, lpos, w * value);
@@ -296,16 +296,16 @@ public class MillerSpaceMapper {
 				}
 				lpos[0]--;
 
-				lpos[1]++;
-				if (lpos[1] >= 0 && lpos[1] < vShape[1]) {
+				m = ++lpos[1];
+				if (m >= 0 && m < vShape[1]) {
 					w = factor * weights[6];
 					if (w > 0) {
 						addToDataset(volume, lpos, w * value);
 						addToDataset(weight, lpos, w);
 					}
 
-					lpos[0]++;
-					if (lpos[0] >= 0 && lpos[0] < vShape[0]) {
+					l = ++lpos[0];
+					if (l >= 0 && l < vShape[0]) {
 						w = factor * weights[7];
 						if (w > 0) {
 							addToDataset(volume, lpos, w * value);
@@ -787,8 +787,18 @@ public class MillerSpaceMapper {
 				QSpace qspace = new QSpace(dp, env);
 				MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
 				printCorners(qspace, mspace);
+
+				if (hDel != null) {
+					calcVolume(hMin, hMax, qspace, mspace);
+				}
 			}
 			n++;
+		}
+
+		if (hDel != null) {
+			roundLimitsAndFindShapes();
+			System.err.println("Extent of the space was found to be " + Arrays.toString(hMin) + " to " + Arrays.toString(hMax));
+			System.err.println("with shape = " + Arrays.toString(hShape));
 		}
 	}
 
@@ -933,13 +943,8 @@ public class MillerSpaceMapper {
 			mapImage(job.getSplitter(), sMinLocal, sMaxLocal, regionSlice, qspace, mTransform, image, iWeight, map, weight);
 		};
 
-		long timeElapsed = -1;
 		try {
-			timeElapsed = pool.submit(() -> {
-				long start = System.currentTimeMillis();
-				jobs.parallelStream().forEach(subTask);
-				return System.currentTimeMillis() - start;
-			}).get();
+			pool.submit(() -> jobs.parallelStream().forEach(subTask)).get();
 		} catch (InterruptedException | ExecutionException e) {
 			throw new RuntimeException("Multithreaded jobs did not finish sucessfully", e);
 		}
@@ -950,8 +955,6 @@ public class MillerSpaceMapper {
 				minMax(sMin, sMax, j.getSMaxLocal());
 			}
 		}
-
-		System.out.printf("For %d threads, took %dms\n", size, (int) (timeElapsed));
 	}
 
 	private static void minMax(final int[] min, final int[] max, final int[] p) {
@@ -1407,6 +1410,7 @@ public class MillerSpaceMapper {
 	}
 
 	private Dataset[] processTrees(boolean mapQ, Tree[] trees, PositionIterator[][] allIters, Dataset[] a) throws ScanFileHolderException, DatasetException {
+		long start = System.currentTimeMillis();
 		int[] vShape = copyParameters(mapQ);
 		String output = bean.getOutput();
 
@@ -1450,11 +1454,14 @@ public class MillerSpaceMapper {
 				hasDeleted = true;
 			}
 
+			System.out.printf("For %d threads, processing took %dms\n", pool.getParallelism(), System.currentTimeMillis() - start);
+			start = System.currentTimeMillis();
 			createAndWriteAttribute(output, PROCESSED, NexusConstants.NXCLASS, NexusConstants.ENTRY);
 			createAndWriteAttribute(output, PROCESSPATH, NexusConstants.NXCLASS, NexusConstants.PROCESS);
 
 			saveVolume(output, bean, entryPath, volPath, map, a);
 			writeDefaultAttributes(output, volName);
+			System.out.printf("Saving took %dms\n", System.currentTimeMillis() - start);
 		} catch (IllegalArgumentException | OutOfMemoryError e) {
 			System.err.println("There is not enough memory to do this all at once!");
 			System.err.println("Now attempting to segment volume");
@@ -1712,8 +1719,13 @@ public class MillerSpaceMapper {
 		double oMin = vMin[0];
 		double oMax = vMax[0];
 
+		long process = 0;
+		long save = 0;
+		long start = -1;
+		long now = -1;
 		Tree tree;
 		PositionIterator[] iters;
+		start = System.currentTimeMillis();
 		for (int p = 0; p < (parts-1); p++) {
 			// shift min
 			vMin[0] = oMin + vstart[0] * vDel[0];
@@ -1756,13 +1768,20 @@ public class MillerSpaceMapper {
 				mapImages(mapQ, tree, trans, images, iters, map, weight, ishape, upSampler);
 			}
 			Maths.dividez(map, weight, map); // normalize by tally
+			now = System.currentTimeMillis();
+			process += now - start;
 
+			start = now;
 			try {
 				output.setSlice(map, slice);
 			} catch (DatasetException e) {
 				System.err.println("Could not save part of volume");
 				throw new ScanFileHolderException("Could not save part of volume", e);
 			}
+			now = System.currentTimeMillis();
+			save += now - start;
+
+			start = now;
 			map.fill(0);
 			weight.fill(0);
 			vstart[0] = vstop[0];
@@ -1812,7 +1831,10 @@ public class MillerSpaceMapper {
 			mapImages(mapQ, tree, trans, images, iters, map, weight, ishape, upSampler);
 		}
 		Maths.dividez(map, weight, map); // normalize by tally
+		now = System.currentTimeMillis();
+		process += now - start;
 
+		start = now;
 		DoubleDataset tmap;
 		if (overflow) {
 			int[] tstop = map.getShape();
@@ -1828,6 +1850,10 @@ public class MillerSpaceMapper {
 			System.err.println("Could not saving last part of volume");
 			throw new ScanFileHolderException("Could not saving last part of volume", e);
 		}
+		save += System.currentTimeMillis() - start;
+
+		System.out.printf("For %d threads, processing took %dms\n", pool.getParallelism(), process);
+		System.out.printf("Saving took %dms\n", save);
 	}
 
 	private void processTreesForList(Tree[] trees, PositionIterator[][] allIters)

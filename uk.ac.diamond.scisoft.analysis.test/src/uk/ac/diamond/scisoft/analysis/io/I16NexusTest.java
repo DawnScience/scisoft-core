@@ -24,13 +24,16 @@ import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironmen
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
+import org.eclipse.dawnsci.hdf5.HDF5File;
 import org.eclipse.dawnsci.hdf5.HDF5FileFactory;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.eclipse.dawnsci.nexus.NexusException;
+import org.eclipse.january.asserts.TestUtils;
 import org.eclipse.january.dataset.ByteDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.PositionIterator;
 import org.junit.Assert;
@@ -481,9 +484,34 @@ public class I16NexusTest {
 	}
 
 	@Test
-	public void testMapI16Nexus222() throws ScanFileHolderException {
+	public void testMapI16Nexus222() throws ScanFileHolderException, NexusException {
 		String n = testFileFolder + "588193.nxs";
-		MillerSpaceMapper.processVolumeWithAutoBox(n, "test-scratch/588193-medium.h5", "inverse", 0.5, 2., true, 0.005);
+
+		MillerSpaceMapper.setCores(1);
+		MillerSpaceMapper.processVolumeWithAutoBox(n,
+				"test-scratch/588193-medium-1-core.h5", "inverse", 0.5, 2., true, 0.005);
+		MillerSpaceMapper.setCores(3);
+		MillerSpaceMapper.processVolumeWithAutoBox(n,
+				"test-scratch/588193-medium-3-cores.h5", "inverse", 0.5, 2., true, 0.005);
+		MillerSpaceMapper.setCores(4);
+		MillerSpaceMapper.processVolumeWithAutoBox(n,
+				"test-scratch/588193-medium-4-cores.h5", "inverse", 0.5, 2., true, 0.005);
+
+		Dataset data1 = readSlicedData("test-scratch/588193-medium-1-core.h5");
+		Dataset data2 = readSlicedData("test-scratch/588193-medium-3-cores.h5");
+		Dataset data3 = readSlicedData("test-scratch/588193-medium-4-cores.h5");
+		TestUtils.assertDatasetEquals(data1, data2);
+		TestUtils.assertDatasetEquals(data1, data3);
+	}
+
+	private Dataset readSlicedData(String file) throws ScanFileHolderException, NexusException {
+		int[] start = new int[] { 21, 23, 238 };
+		int[] count = new int[] { 4, 1, 18 };
+		int[] step = new int[] { 1, 1, 1 };
+		HDF5File file1 = HDF5FileFactory.acquireFile(file, false);
+		Dataset data1 = HDF5Utils.readDataset(file1, "/processed/process/reciprocal_space/volume", start, count, step, 1, DoubleDataset.class, true);
+		HDF5FileFactory.releaseFile(file, true);
+		return data1;
 	}
 
 	@Test

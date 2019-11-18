@@ -439,4 +439,17 @@ public class UtilsTest {
 		assertNull(Utils.findExternalFilePath(p.getAbsolutePath(), null));
 		assertNull(Utils.findExternalFilePath(p.getAbsolutePath(), "target"));
 	}
+
+	@Test
+	public void testTranslateUnix() {
+		assertNull(Utils.translateToUnixPath(null, false));
+		assertNull(Utils.translateToUnixPath(null, true));
+		
+		assertEquals("blah", Utils.translateToUnixPath("blah", false));
+		assertEquals("blah", Utils.translateToUnixPath("blah", true));
+		assertEquals("/blah/foo", Utils.translateToUnixPath("/blah/foo", false));
+		assertEquals("/blah/foo", Utils.translateToUnixPath("/blah/foo", true));
+		assertEquals("\\blah\\foo", Utils.translateToUnixPath("\\blah\\foo", false));
+		assertEquals("/blah/foo", Utils.translateToUnixPath("\\blah\\foo", true));
+	}
 }

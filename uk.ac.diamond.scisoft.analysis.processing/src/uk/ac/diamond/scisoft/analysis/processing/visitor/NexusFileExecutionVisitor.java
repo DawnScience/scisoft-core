@@ -62,6 +62,7 @@ import org.eclipse.january.metadata.UnitMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.ac.diamond.scisoft.analysis.io.Utils;
 import uk.ac.diamond.scisoft.analysis.processing.IFlushMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 
@@ -209,17 +210,16 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 				Node d = nl.getDestination();
 				GroupNode rootgroup = nexusFile.getGroup(Tree.ROOT, false);
 				if (d instanceof GroupNode) {
-					relativePath = Paths.get(filePath).getParent().relativize(Paths.get(originalFilePath)).toString();
-					
-					
+					relativePath = Utils.translateToUnixPath(Paths.get(filePath).getParent().relativize(Paths.get(originalFilePath)).toString());
+
 					GroupNode gn = (GroupNode)d;
 					Map<String, GroupNode> groupNodeMap = gn.getGroupNodeMap();
 					Set<String> keys = groupNodeMap.keySet();
 					for (String key : keys) {
 						String updatedName = key; 
 						int count = 0;
-						while(rootgroup.containsNode(updatedName)) {
-							updatedName = key + count;
+						while (rootgroup.containsNode(updatedName)) {
+							updatedName = key + count++;
 						}
 						nexusFile.linkExternal(new URI("nxfile", "//" + relativePath, key), Tree.ROOT + updatedName, true);
 					}

@@ -777,4 +777,20 @@ public class Utils {
 	static String findExternalFilePath(final String parent, String ePath) {
 		return findExternalFilePath(null, parent, ePath);
 	}
+
+	/**
+	 * Translate path to Unix path if on Windows
+	 * @param path
+	 * @return Unix file path
+	 */
+	public static String translateToUnixPath(final String path) {
+		return translateToUnixPath(path, IS_WINDOWS);
+	}
+
+	static String translateToUnixPath(final String path, boolean isWindows) {
+		if (path == null) {
+			return null;
+		}
+		return isWindows ? path.replace('\\', '/') : path;
+	}
 }

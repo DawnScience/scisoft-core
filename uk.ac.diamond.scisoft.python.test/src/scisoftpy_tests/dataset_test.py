@@ -289,6 +289,18 @@ class Test(unittest.TestCase):
         tds = np.array([np.arange(5), np.arange(5)+5])
         self.checkitems(np.arange(10).reshape(2,5), tds)
 
+    def testLongArray(self):
+        print("test long array")
+        if isjava:
+            global long # don't know why this is necessary!
+        else:
+            from past.builtins import long # requires future package
+        l = long(12)
+        dds = np.array([l])
+        self.assertEquals(dds.dtype, np.int64)
+        self.checkitems([12], dds)
+        self.checkitems([l], dds)
+
     def testAsArray(self):
         ta = np.array([1, 2])
         ata = np.asarray(ta)

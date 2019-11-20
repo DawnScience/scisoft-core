@@ -13,8 +13,11 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.math.BigInteger;
+
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.ComplexDoubleDataset;
+import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
@@ -243,5 +246,33 @@ public class PythonUtilsTest {
 			System.out.println(ret);
 		} catch (Exception e) {
 		}
+	}
+
+	@Test
+	public void testGetDType() {
+		checkSame(true);
+		checkSame((byte) 1);
+		checkSame((short) 1);
+		checkSame(1);
+		checkSame(1);
+		checkSame(1.f);
+		checkSame(1l);
+		checkSame(1.d);
+		checkSame(new boolean[] {false, true});
+		checkSame(new byte[] {0, 1});
+		checkSame(new short[] {0, 1});
+		checkSame(new int[] {0, 1});
+		checkSame(new float[] {0, 1});
+		checkSame(new long[] {0, 1});
+		checkSame(new double[] {0, 1});
+
+		int l = DTypeUtils.getDTypeFromObject(1l);
+		assertEquals(l, PythonUtils.getDTypeFromObject(BigInteger.valueOf(1)));
+		assertEquals(l, PythonUtils.getDTypeFromObject(new Object[] {BigInteger.valueOf(1)}));
+		assertEquals(l, PythonUtils.getDTypeFromObject(new BigInteger[] {BigInteger.valueOf(1)}));
+	}
+
+	private void checkSame(Object o) {
+		assertEquals(DTypeUtils.getDTypeFromObject(o), PythonUtils.getDTypeFromObject(o));
 	}
 }

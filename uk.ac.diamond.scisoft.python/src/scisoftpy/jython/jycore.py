@@ -20,7 +20,6 @@ Core package contains wrappers for Java dataset classes
 
 import org.eclipse.january.dataset.Dataset as _ds
 import org.eclipse.january.dataset.LazyDataset as _lds
-import org.eclipse.january.dataset.DTypeUtils as _dtutils
 import org.eclipse.january.dataset.ShapeUtils as _sutils
 import org.eclipse.january.dataset.DatasetFactory as _df
 
@@ -29,12 +28,14 @@ import org.eclipse.january.dataset.IntegerDataset as _integerds
 import org.eclipse.january.dataset.RGBDataset as _rgbds
 
 import org.eclipse.january.dataset.DatasetUtils as _dsutils
+from org.eclipse.january.dataset.DTypeUtils import isDTypeInteger as _isdtint
 from uk.ac.diamond.scisoft.python.PythonUtils import convertToJava as _cvt2j
 from uk.ac.diamond.scisoft.python.PythonUtils import getSlice as _getslice
 from uk.ac.diamond.scisoft.python.PythonUtils import setSlice as _setslice
 from uk.ac.diamond.scisoft.python.PythonUtils import convertToSlice as _cvt2js
 from uk.ac.diamond.scisoft.python.PythonUtils import createFromObject as _create
 from uk.ac.diamond.scisoft.python.PythonUtils import createRange as _createRange
+from uk.ac.diamond.scisoft.python.PythonUtils import getDTypeFromObject as _getdt
 
 import org.apache.commons.math3.complex.Complex as _jcomplex #@UnresolvedImport
 
@@ -129,7 +130,7 @@ __jcdtype2jytype = { _ds.ARRAYINT8 : cint8, _ds.ARRAYINT16 : cint16,
 
 # get dtype from object
 def _getdtypefromobj(jobj):
-    jdtype = _dtutils.getDTypeFromObject(jobj)
+    jdtype = _getdt(jobj)
     if jdtype in __jdtype2jytype:
         return __jdtype2jytype[jdtype]
     raise ValueError("Java dataset type unknown")
@@ -351,7 +352,7 @@ def _as_int_array(items): # get integer array or list
     if isinstance(items, ndarray):
         items = items._jdataset()
     if isinstance(items, _ds):
-        if not _dtutils.isDTypeInteger(items.getDType()):
+        if not _isdtint(items.getDType()):
             raise TypeError("Shape must be an integer array or list")
         if items.getRank() > 1:
             raise TypeError("Shape must not be an array with rank > 1")

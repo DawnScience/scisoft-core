@@ -17,10 +17,12 @@ import java.util.List;
 import org.apache.commons.math3.complex.Complex;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.BroadcastUtils;
+import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.InterfaceUtils;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
 import org.python.core.Py;
@@ -84,8 +86,10 @@ public class PythonUtils {
 			return obj;
 		}
 
-		if (obj instanceof BigInteger || !(obj instanceof PyObject))
+		// NB PyLong gets converted to BigInteger automatically so pass it through
+		if (obj instanceof BigInteger || !(obj instanceof PyObject)) {
 			return obj;
+		}
 
 		if (obj instanceof PyComplex) {
 			PyComplex z = (PyComplex) obj;
@@ -342,5 +346,77 @@ public class PythonUtils {
 	@SuppressWarnings("deprecation")
 	public static Dataset createRange(final double start, final double stop, final double step, final int dtype) {
 		return DatasetFactory.createRange(start, stop, step, dtype);
+	}
+
+	/**
+	 * Get dataset type from an object. The following are supported: Java Number objects, Apache common math Complex
+	 * objects, Java arrays and lists
+	 *
+	 * @param obj
+	 * @return dataset type
+	 */
+	public static int getDTypeFromObject(Object obj) {
+		int dtype = -1;
+
+		if (obj == null) {
+			return Dataset.OBJECT;
+		}
+
+		if (obj instanceof List<?>) {
+			List<?> jl = (List<?>) obj;
+			int l = jl.size();
+			for (int i = 0; i < l; i++) {
+				int ldtype = getDTypeFromObject(jl.get(i));
+				if (ldtype > dtype) {
+					dtype = ldtype;
+				}
+			}
+		} else if (obj.getClass().isArray()) {
+			Class<?> ca = obj.getClass().getComponentType();
+			if (InterfaceUtils.isElementSupported(ca)) {
+				return getDTypeFromClass(ca);
+			}
+			int l = Array.getLength(obj);
+			for (int i = 0; i < l; i++) {
+				Object lo = Array.get(obj, i);
+				int ldtype = getDTypeFromObject(lo);
+				if (ldtype > dtype) {
+					dtype = ldtype;
+				}
+			}
+		} else if (obj instanceof Dataset) {
+			return ((Dataset) obj).getDType();
+		} else if (obj instanceof ILazyDataset) {
+			dtype = getDTypeFromClass(((ILazyDataset) obj).getElementClass(), ((ILazyDataset) obj).getElementsPerItem());
+		} else {
+			dtype = getDTypeFromClass(obj.getClass());
+		}
+		return dtype;
+	}
+
+	/**
+	 * Get dataset type from an element class
+	 *
+	 * @param cls element class
+	 * @return dataset type
+	 */
+	private static int getDTypeFromClass(Class<? extends Object> cls, int isize) {
+		if (BigInteger.class.equals(cls)) {
+			return Dataset.INT64;
+		}
+		return DTypeUtils.getDType(InterfaceUtils.getInterfaceFromClass(isize, cls));
+	}
+
+	/**
+	 * Get dataset type from an element class
+	 *
+	 * @param cls element class
+	 * @return dataset type
+	 */
+	private static int getDTypeFromClass(Class<? extends Object> cls) {
+		if (BigInteger.class.equals(cls)) {
+			return Dataset.INT64;
+		}
+		return DTypeUtils.getDType(InterfaceUtils.getInterfaceFromClass(1, cls));
 	}
 }

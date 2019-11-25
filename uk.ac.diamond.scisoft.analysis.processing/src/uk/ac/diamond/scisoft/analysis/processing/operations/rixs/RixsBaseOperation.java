@@ -82,15 +82,16 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
-		updateFromModel(false);
+		updateFromModel(false, evt == null ? null : evt.getPropertyName());
 	}
 
 	/**
 	 * Update internal state from model
 	 * <p>Done when model gets changed by user through GUI or on first slice in process
 	 * @param throwEx
+	 * @param name name of property changed
 	 */
-	abstract void updateFromModel(boolean throwEx);
+	abstract void updateFromModel(boolean throwEx, String name);
 
 	/**
 	 * Updates useBothROIs and roiMax so override for more
@@ -124,7 +125,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			countTime = 0;
 			currentCountTime = null;
 			resetProcess(input);
-			updateFromModel(true);
+			updateFromModel(true, null);
 			parseNexusFile(smd.getFilePath());
 		}
 		if (currentCountTime != null) {

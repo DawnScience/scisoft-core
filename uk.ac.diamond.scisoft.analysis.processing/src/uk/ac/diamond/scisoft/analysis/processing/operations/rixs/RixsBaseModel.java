@@ -165,6 +165,4 @@ public class RixsBaseModel extends AbstractOperationModel {
 	public void setCountsPerPhoton(int countsPerPhoton) {
 		firePropertyChange("setCountsPerPhoton", this.countsPerPhoton, this.countsPerPhoton = countsPerPhoton);
 	}
-
-	
 }

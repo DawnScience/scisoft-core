@@ -97,7 +97,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	}
 
 	@Override
-	void updateFromModel(boolean throwEx) {
+	void updateFromModel(boolean throwEx, String name) {
 		try {
 			selection = MultiRange.createMultiRange(model.getFrameSelection());
 		} catch (IllegalArgumentException e) {

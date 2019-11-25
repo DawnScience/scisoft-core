@@ -803,6 +803,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			double res = opt.calculateResidual();
 			System.err.println("Peak " + i + " fit is " + peak + " with residual " + res);
 			if (Double.isFinite(res)) {
+				log.append("Peak fit (with residual of %g) is %s", res, peak);
 				gPosition.add(positions.get(i));
 				gPosn.add(peak.getParameterValue(SPECTRA_PEAK_POSN));
 				gFWHM.add(peak.getParameterValue(SPECTRA_PEAK_WIDTH));
@@ -823,7 +824,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 					gSpectrumFit = DatasetUtils.concatenate(new IDataset[] {gSpectrumFit, fit.reshape(minShape)}, 0);
 				}
 			} else {
-				log.append("Fitting elastic peak: FAILED");
+				log.appendFailure("Fitting elastic peak: FAILED");
 				bPosition.add(positions.get(i));
 				if (bSpectrum == null) {
 					bSpectrum = spectrum.clone().reshape(minShape);
@@ -834,6 +835,9 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		}
 
 		if (gPosition.size() > 0) {
+			log.appendSuccess("Fitted spectra of %d frames", gPosition.size());
+			double w = gFWHM.stream().mapToDouble(Double::doubleValue).average().getAsDouble();
+			log.appendSuccess("Average FWHM = %g", w);
 			Dataset ge = DatasetFactory.createFromList(gPosition);
 			ge.setName(positionName);
 			gSpectrum.setName(ES_PREFIX + r);
@@ -864,6 +868,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			summaryData.add(gh);
 		}
 		if (bPosition.size() > 0) {
+			log.appendSuccess("Could not fit spectra of %d frames", bPosition.size());
 			Dataset be = DatasetFactory.createFromList(bPosition);
 			be.setName(positionName);
 			bSpectrum.setName("bad_elastic_spectrum_" + r);

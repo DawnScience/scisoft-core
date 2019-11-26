@@ -448,7 +448,7 @@ fd = os.open(os.devnull, os.O_RDWR)
 os.dup2(fd, orig_fd) #@UndefinedVariable
 
 try:
-    import scisoftpy._external.tifffile as _tf
+    import tifffile as _tf
 except:
     print("Could not import tiff file package", file=sys.stderr)
     _tf = None

@@ -199,12 +199,9 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		Dataset spectrum = result[1];
 		spectrum.setName("spectrum_" + r);
 
-		// work out energy scale (needs calibration)
-		Dataset e = DatasetFactory.createRange(spectrum.getSize());
 		spectrum.clearMetadata(AxesMetadata.class);
-		e.iadd(offset[1]-result[0].getDouble()); // TODO discretize???
-		e.imultiply(-energyDispersion[r]);
-		e.setName(ENERGY_LOSS);
+		// work out energy scale (needs calibration)
+		Dataset e = makeEnergyScale(result, offset[1], energyDispersion[r]);
 		MetadataUtils.setAxes(spectrum, e);
 		auxData.add(spectrum.getView(true));
 		allSpectra[r].add(spectrum.getView(true));
@@ -701,15 +698,16 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	}
 
 	/**
-	 * Make spectrum from image by summing along line
-	 * @param in (usually transposed)
+	 * Make spectrum from image by summing along line<p>
+	 * The image comprises rows of spectrum that are offset by a line of given slope and intercept
+	 * @param in image orientated so that each row represents an individual spectrum
 	 * @param rOffset ROI offset
 	 * @param slope line slope
 	 * @param intercept line intercept
 	 * @param clip if true, clip columns where rows contribute from outside image 
 	 * @return elastic line position and spectrum datasets
 	 */
-	public static Dataset[] makeSpectrum(Dataset in, double rOffset, double slope, double intercept, boolean clip) {
+	public static Dataset[] makeSpectrum(Dataset in, int rOffset, double slope, double intercept, boolean clip) {
 		int rows = in.getShapeRef()[0];
 		Dataset elastic = DatasetFactory.createRange(rows);
 		if (rOffset != 0) {
@@ -734,6 +732,21 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		}
 
 		return new Dataset[] {elastic, spectrum};
+	}
+
+	/**
+	 * Make energy scale
+	 * @param result
+	 * @param offset
+	 * @param dispersion
+	 * @return energy scale
+	 */
+	public static Dataset makeEnergyScale(Dataset[] result, int offset, double dispersion) {
+		Dataset e = DatasetFactory.createRange(result[1].getSize());
+		e.iadd(offset - result[0].getDouble()); // TODO discretize???
+		e.imultiply(-dispersion);
+		e.setName(ENERGY_LOSS);
+		return e;
 	}
 
 	private static int findTurningPoint(boolean fromFirst, Dataset y) {

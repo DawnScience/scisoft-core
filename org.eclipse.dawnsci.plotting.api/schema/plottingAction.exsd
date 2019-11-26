@@ -90,6 +90,19 @@ NOTE: When you implement the command which is referenced by this action, the app
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="style" type="string">
+            <annotation>
+               <documentation>
+                  Style of the action GUI element. Currently, "push_button" (default) and "toggle_button" are supported
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="push_button" />
+                  <enumeration value="toggle_button" />
+               </restriction>
+            </simpleType>
+         </attribute>
          <attribute name="label" type="string">
             <annotation>
                <documentation>

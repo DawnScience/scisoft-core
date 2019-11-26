@@ -4,66 +4,41 @@ Python side implementation of DatasetManager connection
 
 # import pyplot as _plot # We are going to reuse its _get_rpcclient()
 
-from py4j.java_gateway import JavaGateway, java_import
+from py4j.java_gateway import java_import
 
-
-_gateway = None
+from . import py4jutils as _py4j
 
 def getPlottingSystem(plottingSystemName):
-    
-    global _gateway
-    if _gateway is None:
-        _gateway = JavaGateway()
-        
-    jvm = _gateway.jvm
-    
+    jvm = _py4j.get_gateway().jvm
     java_import(jvm, 'org.eclipse.dawnsci.plotting.api.*')
     
     return jvm.PlottingFactory.getPlottingSystem(plottingSystemName, True)
 
-'''
-Creates a color that can be used with the plotting system
-For instance to set trace color.
-'''   
-def createColor(r, g, b):    
-
-    global _gateway
-    if _gateway is None:
-        _gateway = JavaGateway()
-        
-    jvm = _gateway.jvm
-
+def createColor(r, g, b):
+    '''
+    Creates a color that can be used with the plotting system
+    For instance to set trace color.
+    '''
+    jvm = _py4j.get_gateway().jvm
     java_import(jvm, 'org.eclipse.swt.graphics.*')
     
     return jvm.Color(None, r, g, b)
 
-'''
-Creates a histogram bound which is a color and a position for the bound
-'''   
-def createHistogramBound(position, rgb):    
-
-    global _gateway
-    if _gateway is None:
-        _gateway = JavaGateway()
-        
-    jvm = _gateway.jvm
-
+def createHistogramBound(position, rgb):
+    '''
+    Creates a histogram bound which is a color and a position for the bound
+    '''
+    jvm = _py4j.get_gateway().jvm
     java_import(jvm, 'org.eclipse.dawnsci.plotting.api.histogram.*')
     
     return jvm.HistogramBound(position, rgb)
 
 
-'''
-Get an implementation of an OSGi service
-'''
 def getService(serviceClass):
-    
-    global _gateway
-    if _gateway is None:
-        _gateway = JavaGateway()
-        
-    jvm = _gateway.jvm
-    
+    '''
+    Get an implementation of an OSGi service
+    '''
+    jvm = _py4j.get_gateway().jvm
     java_import(jvm, 'org.dawb.common.services.*')
     
     return jvm.Activator.getService(serviceClass)

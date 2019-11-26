@@ -62,7 +62,7 @@ public class RixsBaseModel extends AbstractOperationModel {
 		firePropertyChange("setRoiA", this.roiA, this.roiA = roi);
 	}
 
-	void internalSetRoiA(IRectangularROI roi) {
+	public void internalSetRoiA(IRectangularROI roi) {
 		this.roiA = roi;
 	}
 

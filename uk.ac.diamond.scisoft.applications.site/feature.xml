@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="uk.ac.diamond.scisoft.applications.site"
+      label="Scisoft Applications"
+      version="1.0.0.qualifier"
+      provider-name="Diamond Light Source">
+
+   <description url="http://www.example.com/description">
+      The top level OSGI Scisoft Applications product export definition: In Eclipse,right click on the project and select Buckmister-&gt;Invoke Action and then select create-product-linuxgtkx64 and press ok to generate the product in the /servers directory under you workspace parent.
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <includes
+         id="uk.ac.diamond.scisoft.applications.feature"
+         version="0.0.0"
+         name="Scisoft Applications"/>
+
+   <plugin
+         id="org.eclipse.equinox.launcher"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

@@ -2,7 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         id="uk.ac.diamond.scisoft.msmapper.application"
+         id="uk.ac.diamond.scisoft.applications.msmapper"
          point="org.eclipse.core.runtime.applications">
       <application
             cardinality="singleton-global"
@@ -12,5 +12,17 @@
                class="uk.ac.diamond.scisoft.applications.MillerSpaceMapperApplication">
          </run>
       </application>
+   </extension>
+   <extension
+         id="MSMApp"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="uk.ac.diamond.scisoft.applications.mapper"
+            name="MSMApp">
+         <property
+               name="appName"
+               value="MSMApp">
+         </property>
+      </product>
    </extension>
 </plugin>

@@ -31,3 +31,8 @@ setup(
     zip_safe=True,
     url="https://gerrit.diamond.ac.uk/admin/repos/scisoft/scisoft-core",
 )
+
+try:
+    import tifffile
+except ImportError:
+    print("Could not import tifffile package. The io subpackage will use Pillow to load TIFFs unless tifffile is installed.")

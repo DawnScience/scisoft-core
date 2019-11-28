@@ -1108,9 +1108,12 @@ public class NexusTreeUtils {
 	 * Parse a group that is an NXattenuator class from a tree
 	 * @param path to group
 	 * @param tree
-	 * @return a dataset of attenuator transmission values
+	 * @return a dataset of attenuator transmission values or null if path is null or not found
 	 */
 	public static Dataset parseAttenuator(String path, Tree tree) {
+		if (path == null) {
+			return null;
+		}
 		NodeLink link = tree.findNodeLink(path);
 
 		if (link == null) {

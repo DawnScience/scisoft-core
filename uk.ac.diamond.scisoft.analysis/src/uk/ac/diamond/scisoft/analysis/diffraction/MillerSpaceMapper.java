@@ -1157,9 +1157,13 @@ public class MillerSpaceMapper {
 			link = instrument.getNodeLink(attenuatorName);
 		}
 		if (link == null || !link.isDestinationGroup()) {
-			throw new ScanFileHolderException("Could not find attenuator");
+			attenuatorPath = null;
+		} else {
+			attenuatorPath = TreeUtils.getPath(tree, link.getDestination());
 		}
-		attenuatorPath = TreeUtils.getPath(tree, link.getDestination());
+		if (attenuatorPath == null) {
+			System.err.println("Could not find attenuator");
+		}
 
 		String dataName = bean.getDataName();
 		if (dataName == null || dataName.isEmpty()) {

@@ -29,7 +29,7 @@ setup(
     packages=find_packages(exclude=['py4j*', 'uk*']),
     install_requires=INSTALL_REQUIRES,
     zip_safe=True,
-    url="https://gerrit.diamond.ac.uk/admin/repos/scisoft/scisoft-core",
+    url="https://gerrit.diamond.ac.uk/plugins/gitiles/scisoft/scisoft-core",
 )
 
 try:

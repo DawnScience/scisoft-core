@@ -323,14 +323,13 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			List<Double> cX = new ArrayList<>();
 			List<Double> cY = new ArrayList<>();
 			boolean first = true;
-			int j = -1;
+			int j = 0;
 			for (int i = 0; i < smax; i++) {
 				Dataset sums = allSums.get(i);
 				if (sums == null) {
 					continue;
 				}
 				Dataset posn = allPositions.get(i);
-				j++;
 				for (int r = 0; r < roiMax; r++) {
 					cX.clear();
 					cY.clear();
@@ -361,8 +360,9 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 						}
 					}
 				}
+				j++;
 			}
-			if (j < smax - 1) { // truncate for omitted frames
+			if (j < smax) { // truncate for omitted frames
 				for (int r = 0; r < roiMax; r++) {
 					allSingle[r] = Arrays.copyOf(allSingle[r], j);
 					allMultiple[r] = Arrays.copyOf(allMultiple[r], j);

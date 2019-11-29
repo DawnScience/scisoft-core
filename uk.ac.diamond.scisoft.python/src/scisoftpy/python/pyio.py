@@ -439,22 +439,11 @@ class TIFFSaver(PythonSaver):
                 raise
         im.save(self.name)
 
-# capture all error messages
-import os
-orig_fd = sys.__stderr__.fileno()
-saved = os.dup(orig_fd) #@UndefinedVariable
-sys.__stderr__.flush()
-fd = os.open(os.devnull, os.O_RDWR)
-os.dup2(fd, orig_fd) #@UndefinedVariable
-
 try:
     import tifffile as _tf
 except:
     print("Could not import tiff file package", file=sys.stderr)
     _tf = None
-finally:
-    os.dup2(saved, orig_fd)#@UndefinedVariable
-    os.close(fd)
 
 class TIFFfileLoader(PythonLoader):
     def load(self, warn=True):

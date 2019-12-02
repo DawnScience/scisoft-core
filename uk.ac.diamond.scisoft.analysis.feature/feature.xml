@@ -95,7 +95,7 @@
          unpack="false"/>
 
    <plugin
-         id="net.sf.py4j.defaultserver"
+         id="org.py4j.defaultserver"
          download-size="0"
          install-size="0"
          version="0.0.0"

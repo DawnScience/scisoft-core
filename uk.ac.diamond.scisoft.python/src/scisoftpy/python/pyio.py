@@ -459,7 +459,7 @@ class TIFFfileLoader(PythonLoader):
         t = _tf.TiffFile(self.name)
         for i, p in enumerate(t.pages):
             d = p.asarray()
-            if p.photometric == _tf.TIFF.PHOTOMETRIC.RGB:
+            if p.photometric == p.photometric.RGB:
                 # convert to an rgb dataset
                 d = _core.asarray(d, dtype=_core.int16).view(_RGB)
 

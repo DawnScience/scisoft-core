@@ -17,12 +17,13 @@ import java.util.List;
 import org.apache.commons.math3.complex.Complex;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.BroadcastUtils;
-import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.InterfaceUtils;
+import org.eclipse.january.dataset.LongDataset;
+import org.eclipse.january.dataset.ObjectDataset;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
 import org.python.core.Py;
@@ -322,30 +323,14 @@ public class PythonUtils {
 
 	/**
 	 * Create a dataset from object (as workaround for Jython's funky dispatcher calling wrong method)
-	 * @param dtype
+	 * @param clazz
 	 * @param obj
 	 *            can be a Java list, array or Number
 	 * @return dataset
-	 * @throws IllegalArgumentException if dataset type is not known
+	 * @throws IllegalArgumentException if dataset interface is not known
 	 */
-	@SuppressWarnings("deprecation")
-	public static Dataset createFromObject(final Integer dtype, final Object obj) {
-		return DatasetFactory.createFromObject(dtype, obj, null);
-	}
-
-	/**
-	 * Create dataset with items ranging from given start to given stop in given steps
-	 * <p>
-	 * Use this to get around the overloaded method problem in Jython
-	 * @param start
-	 * @param stop
-	 * @param step
-	 * @param dtype
-	 * @return a new 1D dataset of given type, filled with values determined by parameters
-	 */
-	@SuppressWarnings("deprecation")
-	public static Dataset createRange(final double start, final double stop, final double step, final int dtype) {
-		return DatasetFactory.createRange(start, stop, step, dtype);
+	public static Dataset createFromObject(Class<? extends Dataset> clazz, final Object obj) {
+		return DatasetFactory.createFromObject(clazz, obj, null);
 	}
 
 	/**
@@ -355,43 +340,37 @@ public class PythonUtils {
 	 * @param obj
 	 * @return dataset type
 	 */
-	public static int getDTypeFromObject(Object obj) {
-		int dtype = -1;
-
+	public static Class<? extends Dataset> getInterfaceFromObject(Object obj) {
 		if (obj == null) {
-			return Dataset.OBJECT;
+			return ObjectDataset.class;
 		}
+
+		Class<? extends Dataset> clazz = null;
 
 		if (obj instanceof List<?>) {
 			List<?> jl = (List<?>) obj;
 			int l = jl.size();
 			for (int i = 0; i < l; i++) {
-				int ldtype = getDTypeFromObject(jl.get(i));
-				if (ldtype > dtype) {
-					dtype = ldtype;
-				}
+				clazz = InterfaceUtils.getBestInterface(clazz, getInterfaceFromObject(jl.get(i)));
 			}
 		} else if (obj.getClass().isArray()) {
 			Class<?> ca = obj.getClass().getComponentType();
 			if (InterfaceUtils.isElementSupported(ca)) {
-				return getDTypeFromClass(ca);
+				return getInterfaceFromClass(ca);
 			}
 			int l = Array.getLength(obj);
 			for (int i = 0; i < l; i++) {
 				Object lo = Array.get(obj, i);
-				int ldtype = getDTypeFromObject(lo);
-				if (ldtype > dtype) {
-					dtype = ldtype;
-				}
+				clazz = InterfaceUtils.getBestInterface(clazz, getInterfaceFromObject(lo));
 			}
 		} else if (obj instanceof Dataset) {
-			return ((Dataset) obj).getDType();
+			return ((Dataset) obj).getClass();
 		} else if (obj instanceof ILazyDataset) {
-			dtype = getDTypeFromClass(((ILazyDataset) obj).getElementClass(), ((ILazyDataset) obj).getElementsPerItem());
+			clazz = getInterfaceFromClass(((ILazyDataset) obj).getElementClass(), ((ILazyDataset) obj).getElementsPerItem());
 		} else {
-			dtype = getDTypeFromClass(obj.getClass());
+			clazz = getInterfaceFromClass(obj.getClass());
 		}
-		return dtype;
+		return clazz;
 	}
 
 	/**
@@ -400,11 +379,11 @@ public class PythonUtils {
 	 * @param cls element class
 	 * @return dataset type
 	 */
-	private static int getDTypeFromClass(Class<? extends Object> cls, int isize) {
+	private static Class<? extends Dataset> getInterfaceFromClass(Class<? extends Object> cls, int isize) {
 		if (BigInteger.class.equals(cls)) {
-			return Dataset.INT64;
+			return LongDataset.class;
 		}
-		return DTypeUtils.getDType(InterfaceUtils.getInterfaceFromClass(isize, cls));
+		return InterfaceUtils.getInterfaceFromClass(isize, cls);
 	}
 
 	/**
@@ -413,10 +392,10 @@ public class PythonUtils {
 	 * @param cls element class
 	 * @return dataset type
 	 */
-	private static int getDTypeFromClass(Class<? extends Object> cls) {
+	private static Class<? extends Dataset> getInterfaceFromClass(Class<? extends Object> cls) {
 		if (BigInteger.class.equals(cls)) {
-			return Dataset.INT64;
+			return LongDataset.class;
 		}
-		return DTypeUtils.getDType(InterfaceUtils.getInterfaceFromClass(1, cls));
+		return InterfaceUtils.getInterfaceFromClass(1, cls);
 	}
 }

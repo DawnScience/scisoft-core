@@ -621,13 +621,12 @@ def kron(a, b):
 
 @_wrap('a')
 def trace(a, offset=0, axis1=0, axis2=1, dtype=None):
-    dtype = _translatenativetype(dtype)
-    if dtype is None:
-        dtval = a.getDType()
-    else:
-        dtval = dtype.value
+    t = _linalg.trace(a, offset)
 
-    return _linalg.trace(a, offset).cast(dtval)
+    dtype = _translatenativetype(dtype)
+    if dtype is not None:
+        t = t.cast(dtype.value)
+    return t
 
 @_wrap('a', 'b')
 def cross(a, b, axisa=-1, axisb=-1, axisc=-1, axis=None):

@@ -49,7 +49,7 @@ class Test(unittest.TestCase):
             t = pt[i]
             f = pf[i]
             if max(t, f) > 1e-10:
-                self.assertAlmostEquals(pl*t, pl*f, places=places)
+                self.assertAlmostEqual(pl*t, pl*f, places=places)
 
     def testFunction(self):
         print(dnp.fit.function.isjclass(dnp.fit.function.linear))

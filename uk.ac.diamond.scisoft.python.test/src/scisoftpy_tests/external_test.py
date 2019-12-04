@@ -130,14 +130,14 @@ class Test(unittest.TestCase):
     def testPyAna(self):
         efun = dnp.external.create_function("funpyana", "external_functions", extra_path=Test.epath_list, dls_module="python/anaconda")
         print('2,7', end=' ')
-        self.assertEquals(efun(), (2,7))
+        self.assertEqual(efun(), (2,7))
         print('passed')
 
     def testArrayScalar(self):
         efun = dnp.external.create_function("funarrayscalar", "external_functions", extra_path=Test.epath_list, dls_module=True)
         a = 2+3j, 1., 123, True
         print(a, end=' ')
-        self.assertEquals(efun(), a)
+        self.assertEqual(efun(), a)
         print('passed')
 
     def testSpeed(self):

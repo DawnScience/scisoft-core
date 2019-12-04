@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.python.pydev.debug.jythonLaunchConfigurationType">
-<stringAttribute key="bad_container_name" value="/uk.ac.diamond.scisoft.python.test/JyUnit"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
 <listEntry value="/uk.ac.diamond.scisoft.python.test/src/all_tests.py"/>
 </listAttribute>
@@ -11,6 +10,7 @@
 <mapEntry key="LD_LIBRARY_PATH" value="${project_loc:uk.ac.diamond.CBFlib}/lib/${target.os}-${target.arch}:${project_loc:hdf.hdf5lib}/lib/${target.os}-${target.arch}"/>
 </mapAttribute>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="${workspace_loc:uk.ac.diamond.scisoft.python.test/src/all_tests.py}"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_OTHER_WORKING_DIRECTORY" value="${workspace_loc:uk.ac.diamond.scisoft.python.test/src}"/>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_TOOL_ARGUMENTS" value=""/>
 <stringAttribute key="org.eclipse.ui.externaltools.ATTR_WORKING_DIRECTORY" value="${workspace_loc:uk.ac.diamond.scisoft.python.test/src}"/>
 <stringAttribute key="org.python.pydev.debug.ATTR_INTERPRETER" value="__default"/>

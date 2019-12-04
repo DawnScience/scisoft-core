@@ -596,7 +596,10 @@ class LoaderFactoryDelegate(PythonLoader):
     def load(self, warn=True):
         # py4j gymnastics to get access to Java LoaderFactory
         from . import py4jutils as utils #@UnresolvedImport
-        java = utils.get_gateway().jvm
+        try:
+            java = utils.get_gateway().jvm
+        except:
+            raise io_exception("No Py4J gateway so cannot use Java loaders")
         loader_factory = java.uk.ac.diamond.scisoft.analysis.io.LoaderFactory
         jdh = loader_factory.getData(self.name, self.load_metadata, None)
         # convert to Python

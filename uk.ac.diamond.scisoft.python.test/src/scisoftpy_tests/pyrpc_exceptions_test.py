@@ -58,7 +58,7 @@ class Test(unittest.TestCase):
         try:
             self.rpcclient.cat_invalid("Hello")
         except Exception as e:
-            self.assertEquals("Exception: No handler registered for cat_invalid", e.args[0])
+            self.assertEqual("Exception: No handler registered for cat_invalid", e.args[0])
 
 def suite():
     suite = unittest.TestSuite()

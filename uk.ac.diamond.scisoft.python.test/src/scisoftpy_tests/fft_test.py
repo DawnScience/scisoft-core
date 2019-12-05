@@ -36,36 +36,36 @@ class Test(unittest.TestCase):
     def checkrealitems(self, dr, ds, places=7):
         if ds.ndim == 1:
             for i in range(ds.shape[0]):
-                self.assertAlmostEquals(dr[i], ds[i].real, places)
-                self.assertAlmostEquals(0, ds[i].imag, places)
+                self.assertAlmostEqual(dr[i], ds[i].real, places)
+                self.assertAlmostEqual(0, ds[i].imag, places)
         elif ds.ndim == 2:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
-                    self.assertAlmostEquals(dr[i, j], ds[i, j].real, places)
-                    self.assertAlmostEquals(0, ds[i, j].imag, places)
+                    self.assertAlmostEqual(dr[i, j], ds[i, j].real, places)
+                    self.assertAlmostEqual(0, ds[i, j].imag, places)
         elif ds.ndim == 3:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
                     for k in range(ds.shape[2]):
-                        self.assertAlmostEquals(dr[i, j, k], ds[i, j, k].real, places)
-                        self.assertAlmostEquals(0, ds[i, j, k].imag, places)
+                        self.assertAlmostEqual(dr[i, j, k], ds[i, j, k].real, places)
+                        self.assertAlmostEqual(0, ds[i, j, k].imag, places)
 
     def checkcomplexitems(self, lz, ds, places=7):
         if ds.ndim == 1:
             for i in range(ds.shape[0]):
-                self.assertAlmostEquals(lz[i].real, ds[i].real, places)
-                self.assertAlmostEquals(lz[i].imag, ds[i].imag, places)
+                self.assertAlmostEqual(lz[i].real, ds[i].real, places)
+                self.assertAlmostEqual(lz[i].imag, ds[i].imag, places)
         elif ds.ndim == 2:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
-                    self.assertAlmostEquals(lz[i][j].real, ds[i, j].real, places)
-                    self.assertAlmostEquals(lz[i][j].imag, ds[i, j].imag, places)
+                    self.assertAlmostEqual(lz[i][j].real, ds[i, j].real, places)
+                    self.assertAlmostEqual(lz[i][j].imag, ds[i, j].imag, places)
         elif ds.ndim == 3:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
                     for k in range(ds.shape[2]):
-                        self.assertAlmostEquals(lz[i][j][k].real, ds[i, j, k].real, places)
-                        self.assertAlmostEquals(lz[i][j][k].imag, ds[i, j, k].imag, places)
+                        self.assertAlmostEqual(lz[i][j][k].real, ds[i, j, k].real, places)
+                        self.assertAlmostEqual(lz[i][j][k].imag, ds[i, j, k].imag, places)
 
     def testFFT1(self):
         az = [ 66. +0.j        ,  -6.+22.39230485j,  -6.+10.39230485j,

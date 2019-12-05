@@ -29,13 +29,13 @@ class Test(unittest.TestCase):
 
     def _assertFlattenedEquals(self, expected, actual):
         if expected is None:
-            self.assertEquals(None, actual)
+            self.assertEqual(None, actual)
         elif isinstance(expected, (list, tuple)):
-            self.assertEquals(len(expected), len(actual))
+            self.assertEqual(len(expected), len(actual))
             for exp, act in zip(expected, actual):
                 self._assertFlattenedEquals(exp, act)
         elif isinstance(expected, dict):
-            self.assertEquals(len(expected), len(actual))
+            self.assertEqual(len(expected), len(actual))
             for k, v in six.iteritems(expected):
                 self.assertTrue(k in actual)
                 self._assertFlattenedEquals(v, actual[k])
@@ -58,11 +58,11 @@ class Test(unittest.TestCase):
                 expstr = expstr[:i]
             if expstr != actualstr and "Exception: " + expstr != actualstr:
                 # on mismatch, display error on original string
-                self.assertEquals(str(expected), str(actual))
+                self.assertEqual(str(expected), str(actual))
         elif isinstance(expected, (dnp.ndarray)):
             self.assertTrue(dnp.equaldataset(expected, actual))
         else:
-            self.assertEquals(expected, actual)
+            self.assertEqual(expected, actual)
     
     def _checkFlattenedState(self, flat):
         if isinstance(flat, (str, six.text_type, int, float, bool, six.moves.xmlrpc_client.Binary)):
@@ -102,7 +102,7 @@ class Test(unittest.TestCase):
         self._assertFlattenedEquals(expectedObj, out);
         
         if expectedObj is not None and expectedType == type(expectedObj):
-            self.assertEquals(expectedType, type(out))
+            self.assertEqual(expectedType, type(out))
         elif expectedType is not None:
             self.assertTrue(isinstance(out, expectedType))
 

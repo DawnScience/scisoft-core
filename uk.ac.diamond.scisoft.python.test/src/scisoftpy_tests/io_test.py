@@ -106,28 +106,28 @@ class Test(unittest.TestCase):
         t = dnp.io.load(f + "h5py_complex.h5")
         cs = t.complex_example
         cx = cs[1:10:2, 3:10:3]
-        self.assertAlmostEquals(cx[0,0].real, 0.22884877031898887, places=17)
-        self.assertAlmostEquals(cx[0,0].imag, 0.19673784135439948, places=17)
-        self.assertAlmostEquals(cx[4,2].real, 0.6922704317579508, places=17)
-        self.assertAlmostEquals(cx[4,2].imag, -1.8087566023531674, places=17)
+        self.assertAlmostEqual(cx[0,0].real, 0.22884877031898887, places=17)
+        self.assertAlmostEqual(cx[0,0].imag, 0.19673784135439948, places=17)
+        self.assertAlmostEqual(cx[4,2].real, 0.6922704317579508, places=17)
+        self.assertAlmostEqual(cx[4,2].imag, -1.8087566023531674, places=17)
 
     def testLoadingHDF5Scalars(self):
         f = IOTestFolder + "NexusLoaderTest/"
         nm = dnp.io.load(f + "scalar.h5", format=['hdf5'])
         d = nm['scalar'][...]
-        self.assertAlmostEquals(d[()], 1.0, places=17)
+        self.assertAlmostEqual(d[()], 1.0, places=17)
         d = nm['s_f_string'][...]
-        self.assertEquals(d, b'hello!')
+        self.assertEqual(d, b'hello!')
         d = nm['s_a_string'][...]
-        self.assertEquals(d, b'hello!')
+        self.assertEqual(d, b'hello!')
         d = nm['s_u_string'][...]
-        self.assertEquals(d, u'hello!')
+        self.assertEqual(d, u'hello!')
 
     def checkTree(self, t):
         print(t)
         g = t['entry1/instrument/FFI0']
         h = g['/entry1/instrument/FFI0']
-        self.assertEquals(g, h, "relative and absolute do not match!")
+        self.assertEqual(g, h, "relative and absolute do not match!")
         ga = g['..']
         assert ga is t['entry1/instrument'], "parent is wrong!"
         assert g['.'] is g, "self is wrong!"

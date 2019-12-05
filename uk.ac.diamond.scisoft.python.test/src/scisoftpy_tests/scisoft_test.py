@@ -40,16 +40,16 @@ class Test(unittest.TestCase):
     def checkitems(self, la, ds, convert=toAny):
         if ds.ndim == 1:
             for i in range(ds.shape[0]):
-                self.assertAlmostEquals(convert(la[i]), ds[i])
+                self.assertAlmostEqual(convert(la[i]), ds[i])
         elif ds.ndim == 2:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
-                    self.assertAlmostEquals(convert(la[i][j]), ds[i, j])
+                    self.assertAlmostEqual(convert(la[i][j]), ds[i, j])
         elif ds.ndim == 3:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
                     for k in range(ds.shape[2]):
-                        self.assertAlmostEquals(convert(la[i][j][k]), ds[i, j, k])
+                        self.assertAlmostEqual(convert(la[i][j][k]), ds[i, j, k])
 
     def testStrAndRepr(self):
         print('String and repr testing')
@@ -175,24 +175,24 @@ class Test(unittest.TestCase):
         a = np.arange(24).reshape(3,4,2)
         oa = np.compoundarray(a)
         ca = oa.copy()
-        self.assertEquals(ca.shape[0], 3)
-        self.assertEquals(ca.shape[1], 4)
+        self.assertEqual(ca.shape[0], 3)
+        self.assertEqual(ca.shape[1], 4)
         la = ca[1,2]
         print(la)
-        self.assertEquals(la[0], 12)
-        self.assertEquals(la[1], 13)
+        self.assertEqual(la[0], 12)
+        self.assertEqual(la[1], 13)
         ca[2,2] = (0,0)
-        self.assertEquals(ca[2,2][0], 0)
-        self.assertEquals(ca[2,2][1], 0)
+        self.assertEqual(ca[2,2][0], 0)
+        self.assertEqual(ca[2,2][1], 0)
         ca[2,2] = (-2, 1)
-        self.assertEquals(ca[2,2][0], -2)
-        self.assertEquals(ca[2,2][1], 1)
+        self.assertEqual(ca[2,2][0], -2)
+        self.assertEqual(ca[2,2][1], 1)
         ca[1:,3:] = (-1,-1)
-        self.assertEquals(ca[2,3][0], -1)
-        self.assertEquals(ca[2,3][1], -1)
+        self.assertEqual(ca[2,3][0], -1)
+        self.assertEqual(ca[2,3][1], -1)
         ca[1:,3:] = (3,-4)
-        self.assertEquals(ca[2,3][0], 3)
-        self.assertEquals(ca[2,3][1], -4)
+        self.assertEqual(ca[2,3][0], 3)
+        self.assertEqual(ca[2,3][1], -4)
 
         ia = np.array([2, -3])
         print('Integer index testing')
@@ -200,17 +200,17 @@ class Test(unittest.TestCase):
         print(ca)
         cb = ca[ia]
         print(cb)
-        self.assertEquals(cb.shape[0], 2)
-        self.assertEquals(cb[0,0][0], 16)
-        self.assertEquals(cb[0,0][1], 17)
-        self.assertEquals(cb[1,0][0], 0)
-        self.assertEquals(cb[1,0][1], 1)
+        self.assertEqual(cb.shape[0], 2)
+        self.assertEqual(cb[0,0][0], 16)
+        self.assertEqual(cb[0,0][1], 17)
+        self.assertEqual(cb[1,0][0], 0)
+        self.assertEqual(cb[1,0][1], 1)
         print(np.compoundarray(np.array([1,2])))
         ca[ia] = np.compoundarray(np.array([1,2]))
-        self.assertEquals(ca[0,2][0], 1)
-        self.assertEquals(ca[0,2][1], 2)
-        self.assertEquals(ca[1,1][0], 10)
-        self.assertEquals(ca[1,1][1], 11)
+        self.assertEqual(ca[0,2][0], 1)
+        self.assertEqual(ca[0,2][1], 2)
+        self.assertEqual(ca[1,1][0], 10)
+        self.assertEqual(ca[1,1][1], 11)
 
         ca[ia] = (1,2) # this works too
 
@@ -221,29 +221,29 @@ class Test(unittest.TestCase):
         # index dataset does not work
         # test boolean too
         print(cc)
-        self.assertEquals(cc.shape[0], 4)
-        self.assertEquals(cc[0][0], 4)
-        self.assertEquals(cc[0][1], 5)
-        self.assertEquals(cc[1][0], 8)
-        self.assertEquals(cc[1][1], 9)
-        self.assertEquals(cc[2][0], 18)
-        self.assertEquals(cc[2][1], 19)
-        self.assertEquals(cc[3][0], 22)
-        self.assertEquals(cc[3][1], 23)
+        self.assertEqual(cc.shape[0], 4)
+        self.assertEqual(cc[0][0], 4)
+        self.assertEqual(cc[0][1], 5)
+        self.assertEqual(cc[1][0], 8)
+        self.assertEqual(cc[1][1], 9)
+        self.assertEqual(cc[2][0], 18)
+        self.assertEqual(cc[2][1], 19)
+        self.assertEqual(cc[3][0], 22)
+        self.assertEqual(cc[3][1], 23)
         ca[ba] = (1,2)
-        self.assertEquals(ca[0,2][0], 1)
-        self.assertEquals(ca[0,2][1], 2)
-        self.assertEquals(ca[1,0][0], 1)
-        self.assertEquals(ca[1,0][1], 2)
-        self.assertEquals(ca[2,1][0], 1)
-        self.assertEquals(ca[2,1][1], 2)
-        self.assertEquals(ca[2,3][0], 1)
-        self.assertEquals(ca[2,3][1], 2)
+        self.assertEqual(ca[0,2][0], 1)
+        self.assertEqual(ca[0,2][1], 2)
+        self.assertEqual(ca[1,0][0], 1)
+        self.assertEqual(ca[1,0][1], 2)
+        self.assertEqual(ca[2,1][0], 1)
+        self.assertEqual(ca[2,1][1], 2)
+        self.assertEqual(ca[2,3][0], 1)
+        self.assertEqual(ca[2,3][1], 2)
 
     def testBools(self):
         b = np.array([False, True], dtype=np.bool)
-        self.assertEquals(b[0], False)
-        self.assertEquals(b[1], True)
+        self.assertEqual(b[0], False)
+        self.assertEqual(b[1], True)
 
     def testHelp(self):
         import sys
@@ -262,26 +262,26 @@ class Test(unittest.TestCase):
         a = np.arange(12.)
         x = np.arange(12.) + 2
         ca = np.centroid(a)
-        self.assertEquals(ca[0], 539./66)
+        self.assertEqual(ca[0], 539./66)
         ca = np.centroid(a, x)
-        self.assertEquals(ca[0], 539./66 + 1.5)
+        self.assertEqual(ca[0], 539./66 + 1.5)
         a.shape = (3,4)
         ca = np.centroid(a)
-        self.assertEquals(ca[0], 131./66)
-        self.assertEquals(ca[1], 147./66)
+        self.assertEqual(ca[0], 131./66)
+        self.assertEqual(ca[1], 147./66)
         x = np.arange(3.) + 2
         y = np.arange(4.) + 3
         ca = np.centroid(a, [x,y])
-        self.assertEquals(ca[0], 131./66 + 1.5)
-        self.assertEquals(ca[1], 312./66) #147./66 + 2.5)
+        self.assertEqual(ca[0], 131./66 + 1.5)
+        self.assertEqual(ca[1], 312./66) #147./66 + 2.5)
 
     def testQuantile(self):
         print('Quantile testing')
         a = np.array([6., 47., 49., 15., 42., 41., 7., 39., 43., 40., 36., 21.])
         ans = [19.5, 39.5, 42.25]
-        self.assertEquals(np.median(a), ans[1])
+        self.assertEqual(np.median(a), ans[1])
         iqr = np.iqr(a)
-        self.assertEquals(iqr, ans[2] - ans[0])
+        self.assertEqual(iqr, ans[2] - ans[0])
         qs = np.quantile(a, [0.25, 0.5, 0.75])
         self.checkitems(ans, np.array(qs))
         a.shape = (3,4)
@@ -291,18 +291,18 @@ class Test(unittest.TestCase):
         self.checkitems([47.5, 41.25, 40.75], qs[2])
         iqr = np.iqr(a, axis=1)
         print(type(iqr))
-        self.assertEquals(-12.75 + 47.5, iqr[0])
-        self.assertEquals(-31. + 41.25, iqr[1])
-        self.assertEquals(-32.25 + 40.75, iqr[2])
+        self.assertEqual(-12.75 + 47.5, iqr[0])
+        self.assertEqual(-31. + 41.25, iqr[1])
+        self.assertEqual(-32.25 + 40.75, iqr[2])
 
 
     def testGradient(self):
         print('Gradient testing')
         z = np.arange(200.)
         dz = np.gradient(z)
-        self.assertEquals(1, len(dz.shape))
-        self.assertEquals(200, dz.size)
-        self.assertEquals(1, dz[0])
+        self.assertEqual(1, len(dz.shape))
+        self.assertEqual(200, dz.size)
+        self.assertEqual(1, dz[0])
 
         x = np.array([1, 2, 4, 7, 11, 16], dtype=np.float)
         g = np.gradient(x)
@@ -336,9 +336,9 @@ class Test(unittest.TestCase):
 
     def testAsfarray(self):
         print('Float array testing')
-        self.assertEquals(np.float64, np.asfarray([1.,]).dtype, "")
-        self.assertEquals(np.float64, np.asfarray([1.,], dtype=np.int).dtype, "")
-        self.assertEquals(np.float64, np.asfarray([1,]).dtype, "")
+        self.assertEqual(np.float64, np.asfarray([1.,]).dtype, "")
+        self.assertEqual(np.float64, np.asfarray([1.,], dtype=np.int).dtype, "")
+        self.assertEqual(np.float64, np.asfarray([1,]).dtype, "")
         self.failUnlessRaises(TypeError, np.asfarray, [1+12j,])
 
     def testRoll(self):
@@ -357,23 +357,23 @@ class Test(unittest.TestCase):
     def testItem(self):
         print('Item testing')
         a = np.array(10)
-        self.assertEquals(10, a.item())
-        self.assertEquals(10, a.item(0))
+        self.assertEqual(10, a.item())
+        self.assertEqual(10, a.item(0))
         self.assertRaises(IndexError, a.item, 1)
         self.assertRaises(ValueError, a.item, 1, 1)
         a = np.array([10.])
-        self.assertEquals(10, a.item())
-        self.assertEquals(10, a.item(0))
+        self.assertEqual(10, a.item())
+        self.assertEqual(10, a.item(0))
         self.assertRaises(IndexError, a.item, 1)
         self.assertRaises(ValueError, a.item, 1, 1)
 
         a = np.arange(10.)
-        self.assertEquals(4, a.item(4))
+        self.assertEqual(4, a.item(4))
         self.assertRaises(IndexError, a.item, 11)
         self.assertRaises(ValueError, a.item, 1, 1)
         a.shape = (2,5)
-        self.assertEquals(4, a.item(4))
-        self.assertEquals(4, a.item(0,4))
+        self.assertEqual(4, a.item(4))
+        self.assertEqual(4, a.item(0,4))
         self.assertRaises(IndexError, a.item, 11)
         self.assertRaises(IndexError, a.item, 2, 1)
 
@@ -381,17 +381,17 @@ class Test(unittest.TestCase):
         print('Zero rank arrays testing')
         zi = np.array(1)
         print(zi)
-        self.assertEquals(0, len(zi.shape))
-        self.assertEquals(1, zi[()])
-        self.assertEquals(np.array(1), zi[...])
+        self.assertEqual(0, len(zi.shape))
+        self.assertEqual(1, zi[()])
+        self.assertEqual(np.array(1), zi[...])
         zi[()] = -3
-        self.assertEquals(-3, zi[()])
+        self.assertEqual(-3, zi[()])
         zf = np.array(1.)
-        self.assertEquals(0, len(zf.shape))
-        self.assertEquals(1., zf[()])
-        self.assertEquals(np.array(1.), zf[...])
+        self.assertEqual(0, len(zf.shape))
+        self.assertEqual(1., zf[()])
+        self.assertEqual(np.array(1.), zf[...])
         zf[()] = -3
-        self.assertEquals(-3, zf[()])
+        self.assertEqual(-3, zf[()])
 
     def testUnpack(self):
         print('Unpacking testing')
@@ -406,30 +406,30 @@ class Test(unittest.TestCase):
     def testSlicing(self):
         print('Slicing testing')
         a = np.arange(60).reshape(2, 5, 3, 2)
-        self.assertEquals((5, 3, 2), a[-1].shape)
-        self.assertEquals((5, 3, 2), a[-1, :, :].shape)
-        self.assertEquals((5, 3, 2), a[-1, :, :, :].shape)
-        self.assertEquals((5, 2, 2), a[-1, :, 1:, :].shape)
-        self.assertEquals((5, 3, 2), a[-1, ...].shape)
-        self.assertEquals((2, 5, 3), a[..., -1].shape)
-        self.assertEquals((5, 3),    a[1, ..., -1].shape)
-        self.assertEquals((1, 5, 3, 2), a[-1, np.newaxis].shape)
-        self.assertEquals((2, 1, 5, 3, 2), a[:, np.newaxis].shape)
-        self.assertEquals((2, 1, 3, 2), a[:, np.newaxis, -1].shape)
-        self.assertEquals((2, 5, 3, 1), a[..., -1, np.newaxis].shape)
-        self.assertEquals((2, 1, 5, 3), a[:, np.newaxis, ..., -1].shape)
-        self.assertEquals((2, 1, 5, 3, 1), a[:, np.newaxis, ..., np.newaxis, -1].shape)
-        self.assertEquals((2, 1, 5, 3, 1), a[:, np.newaxis, ..., -1, np.newaxis].shape)
+        self.assertEqual((5, 3, 2), a[-1].shape)
+        self.assertEqual((5, 3, 2), a[-1, :, :].shape)
+        self.assertEqual((5, 3, 2), a[-1, :, :, :].shape)
+        self.assertEqual((5, 2, 2), a[-1, :, 1:, :].shape)
+        self.assertEqual((5, 3, 2), a[-1, ...].shape)
+        self.assertEqual((2, 5, 3), a[..., -1].shape)
+        self.assertEqual((5, 3),    a[1, ..., -1].shape)
+        self.assertEqual((1, 5, 3, 2), a[-1, np.newaxis].shape)
+        self.assertEqual((2, 1, 5, 3, 2), a[:, np.newaxis].shape)
+        self.assertEqual((2, 1, 3, 2), a[:, np.newaxis, -1].shape)
+        self.assertEqual((2, 5, 3, 1), a[..., -1, np.newaxis].shape)
+        self.assertEqual((2, 1, 5, 3), a[:, np.newaxis, ..., -1].shape)
+        self.assertEqual((2, 1, 5, 3, 1), a[:, np.newaxis, ..., np.newaxis, -1].shape)
+        self.assertEqual((2, 1, 5, 3, 1), a[:, np.newaxis, ..., -1, np.newaxis].shape)
 
     def testSlicedViews(self):
         print('Sliced view testing')
         a = np.arange(9).reshape(3,3)
         a[1][1] = -3
-        self.assertEquals(-3, a[1, 1])
-        self.assertEquals(-3, a[1][1])
+        self.assertEqual(-3, a[1, 1])
+        self.assertEqual(-3, a[1][1])
         b = a[::2, 1:]
         b[...] = 0
-        self.assertEquals(0, a[0, 1])
+        self.assertEqual(0, a[0, 1])
 
         a = np.arange(28).reshape(4,7)[1:4,::2]
         try:

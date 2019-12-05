@@ -35,16 +35,16 @@ class Test(unittest.TestCase):
     def checkitems(self, la, ds, convert=toAny):
         if ds.ndim == 1:
             for i in range(ds.shape[0]):
-                self.assertAlmostEquals(convert(la[i]), ds[i])
+                self.assertAlmostEqual(convert(la[i]), ds[i])
         elif ds.ndim == 2:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
-                    self.assertAlmostEquals(convert(la[i][j]), ds[i, j])
+                    self.assertAlmostEqual(convert(la[i][j]), ds[i, j])
         elif ds.ndim == 3:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
                     for k in range(ds.shape[2]):
-                        self.assertAlmostEquals(convert(la[i][j][k]), ds[i, j, k])
+                        self.assertAlmostEqual(convert(la[i][j][k]), ds[i, j, k])
 
     def testDot(self):
         a = np.arange(1,9).reshape(2, 2, 2)

@@ -48,7 +48,6 @@ import org.apache.commons.math3.random.Well19937c;
 import org.apache.commons.math3.util.Pair;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
 import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
@@ -153,7 +152,7 @@ public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresO
 					dv = calculateValues().getData();
 					for (int i = 0; i < n; i++) {
 						IParameter p = params.get(i);
-						DoubleDataset dp = (DoubleDataset) DatasetUtils.cast(function.calculatePartialDerivativeValues(p, coords), Dataset.FLOAT64);
+						DoubleDataset dp = DatasetUtils.cast(DoubleDataset.class, function.calculatePartialDerivativeValues(p, coords));
 						double[] pd = dp.getData();
 						for (int j = 0; j < size; j++) {
 							dm[j][i] = pd[j];

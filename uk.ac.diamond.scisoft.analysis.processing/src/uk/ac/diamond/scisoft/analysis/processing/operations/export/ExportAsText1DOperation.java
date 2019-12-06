@@ -11,10 +11,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
-import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.DTypeUtils;
-import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Slice;
@@ -46,48 +43,16 @@ public class ExportAsText1DOperation extends AbstractOperation<ExportAsText1DMod
 		
 		IDataset outds = input.getSlice().clone();
 		
-		outds.squeeze().setShape(outds.getShape()[0],1);
+		outds.setShape(outds.getSize(), 1);
 		
 		if (lx != null) {
-			IDataset x;
-			try {
-				x = lx.getSliceView().getSlice().squeeze();
-			} catch (DatasetException e) {
-				throw new OperationException(this, e);
-			}
-			x.setShape(x.getShape()[0],1);
-			int xtype = DTypeUtils.getDType(x);
-			int ytype = DTypeUtils.getDType(outds);
-			if (xtype != ytype) {
-				if (xtype > ytype) {
-					outds = DatasetUtils.cast(outds, xtype);
-				} else {
-					x = DatasetUtils.cast(x, ytype);
-				}
-			}
-			outds = DatasetUtils.concatenate(new IDataset[]{x,outds}, 1);
+			outds = ExportAsATSASOperation.concatenate(this, lx, outds, true);
 		}
 		
 		ILazyDataset error = input.getErrors();
 		
 		if (error != null) {
-			IDataset e;
-			try {
-				e = error.getSlice();
-			} catch (Exception e1) {
-				throw new OperationException(this, e1);
-			}
-			e.setShape(e.getShape()[0],1);
-			int etype = DTypeUtils.getDType(e);
-			int ytype = DTypeUtils.getDType(outds);
-			if (etype != ytype) {
-				if (etype > ytype) {
-					outds = DatasetUtils.cast(outds, etype);
-				} else {
-					e = DatasetUtils.cast(e, ytype);
-				}
-			}
-			outds = DatasetUtils.concatenate(new IDataset[]{outds,e}, 1);
+			outds = ExportAsATSASOperation.concatenate(this, error, outds, false);
 		}
 		
 		ASCIIDataWithHeadingSaver saver = new ASCIIDataWithHeadingSaver(fileName);

@@ -90,7 +90,7 @@ public class TwoDExponentialFittingUsingIOperation extends AbstractOperation<Two
 		catch(Exception b){
 			System.out.println(b.getMessage());
 		}
-		output = DatasetUtils.cast(pBackgroundSubtracted, Dataset.FLOAT64);
+		output = DatasetUtils.cast(DoubleDataset.class, pBackgroundSubtracted);
 
 		output.setName("Region of Interest, 2D Gaussian background removed");
 			

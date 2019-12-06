@@ -178,7 +178,7 @@ public class SurfacePixelIntegrationCache implements IPixelIntegrationCache {
 			double shift = 0;
 //			range corresponds to bin centres
 			shift = (binRange[1]- binRange[0])/(2*numBins);
-			return (DoubleDataset) DatasetFactory.createLinearSpace(binRange[0]-shift, binRange[1]+shift, numBins + 1, Dataset.FLOAT64);
+			return DatasetFactory.createLinearSpace(DoubleDataset.class, binRange[0]-shift, binRange[1]+shift, numBins + 1);
 		}
 
 		
@@ -195,7 +195,7 @@ public class SurfacePixelIntegrationCache implements IPixelIntegrationCache {
 			max = x > max ? x : max;
 		}
 		//default range corresponds to bin edges
-		return (DoubleDataset) DatasetFactory.createLinearSpace(min, max, numBins + 1, Dataset.FLOAT64);
+		return DatasetFactory.createLinearSpace(DoubleDataset.class, min, max, numBins + 1);
 	}
 
 }

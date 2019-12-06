@@ -22,6 +22,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.metadata.MaskMetadata;
 
 
@@ -58,7 +59,7 @@ public class InvalidateDataUnderMaskOperation extends AbstractOperation<Invalida
 			case ZEROS:	out.setByBoolean(0.00, Comparisons.logicalNot(mask));
 						break;
 						
-			case NANS:	if (!out.hasFloatingPointElements()) out = DatasetUtils.cast(input, Dataset.FLOAT64);
+			case NANS:	if (!out.hasFloatingPointElements()) out = DatasetUtils.cast(DoubleDataset.class, input);
 						out.setByBoolean(Double.NaN, Comparisons.logicalNot(mask));
 						break;
 						

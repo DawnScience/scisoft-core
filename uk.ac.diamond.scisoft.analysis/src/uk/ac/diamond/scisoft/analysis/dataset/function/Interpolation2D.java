@@ -113,9 +113,9 @@ public class Interpolation2D {
 		if (output_type == BicubicInterpolationOutput.ONED && newy.getSize() != newx.getSize())
 			throw new IllegalArgumentException("newx and newy Size must be identical when expecting a rank 1 dataset result");
 		
-		DoubleDataset oldx_dd = (DoubleDataset)DatasetUtils.cast(oldx,Dataset.FLOAT64);
-		DoubleDataset oldy_dd = (DoubleDataset)DatasetUtils.cast(oldy,Dataset.FLOAT64);
-		DoubleDataset oldxy_dd = (DoubleDataset)DatasetUtils.cast(oldxy,Dataset.FLOAT64);
+		DoubleDataset oldx_dd = DatasetUtils.cast(DoubleDataset.class, oldx);
+		DoubleDataset oldy_dd = DatasetUtils.cast(DoubleDataset.class, oldy);
+		DoubleDataset oldxy_dd = DatasetUtils.cast(DoubleDataset.class, oldxy);
 
 		//unlike in Interpolation1D, we will not be sorting here, as it just too complicated
 		//the user will be responsible for ensuring the arrays are properly sorted

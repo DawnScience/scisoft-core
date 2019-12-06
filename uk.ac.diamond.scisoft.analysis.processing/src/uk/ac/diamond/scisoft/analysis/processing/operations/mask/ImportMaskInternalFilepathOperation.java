@@ -15,12 +15,9 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 
-import uk.ac.diamond.scisoft.analysis.processing.operations.mask.ImportMaskModel;
-import uk.ac.diamond.scisoft.analysis.processing.operations.mask.ImportMaskOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 
@@ -56,7 +53,7 @@ public class ImportMaskInternalFilepathOperation<T extends ImportMaskInternalFil
 		String filePath = null;
 				
 		if (datasetContainingFilePath != null) {
-			filePath = DatasetUtils.cast(datasetContainingFilePath, Dataset.STRING).getString();
+			filePath = DatasetUtils.convertToDataset(datasetContainingFilePath).getString();
 		}
 		
 		ImportMaskModel maskModel = new ImportMaskModel();

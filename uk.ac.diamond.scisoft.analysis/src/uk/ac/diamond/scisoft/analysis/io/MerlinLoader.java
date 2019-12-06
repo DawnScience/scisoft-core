@@ -368,7 +368,7 @@ public class MerlinLoader extends AbstractFileLoader {
 			Dataset loaded = null;
 			Dataset temp = null;
 			Class<? extends Dataset> iclazz = this.clazz;
-			if (LongDataset.class.equals(iclazz)) {
+			if (LongDataset.class.isAssignableFrom(iclazz)) {
 				iclazz = IntegerDataset.class;
 			}
 
@@ -390,11 +390,11 @@ public class MerlinLoader extends AbstractFileLoader {
 				try {
 					fis = new FileInputStream(file);
 					long position = frameOffsets[(int) lookup.get(pos)];
-					if (ShortDataset.class.equals(clazz)) {
+					if (ShortDataset.class.isAssignableFrom(clazz)) {
 						Utils.readByte(fis, (ShortDataset) temp, position);
-					} else if (IntegerDataset.class.equals(clazz)) {
+					} else if (IntegerDataset.class.isAssignableFrom(clazz)) {
 						Utils.readBeShort(fis, (IntegerDataset) temp, position, false);
-					} else if (LongDataset.class.equals(clazz)) {
+					} else if (LongDataset.class.isAssignableFrom(clazz)) {
 						Utils.readBeInt(fis, (IntegerDataset) temp, position);
 					}
 				} catch (Exception e) {

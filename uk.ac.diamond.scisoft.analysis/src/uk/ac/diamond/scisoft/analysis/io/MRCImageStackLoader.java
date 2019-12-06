@@ -113,7 +113,7 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 	private ILazyDataset createDataset(final long pos, final int mode, final int width, final int height, final int depth) throws ScanFileHolderException {
 		final int[] trueShape = new int[] {depth, height, width};
 		final Class<? extends Dataset> clazz = modeToDtype.get(mode);
-		if (!ShortDataset.class.equals(clazz) && !FloatDataset.class.equals(clazz)) { // TODO support other modes
+		if (!ShortDataset.class.isAssignableFrom(clazz) && !FloatDataset.class.isAssignableFrom(clazz)) { // TODO support other modes
 			throw new ScanFileHolderException("Only 16-bit integers and 32-bit floats are currently supported");
 		}
 
@@ -204,7 +204,7 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 
 		Dataset d = DatasetFactory.zeros(dClazz, count);
 
-		Class<? extends Dataset> iClazz = FloatDataset.class.equals(dClazz) ? dClazz : IntegerDataset.class;
+		Class<? extends Dataset> iClazz = FloatDataset.class.isAssignableFrom(dClazz) ? dClazz : IntegerDataset.class;
 		Dataset image = DatasetFactory.zeros(iClazz, shape[1], shape[2]);
 		try {
 			bi = new BufferedInputStream(new FileInputStream(f));
@@ -223,13 +223,13 @@ public class MRCImageStackLoader extends AbstractFileLoader implements Serializa
 			bi.skip(pos);
 			pos = (step[0] - 1) * imageSize;
 			do { // TODO maybe read smaller chunk of image...
-				if (ShortDataset.class.equals(dClazz)) {
+				if (ShortDataset.class.isAssignableFrom(dClazz)) {
 					if (isLE) {
 						Utils.readLeShort(bi, (IntegerDataset) image, 0, signExtend);
 					} else {
 						Utils.readBeShort(bi, (IntegerDataset) image, 0, signExtend);
 					}
-				} else if (Float.class.equals(dClazz)) {
+				} else if (FloatDataset.class.isAssignableFrom(dClazz)) {
 					if (isLE) {
 						Utils.readLeFloat(bi, (FloatDataset) image, 0);
 					} else {

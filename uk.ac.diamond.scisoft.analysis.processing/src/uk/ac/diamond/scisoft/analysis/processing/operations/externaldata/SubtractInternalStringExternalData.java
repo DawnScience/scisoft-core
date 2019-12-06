@@ -39,7 +39,7 @@ public class SubtractInternalStringExternalData extends FrameMathsOperation<Inte
 		IDataset datasetContainingFilePath = ProcessingUtils.getDataset(this, ssm.getFilePath(), model.getFilePathDataset());
 		
 		if (datasetContainingFilePath != null) {
-			filePath = DatasetUtils.cast(datasetContainingFilePath, Dataset.STRING).getString();
+			filePath = DatasetUtils.convertToDataset(datasetContainingFilePath).getString();
 		}
 				
 		if (filePath == null) {

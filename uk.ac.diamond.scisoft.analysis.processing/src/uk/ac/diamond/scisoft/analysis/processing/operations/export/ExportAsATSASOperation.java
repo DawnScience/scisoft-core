@@ -13,10 +13,11 @@ import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.DTypeUtils;
+import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.InterfaceUtils;
 import org.eclipse.january.dataset.Slice;
 
 import uk.ac.diamond.scisoft.analysis.io.ASCIIDataWithHeadingSaver;
@@ -45,49 +46,16 @@ public class ExportAsATSASOperation extends AbstractOperation<ExportAsATSASModel
 		ILazyDataset lx = axes != null ? axes[0] : null;
 		
 		IDataset outds = input.getSlice().clone();
-		
-		outds.squeeze().setShape(outds.getShape()[0],1);
+		outds.setShape(outds.getSize(), 1);
 		
 		if (lx != null) {
-			IDataset x;
-			try {
-				x = lx.getSliceView().getSlice().squeeze();
-			} catch (DatasetException e) {
-				throw new OperationException(this, e);
-			}
-			x.setShape(x.getShape()[0],1);
-			int xtype = DTypeUtils.getDType(x);
-			int ytype = DTypeUtils.getDType(outds);
-			if (xtype != ytype) {
-				if (xtype > ytype) {
-					outds = DatasetUtils.cast(outds, xtype);
-				} else {
-					x = DatasetUtils.cast(x, ytype);
-				}
-			}
-			outds = DatasetUtils.concatenate(new IDataset[]{x,outds}, 1);
+			outds = concatenate(this, lx, outds, true);
 		}
 		
 		ILazyDataset error = input.getErrors();
 		
 		if (error != null) {
-			IDataset e;
-			try {
-				e = error.getSlice();
-			} catch (Exception e1) {
-				throw new OperationException(this, e1);
-			}
-			e.setShape(e.getShape()[0],1);
-			int etype = DTypeUtils.getDType(e);
-			int ytype = DTypeUtils.getDType(outds);
-			if (etype != ytype) {
-				if (etype > ytype) {
-					outds = DatasetUtils.cast(outds, etype);
-				} else {
-					e = DatasetUtils.cast(e, ytype);
-				}
-			}
-			outds = DatasetUtils.concatenate(new IDataset[]{outds,e}, 1);
+			outds = concatenate(this, error, outds, false);
 		}
 		
 		ASCIIDataWithHeadingSaver saver = new ASCIIDataWithHeadingSaver(fileName);
@@ -118,6 +86,28 @@ public class ExportAsATSASOperation extends AbstractOperation<ExportAsATSASModel
 		
 		return new OperationData(input);
 
+	}
+
+	/**
+	 * Concatenate a lazy dataset and a concrete dataset
+	 * @param op
+	 * @param lazy
+	 * @param concrete
+	 * @param first if true, then put lazy dataset first
+	 * @return concatenated dataset
+	 */
+	static Dataset concatenate(IOperation<?, ?> op, ILazyDataset lazy, IDataset concrete, boolean first) {
+		IDataset x;
+		try {
+			x = lazy.getSlice();
+		} catch (DatasetException e) {
+			throw new OperationException(op, e);
+		}
+		x.setShape(x.getSize(),1);
+		Class<? extends Dataset> clazz = InterfaceUtils.getBestInterface(InterfaceUtils.getInterface(x), InterfaceUtils.getInterface(concrete));
+		concrete = DatasetUtils.cast(clazz, concrete);
+		x = DatasetUtils.cast(clazz, x);
+		return DatasetUtils.concatenate(first ? new IDataset[]{x, concrete} : new IDataset[]{concrete, x}, 1);
 	}
 
 	@Override

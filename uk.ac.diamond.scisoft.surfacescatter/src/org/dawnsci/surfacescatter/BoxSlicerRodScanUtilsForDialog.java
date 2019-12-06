@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+
 import org.dawnsci.surfacescatter.AnalaysisMethodologies.Methodology;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.january.dataset.Dataset;
@@ -109,7 +110,7 @@ public class BoxSlicerRodScanUtilsForDialog {
 			slice0.setSlice(1, pt[0]-boundaryBox, pt[0]+len[0]+boundaryBox, 1);
 			slice0.setSlice(0, pt[1]-boundaryBox, pt[1] + len[1] + boundaryBox, 1);
 			IDataset small0 = input.getSlice(slice0);
-			Dataset small0d = DatasetUtils.cast(small0, Dataset.FLOAT64);
+			Dataset small0d = DatasetUtils.cast(DoubleDataset.class, small0);
 			
 		
 		
@@ -124,7 +125,7 @@ public class BoxSlicerRodScanUtilsForDialog {
 			slice0.setSlice(1, (int) Math.round(pt[0]-0.5*len[0]-boundaryBox), (int) Math.round(pt[0]+0.5*len[0]+boundaryBox), 1);
 			slice0.setSlice(0, (int) Math.round(pt[1]-0.5*len[1]-boundaryBox), (int) Math.round(pt[1] + 0.5*len[1] + boundaryBox), 1);
 			IDataset small0 = input.getSlice(slice0);
-			Dataset small0d = DatasetUtils.cast(small0, Dataset.FLOAT64);
+			Dataset small0d = DatasetUtils.cast(DoubleDataset.class, small0);
 			
 		
 		
@@ -136,8 +137,8 @@ public class BoxSlicerRodScanUtilsForDialog {
 		
 		Dataset regionOfRegard = regionOfRegard(input, len, pt, boundaryBox);
 		
-		Dataset x = DatasetFactory.createRange(regionOfRegard.getShape()[0], Dataset.FLOAT64);
-		Dataset y = DatasetFactory.createRange(regionOfRegard.getShape()[1], Dataset.FLOAT64);;
+		Dataset x = DatasetFactory.createRange(DoubleDataset.class, regionOfRegard.getShapeRef()[0]);
+		Dataset y = DatasetFactory.createRange(DoubleDataset.class, regionOfRegard.getShapeRef()[1]);
 		
 		List<Dataset> meshGrid = DatasetUtils.meshGrid(x,y);
 		

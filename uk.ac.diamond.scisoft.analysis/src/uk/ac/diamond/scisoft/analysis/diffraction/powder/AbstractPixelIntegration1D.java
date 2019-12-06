@@ -15,6 +15,7 @@ import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.Maths;
 
 public abstract class AbstractPixelIntegration1D extends AbstractPixelIntegration {
@@ -57,7 +58,7 @@ public abstract class AbstractPixelIntegration1D extends AbstractPixelIntegratio
 				axis = Maths.add(binEdges.getSlice(new int[]{1}, null ,null), binEdges.getSlice(null, new int[]{-1},null));
 				axis.idivide(2);
 			} else {
-				axis = DatasetFactory.createLinearSpace(binRange[0], binRange[1], nbins, Dataset.FLOAT64);
+				axis = DatasetFactory.createLinearSpace(DoubleDataset.class, binRange[0], binRange[1], nbins);
 			}
 			
 			axis.setName("azimuthal angle (degrees)");

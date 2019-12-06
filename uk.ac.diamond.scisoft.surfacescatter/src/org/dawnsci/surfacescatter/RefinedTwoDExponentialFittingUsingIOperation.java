@@ -123,7 +123,7 @@ public class RefinedTwoDExponentialFittingUsingIOperation extends AbstractOperat
 		catch(Exception b){
 			System.out.println(b.getMessage());
 		}
-		output = DatasetUtils.cast(pBackgroundSubtracted, Dataset.FLOAT64);
+		output = DatasetUtils.cast(DoubleDataset.class, pBackgroundSubtracted);
 
 		output.setName("Region of Interest, 2D Exponential background removed");
 			

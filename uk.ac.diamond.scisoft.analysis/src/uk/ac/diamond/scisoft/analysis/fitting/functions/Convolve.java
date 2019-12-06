@@ -50,8 +50,8 @@ public class Convolve extends ABinaryOperator implements IOperator {
 			return;
 
 		IDataset[] values = it.getValues();
-		DoubleDataset da = (DoubleDataset) DatasetUtils.cast(fa.calculateValues(values), Dataset.FLOAT64);
-		Dataset db = DatasetUtils.cast(fb.calculateValues(values), Dataset.FLOAT64);
+		DoubleDataset da = DatasetUtils.cast(DoubleDataset.class, fa.calculateValues(values));
+		Dataset db = DatasetUtils.cast(DoubleDataset.class, fb.calculateValues(values));
 		data.setSlice(calcConvolution(da, db));
 	}
 
@@ -74,13 +74,13 @@ public class Convolve extends ABinaryOperator implements IOperator {
 			return;
 
 		final IDataset[] values = it.getValues();
-		DoubleDataset da = (DoubleDataset) DatasetUtils.cast(fa.calculatePartialDerivativeValues(parameter, values), Dataset.FLOAT64);
-		Dataset db = DatasetUtils.cast(fb.calculateValues(values), Dataset.FLOAT64);
+		DoubleDataset da = DatasetUtils.cast(DoubleDataset.class, fa.calculatePartialDerivativeValues(parameter, values));
+		Dataset db = DatasetUtils.cast(DoubleDataset.class, fb.calculateValues(values));
 
 		data.setSlice(calcConvolution(da, db));
 
-		da = (DoubleDataset) DatasetUtils.cast(fa.calculateValues(values), Dataset.FLOAT64);
-		db = DatasetUtils.cast(fb.calculatePartialDerivativeValues(parameter, values), Dataset.FLOAT64);
+		da = DatasetUtils.cast(DoubleDataset.class, fa.calculateValues(values));
+		db = DatasetUtils.cast(DoubleDataset.class, fb.calculatePartialDerivativeValues(parameter, values));
 		data.iadd(calcConvolution(da, db));
 	}
 }

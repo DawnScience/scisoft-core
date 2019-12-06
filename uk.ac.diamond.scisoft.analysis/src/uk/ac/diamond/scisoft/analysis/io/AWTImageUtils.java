@@ -61,11 +61,11 @@ public class AWTImageUtils {
 		Dataset tmp;
 
 		for (int i = 0; i < bands; i++) {
-			if (FloatDataset.class.equals(clazz)) {
+			if (FloatDataset.class.isAssignableFrom(clazz)) {
 				tmp =  DatasetFactory.createFromObject(r.getSamples(0, 0, width, height, i, (float[]) null), height, width);
-			} else if (DoubleDataset.class.equals(clazz)) {
+			} else if (DoubleDataset.class.isAssignableFrom(clazz)) {
 				tmp = DatasetFactory.createFromObject(r.getSamples(0, 0, width, height, i, (double[]) null), height, width);
-			} else if (IntegerDataset.class.equals(clazz)) {
+			} else if (IntegerDataset.class.isAssignableFrom(clazz)) {
 				tmp = DatasetFactory.createFromObject(r.getSamples(0, 0, width, height, i, (int[]) null), height, width);
 			} else {
 				tmp = DatasetFactory.createFromObject(clazz, r.getSamples(0, 0, width, height, i, (int[]) null), height, width);

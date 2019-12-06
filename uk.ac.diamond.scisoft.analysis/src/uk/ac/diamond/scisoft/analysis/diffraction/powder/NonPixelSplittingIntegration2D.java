@@ -67,8 +67,8 @@ public class NonPixelSplittingIntegration2D extends AbstractPixelIntegration2D {
 
 		//TODO early exit if spans are z
 
-		IntegerDataset histo = (IntegerDataset) DatasetFactory.zeros(new int[]{nBinsChi,nbins}, Dataset.INT32);
-		FloatDataset intensity = (FloatDataset) DatasetFactory.zeros(new int[]{nBinsChi,nbins},Dataset.FLOAT32);
+		IntegerDataset histo = DatasetFactory.zeros(IntegerDataset.class, nBinsChi,nbins);
+		FloatDataset intensity = DatasetFactory.zeros(FloatDataset.class, nBinsChi,nbins);
 
 		Dataset a = DatasetUtils.convertToDataset(radialArray[0]);
 		Dataset b = DatasetUtils.convertToDataset(dataset);

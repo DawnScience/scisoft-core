@@ -15,6 +15,7 @@ import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation; import
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
 
@@ -44,7 +45,7 @@ public class SXRDRodScanFinalExtraction extends AbstractOperation<RodScanPolynom
 		
 		
 		Dataset fhkl = Maths.sqrt(input);
-		Dataset inputSum = DatasetFactory.createFromObject((DatasetUtils.cast(input, Dataset.FLOAT64)).sum());
+		Dataset inputSum = DatasetFactory.createFromObject((DatasetUtils.cast(DoubleDataset.class, input)).sum());
 		Dataset fhklSum = DatasetFactory.createFromObject(fhkl.sum());
 	
 		return new OperationData(fhklSum, fhkl, input, inputSum);

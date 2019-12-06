@@ -13,6 +13,7 @@ import java.util.Arrays;
 
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 
 public class XYImagePixelCache implements IPixelIntegrationCache {
 
@@ -121,7 +122,7 @@ public class XYImagePixelCache implements IPixelIntegrationCache {
 //		double shift = (binRange[1]- binRange[0])/(2*nBins);
 //		return DatasetFactory.createLinearSpace(binRange[0]-shift, binRange[1]+shift, nBins + 1, Dataset.FLOAT64);
 		
-		return DatasetFactory.createLinearSpace(binRange[0], binRange[1], nBins, Dataset.FLOAT64);
+		return DatasetFactory.createLinearSpace(DoubleDataset.class, binRange[0], binRange[1], nBins);
 	}
 
 

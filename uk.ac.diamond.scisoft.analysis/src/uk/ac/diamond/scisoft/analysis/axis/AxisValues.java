@@ -144,7 +144,7 @@ public class AxisValues implements Iterable<Double>, Serializable, Cloneable {
 	 * @param data
 	 */
 	public void setValues(IDataset data) {
-		values = (DoubleDataset) DatasetUtils.cast(data, Dataset.FLOAT64);
+		values = DatasetUtils.cast(DoubleDataset.class, data);
 		isDirty = true;
 	}
 

@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IPeak;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.Maths;
@@ -181,7 +180,7 @@ public abstract class Generic1DFitterTestBase {
 	@SuppressWarnings("unused")
 	private DoubleDataset addNoiseToDataSet(DoubleDataset data) {
 		Random.seed(123568);
-		DoubleDataset noise = (DoubleDataset) Random.poisson(lambda, dataRange).cast(Dataset.FLOAT64);
+		DoubleDataset noise = Random.poisson(lambda, dataRange).cast(DoubleDataset.class);
 		noise = (DoubleDataset) Maths.multiply(noise, 0.01);
 		return (DoubleDataset) Maths.add(data, noise);
 	}

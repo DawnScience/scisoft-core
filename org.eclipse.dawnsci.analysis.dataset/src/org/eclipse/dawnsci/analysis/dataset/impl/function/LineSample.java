@@ -15,11 +15,11 @@ package org.eclipse.dawnsci.analysis.dataset.impl.function;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.InterfaceUtils;
 import org.eclipse.january.dataset.Maths;
 
 /**
@@ -88,8 +88,7 @@ public class LineSample implements DatasetToDatasetFunction {
 			Dataset ds = DatasetUtils.convertToDataset(ids);
 			int nr = ((int) Math.floor(rad / step)) + 1;
 
-			Dataset linsample = DatasetFactory.zeros(new int[] { nr },
-					DTypeUtils.getBestFloatDType(ds.getDType()));
+			Dataset linsample = DatasetFactory.zeros(InterfaceUtils.getBestFloatInterface(ds.getClass()), nr);
 
 			double x, y;
 			for (int i = 0; i < nr; i++) {

@@ -39,12 +39,21 @@ import org.eclipse.dawnsci.nexus.NXdata;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NXroot;
 import org.eclipse.january.DatasetException;
-import org.eclipse.january.dataset.DTypeUtils;
+import org.eclipse.january.dataset.BooleanDataset;
+import org.eclipse.january.dataset.ByteDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DateDataset;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.InterfaceUtils;
+import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.dataset.PositionIterator;
+import org.eclipse.january.dataset.ShortDataset;
+import org.eclipse.january.dataset.StringDataset;
 
 public class NexusAssert {
 
@@ -132,25 +141,6 @@ public class NexusAssert {
 		}
 	}
 
-	public static void assertAttributesEquals(final String path, final Attribute expectedAttr,
-			final Attribute actualAttr) {
-		assertEquals(path, expectedAttr.getName(), actualAttr.getName());
-		assertEquals(path, expectedAttr.getTypeName(), actualAttr.getTypeName());
-		assertEquals(path, expectedAttr.getFirstElement(), actualAttr.getFirstElement());
-		assertEquals(path, expectedAttr.getSize(), actualAttr.getSize());
-		if (expectedAttr.getSize() == 1 && expectedAttr.getRank() == 1 && actualAttr.getRank() == 0) {
-			// TODO fix examples now that we can save scalar (or zero-ranked) datasets
-			actualAttr.getValue().setShape(1);
-		}
-		assertEquals(path, expectedAttr.getRank(), actualAttr.getRank());
-		assertArrayEquals(path, expectedAttr.getShape(), actualAttr.getShape());
-		assertDatasetsEqual(path, expectedAttr.getValue(), actualAttr.getValue());
-	}
-	
-	public static void assertDatasetValue(Object expectedValue, ILazyDataset dataset) {
-		assertDatasetsEqual(null, DatasetFactory.createFromObject(expectedValue), dataset);
-	}
-	
 	public static void assertDataNodesEqual(final String path,
 			final DataNode expectedDataNode, final DataNode actualDataNode) {
 		// check number of attributes same (i.e. actualDataNode has no additional attributes)
@@ -191,6 +181,25 @@ public class NexusAssert {
 		assertDatasetsEqual(path, expectedDataNode.getDataset(), actualDataNode.getDataset());
 	}
 
+	public static void assertAttributesEquals(final String path, final Attribute expectedAttr,
+			final Attribute actualAttr) {
+		assertEquals(path, expectedAttr.getName(), actualAttr.getName());
+		assertEquals(path, expectedAttr.getTypeName(), actualAttr.getTypeName());
+		assertEquals(path, expectedAttr.getFirstElement(), actualAttr.getFirstElement());
+		assertEquals(path, expectedAttr.getSize(), actualAttr.getSize());
+		if (expectedAttr.getSize() == 1 && expectedAttr.getRank() == 1 && actualAttr.getRank() == 0) {
+			// TODO fix examples now that we can save scalar (or zero-ranked) datasets
+			actualAttr.getValue().setShape(1);
+		}
+		assertEquals(path, expectedAttr.getRank(), actualAttr.getRank());
+		assertArrayEquals(path, expectedAttr.getShape(), actualAttr.getShape());
+		assertDatasetsEqual(path, expectedAttr.getValue(), actualAttr.getValue());
+	}
+
+	public static void assertDatasetValue(Object expectedValue, ILazyDataset dataset) {
+		assertDatasetsEqual(null, DatasetFactory.createFromObject(expectedValue), dataset);
+	}
+
 	public static void assertDatasetsEqual(final String path, final ILazyDataset expectedDataset,
 			final ILazyDataset actualDataset) {
 		// Note: dataset names can be different, as long as the containing data node names are the same
@@ -226,38 +235,28 @@ public class NexusAssert {
 				throw new AssertionError("Could not get data from lazy dataset", e.getCause());
 			}
 
-			final int datatype = DTypeUtils.getDType(actualDataset);
+			Class<? extends Dataset> clazz = InterfaceUtils.getInterface(actualDataset);
 			PositionIterator positionIterator = new PositionIterator(actualDataset.getShape());
 			while (positionIterator.hasNext()) {
 				int[] position = positionIterator.getPos();
-				switch (datatype) {
-				case Dataset.BOOL:
+				if (BooleanDataset.class.isAssignableFrom(clazz)) {
 					assertEquals(path, expectedSlice.getBoolean(position), actualSlice.getBoolean(position));
-					break;
-				case Dataset.INT8:
+				} else if (ByteDataset.class.isAssignableFrom(clazz)) {
 					assertEquals(path, expectedSlice.getByte(position), actualSlice.getByte(position));
-					break;
-				case Dataset.INT32:
+				} else if (ShortDataset.class.isAssignableFrom(clazz)) {
+					assertEquals(path, expectedSlice.getShort(position), actualSlice.getShort(position));
+				} else if (IntegerDataset.class.isAssignableFrom(clazz)) {
 					assertEquals(path, expectedSlice.getInt(position), actualSlice.getInt(position));
-					break;
-				case Dataset.INT64:
+				} else if (LongDataset.class.isAssignableFrom(clazz)) {
 					assertEquals(path, expectedSlice.getLong(position), actualSlice.getLong(position));
-					break;
-				case Dataset.FLOAT32:
+				} else if (FloatDataset.class.isAssignableFrom(clazz)) {
 					assertEquals(path, expectedSlice.getFloat(position), actualSlice.getFloat(position), 1e-7);
-					break;
-				case Dataset.FLOAT64:
+				} else if (DoubleDataset.class.isAssignableFrom(clazz)) {
 					assertEquals(path, expectedSlice.getDouble(position), actualSlice.getDouble(position), 1e-15);
-					break;
-				case Dataset.STRING:
-				case Dataset.DATE:
+				} else if (StringDataset.class.isAssignableFrom(clazz) || DateDataset.class.isAssignableFrom(clazz)) {
 					assertEquals(path, expectedSlice.getString(position), actualSlice.getString(position));
-					break;
-				case Dataset.COMPLEX64:
-				case Dataset.COMPLEX128:
-				case Dataset.OBJECT:
+				} else {
 					assertEquals(path, expectedSlice.getObject(position), actualSlice.getObject(position));
-					break;
 				}
 			}
 		}

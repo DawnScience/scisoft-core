@@ -16,10 +16,14 @@ import org.eclipse.january.asserts.TestUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.Random;
+import org.eclipse.january.dataset.ShortDataset;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -210,11 +214,11 @@ public class SummedAreaTableTest {
 
 	private void typeLoop(int[] size) throws Exception {
 		for (int i : new int[] { 1, 5, 9 }) {
-			testFano(DatasetUtils.cast(Maths.multiply(Random.rand(size), 100), Dataset.INT16), i, i);
-			testFano(DatasetUtils.cast(Maths.multiply(Random.rand(size), 100), Dataset.INT32), i, i);
-			testFano(DatasetUtils.cast(Maths.multiply(Random.rand(size), 100), Dataset.INT64), i, i);
-			testFano(DatasetUtils.cast(Maths.multiply(Random.rand(size), 100), Dataset.FLOAT32), i, i);
-			testFano(DatasetUtils.cast(Maths.multiply(Random.rand(size), 100), Dataset.FLOAT64), i, i);
+			testFano(DatasetUtils.cast(ShortDataset.class, Maths.multiply(Random.rand(size), 100)), i, i);
+			testFano(DatasetUtils.cast(IntegerDataset.class, Maths.multiply(Random.rand(size), 100)), i, i);
+			testFano(DatasetUtils.cast(LongDataset.class, Maths.multiply(Random.rand(size), 100)), i, i);
+			testFano(DatasetUtils.cast(FloatDataset.class, Maths.multiply(Random.rand(size), 100)), i, i);
+			testFano(DatasetUtils.cast(DoubleDataset.class, Maths.multiply(Random.rand(size), 100)), i, i);
 		}
 	}
 

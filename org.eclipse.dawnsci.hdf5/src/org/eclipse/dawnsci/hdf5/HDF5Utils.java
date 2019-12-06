@@ -912,7 +912,7 @@ public class HDF5Utils {
 		long[] shape = toLongArray(iShape);
 		long[] maxShape = toLongArray(iMaxShape);
 		long[] chunks = toLongArray(iChunks);
-		boolean stringDataset = StringDataset.class.equals(clazz);
+		boolean stringDataset = StringDataset.class.isAssignableFrom(clazz);
 		long hdfType = getHDF5type(clazz);
 		try {
 			long hdfDatatypeId = -1;
@@ -1745,7 +1745,7 @@ public class HDF5Utils {
 			if (comp.isize == 2 && tclass == HDF5Constants.H5T_FLOAT) {
 				if (getLastComponent(names.get(0)).toLowerCase().startsWith("r") && getLastComponent(names.get(1)).toLowerCase().startsWith("i")) {
 					comp.isComplex = true;
-					comp.clazz = FloatDataset.class.equals(comp.clazz) ? ComplexFloatDataset.class: ComplexDoubleDataset.class;
+					comp.clazz = FloatDataset.class.isAssignableFrom(comp.clazz) ? ComplexFloatDataset.class: ComplexDoubleDataset.class;
 				}
 			}
 			if (!comp.isComplex) {

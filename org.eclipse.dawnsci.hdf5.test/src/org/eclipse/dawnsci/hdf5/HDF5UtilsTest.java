@@ -88,13 +88,13 @@ public class HDF5UtilsTest {
 
 		System.err.printf("Created source %s and destination %s", src, dst);
 		HDF5File f = HDF5FileFactory.acquireFile(dst, false);
-		Dataset d = HDF5Utils.readDataset(f, "/group0/data0", new int[] {0, 0}, new int[] {3, 2}, new int[] {1,1}, Dataset.INT8, 1, true);
+		Dataset d = HDF5Utils.readDataset(f, "/group0/data0", new int[] {0, 0}, new int[] {3, 2}, new int[] {1,1}, 1, ByteDataset.class, true);
 		TestUtils.assertDatasetEquals(DatasetFactory.zeros(ByteDataset.class, shape0).fill(30), d);
 
-		d = HDF5Utils.readDataset(f, "/data0", new int[] {0, 0}, new int[] {3, 2}, new int[] {1,1}, Dataset.INT8, 1, true);
+		d = HDF5Utils.readDataset(f, "/data0", new int[] {0, 0}, new int[] {3, 2}, new int[] {1,1}, 1, ByteDataset.class, true);
 		TestUtils.assertDatasetEquals(DatasetFactory.zeros(ShortDataset.class, shape0).fill(130), d);
 
-		d = HDF5Utils.readDataset(f, "/group1/data1", new int[] {0, 0}, new int[] {4, 3}, new int[] {1,1}, Dataset.FLOAT32, 1, true);
+		d = HDF5Utils.readDataset(f, "/group1/data1", new int[] {0, 0}, new int[] {4, 3}, new int[] {1,1}, 1, FloatDataset.class, true);
 		TestUtils.assertDatasetEquals(DatasetFactory.zeros(FloatDataset.class, shape1).fill(-1.0), d);
 		HDF5FileFactory.releaseFile(dst, true);
 	}

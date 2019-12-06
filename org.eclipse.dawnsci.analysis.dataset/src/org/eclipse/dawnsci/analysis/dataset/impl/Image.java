@@ -33,6 +33,7 @@ import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.InterpolatorUtils;
 import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.dataset.RGBDataset;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.Stats;
 import org.slf4j.Logger;
@@ -294,7 +295,7 @@ public class Image {
 			Dataset gMean = gTable.getMeanImage(radius);
 			SummedAreaTable bTable = new SummedAreaTable(bData, true);
 			Dataset bMean = bTable.getMeanImage(radius);
-			Dataset meanRgb = DatasetUtils.createCompoundDataset(Dataset.RGB, rMean, gMean, bMean);
+			Dataset meanRgb = DatasetUtils.createCompoundDataset(RGBDataset.class, rMean, gMean, bMean);
 			return meanRgb;
 		}
 		final SummedAreaTable table = new SummedAreaTable(input, true);
@@ -391,7 +392,7 @@ public class Image {
 					// clip negative values
 					Maths.clip(pseudoFlatFielded[i], pseudoFlatFielded[i], 0, Double.POSITIVE_INFINITY);
 				}
-				return DatasetUtils.createCompoundDataset(Dataset.RGB, pseudoFlatFielded);
+				return DatasetUtils.createCompoundDataset(RGBDataset.class, pseudoFlatFielded);
 			}
 			return DatasetUtils.createCompoundDataset(pseudoFlatFielded);
 		}
@@ -485,7 +486,7 @@ public class Image {
 			Dataset gFano = gTable.getFanoImage(box);
 			SummedAreaTable bTable = new SummedAreaTable(bData, true);
 			Dataset bFano = bTable.getFanoImage(box);
-			return DatasetUtils.createCompoundDataset(Dataset.RGB, rFano, gFano, bFano);
+			return DatasetUtils.createCompoundDataset(RGBDataset.class, rFano, gFano, bFano);
 		}
 		final SummedAreaTable table = new SummedAreaTable(input, true);
 		return table.getFanoImage(box);
@@ -517,8 +518,8 @@ public class Image {
 	public static Dataset rotate(Dataset input, double angle, boolean keepShape) throws Exception {
 		if (input.getRank() != 2)
 			throw new Exception("Error: input dataset rank expected is 2");
-		IDataset ret = transformService.rotate(input.cast(input.getDType()), angle, keepShape);
-		Dataset result = DatasetUtils.cast(ret, input.getDType());
+		IDataset ret = transformService.rotate(input.cast(input.getClass()), angle, keepShape);
+		Dataset result = DatasetUtils.cast(input.getClass(), ret);
 		return result;
 	}
 
@@ -545,7 +546,7 @@ public class Image {
 		for (int i = 0; i < aligned.size(); i ++) {
 			IDataset dat = aligned.get(i);
 			dat.resize(new int[]{1, size[1], size[2]});
-			alignedData[i] = DatasetUtils.cast(dat, input.getDType());
+			alignedData[i] = DatasetUtils.cast(input.getClass(), dat);
 		}
 		Dataset result = DatasetUtils.concatenate(alignedData, 0);
 		return result;

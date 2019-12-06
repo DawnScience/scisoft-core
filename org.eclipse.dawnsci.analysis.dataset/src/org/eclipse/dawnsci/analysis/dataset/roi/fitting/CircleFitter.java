@@ -318,8 +318,8 @@ public class CircleFitter implements IConicSectionFitter, Serializable {
 		Dataset y = DatasetUtils.convertToDataset(iy);
 		double mx = (Double) x.mean();
 		double my = (Double) y.mean();
-		x = Maths.subtract(x.cast(Dataset.FLOAT64), mx);
-		y = Maths.subtract(y.cast(Dataset.FLOAT64), my);
+		x = Maths.subtract(x.cast(DoubleDataset.class), mx);
+		y = Maths.subtract(y.cast(DoubleDataset.class), my);
 		final DoubleDataset z = (DoubleDataset) Maths.square(x).iadd(Maths.square(y));
 		final DoubleDataset o = DatasetFactory.ones(DoubleDataset.class, x.getShape());
 

@@ -16,11 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
-import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.InterfaceUtils;
 import org.eclipse.january.dataset.Maths;
 
 /**
@@ -114,7 +114,7 @@ public class MapToRotatedCartesian implements DatasetToDatasetFunction {
 
 			// work out cosine and sine
 
-			Dataset newmap = DatasetFactory.zeros(os, DTypeUtils.getBestFloatDType(ds.getDType()));
+			Dataset newmap = DatasetFactory.zeros(InterfaceUtils.getBestFloatInterface(ds.getClass()), os);
 			Dataset unitmap = DatasetFactory.zeros(newmap);
 
 			double cx, cy;

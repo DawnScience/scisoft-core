@@ -27,11 +27,9 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.io.SliceObject;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.IMetadata;
 import org.eclipse.january.metadata.Metadata;
@@ -44,7 +42,6 @@ import gda.data.nexus.extractor.NexusGroupData;
 import gda.data.nexus.tree.INexusTree;
 import gda.data.nexus.tree.NexusTreeBuilder;
 import gda.data.nexus.tree.NexusTreeNodeSelection;
-import uk.ac.diamond.scisoft.analysis.dataset.Nexus;
 
 /**
  *
@@ -498,46 +495,6 @@ public class NexusLoader extends AbstractFileLoader {
 			this.dataSetNames = origNames;
 			this.fileName     = origFileName;
 		}
-    }
-
-	
-	/**
-	 * Method is supposed to slice without reading all the rest of the data in.
-	 * 
-	 * *NOTE* If this is not protected with a synchronized then 
-	 * 
-	 * @param object
-	 * @param mon
-	 * @return set
-	 * @throws Exception
-	 */
-	protected Dataset slice(final SliceObject object, IMonitor mon) throws Exception {
-
-		final List<String> origNames    =  dataSetNames;
-		final String       origFileName =  fileName;
-		try {
-			this.fileName     = object.getPath();
-			this.dataSetNames = Arrays.asList(new String[]{object.getName()});
-			if (mon!=null&&mon.isCancelled()) return null;
-			INexusTree tree = getTreeForDatasetNames(fileName, dataSetNames, false, mon);
-			if (mon!=null&&mon.isCancelled()) return null;
-			Map<String, INexusTree> nodes =  getDatasetNodes(tree, dataSetNames);
-			if (mon!=null&&mon.isCancelled()) return null;
-		
-			final INexusTree   node = nodes.get(object.getName());
-			if (mon!=null&&mon.isCancelled()) return null;
-			final ILazyDataset nSet = Nexus.createLazyDataset(node);
-			if (mon!=null&&mon.isCancelled()) return null;
-			
-			Dataset slicedData = DatasetUtils.convertToDataset(
-					nSet.getSlice(object.getSliceStart(), object.getSliceStop(), object.getSliceStep()));
-            return slicedData;
-
-		} finally {
-			this.dataSetNames = origNames;
-			this.fileName     = origFileName;
-		}
-
 	}
 
 	/**

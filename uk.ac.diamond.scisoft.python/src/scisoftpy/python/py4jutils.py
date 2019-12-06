@@ -58,6 +58,14 @@ def get_gateway():
         print("Dawn JVM not found - switch on Py4J server in Window > Preferences > Py4J Default Server", file=sys.stderr)
         print(ne, file=sys.stderr)
 
+def java_import(jvm_view, import_str):
+    try:
+        from py4j.java_gateway import java_import as ji
+        ji(jvm_view, import_str)
+    except ImportError as ie:
+        print("No Py4J found - check your python installation", file=sys.stderr)
+        print(ie, file=sys.stderr)
+
 def convert_line_roi(roi):
     '''
     Convert a line ROI to its Java equivalent

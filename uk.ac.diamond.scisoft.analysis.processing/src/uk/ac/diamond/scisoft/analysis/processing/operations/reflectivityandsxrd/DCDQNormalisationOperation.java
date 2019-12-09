@@ -16,6 +16,7 @@ import java.beans.PropertyChangeListener;
 
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
+import org.apache.commons.math3.exception.OutOfRangeException;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
@@ -76,7 +77,15 @@ public class DCDQNormalisationOperation extends AbstractOperationBase<DCDQNormal
 		// in order to avoid the situation where we are normalising by a 
 		// particularly massive number we divide by the average intensity here		
 		double qValue = qSlice.getDouble();
-		double divisor = pSF.value(qValue) / averageIntensity;
+		double divisor;
+		try {
+			divisor = pSF.value(qValue) / averageIntensity;
+		} catch (OutOfRangeException outRangeError) {
+			// If the minimum q collected is less than the minimum in the 
+			// normalisation then just assume that the divisor will be 
+			// the same
+			divisor = pSF.value(pSF.getKnots()[0]) / averageIntensity;
+		}
 		
 		IDataset output = ErrorPropagationUtils.divideWithUncertainty(DatasetUtils.convertToDataset(input), DatasetFactory.createFromObject(divisor));
 		copyMetadata(input, output);

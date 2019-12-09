@@ -47,6 +47,7 @@ import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.Stats;
 import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.Histogram;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
@@ -693,6 +694,31 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			if (useSpectrum && in != null) {
 				Dataset spectrum = makeSpectrum(in, m, model.isClipSpectra());
 				spectrum.setName(ES_PREFIX + i);
+				int rows = spectrum.getShapeRef()[0];
+				Dataset elastic = DatasetFactory.createRange(rows);
+				if (offset[1] != 0) {
+					elastic.iadd(offset[1]);
+				}
+
+				AxesMetadata am = spectrum.getFirstMetadata(AxesMetadata.class);
+				if (am != null) {
+					try { // adjust for shift by clipping
+						Dataset x = DatasetUtils.sliceAndConvertLazyDataset(am.getAxes()[0]);
+						elastic.iadd(x.getDouble());
+					} catch (DatasetException e1) {
+						// do nothing
+					}
+				} else {
+					try {
+						am = MetadataFactory.createMetadata(AxesMetadata.class, 1);
+					} catch (MetadataException e) {
+						// do nothing
+					}
+				}
+				if (am != null) {
+					am.setAxis(0, elastic);
+				}
+
 				goodSpectra[i].add(spectrum);
 				posSlope[i].add(m > 0);
 			}

@@ -258,11 +258,11 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			}
 		}
 		
-		if (nullReturnSWMRMode.get()) {
+		if (nullReturnSWMRMode.get() || result.getData() == null) {
 			flushDatasets(monitor);
 			return;
 		}
-		
+
 		//not threadsafe but closer
 		boolean fNNE = firstNonNullExecution.getAndSet(false);
 		
@@ -319,69 +319,74 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 
 		String position = String.valueOf(positionMap.get(intermediateData));
 
-		SliceFromSeriesMetadata metadata;
+		SliceFromSeriesMetadata metadata = null;
 		try {
-			metadata = data.getData().getMetadata(SliceFromSeriesMetadata.class).get(0);
+			IDataset d = data.getData();
+			if (d != null) {
+				metadata = d.getMetadata(SliceFromSeriesMetadata.class).get(0);
+			}
 		} catch (Exception e) {
 			logger.error("Cannot access series metadata, contact DAWN support", e);
 			return;
 		}
 
-		int[] dataDims = metadata.getDataDimensions();
-		int[] shape = metadata.getSubSampledShape();
-		Slice[] slices = metadata.getSliceInOutput();
-
-		//if specified to save data, do it
-		if (intermediateData.isStoreOutput()) {
-			try {
-				String intermediatePosData = intermediate + Node.SEPARATOR + position + "-" + intermediateData.getName();
-				GroupNode group;
-				synchronized (nexusFile) {
-					group = nexusFile.getGroup(intermediatePosData, true);
-				}
-				Dataset d = DatasetUtils.convertToDataset(data.getData());
-				
-				synchronized (nexusFile) {
-					d.setName(DATA_NAME);
-					appendData(d,group, slices,shape, nexusFile, dataDims);
-				}
-				if (first){
+		if (metadata != null) {
+			int[] dataDims = metadata.getDataDimensions();
+			int[] shape = metadata.getSubSampledShape();
+			Slice[] slices = metadata.getSliceInOutput();
+	
+			//if specified to save data, do it
+			if (intermediateData.isStoreOutput()) {
+				try {
+					String intermediatePosData = intermediate + Node.SEPARATOR + position + "-" + intermediateData.getName();
+					GroupNode group;
 					synchronized (nexusFile) {
-						nexusFile.addAttribute(group, TreeFactory.createAttribute(NexusConstants.DATA_SIGNAL, d.getName()));
+						group = nexusFile.getGroup(intermediatePosData, true);
 					}
-				}
-				updateAxes(d, slices, shape, dataDims, intermediatePosData,first);
-
-			} catch (Exception e) {
-				logger.error("Could not append intermediate data", e);
-			}
-
-		}
-
-		//save aux data (should be IDataset, with unit dimensions)
-		if (!isEmpty(auxData)) {
-			for (int i = 0; i < auxData.length; i++) {
-				if (auxData[i] instanceof IDataset) {
+					Dataset d = DatasetUtils.convertToDataset(data.getData());
 					
-					try {
-						Dataset ds = DatasetUtils.convertToDataset((IDataset) auxData[i]);
-						String dsName = ds.getName();
-						GroupNode group;
-						String currentGroup = Tree.ROOT + ENTRY + Node.SEPARATOR + AUX_GROUP;
+					synchronized (nexusFile) {
+						d.setName(DATA_NAME);
+						appendData(d,group, slices,shape, nexusFile, dataDims);
+					}
+					if (first){
 						synchronized (nexusFile) {
-							GroupNode auxG = requireNXclass(currentGroup, NexusConstants.SUBENTRY);
-							group = requireNXclass(auxG, position + "-" + intermediateData.getName() + Node.SEPARATOR + dsName, NexusConstants.DATA);
-							currentGroup += Node.SEPARATOR + position + "-" + intermediateData.getName();
-							ds.setName(DATA_NAME);
-							appendData(ds, group, slices, shape, nexusFile, dataDims);
-							if (first) {
-								nexusFile.addAttribute(group, TreeFactory.createAttribute(NexusConstants.DATA_SIGNAL, ds.getName()));
-							}
+							nexusFile.addAttribute(group, TreeFactory.createAttribute(NexusConstants.DATA_SIGNAL, d.getName()));
 						}
+					}
+					updateAxes(d, slices, shape, dataDims, intermediatePosData,first);
+	
+				} catch (Exception e) {
+					logger.error("Could not append intermediate data", e);
+				}
+	
+			}
+	
+			//save aux data (should be IDataset, with unit dimensions)
+			if (!isEmpty(auxData)) {
+				for (int i = 0; i < auxData.length; i++) {
+					if (auxData[i] instanceof IDataset) {
 						
-						updateAxes(ds, slices, shape, dataDims, currentGroup + Node.SEPARATOR + dsName, first);
-					} catch (Exception e) {
-						logger.error("Could not append auxiliary data", e);
+						try {
+							Dataset ds = DatasetUtils.convertToDataset((IDataset) auxData[i]);
+							String dsName = ds.getName();
+							GroupNode group;
+							String currentGroup = Tree.ROOT + ENTRY + Node.SEPARATOR + AUX_GROUP;
+							synchronized (nexusFile) {
+								GroupNode auxG = requireNXclass(currentGroup, NexusConstants.SUBENTRY);
+								group = requireNXclass(auxG, position + "-" + intermediateData.getName() + Node.SEPARATOR + dsName, NexusConstants.DATA);
+								currentGroup += Node.SEPARATOR + position + "-" + intermediateData.getName();
+								ds.setName(DATA_NAME);
+								appendData(ds, group, slices, shape, nexusFile, dataDims);
+								if (first) {
+									nexusFile.addAttribute(group, TreeFactory.createAttribute(NexusConstants.DATA_SIGNAL, ds.getName()));
+								}
+							}
+							
+							updateAxes(ds, slices, shape, dataDims, currentGroup + Node.SEPARATOR + dsName, first);
+						} catch (Exception e) {
+							logger.error("Could not append auxiliary data", e);
+						}
 					}
 				}
 			}

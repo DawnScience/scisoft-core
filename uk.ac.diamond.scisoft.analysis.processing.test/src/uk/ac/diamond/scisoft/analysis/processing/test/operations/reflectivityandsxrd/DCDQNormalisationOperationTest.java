@@ -63,6 +63,19 @@ public class DCDQNormalisationOperationTest {
 		TestUtils.assertDatasetEquals(DatasetUtils.convertToDataset(resultData.getData()), expectedData);
 	}
 	
+	@Test 
+	public void testProcessOutOfRange() throws MetadataException {
+		DCDQNormalisationOperation dcdQNormalisationOperation = initialiseOperation("testfiles/dcdnormalisationtest.dat", "adc2", "qdcd_");		
+		Dataset testData = initialiseTestDataOutOfRange();
+		IMonitor monitor = new IMonitor.Stub();
+
+		OperationData resultData = dcdQNormalisationOperation.execute(testData, monitor);
+		// Now some result data needs to be created
+		Dataset expectedData = Maths.divide(DatasetFactory.ones(5), 2.46123243E8 / 2.1884084347272727E8);
+		
+		TestUtils.assertDatasetEquals(DatasetUtils.convertToDataset(resultData.getData()), expectedData);
+	}
+	
 	@Test(expected = OperationException.class)
 	public void testProcessBadIName() throws MetadataException {
 		DCDQNormalisationOperation dcdQNormalisationOperation = initialiseOperation("testfiles/dcdnormalisationtest.dat", "not_there", "qdcd_");		
@@ -95,6 +108,18 @@ public class DCDQNormalisationOperationTest {
 		
 		AxesMetadata axesMetadata = MetadataFactory.createMetadata(AxesMetadata.class, 1);	
 		Dataset sliceAxis = DatasetFactory.createFromObject(0.5);
+		axesMetadata.setAxis(0, sliceAxis);	
+		SliceFromSeriesMetadata sliceSeriesMetadata = new SliceFromSeriesMetadata((SliceInformation) null);
+		testData.addMetadata(sliceSeriesMetadata);
+		testData.setMetadata(axesMetadata);
+		return testData;
+	}
+	
+	private Dataset initialiseTestDataOutOfRange() throws MetadataException {
+		Dataset testData = DatasetFactory.ones(5);
+		
+		AxesMetadata axesMetadata = MetadataFactory.createMetadata(AxesMetadata.class, 1);	
+		Dataset sliceAxis = DatasetFactory.createFromObject(0.0005);
 		axesMetadata.setAxis(0, sliceAxis);	
 		SliceFromSeriesMetadata sliceSeriesMetadata = new SliceFromSeriesMetadata((SliceInformation) null);
 		testData.addMetadata(sliceSeriesMetadata);

@@ -73,6 +73,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	private Dataset currentCountTime;
 	private double countTime = 0;
 	private double drainCurrent;
+	private BooleanDataset usedFrames = null;
 
 	@Override
 	public void setModel(T model) {
@@ -111,6 +112,10 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		return OperationRank.TWO;
 	}
 
+	protected BooleanDataset getUsedFrames() {
+		return usedFrames;
+	}
+
 	abstract boolean skipFrame(int size, int frame);
 
 	@Override
@@ -122,6 +127,9 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		SliceInformation si = smd.getSliceInfo();
 		if (si.isFirstSlice()) {
 			log.clear();
+			if (usedFrames == null || usedFrames.getSize() != si.getTotalSlices()) {
+				usedFrames = DatasetFactory.zeros(BooleanDataset.class, si.getTotalSlices());
+			}
 			countTime = 0;
 			currentCountTime = null;
 			resetProcess(input);
@@ -131,7 +139,10 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		if (currentCountTime != null) {
 			countTime += ((Number) currentCountTime.getSlice(si.getInputSliceWithoutDataDimensions()).sum(true)).doubleValue();
 		}
-		if (skipFrame(si.getTotalSlices(), si.getSliceNumber())) {
+
+		boolean skip = skipFrame(si.getTotalSlices(), si.getSliceNumber());
+		usedFrames.setAbs(si.getSliceNumber(), !skip);
+		if (skip) {
 			return null;
 		}
 

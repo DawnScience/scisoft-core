@@ -24,18 +24,32 @@ import org.eclipse.january.dataset.ShapeUtils as _sutils
 import org.eclipse.january.dataset.DatasetFactory as _df
 
 import org.eclipse.january.dataset.BooleanDataset as _booleands
+import org.eclipse.january.dataset.ByteDataset as _byteds
+import org.eclipse.january.dataset.ShortDataset as _shortds
 import org.eclipse.january.dataset.IntegerDataset as _integerds
+import org.eclipse.january.dataset.LongDataset as _longds
+import org.eclipse.january.dataset.CompoundByteDataset as _cpdbyteds
+import org.eclipse.january.dataset.CompoundShortDataset as _cpdshortds
+import org.eclipse.january.dataset.CompoundIntegerDataset as _cpdintegerds
+import org.eclipse.january.dataset.CompoundLongDataset as _cpdlongds
 import org.eclipse.january.dataset.RGBDataset as _rgbds
+import org.eclipse.january.dataset.FloatDataset as _floatds
+import org.eclipse.january.dataset.DoubleDataset as _doubleds
+import org.eclipse.january.dataset.ComplexFloatDataset as _cpxfloatds
+import org.eclipse.january.dataset.ComplexDoubleDataset as _cpxdoubleds
+import org.eclipse.january.dataset.CompoundFloatDataset as _cpdfloatds
+import org.eclipse.january.dataset.CompoundDoubleDataset as _cpddoubleds
+import org.eclipse.january.dataset.DateDataset as _dateds
+import org.eclipse.january.dataset.StringDataset as _stringds
 
 import org.eclipse.january.dataset.DatasetUtils as _dsutils
-from org.eclipse.january.dataset.DTypeUtils import isDTypeInteger as _isdtint
+import org.eclipse.january.dataset.InterfaceUtils as _ifutils
 from uk.ac.diamond.scisoft.python.PythonUtils import convertToJava as _cvt2j
 from uk.ac.diamond.scisoft.python.PythonUtils import getSlice as _getslice
 from uk.ac.diamond.scisoft.python.PythonUtils import setSlice as _setslice
 from uk.ac.diamond.scisoft.python.PythonUtils import convertToSlice as _cvt2js
+from uk.ac.diamond.scisoft.python.PythonUtils import getInterfaceFromObject as _getdt
 from uk.ac.diamond.scisoft.python.PythonUtils import createFromObject as _create
-from uk.ac.diamond.scisoft.python.PythonUtils import createRange as _createRange
-from uk.ac.diamond.scisoft.python.PythonUtils import getDTypeFromObject as _getdt
 
 import org.apache.commons.math3.complex.Complex as _jcomplex #@UnresolvedImport
 
@@ -80,7 +94,7 @@ class _dtype(object):
     '''
     Dataset type has two properties:
 
-    value = Java dataset type object
+    value = Java dataset interface
     elements = number of elements per item
     '''
     def __init__(self, value, elements=1, name=None):
@@ -96,37 +110,35 @@ class _dtype(object):
             s += "(%d)" % self.elements
         return s
 
-bool = _dtype(_ds.BOOL, name='bool') #@ReservedAssignment
-int8 = _dtype(_ds.INT8, name='int8')
-int16 = _dtype(_ds.INT16, name='int16')
-int32 = _dtype(_ds.INT32, name='int32')
-int64 = _dtype(_ds.INT64, name='int64')
-cint8 = lambda e : _dtype(_ds.ARRAYINT8, e, 'cint8')
-cint16 = lambda e : _dtype(_ds.ARRAYINT16, e, 'cint16')
-cint32 = lambda e : _dtype(_ds.ARRAYINT32, e, 'cint32')
-cint64 = lambda e : _dtype(_ds.ARRAYINT64, e, 'cint64')
-float32 = _dtype(_ds.FLOAT32, name='float32')
-float64 = _dtype(_ds.FLOAT64, name='float64')
-cfloat32 = lambda e : _dtype(_ds.ARRAYFLOAT32, e, 'cfloat32')
-cfloat64 = lambda e : _dtype(_ds.ARRAYFLOAT64, e, 'cfloat64')
-complex64 = _dtype(_ds.COMPLEX64, name='complex64')
-complex128 = _dtype(_ds.COMPLEX128, name='complex128')
-string = _dtype(_ds.STRING, name='S')
-rgb = _dtype(_ds.RGB, 3, 'rgb')
+bool = _dtype(_booleands, name='bool') #@ReservedAssignment
+int8 = _dtype(_byteds, name='int8')
+int16 = _dtype(_shortds, name='int16')
+int32 = _dtype(_integerds, name='int32')
+int64 = _dtype(_longds, name='int64')
+cint8 = lambda e : _dtype(_cpdbyteds, e, 'cint8')
+cint16 = lambda e : _dtype(_cpdshortds, e, 'cint16')
+cint32 = lambda e : _dtype(_cpdintegerds, e, 'cint32')
+cint64 = lambda e : _dtype(_cpdlongds, e, 'cint64')
+float32 = _dtype(_floatds, name='float32')
+float64 = _dtype(_doubleds, name='float64')
+cfloat32 = lambda e : _dtype(_cpdfloatds, e, 'cfloat32')
+cfloat64 = lambda e : _dtype(_cpddoubleds, e, 'cfloat64')
+complex64 = _dtype(_cpxfloatds, name='complex64')
+complex128 = _dtype(_cpxdoubleds, name='complex128')
+string = _dtype(_stringds, name='S')
+rgb = _dtype(_rgbds, 3, 'rgb')
 
-# tuple of floating point types
-_floattype = (_ds.FLOAT32, _ds.FLOAT64, _ds.ARRAYFLOAT32, _ds.ARRAYFLOAT64)
+def _populate_dtype_maps(*types):
+    d = {}
+    for t in types:
+        d[t.value] = t
+    return d
 
 # dictionaries to map from Java dataset types to Jython types
-__jdtype2jytype = { _ds.BOOL : bool, _ds.INT8 : int8, _ds.INT16 : int16,
-                    _ds.INT32 : int32, _ds.INT64 : int64,
-                    _ds.FLOAT32 : float32, _ds.FLOAT64 : float64,
-                    _ds.COMPLEX64 : complex64, _ds.COMPLEX128 : complex128,
-                    _ds.STRING : string, _ds.RGB : rgb }
+__jdtype2jytype = _populate_dtype_maps(bool, int8, int16, int32, int64, float32, float64, complex64, complex128, string, rgb)
 
-__jcdtype2jytype = { _ds.ARRAYINT8 : cint8, _ds.ARRAYINT16 : cint16,
-                    _ds.ARRAYINT32 : cint32, _ds.ARRAYINT64 : cint64,
-                    _ds.ARRAYFLOAT32 : cfloat32, _ds.ARRAYFLOAT64 : cfloat64 }
+__jcdtype2jytype = {_cpdbyteds:cint8, _cpdshortds:cint16, _cpdintegerds:cint32, _cpdlongds:cint64, _cpdfloatds: cfloat32, _cpddoubleds:cfloat64}
+_compound_dtypes = (cint8, cint16, cint32, cint64, cfloat32, cfloat64)
 
 # get dtype from object
 def _getdtypefromobj(jobj):
@@ -137,7 +149,7 @@ def _getdtypefromobj(jobj):
 
 # get dtype from Java dataset
 def _getdtypefromjdataset(jobj):
-    d = jobj.getDType()
+    d = _ifutils.getInterface(jobj)
     if d in __jdtype2jytype:
         return __jdtype2jytype[d]
     if d in __jcdtype2jytype:
@@ -148,7 +160,7 @@ def _getdtypefromjdataset(jobj):
 def _translatenativetype(dtype):
     if dtype is None:
         return None
-    elif isinstance(dtype, _dtype) or dtype in list(__jcdtype2jytype.values()):
+    elif isinstance(dtype, _dtype) or dtype in _compound_dtypes:
         return dtype
     elif dtype is int:
         return int32
@@ -230,13 +242,13 @@ def _convertjArgs(newargs, newkwargs):
     nargs = [ _jinput(a) for a in newargs ]
     nkwargs = dict()
     for k,v in newkwargs.iteritems():
-        nkwargs[k] = _jinput(v)  
+        nkwargs[k] = _jinput(v)
     return nargs, nkwargs
 
 def _checkArgnames(argnames, args_to_convert):
     for inputname in args_to_convert:
         if not inputname in argnames:
-            raise ValueError('Input name %s is not an argument of the function' % str(inputname))    
+            raise ValueError('Input name %s is not an argument of the function' % str(inputname))
 
 def _convertArgsToArray(argnames, args_to_convert, args, kwargs):
     newkwargs = {}
@@ -352,7 +364,7 @@ def _as_int_array(items): # get integer array or list
     if isinstance(items, ndarray):
         items = items._jdataset()
     if isinstance(items, _ds):
-        if not _isdtint(items.getDType()):
+        if not _ifutils.isInteger(items.getClass()):
             raise TypeError("Shape must be an integer array or list")
         if items.getRank() > 1:
             raise TypeError("Shape must not be an array with rank > 1")
@@ -448,10 +460,10 @@ def asfarray(data, dtype=None):
 
     dt = _getdtypefromjdataset(jdata)
     dtype = _translatenativetype(dtype)
-    if dtype is None or dtype.value not in _floattype:
+    if dtype is None or not _ifutils.isFloating(dtype.value):
         if dt.elements == 1:
-            return jdata.cast(_ds.FLOAT64)
-        return jdata.cast(_ds.ARRAYFLOAT64)
+            return jdata.cast(_doubleds)
+        return jdata.cast(_cpddoubleds)
     return jdata.cast(dtype.value)
 
 def asDatasetList(dslist):
@@ -567,7 +579,7 @@ def __cvt_jobj(obj, dtype=None, copy=True, force=False):
     dtype = _translatenativetype(dtype)
     if isinstance(obj, _ds):
         if copy:
-            if dtype is None or dtype.value == obj.getDType():
+            if dtype is None or dtype.value.isAssignableFrom(obj.getClass()):
                 return obj.clone()
             else:
                 return obj.cast(dtype.value)
@@ -683,7 +695,7 @@ class ndarray(object):
                 self.__dataset.setShape(asIterable(shape))
         else:
             dtype = _translatenativetype(dtype)
-            self.__dataset = _df.zeros(dtype.elements, asIterable(shape), dtype.value)
+            self.__dataset = _df.zeros(dtype.elements, dtype.value, asIterable(shape))
 
     def _jdataset(self): # private access to Java dataset class
         return self.__dataset
@@ -1378,7 +1390,7 @@ class ndarrayRGB(ndarray):
             if len(cweights) != 3:
                 raise ValueError("three colour channel weights needed")
             csum = float(sum(cweights))
-            return self._jdataset().createGreyDataset(cweights[0]/csum, cweights[1]/csum, cweights[2]/csum, dtype.value)
+            return self._jdataset().createGreyDataset(dtype.value, cweights[0]/csum, cweights[1]/csum, cweights[2]/csum)
         return self._jdataset().createGreyDataset(dtype.value)
 
     red = property(get_red)
@@ -1418,7 +1430,7 @@ def arange(start, stop=None, step=1, dtype=None):
     if dtype == bool:
         return None
 
-    return _createRange(start, stop, step, dtype.value)
+    return _df.createRange(dtype.value, start, stop, step)
 
 def array(obj, dtype=None, copy=True):
     '''Create a dataset of given type from a sequence or JAMA matrix'''
@@ -1428,7 +1440,7 @@ def array(obj, dtype=None, copy=True):
 def ones(shape, dtype=float64):
     '''Create a dataset filled with 1'''
     dtype = _translatenativetype(dtype)
-    return _df.ones(dtype.elements,  _as_int_array(shape), dtype.value)
+    return _df.ones(dtype.elements, dtype.value, _as_int_array(shape))
 
 @_wrap('a')
 def ones_like(a, dtype=None):
@@ -1452,7 +1464,7 @@ def zeros(shape, dtype=float64, elements=None):
     elif type(dtype) is _fntype:
         raise ValueError("Given data-type is a function and needs elements defining")
 
-    return _df.zeros(dtype.elements, _as_int_array(shape), dtype.value)
+    return _df.zeros(dtype.elements, dtype.value, _as_int_array(shape))
 
 @_wrap('a')
 def zeros_like(a, dtype=None):
@@ -1480,7 +1492,7 @@ def full(shape, fill_value, dtype=None, elements=None):
     elif type(dtype) is _fntype:
         raise ValueError("Given data-type is a function and needs elements defining")
 
-    return _df.zeros(dtype.elements, _as_int_array(shape), dtype.value).fill(fill_value)
+    return _df.zeros(dtype.elements, dtype.value, _as_int_array(shape)).fill(fill_value)
 
 @_argsToArrayType('a')
 def full_like(a, fill_value, dtype=None, elements=None):
@@ -1504,24 +1516,22 @@ def linspace(start, stop, num=50, endpoint=True, retstep=False, dtype=None):
 
     dtype = _translatenativetype(dtype)
     if dtype is None:
-        dtype = _getdtypefromobj(((start, stop)))
+        dtype = _getdtypefromobj((start, stop))
 
-        if dtype.value < float64.value:
+        if _ifutils.isInteger(dtype.value):
             dtype = float64
 
-    if dtype.value >= complex64.value:
-        dtype = complex128
-
+    if _ifutils.isComplex(dtype.value):
         if isinstance(start, int):
             start = start+0j
         if isinstance(stop, int):
             stop = stop+0j
-        rresult = _df.createLinearSpace(start.real, stop.real, num, float64.value)
-        iresult = _df.createLinearSpace(start.imag, stop.imag, num, float64.value)
+        rresult = _df.createLinearSpace(float64.value, start.real, stop.real, num)
+        iresult = _df.createLinearSpace(float64.value, start.imag, stop.imag, num)
         result = Sciwrap(_dsutils.createCompoundDataset(complex128.value, (rresult, iresult)))
         del rresult, iresult
     else:
-        result = Sciwrap(_df.createLinearSpace(start, stop, num, dtype.value))
+        result = Sciwrap(_df.createLinearSpace(dtype.value, start, stop, num))
 
     if retstep:
         step = result[1] - result[0]
@@ -1538,12 +1548,11 @@ def logspace(start, stop, num=50, endpoint=True, base=10.0, dtype=None):
     dtype = _translatenativetype(dtype)
     if complex(start).imag == 0 and complex(stop).imag == 0:
         if dtype is None:
-            dtype = _getdtypefromobj(((start, stop)))
-
-            if dtype.value < float64.value:
+            dtype = _getdtypefromobj((start, stop))
+            if _ifutils.isInteger(dtype.value):
                 dtype = float64
 
-        return _df.createLogSpace(start, stop, num, base, dtype.value)
+        return _df.createLogSpace(dtype.value, start, stop, num, base)
     else:
         result = linspace(start, stop, num, endpoint, False, dtype)
         return _maths.power(base, result)
@@ -1554,7 +1563,7 @@ def eye(N, M=None, k=0, dtype=float64):
         M = N
 
     dtype = _translatenativetype(dtype)
-    return _dsutils.eye(N, M, k, dtype.value)
+    return _dsutils.eye(dtype.value, N, M, k)
 
 def identity(n, dtype=float64):
     return eye(n,n,0,dtype)
@@ -1731,7 +1740,7 @@ def append(arr, values, axis=None):
 
 @_wrap('a')
 def cast(a, dtype):
-    return _dsutils.cast(a, dtype.value)
+    return _dsutils.cast(dtype.value, a)
 
 @_wrapout('a')
 def copy(a):
@@ -1814,7 +1823,7 @@ def indices(dimensions, dtype=int32):
     ind = _dsutils.indices(asIterable(dimensions))
     dtype = _translatenativetype(dtype)
     if dtype != int32:
-        ind = _dsutils.cast(ind, dtype.value)
+        ind = _dsutils.cast(dtype.value, ind)
     return ind
 
 def ix_(*args):

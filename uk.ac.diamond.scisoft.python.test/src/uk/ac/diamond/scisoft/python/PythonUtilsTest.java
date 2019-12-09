@@ -17,12 +17,12 @@ import java.math.BigInteger;
 
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.ComplexDoubleDataset;
-import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.InterfaceUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.python.core.CompileMode;
@@ -266,13 +266,13 @@ public class PythonUtilsTest {
 		checkSame(new long[] {0, 1});
 		checkSame(new double[] {0, 1});
 
-		int l = DTypeUtils.getDTypeFromObject(1l);
-		assertEquals(l, PythonUtils.getDTypeFromObject(BigInteger.valueOf(1)));
-		assertEquals(l, PythonUtils.getDTypeFromObject(new Object[] {BigInteger.valueOf(1)}));
-		assertEquals(l, PythonUtils.getDTypeFromObject(new BigInteger[] {BigInteger.valueOf(1)}));
+		Class<? extends Dataset> c = InterfaceUtils.getInterface(1l);
+		assertEquals(c, PythonUtils.getInterfaceFromObject(BigInteger.valueOf(1)));
+		assertEquals(c, PythonUtils.getInterfaceFromObject(new Object[] {BigInteger.valueOf(1)}));
+		assertEquals(c, PythonUtils.getInterfaceFromObject(new BigInteger[] {BigInteger.valueOf(1)}));
 	}
 
 	private void checkSame(Object o) {
-		assertEquals(DTypeUtils.getDTypeFromObject(o), PythonUtils.getDTypeFromObject(o));
+		assertEquals(InterfaceUtils.getInterface(o), PythonUtils.getInterfaceFromObject(o));
 	}
 }

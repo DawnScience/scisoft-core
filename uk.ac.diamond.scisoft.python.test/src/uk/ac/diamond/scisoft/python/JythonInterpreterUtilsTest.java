@@ -40,7 +40,7 @@ public class JythonInterpreterUtilsTest {
 
 		interpreter.set("fred", 10d);
 		interpreter.exec("fred = dnp.Sciwrap(fred)");
-        
+
 		final Object fred = interpreter.get("fred");
 		if (fred==null) throw new Exception("Cannot read object 'fred'!");
 		if (!(fred instanceof PyFloat)) throw new Exception("Fred should be a float!");
@@ -56,6 +56,6 @@ public class JythonInterpreterUtilsTest {
 		final Object sumX = interpreter.get("sum");
 		if (sumX==null) throw new Exception("Cannot read object 'sumX'!");
 		if (!(sumX instanceof PyFloat)) throw new Exception("sumX should be a float!");
-        if (((PyFloat)sumX).getValue()!=4950.0d) throw new Exception("sumX should be 4950.0!");
+		if (((PyFloat)sumX).getValue()!=4950.0d) throw new Exception("sumX should be 4950.0!");
 	}
 }

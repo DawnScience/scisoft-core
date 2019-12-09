@@ -51,8 +51,10 @@ public class RixsImageReductionModel extends RixsImageReductionBaseModel {
 		return fitFileOption;
 	}
 
+	public static final String SET_FITFILE_OPTION = "setFitFileOption";
+
 	public void setFitFileOption(FIT_FILE_OPTION fitFileOption) {
-		firePropertyChange("setFitFileOption", this.fitFileOption, this.fitFileOption = fitFileOption);
+		firePropertyChange(SET_FITFILE_OPTION, this.fitFileOption, this.fitFileOption = fitFileOption);
 	}
 
 	/**
@@ -64,6 +66,10 @@ public class RixsImageReductionModel extends RixsImageReductionBaseModel {
 
 	public void setRegionsFromFile(boolean regionsFromFile) {
 		firePropertyChange("setRegionsFromFile", this.regionsFromFile, this.regionsFromFile = regionsFromFile);
+	}
+
+	void internalSetRegionsFromFile(boolean regionsFromFile) {
+		this.regionsFromFile = regionsFromFile;
 	}
 
 	/**

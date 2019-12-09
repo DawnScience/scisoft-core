@@ -58,8 +58,8 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 	}
 
 	@Override
-	void updateFromModel(boolean throwEx) {
-		super.updateFromModel(throwEx);
+	void updateFromModel(boolean throwEx, String name) {
+		super.updateFromModel(throwEx, name);
 
 		ElasticLineReductionModel em = eop.getModel();
 

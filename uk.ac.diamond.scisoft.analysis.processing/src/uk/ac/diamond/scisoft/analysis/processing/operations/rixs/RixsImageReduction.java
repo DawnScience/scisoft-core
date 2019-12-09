@@ -41,8 +41,8 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 	private Dataset[] summaryStore;
 
 	@Override
-	void updateFromModel(boolean throwEx) {
-		super.updateFromModel(throwEx);
+	void updateFromModel(boolean throwEx, String name) {
+		super.updateFromModel(throwEx, name);
 
 		// done regardless of fit file option but gets overwrite when not manual override
 		useSummaryFits = model.isPerFrameFits();
@@ -62,6 +62,10 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 					}
 				}
 			}
+		}
+
+		if (RixsImageReductionModel.SET_FITFILE_OPTION.equals(name) && model.getFitFileOption() == FIT_FILE_OPTION.MANUAL_OVERRIDE) {
+			model.internalSetRegionsFromFile(false);
 		}
 
 		if (isCalibration && model.isRegionsFromFile()) {

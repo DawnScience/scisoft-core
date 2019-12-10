@@ -94,7 +94,7 @@ public class SeriesRunner implements IOperationRunner {
 				
 				if (visitor instanceof ISavesToFile) outputFile = ((ISavesToFile)visitor).getFileName();
 				
-				OperationData  data = new OperationData(slice, (Serializable[])null);
+				OperationData  data = new OperationData(slice, (Serializable[]) null);
 				long start = System.currentTimeMillis();
 				for (IOperation<?,?> i : context.getSeries()) {
 
@@ -120,22 +120,26 @@ public class SeriesRunner implements IOperationRunner {
 					OperationData tmp = i.execute(data.getData(), context.getMonitor());
 					//TODO only set metadata if doesnt already contain it!
 					//TODO continue if null;
-					
 					if (tmp == null || tmp.getData() == null) {
 						data = null;
+					} else {
+						List<SliceFromSeriesMetadata> md = tmp.getData().getMetadata(SliceFromSeriesMetadata.class);
+						
+						if (md == null || md.isEmpty())  {
+							tmp.getData().setMetadata(fullssm);
+						} else {
+							fullssm = md.get(0);
+						}
+					}
+
+					if (tmp != null) {
+						visitor.notify(i, tmp); // Optionally send intermediate result
+					}
+
+					data = i.isPassUnmodifiedData() ? data : tmp;
+					if (data == null || data.getData() == null) {
 						break;
 					}
-					
-					List<SliceFromSeriesMetadata> md = tmp.getData().getMetadata(SliceFromSeriesMetadata.class);
-					
-					if (md == null || md.isEmpty())  {
-						tmp.getData().setMetadata(fullssm);
-					} else {
-						fullssm = md.get(0);
-					}
-					
-					visitor.notify(i, tmp); // Optionally send intermediate result
-					data = i.isPassUnmodifiedData() ? data : tmp;
 				}
 				logger.debug("Slice " + current + " ran in: " +(System.currentTimeMillis()-start)/1000. + " s : Thread" +Thread.currentThread().toString());
 				if (context.getMonitor() != null) context.getMonitor().worked(1);

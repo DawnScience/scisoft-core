@@ -231,9 +231,6 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			log.appendFailure("Skipping frame %d", si.getSliceNumber());
 		}
 
-		IntegerDataset bins = null;
-		Dataset a = null;
-		Dataset h = null;
 		if (eSum == null || eSum.getSize() == 0) {
 			log.appendFailure("No events found");
 			// need to pad spectra
@@ -252,7 +249,12 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			log.appendSuccess("Found %d photon events, current total = %s", eSum.getSize(), totalSum.getSize());
 			allSums.add(eSum);
 			allPositions.add(events.get(1));
-	
+		}
+
+		IntegerDataset bins = null;
+		Dataset a = null;
+		Dataset h = null;
+		if (totalSum != null) {
 			double max = totalSum.max(true).doubleValue();
 			bins = DatasetFactory.createRange(IntegerDataset.class, totalSum.min(true).doubleValue(), max+1, 1);
 			bins.setName("Event sum");

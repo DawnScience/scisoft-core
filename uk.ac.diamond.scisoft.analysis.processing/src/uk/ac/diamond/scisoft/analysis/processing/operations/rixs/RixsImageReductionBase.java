@@ -506,7 +506,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 				if (n == null) {
 					throw new OperationException(this, "Could not read normalization dataset at " + dataPath + " in " + filePath);
 				}
-				return Maths.divide(spectrum, n.sum(true));
+				return Maths.divide(spectrum, n.getByBoolean(getUsedFrames()).sum(true));
 			}
 		} catch (Exception e) {
 			log.appendFailure("Could not read normalization dataset %s from file %s: %s", dataPath, filePath, e);

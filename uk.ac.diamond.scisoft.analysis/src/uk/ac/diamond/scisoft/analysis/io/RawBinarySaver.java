@@ -183,14 +183,14 @@ public class RawBinarySaver implements IFileSaver {
 		dbBuffer.order(ByteOrder.LITTLE_ENDIAN);
 
 		IndexIterator iter;
-		if (BooleanDataset.class.equals(clazz)) {
+		if (BooleanDataset.class.isAssignableFrom(clazz)) {
 			BooleanDataset b = (BooleanDataset) sdata;
 			boolean[] dataBln = b.getData();
 			iter = b.getIterator();
 			while (iter.hasNext()) {
 				dbBuffer.put((byte) (dataBln[iter.index] ? 1 : 0));
 			}
-		} else if (ByteDataset.class.equals(clazz)) {
+		} else if (ByteDataset.class.isAssignableFrom(clazz)) {
 			ByteDataset i8 = (ByteDataset) sdata;
 			byte[] dataB = i8.getData();
 			iter = i8.getIterator();
@@ -204,7 +204,7 @@ public class RawBinarySaver implements IFileSaver {
 						dbBuffer.put(dataB[iter.index+j]);
 				}
 			}
-		} else if (ShortDataset.class.equals(clazz)) {
+		} else if (ShortDataset.class.isAssignableFrom(clazz)) {
 			ShortDataset i16 = (ShortDataset) sdata;
 			ShortBuffer sDataBuffer = dbBuffer.asShortBuffer();
 			short[] dataS = i16.getData();
@@ -219,7 +219,7 @@ public class RawBinarySaver implements IFileSaver {
 						sDataBuffer.put(dataS[iter.index+j]);
 				}
 			}
-		} else if (IntegerDataset.class.equals(clazz)) {
+		} else if (IntegerDataset.class.isAssignableFrom(clazz)) {
 			IntegerDataset i32 = (IntegerDataset) sdata;
 			IntBuffer iDataBuffer = dbBuffer.asIntBuffer();
 			int[] dataI = i32.getData();
@@ -234,7 +234,7 @@ public class RawBinarySaver implements IFileSaver {
 						iDataBuffer.put(dataI[iter.index+j]);
 				}
 			}
-		} else if (LongDataset.class.equals(clazz)) {
+		} else if (LongDataset.class.isAssignableFrom(clazz)) {
 			LongDataset i64 = (LongDataset) sdata;
 			LongBuffer lDataBuffer = dbBuffer.asLongBuffer();
 			long[] dataL = i64.getData();
@@ -249,7 +249,7 @@ public class RawBinarySaver implements IFileSaver {
 						lDataBuffer.put(dataL[iter.index+j]);
 				}
 			}
-		} else if (FloatDataset.class.equals(clazz)) {
+		} else if (FloatDataset.class.isAssignableFrom(clazz)) {
 			FloatDataset f32 = (FloatDataset) sdata;
 			FloatBuffer fDataBuffer = dbBuffer.asFloatBuffer();
 			float[] dataFlt = f32.getData();
@@ -264,7 +264,7 @@ public class RawBinarySaver implements IFileSaver {
 						fDataBuffer.put(dataFlt[iter.index+j]);
 				}
 			}
-		} else if (DoubleDataset.class.equals(clazz)) {
+		} else if (DoubleDataset.class.isAssignableFrom(clazz)) {
 			DoubleDataset f64 = (DoubleDataset) sdata;
 			DoubleBuffer dataBuffer = dbBuffer.asDoubleBuffer();
 			double[] dataDbl = f64.getData();
@@ -279,7 +279,7 @@ public class RawBinarySaver implements IFileSaver {
 						dataBuffer.put(dataDbl[iter.index+j]);
 				}
 			}
-		} else if (ComplexFloatDataset.class.equals(clazz)) {
+		} else if (ComplexFloatDataset.class.isAssignableFrom(clazz)) {
 			ComplexFloatDataset c64 = (ComplexFloatDataset) sdata;
 			FloatBuffer fDataBuffer = dbBuffer.asFloatBuffer();
 			float[] dataFlt = c64.getData();
@@ -288,7 +288,7 @@ public class RawBinarySaver implements IFileSaver {
 				fDataBuffer.put(dataFlt[iter.index]);
 				fDataBuffer.put(dataFlt[iter.index+1]);
 			}
-		} else if (ComplexDoubleDataset.class.equals(clazz)) {
+		} else if (ComplexDoubleDataset.class.isAssignableFrom(clazz)) {
 			ComplexDoubleDataset c128 = (ComplexDoubleDataset) sdata;
 			DoubleBuffer dataBuffer = dbBuffer.asDoubleBuffer();
 			double[] dataDbl = c128.getData();

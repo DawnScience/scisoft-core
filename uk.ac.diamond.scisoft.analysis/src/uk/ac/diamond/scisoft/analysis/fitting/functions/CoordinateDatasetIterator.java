@@ -9,11 +9,11 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
+import org.eclipse.january.dataset.CompoundByteDataset;
 import org.eclipse.january.dataset.CompoundDataset;
-import org.eclipse.january.dataset.DTypeUtils;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.InterfaceUtils;
 import org.eclipse.january.dataset.PositionIterator;
 
 /**
@@ -28,9 +28,7 @@ public class CoordinateDatasetIterator extends CoordinatesIterator {
 	 */
 	public CoordinateDatasetIterator(IDataset value) {
 		if (!(value instanceof CompoundDataset)) {
-			int dtype = DTypeUtils.getBestDType(Dataset.ARRAYINT8,
-					DTypeUtils.getDTypeFromClass(value.getElementClass()));
-			cvalue = (CompoundDataset) DatasetUtils.cast(value, dtype);
+			cvalue = (CompoundDataset) DatasetUtils.cast(InterfaceUtils.getBestInterface(CompoundByteDataset.class, InterfaceUtils.getInterface(value)), value);
 		} else {
 			cvalue = (CompoundDataset) value;
 		}

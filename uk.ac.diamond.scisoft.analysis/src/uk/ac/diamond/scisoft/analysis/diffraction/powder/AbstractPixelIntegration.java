@@ -180,7 +180,7 @@ public abstract class AbstractPixelIntegration {
 			axis = Maths.add(binEdges.getSlice(new int[]{1}, null ,null), binEdges.getSlice(null, new int[]{-1},null));
 			axis.idivide(2);
 		} else {
-			axis = DatasetFactory.createLinearSpace(binRange[0], binRange[1], nbins, Dataset.FLOAT64);
+			axis = DatasetFactory.createLinearSpace(DoubleDataset.class, binRange[0], binRange[1], nbins);
 		}
 		
 		switch (xAxis) {
@@ -272,7 +272,7 @@ public abstract class AbstractPixelIntegration {
 		if (binRange != null) {
 			//range corresponds to bin centres
 			double shift = (binRange[1]- binRange[0])/(2*numBins);
-			return (DoubleDataset) DatasetFactory.createLinearSpace(binRange[0]-shift, binRange[1]+shift, numBins + 1, Dataset.FLOAT64);
+			return DatasetFactory.createLinearSpace(DoubleDataset.class, binRange[0]-shift, binRange[1]+shift, numBins + 1);
 		}
 		
 			
@@ -283,7 +283,7 @@ public abstract class AbstractPixelIntegration {
 
 			Dataset data = a;
 			
-			if (mask != null) data = DatasetUtils.select(new BooleanDataset[]{(BooleanDataset)DatasetUtils.cast(mask,Dataset.BOOL)}, new Object[]{a}, Double.NaN);
+			if (mask != null) data = DatasetUtils.select(new BooleanDataset[]{DatasetUtils.cast(BooleanDataset.class, mask)}, new Object[]{a}, Double.NaN);
 
 			double n = data.min(true).doubleValue();
 			double x = data.max(true).doubleValue();
@@ -291,6 +291,6 @@ public abstract class AbstractPixelIntegration {
 			max = x > max ? x : max;
 		}
 
-		return (DoubleDataset) DatasetFactory.createLinearSpace(min, max, numBins + 1, Dataset.FLOAT64);
+		return DatasetFactory.createLinearSpace(DoubleDataset.class, min, max, numBins + 1);
 	}
 }

@@ -137,8 +137,7 @@ extends AbstractOperation<SecondConstantROIBackgroundSubtractionModel, Operation
 			debug("error in second overlapping background subtraction IOperation");
 		}
 
-
-		output = DatasetUtils.cast(pBackgroundSubtracted, Dataset.FLOAT64);
+		output = DatasetUtils.cast(DoubleDataset.class, pBackgroundSubtracted);
 
 		output.setName("Region of Interest, constant background removed");
 

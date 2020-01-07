@@ -20,7 +20,6 @@ import org.eclipse.dawnsci.analysis.api.fitting.functions.IOperator;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Comparisons;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
@@ -517,7 +516,7 @@ public abstract class AFunction implements IFunction, Serializable {
 	public double residual(boolean allValues, IDataset data, IDataset weight, IDataset... coords) {
 		double residual = 0;
 		if (allValues) {
-			DoubleDataset ddata = (DoubleDataset) DatasetUtils.convertToDataset(data).cast(Dataset.FLOAT64);
+			DoubleDataset ddata = DatasetUtils.convertToDataset(data).cast(DoubleDataset.class);
 			residual = ddata.residual(calculateValues(ddata.getShapeRef(), coords), DatasetUtils.convertToDataset(weight), false);
 		} else {
 			// stochastic sampling of coords;

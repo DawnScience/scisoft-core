@@ -11,7 +11,6 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.image;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.Image;
 import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 
@@ -24,8 +23,7 @@ public class PseudoFlatFieldFilterOperation extends AbstractSimpleImageOperation
 
 	@Override
 	public IDataset processImage(IDataset dataset, IMonitor monitor) {
-		int dtype = DTypeUtils.getDType(dataset);
 		int radius = model.getWidth();
-		return Image.pseudoFlatFieldFilter(DatasetUtils.cast(dataset, dtype), radius);
+		return Image.pseudoFlatFieldFilter(DatasetUtils.convertToDataset(dataset), radius);
 	}
 }

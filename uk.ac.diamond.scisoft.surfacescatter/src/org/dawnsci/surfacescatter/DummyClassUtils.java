@@ -4,6 +4,7 @@ import org.dawnsci.surfacescatter.MethodSettingEnum.MethodSetting;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
 
@@ -15,16 +16,16 @@ public class DummyClassUtils {
 		Dataset yValue = correctionMethod(fm, output);
 
 	
-		double intensity = ((Number) DatasetUtils.cast(yValue, Dataset.FLOAT64).sum()).doubleValue();
-		double rawIntensity = ((Number) DatasetUtils.cast(output, Dataset.FLOAT64).sum()).doubleValue();
+		double intensity = ((Number) DatasetUtils.cast(DoubleDataset.class, yValue).sum()).doubleValue();
+		double rawIntensity = ((Number) DatasetUtils.cast(DoubleDataset.class, output).sum()).doubleValue();
 
 		double intensityError = getCorrectionValue(fm)
-				* Math.sqrt(((Number) DatasetUtils.cast(output, Dataset.FLOAT64).sum()).doubleValue());
-		double rawIntensityError = Math.sqrt(((Number) DatasetUtils.cast(output, Dataset.FLOAT64).sum()).doubleValue());
+				* Math.sqrt(((Number) DatasetUtils.cast(DoubleDataset.class, output).sum()).doubleValue());
+		double rawIntensityError = Math.sqrt(((Number) DatasetUtils.cast(DoubleDataset.class, output).sum()).doubleValue());
 
 		double fhkl =0;
 		if (intensity >= 0) {
-			fhkl = Math.pow(((Number) DatasetUtils.cast(yValue, Dataset.FLOAT64).sum()).doubleValue(), 0.5);
+			fhkl = Math.pow(((Number) DatasetUtils.cast(DoubleDataset.class, yValue).sum()).doubleValue(), 0.5);
 		}
 
 		if (trackingMarker != 3) {

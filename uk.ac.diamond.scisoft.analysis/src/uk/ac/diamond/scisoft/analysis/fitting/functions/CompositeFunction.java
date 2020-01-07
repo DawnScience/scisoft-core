@@ -11,7 +11,6 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IPeak;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
@@ -53,7 +52,7 @@ public class CompositeFunction extends Add {
 		// now add the data for each bit in turn
 		int j = 1;
 		for (IFunction f : functions) {
-			outputs[j] = (DoubleDataset) DatasetUtils.cast(f.calculateValues(values), Dataset.FLOAT64);
+			outputs[j] = DatasetUtils.cast(DoubleDataset.class, f.calculateValues(values));
 			outputs[j++].setName(f.getName());
 		}
 
@@ -95,7 +94,7 @@ public class CompositeFunction extends Add {
 		// now add the data for each bit in turn
 		int j = 4;
 		for (IFunction f : functions) {
-			outputs[j] = (DoubleDataset) DatasetUtils.cast(f.calculateValues(XValues), Dataset.FLOAT64);
+			outputs[j] = DatasetUtils.cast(DoubleDataset.class, f.calculateValues(XValues));
 			outputs[j++].setName(f.getName());
 		}
 

@@ -9,6 +9,7 @@ import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.PositionIterator;
@@ -93,7 +94,7 @@ public class SubtractBlankFrameOperation extends AbstractImageSubtractionOperati
 
 			Dataset ds;
 			try {
-				ds = DatasetUtils.cast(data.getSlice(pos, end, st), Dataset.FLOAT64);
+				ds = DatasetUtils.cast(DoubleDataset.class, data.getSlice(pos, end, st));
 			} catch (DatasetException e) {
 				throw new OperationException(this, e);
 			}

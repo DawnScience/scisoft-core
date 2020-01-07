@@ -18,7 +18,6 @@ import org.eclipse.dawnsci.analysis.api.expressions.IExpressionEngine;
 import org.eclipse.dawnsci.analysis.api.expressions.IExpressionService;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
@@ -302,7 +301,7 @@ public class JexlExpressionFunction extends AFunction {
 		try {
 			ob = engine.evaluate();
 			if (ob instanceof IDataset) {
-				return (DoubleDataset) DatasetUtils.cast((IDataset) ob, Dataset.FLOAT64);
+				return DatasetUtils.cast(DoubleDataset.class, (IDataset) ob);
 			}
 			logger.error("Object returned from expression was not a dataset");
 			throw new IllegalStateException("Object returned from expression was not a dataset");

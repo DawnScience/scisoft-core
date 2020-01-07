@@ -17,6 +17,7 @@ import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
 
@@ -57,11 +58,11 @@ public class ReflectivityGeometricCorrectionOperation extends AbstractOperation<
 		NormalDistribution beamfootprint  = new NormalDistribution(0, (1e-3*model.getBeamHeight()/2*Math.sqrt(2*Math.log(2) - 0.5)));
 		double areaCorrection = 2*(beamfootprint.cumulativeProbability((model.getFootprint()*Math.sin((theta + model.getAngularFudgeFactor())*Math.PI/180))));
 			
-		Dataset output = DatasetUtils.cast(input, Dataset.FLOAT64);
+		Dataset output = DatasetUtils.cast(DoubleDataset.class, input);
 		
 		output = Maths.multiply(input, areaCorrection);
 		
-		Dataset outputSum = DatasetFactory.createFromObject((DatasetUtils.cast(output, Dataset.FLOAT64)).sum());
+		Dataset outputSum = DatasetFactory.createFromObject((DatasetUtils.cast(DoubleDataset.class, output)).sum());
 		
 		return new OperationData(output, outputSum);
 	}

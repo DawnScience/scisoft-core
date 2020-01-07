@@ -17,6 +17,7 @@ import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
 
@@ -64,7 +65,7 @@ public class SXRDRodScansGeometricCorrectionsOperation extends AbstractOperation
 		
 		input = Maths.multiply(input, correction);
 		
-		Dataset input1 = DatasetUtils.cast(input, Dataset.FLOAT64);
+		Dataset input1 = DatasetUtils.cast(DoubleDataset.class, input);
 		
 		Dataset input1Sum = DatasetFactory.createFromObject(input1.sum());
 		

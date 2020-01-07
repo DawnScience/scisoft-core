@@ -131,7 +131,7 @@ public class NumPyTest {
 
 	private Dataset createDataset() {
 		final Dataset ds;
-		if (!BooleanDataset.class.equals(clazz)) {
+		if (!BooleanDataset.class.isAssignableFrom(clazz)) {
 			ds = DatasetFactory.createRange(clazz, len);
 		} else {
 			// creates an array of all False, so make two entries True if the array is big enough
@@ -153,7 +153,7 @@ public class NumPyTest {
 	private String createNumPyArray(String postCommands) {
 		StringBuilder script = new StringBuilder();
 		script.append("import numpy; ");
-		if (!BooleanDataset.class.equals(clazz)) {
+		if (!BooleanDataset.class.isAssignableFrom(clazz)) {
 			script.append("exp=numpy.arange(" + len + ", dtype=" + numpyDataType + "); ");
 		} else {
 			script.append("exp=numpy.array([False] * " + len + ", dtype=" + numpyDataType + "); ");

@@ -55,7 +55,7 @@ public abstract class AbstractPixelIntegration2D extends AbstractPixelIntegratio
 			axis = Maths.add(binsChi.getSlice(new int[]{1}, null ,null), binsChi.getSlice(null, new int[]{-1},null));
 			axis.idivide(2);
 		} else {
-			axis = DatasetFactory.createLinearSpace(azimuthalRange[0], azimuthalRange[1], nBinsChi, Dataset.FLOAT64);
+			axis = DatasetFactory.createLinearSpace(DoubleDataset.class, azimuthalRange[0], azimuthalRange[1], nBinsChi);
 		}
 		
 		axis.setName("azimuth");

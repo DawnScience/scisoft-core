@@ -61,7 +61,7 @@ public class IterativePolynomialBaselineSubtractionOperation extends
 			throw new OperationException(this, e);
 		}
 		
-		DoubleDataset data = (DoubleDataset)DatasetUtils.cast(input, Dataset.FLOAT64).clone();
+		DoubleDataset data = DatasetUtils.copy(DoubleDataset.class, input);
 		
 		Dataset baseline = BaselineGeneration.iterativePolynomialBaseline(data, axis, model.getPolynomialOrder(), model.getnIterations());
 		

@@ -18,6 +18,7 @@ import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
 
@@ -84,7 +85,7 @@ public class OneDFittingUsingIOperation extends AbstractOperation<OneDFittingMod
 
 		Dataset pBackgroundSubtracted = Maths.subtract(in1, in1Background, null);
 		
-		output = DatasetUtils.cast(pBackgroundSubtracted, Dataset.FLOAT64);
+		output = DatasetUtils.cast(DoubleDataset.class, pBackgroundSubtracted);
 		
 		output.setName("Region of Interest, polynomial background removed");
 		

@@ -254,7 +254,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 		StatisticsMetadata stats = null;
 		int hash = 0;
 		double dhash = 0;
-		if (BooleanDataset.class.equals(clazz)) {
+		if (BooleanDataset.class.isAssignableFrom(clazz)) {
 			BooleanDataset b = DatasetFactory.zeros(BooleanDataset.class, shape);
 			if (fBuffer.remaining() != tSize) {
 				throw new ScanFileHolderException("Data size, " + fBuffer.remaining()
@@ -274,7 +274,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			}
 			data = b;
 			stats = storeStats(data, maxA ? 1 : 0, minA ? 1 : 0);
-		} else if (ByteDataset.class.equals(clazz)) {
+		} else if (ByteDataset.class.isAssignableFrom(clazz)) {
 			ByteDataset i8 = DatasetFactory.zeros(ByteDataset.class, shape);
 			if (fBuffer.remaining() != tSize) {
 				throw new ScanFileHolderException("Data size, " + fBuffer.remaining()
@@ -294,7 +294,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			}
 			data = i8;
 			stats = storeStats(data, maxB, minB);
-		} else if (ShortDataset.class.equals(clazz)) {
+		} else if (ShortDataset.class.isAssignableFrom(clazz)) {
 			ShortDataset i16 = DatasetFactory.zeros(ShortDataset.class, shape);
 			ShortBuffer sDataBuffer = fBuffer.asShortBuffer();
 			if (sDataBuffer.remaining() != tSize) {
@@ -315,7 +315,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			}
 			data = i16;
 			stats = storeStats(data, maxS, minS);
-		} else if (IntegerDataset.class.equals(clazz)) {
+		} else if (IntegerDataset.class.isAssignableFrom(clazz)) {
 			IntegerDataset i32 = DatasetFactory.zeros(IntegerDataset.class, shape);
 			IntBuffer iDataBuffer = fBuffer.asIntBuffer();
 			if (iDataBuffer.remaining() != tSize) {
@@ -336,7 +336,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			}
 			data = i32;
 			stats = storeStats(data, maxI, minI);
-		} else if (LongDataset.class.equals(clazz)) {
+		} else if (LongDataset.class.isAssignableFrom(clazz)) {
 			LongDataset i64 = DatasetFactory.zeros(LongDataset.class, shape);
 			LongBuffer lDataBuffer = fBuffer.asLongBuffer();
 			if (lDataBuffer.remaining() != tSize) {
@@ -357,7 +357,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			}
 			data = i64;
 			stats = storeStats(data, maxL, minL);
-		} else if (CompoundByteDataset.class.equals(clazz)) {
+		} else if (CompoundByteDataset.class.isAssignableFrom(clazz)) {
 			CompoundByteDataset ci8 = DatasetFactory.zeros(isize, CompoundByteDataset.class, shape);
 			if (fBuffer.remaining() != tSize) {
 				throw new ScanFileHolderException("Data size, " + fBuffer.remaining()
@@ -370,7 +370,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 				dataB[j] = v;
 			}
 			data = ci8;
-		} else if (CompoundShortDataset.class.equals(clazz)) {
+		} else if (CompoundShortDataset.class.isAssignableFrom(clazz)) {
 			CompoundShortDataset ci16 = DatasetFactory.zeros(isize, CompoundShortDataset.class, shape);
 			ShortBuffer sDataBuffer = fBuffer.asShortBuffer();
 			if (sDataBuffer.remaining() != tSize) {
@@ -384,7 +384,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 				dataS[j] = v;
 			}
 			data = ci16;
-		} else if (CompoundIntegerDataset.class.equals(clazz)) {
+		} else if (CompoundIntegerDataset.class.isAssignableFrom(clazz)) {
 			CompoundIntegerDataset ci32 = DatasetFactory.zeros(isize, CompoundIntegerDataset.class, shape);
 			IntBuffer iDataBuffer = fBuffer.asIntBuffer();
 			if (iDataBuffer.remaining() != tSize) {
@@ -398,7 +398,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 				dataI[j] = v;
 			}
 			data = ci32;
-		} else if (CompoundLongDataset.class.equals(clazz)) {
+		} else if (CompoundLongDataset.class.isAssignableFrom(clazz)) {
 			CompoundLongDataset ci64 = DatasetFactory.zeros(isize, CompoundLongDataset.class, shape);
 			LongBuffer lDataBuffer = fBuffer.asLongBuffer();
 			if (lDataBuffer.remaining() != tSize) {
@@ -412,7 +412,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 				dataL[j] = v;
 			}
 			data = ci64;
-		} else if (FloatDataset.class.equals(clazz)) {
+		} else if (FloatDataset.class.isAssignableFrom(clazz)) {
 			FloatBuffer fltDataBuffer = fBuffer.asFloatBuffer();
 			FloatDataset f32 = DatasetFactory.zeros(FloatDataset.class, shape);
 			if (fltDataBuffer.remaining() != tSize) {
@@ -444,26 +444,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			data = f32;
 			stats = storeStats(data, maxF, minF);
 			hash = (int) dhash;
-		} else if (CompoundFloatDataset.class.equals(clazz)) {
-			CompoundFloatDataset cf32 = DatasetFactory.zeros(isize, CompoundFloatDataset.class, shape);
-			FloatBuffer fltDataBuffer = fBuffer.asFloatBuffer();
-			if (fltDataBuffer.remaining() != tSize) {
-				throw new ScanFileHolderException("Data size, " + fltDataBuffer.remaining()
-						+ ", does not match expected, " + tSize);
-			}
-			float[] dataFlt = cf32.getData();
-			for (int j = 0; j < tSize; j++) {
-				float v = fltDataBuffer.get();
-				if (Float.isInfinite(v) || Float.isNaN(v))
-					dhash = (dhash * 19) % Integer.MAX_VALUE;
-				else
-					dhash = (dhash * 19 + v) % Integer.MAX_VALUE;
-
-				dataFlt[j] = v;
-			}
-			data = cf32;
-			hash = (int) dhash;
-		} else if (ComplexFloatDataset.class.equals(clazz)) {
+		} else if (ComplexFloatDataset.class.isAssignableFrom(clazz)) {
 			ComplexFloatDataset c64 = DatasetFactory.zeros(ComplexFloatDataset.class, shape);
 			FloatBuffer fltDataBuffer = fBuffer.asFloatBuffer();
 			if (fltDataBuffer.remaining() != tSize) {
@@ -483,7 +464,26 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			}
 			data = c64;
 			hash = (int) dhash;
-		} else if (clazz == null || DoubleDataset.class.equals(clazz)) {
+		} else if (CompoundFloatDataset.class.isAssignableFrom(clazz)) {
+			CompoundFloatDataset cf32 = DatasetFactory.zeros(isize, CompoundFloatDataset.class, shape);
+			FloatBuffer fltDataBuffer = fBuffer.asFloatBuffer();
+			if (fltDataBuffer.remaining() != tSize) {
+				throw new ScanFileHolderException("Data size, " + fltDataBuffer.remaining()
+						+ ", does not match expected, " + tSize);
+			}
+			float[] dataFlt = cf32.getData();
+			for (int j = 0; j < tSize; j++) {
+				float v = fltDataBuffer.get();
+				if (Float.isInfinite(v) || Float.isNaN(v))
+					dhash = (dhash * 19) % Integer.MAX_VALUE;
+				else
+					dhash = (dhash * 19 + v) % Integer.MAX_VALUE;
+
+				dataFlt[j] = v;
+			}
+			data = cf32;
+			hash = (int) dhash;
+		} else if (clazz == null || DoubleDataset.class.isAssignableFrom(clazz)) {
 			DoubleDataset f64 = DatasetFactory.zeros(DoubleDataset.class, shape);
 			DoubleBuffer dblDataBuffer = fBuffer.asDoubleBuffer();
 			if (dblDataBuffer.remaining() != tSize) {
@@ -516,26 +516,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			data = f64;
 			stats = storeStats(data, maxD, minD);
 			hash = (int) dhash;
-		} else if (CompoundDoubleDataset.class.equals(clazz)) {
-			CompoundDoubleDataset cf64 = DatasetFactory.zeros(isize, CompoundDoubleDataset.class, shape);
-			DoubleBuffer dblDataBuffer = fBuffer.asDoubleBuffer();
-			if (dblDataBuffer.remaining() != tSize) {
-				throw new ScanFileHolderException("Data size, " + dblDataBuffer.remaining()
-						+ ", does not match expected, " + tSize);
-			}
-			double[] dataDbl = cf64.getData();
-			for (int j = 0; j < tSize; j++) {
-				double v = dblDataBuffer.get();
-				if (Double.isInfinite(v) || Double.isNaN(v))
-					dhash = (dhash * 19) % Integer.MAX_VALUE;
-				else
-					dhash = (dhash * 19 + v) % Integer.MAX_VALUE;
-
-				dataDbl[j] = v;
-			}
-			data = cf64;
-			hash = (int) dhash;
-		} else if (ComplexDoubleDataset.class.equals(clazz)) {
+		} else if (ComplexDoubleDataset.class.isAssignableFrom(clazz)) {
 			ComplexDoubleDataset c128 = DatasetFactory.zeros(ComplexDoubleDataset.class, shape);
 			DoubleBuffer dblDataBuffer = fBuffer.asDoubleBuffer();
 			if (dblDataBuffer.remaining() != tSize) {
@@ -553,6 +534,25 @@ public class RawBinaryLoader extends AbstractFileLoader {
 				dataDbl[j] = v;
 			}
 			data = c128;
+			hash = (int) dhash;
+		} else if (CompoundDoubleDataset.class.isAssignableFrom(clazz)) {
+			CompoundDoubleDataset cf64 = DatasetFactory.zeros(isize, CompoundDoubleDataset.class, shape);
+			DoubleBuffer dblDataBuffer = fBuffer.asDoubleBuffer();
+			if (dblDataBuffer.remaining() != tSize) {
+				throw new ScanFileHolderException("Data size, " + dblDataBuffer.remaining()
+						+ ", does not match expected, " + tSize);
+			}
+			double[] dataDbl = cf64.getData();
+			for (int j = 0; j < tSize; j++) {
+				double v = dblDataBuffer.get();
+				if (Double.isInfinite(v) || Double.isNaN(v))
+					dhash = (dhash * 19) % Integer.MAX_VALUE;
+				else
+					dhash = (dhash * 19 + v) % Integer.MAX_VALUE;
+
+				dataDbl[j] = v;
+			}
+			data = cf64;
 			hash = (int) dhash;
 		} else {
 			throw new ScanFileHolderException("Dataset type not supported");

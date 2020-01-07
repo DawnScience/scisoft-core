@@ -82,7 +82,7 @@ public class SavitzkyGolay {
 		Dataset x3 = Maths.power(x1, x2);	
 		
 		// solveSVD seems to correspond to numpy's lstsq
-		Dataset weights = LinearAlgebra.solveSVD(x3, DatasetUtils.eye(window, window, 0, Dataset.FLOAT64));
+		Dataset weights = LinearAlgebra.solveSVD(x3, DatasetUtils.eye(DoubleDataset.class, window, window, 0));
 
 		Dataset coeff = null;
 		

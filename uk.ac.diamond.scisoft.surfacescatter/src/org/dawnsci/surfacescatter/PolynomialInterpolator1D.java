@@ -27,8 +27,8 @@ public class PolynomialInterpolator1D {
 		
 		//TODO more sanity checks on inputs
 		
-		DoubleDataset dx = (DoubleDataset)DatasetUtils.cast(oldx,Dataset.FLOAT64);
-		DoubleDataset dy = (DoubleDataset)DatasetUtils.cast(oldy,Dataset.FLOAT64);
+		DoubleDataset dx = DatasetUtils.cast(DoubleDataset.class, oldx);
+		DoubleDataset dy = DatasetUtils.cast(DoubleDataset.class, oldy);
 		
 		boolean sorted = true;
 		double maxtest = dx.getDouble(0);

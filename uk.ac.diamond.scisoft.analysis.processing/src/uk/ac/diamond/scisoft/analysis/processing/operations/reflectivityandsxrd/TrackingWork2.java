@@ -215,7 +215,7 @@ public class TrackingWork2 extends AbstractOperation<BoxSlicerModel, OperationDa
 				pBackgroundSubtracted.setObjectAbs(it1.index, 0);
 		}
 		
-		Dataset output = DatasetUtils.cast(pBackgroundSubtracted, Dataset.FLOAT64);
+		Dataset output = DatasetUtils.cast(DoubleDataset.class, pBackgroundSubtracted);
 		
 		output.setName("Region of Interest, polynomial background removed");
 		

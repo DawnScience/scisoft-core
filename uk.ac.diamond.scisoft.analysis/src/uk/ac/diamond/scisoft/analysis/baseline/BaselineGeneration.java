@@ -11,7 +11,6 @@ package uk.ac.diamond.scisoft.analysis.baseline;
 
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IndexIterator;
 
@@ -52,7 +51,7 @@ public class BaselineGeneration {
 	public static Dataset iterativePolynomialBaseline(Dataset input, Dataset axis, int polyOrder, int nIterations) {
 		if (nIterations < 1) throw new IllegalArgumentException("nIterations must be 1 or greater");
 		
-		DoubleDataset data = (DoubleDataset)DatasetUtils.cast(input, Dataset.FLOAT64).clone();
+		DoubleDataset data = input.copy(DoubleDataset.class);
 		Dataset[] aa = new Dataset[] {axis};
 		
 		Polynomial polyFit = Fitter.polyFit(aa, data, 1e-15, polyOrder);

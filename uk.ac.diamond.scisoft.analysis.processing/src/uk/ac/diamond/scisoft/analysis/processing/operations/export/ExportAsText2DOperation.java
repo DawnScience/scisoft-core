@@ -49,28 +49,7 @@ public class ExportAsText2DOperation extends AbstractOperation<ExportAsText2DMod
 		Dataset outds = DatasetUtils.convertToDataset(input.getSlice()).clone();
 		outds.clearMetadata(null);
 		outds = outds.getTransposedView();
-		
-//		outds.squeeze().setShape(outds.getShape()[0],1);
-		IDataset x = null;
-		if (lx != null) {
-			try {
-				x = lx.getSliceView().getSlice().squeeze();
-			} catch (DatasetException e) {
-				throw new OperationException(this, e);
-			}
-			x.setShape(x.getShape()[0],1);
-			int xtype = DTypeUtils.getDType(x);
-			int ytype = DTypeUtils.getDType(outds);
-			if (xtype != ytype) {
-				if (xtype > ytype) {
-					outds = DatasetUtils.cast(outds, xtype);
-				} else {
-					x = DatasetUtils.cast(x, ytype);
-				}
-			}
-		}
-		
-		
+
 		if (model.isSplitColumns()) {
 			
 			int count = 0;
@@ -80,8 +59,8 @@ public class ExportAsText2DOperation extends AbstractOperation<ExportAsText2DMod
 				ASCIIDataWithHeadingSaver saver = new ASCIIDataWithHeadingSaver(fileName);
 				try {
 					outds = DatasetUtils.convertToDataset(it.next().getSlice()).transpose();
-					if (x != null) {
-						outds = DatasetUtils.concatenate(new IDataset[]{x,outds}, 1);
+					if (lx != null) {
+						outds = ExportAsATSASOperation.concatenate(this, lx, outds, true);
 					}
 					DataHolder dh = new DataHolder();
 					dh.addDataset("Export", outds);
@@ -93,8 +72,8 @@ public class ExportAsText2DOperation extends AbstractOperation<ExportAsText2DMod
 			
 		} else {
 			String fileName = ExportAsText1DOperation.getFilePath( model, input, this, -1);
-			if (x != null) {
-				outds = DatasetUtils.concatenate(new IDataset[]{x,outds}, 1);
+			if (lx != null) {
+				outds = ExportAsATSASOperation.concatenate(this, lx, outds, true);
 			}
 			ASCIIDataWithHeadingSaver saver = new ASCIIDataWithHeadingSaver(fileName);
 			

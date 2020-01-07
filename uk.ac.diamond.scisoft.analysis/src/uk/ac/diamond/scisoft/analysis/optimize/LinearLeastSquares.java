@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.optimize;
 
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.Maths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,8 +63,8 @@ public class LinearLeastSquares {
 			throw new IllegalArgumentException("Data was not 2D or else not correct length");
 		}
 
-		final Matrix X = new Matrix((double [][]) DatasetUtils.createJavaArray(matrix.cast(Dataset.FLOAT64)));
-		final Matrix W = new Matrix((double [][]) DatasetUtils.createJavaArray(DatasetUtils.diag(Maths.reciprocal(sigmasq.cast(Dataset.FLOAT64)), 0)));
+		final Matrix X = new Matrix((double [][]) DatasetUtils.createJavaArray(matrix.cast(DoubleDataset.class)));
+		final Matrix W = new Matrix((double [][]) DatasetUtils.createJavaArray(DatasetUtils.diag(Maths.reciprocal(sigmasq.cast(DoubleDataset.class)), 0)));
 
 		final Matrix XtW = X.transpose().times(W);
 		final Matrix A = XtW.times(X);

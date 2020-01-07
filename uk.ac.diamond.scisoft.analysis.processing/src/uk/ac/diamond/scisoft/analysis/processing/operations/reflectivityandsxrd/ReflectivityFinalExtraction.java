@@ -16,6 +16,7 @@ import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
 
@@ -45,8 +46,8 @@ public class ReflectivityFinalExtraction extends AbstractOperation<Polynomial2DR
 		
 		
 		
-		Dataset inputSum = DatasetFactory.createFromObject((DatasetUtils.cast(input, Dataset.FLOAT64)).sum());
-		Dataset inputErrors = DatasetFactory.createFromObject(Maths.power((DatasetUtils.cast(input, Dataset.FLOAT64)).sum(),0.5));
+		Dataset inputSum = DatasetFactory.createFromObject((DatasetUtils.cast(DoubleDataset.class, input)).sum());
+		Dataset inputErrors = Maths.sqrt((DatasetUtils.cast(DoubleDataset.class, input)).sum());
 		
 		Dataset inputSumLogTen = Maths.log10(inputSum);
 		Dataset upperSumBound = Maths.add(inputSum, inputErrors);

@@ -17,6 +17,10 @@
       [Enter License Description here.]
    </license>
 
+   <includes
+         id="uk.ac.diamond.CBFlib.feature"
+         version="0.0.0"/>
+
    <plugin
          id="javax.vecmath"
          download-size="0"
@@ -54,13 +58,6 @@
 
    <plugin
          id="com.springsource.javax.media.jai.codec"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="uk.ac.diamond.CBFlib"
          download-size="0"
          install-size="0"
          version="0.0.0"

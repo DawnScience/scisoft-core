@@ -30,7 +30,15 @@ limitations under the License.
    </license>
 
    <includes
+         id="hdf.hdf5lib.feature"
+         version="0.0.0"/>
+
+   <includes
          id="org.dawnsci.thirdparty.xml.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="uk.ac.diamond.CBFlib.feature"
          version="0.0.0"/>
 
    <plugin
@@ -52,12 +60,6 @@ limitations under the License.
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <plugin
-         id="uk.ac.diamond.CBFlib"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
 
    <plugin
          id="org.apache.commons.math3"
@@ -163,12 +165,6 @@ limitations under the License.
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
-   <plugin
-         id="hdf.hdf5lib"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
 
    <plugin
          id="org.eclipse.dawnsci.hdf5"

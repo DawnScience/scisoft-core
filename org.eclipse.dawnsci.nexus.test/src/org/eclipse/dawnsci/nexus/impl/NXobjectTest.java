@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -29,11 +30,13 @@ import org.eclipse.dawnsci.nexus.NXinstrument;
 import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.NXsensor;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
-import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
+import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.InterfaceUtils;
 import org.junit.Test;
 
 public class NXobjectTest {
@@ -129,8 +132,8 @@ public class NXobjectTest {
 		assertNotNull(dataset);
 		assertEquals(2, dataset.getRank());
 		assertEquals(Double.class, dataset.getElementClass());
-		assertEquals(DTypeUtils.getDType(dataset), Dataset.FLOAT64);
-		
+		assertTrue(DoubleDataset.class.equals(InterfaceUtils.getInterface(dataset)));
+
 		assertSame(dataset, detector.getLazyWritableDataset(NXdetector.NX_DATA));
 		DataNode dataNode = detector.getDataNode(NXdetector.NX_DATA);
 		assertNotNull(dataNode);
@@ -147,8 +150,8 @@ public class NXobjectTest {
 		assertArrayEquals(shape, dataset.getShape());
 		assertArrayEquals(shape, dataset.getMaxShape());
 		assertEquals(Integer.class, dataset.getElementClass());
-		assertEquals(DTypeUtils.getDType(dataset), Dataset.INT32);
-		
+		assertTrue(IntegerDataset.class.equals(InterfaceUtils.getInterface(dataset)));
+
 		assertSame(dataset, scanPointsCollection.getLazyWritableDataset("scan_finished"));
 		DataNode dataNode = scanPointsCollection.getDataNode("scan_finished");
 		assertNotNull(dataNode);

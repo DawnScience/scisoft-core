@@ -123,21 +123,6 @@ public class HDF5Utils {
 	 * Create a dataset from the given data object
 	 * @param data
 	 * @param shape
-	 * @param dtype
-	 * @param extend true dataset for unsigned types 
-	 * @return dataset
-	 * @deprecated Use {@link #createDataset(Object, int[], Class, boolean)}
-	 */
-	@Deprecated
-	public static Dataset createDataset(final Object data, final int[] shape, final int dtype,
-			final boolean extend) {
-		return createDataset(data, shape, DTypeUtils.getInterface(dtype), extend);
-	}
-
-	/**
-	 * Create a dataset from the given data object
-	 * @param data
-	 * @param shape
 	 * @param clazz
 	 * @param extend true dataset for unsigned types 
 	 * @return dataset
@@ -151,48 +136,6 @@ public class HDF5Utils {
 		}
 		ds.setShape(shape);
 		return ds;
-	}
-
-	/**
-	 * Translate between data type and dataset type
-	 * @param dclass data type class
-	 * @param dsize data type element size in bytes
-	 * @return dataset type
-	 */
-	public static int getDType(final int dclass, final int dsize) {
-		if (dclass == HDF5Constants.H5T_STRING) {
-			return Dataset.STRING;
-		} else if (dclass == HDF5Constants.H5T_INTEGER) {
-			switch (dsize) {
-			case 1:
-				return Dataset.INT8;
-			case 2:
-				return Dataset.INT16;
-			case 4:
-				return Dataset.INT32;
-			case 8:
-				return Dataset.INT64;
-			}
-		} else if (dclass == HDF5Constants.H5T_BITFIELD) {
-			switch (dsize) {
-			case 1:
-				return Dataset.INT8;
-			case 2:
-				return Dataset.INT16;
-			case 4:
-				return Dataset.INT32;
-			case 8:
-				return Dataset.INT64;
-			}
-		} else if (dclass == HDF5Constants.H5T_FLOAT) {
-			switch (dsize) {
-			case 4:
-				return Dataset.FLOAT32;
-			case 8:
-				return Dataset.FLOAT64;
-			}
-		}
-		return -1;
 	}
 
 	/**
@@ -220,29 +163,6 @@ public class HDF5Utils {
 			return HDF5Constants.H5T_NATIVE_DOUBLE;
 		}
 		throw new IllegalArgumentException("Invalid datatype requested");
-	}
-
-	/**
-	 * Load dataset from given file
-	 * @param fileName
-	 * @param node
-	 * @param start
-	 * @param count
-	 * @param step
-	 * @param dtype
-	 * @param isize
-	 * @param extend
-	 * @return dataset
-	 * @throws Exception
-	 * @deprecated Use {@link #loadDatasetWithClose(String, String, int[], int[], int[], int, Class, boolean)}
-	 */
-	@Deprecated
-	public static Dataset loadDatasetWithClose(final String fileName, final String node,
-				final int[] start, final int[] count, final int[] step,
-				final int dtype, final int isize, final boolean extend)
-				throws ScanFileHolderException {
-
-		return loadDataset(fileName, node, start, count, step, isize, DTypeUtils.getInterface(dtype), extend, true);
 	}
 
 	/**
@@ -1151,9 +1071,8 @@ public class HDF5Utils {
 			try {
 				datatypeID = H5.H5Tcopy(baseHdf5Type);
 				dataspaceID = isScalar ? H5.H5Screate(HDF5Constants.H5S_SCALAR) : H5.H5Screate_simple(shape.length, shape, shape);
-				boolean stringDataset = attrData.getDType() == Dataset.STRING;
 				Serializable buffer = DatasetUtils.serializeDataset(attrData);
-				if (stringDataset) {
+				if (attrData instanceof StringDataset) {
 					String[] strings = (String[]) buffer;
 					int strCount = strings.length;
 					int maxLength = 0;
@@ -1507,7 +1426,6 @@ public class HDF5Utils {
 	}
 
 	private static final Map<Long, Class<? extends Dataset>> HDF_TYPES_TO_DATASET_TYPES;
-	private static final Map<Integer, Long> DATASET_TYPES_TO_HDF_TYPES;
 	private static final Map<Long, Long> ENUM_SIZE_TO_HDF_TYPES;
 	private static final Set<Long> UNSIGNED_HDF_TYPES;
 
@@ -1527,24 +1445,19 @@ public class HDF5Utils {
 
 	static {
 		HDF_TYPES_TO_DATASET_TYPES = new HashMap<Long, Class<? extends Dataset>>();
-		DATASET_TYPES_TO_HDF_TYPES = new HashMap<Integer, Long>();
 		ENUM_SIZE_TO_HDF_TYPES = new HashMap<Long, Long>();
 		UNSIGNED_HDF_TYPES = new HashSet<Long>();
 
 		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_INT8, ByteDataset.class);
-		DATASET_TYPES_TO_HDF_TYPES.put(Dataset.INT8, HDF5Constants.H5T_NATIVE_INT8);
 		ENUM_SIZE_TO_HDF_TYPES.put(1l, HDF5Constants.H5T_NATIVE_INT8);
 
 		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_INT16, ShortDataset.class);
-		DATASET_TYPES_TO_HDF_TYPES.put(Dataset.INT16, HDF5Constants.H5T_NATIVE_INT16);
 		ENUM_SIZE_TO_HDF_TYPES.put(2l, HDF5Constants.H5T_NATIVE_INT16);
 
 		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_INT32, IntegerDataset.class);
-		DATASET_TYPES_TO_HDF_TYPES.put(Dataset.INT32, HDF5Constants.H5T_NATIVE_INT32);
 		ENUM_SIZE_TO_HDF_TYPES.put(4l, HDF5Constants.H5T_NATIVE_INT32);
 
 		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_INT64, LongDataset.class);
-		DATASET_TYPES_TO_HDF_TYPES.put(Dataset.INT64, HDF5Constants.H5T_NATIVE_INT64);
 		ENUM_SIZE_TO_HDF_TYPES.put(8l, HDF5Constants.H5T_NATIVE_INT64);
 
 
@@ -1561,13 +1474,10 @@ public class HDF5Utils {
 		UNSIGNED_HDF_TYPES.add(HDF5Constants.H5T_NATIVE_UINT64);
 
 		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_FLOAT, FloatDataset.class);
-		DATASET_TYPES_TO_HDF_TYPES.put(Dataset.FLOAT32, HDF5Constants.H5T_NATIVE_FLOAT);
 
 		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_DOUBLE, DoubleDataset.class);
-		DATASET_TYPES_TO_HDF_TYPES.put(Dataset.FLOAT64, HDF5Constants.H5T_NATIVE_DOUBLE);
 
 		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_C_S1, StringDataset.class);
-		DATASET_TYPES_TO_HDF_TYPES.put(Dataset.STRING, HDF5Constants.H5T_C_S1);
 
 		HDF_TYPES_TO_DATASET_TYPES.put(HDF5Constants.H5T_NATIVE_B8, ByteDataset.class);
 		UNSIGNED_HDF_TYPES.add(HDF5Constants.H5T_NATIVE_B8);

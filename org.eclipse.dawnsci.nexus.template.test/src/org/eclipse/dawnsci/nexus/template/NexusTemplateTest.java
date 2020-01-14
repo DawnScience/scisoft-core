@@ -10,6 +10,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -41,9 +42,10 @@ import org.eclipse.dawnsci.nexus.TestUtils;
 import org.eclipse.dawnsci.nexus.template.NexusTemplateConstants.ApplicationMode;
 import org.eclipse.dawnsci.nexus.template.impl.NexusTemplateServiceImpl;
 import org.eclipse.dawnsci.nexus.test.util.NexusTestUtils;
-import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.StringDataset;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -205,10 +207,10 @@ public class NexusTemplateTest {
 		// TODO assert datanode?
 		assertThat(entry.getTitleScalar(), is(equalTo("my scan")));
 		assertThat(entry.getDurationScalar(), is(equalTo(260L)));
-		assertThat(((Dataset) entry.getDuration()).getDType(), is(Dataset.INT32));
+		Assert.assertTrue(entry.getDuration() instanceof IntegerDataset);
 		assertThat(entry.getCollection_timeScalar(), is(closeTo(123.2, 1e-15)));
 	}
-	
+
 	@Test
 	public void testAddDataNodeWithAttributes() throws Exception {
 		final NXroot root = applyTemplateStringToEmptyTree(BASIC_TEMPLATE
@@ -222,9 +224,9 @@ public class NexusTemplateTest {
 		assertThat(entry.getProgram_nameScalar(), is(equalTo("myprogram")));
 		assertThat(entry.getProgram_nameAttributeConfiguration(), is(equalTo("foo")));
 		assertThat(entry.getProgram_nameAttributeVersion(), is(equalTo("3")));
-		assertThat(((Dataset) entry.getDataNode("program_name").getAttribute("version").getValue()).getDType(), is(Dataset.INT32));
+		Assert.assertTrue(entry.getDataNode("program_name").getAttribute("version").getValue() instanceof IntegerDataset);
 	}
-	
+
 	@Test(expected = NexusException.class)
 	public void testAddDataNodeWithNoValue() throws Exception {
 		applyTemplateStringToEmptyTree(BASIC_TEMPLATE
@@ -559,26 +561,25 @@ public class NexusTemplateTest {
 		// whereas the nexus file actually contains a string 
 		IDataset startTime = entry.getDataset(NXentry.NX_START_TIME);
 		assertThat(startTime, is(notNullValue()));
-		assertThat(((Dataset) startTime).getDType(), is(Dataset.STRING));
+		assertTrue(startTime instanceof StringDataset);
 		assertThat(startTime.getShape(), is(equalTo(new int[0])));
 		assertThat(startTime.getString(), is(equalTo("2019-05-28T17:56:40.351+01:00")));
 		
 		IDataset endTime = entry.getDataset(NXentry.NX_END_TIME);
 		assertThat(endTime, is(notNullValue()));
-		assertThat(((Dataset) endTime).getDType(), is(Dataset.STRING));
+		assertTrue(endTime instanceof StringDataset);
 		assertThat(endTime.getShape(), is(equalTo(new int[] { 1 })));
 		assertThat(endTime.getString(0), is(equalTo("2019-05-28T17:56:40.895+01:00")));
 
 		assertThat(entry.getDefinitionScalar(), is(equalTo("NXscan")));
 		
 		IDataset programName = entry.getProgram_name();
-		assertThat(((Dataset) programName).getDType(), is(Dataset.STRING));
+		assertTrue(programName instanceof StringDataset);
 		assertThat(programName.getString(), is(equalTo("gda")));
 		
 		DataNode programNameDataNode = entry.getDataNode(NXentry.NX_PROGRAM_NAME);
 		assertThat(entry.getProgram_nameAttributeVersion(), is(equalTo("9.13")));
-		assertThat(((Dataset) programNameDataNode.getAttribute(NXentry.NX_PROGRAM_NAME_ATTRIBUTE_VERSION).getValue()).getDType(),
-				is(Dataset.STRING));
+		assertTrue(programNameDataNode.getAttribute(NXentry.NX_PROGRAM_NAME_ATTRIBUTE_VERSION).getValue() instanceof StringDataset);
 		assertThat(entry.getProgram_nameAttributeConfiguration(), is(equalTo("dummy")));
 		
 		NXinstrument instrument = entry.getInstrument();

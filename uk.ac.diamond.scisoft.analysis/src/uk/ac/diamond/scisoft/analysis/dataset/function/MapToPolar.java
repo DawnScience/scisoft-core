@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.function.DatasetToDatasetFunction;
-import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.InterfaceUtils;
 import org.eclipse.january.dataset.Maths;
 
 /**
@@ -110,8 +110,7 @@ public class MapToPolar implements DatasetToDatasetFunction {
 			if (np == 0)
 				np = 1;
 
-			Dataset polarmap = DatasetFactory.zeros(new int[] { nr, np },
-					DTypeUtils.getBestFloatDType(ds.getDType()));
+			Dataset polarmap = DatasetFactory.zeros(InterfaceUtils.getBestFloatInterface(ds.getClass()), nr, np);
 			Dataset unitpolarmap = DatasetFactory.zeros(polarmap); // unclipped polar of unit field
 
 			double rad, phi;

@@ -19,6 +19,7 @@ import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.InterfaceUtils;
 import org.eclipse.dawnsci.analysis.api.io.IFileSaver;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -102,7 +103,7 @@ public class ExportImageOperation extends AbstractOperation<ExportImageModel, Op
 			
 			int nBits = 32;
 			Dataset d = DatasetUtils.convertToDataset(input);
-			if (d.getDType() == Dataset.FLOAT32 || d.getDType() == Dataset.FLOAT64) {
+			if (InterfaceUtils.isFloating(d.getClass())) {
 				nBits =33;
 			}
 			

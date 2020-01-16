@@ -14,13 +14,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.january.dataset.BroadcastIterator;
-import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.InterfaceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,7 +130,7 @@ public class Histogram extends HistogramBase {
 					count = iCount;
 				} else {
 					cData = null;
-					count = DatasetFactory.zeros(cShape, DTypeUtils.getLargestDType(w.getDType()));
+					count = DatasetFactory.zeros(InterfaceUtils.getLargestInterface(w), cShape);
 				}
 				if (lo >= hi) {
 					count.set(w == null ? ids.getSize() : w.sum(true), be.isIncreasing ? 0 : be.lastBin);
@@ -193,7 +193,7 @@ public class Histogram extends HistogramBase {
 								Arrays.toString(wShape));
 					}
 					cData = null;
-					count = DatasetFactory.zeros(cShape, DTypeUtils.getLargestDType(w.getDType()));
+					count = DatasetFactory.zeros(InterfaceUtils.getLargestInterface(w), cShape);
 				}
 				if (lo >= hi) {
 					count.set(w == null ? ids.getSize() : w.sum(true), binEdges.isIncreasing ? 0 : binEdges.lastBin);

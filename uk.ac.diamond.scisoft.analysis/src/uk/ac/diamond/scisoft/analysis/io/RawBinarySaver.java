@@ -37,6 +37,7 @@ import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.InterfaceUtils;
 import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.dataset.ShortDataset;
 
@@ -106,9 +107,9 @@ public class RawBinarySaver implements IFileSaver {
 			}
 
 			Dataset sdata = DatasetUtils.convertToDataset(dh.getDataset(i));
-			int dtype = sdata.getDType();
-			if (!DTypeUtils.isDTypeComplex(dtype)) {
-				dtype = DTypeUtils.getElementalDType(dtype);
+			Class<? extends Dataset> clazz = sdata.getClass();
+			if (!sdata.isComplex()) {
+				clazz = InterfaceUtils.getElementalInterface(clazz);
 			}
 
 			int is = sdata.getElementsPerItem();
@@ -144,7 +145,7 @@ public class RawBinarySaver implements IFileSaver {
 				ByteBuffer hdrBuffer = ByteBuffer.allocateDirect(hdrSize);
 				hdrBuffer.order(ByteOrder.LITTLE_ENDIAN);
 				hdrBuffer.putInt(formatTag);
-				hdrBuffer.put((byte) dtype);
+				hdrBuffer.put((byte) DTypeUtils.getDType(clazz));
 				hdrBuffer.put(isize);
 				hdrBuffer.put(rank);
 				for (int j = 0; j < rank; j++)
@@ -158,7 +159,6 @@ public class RawBinarySaver implements IFileSaver {
 				while (hdrBuffer.hasRemaining())
 					fc.write(hdrBuffer);
 
-				Class<? extends Dataset> clazz = DTypeUtils.getInterface(dtype);
 				ByteBuffer dbBuffer = saveRawDataset(isize, clazz, sdata);
 				dbBuffer.rewind();
 				while (dbBuffer.hasRemaining())

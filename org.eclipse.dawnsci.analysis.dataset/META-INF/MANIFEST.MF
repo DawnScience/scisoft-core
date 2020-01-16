@@ -28,7 +28,7 @@ Import-Package: Jama;version="1.0.3",
  org.osgi.framework;version="1.7.0",
  org.slf4j;version="[1.7.2,2.0.0)"
 Bundle-ClassPath: .,
- jars/JLargeArrays-1.2.jar,
- jars/JTransforms-3.0.jar
+ jars/JLargeArrays-1.6.jar,
+ jars/JTransforms-3.1.jar
 Service-Component: OSGI-INF/*.xml 
 Automatic-Module-Name: org.eclipse.dawnsci.analysis.dataset

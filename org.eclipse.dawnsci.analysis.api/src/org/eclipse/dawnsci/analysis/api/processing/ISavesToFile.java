@@ -14,5 +14,7 @@ public interface ISavesToFile {
 	public String getFileName();
 	
 	public void includeLinkTo(String fileName);
+	
+	public void useTemplate(String templateFilePath);
 
 }

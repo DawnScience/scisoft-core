@@ -36,14 +36,11 @@ public class Activator implements BundleActivator {
 		Activator.context = null;
 	}
 
-	
-
-	public static Object getService(final Class<?> serviceClass) {
-		
+	public static <T> T getService(final Class<T> serviceClass) {
 		if (context == null) return null;
-		ServiceReference<?> ref = context.getServiceReference(serviceClass);
+		ServiceReference<T> ref = context.getServiceReference(serviceClass);
 		if (ref==null) return null;
-		return context.getService(ref);
+		return (T) context.getService(ref);
 	}
 
 }

@@ -62,6 +62,8 @@ public class OperationBean implements IOperationBean {
 	private String runDirectory;
 	private String name;
 	
+	private String templatePath;
+	
 	public String getDataKey() {
 		return dataKey;
 	}
@@ -257,5 +259,13 @@ public class OperationBean implements IOperationBean {
 
 	public String getName() {
 		return name;
+	}
+
+	public String getTemplatePath() {
+		return templatePath;
+	}
+
+	public void setTemplatePath(String templatePath) {
+		this.templatePath = templatePath;
 	}
 }

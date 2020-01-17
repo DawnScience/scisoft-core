@@ -44,7 +44,7 @@ public class NexusFileExecutionVisitorOverwriteTest {
 		int[] shape = {20,50};
 		double firstVal = 1.5;
 		
-	    NexusFileExecutionVisitor nfev = new NexusFileExecutionVisitor(tmp.getAbsolutePath(),true,null);
+	    NexusFileExecutionVisitor nfev = new NexusFileExecutionVisitor(tmp.getAbsolutePath(),true,null,null);
 	    
 	    Junk2Dto2DOperation op22 = new Junk2Dto2DOperation();
 		op22.setModel(new Junk2Dto2Dmodel());

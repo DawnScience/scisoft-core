@@ -44,6 +44,8 @@ import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
 import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
+import org.eclipse.dawnsci.nexus.template.NexusTemplate;
+import org.eclipse.dawnsci.nexus.template.NexusTemplateService;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -63,6 +65,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.io.Utils;
+import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.IFlushMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 
@@ -101,19 +104,21 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 	private String originalFilePath;
 	
 	private boolean swmring = false;
+	private String templatePath;
 
 	private final static Logger logger = LoggerFactory.getLogger(NexusFileExecutionVisitor.class);
 	
-	public NexusFileExecutionVisitor(String filePath, boolean swmr, String originalFilePath) {
+	public NexusFileExecutionVisitor(String filePath, boolean swmr, String originalFilePath, String templatePath) {
 		this.filePath = filePath;
 		firstNotifyMap = new ConcurrentHashMap<>();
 		positionMap = new ConcurrentHashMap<>();
 		this.swmring = swmr;
 		this.originalFilePath = originalFilePath;
+		this.templatePath = templatePath;
 	}
 	
 	public NexusFileExecutionVisitor(String filePath, boolean swmr) {
-		this(filePath,swmr,null);
+		this(filePath,swmr,null, null);
 	}
 	
 	public NexusFileExecutionVisitor(String filePath) {
@@ -282,12 +287,27 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 				nexusFile.addAttribute(Tree.ROOT, TreeFactory.createAttribute(NexusConstants.DEFAULT,ENTRY));
 				nexusFile.addAttribute(Tree.ROOT + Node.SEPARATOR + ENTRY, TreeFactory.createAttribute(NexusConstants.DEFAULT,RESULTS_GROUP));
 				
+				applyTemplate();
+				
+				
 				if (swmring) {
 					nexusFile.activateSwmrMode();
 					logger.debug("SWMR-ING");
 				}
 			}
 			flushDatasets(monitor);
+		}
+	}
+	
+	private void applyTemplate() {
+		if (templatePath == null || templatePath.isEmpty()) return;
+		NexusTemplateService templateService = Activator.getService(NexusTemplateService.class);
+		try {
+			NexusTemplate template = templateService.loadTemplate(templatePath);
+			logger.info("Applying template file {}",templatePath);
+			template.apply(nexusFile);
+		} catch (NexusException e) {
+			logger.error("Could not apply template {} to nexus file",templatePath,e);
 		}
 	}
 	
@@ -1011,6 +1031,10 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 	@Override
 	public void includeLinkTo(String fileName) {
 		originalFilePath = fileName;
+	}
+	@Override
+	public void useTemplate(String templateFilePath) {
+		templatePath = templateFilePath;
 	}
 
 }

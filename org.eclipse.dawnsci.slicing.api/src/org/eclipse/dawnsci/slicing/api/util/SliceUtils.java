@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
 import org.eclipse.dawnsci.analysis.api.io.SliceObject;
 import org.eclipse.dawnsci.nexus.NexusFile;
@@ -670,70 +669,6 @@ public class SliceUtils {
 		}
 	}
 	
-	/**
-	 * Deals with loaders which provide data names of size > 1
-	 * 
-	 * 
-	 * @param meta
-	 * @return
-	 */
-	public static final List<String> getSlicableNames(IDataHolder holder) {
-
-		return getSlicableNames(holder, 2, String.class);
-	}
-	
-
-	/**
-	 * Deals with loaders which provide data names of size 1
-	 * 
-	 * 
-	 * @param meta
-	 * @param minSize - min size of any one dimension
-	 * @param the list of dTypes which are not slicable data or now required in the list of names.
-	 * @return
-	 */
-	public static final List<String> getSlicableNames(IDataHolder holder, int minSize, Class<?>... elementClasses) {
-				
-		if (minSize<=0) minSize = 2;
-		
-		Collection<String> names = Arrays.asList(holder.getNames());
-		if (names==null||names.isEmpty()) return null;
-		
-		List<Class<?>> restrictions = new ArrayList<Class<?>>(10);
-		if (elementClasses!=null) for (Class<?> clazz : elementClasses) restrictions.add(clazz);
-		
-		boolean isH5 = isH5(holder.getFilePath());
-		
-		List<String> ret   = new ArrayList<String>(names.size());
-		for (String name : names) {
-			
-			// Some funny keys are put in data holders with the 
-			// 'local_name' attribute in nexus.
-			if (isH5 && !name.startsWith("/")) continue;
-			
-			ILazyDataset ls = holder.getLazyDataset(name);
-			if (restrictions.contains(ls.getElementClass())) continue;
-			int[] shape = ls!=null ? ls.getShape() : null;
-			if (shape==null) continue;
-			
-			boolean foundDims = false;
-			if (minSize==1 && shape.length==0) {
-				foundDims = true;
-			} else {
-				for (int i = 0; i < shape.length; i++) {
-					if (shape[i]>=minSize) {
-						foundDims = true;
-						break;
-					}
-				}
-			}
-			if (!foundDims) continue;
-			ret.add(name);
-		}
-		return ret;
-	}
-
-
 	public final static List<String> EXT;
 	static {
 		List<String> tmp = new ArrayList<String>(7);
@@ -745,17 +680,4 @@ public class SliceUtils {
 		tmp.add("nexus");
 		EXT = Collections.unmodifiableList(tmp);
 	}	
-
-	private static boolean isH5(final String filePath) {
-		if (filePath == null) { return false; }
-		final String ext = getFileExtension(filePath);
-		if (ext == null) { return false; }
-		return EXT.contains(ext.toLowerCase());
-	}
-	private static String getFileExtension(String fileName) {
-		int posExt = fileName.lastIndexOf(".");
-		// No File Extension
-		return posExt == -1 ? "" : fileName.substring(posExt + 1);
-	}
-
 }

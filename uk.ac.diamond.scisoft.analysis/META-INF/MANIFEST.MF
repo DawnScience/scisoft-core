@@ -27,7 +27,12 @@ Require-Bundle: javax.vecmath;bundle-version="1.5.2",
  org.eclipse.dawnsci.xdi,
  com.fasterxml.jackson.core.jackson-core;bundle-version="2.6.2",
  com.fasterxml.jackson.core.jackson-databind;bundle-version="2.6.2",
- com.fasterxml.jackson.core.jackson-annotations;bundle-version="2.6.2"
+ com.fasterxml.jackson.core.jackson-annotations;bundle-version="2.6.2",
+ javax.measure.unit-api;bundle-version="1.0.0",
+ si.uom.si-quantity;bundle-version="0.9.0",
+ si.uom.si-units;bundle-version="0.9.0",
+ tec.units.indriya;bundle-version="1.0.0",
+ tec.uom.lib.uom-lib-common;bundle-version="1.0.3"
 Export-Package: uk.ac.diamond.scisoft.analysis,
  uk.ac.diamond.scisoft.analysis.axis,
  uk.ac.diamond.scisoft.analysis.baseline,

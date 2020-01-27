@@ -29,11 +29,12 @@ Export-Package: org.eclipse.dawnsci.analysis.api,
 Import-Package: org.osgi.framework;version="1.7.0",
  org.slf4j;version="[1.7.2,2.0.0)"
 Require-Bundle: javax.vecmath;bundle-version="1.5.2",
- si.uom.si-quantity;bundle-version="0.9.0";visibility:=reexport,
  org.eclipse.january;bundle-version="2.3.0";visibility:=reexport,
- si.uom.si-units;bundle-version="0.9.0";visibility:=reexport,
- tec.units.indriya;bundle-version="1.0.0";visibility:=reexport,
- tec.uom.lib.uom-lib-common;bundle-version="1.0.3";visibility:=reexport,
+ javax.measure.unit-api;bundle-version="1.0.0",
+ si.uom.si-quantity;bundle-version="0.9.0",
+ si.uom.si-units;bundle-version="0.9.0",
+ tec.units.indriya;bundle-version="1.0.0",
+ tec.uom.lib.uom-lib-common;bundle-version="1.0.3",
  org.apache.commons.lang3
 Bundle-Activator: org.eclipse.dawnsci.analysis.api.Activator
 Bundle-ActivationPolicy: lazy

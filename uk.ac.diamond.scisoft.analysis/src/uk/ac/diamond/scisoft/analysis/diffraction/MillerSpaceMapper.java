@@ -920,11 +920,61 @@ public class MillerSpaceMapper {
 		}
 	}
 
+	private boolean chunkSizeTooSmall(int size, double regionSize, final int[] region, final QSpace qspace,
+			final Matrix3d mTransform) {
+		int chunk = (int) Math.ceil(regionSize / size);
+
+		List<Integer> yList = new ArrayList<>();
+		for (int i = 0; i < size; i++) {
+			int y = i * chunk + region[2];
+			yList.add(y);
+		}
+
+		int y = Math.min((size * chunk + region[2]), region[3]);
+		yList.add(y);
+
+		Vector3d v = new Vector3d();
+		List<Vector3d> vlist = new ArrayList<>();
+		for (int yCoord : yList) {
+			qspace.qFromPixelPosition(region[0] + 0.5, yCoord + 0.5, v);
+			if (mTransform != null) {
+				mTransform.transform(v);
+			}
+			vlist.add((Vector3d) v.clone());
+		}
+
+		List<Vector3d> dvList = new ArrayList<>();
+		for (int i = 1; i < vlist.size(); i++) {
+			double dh = vlist.get(i).x - vlist.get(i - 1).x;
+			double dk = vlist.get(i).y - vlist.get(i - 1).y;
+			double dl = vlist.get(i).z - vlist.get(i - 1).z;
+			dvList.add(new Vector3d(dh, dk, dl));
+		}
+
+		double[] voxelSides = mTransform == null ? qDel : hDel;
+		for (Vector3d dv : dvList) {
+			if ((Math.abs(dv.x) < voxelSides[0]) && (Math.abs(dv.y) < voxelSides[1])
+					&& (Math.abs(dv.z) < voxelSides[2])) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	private void mapImageMultiThreaded(boolean mapQ, final int[] region, final QSpace qspace, final MillerSpace mspace,
 			final Dataset image, final Dataset iWeight, final DoubleDataset map, final DoubleDataset weight) {
 		int size = pool.getParallelism();
 		final Matrix3d mTransform = mspace == null ? null : mspace.getMillerTransform();
 		double regionSize = region[3] - region[2];
+
+		while (chunkSizeTooSmall(size, regionSize, region, qspace, mTransform)) {
+			size = Math.max(1, size - 1);
+				if (size == 1) {
+					break;
+				}
+			}
+
 		int chunk = (int) Math.ceil(regionSize / size);
 
 		final List<JobConfig> jobs = new ArrayList<>(size);

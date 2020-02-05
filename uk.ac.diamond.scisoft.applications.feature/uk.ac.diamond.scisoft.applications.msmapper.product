@@ -17,7 +17,7 @@
    <windowImages/>
 
 
-   <launcher>
+   <launcher name="msmapper">
       <win useIco="false">
          <bmp/>
       </win>

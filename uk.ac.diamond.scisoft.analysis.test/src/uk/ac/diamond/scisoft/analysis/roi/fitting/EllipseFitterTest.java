@@ -95,7 +95,7 @@ public class EllipseFitterTest {
 		DoubleDataset theta;
 //		theta = DatasetFactory.createFromObject(DoubleDataset.class, new double[] {0.1, 0.2, 0.25, 0.33, 0.35, 0.37, 0.43, });
 //		theta = Random.rand(0, 2*Math.PI, pts);
-		theta = (DoubleDataset) DatasetFactory.createLinearSpace(0, 2*Math.PI, pts, Dataset.FLOAT64);
+		theta = DatasetFactory.createLinearSpace(DoubleDataset.class, 0, 2*Math.PI, pts);
 
 		Dataset[] coords = EllipseFitter.generateCoordinates(theta, original);
 

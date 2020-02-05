@@ -47,14 +47,13 @@ public class Median implements DatasetToDatasetFunction {
 		
 		for (IDataset idataset : datasets) {
 			Dataset dataset = DatasetUtils.convertToDataset(idataset);
-			final int dt = dataset.getDType();
 			final int is = dataset.getElementsPerItem();
 			final int[] ishape = dataset.getShape();
 			
 			if (ishape.length > 1)
 				throw new IllegalArgumentException("Only 1D input datasets are supported");
 			
-			Dataset filtered = DatasetFactory.zeros(is , ishape, dt);
+			Dataset filtered = DatasetFactory.zeros(is , dataset.getClass(), ishape);
 			
 			final PositionIterator iterPos = filtered.getPositionIterator();
 			final int[] pos = iterPos.getPos();

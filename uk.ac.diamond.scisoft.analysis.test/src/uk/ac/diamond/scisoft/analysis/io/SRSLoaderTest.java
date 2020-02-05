@@ -21,13 +21,14 @@ import org.apache.commons.lang.SerializationUtils;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.DatasetException;
-import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.InterfaceUtils;
 import org.eclipse.january.metadata.IMetadata;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -73,11 +74,13 @@ public class SRSLoaderTest {
 
 			// now the file is loaded, check to make sure that it holds the right data
 			assertEquals("There is not the correct number of axis in the file", 7, dh.size());
-			int dt = dh.getDataset(6).getDType();
-			if (dt == Dataset.FLOAT32)
-				assertEquals("The file does not contain NANs", Float.NaN, dh.getDataset(6).getDouble(1), 10.);
-			if (dt == Dataset.FLOAT64)
-				assertEquals("The file does not contain NANs", Double.NaN, dh.getDataset(6).getDouble(1), 10.);
+			Dataset data = dh.getDataset(6);
+
+			if (data instanceof FloatDataset) {
+				assertEquals("The file does not contain NANs", Float.NaN, data.getFloat(1), 10.);
+			} else if (data instanceof DoubleDataset) {
+				assertEquals("The file does not contain NANs", Double.NaN, data.getDouble(1), 10.);
+			}
 			assertEquals("The file does not contain data as well", 0.1, dh.getDataset(0).getDouble(1), 1.);
 		} catch (ScanFileHolderException e) {
 			fail("Couldn't load the file");
@@ -125,11 +128,14 @@ public class SRSLoaderTest {
 		IDataHolder dh = LoaderFactory.getData("testfiles/gda/analysis/io/SRSLoaderTest/96356.dat", null);
         if (dh==null || dh.getNames().length<1) throw new Exception();
 		assertEquals("There is not the correct number of axis in the file", 7, dh.size());
-		int dt = DTypeUtils.getDType(dh.getDataset(6));
-		if (dt == Dataset.FLOAT32)
-			assertEquals("The file does not contain NANs", Float.NaN, dh.getDataset(6).getDouble(1), 10.);
-		if (dt == Dataset.FLOAT64)
-			assertEquals("The file does not contain NANs", Double.NaN, dh.getDataset(6).getDouble(1), 10.);
+		IDataset data = dh.getDataset(6);
+		Class<? extends Dataset> clazz = InterfaceUtils.getInterface(data);
+
+		if (FloatDataset.class.isAssignableFrom(clazz)) {
+			assertEquals("The file does not contain NANs", Float.NaN, data.getFloat(1), 10.);
+		} else if (DoubleDataset.class.isAssignableFrom(clazz)) {
+			assertEquals("The file does not contain NANs", Double.NaN, data.getDouble(1), 10.);
+		}
 		assertEquals("The file does not contain data as well", 0.1, dh.getDataset(0).getDouble(1), 1.);
 	}
 	

@@ -15,13 +15,13 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.function.DatasetToDatasetFunction;
 import org.eclipse.january.dataset.BroadcastIterator;
-import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.InterfaceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +74,7 @@ public class BinCount implements DatasetToDatasetFunction {
 	}
 
 	private Dataset count(Dataset d, int[] wShape) {
-		if (!DTypeUtils.isDTypeInteger(d.getDType())) {
+		if (!InterfaceUtils.isInteger(d.getClass())) {
 			logger.error("Dataset '{}' is not integer", d.getName());
 			return null;
 		}
@@ -102,7 +102,7 @@ public class BinCount implements DatasetToDatasetFunction {
 			return icount;
 		}
 
-		Dataset count = DatasetFactory.zeros(shape, DTypeUtils.getLargestDType(weights.getDType()));
+		Dataset count = DatasetFactory.zeros(InterfaceUtils.getLargestInterface(weights), shape);
 		final BroadcastIterator it = BroadcastIterator.createIterator(d, weights);
 		if (it.isOutputDouble()) {
 			while (it.hasNext()) {

@@ -276,7 +276,7 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver {
 				String name = names.get(i);
 				final Dataset ds = DatasetFactory.createFromObject(columns[i]);
 				ds.setName(name);
-				if (ds.getDType() == Dataset.STRING) {
+				if (ds instanceof StringDataset) {
 					StringDataset sds = (StringDataset) ds;
 					if (storeStrings) {
 						holder.addDataset(name, ds);

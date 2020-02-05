@@ -16,11 +16,11 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.function.DatasetToDatasetFunction;
 import org.eclipse.january.dataset.CompoundDataset;
-import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.InterfaceUtils;
 
 /**
  * Integrate 2D dataset and return list of two 1D datasets for individual sums over the two dimensions
@@ -102,10 +102,10 @@ public class Integrate2D implements DatasetToDatasetFunction {
 			if (ny == 0)
 				ny = 1;
 
-			final int dtype = DTypeUtils.getBestFloatDType(ds.getDType());
 			final int is = ds.getElementsPerItem();
-			Dataset sumy = DatasetFactory.zeros(is, new int[] { nx }, dtype);
-			Dataset sumx = DatasetFactory.zeros(is, new int[] { ny }, dtype);
+			Class<? extends Dataset> clazz = InterfaceUtils.getBestFloatInterface(ds.getClass());
+			Dataset sumx = DatasetFactory.zeros(is, clazz, ny);
+			Dataset sumy = DatasetFactory.zeros(is, clazz, nx);
 
 			if (is == 1) {
 				double csum;

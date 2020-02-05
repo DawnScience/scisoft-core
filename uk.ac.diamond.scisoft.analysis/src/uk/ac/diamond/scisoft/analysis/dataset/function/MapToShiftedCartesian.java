@@ -58,7 +58,7 @@ public class MapToShiftedCartesian implements DatasetToDatasetFunction {
 			if (s.length != 2)
 				return null;
 
-			Dataset newmap = DatasetFactory.zeros(s, ds.getDType());
+			Dataset newmap = DatasetFactory.zeros(ds.getClass(), s);
 
 			double cx0, cx1;
 			for (int x0 = 0; x0 < s[0]; x0++) {

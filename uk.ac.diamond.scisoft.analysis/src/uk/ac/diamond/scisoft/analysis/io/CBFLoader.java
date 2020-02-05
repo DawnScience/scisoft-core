@@ -705,7 +705,7 @@ _diffrn_radiation_wavelength.wt 1.0
 		bid.delete();
 
 		if (stats != null) {
-			hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
+			hash = hash*19 + data.getClass().hashCode()*17 + data.getElementsPerItem();
 			stats.setHash(hash);
 			data.addMetadata(stats);
 		}

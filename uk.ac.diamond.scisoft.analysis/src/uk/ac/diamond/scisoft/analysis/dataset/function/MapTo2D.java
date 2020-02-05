@@ -70,7 +70,7 @@ public class MapTo2D implements DatasetToDatasetFunction {
 				throw new IllegalArgumentException("Input dataset must be of rank " + d);
 			}
 
-			Dataset newmap = DatasetFactory.zeros(s, ds.getDType());
+			Dataset newmap = DatasetFactory.zeros(ds.getClass(), s);
 
 			double[] p0 = new double[d];
 			double[] p = new double[d];

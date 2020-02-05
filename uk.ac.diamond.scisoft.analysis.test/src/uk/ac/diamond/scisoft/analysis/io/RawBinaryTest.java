@@ -10,15 +10,16 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.InterfaceUtils;
 import org.eclipse.january.dataset.ShortDataset;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -72,7 +73,7 @@ public class RawBinaryTest {
 		try {
 			dh = new RawBinaryLoader(testScratchDirectoryName + filePath2D).loadFile();
 			Dataset data = dh.getDataset(0);
-			assertEquals(data.getDType(), Dataset.FLOAT64);
+			assertTrue(data instanceof DoubleDataset);
 			assertEquals(data.getSize(), range);
 			assertEquals(data.getName(), "test 2D");
 			assertEquals(data.getShape().length, 2);
@@ -107,7 +108,7 @@ public class RawBinaryTest {
 		try {
 			dh = new RawBinaryLoader(testScratchDirectoryName + filePath1D).loadFile();
 			Dataset data = dh.getDataset(0);
-			assertEquals(data.getDType(), Dataset.FLOAT32);
+			assertTrue("Interface", data instanceof FloatDataset);
 			assertEquals(data.getSize(), range);
 			assertEquals(data.getName(), "test 1D");
 			assertEquals(data.getShape().length, 1);
@@ -134,7 +135,7 @@ public class RawBinaryTest {
 		dh = LoaderFactory.getData(testScratchDirectoryName + filePath1D, null);
 		if (dh==null || dh.getNames().length<1) throw new Exception();
 		IDataset data = dh.getDataset(0);
-		assertEquals(DTypeUtils.getDType(data), Dataset.INT16);
+		assertTrue(InterfaceUtils.getInterface(data).equals(ShortDataset.class));
 		assertEquals(data.getSize(), range);
 		assertEquals(data.getName(), "test factory");
 		assertEquals(data.getShape().length, 1);

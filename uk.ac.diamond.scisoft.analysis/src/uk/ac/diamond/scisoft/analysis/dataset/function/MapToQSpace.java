@@ -92,7 +92,7 @@ public class MapToQSpace implements DatasetToDatasetFunction {
 
 		int[] os = new int[] {qlen, qlen, qlen};
 
-		Dataset newmap = DatasetFactory.zeros(os, inDS.getDType());
+		Dataset newmap = DatasetFactory.zeros(inDS.getClass(), os);
 
 		// how does voxel size map to pixel size?
 		// q = -qmax, -qmax+qdel, ..., qmax-qdel, qmax

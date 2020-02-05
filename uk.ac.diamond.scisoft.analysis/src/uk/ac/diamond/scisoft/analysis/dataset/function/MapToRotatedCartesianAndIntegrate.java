@@ -14,11 +14,11 @@ import java.util.List;
 
 import org.eclipse.dawnsci.analysis.dataset.impl.function.DatasetToDatasetFunction;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
-import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.InterfaceUtils;
 import org.eclipse.january.dataset.Maths;
 
 /**
@@ -129,11 +129,11 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 				return null;
 
 			Dataset ds = DatasetUtils.convertToDataset(ids);
-			final int dtype = DTypeUtils.getBestFloatDType(ds.getDType());
-			Dataset sumx = DatasetFactory.zeros(new int[] { h }, dtype);
-			Dataset sumy = DatasetFactory.zeros(new int[] { w }, dtype);
-			Dataset usumx = DatasetFactory.zeros(new int[] { h }, dtype);
-			Dataset usumy = DatasetFactory.zeros(new int[] { w }, dtype);
+			Class<? extends Dataset> clazz = InterfaceUtils.getBestFloatInterface(ds.getClass());
+			Dataset sumx = DatasetFactory.zeros(clazz, h);
+			Dataset sumy = DatasetFactory.zeros(clazz, w);
+			Dataset usumx = DatasetFactory.zeros(clazz, h);
+			Dataset usumy = DatasetFactory.zeros(clazz, w);
 
 			double cx, cy;
 			double csum;
@@ -182,9 +182,9 @@ public class MapToRotatedCartesianAndIntegrate implements DatasetToDatasetFuncti
 				return null;
 
 			Dataset ds = DatasetUtils.convertToDataset(ids);
-			final int dtype = DTypeUtils.getBestFloatDType(ds.getDType());
-			Dataset mx = DatasetFactory.zeros(new int[] { h }, dtype);
-			Dataset my = DatasetFactory.zeros(new int[] { w }, dtype);
+			Class<? extends Dataset> clazz = InterfaceUtils.getBestFloatInterface(ds.getClass());
+			Dataset mx = DatasetFactory.zeros(clazz, h);
+			Dataset my = DatasetFactory.zeros(clazz, w);
 
 			double cx, cy;
 			double cmax;

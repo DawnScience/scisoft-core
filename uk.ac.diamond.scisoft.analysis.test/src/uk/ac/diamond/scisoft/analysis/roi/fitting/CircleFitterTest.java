@@ -70,7 +70,7 @@ public class CircleFitterTest {
 		double[] original = new double[] {50, 150, -0.30};
 
 		DoubleDataset theta;
-		theta = (DoubleDataset) DatasetFactory.createLinearSpace(0, Math.PI, 5, Dataset.FLOAT64);
+		theta = DatasetFactory.createLinearSpace(DoubleDataset.class, 0, Math.PI, 5);
 
 		Dataset[] coords = CircleFitter.generateCoordinates(theta, original);
 

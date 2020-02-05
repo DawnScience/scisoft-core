@@ -263,7 +263,7 @@ public class Utils {
 		}
 
 		stats.setMaximumMinimumSum(max, min, null);
-		stats.setHash(hash*19 + data.getDType()*17 + data.getElementsPerItem());
+		stats.setHash(hash*19 + data.getClass().hashCode()*17 + data.getElementsPerItem());
 		data.addMetadata(stats);
 	}
 

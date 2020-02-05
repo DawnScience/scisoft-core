@@ -24,13 +24,13 @@ import javax.vecmath.Vector3d;
 
 import org.apache.commons.math3.util.MathUtils;
 import org.eclipse.dawnsci.analysis.dataset.impl.function.DatasetToDatasetFunction;
-import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.InterfaceUtils;
 import org.eclipse.january.dataset.Maths;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
@@ -226,10 +226,10 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 			final int np = Math.max(1, (int) Math.ceil((ephi - sphi) * erad / dr));
 			final double dphi = (ephi - sphi) / np;
 			final double rdphi = dphi * erad;
-			
-			final int dtype = DTypeUtils.getBestFloatDType(ds.getDType());
-			Dataset sump = DatasetFactory.zeros(new int[] { nr }, dtype);
-			Dataset sumr = DatasetFactory.zeros(new int[] { np }, dtype);
+
+			Class<? extends Dataset> clazz = InterfaceUtils.getBestFloatInterface(ds.getClass());
+			Dataset sump = DatasetFactory.zeros(clazz, nr);
+			Dataset sumr = DatasetFactory.zeros(clazz, np);
 			
 			double csum;			
 			
@@ -802,10 +802,10 @@ public class MapToPolarAndIntegrate implements DatasetToDatasetFunction {
 						errIds = (DoubleDataset) errorBuffer;
 					}
 				}
-				
-				final int dtype = DTypeUtils.getBestFloatDType(ids.getDType());
-				Dataset sump = DatasetFactory.zeros(new int[] { nr }, dtype);
-				Dataset sumr = DatasetFactory.zeros(new int[] { np }, dtype);
+
+				Class<? extends Dataset> clazz = InterfaceUtils.getBestFloatInterface(ids.getClass());
+				Dataset sump = DatasetFactory.zeros(clazz, nr);
+				Dataset sumr = DatasetFactory.zeros(clazz, np);
 				Dataset errsump = DatasetFactory.zeros(nr);
 				Dataset errsumr = DatasetFactory.zeros(np);
 				

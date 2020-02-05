@@ -49,7 +49,7 @@ public class RegisterData1DTest {
 
 	@Test
 	public void testRegisterSyntheticWithROI() {
-		testRegisterSyntheticWithROI(0.06, 0);
+		testRegisterSyntheticWithROI(0.163, 0);
 		testRegisterSyntheticWithROI(72, 0.05); // 10% noise
 		testRegisterSyntheticWithROI(72, 0.1); // 20% noise
 	}

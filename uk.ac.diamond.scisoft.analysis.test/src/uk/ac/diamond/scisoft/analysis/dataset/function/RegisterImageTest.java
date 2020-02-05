@@ -36,7 +36,7 @@ public class RegisterImageTest {
 
 	@Test
 	public void testRegisterSynthetic() {
-		testRegisterSynthetic(null, 0.173);
+		testRegisterSynthetic(null, 0.175);
 	}
 
 	@Test
@@ -47,7 +47,7 @@ public class RegisterImageTest {
 		end[1] += 2*OBJECT_Y + MAX*Y_DELTA + MARGIN;
 		RectangularROI roi = new RectangularROI(start, end);
 		System.err.println(roi);
-		testRegisterSynthetic(roi, 0.177);
+		testRegisterSynthetic(roi, 0.179);
 	}
 
 	void testRegisterSynthetic(IRectangularROI roi, double delta) {

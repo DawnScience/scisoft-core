@@ -39,8 +39,9 @@ public class NexusTemplateServiceImpl implements NexusTemplateService {
 		}
 	}
 	
-	private NexusTemplate createTemplate(String fileName, Map<String, Object> yamlMapping) {
-		return new NexusTemplateImpl(fileName, yamlMapping);
+	@Override
+	public NexusTemplate createTemplate(String templateName, Map<String, Object> yamlMapping) {
+		return new NexusTemplateImpl(templateName, yamlMapping);
 	}
 	
 	/**

@@ -88,12 +88,6 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 
 		updateROICount();
 
-		if (model.getSlopeOverride() != null) {
-			lines[0].setParameterValues(model.getSlopeOverride());
-			lines[1].setParameterValues(model.getSlopeOverride());
-			return;
-		}
-
 		// TODO integrated scan file case
 
 		// get elastic line scan file path

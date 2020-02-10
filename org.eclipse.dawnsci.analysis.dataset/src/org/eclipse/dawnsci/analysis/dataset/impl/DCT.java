@@ -190,8 +190,7 @@ public class DCT {
 		int[] pos;
 		boolean[] hit;
 
-		switch (a.getDType()) {
-		case Dataset.FLOAT32:
+		if (a instanceof FloatDataset) {
 			FloatDCT_1D ffft = new FloatDCT_1D(n);
 			shape = a.getShape().clone();
 			shape[axis] = n;
@@ -207,8 +206,7 @@ public class DCT {
 				ffft.forward(fdata, true);
 				result.setItemsOnAxes(pos, hit, fdata);
 			}
-			break;
-		case Dataset.FLOAT64:
+		} else if (a instanceof DoubleDataset) {
 			DoubleDCT_1D dfft = new DoubleDCT_1D(n);
 			shape = a.getShape().clone();
 			shape[axis] = n;
@@ -224,10 +222,8 @@ public class DCT {
 				dfft.forward(ddata, true);
 				result.setItemsOnAxes(pos, hit, ddata);
 			}
-			break;
-		default:
+		} else {
 			logger.warn("Non-float dataset not yet supported");
-			break;
 		}
 
 		return result;
@@ -241,8 +237,7 @@ public class DCT {
 		int[] pos;
 		boolean[] hit;
 
-		switch (a.getDType()) {
-		case Dataset.FLOAT32:
+		if (a instanceof FloatDataset) {
 			FloatDCT_2D ffft = new FloatDCT_2D(s[0], s[1]);
 			float[] fdata = null;
 			result = DatasetFactory.zeros(FloatDataset.class, newShape(a.getShapeRef(), s, axes));
@@ -257,8 +252,7 @@ public class DCT {
 				ffft.forward(fdata, true);
 				result.setItemsOnAxes(pos, hit, fdata);
 			}
-			break;
-		case Dataset.FLOAT64:
+		} else if (a instanceof DoubleDataset) {
 			DoubleDCT_2D dfft = new DoubleDCT_2D(s[0], s[1]);
 			double[] ddata = null;
 			result = DatasetFactory.zeros(DoubleDataset.class, newShape(a.getShapeRef(), s, axes));
@@ -273,10 +267,8 @@ public class DCT {
 				dfft.forward(ddata, true);
 				result.setItemsOnAxes(pos, hit, ddata);
 			}
-			break;
-		default:
+		} else {
 			logger.warn("Non-float dataset not yet supported");
-			break;
 		}
 
 		return result;
@@ -290,8 +282,7 @@ public class DCT {
 		int[] pos;
 		boolean[] hit;
 
-		switch (a.getDType()) {
-		case Dataset.FLOAT32:
+		if (a instanceof FloatDataset) {
 			FloatDCT_3D ffft = new FloatDCT_3D(s[0], s[1], s[2]);
 
 			float[] fdata = null;
@@ -307,8 +298,7 @@ public class DCT {
 				ffft.forward(fdata, true);
 				result.setItemsOnAxes(pos, hit, fdata);
 			}
-			break;
-		case Dataset.FLOAT64:
+		} else if (a instanceof DoubleDataset) {
 			DoubleDCT_3D dfft = new DoubleDCT_3D(s[0], s[1], s[2]);
 
 			double[] ddata = null;
@@ -324,10 +314,8 @@ public class DCT {
 				dfft.forward(ddata, true);
 				result.setItemsOnAxes(pos, hit, ddata);
 			}
-			break;
-		default:
+		} else {
 			logger.warn("Non-float dataset not yet supported");
-			break;
 		}
 
 		return result;
@@ -470,8 +458,7 @@ public class DCT {
 		int[] pos;
 		boolean[] hit;
 
-		switch (a.getDType()) {
-		case Dataset.FLOAT32:
+		if (a instanceof FloatDataset) {
 			FloatDCT_1D ffft = new FloatDCT_1D(n);
 			float[] fdata = null;
 			shape = a.getShape();
@@ -488,8 +475,7 @@ public class DCT {
 				ffft.inverse(fdata, true);
 				result.setItemsOnAxes(pos, hit, fdata);
 			}
-			break;
-		case Dataset.FLOAT64:
+		} else if (a instanceof DoubleDataset) {
 			DoubleDCT_1D dfft = new DoubleDCT_1D(n);
 			double[] ddata = null;
 			shape = a.getShape();
@@ -506,10 +492,8 @@ public class DCT {
 				dfft.inverse(ddata, true);
 				result.setItemsOnAxes(pos, hit, ddata);
 			}
-			break;
-		default:
+		} else {
 			logger.warn("Non-complex dataset not yet supported");
-			break;
 		}
 
 		return result;
@@ -523,8 +507,7 @@ public class DCT {
 		int[] pos;
 		boolean[] hit;
 
-		switch (a.getDType()) {
-		case Dataset.FLOAT32:
+		if (a instanceof FloatDataset) {
 			FloatDCT_2D ffft = new FloatDCT_2D(s[0], s[1]);
 			float[] fdata = null;
 			result = DatasetFactory.zeros(FloatDataset.class, newShape(a.getShapeRef(), s, axes));
@@ -539,8 +522,7 @@ public class DCT {
 				ffft.inverse(fdata, true);
 				result.setItemsOnAxes(pos, hit, fdata);
 			}
-			break;
-		case Dataset.FLOAT64:
+		} else if (a instanceof DoubleDataset) {
 			DoubleDCT_2D dfft = new DoubleDCT_2D(s[0], s[1]);
 			double[] ddata = null;
 			result = DatasetFactory.zeros(DoubleDataset.class, newShape(a.getShapeRef(), s, axes));
@@ -555,10 +537,8 @@ public class DCT {
 				dfft.inverse(ddata, true);
 				result.setItemsOnAxes(pos, hit, ddata);
 			}
-			break;
-		default:
+		} else {
 			logger.warn("Non-complex dataset not yet supported");
-			break;
 		}
 
 		return result;
@@ -572,8 +552,7 @@ public class DCT {
 		int[] pos;
 		boolean[] hit;
 
-		switch (a.getDType()) {
-		case Dataset.FLOAT32:
+		if (a instanceof FloatDataset) {
 			FloatDCT_3D ffft = new FloatDCT_3D(s[0], s[1], s[2]);
 			float[] fdata = null;
 			result = DatasetFactory.zeros(FloatDataset.class, newShape(a.getShapeRef(), s, axes));
@@ -588,26 +567,23 @@ public class DCT {
 				ffft.inverse(fdata, true);
 				result.setItemsOnAxes(pos, hit, fdata);
 			}
-			break;
-		case Dataset.FLOAT64:
-				DoubleDCT_3D dfft = new DoubleDCT_3D(s[0], s[1], s[2]);
-				double[] ddata = null;
-				result = DatasetFactory.zeros(DoubleDataset.class, newShape(a.getShapeRef(), s, axes));
-				dest = DatasetFactory.zeros(DoubleDataset.class, s);
-				ddata = (double[]) dest.getBuffer();
-				pi = a.getPositionIterator(axes);
-				pos = pi.getPos();
-				hit = pi.getOmit();
-				while (pi.hasNext()) {
-					Arrays.fill(ddata, 0.);
-					a.copyItemsFromAxes(pos, hit, dest);
-					dfft.inverse(ddata, true);
-					result.setItemsOnAxes(pos, hit, ddata);
-				}
-				break;
-		default:
+		} else if (a instanceof DoubleDataset) {
+			DoubleDCT_3D dfft = new DoubleDCT_3D(s[0], s[1], s[2]);
+			double[] ddata = null;
+			result = DatasetFactory.zeros(DoubleDataset.class, newShape(a.getShapeRef(), s, axes));
+			dest = DatasetFactory.zeros(DoubleDataset.class, s);
+			ddata = (double[]) dest.getBuffer();
+			pi = a.getPositionIterator(axes);
+			pos = pi.getPos();
+			hit = pi.getOmit();
+			while (pi.hasNext()) {
+				Arrays.fill(ddata, 0.);
+				a.copyItemsFromAxes(pos, hit, dest);
+				dfft.inverse(ddata, true);
+				result.setItemsOnAxes(pos, hit, ddata);
+			}
+		} else {
 			logger.warn("Non-complex dataset not yet supported");
-			break;
 		}
 
 		return result;

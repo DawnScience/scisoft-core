@@ -19,6 +19,7 @@ import org.eclipse.dawnsci.plotting.api.trace.IPlane3DTrace;
 import org.eclipse.dawnsci.plotting.examples.util.BundleUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Slice;
@@ -66,13 +67,13 @@ public class Plane3DExample extends PlotExample {
 	private List<? extends IDataset> generateAxes(ILazyDataset data, int length, double... axesDims) {
 		// FIXME for some reason axes have to be the same length
 		List<IDataset> axes = new ArrayList<>();
-		Dataset x = DatasetFactory.createLinearSpace(0, axesDims[0], length, Dataset.FLOAT64);
+		Dataset x = DatasetFactory.createLinearSpace(DoubleDataset.class, 0, axesDims[0], length);
 		x.setName("x");
 		axes.add(x);
-		Dataset y = DatasetFactory.createLinearSpace(0, axesDims[1], (int) (length*1.5), Dataset.FLOAT64);
+		Dataset y = DatasetFactory.createLinearSpace(DoubleDataset.class, 0, axesDims[1], (int) (length*1.5));
 		y.setName("y");
 		axes.add(y);
-		Dataset z = DatasetFactory.createLinearSpace(0, axesDims[2], length * 2, Dataset.FLOAT64);
+		Dataset z = DatasetFactory.createLinearSpace(DoubleDataset.class, 0, axesDims[2], length * 2);
 		z.setName("z");
 		axes.add(z);
 		return axes;

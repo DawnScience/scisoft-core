@@ -22,6 +22,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.PositionIterator;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceIterator;
@@ -200,9 +201,7 @@ public class FFT {
 		int[] pos;
 		boolean[] hit;
 
-		switch (a.getDType()) {
-		case Dataset.FLOAT32:
-		case Dataset.COMPLEX64:
+		if (a instanceof FloatDataset || a instanceof ComplexFloatDataset) {
 			FloatFFT_1D ffft = new FloatFFT_1D(n);
 			shape = a.getShape();
 			shape[axis] = n;
@@ -218,9 +217,7 @@ public class FFT {
 				ffft.complexForward(fdata);
 				result.setItemsOnAxes(pos, hit, fdata);
 			}
-			break;
-		case Dataset.FLOAT64:
-		case Dataset.COMPLEX128:
+		} else if (a instanceof DoubleDataset || a instanceof ComplexDoubleDataset) {
 			DoubleFFT_1D dfft = new DoubleFFT_1D(n);
 			shape = a.getShape();
 			shape[axis] = n;
@@ -236,10 +233,8 @@ public class FFT {
 				dfft.complexForward(ddata);
 				result.setItemsOnAxes(pos, hit, ddata);
 			}
-			break;
-		default:
+		} else {
 			logger.warn("Non-float dataset not yet supported");
-			break;
 		}
 
 		return result;
@@ -253,9 +248,7 @@ public class FFT {
 		int[] pos;
 		boolean[] hit;
 
-		switch (a.getDType()) {
-		case Dataset.FLOAT32:
-		case Dataset.COMPLEX64:
+		if (a instanceof FloatDataset || a instanceof ComplexFloatDataset) {
 			FloatFFT_2D ffft = new FloatFFT_2D(s[0], s[1]);
 			float[] fdata = null;
 			result = DatasetFactory.zeros(ComplexFloatDataset.class, newShape(a.getShapeRef(), s, axes));
@@ -270,9 +263,7 @@ public class FFT {
 				ffft.complexForward(fdata);
 				result.setItemsOnAxes(pos, hit, fdata);
 			}
-			break;
-		case Dataset.FLOAT64:
-		case Dataset.COMPLEX128:
+		} else if (a instanceof DoubleDataset || a instanceof ComplexDoubleDataset) {
 			DoubleFFT_2D dfft = new DoubleFFT_2D(s[0], s[1]);
 			double[] ddata = null;
 			result = DatasetFactory.zeros(ComplexDoubleDataset.class, newShape(a.getShapeRef(), s, axes));
@@ -287,10 +278,8 @@ public class FFT {
 				dfft.complexForward(ddata);
 				result.setItemsOnAxes(pos, hit, ddata);
 			}
-			break;
-		default:
+		} else {
 			logger.warn("Non-float dataset not yet supported");
-			break;
 		}
 
 		return result;
@@ -304,9 +293,7 @@ public class FFT {
 		int[] pos;
 		boolean[] hit;
 
-		switch (a.getDType()) {
-		case Dataset.FLOAT32:
-		case Dataset.COMPLEX64:
+		if (a instanceof FloatDataset || a instanceof ComplexFloatDataset) {
 			FloatFFT_3D ffft = new FloatFFT_3D(s[0], s[1], s[2]);
 
 			float[] fdata = null;
@@ -322,9 +309,7 @@ public class FFT {
 				ffft.complexForward(fdata);
 				result.setItemsOnAxes(pos, hit, fdata);
 			}
-			break;
-		case Dataset.FLOAT64:
-		case Dataset.COMPLEX128:
+		} else if (a instanceof DoubleDataset || a instanceof ComplexDoubleDataset) {
 			DoubleFFT_3D dfft = new DoubleFFT_3D(s[0], s[1], s[2]);
 
 			double[] ddata = null;
@@ -340,10 +325,8 @@ public class FFT {
 				dfft.complexForward(ddata);
 				result.setItemsOnAxes(pos, hit, ddata);
 			}
-			break;
-		default:
+		} else {
 			logger.warn("Non-float dataset not yet supported");
-			break;
 		}
 
 		return result;
@@ -488,9 +471,7 @@ public class FFT {
 		int[] pos;
 		boolean[] hit;
 
-		switch (a.getDType()) {
-		case Dataset.FLOAT32:
-		case Dataset.COMPLEX64:
+		if (a instanceof FloatDataset || a instanceof ComplexFloatDataset) {
 			FloatFFT_1D ffft = new FloatFFT_1D(n);
 			float[] fdata = null;
 			shape = a.getShape();
@@ -507,9 +488,7 @@ public class FFT {
 				ffft.complexInverse(fdata, true);
 				result.setItemsOnAxes(pos, hit, fdata);
 			}
-			break;
-		case Dataset.FLOAT64:
-		case Dataset.COMPLEX128:
+		} else if (a instanceof DoubleDataset || a instanceof ComplexDoubleDataset) {
 			DoubleFFT_1D dfft = new DoubleFFT_1D(n);
 			double[] ddata = null;
 			shape = a.getShape();
@@ -526,10 +505,8 @@ public class FFT {
 				dfft.complexInverse(ddata, true);
 				result.setItemsOnAxes(pos, hit, ddata);
 			}
-			break;
-		default:
+		} else {
 			logger.warn("Non-float dataset not yet supported");
-			break;
 		}
 
 		return result;
@@ -543,9 +520,7 @@ public class FFT {
 		int[] pos;
 		boolean[] hit;
 
-		switch (a.getDType()) {
-		case Dataset.FLOAT32:
-		case Dataset.COMPLEX64:
+		if (a instanceof FloatDataset || a instanceof ComplexFloatDataset) {
 			FloatFFT_2D ffft = new FloatFFT_2D(s[0], s[1]);
 			float[] fdata = null;
 			result = DatasetFactory.zeros(ComplexFloatDataset.class, newShape(a.getShapeRef(), s, axes));
@@ -560,9 +535,7 @@ public class FFT {
 				ffft.complexInverse(fdata, true);
 				result.setItemsOnAxes(pos, hit, fdata);
 			}
-			break;
-		case Dataset.FLOAT64:
-		case Dataset.COMPLEX128:
+		} else if (a instanceof DoubleDataset || a instanceof ComplexDoubleDataset) {
 			DoubleFFT_2D dfft = new DoubleFFT_2D(s[0], s[1]);
 			double[] ddata = null;
 			result = DatasetFactory.zeros(ComplexDoubleDataset.class, newShape(a.getShapeRef(), s, axes));
@@ -577,10 +550,8 @@ public class FFT {
 				dfft.complexInverse(ddata, true);
 				result.setItemsOnAxes(pos, hit, ddata);
 			}
-			break;
-		default:
+		} else {
 			logger.warn("Non-float dataset not yet supported");
-			break;
 		}
 
 		return result;
@@ -594,9 +565,7 @@ public class FFT {
 		int[] pos;
 		boolean[] hit;
 
-		switch (a.getDType()) {
-		case Dataset.FLOAT32:
-		case Dataset.COMPLEX64:
+		if (a instanceof FloatDataset || a instanceof ComplexFloatDataset) {
 			FloatFFT_3D ffft = new FloatFFT_3D(s[0], s[1], s[2]);
 			float[] fdata = null;
 			result = DatasetFactory.zeros(ComplexFloatDataset.class, newShape(a.getShapeRef(), s, axes));
@@ -611,27 +580,23 @@ public class FFT {
 				ffft.complexInverse(fdata, true);
 				result.setItemsOnAxes(pos, hit, fdata);
 			}
-			break;
-		case Dataset.FLOAT64:
-		case Dataset.COMPLEX128:
-				DoubleFFT_3D dfft = new DoubleFFT_3D(s[0], s[1], s[2]);
-				double[] ddata = null;
-				result = DatasetFactory.zeros(ComplexDoubleDataset.class, newShape(a.getShapeRef(), s, axes));
-				dest = DatasetFactory.zeros(ComplexDoubleDataset.class, s);
-				ddata = (double[]) dest.getBuffer();
-				pi = a.getPositionIterator(axes);
-				pos = pi.getPos();
-				hit = pi.getOmit();
-				while (pi.hasNext()) {
-					Arrays.fill(ddata, 0.);
-					a.copyItemsFromAxes(pos, hit, dest);
-					dfft.complexInverse(ddata, true);
-					result.setItemsOnAxes(pos, hit, ddata);
-				}
-				break;
-		default:
+		} else if (a instanceof DoubleDataset || a instanceof ComplexDoubleDataset) {
+			DoubleFFT_3D dfft = new DoubleFFT_3D(s[0], s[1], s[2]);
+			double[] ddata = null;
+			result = DatasetFactory.zeros(ComplexDoubleDataset.class, newShape(a.getShapeRef(), s, axes));
+			dest = DatasetFactory.zeros(ComplexDoubleDataset.class, s);
+			ddata = (double[]) dest.getBuffer();
+			pi = a.getPositionIterator(axes);
+			pos = pi.getPos();
+			hit = pi.getOmit();
+			while (pi.hasNext()) {
+				Arrays.fill(ddata, 0.);
+				a.copyItemsFromAxes(pos, hit, dest);
+				dfft.complexInverse(ddata, true);
+				result.setItemsOnAxes(pos, hit, ddata);
+			}
+		} else {
 			logger.warn("Non-float dataset not yet supported");
-			break;
 		}
 
 		return result;

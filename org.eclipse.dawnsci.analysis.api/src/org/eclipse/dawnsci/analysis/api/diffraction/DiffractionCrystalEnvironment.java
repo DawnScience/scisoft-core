@@ -158,16 +158,36 @@ public class DiffractionCrystalEnvironment implements Serializable, Cloneable {
 	}
 
 	/**
-	 * Energy equivalent (1eV)/(h c) [m^-1] from NIST CODATA 2014
+	 * Energy equivalent (1eV)/(h c) [m^-1] from NIST CODATA 2018
 	 */
-	private static final double CODATA_ENERGY = 8.065544005e5;
+	private static final double CODATA_FACTOR = 8.065543937e5;
+
+	/**
+	 * Calculate photon energy from wavelength
+	 * @param wavelength in Angstroms
+	 * @return energy in keV
+	 */
+	public static double calculateEnergy(double wavelength) {
+		// energy(keV) = 10^7 * (h * c / e) / lambda(A) 
+		// NB, 1e7 is factor from 10^-3 * 10^10 to convert eV to keV and m to A
+		return 1e7 / (CODATA_FACTOR * wavelength);
+	}
+
+	/**
+	 * Calculate wavelength from photon energy
+	 * @param energy in keV
+	 * @return wavelength in Angstroms
+	 */
+	public static double calculateWavelength(double energy) {
+		// lambda(A) = 10^7 * (h * c / e) / energy(keV)
+		return calculateEnergy(energy);
+	}
 
 	/**
 	 * @return keV energy
 	 */
 	public double getEnergy() {
-		// energy(keV) = 10^7 * (h * c / e) / lambda(A) 
-		return 1e7 / (CODATA_ENERGY * wavelength);
+		return calculateEnergy(wavelength);
 	}
 
 	/**
@@ -175,8 +195,7 @@ public class DiffractionCrystalEnvironment implements Serializable, Cloneable {
 	 * @param keV energy
 	 */
 	public void setWavelengthFromEnergykeV(double keV) {
-		// lambda(A) = 10^7 * (h*c/e) / energy(keV)
-		this.wavelength = 1e7 / (CODATA_ENERGY * keV);
+		this.wavelength = calculateWavelength(keV);
 		// Tell listeners
 		fireDiffractionCrystalEnvironmentListeners(new DiffractionCrystalEnvironmentEvent(this, EventType.WAVELENGTH));
 	}

@@ -1557,12 +1557,17 @@ public class MillerSpaceMapper {
 				hasDeleted = true;
 			}
 
-			int[] cShape = vShape.clone();
-			cShape[0] = 1;
-			LazyWriteableDataset lazy = HDF5Utils.createLazyDataset(output, volPath, VOLUME_NAME, vShape, null, cShape, DoubleDataset.class, null, false);
+			int[] cShape = new int[] { 64, 64, 64 };
+			LazyWriteableDataset lazy = HDF5Utils.createLazyDataset(output, volPath, VOLUME_NAME, vShape, null, cShape,
+					DoubleDataset.class, null, false);
+			createAndWriteAttribute(output, PROCESSED, NexusConstants.NXCLASS, NexusConstants.ENTRY);
+			createAndWriteAttribute(output, PROCESSPATH, NexusConstants.NXCLASS, NexusConstants.PROCESS);
+
 			mapAndSaveInParts(mapQ, trees, allIters, lazy, parts, map, weight);
 
 			saveAxesAndAttributes(output, volPath, a);
+			writeLinkedData(output, bean, entryPath);
+			writeDefaultAttributes(output, volName);
 		}
 		return a;
 	}
@@ -1657,6 +1662,12 @@ public class MillerSpaceMapper {
 		v.setName(VOLUME_NAME);
 		HDF5Utils.writeDataset(file, volPath, v);
 		saveAxesAndAttributes(file, volPath, axes);
+		writeLinkedData(file, bean, entryPath);
+
+	}
+
+	static void writeLinkedData(String file, MillerSpaceMapperBean bean, String entryPath)
+			throws ScanFileHolderException {
 
 		String className = MillerSpaceMapper.class.getSimpleName();
 		String program = "DAWN." + className;

@@ -14,6 +14,7 @@ import java.util.stream.IntStream;
 import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
+import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -46,7 +47,6 @@ public class XPDFCoordinates {
 	private Dataset x;
 	private boolean isAngleAuthorative;
 	// Energy-wavelength conversion in keV Angstroms
-	private static final double hckeVAA = 12.39841974;//(17)
 	private Dataset sinTwoTheta, cosTwoTheta;
 	
 	/**
@@ -142,7 +142,7 @@ public class XPDFCoordinates {
 	 * 				beam photon energy in keV.
 	 */
 	public void setEnergy(double inEnergy) {
-		this.wavelength = hckeVAA/inEnergy;
+		this.wavelength = DiffractionCrystalEnvironment.calculateWavelength(inEnergy);
 		invalidateData();
 	}
 	
@@ -361,7 +361,7 @@ public class XPDFCoordinates {
 	 * @return beam energy in keV.
 	 */
 	public double getEnergy() {
-		return hckeVAA/this.wavelength;
+		return DiffractionCrystalEnvironment.calculateEnergy(this.wavelength);
 	}
 
 	private void invalidateData() {

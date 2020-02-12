@@ -14,6 +14,7 @@ import java.util.Arrays;
 import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
+import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
@@ -31,7 +32,6 @@ import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
 public class SurfaceQ {
 
 	private static final int nDim = 3;
-	private static final double hBarC = 1.9732697879296464; // keV Å 
 	@SuppressWarnings("unused") // surfaceLook is not yet used
 	private DoubleDataset surfaceNormal, surfaceLook;
 
@@ -187,7 +187,7 @@ public class SurfaceQ {
 		// For diffraction metadata, we can assume that the beam is on the +ve z-axis
 		DoubleDataset incidentBeam = DatasetFactory.createFromList(DoubleDataset.class, Arrays.asList(0.0, 0.0, 1.0));
 		DetectorProperties dp = dm.getDetector2DProperties();
-		double beamEnergy = 2*Math.PI*hBarC/dm.getDiffractionCrystalEnvironment().getWavelength();
+		double beamEnergy =  dm.getDiffractionCrystalEnvironment().getEnergy();
 		
 		DoubleDataset qPerpPara = DatasetFactory.zeros(dp.getPx(), dp.getPy());
 		
@@ -209,7 +209,7 @@ public class SurfaceQ {
 		// For diffraction metadata, we can assume that the beam is on the +ve z-axis
 		DoubleDataset incidentBeam = DatasetFactory.createFromList(DoubleDataset.class, Arrays.asList(0.0, 0.0, 1.0));
 		DetectorProperties dp = dm.getDetector2DProperties();
-		double beamEnergy = 2*Math.PI*hBarC/dm.getDiffractionCrystalEnvironment().getWavelength();
+		double beamEnergy = dm.getDiffractionCrystalEnvironment().getEnergy();
 
 		DoubleDataset qMin = DatasetFactory.zeros(shape);
 		DoubleDataset qMax = DatasetFactory.zeros(shape);
@@ -419,7 +419,7 @@ public class SurfaceQ {
 		public DoubleDataset kInHat, kOutHat, deltaK, unitSurfaceNormal;
 		
 		public DataCacher(DoubleDataset scatteredBeam, DoubleDataset incidentBeam, DoubleDataset surfaceNormal, double beamEnergy) {
-			double wavenumber = beamEnergy / hBarC; 
+			double wavenumber = 1./DiffractionCrystalEnvironment.calculateWavelength(beamEnergy); 
 			kInHat = (DoubleDataset) Maths.multiply(wavenumber, normalized(incidentBeam));
 			kOutHat = (DoubleDataset) Maths.multiply(wavenumber, normalized(scatteredBeam));
 			
@@ -427,8 +427,7 @@ public class SurfaceQ {
 			unitSurfaceNormal = normalized(surfaceNormal);
 		}
 	}
-	
-	
+
 	// Convert between JavaX Vector3d and our own Datasets.
 	@SuppressWarnings("unused")
 	private static Vector3d vector3dFromDoubleDataset(DoubleDataset d) {

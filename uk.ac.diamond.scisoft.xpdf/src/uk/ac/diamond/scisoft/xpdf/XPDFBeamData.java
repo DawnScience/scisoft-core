@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.xpdf;
 
+import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.Maths;
 
@@ -26,7 +27,6 @@ public class XPDFBeamData {
 	private double beamEnergy;
 	private double beamWidth;
 	private double beamHeight;
-	private static final double hckeVAA = 12.39841974;// (17)
 
 	/**
 	 * Constructor for the empty beam. No beam, no data.
@@ -84,7 +84,7 @@ public class XPDFBeamData {
 	 *            beam wavelength in angstroms.
 	 */
 	public void setBeamWavelength(double beamWavelength) {
-		this.beamEnergy = hckeVAA / beamWavelength;
+		this.beamEnergy = DiffractionCrystalEnvironment.calculateEnergy(beamWavelength);;
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class XPDFBeamData {
 	 * @return beam wavelength in angstroms.
 	 */
 	public double getBeamWavelength() {
-		return hckeVAA / this.beamEnergy;
+		return DiffractionCrystalEnvironment.calculateWavelength(this.beamEnergy);
 	}
 
 	/**

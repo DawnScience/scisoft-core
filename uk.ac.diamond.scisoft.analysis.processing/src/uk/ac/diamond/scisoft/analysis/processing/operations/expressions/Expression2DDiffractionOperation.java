@@ -35,7 +35,7 @@ public class Expression2DDiffractionOperation extends Expression2DOperation<Expr
 		engine.addLoadedVariable("q", q);
 		engine.addLoadedVariable("tth", tth);
 		engine.addLoadedVariable("azimuth", az);
-		engine.addLoadedVariable("energy", 1/(meta.getDiffractionCrystalEnvironment().getWavelength()*0.0806554465));
+		engine.addLoadedVariable("energy", meta.getDiffractionCrystalEnvironment().getEnergy());
 		}
 	
 }

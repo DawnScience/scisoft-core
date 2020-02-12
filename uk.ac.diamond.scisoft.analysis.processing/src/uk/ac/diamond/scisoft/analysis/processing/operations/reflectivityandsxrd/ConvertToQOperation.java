@@ -89,11 +89,8 @@ public class ConvertToQOperation extends AbstractOperationBase<EmptyModel, Opera
 		
 		// Convert from degrees to radians		
 		Dataset theta = ErrorPropagationUtils.multiplyWithUncertainty(thetaDeg, DatasetFactory.createFromObject(Math.toRadians(1)));
-				
-		DiffractionCrystalEnvironment dCE = new DiffractionCrystalEnvironment();
-		dCE.setWavelengthFromEnergykeV(Double.parseDouble(metaValue.toString()));
-		Double lambda = dCE.getWavelength();
-		Dataset lambdaD = DatasetFactory.createFromObject(lambda);
+
+		Dataset lambdaD = DatasetFactory.createFromObject(DiffractionCrystalEnvironment.calculateWavelength(Double.parseDouble(metaValue.toString())));
 		Dataset q = ErrorPropagationUtils.multiplyWithUncertainty(ErrorPropagationUtils.divideWithUncertainty(ErrorPropagationUtils.sineWithUncertainty(theta), lambdaD), FOURPI);
 				
 		// Reconstruct everything that was taken down before

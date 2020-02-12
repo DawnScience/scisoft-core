@@ -130,6 +130,7 @@ public class MillerSpaceMapper {
 	private ForkJoinPool pool;
 
 	private static final String VOLUME_NAME = "volume";
+	private static final String WEIGHT_NAME = "weight";
 	private static final String[] MILLER_VOLUME_AXES = new String[] { "h-axis", "k-axis", "l-axis" };
 	private static final String[] Q_VOLUME_AXES = new String[] { "x-axis", "y-axis", "z-axis" };
 
@@ -1513,7 +1514,7 @@ public class MillerSpaceMapper {
 			createAndWriteAttribute(output, PROCESSED, NexusConstants.NXCLASS, NexusConstants.ENTRY);
 			createAndWriteAttribute(output, PROCESSPATH, NexusConstants.NXCLASS, NexusConstants.PROCESS);
 
-			saveVolume(output, bean, entryPath, volPath, map, a);
+			saveVolume(output, bean, entryPath, volPath, map, weight, a);
 			writeDefaultAttributes(output, volName);
 			System.out.printf("Saving took %dms\n", System.currentTimeMillis() - start);
 		} catch (IllegalArgumentException | OutOfMemoryError e) {
@@ -1558,12 +1559,14 @@ public class MillerSpaceMapper {
 			}
 
 			int[] cShape = new int[] { 64, 64, 64 };
-			LazyWriteableDataset lazy = HDF5Utils.createLazyDataset(output, volPath, VOLUME_NAME, vShape, null, cShape,
-					DoubleDataset.class, null, false);
+			LazyWriteableDataset lazyVolume = HDF5Utils.createLazyDataset(output, volPath, VOLUME_NAME, vShape, null,
+					cShape, DoubleDataset.class, null, false);
+			LazyWriteableDataset lazyWeight = HDF5Utils.createLazyDataset(output, volPath, WEIGHT_NAME, vShape, null,
+					cShape, DoubleDataset.class, null, false);
 			createAndWriteAttribute(output, PROCESSED, NexusConstants.NXCLASS, NexusConstants.ENTRY);
 			createAndWriteAttribute(output, PROCESSPATH, NexusConstants.NXCLASS, NexusConstants.PROCESS);
 
-			mapAndSaveInParts(mapQ, trees, allIters, lazy, parts, map, weight);
+			mapAndSaveInParts(mapQ, trees, allIters, lazyVolume, lazyWeight, parts, map, weight);
 
 			saveAxesAndAttributes(output, volPath, a);
 			writeLinkedData(output, bean, entryPath);
@@ -1647,20 +1650,23 @@ public class MillerSpaceMapper {
 	}
 
 	/**
-	 * Save volume and its axes to a HDF5 file
+	 * Save volume, weight and its axes to a HDF5 file
 	 * @param file path for saving HDF5 file
 	 * @param bean
 	 * @param entryPath path to NXentry
 	 * @param volPath name for NXdata
 	 * @param v volume Dataset
+	 * @param w weight Dataset
 	 * @param axes axes Datasets
 	 * @throws ScanFileHolderException
 	 */
 	public static void saveVolume(String file, MillerSpaceMapperBean bean, String entryPath, String volPath, Dataset v,
-			Dataset... axes) throws ScanFileHolderException {
+			Dataset w, Dataset... axes) throws ScanFileHolderException {
 
 		v.setName(VOLUME_NAME);
+		w.setName(WEIGHT_NAME);
 		HDF5Utils.writeDataset(file, volPath, v);
+		HDF5Utils.writeDataset(file, volPath, w);
 		saveAxesAndAttributes(file, volPath, axes);
 		writeLinkedData(file, bean, entryPath);
 
@@ -1766,15 +1772,21 @@ public class MillerSpaceMapper {
 
 	/**
 	 * Map images from given Nexus file to a volume in Miller (aka HKL) space
-	 * @param trees 
-	 * @param allIters 
-	 * @param parts 
-	 * @param map 
-	 * @param weight 
-	 * @throws ScanFileHolderException 
-	 * @throws DatasetException 
+	 * 
+	 * @param mapQ
+	 * @param trees
+	 * @param allIters
+	 * @param volumeOutput
+	 * @param weightOutput
+	 * @param parts
+	 * @param map
+	 * @param weight
+	 * @throws ScanFileHolderException
+	 * @throws DatasetException
 	 */
-	private void mapAndSaveInParts(boolean mapQ, Tree[] trees, PositionIterator[][] allIters, LazyWriteableDataset output, int parts, DoubleDataset map, DoubleDataset weight) throws ScanFileHolderException, DatasetException {
+	private void mapAndSaveInParts(boolean mapQ, Tree[] trees, PositionIterator[][] allIters,
+			LazyWriteableDataset volumeOutput, LazyWriteableDataset weightOutput, int parts, DoubleDataset map,
+			DoubleDataset weight) throws ScanFileHolderException, DatasetException {
 		int n = trees.length;
 
 		SliceND slice = new SliceND(hShape, null, map.getShapeRef(), null);
@@ -1838,7 +1850,8 @@ public class MillerSpaceMapper {
 
 			start = now;
 			try {
-				output.setSlice(map, slice);
+				volumeOutput.setSlice(map, slice);
+				weightOutput.setSlice(weight, slice);
 			} catch (DatasetException e) {
 				System.err.println("Could not save part of volume");
 				throw new ScanFileHolderException("Could not save part of volume", e);
@@ -1901,19 +1914,23 @@ public class MillerSpaceMapper {
 
 		start = now;
 		DoubleDataset tmap;
+		DoubleDataset tweight;
 		if (overflow) {
 			int[] tstop = map.getShape();
 			tstop[0] = vstop[0] - vstart[0];
 			tmap = (DoubleDataset) map.getSliceView(null, tstop, null);
+			tweight = (DoubleDataset) weight.getSliceView(null, tstop, null);
 			slice.getShape()[0] = tstop[0];
 		} else {
 			tmap = map;
+			tweight = weight;
 		}
 		try {
-			output.setSlice(tmap, slice);
+			volumeOutput.setSlice(tmap, slice);
+			weightOutput.setSlice(tweight, slice);
 		} catch (Exception e) {
-			System.err.println("Could not saving last part of volume");
-			throw new ScanFileHolderException("Could not saving last part of volume", e);
+			System.err.println("Could not save last part of volume");
+			throw new ScanFileHolderException("Could not save last part of volume", e);
 		}
 		save += System.currentTimeMillis() - start;
 

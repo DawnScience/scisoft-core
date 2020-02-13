@@ -4,7 +4,7 @@
 <pydev_property name="org.python.pydev.PYTHON_PROJECT_VERSION">jython 2.7</pydev_property>
 <pydev_pathproperty name="org.python.pydev.PROJECT_SOURCE_PATH">
 <path>/${PROJECT_DIR_NAME}/bin</path>
-<path>/${PROJECT_DIR_NAME}/jars/JLargeArrays-1.2.jar</path>
-<path>/${PROJECT_DIR_NAME}/jars/JTransforms-3.0.jar</path>
+<path>/${PROJECT_DIR_NAME}/jars/JLargeArrays-1.6.jar</path>
+<path>/${PROJECT_DIR_NAME}/jars/JTransforms-3.1.jar</path>
 </pydev_pathproperty>
 </pydev_project>

@@ -175,11 +175,41 @@ public class DSpacing {
 	 * @return semi-angle (aka two-theta), in radians
 	 */
 	public static double coneAngleFromDSpacing(double wavelength, double dSpacing) {
+		return 2 * braggAngleFromDSpacing(wavelength, dSpacing);
+	}
+
+	/**
+	 * Calculate Bragg reflection (glancing) angle
+	 * @param wavelength (in same units as d-spacing)
+	 * @param dSpacing (in same units as wavelength)
+	 * @return Bragg angle (aka theta), in radians
+	 */
+	public static double braggAngleFromDSpacing(double wavelength, double dSpacing) {
 		double s = 0.5 * wavelength / dSpacing;
 		if (s > 1) {
 			throw new IllegalArgumentException("Wavelength cannot be greater than 2 * dSpacing");
 		}
-		return 2 * Math.asin(s);
+		return Math.asin(s);
+	}
+
+	/**
+	 * Calculate wavelength from Bragg reflection (glancing) angle
+	 * @param angle (in radians)
+	 * @param dSpacing 
+	 * @return wavelength (in same units as dSpacing)
+	 */
+	public static double wavelengthFromBraggReflection(double angle, double dSpacing) {
+		return 2 * dSpacing * Math.sin(angle);
+	}
+
+	/**
+	 * Calculate d-spacing from Bragg reflection (glancing) angle
+	 * @param angle (in radians)
+	 * @param wavelength
+	 * @return d-spacing (in same units as dSpacing)
+	 */
+	public static double dSpacingFromBraggReflection(double angle, double wavelength) {
+		return wavelength / (2 * Math.sin(angle));
 	}
 
 	/**

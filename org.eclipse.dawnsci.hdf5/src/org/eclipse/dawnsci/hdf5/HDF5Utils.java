@@ -1652,6 +1652,12 @@ public class HDF5Utils {
 				}
 			}
 			comp.clazz = iClass.get(0);
+			
+			//if flatten composite call has not succeeded
+			if (comp.clazz == null) {
+				return null;
+			}
+			
 			if (comp.isize == 2 && tclass == HDF5Constants.H5T_FLOAT) {
 				if (getLastComponent(names.get(0)).toLowerCase().startsWith("r") && getLastComponent(names.get(1)).toLowerCase().startsWith("i")) {
 					comp.isComplex = true;
@@ -1861,6 +1867,10 @@ public class HDF5Utils {
 			} else {
 				type.isVariableLength = tclass == HDF5Constants.H5T_VLEN;
 				typeRepresentation = getTypeRepresentation(nativeTypeId);
+				//if type not found
+				if (typeRepresentation == -1) {
+					return null;
+				}
 			}
 			type.clazz = HDF_TYPES_TO_DATASET_TYPES.get(typeRepresentation);
 			type.unsigned = UNSIGNED_HDF_TYPES.contains(typeRepresentation);

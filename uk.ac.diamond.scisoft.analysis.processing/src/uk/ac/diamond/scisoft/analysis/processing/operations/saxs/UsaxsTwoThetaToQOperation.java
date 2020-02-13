@@ -11,6 +11,8 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.saxs;
 
 
+import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
+
 // Imports from javax.measure
 
 //Imports from uk.ac.dawnsci.analysis
@@ -113,7 +115,7 @@ public class UsaxsTwoThetaToQOperation extends AbstractOperation<UsaxsTwoThetaTo
 		
 		// Now work out the wavelength
 		double beamEnergy = ProcessingUtils.getDataset(this, fileLocation, this.ENERGYDATASETPATH).getDouble(0);
-		double wavelength = 12.3984193 / beamEnergy;
+		double wavelength = DiffractionCrystalEnvironment.calculateWavelength(beamEnergy);
 		
 		// Get our axis iterator
 		IndexIterator dataIterator = xAxis.getIterator();

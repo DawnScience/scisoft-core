@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.tree.impl.DataNodeImpl;
@@ -233,9 +234,8 @@ class PalladateNexusWriter {
 	private static void addBeam(NXsample nxample) {
 		NXbeam beam = NexusNodeFactory.createNXbeam();
 		double beamEnergy = 76.6; // keV
-		double hc_q = 12.3984197; // keV Å
 		beam.setIncident_energyScalar(beamEnergy);
-		beam.setIncident_wavelengthScalar(hc_q/beamEnergy); // Å
+		beam.setIncident_wavelengthScalar(DiffractionCrystalEnvironment.calculateWavelength(beamEnergy)); // Å
 		beam.setDistanceScalar(3200.0); // looks about right from the schematic
 		beam.setAttribute("distance", "units", "mm");
 		// beam size should come from the slits

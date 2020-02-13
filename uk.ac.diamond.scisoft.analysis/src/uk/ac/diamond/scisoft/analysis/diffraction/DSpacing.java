@@ -159,20 +159,20 @@ public class DSpacing {
 	}
 
 	/**
-	 * Calculate cone semi-angle
+	 * Calculate cone semi-angle or twice Bragg reflection (glancing) angle
 	 * @param diffExp
 	 * @param dSpacing (in Angstroms)
-	 * @return semi-angle
+	 * @return semi-angle (aka two-theta), in radians
 	 */
 	public static double coneAngleFromDSpacing(DiffractionCrystalEnvironment diffExp, double dSpacing) {
 		return coneAngleFromDSpacing(diffExp.getWavelength(), dSpacing);
 	}
 
 	/**
-	 * Calculate cone semi-angle
+	 * Calculate cone semi-angle or twice Bragg reflection (glancing) angle
 	 * @param wavelength (in same units as d-spacing)
 	 * @param dSpacing (in same units as wavelength)
-	 * @return semi-angle
+	 * @return semi-angle (aka two-theta), in radians
 	 */
 	public static double coneAngleFromDSpacing(double wavelength, double dSpacing) {
 		double s = 0.5 * wavelength / dSpacing;

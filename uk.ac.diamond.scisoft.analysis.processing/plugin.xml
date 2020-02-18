@@ -1651,6 +1651,15 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.ReadMultiPositionDetectorInformationModel"
             name="Read Nexus Multiposition Detector Information">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.backgroundsubtraction"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.TopBottomProfileSubtractionOperation"
+            description="Subtract a common profile from top/bottom half of an image, to correct for bleeding artifacts"
+            icon="icons/image--minus.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.TopBottomProfileSubtractionOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.TopBottomProfileSubtractionModel"
+            name="Top Bottom Profile Subtraction">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

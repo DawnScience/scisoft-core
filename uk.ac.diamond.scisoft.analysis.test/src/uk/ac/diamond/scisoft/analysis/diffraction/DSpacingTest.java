@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 
 import javax.vecmath.Matrix3d;
@@ -345,5 +347,15 @@ public class DSpacingTest {
 		Assert.assertEquals(ha.getAngle(), hb.getAngle(), tol);
 		Assert.assertEquals(ha.getPointX(), hb.getPointX(), tol);
 		Assert.assertEquals(ha.getPointY(), hb.getPointY(), tol);
+	}
+
+	@Test
+	public void testBraggAngles() {
+		double d = 1.2345;
+
+		// special case of 30deg where sin(30deg) = 0.5 and wavelength = dSpacing
+		assertEquals(Math.toRadians(30), DSpacing.braggAngleFromDSpacing(d, d), 1e-15);
+		assertEquals(d, DSpacing.wavelengthFromBraggReflection(Math.toRadians(30), d), 1e-15);
+		assertEquals(d, DSpacing.dSpacingFromBraggReflection(Math.toRadians(30), d), 1e-15);
 	}
 }

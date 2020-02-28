@@ -11,10 +11,10 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.nexus.builder.data.impl;
 
-import static org.eclipse.dawnsci.nexus.test.util.NexusAssert.assertAxes;
-import static org.eclipse.dawnsci.nexus.test.util.NexusAssert.assertIndices;
-import static org.eclipse.dawnsci.nexus.test.util.NexusAssert.assertNodesEquals;
-import static org.eclipse.dawnsci.nexus.test.util.NexusAssert.assertSignal;
+import static org.eclipse.dawnsci.nexus.test.utilities.NexusAssert.assertAxes;
+import static org.eclipse.dawnsci.nexus.test.utilities.NexusAssert.assertIndices;
+import static org.eclipse.dawnsci.nexus.test.utilities.NexusAssert.assertNodesEquals;
+import static org.eclipse.dawnsci.nexus.test.utilities.NexusAssert.assertSignal;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.sameInstance;

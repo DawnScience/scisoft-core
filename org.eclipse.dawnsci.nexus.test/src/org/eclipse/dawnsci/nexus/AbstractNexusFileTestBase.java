@@ -9,11 +9,11 @@
 
 package org.eclipse.dawnsci.nexus;
 
-import static org.eclipse.dawnsci.nexus.test.util.NexusAssert.assertNexusTreesEqual;
+import static org.eclipse.dawnsci.nexus.test.utilities.NexusAssert.assertNexusTreesEqual;
 
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.analysis.tree.impl.TreeFileImpl;
-import org.eclipse.dawnsci.nexus.test.util.NexusTestUtils;
+import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.junit.Before;
 import org.junit.Test;
 

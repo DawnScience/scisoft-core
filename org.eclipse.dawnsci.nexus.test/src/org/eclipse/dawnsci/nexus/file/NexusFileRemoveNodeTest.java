@@ -12,7 +12,7 @@ import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.TestUtils;
-import org.eclipse.dawnsci.nexus.test.util.NexusTestUtils;
+import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;

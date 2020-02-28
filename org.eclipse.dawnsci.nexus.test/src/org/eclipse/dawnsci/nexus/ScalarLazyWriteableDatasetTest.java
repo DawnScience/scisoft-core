@@ -11,8 +11,8 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.nexus;
 
-import static org.eclipse.dawnsci.nexus.test.util.NexusTestUtils.loadNexusFile;
-import static org.eclipse.dawnsci.nexus.test.util.NexusTestUtils.saveNexusFile;
+import static org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils.loadNexusFile;
+import static org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils.saveNexusFile;
 import static org.junit.Assert.assertEquals;
 
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;

@@ -11,11 +11,11 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.nexus.builder.data.impl;
 
-import static org.eclipse.dawnsci.nexus.test.util.NexusAssert.assertAxes;
-import static org.eclipse.dawnsci.nexus.test.util.NexusAssert.assertIndices;
-import static org.eclipse.dawnsci.nexus.test.util.NexusAssert.assertShape;
-import static org.eclipse.dawnsci.nexus.test.util.NexusAssert.assertSignal;
-import static org.eclipse.dawnsci.nexus.test.util.NexusAssert.assertTarget;
+import static org.eclipse.dawnsci.nexus.test.utilities.NexusAssert.assertAxes;
+import static org.eclipse.dawnsci.nexus.test.utilities.NexusAssert.assertIndices;
+import static org.eclipse.dawnsci.nexus.test.utilities.NexusAssert.assertShape;
+import static org.eclipse.dawnsci.nexus.test.utilities.NexusAssert.assertSignal;
+import static org.eclipse.dawnsci.nexus.test.utilities.NexusAssert.assertTarget;
 
 import java.util.Arrays;
 

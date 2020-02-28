@@ -12,7 +12,7 @@
 
 package org.eclipse.dawnsci.nexus.builder.impl;
 
-import static org.eclipse.dawnsci.nexus.test.util.NexusAssert.assertNexusTreesEqual;
+import static org.eclipse.dawnsci.nexus.test.utilities.NexusAssert.assertNexusTreesEqual;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -30,7 +30,7 @@ import org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryModification;
 import org.eclipse.dawnsci.nexus.builder.NexusFileBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusScanFile;
-import org.eclipse.dawnsci.nexus.test.util.NexusTestUtils;
+import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.junit.Before;
 import org.junit.Test;

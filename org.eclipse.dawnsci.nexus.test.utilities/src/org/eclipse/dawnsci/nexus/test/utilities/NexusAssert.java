@@ -9,7 +9,7 @@
  * Contributors:
  *    Matthew Gerring - initial API and implementation and/or initial documentation
  *******************************************************************************/
-package org.eclipse.dawnsci.nexus.test.util;
+package org.eclipse.dawnsci.nexus.test.utilities;
 
 import static org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder.ATTR_NAME_AXES;
 import static org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder.ATTR_NAME_SIGNAL;

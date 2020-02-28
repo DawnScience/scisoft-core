@@ -28,7 +28,7 @@ import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.TestUtils;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusFileBuilder;
-import org.eclipse.dawnsci.nexus.test.util.NexusTestUtils;
+import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.eclipse.dawnsci.nexus.validation.NexusValidationException;
 import org.hamcrest.Matchers;
 import org.junit.Before;

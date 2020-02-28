@@ -444,8 +444,10 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	}
 
 	protected Slice[] getSlice(int[] shape, int axis, IRectangularROI r) {
-		Slice s0 = SubtractFittedBackgroundOperation.createSlice(r.getPointX(), r.getLength(0), shape[axis]);
-		Slice s1 = SubtractFittedBackgroundOperation.createSlice(r.getPointY(), r.getLength(1), shape[1 - axis]);
+		double[] p = r.getPointRef();
+		Slice s0 = SubtractFittedBackgroundOperation.createSlice(p[axis], r.getLength(axis), shape[axis]);
+		axis = 1 - axis;
+		Slice s1 = SubtractFittedBackgroundOperation.createSlice(p[axis], r.getLength(axis), shape[axis]);
 
 		offset[0] = s0 == null ? 0 : s0.getStart();
 		offset[1] = s1 == null ? 0 : s1.getStart();

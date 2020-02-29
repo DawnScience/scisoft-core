@@ -9,10 +9,12 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.rixs;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
@@ -21,13 +23,16 @@ import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationDataForDisplay;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.eclipse.dawnsci.analysis.api.processing.OperationLog;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
+import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
+import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
@@ -41,6 +46,7 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.Slice;
@@ -58,6 +64,7 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.MetadataUtils;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionBaseModel.CORRELATE_ORDER;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionBaseModel.CORRELATE_PHOTON;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionBaseModel.ENERGY_OFFSET;
+import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionBaseModel.XIP_OPTION;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseModel> extends RixsBaseOperation<T> {
@@ -277,7 +284,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 				summaryData.add(a);
 			}
 
-			processAccumulatedDataOnLastSlice(ssm.getFilePath(), original.getShapeRef(), si.getTotalSlices(), bins, h);
+			processAccumulatedDataOnLastSlice(ssm.getFilePath(), ssm.getDatasetName(), original.getShapeRef(), si.getTotalSlices(), bins, h);
 		}
 
 		OperationDataForDisplay odd;
@@ -294,13 +301,97 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		return odd;
 	}
 
-	protected void processAccumulatedDataOnLastSlice(String filePath, int[] shape, int smax, IntegerDataset bins, Dataset h) {
+	private static final String XCAM_XIP_FILENAME = "xcam-xpi%d-%d.hdf"; // eg. xcam-xip2-143781.hdf
+	private static final String XCAM_XIP_DATA = "/entry/data/data"; // or "/entry/instrument/detector/data"
+
+//	private static final String XCAM_XIP_PROCESSED_DATA = "/entry_1/processed%d/centroids/data";
+	private static final String XCAM_XIP_PROCESSED_DATA = "xip%d";
+
+	protected List<Dataset> readXIPEventsFromExternalFile(String path, int i) {
+		int l = path.lastIndexOf(File.separator) + 1;
+		String name = l == 0 ? path : path.substring(l);
+
+		Matcher m = NUMBERED_FILE_REGEX.matcher(name);
+		if (!m.matches()) {
+			throw new OperationException(this, "Current file path does not end with scan number (before file extension)");
+		}
+		String digits = m.group(1);
+		int scan = Integer.parseInt(digits);
+		String xipPath = path.substring(0, l).concat(String.format(XCAM_XIP_FILENAME, i, scan));
+
+		if (!new File(xipPath).exists()) {
+			return parseXIPEvents(log, xipPath, XCAM_XIP_DATA);
+		}
+		return null;
+	}
+
+	protected List<Dataset> readXIPEventsFromCurrentFile(String path, String dataPath, int i) {
+		int l = dataPath.lastIndexOf(Node.SEPARATOR) + 1; // expected to be in same group
+		if (l > 0) {
+			dataPath = dataPath.substring(0, l);
+		}
+		return parseXIPEvents(log, path, dataPath + String.format(XCAM_XIP_PROCESSED_DATA, i));
+	}
+
+	/**
+	 * Parse data from XIP Area Detector plugin provided by XCAM
+	 * @param log
+	 * @param filePath
+	 * @param dataPath
+	 * @return sum, centroid xy, eta & iso-linear corrected y
+	 */
+	static List<Dataset> parseXIPEvents(OperationLog log, String filePath, String dataPath) {
+		try {
+			Tree t = LocalServiceManager.getLoaderService().getData(filePath, null).getTree();
+
+			Node n = TreeUtils.getNode(t, dataPath);
+			if (n == null) {
+				log.appendFailure("Could not parse Nexus file %s to find %s", filePath, dataPath);
+			} else if (n instanceof DataNode) {
+				DataNode d = (DataNode) n;
+				// xip is [N,7]
+				// 0,1: x,y centroids w/o eta correction
+				// 2,3: x,y centroids w/ eta correction
+				// 4  : y w/ eta and iso-linear corrections
+				// 5  : 3x3 sum
+				// 6  : algorithm mode (0 = 3x3; 1 = 2x2; 2 = both)
+				Dataset xip = DatasetUtils.sliceAndConvertLazyDataset(d.getDataset());
+
+				// list of their sum, centroids (as coordinates in N x rank dataset), centre fraction, all pixel values,
+				// and position of clashes (where other pixels in the window are equal to the maximum)
+				List<Dataset> results = new ArrayList<>();
+				int r = xip.getRank();
+				Slice[] slice = new Slice[r];
+				r--;
+				slice[r] =  new Slice(5, 6);
+				results.add(xip.getSliceView(slice).squeezeEnds());
+				slice[r] =  new Slice(2);
+				results.add(xip.getSliceView(slice).squeezeEnds());
+				slice[r] =  new Slice(4, 5);
+				results.add(xip.getSliceView(slice).squeezeEnds());
+				return results;
+			} else {
+				log.appendFailure("Could not parse Nexus file %s to find %s", filePath, dataPath);
+			}
+		} catch (Exception e) {
+			log.appendFailure("Could not parse Nexus file %s:%s", filePath, e);
+		}
+
+		return null;
+	}
+
+	protected void processAccumulatedDataOnLastSlice(String filePath, String dataPath, int[] shape, int smax, IntegerDataset bins, Dataset h) {
 		int[][][] allSingle = null;
 		int[][][] allMultiple = null;
 		int bin = 0;
 		int bmax = 0;
 		int single = 0;
 		int multiple = 0;
+		XIP_OPTION xipOpt = model.getXIPOption();
+		int nr = roiMax;
+		if (xipOpt != XIP_OPTION.DONT_USE) {
+			nr += 2;
+		}
 
 		if (bins != null) {
 			// After last image, calculate splitting levels
@@ -320,8 +411,8 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			bmax = bin * shape[model.getEnergyIndex()];
 
 			// per image, separate by sum
-			allSingle = new int[roiMax][smax][];
-			allMultiple = new int[roiMax][smax][];
+			allSingle = new int[nr][smax][];
+			allMultiple = new int[nr][smax][];
 			List<Double> cX = new ArrayList<>();
 			List<Double> cY = new ArrayList<>();
 			boolean first = true;
@@ -342,7 +433,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 					allMultiple[r][j] = hMultiple;
 					StraightLine line = getStraightLine(r);
 					IRectangularROI roi = getROI(r);
-					shiftAndBinPhotonEvents(0, single, multiple, bin, bmax, cX, cY, i, line, roi, sums, posn,
+					shiftAndBinPhotonEvents(false, 0, single, multiple, bin, bmax, cX, cY, i, line, roi, sums, posn,
 							hSingle, hMultiple);
 
 					// add coords from first (non-omitted) frame
@@ -371,6 +462,41 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 				}
 			}
 		}
+
+		if (xipOpt != XIP_OPTION.DONT_USE) {
+			List<Double> cX = new ArrayList<>();
+			List<Double> cY = new ArrayList<>();
+			for (int r = 0; r < 2; r++) {
+				int nx = r + 1;
+				List<Dataset> xip = xipOpt == XIP_OPTION.USE_EXTERNAL ? readXIPEventsFromExternalFile(filePath, nx) : readXIPEventsFromCurrentFile(filePath, dataPath, nx);
+				if (xip == null) {
+					continue;
+				}
+				Dataset sums = xip.get(0);
+				Dataset posn = xip.get(1);
+				cX.clear();
+				cY.clear();
+
+				int[] hSingle = new int[bmax];
+				allSingle[r + roiMax][0] = hSingle;
+//				allMultiple[r][j] = null;
+				StraightLine line = getStraightLine(r);
+				IRectangularROI roi = getROI(r);
+				shiftAndBinPhotonEvents(true, 0, 1, Integer.MAX_VALUE, bin, bmax, cX, cY, r, line, roi, sums, posn,
+					hSingle, null);
+
+				// add coords from first (non-omitted) frame
+				int side = cX.size();
+				if (side > 0) {
+					Dataset t;
+					t = DatasetFactory.createFromList(cY);
+					MetadataUtils.setAxes(t, ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cX), "x"));
+					t.setName("xip_photon_positions_" + nx);
+					summaryData.add(t);
+				}
+			}
+		}
+
 
 		for (int r = 0; r < roiMax; r++) {
 			// total and correlated spectra
@@ -472,6 +598,15 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			MetadataUtils.setAxes(sp, energies);
 			summaryData.add(sp);
 
+			for (int xr = roiMax; xr < nr; xr++) {
+				sp = DatasetFactory.createFromObject(allSingle[xr][0]);
+				if (sp.max().intValue() > 0) {
+					sp.setName("xip_photon_spectrum_" + (xr - roiMax + 1));
+					MetadataUtils.setAxes(sp, energies);
+					summaryData.add(sp);
+				}
+			}
+
 			if (model.getCorrelateOption() == CORRELATE_PHOTON.USE_INTENSITY_SHIFTS) {
 				for (int i = 0; i < sArray.length; i++) { // image to image shifts
 					double offset = shift.get(i);
@@ -486,7 +621,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 						continue;
 					}
 					Dataset posn = allPositions.get(i);
-					shiftAndBinPhotonEvents(offset, single, multiple, bin, bmax, null, null, i, line, roi, sums, posn,
+					shiftAndBinPhotonEvents(false, offset, single, multiple, bin, bmax, null, null, i, line, roi, sums, posn,
 							hSingle, hMultiple);
 				}
 
@@ -576,12 +711,20 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	}
 
 	// bins photons according to their locations
-	private static void shiftAndBinPhotonEvents(double offset, int single, int multiple, int bin, int bmax, List<Double> cX,
+	private static void shiftAndBinPhotonEvents(boolean flip, double offset, int single, int multiple, int bin, int bmax, List<Double> cX,
 			List<Double> cY, int i, StraightLine line, IRectangularROI roi, Dataset sums, Dataset posn, int[] hSingle, int[] hMultiple) {
-		double slope = -line.getParameterValue(STRAIGHT_LINE_M);
-		for (int j = 0, jmax = sums.getSize(); j < jmax; j++) {
-			double px = posn.getDouble(j, 1);
-			double py = posn.getDouble(j, 0) + offset;
+		final double slope = -line.getParameterValue(STRAIGHT_LINE_M);
+		final int ix = flip ? 0 : 1;
+		final int iy = 1 - ix;
+		final IndexIterator it = posn.getIterator(true);
+		final int[] pp = it.getPos();
+		int l = pp.length - 1;
+		final int[] sp = new int[l];
+		while (it.hasNext()) {
+			pp[l] = ix;
+			double px = posn.getDouble(pp);
+			pp[l] = iy;
+			double py = posn.getDouble(pp) + offset;
 
 			if (roi != null && !roi.containsPoint(px, py)) {
 				continue; // separate by regions
@@ -595,8 +738,8 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 
 			// correct for tilt
 			py += slope*px;
-
-			double ps = sums.getDouble(j);
+			System.arraycopy(pp, 0, sp, 0, l);
+			double ps = sums.getDouble(sp);
 			if (ps >= single) {
 				int ip = (int) Math.floor(bin * py); // discretize position
 				if (ip >= 0 && ip < bmax) {

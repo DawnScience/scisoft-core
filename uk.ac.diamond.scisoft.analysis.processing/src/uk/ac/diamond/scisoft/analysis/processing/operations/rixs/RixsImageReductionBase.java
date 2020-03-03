@@ -608,7 +608,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			}
 
 			if (model.getCorrelateOption() == CORRELATE_PHOTON.USE_INTENSITY_SHIFTS) {
-				for (int i = 0; i < sArray.length; i++) { // image to image shifts
+				for (int i = 0, imax = allSingle[r].length; i < imax; i++) { // image to image shifts
 					double offset = shift.get(i);
 					int[] hSingle = new int[bmax];
 					int[] hMultiple = new int[bmax];

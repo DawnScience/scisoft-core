@@ -1,5 +1,7 @@
 package org.eclipse.dawnsci.nexus.template;
 
+import java.util.Map;
+
 import org.eclipse.dawnsci.nexus.NexusException;
 
 /**
@@ -16,5 +18,7 @@ public interface NexusTemplateService {
 	 * @throws NexusException if the template could not be loaded for any reason
 	 */
 	public NexusTemplate loadTemplate(String templateFilePath) throws NexusException;
+
+	public NexusTemplate createTemplate(String templateName, Map<String, Object> yamlMapping);
 	
 }

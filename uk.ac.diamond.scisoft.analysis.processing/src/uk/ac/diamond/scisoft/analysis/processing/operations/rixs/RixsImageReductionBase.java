@@ -338,7 +338,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	 * @param log
 	 * @param filePath
 	 * @param dataPath
-	 * @return sum, centroid xy, eta & iso-linear corrected y
+	 * @return sum, centroid xy, eta-corrected xy, eta & iso-linear corrected y
 	 */
 	static List<Dataset> parseXIPEvents(OperationLog log, String filePath, String dataPath) {
 		try {
@@ -367,6 +367,8 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 				results.add(xip.getSliceView(slice).squeezeEnds());
 				slice[r] =  new Slice(2);
 				results.add(xip.getSliceView(slice).squeezeEnds());
+				slice[r] =  new Slice(2, 4);
+				results.add(xip.getSliceView(slice).squeezeEnds());
 				slice[r] =  new Slice(4, 5);
 				results.add(xip.getSliceView(slice).squeezeEnds());
 				return results;
@@ -381,7 +383,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	}
 
 	protected void processAccumulatedDataOnLastSlice(String filePath, String dataPath, int[] shape, int smax, IntegerDataset bins, Dataset h) {
-		int[][][] allSingle = null;
+		int[][][] allSingle = null; // [number of regions, number of slices, number of bins]
 		int[][][] allMultiple = null;
 		int bin = 0;
 		int bmax = 0;
@@ -389,8 +391,9 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		int multiple = 0;
 		XIP_OPTION xipOpt = model.getXIPOption();
 		int nr = roiMax;
+
 		if (xipOpt != XIP_OPTION.DONT_USE) {
-			nr += 2;
+			nr += 2 * roiMax; // for raw and eta-corrected centroids
 		}
 
 		if (bins != null) {
@@ -415,46 +418,45 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			allMultiple = new int[nr][smax][];
 			List<Double> cX = new ArrayList<>();
 			List<Double> cY = new ArrayList<>();
-			boolean first = true;
+			boolean save = true;
+			boolean all = model.isSaveAllPositions();
 			int j = 0;
-			for (int i = 0; i < smax; i++) {
-				Dataset sums = allSums.get(i);
-				if (sums == null) {
-					continue;
-				}
-				Dataset posn = allPositions.get(i);
-				for (int r = 0; r < roiMax; r++) {
-					cX.clear();
-					cY.clear();
+			for (int r = 0; r < roiMax; r++) {
+				cX.clear();
+				cY.clear();
+				for (int i = 0, imax = allSums.size(); i < imax; i++) {
+					Dataset sums = allSums.get(i);
+					if (sums == null) {
+						continue;
+					}
+					Dataset posn = allPositions.get(i);
 
-					int[] hSingle = new int[bmax];
-					int[] hMultiple = new int[bmax];
-					allSingle[r][j] = hSingle;
-					allMultiple[r][j] = hMultiple;
+					int[] hSingle = allSingle[r][j] = new int[bmax];
+					int[] hMultiple = allMultiple[r][j] = new int[bmax];
 					StraightLine line = getStraightLine(r);
 					IRectangularROI roi = getROI(r);
-					shiftAndBinPhotonEvents(false, 0, single, multiple, bin, bmax, cX, cY, i, line, roi, sums, posn,
-							hSingle, hMultiple);
+					int hits = shiftAndBinPhotonEvents(false, 0, 0, single, multiple, bin, bmax, save, cX, cY, line, roi, sums,
+							posn, hSingle, hMultiple);
 
-					// add coords from first (non-omitted) frame
-					if (first) {
-						int side = cX.size();
-						if (side > 0) {
-							first = false;
-							Dataset t;
-							t = DatasetFactory.createFromList(cY);
-							MetadataUtils.setAxes(t, ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cX), "x"));
-							// for DExplore's 2d scatter point
-//							t = DatasetFactory.zeros(side, side);
-//							ProcessingUtils.addAxes(t, ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cX), "x"),
-//									ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cY), "y"));
-							t.setName("photon_positions_" + r);
-							summaryData.add(t);
-						}
+					log.append("Binned %d events in region %d from %d events in frame %d", hits, r, sums.getSize(), i);
+
+					if (save && !all) {
+						save = false;
 					}
+					j++;
 				}
-				j++;
+				int side = cX.size();
+				if (side > 0) {
+					save = false;
+					Dataset t;
+					t = DatasetFactory.createFromList(cY);
+					MetadataUtils.setAxes(t, ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cX), "x"));
+					t.setName("photon_positions_" + r);
+					summaryData.add(t);
+				}
+
 			}
+
 			if (j < smax) { // truncate for omitted frames
 				for (int r = 0; r < roiMax; r++) {
 					allSingle[r] = Arrays.copyOf(allSingle[r], j);
@@ -464,39 +466,70 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		}
 
 		if (xipOpt != XIP_OPTION.DONT_USE) {
-			List<Double> cX = new ArrayList<>();
-			List<Double> cY = new ArrayList<>();
-			for (int r = 0; r < 2; r++) {
-				int nx = r + 1;
+			boolean[][] regionInCCDs = findRegionsInCCDs(shape); // [2, number of regions] if true then ROI is in given CCD
+
+			List<Double>[] cXs = new List[2 * roiMax];
+			List<Double>[] cYs = new List[2 * roiMax];
+			for (int r = 0; r < 2*roiMax; r++) {
+				cXs[r] = new ArrayList<>();
+				cYs[r] = new ArrayList<>();
+			}
+			boolean save = model.isSaveAllPositions();
+			double offsetX = shape[1]/2; // correct for XIP coords being relative to CCD
+			for (int s = 0; s < 2; s++) {
+				int nx = s + 1;
 				List<Dataset> xip = xipOpt == XIP_OPTION.USE_EXTERNAL ? readXIPEventsFromExternalFile(filePath, nx) : readXIPEventsFromCurrentFile(filePath, dataPath, nx);
 				if (xip == null) {
 					continue;
 				}
+
 				Dataset sums = xip.get(0);
-				Dataset posn = xip.get(1);
-				cX.clear();
-				cY.clear();
+				for (int r = 0; r < roiMax; r++) {
+					if (!regionInCCDs[s][r]) {
+						continue;
+					}
 
-				int[] hSingle = new int[bmax];
-				allSingle[r + roiMax][0] = hSingle;
-//				allMultiple[r][j] = null;
-				StraightLine line = getStraightLine(r);
-				IRectangularROI roi = getROI(r);
-				shiftAndBinPhotonEvents(true, 0, 1, Integer.MAX_VALUE, bin, bmax, cX, cY, r, line, roi, sums, posn,
-					hSingle, null);
+					StraightLine line = getStraightLine(r);
+					IRectangularROI roi = getROI(r);
 
-				// add coords from first (non-omitted) frame
-				int side = cX.size();
-				if (side > 0) {
-					Dataset t;
-					t = DatasetFactory.createFromList(cY);
-					MetadataUtils.setAxes(t, ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cX), "x"));
-					t.setName("xip_photon_positions_" + nx);
-					summaryData.add(t);
+					for (int q = 1; q < 3; q++) { // process both centroid and eta-corrected centroid
+						Dataset posn = xip.get(q);
+						int j = 2*r + q - 1;
+						List<Double> cX = cXs[j];
+						List<Double> cY = cYs[j];
+	
+						int[] hSingle = allSingle[j + roiMax][0];
+						if (hSingle == null) {
+							allSingle[j + roiMax][0] = hSingle = new int[bmax];
+						}
+						int hits = shiftAndBinPhotonEvents(true, s*offsetX, 0, 1, Integer.MAX_VALUE, bin, bmax, save, cX, cY, line, roi, sums,
+							posn, hSingle, null);
+						log.append("Binned %d events in region %d from XIP %d", hits, r, s);
+					}
 				}
 			}
-		}
+			for (int n = 0; n < 2*roiMax; n++) {
+				List<Double> cX = cXs[n];
+				List<Double> cY = cYs[n];
+				int side = cX.size();
+				if (side == 0) {
+					continue;
+				}
+				Dataset t;
+				t = DatasetFactory.createFromList(cY);
+				MetadataUtils.setAxes(t, ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cX), "x"));
+				int r = n / 2;
+				if (n % 2 == 0) {
+					log.append("Saving %d non-zero events from XIP for region %d", side, r);
+					t.setName("xip_photon_positions_" + r);
+				} else {
+					log.append("Saving %d non-zero eta-corrected events from XIP for region %d", side, r);
+					t.setName("xip_eta_photon_positions_" + r);
+				}
+				summaryData.add(t);
+			}
 
+		}
 
 		for (int r = 0; r < roiMax; r++) {
 			// total and correlated spectra
@@ -551,13 +584,13 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			}
 
 			double el0 = getZeroEnergyOffset(r); // elastic line intercept
-			Dataset energies = DatasetFactory.createRange(bmax);
+			final Dataset energies = DatasetFactory.createRange(bmax);
 			energies.iadd(-bin*el0); // adjust zero
 			energies.imultiply(-energyDispersion[r]/bin);
 			energies.setName(ENERGY_LOSS);
 
 			Dataset t = DatasetFactory.createFromObject(allSingle[r]);
-			t.setName("single_photon_spectrum_" + r);
+			t.setName("single_photon_spectra_" + r);
 			MetadataUtils.setAxes(t, null, energies);
 			Dataset sSpectra = t;
 			summaryData.add(t);
@@ -568,7 +601,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			summaryData.add(nf);
 
 			t = DatasetFactory.createFromObject(allMultiple[r]);
-			t.setName("multiple_photon_spectrum_" + r);
+			t.setName("multiple_photon_spectra_" + r);
 			MetadataUtils.setAxes(t, null, energies);
 			Dataset mSpectra = t;
 			summaryData.add(t);
@@ -585,27 +618,20 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 
 			double ts = (Double) ((Number) sEvents.sum()).doubleValue();
 			double tm = (Double) ((Number) mEvents.sum()).doubleValue();
-			log.appendSuccess("Events: single/total = %g/%g = %g ", ts, tm, ts/(ts + tm));
-			summaryData.add(ProcessingUtils.createNamedDataset(ts/(ts + tm), "total_single_events_fraction_" + r));
+			double tt = ts + tm;
+			double sf = tt == 0 ? 0 : ts/tt;
+			log.appendSuccess("Events: single/total = %g/%g = %g", ts, tt, sf);
+			summaryData.add(ProcessingUtils.createNamedDataset(sf, "single_events_total_fraction_" + r));
 
 			sp = sSpectra.sum(0);
-			sp.setName("total_single_photon_spectrum_" + r);
+			sp.setName("single_photon_spectrum_" + r);
 			MetadataUtils.setAxes(sp, energies);
 			summaryData.add(sp);
 
 			sp = mSpectra.sum(0);
-			sp.setName("total_multiple_photon_spectrum_" + r);
+			sp.setName("multiple_photon_spectrum_" + r);
 			MetadataUtils.setAxes(sp, energies);
 			summaryData.add(sp);
-
-			for (int xr = roiMax; xr < nr; xr++) {
-				sp = DatasetFactory.createFromObject(allSingle[xr][0]);
-				if (sp.max().intValue() > 0) {
-					sp.setName("xip_photon_spectrum_" + (xr - roiMax + 1));
-					MetadataUtils.setAxes(sp, energies);
-					summaryData.add(sp);
-				}
-			}
 
 			if (model.getCorrelateOption() == CORRELATE_PHOTON.USE_INTENSITY_SHIFTS) {
 				for (int i = 0, imax = allSingle[r].length; i < imax; i++) { // image to image shifts
@@ -621,8 +647,8 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 						continue;
 					}
 					Dataset posn = allPositions.get(i);
-					shiftAndBinPhotonEvents(false, offset, single, multiple, bin, bmax, null, null, i, line, roi, sums, posn,
-							hSingle, hMultiple);
+					shiftAndBinPhotonEvents(false, 0, offset, single, multiple, bin, bmax, false, null, null, line, roi, sums,
+							posn, hSingle, hMultiple);
 				}
 
 				summarizePhotonSpectra("single_photon_", allSingle, r, energies);
@@ -632,13 +658,83 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 				correlateSpectra("multiple_photon_", r, reg, shift, energies, mSpectra);
 			}
 		}
+
+		for (int r = 0; r < roiMax; r++) { // add XIP to summary data
+			double el0 = getZeroEnergyOffset(r); // elastic line intercept
+			final Dataset energies = DatasetFactory.createRange(bmax);
+			energies.iadd(-bin*el0); // adjust zero
+			energies.imultiply(-energyDispersion[r]/bin);
+			energies.setName(ENERGY_LOSS);
+
+			int xr = roiMax + 2 * r;
+			int[] spectrum = allSingle[xr][0];
+			if (spectrum != null) {
+				Dataset sp = DatasetFactory.createFromObject(spectrum);
+				if (sp.max().intValue() > 0) {
+					sp.setName("xip_photon_spectrum_" + r);
+					MetadataUtils.setAxes(sp, energies);
+					summaryData.add(sp);
+				}
+			}
+			spectrum = allSingle[xr + 1][0];
+			if (spectrum != null) {
+				Dataset sp = DatasetFactory.createFromObject(spectrum);
+				if (sp.max().intValue() > 0) {
+					sp.setName("xip_eta_photon_spectrum_" + r);
+					MetadataUtils.setAxes(sp, energies);
+					summaryData.add(sp);
+				}
+			}
+		}
+	}
+
+	private boolean[][] findRegionsInCCDs(int[] shape) {
+		boolean[][] regionInCCDs = new boolean[2][roiMax];
+		RectangularROI[] ccds = {new RectangularROI(shape[1]/2, shape[0], 0), // left half
+				new RectangularROI(shape[1]/2, 0, shape[1]/2, shape[0], 0)}; // right half
+
+		for (int r = 0; r < roiMax; r++) {
+			IRectangularROI roi = getROI(r);
+			double[] start = roi.getPointRef();
+			double[] end = roi.getEndPoint();
+			for (int s = 0; s < 2; s++) {
+				RectangularROI ccd = ccds[s];
+				boolean[] regionInCCD = regionInCCDs[s];
+				if (ccd.containsPoint(start)) {
+					regionInCCD[r] = true;
+					continue;
+				} else if (ccd.containsPoint(end)) {
+					regionInCCD[r] = true;
+					continue;
+				}
+				double t = end[0];
+				end[0] = start[0];
+				if (ccd.containsPoint(end)) {
+					regionInCCD[r] = true;
+					end[0] = t;
+					continue;
+				}
+				end[0] = t;
+				t = end[1];
+				end[1] = start[1];
+				if (ccd.containsPoint(end)) {
+					regionInCCD[r] = true;
+					end[1] = t;
+					continue;
+				}
+				end[1] = t;
+			}
+		}
+		return regionInCCDs;
 	}
 
 	protected Dataset normalizeSpectrum(String filePath, String dataPath, Dataset spectrum) {
 		try {
 			Tree t = LocalServiceManager.getLoaderService().getData(filePath, null).getTree();
 			NodeLink l = t.findNodeLink(dataPath);
-			if (l.isDestinationData()) {
+			if (l == null) {
+				log.append("No normalization dataset at %s from file %s", dataPath, filePath);
+			} else if (l.isDestinationData()) {
 				Dataset n = DatasetUtils.sliceAndConvertLazyDataset(((DataNode) l.getDestination()).getDataset());
 				if (n == null) {
 					throw new OperationException(this, "Could not read normalization dataset at " + dataPath + " in " + filePath);
@@ -711,38 +807,42 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	}
 
 	// bins photons according to their locations
-	private static void shiftAndBinPhotonEvents(boolean flip, double offset, int single, int multiple, int bin, int bmax, List<Double> cX,
-			List<Double> cY, int i, StraightLine line, IRectangularROI roi, Dataset sums, Dataset posn, int[] hSingle, int[] hMultiple) {
+	private static int shiftAndBinPhotonEvents(boolean flip, double offsetX, double offsetY, int single, int multiple, int bin, int bmax, boolean save,
+			List<Double> cX, List<Double> cY, StraightLine line, IRectangularROI roi, Dataset sums, Dataset posn, int[] hSingle, int[] hMultiple) {
 		final double slope = -line.getParameterValue(STRAIGHT_LINE_M);
 		final int ix = flip ? 0 : 1;
 		final int iy = 1 - ix;
-		final IndexIterator it = posn.getIterator(true);
-		final int[] pp = it.getPos();
-		int l = pp.length - 1;
-		final int[] sp = new int[l];
+		final IndexIterator it = sums.getIterator(true);
+		final int[] sp = it.getPos();
+		int l = sp.length;
+		final int[] pp = new int[l + 1];
+
+		int np = 0;
 		while (it.hasNext()) {
+			System.arraycopy(sp, 0, pp, 0, l);
 			pp[l] = ix;
-			double px = posn.getDouble(pp);
+			double px = posn.getDouble(pp) + offsetX;
 			pp[l] = iy;
-			double py = posn.getDouble(pp) + offset;
+			double py = posn.getDouble(pp) + offsetY;
 
 			if (roi != null && !roi.containsPoint(px, py)) {
 				continue; // separate by regions
 			}
 
+			double ps = sums.getDouble(sp);
+
 			// add coords
-			if (i == 0 && cX != null && cY != null) {
+			if (save && ps > 0) {
 				cX.add(px);
 				cY.add(py);
 			}
 
 			// correct for tilt
 			py += slope*px;
-			System.arraycopy(pp, 0, sp, 0, l);
-			double ps = sums.getDouble(sp);
 			if (ps >= single) {
 				int ip = (int) Math.floor(bin * py); // discretize position
 				if (ip >= 0 && ip < bmax) {
+					np++;
 					if (ps < multiple) {
 						hSingle[ip]++;
 					} else {
@@ -751,6 +851,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 				}
 			}
 		}
+		return np;
 	}
 
 	private static Dataset[] toArray(List<Dataset> d) {

@@ -29,9 +29,11 @@ import org.eclipse.dawnsci.analysis.dataset.roi.HyperbolicROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.ParabolicROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.PolylineROI;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.BooleanDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.metadata.MaskMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -440,7 +442,13 @@ public class DSpacing {
 		PolylineROI points;
 		if (monitor != null) monitor.subTask("Fit POIs");
 		
-		points = PeakFittingEllipseFinder.findPointsOnConic(image, null,roi, innerOuter,nPoints, monitor);
+		BooleanDataset maskDataset = null;
+		MaskMetadata mm =image.getFirstMetadata(MaskMetadata.class);
+		if (mm!=null && mm.getMask()!=null) {
+			maskDataset = DatasetUtils.cast(BooleanDataset.class,mm.getMask());
+		}
+		
+		points = PeakFittingEllipseFinder.findPointsOnConic(image, maskDataset,roi, innerOuter,nPoints, monitor);
 		
 		if (monitor != null && monitor.isCancelled())
 			return null;

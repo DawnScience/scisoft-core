@@ -25,6 +25,7 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.dataset.PositionIterator;
 import org.eclipse.january.dataset.Stats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,23 +45,32 @@ public class PeakFittingEllipseFinder {
 	 * <p>
 	 * The ellipse is divided into sub-areas and these POIs are considered to
 	 * be the locations of maximum pixel intensities found within those sub-areas.
-	 * @param image
-	 * @param mask (can be null)
+	 * @param originalImage
+	 * @param mask (can be null) 
 	 * @param ellipse
 	 * @param inOut array of elliptical ROIs giving search range
 	 * @return polyline ROI
 	 */
-	public static PolylineROI findPointsOnConic(Dataset image, BooleanDataset mask, IParametricROI ellipse,
+	public static PolylineROI findPointsOnConic(Dataset originalImage, BooleanDataset mask, IParametricROI ellipse,
 			IParametricROI[] inOut, int nPoints, IMonitor mon) {
+		
+		Dataset image = originalImage; 
 		
 		if (image.getRank() != 2) {
 			logger.error("Dataset must have two dimensions");
 			throw new IllegalArgumentException("Dataset must have two dimensions");
 		}
-		if (mask != null && !image.isCompatibleWith(mask)) {
-			logger.error("Mask must match image shape");
-			throw new IllegalArgumentException("Mask must match image shape");
+		if (mask != null) {
+			if(image.isCompatibleWith(mask)) {
+				logger.info("Applying mask to image for point finding");
+				image = originalImage.clone();// change to working on a clone of the input data when a mask exists
+				image.setByBoolean(-1, Comparisons.logicalNot(mask)); // the mask is inverted because of the way the FastMaskTool defines masks	
+			}else{
+				logger.error("Mask must match image shape");
+				throw new IllegalArgumentException("Mask must match image shape");
+			}
 		}
+		
 		
 		final int[] shape = image.getShape();
 		final int h = shape[0];

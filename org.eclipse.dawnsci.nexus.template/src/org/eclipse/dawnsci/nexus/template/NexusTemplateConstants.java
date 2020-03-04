@@ -23,6 +23,7 @@ public class NexusTemplateConstants {
 	public static final String MAPPING_NAME_LINK = "link";
 	public static final String MAPPING_NAME_NODE_PATH = "nodePath";
 	public static final String MAPPING_NAME_AXIS_SUBSTITUTIONS = "axisSubstitutions";
+	public static final String MAPPING_NAME_EXPRESSION = "expression";
 
 	private NexusTemplateConstants() {
 		// private constructor to prevent instantiation

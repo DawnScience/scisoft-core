@@ -7,7 +7,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.eclipse.dawnsci.nexus;
+package org.eclipse.dawnsci.nexus.test.utilities;
 
 import java.io.File;
 

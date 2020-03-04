@@ -14,6 +14,7 @@ import static org.eclipse.dawnsci.nexus.test.utilities.NexusAssert.assertNexusTr
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.analysis.tree.impl.TreeFileImpl;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
+import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
 import org.junit.Before;
 import org.junit.Test;
 

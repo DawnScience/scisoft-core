@@ -3,17 +3,31 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 import java.io.File;
 import java.io.IOException;
 
+import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.dawnsci.hdf5.HDF5Utils;
+import org.eclipse.dawnsci.nexus.NexusException;
+import org.eclipse.january.dataset.Dataset;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 import uk.ac.diamond.scisoft.analysis.diffraction.MillerSpaceMapper;
 import uk.ac.diamond.scisoft.analysis.diffraction.MillerSpaceMapper.MillerSpaceMapperBean;
 
 public class MillerSpaceMapperBeanTest {
+	static String testFileFolder = "testfiles/gda/analysis/io/";
+
+	@BeforeClass
+	static public void setUpClass() {
+		testFileFolder = IOTestUtils.getGDALargeTestFilesLocation();
+		testFileFolder = testFileFolder.concat("DiffractionMapping/i16/");
+	}
+
 	@Rule
 	public TemporaryFolder tempFolder = new TemporaryFolder();
 
@@ -111,5 +125,53 @@ public class MillerSpaceMapperBeanTest {
 			// should throw exception
 		}
 	}
-}
 
+	@Test
+	public void testMSMProcessingMapAndSaveInParts() throws ScanFileHolderException, IOException, NexusException {
+		File dst = File.createTempFile("MSMProcessingParts_hdf5", ".h5");
+		String dstPath = dst.getAbsolutePath();
+		String n = testFileFolder + "588193.nxs";
+		String[] inputPaths = { n, n };
+
+		MillerSpaceMapperBean mapperBean = MillerSpaceMapper.createI16MapperBean();
+		MillerSpaceMapper.setBeanWithAutoBox(mapperBean, inputPaths, dstPath, "inverse", 0.5, 2., true, new double[] {0.005}, null);
+		MillerSpaceMapper mapper = new MillerSpaceMapper(mapperBean);
+		mapper.mapToVolumeFile(true);
+
+		Dataset[] a = HDF5Utils.readAttributes(dstPath, "/");
+		Dataset[] b = HDF5Utils.readAttributes(dstPath, "/processed");
+		Dataset[] c = HDF5Utils.readAttributes(dstPath, "/processed/process/reciprocal_space");
+		Dataset[] d = HDF5Utils.readAttributes(dstPath, "entry0");
+		Dataset[] e = HDF5Utils.readAttributes(dstPath, "entry1");
+
+		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/process/date"));
+		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/process/parameters"));
+		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/process/program"));
+		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/process/reciprocal_space/volume"));
+		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/process/reciprocal_space/weight"));
+
+		boolean found = false;
+		for (Dataset dataset : a) {
+			if (dataset.getName().equals("default")) {
+				Assert.assertEquals("processed", dataset.getString());
+				found = true;
+				break;
+			}
+		}
+		Assert.assertTrue(found);
+
+		found = false;
+		for (Dataset dataset : b) {
+			if (dataset.getName().equals("default")) {
+				Assert.assertEquals("process/reciprocal_space", dataset.getString());
+				found = true;
+				break;
+			}
+		}
+		Assert.assertTrue(found);
+
+		Assert.assertEquals("NXdata", c[0].getString());
+		Assert.assertEquals("NXentry", d[0].getString());
+		Assert.assertEquals("NXentry", e[0].getString());
+	}
+}

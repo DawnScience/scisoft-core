@@ -1362,6 +1362,17 @@ public class MillerSpaceMapper {
 	 * @throws ScanFileHolderException
 	 */
 	public Dataset[][] mapToVolumeFile() throws ScanFileHolderException {
+		return mapToVolumeFile(false);
+	}
+
+	/**
+	 * Map images from given Nexus files to a volume in Miller (aka HKL) space and save to a HDF5 file
+	 * 
+	 * @param isErrorTest
+	 * @return Datasets
+	 * @throws ScanFileHolderException
+	 */
+	Dataset[][] mapToVolumeFile(boolean isErrorTest) throws ScanFileHolderException {
 		hasDeleted = false; // reset state
 		Dataset[] datasetA = null;
 		Dataset[] datasetB = null;
@@ -1409,11 +1420,11 @@ public class MillerSpaceMapper {
 
 		try {
 			if (qDel != null) {
-				datasetA = processTrees(true, trees, allIters, a[0]);
+				datasetA = processTrees(true, trees, allIters, a[0], isErrorTest);
 			}
 
 			if (hDel != null) {
-				datasetB = processTrees(false, trees, allIters, a[1]);
+				datasetB = processTrees(false, trees, allIters, a[1], isErrorTest);
 			}
 
 			if (listMillerEntries) {
@@ -1464,7 +1475,8 @@ public class MillerSpaceMapper {
 		}
 	}
 
-	private Dataset[] processTrees(boolean mapQ, Tree[] trees, PositionIterator[][] allIters, Dataset[] a) throws ScanFileHolderException, DatasetException {
+	private Dataset[] processTrees(boolean mapQ, Tree[] trees, PositionIterator[][] allIters, Dataset[] a,
+			boolean isErrorTest) throws ScanFileHolderException, DatasetException {
 		long start = System.currentTimeMillis();
 		int[] vShape = copyParameters(mapQ);
 		String output = bean.getOutput();
@@ -1511,6 +1523,11 @@ public class MillerSpaceMapper {
 
 			System.out.printf("For %d threads, processing took %dms\n", pool.getParallelism(), System.currentTimeMillis() - start);
 			start = System.currentTimeMillis();
+			
+			if (isErrorTest) {
+				throw new OutOfMemoryError();
+			}
+			
 			createAndWriteAttribute(output, PROCESSED, NexusConstants.NXCLASS, NexusConstants.ENTRY);
 			createAndWriteAttribute(output, PROCESSPATH, NexusConstants.NXCLASS, NexusConstants.PROCESS);
 
@@ -1558,7 +1575,8 @@ public class MillerSpaceMapper {
 				hasDeleted = true;
 			}
 
-			int[] cShape = new int[] { 64, 64, 64 };
+			int[] cShape = new int[] { Math.min(vShape[0], 64), Math.min(vShape[1], 64), Math.min(vShape[2], 64) };
+
 			LazyWriteableDataset lazyVolume = HDF5Utils.createLazyDataset(output, volPath, VOLUME_NAME, vShape, null,
 					cShape, DoubleDataset.class, null, false);
 			LazyWriteableDataset lazyWeight = HDF5Utils.createLazyDataset(output, volPath, WEIGHT_NAME, vShape, null,
@@ -2056,9 +2074,25 @@ public class MillerSpaceMapper {
 	 * @throws ScanFileHolderException
 	 */
 	public static void processVolumeWithAutoBox(String[] inputs, String output, String splitter, double p, double scale, boolean reduceToNonZero, double... mDelta) throws ScanFileHolderException {
+		processVolumeWithAutoBox(inputs, output, splitter, p, scale, reduceToNonZero, false, mDelta);
+	}
+	
+	/**
+	 * Process Nexus files for I16 with automatic bounding box setting
+	 * @param inputs Nexus files
+	 * @param output name of HDF5 file to be created
+	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
+	 * @param p splitter parameter
+	 * @param scale upsampling factor
+	 * @param reduceToNonZero if true, reduce output to sub-volume with non-zero data
+	 * @param isErrorTest if true, will throw outOfMemoryError to test mapAndSaveInParts
+	 * @param mDelta sides of voxels in Miller space
+	 * @throws ScanFileHolderException
+	 */
+	private static void processVolumeWithAutoBox(String[] inputs, String output, String splitter, double p, double scale, boolean reduceToNonZero, boolean isErrorTest, double... mDelta) throws ScanFileHolderException {
 		setBeanWithAutoBox(I16MapperBean, inputs, output, splitter, p, scale, reduceToNonZero, mDelta, null);
 		MillerSpaceMapper mapper = new MillerSpaceMapper(I16MapperBean);
-		mapper.mapToVolumeFile();
+		mapper.mapToVolumeFile(isErrorTest);
 	}
 
 	/**

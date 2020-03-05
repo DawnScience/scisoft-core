@@ -82,6 +82,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 	protected List<IDataset> displayData = new ArrayList<>();
 	protected List<IDataset> auxData = new ArrayList<>();
 	private double darkImageCountTime;
+	private boolean autoFindShadowRegion = true;
 
 	/**
 	 * Auxiliary subentry. This must match the name field defined in the plugin extension
@@ -320,7 +321,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 	}
 
 	private double[] findDarkDataScaleAndOffset(Dataset in, Dataset smooth) {
-		boolean noShadow = notValid(model.getGaussianSmoothingLength());
+		boolean noShadow = !autoFindShadowRegion || notValid(model.getGaussianSmoothingLength());
 		IRectangularROI roi = model.getFitRegion();
 		if (noShadow || roi != null) { // don't bother to find shadow region
 			in = in.clone();
@@ -672,6 +673,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		SliceInformation si = ssm.getSliceInfo();
 		if (si.isFirstSlice()) {
 			log.clear();
+			autoFindShadowRegion = checkFindShadow(ssm);
 			createDarkData(ssm);
 
 			if (smoothedDarkData != null) {
@@ -721,6 +723,12 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		}
 
 		return od;
+	}
+
+	private static final String ANDOR = "andor";
+	private boolean checkFindShadow(SliceFromSeriesMetadata ssm) {
+		String n = ssm.getDatasetName();
+		return n.contains(ANDOR); // only true for Andor
 	}
 
 	// make display datasets here to be recorded in file

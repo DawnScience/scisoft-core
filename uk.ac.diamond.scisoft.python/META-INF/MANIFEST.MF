@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
+Eclipse-BundleShape: dir
 Automatic-Module-Name: uk.ac.diamond.scisoft.python
 Bundle-ManifestVersion: 2
 Bundle-Name: ScisoftPy

@@ -28,6 +28,7 @@ import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.impl.Signal;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
 import org.eclipse.dawnsci.nexus.NexusConstants;
@@ -74,6 +75,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	private double countTime = 0;
 	private double drainCurrent;
 	private BooleanDataset usedFrames = null;
+	private double detectorAngle;
 
 	@Override
 	public void setModel(T model) {
@@ -135,6 +137,9 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			resetProcess(input);
 			updateFromModel(true, null);
 			parseNexusFile(smd.getFilePath());
+			if (model.isCropROI() && SubtractFittedBackgroundOperation.isDataFromAndor(smd)) {
+				updateROIForAndor(detectorAngle);
+			}
 		}
 		if (currentCountTime != null) {
 			countTime += ((Number) currentCountTime.getSlice(si.getInputSliceWithoutDataDimensions()).sum(true)).doubleValue();
@@ -164,6 +169,20 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		}
 		od.setAuxData(auxData.toArray(new Serializable[auxData.size()]));
 		return od;
+	}
+
+	private void updateROIForAndor(double detectorAngle) {
+		IRectangularROI r = model.getRoiA();
+		if (r instanceof RectangularROI) {
+			RectangularROI roi = (RectangularROI) r;
+			double ey = roi.getEndPoint()[1];
+			// formula to fit (12., 1200.), (20., 1600.), (30., 1800.)
+			double cy = 2048. - 132.3922 / Math.tan(Math.toRadians(detectorAngle - 3.1425));
+			if (cy > ey) {
+				double[] l = roi.getLengths();
+				l[1] = Math.floor(l[1] + ey - cy);
+			}
+		}
 	}
 
 	private IDataset processRegion(IDataset input, IRectangularROI roi, int r) {

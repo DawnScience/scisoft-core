@@ -673,7 +673,8 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		SliceInformation si = ssm.getSliceInfo();
 		if (si.isFirstSlice()) {
 			log.clear();
-			autoFindShadowRegion = checkFindShadow(ssm);
+
+			autoFindShadowRegion = isDataFromAndor(ssm);
 			createDarkData(ssm);
 
 			if (smoothedDarkData != null) {
@@ -726,7 +727,13 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 	}
 
 	private static final String ANDOR = "andor";
-	private boolean checkFindShadow(SliceFromSeriesMetadata ssm) {
+
+	/**
+	 * Check if data is from Andor detector 
+	 * @param ssm
+	 * @return true if dataset path contains "andor"
+	 */
+	public static boolean isDataFromAndor(SliceFromSeriesMetadata ssm) {
 		String n = ssm.getDatasetName();
 		return n.contains(ANDOR); // only true for Andor
 	}

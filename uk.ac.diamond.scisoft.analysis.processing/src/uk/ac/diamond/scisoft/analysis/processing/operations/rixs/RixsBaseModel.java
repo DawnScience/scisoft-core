@@ -51,6 +51,9 @@ public class RixsBaseModel extends AbstractOperationModel {
 	@OperationModelField(label = "Fallback value for counts per photon", description = "Pixel value of single photon if it is confined in a single pixel; used only if it cannot be determined from file", min = 1, expertOnly = true)
 	private int countsPerPhoton = 74;
 
+	@OperationModelField(label = "Crop region", description = "Crop any region's lower bound according to detector angle if detector is Andor", hint = "Set true to automatically crop any ROIs", expertOnly = true)
+	private boolean cropROI = true;
+	
 	/**
 	 * @return get first region of interest (can be null to signify the entire image)
 	 */
@@ -164,5 +167,16 @@ public class RixsBaseModel extends AbstractOperationModel {
 
 	public void setCountsPerPhoton(int countsPerPhoton) {
 		firePropertyChange("setCountsPerPhoton", this.countsPerPhoton, this.countsPerPhoton = countsPerPhoton);
+	}
+
+	/**
+	 * @return true if ROIs should be cropped in height when data is from Andor detector
+	 */
+	public boolean isCropROI() {
+		return cropROI;
+	}
+
+	public void setCropROI(boolean cropROI) {
+		firePropertyChange("setCropROI", this.cropROI, this.cropROI = cropROI);
 	}
 }

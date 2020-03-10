@@ -144,6 +144,9 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	}
 
 	protected void initializeROIsFromFile(String file) {
+		if (file == null) {
+			return;
+		}
 		try {
 			Tree tree = LoaderFactory.getData(file).getTree();
 			IPersistenceService service = LocalServiceManager.getPersistenceService();
@@ -201,17 +204,17 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	}
 
 	@Override
-	IDataset processImageRegion(int r, IDataset original, Dataset in) {
-		Dataset[] result = makeSpectrum(r, in, model.getSlopeOverride(), model.isClipSpectra());
+	IDataset processImageRegion(int sn, IDataset original, int rn, Dataset in) {
+		Dataset[] result = makeSpectrum(rn, in, model.getSlopeOverride(), model.isClipSpectra());
 		Dataset spectrum = result[1];
-		spectrum.setName("spectrum_" + r);
+		spectrum.setName("spectrum_" + rn);
 
 		spectrum.clearMetadata(AxesMetadata.class);
 		// work out energy scale (needs calibration)
-		Dataset e = makeEnergyScale(result, offset[1], energyDispersion[r]);
+		Dataset e = makeEnergyScale(result, offset[1], energyDispersion[rn]);
 		MetadataUtils.setAxes(spectrum, e);
 		auxData.add(spectrum.getView(true));
-		allSpectra[r].add(spectrum.getView(true));
+		allSpectra[rn].add(spectrum.getView(true));
 		return spectrum;
 	}
 
@@ -919,21 +922,21 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	}
 
 	/**
-	 * @param r
+	 * @param rn
 	 * @param in
 	 * @param slope override value
 	 * @param clip if true, clip columns where rows contribute from outside image 
 	 * @return elastic line position and spectrum datasets
 	 */
-	private Dataset[] makeSpectrum(int r, Dataset in, Double slope, boolean clip) {
-		StraightLine line = getStraightLine(r);
+	private Dataset[] makeSpectrum(int rn, Dataset in, Double slope, boolean clip) {
+		StraightLine line = getStraightLine(rn);
 
 		if (slope == null) {
 			slope = line.getParameterValue(STRAIGHT_LINE_M);
 		}
 		double intercept = model.getEnergyOffsetOption() != ENERGY_OFFSET.MANUAL_OVERRIDE
 				? line.getParameterValue(STRAIGHT_LINE_C)
-				: r == 0 ? model.getEnergyOffsetA() : model.getEnergyOffsetB();
+				: rn == 0 ? model.getEnergyOffsetA() : model.getEnergyOffsetB();
 
 		Dataset[] results = makeSpectrum(in, offset[0], slope, intercept, clip);
 

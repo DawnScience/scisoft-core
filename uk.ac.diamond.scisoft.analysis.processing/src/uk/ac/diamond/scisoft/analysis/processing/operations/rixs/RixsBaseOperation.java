@@ -128,6 +128,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		SliceFromSeriesMetadata smd = input.getFirstMetadata(SliceFromSeriesMetadata.class);
 		SliceInformation si = smd.getSliceInfo();
 		if (si.isFirstSlice()) {
+			summaryData.clear();
 			log.clear();
 			if (usedFrames == null || usedFrames.getSize() != si.getTotalSlices()) {
 				usedFrames = DatasetFactory.zeros(BooleanDataset.class, si.getTotalSlices());
@@ -145,7 +146,8 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			countTime += ((Number) currentCountTime.getSlice(si.getInputSliceWithoutDataDimensions()).sum(true)).doubleValue();
 		}
 
-		boolean skip = skipFrame(si.getTotalSlices(), si.getSliceNumber());
+		int s = si.getSliceNumber();
+		boolean skip = skipFrame(si.getTotalSlices(), s);
 		usedFrames.setAbs(si.getSliceNumber(), !skip);
 		if (skip) {
 			return null;
@@ -157,7 +159,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		IDataset result = input;
 		for (int r = 0; r < roiMax; r++) {
 			roi = getROI(r);
-			result = processRegion(input, roi, r);
+			result = processRegion(s, input, roi, r);
 		}
 
 		OperationDataForDisplay od = new OperationDataForDisplay();
@@ -185,7 +187,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		}
 	}
 
-	private IDataset processRegion(IDataset input, IRectangularROI roi, int r) {
+	private IDataset processRegion(int s, IDataset input, IRectangularROI roi, int r) {
 		Dataset in = preprocessImage(input, roi);
 		if (in.getSize() == 0) {
 			return null;
@@ -203,7 +205,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		}
 
 		log.appendSuccess("Processing region %d", r);
-		return processImageRegion(r, input, in);
+		return processImageRegion(s, input, r, in);
 	}
 
 	protected IRectangularROI getROI(int r) {
@@ -233,12 +235,13 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 
 	/**
 	 * Process a region in image
-	 * @param r region number
+	 * @param sn slice number
 	 * @param original image
+	 * @param rn region number
 	 * @param in sub-image within region
 	 * @return
 	 */
-	abstract IDataset processImageRegion(int r, IDataset original, Dataset in);
+	abstract IDataset processImageRegion(int sn, IDataset original, int rn, Dataset in);
 
 	protected static final int STRAIGHT_LINE_M = 0;
 	protected static final int STRAIGHT_LINE_C = 1;
@@ -329,6 +332,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 
 			countsPerPhoton = calculateCountsPerPhoton(mdg);
 			drainCurrent = parseBeforeScanItem(mdg, "draincurrent");
+			detectorAngle = parseBeforeScanItem(mdg, "specgamma");
 
 			// TODO ring current, other things
 		} catch (Exception e) {

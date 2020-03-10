@@ -219,10 +219,13 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		int smax = si.getTotalSlices();
 		log.appendSuccess("At frame %d/%d", si.getSliceNumber(), smax);
 
+		if (!si.isFirstSlice()) {
+			summaryData.clear(); // only save any fits for first slice (per file)
+		}
+
 		// TODO make this live-friendly by show result per frame
 		// needs to give fake results for first slice
 		if (si.isLastSlice()) {
-			summaryData.clear();
 
 			double[] dispersion = new double[roiMax];
 			for (int r = 0; r < roiMax; r++) {
@@ -322,31 +325,31 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	}
 
 	@Override
-	IDataset processImageRegion(int r, IDataset original, Dataset in) {
+	IDataset processImageRegion(int sn, IDataset original, int rn, Dataset in) {
 		double requiredPhotons = countsPerPhoton * model.getMinPhotons(); // count per photon
 
 		// check if image has sufficient signal: anything less than 100 photons is insufficient
 		double sum = ((Number) in.sum()).doubleValue();
 		log.append("Number of photons, estimated: %g", sum / countsPerPhoton);
 		if (sum < requiredPhotons) {
-			createInvalidOperationData(r, new OperationException(this, "Not enough signal for elastic line"));
+			createInvalidOperationData(rn, new OperationException(this, "Not enough signal for elastic line"));
 			return original;
 		}
 
 		Double slope = model.getSlopeOverride();
 		if (slope != null) {
-			findIntercept(r, in, slope);
+			findIntercept(rn, in, slope);
 		} else {
 			int delta = model.getDelta();
 			int[] shape = original.getShape();
 			if (delta != 0) {
-				extractPointsAndFitLine(r, shape, in, delta, true);
+				extractPointsAndFitLine(sn, rn, shape, in, delta, true);
 			} else {
-				minimizeFWHMForSpectrum(r, shape, in);
+				minimizeFWHMForSpectrum(sn, rn, shape, in);
 			}
 		}
-		StraightLine line = getStraightLine(r);
-		processFit(r, in, line.getParameterValue(STRAIGHT_LINE_M), line.getParameterValue(STRAIGHT_LINE_C), residual);
+		StraightLine line = getStraightLine(rn);
+		processFit(rn, in, line.getParameterValue(STRAIGHT_LINE_M), line.getParameterValue(STRAIGHT_LINE_C), residual);
 		return original;
 	}
 
@@ -367,9 +370,10 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		residual = 0;
 	}
 
-	private void extractPointsAndFitLine(int r, int[] shape, Dataset in, int delta, boolean display) {
+	private void extractPointsAndFitLine(int s, int r, int[] shape, Dataset in, int delta, boolean display) {
+		String fName = String.format("frame_%d_%d", s, r);
 		Dataset[] coords = null;
-
+		Dataset fit = null;
 		try {
 			int minPoints = model.getMinPoints();
 			if (delta == 1) {
@@ -388,32 +392,38 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			int ymax = shape[model.getEnergyIndex()];
 			BooleanDataset mask;
 			mask = fitStraightLine(getStraightLine(r), ymax, minPoints, model.getMaxDev(), coords[0], coords[1]);
+			coords[0] = coords[0].getByBoolean(mask);
+			coords[1] = coords[1].getByBoolean(mask);
+			fit = generateFitForDisplay(getStraightLine(r), coords[0], coords[1], fName + "_fit");
 			if (display && r == 0) {
-				coords[0] = coords[0].getByBoolean(mask);
-				coords[1] = coords[1].getByBoolean(mask);
-				coords[0].setName("row0");
-				coords[1].setName("col0");
 				Plot1DMetadataImpl pm = new Plot1DMetadataImpl(Plot1DMetadata.LineStyle.NONE, 0, PointStyle.CIRCLE, 4);
 				pm.setPlotTitle("Slope fitting");
 				pm.setLegendEntry("Elastic maxima");
 				pm.setXAxisName("y");
 				pm.setYAxisName("x");
 				coords[1].addMetadata(pm);
-				generateFitForDisplayAndSummary(getStraightLine(0), coords[0], coords[1], "line_0_fit");
 			}
 		} catch (OperationException e) {
 			createInvalidOperationData(r, e);
-			if (display && r == 0) {
-				coords[0].setName("row0");
-				coords[1].setName("col0");
-				generateFitForDisplayAndSummary(null, coords[0], coords[1], null);
-			}
+		}
+
+		if (coords != null) {
+			MetadataUtils.setAxes(coords[1], coords[0]);
+			coords[0].setName(fName + "_row");
+			coords[1].setName(fName + "_col");
+			summaryData.add(coords[1]);
+		}
+		if (fit != null) {
+			summaryData.add(fit);
+		}
+		if (display && r == 0) {
+			displayFit(fit, coords[0], coords[1]);
 		}
 	}
 
 	private static boolean USE_EVAL = false;
 
-	private void minimizeFWHMForSpectrum(int r, int[] shape, Dataset in) {
+	private void minimizeFWHMForSpectrum(int sn, int rn, int[] shape, Dataset in) {
 		Add peak = new Add();
 		peak.addFunction(new Gaussian());
 		peak.addFunction(new Offset());
@@ -440,16 +450,16 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		IParameter slope = fn.getParameter(SPECTRAL_SLOPE);
 
 		if (USE_EVAL) {
-			setSlopeFitParametersByEval(r, peak, opt, factor, sin, sx, slope);
+			setSlopeFitParametersByEval(rn, peak, opt, factor, sin, sx, slope);
 		} else {
-			setSlopeFitParametersByFittingLine(r, peak, opt, factor, sin, sx, slope, shape, sin);
+			setSlopeFitParametersByFittingLine(sn, rn, peak, opt, factor, sin, sx, slope, shape, sin);
 		}
 
 		log.append("Initial parameter settings: %g [%g, %g]", slope.getValue(), slope.getLowerLimit(), slope.getUpperLimit());
 		ApacheOptimizer optimizer = new ApacheOptimizer(Optimizer.SIMPLEX_NM);
 		try {
 			optimizer.optimize(true, fn);
-			StraightLine line = getStraightLine(r);
+			StraightLine line = getStraightLine(rn);
 			line.getParameter(STRAIGHT_LINE_M).setValue(slope.getValue());
 			line.getParameter(STRAIGHT_LINE_C).setValue(peak.getParameterValue(SPECTRA_PEAK_POSN));
 
@@ -534,10 +544,10 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		slope.setValue(slopes.getDouble(pmin));
 	}
 
-	private void setSlopeFitParametersByFittingLine(int r, Add peak, ApacheOptimizer opt, double factor, Dataset sin, Dataset sx,
+	private void setSlopeFitParametersByFittingLine(int sn, int rn, Add peak, ApacheOptimizer opt, double factor, Dataset sin, Dataset sx,
 			IParameter slope, int[] shape, Dataset in) {
-		extractPointsAndFitLine(r, shape, in, 1, false);
-		StraightLine line = getStraightLine(r);
+		extractPointsAndFitLine(sn, rn, shape, in, 1, false);
+		StraightLine line = getStraightLine(rn);
 
 		double s = line.getParameterValue(STRAIGHT_LINE_M);
 		Dataset ns = sumImageAlongSlope(sin, s, false);
@@ -747,10 +757,10 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		String name = "intercept_fit_" + r;
 		energy.setName("Energy");
 		intercept.setName("intercept_" + r);
+		MetadataUtils.setAxes(intercept, energy);
 
 		double ePTP = energy.peakToPeak().doubleValue();
 		if (ePTP == 0) {
-			MetadataUtils.setAxes(intercept, energy);
 			summaryData.add(intercept);
 			return null;
 		}
@@ -761,7 +771,11 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		iLine.setParameterValues(grad, 0);
 
 		double res = fitFunction(this, new ApacheOptimizer(Optimizer.SIMPLEX_NM), "Exception for intercept fit to find dispersion", log, iLine, energy, intercept, null);
-		generateFitForDisplayAndSummary(iLine, energy, intercept, name);
+		Dataset fit = generateFitForDisplay(iLine, energy, intercept, name);
+		displayFit(fit, intercept, energy);
+		summaryData.add(intercept);
+		summaryData.add(fit);
+
 		return new double[] {res, iLine.getParameterValue(STRAIGHT_LINE_M)};
 	}
 
@@ -905,19 +919,15 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		return new List<?>[] {gPosition, gPosn};
 	}
 
-	protected void generateFitForDisplayAndSummary(IFunction f, Dataset x, Dataset d, String name) {
-		MetadataUtils.setAxes(d, x);
-		displayData.add(d.getView(false));
-		summaryData.add(d);
-		if (f == null) {
-			return;
-		}
-
+	private Dataset generateFitForDisplay(IFunction f, Dataset x, Dataset d, String name) {
 		Dataset fit = DatasetUtils.convertToDataset(f.calculateValues(x));
 		fit.setName(name);
 		MetadataUtils.setAxes(fit, x);
-		summaryData.add(fit);
-		fit = fit.getView(false);
+		return fit.getView(false);
+	}
+
+	private void displayFit(Dataset fit, Dataset x, Dataset d) {
+		displayData.add(d.getView(false));
 
 		// set plot title again as more lines will overwrite it
 		Plot1DMetadata pm = d.getFirstMetadata(Plot1DMetadata.class);

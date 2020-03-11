@@ -80,7 +80,12 @@ public class QSpace {
 	 */
 	public void qFromPixelPosition(final double x, final double y, Vector3d q) {
 		detProps.pixelPosition(x, y, q);
-		q.scaleAdd(kmod/q.length(), mki);
+		double l = q.length();
+		if (l > 0) {
+			q.scaleAdd(kmod/l, mki);
+		} else {
+			q.add(mki);
+		}
 	}
 
 	/**

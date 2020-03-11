@@ -75,7 +75,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	private double countTime = 0;
 	private double drainCurrent;
 	private BooleanDataset usedFrames = null;
-	private double detectorAngle;
+	private double detectorAngle = Double.NaN;
 
 	@Override
 	public void setModel(T model) {
@@ -138,7 +138,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			resetProcess(input);
 			updateFromModel(true, null);
 			parseNexusFile(smd.getFilePath());
-			if (model.isCropROI() && SubtractFittedBackgroundOperation.isDataFromAndor(smd)) {
+			if (model.isCropROI() && SubtractFittedBackgroundOperation.isDataFromAndor(smd, input)) {
 				updateROIForAndor(detectorAngle);
 			}
 		}
@@ -175,7 +175,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 
 	private void updateROIForAndor(double detectorAngle) {
 		IRectangularROI r = model.getRoiA();
-		if (r instanceof RectangularROI) {
+		if (Double.isFinite(detectorAngle) && r instanceof RectangularROI) {
 			RectangularROI roi = (RectangularROI) r;
 			double ey = roi.getEndPoint()[1];
 			// formula to fit (12., 1200.), (20., 1600.), (30., 1800.)
@@ -330,14 +330,19 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 				throw new NexusException("File does not contain a before_scan collection");
 			}
 
-			countsPerPhoton = calculateCountsPerPhoton(mdg);
+			try {
+				countsPerPhoton = calculateCountsPerPhoton(mdg);
+			} catch (Exception e) {
+				log.appendFailure("Could not calculate counts per photon from Nexus file %s: %s", filePath, e);
+				countsPerPhoton = model.getCountsPerPhoton();
+			}
+
 			drainCurrent = parseBeforeScanItem(mdg, "draincurrent");
 			detectorAngle = parseBeforeScanItem(mdg, "specgamma");
 
 			// TODO ring current, other things
 		} catch (Exception e) {
 			log.appendFailure("Could not parse Nexus file %s: %s", filePath, e);
-			countsPerPhoton = model.getCountsPerPhoton();
 		}
 
 		log.append("Counts per single photon event = %d", countsPerPhoton);

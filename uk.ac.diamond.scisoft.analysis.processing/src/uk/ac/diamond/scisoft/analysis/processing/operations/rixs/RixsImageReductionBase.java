@@ -386,8 +386,6 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	}
 
 	protected void processAccumulatedDataOnLastSlice(String filePath, String dataPath, int[] shape, int smax, IntegerDataset bins, Dataset h) {
-		int[][][] allSingle = null; // [number of regions, number of slices, number of bins]
-		int[][][] allMultiple = null;
 		int bin = 0;
 		int bmax = 0;
 		int single = 0;
@@ -398,6 +396,9 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		if (xipOpt != XIP_OPTION.DONT_USE) {
 			nr += 2 * roiMax; // for raw and eta-corrected centroids
 		}
+
+		int[][][] allSingle = new int[nr][smax][]; // [number of regions, number of slices, number of bins]
+		int[][][] allMultiple = new int[nr][smax][];
 
 		if (bins != null) {
 			// After last image, calculate splitting levels
@@ -417,8 +418,6 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			bmax = bin * shape[model.getEnergyIndex()];
 
 			// per image, separate by sum
-			allSingle = new int[nr][smax][];
-			allMultiple = new int[nr][smax][];
 			List<Double> cX = new ArrayList<>();
 			List<Double> cY = new ArrayList<>();
 			boolean save = true;

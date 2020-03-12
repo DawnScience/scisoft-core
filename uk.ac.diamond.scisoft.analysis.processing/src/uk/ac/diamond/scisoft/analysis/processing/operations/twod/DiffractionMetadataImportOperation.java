@@ -25,6 +25,7 @@ import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 
 import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionCalibrationReader;
+import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 
 @Atomic
@@ -41,17 +42,17 @@ public class DiffractionMetadataImportOperation extends AbstractOperationBase<Di
 	@Override
 	public OperationData execute(IDataset slice, IMonitor monitor)
 			throws OperationException {
-		
+		if (model.getFilePath() == null || model.getFilePath().isEmpty()) throw new IllegalArgumentException("Calibration file path must be set");
 		SliceFromSeriesMetadata ssm = slice.getFirstMetadata(SliceFromSeriesMetadata.class);
 
 			// Look for the user defined detector dataset, if present
 		String datasetName = (model.getDetectorDataset() != null) ? model.getDetectorDataset() : ssm.getDatasetName();
 		
-		slice.setMetadata(getMeta(model, ssm.getParent(), datasetName));
+		slice.setMetadata(getMeta(model.getFilePath(), ssm.getParent(), datasetName, slice));
 		return new OperationData(slice);
 	}
 	
-	private IDiffractionMetadata getMeta(DiffractionMetadataImportModel mod, ILazyDataset parent, String name) {
+	private IDiffractionMetadata getMeta(String modPath, ILazyDataset parent, String name, IDataset input) {
 
 		IDiffractionMetadata lmeta = metadata;
 		if (lmeta == null) {
@@ -60,7 +61,8 @@ public class DiffractionMetadataImportOperation extends AbstractOperationBase<Di
 				if (lmeta == null) {
 					IDiffractionMetadata md;
 					try {
-						md = NexusDiffractionCalibrationReader.getDiffractionMetadataFromNexus(mod.getFilePath(), parent, name);
+						String path = ProcessingUtils.resolvePath(modPath, input);
+						md = NexusDiffractionCalibrationReader.getDiffractionMetadataFromNexus(path, parent, name);
 					} catch (DatasetException e) {
 						throw new OperationException(this, e);
 					}

@@ -54,6 +54,7 @@ public class ImportMaskInternalFilepathOperation<T extends ImportMaskInternalFil
 				
 		if (datasetContainingFilePath != null) {
 			filePath = DatasetUtils.convertToDataset(datasetContainingFilePath).getString();
+			filePath = ProcessingUtils.resolvePath(filePath, input);
 		}
 		
 		ImportMaskModel maskModel = new ImportMaskModel();

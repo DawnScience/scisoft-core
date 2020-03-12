@@ -422,10 +422,10 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			List<Double> cY = new ArrayList<>();
 			boolean save = true;
 			boolean all = model.isSaveAllPositions();
-			int j = 0;
 			for (int r = 0; r < roiMax; r++) {
 				cX.clear();
 				cY.clear();
+				int j = 0;
 				for (int i = 0, imax = allSums.size(); i < imax; i++) {
 					Dataset sums = allSums.get(i);
 					if (sums == null) {
@@ -457,10 +457,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 					summaryData.add(t);
 				}
 
-			}
-
-			if (j < smax) { // truncate for omitted frames
-				for (int r = 0; r < roiMax; r++) {
+				if (j < smax) { // truncate for omitted frames
 					allSingle[r] = Arrays.copyOf(allSingle[r], j);
 					allMultiple[r] = Arrays.copyOf(allMultiple[r], j);
 				}

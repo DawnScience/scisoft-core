@@ -76,8 +76,8 @@ import uk.ac.diamond.scisoft.analysis.crystallography.UnitCell;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionSample;
 import uk.ac.diamond.scisoft.analysis.diffraction.MatrixUtils;
 
+@SuppressWarnings("deprecation")
 public class NexusTreeUtils {
-
 
 	protected static final Logger logger = LoggerFactory.getLogger(NexusTreeUtils.class);
 
@@ -108,6 +108,9 @@ public class NexusTreeUtils {
 	}
 
 	private static final Unit<Length> MILLIMETRE = MetricPrefix.MILLI(Units.METRE);
+
+	private NexusTreeUtils() {
+	}
 
 	/**
 	 * Get lazy dataset (augmented with metadata) from first NXdata group
@@ -1227,7 +1230,7 @@ public class NexusTreeUtils {
 				size = parseIntArray(l.getDestination(), 2);
 				break;
 			case DMOD_MODULEOFFSET:
-				mo  = parseTransformation(path, tree, l, pos);
+				mo = parseTransformation(path, tree, l, pos);
 				if (mo != null) {
 					ftrans.put(mo.name, mo);
 				}
@@ -1940,6 +1943,38 @@ public class NexusTreeUtils {
 		return null;
 	}
 
+	/**
+	 * Find node links in group to be of given Nexus class
+	 * @param group
+	 * @param clazz (can be null but only if prefix is not null)
+	 * @return list of nodes link
+	 */
+	public static List<NodeLink> findNodes(GroupNode group, final String clazz) {
+		return findNodes(group, null, clazz);
+	}
+
+	/**
+	 * Find node links in group with prefix as name to be of given Nexus class
+	 * @param group
+	 * @param prefix (can be null but only if clazz is not null)
+	 * @param clazz (can be null but only if prefix is not null)
+	 * @return list of nodes link
+	 */
+	public static List<NodeLink> findNodes(GroupNode group, final String prefix, final String clazz) {
+		if (prefix == null && clazz == null) {
+			throw new IllegalArgumentException("Prefix or clazz must be defined");
+		}
+		List<NodeLink> nodes = new ArrayList<>();
+		for (NodeLink l : group) {
+			if (prefix != null && !l.getName().startsWith(prefix)) {
+				continue;
+			}
+			if (clazz == null || isNXClass(l.getDestination(), clazz)) {
+				nodes.add(l);
+			}
+		}
+		return nodes;
+	}
 	/**
 	 * @param attr
 	 * @return string or null

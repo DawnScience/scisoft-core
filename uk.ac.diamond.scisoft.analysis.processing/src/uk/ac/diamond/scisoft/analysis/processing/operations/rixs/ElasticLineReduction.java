@@ -95,8 +95,9 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	private boolean useSpectrum = true;
 	private Dataset output;
 
-	protected List<Double>[] allSlope = new List[] {new ArrayList<>(), new ArrayList<>()};
 	protected List<Double>[] allPosition = new List[] {new ArrayList<>(), new ArrayList<>()};
+	protected List<Double>[] allIntercept = new List[] {new ArrayList<>(), new ArrayList<>()};
+	protected List<Double>[] allSlope = new List[] {new ArrayList<>(), new ArrayList<>()};
 	protected List<Double>[] allResidual = new List[] {new ArrayList<>(), new ArrayList<>()};
 	protected List<Double>[] goodPosition = new List[] {new ArrayList<>(), new ArrayList<>()};
 	protected List<Double>[] goodIntercept = new List[] {new ArrayList<>(), new ArrayList<>()};
@@ -135,6 +136,8 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	protected void resetProcess(IDataset original) {
 		allPosition[0].clear();
 		allPosition[1].clear();
+		allIntercept[0].clear();
+		allIntercept[1].clear();
 		allSlope[0].clear();
 		allSlope[1].clear();
 		allResidual[0].clear();
@@ -249,7 +252,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 				double goodC = Double.NaN;
 				int n = 0;
 				List<Double> slopes = allSlope[r];
-				List<Double> posns = allPosition[r];
+				List<Double> intercepts = allIntercept[r];
 				for (int i = 0, imax = slopes.size(); i < imax; i++) {
 					Double a = slopes.get(i);
 					if (Double.isFinite(a)) {
@@ -257,7 +260,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 						aveM += a;
 					}
 					if (Double.isNaN(goodC)) {
-						a = posns.get(i);
+						a = intercepts.get(i);
 						if (Double.isFinite(a)) {
 							goodC = a;
 						}
@@ -267,23 +270,28 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 				auxData.add(ProcessingUtils.createNamedDataset(aveM/n, LINE_GRADIENT_FORMAT, r).reshape(1));
 				auxData.add(ProcessingUtils.createNamedDataset(goodC, LINE_INTERCEPT_FORMAT, r));
 
-				Dataset posData = DatasetFactory.createFromList(coords[0]);
+				Dataset posData = DatasetFactory.createFromList(allPosition[r]);
 				posData.setName(positionName);
+				Dataset d;
 				if (n > 1) {
-					Dataset d = ProcessingUtils.createNamedDataset((Serializable) slopes, LINE_GRADIENT_FORMAT, r);
+					d = ProcessingUtils.createNamedDataset((Serializable) slopes, LINE_GRADIENT_FORMAT, r);
 					MetadataUtils.setAxes(d, posData);
 					summaryData.add(d);
-					d = ProcessingUtils.createNamedDataset((Serializable) posns, LINE_INTERCEPT_FORMAT, r);
+					d = ProcessingUtils.createNamedDataset((Serializable) intercepts, LINE_INTERCEPT_FORMAT, r);
 					MetadataUtils.setAxes(d, posData);
 					summaryData.add(d);
 				}
-				summaryData.add(ProcessingUtils.createNamedDataset((Serializable) allResidual[r], LINE_RESIDUAL_FORMAT, r));
+				d = ProcessingUtils.createNamedDataset((Serializable) allResidual[r], LINE_RESIDUAL_FORMAT, r);
+				MetadataUtils.setAxes(d, posData);
+				summaryData.add(d);
 
 				if (positionName.contains("energy")) {
 					if (smax != 1) { // display when there is only one image
 						displayData.clear();
 					}
 
+					posData = DatasetFactory.createFromList(coords[0]);
+					posData.setName(positionName);
 					double[] res = fitIntercepts(r, posData.getView(false), coords[1]);
 					if (res == null) {
 						dispersion[r] = Double.NaN;
@@ -337,19 +345,23 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		}
 
 		Double slope = model.getSlopeOverride();
+		boolean okay;
 		if (slope != null) {
+			okay = true;
 			findIntercept(rn, in, slope);
 		} else {
 			int delta = model.getDelta();
 			int[] shape = original.getShape();
 			if (delta != 0) {
-				extractPointsAndFitLine(sn, rn, shape, in, delta, true);
+				okay = extractPointsAndFitLine(sn, rn, shape, in, delta, true);
 			} else {
-				minimizeFWHMForSpectrum(sn, rn, shape, in);
+				okay = minimizeFWHMForSpectrum(sn, rn, shape, in);
 			}
 		}
-		StraightLine line = getStraightLine(rn);
-		processFit(rn, in, line.getParameterValue(STRAIGHT_LINE_M), line.getParameterValue(STRAIGHT_LINE_C), residual);
+		if (okay) {
+			StraightLine line = getStraightLine(rn);
+			processFit(rn, in, line.getParameterValue(STRAIGHT_LINE_M), line.getParameterValue(STRAIGHT_LINE_C), residual);
+		}
 		return original;
 	}
 
@@ -370,7 +382,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		residual = 0;
 	}
 
-	private void extractPointsAndFitLine(int s, int r, int[] shape, Dataset in, int delta, boolean display) {
+	private boolean extractPointsAndFitLine(int s, int r, int[] shape, Dataset in, int delta, boolean display) {
 		String fName = String.format("frame_%d_%d", s, r);
 		Dataset[] coords = null;
 		Dataset fit = null;
@@ -419,11 +431,13 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		if (display && r == 0) {
 			displayFit(fit, coords[0], coords[1]);
 		}
+
+		return fit != null;
 	}
 
 	private static boolean USE_EVAL = false;
 
-	private void minimizeFWHMForSpectrum(int sn, int rn, int[] shape, Dataset in) {
+	private boolean minimizeFWHMForSpectrum(int sn, int rn, int[] shape, Dataset in) {
 		Add peak = new Add();
 		peak.addFunction(new Gaussian());
 		peak.addFunction(new Offset());
@@ -467,8 +481,10 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			log.appendSuccess("Optimized minimal FWHM (%g) at slope of %g", peak.getParameterValue(SPECTRA_PEAK_WIDTH), slope.getValue());
 		} catch (Exception e) {
 			log.appendFailure("Error minimizing FWHM for peak in spectrum: %s", e.getMessage());
-			throw new OperationException(this, "Error minimizing FWHM for peak in spectrum", e);
+			createInvalidOperationData(rn, new OperationException(this, "Error minimizing FWHM for peak in spectrum", e));
+			return false;
 		}
+		return true;
 	}
 
 	private void setSlopeFitParametersByEval(int r, Add peak, ApacheOptimizer opt, double factor, Dataset sin, Dataset sx,
@@ -694,11 +710,13 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	}
 
 	private void processFit(int i, Dataset in, double m, double c, double r) {
+		double p = position == null ? 0 : position.getDouble();
+		allPosition[i].add(p);
+		allIntercept[i].add(c);
 		allSlope[i].add(m);
-		allPosition[i].add(c);
 		allResidual[i].add(r);
 		if (Double.isFinite(c)) {
-			goodPosition[i].add(position == null ? 0 : position.getDouble());
+			goodPosition[i].add(p);
 			goodIntercept[i].add(c);
 
 			if (useSpectrum && in != null) {
@@ -929,15 +947,17 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	private void displayFit(Dataset fit, Dataset x, Dataset d) {
 		displayData.add(d.getView(false));
 
-		// set plot title again as more lines will overwrite it
-		Plot1DMetadata pm = d.getFirstMetadata(Plot1DMetadata.class);
-		String pt = pm == null ? null : pm.getPlotTitle();
-		if (pt != null) {
-			pm = new Plot1DMetadataImpl();
-			pm.setPlotTitle(pt);
-			fit.setMetadata(pm);
+		if (fit != null) {
+			// set plot title again as more lines will overwrite it
+			Plot1DMetadata pm = d.getFirstMetadata(Plot1DMetadata.class);
+			String pt = pm == null ? null : pm.getPlotTitle();
+			if (pt != null) {
+				pm = new Plot1DMetadataImpl();
+				pm.setPlotTitle(pt);
+				fit.setMetadata(pm);
+			}
+			displayData.add(fit);
 		}
-		displayData.add(fit);
 	}
 
 	/**

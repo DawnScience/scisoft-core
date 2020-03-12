@@ -25,6 +25,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
+import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.impl.Signal;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
@@ -75,7 +76,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	private double countTime = 0;
 	private double drainCurrent;
 	private BooleanDataset usedFrames = null;
-	private double detectorAngle;
+	private double detectorAngle = Double.NaN;
 
 	@Override
 	public void setModel(T model) {
@@ -138,7 +139,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			resetProcess(input);
 			updateFromModel(true, null);
 			parseNexusFile(smd.getFilePath());
-			if (model.isCropROI() && SubtractFittedBackgroundOperation.isDataFromAndor(smd)) {
+			if (model.isCropROI() && SubtractFittedBackgroundOperation.isDataFromAndor(smd, input)) {
 				updateROIForAndor(detectorAngle);
 			}
 		}
@@ -175,7 +176,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 
 	private void updateROIForAndor(double detectorAngle) {
 		IRectangularROI r = model.getRoiA();
-		if (r instanceof RectangularROI) {
+		if (Double.isFinite(detectorAngle) && r instanceof RectangularROI) {
 			RectangularROI roi = (RectangularROI) r;
 			double ey = roi.getEndPoint()[1];
 			// formula to fit (12., 1200.), (20., 1600.), (30., 1800.)
@@ -322,7 +323,27 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 
 			GroupNode entry = (GroupNode) NexusTreeUtils.requireNode(root, NexusConstants.ENTRY);
 			GroupNode instrument = (GroupNode) NexusTreeUtils.requireNode(entry, NexusConstants.INSTRUMENT);
-			GroupNode detector = (GroupNode) NexusTreeUtils.requireNode(instrument, NexusConstants.DETECTOR);
+
+			// find first area detector
+			List<NodeLink> detectors = NexusTreeUtils.findNodes(instrument, NexusConstants.DETECTOR);
+			GroupNode detector = null;
+			for (NodeLink l : detectors) {
+				if (l.isDestinationGroup()) {
+					GroupNode g = (GroupNode) l.getDestination();
+					if (g.containsDataNode(NexusConstants.DATA_DATA)) {
+						if (g.getDataNode(NexusConstants.DATA_DATA).getRank() > 1) {
+							detector = g;
+							break;
+						}
+					}
+				}
+			}
+			if (detector == null) {
+				String msg = "Could not find NXdetector with image data";
+				log.append(msg);
+				throw new NexusException(msg);
+			}
+
 			currentCountTime = DatasetUtils.sliceAndConvertLazyDataset(detector.getDataNode("count_time").getDataset());
 
 			GroupNode mdg = entry.getGroupNode("before_scan");
@@ -330,14 +351,19 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 				throw new NexusException("File does not contain a before_scan collection");
 			}
 
-			countsPerPhoton = calculateCountsPerPhoton(mdg);
+			try {
+				countsPerPhoton = calculateCountsPerPhoton(mdg);
+			} catch (Exception e) {
+				log.appendFailure("Could not calculate counts per photon from Nexus file %s: %s", filePath, e);
+				countsPerPhoton = model.getCountsPerPhoton();
+			}
+
 			drainCurrent = parseBeforeScanItem(mdg, "draincurrent");
 			detectorAngle = parseBeforeScanItem(mdg, "specgamma");
 
 			// TODO ring current, other things
 		} catch (Exception e) {
 			log.appendFailure("Could not parse Nexus file %s: %s", filePath, e);
-			countsPerPhoton = model.getCountsPerPhoton();
 		}
 
 		log.append("Counts per single photon event = %d", countsPerPhoton);
@@ -354,6 +380,15 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 
 	private static final double PAIR_PRODUCTION_ENERGY = 3.67; // energy required to generate an electron-hole pair
 
+	// XCAM operating temperature at -110C = 160K (16umx16um)
+	// RIXSCam2 2 detectors, 3264x1608 (2 CCDs, left and right dark reference bands per CCD, 16 pixel columns)
+	// Andor operating temperature at -60C = 210K
+	// MN Mazziotta
+	// Electron–hole pair creation energy and Fano factor temperature dependence in silicon
+	// Nuclear Instruments and Methods in Physics Research Section A: Accelerators, Spectrometers, Detectors and Associated Equipment
+	// Volume 584, Issues 2–3, 11 January 2008, Pages 436-439
+	// photons of 500eV @160K, 3.694
+	// photons of 500eV @210K, 3.680
 	// values from ANDOR iKon-L CCD system performance booklet (20160824)
 	// Head DO936N-00Z-#BN-9UY, serial no CCD-19600
 	// CCD from E2V, CCD42-40, 2048x2048 (13.5umx13.5um), serial no 15242-01-06
@@ -408,13 +443,16 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		try {
 			Tree t = LocalServiceManager.getLoaderService().getData(filePath, null).getTree();
 
-			GroupNode root = t.getGroupNode();
+			GroupNode entry = (GroupNode) NexusTreeUtils.requireNode(t.getGroupNode(), NexusConstants.ENTRY);
+
 			// TODO find photon energy, (decide where it should be recorded)
-			GroupNode beam = (GroupNode) NexusTreeUtils.requireNode(root, NexusConstants.BEAM);
+			GroupNode sample = (GroupNode) NexusTreeUtils.requireNode(entry, NexusConstants.SAMPLE);
+			GroupNode beam = (GroupNode) NexusTreeUtils.requireNode(sample, NexusConstants.BEAM);
 			DiffractionCrystalEnvironment dce = new DiffractionCrystalEnvironment();
 			NexusTreeUtils.parseBeam(beam, dce);
 
-			GroupNode detector = (GroupNode) NexusTreeUtils.requireNode(root, NexusConstants.DETECTOR);
+			GroupNode instrument = (GroupNode) NexusTreeUtils.requireNode(entry, NexusConstants.INSTRUMENT);
+			GroupNode detector = (GroupNode) NexusTreeUtils.requireNode(instrument, NexusConstants.DETECTOR);
 			parseDesiredNXrixs(detector, 1e3 * dce.getEnergy());
 		} catch (Exception e) {
 			log.appendFailure("Could not parse Nexus file %s:%s", filePath, e);
@@ -433,12 +471,12 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		String ed = detector.getDataNode("energy_direction").getString();
 		model.setEnergyDirection(ed.toLowerCase().equals("slow") ? RixsBaseModel.ENERGY_DIRECTION.SLOW : RixsBaseModel.ENERGY_DIRECTION.FAST);
 
-		// energy required for each photoelectron [e^- / eV]
+		// energy required for each photoelectron [eV / e^-]
 		double pe = NexusTreeUtils.parseDoubleArray(detector.getDataNode("photoelectrons_energy"))[0];
 		// digitization of photoelectron to AD units [ADu / e^-]
 		double ds = NexusTreeUtils.parseDoubleArray(detector.getDataNode("detector_sensitivity"))[0];
 
-		countsPerPhoton = (int) Math.floor(pEnergy / (pe * ds));
+		countsPerPhoton = (int) Math.floor(pEnergy * ds / pe);
 	}
 
 	/**

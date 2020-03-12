@@ -32,6 +32,7 @@ import org.eclipse.january.metadata.MetadataFactory;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
+import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 @Atomic
 public class ImportMaskOperation<T extends ImportMaskModel> extends AbstractOperation<T, OperationData>{
@@ -48,11 +49,11 @@ public class ImportMaskOperation<T extends ImportMaskModel> extends AbstractOper
 	
 	@Override
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
-		if (model.getFilePath() == null) throw new IllegalArgumentException("mask file path may not be null");
+		if (model.getFilePath() == null || model.getFilePath().isEmpty()) throw new IllegalArgumentException("Mask file path must be set");
 		
 		IDataset inM = DatasetUtils.convertToDataset(getFirstMask(input));
 		
-		IDataset m = getMask(model.getFilePath(), input.getShape());
+		IDataset m = getMask(model.getFilePath(), input);
 		
 		if (inM == null) {
 			inM = m;
@@ -71,7 +72,7 @@ public class ImportMaskOperation<T extends ImportMaskModel> extends AbstractOper
 		return new OperationData(input);
 	}
 	
-	private IDataset getMask(String path, int[] shape) {
+	private IDataset getMask(String path, IDataset input) {
 
 		IDataset lmask = mask;
 		if (lmask == null) {
@@ -79,6 +80,8 @@ public class ImportMaskOperation<T extends ImportMaskModel> extends AbstractOper
 				lmask = mask;
 				if (lmask == null) {
 					try {
+						int[] shape = input.getShape();
+						path = ProcessingUtils.resolvePath(path, input);
 						if (HDF5Utils.isHDF5(path)) {
 							IPersistenceService service = LocalServiceManager.getPersistenceService();
 							IPersistentFile pf = service.getPersistentFile(path);

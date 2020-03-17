@@ -1,6 +1,7 @@
 Dependency-Note: No new dependencies may be added to this plugin
  without agreeing with the team first please.
 Manifest-Version: 1.0
+Eclipse-BundleShape: dir
 Bundle-ManifestVersion: 2
 Bundle-Name: Analysis Plug-in
 Bundle-SymbolicName: uk.ac.diamond.scisoft.analysis;singleton:=true

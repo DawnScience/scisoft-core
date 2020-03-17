@@ -143,22 +143,6 @@ Common tasks used in headless testing. Must be imported in all ant test scripts.
 		</sort></first>
 	</path>
 
-	<path id="tp.jscience.path">
-		<first count="1"><sort>
-			<fileset dir="${workspace.loc}/tp/plugins" includes="uk.ac.diamond.org.jscience_*.jar" />
-			<reverse xmlns="antlib:org.apache.tools.ant.types.resources.comparators">
-				<name/>  <!-- 'name' inherits reverse's namespace -->
-			</reverse>
-		</sort></first>
-	</path>
-	<path id="tp.jscience4.path">
-		<first count="1"><sort>
-			<fileset dir="${workspace.loc}/tp/plugins" includes="uk.ac.diamond.org.jscience4_*.jar" />
-			<reverse xmlns="antlib:org.apache.tools.ant.types.resources.comparators">
-				<name/>  <!-- 'name' inherits reverse's namespace -->
-			</reverse>
-		</sort></first>
-	</path>
 	<path id="tp.javax.measure.unit.path">
 		<first count="1"><sort>
 			<fileset dir="${workspace.loc}/tp/plugins" includes="javax.measure.unit-api_*.jar" />

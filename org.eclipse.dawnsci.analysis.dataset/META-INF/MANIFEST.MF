@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
+Eclipse-BundleShape: dir
 Bundle-ManifestVersion: 2
 Bundle-Name: Dataset
 Bundle-SymbolicName: org.eclipse.dawnsci.analysis.dataset;singleton:=true

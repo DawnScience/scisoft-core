@@ -136,6 +136,7 @@ public class ImageServiceBean {
 
 	public void setImage(IDataset image) {
 		this.image = DatasetUtils.convertToDataset(image);
+		updateLogOffset();
 		value = null;
 	}
 
@@ -336,7 +337,11 @@ public class ImageServiceBean {
 			//colour scale doesn't mean anything for an RGB image
 			return;
 		}
-		if (logColorScale) { // shift by fraction of range
+		updateLogOffset();
+	}
+
+	private void updateLogOffset() {
+		if (logColorScale && image != null) { // shift by fraction of range
 			logOffset = image.min(true).doubleValue();
 			double delta = 1e-6 * image.peakToPeak(true).doubleValue();
 			if (!image.hasFloatingPointElements() && delta < 1) {

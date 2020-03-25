@@ -105,6 +105,18 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		roiMax = useBothROIs ? 2 : 1;
 	}
 
+	/**
+	 * Reset list and fill with nulls
+	 * @param list
+	 * @param n number of nulls
+	 */
+	protected static void resetList(List<?> list, int n) {
+		list.clear();
+		for (int i = 0; i < n; i++) {
+			list.add(null);
+		}
+	}
+
 	@Override
 	public String getId() {
 		return getClass().getName();
@@ -136,7 +148,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			}
 			countTime = 0;
 			currentCountTime = null;
-			resetProcess(input);
+			resetProcess(input, si.getTotalSlices());
 			updateFromModel(true, null);
 			parseNexusFile(smd.getFilePath());
 			if (model.isCropROI() && SubtractFittedBackgroundOperation.isDataFromAndor(smd, input)) {
@@ -225,8 +237,9 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	/**
 	 * Override to reset state of processing object. This is called for the first slice of data only.
 	 * @param original
+	 * @param total total number of slices
 	 */
-	abstract void resetProcess(IDataset original);
+	abstract void resetProcess(IDataset original, int total);
 
 	/**
 	 * Initialize log and fields as necessary

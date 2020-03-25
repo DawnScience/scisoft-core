@@ -69,11 +69,12 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtil
 
 abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseModel> extends RixsBaseOperation<T> {
 
-	protected double[] energyDispersion = new double[2];
+	private double[] energyDispersion = new double[2];
 	private Dataset totalSum = null; // dataset of all event sums (so far)
 	private List<Dataset> allSums = new ArrayList<>(); // list of dataset of event sums in each image
 	private List<Dataset> allPositions = new ArrayList<>(); // list of dataset of event coords in each image
-	protected List<Dataset>[] allSpectra = new List[] {new ArrayList<>(), new ArrayList<>()};
+	@SuppressWarnings("unchecked")
+	private List<Dataset>[] allSpectra = new List[] {new ArrayList<>(), new ArrayList<>()};
 
 	protected String currentDataFile = null;
 	private MultiRange selection;
@@ -134,12 +135,13 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	}
 
 	@Override
-	protected void resetProcess(IDataset original) {
+	protected void resetProcess(IDataset original, int total) {
 		totalSum = null;
-		allSums.clear();
-		allPositions.clear();
-		allSpectra[0].clear();
-		allSpectra[1].clear();
+		resetList(allPositions, total);
+		resetList(allSums, total);
+		for (int i = 0; i < 2; i++) {
+			resetList(allSpectra[i], total);
+		}
 		currentDataFile = null;
 	}
 
@@ -214,7 +216,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		Dataset e = makeEnergyScale(result, offset[1], energyDispersion[rn]);
 		MetadataUtils.setAxes(spectrum, e);
 		auxData.add(spectrum.getView(true));
-		allSpectra[rn].add(spectrum.getView(true));
+		allSpectra[rn].set(sn, spectrum.getView(true));
 		return spectrum;
 	}
 
@@ -241,14 +243,15 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			log.appendFailure("Skipping frame %d", si.getSliceNumber());
 		}
 
+		int sn = si.getSliceNumber();
 		if (eSum == null || eSum.getSize() == 0) {
 			log.appendFailure("No events found");
 			// need to pad spectra
 			for (int r = 0; r < roiMax; r++) {
-				allSpectra[r].add(null);
+				allSpectra[r].set(sn, null);
 			}
-			allSums.add(null);
-			allPositions.add(null);
+			allSums.set(sn, null);
+			allPositions.set(sn, null);
 		} else {
 			// accumulate event sums and photons
 			if (totalSum == null) {
@@ -257,8 +260,8 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 				totalSum = DatasetUtils.concatenate(new IDataset[] {totalSum, eSum}, 0);
 			}
 			log.appendSuccess("Found %d photon events, current total = %s", eSum.getSize(), totalSum.getSize());
-			allSums.add(eSum);
-			allPositions.add(events.get(1));
+			allSums.set(sn, eSum);
+			allPositions.set(sn, events.get(1));
 		}
 
 		IntegerDataset bins = null;
@@ -467,7 +470,9 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		if (xipOpt != XIP_OPTION.DONT_USE) {
 			boolean[][] regionInCCDs = findRegionsInCCDs(shape); // [2, number of regions] if true then ROI is in given CCD
 
+			@SuppressWarnings("unchecked")
 			List<Double>[] cXs = new List[2 * roiMax];
+			@SuppressWarnings("unchecked")
 			List<Double>[] cYs = new List[2 * roiMax];
 			for (int r = 0; r < 2*roiMax; r++) {
 				cXs[r] = new ArrayList<>();

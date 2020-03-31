@@ -100,11 +100,6 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	}
 
 	@Override
-	public String getFilenameSuffix() {
-		return "rixs_spectra";
-	}
-
-	@Override
 	void updateFromModel(boolean throwEx, String name) {
 		try {
 			selection = MultiRange.createMultiRange(model.getFrameSelection());
@@ -163,7 +158,8 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 				}
 			}
 		} catch (Exception e) {
-			throw new OperationException(this, "Cannot load file with ROIs", e);
+			String msg = String.format("Cannot load file '%s' with ROIs", file);
+			throw new OperationException(this, msg, e);
 		}
 	}
 
@@ -355,7 +351,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 				log.appendFailure("Could not parse Nexus file %s to find %s", filePath, dataPath);
 			} else if (n instanceof DataNode) {
 				DataNode d = (DataNode) n;
-				// xip is [N,7]
+				// xip is [F,N,7]
 				// 0,1: x,y centroids w/o eta correction
 				// 2,3: x,y centroids w/ eta correction
 				// 4  : y w/ eta and iso-linear corrections
@@ -423,11 +419,13 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			// per image, separate by sum
 			List<Double> cX = new ArrayList<>();
 			List<Double> cY = new ArrayList<>();
+			List<Integer> cV = new ArrayList<>();
 			boolean save = true;
 			boolean all = model.isSaveAllPositions();
 			for (int r = 0; r < roiMax; r++) {
 				cX.clear();
 				cY.clear();
+				cV.clear();
 				int j = 0;
 				for (int i = 0, imax = allSums.size(); i < imax; i++) {
 					Dataset sums = allSums.get(i);
@@ -440,23 +438,25 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 					int[] hMultiple = allMultiple[r][j] = new int[bmax];
 					StraightLine line = getStraightLine(r);
 					IRectangularROI roi = getROI(r);
-					int hits = shiftAndBinPhotonEvents(false, 0, 0, single, multiple, bin, bmax, save, cX, cY, line, roi, sums,
+					int hits = shiftAndBinPhotonEvents(false, 0, 0, single, multiple, bin, bmax, save, cX, cY, cV, line, roi, sums,
 							posn, hSingle, hMultiple);
 
 					log.append("Binned %d events in region %d from %d events in frame %d", hits, r, sums.getSize(), i);
 
-					if (save && !all) {
+					if (save && !all) { // then only save photon data from first frame and first region
 						save = false;
 					}
 					j++;
 				}
 				int side = cX.size();
 				if (side > 0) {
-					save = false;
 					Dataset t;
 					t = DatasetFactory.createFromList(cY);
 					MetadataUtils.setAxes(t, ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cX), "x"));
 					t.setName("photon_positions_" + r);
+					summaryData.add(t);
+					t = DatasetFactory.createFromList(cV);
+					t.setName("photon_values_" + r);
 					summaryData.add(t);
 				}
 
@@ -474,11 +474,16 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			List<Double>[] cXs = new List[2 * roiMax];
 			@SuppressWarnings("unchecked")
 			List<Double>[] cYs = new List[2 * roiMax];
+			@SuppressWarnings("unchecked")
+			List<Integer>[] cVs = new List[2 * roiMax];
 			for (int r = 0; r < 2*roiMax; r++) {
 				cXs[r] = new ArrayList<>();
 				cYs[r] = new ArrayList<>();
+				cVs[r] = new ArrayList<>();
 			}
-			boolean save = model.isSaveAllPositions();
+
+			boolean save = true;
+			boolean all = model.isSaveAllPositions();
 			double offsetX = shape[1]/2; // correct for XIP coords being relative to CCD
 			for (int s = 0; s < 2; s++) {
 				int nx = s + 1;
@@ -501,20 +506,36 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 						int j = 2*r + q - 1;
 						List<Double> cX = cXs[j];
 						List<Double> cY = cYs[j];
+						List<Integer> cV = cVs[j];
 	
 						int[] hSingle = allSingle[j + roiMax][0];
 						if (hSingle == null) {
 							allSingle[j + roiMax][0] = hSingle = new int[bmax];
 						}
-						int hits = shiftAndBinPhotonEvents(true, s*offsetX, 0, 1, Integer.MAX_VALUE, bin, bmax, save, cX, cY, line, roi, sums,
-							posn, hSingle, null);
+
+						int hits;
+						if (all || !save) {
+							hits = shiftAndBinPhotonEvents(true, s*offsetX, 0, 1, Integer.MAX_VALUE, bin, bmax, save,
+									cX, cY, cV, line, roi, sums, posn, hSingle, null);
+						} else { // split first frame
+							Slice slice = new Slice(1);
+							hits = shiftAndBinPhotonEvents(true, s*offsetX, 0, 1, Integer.MAX_VALUE, bin, bmax, true,
+									cX, cY, cV, line, roi, sums.getSliceView(slice), posn.getSliceView(slice), hSingle, null);
+							slice = new Slice(1, null, null);
+							hits += shiftAndBinPhotonEvents(true, s*offsetX, 0, 1, Integer.MAX_VALUE, bin, bmax, false,
+									cX, cY, cV, line, roi, sums.getSliceView(slice), posn.getSliceView(slice), hSingle, null);
+						}
 						log.append("Binned %d events in region %d from XIP %d", hits, r, s);
+					}
+					if (save && !all) { // then only save photon data from first frame and first region
+						save = false;
 					}
 				}
 			}
 			for (int n = 0; n < 2*roiMax; n++) {
 				List<Double> cX = cXs[n];
 				List<Double> cY = cYs[n];
+				List<Integer> cV = cVs[n];
 				int side = cX.size();
 				if (side == 0) {
 					continue;
@@ -530,6 +551,9 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 					log.append("Saving %d non-zero eta-corrected events from XIP for region %d", side, r);
 					t.setName("xip_eta_photon_positions_" + r);
 				}
+				summaryData.add(t);
+				t = DatasetFactory.createFromList(cV);
+				t.setName("xip_photon_values_" + r);
 				summaryData.add(t);
 			}
 
@@ -651,7 +675,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 						continue;
 					}
 					Dataset posn = allPositions.get(i);
-					shiftAndBinPhotonEvents(false, 0, offset, single, multiple, bin, bmax, false, null, null, line, roi, sums,
+					shiftAndBinPhotonEvents(false, 0, offset, single, multiple, bin, bmax, false, null, null, null, line, roi, sums,
 							posn, hSingle, hMultiple);
 				}
 
@@ -812,7 +836,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 
 	// bins photons according to their locations
 	private static int shiftAndBinPhotonEvents(boolean flip, double offsetX, double offsetY, int single, int multiple, int bin, int bmax, boolean save,
-			List<Double> cX, List<Double> cY, StraightLine line, IRectangularROI roi, Dataset sums, Dataset posn, int[] hSingle, int[] hMultiple) {
+			List<Double> cX, List<Double> cY, List<Integer> cV, StraightLine line, IRectangularROI roi, Dataset sums, Dataset posn, int[] hSingle, int[] hMultiple) {
 		final double slope = -line.getParameterValue(STRAIGHT_LINE_M);
 		final int ix = flip ? 0 : 1;
 		final int iy = 1 - ix;
@@ -833,12 +857,13 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 				continue; // separate by regions
 			}
 
-			double ps = sums.getDouble(sp);
+			int ps = sums.getInt(sp);
 
 			// add coords
 			if (save && ps > 0) {
 				cX.add(px);
 				cY.add(py);
+				cV.add(ps);
 			}
 
 			// correct for tilt

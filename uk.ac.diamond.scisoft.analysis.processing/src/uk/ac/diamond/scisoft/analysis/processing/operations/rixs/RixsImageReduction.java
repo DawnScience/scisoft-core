@@ -41,6 +41,11 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 	private Dataset[] summaryStore;
 
 	@Override
+	public String getFilenameSuffix() {
+		return "rixs_spectra";
+	}
+
+	@Override
 	void updateFromModel(boolean throwEx, String name) {
 		super.updateFromModel(throwEx, name);
 

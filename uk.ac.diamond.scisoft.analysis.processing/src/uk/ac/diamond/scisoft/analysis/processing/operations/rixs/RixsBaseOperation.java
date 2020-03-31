@@ -77,6 +77,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	private double drainCurrent;
 	private BooleanDataset usedFrames = null;
 	private double detectorAngle = Double.NaN;
+	private double cropY = -1; // negative for no crop
 
 	@Override
 	public void setModel(T model) {
@@ -152,9 +153,12 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			updateFromModel(true, null);
 			parseNexusFile(smd.getFilePath());
 			if (model.isCropROI() && SubtractFittedBackgroundOperation.isDataFromAndor(smd, input)) {
-				updateROIForAndor(detectorAngle);
+				cropY = calculateCropYForAndor(detectorAngle);
+			} else {
+				cropY = -1;
 			}
 		}
+
 		if (currentCountTime != null) {
 			countTime += ((Number) currentCountTime.getSlice(si.getInputSliceWithoutDataDimensions()).sum(true)).doubleValue();
 		}
@@ -172,6 +176,9 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		IDataset result = input;
 		for (int r = 0; r < roiMax; r++) {
 			roi = getROI(r);
+			if (cropY > 0) {
+				roi = cropROIForAndor(roi);
+			}
 			result = processRegion(s, input, roi, r);
 		}
 
@@ -186,18 +193,34 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		return od;
 	}
 
-	private void updateROIForAndor(double detectorAngle) {
-		IRectangularROI r = model.getRoiA();
-		if (Double.isFinite(detectorAngle) && r instanceof RectangularROI) {
-			RectangularROI roi = (RectangularROI) r;
-			double ey = roi.getEndPoint()[1];
+	private double calculateCropYForAndor(double detectorAngle) {
+		if (Double.isFinite(detectorAngle)) {
 			// formula to fit (12., 1200.), (20., 1600.), (30., 1800.)
 			double cy = 2048. - 132.3922 / Math.tan(Math.toRadians(detectorAngle - 3.1425));
-			if (cy > ey) {
+
+			log.append("Setting crop y for Andor to %g", cy);
+			return cy;
+		}
+		return -1;
+	}
+
+	/**
+	 * Crop ROI for Andor if necessary
+	 * @param r
+	 * @return cropped ROI or original
+	 */
+	private IRectangularROI cropROIForAndor(IRectangularROI r) {
+		if (r instanceof RectangularROI) {
+			double ey = r.getEndPoint()[1];
+			if (cropY < ey) {
+				RectangularROI roi = ((RectangularROI) r).copy();
 				double[] l = roi.getLengths();
-				l[1] = Math.floor(l[1] + ey - cy);
+				l[1] = Math.floor(l[1] + cropY - ey);
+				return roi;
 			}
 		}
+
+		return r;
 	}
 
 	private IDataset processRegion(int s, IDataset input, IRectangularROI roi, int r) {

@@ -10,6 +10,9 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.utils;
 
 import java.io.Serializable;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
@@ -18,6 +21,7 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
@@ -120,5 +124,63 @@ public class ProcessingUtils {
 		}
 	
 		throw new OperationException(operation, NexusConstants.PROCESS + " node not found: " + processName);
+	}
+	
+	/**
+	 * Resolve the full path to a file from a relative path string
+	 * and the path to a base file.
+	 * <p>
+	 * If relative, the path input string must use unix-style forward slash
+	 * as a separator.
+	 * <p>
+	 * If path is an absolute path it will be returned unmodified.
+	 * 
+	 * If baseFile is null, path will be returned even if relative.
+	 * 
+	 * @param path
+	 * @param baseFile
+	 * @return fullPath
+	 */
+	public static String resolvePath(String path, String baseFile) {
+		
+		FileSystem fs = FileSystems.getDefault();
+		
+		Path p = fs.getPath(path);
+		
+		//hopefully if baseFile is null returning the relative path
+		// should show a sensible error
+		if (p.isAbsolute() || baseFile == null) {
+			return path;
+		}
+		
+		Path pp = fs.getPath(baseFile);
+		Path resolved = pp.getParent().resolve(p);
+		return resolved.normalize().toString();
+		
+	}
+	
+	/**
+	 * Resolve the full path to a file from a relative path string
+	 * and the path to a base file from the {@link SliceFromSeriesMetadata} in the dataset.
+	 * <p>
+	 * Extracts the path to the file containing the dataset from the metadata, then calls
+	 * {@link ProcessingUtils#resolvePath(String, String)}
+	 * 
+	 * @param path
+	 * @param dataset
+	 * @return fullPath
+	 */
+	public static String resolvePath(String path, IDataset dataset) {
+		
+		SliceFromSeriesMetadata md = dataset.getFirstMetadata(SliceFromSeriesMetadata.class);
+		
+		String baseFile = null;
+		
+		if (md != null) {
+			baseFile = md.getFilePath();
+		}
+		
+		return resolvePath(path, baseFile);
+		
 	}
 }

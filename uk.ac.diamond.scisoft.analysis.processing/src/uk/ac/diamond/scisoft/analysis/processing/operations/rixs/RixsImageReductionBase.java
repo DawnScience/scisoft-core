@@ -664,6 +664,9 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			if (model.getCorrelateOption() == CORRELATE_PHOTON.USE_INTENSITY_SHIFTS) {
 				for (int i = 0, imax = allSingle[r].length; i < imax; i++) { // image to image shifts
 					double offset = shift.get(i);
+					if (Double.isNaN(offset)) {
+						continue;
+					}
 					int[] hSingle = new int[bmax];
 					int[] hMultiple = new int[bmax];
 					allSingle[r][i] = hSingle; // need to repopulate as previous arrays are referenced in datasets
@@ -827,7 +830,8 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 
 		shift.clear();
 		for (int i = 0; i < sArray.length; i++) {
-			shift.add(results.get(2*i).getDouble());
+			Dataset d = results.get(2*i);
+			shift.add(d == null ? Double.NaN : d.getDouble());
 		}
 		summaryData.add(ProcessingUtils.createNamedDataset((Serializable) shift, prefix + "shift_" + r));
 

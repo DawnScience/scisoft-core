@@ -182,7 +182,7 @@ public class RegisterNoisyData1D implements DatasetToDatasetFunction {
 
 	/**
 	 * @param datasets array of datasets
-	 * @return pairs of datasets of shift and shifted data
+	 * @return pairs of datasets of shift and shifted data. These pairs can be null when shift cannot be found
 	 */
 	@Override
 	public List<Dataset> value(IDataset... datasets) {
@@ -247,9 +247,9 @@ public class RegisterNoisyData1D implements DatasetToDatasetFunction {
 	
 			// create all values for A and b as list of rows
 			List<double[]> list = new ArrayList<>();
-			int rlen = n;
-			for (int i = 0; i < n - 1; i++) {
-				double[] rowk0 = new double[rlen];
+			int rend = n - 1;
+			for (int i = 0; i < rend; i++) {
+				double[] rowk0 = new double[n];
 				rowk0[i] = 1;
 				Dataset cf = Maths.conjugate(filtered.get(datasets[i]));
 				shift = ccFindShift(cf, datasets[i+1]);
@@ -259,11 +259,11 @@ public class RegisterNoisyData1D implements DatasetToDatasetFunction {
 					}
 					monitor.worked(1);
 				}
-				rowk0[rlen - 1] = shift;
+				rowk0[rend] = shift;
 				list.add(rowk0);
 	
 				for (int j = i + 2; j < n; j++) {
-					rowk0 = new double[rlen];
+					rowk0 = new double[n];
 					for (int l = i; l < j; l++) {
 						rowk0[l] = 1;
 					}
@@ -275,7 +275,7 @@ public class RegisterNoisyData1D implements DatasetToDatasetFunction {
 						}
 						monitor.worked(1);
 					}
-					rowk0[rlen - 1] = shift;
+					rowk0[rend] = shift;
 					list.add(rowk0);
 				}
 			}
@@ -315,9 +315,9 @@ public class RegisterNoisyData1D implements DatasetToDatasetFunction {
 					monitor.worked(1);
 				}
 	//			System.err.println("Useable " + Arrays.toString(use));
-			} while (used >= rlen - 1);
+			} while (used >= rend);
 	
-			if (used < rlen - 1) { // dropped too many rows
+			if (used < rend) { // dropped too many rows
 				return null;
 			}
 	
@@ -349,9 +349,14 @@ public class RegisterNoisyData1D implements DatasetToDatasetFunction {
 			Dataset cf = Maths.conjugate(filtered.get(datasets[0]));
 			for (int i = 1; i < n; i++) {
 				shift = ccFindShift(cf, datasets[i]);
-				result.add(DatasetFactory.createFromObject(shift));
-				shiftedImage = shiftData ? RegisterData1D.shiftData(DatasetUtils.convertToDataset(datasets[i]), shift) : null;
-				result.add(shiftedImage);
+				if (Double.isNaN(shift)) {
+					result.add(null);
+					result.add(null);
+				} else {
+					result.add(DatasetFactory.createFromObject(shift));
+					shiftedImage = shiftData ? RegisterData1D.shiftData(DatasetUtils.convertToDataset(datasets[i]), shift) : null;
+					result.add(shiftedImage);
+				}
 				if (monitor != null) {
 					if(monitor.isCancelled()) {
 						return result;
@@ -420,17 +425,20 @@ public class RegisterNoisyData1D implements DatasetToDatasetFunction {
 	 * Find shift in cross-correlation peak
 	 * @param fim
 	 * @param imb
-	 * @return shift
+	 * @return shift or {@link Double#NaN} if cannot find shift
 	 */
 	public double ccFindShift(IDataset fim, IDataset imb) {
 		Dataset cc = crossCorrelate(fim, imb);
 		int[] maxpos = cc.maxPos(); // peak pos
 		// crop to threshold intercept with at least one side of peak and find centroid
-		double threshold = cc.max().doubleValue() * peakThresholdFraction;
 		int left = maxpos[0];
 		int right = left;
 		int rMax = cc.getSize() - 1;
+		if (left == 0 || right == rMax) {
+			return Double.NaN;
+		}
 		double sum = cc.max().doubleValue(), sum0 = sum*left;
+		double threshold = cc.max().doubleValue() * peakThresholdFraction;
 		double vl, vr;
 		boolean bl = true, br = true;
 		do {

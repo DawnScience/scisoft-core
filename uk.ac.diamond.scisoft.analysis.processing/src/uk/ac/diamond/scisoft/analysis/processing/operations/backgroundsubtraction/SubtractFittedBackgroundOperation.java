@@ -674,7 +674,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		if (si.isFirstSlice()) {
 			log.clear();
 
-			autoFindShadowRegion = isDataFromAndor(ssm);
+			autoFindShadowRegion = isDataFromAndor(ssm, input);
 			createDarkData(ssm);
 
 			if (smoothedDarkData != null) {
@@ -727,15 +727,21 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 	}
 
 	private static final String ANDOR = "andor";
+	private static final int[] ANDOR_SHAPE = new int[] {2048, 2048};
 
 	/**
 	 * Check if data is from Andor detector 
 	 * @param ssm
-	 * @return true if dataset path contains "andor"
+	 * @param input 
+	 * @return true if dataset path contains "andor" and dataset has correct shape
 	 */
-	public static boolean isDataFromAndor(SliceFromSeriesMetadata ssm) {
+	public static boolean isDataFromAndor(SliceFromSeriesMetadata ssm, IDataset input) {
 		String n = ssm.getDatasetName();
-		return n.contains(ANDOR); // only true for Andor
+		if (n.contains(ANDOR)) { // only true for Andor of given shape
+			int[] shape = input instanceof Dataset ? ((Dataset) input).getShapeRef() : input.getShape();
+			return shape.length >= 2 && ANDOR_SHAPE[0] == shape[shape.length - 2] && ANDOR_SHAPE[1] == shape[shape.length - 1];
+		}
+		return false;
 	}
 
 	// make display datasets here to be recorded in file

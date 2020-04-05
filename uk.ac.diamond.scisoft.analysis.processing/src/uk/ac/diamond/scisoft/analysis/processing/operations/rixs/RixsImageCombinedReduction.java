@@ -67,6 +67,7 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 		em.setRoiA(model.getRoiA());
 		em.setRoiB(model.getRoiB());
 		em.setEnergyDirection(model.getEnergyDirection());
+		em.setCropROI(model.isCropROI());
 		em.setUseCutoff(model.isElUseCutoff());
 		em.setCutoff(model.getElCutoff());
 		em.setCutoffSize(model.getElCutoffSize());

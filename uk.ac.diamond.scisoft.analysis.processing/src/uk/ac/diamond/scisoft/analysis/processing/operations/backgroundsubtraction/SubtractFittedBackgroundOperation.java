@@ -477,7 +477,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 			darkImageCountTime = getCountTime(file).getDouble();
 
-			dark.squeezeEnds();
+			dark = dark.getSliceView().squeezeEnds();
 			Dataset d;
 			if (dark.getRank() == 2) {
 				try {

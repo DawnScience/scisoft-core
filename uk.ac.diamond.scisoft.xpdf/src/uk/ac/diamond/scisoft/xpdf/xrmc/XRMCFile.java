@@ -3,7 +3,7 @@ package uk.ac.diamond.scisoft.xpdf.xrmc;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 public class XRMCFile implements Serializable {
 	

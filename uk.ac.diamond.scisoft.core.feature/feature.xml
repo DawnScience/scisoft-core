@@ -76,7 +76,7 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="org.apache.commons.lang"
+         id="org.apache.commons.lang3"
          download-size="0"
          install-size="0"
          version="0.0.0"

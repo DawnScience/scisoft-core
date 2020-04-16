@@ -12,7 +12,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 import java.util.Collection;
 import java.util.Map;
 
-import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.lang3.SerializationUtils;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.ILazyDataset;

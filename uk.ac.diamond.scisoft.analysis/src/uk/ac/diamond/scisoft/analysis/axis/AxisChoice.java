@@ -11,7 +11,7 @@ package uk.ac.diamond.scisoft.analysis.axis;
 
 import java.util.Arrays;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.eclipse.january.dataset.ILazyDataset;
 
 /**

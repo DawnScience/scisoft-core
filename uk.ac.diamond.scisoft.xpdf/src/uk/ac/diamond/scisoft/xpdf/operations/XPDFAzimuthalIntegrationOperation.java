@@ -12,7 +12,7 @@ package uk.ac.diamond.scisoft.xpdf.operations;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;

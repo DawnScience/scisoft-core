@@ -14,7 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.lang3.SerializationUtils;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.january.dataset.Dataset;
@@ -113,7 +113,7 @@ public class ADSCImageTest {
 		Assert.assertEquals("Metadata", md.getDetector2DProperties(), cmd.getDetector2DProperties());
 
 		// test cloning serialization
-		cmd = (IDiffractionMetadata) SerializationUtils.clone(md);
+		cmd = SerializationUtils.clone(md);
 		Assert.assertEquals("Metadata", md.getDiffractionCrystalEnvironment(), cmd.getDiffractionCrystalEnvironment());
 		Assert.assertEquals("Metadata", md.getDetector2DProperties(), cmd.getDetector2DProperties());
 	}

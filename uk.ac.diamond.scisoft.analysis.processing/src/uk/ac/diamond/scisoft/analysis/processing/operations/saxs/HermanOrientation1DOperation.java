@@ -14,7 +14,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.saxs;
 import java.util.Arrays;
 
 // Imports from org.apache
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 // Imports from org.eclipse.january
 import org.eclipse.january.IMonitor;

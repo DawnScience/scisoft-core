@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.IntegersIterator;
 import org.eclipse.january.dataset.PositionIterator;

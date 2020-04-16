@@ -12,7 +12,7 @@ package org.eclipse.dawnsci.json.test;
 import static org.eclipse.dawnsci.json.test.JsonUtils.assertJsonEquals;
 import static org.junit.Assert.assertEquals;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.dawnsci.analysis.api.persistence.IMarshallerService;
 import org.eclipse.dawnsci.analysis.api.roi.IROI;
 import org.eclipse.dawnsci.analysis.dataset.roi.CircularROI;

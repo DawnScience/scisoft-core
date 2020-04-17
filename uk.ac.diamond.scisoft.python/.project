@@ -5,7 +5,6 @@
 	<projects>
 		<project>org.dawnsci.boofcv</project>
 		<project>org.eclipse.dawnsci.plotting.api</project>
-		<project>tp</project>
 		<project>uk.ac.diamond.scisoft.analysis</project>
 		<project>uk.ac.diamond.scisoft.analysis.plotclient</project>
 		<project>uk.ac.diamond.scisoft.analysis.plotserver</project>

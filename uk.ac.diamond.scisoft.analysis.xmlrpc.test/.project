@@ -3,7 +3,6 @@
 	<name>uk.ac.diamond.scisoft.analysis.xmlrpc.test</name>
 	<comment></comment>
 	<projects>
-		<project>tp</project>
 		<project>uk.ac.diamond.scisoft.analysis</project>
 		<project>org.eclipse.dawnsci.analysis.api</project>
 	</projects>

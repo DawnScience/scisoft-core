@@ -8,7 +8,6 @@
 		<project>org.eclipse.dawnsci.analysis.dataset</project>
 		<project>org.eclipse.dawnsci.analysis.tree</project>
 		<project>org.eclipse.dawnsci.hdf5</project>
-		<project>tp</project>
 		<project>uk.ac.diamond.CBFlib</project>
 	</projects>
 	<buildSpec>

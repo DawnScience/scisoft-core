@@ -3,7 +3,6 @@
 	<name>uk.ac.diamond.scisoft.deprecated</name>
 	<comment></comment>
 	<projects>
-		<project>tp</project>
 		<project>uk.ac.diamond.scisoft.analysis</project>
 		<project>uk.ac.gda.nexus</project>
 	</projects>
@@ -32,6 +31,5 @@
 	<natures>
 		<nature>org.eclipse.pde.PluginNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
-		<nature>org.python.pydev.pythonNature</nature>
 	</natures>
 </projectDescription>

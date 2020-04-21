@@ -28,6 +28,11 @@ class DefaultNexusScanFile implements NexusScanFile {
 	}
 	
 	@Override
+	public String getFilePath() {
+		return filePath;
+	}
+
+	@Override
 	public void openToWrite() throws NexusException {
 		if (nexusFile != null) {
 			throw new IllegalStateException("NexusFile is already open.");

@@ -22,6 +22,12 @@ import org.eclipse.dawnsci.nexus.NexusFile;
 public interface NexusScanFile extends AutoCloseable {
 	
 	/**
+	 * Returns the path of this nexus scan file.
+	 * @return path of file
+	 */
+	public String getFilePath();
+	
+	/**
 	 * Opens the file to write. SWMR mode is also enabled.
 	 * @throws NexusException if the file could not be opened for any reason
 	 */

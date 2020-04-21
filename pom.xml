@@ -11,7 +11,7 @@
 		<groupId>uk.ac.diamond</groupId>
 		<artifactId>uk.ac.diamond.aggregator</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../daq-aggregator</relativePath>
+		<relativePath>../daq-aggregator.git</relativePath>
 	</parent>
 
 	<modules>

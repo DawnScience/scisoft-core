@@ -774,6 +774,12 @@ public class Utils {
 		return ePath;
 	}
 
+	/**
+	 * Find external file by checking parent's directory
+	 * @param parent
+	 * @param ePath external file path
+	 * @return absolute file path or null if not found
+	 */
 	static String findExternalFilePath(final String parent, String ePath) {
 		return findExternalFilePath(null, parent, ePath);
 	}

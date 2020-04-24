@@ -34,10 +34,12 @@ public class AnalysisRpcBasicRemoteTest {
 				.runPythonFileBackground("src/uk/ac/diamond/scisoft/analysis/rpc/rpcremote.py");
 
 		try {
+			Thread.sleep(3000); // add delay to ensure client is receiving
+
 			// Create a new client to connect to the server (note that the ports match)
 			AnalysisRpcClient analysisRpcClient = new AnalysisRpcClient(PORT);
 
-			Thread.sleep(500); // add delay to ensure client is receiving
+			Thread.sleep(3000); // add delay to ensure client is receiving
 
 			// Set up arguments to pass
 			Dataset cosInput = DatasetFactory.createRange(IntegerDataset.class, 100);

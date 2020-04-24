@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Xmlrpc
+Bundle-Name: XMLRPC
 Bundle-SymbolicName: uk.ac.diamond.scisoft.analysis.xmlrpc
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

@@ -17,8 +17,6 @@ import org.python.core.PyFloat;
 import org.python.core.PyObjectDerived;
 import org.python.util.PythonInterpreter;
 
-import uk.ac.diamond.scisoft.python.JythonInterpreterUtils;
-
 public class JythonInterpreterUtilsTest {
 
 	

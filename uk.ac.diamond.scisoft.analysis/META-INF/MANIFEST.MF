@@ -3,7 +3,7 @@ Dependency-Note: No new dependencies may be added to this plugin
 Manifest-Version: 1.0
 Eclipse-BundleShape: dir
 Bundle-ManifestVersion: 2
-Bundle-Name: Analysis Plug-in
+Bundle-Name: Scisoft Analysis
 Bundle-SymbolicName: uk.ac.diamond.scisoft.analysis;singleton:=true
 Bundle-Version: 1.5.0.qualifier
 Bundle-Vendor: Diamond Light Source

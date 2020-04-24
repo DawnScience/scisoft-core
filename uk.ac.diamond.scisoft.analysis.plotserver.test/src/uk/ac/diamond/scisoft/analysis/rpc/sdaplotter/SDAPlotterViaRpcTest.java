@@ -55,15 +55,28 @@ public class SDAPlotterViaRpcTest extends SDAPlotterTestAbstract {
 		// Launch the AnalysisRpc server that receives our requests and sends them back to us
 		AnalysisRpcServerProvider.getInstance().startServer();
 		// sleep as possible fix for SCI-1893
-		Thread.sleep(1000);
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		String[] envp = new String[] {"SCISOFT_RPC_PORT=" + AnalysisRpcServerProvider.getInstance().getPort()};
 		pythonRunInfo = PythonHelper
 				.runPythonFileBackground("../uk.ac.diamond.scisoft.python/test/scisoftpy/loopback.py", new String[] {"../uk.ac.diamond.scisoft.python/src/"}, envp);
 		// sleep as possible fix for SCI-1893
-		Thread.sleep(1000);
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
 		sdaPlotterImplUnderTest = new ReDirectOverRpcPlotterImpl();
 		// sleep as possible fix for SCI-1893
-		Thread.sleep(1000);
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void checkPythonState() {

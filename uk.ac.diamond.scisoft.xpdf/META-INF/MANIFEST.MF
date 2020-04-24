@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Xpdf
+Bundle-Name: XPDF
 Bundle-SymbolicName: uk.ac.diamond.scisoft.xpdf;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Require-Bundle: org.apache.commons.math3;bundle-version="[3.2.0,4.0.0)",

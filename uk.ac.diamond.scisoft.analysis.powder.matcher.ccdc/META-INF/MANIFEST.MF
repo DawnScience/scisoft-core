@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Eclipse-BundleShape: dir
 Bundle-ManifestVersion: 2
-Bundle-Name: CCDC
+Bundle-Name: CellMatcher
 Bundle-SymbolicName: uk.ac.diamond.scisoft.analysis.powder.matcher.ccdc
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: uk.ac.diamond.scisoft.analysis.powder.matcher.ccdc.Activator
@@ -13,13 +13,12 @@ Require-Bundle: org.eclipse.ui,
  uk.ac.diamond.org.apache.xmlrpc.common;bundle-version="3.1.3",
  uk.ac.diamond.scisoft.analysis.xmlrpc;bundle-version="1.0.0",
  org.dawnsci.python.rpc;bundle-version="1.0.0",
- org.dawnsci.processing.python;bundle-version="1.0.0"
+ org.dawnsci.processing.python;bundle-version="1.0.0",
+ uk.ac.diamond.scisoft.analysis.powder.indexer
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: org.dawb.common.util.eclipse,
  org.eclipse.core.resources,
  org.osgi.service.event;version="1.3.1",
- org.slf4j;version="1.7.22",
- uk.ac.diamond.scisoft.analysis.powder.indexer.crystal,
- uk.ac.diamond.scisoft.analysis.powder.indexer.indexers
+ org.slf4j;version="1.7.22"
 Export-Package: uk.ac.diamond.scisoft.analysis.powder.matcher.ccdc

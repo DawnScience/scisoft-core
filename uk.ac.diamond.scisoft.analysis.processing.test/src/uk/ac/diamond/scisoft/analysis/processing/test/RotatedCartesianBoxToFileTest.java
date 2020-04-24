@@ -10,7 +10,8 @@ package uk.ac.diamond.scisoft.analysis.processing.test;
 
 import java.io.File;
 
-import org.eclipse.dawnsci.analysis.api.processing.IOperation;
+import org.dawnsci.persistence.PersistenceServiceCreator;
+import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
@@ -28,11 +29,12 @@ import org.junit.Test;
 import uk.ac.diamond.scisoft.analysis.processing.OperationServiceImpl;
 import uk.ac.diamond.scisoft.analysis.processing.operations.RotatedCartesianBox;
 import uk.ac.diamond.scisoft.analysis.processing.operations.RotatedCartesianBoxModel;
+import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
+import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
 import uk.ac.diamond.scisoft.analysis.processing.visitor.NexusFileExecutionVisitor;
 
 public class RotatedCartesianBoxToFileTest {
-	
-private static IOperationService service;
+	private static IOperationService service;
 	
 	/**
 	 * Manually creates the service so that no extension points have to be read.
@@ -43,7 +45,9 @@ private static IOperationService service;
 	@BeforeClass
 	public static void before() throws Exception {
 		service = new OperationServiceImpl();
-		
+		new NexusFileExecutionVisitor().setPersistenceService(PersistenceServiceCreator.createPersistenceService());
+		OperationRunnerImpl.setRunner(ExecutionType.SERIES, new SeriesRunner());
+
 		// Just read all these operations.
 		service.createOperations(service.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.operations");
 	}
@@ -78,7 +82,7 @@ private static IOperationService service;
 		lz.addMetadata(am);
 		
 		//pixel integration
-		final IOperation rotatedCartesianBox = new RotatedCartesianBox();
+		final RotatedCartesianBox rotatedCartesianBox = new RotatedCartesianBox();
 		RotatedCartesianBoxModel parameters = new RotatedCartesianBoxModel();
 		parameters.setRoi(new RectangularROI(30,30,40,40,0.0));
 		rotatedCartesianBox.setModel(parameters);

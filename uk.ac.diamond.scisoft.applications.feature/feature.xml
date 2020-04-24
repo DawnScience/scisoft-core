@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="uk.ac.diamond.scisoft.applications.feature"
-      label="Scisoft Applications"
+      label="Scisoft Applications Feature"
       version="1.0.0.qualifier">
 
    <description url="https://www.dawnsci.org/">

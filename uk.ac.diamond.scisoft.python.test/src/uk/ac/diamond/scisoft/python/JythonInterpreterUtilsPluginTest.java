@@ -43,7 +43,7 @@ public class JythonInterpreterUtilsPluginTest {
 		try{
 			jyTestInt = JythonInterpreterUtils.getBasicInterpreter(null);
 		} catch (Exception e) {
-			fail("Starting Jython interpreter failed!");
+			fail("Starting Jython interpreter failed: " + e);
 		}
 		
 		// Have we *really* got a python interpreter???
@@ -76,7 +76,7 @@ public class JythonInterpreterUtilsPluginTest {
 		try{
 			jyTestInt = JythonInterpreterUtils.getScisoftpyInterpreter();
 		} catch (Exception e) {
-			fail("Starting Jython interpreter failed!");
+			fail("Starting Jython interpreter failed: " + e);
 		}
 		
 		// Have we *really* got a python interpreter???
@@ -114,7 +114,7 @@ public class JythonInterpreterUtilsPluginTest {
 		try{
 			jyTestInt = JythonInterpreterUtils.getFullInterpreter(JythonInterpreterUtils.class.getClassLoader());
 		} catch (Exception e) {
-			fail("Starting Jython interpreter failed!");
+			fail("Starting Jython interpreter failed: " + e);
 		}
 	}
 }

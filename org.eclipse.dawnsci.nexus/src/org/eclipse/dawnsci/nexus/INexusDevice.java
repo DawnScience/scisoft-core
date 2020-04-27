@@ -29,6 +29,12 @@ import org.eclipse.january.dataset.LazyDataset;
  *
  */
 public interface INexusDevice<N extends NXobject> {
+	
+	/**
+	 * Returns the name of this nexus device.
+	 * @return name of nexus device
+	 */
+	public String getName();
 
 	/**
 	 * Returns the object provider required for writing correct NeXus files.

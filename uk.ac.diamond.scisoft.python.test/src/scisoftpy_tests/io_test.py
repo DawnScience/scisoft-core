@@ -25,15 +25,15 @@ import unittest
 import scisoftpy as dnp
 
 import os
+isjava = os.name == 'java'
 
 from os import path
 TestFolder = path.dirname(__file__) + "/../../../uk.ac.diamond.scisoft.analysis.test/testfiles/images/"
 
 IOTestFolder = TestFolder + "../gda/analysis/io/"
 OutTestFolder = TestFolder + "../../test-scratch/"
-
-import os
-isjava = os.name == 'java'
+if not path.exists(OutTestFolder):
+    os.mkdir(OutTestFolder)
 
 class Test(unittest.TestCase):
     def load(self, name, testfolder=TestFolder):
@@ -49,7 +49,6 @@ class Test(unittest.TestCase):
         return im[0]
 
     def testLoading(self):
-        import os
         print(os.getcwd())
         self.load("test.png")
         self.load("testrgb.png")

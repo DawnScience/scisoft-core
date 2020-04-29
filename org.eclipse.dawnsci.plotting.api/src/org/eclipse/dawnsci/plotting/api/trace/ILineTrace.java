@@ -33,6 +33,9 @@ public interface ILineTrace extends ITrace {
 
 		/** Dash Line */
 		DASH_LINE("Dash Line", true),
+		
+		/** Dot Line */
+		DOT_LINE("Dot Line", true),
 
 		/** Only draw point whose style is defined by pointStyle.
 		 * Its size is defined by pointSize. */

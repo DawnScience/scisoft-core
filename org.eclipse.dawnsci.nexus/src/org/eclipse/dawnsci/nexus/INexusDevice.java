@@ -35,7 +35,7 @@ public interface INexusDevice<N extends NXobject> {
 	 * @return name of nexus device
 	 */
 	public String getName();
-
+	
 	/**
 	 * Returns the object provider required for writing correct NeXus files.
 	 * 

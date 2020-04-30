@@ -7,7 +7,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
+import org.eclipse.dawnsci.nexus.INexusDevice;
+import org.eclipse.dawnsci.nexus.NXaperture;
 import org.eclipse.dawnsci.nexus.NXdetector;
 import org.eclipse.dawnsci.nexus.NXinstrument;
 import org.eclipse.dawnsci.nexus.NXpositioner;
@@ -20,6 +25,10 @@ import org.eclipse.dawnsci.nexus.device.impl.NexusDeviceService;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+/**
+ * Test for {@link NexusDeviceService} and various implementations of {@link INexusDevice} that
+ * allow nexus devices to be added to a scan.
+ */
 public class NexusDeviceServiceTest {
 	
 	public static class TestPositioner extends AbstractNexusObjectProvider<NXpositioner> {
@@ -58,6 +67,31 @@ public class NexusDeviceServiceTest {
 		instrument.setPositioner("testPositioner", positioner);
 		positioner.setValueScalar(2.34);
 		
+		// build the nexus tree and compare it to the expected tree
+		final TreeFile actualTree = buildNexusTree(nexusDevice);
+		assertNexusTreesEqual(expectedTree, actualTree);
+	}
+	
+	@Test
+	public void testNexusMetadataDevice() throws Exception {
+		final NexusMetadataDevice nexusDevice = new NexusMetadataDevice("aperture", NexusBaseClass.NX_APERTURE);
+		final Map<String, Object> nexusMetadata = new HashMap<String, Object>();
+		nexusMetadata.put(NXaperture.NX_MATERIAL, "cobalt");
+		nexusMetadata.put(NXaperture.NX_DESCRIPTION, "description of aperture");
+		nexusDevice.setNexusMetadata(nexusMetadata);
+		
+		((NexusDeviceService) nexusDeviceService).register(nexusDevice);
+		assertThat(nexusDeviceService.getNexusDevice(nexusDevice.getName()), is(sameInstance(nexusDevice)));
+		
+		// construct the expected tree
+		final TreeFile expectedTree = buildEmptyTree();
+		final NXinstrument instrument = ((NXroot) expectedTree.getGroupNode()).getEntry().getInstrument();
+		final NXaperture aperture = NexusNodeFactory.createNXaperture();
+		instrument.setAperture("aperture", aperture);
+		aperture.setMaterialScalar("cobalt");
+		aperture.setDescriptionScalar("description of aperture");
+		
+		// build the nexus tree and compare it to the expected tree
 		final TreeFile actualTree = buildNexusTree(nexusDevice);
 		assertNexusTreesEqual(expectedTree, actualTree);
 	}

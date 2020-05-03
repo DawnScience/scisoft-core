@@ -1,6 +1,7 @@
 package org.eclipse.dawnsci.nexus.device;
 
 import org.eclipse.dawnsci.nexus.INexusDevice;
+import org.eclipse.dawnsci.nexus.INexusDeviceDecorator;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.january.INameable;
 
@@ -27,5 +28,18 @@ public interface INexusDeviceService {
 	 * @return the nexus device with the given name
 	 */
 	public <N extends NXobject> INexusDevice<N> getNexusDevice(String name);
+	
+	/**
+	 * Gets the decorated nexus device for the given nexus device if one is registered,
+	 * otherwise returns the given nexus device as is. The decorator should be an
+	 * instance of {@link INexusDeviceDecorator}. It will be looked up by name
+	 * and its {@link INexusDeviceDecorator#setDecorated(INexusDevice)} called with the
+	 * given nexus device.
+	 *  
+	 * @param <N> subclass of {@link NXobject} created by the given device, and the decorator (if applicable)
+	 * @param nexusDevice the nexus device to decorate, if a decorator is registered
+	 * @return
+	 */
+	public <N extends NXobject> INexusDevice<N> getNexusDevice(INexusDevice<N> nexusDevice);
 	
 }

@@ -13,6 +13,8 @@ import org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusFileBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 import org.eclipse.dawnsci.nexus.builder.impl.DefaultNexusBuilderFactory;
+import org.eclipse.dawnsci.nexus.device.INexusDeviceService;
+import org.eclipse.dawnsci.nexus.device.impl.NexusDeviceService;
 
 /**
  * A utility class to build a nexus tree structure from a set of INexusDevices.
@@ -26,15 +28,17 @@ import org.eclipse.dawnsci.nexus.builder.impl.DefaultNexusBuilderFactory;
  */
 public class NexusDeviceFileBuilder {
 	
-	private NexusDeviceFileBuilder() {
-		// private constructor to prevent instatiation
+	private final INexusDeviceService nexusDeviceService;
+	
+	public NexusDeviceFileBuilder(INexusDeviceService nexusDeviceService) {
+		this.nexusDeviceService = nexusDeviceService;
 	}
 	
-	public static TreeFile buildEmptyTree() throws NexusException {
+	public TreeFile buildEmptyTree() throws NexusException {
 		return buildNexusTree();
 	}
 	
-	public static TreeFile buildNexusTree(INexusDevice<?>... nexusDevices) throws NexusException {
+	public TreeFile buildNexusTree(INexusDevice<?>... nexusDevices) throws NexusException {
 		final NexusScanInfo scanInfo = new NexusScanInfo(Arrays.asList("stagey", "stagex"));
 		scanInfo.setRank(2);
 		// note: we don't save the nexus tree to file as we can check just structure of the nexus tree 
@@ -48,17 +52,17 @@ public class NexusDeviceFileBuilder {
 		return fileBuilder.getNexusTree();
 	}
 	
-	private static void addNexusDevice(NexusEntryBuilder entryBuilder, INexusDevice<?> nexusDevice, NexusScanInfo scanInfo) throws NexusException {
-		final NexusObjectProvider<?> nexusObjectProvider = nexusDevice.getNexusProvider(scanInfo);
+	private void addNexusDevice(NexusEntryBuilder entryBuilder, INexusDevice<?> nexusDevice, NexusScanInfo scanInfo) throws NexusException {
+		final INexusDevice<?> decoratedNexusDevice = nexusDeviceService.getNexusDevice(nexusDevice);
+		
+		final NexusObjectProvider<?> nexusObjectProvider = decoratedNexusDevice.getNexusProvider(scanInfo);
 		if (nexusObjectProvider != null) {
 			entryBuilder.add(nexusObjectProvider);
 		}
-		final CustomNexusEntryModification customNexusEntryModification = nexusDevice.getCustomNexusModification();
+		final CustomNexusEntryModification customNexusEntryModification = decoratedNexusDevice.getCustomNexusModification();
 		if (customNexusEntryModification != null) {
 			entryBuilder.modifyEntry(customNexusEntryModification);
 		}
 	}
-	
-
 
 }

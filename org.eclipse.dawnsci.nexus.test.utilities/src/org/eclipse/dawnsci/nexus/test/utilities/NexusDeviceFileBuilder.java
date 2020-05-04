@@ -14,7 +14,6 @@ import org.eclipse.dawnsci.nexus.builder.NexusFileBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 import org.eclipse.dawnsci.nexus.builder.impl.DefaultNexusBuilderFactory;
 import org.eclipse.dawnsci.nexus.device.INexusDeviceService;
-import org.eclipse.dawnsci.nexus.device.impl.NexusDeviceService;
 
 /**
  * A utility class to build a nexus tree structure from a set of INexusDevices.

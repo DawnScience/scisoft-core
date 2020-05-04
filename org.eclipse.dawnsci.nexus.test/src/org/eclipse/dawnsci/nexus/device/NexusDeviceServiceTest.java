@@ -165,4 +165,34 @@ public class NexusDeviceServiceTest {
 		assertNexusTreesEqual(expectedTree, actualTree);
 	}
 	
+	@Test
+	public void testNexusMetadataAppender() throws Exception {
+		final NexusObjectProvider<NXpositioner> nexusObjectProvider = new TestPositioner();
+		final String deviceName = nexusObjectProvider.getName();
+		final SimpleNexusDevice<NXpositioner> nexusDevice = new SimpleNexusDevice<NXpositioner>(nexusObjectProvider); 
+		
+		final NexusMetadataAppender<NXpositioner> metadataAppender = new NexusMetadataAppender<>("testPositioner");
+		final Map<String, Object> nexusMetadata = new HashMap<>();
+		nexusMetadata.put(NXpositioner.NX_NAME, "testPositioner");
+		nexusMetadata.put(NXpositioner.NX_ACCELERATION_TIME, 10.23);
+		nexusMetadata.put(NXpositioner.NX_DESCRIPTION, "description of positioner");
+		metadataAppender.setNexusMetadata(nexusMetadata);
+		((NexusDeviceService) nexusDeviceService).register(metadataAppender);
+		assertThat(nexusDeviceService.getNexusDevice(deviceName), is(sameInstance(metadataAppender)));
+		
+		// Construct the expected tree
+		final TreeFile expectedTree = nexusDeviceBuilder.buildEmptyTree();
+		final NXinstrument instrument = ((NXroot) expectedTree.getGroupNode()).getEntry().getInstrument();
+		final NXpositioner positioner = NexusNodeFactory.createNXpositioner();
+		instrument.setPositioner(nexusObjectProvider.getName(), positioner);
+		positioner.setValueScalar(2.34);
+		positioner.setNameScalar("testPositioner");
+		positioner.setAcceleration_timeScalar(10.23);
+		positioner.setDescriptionScalar("description of positioner");
+		
+		// build the nexus tree and compare it to the expected tree
+		final TreeFile actualTree = nexusDeviceBuilder.buildNexusTree(nexusDevice);
+		assertNexusTreesEqual(expectedTree, actualTree);
+	}
+	
 }

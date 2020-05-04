@@ -6,6 +6,7 @@ import java.util.function.Function;
 
 import org.eclipse.dawnsci.nexus.INexusDevice;
 import org.eclipse.dawnsci.nexus.INexusDeviceDecorator;
+import org.eclipse.dawnsci.nexus.NXdata;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusScanInfo;
@@ -17,6 +18,15 @@ import org.eclipse.dawnsci.nexus.builder.NexusObjectWrapper;
  * A type of {@link INexusDeviceDecorator} that appends (by adding fields and/or attributes),
  * to the nexus object returned by calling {@link INexusDevice#getNexusProvider(NexusScanInfo)}
  * on the decorated {@link INexusDevice}.
+ * <p>
+ * There are two ways this class can be used. Either:<ul>
+ *   <li>Create a subclass of this class and override {@link #appendNexusObject(NXobject)}, or another
+ *   {@code appendNexusObject} method if it is necessary to make changes to the {@link AbstractNexusObjectProvider}
+ *   or information from the {@link NexusScanInfo} is needed;</li>
+ *   <li>Supply a {@link Consumer} for the appropriate kind of nexus object.</li>
+ * </ul>
+ * The first option is more suitable to creating an appender via spring configuration, the second is more
+ * easier to use when doing so programatically in Java code.
  * 
  * @author Matthew Dickie
  *
@@ -55,24 +65,31 @@ public class NexusObjectAppender<N extends NXobject> extends AbstactNexusDecorat
 	
 	/**
 	 * Override this method to append to a nexus object if information from the {@link NexusScanInfo}
-	 * is required. Otherwise it is preferred to override {@link #appendNexusObject(NXobject)}.
-	 * @param nexusObject
-	 * @param scanInfo
-	 * @return
+	 * is required, or it is required to make changes to the {@link AbstractNexusObjectProvider},
+	 * Otherwise it is preferred to override {@link #appendNexusObject(NXobject)}.
+	 * @param nexusObject nexus object to append
+	 * @param provider nexus object provider with more information about how to use the nexus object, update if necesssary
+	 * @param scanInfo scan information with information about the scan which may be of use, such as the scan size,
+	 *    and the devices in the scan 
 	 */
-	protected void appendNexusObject(N nexusObject, AbstractNexusObjectProvider<N> wrapper, NexusScanInfo info) {
-		appendNexusObject(nexusObject, wrapper);
+	protected void appendNexusObject(N nexusObject, AbstractNexusObjectProvider<N> provider, NexusScanInfo info) {
+		appendNexusObject(nexusObject, provider);
 	}
 	
+	/**
+	 * Override this method to append to a nexus object if it is required to make changes to the {@link AbstractNexusObjectProvider}. 
+	 * @param nexusObject nexus object to append
+	 * @param provider nexus object provider with more information about how to use the nexus object, update if necessary
+	 */
 	protected void appendNexusObject(N nexusObject, AbstractNexusObjectProvider<N> wrapper) {
 		appendNexusObject(nexusObject);
 	}
 	
 	
 	/**
-	 * Appends a nexus object.  
-	 * @param nexusObject
-	 * @return
+	 * Appends a nexus object. Override this method if no changes need to be made to the
+	 * {@link AbstractNexusObjectProvider} (e.g. names of data fields, etc).
+	 * @param nexusObject nexus object to append
 	 */
 	protected void appendNexusObject(N nexusObject) {
 		appender.ifPresent(dec -> dec.accept(nexusObject));

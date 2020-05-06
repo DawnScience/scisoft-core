@@ -21,9 +21,14 @@ Created on 1 May 2011
 '''
 import unittest
 import scisoftpy.python.pyrpc as rpc
-import six.moves._thread
 
 PORT = 8713
+
+def _start_new_thread(target):
+    import threading
+    t = threading.Thread(target=target)
+    t.start()
+
 
 def catTwoStrings(string1, string2):
     return string1 + string2
@@ -35,7 +40,7 @@ class Test(unittest.TestCase):
         rpcserver = rpc.rpcserver(PORT)
         rpcserver.add_handler("cat", catTwoStrings)
         
-        six.moves._thread.start_new_thread(rpcserver.serve_forever, ())
+        _start_new_thread(rpcserver.serve_forever)
         try:
             rpcclient = rpc.rpcclient(PORT)
             result = rpcclient.cat("Hello, ", "World!")

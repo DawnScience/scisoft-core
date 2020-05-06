@@ -18,8 +18,11 @@ import os, sys
 scisoftpath = os.path.abspath(os.path.join('..', 'uk.ac.diamond.scisoft.python', 'src'))
 sys.path.append(scisoftpath)
 import scisoftpy as dnp #@UnresolvedImport
-from SimpleXMLRPCServer import SimpleXMLRPCServer
-from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler
+
+try:
+    from SimpleXMLRPCServer import SimpleXMLRPCServer, SimpleXMLRPCRequestHandler
+except ImportError: # Python 3
+    from xmlrpc.server import SimpleXMLRPCServer, SimpleXMLRPCRequestHandler
 
 # Create server
 class RequestHandler(SimpleXMLRPCRequestHandler):

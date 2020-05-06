@@ -21,16 +21,17 @@ import unittest
 
 import scisoftpy.python.pyplot as plot
 import scisoftpy.python.pyrpc as rpc
-import six.moves._thread
 
-PORT = 8719
+PORT = 8715
+
+from pyrpc_test import _start_new_thread
 
 class Test(unittest.TestCase):
 
     def setUp(self):
         self.rpcserver = rpc.rpcserver(PORT)
         self.rpcserver.add_handler('SDAPlotter', lambda plotter_method_name, *args: (plotter_method_name, args))
-        six.moves._thread.start_new_thread(self.rpcserver.serve_forever, ())
+        _start_new_thread(self.rpcserver.serve_forever)
         
         self.plot = plot.plotter()
         plot.setremoteport(PORT)

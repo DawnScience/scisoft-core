@@ -23,7 +23,6 @@ Provide a loop back mechanism that allows Java to call into this script and have
 import os, sys
 sys.path.append(sys.argv[1])
 import scisoftpy as dnp #@UnresolvedImport
-import thread
 
 server = dnp.rpc.rpcserver(8912)
 server.add_handler("addpoints",    lambda *args: dnp.plot.addpoints(*args))

@@ -19,13 +19,14 @@ scisoftpath = os.path.abspath(os.path.join('..', 'uk.ac.diamond.scisoft.python',
 sys.path.append(scisoftpath)
 
 import scisoftpy as dnp #@UnresolvedImport
-import thread
+import threading
 
 internal_rpcclient = dnp.rpc.rpcclient(8715)
 rpcserver = dnp.rpc.rpcserver(8714)
 rpcserver.add_handler("loopback", lambda arg: arg)
 rpcserver.add_handler("loopback_after_local", lambda arg: internal_rpcclient.loopback(arg))
-thread.start_new_thread(rpcserver.serve_forever, ())
+t = threading.Thread(target=rpcserver.serve_forever)
+t.start()
 
 # This is the server that is going to loopback locally to python
 rpcserver = dnp.rpc.rpcserver(8715)

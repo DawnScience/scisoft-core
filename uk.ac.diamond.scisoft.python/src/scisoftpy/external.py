@@ -53,7 +53,6 @@ if py3:
     import subprocess as sub
 else:
     from cPickle import dump as _psave, load as _pload
-    import os
     if os.name == 'posix':
         try:
             import subprocess32 as sub
@@ -67,11 +66,17 @@ def save_args(arg, dir=None): #@ReservedAssignment
     '''Save arguments as files in a temporary directory
     Use pickle for most objects but use NumPy's npy format for arrays
     arg -- sequence of arguments
-    
+    dir -- if None then create a secure temporary, else create if does not exist
     Return name of directory used
     '''
-    import tempfile as _tmp
-    d = _tmp.mkdtemp(prefix='ef-args', dir=dir)
+    if dir is not None:
+        if not _path.isdir(dir):
+            os.mkdir(dir)
+        d = dir
+    else:
+        import tempfile as _tmp
+        d = _tmp.mkdtemp(prefix='ef-args', dir=dir)
+
     _n, tree = _pickle(d, arg, 0) # pickle non-sequences
     # now do argument structure
     with open(_path.join(d, 'tree.pkl'), 'wb') as f:
@@ -394,7 +399,6 @@ while True:
         TIMEOUT = 0.005
         def __init__(self, exe='python', env=None):
             if env is None:
-                import os
                 env = dict(os.environ)
                 env.pop(_PYTHONPATH)
 #             print('PyExe: %s' % exe, file=sys.stderr)

@@ -15,6 +15,7 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.LongDataset;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.plotserver.GuiPlotMode;
@@ -52,6 +53,7 @@ abstract public class SDAPlotterTestAbstract {
 		Assert.assertEquals(ds, testPlotServer.getLastDataBean().getData().get(0).getData());
 	}
 
+	@Ignore("Not implemented since 20181011")
 	@Test
 	public void testImagesPlot() throws Exception {
 		Dataset ds = DatasetFactory.createRange(LongDataset.class, 100);

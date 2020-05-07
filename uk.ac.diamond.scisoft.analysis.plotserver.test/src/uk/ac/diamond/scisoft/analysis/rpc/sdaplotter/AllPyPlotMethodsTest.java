@@ -14,6 +14,7 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.MockSDAPlotter;
@@ -189,6 +190,7 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		Assert.assertTrue(passed[0]);
 	}
 
+	@Ignore("Not implemented since 20181011")
 	@Test
 	public void testImagesPlotStringIDatasetArray() throws Exception {
 		passed[0] = false;
@@ -219,6 +221,7 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		Assert.assertTrue(passed[0]);
 	}
 
+	@Ignore("Not implemented since 20181011")
 	@Test
 	public void testImagesPlotStringIDatasetIDatasetIDatasetArray() throws Exception {
 		passed[0] = false;
@@ -260,6 +263,7 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		Assert.assertTrue(passed[0]);
 	}
 
+	@Ignore("Not implemented since 20181106")
 	@Test
 	public void testScatter3DPlotStringIDatasetIDatasetIDatasetIDataset() throws Exception {
 		passed[0] = false;
@@ -274,6 +278,7 @@ public class AllPyPlotMethodsTest extends SDAPlotterTestsUsingLoopbackTestAbstra
 		Assert.assertTrue(passed[0]);
 	}
 
+	@Ignore("Not implemented since 20181106")
 	@Test
 	public void testScatter3DPlotOverStringIDatasetIDatasetIDatasetIDataset() throws Exception {
 		passed[0] = false;

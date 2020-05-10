@@ -21,6 +21,12 @@ import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 public interface IMultipleNexusDevice {
 	
 	/**
+	 * Returns the name of the device
+	 * @return name of device
+	 */
+	public String getName();
+	
+	/**
 	 * Returns the object providers required for writing correct NeXus files.
 	 * 
 	 * @see INexusDevice#getNexusProvider(NexusScanInfo)

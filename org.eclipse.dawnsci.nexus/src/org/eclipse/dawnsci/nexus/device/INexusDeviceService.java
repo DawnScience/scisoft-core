@@ -30,7 +30,18 @@ public interface INexusDeviceService {
 	public <N extends NXobject> INexusDevice<N> getNexusDevice(String name);
 	
 	/**
-	 * Gets the decorated nexus device for the given nexus device if one is registered,
+	 * Returns the decorator for the given name, if one is registered. This can be used
+	 * to query or update the decorators properties. It should not be used to decorate a
+	 * nexus device as the method {@link #decorateNexusDevice(INexusDevice)} is provided
+	 * for that purpose
+	 * @param <N>
+	 * @param name
+	 * @return
+	 */
+	public <N extends NXobject> INexusDeviceDecorator<N> getDecorator(String name);
+	
+	/**
+	 * Returns the decorated nexus device for the given nexus device if one is registered,
 	 * otherwise returns the given nexus device as is. The decorator should be an
 	 * instance of {@link INexusDeviceDecorator}. It will be looked up by name
 	 * and its {@link INexusDeviceDecorator#setDecorated(INexusDevice)} called with the
@@ -40,6 +51,6 @@ public interface INexusDeviceService {
 	 * @param nexusDevice the nexus device to decorate, if a decorator is registered
 	 * @return
 	 */
-	public <N extends NXobject> INexusDevice<N> getNexusDevice(INexusDevice<N> nexusDevice);
+	public <N extends NXobject> INexusDevice<N> decorateNexusDevice(INexusDevice<N> nexusDevice);
 	
 }

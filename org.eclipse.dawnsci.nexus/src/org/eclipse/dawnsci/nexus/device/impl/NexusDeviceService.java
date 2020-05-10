@@ -15,6 +15,8 @@ import org.eclipse.dawnsci.nexus.device.INexusDeviceService;
  */
 public class NexusDeviceService implements INexusDeviceService {
 
+	private Map<String, INexusDeviceDecorator<?>> nexusDecorators = new HashMap<>();
+	
 	private Map<String, INexusDevice<?>> nexusDevices = new HashMap<>();
 	
 	public <N extends NXobject> void register(INexusDevice<N> nexusDevice) {
@@ -22,7 +24,11 @@ public class NexusDeviceService implements INexusDeviceService {
 			throw new IllegalArgumentException("the nexus device name is not set");
 		}
 		
-		nexusDevices.put(nexusDevice.getName(), nexusDevice);
+		if (nexusDevice instanceof INexusDeviceDecorator<?>) {
+			nexusDecorators.put(nexusDevice.getName(), (INexusDeviceDecorator<?>) nexusDevice);
+		} else {
+			nexusDevices.put(nexusDevice.getName(), nexusDevice);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -34,17 +40,27 @@ public class NexusDeviceService implements INexusDeviceService {
 		
 		throw new IllegalArgumentException("Cannot find nexus device with name: " + name);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public <N extends NXobject> INexusDeviceDecorator<N> getDecorator(String name) {
+		if (nexusDecorators.containsKey(name)) {
+			return (INexusDeviceDecorator<N>) nexusDecorators.get(name);
+		}
+		
+		throw new IllegalArgumentException("Cannot find nexus decorator with name: " + name);
+	}
 
 	@Override
-	public <N extends NXobject> INexusDevice<N> getNexusDevice(INexusDevice<N> nexusDevice) {
+	public <N extends NXobject> INexusDevice<N> decorateNexusDevice(INexusDevice<N> nexusDevice) {
 		final String deviceName = nexusDevice.getName();
-		if (!nexusDevices.containsKey(deviceName)) {
+		if (!nexusDecorators.containsKey(deviceName)) {
 			return nexusDevice;
 		}
 		
 		// Get the existing nexus device if there is one
 		@SuppressWarnings("unchecked")
-		final INexusDevice<N> existingNexusDevice = (INexusDevice<N>) nexusDevices.get(deviceName);
+		final INexusDevice<N> existingNexusDevice = (INexusDevice<N>) nexusDecorators.get(deviceName);
 		if (existingNexusDevice instanceof INexusDeviceDecorator<?>) {
 			// If it is a decorator, set the decorated nexus device to be the one passed in.
 			((INexusDeviceDecorator<N>) existingNexusDevice).setDecorated(nexusDevice);
@@ -52,7 +68,6 @@ public class NexusDeviceService implements INexusDeviceService {
 		}
 		
 		// otherwise use the passed in nexusDevice, replacing the old one in the caches 
-		nexusDevices.put(deviceName, nexusDevice);
 		return nexusDevice;
 	}
 

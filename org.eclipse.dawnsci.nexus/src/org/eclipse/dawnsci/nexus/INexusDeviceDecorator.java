@@ -17,7 +17,7 @@ public interface INexusDeviceDecorator<N extends NXobject> extends INexusDevice<
 	
 	/**
 	 * Set the decorated nexus device. This method should not be called by client code. It is called
-	 * by the implementation of {@link INexusDeviceService#getNexusDevice(INexusDevice)} is called
+	 * by the implementation of {@link INexusDeviceService#decorateNexusDevice(INexusDevice)} is called
 	 * with an {@link INexusDevice} with a name for which this {@link INexusDeviceDecorator} has been
 	 * registered with the {@link INexusDeviceService} by calling {@link INexusDeviceService#register(INexusDevice)}.
 	 * @param decorated

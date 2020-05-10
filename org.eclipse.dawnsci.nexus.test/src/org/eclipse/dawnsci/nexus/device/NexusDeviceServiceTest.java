@@ -118,7 +118,7 @@ public class NexusDeviceServiceTest {
 		
 		// create the appender and register it
 		((NexusDeviceService) nexusDeviceService).register(nexusAppender);
-		assertThat(nexusDeviceService.getNexusDevice(deviceName), is(sameInstance(nexusAppender)));
+		assertThat(nexusDeviceService.getDecorator(deviceName), is(sameInstance(nexusAppender)));
 		
 		// Construct the expected tree
 		final TreeFile expectedTree = nexusDeviceBuilder.buildEmptyTree();
@@ -150,7 +150,7 @@ public class NexusDeviceServiceTest {
 		// create the appender and register it
 		final NexusObjectAppender<NXpositioner> nexusAppender = new NexusObjectAppender<>(deviceName, appenderConsumer);
 		((NexusDeviceService) nexusDeviceService).register(nexusAppender);
-		assertThat(nexusDeviceService.getNexusDevice(deviceName), is(sameInstance(nexusAppender)));
+		assertThat(nexusDeviceService.getDecorator(deviceName), is(sameInstance(nexusAppender)));
 		
 		// Construct the expected tree
 		final TreeFile expectedTree = nexusDeviceBuilder.buildEmptyTree();
@@ -178,7 +178,7 @@ public class NexusDeviceServiceTest {
 		nexusMetadata.put(NXpositioner.NX_DESCRIPTION, "description of positioner");
 		metadataAppender.setNexusMetadata(nexusMetadata);
 		((NexusDeviceService) nexusDeviceService).register(metadataAppender);
-		assertThat(nexusDeviceService.getNexusDevice(deviceName), is(sameInstance(metadataAppender)));
+		assertThat(nexusDeviceService.getDecorator(deviceName), is(sameInstance(metadataAppender)));
 		
 		// Construct the expected tree
 		final TreeFile expectedTree = nexusDeviceBuilder.buildEmptyTree();

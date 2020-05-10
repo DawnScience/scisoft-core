@@ -52,7 +52,7 @@ public class NexusDeviceFileBuilder {
 	}
 	
 	private void addNexusDevice(NexusEntryBuilder entryBuilder, INexusDevice<?> nexusDevice, NexusScanInfo scanInfo) throws NexusException {
-		final INexusDevice<?> decoratedNexusDevice = nexusDeviceService.getNexusDevice(nexusDevice);
+		final INexusDevice<?> decoratedNexusDevice = nexusDeviceService.decorateNexusDevice(nexusDevice);
 		
 		final NexusObjectProvider<?> nexusObjectProvider = decoratedNexusDevice.getNexusProvider(scanInfo);
 		if (nexusObjectProvider != null) {

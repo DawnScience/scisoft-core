@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.nexus.builder.AbstractNexusObjectProvider;
 import org.eclipse.dawnsci.nexus.builder.CustomNexusEntryModification;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
+import org.eclipse.dawnsci.nexus.device.INexusDeviceService;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.LazyDataset;
 
@@ -102,6 +103,17 @@ public interface INexusDevice<N extends NXobject> {
 	 */
 	default CustomNexusEntryModification getCustomNexusModification() {
 		return null;
+	}
+	
+	/**
+	 * Registers this {@link INexusDevice} with the {@link INexusDeviceService}. Clients may use this to register
+	 * {@link INexusDevice}s to be looked up later by name. Note that this is not necessary for most devices,
+	 * if they can be found some other way. It is however nec for {@link INexusDeviceDecorator}s to call this 
+	 * method in order to decorate a device with the same name when
+	 * {@link INexusDeviceService#getNexusDevice(INexusDevice)} is called, for example a device that adds metadata. 
+	 */
+	default void register() {
+		ServiceHolder.getNexusDeviceService().register(this);
 	}
 	
 }

@@ -7,7 +7,8 @@ import org.eclipse.dawnsci.nexus.NexusScanInfo;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 
 /**
- * 
+ * A simple nexus device that always returns the same {@link NexusObjectProvider}. This class is useful when
+ * you have an {@link NexusObjectProvider} and want to use an API that expects an {@link INexusDevice}.
  * 
  * @author Matthew Dickie
  *

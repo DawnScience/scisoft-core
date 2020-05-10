@@ -2,4 +2,5 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="true" name="NeXus Service Holder">
    <implementation class="org.eclipse.dawnsci.nexus.ServiceHolder"/>
    <reference bind="setNexusFileFactory" cardinality="1..1" interface="org.eclipse.dawnsci.nexus.INexusFileFactory" name="INexusFileFactory" policy="static"/>
+   <reference bind="setNexusDeviceService" cardinality="1..1" interface="org.eclipse.dawnsci.nexus.device.INexusDeviceService" name="INexusDeviceService" policy="static"/>
 </scr:component>

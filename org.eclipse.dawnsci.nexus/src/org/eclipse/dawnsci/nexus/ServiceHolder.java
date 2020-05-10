@@ -11,8 +11,11 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.nexus;
 
+import org.eclipse.dawnsci.nexus.device.INexusDeviceService;
 
 public class ServiceHolder {
+	
+	private static INexusDeviceService nexusDeviceService;
 	
 	private static INexusFileFactory nexusFileFactory;
 	
@@ -22,6 +25,14 @@ public class ServiceHolder {
 	
 	public void setNexusFileFactory(INexusFileFactory nexusFileFactory) {
 		ServiceHolder.nexusFileFactory = nexusFileFactory;
+	}
+	
+	public static INexusDeviceService getNexusDeviceService() {
+		return nexusDeviceService;
+	}
+	
+	public void setNexusDeviceService(INexusDeviceService nexusDeviceService) {
+		ServiceHolder.nexusDeviceService = nexusDeviceService;
 	}
 
 }

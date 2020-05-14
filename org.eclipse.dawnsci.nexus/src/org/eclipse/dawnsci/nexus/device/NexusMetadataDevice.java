@@ -13,6 +13,12 @@ import org.eclipse.dawnsci.nexus.NexusScanInfo;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectWrapper;
 
+/**
+ * A simple metadata {@link INexusDevice} that adds metadata as scalar fields according to the
+ * {@link Map} as set by {@link #setNexusMetadata(Map)}.
+ * 
+ * @author Matthew Dickie
+ */
 public class NexusMetadataDevice implements INexusDevice<NXobject> {
 	
 	private NexusBaseClass nexusBaseClass;
@@ -55,6 +61,10 @@ public class NexusMetadataDevice implements INexusDevice<NXobject> {
 	
 	public void addNexusMetadata(String name, Object value) {
 		nexusMetadata.put(name, value);
+	}
+	
+	public Map<String, Object> getNexusMetadata() {
+		return nexusMetadata;
 	}
 	
 	@Override

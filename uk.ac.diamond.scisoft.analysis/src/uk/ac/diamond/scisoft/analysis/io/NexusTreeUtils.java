@@ -2329,6 +2329,9 @@ public class NexusTreeUtils {
 		double[] bc = dp.getBeamCentreCoords();
 		addDataNode(g, DETECTOR_BEAMCENTERX, dp.getHPxSize()*bc[0], "mm");
 		addDataNode(g, DETECTOR_BEAMCENTERY, dp.getVPxSize()*bc[1], "mm");
+		
+		addDataNode(g, DETECTOR_XPIXELSIZE, dp.getHPxSize(), "mm");
+		addDataNode(g, DETECTOR_YPIXELSIZE, dp.getVPxSize(), "mm");
 
 		addDataNode(g, TRANSFORMATIONS_DEPENDSON, CURRENT_DIR_PREFIX + "transformations/euler_c", null);
 

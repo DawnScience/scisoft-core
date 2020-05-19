@@ -27,6 +27,10 @@ import org.eclipse.dawnsci.nexus.device.INexusDeviceService;
  */
 public class NexusDeviceFileBuilder {
 	
+	// A dummy name to give TreeFiles if one isn't specified. A TreeFile can't be created without a name,
+	// but the normal use case for the returned TreeFile is just to check its structure in-memory.
+	private static final String DUMMY_FILE_NAME = "dummy.nxs";
+	
 	private final INexusDeviceService nexusDeviceService;
 	
 	public NexusDeviceFileBuilder(INexusDeviceService nexusDeviceService) {
@@ -38,11 +42,15 @@ public class NexusDeviceFileBuilder {
 	}
 	
 	public TreeFile buildNexusTree(INexusDevice<?>... nexusDevices) throws NexusException {
+		return buildNexusTree(DUMMY_FILE_NAME, nexusDevices);
+	}
+	
+	public TreeFile buildNexusTree(String fileName, INexusDevice<?>... nexusDevices) throws NexusException {
 		final NexusScanInfo scanInfo = new NexusScanInfo(Arrays.asList("stagey", "stagex"));
 		scanInfo.setRank(2);
 		// note: we don't save the nexus tree to file as we can check just structure of the nexus tree 
 		final NexusBuilderFactory factory = new DefaultNexusBuilderFactory();
-		final NexusFileBuilder fileBuilder = factory.newNexusFileBuilder("text.nxs");
+		final NexusFileBuilder fileBuilder = factory.newNexusFileBuilder(fileName);
 		final NexusEntryBuilder entryBuilder = fileBuilder.newEntry();
 		entryBuilder.addDefaultGroups();
 		for (INexusDevice<?> nexusDevice : nexusDevices) {

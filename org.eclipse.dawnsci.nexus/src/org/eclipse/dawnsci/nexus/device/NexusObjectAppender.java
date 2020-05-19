@@ -71,8 +71,9 @@ public class NexusObjectAppender<N extends NXobject> extends AbstactNexusDecorat
 	 * @param provider nexus object provider with more information about how to use the nexus object, update if necesssary
 	 * @param scanInfo scan information with information about the scan which may be of use, such as the scan size,
 	 *    and the devices in the scan 
+	 * @throws NexusException 
 	 */
-	protected void appendNexusObject(N nexusObject, AbstractNexusObjectProvider<N> provider, NexusScanInfo info) {
+	protected void appendNexusObject(N nexusObject, AbstractNexusObjectProvider<N> provider, NexusScanInfo info) throws NexusException {
 		appendNexusObject(nexusObject, provider);
 	}
 	
@@ -80,8 +81,9 @@ public class NexusObjectAppender<N extends NXobject> extends AbstactNexusDecorat
 	 * Override this method to append to a nexus object if it is required to make changes to the {@link AbstractNexusObjectProvider}. 
 	 * @param nexusObject nexus object to append
 	 * @param provider nexus object provider with more information about how to use the nexus object, update if necessary
+	 * @throws NexusException 
 	 */
-	protected void appendNexusObject(N nexusObject, AbstractNexusObjectProvider<N> wrapper) {
+	protected void appendNexusObject(N nexusObject, AbstractNexusObjectProvider<N> wrapper) throws NexusException {
 		appendNexusObject(nexusObject);
 	}
 	
@@ -91,7 +93,7 @@ public class NexusObjectAppender<N extends NXobject> extends AbstactNexusDecorat
 	 * {@link AbstractNexusObjectProvider} (e.g. names of data fields, etc).
 	 * @param nexusObject nexus object to append
 	 */
-	protected void appendNexusObject(N nexusObject) {
+	protected void appendNexusObject(N nexusObject) throws NexusException {
 		appender.ifPresent(dec -> dec.accept(nexusObject));
 	}
 	

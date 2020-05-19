@@ -33,10 +33,14 @@ import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusUtils;
 import org.eclipse.dawnsci.nexus.ServiceHolder;
+import org.eclipse.dawnsci.nexus.device.INexusDeviceService;
+import org.eclipse.dawnsci.nexus.device.impl.NexusDeviceService;
 
 public class NexusTestUtils {
 
 	private static INexusFileFactory nexusFileFactory = new NexusFileFactoryHDF5();
+	
+	private static INexusDeviceService nexusDeviceService = new NexusDeviceService();
 	
 	private static INexusFileFactory getNexusFileFactory() {
 		return nexusFileFactory;
@@ -45,6 +49,7 @@ public class NexusTestUtils {
 	public static void setUpServices() {
 		ServiceHolder serviceHolder = new ServiceHolder();
 		serviceHolder.setNexusFileFactory(nexusFileFactory);
+		serviceHolder.setNexusDeviceService(nexusDeviceService);
 	}
 	
 	/**

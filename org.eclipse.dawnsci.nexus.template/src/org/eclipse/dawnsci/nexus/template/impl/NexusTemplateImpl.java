@@ -2,12 +2,14 @@ package org.eclipse.dawnsci.nexus.template.impl;
 
 import java.util.Map;
 
+import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.template.NexusTemplate;
 import org.eclipse.dawnsci.nexus.template.impl.tree.InMemoryNexusContext;
+import org.eclipse.dawnsci.nexus.template.impl.tree.LocalInMemoryNexusContext;
 import org.eclipse.dawnsci.nexus.template.impl.tree.NexusContext;
 import org.eclipse.dawnsci.nexus.template.impl.tree.OnDiskNexusContext;
 import org.slf4j.Logger;
@@ -44,6 +46,14 @@ class NexusTemplateImpl implements NexusTemplate {
 		logger.debug("Applying template {} to in-memory nexus tree", templateName);
 		final NexusContext nexusContext = new InMemoryNexusContext(tree);
 		applyTemplate(nexusContext);
+	}
+	
+	@Override
+	public GroupNode createNew() throws NexusException {
+		logger.debug("Creating new nexus object from template {}", templateName);
+		final LocalInMemoryNexusContext nexusContext = new LocalInMemoryNexusContext();
+		applyTemplate(nexusContext);
+		return nexusContext.getNexusRoot();
 	}
 
 	@Override

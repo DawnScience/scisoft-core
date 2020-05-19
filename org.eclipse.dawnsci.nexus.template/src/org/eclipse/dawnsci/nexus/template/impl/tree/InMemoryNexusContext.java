@@ -1,91 +1,34 @@
 package org.eclipse.dawnsci.nexus.template.impl.tree;
 
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
-import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.SymbolicNode;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
-import org.eclipse.dawnsci.nexus.NXobject;
-import org.eclipse.dawnsci.nexus.NexusBaseClass;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.template.NexusTemplateConstants;
-import org.eclipse.dawnsci.nexus.template.NexusTemplateConstants.ApplicationMode;
-import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * A {@link NexusContext} to abstract adding nodes to an in-memory nexus tree.
+ * A {@link NexusContext} to abstract adding nodes to an in-memory nexus tree. This
+ * context should be used when we have access to the whole nexus tree. Unlike {@link LocalInMemoryNexusContext}
+ * it allows the creation of hard links to any existing node in the nexus tree. It also allows
+ * copying of group nodes and attribute values from elsewhere in the nexus tree.
  */
-public class InMemoryNexusContext implements NexusContext {
-	
-	private static final Logger logger = LoggerFactory.getLogger(InMemoryNexusContext.class);
-	
-	private final Tree tree;
+public class InMemoryNexusContext extends AbstractInMemoryNexusContext {
 	
 	public InMemoryNexusContext(Tree tree) {
-		this.tree = tree;
+		super(tree);
 	}
 	
-	@Override
-	public ApplicationMode getApplicationMode() {
-		return ApplicationMode.IN_MEMORY;
-	}
-	
-	private void logDebug(String pattern, Object... arguments) {
-		if (logger.isDebugEnabled()) {
-			// replace any nodes with their paths within the nexus file
-			// getting the path uses a breadth-first search, so we only do it if we have to
-			for (int i = 0; i < arguments.length; i++) {
-				if (arguments[i] instanceof Node) {
-					arguments[i] = TreeUtils.getPath(tree, (Node) arguments[i]);
-				}
-			}
-			logger.debug(pattern, arguments);
-		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.dawnsci.nexus.template.impl.tree.NexusContext#getNexusRoot()
-	 */
-	@Override
-	public GroupNode getNexusRoot() {
-		return tree.getGroupNode();
-	}
-
 	@Override
 	public Node getNode(String path) throws NexusException {
 		return TreeUtils.getNode(tree, path);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.dawnsci.nexus.template.impl.tree.NexusContext#addGroupNode(org.eclipse.dawnsci.analysis.api.tree.GroupNode, java.lang.String, org.eclipse.dawnsci.nexus.NexusBaseClass)
-	 */
-	@Override
-	public GroupNode createGroupNode(GroupNode parent, String name, NexusBaseClass nexusBaseClass) {
-		logDebug("Creating new group node with name '{}' and nexus class '{}' to parent group '{}'", name, nexusBaseClass, parent);
-		NXobject group = NexusNodeFactory.createNXobjectForClass(nexusBaseClass);
-		parent.addGroupNode(name, group);
-		return group;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.dawnsci.nexus.template.impl.tree.NexusContext#addDataNode(org.eclipse.dawnsci.analysis.api.tree.GroupNode, java.lang.String, java.lang.Object)
-	 */
-	@Override
-	public DataNode createDataNode(GroupNode parent, String name, Object value) {
-		logDebug("Creating new data node with name '{}' and value '{}' to parent group '{}'", name, value, parent);
-		final DataNode dataNode = NexusNodeFactory.createDataNode();
-		parent.addDataNode(name, dataNode);
-		dataNode.setDataset(DatasetFactory.createFromObject(value));
-		return dataNode;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.dawnsci.nexus.template.impl.tree.NexusContext#addLink(org.eclipse.dawnsci.analysis.api.tree.GroupNode, java.lang.String, java.lang.String)
 	 */

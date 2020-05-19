@@ -1,5 +1,6 @@
 package org.eclipse.dawnsci.nexus.template.impl;
 
+import static org.eclipse.dawnsci.nexus.template.NexusTemplateConstants.ATTRIBUTE_NAME_NX_CLASS;
 import static org.eclipse.dawnsci.nexus.template.NexusTemplateConstants.ATTRIBUTE_SUFFIX;
 import static org.eclipse.dawnsci.nexus.template.NexusTemplateConstants.COPY_GROUP_SUFFIX;
 import static org.eclipse.dawnsci.nexus.template.NexusTemplateConstants.GROUP_SUFFIX;
@@ -62,7 +63,12 @@ public class ApplyNexusTemplateTask  {
 	 * @throws NexusException
 	 */
 	public void run() throws NexusException {
-		applyMappingToGroupNode(nexusContext.getNexusRoot(), template.getMapping());
+		final GroupNode rootNode = nexusContext.getNexusRoot();
+		if (rootNode == null) {
+			createGroupNode(null, null, template.getMapping());
+		} else {
+			applyMappingToGroupNode(nexusContext.getNexusRoot(), template.getMapping());
+		}
 	}
 
 	/**
@@ -112,14 +118,18 @@ public class ApplyNexusTemplateTask  {
 			logger.debug("Adding link {} to group node path {}", nodeName, linkPath);
 			addLinkNode(parentGroup, nodeName, linkPath.get());
 		} else if (nodeValue instanceof Map) {
-			final GroupNode childGroup = nexusContext.createGroupNode(parentGroup, nodeName, getNexusClass(nodeName, nodeValue));
-			@SuppressWarnings("unchecked")
-			final Map<String, Object> mapping = (Map<String, Object>) nodeValue;
-			// recursively apply the mapping to the child group
-			applyMappingToGroupNode(childGroup, mapping);
+			createGroupNode(parentGroup, nodeName, nodeValue);
 		} else {
 			throw new NexusException("The value of a group node must be a mapping"); // Impossible due to the way yaml is parsed?
 		}
+	}
+
+	private void createGroupNode(GroupNode parentGroup, String nodeName, Object nodeValue) throws NexusException {
+		final GroupNode childGroup = nexusContext.createGroupNode(parentGroup, nodeName, getNexusClass(nodeName, nodeValue));
+		@SuppressWarnings("unchecked")
+		final Map<String, Object> mapping = (Map<String, Object>) nodeValue;
+		// recursively apply the mapping to the child group
+		applyMappingToGroupNode(childGroup, mapping);
 	}
 	
 	/**
@@ -164,7 +174,7 @@ public class ApplyNexusTemplateTask  {
 		final Map<String, Object> childMapping = (Map<String, Object>) nodeValue;
 
 		// find the nexus class
-		final String nexusClassString = (String) childMapping.get(NexusTemplateConstants.ATTRIBUTE_NAME_NX_CLASS + '@');
+		final String nexusClassString = (String) childMapping.get(ATTRIBUTE_NAME_NX_CLASS + '@');
 		if (nexusClassString == null) {
 			throw new NexusException("The nexus class for group " + nodeName + " is not specified"); 
 		}

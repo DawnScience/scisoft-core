@@ -9,7 +9,7 @@ package org.eclipse.dawnsci.nexus.template;
  */
 public class NexusTemplateConstants {
 
-	public enum ApplicationMode { // TODO remove if not necessary
+	public enum ApplicationMode {
 		ON_DISK, IN_MEMORY
 	}
 

@@ -19,7 +19,7 @@ import org.eclipse.dawnsci.nexus.builder.NexusObjectWrapper;
  * 
  * @author Matthew Dickie
  */
-public class NexusMetadataDevice implements INexusDevice<NXobject> {
+public class NexusMetadataDevice<N extends NXobject> implements INexusDevice<N> {
 	
 	private NexusBaseClass nexusBaseClass;
 	
@@ -39,6 +39,10 @@ public class NexusMetadataDevice implements INexusDevice<NXobject> {
 	@Override
 	public String getName() {
 		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	public void setNexusBaseClass(NexusBaseClass nexusBaseClass) {
@@ -68,13 +72,14 @@ public class NexusMetadataDevice implements INexusDevice<NXobject> {
 	}
 	
 	@Override
-	public NexusObjectProvider<NXobject> getNexusProvider(NexusScanInfo info) throws NexusException {
-		final NXobject nexusObject = NexusNodeFactory.createNXobjectForClass(nexusBaseClass);
+	public NexusObjectProvider<N> getNexusProvider(NexusScanInfo info) throws NexusException {
+		@SuppressWarnings("unchecked")
+		final N nexusObject = (N) NexusNodeFactory.createNXobjectForClass(nexusBaseClass);
 		for (Map.Entry<String, Object> entry : nexusMetadata.entrySet()) {
 			nexusObject.setField(entry.getKey(), entry.getValue());
 		}
 		
-		return new NexusObjectWrapper<NXobject>(getName(), nexusObject);
+		return new NexusObjectWrapper<N>(getName(), nexusObject);
 	}
 	
 }

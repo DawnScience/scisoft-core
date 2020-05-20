@@ -55,6 +55,13 @@ class NexusTemplateImpl implements NexusTemplate {
 		applyTemplate(nexusContext);
 		return nexusContext.getNexusRoot();
 	}
+	
+	@Override
+	public void apply(GroupNode node) throws NexusException {
+		logger.debug("Applying template {} to nexus group", templateName);
+		final NexusContext nexusContext = new LocalInMemoryNexusContext(node);
+		applyTemplate(nexusContext);
+	}
 
 	@Override
 	public void apply(String nexusFilePath) throws NexusException {

@@ -38,7 +38,7 @@ public abstract class AbstractInMemoryNexusContext implements NexusContext {
 	}
 	
 	public AbstractInMemoryNexusContext() {
-		// do nothing, tree and root node not applied yet
+		// do nothing, tree and root node not set yet. 
 	}
 	
 	@Override

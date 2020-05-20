@@ -18,10 +18,24 @@ import org.eclipse.dawnsci.nexus.NexusNodeFactory;
  */
 public class LocalInMemoryNexusContext extends AbstractInMemoryNexusContext {
 	
+	/**
+	 * Use this context when using the context to create a new node from scratch.
+	 */
+	public LocalInMemoryNexusContext() {
+		super();
+	}
+	
+	/**
+	 * Create a new context for applying changes to an existing {@link GroupNode}. 
+	 * @param node group node to apply the context to
+	 */
+	public LocalInMemoryNexusContext(GroupNode node) {
+		setRootNode(node);
+	}
+
 	@Override
 	public void createNodeLink(GroupNode parent, String name, String linkPath) throws NexusException {
-		// when creating a link without the overall tree, we can only create a soft link with a SymbolicNode
-		// 
+		// when creating a link without the overall tree, we can't create a hard link, only create a soft link with a SymbolicNode
 		logDebug("Linking node '{}' with name '{}' to parent '{}'", linkPath, name, parent);
 		final SymbolicNode symbolicNode = TreeFactory.createSymbolicNode(NexusNodeFactory.getNextOid(), (URI) null, null, linkPath);
 		parent.addSymbolicNode(name, symbolicNode);

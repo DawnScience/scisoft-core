@@ -12,8 +12,7 @@ import org.eclipse.dawnsci.nexus.NexusFile;
  *   in-memory nexus tree.</li>
  * </ul>
  * 
- * @author wgp76868
- *
+ * @author Matthew Dickie
  */
 public interface NexusTemplate {
 	
@@ -38,6 +37,16 @@ public interface NexusTemplate {
 	 */
 	public GroupNode createNew() throws NexusException;
 	
+	/**
+	 * Applies the  nexus template to the given in-memory nexus object.
+	 * @param nexusObject the nexus object to apply the temlate to
+	 * @throws NexusException if the template could not be fully applied for any reason,
+	 *    note the template may have been partially applied, so the object may have some
+	 *    modifications
+	 */
+	public void apply(GroupNode node) throws NexusException;
+	
+
 	/**
 	 * Applies the nexus template to the NeXus file at the given file path.
 	 * @param nexusTree the path of the NeXus file to apply the template to

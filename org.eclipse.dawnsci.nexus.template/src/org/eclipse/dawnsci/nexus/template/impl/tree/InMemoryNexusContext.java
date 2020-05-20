@@ -20,6 +20,10 @@ import org.eclipse.january.dataset.IDataset;
  */
 public class InMemoryNexusContext extends AbstractInMemoryNexusContext {
 	
+	/**
+	 * Creates a new {@link InMemoryNexusContext} for the given nexus tree.
+	 * @param tree the tree object containing the root node of the nexus tree
+	 */
 	public InMemoryNexusContext(Tree tree) {
 		super(tree);
 	}

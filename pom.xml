@@ -15,37 +15,65 @@
 	</parent>
 
 	<modules>
-	<module>de.desy.file.loader</module>
-<!--module>de.desy.file.loader.test</module-->
-<!--
-<module>diamond.releng.tools.dawn</module> -->
-<module>uk.ac.diamond.scisoft.analysis</module>
-<module>uk.ac.diamond.scisoft.analysis.feature</module>
-<module>uk.ac.diamond.scisoft.analysis.osgi</module>
-<module>uk.ac.diamond.scisoft.analysis.peakfinding</module>
-<!--module>uk.ac.diamond.scisoft.analysis.peakfinding.test</module-->
-<module>uk.ac.diamond.scisoft.analysis.plotserver</module>
-<!--module>uk.ac.diamond.scisoft.analysis.plotserver.test</module-->
-<module>uk.ac.diamond.scisoft.analysis.powder.indexer</module>
-<!--module>uk.ac.diamond.scisoft.analysis.powder.indexer.test</module-->
-<module>uk.ac.diamond.scisoft.analysis.powder.matcher.ccdc</module>
-<module>uk.ac.diamond.scisoft.analysis.processing</module>
-<!--module>uk.ac.diamond.scisoft.analysis.processing.test</module-->
-<!--module>uk.ac.diamond.scisoft.analysis.test</module-->
-<module>uk.ac.diamond.scisoft.analysis.xmlrpc</module>
-<!--module>uk.ac.diamond.scisoft.analysis.xmlrpc.test</module-->
-<module>uk.ac.diamond.scisoft.applications</module>
-<module>uk.ac.diamond.scisoft.core.feature</module>
-<module>uk.ac.diamond.scisoft.deprecated</module>
-<module>uk.ac.diamond.scisoft.jython</module>
-<module>uk.ac.diamond.scisoft.nexus.examples</module>
-<module>uk.ac.diamond.scisoft.python</module>
-<!--module>uk.ac.diamond.scisoft.python.test</module-->
-<module>uk.ac.diamond.scisoft.surfacescatter</module>
-<!--module>uk.ac.diamond.scisoft.surfacescatter.test</module-->
-<module>uk.ac.diamond.scisoft.xpdf</module>
-<!--module>uk.ac.diamond.scisoft.xpdf.test</module-->
-
-
+		<module>de.desy.file.loader</module>
+		<!-- module>diamond.releng.tools.dawn</module -->
+		<module>uk.ac.diamond.scisoft.analysis</module>
+		<module>uk.ac.diamond.scisoft.analysis.feature</module>
+		<module>uk.ac.diamond.scisoft.analysis.osgi</module>
+		<module>uk.ac.diamond.scisoft.analysis.peakfinding</module>
+		<module>uk.ac.diamond.scisoft.analysis.plotserver</module>
+		<module>uk.ac.diamond.scisoft.analysis.processing</module>
+		<module>uk.ac.diamond.scisoft.analysis.xmlrpc</module>
+		<module>uk.ac.diamond.scisoft.applications</module>
+		<module>uk.ac.diamond.scisoft.core.feature</module>
+		<module>uk.ac.diamond.scisoft.nexus.examples</module>
+		<module>uk.ac.diamond.scisoft.jython</module>
+		<module>uk.ac.diamond.scisoft.python</module>
+		<module>uk.ac.diamond.scisoft.xpdf</module>
 	</modules>
+
+	<profiles>
+		<profile>
+			<id>gda</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>uk.ac.diamond.scisoft.deprecated</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>dawn</id>
+			<modules>
+				<module>de.desy.file.loader.test</module>
+				<!-- does not work in IDE: module>uk.ac.diamond.scisoft.analysis.peakfinding.test</module -->
+				<module>uk.ac.diamond.scisoft.analysis.plotserver.test</module>
+				<module>uk.ac.diamond.scisoft.analysis.processing.test</module>
+				<module>uk.ac.diamond.scisoft.analysis.test</module>
+				<module>uk.ac.diamond.scisoft.analysis.xmlrpc.test</module>
+				<module>uk.ac.diamond.scisoft.python.test</module>
+				<module>uk.ac.diamond.scisoft.xpdf.test</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>dawn-dls</id>
+			<modules>
+				<module>uk.ac.diamond.scisoft.analysis.powder.indexer</module>
+				<!-- does not work in IDE: module>uk.ac.diamond.scisoft.analysis.powder.indexer.test</module -->
+				<module>uk.ac.diamond.scisoft.analysis.powder.matcher.ccdc</module>
+				<module>uk.ac.diamond.scisoft.surfacescatter</module>
+				<!-- No tests within!!! module>uk.ac.diamond.scisoft.surfacescatter.test</module -->
+			</modules>
+		</profile>
+		<profile>
+			<id>dawn-full</id>
+			<modules>
+				<module>uk.ac.diamond.scisoft.analysis.powder.indexer</module>
+				<!-- does not work in IDE: module>uk.ac.diamond.scisoft.analysis.powder.indexer.test</module -->
+				<module>uk.ac.diamond.scisoft.analysis.powder.matcher.ccdc</module>
+				<module>uk.ac.diamond.scisoft.surfacescatter</module>
+				<!-- No tests within!!! module>uk.ac.diamond.scisoft.surfacescatter.test</module -->
+			</modules>
+		</profile>
+	</profiles>
 </project>

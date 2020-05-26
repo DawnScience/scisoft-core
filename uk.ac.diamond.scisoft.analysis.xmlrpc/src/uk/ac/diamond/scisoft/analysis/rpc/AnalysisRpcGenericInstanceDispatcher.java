@@ -44,7 +44,7 @@ public class AnalysisRpcGenericInstanceDispatcher extends AbstractAnalysisRpcGen
 	 * Create a new dispatcher
 	 * 
 	 * @param instance
-	 *            instance of the class to delegate to, the type of the delgating class is based on the instance
+	 *            instance of the class to delegate to, the type of the delegating class is based on the instance
 	 * @throws NullPointerException
 	 *             if instance is <code>null</code>
 	 */

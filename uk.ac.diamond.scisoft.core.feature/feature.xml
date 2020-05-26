@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="uk.ac.diamond.scisoft.core.feature"
-      label="scisoft core"
+      label="Scisoft Core Feature"
       version="1.6.0.qualifier"
       provider-name="Diamond Light Source">
 

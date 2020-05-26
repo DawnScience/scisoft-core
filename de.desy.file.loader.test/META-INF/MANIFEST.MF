@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Loader
+Bundle-Name: DESY File Loader Tests
 Bundle-SymbolicName: de.desy.file.loader.test;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: DESY
@@ -8,3 +8,4 @@ Fragment-Host: de.desy.file.loader
 Require-Bundle: org.junit;bundle-version="[4.10.0,5.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
+Automatic-Module-Name: de.desy.file.loader.test

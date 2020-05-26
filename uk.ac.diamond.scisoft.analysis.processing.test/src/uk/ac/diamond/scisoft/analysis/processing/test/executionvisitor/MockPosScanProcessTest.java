@@ -36,7 +36,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
-import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.OperationServiceImpl;
 import uk.ac.diamond.scisoft.analysis.processing.operations.DataWrittenModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.DataWrittenOperation;

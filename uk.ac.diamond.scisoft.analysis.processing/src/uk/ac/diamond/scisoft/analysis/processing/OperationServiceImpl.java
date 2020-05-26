@@ -97,16 +97,19 @@ public class OperationServiceImpl implements IOperationService {
 		
 		logmem();
 
+		SourceInformation ssource = null;
 		try {
-			
-			SourceInformation ssource = context.getData().getMetadata(SliceFromSeriesMetadata.class).get(0).getSourceInfo();
+			SliceFromSeriesMetadata ssm = context.getData().getFirstMetadata(SliceFromSeriesMetadata.class);
+			ssource = ssm == null ? null : ssm.getSourceInfo();
 			
 			StringBuilder builder = new StringBuilder("Processing ");
-			builder.append(ssource.getDatasetName());
-			builder.append(" from ");
-			builder.append(ssource.getFilePath());
-			if (ssource.isLive()) {
-				builder.append(", live,");
+			if (ssource != null) {
+				builder.append(ssource.getDatasetName());
+				builder.append(" from ");
+				builder.append(ssource.getFilePath());
+				if (ssource.isLive()) {
+					builder.append(", live,");
+				}
 			}
 			builder.append(" using the following sequence: ");
 			IOperation<? extends IOperationModel, ? extends OperationData>[] series = context.getSeries();
@@ -118,7 +121,7 @@ public class OperationServiceImpl implements IOperationService {
 			logger.info(builder.toString());
 			
 		} catch (Exception e) {
-			logger.error("Could not log processing run",e);
+			logger.error("Could not log processing run", e);
 		}
 		
 		// We check the pipeline ranks are ok
@@ -159,16 +162,15 @@ public class OperationServiceImpl implements IOperationService {
 				}
 	        }
 	
-			List<SliceFromSeriesMetadata> meta = firstSlice.getMetadata(SliceFromSeriesMetadata.class);
 			// Bug in getMetadata(...) that sometimes the wrong metadata type can be returned.
-			SliceFromSeriesMetadata ssm = meta!=null && meta.size()>0 && meta.get(0) instanceof SliceFromSeriesMetadata ? meta.get(0) : null;
-			
-			SourceInformation ssource = null;
-			
+			SliceFromSeriesMetadata ssm = null;
 			try {
-				 ssource = context.getData().getMetadata(SliceFromSeriesMetadata.class).get(0).getSourceInfo();
+				ssm = firstSlice.getFirstMetadata(SliceFromSeriesMetadata.class);
 			} catch (Exception e) {
-				logger.error("Source not obtainable. Hope this is just a unit test...");
+				logger.error("Slice series metadata not obtainable. Hope this is just a unit test...");
+			}
+			if (ssource == null) {
+				logger.warn("Source not obtainable. Hope this is just a unit test...");
 			}
 			
 			try {
@@ -348,11 +350,11 @@ public class OperationServiceImpl implements IOperationService {
 	private synchronized void checkOperations() throws CoreException {
 		if (operations!=null) return;
 		
-		operations = new HashMap<String, IOperation<? extends IOperationModel, ? extends OperationData>>(31);
-		models     = new HashMap<String, Class<? extends IOperationModel>>(31);
-		categoryOp = new HashMap<String, Collection<IOperation<? extends IOperationModel, ? extends OperationData>>>(7);
-		categoryId = new HashMap<String, OperationCategory>(7);
-		opIdCategory = new HashMap<String, String>();
+		operations = new LinkedHashMap<>(31);
+		models     = new HashMap<>(31);
+		categoryOp = new HashMap<>(7);
+		categoryId = new HashMap<>(7);
+		opIdCategory = new HashMap<>();
 		
 		IConfigurationElement[] eles = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.dawnsci.analysis.api.operation");
 		for (IConfigurationElement e : eles) {
@@ -467,15 +469,15 @@ public class OperationServiceImpl implements IOperationService {
 	 * NOTE the regex will be matched as follows on the id of the operation:
 	 * 1. if matching on the id
 	 * 2. if matching the description in lower case.
-	 * 3. if indexOf the regex in the id is >0
-	 * 4. if indexOf the regex in the description is >0
+	 * 3. if indexOf the regex in the id is >=0
+	 * 4. if indexOf the regex in the description is >=0
 	 */
 	private boolean matches(String id, IOperation<? extends IOperationModel, ? extends OperationData> operation, String regex) {
 		if (id.matches(regex)) return true;
 		final String description = operation.getDescription();
 		if (description.matches(regex)) return true;
-		if (id.indexOf(regex)>0) return true;
-		if (description.indexOf(regex)>0) return true;
+		if (id.indexOf(regex)>=0) return true;
+		if (description.indexOf(regex)>=0) return true;
 		return false;
 	}
 
@@ -491,7 +493,7 @@ public class OperationServiceImpl implements IOperationService {
 		checkOperations();
 		
 		// Sorted alphabetically by category name string
-		final TreeMap<String, Collection<IOperation<? extends IOperationModel,? extends OperationData>>> cats = new TreeMap<String, Collection<IOperation<? extends IOperationModel,? extends OperationData>>>();
+		final TreeMap<String, Collection<IOperation<? extends IOperationModel,? extends OperationData>>> cats = new TreeMap<>();
 		
 		for (String catId : categoryId.keySet()) {
 			
@@ -501,11 +503,11 @@ public class OperationServiceImpl implements IOperationService {
 			cats.put(cat.getName(), group);
 		}
 		
-		final LinkedHashMap<String, Collection<IOperation<? extends IOperationModel,? extends OperationData>>> ret = new LinkedHashMap<String, Collection<IOperation<? extends IOperationModel,? extends OperationData>>>();
+		final LinkedHashMap<String, Collection<IOperation<? extends IOperationModel,? extends OperationData>>> ret = new LinkedHashMap<>();
 		ret.putAll(cats);
 		
 		// Now add all those with no category
-		final TreeSet<IOperation<? extends IOperationModel,? extends OperationData>> uncategorized = new TreeSet<IOperation<? extends IOperationModel,? extends OperationData>>(new AbstractOperationBase.OperationComparator());
+		final TreeSet<IOperation<? extends IOperationModel,? extends OperationData>> uncategorized = new TreeSet<>(new AbstractOperationBase.OperationComparator());
 		for (String id : operations.keySet()) {
 			final IOperation op = operations.get(id);
 			if (op instanceof AbstractOperationBase) {
@@ -552,7 +554,7 @@ public class OperationServiceImpl implements IOperationService {
 			if (IOperation.class.isAssignableFrom(class1)) {
 				
 				IOperation<? extends IOperationModel, ? extends OperationData> op = (IOperation<? extends IOperationModel, ? extends OperationData>) class1.newInstance();
-				if (operations==null) operations = new HashMap<String, IOperation<? extends IOperationModel, ? extends OperationData>>(31);
+				if (operations==null) operations = new HashMap<>(31);
 				if (models == null) models = new HashMap<>();
 				
 				operations.put(op.getId(), op);

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Loader
+Bundle-Name: DESY File Loader
 Bundle-SymbolicName: de.desy.file.loader;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: de.desy.file.loader.Activator
@@ -8,8 +8,9 @@ Bundle-Vendor: DESY
 Require-Bundle: org.eclipse.january;bundle-version="1.0.0",
  org.eclipse.dawnsci.analysis.api;bundle-version="1.0.0",
  uk.ac.diamond.scisoft.analysis;bundle-version="1.3.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: org.osgi.framework;version="1.8.0",
  org.slf4j;version="[1.7.2,2.0.0)"
 Export-Package: de.desy.file.loader
+Automatic-Module-Name: de.desy.file.loader

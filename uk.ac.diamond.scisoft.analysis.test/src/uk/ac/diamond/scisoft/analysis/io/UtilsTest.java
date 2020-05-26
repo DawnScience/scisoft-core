@@ -437,7 +437,7 @@ public class UtilsTest {
 		assertEquals("testfiles", Utils.findExternalFilePath(p.getAbsolutePath(), "testfiles"));
 
 		assertNull(Utils.findExternalFilePath(p.getAbsolutePath(), null));
-		assertNull(Utils.findExternalFilePath(p.getAbsolutePath(), "target"));
+		assertNull(Utils.findExternalFilePath(p.getAbsolutePath(), "target1"));
 	}
 
 	@Test

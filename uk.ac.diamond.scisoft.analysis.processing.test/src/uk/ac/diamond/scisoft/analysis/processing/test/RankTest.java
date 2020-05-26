@@ -82,33 +82,33 @@ public class RankTest {
 			public void executed(OperationData result, IMonitor monitor) throws Exception {
 				if (result.getData().getRank()!=context.getData().getRank()) throw new Exception("Unexpected rank found!");
 				count++;
-			}			
+			}
 		});
 		context.setSeries(function);
 		
-        context.setExecutionType(ExecutionType.SERIES);
-        anyRank(context, service);
+		context.setExecutionType(ExecutionType.SERIES);
+		anyRank(context, service);
 
 	}
 
 	private void anyRank(IOperationContext context, IOperationService service) throws Exception {
-		count=0;
+		count = 0;
 //		context.setSlicing("all");
-		context.setDataDimensions(new int[]{1,2});
-        service.execute(context);
-		System.out.println("Run with iterating first dimension gave "+count+ "of rank 2");
+		context.setDataDimensions(new int[] { 1, 2 });
+		service.execute(context);
+		System.out.println("Run with iterating first dimension gave " + count + " of rank 2");
 
-		count=0;
+		count = 0;
 //		context.setSlicing("all", "500");
-		context.setDataDimensions(new int[]{1,2});
-        service.execute(context);
-		System.out.println("Run with slicing first and second dimension gave "+count+ "of rank 1");
+		context.setDataDimensions(new int[] { 1, 2 });
+		service.execute(context);
+		System.out.println("Run with slicing first and second dimension gave " + count + " of rank 1");
 
-		count=0;
+		count = 0;
 //		context.setSlicing("8", "500", "500");
-		context.setDataDimensions(new int[]{1,2});
-        service.execute(context);
-		System.out.println("Run with slicing first, second and third dimension gave "+count+ "of rank 0");
+		context.setDataDimensions(new int[] { 1, 2 });
+		service.execute(context);
+		System.out.println("Run with slicing first, second and third dimension gave " + count + " of rank 0");
 	}
 
 	@Test
@@ -150,10 +150,13 @@ public class RankTest {
 		context.setDataDimensions(new int[]{1,2});
 	
 		final IOperation azi = service.findFirst("azimuthal");
+		System.err.println("Operation class: " + azi.getClass());
 		azi.setModel(new SectorIntegrationModel(sector));
 		
 		final IOperation box = service.findFirst("box");
+		System.err.println("Operation class: " + box.getClass());
 		final IOperation add = service.findFirst("add");
+		System.err.println("Operation class: " + add.getClass());
 		add.setModel(new ValueModel(100));
 
 		// This order is ok
@@ -198,6 +201,7 @@ public class RankTest {
 		context.setDataDimensions(new int[]{1,2});
 
 		final IOperation azi      = service.findFirst("azimuthal");
+		System.err.println("Operation class: " + azi.getClass());
 		azi.setModel(new SectorIntegrationModel(sector));
 		
 		final IOperation add      = service.findFirst("add");

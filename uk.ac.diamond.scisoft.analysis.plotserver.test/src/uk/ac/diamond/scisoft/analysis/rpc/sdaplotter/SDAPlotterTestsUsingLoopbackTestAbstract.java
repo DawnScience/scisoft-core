@@ -42,6 +42,12 @@ public class SDAPlotterTestsUsingLoopbackTestAbstract {
 		pythonRunInfo = PythonHelper
 				.runPythonFileBackground("../uk.ac.diamond.scisoft.python/test/scisoftpy/loopback.py", new String[] {"../uk.ac.diamond.scisoft.python/src/"}, envp);
 
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
 		savedHandler = AnalysisRpcServerProvider.getInstance().getHandler(SDAPlotter.class.getSimpleName());
 	}
 

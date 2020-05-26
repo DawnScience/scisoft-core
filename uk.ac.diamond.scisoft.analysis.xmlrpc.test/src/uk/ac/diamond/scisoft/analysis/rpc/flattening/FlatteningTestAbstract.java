@@ -66,7 +66,7 @@ abstract public class FlatteningTestAbstract {
 	/**
 	 * Waiting period for server to start up (in milliseconds)
 	 */
-	public static final long SERVER_WAIT_TIME = 200;
+	public static final long SERVER_WAIT_TIME = 3000;
 
 	protected static IRootFlattener flattener;
 

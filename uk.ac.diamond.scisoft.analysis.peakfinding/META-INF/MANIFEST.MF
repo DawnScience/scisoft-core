@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: PeakFinding
+Bundle-Name: Peak Finding
 Bundle-SymbolicName: uk.ac.diamond.scisoft.analysis.peakfinding;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Diamond Light Source

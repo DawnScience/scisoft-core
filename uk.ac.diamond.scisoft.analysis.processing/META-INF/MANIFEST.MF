@@ -20,13 +20,12 @@ Require-Bundle: org.eclipse.january;bundle-version="2.3.0",
  si.uom.si-units;bundle-version="0.9.0",
  tec.units.indriya;bundle-version="1.0.0",
  tec.uom.lib.uom-lib-common;bundle-version="1.0.3",
- org.apache.commons.lang3;bundle-version="3.1.0"
+ org.apache.commons.lang3;bundle-version="3.1.0",
+ javax.vecmath;bundle-version="1.5.2",
+ org.dawnsci.boofcv;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Import-Package: javax.vecmath,
- org.dawnsci.boofcv,
- org.eclipse.january.dataset,
- org.osgi.framework;version="1.7.0",
+Import-Package: org.osgi.framework;version="1.7.0",
  org.slf4j;version="1.7.6"
 Service-Component: OSGI-INF/*.xml
 Export-Package: uk.ac.diamond.scisoft.analysis.processing,

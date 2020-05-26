@@ -23,6 +23,8 @@
 <path>${BUNDLE_POOL_PLUGINS}/org.eclipse.january.asserts_2.3.0.v201909092132.jar</path>
 <path>${BUNDLE_POOL_PLUGINS}/org.eclipse.swt_3.106.3.v20180329-0507.jar</path>
 <path>${BUNDLE_POOL_PLUGINS}/org.eclipse.swt.gtk.linux.x86_64_3.106.3.v20180329-0507.jar</path>
+<path>${BUNDLE_POOL_PLUGINS}/org.eclipse.swt.cocoa.macosx.x86_64_3.106.3.v20180329-0507.jar</path>
+<path>${BUNDLE_POOL_PLUGINS}/org.eclipse.swt.win32.win32.x86_64_3.106.3.v20180329-0507.jar</path>
 <path>${BUNDLE_POOL_PLUGINS}/org.uncommons.maths_1.2.3.jar</path>
 <path>${BUNDLE_POOL_PLUGINS}/si.uom.si-quantity_0.9.0.jar</path>
 <path>${BUNDLE_POOL_PLUGINS}/si.uom.si-units_0.9.0.jar</path>

@@ -31,10 +31,7 @@ public class IOTestUtils {
 	public static String generateDirectorynameFromClassname(String classname) {
 		// the generated directory name is usable on both Linux and Windows
 		// (which uses \ as a separator).
-		return IOTestUtils.OUTPUT_FOLDER_PREFIX + classname.replace('.', '/') + '/';
-		// File tmp = new File(OUTPUT_FOLDER_PREFIX + classname.replace('.',
-		// '/') + '/');
-		// return tmp.getAbsolutePath();
+		return OUTPUT_FOLDER_PREFIX + classname.replace('.', '/') + '/';
 	}
 
 	/**
@@ -92,7 +89,7 @@ public class IOTestUtils {
 			throw new Exception("Unable to delete old test scratch directory " + testScratchDirectoryname);
 		}
 		// set up for a new run of this test
-		if (!((new File(testScratchDirectoryname)).mkdirs())) {
+		if (!(new File(testScratchDirectoryname)).mkdirs()) {
 			throw new Exception("Unable to create new test scratch directory " + testScratchDirectoryname);
 		}
 	}
@@ -136,7 +133,7 @@ public class IOTestUtils {
 		if (name == null) {
 			throw new IllegalArgumentException("getCanonicalName failed for class " + testClass.toString());
 		}
-		String testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(testClass.getCanonicalName())
+		String testScratchDirectoryName = generateDirectorynameFromClassname(testClass.getCanonicalName())
 				+ nameOfTest;
 	
 		if (makedir) {
@@ -148,21 +145,32 @@ public class IOTestUtils {
 	}
 
 	/**
-	 * @return String pointing to the top of the hierarchy of large test files used in GDA tests.
-	 * Set using vmarg e.g. -DGDALargeTestFilesLocation=/scratch/largetestfiles/
-	 *   note that the value should end with a File.separatorChar so simply concat the result with the filename required to get the full path.
+	 * Name of property used pointing to the top of the hierarchy of large test files used in GDA tests.
+	 * Set using vmarg e.g. -DGDALargeTestFilesLocation=/scratch/largetestfiles/.
+	 * Note that the value should end with a File.separatorChar so simply concatenate the result with
+	 * the filename required to get the full path.
+	 */
+	public final static String GDA_LARGE_TEST_FILES_LOCATION = "GDALargeTestFilesLocation";
+
+	/**
+	 * @return String from the {@link #GDA_LARGE_TEST_FILES_LOCATION} property.
 	 * For running tests within the Eclipse IDE:
-	 *   set GDALargeTestFiles_loc in Windows --> Preferences --> Run/Debug --> String Substitution
-	 *   set "-DGDALargeTestFilesLocation=${GDALargeTestFiles_loc}" in the test launcher's VM Arguments section
+	 * <ol>
+	 *   <li>set GDALargeTestFiles_loc in Windows --> Preferences --> Run/Debug --> String Substitution
+	 *   <li>set "-DGDALargeTestFilesLocation=${GDALargeTestFiles_loc}" in the test launcher's VM Arguments section
+	 *  </ol>
 	 * @throws AssertionError if the path is not defined, does not exist or is not readable
 	 */
 	public static String getGDALargeTestFilesLocation() throws AssertionError {
-		String path = System.getProperty("GDALargeTestFilesLocation");
-		if (path ==  null)
-			throw new AssertionError("The Java property GDALargeTestFilesLocation has not been defined");
+		String path = System.getProperty(GDA_LARGE_TEST_FILES_LOCATION);
+		if (path ==  null) {
+			throw new AssertionError("The Java property " + GDA_LARGE_TEST_FILES_LOCATION + " has not been defined");
+		}
 		File file = new File(path);
-		if (!file.exists())
-			throw new AssertionError("The Java property GDALargeTestFilesLocation '" + path + "' does not exist or is not readable");
-		return path;
+		if (!file.isDirectory()) {
+			throw new AssertionError("The Java property  " + GDA_LARGE_TEST_FILES_LOCATION + "'" + path + "' does not exist or is not a directory");
+		}
+
+		return path.endsWith(File.separator) ? path : path + File.separator;
 	}
 }

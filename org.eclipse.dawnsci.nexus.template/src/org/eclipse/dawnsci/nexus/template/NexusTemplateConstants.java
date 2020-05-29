@@ -1,17 +1,12 @@
 package org.eclipse.dawnsci.nexus.template;
 
 /**
+ * Constants for use with Nexus Templates. These constants include symbols that have special meaning in
+ * the nexus template format, such as '/', '@' and '*', as well as special mapping names, such as 'value' and 'link'.
  * 
- * TODO javadoc
- * 
- * @author wgp76868
- *
+ * @author Matthew Dickie
  */
 public class NexusTemplateConstants {
-
-	public enum ApplicationMode {
-		ON_DISK, IN_MEMORY
-	}
 
 	public static final char GROUP_SUFFIX = '/';
 	public static final char ATTRIBUTE_SUFFIX = '@';

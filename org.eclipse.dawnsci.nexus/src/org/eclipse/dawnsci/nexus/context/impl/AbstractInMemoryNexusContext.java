@@ -1,4 +1,4 @@
-package org.eclipse.dawnsci.nexus.template.impl.tree;
+package org.eclipse.dawnsci.nexus.context.impl;
 
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
@@ -11,7 +11,8 @@ import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NexusBaseClass;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
-import org.eclipse.dawnsci.nexus.template.NexusTemplateConstants.ApplicationMode;
+import org.eclipse.dawnsci.nexus.context.NexusContext;
+import org.eclipse.dawnsci.nexus.context.NexusContextType;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractInMemoryNexusContext implements NexusContext {
 	
-	private static final Logger logger = LoggerFactory.getLogger(InMemoryNexusContext.class);
+	private static final Logger logger = LoggerFactory.getLogger(AbstractInMemoryNexusContext.class);
 	
 	protected Tree tree = null;
 	
@@ -42,8 +43,8 @@ public abstract class AbstractInMemoryNexusContext implements NexusContext {
 	}
 	
 	@Override
-	public ApplicationMode getApplicationMode() {
-		return ApplicationMode.IN_MEMORY;
+	public NexusContextType getContextType() {
+		return NexusContextType.IN_MEMORY;
 	}
 	
 	/* (non-Javadoc)

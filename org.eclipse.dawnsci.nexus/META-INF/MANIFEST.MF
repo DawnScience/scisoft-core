@@ -19,8 +19,10 @@ Export-Package: org.eclipse.dawnsci.nexus,
  org.eclipse.dawnsci.nexus.builder.appdef.impl,
  org.eclipse.dawnsci.nexus.builder.data,
  org.eclipse.dawnsci.nexus.builder.impl,
+ org.eclipse.dawnsci.nexus.context,
  org.eclipse.dawnsci.nexus.device,
  org.eclipse.dawnsci.nexus.device.impl,
  org.eclipse.dawnsci.nexus.validation
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.eclipse.dawnsci.nexus
+Import-Package: org.slf4j;version="1.7.25"

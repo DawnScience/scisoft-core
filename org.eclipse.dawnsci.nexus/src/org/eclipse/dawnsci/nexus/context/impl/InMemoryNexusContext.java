@@ -1,4 +1,4 @@
-package org.eclipse.dawnsci.nexus.template.impl.tree;
+package org.eclipse.dawnsci.nexus.context.impl;
 
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
@@ -9,7 +9,7 @@ import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
-import org.eclipse.dawnsci.nexus.template.NexusTemplateConstants;
+import org.eclipse.dawnsci.nexus.context.NexusContext;
 import org.eclipse.january.dataset.IDataset;
 
 /**
@@ -74,12 +74,10 @@ public class InMemoryNexusContext extends AbstractInMemoryNexusContext {
 		
 		final String nodePath = linkPath.substring(0, index);
 		
-		// extract the attribute name
+		// extract the attribute name, note linkPath may optionally end with '@' indicating an attribute
 		final String attrSegment = linkPath.substring(index + 1);
-		if (!attrSegment.endsWith(String.valueOf(NexusTemplateConstants.ATTRIBUTE_SUFFIX))) {
-			throw new NexusException("Not a valid attribute path: " + linkPath);
-		}
-		final String attrName = attrSegment.substring(0, attrSegment.length() - 1);
+		final String attrName = attrSegment.charAt(attrSegment.length() - 1) == '@' ?
+				attrSegment.substring(0, attrSegment.length() - 1) : attrSegment;
 		
 		// get the node that the existing attribute is on
 		final Node currentNode = TreeUtils.getNode(tree, nodePath);

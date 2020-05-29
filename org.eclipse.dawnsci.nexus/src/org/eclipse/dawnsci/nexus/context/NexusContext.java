@@ -1,12 +1,10 @@
-package org.eclipse.dawnsci.nexus.template.impl.tree;
+package org.eclipse.dawnsci.nexus.context;
 
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.nexus.NexusBaseClass;
 import org.eclipse.dawnsci.nexus.NexusException;
-import org.eclipse.dawnsci.nexus.template.NexusTemplateConstants;
-import org.eclipse.dawnsci.nexus.template.NexusTemplateConstants.ApplicationMode;
 
 /**
  * Encapsulates a nexus tree with methods to modify that tree. This is because modifying a nexus tree
@@ -19,11 +17,11 @@ import org.eclipse.dawnsci.nexus.template.NexusTemplateConstants.ApplicationMode
 public interface NexusContext {
 
 	/**
-	 * Gets the application mode, {@link ApplicationMode#IN_MEMORY} if this context modifies an
-	 * in-memory nexus tree, or {@link ApplicationMode#ON_DISK} if it modifies an existing nexus file.
+	 * Gets the context type, {@link NexusContextType#IN_MEMORY} if this context modifies an
+	 * in-memory nexus tree, or {@link NexusContextType#ON_DISK} if it modifies an existing nexus file.
 	 * @return the application mode
 	 */
-	public ApplicationMode getApplicationMode();
+	public NexusContextType getContextType();
 	
 	/**
 	 * Returns the {@link GroupNode} at the root of the nexus tree.

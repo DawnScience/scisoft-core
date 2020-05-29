@@ -1,4 +1,4 @@
-package org.eclipse.dawnsci.nexus.template.impl.tree;
+package org.eclipse.dawnsci.nexus.context.impl;
 
 import java.net.URI;
 
@@ -8,6 +8,7 @@ import org.eclipse.dawnsci.analysis.api.tree.SymbolicNode;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
+import org.eclipse.dawnsci.nexus.context.NexusContext;
 
 /**
  * A {@link NexusContext} for making changes to a local tree. As we only have the

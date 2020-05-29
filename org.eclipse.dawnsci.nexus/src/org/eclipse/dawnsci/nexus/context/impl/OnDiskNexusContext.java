@@ -1,4 +1,4 @@
-package org.eclipse.dawnsci.nexus.template.impl.tree;
+package org.eclipse.dawnsci.nexus.context.impl;
 
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
@@ -8,7 +8,8 @@ import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.nexus.NexusBaseClass;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
-import org.eclipse.dawnsci.nexus.template.NexusTemplateConstants.ApplicationMode;
+import org.eclipse.dawnsci.nexus.context.NexusContext;
+import org.eclipse.dawnsci.nexus.context.NexusContextType;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.slf4j.Logger;
@@ -28,8 +29,8 @@ public class OnDiskNexusContext implements NexusContext {
 	}
 
 	@Override
-	public ApplicationMode getApplicationMode() {
-		return ApplicationMode.ON_DISK;
+	public NexusContextType getContextType() {
+		return NexusContextType.ON_DISK;
 	}
 
 	@Override

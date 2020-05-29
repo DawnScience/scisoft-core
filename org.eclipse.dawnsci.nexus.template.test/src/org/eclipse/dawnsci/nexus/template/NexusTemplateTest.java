@@ -1,7 +1,7 @@
 package org.eclipse.dawnsci.nexus.template;
 
-import static org.eclipse.dawnsci.nexus.template.NexusTemplateConstants.ApplicationMode.IN_MEMORY;
-import static org.eclipse.dawnsci.nexus.template.NexusTemplateConstants.ApplicationMode.ON_DISK;
+import static org.eclipse.dawnsci.nexus.context.NexusContextType.IN_MEMORY;
+import static org.eclipse.dawnsci.nexus.context.NexusContextType.ON_DISK;
 import static org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils.getNode;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.closeTo;
@@ -38,7 +38,7 @@ import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
-import org.eclipse.dawnsci.nexus.template.NexusTemplateConstants.ApplicationMode;
+import org.eclipse.dawnsci.nexus.context.NexusContextType;
 import org.eclipse.dawnsci.nexus.template.impl.NexusTemplateServiceImpl;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
@@ -70,18 +70,15 @@ public class NexusTemplateTest {
 	
 	private static String testFilesDirName;
 
-	private final ApplicationMode applicationMode;
+	private final NexusContextType contextType;
 
-	@Parameters(name="application= {0}")
+	@Parameters(name="nexusContextType= {0}")
 	public static Object[] data() {
-		return new Object[] {
-				ApplicationMode.ON_DISK,
-				ApplicationMode.IN_MEMORY
-		};
+		return new Object[] { NexusContextType.ON_DISK, NexusContextType.IN_MEMORY };
 	}
 	
-	public NexusTemplateTest(ApplicationMode applicationMode) {
-		this.applicationMode = applicationMode;
+	public NexusTemplateTest(NexusContextType contextType) {
+		this.contextType = contextType;
 	}
 	
 	@BeforeClass
@@ -104,7 +101,7 @@ public class NexusTemplateTest {
 	
 	private NXroot applyTemplateStringToEmptyTree(String templateString) throws Exception {
 		final NexusTemplate template = templateService.loadTemplateFromString(templateString);
-		if (applicationMode == ApplicationMode.IN_MEMORY) {
+		if (contextType == NexusContextType.IN_MEMORY) {
 			Tree tree = TreeFactory.createTree(0, null);
 			final NXroot root = NexusNodeFactory.createNXroot();
 			tree.setGroupNode(root);
@@ -135,7 +132,7 @@ public class NexusTemplateTest {
 	
 	private Tree applyTemplateStringToFile(String templateString, String nexusFilePath) throws Exception {
 		final NexusTemplate template = templateService.loadTemplateFromString(templateString);
-		if (applicationMode == ApplicationMode.IN_MEMORY) {
+		if (contextType == NexusContextType.IN_MEMORY) {
 			final Tree tree = loadNexusFile(nexusFilePath);
 			template.apply(tree);
 			return tree;
@@ -490,9 +487,9 @@ public class NexusTemplateTest {
 		detector.addSymbolicNode(NXdetector.NX_DATA, externalLinkNode);
 		
 		final Tree treeWithTemplate;
-		if (applicationMode == IN_MEMORY) {
+		if (contextType == IN_MEMORY) {
 			treeWithTemplate = applyTemplateStringToTree(template, treeFile);
-		} else if (applicationMode == ON_DISK) {
+		} else if (contextType == ON_DISK) {
 			// if we're testing on disk, save the nexus file with the link
 			// and create the file to link to
 			NexusTestUtils.saveNexusFile(treeFile);
@@ -518,7 +515,7 @@ public class NexusTemplateTest {
 		final Node dataNode = data.getNode(NXdata.NX_DATA);
 		assertThat(dataNode, is(notNullValue()));
 		
-		if (applicationMode == IN_MEMORY) {
+		if (contextType == IN_MEMORY) {
 			assertThat(dataNode.isSymbolicNode(), is(true));
 			
 			// get the newly created link node. Note it has to be a copy, as NexusFileHDF5 cannot create a
@@ -527,7 +524,7 @@ public class NexusTemplateTest {
 			assertThat(newExternalLinkNode, is(not(sameInstance(externalLinkNode))));
 			assertThat(newExternalLinkNode.getSourceURI(), is(equalTo(externalLinkNode.getSourceURI())));
 			assertThat(newExternalLinkNode.getPath(), is(equalTo(externalLinkNode.getPath())));
-		} else if (applicationMode == ON_DISK) {
+		} else if (contextType == ON_DISK) {
 			assertThat(dataNode.isDataNode(), is(true));
 			IDataset dataset = ((DataNode) dataNode).getDataset().getSlice();
 			assertThat(dataset.getRank(), is(1));

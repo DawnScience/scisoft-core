@@ -7,11 +7,9 @@ import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.ServiceHolder;
+import org.eclipse.dawnsci.nexus.context.NexusContext;
+import org.eclipse.dawnsci.nexus.context.NexusContextFactory;
 import org.eclipse.dawnsci.nexus.template.NexusTemplate;
-import org.eclipse.dawnsci.nexus.template.impl.tree.InMemoryNexusContext;
-import org.eclipse.dawnsci.nexus.template.impl.tree.LocalInMemoryNexusContext;
-import org.eclipse.dawnsci.nexus.template.impl.tree.NexusContext;
-import org.eclipse.dawnsci.nexus.template.impl.tree.OnDiskNexusContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,14 +42,14 @@ class NexusTemplateImpl implements NexusTemplate {
 	@Override
 	public void apply(Tree tree) throws NexusException {
 		logger.debug("Applying template {} to in-memory nexus tree", templateName);
-		final NexusContext nexusContext = new InMemoryNexusContext(tree);
+		final NexusContext nexusContext = NexusContextFactory.createInMemoryContext(tree);
 		applyTemplate(nexusContext);
 	}
 	
 	@Override
 	public GroupNode createNew() throws NexusException {
 		logger.debug("Creating new nexus object from template {}", templateName);
-		final LocalInMemoryNexusContext nexusContext = new LocalInMemoryNexusContext();
+		final NexusContext nexusContext = NexusContextFactory.createNewLocalNodeContext();
 		applyTemplate(nexusContext);
 		return nexusContext.getNexusRoot();
 	}
@@ -59,7 +57,7 @@ class NexusTemplateImpl implements NexusTemplate {
 	@Override
 	public void apply(GroupNode node) throws NexusException {
 		logger.debug("Applying template {} to nexus group", templateName);
-		final NexusContext nexusContext = new LocalInMemoryNexusContext(node);
+		final NexusContext nexusContext = NexusContextFactory.createLocalNodeInMemoryContext(node);
 		applyTemplate(nexusContext);
 	}
 
@@ -79,7 +77,7 @@ class NexusTemplateImpl implements NexusTemplate {
 	}
 
 	private void applyToNexusFile(NexusFile nexusFile) throws NexusException {
-		final NexusContext nexusContext = new OnDiskNexusContext(nexusFile);
+		final NexusContext nexusContext = NexusContextFactory.createOnDiskContext(nexusFile);
 		applyTemplate(nexusContext);
 		nexusFile.flush();
 	}

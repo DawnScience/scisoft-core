@@ -8,17 +8,17 @@ import org.eclipse.dawnsci.nexus.NexusScanInfo;
 import org.eclipse.dawnsci.nexus.builder.CustomNexusEntryModification;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 
-public abstract class AbstactNexusDecorator<N extends NXobject> implements INexusDeviceDecorator<N> {
+public abstract class AbstractNexusDecorator<N extends NXobject> implements INexusDeviceDecorator<N> {
 	
 	private String name;
 	
 	private INexusDevice<N> decorated;
 	
-	public AbstactNexusDecorator() {
+	public AbstractNexusDecorator() {
 		// no-args construtor for spring configuration
 	}
 	
-	public AbstactNexusDecorator(String name) {
+	public AbstractNexusDecorator(String name) {
 		setName(name);
 	}
 	

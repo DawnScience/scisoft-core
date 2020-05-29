@@ -6,7 +6,7 @@ import java.util.Objects;
 import org.eclipse.dawnsci.nexus.INexusDevice;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NexusException;
-import org.eclipse.dawnsci.nexus.device.NexusObjectAppender;
+import org.eclipse.dawnsci.nexus.appender.NexusObjectAppender;
 import org.eclipse.dawnsci.nexus.template.NexusTemplate;
 import org.eclipse.dawnsci.nexus.template.TemplateServiceHolder;
 

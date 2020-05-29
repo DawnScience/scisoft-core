@@ -1,18 +1,16 @@
-package org.eclipse.dawnsci.nexus.device;
+package org.eclipse.dawnsci.nexus.appender;
 
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import org.eclipse.dawnsci.nexus.INexusDevice;
 import org.eclipse.dawnsci.nexus.INexusDeviceDecorator;
-import org.eclipse.dawnsci.nexus.NXdata;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusScanInfo;
 import org.eclipse.dawnsci.nexus.builder.AbstractNexusObjectProvider;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
-import org.eclipse.dawnsci.nexus.builder.NexusObjectWrapper;
+import org.eclipse.dawnsci.nexus.device.AbstractNexusDecorator;
 
 /**
  * A type of {@link INexusDeviceDecorator} that appends (by adding fields and/or attributes),
@@ -26,13 +24,13 @@ import org.eclipse.dawnsci.nexus.builder.NexusObjectWrapper;
  *   <li>Supply a {@link Consumer} for the appropriate kind of nexus object.</li>
  * </ul>
  * The first option is more suitable to creating an appender via spring configuration, the second is more
- * easier to use when doing so programatically in Java code.
+ * easier to use when doing so programmatically in Java code.
  * 
  * @author Matthew Dickie
  *
  * @param <N> subclass of {@link NXobject} to be appended
  */
-public class NexusObjectAppender<N extends NXobject> extends AbstactNexusDecorator<N> {
+public class NexusObjectAppender<N extends NXobject> extends AbstractNexusDecorator<N> {
 	
 	private final Optional<Consumer<N>> appender;
 	

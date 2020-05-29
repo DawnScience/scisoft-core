@@ -1,10 +1,13 @@
-package org.eclipse.dawnsci.nexus.device;
+package org.eclipse.dawnsci.nexus.appender;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.nexus.NXobject;
+import org.eclipse.dawnsci.nexus.NexusException;
+import org.eclipse.dawnsci.nexus.context.NexusContext;
+import org.eclipse.dawnsci.nexus.context.NexusContextFactory;
 
 /**
  * A {@link NexusObjectAppender} that appends metadata as scalar fields according to the
@@ -14,7 +17,7 @@ import org.eclipse.dawnsci.nexus.NXobject;
  *
  * @param <N> type of nexus object to append
  */
-public class NexusMetadataAppender<N extends NXobject> extends NexusObjectAppender<N> {
+public class NexusMetadataAppender<N extends NXobject> extends AbstractNexusContextAppender<N> {
 
 	private Map<String, Object> nexusMetadata = new HashMap<>();
 	
@@ -39,9 +42,9 @@ public class NexusMetadataAppender<N extends NXobject> extends NexusObjectAppend
 	}
 	
 	@Override
-	protected void appendNexusObject(N nexusObject) {
+	public void append(GroupNode groupNode, NexusContext context) throws NexusException {
 		for (Map.Entry<String, Object> entry : nexusMetadata.entrySet()) {
-			nexusObject.setField(entry.getKey(), entry.getValue());
+			context.createDataNode(groupNode, entry.getKey(), entry.getValue());
 		}
 	}
 	

@@ -1,4 +1,4 @@
-package org.eclipse.dawnsci.nexus.device;
+package org.eclipse.dawnsci.nexus.appender;
 
 import java.util.Iterator;
 import java.util.Objects;

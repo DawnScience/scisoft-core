@@ -14,6 +14,7 @@ Require-Bundle: org.eclipse.january;bundle-version="2.3.0",
  tec.uom.lib.uom-lib-common;bundle-version="1.0.3",
  tec.units.indriya;bundle-version="1.0.0"
 Export-Package: org.eclipse.dawnsci.nexus,
+ org.eclipse.dawnsci.nexus.appender,
  org.eclipse.dawnsci.nexus.builder,
  org.eclipse.dawnsci.nexus.builder.appdef,
  org.eclipse.dawnsci.nexus.builder.appdef.impl,

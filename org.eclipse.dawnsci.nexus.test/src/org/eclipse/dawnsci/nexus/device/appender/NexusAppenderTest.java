@@ -1,4 +1,4 @@
-package org.eclipse.dawnsci.nexus.device;
+package org.eclipse.dawnsci.nexus.device.appender;
 
 import static org.eclipse.dawnsci.nexus.test.utilities.NexusAssert.assertNexusTreesEqual;
 import static org.hamcrest.MatcherAssert.assertThat;

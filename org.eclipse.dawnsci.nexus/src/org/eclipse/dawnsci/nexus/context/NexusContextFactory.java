@@ -5,6 +5,7 @@ import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.context.impl.InMemoryNexusContext;
 import org.eclipse.dawnsci.nexus.context.impl.LocalInMemoryNexusContext;
+import org.eclipse.dawnsci.nexus.context.impl.LocalOnDiskNexusContext;
 import org.eclipse.dawnsci.nexus.context.impl.OnDiskNexusContext;
 
 /**
@@ -26,6 +27,10 @@ public class NexusContextFactory {
 		return new OnDiskNexusContext(nexusFile);
 	}
 	
+	public static NexusContext createLocalOnDiskContext(NexusFile nexusFile, GroupNode groupNode) {
+		return new LocalOnDiskNexusContext(nexusFile, groupNode);
+	}
+
 	public static NexusContext createInMemoryContext(Tree tree) {
 		return new InMemoryNexusContext(tree);
 	}

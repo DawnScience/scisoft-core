@@ -24,6 +24,18 @@ public interface NexusContext {
 	public NexusContextType getContextType();
 	
 	/**
+	 * Returns whether this context is local. If a context is local then changes are being made to a
+	 * local {@link GroupNode}, and the whole nexus tree is not available. This means that we cannot
+	 * create links or copy attributes or groups from elsewhere in the nexus tree - if a method such
+	 * as {@link #copyAttribute(Node, String, String)} or {@link #createNodeLink(GroupNode, String, String)}
+	 * is called, and {@link UnsupportedOperationException} will be thrown.
+	 * 
+	 * @return <code>true</code> if this context is local, <code>false</code> if global (i.e. the whole
+	 *    nexus tree/file is available.
+	 */
+	public boolean isLocal();
+	
+	/**
 	 * Returns the {@link GroupNode} at the root of the nexus tree.
 	 * @return the root node
 	 * @throws NexusException if the root node could not be returned for any reason
@@ -94,9 +106,9 @@ public interface NexusContext {
 	 * 
 	 * @param node node to add copied attribute to
 	 * @param name name of the new attribute
-	 * @param linkPath the path to the attribute to copy
+	 * @param attributePath the path to the attribute to copy
 	 * @throws NexusException if the attribute could not be copied for any reason
 	 */
-	public void copyAttribute(Node node, String name, String linkPath) throws NexusException;	
+	public void copyAttribute(Node node, String name, String attributePath) throws NexusException;	
 
 }

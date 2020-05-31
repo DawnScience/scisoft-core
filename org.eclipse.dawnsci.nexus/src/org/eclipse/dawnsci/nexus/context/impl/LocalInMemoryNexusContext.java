@@ -35,6 +35,11 @@ public class LocalInMemoryNexusContext extends AbstractInMemoryNexusContext {
 	}
 
 	@Override
+	public boolean isLocal() {
+		return true;
+	}
+
+	@Override
 	public void createNodeLink(GroupNode parent, String name, String linkPath) throws NexusException {
 		// when creating a link without the overall tree, we can't create a hard link, only create a soft link with a SymbolicNode
 		logDebug("Linking node '{}' with name '{}' to parent '{}'", linkPath, name, parent);
@@ -44,14 +49,14 @@ public class LocalInMemoryNexusContext extends AbstractInMemoryNexusContext {
 	
 	@Override
 	public Node getNode(String path) throws NexusException {
-		// we can't get an node by path as we don't have access to the rest of the tree
-		throw new UnsupportedOperationException("Cannot get node by path when without when applying template locally");
+		// we can't get an node by path as we don't have access to the whole nexus tree
+		throw new UnsupportedOperationException("Cannot get node by path in a local context");
 	}
 
 	@Override
 	public void copyAttribute(Node node, String name, String linkPath) throws NexusException {
-		// Cannot copy an attribute as we don't have access to the rest of the tree
-		throw new UnsupportedOperationException("Cannot get node by path when without when applying template locally");
+		// Cannot copy an attribute as we don't have access to the whole nexus tree
+		throw new UnsupportedOperationException("Cannot copy an attribute in a local context");
 	}
-	
+
 }

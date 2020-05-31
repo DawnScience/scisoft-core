@@ -29,6 +29,11 @@ public class InMemoryNexusContext extends AbstractInMemoryNexusContext {
 	}
 	
 	@Override
+	public boolean isLocal() {
+		return false;
+	}
+
+	@Override
 	public Node getNode(String path) throws NexusException {
 		return TreeUtils.getNode(tree, path);
 	}

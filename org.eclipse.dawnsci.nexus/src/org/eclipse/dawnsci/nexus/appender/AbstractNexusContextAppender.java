@@ -20,10 +20,14 @@ public abstract class AbstractNexusContextAppender<N extends NXobject> extends N
 		append(nexusObject, NexusContextFactory.createLocalNodeInMemoryContext(nexusObject));
 	}
 	
+	public void append(GroupNode groupNode) throws NexusException {
+		append(groupNode, NexusContextFactory.createLocalNodeInMemoryContext(groupNode));
+	}
+
 	@Override
 	public final void append(NexusFile nexusFile, GroupNode groupNode) throws NexusException {
 		// make final to ensure that implementations only override the append method that takes the context 
-		append(groupNode, NexusContextFactory.createOnDiskContext(nexusFile)); 
+		append(groupNode, NexusContextFactory.createLocalOnDiskContext(nexusFile, groupNode));
 	}
 
 	/**

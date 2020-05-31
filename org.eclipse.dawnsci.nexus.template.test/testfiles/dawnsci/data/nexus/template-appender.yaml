@@ -1,15 +1,16 @@
-detector_number: 2
+detector_number: !!java.lang.Long 2 # long is not supported by the YAML spec, this is how to specify a long in SnakeYAML
 layout: area
-saturation_value: 999.99
+saturation_value: !!java.lang.Long 999 
 time_of_flight:
-   value: 732.2
-   axis@: 3
-   primary@: 1
+   value: 0.1
    long_name@: Total time of flight
+raw_time_of_flight:
+   value: !!java.lang.Long 5
+   frequency@: 10000
 calibration_method/:
    NX_class@: NXnote
    author: John Smith
    date: "2020-05-19"
    type: text/plain
-   sequence_index: !!java.lang.Long 1 # long is not supported by the YAML spec, this is how to specify a long in SnakeYAML 
+   sequence_index: !!java.lang.Long 1 
    data: Calibration note

@@ -14,6 +14,8 @@ import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusUtils;
 import org.eclipse.dawnsci.nexus.ServiceHolder;
+import org.eclipse.dawnsci.nexus.builder.AbstractNexusObjectProvider;
+import org.eclipse.dawnsci.nexus.context.NexusContext;
 
 /**
  * An appender that copies a {@link GroupNode} from an external file into the node being appended.
@@ -22,7 +24,7 @@ import org.eclipse.dawnsci.nexus.ServiceHolder;
  *
  * @param <N>
  */
-public class NexusGroupCopyAppender<N extends NXobject> extends NexusObjectAppender<N> {
+public class NexusGroupCopyAppender<N extends NXobject> extends AbstractNexusContextAppender<N> {
 
 	private String externalFilePath;
 	
@@ -55,7 +57,7 @@ public class NexusGroupCopyAppender<N extends NXobject> extends NexusObjectAppen
 	}
 
 	@Override
-	protected void appendNexusObject(N nexusObject) throws NexusException {
+	public void append(GroupNode groupNode, NexusContext context) throws NexusException {
 		Objects.requireNonNull(externalFilePath, "externalFilePath not set for appender: " + getName());
 		Objects.requireNonNull(externalFilePath, "nodePath not set for appender: " + getName());
 
@@ -73,7 +75,7 @@ public class NexusGroupCopyAppender<N extends NXobject> extends NexusObjectAppen
 			for (Iterator<String> iterator = groupToCopy.getNodeNameIterator(); iterator.hasNext();) {
 				final String nodeName = iterator.next();
 				final Node node = groupToCopy.getNode(nodeName);
-				nexusObject.addNode(nodeName, node);
+				context.addNode(groupNode, nodeName, node);
 			}
 		} 
 	}

@@ -62,7 +62,7 @@ public interface NexusContext {
 	 * @throws NexusException if the new group node could not be created for any reason
 	 */
 	public GroupNode createGroupNode(GroupNode parent, String name, NexusBaseClass nexusBaseClass) throws NexusException;
-
+	
 	/**
 	 * Creates and returns a new {@link DataNode} with the given value as a child of the given
 	 * parent node. The new data node will contains a dataset holding the given value. This will be a scalar
@@ -109,6 +109,15 @@ public interface NexusContext {
 	 * @param attributePath the path to the attribute to copy
 	 * @throws NexusException if the attribute could not be copied for any reason
 	 */
-	public void copyAttribute(Node node, String name, String attributePath) throws NexusException;	
+	public void copyAttribute(Node node, String name, String attributePath) throws NexusException;
+
+	/**
+	 * Adds the given node to the parent node with the given name.
+	 * @param groupNode the parent group node to add 
+	 * @param name name to given node within its parent
+	 * @param node the node to add
+	 * @throws NexusException if the node could not be added for any reason
+	 */
+	public void addNode(GroupNode parent, String name, Node node) throws NexusException;
 
 }

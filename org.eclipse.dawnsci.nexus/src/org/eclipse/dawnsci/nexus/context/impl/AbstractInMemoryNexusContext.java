@@ -118,5 +118,10 @@ public abstract class AbstractInMemoryNexusContext implements NexusContext {
 		final Attribute attribute = TreeFactory.createAttribute(name, value);
 		parent.addAttribute(attribute);
 	}
+
+	@Override
+	public void addNode(GroupNode groupNode, String nodeName, Node node) throws NexusException {
+		groupNode.addNode(nodeName, node);
+	}
 	
 }

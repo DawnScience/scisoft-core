@@ -63,4 +63,9 @@ public abstract class AbstractOnDiskNexusContext implements NexusContext {
 		nexusFile.addAttribute(parent, TreeFactory.createAttribute(name, value));
 	}
 
+	@Override
+	public void addNode(GroupNode parent, String name, Node node) throws NexusException {
+		nexusFile.addNode(parent, name, node);
+	}
+	
 }

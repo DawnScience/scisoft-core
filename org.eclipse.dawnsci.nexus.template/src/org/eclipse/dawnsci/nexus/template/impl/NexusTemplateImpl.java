@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  * The implementation of a NexusTemplate. Essentially this just holds the YAML content as a {@link Map}. 
  * @author Matthew Dickie
  */
-class NexusTemplateImpl implements NexusTemplate {
+public class NexusTemplateImpl implements NexusTemplate {
 
 	private static final Logger logger = LoggerFactory.getLogger(NexusTemplateImpl.class);
 	
@@ -76,6 +76,19 @@ class NexusTemplateImpl implements NexusTemplate {
 		applyToNexusFile(nexusFile);
 	}
 
+	@Override
+	public void apply(NexusFile nexusFile, GroupNode groupNode) throws NexusException {
+		logger.debug("Applying template {} to node {} within nexus file {}", templateName,
+				nexusFile.getPath(groupNode), nexusFile.getFilePath());
+		final NexusContext nexusContext = NexusContextFactory.createLocalOnDiskContext(nexusFile, groupNode);
+		applyTemplate(nexusContext);
+	}
+	
+	@Override
+	public void apply(NexusContext context) throws NexusException {
+		applyTemplate(context);
+	}
+
 	private void applyToNexusFile(NexusFile nexusFile) throws NexusException {
 		final NexusContext nexusContext = NexusContextFactory.createOnDiskContext(nexusFile);
 		applyTemplate(nexusContext);
@@ -83,7 +96,7 @@ class NexusTemplateImpl implements NexusTemplate {
 	}
 	
 	private void applyTemplate(NexusContext nexusContext) throws NexusException {
-		ApplyNexusTemplateTask applyTemplateTask = new ApplyNexusTemplateTask(this, nexusContext);
+		final ApplyNexusTemplateTask applyTemplateTask = new ApplyNexusTemplateTask(this, nexusContext);
 		applyTemplateTask.run();
 	}
 

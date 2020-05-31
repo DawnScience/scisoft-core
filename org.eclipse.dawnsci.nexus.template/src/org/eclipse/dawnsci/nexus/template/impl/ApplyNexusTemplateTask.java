@@ -53,7 +53,7 @@ public class ApplyNexusTemplateTask  {
 	private final NexusTemplateImpl template;
 	private final NexusContext nexusContext;
 	
-	ApplyNexusTemplateTask(NexusTemplateImpl template, NexusContext nexusContext) {
+	public ApplyNexusTemplateTask(NexusTemplateImpl template, NexusContext nexusContext) {
 		this.template = template;
 		this.nexusContext = nexusContext;
 	}

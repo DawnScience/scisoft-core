@@ -4,6 +4,8 @@ import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
+import org.eclipse.dawnsci.nexus.context.NexusContext;
+import org.eclipse.dawnsci.nexus.context.NexusContextFactory;
 
 /**
  * A nexus template that can be applied to a nexus file one of two ways:<ul>
@@ -38,7 +40,7 @@ public interface NexusTemplate {
 	public GroupNode createNew() throws NexusException;
 	
 	/**
-	 * Applies the  nexus template to the given in-memory nexus object.
+	 * Applies the nexus template to the given in-memory nexus object.
 	 * @param nexusObject the nexus object to apply the temlate to
 	 * @throws NexusException if the template could not be fully applied for any reason,
 	 *    note the template may have been partially applied, so the object may have some
@@ -57,7 +59,7 @@ public interface NexusTemplate {
 	public void apply(String nexusFilePath) throws NexusException;
 
 	/**
-	 * Applies the nexus template to the nexus file respresented by the given {@link NexusFile} object.
+	 * Applies the nexus template to the nexus file represented by the given {@link NexusFile} object.
 	 * The file should already be open for writing.
 	 * @param nexusFile the nexus file to apply the template to
 	 * @throws NexusException if the template could not be fully applied for any reason,
@@ -65,5 +67,31 @@ public interface NexusTemplate {
 	 *   modifications
 	 */
 	public void apply(NexusFile file) throws NexusException;
+
+	/**
+	 * Applies the nexus template to the given {@link GroupNode} within the given {@link NexusFile}.
+	 * The file should already be open for writing.
+	 * @param nexusFile the nexus file containing the node to apply the template to
+	 * @param groupNode the group node to apply the template to
+	 * @throws NexusException if the template could not be fully applied for any reason,
+	 *   note the template may have been partially applied, so the file may have some
+	 *   modifications
+	 */
+	public void apply(NexusFile nexusFile, GroupNode groupNode) throws NexusException;
+
+	/**
+	 * Applies the given template to the given {@link NexusContext}. A context can be created
+	 * using {@link NexusContextFactory} and encapsulates whether a template is being applied to an
+	 * in-memory nexus tree versus and on-disk nexus file, and where in the tree/file to apply the
+	 * template.<p>
+	 * There is only need to use this method if you already have a context. Otherwise call one of the
+	 * other {@code apply} methods in this interface. 
+	 * 
+	 * @param context the context to apply the template to
+	 * @throws NexusException if the template could not be fully applied for any reason,
+	 *   note the template may have been partially applied, so the tree/file may have some
+	 *   modifications
+	 */
+	public void apply(NexusContext context) throws NexusException;
 
 }

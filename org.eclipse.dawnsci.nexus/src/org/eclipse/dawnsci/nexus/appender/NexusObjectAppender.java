@@ -69,7 +69,7 @@ public class NexusObjectAppender<N extends NXobject> extends AbstractNexusDecora
 	 * @param provider nexus object provider with more information about how to use the nexus object, update if necesssary
 	 * @param scanInfo scan information with information about the scan which may be of use, such as the scan size,
 	 *    and the devices in the scan 
-	 * @throws NexusException 
+	 * @throws NexusException
 	 */
 	protected void appendNexusObject(N nexusObject, AbstractNexusObjectProvider<N> provider, NexusScanInfo info) throws NexusException {
 		appendNexusObject(nexusObject, provider);

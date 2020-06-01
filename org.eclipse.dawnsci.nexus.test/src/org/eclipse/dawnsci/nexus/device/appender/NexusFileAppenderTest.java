@@ -25,12 +25,15 @@ import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.appender.AbstractNexusContextAppender;
+import org.eclipse.dawnsci.nexus.appender.INexusFileAppenderService;
 import org.eclipse.dawnsci.nexus.appender.NexusMetadataAppender;
+import org.eclipse.dawnsci.nexus.appender.impl.NexusFileAppenderService;
 import org.eclipse.dawnsci.nexus.context.NexusContext;
 import org.eclipse.dawnsci.nexus.context.NexusContextFactory;
 import org.eclipse.dawnsci.nexus.context.NexusContextType;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,13 +41,16 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(value = Parameterized.class)
-public class NexusAppenderTest {
+public class NexusFileAppenderTest {
 	
-	private static final String DETECTOR_GROUP_PATH = "/entry/instrument/detector";
+	private static final String DETECTOR_NAME = "detector";
+	private static final String DETECTOR_GROUP_PATH = "/entry/instrument/" + DETECTOR_NAME;
 	
 	private static INexusFileFactory nexusFileFactory = new NexusFileFactoryHDF5();
 	
 	private static String testScratchDirectoryName;
+	
+	private INexusFileAppenderService appenderService;
 	
 	private final NexusContextType contextType;
 
@@ -53,14 +59,19 @@ public class NexusAppenderTest {
 		return new Object[] { NexusContextType.ON_DISK, NexusContextType.IN_MEMORY };
 	}
 	
-	public NexusAppenderTest(NexusContextType contextType) {
+	public NexusFileAppenderTest(NexusContextType contextType) {
 		this.contextType = contextType;
 	}
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		testScratchDirectoryName = TestUtils.generateDirectorynameFromClassname(NexusAppenderTest.class.getCanonicalName()) + "/";
+		testScratchDirectoryName = TestUtils.generateDirectorynameFromClassname(NexusFileAppenderTest.class.getCanonicalName()) + "/";
 		TestUtils.makeScratchDirectory(testScratchDirectoryName);
+	}
+	
+	@Before
+	public void setUp() {
+		appenderService = new NexusFileAppenderService();
 	}
 	
 	private NexusFile createInitialFile(String filePath) throws NexusException {
@@ -101,7 +112,8 @@ public class NexusAppenderTest {
 				final NexusFile nexusFile = createInitialFile(filePath);
 				group = nexusFile.getGroup(groupPath, false);
 				assertThat(group, is(notNullValue()));
-				appender.append(nexusFile, group);
+				appenderService.register(appender);
+				appenderService.appendMetadata(DETECTOR_NAME, nexusFile, group);
 				
 				// close the file and reload it, to ensure we're testing whats been written to disk
 				nexusFile.close();
@@ -122,7 +134,7 @@ public class NexusAppenderTest {
 		final String longName = "long name of detector";
 		final String collectionName = "collection";
 		
-		final AbstractNexusContextAppender<NXdetector> appender = new AbstractNexusContextAppender<NXdetector>() {
+		final AbstractNexusContextAppender<NXdetector> appender = new AbstractNexusContextAppender<NXdetector>(DETECTOR_NAME) {
 			
 			@Override
 			public void append(GroupNode groupNode, NexusContext context) throws NexusException {

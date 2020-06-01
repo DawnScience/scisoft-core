@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.nexus;
 
+import org.eclipse.dawnsci.nexus.appender.INexusFileAppenderService;
 import org.eclipse.dawnsci.nexus.device.INexusDeviceService;
 
 public class ServiceHolder {
@@ -18,6 +19,8 @@ public class ServiceHolder {
 	private static INexusDeviceService nexusDeviceService;
 	
 	private static INexusFileFactory nexusFileFactory;
+	
+	private static INexusFileAppenderService nexusFileAppenderService;
 	
 	public static INexusFileFactory getNexusFileFactory() {
 		return nexusFileFactory;
@@ -35,4 +38,12 @@ public class ServiceHolder {
 		ServiceHolder.nexusDeviceService = nexusDeviceService;
 	}
 
+	public static INexusFileAppenderService getNexusFileAppenderService() {
+		return nexusFileAppenderService;
+	}
+	
+	public void setNexusFileAppenderService(INexusFileAppenderService nexusFileAppenderService) {
+		ServiceHolder.nexusFileAppenderService = nexusFileAppenderService;
+	}
+	
 }

@@ -242,10 +242,6 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		int sn = si.getSliceNumber();
 		if (eSum == null || eSum.getSize() == 0) {
 			log.appendFailure("No events found");
-			// need to pad spectra
-			for (int r = 0; r < roiMax; r++) {
-				allSpectra[r].set(sn, null);
-			}
 			allSums.set(sn, null);
 			allPositions.set(sn, null);
 		} else {

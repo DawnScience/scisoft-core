@@ -20,6 +20,13 @@ Provide a loop back mechanism that allows Java to call into this script and have
 # Note: manual add of path is needed when this is run as an automated test by:
 # AllPyPlotMethodsPluginTest.java
 # AllPyPlotMethodsTest.java
+
+try: # attempt to prevent OpenMPI initialization issues
+    import mpi4py
+    mpi4py.rc(initialize=False)
+except:
+    pass
+
 import os, sys
 sys.path.append(sys.argv[1])
 import scisoftpy as dnp #@UnresolvedImport

@@ -18,6 +18,7 @@ import org.eclipse.dawnsci.hdf5.HDF5DatasetResource;
 import org.eclipse.dawnsci.hdf5.HDF5DatatypeResource;
 import org.eclipse.dawnsci.hdf5.HDF5FileResource;
 import org.eclipse.dawnsci.hdf5.HDF5Resource;
+import org.eclipse.dawnsci.hdf5.TestBase;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
@@ -28,7 +29,7 @@ import org.junit.Test;
 import hdf.hdf5lib.H5;
 import hdf.hdf5lib.HDF5Constants;
 
-public class NexusFileHDF5Test {
+public class NexusFileHDF5Test extends TestBase {
 
 	private final static String FILE_NAME = "test-scratch/test.nxs";
 

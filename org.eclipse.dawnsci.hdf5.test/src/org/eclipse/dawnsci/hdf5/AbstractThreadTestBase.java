@@ -15,7 +15,7 @@ package org.eclipse.dawnsci.hdf5;
 /**
  * Class to extend, does not have any tests itself.
  */
-public abstract class AbstractThreadTestBase {
+public abstract class AbstractThreadTestBase extends TestBase {
 
 	public void testInTestThread() throws Throwable {
 		doTestOfDataSet(0);

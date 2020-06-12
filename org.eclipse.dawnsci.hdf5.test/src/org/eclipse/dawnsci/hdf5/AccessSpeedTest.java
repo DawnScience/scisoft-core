@@ -27,7 +27,7 @@ import hdf.hdf5lib.HDF5Constants;
 import hdf.hdf5lib.exceptions.HDF5Exception;
 import hdf.hdf5lib.exceptions.HDF5LibraryException;
 
-public class AccessSpeedTest {
+public class AccessSpeedTest extends TestBase {
 
 	@Test
 	public void testReadSpeed() throws HDF5LibraryException, NullPointerException, NexusException, ScanFileHolderException, InterruptedException {

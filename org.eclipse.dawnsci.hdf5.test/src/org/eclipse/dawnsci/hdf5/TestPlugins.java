@@ -33,7 +33,7 @@ import hdf.hdf5lib.exceptions.HDF5Exception;
  * Test various filter plugins that are built into the hdf.hdf5lib
  * plugin
  */
-public class TestPlugins {
+public class TestPlugins extends TestBase {
 
 	private final static String DATA_PATH = "/data";
 	private final static int DIM_0 = 10;

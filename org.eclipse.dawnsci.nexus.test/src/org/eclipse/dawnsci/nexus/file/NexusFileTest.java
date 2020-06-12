@@ -749,7 +749,7 @@ public class NexusFileTest {
 
 	private long checkWrite(ILazyWriteableDataset lazy, IDataset image) throws Exception {
 		
-		int size = lazy.getShape().length;
+		int size = lazy.getRank();
 		int[] start = new int[size];
 		int[] end   = new int[size];
 		for (int i = 0; i < size; i++) {
@@ -763,7 +763,7 @@ public class NexusFileTest {
 		long after = System.currentTimeMillis();
 		long diff = after-before;
 		System.out.println("Writing 1 image in "+size+"D stack took: "+diff+" ms");
-        return diff;
+		return diff;
 	}
 
 	private ILazyWriteableDataset createLazyDouble(int size) throws NexusException {

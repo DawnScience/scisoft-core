@@ -16,7 +16,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.junit.Test;
 
-public class ScalarDatasetTest {
+public class ScalarDatasetTest extends TestBase {
 	private static final String file = "test-scratch/scalar.h5";
 
 	@Test

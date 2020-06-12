@@ -17,6 +17,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.dawnsci.hdf5.TestBase;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.january.DatasetException;
@@ -41,7 +42,7 @@ import org.junit.Test;
  * MCA sum of elements [s0, s1, number of channels]
  * ROI scannables [s0, s1] for each ROI
  */
-public class NexusFileBenchmarkTest {
+public class NexusFileBenchmarkTest extends TestBase {
 	private final static String OUTPUT_DIRECTORY = "test-scratch/";
 	private static final String SYNCHRONOUS_FILE_NAME = OUTPUT_DIRECTORY + "syncbenchmark.nxs";
 	private final static String SINGLE_THREAD_FILE_NAME = OUTPUT_DIRECTORY + "singlebenchmark.nxs";

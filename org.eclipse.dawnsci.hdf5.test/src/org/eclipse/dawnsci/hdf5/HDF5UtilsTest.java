@@ -9,23 +9,22 @@
 
 package org.eclipse.dawnsci.hdf5;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 
+import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
 import org.eclipse.january.asserts.TestUtils;
 import org.eclipse.january.dataset.ByteDataset;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.dawnsci.hdf5.HDF5Utils;
-import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.ShortDataset;
 import org.junit.Test;
 
-public class HDF5UtilsTest {
+public class HDF5UtilsTest extends TestBase {
 
 	@Test
 	public void testHasDataset() throws Throwable {
@@ -39,7 +38,6 @@ public class HDF5UtilsTest {
 		assertFalse(HDF5Utils.hasDataset(f.getAbsolutePath(), "/entry/data"));
 		assertTrue(HDF5Utils.hasDataset(f.getAbsolutePath(), "/entry/data/data"));
 		assertFalse(HDF5Utils.hasDataset(f.getAbsolutePath(), "/not/in/file"));
-
 	}
 
 	@Test
@@ -51,6 +49,9 @@ public class HDF5UtilsTest {
 
 		Dataset b = DatasetFactory.createFromObject("NXdata");
 		b.setName("NX_class");
+
+		// can we detect empty file???
+//		HDF5Utils.writeDataset(f.getAbsolutePath(), "/entry");
 
 		HDF5Utils.writeAttributes(f.getAbsolutePath(), "/entry/data", true, a);
 

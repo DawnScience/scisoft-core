@@ -13,6 +13,7 @@ package org.eclipse.dawnsci.hdf5.swmr;
 
 import java.io.File;
 
+import org.eclipse.dawnsci.hdf5.TestBase;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +23,7 @@ import hdf.hdf5lib.HDF5Constants;
 import hdf.hdf5lib.exceptions.HDF5Exception;
 import hdf.hdf5lib.exceptions.HDF5LibraryException;
 
-public class SWMRTest {
+public class SWMRTest extends TestBase {
 
 	private final static String filename = "test-scratch/testSWMR.h5";
 

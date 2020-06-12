@@ -11,9 +11,6 @@ package org.eclipse.dawnsci.hdf5;
 
 import java.util.Arrays;
 
-import org.eclipse.dawnsci.hdf5.HDF5File;
-import org.eclipse.dawnsci.hdf5.HDF5FileFactory;
-import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;

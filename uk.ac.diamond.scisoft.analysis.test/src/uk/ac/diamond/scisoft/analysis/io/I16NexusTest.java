@@ -56,9 +56,10 @@ public class I16NexusTest {
 	static String testFileFolder = "testfiles/gda/analysis/io/";
 
 	@BeforeClass
-	static public void setUpClass() {
+	static public void setUpClass() throws Exception {
 		testFileFolder = IOTestUtils.getGDALargeTestFilesLocation();
 		testFileFolder = testFileFolder.concat("DiffractionMapping/i16/");
+		IOTestUtils.makeScratchDirectory("test-scratch");
 	}
 
 	@Test

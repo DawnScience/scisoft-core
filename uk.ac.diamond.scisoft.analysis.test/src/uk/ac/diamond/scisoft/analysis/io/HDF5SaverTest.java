@@ -33,10 +33,18 @@ import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.dataset.SliceNDIterator;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 
 public class HDF5SaverTest {
 	final static String TestFileFolder = "test-scratch/";
+
+	@BeforeClass
+	public static void setUpClass() throws Exception {
+		IOTestUtils.makeScratchDirectory(TestFileFolder);
+	}
 
 	@Test
 	public void testSaving() throws Exception {

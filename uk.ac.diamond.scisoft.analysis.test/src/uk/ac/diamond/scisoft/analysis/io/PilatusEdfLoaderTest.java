@@ -32,12 +32,9 @@ public class PilatusEdfLoaderTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		TestFileFolder = IOTestUtils.getGDALargeTestFilesLocation();
-		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(PilatusEdfLoaderTest.class.getCanonicalName());
-
-		IOTestUtils.makeScratchDirectory(testScratchDirectoryName);
-		
+		testScratchDirectoryName = IOTestUtils.setUpTestClass(PilatusEdfLoaderTest.class, true);
 	}
-	
+
 	@Test
 	public void testUnsignedShortFiles()  throws Exception {
 		testShortFile(TestFileFolder + "/EDFLoaderTest/billeA_4201_EF_XRD_5000.edf");

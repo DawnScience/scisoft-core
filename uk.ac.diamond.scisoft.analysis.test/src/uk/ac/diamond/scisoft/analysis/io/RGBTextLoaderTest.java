@@ -14,29 +14,12 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.fail;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
-import org.junit.BeforeClass;
 import org.junit.Test;
-
-import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 
 /**
  * Test for RGBText Loader
  */
 public class RGBTextLoaderTest {
-
-	private static String testScratchDirectoryName;
-
-	/**
-	 * Creates an empty directory for use by test code.
-	 * 
-	 * @throws Exception
-	 *             if the directory is not created
-	 */
-	@BeforeClass
-	static public void setUpClass() throws Exception {
-		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(RGBTextLoaderTest.class.getCanonicalName());
-		IOTestUtils.makeScratchDirectory(testScratchDirectoryName);
-	}
 
 	/**
 	 * Test Loader

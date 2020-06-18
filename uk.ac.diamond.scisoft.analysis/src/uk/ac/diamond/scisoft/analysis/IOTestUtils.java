@@ -85,11 +85,12 @@ public class IOTestUtils {
 	 */
 	public static void makeScratchDirectory(String testScratchDirectoryname) throws Exception {
 		// delete any remains from a previous run of this test
-		if (!deleteDir(new File(testScratchDirectoryname))) {
+		File tsd = new File(testScratchDirectoryname);
+		if (!deleteDir(tsd)) {
 			throw new Exception("Unable to delete old test scratch directory " + testScratchDirectoryname);
 		}
 		// set up for a new run of this test
-		if (!(new File(testScratchDirectoryname)).mkdirs()) {
+		if (!tsd.mkdirs()) {
 			throw new Exception("Unable to create new test scratch directory " + testScratchDirectoryname);
 		}
 	}
@@ -114,9 +115,22 @@ public class IOTestUtils {
 	}
 
 	/**
-	 * Sets up of environment for the a test Set property so that output is to Nexus format file Uses
-	 * MockJythonServerFacade and MockJythonServer to configure InterfaceProvider Configure logging so that DEBUG and
-	 * above go to log.txt in output folder
+	 * Sets up directory for test class output
+	 * 
+	 * @param testClass
+	 *            e.g. gda.data.nexus.ScanToNexusTest
+	 * @param makedir
+	 *            if true the scratch dir is deleted and constructed
+	 * @return The directory into which output will be sent
+	 * @throws Exception
+	 *             if setup fails
+	 */
+	public static String setUpTestClass(Class<?> testClass, boolean makedir) throws Exception {
+		return setUpTest(testClass, "", makedir);
+	}
+
+	/**
+	 * Sets up directory for test output
 	 * 
 	 * @param testClass
 	 *            e.g. gda.data.nexus.ScanToNexusTest
@@ -133,14 +147,12 @@ public class IOTestUtils {
 		if (name == null) {
 			throw new IllegalArgumentException("getCanonicalName failed for class " + testClass.toString());
 		}
-		String testScratchDirectoryName = generateDirectorynameFromClassname(testClass.getCanonicalName())
-				+ nameOfTest;
+		String testScratchDirectoryName = generateDirectorynameFromClassname(name) + nameOfTest;
 	
 		if (makedir) {
 			makeScratchDirectory(testScratchDirectoryName);
 		}
 	
-		
 		return testScratchDirectoryName;
 	}
 
@@ -168,7 +180,7 @@ public class IOTestUtils {
 		}
 		File file = new File(path);
 		if (!file.isDirectory()) {
-			throw new AssertionError("The Java property  " + GDA_LARGE_TEST_FILES_LOCATION + "'" + path + "' does not exist or is not a directory");
+			throw new AssertionError("The Java property " + GDA_LARGE_TEST_FILES_LOCATION + " '" + path + "' does not exist or is not a directory");
 		}
 
 		return path.endsWith(File.separator) ? path : path + File.separator;

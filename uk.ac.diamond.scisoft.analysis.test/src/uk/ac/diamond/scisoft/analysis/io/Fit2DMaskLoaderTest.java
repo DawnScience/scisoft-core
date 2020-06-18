@@ -25,8 +25,7 @@ public class Fit2DMaskLoaderTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(Fit2DMaskLoaderTest.class.getCanonicalName());
-	    IOTestUtils.makeScratchDirectory(testScratchDirectoryName);
+		testScratchDirectoryName = IOTestUtils.setUpTestClass(Fit2DMaskLoaderTest.class, true);
 	}
 	
 	@Test

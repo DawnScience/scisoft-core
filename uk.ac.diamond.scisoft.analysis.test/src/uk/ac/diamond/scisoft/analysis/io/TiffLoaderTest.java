@@ -41,8 +41,7 @@ public class TiffLoaderTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(TiffLoaderTest.class.getCanonicalName());
-		IOTestUtils.makeScratchDirectory(testScratchDirectoryName);
+		testScratchDirectoryName = IOTestUtils.setUpTestClass(TiffLoaderTest.class, true);
 	}
 
 	static String TestFileFolder;

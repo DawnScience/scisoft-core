@@ -9,6 +9,9 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.junit.Test;
 
@@ -30,12 +33,14 @@ public class XMapLoaderTest {
 		
 		XMapLoader xMapLoader = new XMapLoader(testfile1);
 
-		xMapLoader.loadFile();
+		DataHolder dh = xMapLoader.loadFile();
+		assertTrue(dh.getNames().length >= 1);
 	}
 
 	@Test
 	public void testLoaderFactory() throws Exception {
 		IDataHolder dh = LoaderFactory.getData("testfiles/gda/analysis/io/XMapLoaderTest/module1binary_31.zip", null);
-        if (dh==null || dh.getNames().length<1) throw new Exception();
+		assertNotNull(dh);
+		assertTrue(dh.getNames().length >= 1);
  	}
 }

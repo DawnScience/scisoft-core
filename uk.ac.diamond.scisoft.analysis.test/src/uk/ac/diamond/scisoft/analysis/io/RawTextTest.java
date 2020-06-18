@@ -37,8 +37,7 @@ public class RawTextTest {
 	 */
 	@BeforeClass
 	static public void setUpClass() throws Exception {
-		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(RawTextTest.class.getCanonicalName());
-		IOTestUtils.makeScratchDirectory(testScratchDirectoryName);
+		testScratchDirectoryName = IOTestUtils.setUpTestClass(RawTextTest.class, true);
 	}
 
 	/**

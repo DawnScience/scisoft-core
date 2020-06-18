@@ -26,12 +26,9 @@ public class Fit2DLoaderTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(Fit2DLoaderTest.class.getCanonicalName());
-
-	    IOTestUtils.makeScratchDirectory(testScratchDirectoryName);
-		
+		testScratchDirectoryName = IOTestUtils.setUpTestClass(Fit2DLoaderTest.class, true);
 	}
-	
+
 	@Test
 	public void testF2dMetaLoader()  throws Exception {
 		

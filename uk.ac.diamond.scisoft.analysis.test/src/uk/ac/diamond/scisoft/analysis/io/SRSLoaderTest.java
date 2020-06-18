@@ -51,8 +51,7 @@ public class SRSLoaderTest {
 	 */
 	@BeforeClass
 	static public void setUpClass() throws Exception {
-		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(SRSLoaderTest.class.getCanonicalName());
-		IOTestUtils.makeScratchDirectory(testScratchDirectoryName);
+		testScratchDirectoryName = IOTestUtils.setUpTestClass(SRSLoaderTest.class, true);
 	}
 
 	/**

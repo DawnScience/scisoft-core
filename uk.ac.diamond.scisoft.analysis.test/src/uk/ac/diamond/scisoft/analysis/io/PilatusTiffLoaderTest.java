@@ -10,6 +10,8 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -35,7 +37,8 @@ public class PilatusTiffLoaderTest {
 	 */
 	@Test
 	public void testLoadFile() throws ScanFileHolderException {
-		new PilatusTiffLoader(testfile1).loadFile();
+		DataHolder dh = new PilatusTiffLoader(testfile1).loadFile();
+		assertTrue(dh.getNames().length >= 1);
 	}
 }
 

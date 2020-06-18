@@ -807,6 +807,30 @@ public class LoaderFactory {
 		return list.next();
 	}
 
+	/**
+	 * Set registered extension to given loader class for testing
+	 * @param extension
+	 * @param loaderClass can be null to use preset order
+	 */
+	static void setTestingForLoader(String extension, Class<? extends IFileLoader> loaderClass) {
+		CachedListIterator<Class<? extends IFileLoader>> list = LOADERS.get(extension);
+		if (list == null) {
+			if (loaderClass == null) {
+				logger.error("Can not register a null loader class when extension is not known");
+			} else {
+				try {
+					registerLoader(extension, loaderClass);
+					list = LOADERS.get(extension);
+				} catch (Exception e) {
+					logger.error("Could not register loader to new extension list", e);
+				}
+			}
+		}
+		if (list != null) {
+			list.setLast(loaderClass);
+		}
+	}
+
 	private static Iterator<Class<? extends IFileLoader>> getIterator(String path) throws IllegalAccessException {
 
 		if ((new File(path).isDirectory()))
@@ -1020,6 +1044,14 @@ public class LoaderFactory {
 		public T next() {
 			last = it.next();
 			return last;
+		}
+
+		/**
+		 * Set last item used
+		 * @param last
+		 */
+		public void setLast(T last) {
+			this.last = last;
 		}
 
 		/**

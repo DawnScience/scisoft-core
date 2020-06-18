@@ -26,12 +26,9 @@ public class PilatusEdfLoaderThreadTest extends LoaderThreadTestBase {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(PilatusEdfLoaderThreadTest.class.getCanonicalName());
-
-		IOTestUtils.makeScratchDirectory(testScratchDirectoryName);
-		
+		testScratchDirectoryName = IOTestUtils.setUpTestClass(PilatusEdfLoaderThreadTest.class, true);
 	}
-	
+
 	@Override
 	@Test
 	public void testInTestThread() throws Exception{

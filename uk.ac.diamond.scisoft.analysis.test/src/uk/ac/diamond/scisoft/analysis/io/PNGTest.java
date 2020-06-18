@@ -46,8 +46,7 @@ public class PNGTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(PNGTest.class.getCanonicalName());
-		IOTestUtils.makeScratchDirectory(testScratchDirectoryName);
+		testScratchDirectoryName = IOTestUtils.setUpTestClass(PNGTest.class, true);
 	}
 
 	/**

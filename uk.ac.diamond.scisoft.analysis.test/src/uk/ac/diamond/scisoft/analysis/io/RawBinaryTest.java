@@ -45,9 +45,8 @@ public class RawBinaryTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(RawBinaryTest.class.getCanonicalName());
-		IOTestUtils.makeScratchDirectory(testScratchDirectoryName);
-	}	
+		testScratchDirectoryName = IOTestUtils.setUpTestClass(RawBinaryTest.class, true);
+	}
 
 	/* @throws ScanFileHolderException
 	 * 

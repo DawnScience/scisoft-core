@@ -9,7 +9,11 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.commons.lang3.SerializationUtils;
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.metadata.IMetadata;
 import org.junit.BeforeClass;
@@ -35,7 +39,9 @@ public class CrysalisLoaderTest {
 	 */
 	@Test
 	public void testLoadFile() throws Exception {
-		new CrysalisLoader(TestFileFolder + "ccd_direct_0deg_1000ms_1.img_1_uncomp.img").loadFile();
+		DataHolder dh = new CrysalisLoader(TestFileFolder + "ccd_direct_0deg_1000ms_1.img_1_uncomp.img").loadFile();
+		assertTrue(dh.getNames().length >= 1);
+
 	}
 
 	/**
@@ -45,7 +51,9 @@ public class CrysalisLoaderTest {
 	 */
 	@Test
 	public void testLoaderFactory() throws Exception {
-		if (LoaderFactory.getData(TestFileFolder + "ccd_direct_0deg_1000ms_1.img_1_uncomp.img", null) == null) throw new Exception();
+		IDataHolder dh = LoaderFactory.getData(TestFileFolder + "ccd_direct_0deg_1000ms_1.img_1_uncomp.img", null);
+		assertNotNull(dh);
+		assertTrue(dh.getNames().length >= 1);
 	}
 
 	@Test

@@ -21,8 +21,6 @@ import org.junit.runners.Parameterized.Parameters;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.optimize.GradientDescent;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
-import uk.ac.diamond.scisoft.analysis.optimize.LeastSquares;
-import uk.ac.diamond.scisoft.analysis.optimize.NelderMead;
 
 /**
  * Test minimizer and maximizer

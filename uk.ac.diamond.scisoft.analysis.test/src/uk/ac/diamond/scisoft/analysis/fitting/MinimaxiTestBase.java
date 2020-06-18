@@ -38,6 +38,8 @@ abstract class MinimaxiTestBase {
 	}
 
 	class Function extends AFunction {
+		private static final long serialVersionUID = 1L;
+
 		public Function() {
 			super(1);
 		}

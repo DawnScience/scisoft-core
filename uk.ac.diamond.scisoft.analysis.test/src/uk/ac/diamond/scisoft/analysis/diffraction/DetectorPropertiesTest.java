@@ -81,9 +81,7 @@ public class DetectorPropertiesTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		testScratchDirectoryName = IOTestUtils.generateDirectorynameFromClassname(DetectorPropertiesTest.class
-				.getCanonicalName());
-		IOTestUtils.makeScratchDirectory(testScratchDirectoryName);
+		testScratchDirectoryName = IOTestUtils.setUpTestClass(DetectorPropertiesTest.class, true);
 		DataHolder dh = new DataHolder();
 		DoubleDataset data = makeDiffImage();
 		dh.addDataset("testing data", data);

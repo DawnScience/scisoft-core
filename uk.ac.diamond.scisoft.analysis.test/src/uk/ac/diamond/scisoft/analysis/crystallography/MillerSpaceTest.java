@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.crystallography;
 
+import static org.junit.Assert.assertEquals;
+
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
@@ -45,10 +47,12 @@ public class MillerSpaceTest {
 		qmod = q.length();
 		q.add(k);
 		System.err.println("kf : " + q);
-		System.err.println(q.length()/k.length());
+		assertEquals(k.length(), q.length(), 1e-15);
 		q.normalize();
 		System.err.println("Reflection in " + q + "; cos(2t) = " + Math.cos(2*t));
-		System.err.println("t = " + t + " " + Math.asin(qmod*l/(4*Math.PI)) + " cf " + 0.5*Math.acos(q.z));
+		double theta = Math.asin(qmod*l/(4*Math.PI));
+		assertEquals(theta, t, 1e-15);
+		assertEquals(theta, 0.5*Math.acos(q.z), 1e-15);
 	}
 
 	/**

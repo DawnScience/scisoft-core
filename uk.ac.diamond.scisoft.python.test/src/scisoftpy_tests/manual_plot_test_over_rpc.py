@@ -15,7 +15,7 @@
 ###
 
 '''
-Run this test manually to sanity check plotting in a running SDA when this 
+Run this test manually to sanity check plotting in a running DAWN/GDA when this
 script is launched from the host Eclipse Dev
 This tests checks that the RPC Client in Python and Jython works by making a plotting
 call to SDA over RPC (as opposed to how manual_plot_test does it in the user

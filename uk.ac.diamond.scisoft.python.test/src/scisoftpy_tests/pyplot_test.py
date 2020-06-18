@@ -17,61 +17,59 @@
 '''
 Test pyplot by setting up a "fake" SDAPlotter server
 '''
-import unittest
 
-import scisoftpy.python.pyplot as plot
-import scisoftpy.python.pyrpc as rpc
+import os
+if os.name != 'java':
 
-PORT = 8715
+    import unittest
 
-from pyrpc_test import _start_new_thread
+    import scisoftpy.python.pyplot as plot
+    import scisoftpy.python.pyrpc as rpc
 
-class Test(unittest.TestCase):
+    PORT = 8715
 
-    def setUp(self):
-        self.rpcserver = rpc.rpcserver(PORT)
-        self.rpcserver.add_handler('SDAPlotter', lambda plotter_method_name, *args: (plotter_method_name, args))
-        _start_new_thread(self.rpcserver.serve_forever)
-        
-        self.plot = plot.plotter()
-        plot.setremoteport(PORT)
+    from pyrpc_test import _start_new_thread
 
-    def tearDown(self):
-        self.rpcserver.shutdown()
-        self.rpcserver.close()
+    class Test(unittest.TestCase):
 
+        def setUp(self):
+            self.rpcserver = rpc.rpcserver(PORT)
+            self.rpcserver.add_handler('SDAPlotter', lambda plotter_method_name, *args: (plotter_method_name, args))
+            _start_new_thread(self.rpcserver.serve_forever)
 
-    def testBasic(self):
-        (plotter_method_name, args) = self.plot.plot_line(0)
-        self.assertEqual('plot', plotter_method_name)
-        self.assertEqual([0], args)
-        
-    def testCallByAttribute(self):
-        (plotter_method_name, args) = self.plot.__getattr__('plot_line')(0)
-        self.assertEqual('plot', plotter_method_name)
-        self.assertEqual([0], args)
+            self.plot = plot.plotter()
+            plot.setremoteport(PORT)
 
-    def testNoSuchMethod(self):
-        self.assertRaises(AttributeError, self.plot.__getattr__, ('unknown_plot_method',))
-        try:
-            self.plot.unknown_plot_method(0)
-            self.fail()
-        except AttributeError:
-            pass
+        def tearDown(self):
+            self.rpcserver.shutdown()
+            self.rpcserver.close()
 
-    def testOrder(self):
-        '''Tests that the order returned match those expected in SDAPlotter'''
-        self.assertEqual(0, self.plot.plot_orders['none'])
-        self.assertEqual(1, self.plot.plot_orders['alpha'])
-        self.assertEqual(2, self.plot.plot_orders['chrono'])
+        def testBasic(self):
+            (plotter_method_name, args) = self.plot.plot_line(0)
+            self.assertEqual('plot', plotter_method_name)
+            self.assertEqual([0], args)
 
-    def testOrderInvalid(self):
-        self.assertRaises(KeyError, self.plot.plot_orders.__getitem__, 'unknown_order')
+        def testCallByAttribute(self):
+            (plotter_method_name, args) = self.plot.__getattr__('plot_line')(0)
+            self.assertEqual('plot', plotter_method_name)
+            self.assertEqual([0], args)
 
-def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(Test))
-    return suite 
+        def testNoSuchMethod(self):
+            self.assertRaises(AttributeError, self.plot.__getattr__, ('unknown_plot_method',))
+            try:
+                self.plot.unknown_plot_method(0)
+                self.fail()
+            except AttributeError:
+                pass
 
-if __name__ == '__main__':
-    unittest.TextTestRunner(verbosity=2).run(suite())
+        def testOrder(self):
+            '''Tests that the order returned match those expected in SDAPlotter'''
+            self.assertEqual(0, self.plot.plot_orders['none'])
+            self.assertEqual(1, self.plot.plot_orders['alpha'])
+            self.assertEqual(2, self.plot.plot_orders['chrono'])
+
+        def testOrderInvalid(self):
+            self.assertRaises(KeyError, self.plot.plot_orders.__getitem__, 'unknown_order')
+
+    if __name__ == '__main__':
+        unittest.main(verbosity=2)

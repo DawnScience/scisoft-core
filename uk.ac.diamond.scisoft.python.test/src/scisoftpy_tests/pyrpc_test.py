@@ -19,41 +19,36 @@ Created on 1 May 2011
 
 @author: Jonah
 '''
-import unittest
-import scisoftpy.python.pyrpc as rpc
+import os
+if os.name != 'java':
 
-PORT = 8713
+    import unittest
+    import scisoftpy.python.pyrpc as rpc
 
-def _start_new_thread(target):
-    import threading
-    t = threading.Thread(target=target)
-    t.start()
+    PORT = 8713
 
+    def _start_new_thread(target):
+        import threading
+        t = threading.Thread(target=target)
+        t.start()
 
-def catTwoStrings(string1, string2):
-    return string1 + string2
+    def catTwoStrings(string1, string2):
+        return string1 + string2
 
-class Test(unittest.TestCase):
+    class Test(unittest.TestCase):
 
-    def testBasic(self):
-        
-        rpcserver = rpc.rpcserver(PORT)
-        rpcserver.add_handler("cat", catTwoStrings)
-        
-        _start_new_thread(rpcserver.serve_forever)
-        try:
-            rpcclient = rpc.rpcclient(PORT)
-            result = rpcclient.cat("Hello, ", "World!")
-            
-            self.assertEqual("Hello, World!", result)
-        finally:
-            rpcserver.shutdown()
-            rpcserver.close()
+        def testBasic(self):
+            rpcserver = rpc.rpcserver(PORT)
+            rpcserver.add_handler("cat", catTwoStrings)
 
-def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(Test))
-    return suite 
+            _start_new_thread(rpcserver.serve_forever)
+            try:
+                rpcclient = rpc.rpcclient(PORT)
+                result = rpcclient.cat("Hello, ", "World!")
+                self.assertEqual("Hello, World!", result)
+            finally:
+                rpcserver.shutdown()
+                rpcserver.close()
 
-if __name__ == '__main__':
-    unittest.TextTestRunner(verbosity=2).run(suite())
+    if __name__ == '__main__':
+        unittest.main(verbosity=2)

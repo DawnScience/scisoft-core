@@ -27,7 +27,6 @@ import scisoftpy.random as rnd
 
 class Test(unittest.TestCase):
 
-
     def testRandom(self):
         import os
         if os.name == 'java':
@@ -66,10 +65,5 @@ class Test(unittest.TestCase):
         a = rnd.rand(200,300)
         print(a.mean(), a.std())
 
-def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(Test))
-    return suite 
-
 if __name__ == '__main__':
-    unittest.TextTestRunner(verbosity=2).run(suite())
+    unittest.main(verbosity=2)

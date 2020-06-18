@@ -184,15 +184,5 @@ with open('/tmp/e.log', 'w') as _log:
         l = p.stdout.read()
         print(l)
 
-
-def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(Test))
-#     suite.addTest(Test("testException"))
-#     suite.addTest(Test("testSubprocess"))
-#     suite.addTest(Test("testSubprocessCmds"))
-#     suite.addTest(Test("testHello"))
-    return suite 
-
 if __name__ == '__main__':
-    unittest.TextTestRunner(verbosity=2).run(suite())
+    unittest.main(verbosity=2)

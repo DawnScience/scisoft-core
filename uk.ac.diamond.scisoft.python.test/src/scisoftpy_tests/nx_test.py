@@ -72,10 +72,5 @@ class Test(unittest.TestCase):
     def save(self, name, data, testfolder=TestFolder):
         dnp.io.save(path.join(testfolder, name), data)
 
-def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(Test))
-    return suite 
-
 if __name__ == '__main__':
-    unittest.TextTestRunner(verbosity=2).run(suite())
+    unittest.main(verbosity=2)

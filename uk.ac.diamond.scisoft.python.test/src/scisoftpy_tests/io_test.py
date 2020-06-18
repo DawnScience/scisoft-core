@@ -25,8 +25,6 @@ import unittest
 import scisoftpy as dnp
 
 import os
-isjava = os.name == 'java'
-
 from os import path
 TestFolder = path.dirname(__file__) + "/../../../uk.ac.diamond.scisoft.analysis.test/testfiles/images/"
 
@@ -35,61 +33,70 @@ OutTestFolder = TestFolder + "../../test-scratch/"
 if not path.exists(OutTestFolder):
     os.mkdir(OutTestFolder)
 
+TestShape = (512, 256)
+
 class Test(unittest.TestCase):
-    def load(self, name, testfolder=TestFolder):
+    def load(self, name, testfolder=TestFolder, shape=None):
         path = testfolder + name
         im = dnp.io.load(path)
         print(type(im[0]), im[0].shape)
+        if shape is not None:
+            self.assertSequenceEqual(im[0].shape, shape)
         return im
 
-    def colourload(self, name, testfolder=TestFolder):
+    def colourload(self, name, testfolder=TestFolder, shape=None):
         path = testfolder + name
         im = dnp.io.load(path, ascolour=True)
         print(type(im[0]), im[0].shape)
+        if shape is not None:
+            self.assertSequenceEqual(im[0].shape, shape)
         return im[0]
 
     def testLoading(self):
         print(os.getcwd())
-        self.load("test.png")
-        self.load("testrgb.png")
+        self.load("test.png", shape=TestShape)
+        self.load("testrgb.png", shape=TestShape)
 
-        self.colourload("test.png")
-        im = self.colourload("testrgb.png")
+        self.colourload("test.png", shape=TestShape)
+        im = self.colourload("testrgb.png", shape=TestShape)
         print('slicing RGB: ', type(im[:5,2]))
+        self.assertTrue(isinstance(im, dnp.ndarrayRGB))
 
-        self.load("test.jpg")
-        self.load("testlossy85.jpg")
-        self.load("testrgb.jpg")
-        self.load("testrgblossy85.jpg")
+        self.load("test.jpg", shape=TestShape)
+        self.load("testlossy85.jpg", shape=TestShape)
+        self.load("testrgb.jpg", shape=TestShape)
+        self.load("testrgblossy85.jpg", shape=TestShape)
 
-        self.colourload("test.jpg")
-        self.colourload("testrgb.jpg")
-        self.colourload("testrgblossy85.jpg")
+        self.colourload("test.jpg", shape=TestShape)
+        self.colourload("testrgb.jpg", shape=TestShape)
+        self.colourload("testrgblossy85.jpg", shape=TestShape)
 
-        self.load("test.tiff")
-        self.load("test-df.tiff")
-        self.load("test-pb.tiff")
-        self.load("testrgb.tiff")
-        self.load("testrgb-df.tiff")
-        self.load("testrgb-lzw.tiff")
-        self.load("testrgb-pb.tiff")
+        self.load("test.tiff", shape=TestShape)
+        self.load("test-df.tiff", shape=TestShape)
+        self.load("test-pb.tiff", shape=TestShape)
+        self.load("testrgb.tiff", shape=TestShape)
+        self.load("testrgb-df.tiff", shape=TestShape)
+        self.load("testrgb-lzw.tiff", shape=TestShape)
+        self.load("testrgb-pb.tiff", shape=TestShape)
         try:
             self.load("test-trunc.tiff")
+            self.fail('Should have failed loading truncated file')
         except IOError as e:
             print('Expected IO error caught:', e)
         except:
             import sys
             print('Unexpected exception caught', sys.exc_info())
 
-        self.colourload("testrgb.tiff")
-        self.colourload("testrgb-df.tiff")
-        self.colourload("testrgb-lzw.tiff")
-        self.colourload("testrgb-pb.tiff")
-        return True
+        self.colourload("testrgb.tiff", shape=TestShape)
+        self.colourload("testrgb-df.tiff", shape=TestShape)
+        self.colourload("testrgb-lzw.tiff", shape=TestShape)
+        self.colourload("testrgb-pb.tiff", shape=TestShape)
 
     def testLoadingSRS(self):
         dh = self.load("96356.dat", IOTestFolder+"SRSLoaderTest/")
         print(dh.eta)
+        self.assertEquals(dh.eta.size, 41)
+        self.assertAlmostEquals(dh.eta[3], 32.7779, 4)
 
     def testLoadingNXS(self):
         f = IOTestFolder + "NexusLoaderTest/"
@@ -142,46 +149,49 @@ class Test(unittest.TestCase):
         assert dd.shape == (489,), "Wrong shape"
         print(type(d), type(dd))
 
-    def save(self, name, data, testfolder=OutTestFolder):
+    def save(self, name, data, testfolder=OutTestFolder, signed=True, bits=None):
         path = testfolder + name
-        dnp.io.save(path, data)
+        dnp.io.save(path, data, signed=signed, bits=bits)
 
     def testSaving(self):
         d = dnp.arange(100).reshape(10,10) % 3
         self.save("chequered.png", d)
-        im = self.load("chequered.png", testfolder=OutTestFolder)
-        im = self.load("test.png")
+        im = self.load("chequered.png", testfolder=OutTestFolder, shape=(10,10))
+        im = self.load("test.png", shape=TestShape)
         self.save("grey.png", im)
-        im2 = self.load("grey.png", testfolder=OutTestFolder)
+        im2 = self.load("grey.png", testfolder=OutTestFolder, shape=TestShape)
         self.save("chequered.npy", d)
-        im3 = self.load("chequered.npy", testfolder=OutTestFolder)
+        im3 = self.load("chequered.npy", testfolder=OutTestFolder, shape=(10,10))
 
     def testSavingOthers(self):
-        im = self.colourload("testrgb.png")
+        im = self.colourload("testrgb.png", shape=TestShape)
         self.save("colour.png", im)
-        im2 = self.colourload("colour.png", testfolder=OutTestFolder)
+        im2 = self.colourload("colour.png", testfolder=OutTestFolder, shape=TestShape)
 
     def testSavingBits(self):
         d = dnp.arange(12*32).reshape((12,32))
         b = dnp.abs(dnp.array(d, dnp.int8))
         b[b < 0] = 0
         print(b.min(), b.max())
-        dnp.io.save(OutTestFolder+'uint.tiff', d, bits=32, signed=False)
-        dnp.io.save(OutTestFolder+'ushort.tiff', d, bits=16, signed=False)
-        dnp.io.save(OutTestFolder+'ubyte.tiff', b, bits=8, signed=False)
-        dnp.io.save(OutTestFolder+'int.tiff', d, bits=32)
-        dnp.io.save(OutTestFolder+'short.tiff', d, bits=16)
-        dnp.io.save(OutTestFolder+'byte.tiff', dnp.array(d, dnp.int8), bits=8)
-        dnp.io.save(OutTestFolder+'double.tiff', d, bits=33)
-        dnp.io.save(OutTestFolder+'float.tiff', d, bits=33)
-        dnp.io.save(OutTestFolder+'short.png', d, bits=16)
-        dnp.io.save(OutTestFolder+'byte.png', b, bits=8)
+        self.save('uint.tiff', d, bits=32, signed=False)
+        self.save('ushort.tiff', d, bits=16, signed=False)
+        self.save('ubyte.tiff', b, bits=8, signed=False)
+        self.save('int.tiff', d, bits=32)
+        self.save('short.tiff', d, bits=16)
+        self.save('byte.tiff', dnp.array(d, dnp.int8), bits=8)
+        self.save('double.tiff', d, bits=33)
+        self.save('float.tiff', d, bits=33)
+        self.save('short.png', d, bits=16)
+        self.save('byte.png', b, bits=8)
 
     def testB16data(self):
         d = dnp.io.load(IOTestFolder + 'SRSLoaderTest/34146.dat', format=['srs'])
         print(list(d.keys()))
         print(list(d.metadata.keys()))
         print(list(d.metadata.values()))
+        self.assertIn('x', d.keys())
+        self.assertIn('SRSDAT', d.metadata.keys())
+        self.assertEqual(int(d.metadata['SRSDAT']), 2011513)
 
     def testNulldata(self):
         try:
@@ -189,10 +199,5 @@ class Test(unittest.TestCase):
         except Exception as e:
             print("Expected exception caught:", e)
 
-def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(Test))
-    return suite 
-
 if __name__ == '__main__':
-    unittest.TextTestRunner(verbosity=2).run(suite())
+    unittest.main(verbosity=2)

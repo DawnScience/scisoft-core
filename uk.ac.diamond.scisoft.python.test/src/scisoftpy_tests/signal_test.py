@@ -132,10 +132,5 @@ class Test(unittest.TestCase):
         self.checkitems([1., 2.5, 4.], np.convolve(b, a, 'same'))
         self.checkitems([2.5], np.convolve(b, a, 'valid'))
 
-def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(Test))
-    return suite 
-
 if __name__ == '__main__':
-    unittest.TextTestRunner(verbosity=2).run(suite())
+    unittest.main(verbosity=2)

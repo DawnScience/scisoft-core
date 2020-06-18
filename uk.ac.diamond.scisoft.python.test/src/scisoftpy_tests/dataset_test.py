@@ -195,7 +195,7 @@ class Test(unittest.TestCase):
 #        dds = np.ndarrayCB(3, (3,4))
 #        self.assertEqual(3, dds.itemsize, msg="itemsize incorrect")
         dds = np.zeros((3,5), np.rgb)
-        print(type(dds), dds.dtype, dds.shape)
+        print(type(dds), dds.dtype, dds.shape, dds.itemsize)
         self.assertEqual(6, dds.itemsize, msg="itemsize incorrect")
         dds = dds.red
         print(type(dds), dds.dtype, dds.shape)
@@ -1200,10 +1200,5 @@ class Test(unittest.TestCase):
         a = np.array(self.q)
         self.checkitems(self.q, np.copy(a))
 
-def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(Test))
-    return suite 
-
 if __name__ == '__main__':
-    unittest.TextTestRunner(verbosity=2).run(suite())
+    unittest.main(verbosity=2)

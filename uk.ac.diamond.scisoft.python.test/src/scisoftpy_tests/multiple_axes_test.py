@@ -1,26 +1,22 @@
 
 import unittest
 import scisoftpy as dnp
-import inspect
 
 class Test(unittest.TestCase):
 
-    def toAny(o):
-        return o
-
-    def checkitems(self, la, ds, convert=toAny):
+    def checkitems(self, la, ds):
         if ds.ndim == 1:
             for i in range(ds.shape[0]):
-                self.assertEqual(convert(la[i]), ds[i])
+                self.assertEqual(la[i], ds[i])
         elif ds.ndim == 2:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
-                    self.assertEqual(convert(la[i][j]), ds[i, j])
+                    self.assertEqual(la[i][j], ds[i, j])
         elif ds.ndim == 3:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
                     for k in range(ds.shape[2]):
-                        self.assertEqual(convert(la[i][j][k]), ds[i, j, k])
+                        self.assertEqual(la[i][j][k], ds[i, j, k])
 
     def testAmin(self):
         a = dnp.array([[[1, 2, 3], [4, 5, 6]], [[7, 8, 9], [10, 11, 12]]])
@@ -37,10 +33,5 @@ class Test(unittest.TestCase):
         self.assertEqual(dnp.amin(a, axis=(0, 2), keepdims=True).shape, (1, 2, 1))
         self.checkitems(dnp.amin(a, axis=(0, 2), keepdims=True), dnp.array([[[1], [4]]]))
 
-def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(Test))
-    return suite
-
 if __name__ == '__main__':
-    unittest.TextTestRunner(verbosity=2).run(suite())
+    unittest.main(verbosity=2)

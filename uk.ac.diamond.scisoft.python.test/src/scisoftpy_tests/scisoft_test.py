@@ -24,12 +24,6 @@ from __future__ import print_function
 import unittest
 import scisoftpy as np
 
-def toInt(o):
-    return int(o)
-
-def toAny(o):
-    return o
-
 class Test(unittest.TestCase):
 
     def setUp(self):
@@ -37,19 +31,19 @@ class Test(unittest.TestCase):
 #        import pydevd
 #        pydevd.settrace(stdoutToServer=True, stderrToServer=True)
 
-    def checkitems(self, la, ds, convert=toAny):
+    def checkitems(self, la, ds):
         if ds.ndim == 1:
             for i in range(ds.shape[0]):
-                self.assertAlmostEqual(convert(la[i]), ds[i])
+                self.assertAlmostEqual(la[i], ds[i])
         elif ds.ndim == 2:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
-                    self.assertAlmostEqual(convert(la[i][j]), ds[i, j])
+                    self.assertAlmostEqual(la[i][j], ds[i, j])
         elif ds.ndim == 3:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
                     for k in range(ds.shape[2]):
-                        self.assertAlmostEqual(convert(la[i][j][k]), ds[i, j, k])
+                        self.assertAlmostEqual(la[i][j][k], ds[i, j, k])
 
     def testStrAndRepr(self):
         print('String and repr testing')
@@ -663,10 +657,5 @@ class Test(unittest.TestCase):
         c = np.bincount(a, w * 0.5)
         self.checkitems([0, 1, 3, 0, 4, 0, 1], 2*c)
 
-def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(Test))
-    return suite 
-
 if __name__ == '__main__':
-    unittest.TextTestRunner(verbosity=2).run(suite())
+    unittest.main(verbosity=2)

@@ -19,67 +19,66 @@ Created on 1 May 2011
 
 @author: Jonah
 '''
-import unittest
-import scisoftpy.python.pyrpc as rpc
-import threading
 
-PORT = 8715
+import os
+if os.name != 'java':
 
-from pyrpc_test import _start_new_thread
+    import unittest
+    import scisoftpy.python.pyrpc as rpc
+    import threading
 
-class Test(unittest.TestCase):
+    PORT = 8715
 
-    def testMultipleHandlers(self):
-        rpcserver = rpc.rpcserver(PORT)
-        rpcserver.add_handler("cat", lambda s1, s2: s1 + s2)
-        rpcserver.add_handler("len", lambda s1, s2: len(s1 + s2))
-        
-        _start_new_thread(rpcserver.serve_forever)
-        try:
+    from pyrpc_test import _start_new_thread
+
+    class Test(unittest.TestCase):
+
+        def testMultipleHandlers(self):
+            rpcserver = rpc.rpcserver(PORT)
+            rpcserver.add_handler("cat", lambda s1, s2: s1 + s2)
+            rpcserver.add_handler("len", lambda s1, s2: len(s1 + s2))
+
+            _start_new_thread(rpcserver.serve_forever)
+            try:
+                rpcclient = rpc.rpcclient(PORT)
+                result = rpcclient.cat("Hello, ", "World!")
+                self.assertEqual("Hello, World!", result)
+                result = rpcclient.len("Hello, ", "World!")
+                self.assertEqual(len("Hello, World!"), result)
+            finally:
+                rpcserver.shutdown()
+                rpcserver.close()
+
+        def testExceptionOnHandlerFlattening(self):
+            rpcserver = rpc.rpcserver(PORT)
+            rpcserver.add_handler("flaterror", lambda o: object())
+
+            _start_new_thread(rpcserver.serve_forever)
+            try:
+                rpcclient = rpc.rpcclient(PORT)
+                self.assertRaises(Exception, rpcclient.flaterror, ("Hello",))
+            finally:
+                rpcserver.shutdown()
+                rpcserver.close()
+
+        def testSingleIntegerArg(self):
+            rpcserver = rpc.rpcserver(PORT)
+            rpcserver.add_handler("echo", lambda o: o)
+
+            _start_new_thread(rpcserver.serve_forever)
+            try:
+                rpcclient = rpc.rpcclient(PORT)
+                self.assertRaises(Exception, rpcclient.flaterror, (18,))
+            finally:
+                rpcserver.shutdown()
+                rpcserver.close()
+
+        def testConnectionTimesOutQuicklyEnough(self):
             rpcclient = rpc.rpcclient(PORT)
-            result = rpcclient.cat("Hello, ", "World!")
-            self.assertEqual("Hello, World!", result)
-            result = rpcclient.len("Hello, ", "World!")
-            self.assertEqual(len("Hello, World!"), result)
-        finally:
-            rpcserver.shutdown()
-            rpcserver.close()
+            t = threading.Thread(target=self.assertRaises, args=(Exception, rpcclient.doesnotexist, ("Hello",)))
+            t.start()
+            t.join(2.0)
+            self.assertFalse(t.isAlive())
 
-    def testExceptionOnHandlerFlattening(self):
-        rpcserver = rpc.rpcserver(PORT)
-        rpcserver.add_handler("flaterror", lambda o: object())
-        
-        _start_new_thread(rpcserver.serve_forever)
-        try:
-            rpcclient = rpc.rpcclient(PORT)
-            self.assertRaises(Exception, rpcclient.flaterror, ("Hello",))
-        finally:
-            rpcserver.shutdown()
-            rpcserver.close()
-
-    def testSingleIntegerArg(self):
-        rpcserver = rpc.rpcserver(PORT)
-        rpcserver.add_handler("echo", lambda o: o)
-        
-        _start_new_thread(rpcserver.serve_forever)
-        try:
-            rpcclient = rpc.rpcclient(PORT)
-            self.assertRaises(Exception, rpcclient.flaterror, (18,))
-        finally:
-            rpcserver.shutdown()
-            rpcserver.close()
-
-    def testConnectionTimesOutQuicklyEnough(self):
-        rpcclient = rpc.rpcclient(PORT)
-        t = threading.Thread(target=self.assertRaises, args=(Exception, rpcclient.doesnotexist, ("Hello",)))
-        t.start()
-        t.join(2.0)
-        self.assertFalse(t.isAlive())
-
-def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(Test))
-    return suite 
-
-if __name__ == '__main__':
-    unittest.TextTestRunner(verbosity=2).run(suite())
+    if __name__ == '__main__':
+        unittest.main(verbosity=2)

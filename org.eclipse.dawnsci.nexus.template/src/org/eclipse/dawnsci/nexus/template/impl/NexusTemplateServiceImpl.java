@@ -26,32 +26,36 @@ public class NexusTemplateServiceImpl implements NexusTemplateService {
 	/**
 	 * The SnakeYAML Yaml object, essentially a Facade to the snakeyaml API.
 	 */
-	private final Yaml yaml = new Yaml(); // note should only be used by one thread
+	private final Yaml yamlParser = new Yaml(); // note: not thread-safe, must only be called by synchronized methods
+	
+	private synchronized Map<String, Object> loadTemplate(Reader reader) {
+		return yamlParser.load(reader);
+	}
+	
+	private synchronized Map<String, Object> loadTemplateString(String templateString) {
+		return yamlParser.load(templateString);
+	}
 	
 	@Override
-	public synchronized NexusTemplate loadTemplate(String templateFilePath) throws NexusException {
+	public NexusTemplate loadTemplate(String templateFilePath) throws NexusException {
 		final Path filePath = Paths.get(templateFilePath);
 		try (Reader reader = Files.newBufferedReader(filePath)) {
 			logger.debug("Creating template from file: {}", templateFilePath);
-			return createTemplate(filePath.getFileName().toString(), yaml.load(reader));
+			return createTemplate(filePath.getFileName().toString(), loadTemplate(reader));
 		} catch (IOException e) {
 			throw new NexusException("Could not read template file " + templateFilePath);
 		}
 	}
 	
 	@Override
-	public NexusTemplate createTemplate(String templateName, Map<String, Object> yamlMapping) {
-		return new NexusTemplateImpl(templateName, yamlMapping);
+	public NexusTemplate createTemplate(String templateName, Map<String, Object> templateMap) {
+		return new NexusTemplateImpl(templateName, templateMap);
 	}
 	
-	/**
-	 * Load a template from a String. This method is used for testing and is not public API.
-	 * @param templateString
-	 * @return
-	 */
-	public synchronized NexusTemplate loadTemplateFromString(String templateString) {
+	@Override
+	public NexusTemplate createTemplateFromString(String templateString) throws NexusException {
 		logger.debug("Creating template from string: {}", templateString);
-		return createTemplate("<string>", yaml.load(templateString));
+		return createTemplate("<string>", loadTemplateString(templateString));
 	}
 
 }

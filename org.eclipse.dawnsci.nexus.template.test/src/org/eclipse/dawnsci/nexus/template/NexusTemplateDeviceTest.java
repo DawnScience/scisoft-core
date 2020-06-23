@@ -92,6 +92,31 @@ public class NexusTemplateDeviceTest {
 		final TreeFile actualTree = nexusDeviceBuilder.buildNexusTree(templateDevice);
 		assertNexusTreesEqual(expectedTree, actualTree);
 	}
+	
+	@Test
+	public void testTemplateDeviceFromString() throws Exception {
+		final NexusTemplateDevice<NXcollection> templateDevice = new NexusTemplateDevice<>();
+		templateDevice.setName("template");
+		final String templateString = "NX_class@: NXcollection\n" + 
+				"name: template\n" + 
+				"description: device from a template\n" + 
+				"attr@: attrValue\n" + 
+				"program_name:\n" + 
+				"   value: gda\n" + 
+				"   version@: \"9.13\"\n" + 
+				"   configuration@: dummy";
+		templateDevice.setTemplateString(templateString);
+		templateDevice.register();
+		
+		assertThat(nexusDeviceService.getNexusDevice(templateDevice.getName()), is(sameInstance(templateDevice)));
+		
+		// construct the expected tree
+		final TreeFile expectedTree = createExpectedTree(templateDevice);
+		
+		// build the nexus tree
+		final TreeFile actualTree = nexusDeviceBuilder.buildNexusTree(templateDevice);
+		assertNexusTreesEqual(expectedTree, actualTree);
+	}
 
 	private TreeFile createExpectedTree(final NexusTemplateDevice<NXcollection> templateDevice) throws NexusException {
 		final TreeFile expectedTree = nexusDeviceBuilder.buildEmptyTree();

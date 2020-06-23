@@ -94,13 +94,13 @@ public class NexusTemplateTest {
 	}
 	
 	private Tree applyTemplateStringToTree(String templateString, Tree tree) throws Exception {
-		final NexusTemplate template = templateService.loadTemplateFromString(templateString);
+		final NexusTemplate template = templateService.createTemplateFromString(templateString);
 		template.apply(tree);
 		return tree;
 	}
 	
 	private NXroot applyTemplateStringToEmptyTree(String templateString) throws Exception {
-		final NexusTemplate template = templateService.loadTemplateFromString(templateString);
+		final NexusTemplate template = templateService.createTemplateFromString(templateString);
 		if (contextType == NexusContextType.IN_MEMORY) {
 			Tree tree = TreeFactory.createTree(0, null);
 			final NXroot root = NexusNodeFactory.createNXroot();
@@ -131,7 +131,7 @@ public class NexusTemplateTest {
 	}
 	
 	private Tree applyTemplateStringToFile(String templateString, String nexusFilePath) throws Exception {
-		final NexusTemplate template = templateService.loadTemplateFromString(templateString);
+		final NexusTemplate template = templateService.createTemplateFromString(templateString);
 		if (contextType == NexusContextType.IN_MEMORY) {
 			final Tree tree = loadNexusFile(nexusFilePath);
 			template.apply(tree);

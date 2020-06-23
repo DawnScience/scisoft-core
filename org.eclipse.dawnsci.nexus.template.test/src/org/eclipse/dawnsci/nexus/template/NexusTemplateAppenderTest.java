@@ -164,6 +164,34 @@ public class NexusTemplateAppenderTest {
 		assertNexusTreesEqual(expectedTree, actualTree);
 	}
 	
+	@Test
+	public void testAppendTemplateFromString() throws Exception {
+		final String fileName = "templateFromString.nxs";
+		final NexusTemplateAppender<NXdetector> appender = new NexusTemplateAppender<>("stringTemplate");
+		final String templateString = "detector_number: !!java.lang.Long 2 # long is not supported by the YAML spec, this is how to specify a long in SnakeYAML\n" + 
+				"layout: area\n" + 
+				"saturation_value: !!java.lang.Long 999 \n" + 
+				"time_of_flight:\n" + 
+				"   value: 0.1\n" + 
+				"   long_name@: Total time of flight\n" + 
+				"raw_time_of_flight:\n" + 
+				"   value: !!java.lang.Long 5\n" + 
+				"   frequency@: 10000\n" + 
+				"calibration_method/:\n" + 
+				"   NX_class@: NXnote\n" + 
+				"   author: John Smith\n" + 
+				"   date: \"2020-05-19\"\n" + 
+				"   type: text/plain\n" + 
+				"   sequence_index: !!java.lang.Long 1 \n" + 
+				"   data: Calibration note";
+		appender.setTemplateString(templateString);
+		
+		final TreeFile actualTree = createTreeAndAppend(fileName, DETECTOR_GROUP_PATH, appender);
+		
+		final TreeFile expectedTree = createExpectedTree(fileName);
+		assertNexusTreesEqual(expectedTree, actualTree);
+	}
+	
 	private TreeFile createExpectedTree(String fileName) throws NexusException {
 		final TreeFile expectedTree = buildInitialTree(fileName);
 		final NXdetector expectedDetector = (NXdetector) expectedTree.findNodeLink(DETECTOR_GROUP_PATH).getDestination();

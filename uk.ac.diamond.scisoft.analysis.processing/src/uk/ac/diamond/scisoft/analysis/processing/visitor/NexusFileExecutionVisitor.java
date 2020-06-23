@@ -242,7 +242,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 	private void createInterGroup() {
 		try {
 			intermediate = Tree.ROOT + ENTRY + Node.SEPARATOR + INTER_GROUP;
-			requireNXclass(intermediate, NexusConstants.SUBENTRY);
+			requireNXclass(intermediate, NexusConstants.COLLECTION);
 		} catch (Exception e) {
 			logger.error("Could not create intermediate group: {}", intermediate, e);
 		}
@@ -393,7 +393,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 							GroupNode group;
 							String currentGroup = Tree.ROOT + ENTRY + Node.SEPARATOR + AUX_GROUP;
 							synchronized (nexusFile) {
-								GroupNode auxG = requireNXclass(currentGroup, NexusConstants.SUBENTRY);
+								GroupNode auxG = requireNXclass(currentGroup, NexusConstants.COLLECTION);
 								group = requireNXclass(auxG, position + "-" + intermediateData.getName() + Node.SEPARATOR + dsName, NexusConstants.DATA);
 								currentGroup += Node.SEPARATOR + position + "-" + intermediateData.getName();
 								ds.setName(DATA_NAME);
@@ -423,7 +423,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 						GroupNode group;
 						String currentPath = Tree.ROOT + ENTRY + Node.SEPARATOR + SUM_GROUP;
 						synchronized (nexusFile) {
-							group = requireNXclass(currentPath, NexusConstants.SUBENTRY);
+							group = requireNXclass(currentPath, NexusConstants.COLLECTION);
 							String gName = position + "-" + intermediateData.getName();
 							currentPath += Node.SEPARATOR + gName + Node.SEPARATOR + dsName;
 							group = requireNXclass(currentPath, NexusConstants.DATA);

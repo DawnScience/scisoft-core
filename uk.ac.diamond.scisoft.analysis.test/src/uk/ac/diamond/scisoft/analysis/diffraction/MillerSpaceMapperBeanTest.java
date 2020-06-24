@@ -16,7 +16,6 @@ import org.junit.rules.TemporaryFolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import uk.ac.diamond.scisoft.analysis.IOTestUtils;
-import uk.ac.diamond.scisoft.analysis.diffraction.MillerSpaceMapper;
 import uk.ac.diamond.scisoft.analysis.diffraction.MillerSpaceMapper.MillerSpaceMapperBean;
 
 public class MillerSpaceMapperBeanTest {
@@ -140,15 +139,15 @@ public class MillerSpaceMapperBeanTest {
 
 		Dataset[] a = HDF5Utils.readAttributes(dstPath, "/");
 		Dataset[] b = HDF5Utils.readAttributes(dstPath, "/processed");
-		Dataset[] c = HDF5Utils.readAttributes(dstPath, "/processed/process/reciprocal_space");
+		Dataset[] c = HDF5Utils.readAttributes(dstPath, "/processed/reciprocal_space");
 		Dataset[] d = HDF5Utils.readAttributes(dstPath, "entry0");
 		Dataset[] e = HDF5Utils.readAttributes(dstPath, "entry1");
 
 		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/process/date"));
 		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/process/parameters"));
 		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/process/program"));
-		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/process/reciprocal_space/volume"));
-		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/process/reciprocal_space/weight"));
+		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/reciprocal_space/volume"));
+		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/reciprocal_space/weight"));
 
 		boolean found = false;
 		for (Dataset dataset : a) {
@@ -163,7 +162,7 @@ public class MillerSpaceMapperBeanTest {
 		found = false;
 		for (Dataset dataset : b) {
 			if (dataset.getName().equals("default")) {
-				Assert.assertEquals("process/reciprocal_space", dataset.getString());
+				Assert.assertEquals("reciprocal_space", dataset.getString());
 				found = true;
 				break;
 			}

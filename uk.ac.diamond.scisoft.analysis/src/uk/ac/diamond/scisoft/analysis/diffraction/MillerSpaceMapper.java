@@ -135,7 +135,6 @@ public class MillerSpaceMapper {
 	private static final String[] Q_VOLUME_AXES = new String[] { "x-axis", "y-axis", "z-axis" };
 
 	private static final String ENTRY = "processed";
-	private static final String PROCESS = "process";
 	private static final String PROCESSED = Tree.ROOT + ENTRY;
 	private static final String PROCESSPATH = PROCESSED + Node.SEPARATOR + "process";
 
@@ -1468,7 +1467,7 @@ public class MillerSpaceMapper {
 		}
 
 		String volName = mapQ ? "q_space" : "reciprocal_space";
-		String volPath = PROCESSPATH + Node.SEPARATOR + volName;
+		String volPath = PROCESSED + Node.SEPARATOR + volName;
 
 		try {
 			DoubleDataset map = DatasetFactory.zeros(vShape);
@@ -1498,23 +1497,26 @@ public class MillerSpaceMapper {
 					createMillerSpaceAxes(a, vShape, vMin, null, vDel);
 				}
 			}
-			if (!hasDeleted) {
+			System.out.printf("For %d threads, processing took %dms\n", pool.getParallelism(), System.currentTimeMillis() - start);
+			start = System.currentTimeMillis();
+
+			if (isErrorTest) {
+				throw new OutOfMemoryError();
+			}
+
+			boolean isFileNew = !hasDeleted;
+			if (isFileNew) {
 				HDF5FileFactory.deleteFile(output);
 				hasDeleted = true;
 			}
 
-			System.out.printf("For %d threads, processing took %dms\n", pool.getParallelism(), System.currentTimeMillis() - start);
-			start = System.currentTimeMillis();
-			
-			if (isErrorTest) {
-				throw new OutOfMemoryError();
+			if (isFileNew) {
+				writeNXclass(output, PROCESSED, NexusConstants.ENTRY);
+				writeNXclass(output, PROCESSPATH, NexusConstants.PROCESS);
+				writeDefaultAttributes(output, volName);
 			}
-			
-			createAndWriteAttribute(output, PROCESSED, NexusConstants.NXCLASS, NexusConstants.ENTRY);
-			createAndWriteAttribute(output, PROCESSPATH, NexusConstants.NXCLASS, NexusConstants.PROCESS);
 
 			saveVolume(output, bean, entryPath, volPath, map, weight, a);
-			writeDefaultAttributes(output, volName);
 			System.out.printf("Saving took %dms\n", System.currentTimeMillis() - start);
 		} catch (IllegalArgumentException | OutOfMemoryError e) {
 			System.err.println("There is not enough memory to do this all at once!");
@@ -1552,7 +1554,8 @@ public class MillerSpaceMapper {
 				throw e;
 			}
 			System.out.println("Mapping in " + parts + " parts");
-			if (!hasDeleted) {
+			boolean isFileNew = !hasDeleted;
+			if (isFileNew) {
 				HDF5FileFactory.deleteFile(output);
 				hasDeleted = true;
 			}
@@ -1563,26 +1566,25 @@ public class MillerSpaceMapper {
 					cShape, DoubleDataset.class, null, false);
 			LazyWriteableDataset lazyWeight = HDF5Utils.createLazyDataset(output, volPath, WEIGHT_NAME, vShape, null,
 					cShape, DoubleDataset.class, null, false);
-			createAndWriteAttribute(output, PROCESSED, NexusConstants.NXCLASS, NexusConstants.ENTRY);
-			createAndWriteAttribute(output, PROCESSPATH, NexusConstants.NXCLASS, NexusConstants.PROCESS);
+
+			if (isFileNew) {
+				writeNXclass(output, PROCESSED, NexusConstants.ENTRY);
+				writeNXclass(output, PROCESSPATH, NexusConstants.PROCESS);
+				writeDefaultAttributes(output, volName);
+			}
 
 			mapAndSaveInParts(mapQ, trees, allIters, lazyVolume, lazyWeight, parts, map, weight);
 
 			saveAxesAndAttributes(output, volPath, a);
-			writeLinkedData(output, bean, entryPath);
-			writeDefaultAttributes(output, volName);
+			writeProcessingParameters(output, bean, entryPath);
+			linkOriginalData(output, bean.getInputs(), entryPath);
 		}
 		return a;
 	}
 
 	private static void writeDefaultAttributes(String file, String volName) throws ScanFileHolderException {
-		Dataset x = DatasetFactory.createFromObject(ENTRY);
-		x.setName(NexusConstants.DEFAULT);
-		HDF5Utils.writeAttributes(file, Tree.ROOT, false, x);
-
-		Dataset y = DatasetFactory.createFromObject(PROCESS + Node.SEPARATOR + volName);
-		y.setName(NexusConstants.DEFAULT);
-		HDF5Utils.writeAttributes(file, PROCESSED, false, y);
+		createAndWriteAttribute(file, Tree.ROOT, NexusConstants.DEFAULT, ENTRY);
+		createAndWriteAttribute(file, PROCESSED, NexusConstants.DEFAULT, volName);
 	}
 
 	private static void createQSpaceAxes(Dataset[] a, int[] mShape, double[] mStart, double[] mStop, double[] mDelta) {
@@ -1668,13 +1670,12 @@ public class MillerSpaceMapper {
 		HDF5Utils.writeDataset(file, volPath, v);
 		HDF5Utils.writeDataset(file, volPath, w);
 		saveAxesAndAttributes(file, volPath, axes);
-		writeLinkedData(file, bean, entryPath);
-
+		writeProcessingParameters(file, bean, entryPath);
+		linkOriginalData(file, bean.getInputs(), entryPath);
 	}
 
-	static void writeLinkedData(String file, MillerSpaceMapperBean bean, String entryPath)
+	static void writeProcessingParameters(String file, MillerSpaceMapperBean bean, String entryPath)
 			throws ScanFileHolderException {
-
 		String className = MillerSpaceMapper.class.getSimpleName();
 		String program = "DAWN." + className;
 		String timeStamp = Instant.now().toString();
@@ -1687,21 +1688,23 @@ public class MillerSpaceMapper {
 			writeData(file, PROCESSPATH, program, "program");
 			writeData(file, PROCESSPATH, timeStamp, "date");
 			writeData(file, PROCESSPATH, VERSION, "version");
-
-			String[] inputs = bean.inputs;
-			Path fileParent = Paths.get(file).toAbsolutePath().getParent();
-			for (int i = 0; i < inputs.length; i++) {
-				String destination = String.format("/entry%d", i);
-				try {
-					String relativePath = fileParent.relativize(Paths.get(inputs[i])).toString();
-					HDF5Utils.createExternalLink(file, destination, relativePath, entryPath);
-				} catch (IllegalArgumentException e) {
-					System.err.println("Could not create relative path between: " + file + " and " + inputs[i]);
-					HDF5Utils.createExternalLink(file, destination, inputs[i], entryPath);
-				}
-			}
 		} catch (JsonProcessingException e) {
 			throw new ScanFileHolderException("Could not process JSON file", e);
+		}
+	}
+
+	static void linkOriginalData(String file, String[] inputs, String entryPath)
+			throws ScanFileHolderException {
+		Path fileParent = Paths.get(file).toAbsolutePath().getParent();
+		for (int i = 0; i < inputs.length; i++) {
+			String destination = String.format("/entry%d", i);
+			try {
+				String relativePath = fileParent.relativize(Paths.get(inputs[i])).toString();
+				HDF5Utils.createExternalLink(file, destination, relativePath, entryPath);
+			} catch (IllegalArgumentException e) {
+				System.err.println("Could not create relative path between: " + file + " and " + inputs[i]);
+				HDF5Utils.createExternalLink(file, destination, inputs[i], entryPath);
+			}
 		}
 	}
 
@@ -1714,11 +1717,23 @@ public class MillerSpaceMapper {
 	 * @param attribute
 	 * @throws ScanFileHolderException
 	 */
-	public static void createAndWriteAttribute(String file, String path, String attributeName, String attribute)
+	private static void createAndWriteAttribute(String file, String path, String attributeName, String attribute)
 			throws ScanFileHolderException {
 		Dataset x = DatasetFactory.createFromObject(attribute);
 		x.setName(attributeName);
 		HDF5Utils.writeAttributes(file, path, true, x);
+	}
+
+	/**
+	 * Write an NXclass attribute
+	 * 
+	 * @param file
+	 * @param path
+	 * @param nxClass
+	 * @throws ScanFileHolderException
+	 */
+	private static void writeNXclass(String file, String path, String nxClass) throws ScanFileHolderException {
+		createAndWriteAttribute(file, path, NexusConstants.NXCLASS, nxClass);
 	}
 
 	/**
@@ -1938,21 +1953,34 @@ public class MillerSpaceMapper {
 		System.out.printf("Saving took %dms\n", save);
 	}
 
+	private static final String INDICES = "indices";
+	private static final String millerIndicesPath = PROCESSED + Node.SEPARATOR + INDICES;
+
 	private void processTreesForList(Tree[] trees, PositionIterator[][] allIters)
 			throws ScanFileHolderException, DatasetException {
 		String output = bean.getOutput();
-		if (!hasDeleted) {
+		boolean isFileNew = !hasDeleted;
+		if (isFileNew) {
 			HDF5FileFactory.deleteFile(output);
 			hasDeleted = true;
 		}
 
 		// Each pixel => HKL (3 doubles) plus corrected intensity (1 double)
-		String millerIndicesPath = PROCESSPATH + Node.SEPARATOR + "indices";
 		LazyWriteableDataset lazy = HDF5Utils.createLazyDataset(output, millerIndicesPath, INDICES_NAME, new int[] {0,4}, new int[] {-1,4}, new int[] {1024, 4}, DoubleDataset.class, null, false);
+
+		if (isFileNew) {
+			writeNXclass(output, PROCESSED, NexusConstants.ENTRY);
+			writeNXclass(output, PROCESSPATH, NexusConstants.PROCESS);
+			writeNXclass(output, millerIndicesPath, NexusConstants.DATA);
+			writeDefaultAttributes(output, INDICES);
+		}
+
 		for (int i = 0; i < trees.length; i++) {
 			Tree tree = trees[i];
 			listToASpace(tree, allIters[i], lazy);
 		}
+		writeProcessingParameters(output, bean, entryPath);
+		linkOriginalData(output, bean.getInputs(), entryPath);
 	}
 
 	/**

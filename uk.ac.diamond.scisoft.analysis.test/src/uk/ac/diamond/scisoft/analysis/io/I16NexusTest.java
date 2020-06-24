@@ -134,15 +134,15 @@ public class I16NexusTest {
 
 		Dataset[] a = HDF5Utils.readAttributes(dstPath, "/");
 		Dataset[] b = HDF5Utils.readAttributes(dstPath, "/processed");
-		Dataset[] c = HDF5Utils.readAttributes(dstPath, "/processed/process/reciprocal_space");
+		Dataset[] c = HDF5Utils.readAttributes(dstPath, "/processed/reciprocal_space");
 		Dataset[] d = HDF5Utils.readAttributes(dstPath, "entry0");
 		Dataset[] e = HDF5Utils.readAttributes(dstPath, "entry1");
 
 		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/process/date"));
 		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/process/parameters"));
 		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/process/program"));
-		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/process/reciprocal_space/volume"));
-		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/process/reciprocal_space/weight"));
+		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/reciprocal_space/volume"));
+		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/reciprocal_space/weight"));
 
 		boolean found = false;
 		for (Dataset dataset : a) {
@@ -157,7 +157,7 @@ public class I16NexusTest {
 		found = false;
 		for (Dataset dataset : b) {
 			if (dataset.getName().equals("default")) {
-				Assert.assertEquals("process/reciprocal_space", dataset.getString());
+				Assert.assertEquals("reciprocal_space", dataset.getString());
 				found = true;
 				break;
 			}
@@ -516,7 +516,7 @@ public class I16NexusTest {
 		int[] count = new int[] { 4, 1, 18 };
 		int[] step = new int[] { 1, 1, 1 };
 		HDF5File file1 = HDF5FileFactory.acquireFile(file, false);
-		Dataset data1 = HDF5Utils.readDataset(file1, "/processed/process/reciprocal_space/volume", start, count, step, 1, DoubleDataset.class, true);
+		Dataset data1 = HDF5Utils.readDataset(file1, "/processed/reciprocal_space/volume", start, count, step, 1, DoubleDataset.class, true);
 		HDF5FileFactory.releaseFile(file, true);
 		return data1;
 	}

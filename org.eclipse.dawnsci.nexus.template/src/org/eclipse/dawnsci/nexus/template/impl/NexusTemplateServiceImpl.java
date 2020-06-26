@@ -13,6 +13,7 @@ import org.eclipse.dawnsci.nexus.template.NexusTemplateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.scanner.ScannerException;
 
 /**
  * Implementation of the template service, uses SnakeYaml to read the template file internally.
@@ -28,11 +29,11 @@ public class NexusTemplateServiceImpl implements NexusTemplateService {
 	 */
 	private final Yaml yamlParser = new Yaml(); // note: not thread-safe, must only be called by synchronized methods
 	
-	private synchronized Map<String, Object> loadTemplate(Reader reader) {
+	private synchronized Map<String, Object> loadTemplate(Reader reader) throws ScannerException {
 		return yamlParser.load(reader);
 	}
 	
-	private synchronized Map<String, Object> loadTemplateString(String templateString) {
+	private synchronized Map<String, Object> loadTemplateString(String templateString) throws ScannerException {
 		return yamlParser.load(templateString);
 	}
 	
@@ -42,8 +43,8 @@ public class NexusTemplateServiceImpl implements NexusTemplateService {
 		try (Reader reader = Files.newBufferedReader(filePath)) {
 			logger.debug("Creating template from file: {}", templateFilePath);
 			return createTemplate(filePath.getFileName().toString(), loadTemplate(reader));
-		} catch (IOException e) {
-			throw new NexusException("Could not read template file " + templateFilePath);
+		} catch (ScannerException | IOException e) {
+			throw new NexusException("Could not read template file: " + templateFilePath);
 		}
 	}
 	
@@ -54,8 +55,12 @@ public class NexusTemplateServiceImpl implements NexusTemplateService {
 	
 	@Override
 	public NexusTemplate createTemplateFromString(String templateString) throws NexusException {
-		logger.debug("Creating template from string: {}", templateString);
-		return createTemplate("<string>", loadTemplateString(templateString));
+		try {
+			logger.debug("Creating template from string: {}", templateString);
+			return createTemplate("<string>", loadTemplateString(templateString));
+		} catch (ScannerException e) {
+			throw new NexusException("Could not parse template string: " + templateString);
+		}
 	}
 
 }

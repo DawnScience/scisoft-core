@@ -42,6 +42,7 @@ public class NexusTemplateAppenderTest {
 	
 	private static final String NEXUS_TESTFILES_DIR = "testfiles/dawnsci/data/nexus/";
 	private static final String TEMPLATE_APPENDER_FILE_PATH = NEXUS_TESTFILES_DIR + "template-appender.yaml";
+	private static final String MALFORMED_TEMPLATE_APPENDER_FILE_PATH = NEXUS_TESTFILES_DIR + "malformed-template-appender.yaml";
 	private static final String DETECTOR_GROUP_PATH = "/entry/instrument/detector";
 	
 	private static INexusFileFactory nexusFileFactory;
@@ -164,6 +165,15 @@ public class NexusTemplateAppenderTest {
 		assertNexusTreesEqual(expectedTree, actualTree);
 	}
 	
+	@Test(expected = NexusException.class)
+	public void testAppendTemplateFromMalformedFile() throws Exception {
+		final String fileName = "templateFromMalformedFile.nxs";
+		final NexusTemplateAppender<NXdetector> appender = new NexusTemplateAppender<>("malformedFileTemplate");
+		appender.setTemplateFilePath(MALFORMED_TEMPLATE_APPENDER_FILE_PATH);
+		
+		createTreeAndAppend(fileName, DETECTOR_GROUP_PATH, appender);
+	}
+	
 	@Test
 	public void testAppendTemplateFromString() throws Exception {
 		final String fileName = "templateFromString.nxs";
@@ -190,6 +200,20 @@ public class NexusTemplateAppenderTest {
 		
 		final TreeFile expectedTree = createExpectedTree(fileName);
 		assertNexusTreesEqual(expectedTree, actualTree);
+	}
+	
+	@Test(expected=NexusException.class)
+	public void testAppendTemplateFileFromMalformedString() throws Exception {
+		final String fileName = "templateFromMalformedString.nxs";
+		final NexusTemplateAppender<NXdetector> appender = new NexusTemplateAppender<>("malformedStringTemplate");
+		final String templateString = "detector_number: 2\n" + 
+				"layout: area\n" + 
+				"calibration_method/:\n" + 
+				"   @NX_class: NXnote\n" + // @ is a reserved character in yaml, making this string malformed 
+				"   author: John Smith"; 
+		appender.setTemplateString(templateString);
+		
+		createTreeAndAppend(fileName, DETECTOR_GROUP_PATH, appender);
 	}
 	
 	private TreeFile createExpectedTree(String fileName) throws NexusException {

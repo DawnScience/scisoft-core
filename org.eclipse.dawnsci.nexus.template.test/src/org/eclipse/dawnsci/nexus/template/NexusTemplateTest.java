@@ -66,7 +66,7 @@ public class NexusTemplateTest {
 	private static final String TEMPLATE_FILE_PATH = NEXUS_TESTFILES_DIR + "test-template.yaml";
 	
 	private static final String BASIC_TEMPLATE = "scan/:\n  NX_class@: NXentry\n";
-	private NexusTemplateServiceImpl templateService;
+	private NexusTemplateService templateService;
 	
 	private static String testFilesDirName;
 
@@ -151,7 +151,13 @@ public class NexusTemplateTest {
 		assertThat(sourceTree, is(notNullValue()));
 		return sourceTree;
 	}
-
+	
+	@Test(expected = NexusException.class)
+	public void testMalformedTemplate() throws Exception {
+		// @ is a reserved character in yaml, making this template malformed
+		applyTemplateStringToEmptyTree("scan:/\n  @NX_class: NXentry");
+	}
+	
 	@Test
 	public void testAddGroupNode() throws Exception {
 		final NXroot root = applyTemplateStringToEmptyTree(BASIC_TEMPLATE);

@@ -47,7 +47,7 @@ public class Image {
 	/**
 	 * Setup the logging facilities
 	 */
-	protected static final Logger logger = LoggerFactory.getLogger(Image.class);
+	private static final Logger logger = LoggerFactory.getLogger(Image.class);
 
 	private static IImageFilterService filterService;
 	private static IImageTransform transformService;

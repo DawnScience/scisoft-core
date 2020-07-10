@@ -41,7 +41,7 @@ public class DCT {
 	/**
 	 * Setup the logging facilities
 	 */
-	protected static final Logger logger = LoggerFactory.getLogger(DCT.class);
+	private static final Logger logger = LoggerFactory.getLogger(DCT.class);
 
 	/**
 	 * forward 1D Discrete Cosine Transform (DCT-II)

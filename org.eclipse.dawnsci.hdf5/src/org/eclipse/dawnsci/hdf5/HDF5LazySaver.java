@@ -26,12 +26,15 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.io.ILazyAsyncSaver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Lazy saver for HDF5 files
  */
 public class HDF5LazySaver extends HDF5LazyLoader implements ILazyAsyncSaver, Serializable {
 
+	private static final Logger logger = LoggerFactory.getLogger(HDF5LazySaver.class);
 	private static final long serialVersionUID = -5244067010482825423L;
 
 	boolean isWriteable;

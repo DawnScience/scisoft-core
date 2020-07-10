@@ -49,7 +49,7 @@ public class FFT {
 	/**
 	 * Setup the logging facilities
 	 */
-	protected static final Logger logger = LoggerFactory.getLogger(FFT.class);
+	private static final Logger logger = LoggerFactory.getLogger(FFT.class);
 
 	/**
 	 * forward 1D fast Fourier transform

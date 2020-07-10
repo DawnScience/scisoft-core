@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  */
 public class HDF5LazyLoader implements ILazyLoader, ILazyDynamicLoader, Serializable {
 	public static final long serialVersionUID = 5057544213374303912L;
-	protected static final Logger logger = LoggerFactory.getLogger(HDF5LazyLoader.class);
+	private static final Logger logger = LoggerFactory.getLogger(HDF5LazyLoader.class);
 
 	private boolean isReadable;
 	private boolean isRemote;

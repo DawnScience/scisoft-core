@@ -68,7 +68,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractSliceSystem implements ISliceSystem {
 
-	protected static final Logger logger = LoggerFactory.getLogger(AbstractSliceSystem.class);
+	private static final Logger logger = LoggerFactory.getLogger(AbstractSliceSystem.class);
 
 	protected DimsDataList    dimsDataList;
 	protected IPlottingSystem plottingSystem;

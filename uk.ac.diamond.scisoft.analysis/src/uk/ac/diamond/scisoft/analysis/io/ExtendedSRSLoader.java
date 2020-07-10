@@ -19,6 +19,8 @@ import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class loads an SRS data file and also images from a Dectris Pilatus detector
@@ -26,6 +28,8 @@ import org.eclipse.january.dataset.ILazyDataset;
  * <b>Note</b>: the metadata from this loader is left as strings
  */
 public class ExtendedSRSLoader extends SRSLoader {
+
+	private static final Logger logger = LoggerFactory.getLogger(ExtendedSRSLoader.class);
 
 	private static final String PILATUS_DIR = "pilatus100k"; // sub-directory for 100k images
 	private static final String PATH_DATASET = "path"; // path dataset name

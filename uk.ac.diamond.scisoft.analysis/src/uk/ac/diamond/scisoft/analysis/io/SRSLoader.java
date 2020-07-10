@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SRSLoader extends AbstractFileLoader implements IFileSaver {
 	
-	protected static final Logger logger = LoggerFactory.getLogger(SRSLoader.class);
+	private static final Logger logger = LoggerFactory.getLogger(SRSLoader.class);
 
 	protected Map<String, String> textMetadata = new HashMap<String, String>();
 	protected List<String> extraHeaders = new ArrayList<String>();

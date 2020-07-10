@@ -20,12 +20,16 @@ import java.util.List;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.IMonitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Should act like the SRSLoader, but for Xas format ascii files. This is because the associated editor subclasses the
  * SRSEditor.
  */
 public class XasAsciiLoader extends SRSLoader {
+
+	private static final Logger logger = LoggerFactory.getLogger(XasAsciiLoader.class);
 
 	private static final String COMMENT_PREFIX = "#";
 

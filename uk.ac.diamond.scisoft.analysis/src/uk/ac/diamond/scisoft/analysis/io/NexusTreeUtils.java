@@ -79,7 +79,7 @@ import uk.ac.diamond.scisoft.analysis.diffraction.MatrixUtils;
 @SuppressWarnings("deprecation")
 public class NexusTreeUtils {
 
-	protected static final Logger logger = LoggerFactory.getLogger(NexusTreeUtils.class);
+	private static final Logger logger = LoggerFactory.getLogger(NexusTreeUtils.class);
 
 	private static final String TRANSFORMATIONS_ROOT = ".";
 	private static final String TRANSFORMATIONS_DEPENDSON = "depends_on";

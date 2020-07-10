@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * Loader for MRC electron microscope image stacks
  */
 public class MRCImageStackLoader extends AbstractFileLoader implements Serializable {
-	protected static final Logger logger = LoggerFactory.getLogger(MRCImageStackLoader.class);
+	private static final Logger logger = LoggerFactory.getLogger(MRCImageStackLoader.class);
 	private boolean isLittleEndian;
 
 	public MRCImageStackLoader(String filename) {

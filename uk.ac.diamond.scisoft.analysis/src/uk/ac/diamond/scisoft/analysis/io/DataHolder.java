@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DataHolder implements IMetadataProvider, IDataHolder, Serializable {
 	
-	protected static final Logger logger = LoggerFactory.getLogger(DataHolder.class);
+	private static final Logger logger = LoggerFactory.getLogger(DataHolder.class);
 
 	/**
 	 * List containing all the name and data pairs (to be) loaded.

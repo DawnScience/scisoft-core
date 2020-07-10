@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * Utilities class
  */
 public class Utils {
-	protected static final Logger logger = LoggerFactory.getLogger(Utils.class);
+	private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
 	/**
 	 * @param b

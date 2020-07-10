@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * Class that saves 1D or 2D data from DataHolder by writing the output as tab-delimited ACSII output
  */
 public class RawTextSaver implements IFileSaver {
-	protected static final Logger logger = LoggerFactory.getLogger(RawTextSaver.class);
+	private static final Logger logger = LoggerFactory.getLogger(RawTextSaver.class);
 
 	private String fileName = "";
 	protected char delimiter = '\t';

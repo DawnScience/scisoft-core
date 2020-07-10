@@ -88,9 +88,7 @@ It is also legal to have no header section at all and just columns of white spac
 In this case the columns will be labelled Column_1...Column_N.
  */
 public class DatLoader extends AbstractFileLoader {
-	
-	protected static final Logger logger = LoggerFactory.getLogger(DatLoader.class);
-	
+
 	transient protected final Pattern DATA;
 
 	protected Map<String,String>        metadataMap;

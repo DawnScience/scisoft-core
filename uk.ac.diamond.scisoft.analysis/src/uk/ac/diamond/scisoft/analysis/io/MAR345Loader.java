@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * 
  */
 public class MAR345Loader extends AbstractFileLoader implements Serializable {
-	protected static final Logger logger = LoggerFactory.getLogger(MAR345Loader.class);
+	private static final Logger logger = LoggerFactory.getLogger(MAR345Loader.class);
 
 	protected Map<String, Serializable> headers = new HashMap<>();
 	private boolean littleEndian;

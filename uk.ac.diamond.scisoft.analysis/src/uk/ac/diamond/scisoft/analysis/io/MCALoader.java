@@ -24,9 +24,7 @@ import java.util.Scanner;
 
 public class MCALoader extends AbstractFileLoader {
 	protected Map<String,String> mcaParameters;
-	
-	transient protected static final Logger logger = LoggerFactory.getLogger(MCALoader.class);
-	
+
 	public MCALoader() {
 	}
 

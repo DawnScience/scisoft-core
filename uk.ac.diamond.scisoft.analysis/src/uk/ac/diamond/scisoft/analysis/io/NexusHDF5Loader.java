@@ -10,12 +10,17 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is a HDF5Loader with extra things associated by the nexus standard. Primarily if an ILazyDataset is
  * loaded, it will attempt to load the errors associated with the dataset.
  */
 public class NexusHDF5Loader extends HDF5Loader {
+
+	private static final Logger logger = LoggerFactory.getLogger(NexusHDF5Loader.class);
+
 	@Override
 	public void augmentLink(NodeLink link) {
 		try {

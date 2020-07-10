@@ -29,12 +29,17 @@ import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.Random;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Test IO utils
  *
  */
 public class UtilsTest {
+
+	private static final Logger logger = LoggerFactory.getLogger(UtilsTest.class);
+
 	static int answer = 0xdeadbeef;
 	static int sLeAnswer = 0xbeef;
 	static int sBeAnswer = 0xdead;
@@ -387,7 +392,7 @@ public class UtilsTest {
 						try { // nb no float as precision
 							return Double.parseDouble(text);
 						} catch (NumberFormatException de) {
-							SRSLoader.logger.info("Value {} is not a number", text);
+							logger.info("Value {} is not a number", text);
 						}
 					}
 				}

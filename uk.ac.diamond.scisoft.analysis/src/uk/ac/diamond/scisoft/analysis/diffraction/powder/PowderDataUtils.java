@@ -21,8 +21,7 @@ public class PowderDataUtils {
 	/**
 	 * Setup the logging facilities
 	 */
-	protected static final Logger logger = LoggerFactory.getLogger(PowderDataUtils.class);
-	
+
 	public static Dataset convert1DDataset(Dataset axisData, XAxis inAxisType, XAxis outAxisType, double lambda) throws Exception {
 		int[] shape = axisData.getShapeRef();
 		int rank = shape.length;

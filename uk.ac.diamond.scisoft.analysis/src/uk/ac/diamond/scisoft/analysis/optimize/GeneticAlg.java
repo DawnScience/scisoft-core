@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  */
 public class GeneticAlg extends AbstractOptimizer {
 	
-	transient protected static final Logger GAlogger = LoggerFactory.getLogger(GeneticAlg.class);
+	private static final Logger GAlogger = LoggerFactory.getLogger(GeneticAlg.class);
 	
 	private final RandomGenerator generator = new MersenneTwister();
 	private final RandomDataGenerator prng = new RandomDataGenerator(generator);

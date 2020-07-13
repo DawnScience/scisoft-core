@@ -10,6 +10,7 @@
 package org.eclipse.dawnsci.json.internal;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.jsontype.TypeIdResolver;
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
@@ -57,7 +58,7 @@ public class RegisteredClassIdResolver extends TypeIdResolverBase {
 	}
 
 	@Override
-	public JavaType typeFromId(String id) {
+	public JavaType typeFromId(DatabindContext context, String id) {
 		Class<?> clazz = registry.getClassFromId(id);
 		if (clazz == null) {
 			throw new IllegalArgumentException("Class " + id + " not found");

@@ -69,7 +69,7 @@ import hdf.hdf5lib.structs.H5O_info_t;
  */
 public class HDF5Loader extends AbstractFileLoader {
 	
-	protected static final Logger logger = LoggerFactory.getLogger(HDF5Loader.class);
+	private static final Logger logger = LoggerFactory.getLogger(HDF5Loader.class);
 
 
 	private boolean keepBitWidth = false;

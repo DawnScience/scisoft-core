@@ -26,7 +26,7 @@ import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 
 public class XMSOLoader extends AbstractFileLoader {
 
-	protected static final Logger logger = LoggerFactory.getLogger(XMSOLoader.class);
+	private static final Logger logger = LoggerFactory.getLogger(XMSOLoader.class);
 	private static final String ENERGY = "Energy (keV)";
 	
 	public XMSOLoader() {

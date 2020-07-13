@@ -34,7 +34,7 @@ import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
  */
 public class AlignToHalfGaussianPeak implements DatasetToNumberFunction {
 
-	protected static final Logger logger = LoggerFactory.getLogger(AlignToHalfGaussianPeak.class);
+	private static final Logger logger = LoggerFactory.getLogger(AlignToHalfGaussianPeak.class);
 	private boolean useRisingSide = false;
 	private double lx = -Double.MAX_VALUE, hx = Double.MAX_VALUE;
 

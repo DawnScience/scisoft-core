@@ -60,7 +60,7 @@ import uk.ac.diamond.CBFlib.CBFlib;
  *
  */
 public class CBFLoader extends AbstractFileLoader {
-	protected static final Logger logger = LoggerFactory.getLogger(CBFLoader.class);
+	private static final Logger logger = LoggerFactory.getLogger(CBFLoader.class);
 	private HashMap<String, String> metadataMap = new HashMap<String, String>();
 	public HashMap<String, Serializable> GDAMetadata = new HashMap<String, Serializable>();
 

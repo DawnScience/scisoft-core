@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * so access the image data via the BufferedImage's Raster attribute.
  */
 public class JavaImageLoader extends AbstractFileLoader {
-	protected static final Logger logger = LoggerFactory.getLogger(JavaImageLoader.class);
+	private static final Logger logger = LoggerFactory.getLogger(JavaImageLoader.class);
 
 	private String fileType = "";
 	protected boolean asGrey;

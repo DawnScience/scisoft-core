@@ -34,6 +34,8 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.metadata.IMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sun.media.imageio.plugins.tiff.TIFFDirectory;
 import com.sun.media.imageio.plugins.tiff.TIFFField;
@@ -47,6 +49,8 @@ import uk.ac.diamond.scisoft.analysis.io.tiff.Grey12bitTIFFReaderSpi;
  * This class loads a TIFF image file
  */
 public class TIFFImageLoader extends JavaImageLoader {
+
+	private static final Logger logger = LoggerFactory.getLogger(TIFFImageLoader.class);
 
 	protected Map<String, Serializable> metadataMap = null;
 	private boolean loadData = true;

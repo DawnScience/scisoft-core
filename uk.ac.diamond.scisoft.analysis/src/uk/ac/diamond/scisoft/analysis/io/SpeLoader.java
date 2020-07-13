@@ -16,8 +16,6 @@ import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 
 public class SpeLoader extends AbstractFileLoader {
 
-	transient protected static final Logger logger = LoggerFactory.getLogger(SpeLoader.class);
-
 	protected int channel_begin;
 	protected int channel_end;
 	protected int nchannels;

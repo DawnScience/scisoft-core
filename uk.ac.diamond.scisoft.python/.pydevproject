@@ -32,8 +32,9 @@
 <path>${BUNDLE_POOL_PLUGINS}/tec.units.indriya_1.0.0.jar</path>
 <path>${BUNDLE_POOL_PLUGINS}/tec.uom.lib.uom-lib-common_1.0.3.jar</path>
 <path>${BUNDLE_POOL_PLUGINS}/uk.ac.diamond.jama_1.0.3.jar</path>
-<path>${BUNDLE_POOL_PLUGINS}/uk.ac.diamond.org.apache.xmlrpc.client_3.1.3.jar</path>
-<path>${BUNDLE_POOL_PLUGINS}/uk.ac.diamond.org.apache.xmlrpc.common_3.1.3.jar</path>
-<path>${BUNDLE_POOL_PLUGINS}/uk.ac.diamond.org.apache.xmlrpc.server_3.1.3.jar</path>
+<path>${BUNDLE_POOL_PLUGINS}/org.apache.ws.commons.util_1.0.2.v20160817-1930.jar</path>
+<path>${BUNDLE_POOL_PLUGINS}/org.apache.xmlrpc.client_3.1.3.v20160817-1930.jar</path>
+<path>${BUNDLE_POOL_PLUGINS}/org.apache.xmlrpc.common_3.1.3.v20160817-1930.jar</path>
+<path>${BUNDLE_POOL_PLUGINS}/org.apache.xmlrpc.server_3.1.3.v20160817-1930.jar</path>
 </pydev_pathproperty>
 </pydev_project>

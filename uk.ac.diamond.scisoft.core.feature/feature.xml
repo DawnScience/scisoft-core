@@ -83,28 +83,28 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="uk.ac.diamond.org.apache.xmlrpc.client"
+         id="org.apache.xmlrpc.client"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="uk.ac.diamond.org.apache.xmlrpc.common"
+         id="org.apache.xmlrpc.common"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="uk.ac.diamond.org.apache.xmlrpc.server"
+         id="org.apache.xmlrpc.server"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="uk.ac.diamond.org.apache.ws.commons.util"
+         id="org.apache.ws.commons.util"
          download-size="0"
          install-size="0"
          version="0.0.0"

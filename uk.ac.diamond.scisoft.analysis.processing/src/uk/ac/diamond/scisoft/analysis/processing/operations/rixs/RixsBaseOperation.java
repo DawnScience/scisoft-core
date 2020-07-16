@@ -337,6 +337,9 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		return result;
 	}
 
+	private static final String DETECTOR_LOCAL_NAME = "local_name";
+	private static final String DETECTOR_NAME_XCAM = "xcam";
+
 	/**
 	 * Parse NeXus file to set various fields
 	 * @param filePath
@@ -387,11 +390,27 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 				throw new NexusException("File does not contain a before_scan collection");
 			}
 
+			countsPerPhoton = -1;
 			try {
 				countsPerPhoton = calculateCountsPerPhoton(mdg);
 			} catch (Exception e) {
-				log.appendFailure("Could not calculate counts per photon from Nexus file %s: %s", filePath, e);
-				countsPerPhoton = model.getCountsPerPhoton();
+				if (detector.containsDataNode(DETECTOR_LOCAL_NAME)) {
+					try {
+						String[] names = NexusTreeUtils.parseStringArray(detector.getDataNode(DETECTOR_LOCAL_NAME), 1);
+						if (names[0].toLowerCase().contains(DETECTOR_NAME_XCAM)) {
+							countsPerPhoton = 1000; // TODO finalize good value
+						} else {
+							log.appendFailure("Unknown detector in Nexus file %s: %s = %s", filePath, DETECTOR_LOCAL_NAME, names[0]);
+						}
+					} catch (Exception e1) {
+						log.appendFailure("Could not read %s in NXdetector from Nexus file %s: %s", DETECTOR_LOCAL_NAME, filePath, e1);
+					}
+				} else {
+					log.appendFailure("Could not calculate counts per photon from Nexus file %s: %s", filePath, e);
+				}
+				if (countsPerPhoton < 0) {
+					countsPerPhoton = model.getCountsPerPhoton();
+				}
 			}
 
 			drainCurrent = parseBeforeScanItem(mdg, "draincurrent");
@@ -414,7 +433,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		summaryData.add(ProcessingUtils.createNamedDataset(countTime, "total_count_time"));
 	}
 
-	private static final double PAIR_PRODUCTION_ENERGY = 3.67; // energy required to generate an electron-hole pair
+	private static final double PAIR_PRODUCTION_ENERGY = 3.67; // energy required to generate an electron-hole pair in silicon
 
 	// XCAM operating temperature at -110C = 160K (16umx16um)
 	// RIXSCam2 2 detectors, 3264x1608 (2 CCDs, left and right dark reference bands per CCD, 16 pixel columns)
@@ -535,6 +554,10 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			return in;
 		}
 
+		if (in == image) {
+			in = in.getView(false);
+		}
+		in.clearMetadata(null);
 		Slice[] s = getSlice(in.getShapeRef(), axis, r);
 		log.append("Slicing image %s from %s", Arrays.toString(s), Arrays.toString(in.getShapeRef()));
 		return s[0] == null && s[1] == null ? in : in.getSliceView(s);

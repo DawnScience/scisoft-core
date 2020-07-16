@@ -230,10 +230,13 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		OperationData od = super.process(original, monitor);
 		List<Dataset> events = null;
 		Dataset eSum = null;
-		if (od != null) {
-			// find photon events in entire image
-			Maths.clip(original, original, 0, Double.POSITIVE_INFINITY);
-			events = ImageUtils.findWindowedPeaks(original, model.getWindow(), countsPerPhoton * model.getLowThreshold(), countsPerPhoton * model.getHighThreshold());
+		if (od != null) { // find photon events in entire image
+			Dataset o = original;
+			if (o.min().doubleValue() < 0) {
+				log.appendFailure("Clipping original image as it has negative values");
+				o = Maths.clip(o, 0, Double.POSITIVE_INFINITY);
+			}
+			events = ImageUtils.findWindowedPeaks(o, model.getWindow(), countsPerPhoton * model.getLowThreshold(), countsPerPhoton * model.getHighThreshold());
 			eSum = events.get(0);
 		} else {
 			log.appendFailure("Skipping frame %d", si.getSliceNumber());

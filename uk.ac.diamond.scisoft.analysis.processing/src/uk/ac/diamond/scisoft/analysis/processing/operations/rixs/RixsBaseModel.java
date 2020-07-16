@@ -65,7 +65,7 @@ public class RixsBaseModel extends AbstractOperationModel {
 		firePropertyChange("setRoiA", this.roiA, this.roiA = roi);
 	}
 
-	public void internalSetRoiA(IRectangularROI roi) {
+	void internalSetRoiA(IRectangularROI roi) {
 		this.roiA = roi;
 	}
 
@@ -148,7 +148,7 @@ public class RixsBaseModel extends AbstractOperationModel {
 	}
 
 	/**
-	 * @return slope of elastic line. Non-zero values are used to override values from elastic fit files
+	 * @return slope of elastic line. Non-null values are used to override values from elastic fit files
 	 */
 	public Double getSlopeOverride() {
 		return slopeOverride;

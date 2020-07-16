@@ -74,6 +74,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 	public static final String ES_PREFIX = "elastic_spectrum_";
 	public static final String ESF_PREFIX = ES_PREFIX + "fit_";
+	public static final String ESPOSN_PREFIX = ES_PREFIX + "posn_";
 	public static final String ESFWHM_PREFIX = ES_PREFIX + "fwhm_";
 	public static final String ESAREA_PREFIX = ES_PREFIX + "area_";
 	public static final String ESHEIGHT_PREFIX = ES_PREFIX + "height_";
@@ -414,7 +415,8 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		double w = findFWHM(countedData, opt, peak, factor, x, s);
 		StraightLine line = getStraightLine(r);
 		line.getParameter(STRAIGHT_LINE_M).setValue(slope);
-		line.getParameter(STRAIGHT_LINE_C).setValue(peak.getParameterValue(SPECTRA_PEAK_POSN));
+		double pOffset = - slope * offset[0];
+		line.getParameter(STRAIGHT_LINE_C).setValue(pOffset + peak.getParameterValue(SPECTRA_PEAK_POSN));
 		log.append("Override with slope (%g) gives width = %g and line %s", slope, w, line);
 		residual = 0;
 	}
@@ -512,7 +514,8 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			optimizer.optimize(true, fn);
 			StraightLine line = getStraightLine(rn);
 			line.getParameter(STRAIGHT_LINE_M).setValue(slope.getValue());
-			line.getParameter(STRAIGHT_LINE_C).setValue(peak.getParameterValue(SPECTRA_PEAK_POSN));
+			double pOffset = -slope.getValue() * offset[0];
+			line.getParameter(STRAIGHT_LINE_C).setValue(pOffset + peak.getParameterValue(SPECTRA_PEAK_POSN));
 
 			residual = peak.residual(true, sumImageAlongSlope(sin, slope.getValue(), false), null, sx);
 			log.appendSuccess("Optimized minimal FWHM (%g) at slope of %g", peak.getParameterValue(SPECTRA_PEAK_WIDTH), slope.getValue());
@@ -945,6 +948,10 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			gSpectrumFit.setName(ESF_PREFIX + r);
 			MetadataUtils.setAxes(gSpectrumFit, ge, gAxis);
 			summaryData.add(gSpectrumFit);
+			Dataset gp = DatasetFactory.createFromList(gPosn);
+			gp.setName(ESPOSN_PREFIX + r);
+			MetadataUtils.setAxes(gp, ge);
+			summaryData.add(gp);
 			Dataset gf = DatasetFactory.createFromList(gFWHM);
 			gf.setName(ESFWHM_PREFIX + r);
 			MetadataUtils.setAxes(gf, ge);

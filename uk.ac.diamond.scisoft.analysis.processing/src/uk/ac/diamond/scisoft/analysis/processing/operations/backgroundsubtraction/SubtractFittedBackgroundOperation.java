@@ -323,6 +323,8 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 	private double[] findDarkDataScaleAndOffset(Dataset in, Dataset smooth) {
 		boolean noShadow = !autoFindShadowRegion || notValid(model.getGaussianSmoothingLength());
 		IRectangularROI roi = model.getFitRegion();
+		in = in.getView(false);
+		in.clearMetadata(null);
 		if (noShadow || roi != null) { // don't bother to find shadow region
 			in = in.clone();
 			int[] shape = in.getShapeRef();
@@ -549,7 +551,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 				while (it.hasNext() && data.getElementDoubleAbs(it.index) >= thr) {
 				}
 				int imax = it.index;
-				double d = 0.5*(data.getElementDoubleAbs(i - 1) + data.getElementDoubleAbs(imax));
+				double d = 0.5*(data.getElementDoubleAbs(Math.max(0, i - 1)) + data.getElementDoubleAbs(imax));
 				while (i < imax) {
 					data.setObjectAbs(i++, d);
 				}

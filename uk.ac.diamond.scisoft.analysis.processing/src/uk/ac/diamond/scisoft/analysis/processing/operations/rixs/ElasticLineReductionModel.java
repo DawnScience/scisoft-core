@@ -100,4 +100,24 @@ public class ElasticLineReductionModel extends RixsBaseModel {
 	public void setPeakFittingFactor(double peakFittingFactor) {
 		firePropertyChange("setPeakFittingFactor", this.peakFittingFactor, this.peakFittingFactor = peakFittingFactor);
 	}
+
+	public ElasticLineReductionModel copy() {
+		ElasticLineReductionModel c = new ElasticLineReductionModel();
+		c.setClipSpectra(isClipSpectra());
+		c.setCountsPerPhoton(getCountsPerPhoton());
+		c.setCropROI(isCropROI());
+		c.setCutoff(getCutoff());
+		c.setCutoffSize(getCutoffSize());
+		c.setEnergyDirection(getEnergyDirection());
+		c.setRoiA(getRoiA());
+		c.setRoiB(getRoiB());
+		c.setSlopeOverride(getSlopeOverride());
+		c.setUseCutoff(isUseCutoff());
+		c.delta = delta;
+		c.maxDev = maxDev;
+		c.maxSlope = maxSlope;
+		c.minPhotons = minPhotons;
+		c.minPoints = minPoints;
+		return c;
+	}
 }

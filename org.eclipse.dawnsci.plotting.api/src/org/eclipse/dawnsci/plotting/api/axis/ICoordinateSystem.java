@@ -171,4 +171,11 @@ public interface ICoordinateSystem {
 	 * @param y
 	 */
 	public void update(IImageTrace imageTrace, IAxis x, IAxis y);
+	
+	/**
+	 * Has the image been transposed, flipping the coordinate system
+	 * 
+	 * @return
+	 */
+	boolean isCoordsFlipped();
 }

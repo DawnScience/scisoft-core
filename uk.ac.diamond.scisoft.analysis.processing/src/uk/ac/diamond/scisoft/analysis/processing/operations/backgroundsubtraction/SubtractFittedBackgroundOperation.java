@@ -78,6 +78,8 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 	private String darkImageFile = null;
 	private Dataset smoothedDarkData;
 	private Dataset darkData;
+	private boolean useBothROIs;
+	private int roiMax;
 
 	protected List<IDataset> displayData = new ArrayList<>();
 	protected List<IDataset> auxData = new ArrayList<>();
@@ -213,18 +215,31 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		return thr;
 	}
 
+	/**
+	 * Updates useBothROIs and roiMax so override for more
+	 */
+	protected void updateROICount() {
+		useBothROIs = model.getRoiA() != null && model.getRoiB() != null;
+		roiMax = useBothROIs ? 2 : 1;
+	}
+
+	protected IRectangularROI getROI(int r) {
+		IRectangularROI roi;
+		if (useBothROIs) {
+			roi = r == 0 ? model.getRoiA() : model.getRoiB();
+		} else {
+			roi = model.getRoiA();
+			if (roi == null) {
+				roi = model.getRoiB();
+			}
+		}
+		return roi;
+	}
+
 	@Override
 	protected Dataset getImage(IDataset input) throws OperationException {
 		// this calculates a background to subtract from input
 		Dataset in = DatasetUtils.convertToDataset(input);
-//		IRectangularROI r = model.getRoi(); // cannot do this as superclass expects result to have input's shape 
-//		Slice[] s = null;
-//		if (r != null) {
-//			s = getSlice(in.getShapeRef(), r);
-//			if (s[0] != null || s[1] != null) {
-//				in = in.getSliceView(s);
-//			}
-//		}
 
 		if (smoothedDarkData != null) {
 			h = null;
@@ -243,17 +258,30 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 				auxData.add(ProcessingUtils.createNamedDataset(scaleOffset[0], "dark_scale"));
 
 				subtractImage = scaleOffset[0] == 1 ? Maths.add(smoothedDarkData, scaleOffset[1]) : Maths.multiply(smoothedDarkData, scaleOffset[0]).iadd(scaleOffset[1]);
-				Dataset darkFit = subtractImage.mean(1, true).getSliceView(new Slice(1, -1));
-				auxData.add(ProcessingUtils.createNamedDataset(darkFit, "profile_fit_dark"));
-				Dataset profile = in.mean(1, true).getSliceView(new Slice(1, -1));;
-				cleanUpProfile(profile);
-				profile.setName("profile");
-				displayData.add(profile);
-				auxData.add(profile);
 
-				Dataset diff = Maths.subtract(profile, darkFit);
-				auxData.add(ProcessingUtils.createNamedDataset(diff, "profile_diff"));
-				displayData.add(darkFit);
+				int[] shape = in.getShapeRef();
+				for (int r = 0; r < roiMax; r++) { // per rectangle
+					IRectangularROI roi = getROI(r);
+					SliceND s = null;
+					if (roi == null) {
+						s = new SliceND(shape, new Slice(1, -1));
+					} else {
+						Slice s0 = createSlice(roi.getPointX(), roi.getLength(0), shape[1]);
+						Slice s1 = createSlice(roi.getPointY(), roi.getLength(1), shape[0]);
+						s = new SliceND(shape, s1, s0);
+					}
+
+					Dataset darkFit = subtractImage.getSliceView(s).mean(1, true);
+					auxData.add(ProcessingUtils.createNamedDataset(darkFit, "profile_fit_dark_" + r));
+					Dataset profile = in.getSliceView(s).mean(1, true);
+					cleanUpProfile(profile);
+					profile.setName("profile_" + r);
+					displayData.add(profile);
+					auxData.add(profile);
+					Dataset diff = Maths.subtract(profile, darkFit);
+					auxData.add(ProcessingUtils.createNamedDataset(diff, "profile_diff" + r));
+					displayData.add(darkFit);
+				}
 			} else {
 				Dataset profile = in.mean(1, true);
 				cleanUpProfile(profile);
@@ -687,6 +715,8 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 				}
 			}
 		}
+
+		updateROICount();
 
 		OperationData op = super.process(input, monitor);
 

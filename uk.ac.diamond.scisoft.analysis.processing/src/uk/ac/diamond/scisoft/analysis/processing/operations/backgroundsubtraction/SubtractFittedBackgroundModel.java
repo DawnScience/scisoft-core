@@ -53,6 +53,12 @@ public class SubtractFittedBackgroundModel extends AbstractOperationModel {
 	@OperationModelField(fieldPosition = 9, label = "Scale dark image", hint = "This factor is applied before the offset is added", description = "Override scaling of dark image", enableif = "darkOffset != null", expertOnly = true)
 	private double darkScaling = 1;
 
+	@OperationModelField(label = "Rectangle 0", description = "Region for profile 0", expertOnly = true)
+	private IRectangularROI roiA = null;
+
+	@OperationModelField(label = "Rectangle 1", description = "Region for profile 1", expertOnly = true)
+	private IRectangularROI roiB = null;
+
 	public static final int HISTOGRAM_MAX_BINS = 1024*1024;
 
 	/**
@@ -182,5 +188,27 @@ public class SubtractFittedBackgroundModel extends AbstractOperationModel {
 
 	public void setDarkScaling(double darkScaling) {
 		firePropertyChange("setDarkScaling", this.darkScaling, this.darkScaling = darkScaling);
+	}
+
+	/**
+	 * @return get first region of interest (can be null to signify the entire image)
+	 */
+	public IRectangularROI getRoiA() {
+		return roiA;
+	}
+
+	public void setRoiA(IRectangularROI roi) {
+		firePropertyChange("setRoiA", this.roiA, this.roiA = roi);
+	}
+
+	/**
+	 * @return get second region of interest (can be null to signify the entire image)
+	 */
+	public IRectangularROI getRoiB() {
+		return roiB;
+	}
+
+	public void setRoiB(IRectangularROI roi) {
+		firePropertyChange("setRoiB", this.roiB, this.roiB = roi);
 	}
 }

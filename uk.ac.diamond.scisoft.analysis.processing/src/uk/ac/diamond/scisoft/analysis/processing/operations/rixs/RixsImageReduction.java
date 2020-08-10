@@ -28,6 +28,7 @@ import org.eclipse.january.dataset.IDataset;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
+import uk.ac.diamond.scisoft.analysis.processing.metadata.OperationMetadata;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionModel.FIT_FILE_OPTION;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 import uk.ac.diamond.scisoft.analysis.processing.visitor.NexusFileExecutionVisitor;
@@ -118,7 +119,8 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 				// ensure zero padding of scan number is correct
 				String format = String.format("%s%%0%dd_processed_%s", currentName.substring(0, m.start(1)), digits.length(), ElasticLineReduction.SUFFIX);
 				String prefix = String.format(format, scan);
-				currentFitFile = getElasticFitFromFile(currentDir, prefix);
+				OperationMetadata om = original.getFirstMetadata(OperationMetadata.class);
+				currentFitFile = getElasticFitFromFile(currentDir, prefix, om == null ? null : om.getOutputFilename());
 				if (!useSummaryFits) {
 					initializeFitLine(currentFitFile, true, 0, 1);
 				}
@@ -136,7 +138,7 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 		}
 	}
 
-	private String getElasticFitFromFile(final File currentDir, final String prefix) {
+	private String getElasticFitFromFile(final File currentDir, final String prefix, final String outputFile) {
 		log.append("Looking for processed elastic line fit of scan with prefix %s", prefix);
 
 		FilenameFilter filter = new FilenameFilter() {
@@ -157,7 +159,19 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 			if (fitFile == null) {
 				fitFile = findLatestFitFile(filter, new File(currentDir, PROCESSING));
 				if (fitFile == null) {
-					throw new OperationException(this, "Could not find fit file in data, calibration or processing directories");
+					if (outputFile != null) {
+						File outputDir = new File(outputFile).getParentFile();
+						fitFile = findLatestFitFile(filter, outputDir);
+					}
+					if (fitFile == null) {
+						String dir = model.getFitDirectory();
+						if (dir != null) {
+							fitFile = findLatestFitFile(filter, new File(dir));
+						}
+					}
+					if (fitFile == null) {
+						throw new OperationException(this, "Could not find elastic line fit file in data, calibration, processing or output directories. Set the fallback directory and try again");
+					}
 				}
 			}
 		}

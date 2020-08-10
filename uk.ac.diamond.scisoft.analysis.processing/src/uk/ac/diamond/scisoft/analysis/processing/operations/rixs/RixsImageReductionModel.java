@@ -44,6 +44,9 @@ public class RixsImageReductionModel extends RixsImageReductionBaseModel {
 	@OperationModelField(label = "Use per frame fits", description = "Use individual fits from each frame (rather than average slope)", expertOnly = true)
 	private boolean perFrameFits = false;
 
+	@OperationModelField(label = "Fallback directory for elastic line fits", description = "This is used as last resort to locate the directory to find processed fit files (when not manually overriden)", file = FileType.EXISTING_FOLDER, expertOnly = true)
+	private String fitDirectory;
+
 	/**
 	 * @return option to work out which fit file to use
 	 */
@@ -81,5 +84,16 @@ public class RixsImageReductionModel extends RixsImageReductionBaseModel {
 
 	public void setPerFrameFits(boolean perFrameFits) {
 		firePropertyChange("setIsPerFrameFits", this.perFrameFits, this.perFrameFits = perFrameFits);
+	}
+
+	/**
+	 * @return path to directory that contains processed fit files
+	 */
+	public String getFitDirectory() {
+		return fitDirectory;
+	}
+
+	public void setFitDirectory(String fitDirectory) {
+		firePropertyChange("setFitDirectory", this.fitDirectory, this.fitDirectory = fitDirectory);
 	}
 }

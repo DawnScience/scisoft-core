@@ -147,7 +147,7 @@ public class CrysalisLoader extends AbstractFileLoader implements IFileSaver {
 			if (loadMetadata)
 				createMetadata(data);
 		} catch (Exception e) {
-			logger.error("File failed to load {} with error: {}" , fileName, e);
+			logger.error("File failed to load {} with error:" , fileName, e);
 			throw new ScanFileHolderException("File failed to load " + fileName, e);
 		} finally {
 			if (fi != null) {

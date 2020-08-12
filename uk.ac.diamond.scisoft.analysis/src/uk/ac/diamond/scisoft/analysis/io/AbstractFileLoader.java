@@ -18,6 +18,7 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.LazyDataset;
 import org.eclipse.january.dataset.SliceND;
@@ -183,7 +184,7 @@ public abstract class AbstractFileLoader implements IFileLoader, IMetaLoader {
 	}
 
 	protected LazyDataset createLazyDataset(LazyLoaderStub l, String dName, Class<? extends Dataset> clazz, int... shape) {
-		return new LazyDataset(l, dName, clazz, shape);
+		return new LazyDataset(l, dName, clazz == null ? DoubleDataset.class : clazz, shape);
 	}
 
 	protected LazyDataset createLazyDataset(IFileLoader loader, String dName, Class<? extends Dataset> clazz, int... shape) {
@@ -191,7 +192,7 @@ public abstract class AbstractFileLoader implements IFileLoader, IMetaLoader {
 	}
 
 	protected LazyDataset createLazyDataset(IFileLoader loader, String dName, String dhName, Class<? extends Dataset> clazz, int... shape) {
-		return new LazyDataset(new LazyLoaderStub(loader, dhName), dName, clazz, shape);
+		return new LazyDataset(new LazyLoaderStub(loader, dhName), dName, clazz == null ? DoubleDataset.class : clazz, shape);
 	}
 
 

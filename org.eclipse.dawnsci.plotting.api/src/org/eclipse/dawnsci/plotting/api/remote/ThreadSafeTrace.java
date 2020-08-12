@@ -809,5 +809,15 @@ class ThreadSafeTrace extends ThreadSafeObject implements ITrace,
 		call(getMethodName(Thread.currentThread().getStackTrace()), isRadians);
 		
 	}
+
+	@Override
+	public void setDrawYErrorInArea(boolean drawYErrorInArea) {
+		call(getMethodName(Thread.currentThread().getStackTrace()), drawYErrorInArea);
+	}
+
+	@Override
+	public boolean isDrawYErrorInArea() {
+		return (boolean)call(getMethodName(Thread.currentThread().getStackTrace()));
+	}
 	
 }

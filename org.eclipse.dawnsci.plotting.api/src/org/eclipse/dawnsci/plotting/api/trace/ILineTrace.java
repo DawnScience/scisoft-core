@@ -263,4 +263,18 @@ public interface ILineTrace extends ITrace {
 	 */
 	public IAxis getYAxis();
 	
+	/**
+	 * Set the Y error to draw as an area instead of discrete points
+	 * 
+	 * @param drawYErrorInArea
+	 */
+	public void setDrawYErrorInArea(boolean drawYErrorInArea);
+	
+	/**
+	 * Return if the Y error is set to draw as an area instead of discrete points
+	 * 
+	 * @return
+	 */
+	public boolean isDrawYErrorInArea();
+	
 }

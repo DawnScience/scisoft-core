@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.eclipse.dawnsci.nexus.scan">
+   <implementation class="org.eclipse.dawnsci.nexus.scan.ServiceHolder"/>
+   <reference bind="setNexusBuilderFactory" cardinality="1..1" interface="org.eclipse.dawnsci.nexus.builder.NexusBuilderFactory" name="NexusBuilderFactory" policy="static"/>
+   <reference bind="setNexusDeviceService" cardinality="1..1" interface="org.eclipse.dawnsci.nexus.device.INexusDeviceService" name="NexusDeviceService" policy="static"/>
+   <reference bind="setTemplateService" cardinality="1..1" interface="org.eclipse.dawnsci.nexus.template.NexusTemplateService" name="NexusTemplateService" policy="static"/>
+</scr:component>

@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Nexus Scan
+Bundle-SymbolicName: org.eclipse.dawnsci.nexus.scan
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Diamond Light Source Ltd.
+Automatic-Module-Name: org.eclipse.dawnsci.nexus.scan
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.dawnsci.nexus,
+ org.eclipse.january,
+ org.eclipse.dawnsci.analysis.api,
+ org.eclipse.dawnsci.analysis.tree,
+ org.eclipse.dawnsci.nexus.template
+Export-Package: org.eclipse.dawnsci.nexus.scan
+Import-Package: org.slf4j
+Service-Component: OSGI-INF/*.xml
+Bundle-ActivationPolicy: lazy

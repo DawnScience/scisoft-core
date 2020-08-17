@@ -32,8 +32,6 @@ import org.eclipse.january.dataset.SliceND;
  * 
  * For instance, names of scannables in the axes and the rank of the scan.
  * 
- * TODO mattd 2017-02-28: should this class be removed and we use ScanInformation / ScanModel instead?
- * 
  * @author Matthew Gerring
  *
  */

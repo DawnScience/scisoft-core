@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.dawnsci.nexus,
  org.eclipse.dawnsci.analysis.api,
  org.eclipse.dawnsci.analysis.tree,
  org.eclipse.dawnsci.nexus.template
-Export-Package: org.eclipse.dawnsci.nexus.scan
+Export-Package: org.eclipse.dawnsci.nexus.scan,
+ org.eclipse.dawnsci.nexus.scan.impl
 Import-Package: org.slf4j
 Service-Component: OSGI-INF/*.xml
 Bundle-ActivationPolicy: lazy

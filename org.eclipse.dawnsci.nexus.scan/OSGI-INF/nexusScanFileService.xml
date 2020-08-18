@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.eclipse.dawnsci.nexus.scan">
+   <implementation class="org.eclipse.dawnsci.nexus.scan.impl.NexusScanFileServiceImpl"/>
+   <service>
+      <provide interface="org.eclipse.dawnsci.nexus.scan.NexusScanFileService"/>
+   </service>
+</scr:component>

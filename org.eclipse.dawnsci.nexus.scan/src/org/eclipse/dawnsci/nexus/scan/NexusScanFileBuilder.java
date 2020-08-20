@@ -21,6 +21,7 @@ package org.eclipse.dawnsci.nexus.scan;
 import java.util.Set;
 
 import org.eclipse.dawnsci.nexus.NexusException;
+import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.builder.NexusBuilderFile;
 
 /**
@@ -29,23 +30,37 @@ import org.eclipse.dawnsci.nexus.builder.NexusBuilderFile;
 public interface NexusScanFileBuilder {
 
 	/**
-	 * Create the nexus file.
-	 * @param async if <code>true</code> all writes to datasets are done asynchronously
-	 * @return the nexus file 
-	 * @throws NexusException if the nexus file could not be created for any reason
+	 * Returns the absolute file path of the underlying {@link NexusFile} on disk
+	 * @return
 	 */
-	public NexusBuilderFile createNexusFile(boolean async) throws NexusException;
-
-	/**
-	 * Call at the end of the scan to write the final timestamps.
-	 */
-	public void scanFinished();
+	public String getFilePath();
 
 	/**
 	 * Returns the set of file paths of the external file that this scan file links to.
 	 * @return external file paths
 	 */
 	public Set<String> getExternalFilePaths();
-	
+
+	/**
+	 * Create the structure of the nexus file according to the {@link NexusScanModel} that this
+	 * {@link NexusScanFileBuilder} was created with and writes it to disk.
+	 * @param async if <code>true</code> all writes to datasets are done asynchronously
+	 * @return the nexus file 
+	 * @throws NexusException if the nexus file could not be created for any reason
+	 */
+	public void createNexusFile(boolean async) throws NexusException;
+
+	/**
+	 * Flush the underlying nexus file.
+	 * @return
+	 * @throws NexusException
+	 */
+	public int flush() throws NexusException;
+
+	/**
+	 * Call at the end of the scan to write the final timestamps and close the nexus file.
+	 * @throws NexusException 
+	 */
+	public void scanFinished() throws NexusException;
 
 }

@@ -84,7 +84,7 @@ class NexusScanFileBuilderImpl implements NexusScanFileBuilder {
 
 	private final NexusScanModel nexusScanModel;
 	private NexusFileBuilder fileBuilder;
-	private NexusBuilderFile nexusScanFile;
+	private NexusBuilderFile nexusBuilderFile;
 	private ScanMetadataWriter scanMetadataWriter;
 	private NXEntryScanTimestampsWriter entryFieldBuilder;
 
@@ -124,6 +124,11 @@ class NexusScanFileBuilderImpl implements NexusScanFileBuilder {
 		scanMetadataWriter.setNexusObjectProviders(nexusObjectProviders);
 	}
 
+	@Override
+	public String getFilePath() {
+		return nexusBuilderFile.getFilePath();
+	}
+
 	/**
 	 *
 	 * @return the paths of all the external files to which we will be writing.
@@ -139,7 +144,7 @@ class NexusScanFileBuilderImpl implements NexusScanFileBuilder {
 		return paths;
 	}
 
-	public NexusBuilderFile createNexusFile(boolean async) throws NexusException {
+	public void createNexusFile(boolean async) throws NexusException {
 		// We use the new nexus framework to join everything up into the scan
 		// Create a builder
 		fileBuilder = ServiceHolder.getNexusBuilderFactory().newNexusFileBuilder(nexusScanModel.getFilePath());
@@ -148,19 +153,30 @@ class NexusScanFileBuilderImpl implements NexusScanFileBuilder {
 			createEntry(fileBuilder);
 			applyTemplates(fileBuilder.getNexusTree());
 			// create the file from the builder and open it
-			nexusScanFile = fileBuilder.createFile(async);
-			nexusScanFile.openToWrite();
-			return nexusScanFile;
+			nexusBuilderFile = fileBuilder.createFile(async);
+			nexusBuilderFile.openToWrite();
 		} catch (NexusException e) {
 			throw new NexusException("Cannot create nexus file", e);
 		}
 	}
 
+	@Override
+	public int flush() throws NexusException {
+		if (nexusBuilderFile == null)
+			throw new IllegalStateException("The nexus file either not been created or has already been closed.");
+		return nexusBuilderFile.flush();
+	}
+
 	/**
 	 * Writes scan finished and closes the wrapped nexus file.
+	 * @throws NexusException 
 	 */
-	public void scanFinished() {
+	public void scanFinished() throws NexusException {
+		if (nexusBuilderFile == null)
+			throw new IllegalStateException("The nexus file either not been created or has already been closed.");
 		entryFieldBuilder.end();
+		nexusBuilderFile.close();
+		nexusBuilderFile = null;
 	}
 
 	private void applyTemplates(Tree tree) throws NexusException {

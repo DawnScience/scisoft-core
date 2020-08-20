@@ -18,10 +18,15 @@
 
 package org.eclipse.dawnsci.nexus.scan;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.dawnsci.nexus.INexusDevice;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
+import org.eclipse.dawnsci.nexus.NexusScanInfo.ScanRole;
+import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 
 /**
  * An instance of this interface encapsulates a nexus file as defined by a {@link NexusScanModel}.
@@ -39,6 +44,13 @@ public interface NexusScanFile {
 	 * @return
 	 */
 	public NexusScanModel getNexusScanModel();
+
+	/**
+	 * Returns the {@link NexusObjectProvider}s for this scan file, grouped by {@link ScanRole}.
+	 * These are extracted from the {@link INexusDevice}s when this {@link NexusScanFile} is created.
+	 * @return
+	 */
+	public Map<ScanRole, List<NexusObjectProvider<?>>> getNexusObjectProviders();
 
 	/**
 	 * Returns the set of file paths of the external file that this scan file links to.

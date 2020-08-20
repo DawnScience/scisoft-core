@@ -44,11 +44,11 @@ import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusScanInfo;
 import org.eclipse.dawnsci.nexus.NexusScanInfo.ScanRole;
 import org.eclipse.dawnsci.nexus.builder.CustomNexusEntryModification;
+import org.eclipse.dawnsci.nexus.builder.NexusBuilderFile;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusFileBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusMetadataProvider;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
-import org.eclipse.dawnsci.nexus.builder.NexusBuilderFile;
 import org.eclipse.dawnsci.nexus.builder.data.AxisDataDevice;
 import org.eclipse.dawnsci.nexus.builder.data.DataDevice;
 import org.eclipse.dawnsci.nexus.builder.data.DataDeviceBuilder;
@@ -59,7 +59,6 @@ import org.eclipse.dawnsci.nexus.device.SimpleNexusDevice;
 import org.eclipse.dawnsci.nexus.scan.NXEntryScanTimestampsWriter;
 import org.eclipse.dawnsci.nexus.scan.NexusScanFile;
 import org.eclipse.dawnsci.nexus.scan.NexusScanModel;
-import org.eclipse.dawnsci.nexus.scan.ScanMetadataWriter;
 import org.eclipse.dawnsci.nexus.scan.ServiceHolder;
 import org.eclipse.dawnsci.nexus.template.NexusTemplate;
 import org.eclipse.dawnsci.nexus.template.NexusTemplateService;
@@ -86,7 +85,7 @@ class NexusScanFileImpl implements NexusScanFile {
 	private final String filePath;
 	private NexusFileBuilder fileBuilder;
 	private NexusBuilderFile nexusBuilderFile;
-	private ScanMetadataWriter scanMetadataWriter;
+	private INexusDevice<?> scanMetadataWriter;
 	private NXEntryScanTimestampsWriter entryFieldBuilder;
 
 	// we need to cache various things as they are used more than once
@@ -110,7 +109,7 @@ class NexusScanFileImpl implements NexusScanFile {
 
 	private final INexusDeviceService nexusDeviceService = ServiceHolder.getNexusDeviceService();
 
-	NexusScanFileImpl(NexusScanModel nexusScanModel, ScanMetadataWriter scanMetadataWriter) throws NexusException {
+	NexusScanFileImpl(NexusScanModel nexusScanModel, INexusDevice<?> scanMetadataWriter) throws NexusException {
 		this.nexusScanModel = nexusScanModel;
 		this.filePath = nexusScanModel.getFilePath();
 
@@ -123,7 +122,6 @@ class NexusScanFileImpl implements NexusScanFile {
 
 		// convert this to a map of nexus object providers for each type
 		nexusObjectProviders = extractNexusProviders();
-		scanMetadataWriter.setNexusObjectProviders(nexusObjectProviders);
 	}
 	
 	@Override
@@ -134,6 +132,11 @@ class NexusScanFileImpl implements NexusScanFile {
 	@Override
 	public String getFilePath() {
 		return filePath;
+	}
+
+	@Override
+	public Map<ScanRole, List<NexusObjectProvider<?>>> getNexusObjectProviders() {
+		return nexusObjectProviders;
 	}
 
 	/**

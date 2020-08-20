@@ -11,7 +11,7 @@ public class NexusScanFileServiceImpl implements NexusScanFileService {
 	@Override
 	public NexusScanFileBuilder newNexusScanFileBuilder(NexusScanModel nexusScanModel,
 			ScanMetadataWriter metadataWriter) throws NexusException {
-		return new NexusScanFileBuilder(nexusScanModel, metadataWriter);
+		return new NexusScanFileBuilderImpl(nexusScanModel, metadataWriter);
 	}
 
 }

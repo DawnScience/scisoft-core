@@ -19,7 +19,7 @@ import org.eclipse.dawnsci.nexus.NexusFile;
  * of the file has been created and cannot be further modified.
  * Writable datasets can to be written to the file.
  */
-public interface NexusScanFile extends AutoCloseable {
+public interface NexusBuilderFile extends AutoCloseable {
 	
 	/**
 	 * Returns the path of this nexus scan file.

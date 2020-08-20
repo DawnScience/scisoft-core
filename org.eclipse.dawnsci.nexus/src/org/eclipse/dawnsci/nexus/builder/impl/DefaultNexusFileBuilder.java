@@ -26,7 +26,7 @@ import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusFileBuilder;
-import org.eclipse.dawnsci.nexus.builder.NexusScanFile;
+import org.eclipse.dawnsci.nexus.builder.NexusBuilderFile;
 import org.eclipse.dawnsci.nexus.validation.NexusValidationException;
 
 /**
@@ -111,7 +111,7 @@ public class DefaultNexusFileBuilder implements NexusFileBuilder {
 	 * @see org.eclipse.dawnsci.nexus.builder.NexusFileBuilder#createFile(boolean)
 	 */
 	@Override
-	public NexusScanFile createFile(boolean async) throws NexusException {
+	public NexusBuilderFile createFile(boolean async) throws NexusException {
 		if (fileCreated) {
 			throw new IllegalStateException("The Nexus file has already been created");
 		}
@@ -133,7 +133,7 @@ public class DefaultNexusFileBuilder implements NexusFileBuilder {
 			nexusFile.addNode("/", treeFile.getGroupNode());
 			nexusFile.flush();
 			fileCreated = true;
-			return new DefaultNexusScanFile(filename);
+			return new DefaultNexusBuilderFile(filename);
 		} // NexusFile is auto-closed
 	}
 

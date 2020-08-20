@@ -45,7 +45,7 @@ import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.builder.AbstractNexusObjectProvider;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusFileBuilder;
-import org.eclipse.dawnsci.nexus.builder.NexusScanFile;
+import org.eclipse.dawnsci.nexus.builder.NexusBuilderFile;
 import org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder;
 import org.eclipse.dawnsci.nexus.builder.impl.DefaultNexusFileBuilder;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
@@ -233,7 +233,7 @@ public class MultipleThreadNexusFileWriteTest {
 		return testScratchDirectoryName + "test" + numPositioners + s + "Positioners.nxs";
 	}
 
-	private NexusScanFile createNexusFile(boolean async, final int numPositioners) throws NexusException {
+	private NexusBuilderFile createNexusFile(boolean async, final int numPositioners) throws NexusException {
 		String fileName = makeFileName(async, numPositioners);
 		NexusFileBuilder fileBuilder = new DefaultNexusFileBuilder(fileName);
 		final NexusEntryBuilder entryBuilder = fileBuilder.newEntry();
@@ -311,7 +311,7 @@ public class MultipleThreadNexusFileWriteTest {
 
 	public void doTestMultiplePositioners(boolean async, final int numPositioners, final int numSteps, final long stepTime) throws Exception {
 		String filePath = makeFileName(async, numPositioners); 
-		NexusScanFile nexusFile = createNexusFile(async, numPositioners);
+		NexusBuilderFile nexusFile = createNexusFile(async, numPositioners);
 		initializeDevices(stepTime, numSteps);
 		nexusFile.openToWrite();
 		// we need quite a long timeout so as not to fail on jenkins when there are other jobs running

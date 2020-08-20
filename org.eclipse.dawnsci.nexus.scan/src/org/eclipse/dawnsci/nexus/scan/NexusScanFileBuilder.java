@@ -21,10 +21,10 @@ package org.eclipse.dawnsci.nexus.scan;
 import java.util.Set;
 
 import org.eclipse.dawnsci.nexus.NexusException;
-import org.eclipse.dawnsci.nexus.builder.NexusScanFile;
+import org.eclipse.dawnsci.nexus.builder.NexusBuilderFile;
 
 /**
- * An instance of this interface knows how to build a {@link NexusScanFile} for a given {@link NexusScanModel}.
+ * An instance of this interface knows how to build a {@link NexusBuilderFile} for a given {@link NexusScanModel}.
  */
 public interface NexusScanFileBuilder {
 
@@ -34,7 +34,7 @@ public interface NexusScanFileBuilder {
 	 * @return the nexus file 
 	 * @throws NexusException if the nexus file could not be created for any reason
 	 */
-	public NexusScanFile createNexusFile(boolean async) throws NexusException;
+	public NexusBuilderFile createNexusFile(boolean async) throws NexusException;
 
 	/**
 	 * Call at the end of the scan to write the final timestamps.

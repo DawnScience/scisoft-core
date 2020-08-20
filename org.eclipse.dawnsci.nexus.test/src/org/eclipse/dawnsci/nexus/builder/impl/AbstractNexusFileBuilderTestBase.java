@@ -25,10 +25,10 @@ import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.builder.NexusBuilderFactory;
+import org.eclipse.dawnsci.nexus.builder.NexusBuilderFile;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryModification;
 import org.eclipse.dawnsci.nexus.builder.NexusFileBuilder;
-import org.eclipse.dawnsci.nexus.builder.NexusScanFile;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
 import org.eclipse.january.dataset.ILazyDataset;
@@ -111,7 +111,7 @@ public abstract class AbstractNexusFileBuilderTestBase {
 		addApplicationDefinitions(entryBuilder);
 		
 		// save the nexus file
-		NexusScanFile scanFile = fileBuilder.createFile(async);
+		NexusBuilderFile scanFile = fileBuilder.createFile(async);
 		scanFile.openToWrite();
 		
 		// compare with file in repository

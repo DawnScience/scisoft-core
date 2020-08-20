@@ -75,5 +75,5 @@ public interface NexusFileBuilder {
 	 * @param async if true, then all writes are done asynchronously
 	 * @throws NexusException if the nexus file could not be saved for any reason 
 	 */
-	public NexusScanFile createFile(boolean async) throws NexusException;
+	public NexusBuilderFile createFile(boolean async) throws NexusException;
 }

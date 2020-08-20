@@ -15,15 +15,15 @@ import org.eclipse.dawnsci.nexus.INexusFileFactory;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.ServiceHolder;
-import org.eclipse.dawnsci.nexus.builder.NexusScanFile;
+import org.eclipse.dawnsci.nexus.builder.NexusBuilderFile;
 
-class DefaultNexusScanFile implements NexusScanFile {
+class DefaultNexusBuilderFile implements NexusBuilderFile {
 
 	private final String filePath;
 	
 	private NexusFile nexusFile = null;
 	
-	protected DefaultNexusScanFile(final String filePath) {
+	protected DefaultNexusBuilderFile(final String filePath) {
 		this.filePath = filePath;
 	}
 	

@@ -48,7 +48,7 @@ import org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusFileBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusMetadataProvider;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
-import org.eclipse.dawnsci.nexus.builder.NexusScanFile;
+import org.eclipse.dawnsci.nexus.builder.NexusBuilderFile;
 import org.eclipse.dawnsci.nexus.builder.data.AxisDataDevice;
 import org.eclipse.dawnsci.nexus.builder.data.DataDevice;
 import org.eclipse.dawnsci.nexus.builder.data.DataDeviceBuilder;
@@ -67,7 +67,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An instance of this class knows how to build a {@link NexusScanFile} for a given {@link NexusScanModel}.
+ * An instance of this class knows how to build a {@link NexusBuilderFile} for a given {@link NexusScanModel}.
  */
 class NexusScanFileBuilderImpl implements NexusScanFileBuilder {
 	
@@ -84,7 +84,7 @@ class NexusScanFileBuilderImpl implements NexusScanFileBuilder {
 
 	private final NexusScanModel nexusScanModel;
 	private NexusFileBuilder fileBuilder;
-	private NexusScanFile nexusScanFile;
+	private NexusBuilderFile nexusScanFile;
 	private ScanMetadataWriter scanMetadataWriter;
 	private NXEntryScanTimestampsWriter entryFieldBuilder;
 
@@ -139,7 +139,7 @@ class NexusScanFileBuilderImpl implements NexusScanFileBuilder {
 		return paths;
 	}
 
-	public NexusScanFile createNexusFile(boolean async) throws NexusException {
+	public NexusBuilderFile createNexusFile(boolean async) throws NexusException {
 		// We use the new nexus framework to join everything up into the scan
 		// Create a builder
 		fileBuilder = ServiceHolder.getNexusBuilderFactory().newNexusFileBuilder(nexusScanModel.getFilePath());

@@ -22,18 +22,23 @@ import java.util.Set;
 
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
-import org.eclipse.dawnsci.nexus.builder.NexusBuilderFile;
 
 /**
- * An instance of this interface knows how to build a {@link NexusBuilderFile} for a given {@link NexusScanModel}.
+ * An instance of this interface encapsulates a nexus file as defined by a {@link NexusScanModel}.
  */
-public interface NexusScanFileBuilder {
+public interface NexusScanFile {
 
 	/**
 	 * Returns the absolute file path of the underlying {@link NexusFile} on disk
 	 * @return
 	 */
 	public String getFilePath();
+	
+	/**
+	 * Returns the {@link NexusScanModel} defining the scan for this scan file.  
+	 * @return
+	 */
+	public NexusScanModel getNexusScanModel();
 
 	/**
 	 * Returns the set of file paths of the external file that this scan file links to.
@@ -43,7 +48,7 @@ public interface NexusScanFileBuilder {
 
 	/**
 	 * Create the structure of the nexus file according to the {@link NexusScanModel} that this
-	 * {@link NexusScanFileBuilder} was created with and writes it to disk.
+	 * {@link NexusScanFile} was created with and writes it to disk.
 	 * @param async if <code>true</code> all writes to datasets are done asynchronously
 	 * @return the nexus file 
 	 * @throws NexusException if the nexus file could not be created for any reason
@@ -51,7 +56,7 @@ public interface NexusScanFileBuilder {
 	public void createNexusFile(boolean async) throws NexusException;
 
 	/**
-	 * Flush the underlying nexus file.
+	 * Flush the underlying nexus file
 	 * @return
 	 * @throws NexusException
 	 */

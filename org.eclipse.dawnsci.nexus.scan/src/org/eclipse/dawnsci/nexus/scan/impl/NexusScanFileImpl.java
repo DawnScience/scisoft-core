@@ -57,7 +57,7 @@ import org.eclipse.dawnsci.nexus.builder.data.PrimaryDataDevice;
 import org.eclipse.dawnsci.nexus.device.INexusDeviceService;
 import org.eclipse.dawnsci.nexus.device.SimpleNexusDevice;
 import org.eclipse.dawnsci.nexus.scan.NXEntryScanTimestampsWriter;
-import org.eclipse.dawnsci.nexus.scan.NexusScanFileBuilder;
+import org.eclipse.dawnsci.nexus.scan.NexusScanFile;
 import org.eclipse.dawnsci.nexus.scan.NexusScanModel;
 import org.eclipse.dawnsci.nexus.scan.ScanMetadataWriter;
 import org.eclipse.dawnsci.nexus.scan.ServiceHolder;
@@ -69,9 +69,9 @@ import org.slf4j.LoggerFactory;
 /**
  * An instance of this class knows how to build a {@link NexusBuilderFile} for a given {@link NexusScanModel}.
  */
-class NexusScanFileBuilderImpl implements NexusScanFileBuilder {
+class NexusScanFileImpl implements NexusScanFile {
 	
-	private static final Logger logger = LoggerFactory.getLogger(NexusScanFileBuilderImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(NexusScanFileImpl.class);
 
 	private static final Map<NexusBaseClass, ScanRole> DEFAULT_SCAN_ROLES;
 
@@ -83,6 +83,7 @@ class NexusScanFileBuilderImpl implements NexusScanFileBuilder {
 	}
 
 	private final NexusScanModel nexusScanModel;
+	private final String filePath;
 	private NexusFileBuilder fileBuilder;
 	private NexusBuilderFile nexusBuilderFile;
 	private ScanMetadataWriter scanMetadataWriter;
@@ -109,8 +110,9 @@ class NexusScanFileBuilderImpl implements NexusScanFileBuilder {
 
 	private final INexusDeviceService nexusDeviceService = ServiceHolder.getNexusDeviceService();
 
-	NexusScanFileBuilderImpl(NexusScanModel nexusScanModel, ScanMetadataWriter scanMetadataWriter) throws NexusException {
+	NexusScanFileImpl(NexusScanModel nexusScanModel, ScanMetadataWriter scanMetadataWriter) throws NexusException {
 		this.nexusScanModel = nexusScanModel;
+		this.filePath = nexusScanModel.getFilePath();
 
 		if (fileBuilder != null) {
 			throw new IllegalStateException("The nexus file has already been created");
@@ -123,10 +125,15 @@ class NexusScanFileBuilderImpl implements NexusScanFileBuilder {
 		nexusObjectProviders = extractNexusProviders();
 		scanMetadataWriter.setNexusObjectProviders(nexusObjectProviders);
 	}
+	
+	@Override
+	public NexusScanModel getNexusScanModel() {
+		return nexusScanModel;
+	}
 
 	@Override
 	public String getFilePath() {
-		return nexusBuilderFile.getFilePath();
+		return filePath;
 	}
 
 	/**
@@ -162,8 +169,6 @@ class NexusScanFileBuilderImpl implements NexusScanFileBuilder {
 
 	@Override
 	public int flush() throws NexusException {
-		if (nexusBuilderFile == null)
-			throw new IllegalStateException("The nexus file either not been created or has already been closed.");
 		return nexusBuilderFile.flush();
 	}
 
@@ -172,11 +177,8 @@ class NexusScanFileBuilderImpl implements NexusScanFileBuilder {
 	 * @throws NexusException 
 	 */
 	public void scanFinished() throws NexusException {
-		if (nexusBuilderFile == null)
-			throw new IllegalStateException("The nexus file either not been created or has already been closed.");
 		entryFieldBuilder.end();
 		nexusBuilderFile.close();
-		nexusBuilderFile = null;
 	}
 
 	private void applyTemplates(Tree tree) throws NexusException {

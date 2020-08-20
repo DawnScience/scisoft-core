@@ -4,6 +4,6 @@ import org.eclipse.dawnsci.nexus.NexusException;
 
 public interface NexusScanFileService {
 	
-	public NexusScanFileBuilder newNexusScanFileBuilder(NexusScanModel nexusScanModel, ScanMetadataWriter metadataWriter) throws NexusException;
+	public NexusScanFile newNexusScanFile(NexusScanModel nexusScanModel, ScanMetadataWriter metadataWriter) throws NexusException;
 
 }

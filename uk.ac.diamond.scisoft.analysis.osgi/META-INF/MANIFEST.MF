@@ -10,7 +10,6 @@ Import-Package: org.eclipse.core.runtime;version="3.4.0",
  org.osgi.framework;version="1.6.0",
  org.slf4j;version="[1.7.2,2.0.0)"
 Export-Package: uk.ac.diamond.scisoft.analysis.osgi
-Bundle-Activator: uk.ac.diamond.scisoft.analysis.osgi.Activator
 Require-Bundle: org.eclipse.january;bundle-version="1.0.0",
  org.eclipse.dawnsci.analysis.api;bundle-version="1.0.0",
  org.eclipse.equinox.preferences;bundle-version="3.5.1",

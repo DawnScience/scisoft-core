@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.eclipse.dawnsci.nexus.IMultipleNexusDevice;
 import org.eclipse.dawnsci.nexus.INexusDevice;
+import org.eclipse.dawnsci.nexus.NXcollection;
 import org.eclipse.dawnsci.nexus.NexusScanInfo;
 import org.eclipse.dawnsci.nexus.NexusScanInfo.ScanRole;
 import org.eclipse.dawnsci.nexus.builder.NexusMetadataProvider;
@@ -53,6 +54,8 @@ public class NexusScanModel {
 	 * This could be a device that controls other devices, such as a malcolm device in GDA.
 	 */
 	private Optional<IMultipleNexusDevice> multipleNexusDevice = Optional.empty();
+	
+	private INexusDevice<NXcollection> metadataWriter;
 
 	/**
 	 * Some information about the scan shape, dimensions and size
@@ -76,7 +79,7 @@ public class NexusScanModel {
 	 * rather than depending on the devices in the scan.
 	 */
 	private List<NexusMetadataProvider> nexusMetadataProviders;
-
+	
 	public NexusScanModel(Map<ScanRole, List<INexusDevice<?>>> nexusDevices) {
 		this.nexusDevices = nexusDevices;
 	}
@@ -99,6 +102,14 @@ public class NexusScanModel {
 
 	public void setMultipleNexusDevice(Optional<IMultipleNexusDevice> multipleNexusDevice) {
 		this.multipleNexusDevice = multipleNexusDevice;
+	}
+	
+	public INexusDevice<NXcollection> getMetadataWriter() {
+		return metadataWriter;
+	}
+
+	public void setMetadataWriter(INexusDevice<NXcollection> metadataWriter) {
+		this.metadataWriter = metadataWriter;
 	}
 
 	public NexusScanInfo getNexusScanInfo() {

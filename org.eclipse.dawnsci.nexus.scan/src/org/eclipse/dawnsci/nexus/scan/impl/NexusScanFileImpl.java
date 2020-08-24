@@ -85,7 +85,6 @@ class NexusScanFileImpl implements NexusScanFile {
 	private final String filePath;
 	private NexusFileBuilder fileBuilder;
 	private NexusBuilderFile nexusBuilderFile;
-	private INexusDevice<?> scanMetadataWriter;
 	private NXEntryScanTimestampsWriter entryFieldBuilder;
 
 	// we need to cache various things as they are used more than once
@@ -109,16 +108,13 @@ class NexusScanFileImpl implements NexusScanFile {
 
 	private final INexusDeviceService nexusDeviceService = ServiceHolder.getNexusDeviceService();
 
-	NexusScanFileImpl(NexusScanModel nexusScanModel, INexusDevice<?> scanMetadataWriter) throws NexusException {
+	NexusScanFileImpl(NexusScanModel nexusScanModel) throws NexusException {
 		this.nexusScanModel = nexusScanModel;
 		this.filePath = nexusScanModel.getFilePath();
 
 		if (fileBuilder != null) {
 			throw new IllegalStateException("The nexus file has already been created");
 		}
-
-		// add the solstice scan monitor which writes unique keys.
-		this.scanMetadataWriter = scanMetadataWriter;
 
 		// convert this to a map of nexus object providers for each type
 		nexusObjectProviders = extractNexusProviders();
@@ -330,7 +326,11 @@ class NexusScanFileImpl implements NexusScanFile {
 		for (ScanRole deviceType : EnumSet.allOf(ScanRole.class)) {
 			addDevicesToEntry(entryBuilder, deviceType);
 		}
-		entryBuilder.add(scanMetadataWriter.getNexusProvider(nexusScanModel.getNexusScanInfo()));
+		
+		// add the nexus object for the metadata entry (TODO: merge with above)?
+		if (nexusScanModel.getMetadataWriter() != null) {
+			entryBuilder.add(nexusScanModel.getMetadataWriter().getNexusProvider(nexusScanModel.getNexusScanInfo()));
+		}
 
 		// create the NXdata groups
 		createNexusDataGroups(entryBuilder);
@@ -383,7 +383,9 @@ class NexusScanFileImpl implements NexusScanFile {
 	private void createNXDataGroups(NexusEntryBuilder entryBuilder, NexusObjectProvider<?> detector) throws NexusException {
 		List<NexusObjectProvider<?>> scannables = nexusObjectProviders.get(ScanRole.SCANNABLE);
 		List<NexusObjectProvider<?>> monitors = new LinkedList<>(nexusObjectProviders.get(ScanRole.MONITOR_PER_POINT));
-		monitors.remove(scanMetadataWriter.getNexusProvider(nexusScanModel.getNexusScanInfo()));
+		if (nexusScanModel.getMetadataWriter() != null) {
+			monitors.remove(nexusScanModel.getMetadataWriter().getNexusProvider(nexusScanModel.getNexusScanInfo()));
+		}
 
 		// determine the primary device - i.e. the device whose primary dataset to make the @signal field
 		NexusObjectProvider<?> primaryDevice = null;

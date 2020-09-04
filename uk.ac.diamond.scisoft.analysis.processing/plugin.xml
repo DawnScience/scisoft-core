@@ -872,6 +872,14 @@
             name="Read Nexus Detector Information">
       </operation>
       <operation
+      		class="uk.ac.diamond.scisoft.analysis.processing.operations.export.DiffractionMetadataConversionOperation"
+      		description="Convert the existing calibration to an alternative format (for example .poni)"
+      		icon="icons/CalibrationRun.png"
+      		id="uk.ac.diamond.scisoft.analysis.processing.operations.export.DiffractionMetadataConversionOperation"
+      		model="uk.ac.diamond.scisoft.analysis.processing.operations.export.DiffractionMetadataConversionModel"
+      		name="Convert Nexus Detector Information">
+      </operation>
+      <operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.FunctionFittingOperation"
             description="Fit a function to the data, using a function generated in the function fitting tool and exported as a NeXus file"
             icon="icons/rollingball.png"

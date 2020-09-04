@@ -1,5 +1,5 @@
 {% set name = "scisoftpy" %}
-{% set version = "2.19.0" %}
+{% set version = "2.20.0" %}
 
 package:
   name: {{ name }}

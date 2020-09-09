@@ -29,7 +29,11 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 	private AnalysisRpcClient rpcClient;
 
 	public ReDirectOverRpcPlotterImpl() {
-		rpcClient = new AnalysisRpcClient(8912);
+		this(8912);
+	}
+
+	public ReDirectOverRpcPlotterImpl(int port) {
+		rpcClient = new AnalysisRpcClient(port);
 	}
 
 	private Object request(String dest, Object... args) throws AnalysisRpcException {

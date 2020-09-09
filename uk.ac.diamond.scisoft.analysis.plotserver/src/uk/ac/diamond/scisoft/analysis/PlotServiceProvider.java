@@ -50,7 +50,7 @@ public class PlotServiceProvider {
 				try {
 					plotService = (PlotService) RMIClientProvider.getInstance().lookup(hostname,
 							RMIPlotServer.RMI_SERVICE_NAME);
-					logger.info("Using RMIPlotService");
+					logger.info("Using RMIPlotServer");
 				} catch (Exception e1) {
 					logger.info("Couldn't get any PlotService ", e1);
 				}

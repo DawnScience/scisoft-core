@@ -31,14 +31,14 @@ public class SDAPlotterTestsUsingLoopbackTestAbstract {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-
-		redirectPlotter = new ReDirectOverRpcPlotterImpl();
-
 		// Launch the AnalysisRpc server that receives our requests and sends them back to us
 		AnalysisRpcServerProvider.getInstance().startServer();
 		// give server time to start (possible fix for SCI-1893)
 		Thread.sleep(2000);
-		String[] envp = new String[] {"SCISOFT_RPC_PORT=" + AnalysisRpcServerProvider.getInstance().getPort()};
+
+		int port = AnalysisRpcServerProvider.getInstance().getPort();
+		int loopBackPort = port + 1; // avoid same port
+		String[] envp = new String[] {"SCISOFT_RPC_PORT=" + port, "LOOPBACK_SERVER_PORT=" + loopBackPort};
 		pythonRunInfo = PythonHelper
 				.runPythonFileBackground("../uk.ac.diamond.scisoft.python/test/scisoftpy/loopback.py", new String[] {"../uk.ac.diamond.scisoft.python/src/"}, envp);
 
@@ -47,6 +47,7 @@ public class SDAPlotterTestsUsingLoopbackTestAbstract {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		redirectPlotter = new ReDirectOverRpcPlotterImpl(loopBackPort);
 
 		savedHandler = AnalysisRpcServerProvider.getInstance().getHandler(SDAPlotter.class.getSimpleName());
 	}

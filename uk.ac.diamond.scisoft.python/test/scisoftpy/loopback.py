@@ -31,7 +31,8 @@ import os, sys
 sys.path.append(sys.argv[1])
 import scisoftpy as dnp #@UnresolvedImport
 
-server = dnp.rpc.rpcserver(8912)
+port = int(os.getenv("LOOPBACK_SERVER_PORT", 8912))
+server = dnp.rpc.rpcserver(port)
 server.add_handler("addpoints",    lambda *args: dnp.plot.addpoints(*args))
 server.add_handler("addline",      lambda *args: dnp.plot.addline(*args))
 server.add_handler("getbean",      lambda *args: dnp.plot.getbean(*args))

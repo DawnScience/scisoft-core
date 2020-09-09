@@ -70,14 +70,6 @@ public class PythonHelper {
 		return readAndProcessOutput(failOnAnyOutput, new String[] { PYTHON_EXE, "-c", scriptContents }, envp);
 	}
 
-//	public static String runPythonFile(String file, boolean failOnAnyOutput) throws Exception {
-//		return runPythonFile(file, null, failOnAnyOutput);
-//	}
-//	
-//	public static String runPythonFile(String file, String[] args, boolean failOnAnyOutput) throws Exception {
-//		return runPythonFile(file, args, PYTHON_ENV, failOnAnyOutput);
-//	}
-//	
 	public static String runPythonFile(String file, String[] args, String[] envp, boolean failOnAnyOutput) throws Exception {
 		if (args == null)
 			args = new String[0];
@@ -90,10 +82,6 @@ public class PythonHelper {
 		return readAndProcessOutput(failOnAnyOutput, allArgs, envp);
 	}
 	
-//	public static PythonRunInfo runPythonScriptBackground(String scriptContents) throws Exception {
-//		return launch(new String[] { PYTHON_EXE, "-c", scriptContents }, null);
-//	}
-
 	public static PythonRunInfo runPythonFileBackground(String file) throws Exception {
 		return runPythonFileBackground(file, null);
 	}

@@ -47,7 +47,7 @@ public class NexusScanModel {
 	/**
 	 * The nexus devices from which to get the nexus objects, grouped by {@link ScanRole}.
 	 */
-	private final Map<ScanRole, List<INexusDevice<?>>> nexusDevices;
+	private Map<ScanRole, List<INexusDevice<?>>> nexusDevices;
 
 	/**
 	 * Optionally a device that produces multiple nexus objects with different scan roles.
@@ -80,6 +80,10 @@ public class NexusScanModel {
 	 */
 	private List<NexusMetadataProvider> nexusMetadataProviders;
 	
+	public NexusScanModel() {
+		// do nothing
+	}
+	
 	public NexusScanModel(Map<ScanRole, List<INexusDevice<?>>> nexusDevices) {
 		this.nexusDevices = nexusDevices;
 	}
@@ -94,6 +98,10 @@ public class NexusScanModel {
 
 	public Map<ScanRole, List<INexusDevice<?>>> getNexusDevices() {
 		return nexusDevices;
+	}
+	
+	public void setNexusDevices(Map<ScanRole, List<INexusDevice<?>>> nexusDevices) {
+		this.nexusDevices = nexusDevices;
 	}
 
 	public Optional<IMultipleNexusDevice> getMultipleNexusDevice() {

@@ -71,7 +71,7 @@ public class NexusScanModel {
 	 * A list of the dimensions names for the scan, each with the same index in the list
 	 * as the index of the scan for . 
 	 */
-	private List<Collection<String>> dimensionNamesByIndex;
+	private List<Set<String>> dimensionNamesByIndex;
 
 	/**
 	 * A list of metadata providers, used to add metadata fields to the core nexus groups,
@@ -139,11 +139,11 @@ public class NexusScanModel {
 		this.templateFilePaths = templateFilePaths;
 	}
 
-	public List<Collection<String>> getDimensionNamesByIndex() {
+	public List<Set<String>> getDimensionNamesByIndex() {
 		return dimensionNamesByIndex;
 	}
 
-	public void setDimensionNamesByIndex(List<Collection<String>> dimensionNamesByIndex) {
+	public void setDimensionNamesByIndex(List<Set<String>> dimensionNamesByIndex) {
 		this.dimensionNamesByIndex = dimensionNamesByIndex;
 	}
 

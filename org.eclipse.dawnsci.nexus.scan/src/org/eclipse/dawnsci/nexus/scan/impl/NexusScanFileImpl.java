@@ -495,7 +495,7 @@ class NexusScanFileImpl implements NexusScanFile {
 		// Convert the list into a map from scannable name to index in scan, only including
 		// scannable names which are the dimension name for exactly one index of the scan
 		int dimensionIndex = 0;
-		final Iterator<Collection<String>> dimensionNamesIter = nexusScanModel.getDimensionNamesByIndex().iterator();
+		final Iterator<Set<String>> dimensionNamesIter = nexusScanModel.getDimensionNamesByIndex().iterator();
 		while (dimensionNamesIter.hasNext()) {
 			Collection<String> dimensionNamesForIndex = dimensionNamesIter.next();
 			//need to iterate or the _indices attibute defaults to [0]

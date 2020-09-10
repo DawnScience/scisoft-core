@@ -432,7 +432,7 @@ public class HDF5FileFactory {
 							if (verbose) {
 								System.err.println("Finishing writes for " + cPath);
 							}
-							access.finish(access.getID());
+							access.finish(finishPeriod);
 							tryToCloseOpenObjects(access.getID());
 							if (verbose) {
 								System.err.println("Closing " + cPath);

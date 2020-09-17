@@ -228,7 +228,8 @@ class NXLoader(HDF5Loader):
         except KeyError:
             cls = None
         if cls is not None:
-            cls = str(cls)
+            if not isinstance(cls, str):
+                cls = str(cls, 'utf-8')
             if cls in _nx.NX_CLASSES:
                 g = _nx.NX_CLASSES[cls](attrs, parent)
             else:

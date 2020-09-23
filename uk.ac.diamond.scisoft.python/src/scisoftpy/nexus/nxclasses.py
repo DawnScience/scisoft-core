@@ -275,6 +275,14 @@ class NXcrystal(NXobject):
     '''
     pass
 
+class NXcylindrical_geometry(NXobject):
+    '''
+    NXcylindrical_geometry node. This is a subclass of the NXobject class.
+    
+    See the NXobject documentation for more details.
+    '''
+    pass
+
 class NXdetector(NXobject):
     '''
     NXdetector node. This is a subclass of the NXobject class.
@@ -435,6 +443,14 @@ class NXnote(NXobject):
     '''
     pass
 
+class NXoff_geometry(NXobject):
+    '''
+    NXoff_geometry node. This is a subclass of the NXobject class.
+    
+    See the NXobject documentation for more details.
+    '''
+    pass
+
 class NXorientation(NXobject):
     '''
     NXorientation node. This is a subclass of the NXobject class.
@@ -446,6 +462,14 @@ class NXorientation(NXobject):
 class NXparameters(NXobject):
     '''
     NXparameters node. This is a subclass of the NXobject class.
+    
+    See the NXobject documentation for more details.
+    '''
+    pass
+
+class NXpdb(NXobject):
+    '''
+    NXpdb node. This is a subclass of the NXobject class.
     
     See the NXobject documentation for more details.
     '''
@@ -586,6 +610,22 @@ class NXxraylens(NXobject):
     See the NXobject documentation for more details.
     '''
     pass
+
+# contributed classes to add when they are ratified by the NIAC
+# 
+# NXcontainer
+# NXcsg
+# NXelectrostatic_kicker
+# NXmagnetic_kicker
+# NXquadric
+# NXquadrupole_magnet
+# NXseparator
+# NXsnsevent
+# NXsnshisto
+# NXsolenoid_magnet
+# NXsolid_geometry
+# NXspecdata
+# NXspin_rotor
 
 #class Unknown(NXnode):
 #    '''

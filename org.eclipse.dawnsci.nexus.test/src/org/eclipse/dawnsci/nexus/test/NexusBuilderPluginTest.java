@@ -16,6 +16,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import org.eclipse.dawnsci.nexus.NexusTestServiceHolder;
+import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.junit.Test;
 
 public class NexusBuilderPluginTest {
@@ -23,7 +24,7 @@ public class NexusBuilderPluginTest {
 	@Test
 	public void testNexusBuilderDS() {
 		assertThat(NexusTestServiceHolder.getNexusBuilderFactory(), is(notNullValue()));
-		assertThat(NexusTestServiceHolder.getNexusFileFactory(), is(notNullValue()));
+		assertThat(ServiceHolder.getNexusFileFactory(), is(notNullValue()));
 	}
 	
 }

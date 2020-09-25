@@ -11,15 +11,12 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.nexus;
 
-import org.eclipse.dawnsci.nexus.INexusFileFactory;
 import org.eclipse.dawnsci.nexus.builder.NexusBuilderFactory;
 
 public class NexusTestServiceHolder {
 	
 	private static NexusBuilderFactory nexusBuilderFactory;
 	
-	private static INexusFileFactory nexusFileFactory;
-
 	public void setNexusBuilderFactory(NexusBuilderFactory nexusBuilderFactory) {
 		NexusTestServiceHolder.nexusBuilderFactory = nexusBuilderFactory; 
 	}
@@ -28,12 +25,5 @@ public class NexusTestServiceHolder {
 		return nexusBuilderFactory;
 	}
 	
-	public void setNexusFileFactory(INexusFileFactory nexusFileFactory) {
-		NexusTestServiceHolder.nexusFileFactory = nexusFileFactory; 
-	}
-	
-	public static INexusFileFactory getNexusFileFactory() {
-		return nexusFileFactory;
-	}
 
 }

@@ -279,4 +279,15 @@ public class SRSLoaderTest {
 		assertEquals("col1", dh.getName(0));
 		assertEquals("testing data", dh.getName(1));
 	}
+	
+	/**
+	 * Test to check that exceptions are thrown when no header is found.
+	 * @throws Exception
+	 */
+	@Test(expected = ScanFileHolderException.class)
+	public void testNoHeader() throws Exception {
+		 SRSLoader srsLoader = new SRSLoader("testfiles/gda/analysis/io/DatLoaderTest/noheader.dat");
+		 srsLoader.loadFile();
+
+	}
 }

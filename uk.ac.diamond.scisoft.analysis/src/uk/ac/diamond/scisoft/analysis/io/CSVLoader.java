@@ -12,6 +12,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.IMonitor;
@@ -36,6 +37,8 @@ BL04J-AL-SLITS-02:TOP.VAL,Points,BL04J-EA-STK-03:IAMP4:I
 
  */
 public class CSVLoader extends DatLoader {
+	
+	private static final Pattern HEADER_REGEX = Pattern.compile("\\s{2,}|\\,\\s*|\\t");
 
 	public CSVLoader() {
 		super();
@@ -140,5 +143,10 @@ public class CSVLoader extends DatLoader {
         createHeaders(header, line, name);		
         
 		return line;
+	}
+	
+	@Override
+	protected Pattern getHeaderRegex() {
+		return HEADER_REGEX;
 	}
 }

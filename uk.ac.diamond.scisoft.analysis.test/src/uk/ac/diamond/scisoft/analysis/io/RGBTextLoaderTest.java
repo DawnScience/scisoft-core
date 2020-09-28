@@ -32,7 +32,7 @@ public class RGBTextLoaderTest {
 	public void testRGBTextLoaderLoop()  {
 		boolean success = false;
 		try {
-			DataHolder dh = new SRSLoader("testfiles/images/56884_Baier_norm_red_1.rgb").loadFile();
+			DataHolder dh = new RGBTextLoader("testfiles/images/56884_Baier_norm_red_1.rgb").loadFile();
 			success = dh.size() != 0;
 		} catch (Exception expected) {
 			// do nothing

@@ -30,8 +30,6 @@ import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.ILazyDataset;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class loads a dat data files where:
@@ -317,6 +315,7 @@ public class DatLoader extends AbstractFileLoader {
 
 	protected static final Pattern SCAN_LINE = Pattern.compile("#S \\d+ .*");
 	protected static final Pattern DATE_LINE = Pattern.compile("#D (Sun|Mon|Tue|Wed|Thu|Fri|Sat) [a-zA-Z]+ \\d+ .*");
+	private static final Pattern HEADER_REGEX = Pattern.compile("\\s{2,}|\\,\\s+|\\t");
 	/**
 	 * This method parses the headers. It tries to throw an exception
 	 * if it is sure an SRS file is found. Also it looks in the headers
@@ -400,6 +399,10 @@ public class DatLoader extends AbstractFileLoader {
 		return line;
 	}
 	
+	protected Pattern getHeaderRegex() {
+		return HEADER_REGEX;
+	}
+	
 	protected void createHeaders(final List<String> header, final String line, final String name) {
 		
 		final String lastHeaderLine = header.get(header.size()-1);
@@ -410,7 +413,7 @@ public class DatLoader extends AbstractFileLoader {
 			vals.put(name, new ArrayList<Double>(89));
 			
 			// Busy line, been looking at too much python...
-			List<String> headers = new ArrayList<String>(Arrays.asList(lastHeaderLine.substring(1).trim().split("\\s{2,}|\\,\\s+|\\t")));
+			List<String> headers = new ArrayList<String>(Arrays.asList(getHeaderRegex().split(lastHeaderLine.substring(1).trim())));
 			headers = removeQuotations(headers);
 			
 			if (values.length > headers.size()) {
@@ -467,9 +470,8 @@ public class DatLoader extends AbstractFileLoader {
 	}
 
 	protected void createValues(Map<String, List<Double>> v, String header) {
-		
 		// Two or more spaces or a comma and zero more more space
-		final String[] headers = header.substring(1).trim().split("\\s{2,}|\\,\\s*|\\t");
+		final String[] headers = getHeaderRegex().split(header.substring(1).trim());
 		
 		for (String name : headers) {
 			name = removeQuotations(name);

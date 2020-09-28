@@ -125,8 +125,17 @@ public class SRSLoader extends AbstractFileLoader implements IFileSaver {
 		LineNumberReader in = null;
 		
 		try {
+			
 			in = new LineNumberReader(new FileReader(fileName), BUFFER_SIZE);
 			String dataStr;
+			in.setLineNumber(0);
+			in.mark(MARK_LIMIT);
+			String line = in.readLine();
+			if (line == null)
+				throw new ScanFileHolderException("No lines found");
+			if (!line.trim().startsWith("&") && !line.trim().startsWith("#")) throw new Exception("No & (or #) found, not an SRS file!");
+			in.reset();
+			
 			// an updated header reader grabs all the metadata
 			readMetadata(in, mon);
 

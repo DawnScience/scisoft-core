@@ -136,4 +136,15 @@ public class DatLoaderTest {
 		Dataset data = loader.getDataset(0);
 		SerializationUtils.serialize(data.getFirstMetadata(IMetadata.class));
 	}
+	
+	/**
+	 * This method tests for correct number of datasets when there is a , in the dataset names
+	 */
+	@Test
+	public void testBadDatasetNames() throws Exception {
+		final String testfile1 = "testfiles/gda/analysis/io/DatLoaderTest/bad_names.dat";
+		final IMetadata meta   = LoaderFactory.getMetadata(testfile1, null);
+		assertEquals("Wrong number of columns!", 4, meta.getDataNames().size());
+
+	}
 }

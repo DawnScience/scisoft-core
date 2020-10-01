@@ -72,12 +72,12 @@ public class TestUtils {
 	 * @throws Exception
 	 */
 	public static void makeScratchDirectory(String testScratchDirectoryname) throws Exception {
-		// delete any remains from a previous run of this test
-		if (!deleteDir(new File(testScratchDirectoryname))) {
+		File tsd = new File(testScratchDirectoryname);
+		if (!deleteDir(tsd)) {
 			throw new Exception("Unable to delete old test scratch directory " + testScratchDirectoryname);
 		}
 		// set up for a new run of this test
-		if (!((new File(testScratchDirectoryname)).mkdirs())) {
+		if (!tsd.mkdirs()) {
 			throw new Exception("Unable to create new test scratch directory " + testScratchDirectoryname);
 		}
 	}

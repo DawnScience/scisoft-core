@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">
       <bundle
-            class="org.eclipse.dawnsci.hdf5.Activator">
+            class="org.eclipse.dawnsci.hdf5.HDF5FileFactory">
       </bundle>
    </extension>
 

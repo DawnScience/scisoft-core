@@ -3,7 +3,6 @@ package org.eclipse.dawnsci.nexus.device;
 import org.eclipse.dawnsci.nexus.INexusDevice;
 import org.eclipse.dawnsci.nexus.INexusDeviceDecorator;
 import org.eclipse.dawnsci.nexus.NXobject;
-import org.eclipse.january.INameable;
 
 /**
  * A service to store and retrieve nexus devices. This service is not necessary if devices in a scan

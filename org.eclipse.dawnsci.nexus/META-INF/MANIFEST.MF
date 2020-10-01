@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Nexus
-Bundle-SymbolicName: org.eclipse.dawnsci.nexus
+Bundle-SymbolicName: org.eclipse.dawnsci.nexus;singleton:=true
 Bundle-Version: 1.1.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Service-Component: OSGI-INF/*.xml

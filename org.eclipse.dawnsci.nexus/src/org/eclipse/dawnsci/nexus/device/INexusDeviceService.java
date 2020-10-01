@@ -3,6 +3,7 @@ package org.eclipse.dawnsci.nexus.device;
 import org.eclipse.dawnsci.nexus.INexusDevice;
 import org.eclipse.dawnsci.nexus.INexusDeviceDecorator;
 import org.eclipse.dawnsci.nexus.NXobject;
+import org.eclipse.dawnsci.nexus.NexusException;
 
 /**
  * A service to store and retrieve nexus devices. This service is not necessary if devices in a scan
@@ -15,27 +16,36 @@ public interface INexusDeviceService {
 	
 	/**
 	 * Registers the given nexus device with this service.
+	 * @param nexusDevice the nexus device to register
 	 * @param <N> subclass of {@link NXobject} created by this device
-	 * @param nexusDevice device with the given name
 	 */
 	public <N extends NXobject> void register(INexusDevice<N> nexusDevice);
-
+	
 	/**
-	 * Gets the nexus device with the given name name.
-	 * @param <N> subclass of {@link NXobject} created by this device
+	 * Gets the {@link INexusDevice} with the given name.
 	 * @param name name
+	 * @param <N> subclass of {@link NXobject} created by this device
 	 * @return the nexus device with the given name
 	 */
 	public <N extends NXobject> INexusDevice<N> getNexusDevice(String name);
+	
+	/**
+	 * Gets the {@link INexusDevice} for the given object, if possible.
+	 * @param device the device to get the {@link INexusDevice} for
+	 * @param <N> subclass of {@link NXobject} created by this device
+	 * @return the nexus device with the given name
+	 * @throws NexusException 
+	 */
+	public <N extends NXobject, T> INexusDevice<N> getNexusDevice(T device) throws NexusException;
 	
 	/**
 	 * Returns the decorator for the given name, if one is registered. This can be used
 	 * to query or update the decorators properties. It should not be used to decorate a
 	 * nexus device as the method {@link #decorateNexusDevice(INexusDevice)} is provided
 	 * for that purpose
-	 * @param <N>
-	 * @param name
-	 * @return
+	 * @param <N> subclass of {@link NXobject} created by the returned decorator
+	 * @param the decorator for the given name
+	 * @return the decorator for the given name 
 	 */
 	public <N extends NXobject> INexusDeviceDecorator<N> getDecorator(String name);
 	

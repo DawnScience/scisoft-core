@@ -6,6 +6,9 @@ import java.util.Map;
 import org.eclipse.dawnsci.nexus.INexusDevice;
 import org.eclipse.dawnsci.nexus.INexusDeviceDecorator;
 import org.eclipse.dawnsci.nexus.NXobject;
+import org.eclipse.dawnsci.nexus.NexusException;
+import org.eclipse.dawnsci.nexus.ServiceHolder;
+import org.eclipse.dawnsci.nexus.device.INexusDeviceAdapterFactory;
 import org.eclipse.dawnsci.nexus.device.INexusDeviceService;
 
 /**
@@ -71,4 +74,14 @@ public class NexusDeviceService implements INexusDeviceService {
 		return nexusDevice;
 	}
 
+	@Override
+	public <N extends NXobject, T> INexusDevice<N> getNexusDevice(T device) throws NexusException {
+		@SuppressWarnings("unchecked")
+		final INexusDeviceAdapterFactory<T> factory = (INexusDeviceAdapterFactory<T>) ServiceHolder.getNexusDeviceAdapterFactory();
+		if (factory != null && factory.canAdapt(device)) {
+			return factory.createNexusDevice(device);
+		}
+		return null;
+	}
+	
 }

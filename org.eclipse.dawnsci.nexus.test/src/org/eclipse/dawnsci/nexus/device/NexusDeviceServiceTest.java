@@ -2,7 +2,10 @@ package org.eclipse.dawnsci.nexus.device;
 
 import static org.eclipse.dawnsci.nexus.test.utilities.NexusAssert.assertNexusTreesEqual;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 
 import java.util.Arrays;
@@ -25,11 +28,14 @@ import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NXpositioner;
 import org.eclipse.dawnsci.nexus.NXroot;
 import org.eclipse.dawnsci.nexus.NexusBaseClass;
+import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
+import org.eclipse.dawnsci.nexus.NexusScanInfo;
 import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.appender.NexusGroupCopyAppender;
 import org.eclipse.dawnsci.nexus.appender.NexusMetadataAppender;
 import org.eclipse.dawnsci.nexus.appender.NexusObjectAppender;
+import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectWrapper;
 import org.eclipse.dawnsci.nexus.device.impl.NexusDeviceService;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusDeviceFileBuilder;
@@ -38,6 +44,7 @@ import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.Random;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -261,6 +268,63 @@ public class NexusDeviceServiceTest {
 		// build the nexus tree and compare it to the expected tree
 		final TreeFile actualTree = nexusDeviceBuilder.buildNexusTree(detector);
 		assertNexusTreesEqual(expectedTree, actualTree);
+	}
+	
+	@Test
+	public void testGetNexusDeviceFromAdapter() throws Exception {
+		// a simple test to check that the NexusDeviceService delegates the the configured nexus adapter factory 
+		// this factory takes an integer and return an INexusDevice which produces a NexusobjectWrapper
+		// wrapping a NXpositioner whose name is "device" + value of integer
+		final INexusDeviceAdapterFactory<Integer> nexusDeviceAdapterFactory = new INexusDeviceAdapterFactory<Integer>() {
+
+			@Override
+			public boolean canAdapt(Object object) {
+				return object instanceof Integer && ((Integer) object).intValue() < 5;
+			}
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public INexusDevice<NXpositioner> createNexusDevice(Integer value) throws NexusException {
+				return new INexusDevice<NXpositioner>() {
+					
+					final String name = "device" + value;
+
+					@Override
+					public String getName() {
+						return name;
+					}
+
+					@Override
+					public NexusObjectProvider<NXpositioner> getNexusProvider(NexusScanInfo info) throws NexusException {
+						final NXpositioner positioner = NexusNodeFactory.createNXpositioner();
+						positioner.setNameScalar(name);
+						return new NexusObjectWrapper<NXpositioner>(name, positioner);
+					}
+				};
+			}
+		};
+		
+		new ServiceHolder().setNexusDeviceAdapterFactory(nexusDeviceAdapterFactory);
+		
+		for (int i = 1; i < 5; i++) {
+			final String expectedName = "device" + i;
+			final INexusDevice<NXpositioner> nexusDevice = nexusDeviceService.getNexusDevice(i);
+			
+			assertThat(nexusDevice, is(notNullValue()));
+			assertThat(nexusDevice.getName(), is(equalTo(expectedName)));
+			final NexusObjectProvider<NXpositioner> nexusObjectProvider = nexusDevice.getNexusProvider(null);
+			assertThat(nexusObjectProvider, is(notNullValue()));
+			assertThat(nexusObjectProvider.getName(), is(expectedName));
+			final NXpositioner positioner = nexusObjectProvider.getNexusObject();
+			assertThat(positioner, is(notNullValue()));
+			assertThat(positioner.getNameScalar(), is(expectedName));
+		}
+		
+		// check that the nexus device adapter factory is only called with valid values
+		assertThat(nexusDeviceService.getNexusDevice(6), is(nullValue()));
+		assertThat(nexusDeviceService.getNexusDevice(100), is(nullValue()));
+		assertThat(nexusDeviceService.getNexusDevice(2.0), is(nullValue()));
+		assertThat(nexusDeviceService.getNexusDevice(new Object()), is(nullValue()));
 	}
 	
 }

@@ -42,6 +42,5 @@ Export-Package: org.eclipse.dawnsci.plotting.api,
  org.eclipse.dawnsci.plotting.api.tool,
  org.eclipse.dawnsci.plotting.api.trace,
  org.eclipse.dawnsci.plotting.api.views
-Service-Component: OSGI-INF/*.xml
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.eclipse.dawnsci.plotting.api

@@ -163,13 +163,4 @@ public class BasePlottingConstants {
 	 */
 	public static final String USE_PALETTE_FUNCTIONS = "org.dawnsci.plotting.use.paletteFunctions";
 
-	/**
-	 * Property used to enable/disable event tracking
-	 */
-	public static final String IS_TRACKER_ENABLED = "org.eclipse.dawnsci.enable.event.tracking";
-
-	/**
-	 * Property used to store analytics tracking code
-	 */
-	public static final String ANALYTICS_TRACK_CODE = "org.eclipse.dawnsci.analytics.tracking.code";
 }

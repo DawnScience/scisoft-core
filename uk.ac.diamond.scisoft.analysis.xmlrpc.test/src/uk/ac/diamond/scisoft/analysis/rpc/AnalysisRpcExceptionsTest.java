@@ -27,8 +27,6 @@ public class AnalysisRpcExceptionsTest {
 		}
 	}
 
-	private static final int PORT = 8614;
-	
 	private static final String CAT_TWO_STRINGS = "cat";
 	private static AnalysisRpcServer analysisRpcServer;
 	private static AnalysisRpcClient analysisRpcClient;
@@ -37,11 +35,11 @@ public class AnalysisRpcExceptionsTest {
 
 	@BeforeClass
 	public static void setupBeforeClass() throws AnalysisRpcException {
-		analysisRpcServer = new AnalysisRpcServer(PORT);
+		analysisRpcServer = new AnalysisRpcServer();
 		analysisRpcServer.start();
 		analysisRpcServer.addHandler(CAT_TWO_STRINGS, new CatStringsHandler());
 	
-		analysisRpcClient = new AnalysisRpcClient(PORT);		
+		analysisRpcClient = new AnalysisRpcClient(analysisRpcServer.getPort());
 	}
 	
 	@AfterClass

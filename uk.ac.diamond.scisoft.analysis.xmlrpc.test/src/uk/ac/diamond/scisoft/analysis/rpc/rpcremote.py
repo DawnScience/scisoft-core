@@ -14,6 +14,12 @@
 # limitations under the License.
 ###
 
+try: # attempt to prevent OpenMPI initialization issues
+    import mpi4py
+    mpi4py.rc(initialize=False)
+except:
+    pass
+
 # Set up environment
 import os, sys
 scisoftpath = os.getcwd() + '/../uk.ac.diamond.scisoft.python/src'
@@ -27,6 +33,11 @@ def python_cos(ds):
 
 
 # Make the fancy function available
-rpcserver = dnp.rpc.rpcserver(8751)
+rpcserver = dnp.rpc.rpcserver(0)
 rpcserver.add_handler("cos", python_cos)
+
+# returns port in stdout
+print('server_port:{}'.format(rpcserver.port))
+sys.stdout.flush()
+
 rpcserver.serve_forever()

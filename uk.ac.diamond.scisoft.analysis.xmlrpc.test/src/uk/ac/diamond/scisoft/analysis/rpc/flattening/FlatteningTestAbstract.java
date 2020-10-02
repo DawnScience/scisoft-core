@@ -68,6 +68,8 @@ abstract public class FlatteningTestAbstract {
 	 */
 	public static final long SERVER_WAIT_TIME = 3000;
 
+	public static final String SERVER_PORT = "server_port:";
+
 	protected static IRootFlattener flattener;
 
 	/**

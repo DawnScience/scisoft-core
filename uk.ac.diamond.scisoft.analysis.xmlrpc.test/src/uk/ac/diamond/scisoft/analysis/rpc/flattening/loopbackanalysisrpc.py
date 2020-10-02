@@ -14,6 +14,12 @@
 # limitations under the License.
 ###
 
+try: # attempt to prevent OpenMPI initialization issues
+    import mpi4py
+    mpi4py.rc(initialize=False)
+except:
+    pass
+
 import os, sys
 scisoftpath = os.path.abspath(os.path.join('..', 'uk.ac.diamond.scisoft.python', 'src'))
 sys.path.append(scisoftpath)
@@ -21,14 +27,22 @@ sys.path.append(scisoftpath)
 import scisoftpy as dnp #@UnresolvedImport
 import threading
 
-internal_rpcclient = dnp.rpc.rpcclient(8715)
-rpcserver = dnp.rpc.rpcserver(8714)
-rpcserver.add_handler("loopback", lambda arg: arg)
-rpcserver.add_handler("loopback_after_local", lambda arg: internal_rpcclient.loopback(arg))
-t = threading.Thread(target=rpcserver.serve_forever)
-t.start()
-
 # This is the server that is going to loopback locally to python
-rpcserver = dnp.rpc.rpcserver(8715)
-rpcserver.add_handler("loopback", lambda arg: arg)
-rpcserver.serve_forever()
+rpcserver1 = dnp.rpc.rpcserver(0)
+rpcserver1.add_handler("loopback", lambda arg: arg)
+
+internal_rpcclient = dnp.rpc.rpcclient(rpcserver1.port)
+rpcserver2 = dnp.rpc.rpcserver(0)
+rpcserver2.add_handler("loopback", lambda arg: arg)
+rpcserver2.add_handler("loopback_after_local", lambda arg: internal_rpcclient.loopback(arg))
+
+# returns port in stdout
+print('server_port:{}'.format(rpcserver2.port))
+sys.stdout.flush()
+
+t2 = threading.Thread(target=rpcserver2.serve_forever)
+t2.start()
+
+rpcserver1.serve_forever()
+
+

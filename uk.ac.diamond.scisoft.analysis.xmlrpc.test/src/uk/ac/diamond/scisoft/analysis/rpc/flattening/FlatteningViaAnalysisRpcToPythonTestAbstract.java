@@ -9,25 +9,30 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.flattening;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import uk.ac.diamond.scisoft.analysis.PythonHelper;
 import uk.ac.diamond.scisoft.analysis.PythonHelper.PythonRunInfo;
+import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcBasicRemoteTest;
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcClient;
 
 abstract public class FlatteningViaAnalysisRpcToPythonTestAbstract extends FlatteningTestAbstract {
 	private static PythonRunInfo pythonRunInfo;
 	protected static AnalysisRpcClient client;
 
+	
 	@BeforeClass
 	public static void start() throws Exception {
 		pythonRunInfo = PythonHelper
 				.runPythonFileBackground("src/uk/ac/diamond/scisoft/analysis/rpc/flattening/loopbackanalysisrpc.py");
 
 		Thread.sleep(SERVER_WAIT_TIME); // wait for server to start
-
-		client = new AnalysisRpcClient(8714);
+		int port = AnalysisRpcBasicRemoteTest.retrievePort(pythonRunInfo.getStdout());
+		assertTrue("Port from Analysis RPC server was not returned", port > 0);
+		client = new AnalysisRpcClient(port);
 	}
 
 	@AfterClass

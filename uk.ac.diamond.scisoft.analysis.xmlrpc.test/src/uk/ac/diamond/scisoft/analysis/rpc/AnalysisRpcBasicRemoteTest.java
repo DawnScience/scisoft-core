@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc;
 
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IntegerDataset;
@@ -18,13 +20,13 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.PythonHelper;
 import uk.ac.diamond.scisoft.analysis.PythonHelper.PythonRunInfo;
+import uk.ac.diamond.scisoft.analysis.rpc.flattening.FlatteningTestAbstract;
 
 /**
  * This test is intended to show the basic operation of the RPC Client and Server
  */
 public class AnalysisRpcBasicRemoteTest {
 
-	private static final int PORT = 8751;
 	private static final String COS = "cos";
 
 	@Test
@@ -34,12 +36,14 @@ public class AnalysisRpcBasicRemoteTest {
 				.runPythonFileBackground("src/uk/ac/diamond/scisoft/analysis/rpc/rpcremote.py");
 
 		try {
-			Thread.sleep(3000); // add delay to ensure client is receiving
+			Thread.sleep(1500); // add delay to ensure client is receiving
+			int port = retrievePort(server.getStdout());
+			assertTrue("Port from XML RPC server was not returned", port > 0);
 
 			// Create a new client to connect to the server (note that the ports match)
-			AnalysisRpcClient analysisRpcClient = new AnalysisRpcClient(PORT);
+			AnalysisRpcClient analysisRpcClient = new AnalysisRpcClient(port);
 
-			Thread.sleep(3000); // add delay to ensure client is receiving
+			Thread.sleep(1000); // add delay to ensure client is receiving
 
 			// Set up arguments to pass
 			Dataset cosInput = DatasetFactory.createRange(IntegerDataset.class, 100);
@@ -56,5 +60,14 @@ public class AnalysisRpcBasicRemoteTest {
 				server.getStdout(true);
 			}
 		}
+	}
+
+	/**
+	 * Retrieve port number from output string
+	 * @param info
+	 * @return port or -1 if none returned
+	 */
+	public static int retrievePort(String info) {
+		return info.startsWith(FlatteningTestAbstract.SERVER_PORT) ? Integer.parseInt(info.substring(FlatteningTestAbstract.SERVER_PORT.length())) : -1;
 	}
 }

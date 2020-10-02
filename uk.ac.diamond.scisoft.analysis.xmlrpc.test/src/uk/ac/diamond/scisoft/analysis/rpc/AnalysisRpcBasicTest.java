@@ -19,7 +19,6 @@ import org.junit.Test;
  */
 public class AnalysisRpcBasicTest {
 
-	private static final int PORT = 8613;
 	private static final String CAT_TWO_STRINGS = "cat";
 	
 	/**
@@ -35,15 +34,14 @@ public class AnalysisRpcBasicTest {
 	@Test
 	public void testBasicOperation() throws AnalysisRpcException {
 		// Create a server
-		AnalysisRpcServer analysisRpcServer = new AnalysisRpcServer(PORT);
-		try {
+		try (AnalysisRpcServer analysisRpcServer = new AnalysisRpcServer()) {
 			// Register a handler with it, with the given name
 			analysisRpcServer.addHandler(CAT_TWO_STRINGS, new CatTwoStringsHandler());
 			// Start the server
 			analysisRpcServer.start();
 
 			// Create a new client to connect to the server (note that the ports match)
-			AnalysisRpcClient analysisRpcClient = new AnalysisRpcClient(PORT);
+			AnalysisRpcClient analysisRpcClient = new AnalysisRpcClient(analysisRpcServer.getPort());
 
 			// Set up arguments to pass
 			Object[] args = new Object[] { "Hello, ", "World!" };
@@ -52,9 +50,6 @@ public class AnalysisRpcBasicTest {
 
 			// Check our results
 			Assert.assertEquals("Hello, World!", result);
-		} finally {
-			// Shutdown the server (in a finally block just in case the test fails)
-			analysisRpcServer.shutdown();
 		}
 	}
 }

@@ -23,7 +23,7 @@ public class FlatteningViaAnalysisRpcTest extends FlatteningTestAbstract {
 
 	@BeforeClass
 	public static void start() throws AnalysisRpcException {
-		server = new AnalysisRpcServer(8620);
+		server = new AnalysisRpcServer();
 		server.addHandler("loopback", new IAnalysisRpcHandler() {
 			@Override
 			public Object run(Object[] args) {
@@ -32,7 +32,7 @@ public class FlatteningViaAnalysisRpcTest extends FlatteningTestAbstract {
 		});
 		server.start();
 
-		client = new AnalysisRpcClient(8620);
+		client = new AnalysisRpcClient(server.getPort());
 	}
 
 	@AfterClass

@@ -122,6 +122,14 @@ public class PythonHelper {
 			process.destroy();
 		}
 
+		/**
+		 * Non-blocking method that also clears current stdout's content
+		 * @return standard out string
+		 */
+		public String getStdout() {
+			return std.getContents(true).trim();
+		}
+
 		public String getStdout(boolean failOnAnyOutput) {
 			try {
 				// wait until the process completion.

@@ -28,7 +28,7 @@ public class FlatteningViaXmlRpcTest extends ExplicitFlatteningTestAbstract {
 	
 	@BeforeClass
 	public static void start() throws IOException, XmlRpcException {
-		webServer = new WebServer(8614);
+		webServer = new WebServer(0);
 		XmlRpcServer xmlRpcServer = webServer.getXmlRpcServer();
 
 		PropertyHandlerMapping phm = new PropertyHandlerMapping();
@@ -43,9 +43,9 @@ public class FlatteningViaXmlRpcTest extends ExplicitFlatteningTestAbstract {
 		webServer.start();
 		
 		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-	    config.setServerURL(new URL("http://127.0.0.1:8614/xmlrpc"));
-	    client = new XmlRpcClient();
-	    client.setConfig(config);
+		config.setServerURL(new URL(String.format("http://127.0.0.1:%d/xmlrpc", webServer.getPort())));
+		client = new XmlRpcClient();
+		client.setConfig(config);
 	}
 	
 	@AfterClass

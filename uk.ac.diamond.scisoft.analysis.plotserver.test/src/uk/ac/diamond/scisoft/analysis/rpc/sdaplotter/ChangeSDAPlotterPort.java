@@ -55,45 +55,45 @@ public class ChangeSDAPlotterPort extends SDAPlotterTestsUsingLoopbackTestAbstra
 		final boolean[] receivedAtAlternatePortHandler = new boolean[1];
 		
 		// Set a handler that we can detect we arrived at ok on the default port
-		registerHandler(new MyMockPlotter(receivedAtDefaultHandler));	
+		registerHandler(new MyMockPlotter(receivedAtDefaultHandler));
 
 		// Set an alternate handler on a different port
-		AnalysisRpcServer altServer = new AnalysisRpcServer(9876); 
-		altServer.start();
-		IAnalysisRpcHandler dispatcher = new AnalysisRpcGenericInstanceDispatcher(ISDAPlotter.class, new MyMockPlotter(receivedAtAlternatePortHandler));
-		altServer.addHandler(SDAPlotter.class.getSimpleName(), dispatcher);
+		try (AnalysisRpcServer altServer = new AnalysisRpcServer()) {
+			int port = altServer.getPort();
 	
+			altServer.start();
+			IAnalysisRpcHandler dispatcher = new AnalysisRpcGenericInstanceDispatcher(ISDAPlotter.class, new MyMockPlotter(receivedAtAlternatePortHandler));
+			altServer.addHandler(SDAPlotter.class.getSimpleName(), dispatcher);
 		
-		// make sure by default we arrive at the default port (the one provided in AnalysisRpcServerProvider)
-		receivedAtAlternatePortHandler[0] = receivedAtDefaultHandler[0] = false;
-		redirectPlotter.plot("Plot 1", null, null, new IDataset[] {DatasetFactory.createRange(IntegerDataset.class, 100)},
-				null, null, null);
-		Assert.assertTrue(receivedAtDefaultHandler[0]);
-		Assert.assertFalse(receivedAtAlternatePortHandler[0]);
-		
-		// change port to something else
-		Assert.assertTrue(AnalysisRpcServerProvider.getInstance().getPort() != 9876); // test is invalid if already on 9876!
-		redirectPlotter.setRemotePortRpc(9876);
-		
-		// make sure we arrive at the alternate handler
-		receivedAtAlternatePortHandler[0] = receivedAtDefaultHandler[0] = false;
-		redirectPlotter.plot("Plot 1", null, null, new IDataset[] {DatasetFactory.createRange(IntegerDataset.class, 100)},
-				null, null, null);
-		Assert.assertFalse(receivedAtDefaultHandler[0]);
-		Assert.assertTrue(receivedAtAlternatePortHandler[0]);
-		
-
-		// restore default by setting to 0
-		redirectPlotter.setRemotePortRpc(0);
-		
-		// make sure by default we arrive at the default port (the one provided in AnalysisRpcServerProvider)
-		receivedAtAlternatePortHandler[0] = receivedAtDefaultHandler[0] = false;
-		redirectPlotter.plot("Plot 1", null, null, new IDataset[] {DatasetFactory.createRange(IntegerDataset.class, 100)},
-				null, null, null);
-		Assert.assertTrue(receivedAtDefaultHandler[0]);
-		Assert.assertFalse(receivedAtAlternatePortHandler[0]);
-		
-
+			
+			// make sure by default we arrive at the default port (the one provided in AnalysisRpcServerProvider)
+			receivedAtAlternatePortHandler[0] = receivedAtDefaultHandler[0] = false;
+			redirectPlotter.plot("Plot 1", null, null, new IDataset[] {DatasetFactory.createRange(IntegerDataset.class, 100)},
+					null, null, null);
+			Assert.assertTrue(receivedAtDefaultHandler[0]);
+			Assert.assertFalse(receivedAtAlternatePortHandler[0]);
+			
+			// change port to something else
+			Assert.assertTrue(AnalysisRpcServerProvider.getInstance().getPort() != port); // test is invalid if already on 9876!
+			redirectPlotter.setRemotePortRpc(9876);
+			
+			// make sure we arrive at the alternate handler
+			receivedAtAlternatePortHandler[0] = receivedAtDefaultHandler[0] = false;
+			redirectPlotter.plot("Plot 1", null, null, new IDataset[] {DatasetFactory.createRange(IntegerDataset.class, 100)},
+					null, null, null);
+			Assert.assertFalse(receivedAtDefaultHandler[0]);
+			Assert.assertTrue(receivedAtAlternatePortHandler[0]);
+			
+	
+			// restore default by setting to 0
+			redirectPlotter.setRemotePortRpc(0);
+			
+			// make sure by default we arrive at the default port (the one provided in AnalysisRpcServerProvider)
+			receivedAtAlternatePortHandler[0] = receivedAtDefaultHandler[0] = false;
+			redirectPlotter.plot("Plot 1", null, null, new IDataset[] {DatasetFactory.createRange(IntegerDataset.class, 100)},
+					null, null, null);
+			Assert.assertTrue(receivedAtDefaultHandler[0]);
+			Assert.assertFalse(receivedAtAlternatePortHandler[0]);
+		}
 	}
-
 }

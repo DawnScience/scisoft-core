@@ -7,8 +7,6 @@ import org.dawb.common.util.eclipse.BundleUtils;
 import org.eclipse.dawnsci.analysis.api.rpc.AnalysisRpcException;
 import org.eclipse.dawnsci.analysis.api.rpc.AnalysisRpcRemoteException;
 import org.eclipse.dawnsci.analysis.api.rpc.IAnalysisRpcPythonService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcClient;
 
@@ -18,8 +16,6 @@ public class PythonRunSearcherService implements IPythonSearcherHandlers {
 	private static final String SCRIPTPATH = "/uk/ac/diamond/scisoft/analysis/powder/matcher/ccdc/";
 
 	private static final String PYTHONSERVICESCRIPTHANDLER = "cellSearcherService.py";
-
-	private static final Logger logger = LoggerFactory.getLogger(PythonRunSearcherService.class);
 
 	private IPythonSearcherHandlers proxy;
 	
@@ -88,7 +84,7 @@ public class PythonRunSearcherService implements IPythonSearcherHandlers {
 		
 		this.rpcservice = rpcservice;
 		if (!skipAddHandler) {
-			File bundlePath = BundleUtils.getBundleLocation(Activator.PLUGIN_ID);
+			File bundlePath = BundleUtils.getBundleLocation(CCDCService.PLUGIN_ID);
 
 			String script = bundlePath.getAbsolutePath() + SCRIPTPATH + PYTHONSERVICESCRIPTHANDLER;
 
@@ -145,13 +141,13 @@ public class PythonRunSearcherService implements IPythonSearcherHandlers {
 	public int findCellMatches(double a, double b, double c, double alp, double bet, double gam)
 			throws AnalysisRpcException {
 		
-     rpcservice.getClient().getPort();
-     
-		
-		
-		IPythonSearcherHandlers newProxyInstance = rpcservice.getClient().newProxyInstance(IPythonSearcherHandlers.class,false);
-		rpcservice.getClient().newProxyInstance(IPythonSearcherHandlers.class);
-		final Object newOut = newProxyInstance.findCellMatches(a, b, c, alp, bet, gam);
+//     rpcservice.getClient().getPort();
+//     
+//		
+//		
+//		IPythonSearcherHandlers newProxyInstance = rpcservice.getClient().newProxyInstance(IPythonSearcherHandlers.class,false);
+//		rpcservice.getClient().newProxyInstance(IPythonSearcherHandlers.class);
+//		final Object newOut = newProxyInstance.findCellMatches(a, b, c, alp, bet, gam);
 		
 		final Object out =  proxy.findCellMatches(a, b, c, alp, bet, gam);//this.rpcservice.getClient().request("findCellMatches", new Object[]{a, b, c, alp,bet,gam}); 
 		

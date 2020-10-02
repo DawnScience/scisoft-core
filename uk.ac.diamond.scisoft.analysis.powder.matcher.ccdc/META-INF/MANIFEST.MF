@@ -2,9 +2,8 @@ Manifest-Version: 1.0
 Eclipse-BundleShape: dir
 Bundle-ManifestVersion: 2
 Bundle-Name: CellMatcher
-Bundle-SymbolicName: uk.ac.diamond.scisoft.analysis.powder.matcher.ccdc
+Bundle-SymbolicName: uk.ac.diamond.scisoft.analysis.powder.matcher.ccdc;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: uk.ac.diamond.scisoft.analysis.powder.matcher.ccdc.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.january;bundle-version="1.0.0",

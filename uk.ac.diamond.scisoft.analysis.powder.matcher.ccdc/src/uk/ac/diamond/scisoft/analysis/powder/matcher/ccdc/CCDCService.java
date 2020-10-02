@@ -1,25 +1,22 @@
 package uk.ac.diamond.scisoft.analysis.powder.matcher.ccdc;
 
-import uk.ac.diamond.scisoft.analysis.PythonHelper.PythonRunInfo;
-import uk.ac.diamond.scisoft.analysis.powder.indexer.crystal.Crystal;
-import uk.ac.diamond.scisoft.analysis.powder.indexer.indexers.CellParameter;
-import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcClient;
-
 import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.dawb.common.util.eclipse.BundleUtils;
-
-import uk.ac.diamond.scisoft.analysis.powder.matcher.ccdc.Activator;
-
 import org.dawnsci.python.rpc.AnalysisRpcPythonPyDevService;
 import org.dawnsci.python.rpc.PythonRunScriptService;
 import org.eclipse.dawnsci.analysis.api.rpc.AnalysisRpcException;
 import org.eclipse.dawnsci.analysis.api.rpc.IAnalysisRpcClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import uk.ac.diamond.scisoft.analysis.PythonHelper.PythonRunInfo;
+import uk.ac.diamond.scisoft.analysis.powder.indexer.crystal.Crystal;
+import uk.ac.diamond.scisoft.analysis.powder.indexer.indexers.CellParameter;
+import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcClient;
 
 /**
  * Cambridge Crystallographic Data Centre wrapper to communicate with xmlrpc
@@ -29,6 +26,8 @@ import org.slf4j.LoggerFactory;
  * @author Dean P. Ottewell
  */
 public class CCDCService implements ICCDCService {
+
+	public static final String PLUGIN_ID = "uk.ac.diamond.scisoft.analysis.powder.matcher.ccdc"; //$NON-NLS-1$
 
 	private static final Logger logger = LoggerFactory.getLogger(CCDCService.class);
 
@@ -109,7 +108,7 @@ public class CCDCService implements ICCDCService {
 	 */
 	public void setUpServer() throws Exception {
 		try {					
-			File bundlePath = BundleUtils.getBundleLocation(Activator.PLUGIN_ID);
+			File bundlePath = BundleUtils.getBundleLocation(PLUGIN_ID);
 			
 			scriptAbsPath = bundlePath.getAbsolutePath() + SCRIPTPATH
 					+ PYTHONSCRIPTHANDLER;

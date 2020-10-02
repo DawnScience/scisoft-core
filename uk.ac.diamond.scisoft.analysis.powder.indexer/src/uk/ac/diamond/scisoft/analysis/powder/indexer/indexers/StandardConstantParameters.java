@@ -5,7 +5,6 @@ import java.util.TreeMap;
 
 import uk.ac.diamond.scisoft.analysis.powder.indexer.IPowderIndexerParam;
 import uk.ac.diamond.scisoft.analysis.powder.indexer.PowderIndexerParam;
-import uk.ac.diamond.scisoft.analysis.powder.indexer.Activator;
 
 public class StandardConstantParameters {
 

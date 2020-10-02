@@ -451,6 +451,5 @@ public interface IPersistentFile extends AutoCloseable {
 	 * @return data of data origin
 	 * @throws Exception
 	 */
-	@Deprecated
 	public OriginMetadata getOperationDataOrigin() throws Exception;
 }

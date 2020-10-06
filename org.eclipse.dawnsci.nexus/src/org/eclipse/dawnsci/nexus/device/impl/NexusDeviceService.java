@@ -34,24 +34,34 @@ public class NexusDeviceService implements INexusDeviceService {
 		}
 	}
 	
+	@Override
+	public boolean hasNexusDevice(String name) {
+		return nexusDevices.containsKey(name);
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public <N extends NXobject> INexusDevice<N> getNexusDevice(String name) {
-		if (nexusDevices.containsKey(name)) {
+	public <N extends NXobject> INexusDevice<N> getNexusDevice(String name) throws NexusException {
+		if (hasNexusDevice(name)) {
 			return (INexusDevice<N>) nexusDevices.get(name);
 		}
 		
-		throw new IllegalArgumentException("Cannot find nexus device with name: " + name);
+		throw new NexusException("No nexus device is registered with the name: " + name);
 	}
 	
+	@Override
+	public boolean hasDecorator(String name) {
+		return nexusDecorators.containsKey(name);
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public <N extends NXobject> INexusDeviceDecorator<N> getDecorator(String name) {
-		if (nexusDecorators.containsKey(name)) {
+	public <N extends NXobject> INexusDeviceDecorator<N> getDecorator(String name) throws NexusException {
+		if (hasDecorator(name)) {
 			return (INexusDeviceDecorator<N>) nexusDecorators.get(name);
 		}
 		
-		throw new IllegalArgumentException("Cannot find nexus decorator with name: " + name);
+		throw new NexusException("No nexus decorator is registered with the name: " + name);
 	}
 
 	@Override

@@ -76,4 +76,17 @@ public interface NexusFileBuilder {
 	 * @throws NexusException if the nexus file could not be saved for any reason 
 	 */
 	public NexusBuilderFile createFile(boolean async) throws NexusException;
+	
+	/**
+	 * Creates the NeXus file with the content as configured with this builder.
+	 * The nexus file is left open. SWMR mode is activated if <code>useSwmr</code>
+	 * is <code>true</code>, otherwise SWMR mode is not used. 
+	 * This file must be closed by calling {@link #closeFile()}
+	 * (or by using try-with-resources on this object).
+	 * @param async if true, then all writes are done asynchronously
+	 * @throws NexusException if the nexus file could not be saved for any reason 
+	 */
+	public NexusBuilderFile createFile(boolean async, boolean useSwmr) throws NexusException;
+
+	
 }

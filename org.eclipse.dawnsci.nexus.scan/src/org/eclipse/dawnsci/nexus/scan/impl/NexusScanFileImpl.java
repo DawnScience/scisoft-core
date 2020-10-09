@@ -151,6 +151,10 @@ class NexusScanFileImpl implements NexusScanFile {
 	}
 
 	public void createNexusFile(boolean async) throws NexusException {
+		createNexusFile(async, true);
+	}
+	
+	public void createNexusFile(boolean async, boolean useSwmr) throws NexusException {
 		// We use the new nexus framework to join everything up into the scan
 		// Create a builder
 		fileBuilder = ServiceHolder.getNexusBuilderFactory().newNexusFileBuilder(nexusScanModel.getFilePath());
@@ -159,7 +163,7 @@ class NexusScanFileImpl implements NexusScanFile {
 			createEntry(fileBuilder);
 			applyTemplates(fileBuilder.getNexusTree());
 			// create the file from the builder and open it
-			nexusBuilderFile = fileBuilder.createFile(async);
+			nexusBuilderFile = fileBuilder.createFile(async, useSwmr);
 			nexusBuilderFile.openToWrite();
 		} catch (NexusException e) {
 			throw new NexusException("Cannot create nexus file", e);

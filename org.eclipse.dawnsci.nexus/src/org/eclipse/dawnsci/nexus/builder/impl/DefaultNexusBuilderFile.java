@@ -16,15 +16,22 @@ import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.builder.NexusBuilderFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class DefaultNexusBuilderFile implements NexusBuilderFile {
 
+	private static final Logger logger = LoggerFactory.getLogger(DefaultNexusBuilderFile.class);
+	
 	private final String filePath;
+	
+	private final boolean useSwmr;
 	
 	private NexusFile nexusFile = null;
 	
-	protected DefaultNexusBuilderFile(final String filePath) {
+	protected DefaultNexusBuilderFile(final String filePath, boolean useSwmr) {
 		this.filePath = filePath;
+		this.useSwmr = useSwmr;
 	}
 	
 	@Override
@@ -41,11 +48,13 @@ class DefaultNexusBuilderFile implements NexusBuilderFile {
 		nexusFile = nexusFileFactory.newNexusFile(filePath, true);
 		nexusFile.openToWrite(false); // file must already exist on disk
 		
-		try {
-		    nexusFile.activateSwmrMode();
-		} catch (NexusException nxsE) {
-			System.out.println("Scan to '"+nexusFile.getFilePath()+"' is not SWMR "+nxsE.getMessage());
-			// We are not in SWMR mode so we allow a non-SWMR write, which works but other processes may have issues.
+		if (useSwmr) {
+			try {
+			    nexusFile.activateSwmrMode();
+			} catch (NexusException e) {
+				// We are not in SWMR mode so we allow a non-SWMR write, which works but other processes may have issues.
+				logger.warn("NexusFile {} is not SWMR ", nexusFile.getFilePath(), e);
+			}
 		}
 	}
 

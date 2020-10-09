@@ -60,12 +60,22 @@ public interface NexusScanFile {
 
 	/**
 	 * Create the structure of the nexus file according to the {@link NexusScanModel} that this
-	 * {@link NexusScanFile} was created with and writes it to disk.
+	 * {@link NexusScanFile} was created with and writes it to disk. This method always opens the
+	 * file in SWMR mode. This means that the structure of the file cannot be chaned
 	 * @param async if <code>true</code> all writes to datasets are done asynchronously
 	 * @return the nexus file 
 	 * @throws NexusException if the nexus file could not be created for any reason
 	 */
 	public void createNexusFile(boolean async) throws NexusException;
+	
+	/**
+	 * Create the structure of the nexus file according to the {@link NexusScanModel} that this
+	 * {@link NexusScanFile} was created with and writes it to disk.
+	 * @param async if <code>true</code> all writes to datasets are done asynchronously
+	 * @return the nexus file 
+	 * @throws NexusException if the nexus file could not be created for any reason
+	 */
+	public void createNexusFile(boolean async, boolean useSwmr) throws NexusException;
 
 	/**
 	 * Flush the underlying nexus file

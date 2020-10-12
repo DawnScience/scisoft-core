@@ -18,6 +18,8 @@
 
 package org.eclipse.dawnsci.nexus.scan.impl;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -372,14 +374,17 @@ class NexusScanFileImpl implements NexusScanFile {
 			throw new NexusException("The scan must include at least one device in order to write a NeXus file.");
 		}
 
-		List<NexusObjectProvider<?>> detectors = nexusObjectProviders.get(ScanRole.DETECTOR);
-		if (detectors.isEmpty()) {
+		final List<NexusObjectProvider<?>> detectors = nexusObjectProviders.get(ScanRole.DETECTOR);
+		final List<NexusObjectProvider<?>> primaryDetectors = detectors.stream() // exceptionally, some detectors may not have a primary field
+				.filter(det -> det.getPrimaryDataFieldName() != null)
+				.collect(toList());
+		if (primaryDetectors.isEmpty()) {
 			// create a NXdata groups when there is no detector
 			// (uses first monitor, or first scannable if there is no monitor either)
 			createNXDataGroups(entryBuilder, null);
 		} else {
 			// create NXdata groups for each detector
-			for (NexusObjectProvider<?> detector : detectors) {
+			for (NexusObjectProvider<?> detector : primaryDetectors) {
 				createNXDataGroups(entryBuilder, detector);
 			}
 		}

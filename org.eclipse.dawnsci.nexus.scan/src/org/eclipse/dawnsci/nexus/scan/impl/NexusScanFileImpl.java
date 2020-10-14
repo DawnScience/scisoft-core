@@ -318,7 +318,8 @@ class NexusScanFileImpl implements NexusScanFile {
 	 * @throws NexusException
 	 */
 	private void createEntry(NexusFileBuilder fileBuilder) throws NexusException {
-		final NexusEntryBuilder entryBuilder  = fileBuilder.newEntry();
+		final String entryName = nexusScanModel.getEntryName();
+		final NexusEntryBuilder entryBuilder = fileBuilder.newEntry(entryName); 
 		entryBuilder.addDefaultGroups();
 
 		addScanMetadata(entryBuilder, nexusScanModel.getNexusMetadataProviders());

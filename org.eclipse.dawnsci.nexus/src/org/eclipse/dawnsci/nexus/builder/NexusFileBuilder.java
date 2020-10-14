@@ -46,14 +46,15 @@ public interface NexusFileBuilder {
 	public NXroot getNXroot();
 
 	/**
-	 * Creates a new {@link NexusEntryBuilder} with the default name, "entry".
+	 * Creates a new {@link NexusEntryBuilder} with the default name 'entry'.
 	 * @return new {@link NexusEntryBuilder}
 	 * @throws NexusException if the entry could not be created for any reason
 	 */
 	public NexusEntryBuilder newEntry() throws NexusException;
 
 	/**
-	 * Creates a new {@link NexusEntryBuilder} with the given name.
+	 * Creates a new {@link NexusEntryBuilder} with the given name. If the given
+	 * name is <code>null</code>, the default name 'entry' is used.
 	 * @param entryName entry name
 	 * @return new {@link NexusEntryBuilder}
 	 * @throws NexusException if the entry could not be created for any reason

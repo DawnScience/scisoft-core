@@ -34,6 +34,8 @@ import org.eclipse.dawnsci.nexus.validation.NexusValidationException;
  */
 public class DefaultNexusFileBuilder implements NexusFileBuilder {
 
+	private static final String DEFAULT_ENTRY_NAME = "entry"; 
+	
 	private final TreeFile treeFile;
 
 	private final NXroot nxRoot;
@@ -76,7 +78,7 @@ public class DefaultNexusFileBuilder implements NexusFileBuilder {
 	 */
 	@Override
 	public DefaultNexusEntryBuilder newEntry() throws NexusException {
-		return newEntry("entry");
+		return newEntry(null);
 	}
 
 	/* (non-Javadoc)
@@ -84,6 +86,10 @@ public class DefaultNexusFileBuilder implements NexusFileBuilder {
 	 */
 	@Override
 	public DefaultNexusEntryBuilder newEntry(String entryName) throws NexusException {
+		if (entryName == null) {
+			entryName = DEFAULT_ENTRY_NAME;
+		}
+		
 		if (entries.containsKey(entryName)) {
 			throw new NexusException("An entry with the name " + entryName + " already exists");
 		}

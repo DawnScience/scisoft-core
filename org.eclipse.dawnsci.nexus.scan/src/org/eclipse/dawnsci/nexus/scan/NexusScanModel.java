@@ -43,6 +43,11 @@ public class NexusScanModel {
 	 * The path of the nexus file to write
 	 */
 	private String filePath;
+	
+	/**
+	 * The name of the nexus entry to create within the file.
+	 */
+	private String entryName;
 
 	/**
 	 * The nexus devices from which to get the nexus objects, grouped by {@link ScanRole}.
@@ -86,6 +91,14 @@ public class NexusScanModel {
 	
 	public NexusScanModel(Map<ScanRole, List<INexusDevice<?>>> nexusDevices) {
 		this.nexusDevices = nexusDevices;
+	}
+	
+	public String getEntryName() {
+		return entryName;
+	}
+	
+	public void setEntryName(String entryName) {
+		this.entryName = entryName;
 	}
 
 	public String getFilePath() {

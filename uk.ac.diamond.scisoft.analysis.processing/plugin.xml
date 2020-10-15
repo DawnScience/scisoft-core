@@ -1668,6 +1668,14 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.TopBottomProfileSubtractionModel"
             name="Top Bottom Profile Subtraction">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.error"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.POSDetectorErrorOperation"
+            icon="icons/error.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.POSDetectorErrorOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.POSDetectorErrorModel"
+            name="General Detector Error - Scaled">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

@@ -23,7 +23,7 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IndexIterator;
 
 @Atomic
-public class GeneralDetectorErrorOperation extends AbstractOperation<GeneralDetectorErrorModel, OperationData> {
+public class GeneralDetectorErrorOperation<T extends GeneralDetectorErrorModel> extends AbstractOperation<T, OperationData> {
 
 	@Override
 	public String getId() {

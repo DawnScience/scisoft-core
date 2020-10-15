@@ -42,36 +42,12 @@ public abstract class OperateOnDataAbstractOperation<T extends InternalDataModel
 	@Override
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		
-		// Shamelessly ripped from the old MultiplyExternalDataOperation class
-		SliceFromSeriesMetadata ssm = getSliceSeriesMetadata(input);
-		
 		Dataset inputData = DatasetUtils.convertToDataset(input);
 		
 		String dataPath = getFilePath(input);
 		
-		ILazyDataset lz = ProcessingUtils.getLazyDataset(this, dataPath, model.getDatasetName());
-		IDataset val = null;
-
-		try {
-			if (ShapeUtils.squeezeShape(lz.getShape(), false).length == 0) {
-				// scalar lz
-				val = lz.getSlice();
-			} else {
-				// vector lz
-				val = ssm.getMatchingSlice(lz);
-			}
-		} catch (DatasetException e) {
-			throw new OperationException(this, e);
-		}
-
-		// If a matching val was not found, throw
-		if (val == null) throw new OperationException(this, "Dataset " + model.getDatasetName() + " " + Arrays.toString(lz.getShape()) + 
-				" not a compatable shape with " + Arrays.toString(ssm.getParent().getShape()));
-		val.squeeze();
-
-		// A non-scalar val is an error at this point
-		if (val.getRank() != 0) throw new OperationException(this, "External data shape invalid");
-
+		IDataset val = ProcessingUtils.getMatchingValue(this, input, dataPath, model.getDatasetName());
+		
 		Dataset output = doMathematics(inputData, DatasetUtils.convertToDataset(val));
 		// copy metadata, except for the error metadata
 		copyMetadata(input, output);

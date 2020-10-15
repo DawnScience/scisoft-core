@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
@@ -28,6 +29,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.ShapeUtils;
 
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
@@ -182,5 +184,38 @@ public class ProcessingUtils {
 		
 		return resolvePath(path, baseFile);
 		
+	}
+	
+	public static IDataset getMatchingValue(IOperation<?,?> op, IDataset input, String filePath, String datasetName) throws OperationException {
+		SliceFromSeriesMetadata ssm = input.getFirstMetadata(SliceFromSeriesMetadata.class);
+
+		if (ssm == null) {
+			throw new OperationException(op, "No Metadata found!");
+		}
+
+		ILazyDataset lz = ProcessingUtils.getLazyDataset(op, filePath, datasetName);
+		IDataset val = null;
+
+		try {
+			if (ShapeUtils.squeezeShape(lz.getShape(), false).length == 0) {
+				// scalar lz
+				val = lz.getSlice();
+			} else {
+				// vector lz
+				val = ssm.getMatchingSlice(lz);
+			}
+		} catch (DatasetException e) {
+			throw new OperationException(op, e);
+		}
+
+		// If a matching val was not found, throw
+		if (val == null) throw new OperationException(op, "Dataset " + datasetName + " " + Arrays.toString(lz.getShape()) + 
+				" not a compatable shape with " + Arrays.toString(ssm.getParent().getShape()));
+		val.squeeze();
+
+		// A non-scalar val is an error at this point
+		if (val.getRank() != 0) throw new OperationException(op, "External data shape invalid");
+
+		return val;
 	}
 }

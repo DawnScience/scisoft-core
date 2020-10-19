@@ -30,5 +30,17 @@ public class TopBottomProfileSubtractionModel extends AbstractOperationModel {
 	public void setWindowFraction(double windowFraction) {
 		firePropertyChange("windowFraction", this.windowFraction, this.windowFraction = windowFraction);
 	}
+	
+	@OperationModelField(label = "Center offset", hint = "Vertical offset between image center and beam center given in pixels between")
+	private int centerOffset = 0;
+
+	public int getCenterOffset() {
+		return centerOffset;
+	}
+	
+	public void setCenterOffset(int centerOffset) {
+		firePropertyChange("centerOffset", this.centerOffset, this.centerOffset = centerOffset);
+	}
+
 
 }

@@ -49,10 +49,13 @@ public class TopBottomProfileSubtractionOperation extends AbstractOperation<TopB
 		// window fraction to be used for defining average line profile
 		double fraction = model.getWindowFraction();
 		
+		// center offset
+		int offset = model.getCenterOffset();
+		
 		// Get the shape of the image
 		int[] shape = correctedData.getShapeRef();
 		int sy = shape[0];
-		int hy = sy/2;
+		int hy = sy/2 + offset;
 		
 		// Calculate the window size
 		int w = (int) (fraction * hy);

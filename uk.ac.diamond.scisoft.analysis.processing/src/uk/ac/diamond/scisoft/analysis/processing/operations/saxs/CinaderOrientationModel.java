@@ -20,7 +20,7 @@ public class CinaderOrientationModel extends AbstractOperationModel {
 
 
 	// Let's give the user a fixed choice on the integration range so they don't go too nuts...
-	enum NumberOfSymmetryFolds {
+	public enum NumberOfSymmetryFolds {
 		TWO_FOLD(1),
 		FOUR_FOLD(2),
 		SIX_FOLD(3),

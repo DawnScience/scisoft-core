@@ -42,7 +42,7 @@ import uk.ac.diamond.scisoft.analysis.rpc.internal.HandlerRequestProcessorFactor
  * 
  * @see AnalysisRpcBasicTest See the Ananlysis Rpc Basic Test for an example of use
  */
-public class AnalysisRpcServer implements IAnalysisRpcServer {
+public class AnalysisRpcServer implements IAnalysisRpcServer, AutoCloseable {
 	private static final Logger logger = LoggerFactory.getLogger(AnalysisRpcServer.class);
 
 	private XmlRpcServer xmlRpcServer;
@@ -50,6 +50,13 @@ public class AnalysisRpcServer implements IAnalysisRpcServer {
 
 	private Map<String, IAnalysisRpcHandler> handlers = Collections.synchronizedMap(new HashMap<String, IAnalysisRpcHandler>());
 	private IRootFlattener flattener = FlatteningService.getFlattener();
+
+	/**
+	 * Create a new AnalysisRpc server that listens on an automatically allocated port
+	 */
+	public AnalysisRpcServer() {
+		this(0);
+	}
 
 	/**
 	 * Create a new AnalysisRpc server that listens on the given port
@@ -109,6 +116,11 @@ public class AnalysisRpcServer implements IAnalysisRpcServer {
 
 	@Override
 	public void shutdown() {
+		webServer.shutdown();
+	}
+
+	@Override
+	public void close() {
 		webServer.shutdown();
 	}
 

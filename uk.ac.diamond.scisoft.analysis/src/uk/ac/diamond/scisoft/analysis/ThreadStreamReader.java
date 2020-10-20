@@ -83,9 +83,24 @@ import java.io.InputStreamReader;
         }
     }
 
+    /**
+     * @return returns stream output
+     */
     public String getContents() {
+    	return getContents(false);
+    }
+
+    /**
+     * @param clear if true then clear current contents
+     * @return returns stream output
+     */
+    public String getContents(boolean clear) {
         synchronized(lock){
-            return contents.toString();
+            String out = contents.toString();
+            if (clear) {
+            	contents.setLength(0);
+            }
+            return out;
         }
     }
 }

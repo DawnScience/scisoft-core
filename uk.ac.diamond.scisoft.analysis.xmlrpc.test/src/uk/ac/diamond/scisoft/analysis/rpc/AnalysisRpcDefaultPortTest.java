@@ -36,8 +36,7 @@ public class AnalysisRpcDefaultPortTest {
 	@Test
 	public void testBasicOperation() throws AnalysisRpcException {
 		// Create a server
-		AnalysisRpcServer analysisRpcServer = new AnalysisRpcServer(0);
-		try {
+		try (AnalysisRpcServer analysisRpcServer = new AnalysisRpcServer()) {
 			// Register a handler with it, with the given name
 			analysisRpcServer.addHandler(CAT_TWO_STRINGS, new CatTwoStringsHandler());
 			// Start the server
@@ -53,9 +52,6 @@ public class AnalysisRpcDefaultPortTest {
 
 			// Check our results
 			Assert.assertEquals("Hello, World!", result);
-		} finally {
-			// Shutdown the server (in a finally block just in case the test fails)
-			analysisRpcServer.shutdown();
 		}
 	}
 }

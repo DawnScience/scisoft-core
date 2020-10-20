@@ -12,19 +12,39 @@ package uk.ac.diamond.scisoft.analysis.rpc;
 import org.eclipse.dawnsci.analysis.api.rpc.AnalysisRpcException;
 import org.eclipse.dawnsci.analysis.api.rpc.AnalysisRpcRemoteException;
 import org.eclipse.dawnsci.analysis.api.rpc.IAnalysisRpcHandler;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class AnalysisRpcAdvancedTest {
-	// Increment port on each use to avoid a Windows issue of a significant
+
+	private static AnalysisRpcServer freePortServer = null;
+
+	// Increment port before each use to avoid a Windows issue of a significant
 	// slowdown between starting and then restarting a server
-	static int PORT = 8615;
+	private static int PORT = 8615;
+
+	@BeforeClass
+	public static void getFreePort() {
+		try {
+			freePortServer = new AnalysisRpcServer();
+			PORT = freePortServer.getPort();
+		} catch (Exception e) {
+			// do nothing
+		}
+	}
+
+	@AfterClass
+	public static void tearDown() {
+		if (freePortServer != null) {
+			freePortServer.shutdown();
+		}
+	}
 
 	@Test
 	public void testMultipleHandlers() throws AnalysisRpcException {
-		AnalysisRpcServer analysisRpcServer = null;
-		try {
-			analysisRpcServer = new AnalysisRpcServer(++PORT);
+		try (AnalysisRpcServer analysisRpcServer = new AnalysisRpcServer()) {
 			analysisRpcServer.start();
 			analysisRpcServer.addHandler("cat", new IAnalysisRpcHandler() {
 
@@ -42,24 +62,19 @@ public class AnalysisRpcAdvancedTest {
 				}
 			});
 
-			AnalysisRpcClient analysisRpcClient = new AnalysisRpcClient(PORT);
+			AnalysisRpcClient analysisRpcClient = new AnalysisRpcClient(analysisRpcServer.getPort());
 			String catResult = (String) analysisRpcClient.request("cat",
 					new Object[] { "Hello, ", "World!" });
 			Assert.assertEquals("Hello, World!", catResult);
 			int lenResult = (Integer) analysisRpcClient.request("len",
 					new Object[] { "Hello, ", "World!" });
 			Assert.assertEquals("Hello, World!".length(), lenResult);
-		} finally {
-			if (analysisRpcServer != null)
-				analysisRpcServer.shutdown();
 		}
 	}
 
 	@Test
 	public void testExceptionOnHandlerFlattening() throws AnalysisRpcException {
-		AnalysisRpcServer analysisRpcServer = null;
-		try {
-			analysisRpcServer = new AnalysisRpcServer(++PORT);
+		try (AnalysisRpcServer analysisRpcServer = new AnalysisRpcServer()) {
 			analysisRpcServer.start();
 			analysisRpcServer.addHandler("flaterror",
 					new IAnalysisRpcHandler() {
@@ -71,7 +86,7 @@ public class AnalysisRpcAdvancedTest {
 						}
 					});
 
-			AnalysisRpcClient analysisRpcClient = new AnalysisRpcClient(PORT);
+			AnalysisRpcClient analysisRpcClient = new AnalysisRpcClient(analysisRpcServer.getPort());
 			// force a flattening exception on the call side
 			try {
 				analysisRpcClient
@@ -81,9 +96,6 @@ public class AnalysisRpcAdvancedTest {
 				Assert.assertFalse(e.getCause() instanceof UnsupportedOperationException);
 				Assert.assertTrue(e.getCause() instanceof AnalysisRpcRemoteException);
 			}
-		} finally {
-			if (analysisRpcServer != null)
-				analysisRpcServer.shutdown();
 		}
 	}
 
@@ -100,12 +112,9 @@ public class AnalysisRpcAdvancedTest {
 	public void testIsAlive() throws AnalysisRpcException {
 		AnalysisRpcClient analysisRpcClient = new AnalysisRpcClient(++PORT);
 		Assert.assertFalse(analysisRpcClient.isAlive());
-		AnalysisRpcServer analysisRpcServer = new AnalysisRpcServer(PORT);
-		try {
+		try (AnalysisRpcServer analysisRpcServer = new AnalysisRpcServer(PORT)) {
 			analysisRpcServer.start();
 			Assert.assertTrue(analysisRpcClient.isAlive());
-		} finally {
-			analysisRpcServer.shutdown();
 		}
 	}
 
@@ -120,13 +129,10 @@ public class AnalysisRpcAdvancedTest {
 			// test passes, waitUntilAlive has raised exception saying not ready
 			// yet
 		}
-		AnalysisRpcServer analysisRpcServer = new AnalysisRpcServer(PORT);
-		try {
+		try (AnalysisRpcServer analysisRpcServer = new AnalysisRpcServer(PORT)) {
 			analysisRpcServer.start();
 			analysisRpcClient.waitUntilAlive(1000);
 			Assert.assertTrue(analysisRpcClient.isAlive());
-		} finally {
-			analysisRpcServer.shutdown();
 		}
 	}
 
@@ -136,9 +142,7 @@ public class AnalysisRpcAdvancedTest {
 
 	@Test
 	public void testProxy() throws AnalysisRpcException {
-		AnalysisRpcServer analysisRpcServer = null;
-		try {
-			analysisRpcServer = new AnalysisRpcServer(++PORT);
+		try (AnalysisRpcServer analysisRpcServer = new AnalysisRpcServer()) {
 			analysisRpcServer.start();
 			analysisRpcServer.addHandler("cat", new IAnalysisRpcHandler() {
 
@@ -148,14 +152,11 @@ public class AnalysisRpcAdvancedTest {
 				}
 			});
 
-			AnalysisRpcClient analysisRpcClient = new AnalysisRpcClient(PORT);
+			AnalysisRpcClient analysisRpcClient = new AnalysisRpcClient(analysisRpcServer.getPort());
 			TestProxy_Interface catObject = analysisRpcClient
 					.newProxyInstance(TestProxy_Interface.class);
 			String catResult = catObject.cat("Hello, ", "World!");
 			Assert.assertEquals("Hello, World!", catResult);
-		} finally {
-			if (analysisRpcServer != null)
-				analysisRpcServer.shutdown();
 		}
 	}
 

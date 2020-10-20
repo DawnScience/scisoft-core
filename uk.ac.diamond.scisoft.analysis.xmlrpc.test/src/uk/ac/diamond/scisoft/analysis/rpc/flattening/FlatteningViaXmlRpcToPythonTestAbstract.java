@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.flattening;
 
+import static org.junit.Assert.assertTrue;
+
 import java.net.URL;
 
 import org.apache.xmlrpc.client.XmlRpcClient;
@@ -18,6 +20,7 @@ import org.junit.BeforeClass;
 
 import uk.ac.diamond.scisoft.analysis.PythonHelper;
 import uk.ac.diamond.scisoft.analysis.PythonHelper.PythonRunInfo;
+import uk.ac.diamond.scisoft.analysis.rpc.AnalysisRpcBasicRemoteTest;
 
 abstract public class FlatteningViaXmlRpcToPythonTestAbstract extends ExplicitFlatteningTestAbstract {
 	private static PythonRunInfo pythonRunInfo;
@@ -29,9 +32,12 @@ abstract public class FlatteningViaXmlRpcToPythonTestAbstract extends ExplicitFl
 				.runPythonFileBackground("src/uk/ac/diamond/scisoft/analysis/rpc/flattening/loopbackxmlrpc.py");
 
 		Thread.sleep(SERVER_WAIT_TIME); // wait for server to start
+		int port = AnalysisRpcBasicRemoteTest.retrievePort(pythonRunInfo.getStdout());
+		assertTrue("Port from XML RPC server was not returned", port > 0);
+
 
 		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-		config.setServerURL(new URL("http://127.0.0.1:8713/xmlrpc"));
+		config.setServerURL(new URL(String.format("http://127.0.0.1:%d/xmlrpc", port)));
 		client = new XmlRpcClient();
 		client.setConfig(config);
 

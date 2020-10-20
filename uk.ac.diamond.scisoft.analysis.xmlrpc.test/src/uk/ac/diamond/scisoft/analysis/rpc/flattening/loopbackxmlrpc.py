@@ -14,6 +14,12 @@
 # limitations under the License.
 ###
 
+try: # attempt to prevent OpenMPI initialization issues
+    import mpi4py
+    mpi4py.rc(initialize=False)
+except:
+    pass
+
 import os, sys
 scisoftpath = os.path.abspath(os.path.join('..', 'uk.ac.diamond.scisoft.python', 'src'))
 sys.path.append(scisoftpath)
@@ -27,7 +33,12 @@ except ImportError: # Python 3
 # Create server
 class RequestHandler(SimpleXMLRPCRequestHandler):
     rpc_paths = ('/xmlrpc',)
-server = SimpleXMLRPCServer(("127.0.0.1", 8713), requestHandler=RequestHandler, logRequests=False)
+server = SimpleXMLRPCServer(("127.0.0.1", 0), requestHandler=RequestHandler, logRequests=False)
+
+# returns port in stdout
+print('server_port:{}'.format(server.server_address[1]))
+sys.stdout.flush()
+
 server.register_introspection_functions()
 
 def runflat(x):

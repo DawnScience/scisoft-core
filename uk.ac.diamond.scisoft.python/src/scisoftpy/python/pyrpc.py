@@ -47,6 +47,7 @@ class rpcserver(object):
         '''
         TCPServer.allow_reuse_address = True
         self._server = ThreadedSimpleXMLRPCServer(("127.0.0.1", port), requestHandler=RequestHandler, logRequests=False)
+        self.port = self._server.server_address[1]
         self._server.register_introspection_functions()
         
         self._server.register_function(self._xmlrpchandler, 'Analysis.handler');

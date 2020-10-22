@@ -35,7 +35,6 @@ import org.eclipse.january.metadata.AxesMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.CinaderOrientationModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.CinaderOrientationModel.NumberOfSymmetryFolds;
 
 
@@ -142,10 +141,20 @@ public class CinaderOrientationOperation extends AbstractOperation<CinaderOrient
 			
 			float result =  (float) Math.sqrt(Math.pow(cos2mean - sin2mean, 2) + Math.pow(2d * sincosmean, 2));
 			double angle = 0.5 * Math.atan2(2d * sincosmean, cos2mean - sin2mean);
+			angle /= symmetryFolds;
+			
+			double offset = Math.PI/symmetryFolds;
+			
+			while (angle < 0) {
+				angle += offset;
+			}
+			while (angle >= offset) {
+				angle -= offset;
+			}
 			
 			Object[] output = new Object[] {
 					new float[] { result },
-					new float[] { (float) Math.abs(Math.toDegrees(angle)) },
+					new float[] { (float) Math.toDegrees(angle) },
 					new float[] { (float) (result * Math.cos(angle)),  (float) (result * Math.sin(angle)) },
 					}; 
 			

@@ -20,7 +20,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.python.core.PyFloat;
 import org.python.core.PyInteger;
@@ -29,18 +28,12 @@ import org.python.core.PyTuple;
 import org.python.util.PythonInterpreter;
 
 public class JythonInterpreterUtilsPluginTest {
-	private PythonInterpreter jyTestInt;
-	
-	@Before
-	public void setup() {
-		jyTestInt = null;
-		System.setProperty("run.in.eclipse", "true");
-	}
-	
+
 	@Test
 	public void basicInterpreterShouldStartAndExecutePython() {
-		
-		try{
+		PythonInterpreter jyTestInt = null;
+
+		try {
 			jyTestInt = JythonInterpreterUtils.getBasicInterpreter(null);
 		} catch (Exception e) {
 			fail("Starting Jython interpreter failed: " + e);
@@ -73,7 +66,9 @@ public class JythonInterpreterUtilsPluginTest {
 	
 	@Test
 	public void interpreterShouldStartWithSciSoftPyLibs() {
-		try{
+		PythonInterpreter jyTestInt = null;
+
+		try {
 			jyTestInt = JythonInterpreterUtils.getScisoftpyInterpreter();
 		} catch (Exception e) {
 			fail("Starting Jython interpreter failed: " + e);
@@ -111,8 +106,8 @@ public class JythonInterpreterUtilsPluginTest {
 	
 	@Test
 	public void interpreterShouldLoadDLSLibs() {
-		try{
-			jyTestInt = JythonInterpreterUtils.getFullInterpreter(JythonInterpreterUtils.class.getClassLoader());
+		try {
+			JythonInterpreterUtils.getFullInterpreter(JythonInterpreterUtils.class.getClassLoader());
 		} catch (Exception e) {
 			fail("Starting Jython interpreter failed: " + e);
 		}

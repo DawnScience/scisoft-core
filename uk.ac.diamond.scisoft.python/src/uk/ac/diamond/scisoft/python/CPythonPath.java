@@ -12,21 +12,20 @@ package uk.ac.diamond.scisoft.python;
 import java.io.File;
 import java.nio.file.Paths;
 
-import org.dawb.common.util.eclipse.BundleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import uk.ac.diamond.scisoft.jython.JythonPath;
 
 /**
  * Class to hold methods to find files and directories to put on the PYTHONPATH for CPython
  */
 public class CPythonPath {
 
-	
 	private CPythonPath() {}
 	
 	private static Logger logger = LoggerFactory.getLogger(CPythonPath.class);
 
-	private static final String GIT_REPO_ENDING = ".git";
 	private static final String CPYTHON_BUNDLE;// = "uk.ac.diamond.cpython"; // this may need to be changed to something platform dependent
 	private static final String CPYTHON_MAJOR_VERSION = "2";
 	private static final String CPYTHON_MINOR_VERSION = "7";
@@ -56,34 +55,13 @@ public class CPythonPath {
 	}
 	private static final String CPYTHON_BUNDLE_LOC = CPYTHON_BUNDLE + ".location";
 	private static final String CPYTHON_DIR = "cpython" + CPYTHON_VERSION;
-	private static final String SCISOFTPY = "uk.ac.diamond.scisoft.python";
-
-	
-	/**
-	 * Provides location of plugin files; behaviour depends whether we're running in eclipse
-	 * @param isRunningInEclipse Boolean, true if running in eclipse
-	 * @return Directory where plugins live (defined as parent of current bundle)
-	 */
-	public static File getPluginsDirectory(boolean isRunningInEclipse) {
-		try {
-			File scisoftParent = BundleUtils.getBundleLocation(SCISOFTPY).getParentFile();
-			if (isRunningInEclipse) {
-				scisoftParent = scisoftParent.getParentFile();
-			}
-			// Need to include a logging statement
-			return scisoftParent;
-		} catch (Exception e) {
-			logger.error("Could not find Scisoft Python plugin", e);
-		}
-		return null;
-	}
 
 	/**
 	 * Gets the interpreter directory using the bundle location
 	 * @return directory path 
 	 * @throws Exception when CPYTHON_BUNDLE_LOC is not set (and no CPython bundle found)
 	 */
-	public static File getInterpreterDirectory(boolean isRunningInEclipse) throws Exception {
+	public static File getInterpreterDirectory() throws Exception {
 		File cpyBundleLoc = null;
 		
 		if (System.getProperty(CPYTHON_BUNDLE_LOC)!=null) {
@@ -92,7 +70,7 @@ public class CPythonPath {
 
 		if (cpyBundleLoc == null) {
 			try {
-				cpyBundleLoc = BundleUtils.getBundleLocation(CPYTHON_BUNDLE);
+				cpyBundleLoc = JythonPath.getBundleLocation(CPYTHON_BUNDLE);
 			} catch (Exception ignored) {
 			}
 		}
@@ -107,11 +85,7 @@ public class CPythonPath {
 		} else {
 			cpyBundleLoc = new File(cpyBundleLoc, Paths.get(CPYTHON_DIR, "bin").toString());
 		}
-		// Test whether we're running in 
-		if (!isRunningInEclipse && cpyBundleLoc.getAbsolutePath().contains(GIT_REPO_ENDING)) {
-			logger.error("Using cpython from git, but -Drun.in.eclipse set false. This will cause errors.");
-			return null;
-		}
+
 		logger.info("CPython interpreter directory found at: {}", cpyBundleLoc);
 		return cpyBundleLoc;
 	}

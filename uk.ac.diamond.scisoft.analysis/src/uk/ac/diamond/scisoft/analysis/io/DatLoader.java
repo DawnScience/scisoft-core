@@ -95,7 +95,7 @@ public class DatLoader extends AbstractFileLoader {
 	protected int                       columnIndex;
 
 	public DatLoader() {
-		DATA  = Pattern.compile("^(("+Utils.FLOATING_POINT_NUMBER+")"+getDelimiter()+")+("+Utils.FLOATING_POINT_NUMBER+")$");
+		DATA  = Pattern.compile("^(("+Utils.FLOATING_POINT_NUMBER+")"+getDelimiter()+")*("+Utils.FLOATING_POINT_NUMBER+")$");
 	}
 	
 	/**
@@ -153,10 +153,11 @@ public class DatLoader extends AbstractFileLoader {
 			
 			String line	= parseHeaders(in, name, mon);
 			int columns = vals.size();
+			
 			if (columns == 0) throw new ScanFileHolderException("Cannot read header for data set names!");
 
 			// Read data
-			int count = 0;
+ 			int count = 0;
 
 			DATA: while (line != null) {
 				if (!monitorIncrement(mon)) {
@@ -337,7 +338,7 @@ public class DatLoader extends AbstractFileLoader {
 		String line = in.readLine();
 		if (line == null)
 			throw new ScanFileHolderException("No lines found");
-		if (line.trim().startsWith("&")) throw new Exception("Cannot load SRS files with DatLoader!");
+ 		if (line.trim().startsWith("&")) throw new Exception("Cannot load SRS files with DatLoader!");
 		metadataMap.clear();
 		vals.clear();
 		

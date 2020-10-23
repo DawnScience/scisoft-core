@@ -143,8 +143,24 @@ public class DatLoaderTest {
 	@Test
 	public void testBadDatasetNames() throws Exception {
 		final String testfile1 = "testfiles/gda/analysis/io/DatLoaderTest/bad_names.dat";
-		final IMetadata meta   = LoaderFactory.getMetadata(testfile1, null);
+		DataHolder loader = new DatLoader(testfile1).loadFile();
+		final IMetadata meta   = loader.getMetadata();
 		assertEquals("Wrong number of columns!", 4, meta.getDataNames().size());
-
+	}
+	
+	/**
+	 * This method tests for correct number of datasets when there is a , in the dataset names
+	 */
+	@Test
+	public void testSingleColumn() throws Exception {
+		
+		final String testfile1 = "testfiles/gda/analysis/io/DatLoaderTest/single.dat";
+		DataHolder loader = new DatLoader(testfile1).loadFile();
+		final IMetadata meta   = loader.getMetadata();
+		assertEquals("Wrong number of columns!", 1, meta.getDataNames().size());
+		Dataset dataset = loader.getDataset(0);
+		assertEquals(dataset.getSize(), 11);
+		assertEquals(dataset.getDouble(),-180.00, 0.000001);
+		
 	}
 }

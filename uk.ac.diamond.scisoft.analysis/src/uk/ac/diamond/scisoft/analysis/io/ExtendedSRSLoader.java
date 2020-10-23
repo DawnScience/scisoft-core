@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.io.SliceObject;
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -42,16 +43,18 @@ public class ExtendedSRSLoader extends SRSLoader {
 	}
 
 	private void appendPilatusData(DataHolder currentDataHolder, IMonitor mon) {
-		if (loadLazily) {
-			// as columns are loaded lazily, there is no path dataset
-			return;
-		}
 
 		ImageStackLoader loader = null;
 
 		// now we need to try to load in the the pilatus data
 		if (currentDataHolder.contains(PATH_DATASET)) {
-			Dataset paths = currentDataHolder.getDataset(PATH_DATASET);
+			Dataset paths;
+			try {
+				paths = DatasetUtils.sliceAndConvertLazyDataset(currentDataHolder.getLazyDataset(PATH_DATASET));
+			} catch (DatasetException e) {
+				logger.error("Could not read path dataset", e);
+				return;
+			}
 			String template = textMetadata.get(PILATUS_TEMPLATE);
 			if (template == null) {
 				// bodged format v1

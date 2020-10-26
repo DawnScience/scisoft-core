@@ -31,15 +31,16 @@ public class ImageUtils {
 	 * @param low lower threshold value for centre of peak
 	 * @param high upper threshold value for centre of peak
 	 * @return list of their sum, centroids (as coordinates in N x rank dataset), centre fraction, all pixel values,
-	 * and position of clashes (where other pixels in the window are equal to the maximum)
+	 * base offsets (aka minima in window), and position of clashes (where other pixels in the window are equal to the maximum)
 	 */
-	public static List<Dataset> findWindowedPeaks(Dataset data, int window, double low, double high) {
+	public static final List<Dataset> findWindowedPeaks(Dataset data, int window, double low, double high) {
 		int[] shape = data.getShapeRef();
 		int rank = shape.length;
 		List<Double> sum = new ArrayList<>();
 		List<Double> centroid = new ArrayList<>();
 		List<Double> fraction = new ArrayList<>();
 		List<Double> values = new ArrayList<>();
+		List<Double> base = new ArrayList<>();
 		List<Integer> clashes = new ArrayList<>();
 
 		IndexIterator it = data.getIterator(true);
@@ -50,19 +51,19 @@ public class ImageUtils {
 			ub[i] = shape[i] - window;
 			wShape[i] = window;
 		}
-		DoubleDataset base = DatasetFactory.createRange(DoubleDataset.class, window);
+		DoubleDataset coord = DatasetFactory.createRange(DoubleDataset.class, window);
 		data = data.cast(DoubleDataset.class);
 		DoubleDataset sliced = DatasetFactory.zeros(wShape);
 		IndexIterator sIt = sliced.getIterator(true);
 		int ssize = sliced.getSize();
 		double[] sdata = sliced.getData();
 
-		base.iadd(0.5); // shift to centre of pixel
+		coord.iadd(0.5); // shift to centre of pixel
 
 		int[] centre = new int[rank];
 		int[] pos = it.getPos();
 		SliceND slice = new SliceND(shape);
-		final double[] results = new double[rank + 1]; // room to store total at end
+		final double[] results = new double[rank + 2]; // room to store total and min (pedestal) at end
 
 		while (it.hasNext()) {
 			if (windowIsInsideVolume(ub, pos)) {
@@ -77,8 +78,9 @@ public class ImageUtils {
 					}
 
 					data.fillDataset(sliced, data.getSliceIterator(slice.getStart(), slice.getStop(), slice.getStep()));
-					PEAK_TYPE type = processWindow(sliced, sIt, base, v, results);
+					PEAK_TYPE type = processWindow(sliced, sIt, coord, v, results);
 					if (type == PEAK_TYPE.CENTRAL) {
+						base.add(results[rank+1]);
 						final double total = results[rank];
 						sum.add(total);
 						for (int i = 0; i < rank; i++) {
@@ -88,12 +90,12 @@ public class ImageUtils {
 						for (int i = 0; i < ssize; i++) {
 							values.add(sdata[i]);
 						}
-//						// bump along to next window
-//						for (int i = 0; i < window; i++) {
-//							if (!it.hasNext() || !windowIsInsideVolume(ub, pos)) {
-//								break;
-//							}
-//						}
+						// bump along to next window past peak
+						for (int i = 0; i < half; i++) {
+							if (!it.hasNext() || !windowIsInsideVolume(ub, pos)) {
+								break;
+							}
+						}
 					} else if (type == PEAK_TYPE.SHARED) {
 						for (int i = 0; i < rank; i++) {
 							clashes.add(pos[i]);
@@ -109,12 +111,14 @@ public class ImageUtils {
 			list.add(DatasetFactory.zeros(0, rank));
 			list.add(DatasetFactory.zeros(0));
 			list.add(DatasetFactory.zeros(0));
+			list.add(DatasetFactory.zeros(0));
 			list.add(DatasetFactory.zeros(IntegerDataset.class, 0, rank));
 		} else {
 			list.add(DatasetFactory.createFromList(sum));
 			list.add(DatasetFactory.createFromList(centroid).reshape(sum.size(), rank));
 			list.add(DatasetFactory.createFromList(fraction));
 			list.add(DatasetFactory.createFromList(values));
+			list.add(DatasetFactory.createFromList(base));
 			if (clashes.size() > 0) {
 				list.add(DatasetFactory.createFromList(clashes).reshape(clashes.size()/rank, rank));
 			} else {
@@ -132,22 +136,24 @@ public class ImageUtils {
 	 * Find sum and centroid in window
 	 * @param box
 	 * @param it iterator
-	 * @param base values of base
+	 * @param coord values of coordinates
 	 * @param c central value
 	 * @param xsum
-	 * @return return centroid values and total or null if central value not maximum
+	 * @return return centroid values, total and minimum or null if central value not maximum
 	 */
-	private static PEAK_TYPE processWindow(final DoubleDataset box, final IndexIterator it, final DoubleDataset base, final double c, final double[] xsum) {
+	private static final PEAK_TYPE processWindow(final DoubleDataset box, final IndexIterator it, final DoubleDataset coord, final double c, final double[] xsum) {
 		final int[] pos = it.getPos();
 		final int rank = pos.length;
 		int count = 0; // number of pixels with given central value
-		double total = 0;
+		double min = Double.POSITIVE_INFINITY; // minimum used to subtract base or pedestal of peak
 
-		Arrays.fill(xsum, 0);
 		it.reset();
-		while (it.hasNext()) {
+		while (it.hasNext()) { // check values and find minimum
 			final double value = box.getElementDoubleAbs(it.index);
-			
+			if (value < min) {
+				min = value;
+			}
+
 			if (value > c) {
 				return PEAK_TYPE.NONE; // centre not maximum
 			} else if (value == c) {
@@ -156,9 +162,16 @@ public class ImageUtils {
 					return PEAK_TYPE.SHARED; // centre jointly maximum
 				}
 			}
+		}
+
+		Arrays.fill(xsum, 0);
+		it.reset();
+		double total = 0;
+		while (it.hasNext()) { // calculate centroid relative to minimum
+			final double value = box.getElementDoubleAbs(it.index) - min;
 			total += value;
 			for (int i = 0; i < rank; i++) {
-				xsum[i] += base.getElementDoubleAbs(pos[i]) * value;
+				xsum[i] += coord.getElementDoubleAbs(pos[i]) * value;
 			}
 		}
 
@@ -166,6 +179,7 @@ public class ImageUtils {
 			xsum[i] /= total;
 		}
 		xsum[rank] = total;
+		xsum[rank + 1] = min;
 		return PEAK_TYPE.CENTRAL;
 	}
 
@@ -175,7 +189,7 @@ public class ImageUtils {
 	 * @param pos window position
 	 * @return true if window does not overlap boundary of volume
 	 */
-	private static boolean windowIsInsideVolume(int[] ub, int[] pos) {
+	private static final boolean windowIsInsideVolume(int[] ub, int[] pos) {
 		for (int i = ub.length - 1; i >= 0; i--) {
 			if (pos[i] > ub[i]) {
 				return false;
@@ -190,7 +204,7 @@ public class ImageUtils {
 	 * @param shifts
 	 * @return shifted image
 	 */
-	public static Dataset shiftImage(Dataset im, double[] shifts) {
+	public static final Dataset shiftImage(Dataset im, double[] shifts) {
 		if (im.getRank() != 2) {
 			throw new IllegalArgumentException("Dataset must be 2d");
 		}

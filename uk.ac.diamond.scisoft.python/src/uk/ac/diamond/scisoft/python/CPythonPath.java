@@ -81,19 +81,26 @@ public class CPythonPath {
 	/**
 	 * Gets the interpreter directory using the bundle location
 	 * @return directory path 
-	 * @throws Exception when JYTHON_BUNDLE_LOC is not set (and no Jython bundle found)
+	 * @throws Exception when CPYTHON_BUNDLE_LOC is not set (and no CPython bundle found)
 	 */
 	public static File getInterpreterDirectory(boolean isRunningInEclipse) throws Exception {
 		File cpyBundleLoc = null;
-		try {
-			cpyBundleLoc = BundleUtils.getBundleLocation(CPYTHON_BUNDLE);
-		} catch (Exception ignored) {
-		}
-		if (cpyBundleLoc == null) {
-			if (System.getProperty(CPYTHON_BUNDLE_LOC)==null)
-				throw new Exception("Please set the property '" + CPYTHON_BUNDLE_LOC + "' for this test to work!");
+		
+		if (System.getProperty(CPYTHON_BUNDLE_LOC)!=null) {
 			cpyBundleLoc = new File(System.getProperty(CPYTHON_BUNDLE_LOC));
 		}
+
+		if (cpyBundleLoc == null) {
+			try {
+				cpyBundleLoc = BundleUtils.getBundleLocation(CPYTHON_BUNDLE);
+			} catch (Exception ignored) {
+			}
+		}
+		
+		if (cpyBundleLoc == null) {
+			throw new Exception("Please set the property '" + CPYTHON_BUNDLE_LOC + "' for this test to work!");
+		}
+		
 		String osName = System.getProperty("os.name").toLowerCase();
 		if (osName.contains("windows")) {
 			cpyBundleLoc = new File(cpyBundleLoc, CPYTHON_DIR);

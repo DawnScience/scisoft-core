@@ -116,17 +116,20 @@ public class ImageUtilsTest {
 
 		addGaussianPeak(data, centre, 0.5, amp);
 		List<Dataset> result = ImageUtils.findWindowedPeaks(data, window, 0.1*amp, 1.1*amp);
-		Assert.assertEquals(5, result.size());
+		Assert.assertEquals(6, result.size());
 
+		Dataset base = result.get(4);
+		double sumOffset = base.getDouble(0)*window;
+		Assert.assertEquals(1, base.getSize());
 		Dataset sum = result.get(0);
 		Assert.assertEquals(1, sum.getSize());
 		Assert.assertArrayEquals(new int[] {1}, sum.getShapeRef());
-		Assert.assertEquals(amp, sum.getDouble(0), REL_TOL*amp);
+		Assert.assertEquals(amp - sumOffset, sum.getDouble(0), REL_TOL*amp);
 		Dataset coords = result.get(1);
 		Assert.assertArrayEquals(new int[] {1, 1}, coords.getShapeRef());
 		Assert.assertEquals(centre[0], coords.getDouble(0, 0), REL_TOL*centre[0]);
 		Dataset fraction = result.get(2);
-		Assert.assertEquals(3.225/amp, fraction.getDouble(0), 0.01);
+		Assert.assertEquals(3.225/(amp - sumOffset), fraction.getDouble(0), 0.01);
 	}
 
 	@Test
@@ -140,17 +143,20 @@ public class ImageUtilsTest {
 
 		addGaussianPeak(data, centre, 0.5, amp);
 		List<Dataset> result = ImageUtils.findWindowedPeaks(data, window, 0.1*amp, 1.1*amp);
-		Assert.assertEquals(5, result.size());
+		Assert.assertEquals(6, result.size());
 
+		Dataset base = result.get(4);
+		double sumOffset = base.getDouble(0) * window * window;
+		Assert.assertEquals(1, base.getSize());
 		Dataset sum = result.get(0);
 		Assert.assertEquals(1, sum.getSize());
 		Assert.assertArrayEquals(new int[] {1}, sum.getShapeRef());
-		Assert.assertEquals(amp, sum.getDouble(0), REL_TOL*amp);
+		Assert.assertEquals(amp - sumOffset, sum.getDouble(0), REL_TOL*amp);
 		Dataset coords = result.get(1);
 		Assert.assertArrayEquals(new int[] {1, 2}, coords.getShapeRef());
 		Assert.assertEquals(centre[0], coords.getDouble(0, 0), REL_TOL*centre[0]);
 		Assert.assertEquals(centre[1], coords.getDouble(0, 1), REL_TOL*centre[1]);
 		Dataset fraction = result.get(2);
-		Assert.assertEquals(2.080/amp, fraction.getDouble(0), 0.01);
+		Assert.assertEquals(2.080/(amp - sumOffset), fraction.getDouble(0), 0.01);
 	}
 }

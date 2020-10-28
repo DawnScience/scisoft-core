@@ -4,5 +4,5 @@
    <reference bind="setNexusFileFactory" cardinality="1..1" interface="org.eclipse.dawnsci.nexus.INexusFileFactory" name="INexusFileFactory" policy="static"/>
    <reference bind="setNexusDeviceService" cardinality="1..1" interface="org.eclipse.dawnsci.nexus.device.INexusDeviceService" name="INexusDeviceService" policy="static"/>
    <reference bind="setNexusFileAppenderService" cardinality="1..1" interface="org.eclipse.dawnsci.nexus.appender.INexusFileAppenderService" name="INexusFileAppenderService" policy="static"/>
-   <reference bind="addNexusDeviceAdapterFactory" cardinality="0..1" interface="org.eclipse.dawnsci.nexus.device.INexusDeviceAdapterFactory" name="INexusDeviceAdapterFactory" policy="static"/>
+   <reference bind="setNexusDeviceAdapterFactory" cardinality="1..1" interface="org.eclipse.dawnsci.nexus.device.INexusDeviceAdapterFactory" name="INexusDeviceAdapterFactory" policy="static"/>
 </scr:component>

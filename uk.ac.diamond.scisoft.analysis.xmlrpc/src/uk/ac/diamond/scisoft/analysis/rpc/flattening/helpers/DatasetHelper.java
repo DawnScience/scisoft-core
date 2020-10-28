@@ -17,7 +17,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
-import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
+import uk.ac.diamond.scisoft.analysis.io.NumPyFileLoader;
 import uk.ac.diamond.scisoft.analysis.io.NumPyFileSaver;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IFlattener;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IRootFlattener;
@@ -48,7 +48,7 @@ public class DatasetHelper extends MapFlatteningHelper<IDataset> {
 		final Integer index = (Integer) rootFlattener.unflatten(thisMap.get(INDEX));
 		final String name = (String) rootFlattener.unflatten(thisMap.get(NAME));
 		try {
-			final IDataHolder dataHolder = LoaderFactory.getData(fileName, false, null);
+			final IDataHolder dataHolder = new NumPyFileLoader(fileName).loadFile();
 
 			if (deleteFile != null && deleteFile) {
 				File file = new File(fileName);

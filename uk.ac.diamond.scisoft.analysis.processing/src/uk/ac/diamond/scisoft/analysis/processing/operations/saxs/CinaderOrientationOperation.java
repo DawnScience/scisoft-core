@@ -21,6 +21,7 @@ import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.interpolation.UnivariateInterpolator;
 import org.apache.commons.math3.exception.MaxCountExceededException;
 import org.apache.commons.math3.exception.TooManyEvaluationsException;
+import org.eclipse.dawnsci.analysis.api.diffraction.NumberOfSymmetryFolds;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
@@ -34,8 +35,6 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.CinaderOrientationModel.NumberOfSymmetryFolds;
 
 
 @Atomic

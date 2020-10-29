@@ -67,10 +67,13 @@ public class MillerSpaceMapperBeanTest {
 		orig.setMillerStep(0.002);
 
 		ObjectMapper mapper = new ObjectMapper();
-		String testName = "testfiles/i16.json";
-		File f = null;
+		String testName = "test-scratch/i16.json";
 		try {
-			f = new File(testName);
+			File f = new File(testName);
+			File p = f.getParentFile();
+			if (!p.isDirectory()) {
+				p.mkdir();
+			}
 			mapper.writeValue(f, orig);
 		} catch (IOException e1) {
 			e1.printStackTrace();

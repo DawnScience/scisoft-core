@@ -10,6 +10,8 @@
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.junit.Assert.assertArrayEquals;
 
 import javax.vecmath.Matrix3d;
@@ -19,7 +21,6 @@ import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -43,7 +44,6 @@ public class DetectorPropertiesTest {
 			0.969846310392954);
 	static double lambda = 1.001;
 
-	private static String testScratchDirectoryName;
 	private static String filePath = "detectorproperties.png";
 	static double wavelength = 1.4;
 	static int[] ishape = new int[] { 800, 400 };
@@ -81,7 +81,7 @@ public class DetectorPropertiesTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		testScratchDirectoryName = IOTestUtils.setUpTestClass(DetectorPropertiesTest.class, true);
+		String testScratchDirectoryName = IOTestUtils.setUpTestClass(DetectorPropertiesTest.class, true);
 		DataHolder dh = new DataHolder();
 		DoubleDataset data = makeDiffImage();
 		dh.addDataset("testing data", data);
@@ -115,7 +115,7 @@ public class DetectorPropertiesTest {
 
 		DetectorProperties newDetector = det.clone();
 		if (!det.equals(newDetector)) {
-			Assert.fail("Cloned object not equal");
+			fail("Cloned object not equal");
 		}
 	}
 
@@ -125,7 +125,7 @@ public class DetectorPropertiesTest {
 				pixelSize, pixelSize, orientationMatrix);
 		DetectorProperties newDetector = det.clone();
 		if (!det.equals(newDetector)) {
-			Assert.fail("Cloned object not equal");
+			fail("Cloned object not equal");
 		}
 	}
 	
@@ -134,7 +134,7 @@ public class DetectorPropertiesTest {
 		DetectorProperties det = new DetectorProperties(new Vector3d(50, 50, 300000), imageSizePix[0], imageSizePix[1],
 				pixelSize, pixelSize, orientationMatrix);
 		if(!orientationMatrix.equals(det.getOrientation()))
-			Assert.fail("The orientation matrices are not equal");
+			fail("The orientation matrices are not equal");
 	}
 
 	@Test
@@ -148,8 +148,8 @@ public class DetectorPropertiesTest {
 		bc1[1] += 120;
 		det.setBeamCentreCoords(bc1);
 		double[] bc2 = det.getBeamCentreCoords();
-		Assert.assertEquals("X coord", bc1[0], bc2[0], 1e-7);
-		Assert.assertEquals("Y coord", bc1[1], bc2[1], 1e-7);
+		assertEquals("X coord", bc1[0], bc2[0], 1e-7);
+		assertEquals("Y coord", bc1[1], bc2[1], 1e-7);
 	}
 
 	@Test
@@ -247,11 +247,11 @@ public class DetectorPropertiesTest {
 		double angle = Math.PI/6.;
 		double answer = -Math.sin(angle);
 		a.rotX(angle);
-		Assert.assertEquals("X rotation", answer, a.getM12(), 1e-7);
+		assertEquals("X rotation", answer, a.getM12(), 1e-7);
 		a.rotY(angle);
-		Assert.assertEquals("Y rotation", answer, a.getM20(), 1e-7);
+		assertEquals("Y rotation", answer, a.getM20(), 1e-7);
 		a.rotZ(angle);
-		Assert.assertEquals("Z rotation", answer, a.getM01(), 1e-7);
+		assertEquals("Z rotation", answer, a.getM01(), 1e-7);
 	}
 
 	@Test
@@ -260,33 +260,33 @@ public class DetectorPropertiesTest {
 		double[] angle;
 
 		angle = det.getNormalAnglesInDegrees();
-		Assert.assertEquals("Yaw",   0, angle[0], 1e-7);
-		Assert.assertEquals("Pitch", 0, angle[1], 1e-7);
-		Assert.assertEquals("Roll",  0, angle[2], 1e-7);
+		assertEquals("Yaw",   0, angle[0], 1e-7);
+		assertEquals("Pitch", 0, angle[1], 1e-7);
+		assertEquals("Roll",  0, angle[2], 1e-7);
 
 		det.setNormalAnglesInDegrees(30, 25, -35);
 		angle = det.getNormalAnglesInDegrees();
-		Assert.assertEquals("Yaw",   30, angle[0], 1e-7);
-		Assert.assertEquals("Pitch", 25, angle[1], 1e-7);
-		Assert.assertEquals("Roll",  -35, angle[2], 1e-7);
+		assertEquals("Yaw",   30, angle[0], 1e-7);
+		assertEquals("Pitch", 25, angle[1], 1e-7);
+		assertEquals("Roll",  -35, angle[2], 1e-7);
 
 		det.setNormalAnglesInDegrees(-95, -65, 103);
 		angle = det.getNormalAnglesInDegrees();
-		Assert.assertEquals("Yaw",   -95, angle[0], 1e-7);
-		Assert.assertEquals("Pitch", -65, angle[1], 1e-7);
-		Assert.assertEquals("Roll",  103, angle[2], 1e-7);
+		assertEquals("Yaw",   -95, angle[0], 1e-7);
+		assertEquals("Pitch", -65, angle[1], 1e-7);
+		assertEquals("Roll",  103, angle[2], 1e-7);
 
 		det.setNormalAnglesInDegrees(-95, 90, 103);
 		angle = det.getNormalAnglesInDegrees();
-		Assert.assertEquals("Yaw",   -95-103+360, angle[0], 1e-7);
-		Assert.assertEquals("Pitch", 90, angle[1], 1e-7);
-		Assert.assertEquals("Roll",  0, angle[2], 1e-7);
+		assertEquals("Yaw",   -95-103+360, angle[0], 1e-7);
+		assertEquals("Pitch", 90, angle[1], 1e-7);
+		assertEquals("Roll",  0, angle[2], 1e-7);
 
 		det.setNormalAnglesInDegrees(-95, -90, 103);
 		angle = det.getNormalAnglesInDegrees();
-		Assert.assertEquals("Yaw",   -95+103, angle[0], 1e-7);
-		Assert.assertEquals("Pitch", -90, angle[1], 1e-7);
-		Assert.assertEquals("Roll",  0, angle[2], 1e-7);
+		assertEquals("Yaw",   -95+103, angle[0], 1e-7);
+		assertEquals("Pitch", -90, angle[1], 1e-7);
+		assertEquals("Roll",  0, angle[2], 1e-7);
 	}
 
 	@Test
@@ -320,31 +320,31 @@ public class DetectorPropertiesTest {
 		DetectorProperties det = new DetectorProperties(new Vector3d(500, 550, 600), 1000, 1100, 1, 1, null);
 		
 		Vector3d o = det.getOrigin();
-		Assert.assertEquals("Detector origin, x", 500, o.x, 1e-7);
-		Assert.assertEquals("Detector origin, y", 550, o.y, 1e-7);
-		Assert.assertEquals("Detector origin, z", 600, o.z, 1e-7);
+		assertEquals("Detector origin, x", 500, o.x, 1e-7);
+		assertEquals("Detector origin, y", 550, o.y, 1e-7);
+		assertEquals("Detector origin, z", 600, o.z, 1e-7);
 
 		double[] c = det.getBeamCentreCoords();
-		Assert.assertEquals("Beam centre, x", 500, c[0], 1e-7);
-		Assert.assertEquals("Beam centre, y", 550, c[1], 1e-7);
+		assertEquals("Beam centre, x", 500, c[0], 1e-7);
+		assertEquals("Beam centre, y", 550, c[1], 1e-7);
 
-		Assert.assertEquals("Beam centre distance", 600, det.getBeamCentreDistance(), 1e-7);
-		Assert.assertEquals("Detector distance", 600, det.getDetectorDistance(), 1e-7);
+		assertEquals("Beam centre distance", 600, det.getBeamCentreDistance(), 1e-7);
+		assertEquals("Detector distance", 600, det.getDetectorDistance(), 1e-7);
 		det.setBeamCentreDistance(700);
-		Assert.assertEquals("Beam centre distance", 700, det.getBeamCentreDistance(), 1e-7);
-		Assert.assertEquals("Detector distance", 700, det.getDetectorDistance(), 1e-7);
+		assertEquals("Beam centre distance", 700, det.getBeamCentreDistance(), 1e-7);
+		assertEquals("Detector distance", 700, det.getDetectorDistance(), 1e-7);
 
 		det.setDetectorDistance(600);
-		Assert.assertEquals("Beam centre distance", 600, det.getBeamCentreDistance(), 1e-7);
-		Assert.assertEquals("Detector distance", 600, det.getDetectorDistance(), 1e-7);
+		assertEquals("Beam centre distance", 600, det.getBeamCentreDistance(), 1e-7);
+		assertEquals("Detector distance", 600, det.getDetectorDistance(), 1e-7);
 
 		c = det.getBeamCentreCoords();
 		det.setNormalAnglesInDegrees(30, 0, 0);
-		Assert.assertEquals("Beam centre distance", 600, det.getBeamCentreDistance(), 1e-7);
-		Assert.assertEquals("Detector distance", 600*Math.cos(Math.toRadians(30)), det.getDetectorDistance(), 1e-7);
+		assertEquals("Beam centre distance", 600, det.getBeamCentreDistance(), 1e-7);
+		assertEquals("Detector distance", 600*Math.cos(Math.toRadians(30)), det.getDetectorDistance(), 1e-7);
 		double[] d = det.getBeamCentreCoords();
-		Assert.assertEquals("Beam centre, x", c[0], d[0], 1e-7);
-		Assert.assertEquals("Beam centre, y", c[1], d[1], 1e-7);
+		assertEquals("Beam centre, x", c[0], d[0], 1e-7);
+		assertEquals("Beam centre, y", c[1], d[1], 1e-7);
 	}
 
 	@Test
@@ -354,52 +354,52 @@ public class DetectorPropertiesTest {
 		double roll = 0;
 
 		// check yaw
-		Assert.assertEquals("Normal to row", 90, Math.toDegrees(det.getNormal().angle(row)), 1e-7);
+		assertEquals("Normal to row", 90, Math.toDegrees(det.getNormal().angle(row)), 1e-7);
 		double yaw = 30;
 		det.setNormalAnglesInDegrees(yaw, 0, 0);
 		Vector3d n = det.getNormal();
-		Assert.assertEquals("Normal to row", 90+yaw, Math.toDegrees(n.angle(row)), 1e-7);
-		Assert.assertEquals("Normal x", Math.sin(Math.toRadians(yaw)), n.x, 1e-7);
-		Assert.assertEquals("Normal y", 0, n.y, 1e-7);
-		Assert.assertEquals("Normal z", -Math.cos(Math.toRadians(yaw)), n.z, 1e-7);
+		assertEquals("Normal to row", 90+yaw, Math.toDegrees(n.angle(row)), 1e-7);
+		assertEquals("Normal x", Math.sin(Math.toRadians(yaw)), n.x, 1e-7);
+		assertEquals("Normal y", 0, n.y, 1e-7);
+		assertEquals("Normal z", -Math.cos(Math.toRadians(yaw)), n.z, 1e-7);
 
 		// check pitch
 		double pitch = 30;
 		det.setNormalAnglesInDegrees(0, pitch, 0);
 		n = det.getNormal();
-		Assert.assertEquals("Normal to row", 90, Math.toDegrees(n.angle(row)), 1e-7);
-		Assert.assertEquals("Normal to beam", 180-pitch, Math.toDegrees(det.getBeamVector().angle(n)), 1e-7);
-		Assert.assertEquals("Normal x", 0, n.x, 1e-7);
-		Assert.assertEquals("Normal y", Math.sin(Math.toRadians(pitch)), n.y, 1e-7);
-		Assert.assertEquals("Normal z", -Math.cos(Math.toRadians(pitch)), n.z, 1e-7);
+		assertEquals("Normal to row", 90, Math.toDegrees(n.angle(row)), 1e-7);
+		assertEquals("Normal to beam", 180-pitch, Math.toDegrees(det.getBeamVector().angle(n)), 1e-7);
+		assertEquals("Normal x", 0, n.x, 1e-7);
+		assertEquals("Normal y", Math.sin(Math.toRadians(pitch)), n.y, 1e-7);
+		assertEquals("Normal z", -Math.cos(Math.toRadians(pitch)), n.z, 1e-7);
 
 		det.setNormalAnglesInDegrees(0, 0, 0);
-		Assert.assertEquals("Image row angle", roll, Math.toDegrees(det.getPixelRow().angle(row)), 1e-7);
-		Assert.assertEquals("Image col angle", 90-roll, Math.toDegrees(det.getPixelColumn().angle(row)), 1e-7);
+		assertEquals("Image row angle", roll, Math.toDegrees(det.getPixelRow().angle(row)), 1e-7);
+		assertEquals("Image col angle", 90-roll, Math.toDegrees(det.getPixelColumn().angle(row)), 1e-7);
 
 		roll = 30;
 		det.setNormalAnglesInDegrees(0, 0, roll);
 		n = new Vector3d(det.getNormal());
-		Assert.assertEquals("Normal", 180, Math.toDegrees(det.getBeamVector().angle(n)), 1e-7);
-		Assert.assertEquals("Image row angle", roll, Math.toDegrees(det.getPixelRow().angle(row)), 1e-7);
-		Assert.assertEquals("Image col angle", 90-roll, Math.toDegrees(det.getPixelColumn().angle(row)), 1e-7);
+		assertEquals("Normal", 180, Math.toDegrees(det.getBeamVector().angle(n)), 1e-7);
+		assertEquals("Image row angle", roll, Math.toDegrees(det.getPixelRow().angle(row)), 1e-7);
+		assertEquals("Image col angle", 90-roll, Math.toDegrees(det.getPixelColumn().angle(row)), 1e-7);
 
 		roll = 60;
 		det.setNormalAnglesInDegrees(0, 0, roll);
-		Assert.assertEquals("Normal", 0, Math.toDegrees(det.getNormal().angle(n)), 1e-7);
-		Assert.assertEquals("Image row angle", roll, Math.toDegrees(det.getPixelRow().angle(row)), 1e-7);
-		Assert.assertEquals("Image col angle", 90-roll, Math.toDegrees(det.getPixelColumn().angle(row)), 1e-7);
+		assertEquals("Normal", 0, Math.toDegrees(det.getNormal().angle(n)), 1e-7);
+		assertEquals("Image row angle", roll, Math.toDegrees(det.getPixelRow().angle(row)), 1e-7);
+		assertEquals("Image col angle", 90-roll, Math.toDegrees(det.getPixelColumn().angle(row)), 1e-7);
 
 		roll = 120;
 		det.setNormalAnglesInDegrees(0, 0, roll);
-		Assert.assertEquals("Normal", 0, Math.toDegrees(det.getNormal().angle(n)), 1e-7);
-		Assert.assertEquals("Image row angle", roll, Math.toDegrees(det.getPixelRow().angle(row)), 1e-7);
+		assertEquals("Normal", 0, Math.toDegrees(det.getNormal().angle(n)), 1e-7);
+		assertEquals("Image row angle", roll, Math.toDegrees(det.getPixelRow().angle(row)), 1e-7);
 		if (roll > 90) {
 			roll = roll - 90;
 		} else {
 			roll = 90 - roll;
 		}
-		Assert.assertEquals("Image col angle", roll, Math.toDegrees(det.getPixelColumn().angle(row)), 1e-7);
+		assertEquals("Image col angle", roll, Math.toDegrees(det.getPixelColumn().angle(row)), 1e-7);
 
 		// test normal is same for any roll...
 		Vector3d na = getNormal(30, 0, 0);
@@ -409,18 +409,18 @@ public class DetectorPropertiesTest {
 		getNormal(0, 0, 30);
 
 		n = getNormal(30, 0, 30);
-		Assert.assertTrue("Normals rolled", n.epsilonEquals(na, 1e-7));
+		assertTrue("Normals rolled", n.epsilonEquals(na, 1e-7));
 		n = getNormal(0, 30, 30);
-		Assert.assertTrue("Normals rolled", n.epsilonEquals(nb, 1e-7));
+		assertTrue("Normals rolled", n.epsilonEquals(nb, 1e-7));
 		n = getNormal(30, 30, 30);
-		Assert.assertTrue("Normals rolled", n.epsilonEquals(nc, 1e-7));
+		assertTrue("Normals rolled", n.epsilonEquals(nc, 1e-7));
 
 		// check normal to row angle
 		det.setNormalAnglesInDegrees(0, 0, 0);
-		Assert.assertEquals("Normal to row", 90, Math.toDegrees(row.angle(det.getNormal())), 1e-7);
+		assertEquals("Normal to row", 90, Math.toDegrees(row.angle(det.getNormal())), 1e-7);
 		det.setNormalAnglesInDegrees(30, 0, roll);
 		nb = det.getNormal();
-		Assert.assertEquals("Normals rolled", 0, Math.toDegrees(na.angle(nb)), 1e-7);
+		assertEquals("Normals rolled", 0, Math.toDegrees(na.angle(nb)), 1e-7);
 
 		// check sequence of normal angle changes through no-intersection cases and its effect on beam centre distance
 		det.setNormalAnglesInDegrees(70, 0, 0);
@@ -428,16 +428,16 @@ public class DetectorPropertiesTest {
 		double[] centre = det.getBeamCentreCoords();
 		det.setNormalAnglesInDegrees(90, 0, 0);
 
-		Assert.assertTrue("No intersection", Double.isInfinite(det.getBeamCentreDistance()));
+		assertTrue("No intersection", Double.isInfinite(det.getBeamCentreDistance()));
 		double[] centre2 = det.getBeamCentreCoords();
-		Assert.assertTrue("No intersection", Double.isNaN(centre2[0]));
-		Assert.assertTrue("No intersection", Double.isNaN(centre2[1]));
+		assertTrue("No intersection", Double.isNaN(centre2[0]));
+		assertTrue("No intersection", Double.isNaN(centre2[1]));
 
 		det.setNormalAnglesInDegrees(70, 0, 0);
-		Assert.assertEquals("Restored", dist, det.getBeamCentreDistance(), 1e-7);
+		assertEquals("Restored", dist, det.getBeamCentreDistance(), 1e-7);
 		centre2 = det.getBeamCentreCoords();
-		Assert.assertEquals("Restored", centre[0], centre2[0], 1e-7);
-		Assert.assertEquals("Restored", centre[1], centre2[1], 1e-7);
+		assertEquals("Restored", centre[0], centre2[0], 1e-7);
+		assertEquals("Restored", centre[1], centre2[1], 1e-7);
 
 		det.setNormalAnglesInDegrees(70, 5, 0);
 		dist = det.getBeamCentreDistance();
@@ -448,79 +448,79 @@ public class DetectorPropertiesTest {
 //		det.setNormalAnglesInDegrees(70, 0, 0);
 		det.setNormalAnglesInDegrees(70, 5, 0);
 		centre2 = det.getBeamCentreCoords();
-		Assert.assertEquals("Restored", dist, det.getBeamCentreDistance(), 1e-7);
-		Assert.assertEquals("Restored", centre[0], centre2[0], 1e-7);
-		Assert.assertEquals("Restored", centre[1], centre2[1], 1e-7);
+		assertEquals("Restored", dist, det.getBeamCentreDistance(), 1e-7);
+		assertEquals("Restored", centre[0], centre2[0], 1e-7);
+		assertEquals("Restored", centre[1], centre2[1], 1e-7);
 
 		det.setNormalAnglesInDegrees(90, 0, 0);
-		Assert.assertEquals("Yaw 90", 90, det.getNormalAnglesInDegrees()[0], 1e-7);
+		assertEquals("Yaw 90", 90, det.getNormalAnglesInDegrees()[0], 1e-7);
 
 		det.setNormalAnglesInDegrees(120, 0, 0);
-		Assert.assertEquals("Yaw 120", 120, det.getNormalAnglesInDegrees()[0], 1e-7);
+		assertEquals("Yaw 120", 120, det.getNormalAnglesInDegrees()[0], 1e-7);
 
 		det.setNormalAnglesInDegrees(180, 0, 0);
-		Assert.assertEquals("Yaw 180", 180, det.getNormalAnglesInDegrees()[0], 1e-7);
+		assertEquals("Yaw 180", 180, det.getNormalAnglesInDegrees()[0], 1e-7);
 
 		det.setNormalAnglesInDegrees(185, 0, 0);
-		Assert.assertEquals("Yaw -175", -175, det.getNormalAnglesInDegrees()[0], 1e-7);
+		assertEquals("Yaw -175", -175, det.getNormalAnglesInDegrees()[0], 1e-7);
 
 		det.setNormalAnglesInDegrees(-120, 0, 0);
-		Assert.assertEquals("Yaw -120", -120, det.getNormalAnglesInDegrees()[0], 1e-7);
+		assertEquals("Yaw -120", -120, det.getNormalAnglesInDegrees()[0], 1e-7);
 
 		det.setNormalAnglesInDegrees(-180, 0, 0);
-		Assert.assertEquals("Yaw 180", 180, det.getNormalAnglesInDegrees()[0], 1e-7);
+		assertEquals("Yaw 180", 180, det.getNormalAnglesInDegrees()[0], 1e-7);
 
 		det.setNormalAnglesInDegrees(-185, 0, 0);
-		Assert.assertEquals("Yaw 175", 175, det.getNormalAnglesInDegrees()[0], 1e-7);
+		assertEquals("Yaw 175", 175, det.getNormalAnglesInDegrees()[0], 1e-7);
 
 		det.setNormalAnglesInDegrees(0, 85, 0);
-		Assert.assertEquals("Pitch 85", 85, det.getNormalAnglesInDegrees()[1], 1e-7);
+		assertEquals("Pitch 85", 85, det.getNormalAnglesInDegrees()[1], 1e-7);
 
 		det.setNormalAnglesInDegrees(0, 90, 0);
-		Assert.assertEquals("Pitch 90", 90, det.getNormalAnglesInDegrees()[1], 1e-7);
+		assertEquals("Pitch 90", 90, det.getNormalAnglesInDegrees()[1], 1e-7);
 
 		det.setNormalAnglesInDegrees(0, 95, 0);
-		Assert.assertEquals("Pitch 85", 85, det.getNormalAnglesInDegrees()[1], 1e-7);
-		Assert.assertEquals("Yaw 180", 180, det.getNormalAnglesInDegrees()[0], 1e-7);
-		Assert.assertEquals("Roll 180", 180, det.getNormalAnglesInDegrees()[2], 1e-7);
+		assertEquals("Pitch 85", 85, det.getNormalAnglesInDegrees()[1], 1e-7);
+		assertEquals("Yaw 180", 180, det.getNormalAnglesInDegrees()[0], 1e-7);
+		assertEquals("Roll 180", 180, det.getNormalAnglesInDegrees()[2], 1e-7);
 
 		det.setNormalAnglesInDegrees(0, -85, 0);
-		Assert.assertEquals("Pitch -85", -85, det.getNormalAnglesInDegrees()[1], 1e-7);
+		assertEquals("Pitch -85", -85, det.getNormalAnglesInDegrees()[1], 1e-7);
 
 		det.setNormalAnglesInDegrees(0, -90, 0);
-		Assert.assertEquals("Pitch -90", -90, det.getNormalAnglesInDegrees()[1], 1e-7);
+		assertEquals("Pitch -90", -90, det.getNormalAnglesInDegrees()[1], 1e-7);
 
 		det.setNormalAnglesInDegrees(0, -95, 0);
-		Assert.assertEquals("Pitch 85", -85, det.getNormalAnglesInDegrees()[1], 1e-7);
-		Assert.assertEquals("Yaw 180", 180, det.getNormalAnglesInDegrees()[0], 1e-7);
-		Assert.assertEquals("Roll 180", 180, det.getNormalAnglesInDegrees()[2], 1e-7);
+		assertEquals("Pitch 85", -85, det.getNormalAnglesInDegrees()[1], 1e-7);
+		assertEquals("Yaw 180", 180, det.getNormalAnglesInDegrees()[0], 1e-7);
+		assertEquals("Roll 180", 180, det.getNormalAnglesInDegrees()[2], 1e-7);
 
 		det.setNormalAnglesInDegrees(0, 0, 90);
-		Assert.assertEquals("Roll 90", 90, det.getNormalAnglesInDegrees()[2], 1e-7);
+		assertEquals("Roll 90", 90, det.getNormalAnglesInDegrees()[2], 1e-7);
 
 		det.setNormalAnglesInDegrees(0, 0, 179);
-		Assert.assertEquals("Roll 179", 179, det.getNormalAnglesInDegrees()[2], 1e-7);
+		assertEquals("Roll 179", 179, det.getNormalAnglesInDegrees()[2], 1e-7);
 
 		det.setNormalAnglesInDegrees(0, 0, 180);
-		Assert.assertEquals("Roll 180", 180, det.getNormalAnglesInDegrees()[2], 1e-7);
+		assertEquals("Roll 180", 180, det.getNormalAnglesInDegrees()[2], 1e-7);
 
 		det.setNormalAnglesInDegrees(0, 0, 181);
-		Assert.assertEquals("Roll -179", -179, det.getNormalAnglesInDegrees()[2], 1e-7);
+		assertEquals("Roll -179", -179, det.getNormalAnglesInDegrees()[2], 1e-7);
 
 		det.setNormalAnglesInDegrees(0, 0, -90);
-		Assert.assertEquals("Roll -90", -90, det.getNormalAnglesInDegrees()[2], 1e-7);
+		assertEquals("Roll -90", -90, det.getNormalAnglesInDegrees()[2], 1e-7);
 
 		det.setNormalAnglesInDegrees(0, 0, -179);
-		Assert.assertEquals("Roll -179", -179, det.getNormalAnglesInDegrees()[2], 1e-7);
+		assertEquals("Roll -179", -179, det.getNormalAnglesInDegrees()[2], 1e-7);
 
 		det.setNormalAnglesInDegrees(0, 0, -180);
-		Assert.assertEquals("Roll 180", 180, det.getNormalAnglesInDegrees()[2], 1e-7);
+		assertEquals("Roll 180", 180, det.getNormalAnglesInDegrees()[2], 1e-7);
 
 		det.setNormalAnglesInDegrees(0, 0, -181);
-		Assert.assertEquals("Roll 179", 179, det.getNormalAnglesInDegrees()[2], 1e-7);
+		assertEquals("Roll 179", 179, det.getNormalAnglesInDegrees()[2], 1e-7);
 
 		det.setNormalAnglesInDegrees(0, 0, -90);
-		Assert.assertEquals("Roll -90", -90, det.getNormalAnglesInDegrees()[2], 1e-7);
+		assertEquals("Roll -90", -90, det.getNormalAnglesInDegrees()[2], 1e-7);
 	}
 
 	private Vector3d getNormal(double... angles) {
@@ -548,52 +548,52 @@ public class DetectorPropertiesTest {
 
 	@Test
 	public void testMajorAxis() {
-		DetectorProperties det = DetectorProperties.getDefaultDetectorProperties(new int[] {100, 100});
+		DetectorProperties det = DetectorProperties.getDefaultDetectorProperties(100, 100);
 
 		final Vector3d beam = det.getBeamVector();
 		Vector3d major = findMajor(beam, det.getNormal());
 		double angle = 0;
 
-		Assert.assertEquals("Maj x", -1, major.x, 1e-7);
-		Assert.assertEquals("Maj y", 0, major.y, 1e-7);
-		Assert.assertEquals("Maj z", 0, major.z, 1e-7);
+		assertEquals("Maj x", -1, major.x, 1e-7);
+		assertEquals("Maj y", 0, major.y, 1e-7);
+		assertEquals("Maj z", 0, major.z, 1e-7);
 
 		angle = 30;
 		det.setNormalAnglesInDegrees(angle, 0, 0);
 		major = findMajor(beam, det.getNormal());
-		Assert.assertEquals("Maj x", Math.cos(Math.toRadians(angle)), major.x, 1e-7);
-		Assert.assertEquals("Maj y", 0, major.y, 1e-7);
-		Assert.assertEquals("Maj z", Math.sin(Math.toRadians(angle)), major.z, 1e-7);
+		assertEquals("Maj x", Math.cos(Math.toRadians(angle)), major.x, 1e-7);
+		assertEquals("Maj y", 0, major.y, 1e-7);
+		assertEquals("Maj z", Math.sin(Math.toRadians(angle)), major.z, 1e-7);
 
 		det.setNormalAnglesInDegrees(0, angle, 0);
 		major = findMajor(beam, det.getNormal());
-		Assert.assertEquals("Maj x", 0, major.x, 1e-7);
-		Assert.assertEquals("Maj y", Math.cos(Math.toRadians(angle)), major.y, 1e-7);
-		Assert.assertEquals("Maj z", Math.sin(Math.toRadians(angle)), major.z, 1e-7);
+		assertEquals("Maj x", 0, major.x, 1e-7);
+		assertEquals("Maj y", Math.cos(Math.toRadians(angle)), major.y, 1e-7);
+		assertEquals("Maj z", Math.sin(Math.toRadians(angle)), major.z, 1e-7);
 
 		det.setNormalAnglesInDegrees(0, 0, angle);
 		major = findMajor(beam, det.getNormal());
-		Assert.assertEquals("Maj x", -1, major.x, 1e-7);
-		Assert.assertEquals("Maj y", 0, major.y, 1e-7);
-		Assert.assertEquals("Maj z", 0, major.z, 1e-7);
+		assertEquals("Maj x", -1, major.x, 1e-7);
+		assertEquals("Maj y", 0, major.y, 1e-7);
+		assertEquals("Maj z", 0, major.z, 1e-7);
 
 		det.setNormalAnglesInDegrees(-angle, 0, 0);
 		major = findMajor(beam, det.getNormal());
-		Assert.assertEquals("Maj x", -Math.cos(Math.toRadians(angle)), major.x, 1e-7);
-		Assert.assertEquals("Maj y", 0, major.y, 1e-7);
-		Assert.assertEquals("Maj z", Math.sin(Math.toRadians(angle)), major.z, 1e-7);
+		assertEquals("Maj x", -Math.cos(Math.toRadians(angle)), major.x, 1e-7);
+		assertEquals("Maj y", 0, major.y, 1e-7);
+		assertEquals("Maj z", Math.sin(Math.toRadians(angle)), major.z, 1e-7);
 
 		det.setNormalAnglesInDegrees(0, -angle, 0);
 		major = findMajor(beam, det.getNormal());
-		Assert.assertEquals("Maj x", 0, major.x, 1e-7);
-		Assert.assertEquals("Maj y", -Math.cos(Math.toRadians(angle)), major.y, 1e-7);
-		Assert.assertEquals("Maj z", Math.sin(Math.toRadians(angle)), major.z, 1e-7);
+		assertEquals("Maj x", 0, major.x, 1e-7);
+		assertEquals("Maj y", -Math.cos(Math.toRadians(angle)), major.y, 1e-7);
+		assertEquals("Maj z", Math.sin(Math.toRadians(angle)), major.z, 1e-7);
 
 		det.setNormalAnglesInDegrees(0, 0, -angle);
 		major = findMajor(beam, det.getNormal());
-		Assert.assertEquals("Maj x", -1, major.x, 1e-7);
-		Assert.assertEquals("Maj y", 0, major.y, 1e-7);
-		Assert.assertEquals("Maj z", 0, major.z, 1e-7);
+		assertEquals("Maj x", -1, major.x, 1e-7);
+		assertEquals("Maj y", 0, major.y, 1e-7);
+		assertEquals("Maj z", 0, major.z, 1e-7);
 	}
 
 
@@ -611,20 +611,20 @@ public class DetectorPropertiesTest {
 
 		Matrix3d c = new Matrix3d();
 		c.mul(b, a);
-		Assert.assertEquals("M01", 1, c.getM01(), 1e-7);
-		Assert.assertEquals("M10", -1, c.getM10(), 1e-7);
-		Assert.assertEquals("M22", 1, c.getM22(), 1e-7);
+		assertEquals("M01", 1, c.getM01(), 1e-7);
+		assertEquals("M10", -1, c.getM10(), 1e-7);
+		assertEquals("M22", 1, c.getM22(), 1e-7);
 
 		c.mul(a, b);
-		Assert.assertEquals("M01", -1, c.getM01(), 1e-7);
-		Assert.assertEquals("M10", 1, c.getM10(), 1e-7);
-		Assert.assertEquals("M22", 1, c.getM22(), 1e-7);
+		assertEquals("M01", -1, c.getM01(), 1e-7);
+		assertEquals("M10", 1, c.getM10(), 1e-7);
+		assertEquals("M22", 1, c.getM22(), 1e-7);
 
 		// this.mul(other) == this x mul
 		a.mul(b);
-		Assert.assertEquals("M01", a.getM01(), c.getM01(), 1e-7);
-		Assert.assertEquals("M10", a.getM10(), c.getM10(), 1e-7);
-		Assert.assertEquals("M22", a.getM22(), c.getM22(), 1e-7);
+		assertEquals("M01", a.getM01(), c.getM01(), 1e-7);
+		assertEquals("M10", a.getM10(), c.getM10(), 1e-7);
+		assertEquals("M22", a.getM22(), c.getM22(), 1e-7);
 	}
 
 	@Test
@@ -634,7 +634,7 @@ public class DetectorPropertiesTest {
 		Vector3d c = new Vector3d(1, -1, -1);
 		// half of a cube side
 		double s = DetectorProperties.calculatePlaneTriangleSolidAngle(a, b, c);
-		Assert.assertEquals(4.*Math.PI/12, s, 1e-12);
+		assertEquals(4.*Math.PI/12, s, 1e-12);
 
 		// check cos(alpha)^3 for a triangle in y-z that recedes
 		double alpha = Math.toRadians(24.);
@@ -655,7 +655,44 @@ public class DetectorPropertiesTest {
 			double r = side/x;
 			// ratio of solid angle subtended to that estimated by area by distance squared
 			// tends to cos(alpha)^3
-			Assert.assertEquals(factor, s/(r*r), factor*r/2.682);
+			assertEquals(factor, s/(r*r), factor*r/2.682);
 		}
+	}
+
+	@Test
+	public void testPyFAIConventions() {
+		// from pyFAI import detectors, azimuthalIntegrator
+		// da = detectors.Detector(1,1)
+		// ai = azimuthalIntegrator.AzimuthalIntegrator(dist=1, detector=da, wavelength=2.5e-3)
+		// import math
+		// ai.rot1 = math.radians(25.)
+		// ai.rot2 = math.radians(34.) 
+		// ai.rot3 = math.radians(15.)
+		// ai.rotation_matrix()
+		// # Out: 
+		// # array([[ 0.8007888 , -0.00629717, -0.59891372],
+		// #        [ 0.21457071,  0.93659154,  0.27704817],
+		// #        [ 0.5591929 , -0.35036642,  0.75136321]])
+
+		Matrix3d mPyFAI = new Matrix3d(new double[] {0.8007888, -0.00629717, -0.59891372,
+				0.21457071, 0.93659154, 0.27704817,
+				0.5591929, -0.35036642,  0.75136321});
+		Matrix3d toPyFAI = new Matrix3d(new double[] {0,1,0, 1,0,0, 0,0,1,});
+		Matrix3d m = DetectorProperties.inverseMatrixFromEulerAngles(25, -34, -15);
+
+		m.mul(toPyFAI, m);
+		m.mulTransposeRight(m, toPyFAI);
+		m.transpose();
+		System.out.println(m);
+		assertTrue(mPyFAI.epsilonEquals(m, 1e-8));
+
+		DetectorProperties d = DetectorProperties.getDefaultDetectorProperties(100,100);
+		d.setNormalAnglesInDegrees(25, -34, -15);
+
+		m = new Matrix3d(d.getOrientation());
+		m.mulTransposeLeft(toPyFAI, m);
+		m.mul(m, toPyFAI);
+		System.out.println(m);
+		assertTrue(mPyFAI.epsilonEquals(m, 1e-8));
 	}
 }

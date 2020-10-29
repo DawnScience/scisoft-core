@@ -14,14 +14,14 @@
       </application>
    </extension>
    <extension
-         id="MSMApp"
+         id="MSMapper"
          point="org.eclipse.core.runtime.products">
       <product
-            application="uk.ac.diamond.scisoft.applications.mapper"
-            name="MSMApp">
+            application="uk.ac.diamond.scisoft.applications.msmapper"
+            name="MSMapper">
          <property
                name="appName"
-               value="MSMApp">
+               value="MSMapper">
          </property>
       </product>
    </extension>

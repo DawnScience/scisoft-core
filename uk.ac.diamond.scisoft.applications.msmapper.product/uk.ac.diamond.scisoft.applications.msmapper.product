@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="MSMApp" uid="uk.ac.diamond.scisoft.applications.msmapper.product" id="uk.ac.diamond.scisoft.applications.msmapper.product" application="uk.ac.diamond.scisoft.applications.msmapper" useFeatures="true" includeLaunchers="true">
-
+<product name="Miller Space Mapper" uid="uk.ac.diamond.scisoft.applications.msmapper.product" id="uk.ac.diamond.scisoft.applications.MSMapper" application="uk.ac.diamond.scisoft.applications.msmapper" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -16,13 +15,11 @@
 
    <windowImages/>
 
-
    <launcher name="msmapper">
       <win useIco="false">
          <bmp/>
       </win>
    </launcher>
-
 
    <vm>
    </vm>
@@ -35,6 +32,9 @@
       <feature id="uk.ac.diamond.scisoft.applications.feature"/>
    </features>
 
+   <configurations>
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
+   </configurations>
 
    <preferencesInfo>
       <targetfile overwrite="false"/>

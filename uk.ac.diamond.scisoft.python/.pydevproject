@@ -16,7 +16,7 @@
 <path>${BUNDLE_POOL_LOC}/plugins/javax.vecmath_1.5.2.jar</path>
 <path>${BUNDLE_POOL_LOC}/plugins/org.apache.commons.collections4_4.1.0.jar</path>
 <path>${BUNDLE_POOL_LOC}/plugins/org.apache.commons.lang3_3.1.0.v201403281430.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/org.apache.commons.logging_1.1.1.v201101211721.jar</path>
+<path>${BUNDLE_POOL_LOC}/plugins/org.apache.commons.logging_1.2.0.v20180409-1502.jar</path>
 <path>${BUNDLE_POOL_LOC}/plugins/org.apache.commons.math3_3.6.1.jar</path>
 <path>${BUNDLE_POOL_LOC}/plugins/org.ddogleg_0.6.0.SNAPSHOT.jar</path>
 <path>${BUNDLE_POOL_LOC}/plugins/org.eclipse.january_2.3.0.v201909112144.jar</path>

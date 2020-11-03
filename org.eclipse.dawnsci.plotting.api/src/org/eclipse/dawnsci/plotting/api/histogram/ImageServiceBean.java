@@ -333,15 +333,12 @@ public class ImageServiceBean {
 
 	public void setLogColorScale(boolean logColorScale) {
 		this.logColorScale = logColorScale;
-		if (image instanceof RGBDataset) {
-			//colour scale doesn't mean anything for an RGB image
-			return;
-		}
 		updateLogOffset();
 	}
 
 	private void updateLogOffset() {
-		if (logColorScale && image != null) { // shift by fraction of range
+		//colour scale doesn't mean anything for an RGB image
+		if (logColorScale && image != null && !(image instanceof RGBDataset)) { // shift by fraction of range
 			logOffset = image.min(true).doubleValue();
 			double delta = 1e-6 * image.peakToPeak(true).doubleValue();
 			if (!image.hasFloatingPointElements() && delta < 1) {

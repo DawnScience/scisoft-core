@@ -14,6 +14,7 @@ __pycache__/
 *.py[cod]
 jythonCache/
 cachedir/
+.jython_cache/
 
 ### Build output ###
 .springBeans

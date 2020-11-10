@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.processing.test.saxs;
 
 import static org.junit.Assert.assertEquals;
 
+import org.eclipse.dawnsci.analysis.api.diffraction.NumberOfSymmetryFolds;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -28,29 +29,29 @@ public class CinaderOrientationOperationTest {
 	
 	@Test
 	public void testOrientation2fold() throws Exception {
-		innerTest(0,CinaderOrientationModel.NumberOfSymmetryFolds.TWO_FOLD);
-		innerTest(45,CinaderOrientationModel.NumberOfSymmetryFolds.TWO_FOLD);
-		innerTest(90,CinaderOrientationModel.NumberOfSymmetryFolds.TWO_FOLD);
-		innerTest(135,CinaderOrientationModel.NumberOfSymmetryFolds.TWO_FOLD);
+		innerTest(0,NumberOfSymmetryFolds.TWO_FOLD);
+		innerTest(45,NumberOfSymmetryFolds.TWO_FOLD);
+		innerTest(90,NumberOfSymmetryFolds.TWO_FOLD);
+		innerTest(135,NumberOfSymmetryFolds.TWO_FOLD);
 		
 	}
 	
 	@Test
 	public void testOrientation4fold() throws Exception {
 
-		innerTest(0,CinaderOrientationModel.NumberOfSymmetryFolds.FOUR_FOLD);
-		innerTest(30,CinaderOrientationModel.NumberOfSymmetryFolds.FOUR_FOLD);
-		innerTest(45,CinaderOrientationModel.NumberOfSymmetryFolds.FOUR_FOLD);
-		innerTest(65,CinaderOrientationModel.NumberOfSymmetryFolds.FOUR_FOLD);
+		innerTest(0,NumberOfSymmetryFolds.FOUR_FOLD);
+		innerTest(30,NumberOfSymmetryFolds.FOUR_FOLD);
+		innerTest(45,NumberOfSymmetryFolds.FOUR_FOLD);
+		innerTest(65,NumberOfSymmetryFolds.FOUR_FOLD);
 		
 	}
 	
 	@Test
 	public void testOrientation6fold() throws Exception {
 		
-		innerTest(0,CinaderOrientationModel.NumberOfSymmetryFolds.SIX_FOLD);
-		innerTest(30,CinaderOrientationModel.NumberOfSymmetryFolds.SIX_FOLD);
-		innerTest(45,CinaderOrientationModel.NumberOfSymmetryFolds.SIX_FOLD);
+		innerTest(0,NumberOfSymmetryFolds.SIX_FOLD);
+		innerTest(30,NumberOfSymmetryFolds.SIX_FOLD);
+		innerTest(45,NumberOfSymmetryFolds.SIX_FOLD);
 		
 	}
 	
@@ -58,12 +59,12 @@ public class CinaderOrientationOperationTest {
 	@Test
 	public void testOrientation8fold() throws Exception {
 
-		innerTest(0,CinaderOrientationModel.NumberOfSymmetryFolds.EIGHT_FOLD);
-		innerTest(30,CinaderOrientationModel.NumberOfSymmetryFolds.EIGHT_FOLD);
+		innerTest(0,NumberOfSymmetryFolds.EIGHT_FOLD);
+		innerTest(30,NumberOfSymmetryFolds.EIGHT_FOLD);
 		
 	}
 	
-	private void innerTest(double position, CinaderOrientationModel.NumberOfSymmetryFolds folds) throws Exception {
+	private void innerTest(double position, NumberOfSymmetryFolds folds) throws Exception {
 		
 		CinaderOrientationOperation o = new CinaderOrientationOperation();
 		CinaderOrientationModel model = new CinaderOrientationModel();
@@ -84,7 +85,7 @@ public class CinaderOrientationOperationTest {
 		assertEquals(position, angle.getDouble(),1);
 	}
 	
-	private Dataset createTestData(double position, DoubleDataset range, CinaderOrientationModel.NumberOfSymmetryFolds folds) {
+	private Dataset createTestData(double position, DoubleDataset range, NumberOfSymmetryFolds folds) {
 		
 		double step = 180/folds.getFoldsOfSymmetry();
 		

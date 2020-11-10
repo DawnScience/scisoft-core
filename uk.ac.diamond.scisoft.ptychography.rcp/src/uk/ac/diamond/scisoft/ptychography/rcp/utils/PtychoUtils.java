@@ -137,7 +137,7 @@ public class PtychoUtils {
 				loaded.add(row);
 			}
 		} catch (IOException e) {
-			logger.error("Failed to load file: " + fullPath + " " + e.getMessage(),e);
+			logger.error("Failed to load file: {}", fullPath, e);
 		}
 		return loaded;
 	}
@@ -152,7 +152,7 @@ public class PtychoUtils {
 			rootNode = parser.parse(new FileReader(fullPath));
 			jsonObject = rootNode.getAsJsonObject();
 		} catch(FileNotFoundException e) {
-			logger.error("Failed to load file " + fullPath + " " + e.getMessage(),e);
+			logger.error("Failed to load file: {}", fullPath, e);
 		}
 		
 		return recursiveJsonLoad(jsonObject, 0);

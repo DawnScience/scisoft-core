@@ -16,7 +16,6 @@ import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
@@ -127,7 +126,7 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 							broker.send("refreshSimplePtychoEditor", tree);
 						}
 					} catch (Exception e) {
-						logger.error("Error loading spreadsheet file:" + e.getMessage(), e);
+						logger.error("Error loading spreadsheet file", e);
 					}
 				} else if(event.getProperty() == PtychoPreferenceConstants.FILE_SAVE_PATH) {
 					setFileSavedPath((String)event.getNewValue());
@@ -160,7 +159,7 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 				container,
 				SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER,
 				filter,
-				true);
+				true, true);
 		viewer = filteredTree.getViewer();
 		viewer.setColumnProperties(new String[] { "Name", "Value" });
 		ColumnViewerToolTipSupport.enableFor(viewer);

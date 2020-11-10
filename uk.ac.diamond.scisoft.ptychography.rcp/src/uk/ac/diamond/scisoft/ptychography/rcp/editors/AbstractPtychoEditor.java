@@ -127,7 +127,7 @@ public abstract class AbstractPtychoEditor {
 			if (levels != null)
 				tree = PtychoTreeUtils.populate(0, 0, levels);
 		} catch (Exception e) {
-			logger.error("Error loading spreadsheet file:" + e.getMessage(), e);
+			logger.error("Error loading spreadsheet file", e);
 		}
 	}
 
@@ -245,7 +245,7 @@ public abstract class AbstractPtychoEditor {
 		try {
 			PtychoUtils.saveJSon(jsonSavedPath, json);
 		} catch (IOException e) {
-			logger.error("Error saving JSON file:" + e.getMessage());
+			logger.error("Error saving JSON file", e);
 			MessageDialog.openError(Display.getDefault()
 					.getActiveShell(), "Error writing JSON file", "An IO error occured while writing '"
 					+ jsonSavedPath
@@ -321,7 +321,7 @@ public abstract class AbstractPtychoEditor {
 				throw new Exception("XML serialisation is not yet implemented.");
 			}
 		} catch (Exception e) {
-			logger.error("Error saving file:"+ e.getMessage(), e);
+			logger.error("Error saving file", e);
 			return fileSavedPath;
 		}
 		return path;

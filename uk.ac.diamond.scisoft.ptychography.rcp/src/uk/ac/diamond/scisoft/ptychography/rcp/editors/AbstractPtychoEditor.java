@@ -2,6 +2,7 @@ package uk.ac.diamond.scisoft.ptychography.rcp.editors;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -256,14 +257,15 @@ public abstract class AbstractPtychoEditor {
 	@Focus
 	public void setFocus() {}
 
+	private static final String[] EXTENSIONS = new String[] { "csv", "json", "xml" };
+	private static final String[] FILTER_EXTENSIONS = new String[] {
+			"*.csv;*.CSV", "*.json;*.JSON",
+			"*.xml;*.XML" };
 
 	protected String saveAs(String fileSavedPath) {
 		FileDialog dialog = new FileDialog(Display.getDefault()
 				.getActiveShell(), SWT.SAVE);
 		dialog.setText("Choose file path and name to save parameter input");
-		String[] filterExtensions = new String[] {
-				"*.csv;*.CSV", "*.json;*.JSON",
-				"*.xml;*.XML" };
 		if (fileSavedPath != null) {
 			dialog.setFilterPath((new File(fileSavedPath)).getParent());
 		} else {
@@ -275,7 +277,7 @@ public abstract class AbstractPtychoEditor {
 			dialog.setFilterPath(filterPath);
 		}
 		dialog.setFilterNames(PtychoConstants.FILE_TYPES);
-		dialog.setFilterExtensions(filterExtensions);
+		dialog.setFilterExtensions(FILTER_EXTENSIONS);
 		String path = dialog.open();
 		if (path == null) {
 			return fileSavedPath;
@@ -289,10 +291,26 @@ public abstract class AbstractPtychoEditor {
 						.getActiveShell(), "Confirm Overwrite", "The file '"
 						+ file.getName()
 						+ "' exists.\n\nWould you like to overwrite it?");
-				if (!yes)
-					;
+				if (!yes) {
+					return null;
+				}
 			}
-			String fileType = PtychoConstants.FILE_TYPES[dialog.getFilterIndex()];
+			int index = dialog.getFilterIndex();
+			if (index < 0) {
+				String name = file.getName();
+				int i = name.lastIndexOf('.') + 1;
+				if (i > 0 && i < name.length()) {
+					String ext = name.substring(i).toLowerCase();
+					index = Arrays.binarySearch(EXTENSIONS, ext);
+				} else {
+					index = -1;
+				}
+				if (index < 0) {
+					logger.error("Extension of {} not recognised; saving as {}", name,  PtychoConstants.FILE_TYPES[0]);
+					index = 0;
+				}
+			}
+			String fileType = PtychoConstants.FILE_TYPES[index];
 			if (fileType.equals("CSV File")) {
 				List<PtychoData> list = PtychoTreeUtils.extract(tree);
 				PtychoUtils.saveCSVFile(path, list);

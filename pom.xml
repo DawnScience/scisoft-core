@@ -24,7 +24,6 @@
 		<module>uk.ac.diamond.scisoft.analysis.plotserver</module>
 		<module>uk.ac.diamond.scisoft.analysis.processing</module>
 		<module>uk.ac.diamond.scisoft.analysis.xmlrpc</module>
-		<module>uk.ac.diamond.scisoft.applications</module>
 		<module>uk.ac.diamond.scisoft.core.feature</module>
 		<module>uk.ac.diamond.scisoft.nexus.examples</module>
 		<module>uk.ac.diamond.scisoft.jython</module>
@@ -45,6 +44,7 @@
 		<profile>
 			<id>dawn</id>
 			<modules>
+				<module>uk.ac.diamond.scisoft.applications</module>
 				<module>de.desy.file.loader.test</module>
 				<!-- does not work in IDE: module>uk.ac.diamond.scisoft.analysis.peakfinding.test</module -->
 				<module>uk.ac.diamond.scisoft.analysis.plotserver.test</module>
@@ -73,6 +73,13 @@
 				<module>uk.ac.diamond.scisoft.analysis.powder.matcher.ccdc</module>
 				<module>uk.ac.diamond.scisoft.surfacescatter</module>
 				<!-- No tests within!!! module>uk.ac.diamond.scisoft.surfacescatter.test</module -->
+			</modules>
+		</profile>
+		<profile>
+			<id>dawn-msmapper</id>
+			<modules>
+				<module>uk.ac.diamond.scisoft.applications.feature</module>
+				<module>uk.ac.diamond.scisoft.applications.msmapper.product</module>
 			</modules>
 		</profile>
 	</profiles>

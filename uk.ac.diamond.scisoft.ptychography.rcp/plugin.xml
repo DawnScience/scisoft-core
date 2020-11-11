@@ -17,13 +17,11 @@
          point="org.eclipse.ui.views">
       <e4view
             class="uk.ac.diamond.scisoft.ptychography.rcp.editors.PtychoTreeViewerEditor"
-            default="false"
             id="uk.ac.diamond.scisoft.ptychography.rcp.ptychoTreeEditor"
             name="Tree Ptycho input">
       </e4view>
       <e4view
             class="uk.ac.diamond.scisoft.ptychography.rcp.editors.SimplePtychoEditor"
-            default="false"
             id="uk.ac.diamond.scisoft.ptychography.rcp.basicPtychoInput"
             name="Basic Ptycho Input">
       </e4view>

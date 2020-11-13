@@ -8,6 +8,8 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,7 +17,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import org.eclipse.dawnsci.analysis.api.tree.DataNode;
+import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
+import org.eclipse.dawnsci.analysis.tree.TreeFactory;
+import org.eclipse.dawnsci.analysis.tree.impl.NodeLinkImpl;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFileFactoryHDF5;
 import org.eclipse.dawnsci.nexus.INexusDevice;
 import org.eclipse.dawnsci.nexus.NXaperture;
@@ -31,8 +37,9 @@ import org.eclipse.dawnsci.nexus.NexusBaseClass;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.NexusScanInfo;
+import org.eclipse.dawnsci.nexus.NexusUtils;
 import org.eclipse.dawnsci.nexus.ServiceHolder;
-import org.eclipse.dawnsci.nexus.appender.NexusGroupCopyAppender;
+import org.eclipse.dawnsci.nexus.appender.NexusNodeCopyAppender;
 import org.eclipse.dawnsci.nexus.appender.NexusMetadataAppender;
 import org.eclipse.dawnsci.nexus.appender.NexusObjectAppender;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
@@ -208,65 +215,132 @@ public class NexusDeviceServiceTest {
 	}
 	
 	@Test
-	public void testGroupCopyAppender() throws Exception {
-		// create the external file
-		final Map<String, Object> metadata = new HashMap<>();
-		metadata.put(NXdetector.NX_DETECTOR_NUMBER, 2);
-		metadata.put(NXdetector.NX_X_PIXEL_OFFSET, 125);
-		metadata.put(NXdetector.NX_Y_PIXEL_OFFSET, 32);
-		metadata.put(NXdetector.NX_LAYOUT, "area");
-		metadata.put(NXdetector.NX_SATURATION_VALUE, 999.99);
-		final NXcollection metadataCollection = NexusNodeFactory.createNXcollection();
-		for (Map.Entry<String, Object> metadataEntry : metadata.entrySet()) {
-			metadataCollection.setField(metadataEntry.getKey(), metadataEntry.getValue());
-		}
-		// check that child groups are also copied
-		final NXdata calibrationDataGroup = NexusNodeFactory.createNXdata();
-		final String calibrationDataName = "calibration_data";
-		calibrationDataGroup.setAttribute(null, "signal", NXdata.NX_DATA);
-		calibrationDataGroup.setAttribute(null, "data_axes", DatasetFactory.createFromList(Arrays.asList("y", "x", ".", ".")));
-		calibrationDataGroup.setData(Random.rand(8, 5, 64, 64));
-		calibrationDataGroup.setX(DatasetFactory.createLinearSpace(DoubleDataset.class, 2.3, 5.1, 8));
-		calibrationDataGroup.setAttribute(null, "x_indices", DatasetFactory.createFromObject(new int[] { 0, 1 }));
-		calibrationDataGroup.setY(DatasetFactory.createLinearSpace(DoubleDataset.class, 9.3, 11.5, 5));
-		calibrationDataGroup.setAttribute(null, "y_indices", DatasetFactory.createFromObject(new int[] { 0, 1 }));
-		metadataCollection.addGroupNode(calibrationDataName, calibrationDataGroup);
+	public void testNodeCopyAppender() throws Exception {
 		
-		final String metadataDeviceName = "detectorMetadata";
-		final INexusDevice<NXcollection> metadataDevice = createSimpleNexusDevice(metadataDeviceName, metadataCollection);
+		/* 
+		 *  Create an external file with the following structure
+		 * 
+		 *  calibration.nxs
+		 *  
+		 *  
+		 *  entry
+		 *  	> calibration
+		 *  		> boring_group
+		 *  			> boring_attribute
+		 *  		> calibration_sample
+		 *  			> beam
+		 *  				> incident_wavelength
+		 *  			> calibration_positions
+		 *  				> calibrated_x_position
+		 *  				> calibrated_y_position
+		 *  		> calculated
+		 *  			> data
+		 *  			> transformations
+		 *  	> instrument
+		 *  	> sample
+		 *  	> user
+		 */
 		
-		final String externalFilePath = testScratchDirectoryName + "external.nxs";
-		final TreeFile externalTreeFile = nexusDeviceBuilder.buildNexusTree(externalFilePath, metadataDevice);
+		NXcollection boringGroup = NexusNodeFactory.createNXcollection();
+		boringGroup.setField("boring_data", 9000);
+		
+		NXcollection calibrationSample = NexusNodeFactory.createNXcollection();
+		NXcollection beam = NexusNodeFactory.createNXcollection();
+		beam.setField("incident_wavelength", 500);
+		
+		NXcollection calibrationPositions = NexusNodeFactory.createNXcollection();
+		calibrationPositions.setField("calibrated_x_position", 24.11);
+		calibrationPositions.setField("calibrated_y_position", -3.45);
+		
+		calibrationSample.addGroupNode("beam", beam);
+		calibrationSample.addGroupNode("calibration_positions", calibrationPositions);
+		
+		NXdata calculated = NexusNodeFactory.createNXdata();
+		DoubleDataset data = Random.rand(8, 5, 64, 64);
+		calculated.setData(data);
+		calculated.setField("transformations", 10);
+		
+		NXcollection calibration = NexusNodeFactory.createNXcollection();
+		
+		calibration.addGroupNode("boring_group", boringGroup);
+		calibration.addGroupNode("calibration_sample", calibrationSample);
+		calibration.addNode("calculated", calculated);
+		
+		final INexusDevice<NXcollection> calibrationDevice = createSimpleNexusDevice("calibration", calibration);
+		
+		final String externalFilePath = testScratchDirectoryName + "calibration.nxs";
+		final TreeFile externalTreeFile = nexusDeviceBuilder.buildNexusTree(externalFilePath, calibrationDevice);
 		NexusTestUtils.saveNexusFile(externalTreeFile);
-
-		// the detector
+		
+		
+		// Configure the detector
 		final NXdetector nxDetector = NexusNodeFactory.createNXdetector();
 		nxDetector.initializeLazyDataset(NXdetector.NX_DATA, 2, Double.class);
-		final INexusDevice<NXdetector> detector = createSimpleNexusDevice("detector", nxDetector);
+		final INexusDevice<NXdetector> detector = createSimpleNexusDevice("detector", nxDetector);		
 		
-		// a group copy appender that copies the metadata into the detector
-		final NexusGroupCopyAppender<NXdetector> groupCopyAppender = new NexusGroupCopyAppender<>();
-		groupCopyAppender.setName(detector.getName());
-		groupCopyAppender.setNodePath("/entry/" + metadataDeviceName);
-		groupCopyAppender.setExternalFilePath(externalFilePath);
-		final Set<String> excluded = new HashSet<>(Arrays.asList(NXdetector.NX_LAYOUT));
-		groupCopyAppender.setExcluded(excluded);
-		((NexusDeviceService) nexusDeviceService).register(groupCopyAppender);
 		
-		// construct the expected tree
+		/* 
+		 *   Configure NexusNodeCopyAppender to append to above detector's node
+		 * 	 the following structure from the external calibration file
+		 * 
+		 * 	 detector
+		 * 
+		 * 		> calibration_data
+		 * 			> data 							// copied from /entry/calibration/calculated/data
+		 * 
+		 * 		> calibration_sample				// the whole group copied from /entry/calibration/calibration_sample
+		 *  		> beam
+		 *  			> incident_wavelength
+		 *  		> calibration_positions
+		 *  			> calibrated_x_position
+		 *  			> calibrated_y_position
+		 *  
+		 *  	> transformations					// copied from /entry/calibration/calculated/transformations
+		 * 
+		 */
+		
+		final NexusNodeCopyAppender<NXdetector> nodeCopyAppender = new NexusNodeCopyAppender<>();
+		nodeCopyAppender.setName(detector.getName());
+		
+		nodeCopyAppender.setExternalFilePath(externalFilePath);
+		
+		String calibrationNode = "/entry/calibration";
+		String dataNode = "/entry/calibration/calculated/data";
+		String calculatedNode = "/entry/calibration/calculated";
+		
+		nodeCopyAppender.setNodePaths(new HashSet<>(Arrays.asList(dataNode, calibrationNode, calculatedNode)));
+		
+		Map<String, Set<String>> excludedNodesPerGroup = new HashMap<>();
+		excludedNodesPerGroup.put(calibrationNode, new HashSet<>(Arrays.asList(
+				"boring_group",
+				"calculated")));
+		excludedNodesPerGroup.put(calculatedNode, new HashSet<>(Arrays.asList("data")));
+		nodeCopyAppender.setExcludedPerNode(excludedNodesPerGroup);
+		
+		Map<String, String> customTargets = new HashMap<>();
+		customTargets.put(dataNode, "calibration_data");
+		nodeCopyAppender.setCustomTargetPerNode(customTargets);
+		
+		((NexusDeviceService) nexusDeviceService).register(nodeCopyAppender);
+		
+		// Construct the expected tree
 		final TreeFile expectedTree = nexusDeviceBuilder.buildEmptyTree();
 		final NXentry entry = ((NXroot) expectedTree.getGroupNode()).getEntry();
 		final NXinstrument instrument = entry.getInstrument();
 		
 		final NXdetector expectedDetector = NexusNodeFactory.createNXdetector();
-		metadata.entrySet().stream().filter(metEntry -> !excluded.contains(metEntry.getKey())).forEach(
-				metEntry -> expectedDetector.setField(metEntry.getKey(), metEntry.getValue()));
 		expectedDetector.initializeLazyDataset(NXdetector.NX_DATA, 2, Double.class);
-		expectedDetector.addGroupNode(calibrationDataName, calibrationDataGroup);
+		expectedDetector.setField("transformations", 10);
+		expectedDetector.addGroupNode("calibration_sample", calibrationSample);
+		
+		GroupNode expectedData = NexusNodeFactory.createGroupNode();
+		expectedData.addDataNode("data", calculated.getDataNode("data"));
+		expectedDetector.addGroupNode("calibration_data", expectedData);
+		
 		instrument.setDetector(detector.getName(), expectedDetector);
 		
 		// build the nexus tree and compare it to the expected tree
-		final TreeFile actualTree = nexusDeviceBuilder.buildNexusTree(detector);
+		final TreeFile actualTree = nexusDeviceBuilder.buildNexusTree(detector);		
 		assertNexusTreesEqual(expectedTree, actualTree);
 	}
 	

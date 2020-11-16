@@ -68,7 +68,7 @@ public class SeriesRunner implements IOperationRunner {
 			public void visit(IDataset slice) throws Exception {
 
 				List<SliceFromSeriesMetadata> meta = slice.getMetadata(SliceFromSeriesMetadata.class);
-				SliceFromSeriesMetadata ssm = meta!=null && meta.size()>0 ? meta.get(0) : null;
+				SliceFromSeriesMetadata ssm = meta!=null && !meta.isEmpty() ? meta.get(0) : null;
 				SliceFromSeriesMetadata fullssm = null;
 				if (ssm!=null) {
 					fullssm = new SliceFromSeriesMetadata(finalSource, ssm.getSliceInfo());
@@ -77,10 +77,6 @@ public class SeriesRunner implements IOperationRunner {
 
 				if (context.getMonitor() != null && context.getMonitor().isCancelled()) return;
 
-				SourceInformation si = fullssm!=null ? fullssm.getSourceInfo() : null;
-				String path = si == null ? "" : si.getFilePath();
-				if (path == null) path = "";
-				
 				String current = "";
 				if (fullssm != null) {
 					try {
@@ -141,7 +137,7 @@ public class SeriesRunner implements IOperationRunner {
 						break;
 					}
 				}
-				logger.debug("Slice " + current + " ran in: " +(System.currentTimeMillis()-start)/1000. + " s : Thread" +Thread.currentThread().toString());
+				logger.debug("Slice {} ran in: {} s : Thread {}", current, (System.currentTimeMillis()-start)/1000., Thread.currentThread());
 				if (context.getMonitor() != null) context.getMonitor().worked(1);
 				visitor.executed(data, context.getMonitor()); // Send result.
 			}
@@ -172,8 +168,8 @@ public class SeriesRunner implements IOperationRunner {
 		} else {
 			throw new OperationException(context.getSeries()[0], "The edges are needed to execute a graph using ptolemy!");
 		}
-		logger.debug("Data ran in: " +(System.currentTimeMillis()-start)/1000. + " s");
-		
+
+		logger.debug("Data ran in: {} s", (System.currentTimeMillis()-start)/1000.);
 	}
 
 	@Override

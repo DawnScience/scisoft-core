@@ -136,7 +136,6 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		OriginMetadata origin = null;
 		List<SliceFromSeriesMetadata> metadata = data.getMetadata(SliceFromSeriesMetadata.class);
 		if (metadata != null && metadata.get(0) != null) origin = metadata.get(0);
-//		file = HierarchicalDataFactory.getWriter(filePath);
 		if (new File(filePath).exists() && !swmring) {
 			nexusFile = NexusFileHDF5.openNexusFile(filePath);
 		} else {
@@ -268,10 +267,10 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			return;
 		}
 
-		//not threadsafe but closer
+		// not thread-safe but closer
 		boolean fNNE = firstNonNullExecution.getAndSet(false);
 		
-		//Write data to file
+		// write data to file
 		final Dataset integrated = DatasetUtils.convertToDataset(result.getData());
 		SliceFromSeriesMetadata metadata = integrated.getMetadata(SliceFromSeriesMetadata.class).get(0);
 		int[] dataDims = metadata.getDataDimensions();
@@ -279,6 +278,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		Slice[] slices = metadata.getSliceInOutput();
 		updateAxes(integrated, slices, shape, dataDims, results,fNNE);
 		integrated.setName(DATA_NAME);
+
 		synchronized (nexusFile) {
 			appendData(integrated,nexusFile.getGroup(results,false), slices,shape, nexusFile,dataDims);
 			if (fNNE){
@@ -289,7 +289,6 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 				
 				applyTemplate();
 				
-				
 				if (swmring) {
 					nexusFile.activateSwmrMode();
 					logger.debug("SWMR-ING");
@@ -298,7 +297,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			flushDatasets(monitor);
 		}
 	}
-	
+
 	private void applyTemplate() {
 		if (templatePath == null || templatePath.isEmpty()) return;
 		NexusTemplateService templateService = Activator.getService(NexusTemplateService.class);
@@ -315,7 +314,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		long time = System.currentTimeMillis();
 		if (time - lastFlush > 2000) {
 			lastFlush = time;
-			((NexusFileHDF5)nexusFile).flushAllCachedDatasets();
+			nexusFile.flushAllCachedDatasets();
 			logger.debug("Flushing");
 			if (monitor instanceof IFlushMonitor) {
 				((IFlushMonitor)monitor).fileFlushed();
@@ -324,7 +323,15 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 	}
 
 	private static boolean isEmpty(Serializable[] blah) {
-		return blah == null || blah.length == 0 || blah[0] == null;
+		if (blah == null || blah.length == 0) {
+			return true;
+		}
+		for (Serializable s : blah) {
+			if (s != null) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
@@ -420,10 +427,19 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 					try {
 						Dataset ds = DatasetUtils.convertToDataset((IDataset) summaryData[i]).getView(false);
 						String dsName = ds.getName();
-						GroupNode group;
+						GroupNode group = null;
 						String currentPath = Tree.ROOT + ENTRY + Node.SEPARATOR + SUM_GROUP;
 						synchronized (nexusFile) {
-							group = requireNXclass(currentPath, NexusConstants.COLLECTION);
+							try {
+								group = nexusFile.getGroup(currentPath, false);
+							} catch (NexusException ne) {
+								if (!first && swmring) {
+									logger.error("Cannot save any summary data in SWMR mode");
+									return;
+								}
+								group = requireNXclass(currentPath, NexusConstants.COLLECTION);
+							}
+
 							String gName = position + "-" + intermediateData.getName();
 							currentPath += Node.SEPARATOR + gName + Node.SEPARATOR + dsName;
 							group = requireNXclass(currentPath, NexusConstants.DATA);
@@ -855,7 +871,6 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 
 	@Override
 	public void close() throws Exception {
-		
 		if (nexusFile != null) {
 			
 			if (swmring) {

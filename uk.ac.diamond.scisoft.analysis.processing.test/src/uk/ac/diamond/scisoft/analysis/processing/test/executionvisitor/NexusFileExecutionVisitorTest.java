@@ -1,6 +1,7 @@
 package uk.ac.diamond.scisoft.analysis.processing.test.executionvisitor;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -65,12 +66,11 @@ public class NexusFileExecutionVisitorTest {
 	}
 	
 	@Parameterized.Parameters
-	   public static Collection<?> params() {
-	      return Arrays.asList(new Object[] {new Object[]
-	         {ExecutionType.SERIES},new Object[]{ExecutionType.PARALLEL}
-	         
-	      });
-	   }
+	public static Collection<?> params() {
+		return Arrays
+				.asList(new Object[] { new Object[] { ExecutionType.SERIES }, new Object[] { ExecutionType.PARALLEL }
+				});
+	}
 	
 	@Test
 	public void Process3DStackAs2DTo1D() throws Exception {
@@ -275,9 +275,18 @@ public class NexusFileExecutionVisitorTest {
 		testDataset(op21, "1,3,5,:", dh.getLazyDataset(PROCESS_DATA_PATH));
 			
 	}
-	
+
 	@Test
-	public void Process3DStackAs1DTo1D() throws Exception {
+	public void process3DStackAs1DTo1D() throws Exception {
+		process3DStackAs1DTo1D(false);
+	}
+
+	@Test
+	public void process3DStackAs1DTo1DSWMR() throws Exception {
+		process3DStackAs1DTo1D(true);
+	}
+
+	private void process3DStackAs1DTo1D(boolean swmr) throws Exception {
 		
 		int[] inputShape = new int[] {10,30,1100};
 		
@@ -296,7 +305,7 @@ public class NexusFileExecutionVisitorTest {
 		tmp.deleteOnExit();
 		tmp.createNewFile();
 		
-		context.setVisitor(new NexusFileExecutionVisitor(tmp.getAbsolutePath(),true));
+		context.setVisitor(new NexusFileExecutionVisitor(tmp.getAbsolutePath(), swmr));
 		context.setSeries(op11);
 		context.setExecutionType(type);
 		service.execute(context);
@@ -454,35 +463,40 @@ public class NexusFileExecutionVisitorTest {
 		testDataset( op11, "5,10,:", dh.getLazyDataset(PROCESS_DATA_PATH));
 			
 	}
-	
+
 	@Test
-	public void Process3DStackAs1DTo1DAux1D() throws Exception {
-		
+	public void process3DStackAs1DTo1DAux1D() throws Exception {
+		process3DStackAs1DTo1DAux1D(false);
+	}
+
+	@Test
+	public void process3DStackAs1DTo1DAux1DSWMR() throws Exception {
+		process3DStackAs1DTo1DAux1D(true);
+	}
+
+	private void process3DStackAs1DTo1DAux1D(boolean swmr) throws Exception {
 		int[] inputShape = new int[] {10,30,1100};
 		int[] auxShape = new int[]{3};
-		
+
 		ILazyDataset lazy = getLazyDataset(inputShape,1);
-		
+
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-//		context.setSlicing("all","all");
 		context.setDataDimensions(new int[]{2});
-		
-				
+
 		Junk1Dto1DAuxOperation op11 = new Junk1Dto1DAuxOperation();
 		op11.setModel(new Junk1DModel());
 		op11.setAuxShape(auxShape);
-		
+
 		final File tmp = File.createTempFile("Test", ".h5");
 		tmp.deleteOnExit();
 		tmp.createNewFile();
-		
-		context.setVisitor(new NexusFileExecutionVisitor(tmp.getAbsolutePath()));
+
+		context.setVisitor(new NexusFileExecutionVisitor(tmp.getAbsolutePath(), swmr));
 		context.setSeries(op11);
 		context.setExecutionType(type);
 		service.execute(context);
-		
-		
+
 		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
 		assertTrue(dh.contains(PROCESS_DATA_PATH));
 		assertTrue(dh.contains(PROCESS_PATH + AXIS0));
@@ -499,9 +513,63 @@ public class NexusFileExecutionVisitorTest {
 		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset("/processed/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/Axis_0").getShape());
 
 		testDataset( op11, "5,10,:", dh.getLazyDataset(PROCESS_DATA_PATH));
-			
 	}
-	
+
+	@Test
+	public void process3DStackAs1DTo1DSum1D() throws Exception {
+		process3DStackAs1DTo1DSum1D(false);
+	}
+
+	@Test
+	public void process3DStackAs1DTo1DSum1DSWMR() throws Exception {
+		process3DStackAs1DTo1DSum1D(true);
+	}
+
+	private void process3DStackAs1DTo1DSum1D(boolean swmr) throws Exception {
+		int[] inputShape = new int[] {10,30,1100};
+		int[] sumShape = new int[]{3};
+
+		ILazyDataset lazy = getLazyDataset(inputShape,1);
+
+		final IOperationContext context = service.createContext();
+		context.setData(lazy);
+		context.setDataDimensions(new int[]{2});
+
+		Junk1Dto1DSumOperation op11 = new Junk1Dto1DSumOperation();
+		op11.setModel(new Junk1DModel());
+		op11.setSumShape(sumShape);
+
+		final File tmp = File.createTempFile("Test", ".h5");
+		tmp.deleteOnExit();
+		tmp.createNewFile();
+
+		context.setVisitor(new NexusFileExecutionVisitor(tmp.getAbsolutePath(), swmr));
+		context.setSeries(op11);
+		context.setExecutionType(type);
+		service.execute(context);
+
+		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
+		assertTrue(dh.contains(PROCESS_DATA_PATH));
+		assertTrue(dh.contains(PROCESS_PATH + AXIS0));
+		assertTrue(dh.contains(PROCESS_PATH + "Axis_1"));
+		assertTrue(dh.contains(PROCESS_PATH + JUNK_AXIS1D));
+		assertTrue(dh.contains("/processed/summary/0-Junk1Dto1DSumOperation/singlevalue/data"));
+
+		assertArrayEquals(new int[]{inputShape[0],inputShape[1],op11.getModel().getxDim()}, dh.getLazyDataset(PROCESS_DATA_PATH).getShape());
+		assertArrayEquals(new int[]{inputShape[0]}, dh.getLazyDataset(PROCESS_PATH + AXIS0).getShape());
+		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset(PROCESS_PATH + JUNK_AXIS1D).getShape());
+		IDataset ld = dh.getLazyDataset("/processed/summary/0-Junk1Dto1DSumOperation/singlevalue/data").getSlice();
+		assertArrayEquals(sumShape, ld.getShape());
+		int end = inputShape[0]*inputShape[1] - 1;
+		if (type == ExecutionType.PARALLEL) {
+			// as last set of slices may not have executed in order
+			end = Math.max(1, end - Runtime.getRuntime().availableProcessors());
+		}
+		assertTrue(ld.getInt(0) >= end);
+
+		testDataset( op11, "5,10,:", dh.getLazyDataset(PROCESS_DATA_PATH));
+	}
+
 	@Test
 	public void Process3DStackAs2DTo1DAux() throws Exception {
 		
@@ -626,9 +694,8 @@ public class NexusFileExecutionVisitorTest {
 		assertArrayEquals(new int[]{op11.getModel().getyDim()}, dh.getLazyDataset(PROCESS_PATH + "Junk2Dto2DAx2").getShape());
 
 		testDataset( op11, "5,10,:,:", dh.getLazyDataset(PROCESS_DATA_PATH));
-			
 	}
-	
+
 	@Test
 	public void Process3DStackAs2DTo2Dwith2Axes() throws Exception {
 		
@@ -681,10 +748,8 @@ public class NexusFileExecutionVisitorTest {
 		}
 		
 		testDataset( op22, "5,:,:", dh.getLazyDataset(PROCESS_DATA_PATH));
-			
 	}
-	
-	
+
 	@Test
 	public void Process3DStackAs2DTo1Dwith2Axes() throws Exception {
 		
@@ -719,7 +784,6 @@ public class NexusFileExecutionVisitorTest {
 		assertArrayEquals(new int[]{op21.getModel().getxDim()}, dh.getLazyDataset(PROCESS_PATH + JUNK_AXIS1D).getShape());
 
 		testDataset( op21, "5,:", dh.getLazyDataset(PROCESS_DATA_PATH));
-			
 	}
 	
 	@Test
@@ -760,7 +824,6 @@ public class NexusFileExecutionVisitorTest {
 		assertArrayEquals(new int[]{inputShape[0],op21.getModel().getxDim()}, dh.getLazyDataset(PROCESS_DATA_PATH).getShape());
 		
 		testDataset( op21, "5,:", dh.getLazyDataset(PROCESS_DATA_PATH));
-			
 	}
 	
 	@Test
@@ -858,10 +921,8 @@ public class NexusFileExecutionVisitorTest {
 		assertFalse(dh.contains(PROCESS_DATA_PATH));
 		assertTrue(dh.contains("/processed/intermediate/0-Junk2Dto2DOperation/Junk2Dto2DAx1"));
 		assertFalse(dh.contains("/processed/intermediate/0-Junk2Dto2DOperation/Junk2Dto2DAx11"));
-		
-			
 	}
-	
+
 	@Test
 	public void Process1DLineAs1DTo1DAux1D() throws Exception {
 		
@@ -872,10 +933,8 @@ public class NexusFileExecutionVisitorTest {
 		
 		final IOperationContext context = service.createContext();
 		context.setData(lazy);
-//		context.setSlicing("all","all");
 		context.setDataDimensions(new int[]{0});
-		
-				
+
 		Junk1Dto1DAuxOperation op11 = new Junk1Dto1DAuxOperation();
 		op11.setModel(new Junk1DModel());
 		op11.setAuxShape(auxShape);
@@ -901,10 +960,46 @@ public class NexusFileExecutionVisitorTest {
 		IDataset slice = dh.getLazyDataset("/processed/auxiliary/0-Junk1Dto1DAuxOperation/singlevalue/data").getSlice();
 		double d = slice.getDouble(0);
 		assertTrue(d != 0);
-		assertTrue(d != Double.NaN);
-			
+		assertFalse(Double.isNaN(d));
 	}
-	
+
+	@Test
+	public void Process1DLineAs1DTo1DSum1D() throws Exception {
+		
+		int[] inputShape = new int[] {1100};
+		int[] sumShape = new int[]{1};
+		
+		ILazyDataset lazy = getLazyDataset(inputShape,1);
+		
+		final IOperationContext context = service.createContext();
+		context.setData(lazy);
+		context.setDataDimensions(new int[]{0});
+
+		Junk1Dto1DSumOperation op11 = new Junk1Dto1DSumOperation();
+		op11.setModel(new Junk1DModel());
+		op11.setSumShape(sumShape);
+		
+		final File tmp = File.createTempFile("Test", ".h5");
+		tmp.deleteOnExit();
+		tmp.createNewFile();
+		
+		context.setVisitor(new NexusFileExecutionVisitor(tmp.getAbsolutePath()));
+		context.setSeries(op11);
+		context.setExecutionType(type);
+		service.execute(context);
+
+		IDataHolder dh = LoaderFactory.getData(tmp.getAbsolutePath());
+		assertTrue(dh.contains(PROCESS_DATA_PATH));
+		assertTrue(dh.contains(PROCESS_PATH + JUNK_AXIS1D));
+		assertTrue(dh.contains("/processed/summary/0-Junk1Dto1DSumOperation/singlevalue/data"));
+
+		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset(PROCESS_DATA_PATH).getShape());
+		assertArrayEquals(new int[]{op11.getModel().getxDim()}, dh.getLazyDataset(PROCESS_PATH + JUNK_AXIS1D).getShape());
+
+		IDataset slice = dh.getLazyDataset("/processed/summary/0-Junk1Dto1DSumOperation/singlevalue/data").getSlice();
+		assertEquals(0, slice.getInt(0));
+	}
+
 	@Test
 	public void Process3DStackAs2DTo2DSlowAxis() throws Exception {
 		

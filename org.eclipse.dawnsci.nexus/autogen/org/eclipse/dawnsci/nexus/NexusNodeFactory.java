@@ -16,74 +16,70 @@ import java.net.URI;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.SymbolicNode;
-import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
-import org.eclipse.dawnsci.analysis.tree.impl.TreeFileImpl;
-import org.eclipse.dawnsci.analysis.tree.impl.TreeImpl;
-import org.eclipse.dawnsci.nexus.NexusBaseClass;
-import org.eclipse.dawnsci.nexus.impl.NXreflectionsImpl;
-import org.eclipse.dawnsci.nexus.impl.NXmonochromatorImpl;
-import org.eclipse.dawnsci.nexus.impl.NXinsertion_deviceImpl;
-import org.eclipse.dawnsci.nexus.impl.NXguideImpl;
-import org.eclipse.dawnsci.nexus.impl.NXcollimatorImpl;
-import org.eclipse.dawnsci.nexus.impl.NXbending_magnetImpl;
-import org.eclipse.dawnsci.nexus.impl.NXsensorImpl;
-import org.eclipse.dawnsci.nexus.impl.NXmonitorImpl;
-import org.eclipse.dawnsci.nexus.impl.NXlogImpl;
-import org.eclipse.dawnsci.nexus.impl.NXxraylensImpl;
-import org.eclipse.dawnsci.nexus.impl.NXsampleImpl;
-import org.eclipse.dawnsci.nexus.impl.NXfilterImpl;
-import org.eclipse.dawnsci.nexus.impl.NXciteImpl;
-import org.eclipse.dawnsci.nexus.impl.NXcylindrical_geometryImpl;
-import org.eclipse.dawnsci.nexus.impl.NXvelocity_selectorImpl;
-import org.eclipse.dawnsci.nexus.impl.NXdetector_moduleImpl;
-import org.eclipse.dawnsci.nexus.impl.NXslitImpl;
-import org.eclipse.dawnsci.nexus.impl.NXpolarizerImpl;
-import org.eclipse.dawnsci.nexus.impl.NXdetectorImpl;
-import org.eclipse.dawnsci.nexus.impl.NXmirrorImpl;
-import org.eclipse.dawnsci.nexus.impl.NXsubentryImpl;
-import org.eclipse.dawnsci.nexus.impl.NXdetector_groupImpl;
-import org.eclipse.dawnsci.nexus.impl.NXpinholeImpl;
 import org.eclipse.dawnsci.nexus.impl.NXapertureImpl;
-import org.eclipse.dawnsci.nexus.impl.NXparametersImpl;
-import org.eclipse.dawnsci.nexus.impl.NXsourceImpl;
-import org.eclipse.dawnsci.nexus.impl.NXinstrumentImpl;
-import org.eclipse.dawnsci.nexus.impl.NXpositionerImpl;
-import org.eclipse.dawnsci.nexus.impl.NXdisk_chopperImpl;
-import org.eclipse.dawnsci.nexus.impl.NXtransformationsImpl;
-import org.eclipse.dawnsci.nexus.impl.NXuserImpl;
-import org.eclipse.dawnsci.nexus.impl.NXentryImpl;
-import org.eclipse.dawnsci.nexus.impl.NXdataImpl;
-import org.eclipse.dawnsci.nexus.impl.NXrootImpl;
-import org.eclipse.dawnsci.nexus.impl.NXgratingImpl;
 import org.eclipse.dawnsci.nexus.impl.NXattenuatorImpl;
-import org.eclipse.dawnsci.nexus.impl.NXshapeImpl;
-import org.eclipse.dawnsci.nexus.impl.NXprocessImpl;
-import org.eclipse.dawnsci.nexus.impl.NXgeometryImpl;
-import org.eclipse.dawnsci.nexus.impl.NXevent_dataImpl;
-import org.eclipse.dawnsci.nexus.impl.NXenvironmentImpl;
-import org.eclipse.dawnsci.nexus.impl.NXorientationImpl;
-import org.eclipse.dawnsci.nexus.impl.NXflipperImpl;
-import org.eclipse.dawnsci.nexus.impl.NXbeam_stopImpl;
-import org.eclipse.dawnsci.nexus.impl.NXnoteImpl;
-import org.eclipse.dawnsci.nexus.impl.NXcapillaryImpl;
-import org.eclipse.dawnsci.nexus.impl.NXfermi_chopperImpl;
-import org.eclipse.dawnsci.nexus.impl.NXmoderatorImpl;
-import org.eclipse.dawnsci.nexus.impl.NXsample_componentImpl;
-import org.eclipse.dawnsci.nexus.impl.NXcollectionImpl;
-import org.eclipse.dawnsci.nexus.impl.NXoff_geometryImpl;
-import org.eclipse.dawnsci.nexus.impl.NXtranslationImpl;
 import org.eclipse.dawnsci.nexus.impl.NXbeamImpl;
-import org.eclipse.dawnsci.nexus.impl.NXcrystalImpl;
-import org.eclipse.dawnsci.nexus.impl.NXfresnel_zone_plateImpl;
-import org.eclipse.dawnsci.nexus.impl.NXspin_rotatorImpl;
-import org.eclipse.dawnsci.nexus.impl.NXquadrupole_magnetImpl;
-import org.eclipse.dawnsci.nexus.impl.NXsolenoid_magnetImpl;
-import org.eclipse.dawnsci.nexus.impl.NXseparatorImpl;
-import org.eclipse.dawnsci.nexus.impl.NXmagnetic_kickerImpl;
+import org.eclipse.dawnsci.nexus.impl.NXbeam_stopImpl;
+import org.eclipse.dawnsci.nexus.impl.NXbending_magnetImpl;
+import org.eclipse.dawnsci.nexus.impl.NXcapillaryImpl;
+import org.eclipse.dawnsci.nexus.impl.NXciteImpl;
+import org.eclipse.dawnsci.nexus.impl.NXcollectionImpl;
+import org.eclipse.dawnsci.nexus.impl.NXcollimatorImpl;
 import org.eclipse.dawnsci.nexus.impl.NXcontainerImpl;
+import org.eclipse.dawnsci.nexus.impl.NXcrystalImpl;
+import org.eclipse.dawnsci.nexus.impl.NXcylindrical_geometryImpl;
+import org.eclipse.dawnsci.nexus.impl.NXdataImpl;
+import org.eclipse.dawnsci.nexus.impl.NXdetectorImpl;
+import org.eclipse.dawnsci.nexus.impl.NXdetector_groupImpl;
+import org.eclipse.dawnsci.nexus.impl.NXdetector_moduleImpl;
+import org.eclipse.dawnsci.nexus.impl.NXdisk_chopperImpl;
 import org.eclipse.dawnsci.nexus.impl.NXelectrostatic_kickerImpl;
+import org.eclipse.dawnsci.nexus.impl.NXentryImpl;
+import org.eclipse.dawnsci.nexus.impl.NXenvironmentImpl;
+import org.eclipse.dawnsci.nexus.impl.NXevent_dataImpl;
+import org.eclipse.dawnsci.nexus.impl.NXfermi_chopperImpl;
+import org.eclipse.dawnsci.nexus.impl.NXfilterImpl;
+import org.eclipse.dawnsci.nexus.impl.NXflipperImpl;
+import org.eclipse.dawnsci.nexus.impl.NXfresnel_zone_plateImpl;
+import org.eclipse.dawnsci.nexus.impl.NXgeometryImpl;
+import org.eclipse.dawnsci.nexus.impl.NXgratingImpl;
+import org.eclipse.dawnsci.nexus.impl.NXguideImpl;
+import org.eclipse.dawnsci.nexus.impl.NXinsertion_deviceImpl;
+import org.eclipse.dawnsci.nexus.impl.NXinstrumentImpl;
+import org.eclipse.dawnsci.nexus.impl.NXlogImpl;
+import org.eclipse.dawnsci.nexus.impl.NXmagnetic_kickerImpl;
+import org.eclipse.dawnsci.nexus.impl.NXmirrorImpl;
+import org.eclipse.dawnsci.nexus.impl.NXmoderatorImpl;
+import org.eclipse.dawnsci.nexus.impl.NXmonitorImpl;
+import org.eclipse.dawnsci.nexus.impl.NXmonochromatorImpl;
+import org.eclipse.dawnsci.nexus.impl.NXnoteImpl;
+import org.eclipse.dawnsci.nexus.impl.NXoff_geometryImpl;
+import org.eclipse.dawnsci.nexus.impl.NXorientationImpl;
+import org.eclipse.dawnsci.nexus.impl.NXparametersImpl;
+import org.eclipse.dawnsci.nexus.impl.NXpinholeImpl;
+import org.eclipse.dawnsci.nexus.impl.NXpolarizerImpl;
+import org.eclipse.dawnsci.nexus.impl.NXpositionerImpl;
+import org.eclipse.dawnsci.nexus.impl.NXprocessImpl;
+import org.eclipse.dawnsci.nexus.impl.NXquadrupole_magnetImpl;
+import org.eclipse.dawnsci.nexus.impl.NXreflectionsImpl;
+import org.eclipse.dawnsci.nexus.impl.NXrootImpl;
+import org.eclipse.dawnsci.nexus.impl.NXsampleImpl;
+import org.eclipse.dawnsci.nexus.impl.NXsample_componentImpl;
+import org.eclipse.dawnsci.nexus.impl.NXsensorImpl;
+import org.eclipse.dawnsci.nexus.impl.NXseparatorImpl;
+import org.eclipse.dawnsci.nexus.impl.NXshapeImpl;
+import org.eclipse.dawnsci.nexus.impl.NXslitImpl;
+import org.eclipse.dawnsci.nexus.impl.NXsolenoid_magnetImpl;
+import org.eclipse.dawnsci.nexus.impl.NXsourceImpl;
+import org.eclipse.dawnsci.nexus.impl.NXspin_rotatorImpl;
+import org.eclipse.dawnsci.nexus.impl.NXsubentryImpl;
+import org.eclipse.dawnsci.nexus.impl.NXtransformationsImpl;
+import org.eclipse.dawnsci.nexus.impl.NXtranslationImpl;
+import org.eclipse.dawnsci.nexus.impl.NXuserImpl;
+import org.eclipse.dawnsci.nexus.impl.NXvelocity_selectorImpl;
+import org.eclipse.dawnsci.nexus.impl.NXxraylensImpl;
 
 /**
  * Factory class for creating instances of NeXus base classes.
@@ -382,34 +378,16 @@ public class NexusNodeFactory {
 		}
 		return oid;
 	}
-	
-	/**
-	 * Create a new {@link Tree} with given URI.
-	 * @param uri
-	 * @return new tree
-	 */
-	public static Tree createTree(final URI uri) {
-		return new TreeImpl(getNextOid(), uri);
-	}
-	
-	/**
-	 * Create a new {@link TreeFile} given URI.
-	 * @param uri uri
-	 * @return new tree file
-	 */
-	public static TreeFile createTreeFile(final URI uri) {
-		return new TreeFileImpl(getNextOid(), uri);
-	}
-	
+
 	/**
 	 * Create a new tree file with given file name
 	 * @param fileName filename
 	 * @return new tree file
 	 */
-	public static TreeFileImpl createTreeFile(final String fileName) {
-		return new TreeFileImpl(getNextOid(), fileName);
+	public static TreeFile createTreeFile(final String fileName) {
+		return TreeFactory.createTreeFile(getNextOid(), fileName);
 	}
-	
+
 	/**
 	 * Create a new data node.
 	 * @return new data node

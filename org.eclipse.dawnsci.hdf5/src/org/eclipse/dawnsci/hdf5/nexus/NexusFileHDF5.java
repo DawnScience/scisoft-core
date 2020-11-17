@@ -30,7 +30,6 @@ import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
-import org.eclipse.dawnsci.analysis.tree.impl.TreeFileImpl;
 import org.eclipse.dawnsci.hdf5.HDF5AttributeResource;
 import org.eclipse.dawnsci.hdf5.HDF5DatasetResource;
 import org.eclipse.dawnsci.hdf5.HDF5DataspaceResource;
@@ -209,7 +208,7 @@ public class NexusFileHDF5 implements NexusFile {
 	private void initializeTree() {
 		if (tree == null) {
 			tree = TreeFactory.createTreeFile(fileName.hashCode(), fileName);
-			((TreeFileImpl) tree).setGroupNode(NexusNodeFactory.createNXroot(0l));
+			tree.setGroupNode(NexusNodeFactory.createNXroot(0l));
 			nodeMap = new HashMap<Long, Node>();
 			passedNodeMap = new IdentityHashMap<Node, String>();
 		} else {
@@ -263,7 +262,7 @@ public class NexusFileHDF5 implements NexusFile {
 
 	@Override
 	public void openToWrite(boolean createIfNecessary) throws NexusException {
-		if (new java.io.File(fileName).exists()) {
+		if (new File(fileName).exists()) {
 			try {
 				file = HDF5FileFactory.acquireFile(fileName, true, useSWMR);
 				fileId = file.getID();

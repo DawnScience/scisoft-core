@@ -16,8 +16,7 @@ import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
-import org.eclipse.dawnsci.analysis.tree.impl.AttributeImpl;
-import org.eclipse.dawnsci.analysis.tree.impl.GroupNodeImpl;
+import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.NXtransformations;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
@@ -73,7 +72,7 @@ public class AbstractNexusValidatorTest {
 	
 	@Test
 	public void testValidateGroupNotNull_nonNullGroup() throws Exception {
-		final GroupNode group = new GroupNodeImpl(1);
+		final GroupNode group = TreeFactory.createGroupNode(1);
 		validator.validateGroupNotNull("groupName", NXsample.class, group);
 	}
 	
@@ -95,7 +94,7 @@ public class AbstractNexusValidatorTest {
 	
 	@Test
 	public void testValidateAttributeNotNull_notNull() throws Exception {
-		Attribute attribute = new AttributeImpl("attributeName");
+		Attribute attribute = TreeFactory.createAttribute("attributeName");
 		attribute.setValue("hello");
 		validator.validateAttributeNotNull("attributeName", attribute);
 	}
@@ -240,9 +239,9 @@ public class AbstractNexusValidatorTest {
 		transformations.put("two", NexusNodeFactory.createNXtransformations());
 		transformations.put("three", NexusNodeFactory.createNXtransformations());
 		
-		transformations.get("one").addAttribute(new AttributeImpl("depends_on", "two"));
-		transformations.get("two").addAttribute(new AttributeImpl("depends_on", "three"));
-		transformations.get("three").addAttribute(new AttributeImpl("depends_on", "."));
+		transformations.get("one").addAttribute(TreeFactory.createAttribute("depends_on", "two"));
+		transformations.get("two").addAttribute(TreeFactory.createAttribute("depends_on", "three"));
+		transformations.get("three").addAttribute(TreeFactory.createAttribute("depends_on", "."));
 		
 		validator.validateTransformations(transformations, "one");
 	}
@@ -255,9 +254,9 @@ public class AbstractNexusValidatorTest {
 		transformations.put("two", NexusNodeFactory.createNXtransformations());
 		transformations.put("three", NexusNodeFactory.createNXtransformations());
 		
-		transformations.get("one").addAttribute(new AttributeImpl("depends_on", "two"));
-		transformations.get("two").addAttribute(new AttributeImpl("depends_on", "three"));
-		transformations.get("three").addAttribute(new AttributeImpl("depends_on", "."));
+		transformations.get("one").addAttribute(TreeFactory.createAttribute("depends_on", "two"));
+		transformations.get("two").addAttribute(TreeFactory.createAttribute("depends_on", "three"));
+		transformations.get("three").addAttribute(TreeFactory.createAttribute("depends_on", "."));
 		
 		validator.validateTransformations(transformations, "four");
 	}
@@ -270,9 +269,9 @@ public class AbstractNexusValidatorTest {
 		transformations.put("two", NexusNodeFactory.createNXtransformations());
 		transformations.put("three", NexusNodeFactory.createNXtransformations());
 		
-		transformations.get("one").addAttribute(new AttributeImpl("depends_on", "two"));
-		transformations.get("two").addAttribute(new AttributeImpl("depends_on", "three"));
-		transformations.get("three").addAttribute(new AttributeImpl("depends_on", "four"));
+		transformations.get("one").addAttribute(TreeFactory.createAttribute("depends_on", "two"));
+		transformations.get("two").addAttribute(TreeFactory.createAttribute("depends_on", "three"));
+		transformations.get("three").addAttribute(TreeFactory.createAttribute("depends_on", "four"));
 		
 		validator.validateTransformations(transformations, "one");
 	}
@@ -285,9 +284,9 @@ public class AbstractNexusValidatorTest {
 		transformations.put("two", NexusNodeFactory.createNXtransformations());
 		transformations.put("three", NexusNodeFactory.createNXtransformations());
 		
-		transformations.get("one").addAttribute(new AttributeImpl("depends_on", "two"));
-		transformations.get("two").addAttribute(new AttributeImpl("depends_on", "three"));
-		transformations.get("three").addAttribute(new AttributeImpl("depends_on", "one"));
+		transformations.get("one").addAttribute(TreeFactory.createAttribute("depends_on", "two"));
+		transformations.get("two").addAttribute(TreeFactory.createAttribute("depends_on", "three"));
+		transformations.get("three").addAttribute(TreeFactory.createAttribute("depends_on", "one"));
 		
 		validator.validateTransformations(transformations, "one");
 	}

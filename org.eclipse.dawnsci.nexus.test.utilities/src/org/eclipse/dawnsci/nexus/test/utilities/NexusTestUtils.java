@@ -24,7 +24,7 @@ import java.io.File;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
-import org.eclipse.dawnsci.analysis.tree.impl.TreeFileImpl;
+import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFileFactoryHDF5;
 import org.eclipse.dawnsci.nexus.INexusFileFactory;
 import org.eclipse.dawnsci.nexus.NXobject;
@@ -88,7 +88,7 @@ public class NexusTestUtils {
 	 * @throws NexusException
 	 */
 	public static void saveNexusFile(String filePath, NXroot rootNode) throws NexusException {
-		final TreeFileImpl treeFile = new TreeFileImpl(filePath.hashCode(), filePath);
+		final TreeFile treeFile = TreeFactory.createTreeFile(filePath.hashCode(), filePath);
 		treeFile.setGroupNode(rootNode);
 		saveNexusFile(treeFile);
 	}

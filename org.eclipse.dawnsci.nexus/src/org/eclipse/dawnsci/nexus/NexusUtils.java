@@ -892,4 +892,24 @@ public class NexusUtils {
 		}
 		return null;
 	}
+
+	/**
+	 * Create NeXus class attribute
+	 * @param nxClass
+	 * @return attribute
+	 */
+	public static Attribute createNXclassAttribute(String nxClass) {
+		return TreeFactory.createAttribute(NexusConstants.NXCLASS, nxClass);
+	}
+
+	/**
+	 * Create NeXus class
+	 * @param nxClass
+	 * @return class
+	 */
+	public static GroupNode createNXclass(String nxClass) {
+		GroupNode gn = TreeFactory.createGroupNode(1);
+		gn.addAttribute(createNXclassAttribute(nxClass));
+		return gn;
+	}
 }

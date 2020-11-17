@@ -18,7 +18,6 @@ import static org.junit.Assert.assertEquals;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
-import org.eclipse.dawnsci.analysis.tree.impl.TreeFileImpl;
 import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
@@ -58,7 +57,7 @@ public class ScalarLazyWriteableDatasetTest {
 	}
 	
 	protected TreeFile createNexusTree() {
-		final TreeFileImpl treeFile = NexusNodeFactory.createTreeFile(testScratchDirectoryName + FILE_NAME);
+		final TreeFile treeFile = NexusNodeFactory.createTreeFile(testScratchDirectoryName + FILE_NAME);
 
 		NXroot root = NexusNodeFactory.createNXroot();
 		// add scalar attribute

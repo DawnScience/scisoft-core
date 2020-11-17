@@ -29,7 +29,6 @@ import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
-import org.eclipse.dawnsci.analysis.tree.impl.DataNodeImpl;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
 import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
@@ -108,7 +107,7 @@ public class Export1DNXcanSASOperation extends AbstractOperation<Export1DNXcanSA
 		nxData.addAttribute(TreeFactory.createAttribute("Q_indices", Long.valueOf(0)));
 		
 		// Then we add the data
-		DataNode sasDataNode = new DataNodeImpl(1);
+		DataNode sasDataNode = TreeFactory.createDataNode(1);
 		sasDataNode.setDataset(dataForOutput);
 		sasDataNode.addAttribute(TreeFactory.createAttribute(NexusConstants.UNITS, "arbitrary"));
 		//nxData.addDataNode("I", NexusTreeUtils.createDataNode("I", dataForOutput, "1/cm"));
@@ -173,13 +172,13 @@ public class Export1DNXcanSASOperation extends AbstractOperation<Export1DNXcanSA
 		nxEntry.addAttribute(TreeFactory.createAttribute("default", "sasdata"));
 		nxEntry.addAttribute(TreeFactory.createAttribute("version", "1.0"));
 		// These next three require fields with values not attributes
-		DataNode definitionDataNote = new DataNodeImpl(1);
+		DataNode definitionDataNote = TreeFactory.createDataNode(1);
 		definitionDataNote.setDataset(DatasetFactory.createFromObject("NXcanSAS"));
 		nxEntry.addDataNode("definition", definitionDataNote);
-		DataNode runDataNote = new DataNodeImpl(1);
+		DataNode runDataNote = TreeFactory.createDataNode(1);
 		runDataNote.setDataset(DatasetFactory.createFromObject(fileName));
 		nxEntry.addDataNode("run", runDataNote);
-		DataNode titleDataNote = new DataNodeImpl(1);
+		DataNode titleDataNote = TreeFactory.createDataNode(1);
 		titleDataNote.setDataset(DatasetFactory.createFromObject(fileName));
 		nxEntry.addDataNode("title", titleDataNote);
 		

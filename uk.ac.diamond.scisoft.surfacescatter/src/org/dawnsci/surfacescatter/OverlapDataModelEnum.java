@@ -1,11 +1,11 @@
 package org.dawnsci.surfacescatter;
 
 import java.util.ArrayList;
+
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
-import org.eclipse.dawnsci.analysis.tree.impl.DataNodeImpl;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -292,7 +292,7 @@ public enum OverlapDataModelEnum {
 
 	private static void addDataNodeFromDataset(String name, GroupNode g, IDataset in, int l) {
 
-		DataNode newDN = new DataNodeImpl(l);
+		DataNode newDN = TreeFactory.createDataNode(l);
 
 		try {
 			newDN.setDataset(in.getSlice(new SliceND(in.getShape())));

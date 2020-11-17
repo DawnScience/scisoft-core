@@ -17,8 +17,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
-import org.eclipse.dawnsci.analysis.tree.impl.DataNodeImpl;
-import org.eclipse.dawnsci.analysis.tree.impl.SymbolicNodeImpl;
+import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFileFactoryHDF5;
 import org.eclipse.dawnsci.nexus.NXbeam;
 import org.eclipse.dawnsci.nexus.NXcollection;
@@ -206,7 +205,7 @@ class PalladateNexusWriter {
 		GroupNode container = NexusNodeFactory.createNXcontainer();
 		// inside node name
 		// inside file name
-		DataNode inside = new DataNodeImpl(NexusNodeFactory.getNextOid());
+		DataNode inside = TreeFactory.createDataNode(NexusNodeFactory.getNextOid());
 		inside.setDataset(DatasetFactory.createFromObject(new String[]{containerFilePath}, new int[]{1}));
 		container.addDataNode("inside_of_file_name", inside);
 		// container wavelength and distance
@@ -598,7 +597,7 @@ class PalladateNexusWriter {
 		
 		// Add all the symbolic link nodes
 		for (Map.Entry<String, String> entry : namePathMap.entrySet()) {
-			container.addSymbolicNode(entry.getKey(), new SymbolicNodeImpl(NexusNodeFactory.getNextOid(), builder.getNexusTree(), nxample, entry.getValue()));
+			container.addSymbolicNode(entry.getKey(), TreeFactory.createSymbolicNode(NexusNodeFactory.getNextOid(), builder.getNexusTree(), nxample, entry.getValue()));
 		}
 		
 		// Add the geometry nodes

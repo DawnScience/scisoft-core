@@ -9,11 +9,14 @@
 
 package org.eclipse.dawnsci.analysis.dataset.operations;
 
+import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
@@ -35,9 +38,34 @@ public abstract class AbstractOperationBase<T extends IOperationModel, D extends
 
 	private String            name;
 	private String            description;
-	
+	private Map<String, Serializable> configured = null;
+
 	private boolean storeOutput = false;
 	private boolean passUnmodifiedData = false;
+
+	/**
+	 * Add field that was configured by operation
+	 * @param fieldName
+	 * @param value
+	 */
+	protected void addConfiguredField(String fieldName, Serializable value) {
+		if (configured == null) {
+			configured = new LinkedHashMap<String, Serializable>();
+		}
+
+		configured.put(fieldName, value);
+	}
+
+	/**
+	 * Set configured fields in operations data
+	 * @param od
+	 */
+	protected void setConfiguredFields(OperationData od) {
+		if (configured != null && !configured.isEmpty()) {
+			od.setConfiguredFields(configured);
+		}
+	}
+
 
 	@Override
 	public String getName() {

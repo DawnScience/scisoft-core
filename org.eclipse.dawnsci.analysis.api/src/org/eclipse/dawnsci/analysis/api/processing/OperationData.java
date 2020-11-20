@@ -13,6 +13,7 @@
 package org.eclipse.dawnsci.analysis.api.processing;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import org.eclipse.january.dataset.IDataset;
 
@@ -25,6 +26,7 @@ public class OperationData {
 	private Serializable[] auxData;
 	private OperationLog log;
 	private Serializable[] summaryData;
+	private Map<String, Serializable> configuredFields;
 
 	public IDataset getData() {
 		return data;
@@ -80,5 +82,18 @@ public class OperationData {
 		this.summaryData = summaryData;
 	}
 
+	/**
+	 * @return map of fields and their values configured by operation
+	 */
+	public Map<String, Serializable> getConfiguredFields() {
+		return configuredFields;
+	}
 
+	/**
+	 * Set configured fields
+	 * @param configured
+	 */
+	public void setConfiguredFields(Map<String, Serializable> configured) {
+		this.configuredFields = configured;
+	}
 }

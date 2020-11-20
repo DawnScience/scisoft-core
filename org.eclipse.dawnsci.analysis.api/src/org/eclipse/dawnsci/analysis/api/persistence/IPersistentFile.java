@@ -413,4 +413,17 @@ public interface IPersistentFile extends AutoCloseable {
 	 * @throws Exception
 	 */
 	public OriginMetadata getOperationDataOrigin() throws Exception;
+
+	/**
+	 * @return true if any operations have configured fields in their models
+	 * @throws Exception
+	 */
+	public boolean hasConfiguredFields() throws Exception;
+
+	/**
+	 * Apply configured fields in file to given operations
+	 * @param ops
+	 * @throws Exception
+	 */
+	public void applyConfiguredFields(IOperation<? extends IOperationModel, ? extends OperationData>[] ops) throws Exception;
 }

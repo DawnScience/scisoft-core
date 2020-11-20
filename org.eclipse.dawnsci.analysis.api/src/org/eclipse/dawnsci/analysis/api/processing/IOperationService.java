@@ -74,16 +74,17 @@ public interface IOperationService {
 	 * Finds all operations by doing a search
 	 * using the regex passed in. All operations whose descriptions/IDs
 	 * match the regex are returned. For instance:
-	 * 
+	 * <pre>
 	 * find("correction");  // Might give operations "Dark correction", "Flat correction"
 	 * find("integration"); // Might give operations "Azimuthal integration", "Radial integration", "Box integration", "Line integration"
-	 * 
-	 * NOTE the regex will be matched as follows on the id of the operation:
-	 * 1. if matching on the ID
-	 * 2. if matching the description in lower case.
-	 * 3. if indexOf the regex in the ID is >0
-	 * 4. if indexOf the regex in the description is >0
-	 * 
+	 * </pre>
+	 * NOTE the regex will be matched as follows on the ID of the operation:
+	 * <ol>
+	 * <li>if matching on the ID</li>
+	 * <li>if matching the description in lower case</li>
+	 * <li>if indexOf the regex in the ID is >0</li>
+	 * <li>if indexOf the regex in the description is >0</li>
+	 * </ol>
 	 * @param operationRegex
 	 * @return list of operations which match
 	 */
@@ -106,20 +107,21 @@ public interface IOperationService {
 	 * Finds the first operation matching a search
 	 * using the regex passed in. All operations whose descriptions/IDs
 	 * match the regex are returned. For instance:
-	 * 
+	 * <pre>
 	 * find("correction");  // Might give operations "Dark correction", "Flat correction"
 	 * find("integration"); // Might give operations "Azimuthal integration", "Radial integration", "Box integration", "Line integration"
-	 * 
+	 * </pre>
 	 * NOTE the regex will be matched as follows on the ID of the operation:
-	 * 1. if matching on the ID
-	 * 2. if matching the description in lower case.
-	 * 3. if indexOf the regex in the ID is >0
-	 * 4. if indexOf the regex in the description is >0
-	 * 
+	 * <ol>
+	 * <li>if matching on the ID</li>
+	 * <li>if matching the description in lower case</li>
+	 * <li>if indexOf the regex in the ID is >0</li>
+	 * <li>if indexOf the regex in the description is >0</li>
+	 * </ol>
 	 * @param operationRegex
-	 * @return list of operations which match
+	 * @return operation which match
 	 */
-	public IOperation<? extends IOperationModel, ? extends OperationData>  findFirst(String operationRegex)  throws Exception;
+	public IOperation<? extends IOperationModel, ? extends OperationData> findFirst(String operationRegex)  throws Exception;
 	
 	/**
 	 * Gets the IDs of all the operations. The id is defined in the extension point.
@@ -174,11 +176,11 @@ public interface IOperationService {
 	 * in a package which implement IOperation. This is useful if your code for the operations is
 	 * not eclipse or you are writing a unit test.
 	 * 
-	 * @param l classloader where package can be found.
+	 * @param c class to use to find class loader or bundle
 	 * @param pakage separated by dots.
 	 */
-	public void createOperations(ClassLoader l, String pakage)  throws Exception;
-	
+	public void createOperations(Class<?> c, String pakage)  throws Exception;
+
 	/**
 	 * Return the category a the operation with the specified id belongs to
 	 * 

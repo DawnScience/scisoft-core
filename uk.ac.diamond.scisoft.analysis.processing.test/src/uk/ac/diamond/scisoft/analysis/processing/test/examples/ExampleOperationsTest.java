@@ -36,7 +36,6 @@ import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.LoaderServiceImpl;
-import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.OperationServiceImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
@@ -55,7 +54,7 @@ public class ExampleOperationsTest {
 		OperationRunnerImpl.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
 		
 		IOperationService service = new OperationServiceImpl();
-		service.createOperations(service.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.test.examples");
+		service.createOperations(service.getClass(), "uk.ac.diamond.scisoft.analysis.processing.test.examples");
 
 		new LocalServiceManager().setLoaderService(new LoaderServiceImpl());
 		new LocalServiceManager().setOperationService(service);

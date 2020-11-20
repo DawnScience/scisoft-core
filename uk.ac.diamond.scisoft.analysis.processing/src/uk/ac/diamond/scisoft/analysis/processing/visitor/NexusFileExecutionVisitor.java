@@ -84,6 +84,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 	public static final String AUX_GROUP = "auxiliary";
 	public static final String SUM_GROUP = "summary";
 	public static final String ENTRY = "processed";
+	public static final String PROCESS = "process";
 	private static final String LIVE = "live";
 	private static final String FINISHED = "finished";
 	public static final String DATA_NAME = "data";
@@ -150,7 +151,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			// don't fail process because of error persisting models
 			IPersistentNodeFactory pf = service.getPersistentNodeFactory();
 			GroupNode gn = pf.writeOperationsToGroup(series);
-			String process = Tree.ROOT + ENTRY + Node.SEPARATOR + "process";
+			String process = Tree.ROOT + ENTRY + Node.SEPARATOR + PROCESS;
 			nexusFile.addNode(process, gn);
 			GroupNode or = pf.writeOriginalDataInformation(origin);
 			nexusFile.addNode(process + Node.SEPARATOR + "origin", or);
@@ -161,12 +162,12 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		boolean groupCreated = false;
 		for (int i = 0; i < series.length; i++) {
 			if (series[i].isStoreOutput()) {
-				if (!groupCreated){
+				if (!groupCreated) {
 					createInterGroup();
 					groupCreated = true;
 				}
 
-				requireNXclass(intermediate+ Node.SEPARATOR + i + "-" + series[i].getName(), NexusConstants.DATA);
+				requireNXclass(intermediate + Node.SEPARATOR + i + "-" + series[i].getName(), NexusConstants.DATA);
 			}
 		}
 		
@@ -340,11 +341,13 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 
 		Serializable[] auxData = data.getAuxData();
 		Serializable[] summaryData = data.getSummaryData();
-		if (!intermediateData.isStoreOutput() && isEmpty(auxData) && isEmpty(summaryData)) return;
+		Map<String, Serializable> configured = data.getConfiguredFields();
+		if (!intermediateData.isStoreOutput() && isEmpty(auxData) && isEmpty(summaryData) && configured == null) return;
 
 		boolean first = firstNotifyMap.get(intermediateData).getAndSet(false);
 
 		String position = String.valueOf(positionMap.get(intermediateData));
+		String opGroupName = position + "-" + intermediateData.getName();
 
 		SliceFromSeriesMetadata metadata = null;
 		try {
@@ -363,10 +366,10 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			Slice[] slices = metadata.getSliceInOutput();
 	
 			//if specified to save data, do it
+			GroupNode group = null;
 			if (intermediateData.isStoreOutput()) {
 				try {
-					String intermediatePosData = intermediate + Node.SEPARATOR + position + "-" + intermediateData.getName();
-					GroupNode group;
+					String intermediatePosData = intermediate + Node.SEPARATOR + opGroupName;
 					synchronized (nexusFile) {
 						group = nexusFile.getGroup(intermediatePosData, true);
 					}
@@ -396,21 +399,20 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 						
 						try {
 							Dataset ds = DatasetUtils.convertToDataset((IDataset) auxData[i]);
-							String dsName = ds.getName();
-							GroupNode group;
-							String currentGroup = Tree.ROOT + ENTRY + Node.SEPARATOR + AUX_GROUP;
+							String currentPath = Tree.ROOT + ENTRY + Node.SEPARATOR + AUX_GROUP;
+							String dsRelPath = opGroupName + Node.SEPARATOR + ds.getName();
 							synchronized (nexusFile) {
-								GroupNode auxG = requireNXclass(currentGroup, NexusConstants.COLLECTION);
-								group = requireNXclass(auxG, position + "-" + intermediateData.getName() + Node.SEPARATOR + dsName, NexusConstants.DATA);
-								currentGroup += Node.SEPARATOR + position + "-" + intermediateData.getName();
+								GroupNode auxG = requireNXclass(currentPath, NexusConstants.COLLECTION);
+								GroupNode subGroup = requireNXclass(auxG, dsRelPath, NexusConstants.DATA);
 								ds.setName(DATA_NAME);
-								appendData(ds, group, slices, shape, nexusFile, dataDims);
+								appendData(ds, subGroup, slices, shape, nexusFile, dataDims);
 								if (first) {
-									nexusFile.addAttribute(group, TreeFactory.createAttribute(NexusConstants.DATA_SIGNAL, ds.getName()));
+									nexusFile.addAttribute(subGroup, TreeFactory.createAttribute(NexusConstants.DATA_SIGNAL, ds.getName()));
 								}
 							}
-							
-							updateAxes(ds, slices, shape, dataDims, currentGroup + Node.SEPARATOR + dsName, first);
+
+							currentPath += Node.SEPARATOR + dsRelPath;
+							updateAxes(ds, slices, shape, dataDims, currentPath, first);
 						} catch (Exception e) {
 							logger.error("Could not append auxiliary data", e);
 						}
@@ -419,17 +421,28 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			}
 		}
 
-		//save summary data (should be IDataset, with unit dimensions)
+		if (first && configured != null) {
+			String notePath = Tree.ROOT + ENTRY + Node.SEPARATOR + PROCESS + Node.SEPARATOR + position;
+			try {
+				synchronized (nexusFile) {
+					GroupNode nGroup = nexusFile.getGroup(notePath, false);
+					writeConfiguredFields(nGroup, configured);
+				}
+			} catch (NexusException e) {
+				logger.error("Could not write auto-configured fields", e);
+			}
+		}
+
+		// save summary data (should be IDataset)
 		if (!isEmpty(summaryData)) {
 			for (int i = 0; i < summaryData.length; i++) {
 				if (summaryData[i] instanceof IDataset) {
 					
 					try {
 						Dataset ds = DatasetUtils.convertToDataset((IDataset) summaryData[i]).getView(false);
-						String dsName = ds.getName();
-						GroupNode group = null;
 						String currentPath = Tree.ROOT + ENTRY + Node.SEPARATOR + SUM_GROUP;
 						synchronized (nexusFile) {
+							GroupNode group = null;
 							try {
 								group = nexusFile.getGroup(currentPath, false);
 							} catch (NexusException ne) {
@@ -440,8 +453,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 								group = requireNXclass(currentPath, NexusConstants.COLLECTION);
 							}
 
-							String gName = position + "-" + intermediateData.getName();
-							currentPath += Node.SEPARATOR + gName + Node.SEPARATOR + dsName;
+							currentPath += Node.SEPARATOR + opGroupName + Node.SEPARATOR + ds.getName();
 							group = requireNXclass(currentPath, NexusConstants.DATA);
 							ds.setName(DATA_NAME);
 							writeData(ds, group, nexusFile);
@@ -454,6 +466,17 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 					}
 				}
 			}
+		}
+	}
+
+	private void writeConfiguredFields(GroupNode note, Map<String, Serializable> configuredFields) {
+		try {
+			IPersistentNodeFactory pf = service.getPersistentNodeFactory();
+			GroupNode ac = pf.writeOperationFieldsToGroup(configuredFields);
+			String n = ac.getNames().iterator().next();
+			nexusFile.addNode(note, n, ac.getGroupNode(n));
+		} catch (Exception e){
+			logger.error("Could not persist auto-configured fields!", e);
 		}
 	}
 
@@ -922,7 +945,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 	}
 
 	/**
-	 * Get a new slice array which reflects the position of the processed data in the full output dataset
+	 * Get a new slice array which reflects the position of the processed data in the full o)utput dataset
 	 * @param oShape
 	 * @param dsShape
 	 * @param oSlice

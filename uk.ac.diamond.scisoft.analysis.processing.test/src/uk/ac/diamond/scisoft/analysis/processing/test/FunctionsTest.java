@@ -59,7 +59,7 @@ public class FunctionsTest {
 		service = new OperationServiceImpl();
 		
 		// Just read all these operations.
-		service.createOperations(service.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.operations");
+		service.createOperations(service.getClass(), "uk.ac.diamond.scisoft.analysis.processing.operations");
 		
 		OperationRunnerImpl.setRunner(ExecutionType.SERIES,   new SeriesRunner());
 		OperationRunnerImpl.setRunner(ExecutionType.PARALLEL, new SeriesRunner());

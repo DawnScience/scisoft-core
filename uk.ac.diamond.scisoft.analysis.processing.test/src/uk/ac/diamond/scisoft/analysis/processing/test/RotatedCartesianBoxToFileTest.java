@@ -49,7 +49,7 @@ public class RotatedCartesianBoxToFileTest {
 		OperationRunnerImpl.setRunner(ExecutionType.SERIES, new SeriesRunner());
 
 		// Just read all these operations.
-		service.createOperations(service.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.operations");
+		service.createOperations(service.getClass(), "uk.ac.diamond.scisoft.analysis.processing.operations");
 	}
 	
 	@Test

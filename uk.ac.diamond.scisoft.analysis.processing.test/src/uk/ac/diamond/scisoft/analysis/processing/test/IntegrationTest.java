@@ -31,7 +31,6 @@ import org.eclipse.january.metadata.MaskMetadata;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.OperationServiceImpl;
 import uk.ac.diamond.scisoft.analysis.processing.operations.SectorIntegrationModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.mask.ThresholdMaskModel;
@@ -54,7 +53,8 @@ public class IntegrationTest {
 		service = new OperationServiceImpl();
 		
 		// Just read all these operations.
-		service.createOperations(service.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.operations");
+		service.createOperations(service.getClass(), "uk.ac.diamond.scisoft.analysis.processing.operations");
+		service.createOperations(service.getClass(), "uk.ac.diamond.scisoft.analysis.processing.test");
 		OperationRunnerImpl.setRunner(ExecutionType.SERIES,   new SeriesRunner());
 		OperationRunnerImpl.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
 	}

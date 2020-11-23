@@ -44,7 +44,6 @@ import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoNode;
 import uk.ac.diamond.scisoft.ptychography.rcp.model.PtychoTreeUtils;
 import uk.ac.diamond.scisoft.ptychography.rcp.preference.PtychoPreferenceConstants;
 import uk.ac.diamond.scisoft.ptychography.rcp.ui.FolderSelectionWidget;
-import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoConstants;
 import uk.ac.diamond.scisoft.ptychography.rcp.utils.PtychoUtils;
 
 public abstract class AbstractPtychoEditor {
@@ -257,10 +256,9 @@ public abstract class AbstractPtychoEditor {
 	@Focus
 	public void setFocus() {}
 
+	public static final String[] FILE_TYPES = new String[] { "CSV File", "JSON File"};
 	private static final String[] EXTENSIONS = new String[] { "csv", "json", "xml" };
-	private static final String[] FILTER_EXTENSIONS = new String[] {
-			"*.csv;*.CSV", "*.json;*.JSON",
-			"*.xml;*.XML" };
+	private static final String[] FILTER_EXTENSIONS = new String[] {"*.csv;*.CSV", "*.json;*.JSON"};
 
 	protected String saveAs(String fileSavedPath) {
 		FileDialog dialog = new FileDialog(Display.getDefault()
@@ -276,7 +274,7 @@ public abstract class AbstractPtychoEditor {
 			}
 			dialog.setFilterPath(filterPath);
 		}
-		dialog.setFilterNames(PtychoConstants.FILE_TYPES);
+		dialog.setFilterNames(FILE_TYPES);
 		dialog.setFilterExtensions(FILTER_EXTENSIONS);
 		String path = dialog.open();
 		if (path == null) {
@@ -296,7 +294,7 @@ public abstract class AbstractPtychoEditor {
 				}
 			}
 			int index = dialog.getFilterIndex();
-			if (index < 0) {
+			if (index < 0) { // workaround GTK3 bug (< 3.24.21)
 				String name = file.getName();
 				int i = name.lastIndexOf('.') + 1;
 				if (i > 0 && i < name.length()) {
@@ -306,19 +304,21 @@ public abstract class AbstractPtychoEditor {
 					index = -1;
 				}
 				if (index < 0) {
-					logger.error("Extension of {} not recognised; saving as {}", name,  PtychoConstants.FILE_TYPES[0]);
+					logger.error("Extension of {} not recognised; saving as {}", name, FILE_TYPES[0]);
 					index = 0;
 				}
 			}
-			String fileType = PtychoConstants.FILE_TYPES[index];
-			if (fileType.equals("CSV File")) {
+			switch (index) {
+			case 0:
 				List<PtychoData> list = PtychoTreeUtils.extract(tree);
 				PtychoUtils.saveCSVFile(path, list);
-			} else if (fileType.equals("JSon File")) {
+				break;
+			case 1:
 				String json = PtychoTreeUtils.jsonMarshal(tree);
 				PtychoUtils.saveJSon(path, json);
-			} else {
-				throw new Exception("XML serialisation is not yet implemented.");
+				break;
+			default:
+				throw new Exception("Not yet implemented.");
 			}
 		} catch (Exception e) {
 			logger.error("Error saving file", e);

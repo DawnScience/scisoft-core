@@ -517,7 +517,7 @@ public class SectorROI extends RingROI implements Serializable {
 			return false;
 
 		double p = pol[1];
-		if (p >= ang[0] && p <= ang[1])
+		if (closelyEqOrGt(p, ang[0]) && closelyEqOrLt(p, ang[1]))
 			return true;
 		if (ang[1] > TWO_PI && p + TWO_PI < ang[1]) // angle domain straddles branch cut
 			return true;
@@ -679,7 +679,7 @@ public class SectorROI extends RingROI implements Serializable {
 			return false;
 
 		SectorROI other = (SectorROI) obj;
-		if (!Arrays.equals(ang, other.ang))
+		if (!closelyEq(ang, other.ang))
 			return false;
 		if (combineSymmetry != other.combineSymmetry)
 			return false;

@@ -20,6 +20,11 @@ public class StackTraceElementHelper extends
 	public static final String FILENAME = "fileName";
 	public static final String LINENUMBER = "lineNumber";
 
+	// Java 9+ fields
+	public static final String CLASSLOADERNAME = "classLoaderName";
+	public static final String MODULENAME = "moduleName";
+	public static final String MODULEVERSION = "moduleVersion";
+
 	public StackTraceElementHelper() {
 		super(StackTraceElement.class);
 	}
@@ -31,7 +36,11 @@ public class StackTraceElementHelper extends
 		String methodName = (String) rootFlattener.unflatten(thisMap.get(METHODNAME));
 		String fileName = (String) rootFlattener.unflatten(thisMap.get(FILENAME));
 		int lineNumber = (Integer) rootFlattener.unflatten(thisMap.get(LINENUMBER));
-		return new StackTraceElement(declaringClass, methodName, fileName,
+
+		String classLoaderName = (String) rootFlattener.unflatten(thisMap.get(CLASSLOADERNAME));
+		String moduleName = (String) rootFlattener.unflatten(thisMap.get(MODULENAME));
+		String moduleVersion = (String) rootFlattener.unflatten(thisMap.get(MODULEVERSION));
+		return new StackTraceElement(classLoaderName, moduleName, moduleVersion, declaringClass, methodName, fileName,
 				lineNumber);
 	}
 
@@ -43,7 +52,9 @@ public class StackTraceElementHelper extends
 		outMap.put(METHODNAME, rootFlattener.flatten(ste.getMethodName()));
 		outMap.put(FILENAME, rootFlattener.flatten(ste.getFileName()));
 		outMap.put(LINENUMBER, rootFlattener.flatten(ste.getLineNumber()));
+		outMap.put(CLASSLOADERNAME, rootFlattener.flatten(ste.getClassLoaderName()));
+		outMap.put(MODULENAME, rootFlattener.flatten(ste.getModuleName()));
+		outMap.put(MODULEVERSION, rootFlattener.flatten(ste.getModuleVersion()));
 		return outMap;
 	}
-
 }

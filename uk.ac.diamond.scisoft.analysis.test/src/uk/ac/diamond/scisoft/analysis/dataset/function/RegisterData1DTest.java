@@ -42,7 +42,7 @@ public class RegisterData1DTest {
 
 	@Test
 	public void testRegisterSynthetic() {
-		testRegisterSynthetic(0.18, 0);
+		testRegisterSynthetic(0.19, 0);
 		testRegisterSynthetic(179, 0.05); // 10% noise
 		testRegisterSynthetic(169, 0.1); // 20% noise
 	}

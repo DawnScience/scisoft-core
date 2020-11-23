@@ -452,7 +452,10 @@ class stackTraceElementHelper(object):
     METHODNAME = "methodName"
     FILENAME = "fileName"
     LINENUMBER = "lineNumber"
-    
+    CLASSLOADERNAME = "classLoaderName"
+    MODULENAME = "moduleName"
+    MODULEVERSION = "moduleVersion"
+
     def canunflatten(self, obj):
         return isinstance(obj, dict) and obj.get(TYPE) == self.TYPE_NAME
     
@@ -464,25 +467,41 @@ class stackTraceElementHelper(object):
 
     def flatten(self, obj):
         # This method can take a tuple as returned by extract_tb and
-        # convert it to a flattened form
-        (filename, line_number, function_name, unused_text, clazz) = obj
-        
+        # convert it to a flattened form. Note extra item was inserted for traceback formatter
         rval = dict()
         rval[TYPE] = self.TYPE_NAME
 
-        rval[self.DECLARINGCLASS] = flatten(clazz)
-        rval[self.METHODNAME] = flatten(function_name)
-        rval[self.FILENAME] = flatten(filename)
-        rval[self.LINENUMBER] = flatten(line_number)
-        
-        return rval
+        length = len(obj)
+        if length == 5 or length == 8:
+            filename, line_number, function_name, unused_text, clazz = obj[:5]
+            rval[self.DECLARINGCLASS] = flatten(clazz)
+            rval[self.METHODNAME] = flatten(function_name)
+            rval[self.FILENAME] = flatten(filename)
+            rval[self.LINENUMBER] = flatten(line_number)
+
+            if length == 8:
+                classloader_name, module_name, module_version = obj[5:]
+                rval[self.CLASSLOADERNAME] = flatten(classloader_name)
+                rval[self.MODULENAME] = flatten(module_name)
+                rval[self.MODULEVERSION] = flatten(module_version)
+
+            return rval
+
+        raise ValueError("Number of items to flatten incorrect: {}".format(length))
     
     def unflatten(self, obj):
         clazz = unflatten(obj[self.DECLARINGCLASS])
         function_name = unflatten(obj[self.METHODNAME])
         filename = unflatten(obj[self.FILENAME])
         line_number = unflatten(obj[self.LINENUMBER])
-        return (filename, line_number, function_name, clazz)
+
+        if self.CLASSLOADERNAME in obj:
+            classloader_name = unflatten(obj[self.CLASSLOADERNAME])
+            module_name = unflatten(obj[self.MODULENAME])
+            module_version= unflatten(obj[self.MODULEVERSION])
+            return filename, line_number, function_name, clazz, classloader_name, module_name, module_version
+
+        return filename, line_number, function_name, clazz
 
 
 class exceptionHelper(flatteningHelper):
@@ -524,6 +543,7 @@ class exceptionHelper(flatteningHelper):
                 texts = flatten([f[3] for f in tb])
                  
                 return stes, texts
+
             if tb is not None and id(value) == id(thisException):
                 extract_tb = traceback.extract_tb(tb)
                 extract_tb = list(zip(extract_tb, ("",) * len(extract_tb)))
@@ -560,7 +580,9 @@ class exceptionHelper(flatteningHelper):
             if texts is None or len(texts) != len(stackTrace):
                 # texts are mismatched, discard them
                 texts = [""] * len(stackTrace)
-            stackTrace = [s[0][:3] + (s[1],s[0][3]) for s in zip(stackTrace, texts)]
+
+            # insert Python trace messages for formatter
+            stackTrace = [s[:3] + (t,) + s[3:] for s,t in zip(stackTrace, texts)]
 
             # Set the stack order to oldest on top
             # (Java and Python have opposite order for storing 
@@ -571,8 +593,7 @@ class exceptionHelper(flatteningHelper):
             analheader = "\n\nTraceback (from AnalysisRPC Remote Side, most recent call last):\n"
             if analheader not in excmsg:
                 excmsg += analheader
-                # the map removes the sometime present 5th element of "class"
-                out = traceback.format_list([x[0:4] for x in stackTrace])
+                out = traceback.format_list([x[:4] for x in stackTrace]) # clip for formatter
                 excmsg += "".join(out)
             e = Exception(excmsg)
             e.flatten_traceback = stackTrace

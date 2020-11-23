@@ -87,7 +87,7 @@ public class PythonHelper {
 	}
 	
 	private static PythonRunInfo runPythonFileBackground(String file, String[] args) throws Exception {
-		return runPythonFileBackground(file, args, PYTHON_ENV);
+		return runPythonFileBackground(file, args, null);
 	}
 	
 	public static PythonRunInfo runPythonFileBackground(String file, String[] args, String[] envp) throws Exception {
@@ -100,18 +100,24 @@ public class PythonHelper {
 		for (String s : args) {
 			allArgs[i++] = s;
 		}
-		if (PYTHON_ENV != null) {
-			String[] allEnvs = new String[PYTHON_ENV.length + envp.length];
-			i = 0;
-			for (String s : PYTHON_ENV) {
-				allEnvs[i++] = s;
+		String[] allEnvs;
+		if (PYTHON_ENV == null) {
+			allEnvs = envp;
+		} else {
+			if (envp == null || envp.length == 0) {
+				allEnvs = PYTHON_ENV;
+			} else {
+				allEnvs = new String[PYTHON_ENV.length + envp.length];
+				i = 0;
+				for (String s : PYTHON_ENV) {
+					allEnvs[i++] = s;
+				}
+				for (String s : envp) {
+					allEnvs[i++] = s;
+				}
 			}
-			for (String s : envp) {
-				allEnvs[i++] = s;
-			}
-			return launch(allArgs, allEnvs);
 		}
-		return launch(allArgs, envp);
+		return launch(allArgs, allEnvs);
 	}
 
 	public static class PythonRunInfo {

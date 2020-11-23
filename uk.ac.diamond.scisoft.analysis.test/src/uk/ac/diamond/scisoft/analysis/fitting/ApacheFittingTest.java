@@ -48,7 +48,7 @@ public class ApacheFittingTest extends AbstractFittingTestBase {
 		deltaFactor = new HashMap<String, int[]>();
 		deltaFactor.put(GAUSSIAN, new int[] {1, 1});
 		deltaFactor.put(LORENTZIAN, new int[] {4, 6});
-		deltaFactor.put(PEARSON_VII, new int[] {1, 2});
+		deltaFactor.put(PEARSON_VII, new int[] {2, 7});
 		deltaFactor.put(PSEUDO_VOIGT, new int[] {1, 7});
 	}
 

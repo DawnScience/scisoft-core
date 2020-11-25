@@ -57,7 +57,7 @@ public class NexusNodeCopyAppender<N extends NXobject> extends AbstractNexusCont
 	
 	@Override
 	public void append(GroupNode parent, NexusContext context) throws NexusException {
-		Objects.requireNonNull(externalFilePath, "externalFilePath not set for appender: " + getName());
+		if (externalFilePath == null) return;
 		Objects.requireNonNull(nodePaths, "nodePaths not set for appender: " + getName());
 
 		try (NexusFile nexusFile = ServiceHolder.getNexusFileFactory().newNexusFile(externalFilePath)) {

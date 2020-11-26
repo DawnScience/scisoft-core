@@ -83,7 +83,7 @@ public abstract class SourceCodeView extends ViewPart {
 		
 		// Providing that they run this from a debug session:
 		try {
-			File   dir = BundleUtils.getBundleLocation("org.eclipse.dawnsci.plotting.examples");
+			File   dir = BundleUtils.getBundleLocation(Activator.PLUGIN_ID);
 			String loc = "/src/"+getClass().getName().replace('.', '/')+".java";
 			File   src = new File(dir, loc);
 			text.setText(readFile(src).toString());

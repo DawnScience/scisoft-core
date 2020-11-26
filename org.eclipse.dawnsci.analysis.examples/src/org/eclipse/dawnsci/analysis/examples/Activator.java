@@ -13,8 +13,6 @@ package org.eclipse.dawnsci.analysis.examples;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
@@ -82,37 +80,5 @@ public class Activator implements BundleActivator {
  		}
 		return null;
 	}
-
-	/**
-	 * Get the bundle path using eclipse.home.location not loading the bundle.
-	 * @param bundleName
-	 * @return
-	 */
-	public static File getBundlePathNoLoading(String bundleName) {
-		return new File(new File(getEclipseHome(), "plugins"), bundleName);
-	}
-	
-	/**
-	 * Gets eclipse home in debug and in deployed application mode.
-	 * @return
-	 */
-	public static String getEclipseHome() {
-		File hDirectory;
-		try {
-			URI u = new URI(System.getProperty("eclipse.home.location"));
-			hDirectory = new File(u);
-		} catch (URISyntaxException e) {
-			return null;
-		}
-
-		String path = hDirectory.getName();
-		if (path.equals("plugins") || path.equals("bundles")) {
-			path = hDirectory.getParentFile().getParentFile().getAbsolutePath();
-		} else{
-			path = hDirectory.getAbsolutePath();
-		}
-        return path;
-	}
-
 }
 

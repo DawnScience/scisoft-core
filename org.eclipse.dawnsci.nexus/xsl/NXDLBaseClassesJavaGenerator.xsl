@@ -719,6 +719,7 @@ package org.eclipse.dawnsci.nexus;
 import java.net.URI;
 
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
+import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.SymbolicNode;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
@@ -827,6 +828,16 @@ public class NexusNodeFactory {
 	 */
 	public static DataNode createDataNode() {
 		return TreeFactory.createDataNode(getNextOid());
+	}
+	
+	/**
+	 * Create a group node that does not have a nexus class, or whose nexus class is not yet known.
+	 * Note: the {@link NXobjectImpl#NX_CLASS} attribute must be set before the nexus file is
+	 * save to disk for the file to be a valid nexus file.
+	 * @return new group node
+	 */
+	public static GroupNode createGroupNode() {
+		return TreeFactory.createGroupNode(getNextOid());
 	}
 	
 	/**

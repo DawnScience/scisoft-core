@@ -31,8 +31,8 @@
 
 <xsl:output name="text-format" method="text" omit-xml-declaration="yes" indent="no"/>
 
-<xsl:variable name="base-classes" select="collection(concat($nxdlDefinitionsPath, '/base_classes?select=*.nxdl.xml'))/nx:definition"/>
-<xsl:variable name="application-definitions" select="collection(concat($nxdlDefinitionsPath, '/applications?select=*.nxdl.xml'))/nx:definition"/>
+<xsl:variable name="base-classes" select="collection($nxdlDefinitionsPath || '/base_classes?select=*.nxdl.xml')/nx:definition"/>
+<xsl:variable name="application-definitions" select="collection($nxdlDefinitionsPath || '/applications?select=*.nxdl.xml')/nx:definition"/>
 
 <xsl:variable name="fileHeaderComment">/*-
  *******************************************************************************
@@ -63,7 +63,7 @@
 	<!-- The 'NXroot' base class -->
 	<xsl:variable name="baseClass" select="$base-classes[@name = 'NXroot']"/>
 	<!-- The name of this generated validator class. -->
-	<xsl:variable name="validatorClassName" select="concat(@name, 'Validator')"/>
+	<xsl:variable name="validatorClassName" select="@name || 'Validator'"/>
 	<!-- The prefix of the validate group method. -->
 	<xsl:variable name="validateGroupMethodNamePrefix" select="'validateGroup'"/>
 
@@ -137,7 +137,7 @@ package org.eclipse.dawnsci.nexus.validation;&#10;</xsl:text>
 	<!-- Line comment: validate (optional?) (unnamed?) group (<name>?) of type <type> ((possibly multiple)?) -->
 	<xsl:value-of select="dawnsci:tabs(2)"/>
 	<xsl:text>// validate </xsl:text><xsl:if test="$optional">optional </xsl:if>
-	<xsl:value-of select="if (@name) then concat('child group ''', @name, '''') else 'unnamed child group'"/>
+	<xsl:value-of select="if (@name) then 'child group ''' || @name || '''' else 'unnamed child group'"/>
 	<xsl:text> of type </xsl:text><xsl:value-of select="@type"/>
 	<xsl:if test="$multiple"> (possibly multiple)</xsl:if>
 	<xsl:text>&#10;</xsl:text>
@@ -250,7 +250,7 @@ package org.eclipse.dawnsci.nexus.validation;&#10;</xsl:text>
 	<!-- Javadoc comment for method. -->
 	<xsl:text>
 	/**
-	 * Validate </xsl:text><xsl:if test="@minOccurs='0'">optional </xsl:if><xsl:value-of select="if (@name) then concat('group ''', @name, '''') else 'unnamed group'"/> of type <xsl:value-of select="@type"/><xsl:text>.
+	 * Validate </xsl:text><xsl:if test="@minOccurs='0'">optional </xsl:if><xsl:value-of select="if (@name) then 'group ''' || @name || '''' else 'unnamed group'"/> of type <xsl:value-of select="@type"/><xsl:text>.
 	 */
 	private void </xsl:text>
 	
@@ -267,7 +267,7 @@ package org.eclipse.dawnsci.nexus.validation;&#10;</xsl:text>
 	<!-- Invocation of method validateGroupNotNull in abstract superclass -->
 	<xsl:value-of select="dawnsci:tabs(2)"/>
 	<xsl:text>validateGroupNotNull(</xsl:text>
-	<xsl:value-of select="if (@name) then concat('&quot;', @name, '&quot;') else 'null'"/>
+	<xsl:value-of select="if (@name) then '&quot;' || @name || '&quot;' else 'null'"/>
 	<xsl:text>, </xsl:text><xsl:value-of select="@type"/><xsl:text>.class, group);&#10;</xsl:text>
 	
 	<!-- If the group has dimensions defined in the baseclass, clear the local group placeholder value cache. -->
@@ -313,7 +313,7 @@ package org.eclipse.dawnsci.nexus.validation;&#10;</xsl:text>
 	<xsl:variable name="baseClassAttributeDef" select="$baseClass/nx:attribute[@name=current()/@name]"></xsl:variable>
 	<!-- The variable name of the attribute -->
 	<xsl:variable name="attrVarName"
-		select="if ($fieldDef) then concat($fieldDef/@name, '_attr_', @name) else concat(@name, '_attr')"/>
+		select="if ($fieldDef) then $fieldDef/@name || '_attr_' || @name else @name || '_attr'"/>
 	
 	<!-- Line comment: validate attribute 'attributeName' (of field 'fieldName'>)-->
 	<xsl:value-of select="dawnsci:tabs(2)"/>
@@ -368,10 +368,10 @@ package org.eclipse.dawnsci.nexus.validation;&#10;</xsl:text>
 	<xsl:variable name="getFieldDatasetMethod">
 		<xsl:choose>
 			<xsl:when test="$baseClassFieldDef">
-				<xsl:value-of select="concat('get', dawnsci:capitalise-first(@name), '()')"/>
+				<xsl:value-of select="'get' || dawnsci:capitalise-first(@name) || '()'"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:value-of select="concat('getDataset(&quot;', @name, '&quot;)')"/>
+				<xsl:value-of select="'getDataset(&quot;' || @name || '&quot;)'"/>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
@@ -381,7 +381,7 @@ package org.eclipse.dawnsci.nexus.validation;&#10;</xsl:text>
 	<xsl:text>// validate </xsl:text><xsl:if test="$optional">optional </xsl:if>
 	<xsl:text>field '</xsl:text><xsl:value-of select="@name"/>
 	<xsl:text>' of </xsl:text>
-	<xsl:value-of select="if (@type) then concat('type ', @type) else 'unknown type'"/><xsl:text>.</xsl:text>
+	<xsl:value-of select="if (@type) then 'type ' || @type else 'unknown type'"/><xsl:text>.</xsl:text>
 	<xsl:if test="not($baseClassFieldDef)"> Note: field not defined in base class.</xsl:if>
 	<xsl:text>&#10;</xsl:text>
 	
@@ -537,10 +537,10 @@ package org.eclipse.dawnsci.nexus.validation;&#10;</xsl:text>
 	<xsl:if test="$dims">
 		<xsl:value-of select="dawnsci:tabs($tabLevel)"/>
 		<xsl:text>validateFieldDimensions("</xsl:text><xsl:value-of select="@name"/>", <xsl:value-of select="@name"/><xsl:text>, </xsl:text>
-		<xsl:value-of select="if ($dimsFromAppDef) then 'null' else concat('&quot;', ../@type, '&quot;')"/>
+		<xsl:value-of select="if ($dimsFromAppDef) then 'null' else '&quot;' || ../@type || '&quot;'"/>
 		<xsl:for-each select="$dims"><xsl:text>, </xsl:text>
 		<!-- If the dim value is a number, output it as it is, otherwise enclose it in quotes. -->
-		<xsl:variable name="dimValue" select="if (number(@value) = number(@value)) then @value else concat('&quot;', @value, '&quot;')"/>
+		<xsl:variable name="dimValue" select="if (number(@value) = number(@value)) then @value else '&quot;' || @value || '&quot;'"/>
 		<xsl:value-of select="$dimValue"/></xsl:for-each><xsl:text>);&#10;</xsl:text>
 	</xsl:if>
 	
@@ -612,7 +612,7 @@ public enum NexusApplicationDefinition {
 <!-- A function that takes a string and returns the same string but with the first letter capitalised. -->
 <xsl:function name="dawnsci:capitalise-first" as="xs:string?">
 	<xsl:param name="arg" as="xs:string?"/>
-	<xsl:sequence select="concat(upper-case(substring($arg,1,1)), substring($arg,2))"/>
+	<xsl:sequence select="upper-case(substring($arg,1,1)) || substring($arg,2)"/>
 </xsl:function>
 
 <!-- A function to get the name of the validate method for a group -->
@@ -620,14 +620,14 @@ public enum NexusApplicationDefinition {
 	<xsl:param name="validateGroupMethodNamePrefix" as="xs:string"/>
 	<xsl:param name="group" as="node()"/>
 	<xsl:variable name="newSegment" select="if ($group/@name) then $group/@name else $group/@type"/>
-	<xsl:sequence select="concat($validateGroupMethodNamePrefix, '_', $newSegment)"/>
+	<xsl:sequence select="$validateGroupMethodNamePrefix || '_' || $newSegment"/>
 </xsl:function>
 
 <!-- A function to get the enum value for an application definition, i.e. convert it to
     the Java convention for constants, e.g. NXtomo -> NX_TOMO -->
 <xsl:function name="dawnsci:appdef-enum-name" as="xs:string">
 	<xsl:param name="arg" as="xs:string"/>
-	<xsl:sequence select="concat(substring($arg, 1, 2), '_', upper-case(substring($arg, 3)))"/>
+	<xsl:sequence select="substring($arg, 1, 2) || '_' || upper-case(substring($arg, 3))"/>
 </xsl:function>
 
 </xsl:stylesheet> 

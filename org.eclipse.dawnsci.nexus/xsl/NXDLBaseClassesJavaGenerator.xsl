@@ -31,9 +31,9 @@
 <xsl:param name="javaOutputPath" select="'../autogen'"/>
 
 <!-- Find the NeXus classes to generate Java for. -->
-<xsl:variable name="base-classes" select="collection(concat($nxdlDefinitionsPath, '/base_classes?select=*.nxdl.xml'))/nx:definition[@name!='NXobject']"/>
-<xsl:variable name="appdef-classes" select="collection(concat($nxdlDefinitionsPath, '/applications?select=*.nxdl.xml'))/nx:definition[not(nx:group[@type='NXentry'])]"/>
-<xsl:variable name="contributed-classes" select="collection(concat($nxdlDefinitionsPath, '/contributed_definitions?select=*.nxdl.xml'))/nx:definition[not(nx:group[@type='NXentry'])]"/>
+<xsl:variable name="base-classes" select="collection($nxdlDefinitionsPath || '/base_classes?select=*.nxdl.xml')/nx:definition[@name!='NXobject']"/>
+<xsl:variable name="appdef-classes" select="collection($nxdlDefinitionsPath || '/applications?select=*.nxdl.xml')/nx:definition[not(nx:group[@type='NXentry'])]"/>
+<xsl:variable name="contributed-classes" select="collection($nxdlDefinitionsPath || '/contributed_definitions?select=*.nxdl.xml')/nx:definition[not(nx:group[@type='NXentry'])]"/>
 <xsl:variable name="nexus-classes" select="$base-classes, $appdef-classes, $contributed-classes"/>
 
 <xsl:output name="text-format" method="text" omit-xml-declaration="yes" indent="no"/>
@@ -93,7 +93,7 @@ public interface <xsl:value-of select="$interfaceName"/>
 
 	<!-- Template variables -->
 	<xsl:variable name="fieldName"><xsl:apply-templates select="." mode="fieldName"/></xsl:variable>
-	<xsl:variable name="validJavaFieldName" select="if ($fieldName='default') then concat($fieldName, '_') else $fieldName"/>
+	<xsl:variable name="validJavaFieldName" select="if ($fieldName='default') then $fieldName || '_' else $fieldName"/>
 	<xsl:variable name="fieldType"><xsl:apply-templates select="." mode="fieldType"/></xsl:variable>
 	<xsl:variable name="extendedFieldType"><xsl:apply-templates select="." mode="extendedFieldType"/></xsl:variable>
 	<xsl:variable name="methodNameSuffix"><xsl:apply-templates select="." mode="methodNameSuffix">
@@ -286,7 +286,7 @@ public class <xsl:value-of select="$className"/><xsl:apply-templates mode="class
  	| nx:definition/nx:group[@name or not(@type = preceding-sibling::nx:group[not(@name)]/@type)]">
 
 	<xsl:variable name="fieldName"><xsl:apply-templates select="." mode="fieldName"/></xsl:variable>
-	<xsl:variable name="validJavaFieldName" select="if ($fieldName='default') then concat($fieldName, '_') else $fieldName"/>
+	<xsl:variable name="validJavaFieldName" select="if ($fieldName='default') then $fieldName || '_' else $fieldName"/>
 	
 	<xsl:variable name="fieldLabel"><xsl:apply-templates select="." mode="fieldLabel">
 		<xsl:with-param name="fieldName" select="$fieldName"/>
@@ -458,11 +458,11 @@ public class <xsl:value-of select="$className"/><xsl:apply-templates mode="class
 		
 <!-- Unprocessed -->
 
-<xsl:template mode="interface" match="*">	// Unprocessed <xsl:value-of select="concat(name(), ': ', @name)"/>
+<xsl:template mode="interface" match="*">	// Unprocessed <xsl:value-of select="name() || ': ' || @name"/>
 <xsl:text>
 </xsl:text>
 </xsl:template>
-<xsl:template mode="class" match="*">	// Unprocessed <xsl:value-of select="concat(name(), ': ', @name)"/>
+<xsl:template mode="class" match="*">	// Unprocessed <xsl:value-of select="name() || ': ', @name"/>
 <xsl:text>
 </xsl:text>
 </xsl:template>
@@ -517,7 +517,7 @@ public class <xsl:value-of select="$className"/><xsl:apply-templates mode="class
 <xsl:template match="nx:symbols">
  * &lt;p>&lt;b>Symbols:&lt;/b> <xsl:apply-templates select="nx:doc"/>&lt;ul><xsl:apply-templates select="nx:symbol"/>&lt;/ul>&lt;/p></xsl:template>
 <xsl:template match="nx:symbols/nx:symbol">
- * &lt;li><xsl:value-of select="concat('&lt;b>', @name, '&lt;/b> ')"/><xsl:apply-templates select="nx:doc"/>&lt;/li></xsl:template>
+ * &lt;li><xsl:value-of select="'&lt;b>' || @name || '&lt;/b> '"/><xsl:apply-templates select="nx:doc"/>&lt;/li></xsl:template>
 
 <xsl:template match="nx:field/@type">
 	 * &lt;b>Type:&lt;/b> <xsl:value-of select="."/></xsl:template>
@@ -527,12 +527,12 @@ public class <xsl:value-of select="$className"/><xsl:apply-templates mode="class
 
 <xsl:template match="nx:field/nx:dimensions">
 	 * &lt;b>Dimensions:&lt;/b><xsl:apply-templates select="nx:dim"/></xsl:template>
-<xsl:template match="nx:dimensions/nx:dim"><xsl:value-of select="concat(' ', @index, ': ', @value, ';')"/></xsl:template>
+<xsl:template match="nx:dimensions/nx:dim"><xsl:value-of select="' ' || @index || ': ' || @value || ';'"/></xsl:template>
 
 <xsl:template match="nx:enumeration">
 	 * &lt;p>&lt;b>Enumeration:&lt;/b>&lt;ul><xsl:apply-templates select="nx:item"/>&lt;/ul>&lt;/p></xsl:template>
 <xsl:template match="nx:enumeration/nx:item">
-	 * &lt;li><xsl:value-of select="concat('&lt;b>', @value, '&lt;/b> ')"/><xsl:apply-templates select="nx:doc"/>&lt;/li></xsl:template>
+	 * &lt;li><xsl:value-of select="'&lt;b>' || @value || '&lt;/b> '"/><xsl:apply-templates select="nx:doc"/>&lt;/li></xsl:template>
 
 <xsl:template match="@version">
  * @version <xsl:value-of select="."/></xsl:template>
@@ -891,7 +891,7 @@ public class NexusNodeFactory {
 <!-- capitalises the first letter of its string argument -->
 <xsl:function name="dawnsci:capitalise-first" as="xs:string?">
 	<xsl:param name="arg" as="xs:string?"/>
-	<xsl:sequence select="concat(upper-case(substring($arg,1,1)), substring($arg,2))"/>
+	<xsl:sequence select="upper-case(substring($arg,1,1)) || substring($arg,2)"/>
 </xsl:function>
 
 <!-- Returns the name for the Java interface for an NX base class name. -->
@@ -903,13 +903,13 @@ public class NexusNodeFactory {
 <!-- Returns the name for the Java class for an NX base class name. -->
 <xsl:function name="dawnsci:class-name" as="xs:string?">
 	<xsl:param name="arg" as="xs:string?"/>
-	<xsl:sequence select="concat($arg, 'Impl')"/>
+	<xsl:sequence select="$arg || 'Impl'"/>
 </xsl:function>
 
 <!-- Returns the name of the enum for an NX base class name -->
 <xsl:function name="dawnsci:base-class-enum-name" as="xs:string">
 	<xsl:param name="arg" as="xs:string"/>
-	<xsl:sequence select="concat(substring($arg, 1, 2), '_', upper-case(substring($arg, 3)))"/>
+	<xsl:sequence select="substring($arg, 1, 2) || '_' || upper-case(substring($arg, 3))"/>
 </xsl:function>
 
 </xsl:stylesheet>

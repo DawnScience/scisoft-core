@@ -5,7 +5,7 @@
  Note the apparent untidy nature of some of the white space in this stylesheet is required
  in order to generate plain text with tidy white space.
  
- Copyright (c) 2015 Diamond Light Source Ltd.
+ Copyright (c) 2020 Diamond Light Source Ltd.
  All rights reserved. This program and the accompanying materials
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@
 
 <xsl:variable name="fileHeaderComment">/*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,8 +70,8 @@
 	<!-- Set the output document for the Java output for this application definition. -->
 	<xsl:result-document href="{$javaOutputPath}/org/eclipse/dawnsci/nexus/validation/{$validatorClassName}.java" format="text-format">
 		<xsl:value-of select="$fileHeaderComment"/>		
-		<xsl:text>
-package org.eclipse.dawnsci.nexus.validation;&#10;</xsl:text>
+		<xsl:text>&#10;</xsl:text>
+		<xsl:text>package org.eclipse.dawnsci.nexus.validation;&#10;</xsl:text>
 
 		<!-- Apply the templates for imports. -->
 		<xsl:apply-templates mode="imports" select="."/>
@@ -97,15 +97,26 @@ package org.eclipse.dawnsci.nexus.validation;&#10;</xsl:text>
 		
 		<xsl:text>	}&#10;&#10;</xsl:text> <!-- Closing brace for validate() method -->
 
-		<xsl:variable name="entryGroupPath" select="if (nx:group[@type='NXentry']/@name) then nx:group[@type='NXentry']/@name else 'NXentry'"/>
+		<xsl:variable name="entryGroup" select="nx:group[@type='NXentry']"/>
+		
 		<xsl:text>	@Override&#10;</xsl:text>
 		<xsl:text>	public void validate(NXentry entry) throws NexusValidationException {&#10;</xsl:text>
-		<xsl:text>		validateGroup_</xsl:text><xsl:value-of select="$entryGroupPath"/><xsl:text>(entry);&#10;</xsl:text>
+		<xsl:value-of select="dawnsci:tabs(2) || dawnsci:validateGroupMethodName($validateGroupMethodNamePrefix, $entryGroup)"/>
+		<xsl:text>(entry);&#10;</xsl:text>
 		<xsl:text>	}&#10;&#10;</xsl:text>
 		<xsl:text>	@Override&#10;</xsl:text>
 		<xsl:text>	public void validate(NXsubentry subentry) throws NexusValidationException {&#10;</xsl:text>
-		<xsl:text>		validateGroup_</xsl:text><xsl:value-of select="$entryGroupPath"/><xsl:text>(subentry);&#10;</xsl:text>
+		<xsl:value-of select="dawnsci:tabs(2) || dawnsci:validateGroupMethodName($validateGroupMethodNamePrefix, $entryGroup)"/>
+		<xsl:text>(subentry);&#10;</xsl:text>
 		<xsl:text>	}&#10;&#10;</xsl:text>
+		
+		<xsl:if test="@name = 'NXcanSAS'">
+	private &lt;T extends NXobject&gt; Map&lt;String, T&gt; filterBycanSASClass(Map&lt;String, T&gt; groups, String canSASclass) {
+		return groups.entrySet().stream()
+			.filter(entry -> canSASclass.equals(entry.getValue().getAttrString(null, "canSAS_class")))
+			.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+	}
+		</xsl:if>
 		
 		<!-- For each group at the root level of the app def, generate a validate method -->
 		<xsl:apply-templates select="nx:group" mode="implementation">
@@ -134,12 +145,15 @@ package org.eclipse.dawnsci.nexus.validation;&#10;</xsl:text>
 	<!-- True if this group is optional (false if group is multiple) -->
 	<xsl:variable name="optional" select="not($multiple) and @minOccurs='0'"/>
 	
+	<xsl:variable name="canSASclass" select="dawnsci:canSASclass(current())"/>
+		
 	<!-- Line comment: validate (optional?) (unnamed?) group (<name>?) of type <type> ((possibly multiple)?) -->
 	<xsl:value-of select="dawnsci:tabs(2)"/>
 	<xsl:text>// validate </xsl:text><xsl:if test="$optional">optional </xsl:if>
 	<xsl:value-of select="if (@name) then 'child group ''' || @name || '''' else 'unnamed child group'"/>
 	<xsl:text> of type </xsl:text><xsl:value-of select="@type"/>
 	<xsl:if test="$multiple"> (possibly multiple)</xsl:if>
+	<xsl:if test="$canSASclass"> and canSAS_class <xsl:value-of select="$canSASclass"/></xsl:if>
 	<xsl:text>&#10;</xsl:text>
 
 	<!-- Variable for method call to get group (or just group name if multiple), used in invocation of validateGroupXXX method -->
@@ -167,28 +181,34 @@ package org.eclipse.dawnsci.nexus.validation;&#10;</xsl:text>
 	</xsl:variable>
 	
 	<xsl:if test="$multiple">
-		
+		<xsl:variable name="mapVariableName" select="dawnsci:capitalise-first(if ($canSASclass) then $canSASclass else $groupNameInBaseClass)"/>
 		<!-- Line to get the map of all groups of the given type, e.g. final Map<String, NXSample> allSample = group.getAllSample() -->
 		<xsl:value-of select="dawnsci:tabs(2)"/>
 		<xsl:text>final Map&lt;String, </xsl:text><xsl:value-of select="@type"/>
-		<xsl:text>&gt; all</xsl:text><xsl:value-of select="dawnsci:capitalise-first($groupNameInBaseClass)"/>
-		<xsl:text> = </xsl:text><xsl:value-of select="$parentGroupVariableName"/>
+		<xsl:text>&gt; all</xsl:text><xsl:value-of select="$mapVariableName"/>
+		<xsl:text> = </xsl:text>
+		<xsl:if test="$canSASclass">filterBycanSASClass(</xsl:if>
+		<xsl:value-of select="$parentGroupVariableName"/>
 		<xsl:choose>
 			<xsl:when test="not($baseClassGroupDef)">
 				<xsl:text>.getChildren(</xsl:text>
 				<xsl:value-of select="@type"/>
-				<xsl:text>.class);&#10;</xsl:text>
+				<xsl:text>.class)</xsl:text>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:text>.getAll</xsl:text><xsl:value-of select="dawnsci:capitalise-first($groupNameInBaseClass)"/>
-				<xsl:text>();&#10;</xsl:text>
+				<xsl:text>()</xsl:text>
 			</xsl:otherwise>
 		</xsl:choose>
+		<xsl:if test="$canSASclass">
+			<xsl:text>, "</xsl:text><xsl:value-of select="$canSASclass"/><xsl:text>")</xsl:text>
+		</xsl:if>
+		<xsl:text>;&#10;</xsl:text>
 
 		<!-- For loop over values -->
 		<xsl:value-of select="dawnsci:tabs(2)"/>
 		<xsl:text>for (final </xsl:text><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="$groupNameInBaseClass"/>
-		<xsl:text> : all</xsl:text><xsl:value-of select="dawnsci:capitalise-first($groupNameInBaseClass)"/>
+		<xsl:text> : all</xsl:text><xsl:value-of select="$mapVariableName"/>
 		<xsl:text>.values()) {&#10;</xsl:text>
 	</xsl:if>
 	
@@ -559,14 +579,20 @@ package org.eclipse.dawnsci.nexus.validation;&#10;</xsl:text>
 		<xsl:text>import java.util.Map;&#10;</xsl:text>
 		<xsl:text>&#10;</xsl:text>
 	</xsl:if>
+	<xsl:if test="@name = 'NXcanSAS'">
+		<xsl:text>import java.util.stream.Collectors;&#10;</xsl:text>
+	</xsl:if>
 
 	<xsl:text>import org.eclipse.january.dataset.IDataset;&#10;</xsl:text>
 	<xsl:if test="//nx:attribute">
 		<xsl:text>import org.eclipse.dawnsci.analysis.api.tree.Attribute;&#10;</xsl:text>
 	</xsl:if>
 	<xsl:text>&#10;</xsl:text>
-
+	
 	<!-- Import generated base classes as required for group type -->
+	<xsl:if test="@name = 'NXcanSAS'">
+		<xsl:text>import org.eclipse.dawnsci.nexus.NXobject;&#10;</xsl:text>
+	</xsl:if>
 	<xsl:text>import org.eclipse.dawnsci.nexus.NXroot;&#10;</xsl:text>
 	<xsl:text>import org.eclipse.dawnsci.nexus.NXsubentry;&#10;</xsl:text>
 	<xsl:apply-templates select="//nx:group[not(@type=preceding::nx:group/@type)]" mode="imports"/>
@@ -619,7 +645,9 @@ public enum NexusApplicationDefinition {
 <xsl:function name="dawnsci:validateGroupMethodName" as="xs:string">
 	<xsl:param name="validateGroupMethodNamePrefix" as="xs:string"/>
 	<xsl:param name="group" as="node()"/>
-	<xsl:variable name="newSegment" select="if ($group/@name) then $group/@name else $group/@type"/>
+	<xsl:variable name="canSASclass" select="dawnsci:canSASclass($group)"/>
+	<xsl:variable name="groupType" select="if ($canSASclass) then $canSASclass else $group/@type"/>
+	<xsl:variable name="newSegment" select="if ($group/@name) then $group/@name else $groupType"/>
 	<xsl:sequence select="$validateGroupMethodNamePrefix || '_' || $newSegment"/>
 </xsl:function>
 
@@ -628,6 +656,11 @@ public enum NexusApplicationDefinition {
 <xsl:function name="dawnsci:appdef-enum-name" as="xs:string">
 	<xsl:param name="arg" as="xs:string"/>
 	<xsl:sequence select="substring($arg, 1, 2) || '_' || upper-case(substring($arg, 3))"/>
+</xsl:function>
+
+<xsl:function name="dawnsci:canSASclass" as="xs:string">
+	<xsl:param name="group" as="node()"/>
+	<xsl:value-of select="$group/nx:attribute[@name='canSAS_class']/nx:enumeration/nx:item/@value"/>
 </xsl:function>
 
 </xsl:stylesheet> 

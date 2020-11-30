@@ -5,7 +5,7 @@
  Note the apparent untidy nature of some of the white space in this stylesheet is required
  in order to generate plain text with tidy white space.
  
- Copyright (c) 2015 Diamond Light Source Ltd.
+ Copyright (c) 2020 Diamond Light Source Ltd.
  All rights reserved. This program and the accompanying materials
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -480,7 +480,7 @@ public class <xsl:value-of select="$className"/><xsl:apply-templates mode="class
 
 <xsl:variable name="fileHeaderComment">/*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -607,16 +607,15 @@ import org.eclipse.january.dataset.DatasetFactory;</xsl:if>
 <!-- Simple case, the field has the same name as the attribute, field or group name in the NXDL -->
 <xsl:template mode="fieldName" match="nx:attribute|nx:field|nx:group[@name]">
 	<xsl:value-of select="@name"/>
+	<xsl:if test="@name = preceding-sibling::nx:field/@name"><xsl:value-of select="dawnsci:capitalise-first(substring(@type, 3))"/></xsl:if>
 </xsl:template>
 
 <!-- For unnamed groups we use the type, minux the 'NX' prefix -->
 <xsl:template mode="fieldName" match="nx:group">
 	<xsl:variable name="fieldName" select="substring(@type, 3)"/>
-	<xsl:choose>
-		<!-- Special case when a field exists with the same name. NXsample.sampleComponent is an example of this -->
-		<xsl:when test="../nx:field[@name = $fieldName]"><xsl:value-of select="$fieldName"/>Group</xsl:when>
-		<xsl:otherwise><xsl:value-of select="$fieldName"/></xsl:otherwise>
-	</xsl:choose>
+	<xsl:value-of select="$fieldName"/>
+	<!-- Special case when a field exists with the same name. NXsample.sampleComponent is an example of this -->
+	<xsl:if test="../nx:field[@name = $fieldName]">Group</xsl:if>
 </xsl:template>
 
 <!-- Field labels in Java -->

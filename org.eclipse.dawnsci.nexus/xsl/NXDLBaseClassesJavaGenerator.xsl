@@ -66,21 +66,29 @@
 	
 	<xsl:result-document href="{$javaOutputPath}/org/eclipse/dawnsci/nexus/{$interfaceName}.java" format="text-format">
 		<xsl:value-of select="$fileHeaderComment"/>
-package org.eclipse.dawnsci.nexus;
-<xsl:apply-templates mode="imports" select="."><xsl:with-param name="implementation" select="false()"/></xsl:apply-templates>
+		<xsl:text>&#10;</xsl:text> <!-- &#10; is the escape code for newline -->
+		<xsl:text>package org.eclipse.dawnsci.nexus;&#10;</xsl:text>
+		
+		<xsl:apply-templates mode="imports" select=".">
+			<xsl:with-param name="implementation" select="false()"/>
+		</xsl:apply-templates>
 
-/**<xsl:apply-templates select="nx:doc"/><xsl:apply-templates select="nx:symbols"/>
- * <xsl:apply-templates select="@version|@deprecated"/>
- */<xsl:apply-templates mode="typeAnnotations" select="."/>
-public interface <xsl:value-of select="$interfaceName"/>
-<xsl:choose>
-	<xsl:when test="@name='NXentry'"> extends NXsubentry</xsl:when>
-	<xsl:otherwise><xsl:apply-templates mode="interface" select="@extends"/></xsl:otherwise>
-</xsl:choose> {
-<xsl:apply-templates mode="classFields" select="*"/>
-<xsl:apply-templates mode="interface" select="*[not(self::nx:doc)][not(self::nx:symbols)]"/>
-}
-</xsl:result-document>
+		<xsl:text>&#10;&#10;</xsl:text>
+		<xsl:text>/**</xsl:text><xsl:apply-templates select="nx:doc"/><xsl:apply-templates select="nx:symbols"/>
+		<xsl:text>&#10; * </xsl:text><xsl:apply-templates select="@version|@deprecated"/>
+        <xsl:text>&#10; */</xsl:text><xsl:apply-templates mode="typeAnnotations" select="."/>
+		<xsl:text>&#10;public interface </xsl:text><xsl:value-of select="$interfaceName"/>
+
+		<xsl:choose>
+			<xsl:when test="@name='NXentry'"> extends NXsubentry</xsl:when>
+			<xsl:otherwise><xsl:apply-templates mode="interface" select="@extends"/></xsl:otherwise>
+		</xsl:choose>
+		<xsl:text> {&#10;</xsl:text>
+		
+		<xsl:apply-templates mode="classFields" select="*"/>
+		<xsl:apply-templates mode="interface" select="*[not(self::nx:doc)][not(self::nx:symbols)]"/>
+		<xsl:text>&#10;}&#10;</xsl:text>
+	</xsl:result-document>
 
 </xsl:template>
 
@@ -104,37 +112,43 @@ public interface <xsl:value-of select="$interfaceName"/>
 	<!-- Get method -->
 	<xsl:call-template name="methodJavadoc"/>
 	<xsl:apply-templates mode="methodAnnotations" select="."/>
-	public <xsl:value-of select="$fieldType"/> get<xsl:value-of select="$methodNameSuffix"/><xsl:text>();
-	</xsl:text>	
+	<xsl:text>&#10;&#09;public </xsl:text>
+	<xsl:value-of select="$fieldType"/> get<xsl:value-of select="$methodNameSuffix"/>
+	<xsl:text>();&#10;&#09;</xsl:text>	
 	
 	<!-- Set method -->
 	<xsl:call-template name="methodJavadoc">
 		<xsl:with-param name="setParamName" select="$validJavaFieldName"/>
 	</xsl:call-template>
 	<xsl:apply-templates mode="methodAnnotations" select="."/>
-	public <xsl:value-of select="$setMethodReturnType"/> set<xsl:value-of select="$methodNameSuffix"/>(<xsl:value-of select="$fieldType"/>
-	<xsl:text> </xsl:text><xsl:value-of select="$validJavaFieldName"/><xsl:text>);
-</xsl:text>
+	<xsl:text>&#10;&#09;public </xsl:text>
+	<xsl:value-of select="$setMethodReturnType"/> set<xsl:value-of select="$methodNameSuffix"/>
+	<xsl:text>(</xsl:text><xsl:value-of select="$fieldType"/>
+	<xsl:text> </xsl:text><xsl:value-of select="$validJavaFieldName"/>
+	<xsl:text>);&#10;</xsl:text>
 
 	<xsl:if test="self::nx:field[not(nx:scalar)]">
 		<!-- Get scalar method -->	
 		<xsl:variable name="scalarFieldType"><xsl:apply-templates select="." mode="scalarFieldType"/></xsl:variable>
 		<xsl:call-template name="methodJavadoc"/>
 		<xsl:apply-templates mode="methodAnnotations" select="."/>
-	public <xsl:value-of select="$scalarFieldType"/> get<xsl:value-of select="$methodNameSuffix"/><xsl:text>Scalar();
-</xsl:text>
+		<xsl:text>&#10;&#09;public </xsl:text><xsl:value-of select="$scalarFieldType"/>
+		<xsl:text> get</xsl:text><xsl:value-of select="$methodNameSuffix || 'Scalar'"/>
+		<xsl:text>();&#10;</xsl:text>
 
 		<!-- Set scalar method -->
 		<xsl:call-template name="methodJavadoc">
 			<xsl:with-param name="setParamName" select="$validJavaFieldName"/>
 		</xsl:call-template>
 		<xsl:apply-templates mode="methodAnnotations" select="."/>
-	public <xsl:value-of select="$setMethodReturnType"/> set<xsl:value-of select="$methodNameSuffix"/>Scalar(<xsl:value-of select="$scalarFieldType"/><xsl:text> </xsl:text><xsl:value-of select="$validJavaFieldName"/><xsl:text>);
-</xsl:text>
-		
-</xsl:if>
+		<xsl:text>&#10;&#09;public </xsl:text><xsl:value-of select="$setMethodReturnType"/>
+		<xsl:text> set</xsl:text><xsl:value-of select="$methodNameSuffix || 'Scalar'"/>
+		<xsl:text>(</xsl:text><xsl:value-of select="$scalarFieldType"/>
+		<xsl:text> </xsl:text><xsl:value-of select="$validJavaFieldName"/>
+		<xsl:text>);&#10;</xsl:text>		
+	</xsl:if>
 
-<xsl:if test="self::nx:field[@nameType = 'any']">  <!-- All fields with nameType="any" -->
+	<xsl:if test="self::nx:field[@nameType = 'any']">  <!-- All fields with nameType="any" -->
 	/**
 	 * Get all <xsl:value-of select="$methodNameSuffix"/> fields:
 	 *<xsl:apply-templates select="nx:doc"/><xsl:if test="self::nx:field/@type|@units|nx:dimensions|nx:enumeration">
@@ -143,9 +157,11 @@ public interface <xsl:value-of select="$interfaceName"/>
 	 * <xsl:apply-templates select="@deprecated"/>
 	 * @return  a map from node names to the <xsl:value-of select="$extendedFieldType"/> for that node.
 	 */<xsl:apply-templates mode="methodAnnotations" select="."/>
-	public Map&lt;String, <xsl:value-of select="$extendedFieldType"/>> getAll<xsl:value-of select="$methodNameSuffix"/>();
-</xsl:if>
-<xsl:if test="self::nx:group[not(@name)]">  <!-- All unnamed groups could be repeated (unless @maxOccurs=1 - rare) -->
+	public Map&lt;String, <xsl:value-of select="$extendedFieldType"/>> getAll<xsl:value-of select="$methodNameSuffix"/>
+	<xsl:text>();&#10;</xsl:text>
+	</xsl:if>
+	
+	<xsl:if test="self::nx:group[not(@name)]">  <!-- All unnamed groups could be repeated (unless @maxOccurs=1 - rare) -->
 	/**
 	 * Get a <xsl:value-of select="$fieldType"/> node by name:
 	 * &lt;ul><xsl:for-each select="../nx:group[@type = current()/@type]">
@@ -187,10 +203,12 @@ public interface <xsl:value-of select="$interfaceName"/>
 	 * @param <xsl:value-of select="$validJavaFieldName"/> the child nodes to add 
 	 */
 	<xsl:apply-templates mode="methodAnnotations" select="."/>
-	public void setAll<xsl:value-of select="$methodNameSuffix"/>(Map&lt;String, <xsl:value-of select="$fieldType"/>> <xsl:value-of select="$validJavaFieldName"/>);
+	public void setAll<xsl:value-of select="$methodNameSuffix"/>(Map&lt;String, <xsl:value-of select="$fieldType"/>> <xsl:value-of select="$validJavaFieldName"/>
+	<xsl:text>);&#10;&#09;&#10;</xsl:text>	
+	</xsl:if>
 	
-</xsl:if>
-<xsl:apply-templates mode="interface" select="*[not(self::nx:doc)][not(self::nx:dimensions)][not(self::nx:enumeration)]"/>
+	<xsl:apply-templates mode="interface" select="*[not(self::nx:doc)][not(self::nx:dimensions)][not(self::nx:enumeration)]"/>
+
 </xsl:template>
 
 
@@ -203,20 +221,22 @@ public interface <xsl:value-of select="$interfaceName"/>
 	
 	<xsl:result-document href="{$javaOutputPath}/org/eclipse/dawnsci/nexus/impl/{$className}.java" format="text-format">
 		<xsl:value-of select="$fileHeaderComment"/>
-package org.eclipse.dawnsci.nexus.impl;
-<xsl:apply-templates mode="imports" select=".">
-	<xsl:with-param name="implementation" select="true()"/>
-</xsl:apply-templates>
+		<xsl:text>&#10;package org.eclipse.dawnsci.nexus.impl;&#10;</xsl:text>
+		<xsl:apply-templates mode="imports" select=".">
+			<xsl:with-param name="implementation" select="true()"/>
+		</xsl:apply-templates>
+		<xsl:text>&#10;&#10;</xsl:text>
+		<xsl:text>import org.eclipse.dawnsci.nexus.*;&#10;&#10;</xsl:text>
 
-import org.eclipse.dawnsci.nexus.*;
+		<xsl:text>/**</xsl:text><xsl:apply-templates select="nx:doc"/>
+		<xsl:text>&#10; * </xsl:text><xsl:apply-templates select="@version|@deprecated"/>
+		<xsl:text>&#10; */</xsl:text><xsl:apply-templates mode="typeAnnotations" select="."/>
+		
+		<!-- start class declaration -->
+		<xsl:text>&#10;public class </xsl:text><xsl:value-of select="$className"/>
+		<xsl:apply-templates mode="class" select="@extends"/> implements <xsl:value-of select="$interfaceName"/> {
 
-/**<xsl:apply-templates select="nx:doc"/>
- * <xsl:apply-templates select="@version|@deprecated"/>
- */<xsl:apply-templates mode="typeAnnotations" select="."/>
-public class <xsl:value-of select="$className"/><xsl:apply-templates mode="class" select="@extends"/> implements <xsl:value-of select="$interfaceName"/> {
-
-	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
-<xsl:text>
+	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible&#10;<xsl:text>
 
 	public static final Set&lt;NexusBaseClass&gt; PERMITTED_CHILD_GROUP_CLASSES = </xsl:text>
 		<xsl:choose>
@@ -252,10 +272,11 @@ public class <xsl:value-of select="$className"/><xsl:apply-templates mode="class
 	public Set&lt;NexusBaseClass&gt; getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
-<xsl:apply-templates mode="class" select="*[not(self::nx:doc)][not(self::nx:symbols)]"/>
-}
-</xsl:result-document>
+	<xsl:text>&#10;</xsl:text>
+	<xsl:apply-templates mode="class" select="*[not(self::nx:doc)][not(self::nx:symbols)]"/>
+	<xsl:text>&#10;}&#10;</xsl:text>
+
+	</xsl:result-document>
 
 </xsl:template>
 
@@ -305,8 +326,9 @@ public class <xsl:value-of select="$className"/><xsl:apply-templates mode="class
 		<xsl:with-param name="fieldLabel" select="$fieldLabel"/>
 		<xsl:with-param name="fieldType" select="$fieldType"/>
 	</xsl:apply-templates>
-	}
-<xsl:if test="self::nx:field[not(nx:scalar)]">
+	<xsl:text>&#10;&#09;}&#10;</xsl:text> <!-- closing '}' on newline, followed by blank line -->
+	
+	<xsl:if test="self::nx:field[not(nx:scalar)]">
 	<xsl:variable name="scalarFieldType"><xsl:apply-templates select="." mode="scalarFieldType"/></xsl:variable>
 	@Override<xsl:apply-templates mode="methodAnnotations" select="."/>
 	public <xsl:value-of select="$scalarFieldType"/> get<xsl:value-of select="$methodNameSuffix"/>Scalar() {<xsl:apply-templates select="." mode="getScalarMethod">
@@ -314,23 +336,26 @@ public class <xsl:value-of select="$className"/><xsl:apply-templates mode="class
 		<xsl:with-param name="fieldLabel" select="$fieldLabel"/>
 		<xsl:with-param name="fieldType" select="$scalarFieldType"/>
 	</xsl:apply-templates>
-	}
-</xsl:if>
+	<xsl:text>&#10;&#09;}&#10;</xsl:text> <!-- closing '}' on newline, followed by blank line -->	
+	
+	</xsl:if>
 	@Override<xsl:apply-templates mode="methodAnnotations" select="."/>
 	public <xsl:value-of select="$setMethodReturnType"/> set<xsl:value-of select="$methodNameSuffix"/>(<xsl:value-of select="$fieldType"/><xsl:text> </xsl:text><xsl:value-of select="$validJavaFieldName"/>) {<xsl:apply-templates select="." mode="setMethod">
 		<xsl:with-param name="fieldName" select="$validJavaFieldName"/>
 		<xsl:with-param name="fieldLabel" select="$fieldLabel"/>
 	</xsl:apply-templates>
-	}
-<xsl:if test="self::nx:field[not(nx:scalar)]">
+	<xsl:text>&#10;&#09;}&#10;</xsl:text> <!-- closing '}' on newline, followed by blank line -->
+	
+	<xsl:if test="self::nx:field[not(nx:scalar)]">
 	<xsl:variable name="scalarFieldType"><xsl:apply-templates select="." mode="scalarFieldType"/></xsl:variable>
 	@Override<xsl:apply-templates mode="methodAnnotations" select="."/>
 	public <xsl:value-of select="$setMethodReturnType"/> set<xsl:value-of select="$methodNameSuffix"/>Scalar(<xsl:value-of select="$scalarFieldType"/><xsl:text> </xsl:text><xsl:value-of select="$validJavaFieldName"/>) {<xsl:apply-templates select="." mode="setScalarMethod">
 		<xsl:with-param name="fieldName" select="$validJavaFieldName"/>
 		<xsl:with-param name="fieldLabel" select="$fieldLabel"/>
 	</xsl:apply-templates>
-	}
-</xsl:if>
+	<xsl:text>&#10;&#09;}&#10;</xsl:text> <!-- closing '}' on newline, followed by blank line -->
+	</xsl:if>
+	
 <xsl:if test="self::nx:field[@nameType='any']">
 	@Override<xsl:apply-templates mode="methodAnnotations" select="."/>
 	public Map&lt;String, IDataset> getAll<xsl:value-of select="$methodNameSuffix"/>() {
@@ -503,46 +528,65 @@ public class <xsl:value-of select="$className"/><xsl:apply-templates mode="class
 		<xsl:otherwise>
 	 * @return  the value.</xsl:otherwise>
 	</xsl:choose>
-	 */</xsl:template>
+	 */<xsl:text/>
+</xsl:template>
 
 <xsl:template match="nx:doc">
-	<xsl:variable name="indent"><xsl:if test="not(parent::nx:definition|parent::nx:symbols|parent::nx:symbol)"><xsl:text>	</xsl:text></xsl:if></xsl:variable>
+	<xsl:variable name="indent" select="if (parent::nx:definition|parent::nx:symbols|parent::nx:symbol)
+		then '' else codepoints-to-string(9)"/>
 	<xsl:for-each select="tokenize(., '&#10;')">
-		<xsl:if test="string-length(normalize-space(.)) > 0"><xsl:text>
-</xsl:text><xsl:value-of select="$indent"/> * <xsl:value-of select="normalize-space(.)"/>
+		<xsl:if test="string-length(normalize-space(.)) > 0"><xsl:text>&#10;</xsl:text>
+			<xsl:value-of select="$indent || ' * ' || normalize-space(.)"/>
 		</xsl:if>
 	</xsl:for-each>
 </xsl:template>
 
 <xsl:template match="nx:symbols">
- * &lt;p>&lt;b>Symbols:&lt;/b> <xsl:apply-templates select="nx:doc"/>&lt;ul><xsl:apply-templates select="nx:symbol"/>&lt;/ul>&lt;/p></xsl:template>
+	<xsl:text>&#10; * &lt;p>&lt;b>Symbols:&lt;/b> </xsl:text>
+	<xsl:apply-templates select="nx:doc"/>&lt;ul><xsl:apply-templates select="nx:symbol"/>
+	<xsl:text>&lt;/ul>&lt;/p></xsl:text>
+</xsl:template>
+
 <xsl:template match="nx:symbols/nx:symbol">
- * &lt;li><xsl:value-of select="'&lt;b>' || @name || '&lt;/b> '"/><xsl:apply-templates select="nx:doc"/>&lt;/li></xsl:template>
+	<xsl:text>&#10; * &lt;li></xsl:text><xsl:value-of select="'&lt;b>' || @name || '&lt;/b> '"/>
+	<xsl:apply-templates select="nx:doc"/><xsl:text>&lt;/li></xsl:text>
+</xsl:template>
 
 <xsl:template match="nx:field/@type">
-	 * &lt;b>Type:&lt;/b> <xsl:value-of select="."/></xsl:template>
+	<xsl:text>&#10;&#09; * &lt;b>Type:&lt;/b> </xsl:text><xsl:value-of select="."/>
+</xsl:template>
 
 <xsl:template match="nx:field/@units">
-	 * &lt;b>Units:&lt;/b> <xsl:value-of select="."/></xsl:template>
+	<xsl:text>&#10;&#09; * &lt;b>Units:&lt;/b> </xsl:text><xsl:value-of select="."/>
+</xsl:template>
 
 <xsl:template match="nx:field/nx:dimensions">
-	 * &lt;b>Dimensions:&lt;/b><xsl:apply-templates select="nx:dim"/></xsl:template>
-<xsl:template match="nx:dimensions/nx:dim"><xsl:value-of select="' ' || @index || ': ' || @value || ';'"/></xsl:template>
+	<xsl:text>&#10;&#09; * &lt;b>Dimensions:&lt;/b></xsl:text>
+	<xsl:apply-templates select="nx:dim"/>
+</xsl:template>
+
+<xsl:template match="nx:dimensions/nx:dim">
+	<xsl:value-of select="' ' || @index || ': ' || @value || ';'"/>
+</xsl:template>
 
 <xsl:template match="nx:enumeration">
-	 * &lt;p>&lt;b>Enumeration:&lt;/b>&lt;ul><xsl:apply-templates select="nx:item"/>&lt;/ul>&lt;/p></xsl:template>
+	<xsl:text>&#10;&#09; * &lt;p>&lt;b>Enumeration:&lt;/b>&lt;ul></xsl:text>
+	<xsl:apply-templates select="nx:item"/>
+	<xsl:text>&lt;/ul>&lt;/p></xsl:text>
+</xsl:template>
+
 <xsl:template match="nx:enumeration/nx:item">
-	 * &lt;li><xsl:value-of select="'&lt;b>' || @value || '&lt;/b> '"/><xsl:apply-templates select="nx:doc"/>&lt;/li></xsl:template>
+	<xsl:text>&#10;&#09; * &lt;li></xsl:text>
+	<xsl:value-of select="'&lt;b>' || @value || '&lt;/b> '"/>
+	<xsl:apply-templates select="nx:doc"/>
+	<xsl:text>&lt;/li></xsl:text>
+</xsl:template>
 
-<xsl:template match="@version">
- * @version <xsl:value-of select="."/></xsl:template>
+<xsl:template match="@version">&#10; * @version <xsl:value-of select="."/></xsl:template>
 
-<xsl:template match="nx:definition/@deprecated">
- * @deprecated <xsl:value-of select="."/></xsl:template>
+<xsl:template match="nx:definition/@deprecated">&#10; * @deprecated <xsl:value-of select="."/></xsl:template>
 
-<xsl:template match="*[not(self::nx:definition)]/@deprecated">
-	 * @deprecated <xsl:value-of select="."/></xsl:template>
-
+<xsl:template match="*[not(self::nx:definition)]/@deprecated">&#10;	 * @deprecated <xsl:value-of select="."/></xsl:template>
 
 <!-- Imports -->
 <xsl:template mode="imports" match="nx:definition">
@@ -552,21 +596,17 @@ public class <xsl:value-of select="$className"/><xsl:apply-templates mode="class
 		<xsl:apply-templates select="descendant::*" mode="scalarFieldType"/>
 		<xsl:if test="descendant::nx:group[not(@name)] | descendant::nx:field[@nameType='any']">Map</xsl:if>
 	</xsl:variable>
-<xsl:if test="contains($types, 'Date')">
-import java.util.Date;</xsl:if>
-<xsl:if test="$implementation">
-import java.util.Set;
-import java.util.EnumSet;</xsl:if>
-<xsl:if test="contains($types, 'Map')">
-import java.util.Map;</xsl:if>
-<xsl:if test="(contains($types, 'IDataset') or contains($types, 'Binary'))
-		  and (contains($types, 'Date') or contains($types, 'Map'))"><xsl:text>
-</xsl:text></xsl:if>
-import org.eclipse.dawnsci.analysis.api.tree.DataNode;
-<xsl:if test="contains($types, 'IDataset')">
-import org.eclipse.january.dataset.IDataset;</xsl:if>
-<xsl:if test="contains($types, 'Binary')">
-import org.eclipse.january.dataset.DatasetFactory;</xsl:if>
+
+	<xsl:if test="contains($types, 'Date')">&#10;import java.util.Date;</xsl:if>
+	<xsl:if test="$implementation">&#10;import java.util.Set;&#10;import java.util.EnumSet;</xsl:if>
+	<xsl:if test="contains($types, 'Map')">&#10;import java.util.Map;</xsl:if>
+	<xsl:if test="(contains($types, 'IDataset') or contains($types, 'Binary'))
+			  and (contains($types, 'Date') or contains($types, 'Map'))">
+			  <xsl:text>&#10;</xsl:text>
+	</xsl:if>
+	<xsl:text>&#10;import org.eclipse.dawnsci.analysis.api.tree.DataNode;&#10;</xsl:text>
+	<xsl:if test="contains($types, 'IDataset')">&#10;import org.eclipse.january.dataset.IDataset;</xsl:if>
+	<xsl:if test="contains($types, 'Binary')">&#10;import org.eclipse.january.dataset.DatasetFactory;</xsl:if>
 </xsl:template>
 
 <!-- Extends expression -->
@@ -574,12 +614,12 @@ import org.eclipse.january.dataset.DatasetFactory;</xsl:if>
 <xsl:template mode="class" match="nx:definition/@extends"> extends <xsl:value-of select="."/>Impl</xsl:template>
 
 <!-- Annotations -->
-<xsl:template mode="typeAnnotations" match="*[@deprecated]">
-@Deprecated</xsl:template>
+<xsl:template mode="typeAnnotations" match="*[@deprecated]">&#10;@Deprecated</xsl:template>
+
 <xsl:template mode="typeAnnotations" match="*"/>
 
-<xsl:template mode="methodAnnotations" match="*[@deprecated]">
-	@Deprecated</xsl:template>
+<xsl:template mode="methodAnnotations" match="*[@deprecated]">&#10;	@Deprecated</xsl:template>
+
 <xsl:template mode="methodAnnotations" match="*"/>
 
 <!-- Field types in Java: nx:scalar is some expected future feature that indicates the node will never have additional dimensions -->
@@ -607,10 +647,12 @@ import org.eclipse.january.dataset.DatasetFactory;</xsl:if>
 <!-- Simple case, the field has the same name as the attribute, field or group name in the NXDL -->
 <xsl:template mode="fieldName" match="nx:attribute|nx:field|nx:group[@name]">
 	<xsl:value-of select="@name"/>
-	<xsl:if test="@name = preceding-sibling::nx:field/@name"><xsl:value-of select="dawnsci:capitalise-first(substring(@type, 3))"/></xsl:if>
+	<xsl:if test="@name = preceding-sibling::nx:field/@name">
+		<xsl:value-of select="dawnsci:capitalise-first(substring(@type, 3))"/>
+	</xsl:if>
 </xsl:template>
 
-<!-- For unnamed groups we use the type, minux the 'NX' prefix -->
+<!-- For unnamed groups we use the type, minus the 'NX' prefix -->
 <xsl:template mode="fieldName" match="nx:group">
 	<xsl:variable name="fieldName" select="substring(@type, 3)"/>
 	<xsl:value-of select="$fieldName"/>
@@ -619,38 +661,47 @@ import org.eclipse.january.dataset.DatasetFactory;</xsl:if>
 </xsl:template>
 
 <!-- Field labels in Java -->
-<xsl:template mode="fieldLabel" match="nx:field|nx:group"><xsl:param name="fieldName">
+<xsl:template mode="fieldLabel" match="nx:field|nx:group">
+	<xsl:param name="fieldName">
 		<xsl:apply-templates mode="fieldName" select="."/>
-	</xsl:param>NX_<xsl:value-of select="upper-case($fieldName)"/>
+	</xsl:param>
+	<xsl:value-of select="'NX_' || upper-case($fieldName)"/>
 </xsl:template>
+
 <xsl:template mode="fieldLabel" match="nx:definition/nx:attribute">
-	<xsl:param name="fieldName"/>NX_ATTRIBUTE_<xsl:value-of select="upper-case($fieldName)"/>
+	<xsl:param name="fieldName"/>
+	<xsl:value-of select="'NX_ATTRIBUTE_' || upper-case($fieldName)"/>
 </xsl:template>
+
 <xsl:template mode="fieldLabel" match="nx:field/nx:attribute">
-	<xsl:param name="fieldName"/><xsl:apply-templates mode="fieldLabel" select=".."/>_ATTRIBUTE_<xsl:value-of select="upper-case($fieldName)"/>
+	<xsl:param name="fieldName"/>
+	<xsl:apply-templates mode="fieldLabel" select=".."/>_ATTRIBUTE_<xsl:value-of select="upper-case($fieldName)"/>
 </xsl:template>
 
 <!-- Method name suffixes (to get/set) -->
 <xsl:template mode="methodNameSuffix" match="nx:field|nx:group">
 	<xsl:param name="fieldName">
 		<xsl:apply-templates mode="fieldName" select="."/>
-	</xsl:param><xsl:value-of select="dawnsci:capitalise-first($fieldName)"/></xsl:template>
+	</xsl:param><xsl:value-of select="dawnsci:capitalise-first($fieldName)"/>
+</xsl:template>
 
 <xsl:template mode="methodNameSuffix" match="nx:definition/nx:attribute">
-	<xsl:param name="fieldName"/>Attribute<xsl:value-of select="dawnsci:capitalise-first($fieldName)"/></xsl:template>
+	<xsl:param name="fieldName"/>Attribute<xsl:value-of select="dawnsci:capitalise-first($fieldName)"/>
+</xsl:template>
 
 <xsl:template mode="methodNameSuffix" match="nx:field/nx:attribute">
 	<xsl:param name="fieldName"/>
 	<xsl:apply-templates mode="methodNameSuffix" select="..">
 		<xsl:with-param name="fieldName"><xsl:apply-templates mode="fieldName" select=".."/></xsl:with-param>
-	</xsl:apply-templates>Attribute<xsl:value-of select="dawnsci:capitalise-first($fieldName)"/></xsl:template>
-
+	</xsl:apply-templates>Attribute<xsl:value-of select="dawnsci:capitalise-first($fieldName)"/>
+</xsl:template>
 
 <!-- Template to generate an enumeration of NeXus base classes -->
 <xsl:template name="base-class-enum">
 
 	<xsl:result-document href="{$javaOutputPath}/org/eclipse/dawnsci/nexus/NexusBaseClass.java" format="text-format">
 		<xsl:value-of select="$fileHeaderComment"/>
+		
 		<xsl:text>
 package org.eclipse.dawnsci.nexus;
 	
@@ -727,11 +778,12 @@ import org.eclipse.dawnsci.analysis.tree.impl.TreeFileImpl;
 import org.eclipse.dawnsci.analysis.tree.impl.TreeImpl;
 import org.eclipse.dawnsci.nexus.NexusBaseClass;
 </xsl:text>
-<xsl:for-each select="$nexus-classes">
-<xsl:text>import org.eclipse.dawnsci.nexus.impl.</xsl:text>
-<xsl:value-of select="@name"/>
-<xsl:text>Impl;&#10;</xsl:text>
-</xsl:for-each>
+
+	<xsl:for-each select="$nexus-classes">
+		<xsl:text>import org.eclipse.dawnsci.nexus.impl.</xsl:text>
+		<xsl:value-of select="@name"/>
+		<xsl:text>Impl;&#10;</xsl:text>
+	</xsl:for-each>
 
 <xsl:text>
 /**
@@ -847,12 +899,10 @@ public class NexusNodeFactory {
 	 */
 	public static SymbolicNode createSymbolicNode(URI uri, String pathToNode) {
 		return TreeFactory.createSymbolicNode(getNextOid(), uri, null, pathToNode);
-	}
+	}&#10;&#09;&#10;</xsl:text>
 	
-</xsl:text>
-	
-		<xsl:apply-templates mode="factory-methods" select="$nexus-classes"/>
-		<xsl:text>}&#10;</xsl:text>
+	<xsl:apply-templates mode="factory-methods" select="$nexus-classes"/>
+	<xsl:text>}&#10;</xsl:text>
 	
 	</xsl:result-document>
 

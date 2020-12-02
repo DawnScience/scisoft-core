@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -215,33 +215,33 @@ public class NXsqomValidator extends AbstractNexusValidator implements NexusAppl
 		validateGroupNotNull(null, NXdata.class, group);
 		clearLocalGroupDimensionPlaceholderValues();
 
-		// validate field 'data' of type NX_INT.
-		final IDataset data = group.getData();
+		// validate field 'data' of type NX_INT. Note: field not defined in base class.
+		final IDataset data = group.getDataset("data");
 		validateFieldNotNull("data", data);
 		validateFieldType("data", data, NX_INT);
 		validateFieldRank("data", data, 1);
-		validateFieldDimensions("data", data, null, "NP");
+		validateFieldDimensions("data", data, null, "nP");
 
 		// validate field 'qx' of unknown type. Note: field not defined in base class.
 		final IDataset qx = group.getDataset("qx");
 		validateFieldNotNull("qx", qx);
 		validateFieldUnits("qx", qx, NX_WAVENUMBER);
 		validateFieldRank("qx", qx, 1);
-		validateFieldDimensions("qx", qx, null, "NP");
+		validateFieldDimensions("qx", qx, null, "nP");
 
 		// validate field 'qy' of unknown type. Note: field not defined in base class.
 		final IDataset qy = group.getDataset("qy");
 		validateFieldNotNull("qy", qy);
 		validateFieldUnits("qy", qy, NX_WAVENUMBER);
 		validateFieldRank("qy", qy, 1);
-		validateFieldDimensions("qy", qy, null, "NP");
+		validateFieldDimensions("qy", qy, null, "nP");
 
 		// validate field 'qz' of unknown type. Note: field not defined in base class.
 		final IDataset qz = group.getDataset("qz");
 		validateFieldNotNull("qz", qz);
 		validateFieldUnits("qz", qz, NX_WAVENUMBER);
 		validateFieldRank("qz", qz, 1);
-		validateFieldDimensions("qz", qz, null, "NP");
+		validateFieldDimensions("qz", qz, null, "nP");
 
 		// validate field 'en' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset en = group.getDataset("en");
@@ -249,6 +249,6 @@ public class NXsqomValidator extends AbstractNexusValidator implements NexusAppl
 		validateFieldType("en", en, NX_FLOAT);
 		validateFieldUnits("en", en, NX_ENERGY);
 		validateFieldRank("en", en, 1);
-		validateFieldDimensions("en", en, null, "NP");
+		validateFieldDimensions("en", en, null, "nP");
 	}
 }

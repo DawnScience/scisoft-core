@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,12 +61,13 @@ public class NXmoderatorImpl extends NXobjectImpl implements NXmoderator {
 
 	@Override
 	public NXgeometry getGeometry() {
+		// dataNodeName = NX_GEOMETRY
 		return getChild("geometry", NXgeometry.class);
 	}
 
 	@Override
-	public void setGeometry(NXgeometry geometry) {
-		putChild("geometry", geometry);
+	public void setGeometry(NXgeometry geometryGroup) {
+		putChild("geometry", geometryGroup);
 	}
 
 	@Override
@@ -100,13 +101,13 @@ public class NXmoderatorImpl extends NXobjectImpl implements NXmoderator {
 	}
 
 	@Override
-	public DataNode setDistance(IDataset distance) {
-		return setDataset(NX_DISTANCE, distance);
+	public DataNode setDistance(IDataset distanceDataset) {
+		return setDataset(NX_DISTANCE, distanceDataset);
 	}
 
 	@Override
-	public DataNode setDistanceScalar(Double distance) {
-		return setField(NX_DISTANCE, distance);
+	public DataNode setDistanceScalar(Double distanceValue) {
+		return setField(NX_DISTANCE, distanceValue);
 	}
 
 	@Override
@@ -120,13 +121,13 @@ public class NXmoderatorImpl extends NXobjectImpl implements NXmoderator {
 	}
 
 	@Override
-	public DataNode setType(IDataset type) {
-		return setDataset(NX_TYPE, type);
+	public DataNode setType(IDataset typeDataset) {
+		return setDataset(NX_TYPE, typeDataset);
 	}
 
 	@Override
-	public DataNode setTypeScalar(String type) {
-		return setString(NX_TYPE, type);
+	public DataNode setTypeScalar(String typeValue) {
+		return setString(NX_TYPE, typeValue);
 	}
 
 	@Override
@@ -140,13 +141,13 @@ public class NXmoderatorImpl extends NXobjectImpl implements NXmoderator {
 	}
 
 	@Override
-	public DataNode setPoison_depth(IDataset poison_depth) {
-		return setDataset(NX_POISON_DEPTH, poison_depth);
+	public DataNode setPoison_depth(IDataset poison_depthDataset) {
+		return setDataset(NX_POISON_DEPTH, poison_depthDataset);
 	}
 
 	@Override
-	public DataNode setPoison_depthScalar(Double poison_depth) {
-		return setField(NX_POISON_DEPTH, poison_depth);
+	public DataNode setPoison_depthScalar(Double poison_depthValue) {
+		return setField(NX_POISON_DEPTH, poison_depthValue);
 	}
 
 	@Override
@@ -160,13 +161,13 @@ public class NXmoderatorImpl extends NXobjectImpl implements NXmoderator {
 	}
 
 	@Override
-	public DataNode setCoupled(IDataset coupled) {
-		return setDataset(NX_COUPLED, coupled);
+	public DataNode setCoupled(IDataset coupledDataset) {
+		return setDataset(NX_COUPLED, coupledDataset);
 	}
 
 	@Override
-	public DataNode setCoupledScalar(Boolean coupled) {
-		return setField(NX_COUPLED, coupled);
+	public DataNode setCoupledScalar(Boolean coupledValue) {
+		return setField(NX_COUPLED, coupledValue);
 	}
 
 	@Override
@@ -180,13 +181,13 @@ public class NXmoderatorImpl extends NXobjectImpl implements NXmoderator {
 	}
 
 	@Override
-	public DataNode setCoupling_material(IDataset coupling_material) {
-		return setDataset(NX_COUPLING_MATERIAL, coupling_material);
+	public DataNode setCoupling_material(IDataset coupling_materialDataset) {
+		return setDataset(NX_COUPLING_MATERIAL, coupling_materialDataset);
 	}
 
 	@Override
-	public DataNode setCoupling_materialScalar(String coupling_material) {
-		return setString(NX_COUPLING_MATERIAL, coupling_material);
+	public DataNode setCoupling_materialScalar(String coupling_materialValue) {
+		return setString(NX_COUPLING_MATERIAL, coupling_materialValue);
 	}
 
 	@Override
@@ -200,13 +201,13 @@ public class NXmoderatorImpl extends NXobjectImpl implements NXmoderator {
 	}
 
 	@Override
-	public DataNode setPoison_material(IDataset poison_material) {
-		return setDataset(NX_POISON_MATERIAL, poison_material);
+	public DataNode setPoison_material(IDataset poison_materialDataset) {
+		return setDataset(NX_POISON_MATERIAL, poison_materialDataset);
 	}
 
 	@Override
-	public DataNode setPoison_materialScalar(String poison_material) {
-		return setString(NX_POISON_MATERIAL, poison_material);
+	public DataNode setPoison_materialScalar(String poison_materialValue) {
+		return setString(NX_POISON_MATERIAL, poison_materialValue);
 	}
 
 	@Override
@@ -220,33 +221,45 @@ public class NXmoderatorImpl extends NXobjectImpl implements NXmoderator {
 	}
 
 	@Override
-	public DataNode setTemperature(IDataset temperature) {
-		return setDataset(NX_TEMPERATURE, temperature);
+	public DataNode setTemperature(IDataset temperatureDataset) {
+		return setDataset(NX_TEMPERATURE, temperatureDataset);
 	}
 
 	@Override
-	public DataNode setTemperatureScalar(Double temperature) {
-		return setField(NX_TEMPERATURE, temperature);
+	public DataNode setTemperatureScalar(Double temperatureValue) {
+		return setField(NX_TEMPERATURE, temperatureValue);
 	}
 
 	@Override
 	public NXlog getTemperature_log() {
+		// dataNodeName = NX_TEMPERATURE_LOG
 		return getChild("temperature_log", NXlog.class);
 	}
 
 	@Override
-	public void setTemperature_log(NXlog temperature_log) {
-		putChild("temperature_log", temperature_log);
+	public void setTemperature_log(NXlog temperature_logGroup) {
+		putChild("temperature_log", temperature_logGroup);
 	}
 
 	@Override
 	public NXdata getPulse_shape() {
+		// dataNodeName = NX_PULSE_SHAPE
 		return getChild("pulse_shape", NXdata.class);
 	}
 
 	@Override
-	public void setPulse_shape(NXdata pulse_shape) {
-		putChild("pulse_shape", pulse_shape);
+	public void setPulse_shape(NXdata pulse_shapeGroup) {
+		putChild("pulse_shape", pulse_shapeGroup);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

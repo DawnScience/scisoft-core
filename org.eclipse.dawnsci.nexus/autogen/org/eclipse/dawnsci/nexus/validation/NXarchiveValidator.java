@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -212,10 +212,10 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 				"Spallation Neutron Source",
 				"Pulsed Reactor Neutron Source",
 				"Reactor Neutron Source",
-				"Synchrotron X-ray Source",
+				"Synchrotron X-Ray Source",
 				"Pulsed Muon Source",
-				"Rotating Anode X-ray",
-				"Fixed Tube X-ray");
+				"Rotating Anode X-Ray",
+				"Fixed Tube X-Ray");
 
 		// validate field 'name' of unknown type.
 		final IDataset name = group.getName();

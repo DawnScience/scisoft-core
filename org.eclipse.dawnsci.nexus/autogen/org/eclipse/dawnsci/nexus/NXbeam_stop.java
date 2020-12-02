@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ public interface NXbeam_stop extends NXobject {
 	public static final String NX_Y = "y";
 	public static final String NX_DISTANCE_TO_DETECTOR = "distance_to_detector";
 	public static final String NX_STATUS = "status";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * engineering shape, orientation and position of the beam stop.
 	 * 
@@ -41,10 +42,10 @@ public interface NXbeam_stop extends NXobject {
 	/**
 	 * engineering shape, orientation and position of the beam stop.
 	 * 
-	 * @param geometry the geometry
+	 * @param geometryGroup the geometryGroup
 	 */
-	public void setGeometry(NXgeometry geometry);
-  
+	public void setGeometry(NXgeometry geometryGroup);
+
 	/**
 	 * Get a NXgeometry node by name:
 	 * <ul>
@@ -113,9 +114,9 @@ public interface NXbeam_stop extends NXobject {
 	 * <li><b>rectangular</b> </li></ul></p>
 	 * </p>
 	 * 
-	 * @param description the description
+	 * @param descriptionDataset the descriptionDataset
 	 */
-	public DataNode setDescription(IDataset description);
+	public DataNode setDescription(IDataset descriptionDataset);
 
 	/**
 	 * description of beamstop
@@ -139,7 +140,7 @@ public interface NXbeam_stop extends NXobject {
 	 * 
 	 * @param description the description
 	 */
-	public DataNode setDescriptionScalar(String description);
+	public DataNode setDescriptionScalar(String descriptionValue);
 
 	/**
 	 * size of beamstop
@@ -159,9 +160,9 @@ public interface NXbeam_stop extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param size the size
+	 * @param sizeDataset the sizeDataset
 	 */
-	public DataNode setSize(IDataset size);
+	public DataNode setSize(IDataset sizeDataset);
 
 	/**
 	 * size of beamstop
@@ -183,7 +184,7 @@ public interface NXbeam_stop extends NXobject {
 	 * 
 	 * @param size the size
 	 */
-	public DataNode setSizeScalar(Double size);
+	public DataNode setSizeScalar(Double sizeValue);
 
 	/**
 	 * x position of the beamstop in relation to the detector
@@ -203,9 +204,9 @@ public interface NXbeam_stop extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param x the x
+	 * @param xDataset the xDataset
 	 */
-	public DataNode setX(IDataset x);
+	public DataNode setX(IDataset xDataset);
 
 	/**
 	 * x position of the beamstop in relation to the detector
@@ -227,7 +228,7 @@ public interface NXbeam_stop extends NXobject {
 	 * 
 	 * @param x the x
 	 */
-	public DataNode setXScalar(Double x);
+	public DataNode setXScalar(Double xValue);
 
 	/**
 	 * y position of the beamstop in relation to the detector
@@ -247,9 +248,9 @@ public interface NXbeam_stop extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param y the y
+	 * @param yDataset the yDataset
 	 */
-	public DataNode setY(IDataset y);
+	public DataNode setY(IDataset yDataset);
 
 	/**
 	 * y position of the beamstop in relation to the detector
@@ -271,7 +272,7 @@ public interface NXbeam_stop extends NXobject {
 	 * 
 	 * @param y the y
 	 */
-	public DataNode setYScalar(Double y);
+	public DataNode setYScalar(Double yValue);
 
 	/**
 	 * distance of the beamstop to the detector
@@ -291,9 +292,9 @@ public interface NXbeam_stop extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param distance_to_detector the distance_to_detector
+	 * @param distance_to_detectorDataset the distance_to_detectorDataset
 	 */
-	public DataNode setDistance_to_detector(IDataset distance_to_detector);
+	public DataNode setDistance_to_detector(IDataset distance_to_detectorDataset);
 
 	/**
 	 * distance of the beamstop to the detector
@@ -315,7 +316,7 @@ public interface NXbeam_stop extends NXobject {
 	 * 
 	 * @param distance_to_detector the distance_to_detector
 	 */
-	public DataNode setDistance_to_detectorScalar(Double distance_to_detector);
+	public DataNode setDistance_to_detectorScalar(Double distance_to_detectorValue);
 
 	/**
 	 * <p>
@@ -335,9 +336,9 @@ public interface NXbeam_stop extends NXobject {
 	 * <li><b>out</b> </li></ul></p>
 	 * </p>
 	 * 
-	 * @param status the status
+	 * @param statusDataset the statusDataset
 	 */
-	public DataNode setStatus(IDataset status);
+	public DataNode setStatus(IDataset statusDataset);
 
 	/**
 	 * <p>
@@ -359,6 +360,32 @@ public interface NXbeam_stop extends NXobject {
 	 * 
 	 * @param status the status
 	 */
-	public DataNode setStatusScalar(String status);
+	public DataNode setStatusScalar(String statusValue);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

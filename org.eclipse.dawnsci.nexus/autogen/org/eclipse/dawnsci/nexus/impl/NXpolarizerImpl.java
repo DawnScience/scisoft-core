@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,13 +65,13 @@ public class NXpolarizerImpl extends NXobjectImpl implements NXpolarizer {
 	}
 
 	@Override
-	public DataNode setType(IDataset type) {
-		return setDataset(NX_TYPE, type);
+	public DataNode setType(IDataset typeDataset) {
+		return setDataset(NX_TYPE, typeDataset);
 	}
 
 	@Override
-	public DataNode setTypeScalar(String type) {
-		return setString(NX_TYPE, type);
+	public DataNode setTypeScalar(String typeValue) {
+		return setString(NX_TYPE, typeValue);
 	}
 
 	@Override
@@ -85,13 +85,13 @@ public class NXpolarizerImpl extends NXobjectImpl implements NXpolarizer {
 	}
 
 	@Override
-	public DataNode setComposition(IDataset composition) {
-		return setDataset(NX_COMPOSITION, composition);
+	public DataNode setComposition(IDataset compositionDataset) {
+		return setDataset(NX_COMPOSITION, compositionDataset);
 	}
 
 	@Override
-	public DataNode setCompositionScalar(String composition) {
-		return setString(NX_COMPOSITION, composition);
+	public DataNode setCompositionScalar(String compositionValue) {
+		return setString(NX_COMPOSITION, compositionValue);
 	}
 
 	@Override
@@ -105,13 +105,13 @@ public class NXpolarizerImpl extends NXobjectImpl implements NXpolarizer {
 	}
 
 	@Override
-	public DataNode setReflection(IDataset reflection) {
-		return setDataset(NX_REFLECTION, reflection);
+	public DataNode setReflection(IDataset reflectionDataset) {
+		return setDataset(NX_REFLECTION, reflectionDataset);
 	}
 
 	@Override
-	public DataNode setReflectionScalar(Long reflection) {
-		return setField(NX_REFLECTION, reflection);
+	public DataNode setReflectionScalar(Long reflectionValue) {
+		return setField(NX_REFLECTION, reflectionValue);
 	}
 
 	@Override
@@ -125,13 +125,23 @@ public class NXpolarizerImpl extends NXobjectImpl implements NXpolarizer {
 	}
 
 	@Override
-	public DataNode setEfficiency(IDataset efficiency) {
-		return setDataset(NX_EFFICIENCY, efficiency);
+	public DataNode setEfficiency(IDataset efficiencyDataset) {
+		return setDataset(NX_EFFICIENCY, efficiencyDataset);
 	}
 
 	@Override
-	public DataNode setEfficiencyScalar(Double efficiency) {
-		return setField(NX_EFFICIENCY, efficiency);
+	public DataNode setEfficiencyScalar(Double efficiencyValue) {
+		return setField(NX_EFFICIENCY, efficiencyValue);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

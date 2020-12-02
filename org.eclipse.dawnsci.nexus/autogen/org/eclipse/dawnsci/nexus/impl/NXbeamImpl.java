@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,13 +75,13 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public DataNode setDistance(IDataset distance) {
-		return setDataset(NX_DISTANCE, distance);
+	public DataNode setDistance(IDataset distanceDataset) {
+		return setDataset(NX_DISTANCE, distanceDataset);
 	}
 
 	@Override
-	public DataNode setDistanceScalar(Double distance) {
-		return setField(NX_DISTANCE, distance);
+	public DataNode setDistanceScalar(Double distanceValue) {
+		return setField(NX_DISTANCE, distanceValue);
 	}
 
 	@Override
@@ -95,13 +95,13 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public DataNode setIncident_energy(IDataset incident_energy) {
-		return setDataset(NX_INCIDENT_ENERGY, incident_energy);
+	public DataNode setIncident_energy(IDataset incident_energyDataset) {
+		return setDataset(NX_INCIDENT_ENERGY, incident_energyDataset);
 	}
 
 	@Override
-	public DataNode setIncident_energyScalar(Double incident_energy) {
-		return setField(NX_INCIDENT_ENERGY, incident_energy);
+	public DataNode setIncident_energyScalar(Double incident_energyValue) {
+		return setField(NX_INCIDENT_ENERGY, incident_energyValue);
 	}
 
 	@Override
@@ -115,13 +115,13 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public DataNode setFinal_energy(IDataset final_energy) {
-		return setDataset(NX_FINAL_ENERGY, final_energy);
+	public DataNode setFinal_energy(IDataset final_energyDataset) {
+		return setDataset(NX_FINAL_ENERGY, final_energyDataset);
 	}
 
 	@Override
-	public DataNode setFinal_energyScalar(Double final_energy) {
-		return setField(NX_FINAL_ENERGY, final_energy);
+	public DataNode setFinal_energyScalar(Double final_energyValue) {
+		return setField(NX_FINAL_ENERGY, final_energyValue);
 	}
 
 	@Override
@@ -135,13 +135,13 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public DataNode setEnergy_transfer(IDataset energy_transfer) {
-		return setDataset(NX_ENERGY_TRANSFER, energy_transfer);
+	public DataNode setEnergy_transfer(IDataset energy_transferDataset) {
+		return setDataset(NX_ENERGY_TRANSFER, energy_transferDataset);
 	}
 
 	@Override
-	public DataNode setEnergy_transferScalar(Double energy_transfer) {
-		return setField(NX_ENERGY_TRANSFER, energy_transfer);
+	public DataNode setEnergy_transferScalar(Double energy_transferValue) {
+		return setField(NX_ENERGY_TRANSFER, energy_transferValue);
 	}
 
 	@Override
@@ -155,13 +155,13 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public DataNode setIncident_wavelength(IDataset incident_wavelength) {
-		return setDataset(NX_INCIDENT_WAVELENGTH, incident_wavelength);
+	public DataNode setIncident_wavelength(IDataset incident_wavelengthDataset) {
+		return setDataset(NX_INCIDENT_WAVELENGTH, incident_wavelengthDataset);
 	}
 
 	@Override
-	public DataNode setIncident_wavelengthScalar(Double incident_wavelength) {
-		return setField(NX_INCIDENT_WAVELENGTH, incident_wavelength);
+	public DataNode setIncident_wavelengthScalar(Double incident_wavelengthValue) {
+		return setField(NX_INCIDENT_WAVELENGTH, incident_wavelengthValue);
 	}
 
 	@Override
@@ -175,13 +175,13 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public DataNode setIncident_wavelength_spread(IDataset incident_wavelength_spread) {
-		return setDataset(NX_INCIDENT_WAVELENGTH_SPREAD, incident_wavelength_spread);
+	public DataNode setIncident_wavelength_spread(IDataset incident_wavelength_spreadDataset) {
+		return setDataset(NX_INCIDENT_WAVELENGTH_SPREAD, incident_wavelength_spreadDataset);
 	}
 
 	@Override
-	public DataNode setIncident_wavelength_spreadScalar(Double incident_wavelength_spread) {
-		return setField(NX_INCIDENT_WAVELENGTH_SPREAD, incident_wavelength_spread);
+	public DataNode setIncident_wavelength_spreadScalar(Double incident_wavelength_spreadValue) {
+		return setField(NX_INCIDENT_WAVELENGTH_SPREAD, incident_wavelength_spreadValue);
 	}
 
 	@Override
@@ -195,13 +195,33 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public DataNode setIncident_beam_divergence(IDataset incident_beam_divergence) {
-		return setDataset(NX_INCIDENT_BEAM_DIVERGENCE, incident_beam_divergence);
+	public DataNode setIncident_beam_divergence(IDataset incident_beam_divergenceDataset) {
+		return setDataset(NX_INCIDENT_BEAM_DIVERGENCE, incident_beam_divergenceDataset);
 	}
 
 	@Override
-	public DataNode setIncident_beam_divergenceScalar(Double incident_beam_divergence) {
-		return setField(NX_INCIDENT_BEAM_DIVERGENCE, incident_beam_divergence);
+	public DataNode setIncident_beam_divergenceScalar(Double incident_beam_divergenceValue) {
+		return setField(NX_INCIDENT_BEAM_DIVERGENCE, incident_beam_divergenceValue);
+	}
+
+	@Override
+	public IDataset getExtent() {
+		return getDataset(NX_EXTENT);
+	}
+
+	@Override
+	public Double getExtentScalar() {
+		return getDouble(NX_EXTENT);
+	}
+
+	@Override
+	public DataNode setExtent(IDataset extentDataset) {
+		return setDataset(NX_EXTENT, extentDataset);
+	}
+
+	@Override
+	public DataNode setExtentScalar(Double extentValue) {
+		return setField(NX_EXTENT, extentValue);
 	}
 
 	@Override
@@ -215,13 +235,13 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public DataNode setFinal_wavelength(IDataset final_wavelength) {
-		return setDataset(NX_FINAL_WAVELENGTH, final_wavelength);
+	public DataNode setFinal_wavelength(IDataset final_wavelengthDataset) {
+		return setDataset(NX_FINAL_WAVELENGTH, final_wavelengthDataset);
 	}
 
 	@Override
-	public DataNode setFinal_wavelengthScalar(Double final_wavelength) {
-		return setField(NX_FINAL_WAVELENGTH, final_wavelength);
+	public DataNode setFinal_wavelengthScalar(Double final_wavelengthValue) {
+		return setField(NX_FINAL_WAVELENGTH, final_wavelengthValue);
 	}
 
 	@Override
@@ -235,13 +255,13 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public DataNode setIncident_polarization(IDataset incident_polarization) {
-		return setDataset(NX_INCIDENT_POLARIZATION, incident_polarization);
+	public DataNode setIncident_polarization(IDataset incident_polarizationDataset) {
+		return setDataset(NX_INCIDENT_POLARIZATION, incident_polarizationDataset);
 	}
 
 	@Override
-	public DataNode setIncident_polarizationScalar(Double incident_polarization) {
-		return setField(NX_INCIDENT_POLARIZATION, incident_polarization);
+	public DataNode setIncident_polarizationScalar(Double incident_polarizationValue) {
+		return setField(NX_INCIDENT_POLARIZATION, incident_polarizationValue);
 	}
 
 	@Override
@@ -255,13 +275,13 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public DataNode setFinal_polarization(IDataset final_polarization) {
-		return setDataset(NX_FINAL_POLARIZATION, final_polarization);
+	public DataNode setFinal_polarization(IDataset final_polarizationDataset) {
+		return setDataset(NX_FINAL_POLARIZATION, final_polarizationDataset);
 	}
 
 	@Override
-	public DataNode setFinal_polarizationScalar(Double final_polarization) {
-		return setField(NX_FINAL_POLARIZATION, final_polarization);
+	public DataNode setFinal_polarizationScalar(Double final_polarizationValue) {
+		return setField(NX_FINAL_POLARIZATION, final_polarizationValue);
 	}
 
 	@Override
@@ -275,13 +295,13 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public DataNode setFinal_wavelength_spread(IDataset final_wavelength_spread) {
-		return setDataset(NX_FINAL_WAVELENGTH_SPREAD, final_wavelength_spread);
+	public DataNode setFinal_wavelength_spread(IDataset final_wavelength_spreadDataset) {
+		return setDataset(NX_FINAL_WAVELENGTH_SPREAD, final_wavelength_spreadDataset);
 	}
 
 	@Override
-	public DataNode setFinal_wavelength_spreadScalar(Double final_wavelength_spread) {
-		return setField(NX_FINAL_WAVELENGTH_SPREAD, final_wavelength_spread);
+	public DataNode setFinal_wavelength_spreadScalar(Double final_wavelength_spreadValue) {
+		return setField(NX_FINAL_WAVELENGTH_SPREAD, final_wavelength_spreadValue);
 	}
 
 	@Override
@@ -295,13 +315,13 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public DataNode setFinal_beam_divergence(IDataset final_beam_divergence) {
-		return setDataset(NX_FINAL_BEAM_DIVERGENCE, final_beam_divergence);
+	public DataNode setFinal_beam_divergence(IDataset final_beam_divergenceDataset) {
+		return setDataset(NX_FINAL_BEAM_DIVERGENCE, final_beam_divergenceDataset);
 	}
 
 	@Override
-	public DataNode setFinal_beam_divergenceScalar(Double final_beam_divergence) {
-		return setField(NX_FINAL_BEAM_DIVERGENCE, final_beam_divergence);
+	public DataNode setFinal_beam_divergenceScalar(Double final_beam_divergenceValue) {
+		return setField(NX_FINAL_BEAM_DIVERGENCE, final_beam_divergenceValue);
 	}
 
 	@Override
@@ -315,23 +335,24 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public DataNode setFlux(IDataset flux) {
-		return setDataset(NX_FLUX, flux);
+	public DataNode setFlux(IDataset fluxDataset) {
+		return setDataset(NX_FLUX, fluxDataset);
 	}
 
 	@Override
-	public DataNode setFluxScalar(Double flux) {
-		return setField(NX_FLUX, flux);
+	public DataNode setFluxScalar(Double fluxValue) {
+		return setField(NX_FLUX, fluxValue);
 	}
 
 	@Override
 	public NXdata getData() {
+		// dataNodeName = NX_DATA
 		return getChild("data", NXdata.class);
 	}
 
 	@Override
-	public void setData(NXdata data) {
-		putChild("data", data);
+	public void setData(NXdata dataGroup) {
+		putChild("data", dataGroup);
 	}
 
 	@Override
@@ -352,6 +373,16 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	@Override
 	public void setAllData(Map<String, NXdata> data) {
 		setChildren(data);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

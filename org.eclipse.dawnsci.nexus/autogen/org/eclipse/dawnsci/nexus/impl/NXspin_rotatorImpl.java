@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,13 +69,13 @@ public class NXspin_rotatorImpl extends NXobjectImpl implements NXspin_rotator {
 	}
 
 	@Override
-	public DataNode setDescription(IDataset description) {
-		return setDataset(NX_DESCRIPTION, description);
+	public DataNode setDescription(IDataset descriptionDataset) {
+		return setDataset(NX_DESCRIPTION, descriptionDataset);
 	}
 
 	@Override
-	public DataNode setDescriptionScalar(String description) {
-		return setString(NX_DESCRIPTION, description);
+	public DataNode setDescriptionScalar(String descriptionValue) {
+		return setString(NX_DESCRIPTION, descriptionValue);
 	}
 
 	@Override
@@ -89,93 +89,97 @@ public class NXspin_rotatorImpl extends NXobjectImpl implements NXspin_rotator {
 	}
 
 	@Override
-	public DataNode setBeamline_distance(IDataset beamline_distance) {
-		return setDataset(NX_BEAMLINE_DISTANCE, beamline_distance);
+	public DataNode setBeamline_distance(IDataset beamline_distanceDataset) {
+		return setDataset(NX_BEAMLINE_DISTANCE, beamline_distanceDataset);
 	}
 
 	@Override
-	public DataNode setBeamline_distanceScalar(Double beamline_distance) {
-		return setField(NX_BEAMLINE_DISTANCE, beamline_distance);
+	public DataNode setBeamline_distanceScalar(Double beamline_distanceValue) {
+		return setField(NX_BEAMLINE_DISTANCE, beamline_distanceValue);
 	}
 
 	@Override
-	public IDataset getSet_Bfield_current() {
+	public IDataset getSet_bfield_current() {
 		return getDataset(NX_SET_BFIELD_CURRENT);
 	}
 
 	@Override
-	public Double getSet_Bfield_currentScalar() {
+	public Double getSet_bfield_currentScalar() {
 		return getDouble(NX_SET_BFIELD_CURRENT);
 	}
 
 	@Override
-	public DataNode setSet_Bfield_current(IDataset set_Bfield_current) {
-		return setDataset(NX_SET_BFIELD_CURRENT, set_Bfield_current);
+	public DataNode setSet_bfield_current(IDataset set_bfield_currentDataset) {
+		return setDataset(NX_SET_BFIELD_CURRENT, set_bfield_currentDataset);
 	}
 
 	@Override
-	public DataNode setSet_Bfield_currentScalar(Double set_Bfield_current) {
-		return setField(NX_SET_BFIELD_CURRENT, set_Bfield_current);
+	public DataNode setSet_bfield_currentScalar(Double set_bfield_currentValue) {
+		return setField(NX_SET_BFIELD_CURRENT, set_bfield_currentValue);
 	}
 
 	@Override
-	public NXlog getRead_Bfield_current() {
-		return getChild("read_Bfield_current", NXlog.class);
+	public NXlog getRead_bfield_current() {
+		// dataNodeName = NX_READ_BFIELD_CURRENT
+		return getChild("read_bfield_current", NXlog.class);
 	}
 
 	@Override
-	public void setRead_Bfield_current(NXlog read_Bfield_current) {
-		putChild("read_Bfield_current", read_Bfield_current);
+	public void setRead_bfield_current(NXlog read_bfield_currentGroup) {
+		putChild("read_bfield_current", read_bfield_currentGroup);
 	}
 
 	@Override
-	public NXlog getRead_Bfield_voltage() {
-		return getChild("read_Bfield_voltage", NXlog.class);
+	public NXlog getRead_bfield_voltage() {
+		// dataNodeName = NX_READ_BFIELD_VOLTAGE
+		return getChild("read_bfield_voltage", NXlog.class);
 	}
 
 	@Override
-	public void setRead_Bfield_voltage(NXlog read_Bfield_voltage) {
-		putChild("read_Bfield_voltage", read_Bfield_voltage);
+	public void setRead_bfield_voltage(NXlog read_bfield_voltageGroup) {
+		putChild("read_bfield_voltage", read_bfield_voltageGroup);
 	}
 
 	@Override
-	public IDataset getSet_Efield_voltage() {
+	public IDataset getSet_efield_voltage() {
 		return getDataset(NX_SET_EFIELD_VOLTAGE);
 	}
 
 	@Override
-	public Double getSet_Efield_voltageScalar() {
+	public Double getSet_efield_voltageScalar() {
 		return getDouble(NX_SET_EFIELD_VOLTAGE);
 	}
 
 	@Override
-	public DataNode setSet_Efield_voltage(IDataset set_Efield_voltage) {
-		return setDataset(NX_SET_EFIELD_VOLTAGE, set_Efield_voltage);
+	public DataNode setSet_efield_voltage(IDataset set_efield_voltageDataset) {
+		return setDataset(NX_SET_EFIELD_VOLTAGE, set_efield_voltageDataset);
 	}
 
 	@Override
-	public DataNode setSet_Efield_voltageScalar(Double set_Efield_voltage) {
-		return setField(NX_SET_EFIELD_VOLTAGE, set_Efield_voltage);
+	public DataNode setSet_efield_voltageScalar(Double set_efield_voltageValue) {
+		return setField(NX_SET_EFIELD_VOLTAGE, set_efield_voltageValue);
 	}
 
 	@Override
-	public NXlog getRead_Efield_current() {
-		return getChild("read_Efield_current", NXlog.class);
+	public NXlog getRead_efield_current() {
+		// dataNodeName = NX_READ_EFIELD_CURRENT
+		return getChild("read_efield_current", NXlog.class);
 	}
 
 	@Override
-	public void setRead_Efield_current(NXlog read_Efield_current) {
-		putChild("read_Efield_current", read_Efield_current);
+	public void setRead_efield_current(NXlog read_efield_currentGroup) {
+		putChild("read_efield_current", read_efield_currentGroup);
 	}
 
 	@Override
-	public NXlog getRead_Efield_voltage() {
-		return getChild("read_Efield_voltage", NXlog.class);
+	public NXlog getRead_efield_voltage() {
+		// dataNodeName = NX_READ_EFIELD_VOLTAGE
+		return getChild("read_efield_voltage", NXlog.class);
 	}
 
 	@Override
-	public void setRead_Efield_voltage(NXlog read_Efield_voltage) {
-		putChild("read_Efield_voltage", read_Efield_voltage);
+	public void setRead_efield_voltage(NXlog read_efield_voltageGroup) {
+		putChild("read_efield_voltage", read_efield_voltageGroup);
 	}
 
 }

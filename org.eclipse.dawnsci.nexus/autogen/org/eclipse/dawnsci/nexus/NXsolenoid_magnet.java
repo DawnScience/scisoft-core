@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,9 +40,9 @@ public interface NXsolenoid_magnet extends NXobject {
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
 	 * 
-	 * @param description the description
+	 * @param descriptionDataset the descriptionDataset
 	 */
-	public DataNode setDescription(IDataset description);
+	public DataNode setDescription(IDataset descriptionDataset);
 
 	/**
 	 * extended description of the magnet.
@@ -62,7 +62,7 @@ public interface NXsolenoid_magnet extends NXobject {
 	 * 
 	 * @param description the description
 	 */
-	public DataNode setDescriptionScalar(String description);
+	public DataNode setDescriptionScalar(String descriptionValue);
 
 	/**
 	 * define position of beamline element relative to production target
@@ -82,9 +82,9 @@ public interface NXsolenoid_magnet extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param beamline_distance the beamline_distance
+	 * @param beamline_distanceDataset the beamline_distanceDataset
 	 */
-	public DataNode setBeamline_distance(IDataset beamline_distance);
+	public DataNode setBeamline_distance(IDataset beamline_distanceDataset);
 
 	/**
 	 * define position of beamline element relative to production target
@@ -106,7 +106,7 @@ public interface NXsolenoid_magnet extends NXobject {
 	 * 
 	 * @param beamline_distance the beamline_distance
 	 */
-	public DataNode setBeamline_distanceScalar(Double beamline_distance);
+	public DataNode setBeamline_distanceScalar(Double beamline_distanceValue);
 
 	/**
 	 * current set on supply.
@@ -126,9 +126,9 @@ public interface NXsolenoid_magnet extends NXobject {
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
 	 * 
-	 * @param set_current the set_current
+	 * @param set_currentDataset the set_currentDataset
 	 */
-	public DataNode setSet_current(IDataset set_current);
+	public DataNode setSet_current(IDataset set_currentDataset);
 
 	/**
 	 * current set on supply.
@@ -150,7 +150,7 @@ public interface NXsolenoid_magnet extends NXobject {
 	 * 
 	 * @param set_current the set_current
 	 */
-	public DataNode setSet_currentScalar(Double set_current);
+	public DataNode setSet_currentScalar(Double set_currentValue);
 
 	/**
 	 * current read from supply.
@@ -162,9 +162,9 @@ public interface NXsolenoid_magnet extends NXobject {
 	/**
 	 * current read from supply.
 	 * 
-	 * @param read_current the read_current
+	 * @param read_currentGroup the read_currentGroup
 	 */
-	public void setRead_current(NXlog read_current);
+	public void setRead_current(NXlog read_currentGroup);
 
 	/**
 	 * voltage read from supply.
@@ -176,8 +176,8 @@ public interface NXsolenoid_magnet extends NXobject {
 	/**
 	 * voltage read from supply.
 	 * 
-	 * @param read_voltage the read_voltage
+	 * @param read_voltageGroup the read_voltageGroup
 	 */
-	public void setRead_voltage(NXlog read_voltage);
+	public void setRead_voltage(NXlog read_voltageGroup);
 
 }

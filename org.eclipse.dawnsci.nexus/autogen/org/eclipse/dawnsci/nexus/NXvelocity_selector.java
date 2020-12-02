@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public interface NXvelocity_selector extends NXobject {
 	public static final String NX_WIDTH = "width";
 	public static final String NX_WAVELENGTH = "wavelength";
 	public static final String NX_WAVELENGTH_SPREAD = "wavelength_spread";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * velocity selector type
 	 * 
@@ -43,9 +44,9 @@ public interface NXvelocity_selector extends NXobject {
 	/**
 	 * velocity selector type
 	 * 
-	 * @param type the type
+	 * @param typeDataset the typeDataset
 	 */
-	public DataNode setType(IDataset type);
+	public DataNode setType(IDataset typeDataset);
 
 	/**
 	 * velocity selector type
@@ -59,7 +60,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * 
 	 * @param type the type
 	 */
-	public DataNode setTypeScalar(String type);
+	public DataNode setTypeScalar(String typeValue);
 
 	/**
 	 * velocity selector rotation speed
@@ -79,9 +80,9 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Units:</b> NX_FREQUENCY
 	 * </p>
 	 * 
-	 * @param rotation_speed the rotation_speed
+	 * @param rotation_speedDataset the rotation_speedDataset
 	 */
-	public DataNode setRotation_speed(IDataset rotation_speed);
+	public DataNode setRotation_speed(IDataset rotation_speedDataset);
 
 	/**
 	 * velocity selector rotation speed
@@ -103,7 +104,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * 
 	 * @param rotation_speed the rotation_speed
 	 */
-	public DataNode setRotation_speedScalar(Double rotation_speed);
+	public DataNode setRotation_speedScalar(Double rotation_speedValue);
 
 	/**
 	 * radius at beam centre
@@ -123,9 +124,9 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param radius the radius
+	 * @param radiusDataset the radiusDataset
 	 */
-	public DataNode setRadius(IDataset radius);
+	public DataNode setRadius(IDataset radiusDataset);
 
 	/**
 	 * radius at beam centre
@@ -147,7 +148,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * 
 	 * @param radius the radius
 	 */
-	public DataNode setRadiusScalar(Double radius);
+	public DataNode setRadiusScalar(Double radiusValue);
 
 	/**
 	 * spoke width at beam centre
@@ -167,9 +168,9 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param spwidth the spwidth
+	 * @param spwidthDataset the spwidthDataset
 	 */
-	public DataNode setSpwidth(IDataset spwidth);
+	public DataNode setSpwidth(IDataset spwidthDataset);
 
 	/**
 	 * spoke width at beam centre
@@ -191,7 +192,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * 
 	 * @param spwidth the spwidth
 	 */
-	public DataNode setSpwidthScalar(Double spwidth);
+	public DataNode setSpwidthScalar(Double spwidthValue);
 
 	/**
 	 * rotor length
@@ -211,9 +212,9 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param length the length
+	 * @param lengthDataset the lengthDataset
 	 */
-	public DataNode setLength(IDataset length);
+	public DataNode setLength(IDataset lengthDataset);
 
 	/**
 	 * rotor length
@@ -235,7 +236,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * 
 	 * @param length the length
 	 */
-	public DataNode setLengthScalar(Double length);
+	public DataNode setLengthScalar(Double lengthValue);
 
 	/**
 	 * number of spokes/lamella
@@ -255,9 +256,9 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 * 
-	 * @param num the num
+	 * @param numDataset the numDataset
 	 */
-	public DataNode setNum(IDataset num);
+	public DataNode setNum(IDataset numDataset);
 
 	/**
 	 * number of spokes/lamella
@@ -279,7 +280,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * 
 	 * @param num the num
 	 */
-	public DataNode setNumScalar(Long num);
+	public DataNode setNumScalar(Long numValue);
 
 	/**
 	 * twist angle along axis
@@ -299,9 +300,9 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
 	 * 
-	 * @param twist the twist
+	 * @param twistDataset the twistDataset
 	 */
-	public DataNode setTwist(IDataset twist);
+	public DataNode setTwist(IDataset twistDataset);
 
 	/**
 	 * twist angle along axis
@@ -323,7 +324,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * 
 	 * @param twist the twist
 	 */
-	public DataNode setTwistScalar(Double twist);
+	public DataNode setTwistScalar(Double twistValue);
 
 	/**
 	 * offset vertical angle
@@ -343,9 +344,9 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
 	 * 
-	 * @param table the table
+	 * @param tableDataset the tableDataset
 	 */
-	public DataNode setTable(IDataset table);
+	public DataNode setTable(IDataset tableDataset);
 
 	/**
 	 * offset vertical angle
@@ -367,7 +368,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * 
 	 * @param table the table
 	 */
-	public DataNode setTableScalar(Double table);
+	public DataNode setTableScalar(Double tableValue);
 
 	/**
 	 * input beam height
@@ -387,9 +388,9 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param height the height
+	 * @param heightDataset the heightDataset
 	 */
-	public DataNode setHeight(IDataset height);
+	public DataNode setHeight(IDataset heightDataset);
 
 	/**
 	 * input beam height
@@ -411,7 +412,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * 
 	 * @param height the height
 	 */
-	public DataNode setHeightScalar(Double height);
+	public DataNode setHeightScalar(Double heightValue);
 
 	/**
 	 * input beam width
@@ -431,9 +432,9 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param width the width
+	 * @param widthDataset the widthDataset
 	 */
-	public DataNode setWidth(IDataset width);
+	public DataNode setWidth(IDataset widthDataset);
 
 	/**
 	 * input beam width
@@ -455,7 +456,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * 
 	 * @param width the width
 	 */
-	public DataNode setWidthScalar(Double width);
+	public DataNode setWidthScalar(Double widthValue);
 
 	/**
 	 * wavelength
@@ -475,9 +476,9 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * </p>
 	 * 
-	 * @param wavelength the wavelength
+	 * @param wavelengthDataset the wavelengthDataset
 	 */
-	public DataNode setWavelength(IDataset wavelength);
+	public DataNode setWavelength(IDataset wavelengthDataset);
 
 	/**
 	 * wavelength
@@ -499,7 +500,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * 
 	 * @param wavelength the wavelength
 	 */
-	public DataNode setWavelengthScalar(Double wavelength);
+	public DataNode setWavelengthScalar(Double wavelengthValue);
 
 	/**
 	 * deviation FWHM /Wavelength
@@ -519,9 +520,9 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * </p>
 	 * 
-	 * @param wavelength_spread the wavelength_spread
+	 * @param wavelength_spreadDataset the wavelength_spreadDataset
 	 */
-	public DataNode setWavelength_spread(IDataset wavelength_spread);
+	public DataNode setWavelength_spread(IDataset wavelength_spreadDataset);
 
 	/**
 	 * deviation FWHM /Wavelength
@@ -543,7 +544,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * 
 	 * @param wavelength_spread the wavelength_spread
 	 */
-	public DataNode setWavelength_spreadScalar(Double wavelength_spread);
+	public DataNode setWavelength_spreadScalar(Double wavelength_spreadValue);
 
 	/**
 	 * 
@@ -553,8 +554,34 @@ public interface NXvelocity_selector extends NXobject {
 	
 	/**
 	 * 
-	 * @param geometry the geometry
+	 * @param geometryGroup the geometryGroup
 	 */
-	public void setGeometry(NXgeometry geometry);
+	public void setGeometry(NXgeometry geometryGroup);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

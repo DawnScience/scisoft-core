@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,13 +66,13 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public DataNode setName(IDataset name) {
-		return setDataset(NX_NAME, name);
+	public DataNode setName(IDataset nameDataset) {
+		return setDataset(NX_NAME, nameDataset);
 	}
 
 	@Override
-	public DataNode setNameScalar(String name) {
-		return setString(NX_NAME, name);
+	public DataNode setNameScalar(String nameValue) {
+		return setString(NX_NAME, nameValue);
 	}
 
 	@Override
@@ -86,13 +86,13 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public DataNode setChemical_formula(IDataset chemical_formula) {
-		return setDataset(NX_CHEMICAL_FORMULA, chemical_formula);
+	public DataNode setChemical_formula(IDataset chemical_formulaDataset) {
+		return setDataset(NX_CHEMICAL_FORMULA, chemical_formulaDataset);
 	}
 
 	@Override
-	public DataNode setChemical_formulaScalar(String chemical_formula) {
-		return setString(NX_CHEMICAL_FORMULA, chemical_formula);
+	public DataNode setChemical_formulaScalar(String chemical_formulaValue) {
+		return setString(NX_CHEMICAL_FORMULA, chemical_formulaValue);
 	}
 
 	@Override
@@ -106,13 +106,13 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public DataNode setUnit_cell_abc(IDataset unit_cell_abc) {
-		return setDataset(NX_UNIT_CELL_ABC, unit_cell_abc);
+	public DataNode setUnit_cell_abc(IDataset unit_cell_abcDataset) {
+		return setDataset(NX_UNIT_CELL_ABC, unit_cell_abcDataset);
 	}
 
 	@Override
-	public DataNode setUnit_cell_abcScalar(Double unit_cell_abc) {
-		return setField(NX_UNIT_CELL_ABC, unit_cell_abc);
+	public DataNode setUnit_cell_abcScalar(Double unit_cell_abcValue) {
+		return setField(NX_UNIT_CELL_ABC, unit_cell_abcValue);
 	}
 
 	@Override
@@ -126,13 +126,13 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public DataNode setUnit_cell_alphabetagamma(IDataset unit_cell_alphabetagamma) {
-		return setDataset(NX_UNIT_CELL_ALPHABETAGAMMA, unit_cell_alphabetagamma);
+	public DataNode setUnit_cell_alphabetagamma(IDataset unit_cell_alphabetagammaDataset) {
+		return setDataset(NX_UNIT_CELL_ALPHABETAGAMMA, unit_cell_alphabetagammaDataset);
 	}
 
 	@Override
-	public DataNode setUnit_cell_alphabetagammaScalar(Double unit_cell_alphabetagamma) {
-		return setField(NX_UNIT_CELL_ALPHABETAGAMMA, unit_cell_alphabetagamma);
+	public DataNode setUnit_cell_alphabetagammaScalar(Double unit_cell_alphabetagammaValue) {
+		return setField(NX_UNIT_CELL_ALPHABETAGAMMA, unit_cell_alphabetagammaValue);
 	}
 
 	@Override
@@ -146,13 +146,13 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public DataNode setUnit_cell_volume(IDataset unit_cell_volume) {
-		return setDataset(NX_UNIT_CELL_VOLUME, unit_cell_volume);
+	public DataNode setUnit_cell_volume(IDataset unit_cell_volumeDataset) {
+		return setDataset(NX_UNIT_CELL_VOLUME, unit_cell_volumeDataset);
 	}
 
 	@Override
-	public DataNode setUnit_cell_volumeScalar(Double unit_cell_volume) {
-		return setField(NX_UNIT_CELL_VOLUME, unit_cell_volume);
+	public DataNode setUnit_cell_volumeScalar(Double unit_cell_volumeValue) {
+		return setField(NX_UNIT_CELL_VOLUME, unit_cell_volumeValue);
 	}
 
 	@Override
@@ -166,13 +166,13 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public DataNode setSample_orientation(IDataset sample_orientation) {
-		return setDataset(NX_SAMPLE_ORIENTATION, sample_orientation);
+	public DataNode setSample_orientation(IDataset sample_orientationDataset) {
+		return setDataset(NX_SAMPLE_ORIENTATION, sample_orientationDataset);
 	}
 
 	@Override
-	public DataNode setSample_orientationScalar(Double sample_orientation) {
-		return setField(NX_SAMPLE_ORIENTATION, sample_orientation);
+	public DataNode setSample_orientationScalar(Double sample_orientationValue) {
+		return setField(NX_SAMPLE_ORIENTATION, sample_orientationValue);
 	}
 
 	@Override
@@ -186,13 +186,13 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public DataNode setOrientation_matrix(IDataset orientation_matrix) {
-		return setDataset(NX_ORIENTATION_MATRIX, orientation_matrix);
+	public DataNode setOrientation_matrix(IDataset orientation_matrixDataset) {
+		return setDataset(NX_ORIENTATION_MATRIX, orientation_matrixDataset);
 	}
 
 	@Override
-	public DataNode setOrientation_matrixScalar(Double orientation_matrix) {
-		return setField(NX_ORIENTATION_MATRIX, orientation_matrix);
+	public DataNode setOrientation_matrixScalar(Double orientation_matrixValue) {
+		return setField(NX_ORIENTATION_MATRIX, orientation_matrixValue);
 	}
 
 	@Override
@@ -206,13 +206,13 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public DataNode setMass(IDataset mass) {
-		return setDataset(NX_MASS, mass);
+	public DataNode setMass(IDataset massDataset) {
+		return setDataset(NX_MASS, massDataset);
 	}
 
 	@Override
-	public DataNode setMassScalar(Double mass) {
-		return setField(NX_MASS, mass);
+	public DataNode setMassScalar(Double massValue) {
+		return setField(NX_MASS, massValue);
 	}
 
 	@Override
@@ -226,13 +226,13 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public DataNode setDensity(IDataset density) {
-		return setDataset(NX_DENSITY, density);
+	public DataNode setDensity(IDataset densityDataset) {
+		return setDataset(NX_DENSITY, densityDataset);
 	}
 
 	@Override
-	public DataNode setDensityScalar(Double density) {
-		return setField(NX_DENSITY, density);
+	public DataNode setDensityScalar(Double densityValue) {
+		return setField(NX_DENSITY, densityValue);
 	}
 
 	@Override
@@ -246,13 +246,13 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public DataNode setRelative_molecular_mass(IDataset relative_molecular_mass) {
-		return setDataset(NX_RELATIVE_MOLECULAR_MASS, relative_molecular_mass);
+	public DataNode setRelative_molecular_mass(IDataset relative_molecular_massDataset) {
+		return setDataset(NX_RELATIVE_MOLECULAR_MASS, relative_molecular_massDataset);
 	}
 
 	@Override
-	public DataNode setRelative_molecular_massScalar(Double relative_molecular_mass) {
-		return setField(NX_RELATIVE_MOLECULAR_MASS, relative_molecular_mass);
+	public DataNode setRelative_molecular_massScalar(Double relative_molecular_massValue) {
+		return setField(NX_RELATIVE_MOLECULAR_MASS, relative_molecular_massValue);
 	}
 
 	@Override
@@ -266,13 +266,13 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public DataNode setDescription(IDataset description) {
-		return setDataset(NX_DESCRIPTION, description);
+	public DataNode setDescription(IDataset descriptionDataset) {
+		return setDataset(NX_DESCRIPTION, descriptionDataset);
 	}
 
 	@Override
-	public DataNode setDescriptionScalar(String description) {
-		return setString(NX_DESCRIPTION, description);
+	public DataNode setDescriptionScalar(String descriptionValue) {
+		return setString(NX_DESCRIPTION, descriptionValue);
 	}
 
 	@Override
@@ -286,13 +286,13 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public DataNode setVolume_fraction(IDataset volume_fraction) {
-		return setDataset(NX_VOLUME_FRACTION, volume_fraction);
+	public DataNode setVolume_fraction(IDataset volume_fractionDataset) {
+		return setDataset(NX_VOLUME_FRACTION, volume_fractionDataset);
 	}
 
 	@Override
-	public DataNode setVolume_fractionScalar(Double volume_fraction) {
-		return setField(NX_VOLUME_FRACTION, volume_fraction);
+	public DataNode setVolume_fractionScalar(Double volume_fractionValue) {
+		return setField(NX_VOLUME_FRACTION, volume_fractionValue);
 	}
 
 	@Override
@@ -306,13 +306,13 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public DataNode setScattering_length_density(IDataset scattering_length_density) {
-		return setDataset(NX_SCATTERING_LENGTH_DENSITY, scattering_length_density);
+	public DataNode setScattering_length_density(IDataset scattering_length_densityDataset) {
+		return setDataset(NX_SCATTERING_LENGTH_DENSITY, scattering_length_densityDataset);
 	}
 
 	@Override
-	public DataNode setScattering_length_densityScalar(Double scattering_length_density) {
-		return setField(NX_SCATTERING_LENGTH_DENSITY, scattering_length_density);
+	public DataNode setScattering_length_densityScalar(Double scattering_length_densityValue) {
+		return setField(NX_SCATTERING_LENGTH_DENSITY, scattering_length_densityValue);
 	}
 
 	@Override
@@ -326,13 +326,13 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public DataNode setUnit_cell_class(IDataset unit_cell_class) {
-		return setDataset(NX_UNIT_CELL_CLASS, unit_cell_class);
+	public DataNode setUnit_cell_class(IDataset unit_cell_classDataset) {
+		return setDataset(NX_UNIT_CELL_CLASS, unit_cell_classDataset);
 	}
 
 	@Override
-	public DataNode setUnit_cell_classScalar(String unit_cell_class) {
-		return setString(NX_UNIT_CELL_CLASS, unit_cell_class);
+	public DataNode setUnit_cell_classScalar(String unit_cell_classValue) {
+		return setString(NX_UNIT_CELL_CLASS, unit_cell_classValue);
 	}
 
 	@Override
@@ -346,13 +346,13 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public DataNode setSpace_group(IDataset space_group) {
-		return setDataset(NX_SPACE_GROUP, space_group);
+	public DataNode setSpace_group(IDataset space_groupDataset) {
+		return setDataset(NX_SPACE_GROUP, space_groupDataset);
 	}
 
 	@Override
-	public DataNode setSpace_groupScalar(String space_group) {
-		return setString(NX_SPACE_GROUP, space_group);
+	public DataNode setSpace_groupScalar(String space_groupValue) {
+		return setString(NX_SPACE_GROUP, space_groupValue);
 	}
 
 	@Override
@@ -366,23 +366,34 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public DataNode setPoint_group(IDataset point_group) {
-		return setDataset(NX_POINT_GROUP, point_group);
+	public DataNode setPoint_group(IDataset point_groupDataset) {
+		return setDataset(NX_POINT_GROUP, point_groupDataset);
 	}
 
 	@Override
-	public DataNode setPoint_groupScalar(String point_group) {
-		return setString(NX_POINT_GROUP, point_group);
+	public DataNode setPoint_groupScalar(String point_groupValue) {
+		return setString(NX_POINT_GROUP, point_groupValue);
 	}
 
 	@Override
 	public NXdata getTransmission() {
+		// dataNodeName = NX_TRANSMISSION
 		return getChild("transmission", NXdata.class);
 	}
 
 	@Override
-	public void setTransmission(NXdata transmission) {
-		putChild("transmission", transmission);
+	public void setTransmission(NXdata transmissionGroup) {
+		putChild("transmission", transmissionGroup);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

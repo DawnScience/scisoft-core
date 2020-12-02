@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,13 +65,13 @@ public class NXparametersImpl extends NXobjectImpl implements NXparameters {
 	}
 
 	@Override
-	public DataNode setTerm(IDataset term) {
-		return setDataset(NX_TERM, term);
+	public DataNode setTerm(IDataset termDataset) {
+		return setDataset(NX_TERM, termDataset);
 	}
 
 	@Override
-	public DataNode setTermScalar(String term) {
-		return setString(NX_TERM, term);
+	public DataNode setTermScalar(String termValue) {
+		return setString(NX_TERM, termValue);
 	}
 
 	@Override
@@ -80,8 +80,18 @@ public class NXparametersImpl extends NXobjectImpl implements NXparameters {
 	}
 
 	@Override
-	public void setTermAttributeUnits(String units) {
-		setAttribute(NX_TERM, NX_TERM_ATTRIBUTE_UNITS, units);
+	public void setTermAttributeUnits(String unitsValue) {
+		setAttribute(NX_TERM, NX_TERM_ATTRIBUTE_UNITS, unitsValue);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

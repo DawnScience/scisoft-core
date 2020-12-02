@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,23 +57,23 @@ public class NXrootImpl extends NXobjectImpl implements NXroot {
 	
 
 	@Override
-	public String getAttributeNX_class() {
+	public String getAttributeNx_class() {
 		return getAttrString(null, NX_ATTRIBUTE_NX_CLASS);
 	}
 
 	@Override
-	public void setAttributeNX_class(String NX_class) {
-		setAttribute(null, NX_ATTRIBUTE_NX_CLASS, NX_class);
+	public void setAttributeNx_class(String nx_classValue) {
+		setAttribute(null, NX_ATTRIBUTE_NX_CLASS, nx_classValue);
 	}
 
 	@Override
-	public String getAttributeFile_time() {
-		return getAttrString(null, NX_ATTRIBUTE_FILE_TIME);
+	public Date getAttributeFile_time() {
+		return getAttrDate(null, NX_ATTRIBUTE_FILE_TIME);
 	}
 
 	@Override
-	public void setAttributeFile_time(String file_time) {
-		setAttribute(null, NX_ATTRIBUTE_FILE_TIME, file_time);
+	public void setAttributeFile_time(Date file_timeValue) {
+		setAttribute(null, NX_ATTRIBUTE_FILE_TIME, file_timeValue);
 	}
 
 	@Override
@@ -82,58 +82,58 @@ public class NXrootImpl extends NXobjectImpl implements NXroot {
 	}
 
 	@Override
-	public void setAttributeFile_name(String file_name) {
-		setAttribute(null, NX_ATTRIBUTE_FILE_NAME, file_name);
+	public void setAttributeFile_name(String file_nameValue) {
+		setAttribute(null, NX_ATTRIBUTE_FILE_NAME, file_nameValue);
 	}
 
 	@Override
-	public String getAttributeFile_update_time() {
-		return getAttrString(null, NX_ATTRIBUTE_FILE_UPDATE_TIME);
+	public Date getAttributeFile_update_time() {
+		return getAttrDate(null, NX_ATTRIBUTE_FILE_UPDATE_TIME);
 	}
 
 	@Override
-	public void setAttributeFile_update_time(String file_update_time) {
-		setAttribute(null, NX_ATTRIBUTE_FILE_UPDATE_TIME, file_update_time);
+	public void setAttributeFile_update_time(Date file_update_timeValue) {
+		setAttribute(null, NX_ATTRIBUTE_FILE_UPDATE_TIME, file_update_timeValue);
 	}
 
 	@Override
-	public String getAttributeNeXus_version() {
+	public String getAttributeNexus_version() {
 		return getAttrString(null, NX_ATTRIBUTE_NEXUS_VERSION);
 	}
 
 	@Override
-	public void setAttributeNeXus_version(String NeXus_version) {
-		setAttribute(null, NX_ATTRIBUTE_NEXUS_VERSION, NeXus_version);
+	public void setAttributeNexus_version(String nexus_versionValue) {
+		setAttribute(null, NX_ATTRIBUTE_NEXUS_VERSION, nexus_versionValue);
 	}
 
 	@Override
-	public String getAttributeHDF_version() {
+	public String getAttributeHdf_version() {
 		return getAttrString(null, NX_ATTRIBUTE_HDF_VERSION);
 	}
 
 	@Override
-	public void setAttributeHDF_version(String HDF_version) {
-		setAttribute(null, NX_ATTRIBUTE_HDF_VERSION, HDF_version);
+	public void setAttributeHdf_version(String hdf_versionValue) {
+		setAttribute(null, NX_ATTRIBUTE_HDF_VERSION, hdf_versionValue);
 	}
 
 	@Override
-	public String getAttributeHDF5_Version() {
+	public String getAttributeHdf5_version() {
 		return getAttrString(null, NX_ATTRIBUTE_HDF5_VERSION);
 	}
 
 	@Override
-	public void setAttributeHDF5_Version(String HDF5_Version) {
-		setAttribute(null, NX_ATTRIBUTE_HDF5_VERSION, HDF5_Version);
+	public void setAttributeHdf5_version(String hdf5_versionValue) {
+		setAttribute(null, NX_ATTRIBUTE_HDF5_VERSION, hdf5_versionValue);
 	}
 
 	@Override
-	public String getAttributeXML_version() {
+	public String getAttributeXml_version() {
 		return getAttrString(null, NX_ATTRIBUTE_XML_VERSION);
 	}
 
 	@Override
-	public void setAttributeXML_version(String XML_version) {
-		setAttribute(null, NX_ATTRIBUTE_XML_VERSION, XML_version);
+	public void setAttributeXml_version(String xml_versionValue) {
+		setAttribute(null, NX_ATTRIBUTE_XML_VERSION, xml_versionValue);
 	}
 
 	@Override
@@ -142,8 +142,8 @@ public class NXrootImpl extends NXobjectImpl implements NXroot {
 	}
 
 	@Override
-	public void setAttributeH5py_version(String h5py_version) {
-		setAttribute(null, NX_ATTRIBUTE_H5PY_VERSION, h5py_version);
+	public void setAttributeH5py_version(String h5py_versionValue) {
+		setAttribute(null, NX_ATTRIBUTE_H5PY_VERSION, h5py_versionValue);
 	}
 
 	@Override
@@ -152,18 +152,29 @@ public class NXrootImpl extends NXobjectImpl implements NXroot {
 	}
 
 	@Override
-	public void setAttributeCreator(String creator) {
-		setAttribute(null, NX_ATTRIBUTE_CREATOR, creator);
+	public void setAttributeCreator(String creatorValue) {
+		setAttribute(null, NX_ATTRIBUTE_CREATOR, creatorValue);
+	}
+
+	@Override
+	public String getAttributeCreator_version() {
+		return getAttrString(null, NX_ATTRIBUTE_CREATOR_VERSION);
+	}
+
+	@Override
+	public void setAttributeCreator_version(String creator_versionValue) {
+		setAttribute(null, NX_ATTRIBUTE_CREATOR_VERSION, creator_versionValue);
 	}
 
 	@Override
 	public NXentry getEntry() {
+		// dataNodeName = NX_ENTRY
 		return getChild("entry", NXentry.class);
 	}
 
 	@Override
-	public void setEntry(NXentry entry) {
-		putChild("entry", entry);
+	public void setEntry(NXentry entryGroup) {
+		putChild("entry", entryGroup);
 	}
 
 	@Override
@@ -192,8 +203,8 @@ public class NXrootImpl extends NXobjectImpl implements NXroot {
 	}
 
 	@Override
-	public void setAttributeDefault(String default_) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, default_);
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

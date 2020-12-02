@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ public interface NXoff_geometry extends NXobject {
 	public static final String NX_WINDING_ORDER = "winding_order";
 	public static final String NX_FACES = "faces";
 	public static final String NX_DETECTOR_FACES = "detector_faces";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * List of x,y,z coordinates for vertices.
 	 * The origin of the coordinates is the position of the parent component, for
@@ -69,9 +70,9 @@ public interface NXoff_geometry extends NXobject {
 	 * <b>Dimensions:</b> 1: i; 2: 3;
 	 * </p>
 	 * 
-	 * @param vertices the vertices
+	 * @param verticesDataset the verticesDataset
 	 */
-	public DataNode setVertices(IDataset vertices);
+	public DataNode setVertices(IDataset verticesDataset);
 
 	/**
 	 * List of x,y,z coordinates for vertices.
@@ -105,7 +106,7 @@ public interface NXoff_geometry extends NXobject {
 	 * 
 	 * @param vertices the vertices
 	 */
-	public DataNode setVerticesScalar(Number vertices);
+	public DataNode setVerticesScalar(Number verticesValue);
 
 	/**
 	 * List of indices of vertices in the ``vertices`` dataset to form each face,
@@ -127,9 +128,9 @@ public interface NXoff_geometry extends NXobject {
 	 * <b>Dimensions:</b> 1: j;
 	 * </p>
 	 * 
-	 * @param winding_order the winding_order
+	 * @param winding_orderDataset the winding_orderDataset
 	 */
-	public DataNode setWinding_order(IDataset winding_order);
+	public DataNode setWinding_order(IDataset winding_orderDataset);
 
 	/**
 	 * List of indices of vertices in the ``vertices`` dataset to form each face,
@@ -153,7 +154,7 @@ public interface NXoff_geometry extends NXobject {
 	 * 
 	 * @param winding_order the winding_order
 	 */
-	public DataNode setWinding_orderScalar(Long winding_order);
+	public DataNode setWinding_orderScalar(Long winding_orderValue);
 
 	/**
 	 * The start index in ``winding_order`` for each face.
@@ -173,9 +174,9 @@ public interface NXoff_geometry extends NXobject {
 	 * <b>Dimensions:</b> 1: k;
 	 * </p>
 	 * 
-	 * @param faces the faces
+	 * @param facesDataset the facesDataset
 	 */
-	public DataNode setFaces(IDataset faces);
+	public DataNode setFaces(IDataset facesDataset);
 
 	/**
 	 * The start index in ``winding_order`` for each face.
@@ -197,7 +198,7 @@ public interface NXoff_geometry extends NXobject {
 	 * 
 	 * @param faces the faces
 	 */
-	public DataNode setFacesScalar(Long faces);
+	public DataNode setFacesScalar(Long facesValue);
 
 	/**
 	 * List of pairs of index in the "faces" dataset and detector id. Face IDs in
@@ -231,9 +232,9 @@ public interface NXoff_geometry extends NXobject {
 	 * <b>Dimensions:</b> 1: l; 2: 2;
 	 * </p>
 	 * 
-	 * @param detector_faces the detector_faces
+	 * @param detector_facesDataset the detector_facesDataset
 	 */
-	public DataNode setDetector_faces(IDataset detector_faces);
+	public DataNode setDetector_faces(IDataset detector_facesDataset);
 
 	/**
 	 * List of pairs of index in the "faces" dataset and detector id. Face IDs in
@@ -269,6 +270,32 @@ public interface NXoff_geometry extends NXobject {
 	 * 
 	 * @param detector_faces the detector_faces
 	 */
-	public DataNode setDetector_facesScalar(Long detector_faces);
+	public DataNode setDetector_facesScalar(Long detector_facesValue);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

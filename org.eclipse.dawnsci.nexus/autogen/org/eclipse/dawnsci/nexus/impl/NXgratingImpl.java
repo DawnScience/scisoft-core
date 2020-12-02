@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,13 +70,13 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public DataNode setAngles(IDataset angles) {
-		return setDataset(NX_ANGLES, angles);
+	public DataNode setAngles(IDataset anglesDataset) {
+		return setDataset(NX_ANGLES, anglesDataset);
 	}
 
 	@Override
-	public DataNode setAnglesScalar(Double angles) {
-		return setField(NX_ANGLES, angles);
+	public DataNode setAnglesScalar(Double anglesValue) {
+		return setField(NX_ANGLES, anglesValue);
 	}
 
 	@Override
@@ -90,13 +90,13 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public DataNode setPeriod(IDataset period) {
-		return setDataset(NX_PERIOD, period);
+	public DataNode setPeriod(IDataset periodDataset) {
+		return setDataset(NX_PERIOD, periodDataset);
 	}
 
 	@Override
-	public DataNode setPeriodScalar(Double period) {
-		return setField(NX_PERIOD, period);
+	public DataNode setPeriodScalar(Double periodValue) {
+		return setField(NX_PERIOD, periodValue);
 	}
 
 	@Override
@@ -110,13 +110,13 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public DataNode setDuty_cycle(IDataset duty_cycle) {
-		return setDataset(NX_DUTY_CYCLE, duty_cycle);
+	public DataNode setDuty_cycle(IDataset duty_cycleDataset) {
+		return setDataset(NX_DUTY_CYCLE, duty_cycleDataset);
 	}
 
 	@Override
-	public DataNode setDuty_cycleScalar(Double duty_cycle) {
-		return setField(NX_DUTY_CYCLE, duty_cycle);
+	public DataNode setDuty_cycleScalar(Double duty_cycleValue) {
+		return setField(NX_DUTY_CYCLE, duty_cycleValue);
 	}
 
 	@Override
@@ -130,13 +130,13 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public DataNode setDepth(IDataset depth) {
-		return setDataset(NX_DEPTH, depth);
+	public DataNode setDepth(IDataset depthDataset) {
+		return setDataset(NX_DEPTH, depthDataset);
 	}
 
 	@Override
-	public DataNode setDepthScalar(Double depth) {
-		return setField(NX_DEPTH, depth);
+	public DataNode setDepthScalar(Double depthValue) {
+		return setField(NX_DEPTH, depthValue);
 	}
 
 	@Override
@@ -150,13 +150,13 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public DataNode setDiffraction_order(IDataset diffraction_order) {
-		return setDataset(NX_DIFFRACTION_ORDER, diffraction_order);
+	public DataNode setDiffraction_order(IDataset diffraction_orderDataset) {
+		return setDataset(NX_DIFFRACTION_ORDER, diffraction_orderDataset);
 	}
 
 	@Override
-	public DataNode setDiffraction_orderScalar(Long diffraction_order) {
-		return setField(NX_DIFFRACTION_ORDER, diffraction_order);
+	public DataNode setDiffraction_orderScalar(Long diffraction_orderValue) {
+		return setField(NX_DIFFRACTION_ORDER, diffraction_orderValue);
 	}
 
 	@Override
@@ -170,13 +170,13 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public DataNode setDeflection_angle(IDataset deflection_angle) {
-		return setDataset(NX_DEFLECTION_ANGLE, deflection_angle);
+	public DataNode setDeflection_angle(IDataset deflection_angleDataset) {
+		return setDataset(NX_DEFLECTION_ANGLE, deflection_angleDataset);
 	}
 
 	@Override
-	public DataNode setDeflection_angleScalar(Double deflection_angle) {
-		return setField(NX_DEFLECTION_ANGLE, deflection_angle);
+	public DataNode setDeflection_angleScalar(Double deflection_angleValue) {
+		return setField(NX_DEFLECTION_ANGLE, deflection_angleValue);
 	}
 
 	@Override
@@ -190,13 +190,13 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public DataNode setInterior_atmosphere(IDataset interior_atmosphere) {
-		return setDataset(NX_INTERIOR_ATMOSPHERE, interior_atmosphere);
+	public DataNode setInterior_atmosphere(IDataset interior_atmosphereDataset) {
+		return setDataset(NX_INTERIOR_ATMOSPHERE, interior_atmosphereDataset);
 	}
 
 	@Override
-	public DataNode setInterior_atmosphereScalar(String interior_atmosphere) {
-		return setString(NX_INTERIOR_ATMOSPHERE, interior_atmosphere);
+	public DataNode setInterior_atmosphereScalar(String interior_atmosphereValue) {
+		return setString(NX_INTERIOR_ATMOSPHERE, interior_atmosphereValue);
 	}
 
 	@Override
@@ -210,13 +210,13 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public DataNode setSubstrate_material(IDataset substrate_material) {
-		return setDataset(NX_SUBSTRATE_MATERIAL, substrate_material);
+	public DataNode setSubstrate_material(IDataset substrate_materialDataset) {
+		return setDataset(NX_SUBSTRATE_MATERIAL, substrate_materialDataset);
 	}
 
 	@Override
-	public DataNode setSubstrate_materialScalar(String substrate_material) {
-		return setString(NX_SUBSTRATE_MATERIAL, substrate_material);
+	public DataNode setSubstrate_materialScalar(String substrate_materialValue) {
+		return setString(NX_SUBSTRATE_MATERIAL, substrate_materialValue);
 	}
 
 	@Override
@@ -230,13 +230,13 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public DataNode setSubstrate_density(IDataset substrate_density) {
-		return setDataset(NX_SUBSTRATE_DENSITY, substrate_density);
+	public DataNode setSubstrate_density(IDataset substrate_densityDataset) {
+		return setDataset(NX_SUBSTRATE_DENSITY, substrate_densityDataset);
 	}
 
 	@Override
-	public DataNode setSubstrate_densityScalar(Double substrate_density) {
-		return setField(NX_SUBSTRATE_DENSITY, substrate_density);
+	public DataNode setSubstrate_densityScalar(Double substrate_densityValue) {
+		return setField(NX_SUBSTRATE_DENSITY, substrate_densityValue);
 	}
 
 	@Override
@@ -250,13 +250,13 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public DataNode setSubstrate_thickness(IDataset substrate_thickness) {
-		return setDataset(NX_SUBSTRATE_THICKNESS, substrate_thickness);
+	public DataNode setSubstrate_thickness(IDataset substrate_thicknessDataset) {
+		return setDataset(NX_SUBSTRATE_THICKNESS, substrate_thicknessDataset);
 	}
 
 	@Override
-	public DataNode setSubstrate_thicknessScalar(Double substrate_thickness) {
-		return setField(NX_SUBSTRATE_THICKNESS, substrate_thickness);
+	public DataNode setSubstrate_thicknessScalar(Double substrate_thicknessValue) {
+		return setField(NX_SUBSTRATE_THICKNESS, substrate_thicknessValue);
 	}
 
 	@Override
@@ -270,13 +270,13 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public DataNode setCoating_material(IDataset coating_material) {
-		return setDataset(NX_COATING_MATERIAL, coating_material);
+	public DataNode setCoating_material(IDataset coating_materialDataset) {
+		return setDataset(NX_COATING_MATERIAL, coating_materialDataset);
 	}
 
 	@Override
-	public DataNode setCoating_materialScalar(String coating_material) {
-		return setString(NX_COATING_MATERIAL, coating_material);
+	public DataNode setCoating_materialScalar(String coating_materialValue) {
+		return setString(NX_COATING_MATERIAL, coating_materialValue);
 	}
 
 	@Override
@@ -290,13 +290,13 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public DataNode setSubstrate_roughness(IDataset substrate_roughness) {
-		return setDataset(NX_SUBSTRATE_ROUGHNESS, substrate_roughness);
+	public DataNode setSubstrate_roughness(IDataset substrate_roughnessDataset) {
+		return setDataset(NX_SUBSTRATE_ROUGHNESS, substrate_roughnessDataset);
 	}
 
 	@Override
-	public DataNode setSubstrate_roughnessScalar(Double substrate_roughness) {
-		return setField(NX_SUBSTRATE_ROUGHNESS, substrate_roughness);
+	public DataNode setSubstrate_roughnessScalar(Double substrate_roughnessValue) {
+		return setField(NX_SUBSTRATE_ROUGHNESS, substrate_roughnessValue);
 	}
 
 	@Override
@@ -310,13 +310,13 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public DataNode setCoating_roughness(IDataset coating_roughness) {
-		return setDataset(NX_COATING_ROUGHNESS, coating_roughness);
+	public DataNode setCoating_roughness(IDataset coating_roughnessDataset) {
+		return setDataset(NX_COATING_ROUGHNESS, coating_roughnessDataset);
 	}
 
 	@Override
-	public DataNode setCoating_roughnessScalar(Double coating_roughness) {
-		return setField(NX_COATING_ROUGHNESS, coating_roughness);
+	public DataNode setCoating_roughnessScalar(Double coating_roughnessValue) {
+		return setField(NX_COATING_ROUGHNESS, coating_roughnessValue);
 	}
 
 	@Override
@@ -330,43 +330,46 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public DataNode setLayer_thickness(IDataset layer_thickness) {
-		return setDataset(NX_LAYER_THICKNESS, layer_thickness);
+	public DataNode setLayer_thickness(IDataset layer_thicknessDataset) {
+		return setDataset(NX_LAYER_THICKNESS, layer_thicknessDataset);
 	}
 
 	@Override
-	public DataNode setLayer_thicknessScalar(Double layer_thickness) {
-		return setField(NX_LAYER_THICKNESS, layer_thickness);
+	public DataNode setLayer_thicknessScalar(Double layer_thicknessValue) {
+		return setField(NX_LAYER_THICKNESS, layer_thicknessValue);
 	}
 
 	@Override
 	public NXshape getShape() {
+		// dataNodeName = NX_SHAPE
 		return getChild("shape", NXshape.class);
 	}
 
 	@Override
-	public void setShape(NXshape shape) {
-		putChild("shape", shape);
+	public void setShape(NXshape shapeGroup) {
+		putChild("shape", shapeGroup);
 	}
 
 	@Override
 	public NXdata getFigure_data() {
+		// dataNodeName = NX_FIGURE_DATA
 		return getChild("figure_data", NXdata.class);
 	}
 
 	@Override
-	public void setFigure_data(NXdata figure_data) {
-		putChild("figure_data", figure_data);
+	public void setFigure_data(NXdata figure_dataGroup) {
+		putChild("figure_data", figure_dataGroup);
 	}
 
 	@Override
 	public NXtransformations getTransformations() {
+		// dataNodeName = NX_TRANSFORMATIONS
 		return getChild("transformations", NXtransformations.class);
 	}
 
 	@Override
-	public void setTransformations(NXtransformations transformations) {
-		putChild("transformations", transformations);
+	public void setTransformations(NXtransformations transformationsGroup) {
+		putChild("transformations", transformationsGroup);
 	}
 
 	@Override
@@ -387,6 +390,16 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

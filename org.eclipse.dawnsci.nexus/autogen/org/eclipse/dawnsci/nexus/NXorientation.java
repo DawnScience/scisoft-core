@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ import org.eclipse.january.dataset.IDataset;
 public interface NXorientation extends NXobject {
 
 	public static final String NX_VALUE = "value";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * Link to another object if we are using relative positioning, else absent
 	 * 
@@ -35,10 +36,10 @@ public interface NXorientation extends NXobject {
 	/**
 	 * Link to another object if we are using relative positioning, else absent
 	 * 
-	 * @param geometry the geometry
+	 * @param geometryGroup the geometryGroup
 	 */
-	public void setGeometry(NXgeometry geometry);
-  
+	public void setGeometry(NXgeometry geometryGroup);
+
 	/**
 	 * Get a NXgeometry node by name:
 	 * <ul>
@@ -123,9 +124,9 @@ public interface NXorientation extends NXobject {
 	 * <b>Dimensions:</b> 1: numobj; 2: 6;
 	 * </p>
 	 * 
-	 * @param value the value
+	 * @param valueDataset the valueDataset
 	 */
-	public DataNode setValue(IDataset value);
+	public DataNode setValue(IDataset valueDataset);
 
 	/**
 	 * The orientation information is stored as direction cosines. The direction cosines will
@@ -165,6 +166,32 @@ public interface NXorientation extends NXobject {
 	 * 
 	 * @param value the value
 	 */
-	public DataNode setValueScalar(Double value);
+	public DataNode setValueScalar(Double valueValue);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

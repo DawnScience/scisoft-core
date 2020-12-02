@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,13 +67,13 @@ public class NXelectrostatic_kickerImpl extends NXobjectImpl implements NXelectr
 	}
 
 	@Override
-	public DataNode setDescription(IDataset description) {
-		return setDataset(NX_DESCRIPTION, description);
+	public DataNode setDescription(IDataset descriptionDataset) {
+		return setDataset(NX_DESCRIPTION, descriptionDataset);
 	}
 
 	@Override
-	public DataNode setDescriptionScalar(String description) {
-		return setString(NX_DESCRIPTION, description);
+	public DataNode setDescriptionScalar(String descriptionValue) {
+		return setString(NX_DESCRIPTION, descriptionValue);
 	}
 
 	@Override
@@ -87,13 +87,13 @@ public class NXelectrostatic_kickerImpl extends NXobjectImpl implements NXelectr
 	}
 
 	@Override
-	public DataNode setBeamline_distance(IDataset beamline_distance) {
-		return setDataset(NX_BEAMLINE_DISTANCE, beamline_distance);
+	public DataNode setBeamline_distance(IDataset beamline_distanceDataset) {
+		return setDataset(NX_BEAMLINE_DISTANCE, beamline_distanceDataset);
 	}
 
 	@Override
-	public DataNode setBeamline_distanceScalar(Double beamline_distance) {
-		return setField(NX_BEAMLINE_DISTANCE, beamline_distance);
+	public DataNode setBeamline_distanceScalar(Double beamline_distanceValue) {
+		return setField(NX_BEAMLINE_DISTANCE, beamline_distanceValue);
 	}
 
 	@Override
@@ -107,13 +107,13 @@ public class NXelectrostatic_kickerImpl extends NXobjectImpl implements NXelectr
 	}
 
 	@Override
-	public DataNode setTiming(IDataset timing) {
-		return setDataset(NX_TIMING, timing);
+	public DataNode setTiming(IDataset timingDataset) {
+		return setDataset(NX_TIMING, timingDataset);
 	}
 
 	@Override
-	public DataNode setTimingScalar(Double timing) {
-		return setField(NX_TIMING, timing);
+	public DataNode setTimingScalar(Double timingValue) {
+		return setField(NX_TIMING, timingValue);
 	}
 
 	@Override
@@ -122,8 +122,8 @@ public class NXelectrostatic_kickerImpl extends NXobjectImpl implements NXelectr
 	}
 
 	@Override
-	public void setTimingAttributeDescription(String description) {
-		setAttribute(NX_TIMING, NX_TIMING_ATTRIBUTE_DESCRIPTION, description);
+	public void setTimingAttributeDescription(String descriptionValue) {
+		setAttribute(NX_TIMING, NX_TIMING_ATTRIBUTE_DESCRIPTION, descriptionValue);
 	}
 
 	@Override
@@ -137,23 +137,24 @@ public class NXelectrostatic_kickerImpl extends NXobjectImpl implements NXelectr
 	}
 
 	@Override
-	public DataNode setSet_current(IDataset set_current) {
-		return setDataset(NX_SET_CURRENT, set_current);
+	public DataNode setSet_current(IDataset set_currentDataset) {
+		return setDataset(NX_SET_CURRENT, set_currentDataset);
 	}
 
 	@Override
-	public DataNode setSet_currentScalar(Double set_current) {
-		return setField(NX_SET_CURRENT, set_current);
+	public DataNode setSet_currentScalar(Double set_currentValue) {
+		return setField(NX_SET_CURRENT, set_currentValue);
 	}
 
 	@Override
 	public NXlog getRead_current() {
+		// dataNodeName = NX_READ_CURRENT
 		return getChild("read_current", NXlog.class);
 	}
 
 	@Override
-	public void setRead_current(NXlog read_current) {
-		putChild("read_current", read_current);
+	public void setRead_current(NXlog read_currentGroup) {
+		putChild("read_current", read_currentGroup);
 	}
 
 	@Override
@@ -167,23 +168,24 @@ public class NXelectrostatic_kickerImpl extends NXobjectImpl implements NXelectr
 	}
 
 	@Override
-	public DataNode setSet_voltage(IDataset set_voltage) {
-		return setDataset(NX_SET_VOLTAGE, set_voltage);
+	public DataNode setSet_voltage(IDataset set_voltageDataset) {
+		return setDataset(NX_SET_VOLTAGE, set_voltageDataset);
 	}
 
 	@Override
-	public DataNode setSet_voltageScalar(Double set_voltage) {
-		return setField(NX_SET_VOLTAGE, set_voltage);
+	public DataNode setSet_voltageScalar(Double set_voltageValue) {
+		return setField(NX_SET_VOLTAGE, set_voltageValue);
 	}
 
 	@Override
 	public NXlog getRead_voltage() {
+		// dataNodeName = NX_READ_VOLTAGE
 		return getChild("read_voltage", NXlog.class);
 	}
 
 	@Override
-	public void setRead_voltage(NXlog read_voltage) {
-		putChild("read_voltage", read_voltage);
+	public void setRead_voltage(NXlog read_voltageGroup) {
+		putChild("read_voltage", read_voltageGroup);
 	}
 
 }

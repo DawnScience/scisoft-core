@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ public interface NXinsertion_device extends NXobject {
 	public static final String NX_ENERGY = "energy";
 	public static final String NX_BANDWIDTH = "bandwidth";
 	public static final String NX_HARMONIC = "harmonic";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
@@ -53,9 +54,9 @@ public interface NXinsertion_device extends NXobject {
 	 * <li><b>wiggler</b> </li></ul></p>
 	 * </p>
 	 * 
-	 * @param type the type
+	 * @param typeDataset the typeDataset
 	 */
-	public DataNode setType(IDataset type);
+	public DataNode setType(IDataset typeDataset);
 
 	/**
 	 * <p>
@@ -77,7 +78,7 @@ public interface NXinsertion_device extends NXobject {
 	 * 
 	 * @param type the type
 	 */
-	public DataNode setTypeScalar(String type);
+	public DataNode setTypeScalar(String typeValue);
 
 	/**
 	 * separation between opposing pairs of magnetic poles
@@ -97,9 +98,9 @@ public interface NXinsertion_device extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param gap the gap
+	 * @param gapDataset the gapDataset
 	 */
-	public DataNode setGap(IDataset gap);
+	public DataNode setGap(IDataset gapDataset);
 
 	/**
 	 * separation between opposing pairs of magnetic poles
@@ -121,7 +122,7 @@ public interface NXinsertion_device extends NXobject {
 	 * 
 	 * @param gap the gap
 	 */
-	public DataNode setGapScalar(Double gap);
+	public DataNode setGapScalar(Double gapValue);
 
 	/**
 	 * angular of gap difference between upstream and downstream ends of the insertion device
@@ -141,9 +142,9 @@ public interface NXinsertion_device extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
 	 * 
-	 * @param taper the taper
+	 * @param taperDataset the taperDataset
 	 */
-	public DataNode setTaper(IDataset taper);
+	public DataNode setTaper(IDataset taperDataset);
 
 	/**
 	 * angular of gap difference between upstream and downstream ends of the insertion device
@@ -165,7 +166,7 @@ public interface NXinsertion_device extends NXobject {
 	 * 
 	 * @param taper the taper
 	 */
-	public DataNode setTaperScalar(Double taper);
+	public DataNode setTaperScalar(Double taperValue);
 
 	/**
 	 * <p>
@@ -183,9 +184,9 @@ public interface NXinsertion_device extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
 	 * 
-	 * @param phase the phase
+	 * @param phaseDataset the phaseDataset
 	 */
-	public DataNode setPhase(IDataset phase);
+	public DataNode setPhase(IDataset phaseDataset);
 
 	/**
 	 * <p>
@@ -205,7 +206,7 @@ public interface NXinsertion_device extends NXobject {
 	 * 
 	 * @param phase the phase
 	 */
-	public DataNode setPhaseScalar(Double phase);
+	public DataNode setPhaseScalar(Double phaseValue);
 
 	/**
 	 * number of poles
@@ -225,9 +226,9 @@ public interface NXinsertion_device extends NXobject {
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 * 
-	 * @param poles the poles
+	 * @param polesDataset the polesDataset
 	 */
-	public DataNode setPoles(IDataset poles);
+	public DataNode setPoles(IDataset polesDataset);
 
 	/**
 	 * number of poles
@@ -249,7 +250,7 @@ public interface NXinsertion_device extends NXobject {
 	 * 
 	 * @param poles the poles
 	 */
-	public DataNode setPolesScalar(Long poles);
+	public DataNode setPolesScalar(Long polesValue);
 
 	/**
 	 * <p>
@@ -267,9 +268,9 @@ public interface NXinsertion_device extends NXobject {
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * </p>
 	 * 
-	 * @param magnetic_wavelength the magnetic_wavelength
+	 * @param magnetic_wavelengthDataset the magnetic_wavelengthDataset
 	 */
-	public DataNode setMagnetic_wavelength(IDataset magnetic_wavelength);
+	public DataNode setMagnetic_wavelength(IDataset magnetic_wavelengthDataset);
 
 	/**
 	 * <p>
@@ -289,7 +290,7 @@ public interface NXinsertion_device extends NXobject {
 	 * 
 	 * @param magnetic_wavelength the magnetic_wavelength
 	 */
-	public DataNode setMagnetic_wavelengthScalar(Double magnetic_wavelength);
+	public DataNode setMagnetic_wavelengthScalar(Double magnetic_wavelengthValue);
 
 	/**
 	 * beam displacement parameter
@@ -309,9 +310,9 @@ public interface NXinsertion_device extends NXobject {
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
 	 * 
-	 * @param k the k
+	 * @param kDataset the kDataset
 	 */
-	public DataNode setK(IDataset k);
+	public DataNode setK(IDataset kDataset);
 
 	/**
 	 * beam displacement parameter
@@ -333,7 +334,7 @@ public interface NXinsertion_device extends NXobject {
 	 * 
 	 * @param k the k
 	 */
-	public DataNode setKScalar(Double k);
+	public DataNode setKScalar(Double kValue);
 
 	/**
 	 * length of insertion device
@@ -353,9 +354,9 @@ public interface NXinsertion_device extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param length the length
+	 * @param lengthDataset the lengthDataset
 	 */
-	public DataNode setLength(IDataset length);
+	public DataNode setLength(IDataset lengthDataset);
 
 	/**
 	 * length of insertion device
@@ -377,7 +378,7 @@ public interface NXinsertion_device extends NXobject {
 	 * 
 	 * @param length the length
 	 */
-	public DataNode setLengthScalar(Double length);
+	public DataNode setLengthScalar(Double lengthValue);
 
 	/**
 	 * total power delivered by insertion device
@@ -397,9 +398,9 @@ public interface NXinsertion_device extends NXobject {
 	 * <b>Units:</b> NX_POWER
 	 * </p>
 	 * 
-	 * @param power the power
+	 * @param powerDataset the powerDataset
 	 */
-	public DataNode setPower(IDataset power);
+	public DataNode setPower(IDataset powerDataset);
 
 	/**
 	 * total power delivered by insertion device
@@ -421,7 +422,7 @@ public interface NXinsertion_device extends NXobject {
 	 * 
 	 * @param power the power
 	 */
-	public DataNode setPowerScalar(Double power);
+	public DataNode setPowerScalar(Double powerValue);
 
 	/**
 	 * energy of peak intensity in output spectrum
@@ -441,9 +442,9 @@ public interface NXinsertion_device extends NXobject {
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
 	 * 
-	 * @param energy the energy
+	 * @param energyDataset the energyDataset
 	 */
-	public DataNode setEnergy(IDataset energy);
+	public DataNode setEnergy(IDataset energyDataset);
 
 	/**
 	 * energy of peak intensity in output spectrum
@@ -465,7 +466,7 @@ public interface NXinsertion_device extends NXobject {
 	 * 
 	 * @param energy the energy
 	 */
-	public DataNode setEnergyScalar(Double energy);
+	public DataNode setEnergyScalar(Double energyValue);
 
 	/**
 	 * bandwidth of peak energy
@@ -485,9 +486,9 @@ public interface NXinsertion_device extends NXobject {
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
 	 * 
-	 * @param bandwidth the bandwidth
+	 * @param bandwidthDataset the bandwidthDataset
 	 */
-	public DataNode setBandwidth(IDataset bandwidth);
+	public DataNode setBandwidth(IDataset bandwidthDataset);
 
 	/**
 	 * bandwidth of peak energy
@@ -509,7 +510,7 @@ public interface NXinsertion_device extends NXobject {
 	 * 
 	 * @param bandwidth the bandwidth
 	 */
-	public DataNode setBandwidthScalar(Double bandwidth);
+	public DataNode setBandwidthScalar(Double bandwidthValue);
 
 	/**
 	 * harmonic number of peak
@@ -529,9 +530,9 @@ public interface NXinsertion_device extends NXobject {
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 * 
-	 * @param harmonic the harmonic
+	 * @param harmonicDataset the harmonicDataset
 	 */
-	public DataNode setHarmonic(IDataset harmonic);
+	public DataNode setHarmonic(IDataset harmonicDataset);
 
 	/**
 	 * harmonic number of peak
@@ -553,7 +554,7 @@ public interface NXinsertion_device extends NXobject {
 	 * 
 	 * @param harmonic the harmonic
 	 */
-	public DataNode setHarmonicScalar(Long harmonic);
+	public DataNode setHarmonicScalar(Long harmonicValue);
 
 	/**
 	 * spectrum of insertion device
@@ -565,9 +566,9 @@ public interface NXinsertion_device extends NXobject {
 	/**
 	 * spectrum of insertion device
 	 * 
-	 * @param spectrum the spectrum
+	 * @param spectrumGroup the spectrumGroup
 	 */
-	public void setSpectrum(NXdata spectrum);
+	public void setSpectrum(NXdata spectrumGroup);
 
 	/**
 	 * "Engineering" position of insertion device
@@ -579,10 +580,10 @@ public interface NXinsertion_device extends NXobject {
 	/**
 	 * "Engineering" position of insertion device
 	 * 
-	 * @param geometry the geometry
+	 * @param geometryGroup the geometryGroup
 	 */
-	public void setGeometry(NXgeometry geometry);
-  
+	public void setGeometry(NXgeometry geometryGroup);
+
 	/**
 	 * Get a NXgeometry node by name:
 	 * <ul>
@@ -630,5 +631,31 @@ public interface NXinsertion_device extends NXobject {
 	
 	public void setAllGeometry(Map<String, NXgeometry> geometry);
 	
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

@@ -257,7 +257,7 @@ public class NexusDeviceServiceTest {
 		
 		NXdata calculated = NexusNodeFactory.createNXdata();
 		DoubleDataset data = Random.rand(8, 5, 64, 64);
-		calculated.setData(data);
+		calculated.setData(NXdata.NX_DATA, data);
 		calculated.setField("transformations", 10);
 		
 		NXcollection calibration = NexusNodeFactory.createNXcollection();

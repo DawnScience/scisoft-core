@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ public interface NXpolarizer extends NXobject {
 	public static final String NX_COMPOSITION = "composition";
 	public static final String NX_REFLECTION = "reflection";
 	public static final String NX_EFFICIENCY = "efficiency";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * one of these values: "crystal", "supermirror", "3He"
 	 * 
@@ -35,9 +36,9 @@ public interface NXpolarizer extends NXobject {
 	/**
 	 * one of these values: "crystal", "supermirror", "3He"
 	 * 
-	 * @param type the type
+	 * @param typeDataset the typeDataset
 	 */
-	public DataNode setType(IDataset type);
+	public DataNode setType(IDataset typeDataset);
 
 	/**
 	 * one of these values: "crystal", "supermirror", "3He"
@@ -51,7 +52,7 @@ public interface NXpolarizer extends NXobject {
 	 * 
 	 * @param type the type
 	 */
-	public DataNode setTypeScalar(String type);
+	public DataNode setTypeScalar(String typeValue);
 
 	/**
 	 * description of the composition of the polarizing material
@@ -63,9 +64,9 @@ public interface NXpolarizer extends NXobject {
 	/**
 	 * description of the composition of the polarizing material
 	 * 
-	 * @param composition the composition
+	 * @param compositionDataset the compositionDataset
 	 */
-	public DataNode setComposition(IDataset composition);
+	public DataNode setComposition(IDataset compositionDataset);
 
 	/**
 	 * description of the composition of the polarizing material
@@ -79,7 +80,7 @@ public interface NXpolarizer extends NXobject {
 	 * 
 	 * @param composition the composition
 	 */
-	public DataNode setCompositionScalar(String composition);
+	public DataNode setCompositionScalar(String compositionValue);
 
 	/**
 	 * [hkl] values of nominal reflection
@@ -101,9 +102,9 @@ public interface NXpolarizer extends NXobject {
 	 * <b>Dimensions:</b> 1: 3;
 	 * </p>
 	 * 
-	 * @param reflection the reflection
+	 * @param reflectionDataset the reflectionDataset
 	 */
-	public DataNode setReflection(IDataset reflection);
+	public DataNode setReflection(IDataset reflectionDataset);
 
 	/**
 	 * [hkl] values of nominal reflection
@@ -127,7 +128,7 @@ public interface NXpolarizer extends NXobject {
 	 * 
 	 * @param reflection the reflection
 	 */
-	public DataNode setReflectionScalar(Long reflection);
+	public DataNode setReflectionScalar(Long reflectionValue);
 
 	/**
 	 * polarizing efficiency
@@ -147,9 +148,9 @@ public interface NXpolarizer extends NXobject {
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
 	 * 
-	 * @param efficiency the efficiency
+	 * @param efficiencyDataset the efficiencyDataset
 	 */
-	public DataNode setEfficiency(IDataset efficiency);
+	public DataNode setEfficiency(IDataset efficiencyDataset);
 
 	/**
 	 * polarizing efficiency
@@ -171,6 +172,32 @@ public interface NXpolarizer extends NXobject {
 	 * 
 	 * @param efficiency the efficiency
 	 */
-	public DataNode setEfficiencyScalar(Double efficiency);
+	public DataNode setEfficiencyScalar(Double efficiencyValue);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,7 +93,7 @@ public class NXxnbValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
 		validateFieldUnits("polar_angle", polar_angle, NX_ANGLE);
 		validateFieldRank("polar_angle", polar_angle, 1);
-		validateFieldDimensions("polar_angle", polar_angle, null, "np");
+		validateFieldDimensions("polar_angle", polar_angle, null, "nP");
 
 		// validate field 'tilt_angle' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset tilt_angle = group.getDataset("tilt_angle");
@@ -101,7 +101,7 @@ public class NXxnbValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldType("tilt_angle", tilt_angle, NX_FLOAT);
 		validateFieldUnits("tilt_angle", tilt_angle, NX_ANGLE);
 		validateFieldRank("tilt_angle", tilt_angle, 1);
-		validateFieldDimensions("tilt_angle", tilt_angle, null, "np");
+		validateFieldDimensions("tilt_angle", tilt_angle, null, "nP");
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class NXxnbValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
 		validateFieldUnits("rotation_angle", rotation_angle, NX_ANGLE);
 		validateFieldRank("rotation_angle", rotation_angle, 1);
-		validateFieldDimensions("rotation_angle", rotation_angle, null, "np");
+		validateFieldDimensions("rotation_angle", rotation_angle, null, "nP");
 	}
 
 	/**

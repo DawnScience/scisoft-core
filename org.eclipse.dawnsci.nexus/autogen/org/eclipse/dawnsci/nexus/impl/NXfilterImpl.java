@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,12 +65,13 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 
 	@Override
 	public NXgeometry getGeometry() {
+		// dataNodeName = NX_GEOMETRY
 		return getChild("geometry", NXgeometry.class);
 	}
 
 	@Override
-	public void setGeometry(NXgeometry geometry) {
-		putChild("geometry", geometry);
+	public void setGeometry(NXgeometry geometryGroup) {
+		putChild("geometry", geometryGroup);
 	}
 
 	@Override
@@ -104,13 +105,13 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public DataNode setDescription(IDataset description) {
-		return setDataset(NX_DESCRIPTION, description);
+	public DataNode setDescription(IDataset descriptionDataset) {
+		return setDataset(NX_DESCRIPTION, descriptionDataset);
 	}
 
 	@Override
-	public DataNode setDescriptionScalar(String description) {
-		return setString(NX_DESCRIPTION, description);
+	public DataNode setDescriptionScalar(String descriptionValue) {
+		return setString(NX_DESCRIPTION, descriptionValue);
 	}
 
 	@Override
@@ -124,23 +125,24 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public DataNode setStatus(IDataset status) {
-		return setDataset(NX_STATUS, status);
+	public DataNode setStatus(IDataset statusDataset) {
+		return setDataset(NX_STATUS, statusDataset);
 	}
 
 	@Override
-	public DataNode setStatusScalar(String status) {
-		return setString(NX_STATUS, status);
+	public DataNode setStatusScalar(String statusValue) {
+		return setString(NX_STATUS, statusValue);
 	}
 
 	@Override
 	public NXdata getTransmission() {
+		// dataNodeName = NX_TRANSMISSION
 		return getChild("transmission", NXdata.class);
 	}
 
 	@Override
-	public void setTransmission(NXdata transmission) {
-		putChild("transmission", transmission);
+	public void setTransmission(NXdata transmissionGroup) {
+		putChild("transmission", transmissionGroup);
 	}
 
 	@Override
@@ -154,23 +156,24 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public DataNode setTemperature(IDataset temperature) {
-		return setDataset(NX_TEMPERATURE, temperature);
+	public DataNode setTemperature(IDataset temperatureDataset) {
+		return setDataset(NX_TEMPERATURE, temperatureDataset);
 	}
 
 	@Override
-	public DataNode setTemperatureScalar(Double temperature) {
-		return setField(NX_TEMPERATURE, temperature);
+	public DataNode setTemperatureScalar(Double temperatureValue) {
+		return setField(NX_TEMPERATURE, temperatureValue);
 	}
 
 	@Override
 	public NXlog getTemperature_log() {
+		// dataNodeName = NX_TEMPERATURE_LOG
 		return getChild("temperature_log", NXlog.class);
 	}
 
 	@Override
-	public void setTemperature_log(NXlog temperature_log) {
-		putChild("temperature_log", temperature_log);
+	public void setTemperature_log(NXlog temperature_logGroup) {
+		putChild("temperature_log", temperature_logGroup);
 	}
 
 	@Override
@@ -184,13 +187,13 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public DataNode setThickness(IDataset thickness) {
-		return setDataset(NX_THICKNESS, thickness);
+	public DataNode setThickness(IDataset thicknessDataset) {
+		return setDataset(NX_THICKNESS, thicknessDataset);
 	}
 
 	@Override
-	public DataNode setThicknessScalar(Double thickness) {
-		return setField(NX_THICKNESS, thickness);
+	public DataNode setThicknessScalar(Double thicknessValue) {
+		return setField(NX_THICKNESS, thicknessValue);
 	}
 
 	@Override
@@ -204,13 +207,13 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public DataNode setDensity(IDataset density) {
-		return setDataset(NX_DENSITY, density);
+	public DataNode setDensity(IDataset densityDataset) {
+		return setDataset(NX_DENSITY, densityDataset);
 	}
 
 	@Override
-	public DataNode setDensityScalar(Number density) {
-		return setField(NX_DENSITY, density);
+	public DataNode setDensityScalar(Number densityValue) {
+		return setField(NX_DENSITY, densityValue);
 	}
 
 	@Override
@@ -224,23 +227,24 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public DataNode setChemical_formula(IDataset chemical_formula) {
-		return setDataset(NX_CHEMICAL_FORMULA, chemical_formula);
+	public DataNode setChemical_formula(IDataset chemical_formulaDataset) {
+		return setDataset(NX_CHEMICAL_FORMULA, chemical_formulaDataset);
 	}
 
 	@Override
-	public DataNode setChemical_formulaScalar(String chemical_formula) {
-		return setString(NX_CHEMICAL_FORMULA, chemical_formula);
+	public DataNode setChemical_formulaScalar(String chemical_formulaValue) {
+		return setString(NX_CHEMICAL_FORMULA, chemical_formulaValue);
 	}
 
 	@Override
 	public NXsensor getSensor_type() {
+		// dataNodeName = NX_SENSOR_TYPE
 		return getChild("sensor_type", NXsensor.class);
 	}
 
 	@Override
-	public void setSensor_type(NXsensor sensor_type) {
-		putChild("sensor_type", sensor_type);
+	public void setSensor_type(NXsensor sensor_typeGroup) {
+		putChild("sensor_type", sensor_typeGroup);
 	}
 
 	@Override
@@ -254,13 +258,13 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public DataNode setUnit_cell_a(IDataset unit_cell_a) {
-		return setDataset(NX_UNIT_CELL_A, unit_cell_a);
+	public DataNode setUnit_cell_a(IDataset unit_cell_aDataset) {
+		return setDataset(NX_UNIT_CELL_A, unit_cell_aDataset);
 	}
 
 	@Override
-	public DataNode setUnit_cell_aScalar(Double unit_cell_a) {
-		return setField(NX_UNIT_CELL_A, unit_cell_a);
+	public DataNode setUnit_cell_aScalar(Double unit_cell_aValue) {
+		return setField(NX_UNIT_CELL_A, unit_cell_aValue);
 	}
 
 	@Override
@@ -274,13 +278,13 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public DataNode setUnit_cell_b(IDataset unit_cell_b) {
-		return setDataset(NX_UNIT_CELL_B, unit_cell_b);
+	public DataNode setUnit_cell_b(IDataset unit_cell_bDataset) {
+		return setDataset(NX_UNIT_CELL_B, unit_cell_bDataset);
 	}
 
 	@Override
-	public DataNode setUnit_cell_bScalar(Double unit_cell_b) {
-		return setField(NX_UNIT_CELL_B, unit_cell_b);
+	public DataNode setUnit_cell_bScalar(Double unit_cell_bValue) {
+		return setField(NX_UNIT_CELL_B, unit_cell_bValue);
 	}
 
 	@Override
@@ -294,13 +298,13 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public DataNode setUnit_cell_c(IDataset unit_cell_c) {
-		return setDataset(NX_UNIT_CELL_C, unit_cell_c);
+	public DataNode setUnit_cell_c(IDataset unit_cell_cDataset) {
+		return setDataset(NX_UNIT_CELL_C, unit_cell_cDataset);
 	}
 
 	@Override
-	public DataNode setUnit_cell_cScalar(Double unit_cell_c) {
-		return setField(NX_UNIT_CELL_C, unit_cell_c);
+	public DataNode setUnit_cell_cScalar(Double unit_cell_cValue) {
+		return setField(NX_UNIT_CELL_C, unit_cell_cValue);
 	}
 
 	@Override
@@ -314,13 +318,13 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public DataNode setUnit_cell_alpha(IDataset unit_cell_alpha) {
-		return setDataset(NX_UNIT_CELL_ALPHA, unit_cell_alpha);
+	public DataNode setUnit_cell_alpha(IDataset unit_cell_alphaDataset) {
+		return setDataset(NX_UNIT_CELL_ALPHA, unit_cell_alphaDataset);
 	}
 
 	@Override
-	public DataNode setUnit_cell_alphaScalar(Double unit_cell_alpha) {
-		return setField(NX_UNIT_CELL_ALPHA, unit_cell_alpha);
+	public DataNode setUnit_cell_alphaScalar(Double unit_cell_alphaValue) {
+		return setField(NX_UNIT_CELL_ALPHA, unit_cell_alphaValue);
 	}
 
 	@Override
@@ -334,13 +338,13 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public DataNode setUnit_cell_beta(IDataset unit_cell_beta) {
-		return setDataset(NX_UNIT_CELL_BETA, unit_cell_beta);
+	public DataNode setUnit_cell_beta(IDataset unit_cell_betaDataset) {
+		return setDataset(NX_UNIT_CELL_BETA, unit_cell_betaDataset);
 	}
 
 	@Override
-	public DataNode setUnit_cell_betaScalar(Double unit_cell_beta) {
-		return setField(NX_UNIT_CELL_BETA, unit_cell_beta);
+	public DataNode setUnit_cell_betaScalar(Double unit_cell_betaValue) {
+		return setField(NX_UNIT_CELL_BETA, unit_cell_betaValue);
 	}
 
 	@Override
@@ -354,13 +358,13 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public DataNode setUnit_cell_gamma(IDataset unit_cell_gamma) {
-		return setDataset(NX_UNIT_CELL_GAMMA, unit_cell_gamma);
+	public DataNode setUnit_cell_gamma(IDataset unit_cell_gammaDataset) {
+		return setDataset(NX_UNIT_CELL_GAMMA, unit_cell_gammaDataset);
 	}
 
 	@Override
-	public DataNode setUnit_cell_gammaScalar(Double unit_cell_gamma) {
-		return setField(NX_UNIT_CELL_GAMMA, unit_cell_gamma);
+	public DataNode setUnit_cell_gammaScalar(Double unit_cell_gammaValue) {
+		return setField(NX_UNIT_CELL_GAMMA, unit_cell_gammaValue);
 	}
 
 	@Override
@@ -374,13 +378,13 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public DataNode setUnit_cell_volume(IDataset unit_cell_volume) {
-		return setDataset(NX_UNIT_CELL_VOLUME, unit_cell_volume);
+	public DataNode setUnit_cell_volume(IDataset unit_cell_volumeDataset) {
+		return setDataset(NX_UNIT_CELL_VOLUME, unit_cell_volumeDataset);
 	}
 
 	@Override
-	public DataNode setUnit_cell_volumeScalar(Double unit_cell_volume) {
-		return setField(NX_UNIT_CELL_VOLUME, unit_cell_volume);
+	public DataNode setUnit_cell_volumeScalar(Double unit_cell_volumeValue) {
+		return setField(NX_UNIT_CELL_VOLUME, unit_cell_volumeValue);
 	}
 
 	@Override
@@ -394,13 +398,13 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public DataNode setOrientation_matrix(IDataset orientation_matrix) {
-		return setDataset(NX_ORIENTATION_MATRIX, orientation_matrix);
+	public DataNode setOrientation_matrix(IDataset orientation_matrixDataset) {
+		return setDataset(NX_ORIENTATION_MATRIX, orientation_matrixDataset);
 	}
 
 	@Override
-	public DataNode setOrientation_matrixScalar(Double orientation_matrix) {
-		return setField(NX_ORIENTATION_MATRIX, orientation_matrix);
+	public DataNode setOrientation_matrixScalar(Double orientation_matrixValue) {
+		return setField(NX_ORIENTATION_MATRIX, orientation_matrixValue);
 	}
 
 	@Override
@@ -414,13 +418,13 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public DataNode setM_value(IDataset m_value) {
-		return setDataset(NX_M_VALUE, m_value);
+	public DataNode setM_value(IDataset m_valueDataset) {
+		return setDataset(NX_M_VALUE, m_valueDataset);
 	}
 
 	@Override
-	public DataNode setM_valueScalar(Double m_value) {
-		return setField(NX_M_VALUE, m_value);
+	public DataNode setM_valueScalar(Double m_valueValue) {
+		return setField(NX_M_VALUE, m_valueValue);
 	}
 
 	@Override
@@ -434,13 +438,13 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public DataNode setSubstrate_material(IDataset substrate_material) {
-		return setDataset(NX_SUBSTRATE_MATERIAL, substrate_material);
+	public DataNode setSubstrate_material(IDataset substrate_materialDataset) {
+		return setDataset(NX_SUBSTRATE_MATERIAL, substrate_materialDataset);
 	}
 
 	@Override
-	public DataNode setSubstrate_materialScalar(String substrate_material) {
-		return setString(NX_SUBSTRATE_MATERIAL, substrate_material);
+	public DataNode setSubstrate_materialScalar(String substrate_materialValue) {
+		return setString(NX_SUBSTRATE_MATERIAL, substrate_materialValue);
 	}
 
 	@Override
@@ -454,13 +458,13 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public DataNode setSubstrate_thickness(IDataset substrate_thickness) {
-		return setDataset(NX_SUBSTRATE_THICKNESS, substrate_thickness);
+	public DataNode setSubstrate_thickness(IDataset substrate_thicknessDataset) {
+		return setDataset(NX_SUBSTRATE_THICKNESS, substrate_thicknessDataset);
 	}
 
 	@Override
-	public DataNode setSubstrate_thicknessScalar(Double substrate_thickness) {
-		return setField(NX_SUBSTRATE_THICKNESS, substrate_thickness);
+	public DataNode setSubstrate_thicknessScalar(Double substrate_thicknessValue) {
+		return setField(NX_SUBSTRATE_THICKNESS, substrate_thicknessValue);
 	}
 
 	@Override
@@ -474,13 +478,13 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public DataNode setCoating_material(IDataset coating_material) {
-		return setDataset(NX_COATING_MATERIAL, coating_material);
+	public DataNode setCoating_material(IDataset coating_materialDataset) {
+		return setDataset(NX_COATING_MATERIAL, coating_materialDataset);
 	}
 
 	@Override
-	public DataNode setCoating_materialScalar(String coating_material) {
-		return setString(NX_COATING_MATERIAL, coating_material);
+	public DataNode setCoating_materialScalar(String coating_materialValue) {
+		return setString(NX_COATING_MATERIAL, coating_materialValue);
 	}
 
 	@Override
@@ -494,13 +498,13 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public DataNode setSubstrate_roughness(IDataset substrate_roughness) {
-		return setDataset(NX_SUBSTRATE_ROUGHNESS, substrate_roughness);
+	public DataNode setSubstrate_roughness(IDataset substrate_roughnessDataset) {
+		return setDataset(NX_SUBSTRATE_ROUGHNESS, substrate_roughnessDataset);
 	}
 
 	@Override
-	public DataNode setSubstrate_roughnessScalar(Double substrate_roughness) {
-		return setField(NX_SUBSTRATE_ROUGHNESS, substrate_roughness);
+	public DataNode setSubstrate_roughnessScalar(Double substrate_roughnessValue) {
+		return setField(NX_SUBSTRATE_ROUGHNESS, substrate_roughnessValue);
 	}
 
 	@Override
@@ -514,13 +518,23 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public DataNode setCoating_roughness(IDataset coating_roughness) {
-		return setDataset(NX_COATING_ROUGHNESS, coating_roughness);
+	public DataNode setCoating_roughness(IDataset coating_roughnessDataset) {
+		return setDataset(NX_COATING_ROUGHNESS, coating_roughnessDataset);
 	}
 
 	@Override
-	public DataNode setCoating_roughnessScalar(Double coating_roughness) {
-		return setField(NX_COATING_ROUGHNESS, coating_roughness);
+	public DataNode setCoating_roughnessScalar(Double coating_roughnessValue) {
+		return setField(NX_COATING_ROUGHNESS, coating_roughnessValue);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

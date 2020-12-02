@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public interface NXnote extends NXobject {
 	public static final String NX_DESCRIPTION = "description";
 	public static final String NX_SEQUENCE_INDEX = "sequence_index";
 	public static final String NX_DATA = "data";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * Author or creator of note
 	 * 
@@ -43,9 +44,9 @@ public interface NXnote extends NXobject {
 	/**
 	 * Author or creator of note
 	 * 
-	 * @param author the author
+	 * @param authorDataset the authorDataset
 	 */
-	public DataNode setAuthor(IDataset author);
+	public DataNode setAuthor(IDataset authorDataset);
 
 	/**
 	 * Author or creator of note
@@ -59,7 +60,7 @@ public interface NXnote extends NXobject {
 	 * 
 	 * @param author the author
 	 */
-	public DataNode setAuthorScalar(String author);
+	public DataNode setAuthorScalar(String authorValue);
 
 	/**
 	 * Date note created/added
@@ -77,9 +78,9 @@ public interface NXnote extends NXobject {
 	 * <b>Type:</b> NX_DATE_TIME
 	 * </p>
 	 * 
-	 * @param date the date
+	 * @param dateDataset the dateDataset
 	 */
-	public DataNode setDate(IDataset date);
+	public DataNode setDate(IDataset dateDataset);
 
 	/**
 	 * Date note created/added
@@ -99,7 +100,7 @@ public interface NXnote extends NXobject {
 	 * 
 	 * @param date the date
 	 */
-	public DataNode setDateScalar(Date date);
+	public DataNode setDateScalar(Date dateValue);
 
 	/**
 	 * Mime content type of note data field e.g. image/jpeg, text/plain, text/html
@@ -111,9 +112,9 @@ public interface NXnote extends NXobject {
 	/**
 	 * Mime content type of note data field e.g. image/jpeg, text/plain, text/html
 	 * 
-	 * @param type the type
+	 * @param typeDataset the typeDataset
 	 */
-	public DataNode setType(IDataset type);
+	public DataNode setType(IDataset typeDataset);
 
 	/**
 	 * Mime content type of note data field e.g. image/jpeg, text/plain, text/html
@@ -127,7 +128,7 @@ public interface NXnote extends NXobject {
 	 * 
 	 * @param type the type
 	 */
-	public DataNode setTypeScalar(String type);
+	public DataNode setTypeScalar(String typeValue);
 
 	/**
 	 * Name of original file name if note was read from an external source
@@ -139,9 +140,9 @@ public interface NXnote extends NXobject {
 	/**
 	 * Name of original file name if note was read from an external source
 	 * 
-	 * @param file_name the file_name
+	 * @param file_nameDataset the file_nameDataset
 	 */
-	public DataNode setFile_name(IDataset file_name);
+	public DataNode setFile_name(IDataset file_nameDataset);
 
 	/**
 	 * Name of original file name if note was read from an external source
@@ -155,7 +156,7 @@ public interface NXnote extends NXobject {
 	 * 
 	 * @param file_name the file_name
 	 */
-	public DataNode setFile_nameScalar(String file_name);
+	public DataNode setFile_nameScalar(String file_nameValue);
 
 	/**
 	 * Title of an image or other details of the note
@@ -167,9 +168,9 @@ public interface NXnote extends NXobject {
 	/**
 	 * Title of an image or other details of the note
 	 * 
-	 * @param description the description
+	 * @param descriptionDataset the descriptionDataset
 	 */
-	public DataNode setDescription(IDataset description);
+	public DataNode setDescription(IDataset descriptionDataset);
 
 	/**
 	 * Title of an image or other details of the note
@@ -183,7 +184,7 @@ public interface NXnote extends NXobject {
 	 * 
 	 * @param description the description
 	 */
-	public DataNode setDescriptionScalar(String description);
+	public DataNode setDescriptionScalar(String descriptionValue);
 
 	/**
 	 * Sequence index of note, for placing a sequence of
@@ -203,9 +204,9 @@ public interface NXnote extends NXobject {
 	 * <b>Type:</b> NX_POSINT
 	 * </p>
 	 * 
-	 * @param sequence_index the sequence_index
+	 * @param sequence_indexDataset the sequence_indexDataset
 	 */
-	public DataNode setSequence_index(IDataset sequence_index);
+	public DataNode setSequence_index(IDataset sequence_indexDataset);
 
 	/**
 	 * Sequence index of note, for placing a sequence of
@@ -227,7 +228,7 @@ public interface NXnote extends NXobject {
 	 * 
 	 * @param sequence_index the sequence_index
 	 */
-	public DataNode setSequence_indexScalar(Long sequence_index);
+	public DataNode setSequence_indexScalar(Long sequence_indexValue);
 
 	/**
 	 * Binary note data - if text, line terminator is [CR][LF].
@@ -245,9 +246,9 @@ public interface NXnote extends NXobject {
 	 * <b>Type:</b> NX_BINARY
 	 * </p>
 	 * 
-	 * @param data the data
+	 * @param dataDataset the dataDataset
 	 */
-	public DataNode setData(IDataset data);
+	public DataNode setData(IDataset dataDataset);
 
 	/**
 	 * Binary note data - if text, line terminator is [CR][LF].
@@ -267,6 +268,32 @@ public interface NXnote extends NXobject {
 	 * 
 	 * @param data the data
 	 */
-	public DataNode setDataScalar(Object data);
+	public DataNode setDataScalar(Object dataValue);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

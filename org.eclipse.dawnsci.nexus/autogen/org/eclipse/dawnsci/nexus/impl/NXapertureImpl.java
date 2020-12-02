@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,12 +61,13 @@ public class NXapertureImpl extends NXobjectImpl implements NXaperture {
 
 	@Override
 	public NXgeometry getGeometry() {
+		// dataNodeName = NX_GEOMETRY
 		return getChild("geometry", NXgeometry.class);
 	}
 
 	@Override
-	public void setGeometry(NXgeometry geometry) {
-		putChild("geometry", geometry);
+	public void setGeometry(NXgeometry geometryGroup) {
+		putChild("geometry", geometryGroup);
 	}
 
 	@Override
@@ -100,13 +101,13 @@ public class NXapertureImpl extends NXobjectImpl implements NXaperture {
 	}
 
 	@Override
-	public DataNode setMaterial(IDataset material) {
-		return setDataset(NX_MATERIAL, material);
+	public DataNode setMaterial(IDataset materialDataset) {
+		return setDataset(NX_MATERIAL, materialDataset);
 	}
 
 	@Override
-	public DataNode setMaterialScalar(String material) {
-		return setString(NX_MATERIAL, material);
+	public DataNode setMaterialScalar(String materialValue) {
+		return setString(NX_MATERIAL, materialValue);
 	}
 
 	@Override
@@ -120,23 +121,24 @@ public class NXapertureImpl extends NXobjectImpl implements NXaperture {
 	}
 
 	@Override
-	public DataNode setDescription(IDataset description) {
-		return setDataset(NX_DESCRIPTION, description);
+	public DataNode setDescription(IDataset descriptionDataset) {
+		return setDataset(NX_DESCRIPTION, descriptionDataset);
 	}
 
 	@Override
-	public DataNode setDescriptionScalar(String description) {
-		return setString(NX_DESCRIPTION, description);
+	public DataNode setDescriptionScalar(String descriptionValue) {
+		return setString(NX_DESCRIPTION, descriptionValue);
 	}
 
 	@Override
 	public NXnote getNote() {
+		// dataNodeName = NX_NOTE
 		return getChild("note", NXnote.class);
 	}
 
 	@Override
-	public void setNote(NXnote note) {
-		putChild("note", note);
+	public void setNote(NXnote noteGroup) {
+		putChild("note", noteGroup);
 	}
 
 	@Override
@@ -157,6 +159,16 @@ public class NXapertureImpl extends NXobjectImpl implements NXaperture {
 	@Override
 	public void setAllNote(Map<String, NXnote> note) {
 		setChildren(note);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

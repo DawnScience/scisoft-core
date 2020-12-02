@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,13 +70,13 @@ public class NXenvironmentImpl extends NXobjectImpl implements NXenvironment {
 	}
 
 	@Override
-	public DataNode setName(IDataset name) {
-		return setDataset(NX_NAME, name);
+	public DataNode setName(IDataset nameDataset) {
+		return setDataset(NX_NAME, nameDataset);
 	}
 
 	@Override
-	public DataNode setNameScalar(String name) {
-		return setString(NX_NAME, name);
+	public DataNode setNameScalar(String nameValue) {
+		return setString(NX_NAME, nameValue);
 	}
 
 	@Override
@@ -90,13 +90,13 @@ public class NXenvironmentImpl extends NXobjectImpl implements NXenvironment {
 	}
 
 	@Override
-	public DataNode setShort_name(IDataset short_name) {
-		return setDataset(NX_SHORT_NAME, short_name);
+	public DataNode setShort_name(IDataset short_nameDataset) {
+		return setDataset(NX_SHORT_NAME, short_nameDataset);
 	}
 
 	@Override
-	public DataNode setShort_nameScalar(String short_name) {
-		return setString(NX_SHORT_NAME, short_name);
+	public DataNode setShort_nameScalar(String short_nameValue) {
+		return setString(NX_SHORT_NAME, short_nameValue);
 	}
 
 	@Override
@@ -110,13 +110,13 @@ public class NXenvironmentImpl extends NXobjectImpl implements NXenvironment {
 	}
 
 	@Override
-	public DataNode setType(IDataset type) {
-		return setDataset(NX_TYPE, type);
+	public DataNode setType(IDataset typeDataset) {
+		return setDataset(NX_TYPE, typeDataset);
 	}
 
 	@Override
-	public DataNode setTypeScalar(String type) {
-		return setString(NX_TYPE, type);
+	public DataNode setTypeScalar(String typeValue) {
+		return setString(NX_TYPE, typeValue);
 	}
 
 	@Override
@@ -130,13 +130,13 @@ public class NXenvironmentImpl extends NXobjectImpl implements NXenvironment {
 	}
 
 	@Override
-	public DataNode setDescription(IDataset description) {
-		return setDataset(NX_DESCRIPTION, description);
+	public DataNode setDescription(IDataset descriptionDataset) {
+		return setDataset(NX_DESCRIPTION, descriptionDataset);
 	}
 
 	@Override
-	public DataNode setDescriptionScalar(String description) {
-		return setString(NX_DESCRIPTION, description);
+	public DataNode setDescriptionScalar(String descriptionValue) {
+		return setString(NX_DESCRIPTION, descriptionValue);
 	}
 
 	@Override
@@ -150,33 +150,35 @@ public class NXenvironmentImpl extends NXobjectImpl implements NXenvironment {
 	}
 
 	@Override
-	public DataNode setProgram(IDataset program) {
-		return setDataset(NX_PROGRAM, program);
+	public DataNode setProgram(IDataset programDataset) {
+		return setDataset(NX_PROGRAM, programDataset);
 	}
 
 	@Override
-	public DataNode setProgramScalar(String program) {
-		return setString(NX_PROGRAM, program);
+	public DataNode setProgramScalar(String programValue) {
+		return setString(NX_PROGRAM, programValue);
 	}
 
 	@Override
 	public NXgeometry getPosition() {
+		// dataNodeName = NX_POSITION
 		return getChild("position", NXgeometry.class);
 	}
 
 	@Override
-	public void setPosition(NXgeometry position) {
-		putChild("position", position);
+	public void setPosition(NXgeometry positionGroup) {
+		putChild("position", positionGroup);
 	}
 
 	@Override
 	public NXnote getNote() {
+		// dataNodeName = NX_NOTE
 		return getChild("note", NXnote.class);
 	}
 
 	@Override
-	public void setNote(NXnote note) {
-		putChild("note", note);
+	public void setNote(NXnote noteGroup) {
+		putChild("note", noteGroup);
 	}
 
 	@Override
@@ -201,12 +203,13 @@ public class NXenvironmentImpl extends NXobjectImpl implements NXenvironment {
 
 	@Override
 	public NXsensor getSensor() {
+		// dataNodeName = NX_SENSOR
 		return getChild("sensor", NXsensor.class);
 	}
 
 	@Override
-	public void setSensor(NXsensor sensor) {
-		putChild("sensor", sensor);
+	public void setSensor(NXsensor sensorGroup) {
+		putChild("sensor", sensorGroup);
 	}
 
 	@Override

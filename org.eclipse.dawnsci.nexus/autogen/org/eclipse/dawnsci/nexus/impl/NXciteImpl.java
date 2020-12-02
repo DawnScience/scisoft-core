@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,13 +69,13 @@ public class NXciteImpl extends NXobjectImpl implements NXcite {
 	}
 
 	@Override
-	public DataNode setDescription(IDataset description) {
-		return setDataset(NX_DESCRIPTION, description);
+	public DataNode setDescription(IDataset descriptionDataset) {
+		return setDataset(NX_DESCRIPTION, descriptionDataset);
 	}
 
 	@Override
-	public DataNode setDescriptionScalar(String description) {
-		return setString(NX_DESCRIPTION, description);
+	public DataNode setDescriptionScalar(String descriptionValue) {
+		return setString(NX_DESCRIPTION, descriptionValue);
 	}
 
 	@Override
@@ -89,13 +89,13 @@ public class NXciteImpl extends NXobjectImpl implements NXcite {
 	}
 
 	@Override
-	public DataNode setUrl(IDataset url) {
-		return setDataset(NX_URL, url);
+	public DataNode setUrl(IDataset urlDataset) {
+		return setDataset(NX_URL, urlDataset);
 	}
 
 	@Override
-	public DataNode setUrlScalar(String url) {
-		return setString(NX_URL, url);
+	public DataNode setUrlScalar(String urlValue) {
+		return setString(NX_URL, urlValue);
 	}
 
 	@Override
@@ -109,13 +109,13 @@ public class NXciteImpl extends NXobjectImpl implements NXcite {
 	}
 
 	@Override
-	public DataNode setDoi(IDataset doi) {
-		return setDataset(NX_DOI, doi);
+	public DataNode setDoi(IDataset doiDataset) {
+		return setDataset(NX_DOI, doiDataset);
 	}
 
 	@Override
-	public DataNode setDoiScalar(String doi) {
-		return setString(NX_DOI, doi);
+	public DataNode setDoiScalar(String doiValue) {
+		return setString(NX_DOI, doiValue);
 	}
 
 	@Override
@@ -129,13 +129,13 @@ public class NXciteImpl extends NXobjectImpl implements NXcite {
 	}
 
 	@Override
-	public DataNode setEndnote(IDataset endnote) {
-		return setDataset(NX_ENDNOTE, endnote);
+	public DataNode setEndnote(IDataset endnoteDataset) {
+		return setDataset(NX_ENDNOTE, endnoteDataset);
 	}
 
 	@Override
-	public DataNode setEndnoteScalar(String endnote) {
-		return setString(NX_ENDNOTE, endnote);
+	public DataNode setEndnoteScalar(String endnoteValue) {
+		return setString(NX_ENDNOTE, endnoteValue);
 	}
 
 	@Override
@@ -149,13 +149,23 @@ public class NXciteImpl extends NXobjectImpl implements NXcite {
 	}
 
 	@Override
-	public DataNode setBibtex(IDataset bibtex) {
-		return setDataset(NX_BIBTEX, bibtex);
+	public DataNode setBibtex(IDataset bibtexDataset) {
+		return setDataset(NX_BIBTEX, bibtexDataset);
 	}
 
 	@Override
-	public DataNode setBibtexScalar(String bibtex) {
-		return setString(NX_BIBTEX, bibtex);
+	public DataNode setBibtexScalar(String bibtexValue) {
+		return setString(NX_BIBTEX, bibtexValue);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

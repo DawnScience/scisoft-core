@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,7 @@ public interface NXlog extends NXobject {
 	public static final String NX_DESCRIPTION = "description";
 	public static final String NX_AVERAGE_VALUE = "average_value";
 	public static final String NX_AVERAGE_VALUE_ERROR = "average_value_error";
+	public static final String NX_AVERAGE_VALUE_ERRORS = "average_value_errors";
 	public static final String NX_MINIMUM_VALUE = "minimum_value";
 	public static final String NX_MAXIMUM_VALUE = "maximum_value";
 	public static final String NX_DURATION = "duration";
@@ -59,11 +60,12 @@ public interface NXlog extends NXobject {
 	public static final String NX_CUE_TIMESTAMP_ZERO_ATTRIBUTE_START = "start";
 	public static final String NX_CUE_TIMESTAMP_ZERO_ATTRIBUTE_SCALING_FACTOR = "scaling_factor";
 	public static final String NX_CUE_INDEX = "cue_index";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * Time of logged entry. The times are relative to the "start" attribute
 	 * and in the units specified in the "units"
 	 * attribute. Please note that absolute
-	 * timestamps under unix are relative to ``1970-01-01T:00:00``.
+	 * timestamps under unix are relative to ``1970-01-01T00:00:00.0Z``.
 	 * The scaling_factor, when present, has to be applied to the time values in order
 	 * to arrive at the units specified in the units attribute. The scaling_factor allows
 	 * for arbitrary time units such as ticks of some hardware clock.
@@ -80,7 +82,7 @@ public interface NXlog extends NXobject {
 	 * Time of logged entry. The times are relative to the "start" attribute
 	 * and in the units specified in the "units"
 	 * attribute. Please note that absolute
-	 * timestamps under unix are relative to ``1970-01-01T:00:00``.
+	 * timestamps under unix are relative to ``1970-01-01T00:00:00.0Z``.
 	 * The scaling_factor, when present, has to be applied to the time values in order
 	 * to arrive at the units specified in the units attribute. The scaling_factor allows
 	 * for arbitrary time units such as ticks of some hardware clock.
@@ -89,15 +91,15 @@ public interface NXlog extends NXobject {
 	 * <b>Units:</b> NX_TIME
 	 * </p>
 	 * 
-	 * @param time the time
+	 * @param timeDataset the timeDataset
 	 */
-	public DataNode setTime(IDataset time);
+	public DataNode setTime(IDataset timeDataset);
 
 	/**
 	 * Time of logged entry. The times are relative to the "start" attribute
 	 * and in the units specified in the "units"
 	 * attribute. Please note that absolute
-	 * timestamps under unix are relative to ``1970-01-01T:00:00``.
+	 * timestamps under unix are relative to ``1970-01-01T00:00:00.0Z``.
 	 * The scaling_factor, when present, has to be applied to the time values in order
 	 * to arrive at the units specified in the units attribute. The scaling_factor allows
 	 * for arbitrary time units such as ticks of some hardware clock.
@@ -114,7 +116,7 @@ public interface NXlog extends NXobject {
 	 * Time of logged entry. The times are relative to the "start" attribute
 	 * and in the units specified in the "units"
 	 * attribute. Please note that absolute
-	 * timestamps under unix are relative to ``1970-01-01T:00:00``.
+	 * timestamps under unix are relative to ``1970-01-01T00:00:00.0Z``.
 	 * The scaling_factor, when present, has to be applied to the time values in order
 	 * to arrive at the units specified in the units attribute. The scaling_factor allows
 	 * for arbitrary time units such as ticks of some hardware clock.
@@ -125,7 +127,7 @@ public interface NXlog extends NXobject {
 	 * 
 	 * @param time the time
 	 */
-	public DataNode setTimeScalar(Number time);
+	public DataNode setTimeScalar(Number timeValue);
 
 	/**
 	 * 
@@ -135,9 +137,9 @@ public interface NXlog extends NXobject {
 	
 	/**
 	 * 
-	 * @param start the start
+	 * @param startValue the startValue
 	 */
-	public void setTimeAttributeStart(Date start);
+	public void setTimeAttributeStart(Date startValue);
 
 	/**
 	 * 
@@ -147,9 +149,9 @@ public interface NXlog extends NXobject {
 	
 	/**
 	 * 
-	 * @param scaling_factor the scaling_factor
+	 * @param scaling_factorValue the scaling_factorValue
 	 */
-	public void setTimeAttributeScaling_factor(Number scaling_factor);
+	public void setTimeAttributeScaling_factor(Number scaling_factorValue);
 
 	/**
 	 * Array of logged value, such as temperature. If this is
@@ -177,9 +179,9 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 * 
-	 * @param value the value
+	 * @param valueDataset the valueDataset
 	 */
-	public DataNode setValue(IDataset value);
+	public DataNode setValue(IDataset valueDataset);
 
 	/**
 	 * Array of logged value, such as temperature. If this is
@@ -209,7 +211,7 @@ public interface NXlog extends NXobject {
 	 * 
 	 * @param value the value
 	 */
-	public DataNode setValueScalar(Number value);
+	public DataNode setValueScalar(Number valueValue);
 
 	/**
 	 * Array of raw information, such as thermocouple voltage
@@ -229,9 +231,9 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 * 
-	 * @param raw_value the raw_value
+	 * @param raw_valueDataset the raw_valueDataset
 	 */
-	public DataNode setRaw_value(IDataset raw_value);
+	public DataNode setRaw_value(IDataset raw_valueDataset);
 
 	/**
 	 * Array of raw information, such as thermocouple voltage
@@ -253,7 +255,7 @@ public interface NXlog extends NXobject {
 	 * 
 	 * @param raw_value the raw_value
 	 */
-	public DataNode setRaw_valueScalar(Number raw_value);
+	public DataNode setRaw_valueScalar(Number raw_valueValue);
 
 	/**
 	 * Description of logged value
@@ -265,9 +267,9 @@ public interface NXlog extends NXobject {
 	/**
 	 * Description of logged value
 	 * 
-	 * @param description the description
+	 * @param descriptionDataset the descriptionDataset
 	 */
-	public DataNode setDescription(IDataset description);
+	public DataNode setDescription(IDataset descriptionDataset);
 
 	/**
 	 * Description of logged value
@@ -281,7 +283,7 @@ public interface NXlog extends NXobject {
 	 * 
 	 * @param description the description
 	 */
-	public DataNode setDescriptionScalar(String description);
+	public DataNode setDescriptionScalar(String descriptionValue);
 
 	/**
 	 * <p>
@@ -299,9 +301,9 @@ public interface NXlog extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 * 
-	 * @param average_value the average_value
+	 * @param average_valueDataset the average_valueDataset
 	 */
-	public DataNode setAverage_value(IDataset average_value);
+	public DataNode setAverage_value(IDataset average_valueDataset);
 
 	/**
 	 * <p>
@@ -321,7 +323,7 @@ public interface NXlog extends NXobject {
 	 * 
 	 * @param average_value the average_value
 	 */
-	public DataNode setAverage_valueScalar(Double average_value);
+	public DataNode setAverage_valueScalar(Double average_valueValue);
 
 	/**
 	 * estimated uncertainty (often used: standard deviation) of average_value
@@ -330,8 +332,10 @@ public interface NXlog extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 * 
+	 * @deprecated see: https://github.com/nexusformat/definitions/issues/639
 	 * @return  the value.
 	 */
+	@Deprecated
 	public IDataset getAverage_value_error();
 	
 	/**
@@ -341,9 +345,37 @@ public interface NXlog extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 * 
+	 * @deprecated see: https://github.com/nexusformat/definitions/issues/639
+	 * @param average_value_errorDataset the average_value_errorDataset
+	 */
+	@Deprecated
+	public DataNode setAverage_value_error(IDataset average_value_errorDataset);
+
+	/**
+	 * estimated uncertainty (often used: standard deviation) of average_value
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ANY
+	 * </p>
+	 * 
+	 * @deprecated see: https://github.com/nexusformat/definitions/issues/639
+	 * @return  the value.
+	 */
+	@Deprecated
+	public Double getAverage_value_errorScalar();
+
+	/**
+	 * estimated uncertainty (often used: standard deviation) of average_value
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ANY
+	 * </p>
+	 * 
+	 * @deprecated see: https://github.com/nexusformat/definitions/issues/639
 	 * @param average_value_error the average_value_error
 	 */
-	public DataNode setAverage_value_error(IDataset average_value_error);
+	@Deprecated
+	public DataNode setAverage_value_errorScalar(Double average_value_errorValue);
 
 	/**
 	 * estimated uncertainty (often used: standard deviation) of average_value
@@ -354,7 +386,18 @@ public interface NXlog extends NXobject {
 	 * 
 	 * @return  the value.
 	 */
-	public Double getAverage_value_errorScalar();
+	public IDataset getAverage_value_errors();
+	
+	/**
+	 * estimated uncertainty (often used: standard deviation) of average_value
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ANY
+	 * </p>
+	 * 
+	 * @param average_value_errorsDataset the average_value_errorsDataset
+	 */
+	public DataNode setAverage_value_errors(IDataset average_value_errorsDataset);
 
 	/**
 	 * estimated uncertainty (often used: standard deviation) of average_value
@@ -363,9 +406,20 @@ public interface NXlog extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 * 
-	 * @param average_value_error the average_value_error
+	 * @return  the value.
 	 */
-	public DataNode setAverage_value_errorScalar(Double average_value_error);
+	public Double getAverage_value_errorsScalar();
+
+	/**
+	 * estimated uncertainty (often used: standard deviation) of average_value
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ANY
+	 * </p>
+	 * 
+	 * @param average_value_errors the average_value_errors
+	 */
+	public DataNode setAverage_value_errorsScalar(Double average_value_errorsValue);
 
 	/**
 	 * <p>
@@ -383,9 +437,9 @@ public interface NXlog extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 * 
-	 * @param minimum_value the minimum_value
+	 * @param minimum_valueDataset the minimum_valueDataset
 	 */
-	public DataNode setMinimum_value(IDataset minimum_value);
+	public DataNode setMinimum_value(IDataset minimum_valueDataset);
 
 	/**
 	 * <p>
@@ -405,7 +459,7 @@ public interface NXlog extends NXobject {
 	 * 
 	 * @param minimum_value the minimum_value
 	 */
-	public DataNode setMinimum_valueScalar(Double minimum_value);
+	public DataNode setMinimum_valueScalar(Double minimum_valueValue);
 
 	/**
 	 * <p>
@@ -423,9 +477,9 @@ public interface NXlog extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 * 
-	 * @param maximum_value the maximum_value
+	 * @param maximum_valueDataset the maximum_valueDataset
 	 */
-	public DataNode setMaximum_value(IDataset maximum_value);
+	public DataNode setMaximum_value(IDataset maximum_valueDataset);
 
 	/**
 	 * <p>
@@ -445,7 +499,7 @@ public interface NXlog extends NXobject {
 	 * 
 	 * @param maximum_value the maximum_value
 	 */
-	public DataNode setMaximum_valueScalar(Double maximum_value);
+	public DataNode setMaximum_valueScalar(Double maximum_valueValue);
 
 	/**
 	 * Total time log was taken
@@ -465,9 +519,9 @@ public interface NXlog extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 * 
-	 * @param duration the duration
+	 * @param durationDataset the durationDataset
 	 */
-	public DataNode setDuration(IDataset duration);
+	public DataNode setDuration(IDataset durationDataset);
 
 	/**
 	 * Total time log was taken
@@ -489,7 +543,7 @@ public interface NXlog extends NXobject {
 	 * 
 	 * @param duration the duration
 	 */
-	public DataNode setDurationScalar(Double duration);
+	public DataNode setDurationScalar(Double durationValue);
 
 	/**
 	 * Timestamps matching the corresponding cue_index into the
@@ -511,9 +565,9 @@ public interface NXlog extends NXobject {
 	 * <b>Units:</b> NX_TIME
 	 * </p>
 	 * 
-	 * @param cue_timestamp_zero the cue_timestamp_zero
+	 * @param cue_timestamp_zeroDataset the cue_timestamp_zeroDataset
 	 */
-	public DataNode setCue_timestamp_zero(IDataset cue_timestamp_zero);
+	public DataNode setCue_timestamp_zero(IDataset cue_timestamp_zeroDataset);
 
 	/**
 	 * Timestamps matching the corresponding cue_index into the
@@ -537,7 +591,7 @@ public interface NXlog extends NXobject {
 	 * 
 	 * @param cue_timestamp_zero the cue_timestamp_zero
 	 */
-	public DataNode setCue_timestamp_zeroScalar(Number cue_timestamp_zero);
+	public DataNode setCue_timestamp_zeroScalar(Number cue_timestamp_zeroValue);
 
 	/**
 	 * If missing start is assumed to be the same as for "time".
@@ -549,9 +603,9 @@ public interface NXlog extends NXobject {
 	/**
 	 * If missing start is assumed to be the same as for "time".
 	 * 
-	 * @param start the start
+	 * @param startValue the startValue
 	 */
-	public void setCue_timestamp_zeroAttributeStart(Date start);
+	public void setCue_timestamp_zeroAttributeStart(Date startValue);
 
 	/**
 	 * If missing start is assumed to be the same as for "time".
@@ -563,13 +617,13 @@ public interface NXlog extends NXobject {
 	/**
 	 * If missing start is assumed to be the same as for "time".
 	 * 
-	 * @param scaling_factor the scaling_factor
+	 * @param scaling_factorValue the scaling_factorValue
 	 */
-	public void setCue_timestamp_zeroAttributeScaling_factor(Number scaling_factor);
+	public void setCue_timestamp_zeroAttributeScaling_factor(Number scaling_factorValue);
 
 	/**
 	 * Index into the time, value pair matching the corresponding
-	 * cue_timestamp.
+	 * cue_timestamp_zero.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * </p>
@@ -580,18 +634,18 @@ public interface NXlog extends NXobject {
 	
 	/**
 	 * Index into the time, value pair matching the corresponding
-	 * cue_timestamp.
+	 * cue_timestamp_zero.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * </p>
 	 * 
-	 * @param cue_index the cue_index
+	 * @param cue_indexDataset the cue_indexDataset
 	 */
-	public DataNode setCue_index(IDataset cue_index);
+	public DataNode setCue_index(IDataset cue_indexDataset);
 
 	/**
 	 * Index into the time, value pair matching the corresponding
-	 * cue_timestamp.
+	 * cue_timestamp_zero.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * </p>
@@ -602,13 +656,39 @@ public interface NXlog extends NXobject {
 
 	/**
 	 * Index into the time, value pair matching the corresponding
-	 * cue_timestamp.
+	 * cue_timestamp_zero.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * </p>
 	 * 
 	 * @param cue_index the cue_index
 	 */
-	public DataNode setCue_indexScalar(Long cue_index);
+	public DataNode setCue_indexScalar(Long cue_indexValue);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -59,6 +59,13 @@ import org.eclipse.dawnsci.nexus.*;
  * :math:`o` is given the ``offset`` attribute, :math:`t` is given by the ``vector``
  * attribute multiplied by the field value, and :math:`R` is defined as a rotation
  * about an axis in the direction of ``vector``, of angle of the field value.
+ * NOTE
+ * One possible use of ``NXtransformations`` is to define the motors and
+ * transformations for a diffractometer (goniometer). Such use is mentioned
+ * in the ``NXinstrument`` base class. Use one ``NXtransformations`` group
+ * for each diffractometer and name the group appropriate to the device.
+ * Collecting the motors of a sample table or xyz-stage in an NXtransformation
+ * group is equally possible.
  * 
  */
 public class NXtransformationsImpl extends NXobjectImpl implements NXtransformations {
@@ -93,140 +100,138 @@ public class NXtransformationsImpl extends NXobjectImpl implements NXtransformat
 	
 
 	@Override
-	public IDataset getAXISNAME() {
-		return getDataset(NX_AXISNAME);
+	public IDataset getAxisname(String axisname) {
+		return getDataset(axisname);
 	}
 
 	@Override
-	public Number getAXISNAMEScalar() {
-		return getNumber(NX_AXISNAME);
+	public Number getAxisnameScalar(String axisname) {
+		return getNumber(axisname);
 	}
 
 	@Override
-	public DataNode setAXISNAME(IDataset AXISNAME) {
-		return setDataset(NX_AXISNAME, AXISNAME);
+	public DataNode setAxisname(String axisname, IDataset axisnameDataset) {
+		return setDataset(axisname, axisnameDataset);
 	}
 
 	@Override
-	public DataNode setAXISNAMEScalar(Number AXISNAME) {
-		return setField(NX_AXISNAME, AXISNAME);
+	public DataNode setAxisnameScalar(String axisname, Number axisnameValue) {
+		return setField(axisname, axisnameValue);
 	}
 
 	@Override
-	public Map<String, IDataset> getAllAXISNAME() {
-		return getAllDatasets();
-	}
-
-	public void setAXISNAME(String name, IDataset AXISNAME) {
-		setDataset(name, AXISNAME);
+	public Map<String, IDataset> getAllAxisname() {
+		return getAllDatasets(); // note: returns all datasets in the group!
 	}
 
 	@Override
-	public String getAXISNAMEAttributeTransformation_type() {
-		return getAttrString(NX_AXISNAME, NX_AXISNAME_ATTRIBUTE_TRANSFORMATION_TYPE);
+	public String getAxisnameAttributeTransformation_type(String axisname) {
+		return getAttrString(axisname, NX_AXISNAME_ATTRIBUTE_TRANSFORMATION_TYPE);
 	}
 
 	@Override
-	public void setAXISNAMEAttributeTransformation_type(String transformation_type) {
-		setAttribute(NX_AXISNAME, NX_AXISNAME_ATTRIBUTE_TRANSFORMATION_TYPE, transformation_type);
+	public void setAxisnameAttributeTransformation_type(String axisname, String transformation_typeValue) {
+		setAttribute(axisname, NX_AXISNAME_ATTRIBUTE_TRANSFORMATION_TYPE, transformation_typeValue);
 	}
 
 	@Override
-	public Number getAXISNAMEAttributeVector() {
-		return getAttrNumber(NX_AXISNAME, NX_AXISNAME_ATTRIBUTE_VECTOR);
+	public Number getAxisnameAttributeVector(String axisname) {
+		return getAttrNumber(axisname, NX_AXISNAME_ATTRIBUTE_VECTOR);
 	}
 
 	@Override
-	public void setAXISNAMEAttributeVector(Number vector) {
-		setAttribute(NX_AXISNAME, NX_AXISNAME_ATTRIBUTE_VECTOR, vector);
+	public void setAxisnameAttributeVector(String axisname, Number vectorValue) {
+		setAttribute(axisname, NX_AXISNAME_ATTRIBUTE_VECTOR, vectorValue);
 	}
 
 	@Override
-	public Number getAXISNAMEAttributeOffset() {
-		return getAttrNumber(NX_AXISNAME, NX_AXISNAME_ATTRIBUTE_OFFSET);
+	public Number getAxisnameAttributeOffset(String axisname) {
+		return getAttrNumber(axisname, NX_AXISNAME_ATTRIBUTE_OFFSET);
 	}
 
 	@Override
-	public void setAXISNAMEAttributeOffset(Number offset) {
-		setAttribute(NX_AXISNAME, NX_AXISNAME_ATTRIBUTE_OFFSET, offset);
+	public void setAxisnameAttributeOffset(String axisname, Number offsetValue) {
+		setAttribute(axisname, NX_AXISNAME_ATTRIBUTE_OFFSET, offsetValue);
 	}
 
 	@Override
-	public String getAXISNAMEAttributeOffset_units() {
-		return getAttrString(NX_AXISNAME, NX_AXISNAME_ATTRIBUTE_OFFSET_UNITS);
+	public String getAxisnameAttributeOffset_units(String axisname) {
+		return getAttrString(axisname, NX_AXISNAME_ATTRIBUTE_OFFSET_UNITS);
 	}
 
 	@Override
-	public void setAXISNAMEAttributeOffset_units(String offset_units) {
-		setAttribute(NX_AXISNAME, NX_AXISNAME_ATTRIBUTE_OFFSET_UNITS, offset_units);
+	public void setAxisnameAttributeOffset_units(String axisname, String offset_unitsValue) {
+		setAttribute(axisname, NX_AXISNAME_ATTRIBUTE_OFFSET_UNITS, offset_unitsValue);
 	}
 
 	@Override
-	public String getAXISNAMEAttributeDepends_on() {
-		return getAttrString(NX_AXISNAME, NX_AXISNAME_ATTRIBUTE_DEPENDS_ON);
+	public String getAxisnameAttributeDepends_on(String axisname) {
+		return getAttrString(axisname, NX_AXISNAME_ATTRIBUTE_DEPENDS_ON);
 	}
 
 	@Override
-	public void setAXISNAMEAttributeDepends_on(String depends_on) {
-		setAttribute(NX_AXISNAME, NX_AXISNAME_ATTRIBUTE_DEPENDS_ON, depends_on);
+	public void setAxisnameAttributeDepends_on(String axisname, String depends_onValue) {
+		setAttribute(axisname, NX_AXISNAME_ATTRIBUTE_DEPENDS_ON, depends_onValue);
 	}
 
 	@Override
-	public IDataset getAXISNAME_end() {
-		return getDataset(NX_AXISNAME_END);
+	public IDataset getEnd(String axisname) {
+		return getDataset(axisname + NX_END_SUFFIX);
 	}
 
 	@Override
-	public Number getAXISNAME_endScalar() {
-		return getNumber(NX_AXISNAME_END);
+	public Number getEndScalar(String axisname) {
+		return getNumber(axisname + NX_END_SUFFIX);
 	}
 
 	@Override
-	public DataNode setAXISNAME_end(IDataset AXISNAME_end) {
-		return setDataset(NX_AXISNAME_END, AXISNAME_end);
+	public DataNode setEnd(String axisname, IDataset endDataset) {
+		return setDataset(axisname + NX_END_SUFFIX, endDataset);
 	}
 
 	@Override
-	public DataNode setAXISNAME_endScalar(Number AXISNAME_end) {
-		return setField(NX_AXISNAME_END, AXISNAME_end);
+	public DataNode setEndScalar(String axisname, Number endValue) {
+		return setField(axisname + NX_END_SUFFIX, endValue);
 	}
 
 	@Override
-	public Map<String, IDataset> getAllAXISNAME_end() {
-		return getAllDatasets();
-	}
-
-	public void setAXISNAME_end(String name, IDataset AXISNAME_end) {
-		setDataset(name, AXISNAME_end);
+	public Map<String, IDataset> getAllEnd() {
+		return getAllDatasets(); // note: returns all datasets in the group!
 	}
 
 	@Override
-	public IDataset getAXISNAME_increment_set() {
-		return getDataset(NX_AXISNAME_INCREMENT_SET);
+	public IDataset getIncrement_set(String axisname) {
+		return getDataset(axisname + NX_INCREMENT_SET_SUFFIX);
 	}
 
 	@Override
-	public Number getAXISNAME_increment_setScalar() {
-		return getNumber(NX_AXISNAME_INCREMENT_SET);
+	public Number getIncrement_setScalar(String axisname) {
+		return getNumber(axisname + NX_INCREMENT_SET_SUFFIX);
 	}
 
 	@Override
-	public DataNode setAXISNAME_increment_set(IDataset AXISNAME_increment_set) {
-		return setDataset(NX_AXISNAME_INCREMENT_SET, AXISNAME_increment_set);
+	public DataNode setIncrement_set(String axisname, IDataset increment_setDataset) {
+		return setDataset(axisname + NX_INCREMENT_SET_SUFFIX, increment_setDataset);
 	}
 
 	@Override
-	public DataNode setAXISNAME_increment_setScalar(Number AXISNAME_increment_set) {
-		return setField(NX_AXISNAME_INCREMENT_SET, AXISNAME_increment_set);
+	public DataNode setIncrement_setScalar(String axisname, Number increment_setValue) {
+		return setField(axisname + NX_INCREMENT_SET_SUFFIX, increment_setValue);
 	}
 
 	@Override
-	public Map<String, IDataset> getAllAXISNAME_increment_set() {
-		return getAllDatasets();
+	public Map<String, IDataset> getAllIncrement_set() {
+		return getAllDatasets(); // note: returns all datasets in the group!
 	}
 
-	public void setAXISNAME_increment_set(String name, IDataset AXISNAME_increment_set) {
-		setDataset(name, AXISNAME_increment_set);
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

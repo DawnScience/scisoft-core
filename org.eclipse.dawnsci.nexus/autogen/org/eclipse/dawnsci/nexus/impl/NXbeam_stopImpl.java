@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,12 +61,13 @@ public class NXbeam_stopImpl extends NXobjectImpl implements NXbeam_stop {
 
 	@Override
 	public NXgeometry getGeometry() {
+		// dataNodeName = NX_GEOMETRY
 		return getChild("geometry", NXgeometry.class);
 	}
 
 	@Override
-	public void setGeometry(NXgeometry geometry) {
-		putChild("geometry", geometry);
+	public void setGeometry(NXgeometry geometryGroup) {
+		putChild("geometry", geometryGroup);
 	}
 
 	@Override
@@ -100,13 +101,13 @@ public class NXbeam_stopImpl extends NXobjectImpl implements NXbeam_stop {
 	}
 
 	@Override
-	public DataNode setDescription(IDataset description) {
-		return setDataset(NX_DESCRIPTION, description);
+	public DataNode setDescription(IDataset descriptionDataset) {
+		return setDataset(NX_DESCRIPTION, descriptionDataset);
 	}
 
 	@Override
-	public DataNode setDescriptionScalar(String description) {
-		return setString(NX_DESCRIPTION, description);
+	public DataNode setDescriptionScalar(String descriptionValue) {
+		return setString(NX_DESCRIPTION, descriptionValue);
 	}
 
 	@Override
@@ -120,13 +121,13 @@ public class NXbeam_stopImpl extends NXobjectImpl implements NXbeam_stop {
 	}
 
 	@Override
-	public DataNode setSize(IDataset size) {
-		return setDataset(NX_SIZE, size);
+	public DataNode setSize(IDataset sizeDataset) {
+		return setDataset(NX_SIZE, sizeDataset);
 	}
 
 	@Override
-	public DataNode setSizeScalar(Double size) {
-		return setField(NX_SIZE, size);
+	public DataNode setSizeScalar(Double sizeValue) {
+		return setField(NX_SIZE, sizeValue);
 	}
 
 	@Override
@@ -140,13 +141,13 @@ public class NXbeam_stopImpl extends NXobjectImpl implements NXbeam_stop {
 	}
 
 	@Override
-	public DataNode setX(IDataset x) {
-		return setDataset(NX_X, x);
+	public DataNode setX(IDataset xDataset) {
+		return setDataset(NX_X, xDataset);
 	}
 
 	@Override
-	public DataNode setXScalar(Double x) {
-		return setField(NX_X, x);
+	public DataNode setXScalar(Double xValue) {
+		return setField(NX_X, xValue);
 	}
 
 	@Override
@@ -160,13 +161,13 @@ public class NXbeam_stopImpl extends NXobjectImpl implements NXbeam_stop {
 	}
 
 	@Override
-	public DataNode setY(IDataset y) {
-		return setDataset(NX_Y, y);
+	public DataNode setY(IDataset yDataset) {
+		return setDataset(NX_Y, yDataset);
 	}
 
 	@Override
-	public DataNode setYScalar(Double y) {
-		return setField(NX_Y, y);
+	public DataNode setYScalar(Double yValue) {
+		return setField(NX_Y, yValue);
 	}
 
 	@Override
@@ -180,13 +181,13 @@ public class NXbeam_stopImpl extends NXobjectImpl implements NXbeam_stop {
 	}
 
 	@Override
-	public DataNode setDistance_to_detector(IDataset distance_to_detector) {
-		return setDataset(NX_DISTANCE_TO_DETECTOR, distance_to_detector);
+	public DataNode setDistance_to_detector(IDataset distance_to_detectorDataset) {
+		return setDataset(NX_DISTANCE_TO_DETECTOR, distance_to_detectorDataset);
 	}
 
 	@Override
-	public DataNode setDistance_to_detectorScalar(Double distance_to_detector) {
-		return setField(NX_DISTANCE_TO_DETECTOR, distance_to_detector);
+	public DataNode setDistance_to_detectorScalar(Double distance_to_detectorValue) {
+		return setField(NX_DISTANCE_TO_DETECTOR, distance_to_detectorValue);
 	}
 
 	@Override
@@ -200,13 +201,23 @@ public class NXbeam_stopImpl extends NXobjectImpl implements NXbeam_stop {
 	}
 
 	@Override
-	public DataNode setStatus(IDataset status) {
-		return setDataset(NX_STATUS, status);
+	public DataNode setStatus(IDataset statusDataset) {
+		return setDataset(NX_STATUS, statusDataset);
 	}
 
 	@Override
-	public DataNode setStatusScalar(String status) {
-		return setString(NX_STATUS, status);
+	public DataNode setStatusScalar(String statusValue) {
+		return setString(NX_STATUS, statusValue);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,6 +85,24 @@ import org.eclipse.january.dataset.IDataset;
  * * The oldest method uses the ``axis`` attribute on each
  * *dimension scale* to identify
  * with an integer the axis whose value is the number of the dimension.
+ * .. index: !plot; axis label
+ * plot, axis units
+ * units
+ * dimension scale
+ * Each axis of the plot may be labeled with information from the
+ * dimension scale for that axis. The optional ``@long_name`` attribute
+ * is provided as the axis label default. If ``@long_name`` is not
+ * defined, then use the name of the dimension scale. A ``@units`` attribute,
+ * if available, may be added to the axis label for further description.
+ * See the section :ref:`Design-Units` for more information.
+ * .. index: !plot; axis title
+ * The optional ``title`` field, if available, provides a suggested
+ * title for the plot. If no ``title`` field is found in the :ref:`NXdata`
+ * group, look for a ``title`` field in the parent :ref:`NXentry` group,
+ * with a fallback to displaying the path to the :ref:`NXdata` group.
+ * NeXus is about how to find and annotate the data to be plotted
+ * but not to describe how the data is to be plotted.
+ * (https://www.nexusformat.org/NIAC2018Minutes.html#nxdata-plottype--attribute)
  * <p><b>Symbols:</b> 
  * These symbols will be used below to coordinate datasets with the same shape.<ul>
  * <li><b>dataRank</b> 
@@ -101,27 +119,54 @@ import org.eclipse.january.dataset.IDataset;
  */
 public interface NXdata extends NXobject {
 
+	public static final String NX_ATTRIBUTE_AUXILIARY_SIGNALS = "auxiliary_signals";
 	public static final String NX_ATTRIBUTE_SIGNAL = "signal";
 	public static final String NX_ATTRIBUTE_AXES = "axes";
-	public static final String NX_ATTRIBUTE_AXISNAME_INDICES = "AXISNAME_indices";
-	public static final String NX_VARIABLE = "VARIABLE";
+	public static final String NX_ATTRIBUTE_INDICES = "indices";
+	public static final String NX_VARIABLE = "variable";
 	public static final String NX_VARIABLE_ATTRIBUTE_LONG_NAME = "long_name";
 	public static final String NX_VARIABLE_ATTRIBUTE_DISTRIBUTION = "distribution";
 	public static final String NX_VARIABLE_ATTRIBUTE_FIRST_GOOD = "first_good";
 	public static final String NX_VARIABLE_ATTRIBUTE_LAST_GOOD = "last_good";
 	public static final String NX_VARIABLE_ATTRIBUTE_AXIS = "axis";
-	public static final String NX_VARIABLE_ERRORS = "VARIABLE_errors";
+	public static final String NX_ERRORS_SUFFIX = "errors";
 	public static final String NX_DATA = "data";
 	public static final String NX_DATA_ATTRIBUTE_SIGNAL = "signal";
 	public static final String NX_DATA_ATTRIBUTE_AXES = "axes";
-	public static final String NX_DATA_ATTRIBUTE_UNCERTAINTIES = "uncertainties";
 	public static final String NX_DATA_ATTRIBUTE_LONG_NAME = "long_name";
 	public static final String NX_ERRORS = "errors";
 	public static final String NX_SCALING_FACTOR = "scaling_factor";
 	public static final String NX_OFFSET = "offset";
+	public static final String NX_TITLE = "title";
 	public static final String NX_X = "x";
 	public static final String NX_Y = "y";
 	public static final String NX_Z = "z";
+	/**
+	 * .. index:: plotting
+	 * Array of strings holding the names of additional signals to
+	 * be plotted with the default signal (specified by the
+	 * ``signal`` attribute). Each auxiliary signal needs to be of
+	 * the same shape as the default signal.
+	 * .. NIAC2018:
+	 * https://www.nexusformat.org/NIAC2018Minutes.html
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeAuxiliary_signals();
+	
+	/**
+	 * .. index:: plotting
+	 * Array of strings holding the names of additional signals to
+	 * be plotted with the default signal (specified by the
+	 * ``signal`` attribute). Each auxiliary signal needs to be of
+	 * the same shape as the default signal.
+	 * .. NIAC2018:
+	 * https://www.nexusformat.org/NIAC2018Minutes.html
+	 * 
+	 * @param auxiliary_signalsValue the auxiliary_signalsValue
+	 */
+	public void setAttributeAuxiliary_signals(String auxiliary_signalsValue);
+
 	/**
 	 * .. index:: plotting
 	 * Declares which dataset is the default.
@@ -130,7 +175,7 @@ public interface NXdata extends NXobject {
 	 * or as a link to a dataset).
 	 * It is recommended (as of NIAC2014) to use this attribute
 	 * rather than adding a signal attribute to the dataset.
-	 * See http://wiki.nexusformat.org/2014_How_to_find_default_data
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
 	 * 
 	 * @return  the value.
@@ -145,12 +190,12 @@ public interface NXdata extends NXobject {
 	 * or as a link to a dataset).
 	 * It is recommended (as of NIAC2014) to use this attribute
 	 * rather than adding a signal attribute to the dataset.
-	 * See http://wiki.nexusformat.org/2014_How_to_find_default_data
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
 	 * 
-	 * @param signal the signal
+	 * @param signalValue the signalValue
 	 */
-	public void setAttributeSignal(String signal);
+	public void setAttributeSignal(String signalValue);
 
 	/**
 	 * .. index:: plotting
@@ -172,7 +217,7 @@ public interface NXdata extends NXobject {
 	 * is described by the values of a one-dimensional array named ``time``
 	 * while the other two dimensions have no fields to be used as dimension scales.
 	 * See examples provided on the NeXus wiki:
-	 * http://www.nexusformat.org/2014_axes_and_uncertainties
+	 * https://www.nexusformat.org/2014_axes_and_uncertainties.html
 	 * If there are no axes at all (such as with a stack of images),
 	 * the axes attribute can be omitted.
 	 * 
@@ -200,13 +245,13 @@ public interface NXdata extends NXobject {
 	 * is described by the values of a one-dimensional array named ``time``
 	 * while the other two dimensions have no fields to be used as dimension scales.
 	 * See examples provided on the NeXus wiki:
-	 * http://www.nexusformat.org/2014_axes_and_uncertainties
+	 * https://www.nexusformat.org/2014_axes_and_uncertainties.html
 	 * If there are no axes at all (such as with a stack of images),
 	 * the axes attribute can be omitted.
 	 * 
-	 * @param axes the axes
+	 * @param axesValue the axesValue
 	 */
-	public void setAttributeAxes(String axes);
+	public void setAttributeAxes(String axesValue);
 
 	/**
 	 * Each ``AXISNAME_indices`` attribute indicates the dependency
@@ -241,9 +286,10 @@ public interface NXdata extends NXobject {
 	 * (axes and _indices) are to be written as string or integer arrays,
 	 * to avoid string parsing in reading applications.
 	 * 
+	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public String getAttributeAXISNAME_indices();
+	public String getAttributeIndices(String axisname);
 	
 	/**
 	 * Each ``AXISNAME_indices`` attribute indicates the dependency
@@ -278,9 +324,10 @@ public interface NXdata extends NXobject {
 	 * (axes and _indices) are to be written as string or integer arrays,
 	 * to avoid string parsing in reading applications.
 	 * 
-	 * @param AXISNAME_indices the AXISNAME_indices
+	 * @param axisname the axisname
+	 * @param indicesValue the indicesValue
 	 */
-	public void setAttributeAXISNAME_indices(String AXISNAME_indices);
+	public void setAttributeIndices(String axisname, String indicesValue);
 
 	/**
 	 * Dimension scale defining an axis of the data.
@@ -293,9 +340,10 @@ public interface NXdata extends NXobject {
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
 	 * 
+	 * @param variable the variable
 	 * @return  the value.
 	 */
-	public IDataset getVARIABLE();
+	public IDataset getVariable(String variable);
 	
 	/**
 	 * Dimension scale defining an axis of the data.
@@ -308,9 +356,10 @@ public interface NXdata extends NXobject {
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
 	 * 
-	 * @param VARIABLE the VARIABLE
+	 * @param variable the variable
+	 * @param variableDataset the variableDataset
 	 */
-	public DataNode setVARIABLE(IDataset VARIABLE);
+	public DataNode setVariable(String variable, IDataset variableDataset);
 
 	/**
 	 * Dimension scale defining an axis of the data.
@@ -323,9 +372,10 @@ public interface NXdata extends NXobject {
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
 	 * 
+	 * @param variable the variable
 	 * @return  the value.
 	 */
-	public Number getVARIABLEScalar();
+	public Number getVariableScalar(String variable);
 
 	/**
 	 * Dimension scale defining an axis of the data.
@@ -338,12 +388,14 @@ public interface NXdata extends NXobject {
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
 	 * 
-	 * @param VARIABLE the VARIABLE
+	 * @param variable the variable
+	 * @param variable the variable
 	 */
-	public DataNode setVARIABLEScalar(Number VARIABLE);
-  
+	public DataNode setVariableScalar(String variable, Number variableValue);
+
+	
 	/**
-	 * Get all VARIABLE fields:
+	 * Get all Variable fields:
 	 *
 	 * Dimension scale defining an axis of the data.
 	 * Client is responsible for defining the dimensions of the data.
@@ -354,68 +406,77 @@ public interface NXdata extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
+	 * <p> <em>Note: this method returns ALL datasets within this group.</em> 
 	 * 
 	 * @return  a map from node names to the ? extends IDataset for that node.
 	 */
-	public Map<String, ? extends IDataset> getAllVARIABLE();
+	public Map<String, ? extends IDataset> getAllVariable();
 
 	/**
 	 * Axis label
 	 * 
+	 * @param variable the variable
 	 * @return  the value.
 	 */
-	public String getVARIABLEAttributeLong_name();
+	public String getVariableAttributeLong_name(String variable);
 	
 	/**
 	 * Axis label
 	 * 
-	 * @param long_name the long_name
+	 * @param variable the variable
+	 * @param long_nameValue the long_nameValue
 	 */
-	public void setVARIABLEAttributeLong_name(String long_name);
+	public void setVariableAttributeLong_name(String variable, String long_nameValue);
 
 	/**
 	 * ``0|false``: single value,
 	 * ``1|true``: multiple values
 	 * 
+	 * @param variable the variable
 	 * @return  the value.
 	 */
-	public Boolean getVARIABLEAttributeDistribution();
+	public Boolean getVariableAttributeDistribution(String variable);
 	
 	/**
 	 * ``0|false``: single value,
 	 * ``1|true``: multiple values
 	 * 
-	 * @param distribution the distribution
+	 * @param variable the variable
+	 * @param distributionValue the distributionValue
 	 */
-	public void setVARIABLEAttributeDistribution(Boolean distribution);
+	public void setVariableAttributeDistribution(String variable, Boolean distributionValue);
 
 	/**
 	 * Index of first good value
 	 * 
+	 * @param variable the variable
 	 * @return  the value.
 	 */
-	public Long getVARIABLEAttributeFirst_good();
+	public Long getVariableAttributeFirst_good(String variable);
 	
 	/**
 	 * Index of first good value
 	 * 
-	 * @param first_good the first_good
+	 * @param variable the variable
+	 * @param first_goodValue the first_goodValue
 	 */
-	public void setVARIABLEAttributeFirst_good(Long first_good);
+	public void setVariableAttributeFirst_good(String variable, Long first_goodValue);
 
 	/**
 	 * Index of last good value
 	 * 
+	 * @param variable the variable
 	 * @return  the value.
 	 */
-	public Long getVARIABLEAttributeLast_good();
+	public Long getVariableAttributeLast_good(String variable);
 	
 	/**
 	 * Index of last good value
 	 * 
-	 * @param last_good the last_good
+	 * @param variable the variable
+	 * @param last_goodValue the last_goodValue
 	 */
-	public void setVARIABLEAttributeLast_good(Long last_good);
+	public void setVariableAttributeLast_good(String variable, Long last_goodValue);
 
 	/**
 	 * Index (positive integer) identifying this specific set of numbers.
@@ -424,10 +485,11 @@ public interface NXdata extends NXobject {
 	 * The ``axes`` *group* attribute is now preferred.
 	 * 
 	 * @deprecated Use the group ``axes`` attribute   (NIAC2014)
+	 * @param variable the variable
 	 * @return  the value.
 	 */
 	@Deprecated
-	public Long getVARIABLEAttributeAxis();
+	public Long getVariableAttributeAxis(String variable);
 	
 	/**
 	 * Index (positive integer) identifying this specific set of numbers.
@@ -436,138 +498,114 @@ public interface NXdata extends NXobject {
 	 * The ``axes`` *group* attribute is now preferred.
 	 * 
 	 * @deprecated Use the group ``axes`` attribute   (NIAC2014)
-	 * @param axis the axis
+	 * @param variable the variable
+	 * @param axisValue the axisValue
 	 */
 	@Deprecated
-	public void setVARIABLEAttributeAxis(Long axis);
+	public void setVariableAttributeAxis(String variable, Long axisValue);
 
 	/**
-	 * Errors (uncertainties) associated with axis ``VARIABLE``.
+	 * "Errors" (actually *uncertainties*) associated with axis ``VARIABLE``.
 	 * Client is responsible for defining the dimensions of the data.
 	 * The name of this field may be changed to fit the circumstances
-	 * but is matched with the *VARIABLE*
-	 * field with ``_errors`` appended.
+	 * but is matched with the *VARIABLE* field with ``_errors`` appended.
+	 * This pattern of using ``VARIABLE_errors`` can be used
+	 * throughout a NeXus data file to associate uncertainties
+	 * with a dataset named ``VARIABLE``. This pattern also
+	 * applies to other relationships such as ``VARIABLE_resolutions``
+	 * to connect additional data with a certain dataset.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
 	 * 
+	 * @param variable the variable
 	 * @return  the value.
 	 */
-	public IDataset getVARIABLE_errors();
+	public IDataset getErrors(String variable);
 	
 	/**
-	 * Errors (uncertainties) associated with axis ``VARIABLE``.
+	 * "Errors" (actually *uncertainties*) associated with axis ``VARIABLE``.
 	 * Client is responsible for defining the dimensions of the data.
 	 * The name of this field may be changed to fit the circumstances
-	 * but is matched with the *VARIABLE*
-	 * field with ``_errors`` appended.
+	 * but is matched with the *VARIABLE* field with ``_errors`` appended.
+	 * This pattern of using ``VARIABLE_errors`` can be used
+	 * throughout a NeXus data file to associate uncertainties
+	 * with a dataset named ``VARIABLE``. This pattern also
+	 * applies to other relationships such as ``VARIABLE_resolutions``
+	 * to connect additional data with a certain dataset.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
 	 * 
-	 * @param VARIABLE_errors the VARIABLE_errors
+	 * @param variable the variable
+	 * @param errorsDataset the errorsDataset
 	 */
-	public DataNode setVARIABLE_errors(IDataset VARIABLE_errors);
+	public DataNode setErrors(String variable, IDataset errorsDataset);
 
 	/**
-	 * Errors (uncertainties) associated with axis ``VARIABLE``.
+	 * "Errors" (actually *uncertainties*) associated with axis ``VARIABLE``.
 	 * Client is responsible for defining the dimensions of the data.
 	 * The name of this field may be changed to fit the circumstances
-	 * but is matched with the *VARIABLE*
-	 * field with ``_errors`` appended.
+	 * but is matched with the *VARIABLE* field with ``_errors`` appended.
+	 * This pattern of using ``VARIABLE_errors`` can be used
+	 * throughout a NeXus data file to associate uncertainties
+	 * with a dataset named ``VARIABLE``. This pattern also
+	 * applies to other relationships such as ``VARIABLE_resolutions``
+	 * to connect additional data with a certain dataset.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
 	 * 
+	 * @param variable the variable
 	 * @return  the value.
 	 */
-	public Number getVARIABLE_errorsScalar();
+	public Number getErrorsScalar(String variable);
 
 	/**
-	 * Errors (uncertainties) associated with axis ``VARIABLE``.
+	 * "Errors" (actually *uncertainties*) associated with axis ``VARIABLE``.
 	 * Client is responsible for defining the dimensions of the data.
 	 * The name of this field may be changed to fit the circumstances
-	 * but is matched with the *VARIABLE*
-	 * field with ``_errors`` appended.
+	 * but is matched with the *VARIABLE* field with ``_errors`` appended.
+	 * This pattern of using ``VARIABLE_errors`` can be used
+	 * throughout a NeXus data file to associate uncertainties
+	 * with a dataset named ``VARIABLE``. This pattern also
+	 * applies to other relationships such as ``VARIABLE_resolutions``
+	 * to connect additional data with a certain dataset.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
 	 * 
-	 * @param VARIABLE_errors the VARIABLE_errors
+	 * @param variable the variable
+	 * @param errors the errors
 	 */
-	public DataNode setVARIABLE_errorsScalar(Number VARIABLE_errors);
-  
+	public DataNode setErrorsScalar(String variable, Number errorsValue);
+
+	
 	/**
-	 * Get all VARIABLE_errors fields:
+	 * Get all Errors fields:
 	 *
-	 * Errors (uncertainties) associated with axis ``VARIABLE``.
+	 * "Errors" (actually *uncertainties*) associated with axis ``VARIABLE``.
 	 * Client is responsible for defining the dimensions of the data.
 	 * The name of this field may be changed to fit the circumstances
-	 * but is matched with the *VARIABLE*
-	 * field with ``_errors`` appended.
+	 * but is matched with the *VARIABLE* field with ``_errors`` appended.
+	 * This pattern of using ``VARIABLE_errors`` can be used
+	 * throughout a NeXus data file to associate uncertainties
+	 * with a dataset named ``VARIABLE``. This pattern also
+	 * applies to other relationships such as ``VARIABLE_resolutions``
+	 * to connect additional data with a certain dataset.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
+	 * <p> <em>Note: this method returns ALL datasets within this group.</em> 
 	 * 
 	 * @return  a map from node names to the ? extends IDataset for that node.
 	 */
-	public Map<String, ? extends IDataset> getAllVARIABLE_errors();
-
-	/**
-	 * .. index:: plotting
-	 * This field contains the data values to be used as the
-	 * NeXus *plottable data*.
-	 * Client is responsible for defining the dimensions of the data.
-	 * The name of this field may be changed to fit the circumstances.
-	 * Standard NeXus client tools will use the attributes to determine
-	 * how to use this field.
-	 * <p>
-	 * <b>Type:</b> NX_NUMBER
-	 * <b>Dimensions:</b> 0: n;
-	 * </p>
-	 * 
-	 * @return  the value.
-	 */
-	public IDataset getData();
-	
-	/**
-	 * .. index:: plotting
-	 * This field contains the data values to be used as the
-	 * NeXus *plottable data*.
-	 * Client is responsible for defining the dimensions of the data.
-	 * The name of this field may be changed to fit the circumstances.
-	 * Standard NeXus client tools will use the attributes to determine
-	 * how to use this field.
-	 * <p>
-	 * <b>Type:</b> NX_NUMBER
-	 * <b>Dimensions:</b> 0: n;
-	 * </p>
-	 * 
-	 * @param data the data
-	 */
-	public DataNode setData(IDataset data);
-
-	/**
-	 * .. index:: plotting
-	 * This field contains the data values to be used as the
-	 * NeXus *plottable data*.
-	 * Client is responsible for defining the dimensions of the data.
-	 * The name of this field may be changed to fit the circumstances.
-	 * Standard NeXus client tools will use the attributes to determine
-	 * how to use this field.
-	 * <p>
-	 * <b>Type:</b> NX_NUMBER
-	 * <b>Dimensions:</b> 0: n;
-	 * </p>
-	 * 
-	 * @return  the value.
-	 */
-	public Number getDataScalar();
+	public Map<String, ? extends IDataset> getAllErrors();
 
 	/**
 	 * .. index:: plotting
@@ -583,9 +621,65 @@ public interface NXdata extends NXobject {
 	 * </p>
 	 * 
 	 * @param data the data
+	 * @return  the value.
 	 */
-	public DataNode setDataScalar(Number data);
-  
+	public IDataset getData(String data);
+	
+	/**
+	 * .. index:: plotting
+	 * This field contains the data values to be used as the
+	 * NeXus *plottable data*.
+	 * Client is responsible for defining the dimensions of the data.
+	 * The name of this field may be changed to fit the circumstances.
+	 * Standard NeXus client tools will use the attributes to determine
+	 * how to use this field.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Dimensions:</b> 0: n;
+	 * </p>
+	 * 
+	 * @param data the data
+	 * @param dataDataset the dataDataset
+	 */
+	public DataNode setData(String data, IDataset dataDataset);
+
+	/**
+	 * .. index:: plotting
+	 * This field contains the data values to be used as the
+	 * NeXus *plottable data*.
+	 * Client is responsible for defining the dimensions of the data.
+	 * The name of this field may be changed to fit the circumstances.
+	 * Standard NeXus client tools will use the attributes to determine
+	 * how to use this field.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Dimensions:</b> 0: n;
+	 * </p>
+	 * 
+	 * @param data the data
+	 * @return  the value.
+	 */
+	public Number getDataScalar(String data);
+
+	/**
+	 * .. index:: plotting
+	 * This field contains the data values to be used as the
+	 * NeXus *plottable data*.
+	 * Client is responsible for defining the dimensions of the data.
+	 * The name of this field may be changed to fit the circumstances.
+	 * Standard NeXus client tools will use the attributes to determine
+	 * how to use this field.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Dimensions:</b> 0: n;
+	 * </p>
+	 * 
+	 * @param data the data
+	 * @param data the data
+	 */
+	public DataNode setDataScalar(String data, Number dataValue);
+
+	
 	/**
 	 * Get all Data fields:
 	 *
@@ -600,6 +694,7 @@ public interface NXdata extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b> 0: n;
 	 * </p>
+	 * <p> <em>Note: this method returns ALL datasets within this group.</em> 
 	 * 
 	 * @return  a map from node names to the ? extends IDataset for that node.
 	 */
@@ -613,10 +708,11 @@ public interface NXdata extends NXobject {
 	 * Do not use the ``signal`` attribute with the ``axis`` attribute.
 	 * 
 	 * @deprecated Use the group ``signal`` attribute   (NIAC2014)
+	 * @param data the data
 	 * @return  the value.
 	 */
 	@Deprecated
-	public Long getDataAttributeSignal();
+	public Long getDataAttributeSignal(String data);
 	
 	/**
 	 * .. index:: plotting
@@ -626,10 +722,11 @@ public interface NXdata extends NXobject {
 	 * Do not use the ``signal`` attribute with the ``axis`` attribute.
 	 * 
 	 * @deprecated Use the group ``signal`` attribute   (NIAC2014)
-	 * @param signal the signal
+	 * @param data the data
+	 * @param signalValue the signalValue
 	 */
 	@Deprecated
-	public void setDataAttributeSignal(Long signal);
+	public void setDataAttributeSignal(String data, Long signalValue);
 
 	/**
 	 * Defines the names of the dimension scales
@@ -640,10 +737,11 @@ public interface NXdata extends NXobject {
 	 * Do not use the ``axes`` attribute with the ``axis`` attribute.
 	 * 
 	 * @deprecated Use the group ``axes`` attribute   (NIAC2014)
+	 * @param data the data
 	 * @return  the value.
 	 */
 	@Deprecated
-	public String getDataAttributeAxes();
+	public String getDataAttributeAxes(String data);
 	
 	/**
 	 * Defines the names of the dimension scales
@@ -654,54 +752,27 @@ public interface NXdata extends NXobject {
 	 * Do not use the ``axes`` attribute with the ``axis`` attribute.
 	 * 
 	 * @deprecated Use the group ``axes`` attribute   (NIAC2014)
-	 * @param axes the axes
+	 * @param data the data
+	 * @param axesValue the axesValue
 	 */
 	@Deprecated
-	public void setDataAttributeAxes(String axes);
-
-	/**
-	 * Specify the name (or names) of the uncertainties (errors)
-	 * of the dependent axes as plottable data.
-	 * NOTE: The ``uncertainties`` attribute uses the same syntax
-	 * as the ``axes`` attribute, a string or an array of strings
-	 * for multiple uncertainties.
-	 * Examples::
-	 * @uncertainties="data_errors"
-	 * @uncertainties="Idev"
-	 * @uncertainties=["dQw", "dQl"]
-	 * 
-	 * @return  the value.
-	 */
-	public String getDataAttributeUncertainties();
-	
-	/**
-	 * Specify the name (or names) of the uncertainties (errors)
-	 * of the dependent axes as plottable data.
-	 * NOTE: The ``uncertainties`` attribute uses the same syntax
-	 * as the ``axes`` attribute, a string or an array of strings
-	 * for multiple uncertainties.
-	 * Examples::
-	 * @uncertainties="data_errors"
-	 * @uncertainties="Idev"
-	 * @uncertainties=["dQw", "dQl"]
-	 * 
-	 * @param uncertainties the uncertainties
-	 */
-	public void setDataAttributeUncertainties(String uncertainties);
+	public void setDataAttributeAxes(String data, String axesValue);
 
 	/**
 	 * data label
 	 * 
+	 * @param data the data
 	 * @return  the value.
 	 */
-	public String getDataAttributeLong_name();
+	public String getDataAttributeLong_name(String data);
 	
 	/**
 	 * data label
 	 * 
-	 * @param long_name the long_name
+	 * @param data the data
+	 * @param long_nameValue the long_nameValue
 	 */
-	public void setDataAttributeLong_name(String long_name);
+	public void setDataAttributeLong_name(String data, String long_nameValue);
 
 	/**
 	 * Standard deviations of data values -
@@ -727,9 +798,9 @@ public interface NXdata extends NXobject {
 	 * <b>Dimensions:</b> 0: n;
 	 * </p>
 	 * 
-	 * @param errors the errors
+	 * @param errorsDataset the errorsDataset
 	 */
-	public DataNode setErrors(IDataset errors);
+	public DataNode setErrors(IDataset errorsDataset);
 
 	/**
 	 * Standard deviations of data values -
@@ -757,7 +828,7 @@ public interface NXdata extends NXobject {
 	 * 
 	 * @param errors the errors
 	 */
-	public DataNode setErrorsScalar(Number errors);
+	public DataNode setErrorsScalar(Number errorsValue);
 
 	/**
 	 * The elements in data are usually float values really. For
@@ -783,9 +854,9 @@ public interface NXdata extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * </p>
 	 * 
-	 * @param scaling_factor the scaling_factor
+	 * @param scaling_factorDataset the scaling_factorDataset
 	 */
-	public DataNode setScaling_factor(IDataset scaling_factor);
+	public DataNode setScaling_factor(IDataset scaling_factorDataset);
 
 	/**
 	 * The elements in data are usually float values really. For
@@ -813,7 +884,7 @@ public interface NXdata extends NXobject {
 	 * 
 	 * @param scaling_factor the scaling_factor
 	 */
-	public DataNode setScaling_factorScalar(Double scaling_factor);
+	public DataNode setScaling_factorScalar(Double scaling_factorValue);
 
 	/**
 	 * An optional offset to apply to the values in data.
@@ -831,9 +902,9 @@ public interface NXdata extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * </p>
 	 * 
-	 * @param offset the offset
+	 * @param offsetDataset the offsetDataset
 	 */
-	public DataNode setOffset(IDataset offset);
+	public DataNode setOffset(IDataset offsetDataset);
 
 	/**
 	 * An optional offset to apply to the values in data.
@@ -853,7 +924,35 @@ public interface NXdata extends NXobject {
 	 * 
 	 * @param offset the offset
 	 */
-	public DataNode setOffsetScalar(Double offset);
+	public DataNode setOffsetScalar(Double offsetValue);
+
+	/**
+	 * Title for the plot.
+	 * 
+	 * @return  the value.
+	 */
+	public IDataset getTitle();
+	
+	/**
+	 * Title for the plot.
+	 * 
+	 * @param titleDataset the titleDataset
+	 */
+	public DataNode setTitle(IDataset titleDataset);
+
+	/**
+	 * Title for the plot.
+	 * 
+	 * @return  the value.
+	 */
+	public String getTitleScalar();
+
+	/**
+	 * Title for the plot.
+	 * 
+	 * @param title the title
+	 */
+	public DataNode setTitleScalar(String titleValue);
 
 	/**
 	 * This is an array holding the values to use for the x-axis of
@@ -877,9 +976,9 @@ public interface NXdata extends NXobject {
 	 * <b>Dimensions:</b> 1: nx;
 	 * </p>
 	 * 
-	 * @param x the x
+	 * @param xDataset the xDataset
 	 */
-	public DataNode setX(IDataset x);
+	public DataNode setX(IDataset xDataset);
 
 	/**
 	 * This is an array holding the values to use for the x-axis of
@@ -905,7 +1004,7 @@ public interface NXdata extends NXobject {
 	 * 
 	 * @param x the x
 	 */
-	public DataNode setXScalar(Double x);
+	public DataNode setXScalar(Double xValue);
 
 	/**
 	 * This is an array holding the values to use for the y-axis of
@@ -929,9 +1028,9 @@ public interface NXdata extends NXobject {
 	 * <b>Dimensions:</b> 1: ny;
 	 * </p>
 	 * 
-	 * @param y the y
+	 * @param yDataset the yDataset
 	 */
-	public DataNode setY(IDataset y);
+	public DataNode setY(IDataset yDataset);
 
 	/**
 	 * This is an array holding the values to use for the y-axis of
@@ -957,7 +1056,7 @@ public interface NXdata extends NXobject {
 	 * 
 	 * @param y the y
 	 */
-	public DataNode setYScalar(Double y);
+	public DataNode setYScalar(Double yValue);
 
 	/**
 	 * This is an array holding the values to use for the z-axis of
@@ -981,9 +1080,9 @@ public interface NXdata extends NXobject {
 	 * <b>Dimensions:</b> 1: nz;
 	 * </p>
 	 * 
-	 * @param z the z
+	 * @param zDataset the zDataset
 	 */
-	public DataNode setZ(IDataset z);
+	public DataNode setZ(IDataset zDataset);
 
 	/**
 	 * This is an array holding the values to use for the z-axis of
@@ -1009,6 +1108,6 @@ public interface NXdata extends NXobject {
 	 * 
 	 * @param z the z
 	 */
-	public DataNode setZScalar(Double z);
+	public DataNode setZScalar(Double zValue);
 
 }

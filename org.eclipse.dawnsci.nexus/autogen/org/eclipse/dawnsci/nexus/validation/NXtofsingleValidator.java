@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,7 +146,7 @@ public class NXtofsingleValidator extends AbstractNexusValidator implements Nexu
 		validateFieldType("data", data, NX_INT);
 		validateFieldUnits("data", data, NX_ANY);
 		validateFieldRank("data", data, 3);
-		validateFieldDimensions("data", data, null, "xsize", "ysize", "ntimechan");
+		validateFieldDimensions("data", data, null, "xSize", "ySize", "nTimeChan");
 
 		// validate field 'distance' of type NX_FLOAT.
 		final IDataset distance = group.getDistance();
@@ -162,7 +162,7 @@ public class NXtofsingleValidator extends AbstractNexusValidator implements Nexu
 		validateFieldType("time_of_flight", time_of_flight, NX_FLOAT);
 		validateFieldUnits("time_of_flight", time_of_flight, NX_TIME_OF_FLIGHT);
 		validateFieldRank("time_of_flight", time_of_flight, 1);
-		validateFieldDimensions("time_of_flight", time_of_flight, null, "ntimechan");
+		validateFieldDimensions("time_of_flight", time_of_flight, null, "nTimeChan");
 
 		// validate field 'polar_angle' of type NX_FLOAT.
 		final IDataset polar_angle = group.getPolar_angle();
@@ -170,7 +170,7 @@ public class NXtofsingleValidator extends AbstractNexusValidator implements Nexu
 		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
 		validateFieldUnits("polar_angle", polar_angle, NX_ANGLE);
 		validateFieldRank("polar_angle", polar_angle, 1);
-		validateFieldDimensions("polar_angle", polar_angle, null, "ndet");
+		validateFieldDimensions("polar_angle", polar_angle, null, "nDet");
 
 		// validate field 'azimuthal_angle' of type NX_FLOAT.
 		final IDataset azimuthal_angle = group.getAzimuthal_angle();
@@ -178,7 +178,7 @@ public class NXtofsingleValidator extends AbstractNexusValidator implements Nexu
 		validateFieldType("azimuthal_angle", azimuthal_angle, NX_FLOAT);
 		validateFieldUnits("azimuthal_angle", azimuthal_angle, NX_ANGLE);
 		validateFieldRank("azimuthal_angle", azimuthal_angle, 1);
-		validateFieldDimensions("azimuthal_angle", azimuthal_angle, null, "ndet");
+		validateFieldDimensions("azimuthal_angle", azimuthal_angle, null, "nDet");
 	}
 
 	/**
@@ -236,7 +236,7 @@ public class NXtofsingleValidator extends AbstractNexusValidator implements Nexu
 		validateFieldType("data", data, NX_INT);
 		validateFieldUnits("data", data, NX_ANY);
 		validateFieldRank("data", data, 1);
-		validateFieldDimensions("data", data, null, "ntimechan");
+		validateFieldDimensions("data", data, null, "nTimeChan");
 
 		// validate field 'time_of_flight' of type NX_FLOAT.
 		final IDataset time_of_flight = group.getTime_of_flight();
@@ -244,7 +244,7 @@ public class NXtofsingleValidator extends AbstractNexusValidator implements Nexu
 		validateFieldType("time_of_flight", time_of_flight, NX_FLOAT);
 		validateFieldUnits("time_of_flight", time_of_flight, NX_TIME_OF_FLIGHT);
 		validateFieldRank("time_of_flight", time_of_flight, 1);
-		validateFieldDimensions("time_of_flight", time_of_flight, null, "ntimechan");
+		validateFieldDimensions("time_of_flight", time_of_flight, null, "nTimeChan");
 	}
 
 	/**

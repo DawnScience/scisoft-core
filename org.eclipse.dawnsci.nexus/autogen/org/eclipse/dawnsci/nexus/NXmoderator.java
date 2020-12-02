@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ public interface NXmoderator extends NXobject {
 	public static final String NX_COUPLING_MATERIAL = "coupling_material";
 	public static final String NX_POISON_MATERIAL = "poison_material";
 	public static final String NX_TEMPERATURE = "temperature";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * "Engineering" position of moderator
 	 * 
@@ -40,10 +41,10 @@ public interface NXmoderator extends NXobject {
 	/**
 	 * "Engineering" position of moderator
 	 * 
-	 * @param geometry the geometry
+	 * @param geometryGroup the geometryGroup
 	 */
-	public void setGeometry(NXgeometry geometry);
-  
+	public void setGeometry(NXgeometry geometryGroup);
+
 	/**
 	 * Get a NXgeometry node by name:
 	 * <ul>
@@ -110,9 +111,9 @@ public interface NXmoderator extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param distance the distance
+	 * @param distanceDataset the distanceDataset
 	 */
-	public DataNode setDistance(IDataset distance);
+	public DataNode setDistance(IDataset distanceDataset);
 
 	/**
 	 * Effective distance as seen by measuring radiation
@@ -134,7 +135,7 @@ public interface NXmoderator extends NXobject {
 	 * 
 	 * @param distance the distance
 	 */
-	public DataNode setDistanceScalar(Double distance);
+	public DataNode setDistanceScalar(Double distanceValue);
 
 	/**
 	 * <p>
@@ -168,9 +169,9 @@ public interface NXmoderator extends NXobject {
 	 * <li><b>Solid H2</b> </li></ul></p>
 	 * </p>
 	 * 
-	 * @param type the type
+	 * @param typeDataset the typeDataset
 	 */
-	public DataNode setType(IDataset type);
+	public DataNode setType(IDataset typeDataset);
 
 	/**
 	 * <p>
@@ -206,7 +207,7 @@ public interface NXmoderator extends NXobject {
 	 * 
 	 * @param type the type
 	 */
-	public DataNode setTypeScalar(String type);
+	public DataNode setTypeScalar(String typeValue);
 
 	/**
 	 * <p>
@@ -224,9 +225,9 @@ public interface NXmoderator extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param poison_depth the poison_depth
+	 * @param poison_depthDataset the poison_depthDataset
 	 */
-	public DataNode setPoison_depth(IDataset poison_depth);
+	public DataNode setPoison_depth(IDataset poison_depthDataset);
 
 	/**
 	 * <p>
@@ -246,7 +247,7 @@ public interface NXmoderator extends NXobject {
 	 * 
 	 * @param poison_depth the poison_depth
 	 */
-	public DataNode setPoison_depthScalar(Double poison_depth);
+	public DataNode setPoison_depthScalar(Double poison_depthValue);
 
 	/**
 	 * whether the moderator is coupled
@@ -264,9 +265,9 @@ public interface NXmoderator extends NXobject {
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
 	 * 
-	 * @param coupled the coupled
+	 * @param coupledDataset the coupledDataset
 	 */
-	public DataNode setCoupled(IDataset coupled);
+	public DataNode setCoupled(IDataset coupledDataset);
 
 	/**
 	 * whether the moderator is coupled
@@ -286,7 +287,7 @@ public interface NXmoderator extends NXobject {
 	 * 
 	 * @param coupled the coupled
 	 */
-	public DataNode setCoupledScalar(Boolean coupled);
+	public DataNode setCoupledScalar(Boolean coupledValue);
 
 	/**
 	 * The material used for coupling. Usually Cd.
@@ -298,9 +299,9 @@ public interface NXmoderator extends NXobject {
 	/**
 	 * The material used for coupling. Usually Cd.
 	 * 
-	 * @param coupling_material the coupling_material
+	 * @param coupling_materialDataset the coupling_materialDataset
 	 */
-	public DataNode setCoupling_material(IDataset coupling_material);
+	public DataNode setCoupling_material(IDataset coupling_materialDataset);
 
 	/**
 	 * The material used for coupling. Usually Cd.
@@ -314,7 +315,7 @@ public interface NXmoderator extends NXobject {
 	 * 
 	 * @param coupling_material the coupling_material
 	 */
-	public DataNode setCoupling_materialScalar(String coupling_material);
+	public DataNode setCoupling_materialScalar(String coupling_materialValue);
 
 	/**
 	 * <p>
@@ -334,9 +335,9 @@ public interface NXmoderator extends NXobject {
 	 * <li><b>Cd</b> </li></ul></p>
 	 * </p>
 	 * 
-	 * @param poison_material the poison_material
+	 * @param poison_materialDataset the poison_materialDataset
 	 */
-	public DataNode setPoison_material(IDataset poison_material);
+	public DataNode setPoison_material(IDataset poison_materialDataset);
 
 	/**
 	 * <p>
@@ -358,7 +359,7 @@ public interface NXmoderator extends NXobject {
 	 * 
 	 * @param poison_material the poison_material
 	 */
-	public DataNode setPoison_materialScalar(String poison_material);
+	public DataNode setPoison_materialScalar(String poison_materialValue);
 
 	/**
 	 * average/nominal moderator temperature
@@ -378,9 +379,9 @@ public interface NXmoderator extends NXobject {
 	 * <b>Units:</b> NX_TEMPERATURE
 	 * </p>
 	 * 
-	 * @param temperature the temperature
+	 * @param temperatureDataset the temperatureDataset
 	 */
-	public DataNode setTemperature(IDataset temperature);
+	public DataNode setTemperature(IDataset temperatureDataset);
 
 	/**
 	 * average/nominal moderator temperature
@@ -402,7 +403,7 @@ public interface NXmoderator extends NXobject {
 	 * 
 	 * @param temperature the temperature
 	 */
-	public DataNode setTemperatureScalar(Double temperature);
+	public DataNode setTemperatureScalar(Double temperatureValue);
 
 	/**
 	 * log file of moderator temperature
@@ -414,9 +415,9 @@ public interface NXmoderator extends NXobject {
 	/**
 	 * log file of moderator temperature
 	 * 
-	 * @param temperature_log the temperature_log
+	 * @param temperature_logGroup the temperature_logGroup
 	 */
-	public void setTemperature_log(NXlog temperature_log);
+	public void setTemperature_log(NXlog temperature_logGroup);
 
 	/**
 	 * moderator pulse shape
@@ -428,8 +429,34 @@ public interface NXmoderator extends NXobject {
 	/**
 	 * moderator pulse shape
 	 * 
-	 * @param pulse_shape the pulse_shape
+	 * @param pulse_shapeGroup the pulse_shapeGroup
 	 */
-	public void setPulse_shape(NXdata pulse_shape);
+	public void setPulse_shape(NXdata pulse_shapeGroup);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

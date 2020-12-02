@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,13 +71,13 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public DataNode setModel(IDataset model) {
-		return setDataset(NX_MODEL, model);
+	public DataNode setModel(IDataset modelDataset) {
+		return setDataset(NX_MODEL, modelDataset);
 	}
 
 	@Override
-	public DataNode setModelScalar(String model) {
-		return setString(NX_MODEL, model);
+	public DataNode setModelScalar(String modelValue) {
+		return setString(NX_MODEL, modelValue);
 	}
 
 	@Override
@@ -91,13 +91,13 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public DataNode setName(IDataset name) {
-		return setDataset(NX_NAME, name);
+	public DataNode setName(IDataset nameDataset) {
+		return setDataset(NX_NAME, nameDataset);
 	}
 
 	@Override
-	public DataNode setNameScalar(String name) {
-		return setString(NX_NAME, name);
+	public DataNode setNameScalar(String nameValue) {
+		return setString(NX_NAME, nameValue);
 	}
 
 	@Override
@@ -111,13 +111,13 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public DataNode setShort_name(IDataset short_name) {
-		return setDataset(NX_SHORT_NAME, short_name);
+	public DataNode setShort_name(IDataset short_nameDataset) {
+		return setDataset(NX_SHORT_NAME, short_nameDataset);
 	}
 
 	@Override
-	public DataNode setShort_nameScalar(String short_name) {
-		return setString(NX_SHORT_NAME, short_name);
+	public DataNode setShort_nameScalar(String short_nameValue) {
+		return setString(NX_SHORT_NAME, short_nameValue);
 	}
 
 	@Override
@@ -131,23 +131,24 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public DataNode setAttached_to(IDataset attached_to) {
-		return setDataset(NX_ATTACHED_TO, attached_to);
+	public DataNode setAttached_to(IDataset attached_toDataset) {
+		return setDataset(NX_ATTACHED_TO, attached_toDataset);
 	}
 
 	@Override
-	public DataNode setAttached_toScalar(String attached_to) {
-		return setString(NX_ATTACHED_TO, attached_to);
+	public DataNode setAttached_toScalar(String attached_toValue) {
+		return setString(NX_ATTACHED_TO, attached_toValue);
 	}
 
 	@Override
 	public NXgeometry getGeometry() {
+		// dataNodeName = NX_GEOMETRY
 		return getChild("geometry", NXgeometry.class);
 	}
 
 	@Override
-	public void setGeometry(NXgeometry geometry) {
-		putChild("geometry", geometry);
+	public void setGeometry(NXgeometry geometryGroup) {
+		putChild("geometry", geometryGroup);
 	}
 
 	@Override
@@ -161,13 +162,13 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public DataNode setMeasurement(IDataset measurement) {
-		return setDataset(NX_MEASUREMENT, measurement);
+	public DataNode setMeasurement(IDataset measurementDataset) {
+		return setDataset(NX_MEASUREMENT, measurementDataset);
 	}
 
 	@Override
-	public DataNode setMeasurementScalar(String measurement) {
-		return setString(NX_MEASUREMENT, measurement);
+	public DataNode setMeasurementScalar(String measurementValue) {
+		return setString(NX_MEASUREMENT, measurementValue);
 	}
 
 	@Override
@@ -181,13 +182,13 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public DataNode setType(IDataset type) {
-		return setDataset(NX_TYPE, type);
+	public DataNode setType(IDataset typeDataset) {
+		return setDataset(NX_TYPE, typeDataset);
 	}
 
 	@Override
-	public DataNode setTypeScalar(String type) {
-		return setString(NX_TYPE, type);
+	public DataNode setTypeScalar(String typeValue) {
+		return setString(NX_TYPE, typeValue);
 	}
 
 	@Override
@@ -201,13 +202,13 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public DataNode setRun_control(IDataset run_control) {
-		return setDataset(NX_RUN_CONTROL, run_control);
+	public DataNode setRun_control(IDataset run_controlDataset) {
+		return setDataset(NX_RUN_CONTROL, run_controlDataset);
 	}
 
 	@Override
-	public DataNode setRun_controlScalar(Boolean run_control) {
-		return setField(NX_RUN_CONTROL, run_control);
+	public DataNode setRun_controlScalar(Boolean run_controlValue) {
+		return setField(NX_RUN_CONTROL, run_controlValue);
 	}
 
 	@Override
@@ -221,13 +222,13 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public DataNode setHigh_trip_value(IDataset high_trip_value) {
-		return setDataset(NX_HIGH_TRIP_VALUE, high_trip_value);
+	public DataNode setHigh_trip_value(IDataset high_trip_valueDataset) {
+		return setDataset(NX_HIGH_TRIP_VALUE, high_trip_valueDataset);
 	}
 
 	@Override
-	public DataNode setHigh_trip_valueScalar(Double high_trip_value) {
-		return setField(NX_HIGH_TRIP_VALUE, high_trip_value);
+	public DataNode setHigh_trip_valueScalar(Double high_trip_valueValue) {
+		return setField(NX_HIGH_TRIP_VALUE, high_trip_valueValue);
 	}
 
 	@Override
@@ -241,13 +242,13 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public DataNode setLow_trip_value(IDataset low_trip_value) {
-		return setDataset(NX_LOW_TRIP_VALUE, low_trip_value);
+	public DataNode setLow_trip_value(IDataset low_trip_valueDataset) {
+		return setDataset(NX_LOW_TRIP_VALUE, low_trip_valueDataset);
 	}
 
 	@Override
-	public DataNode setLow_trip_valueScalar(Double low_trip_value) {
-		return setField(NX_LOW_TRIP_VALUE, low_trip_value);
+	public DataNode setLow_trip_valueScalar(Double low_trip_valueValue) {
+		return setField(NX_LOW_TRIP_VALUE, low_trip_valueValue);
 	}
 
 	@Override
@@ -261,13 +262,13 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public DataNode setValue(IDataset value) {
-		return setDataset(NX_VALUE, value);
+	public DataNode setValue(IDataset valueDataset) {
+		return setDataset(NX_VALUE, valueDataset);
 	}
 
 	@Override
-	public DataNode setValueScalar(Double value) {
-		return setField(NX_VALUE, value);
+	public DataNode setValueScalar(Double valueValue) {
+		return setField(NX_VALUE, valueValue);
 	}
 
 	@Override
@@ -281,13 +282,13 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public DataNode setValue_deriv1(IDataset value_deriv1) {
-		return setDataset(NX_VALUE_DERIV1, value_deriv1);
+	public DataNode setValue_deriv1(IDataset value_deriv1Dataset) {
+		return setDataset(NX_VALUE_DERIV1, value_deriv1Dataset);
 	}
 
 	@Override
-	public DataNode setValue_deriv1Scalar(Double value_deriv1) {
-		return setField(NX_VALUE_DERIV1, value_deriv1);
+	public DataNode setValue_deriv1Scalar(Double value_deriv1Value) {
+		return setField(NX_VALUE_DERIV1, value_deriv1Value);
 	}
 
 	@Override
@@ -301,43 +302,46 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public DataNode setValue_deriv2(IDataset value_deriv2) {
-		return setDataset(NX_VALUE_DERIV2, value_deriv2);
+	public DataNode setValue_deriv2(IDataset value_deriv2Dataset) {
+		return setDataset(NX_VALUE_DERIV2, value_deriv2Dataset);
 	}
 
 	@Override
-	public DataNode setValue_deriv2Scalar(Double value_deriv2) {
-		return setField(NX_VALUE_DERIV2, value_deriv2);
+	public DataNode setValue_deriv2Scalar(Double value_deriv2Value) {
+		return setField(NX_VALUE_DERIV2, value_deriv2Value);
 	}
 
 	@Override
 	public NXlog getValue_log() {
+		// dataNodeName = NX_VALUE_LOG
 		return getChild("value_log", NXlog.class);
 	}
 
 	@Override
-	public void setValue_log(NXlog value_log) {
-		putChild("value_log", value_log);
+	public void setValue_log(NXlog value_logGroup) {
+		putChild("value_log", value_logGroup);
 	}
 
 	@Override
 	public NXlog getValue_deriv1_log() {
+		// dataNodeName = NX_VALUE_DERIV1_LOG
 		return getChild("value_deriv1_log", NXlog.class);
 	}
 
 	@Override
-	public void setValue_deriv1_log(NXlog value_deriv1_log) {
-		putChild("value_deriv1_log", value_deriv1_log);
+	public void setValue_deriv1_log(NXlog value_deriv1_logGroup) {
+		putChild("value_deriv1_log", value_deriv1_logGroup);
 	}
 
 	@Override
 	public NXlog getValue_deriv2_log() {
+		// dataNodeName = NX_VALUE_DERIV2_LOG
 		return getChild("value_deriv2_log", NXlog.class);
 	}
 
 	@Override
-	public void setValue_deriv2_log(NXlog value_deriv2_log) {
-		putChild("value_deriv2_log", value_deriv2_log);
+	public void setValue_deriv2_log(NXlog value_deriv2_logGroup) {
+		putChild("value_deriv2_log", value_deriv2_logGroup);
 	}
 
 	@Override
@@ -351,23 +355,34 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public DataNode setExternal_field_brief(IDataset external_field_brief) {
-		return setDataset(NX_EXTERNAL_FIELD_BRIEF, external_field_brief);
+	public DataNode setExternal_field_brief(IDataset external_field_briefDataset) {
+		return setDataset(NX_EXTERNAL_FIELD_BRIEF, external_field_briefDataset);
 	}
 
 	@Override
-	public DataNode setExternal_field_briefScalar(String external_field_brief) {
-		return setString(NX_EXTERNAL_FIELD_BRIEF, external_field_brief);
+	public DataNode setExternal_field_briefScalar(String external_field_briefValue) {
+		return setString(NX_EXTERNAL_FIELD_BRIEF, external_field_briefValue);
 	}
 
 	@Override
 	public NXorientation getExternal_field_full() {
+		// dataNodeName = NX_EXTERNAL_FIELD_FULL
 		return getChild("external_field_full", NXorientation.class);
 	}
 
 	@Override
-	public void setExternal_field_full(NXorientation external_field_full) {
-		putChild("external_field_full", external_field_full);
+	public void setExternal_field_full(NXorientation external_field_fullGroup) {
+		putChild("external_field_full", external_field_fullGroup);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ public interface NXsensor extends NXobject {
 	public static final String NX_VALUE_DERIV1 = "value_deriv1";
 	public static final String NX_VALUE_DERIV2 = "value_deriv2";
 	public static final String NX_EXTERNAL_FIELD_BRIEF = "external_field_brief";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * Sensor identification code/model number
 	 * 
@@ -45,9 +46,9 @@ public interface NXsensor extends NXobject {
 	/**
 	 * Sensor identification code/model number
 	 * 
-	 * @param model the model
+	 * @param modelDataset the modelDataset
 	 */
-	public DataNode setModel(IDataset model);
+	public DataNode setModel(IDataset modelDataset);
 
 	/**
 	 * Sensor identification code/model number
@@ -61,7 +62,7 @@ public interface NXsensor extends NXobject {
 	 * 
 	 * @param model the model
 	 */
-	public DataNode setModelScalar(String model);
+	public DataNode setModelScalar(String modelValue);
 
 	/**
 	 * Name for the sensor
@@ -73,9 +74,9 @@ public interface NXsensor extends NXobject {
 	/**
 	 * Name for the sensor
 	 * 
-	 * @param name the name
+	 * @param nameDataset the nameDataset
 	 */
-	public DataNode setName(IDataset name);
+	public DataNode setName(IDataset nameDataset);
 
 	/**
 	 * Name for the sensor
@@ -89,7 +90,7 @@ public interface NXsensor extends NXobject {
 	 * 
 	 * @param name the name
 	 */
-	public DataNode setNameScalar(String name);
+	public DataNode setNameScalar(String nameValue);
 
 	/**
 	 * Short name of sensor used e.g. on monitor display program
@@ -101,9 +102,9 @@ public interface NXsensor extends NXobject {
 	/**
 	 * Short name of sensor used e.g. on monitor display program
 	 * 
-	 * @param short_name the short_name
+	 * @param short_nameDataset the short_nameDataset
 	 */
-	public DataNode setShort_name(IDataset short_name);
+	public DataNode setShort_name(IDataset short_nameDataset);
 
 	/**
 	 * Short name of sensor used e.g. on monitor display program
@@ -117,7 +118,7 @@ public interface NXsensor extends NXobject {
 	 * 
 	 * @param short_name the short_name
 	 */
-	public DataNode setShort_nameScalar(String short_name);
+	public DataNode setShort_nameScalar(String short_nameValue);
 
 	/**
 	 * where sensor is attached to ("sample" | "can")
@@ -129,9 +130,9 @@ public interface NXsensor extends NXobject {
 	/**
 	 * where sensor is attached to ("sample" | "can")
 	 * 
-	 * @param attached_to the attached_to
+	 * @param attached_toDataset the attached_toDataset
 	 */
-	public DataNode setAttached_to(IDataset attached_to);
+	public DataNode setAttached_to(IDataset attached_toDataset);
 
 	/**
 	 * where sensor is attached to ("sample" | "can")
@@ -145,7 +146,7 @@ public interface NXsensor extends NXobject {
 	 * 
 	 * @param attached_to the attached_to
 	 */
-	public DataNode setAttached_toScalar(String attached_to);
+	public DataNode setAttached_toScalar(String attached_toValue);
 
 	/**
 	 * Defines the axes for logged vector quantities if they are not the global instrument axes
@@ -157,9 +158,9 @@ public interface NXsensor extends NXobject {
 	/**
 	 * Defines the axes for logged vector quantities if they are not the global instrument axes
 	 * 
-	 * @param geometry the geometry
+	 * @param geometryGroup the geometryGroup
 	 */
-	public void setGeometry(NXgeometry geometry);
+	public void setGeometry(NXgeometry geometryGroup);
 
 	/**
 	 * name for measured signal
@@ -203,9 +204,9 @@ public interface NXsensor extends NXobject {
 	 * <li><b>surface_pressure</b> </li></ul></p>
 	 * </p>
 	 * 
-	 * @param measurement the measurement
+	 * @param measurementDataset the measurementDataset
 	 */
-	public DataNode setMeasurement(IDataset measurement);
+	public DataNode setMeasurement(IDataset measurementDataset);
 
 	/**
 	 * name for measured signal
@@ -251,7 +252,7 @@ public interface NXsensor extends NXobject {
 	 * 
 	 * @param measurement the measurement
 	 */
-	public DataNode setMeasurementScalar(String measurement);
+	public DataNode setMeasurementScalar(String measurementValue);
 
 	/**
 	 * The type of hardware used for the measurement.
@@ -285,9 +286,9 @@ public interface NXsensor extends NXobject {
 	 * :Surface pressure:
 	 * wilhelmy plate
 	 * 
-	 * @param type the type
+	 * @param typeDataset the typeDataset
 	 */
-	public DataNode setType(IDataset type);
+	public DataNode setType(IDataset typeDataset);
 
 	/**
 	 * The type of hardware used for the measurement.
@@ -323,7 +324,7 @@ public interface NXsensor extends NXobject {
 	 * 
 	 * @param type the type
 	 */
-	public DataNode setTypeScalar(String type);
+	public DataNode setTypeScalar(String typeValue);
 
 	/**
 	 * Is data collection controlled or synchronised to this quantity:
@@ -343,9 +344,9 @@ public interface NXsensor extends NXobject {
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
 	 * 
-	 * @param run_control the run_control
+	 * @param run_controlDataset the run_controlDataset
 	 */
-	public DataNode setRun_control(IDataset run_control);
+	public DataNode setRun_control(IDataset run_controlDataset);
 
 	/**
 	 * Is data collection controlled or synchronised to this quantity:
@@ -367,7 +368,7 @@ public interface NXsensor extends NXobject {
 	 * 
 	 * @param run_control the run_control
 	 */
-	public DataNode setRun_controlScalar(Boolean run_control);
+	public DataNode setRun_controlScalar(Boolean run_controlValue);
 
 	/**
 	 * Upper control bound of sensor reading if using run_control
@@ -387,9 +388,9 @@ public interface NXsensor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 * 
-	 * @param high_trip_value the high_trip_value
+	 * @param high_trip_valueDataset the high_trip_valueDataset
 	 */
-	public DataNode setHigh_trip_value(IDataset high_trip_value);
+	public DataNode setHigh_trip_value(IDataset high_trip_valueDataset);
 
 	/**
 	 * Upper control bound of sensor reading if using run_control
@@ -411,7 +412,7 @@ public interface NXsensor extends NXobject {
 	 * 
 	 * @param high_trip_value the high_trip_value
 	 */
-	public DataNode setHigh_trip_valueScalar(Double high_trip_value);
+	public DataNode setHigh_trip_valueScalar(Double high_trip_valueValue);
 
 	/**
 	 * Lower control bound of sensor reading if using run_control
@@ -431,9 +432,9 @@ public interface NXsensor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 * 
-	 * @param low_trip_value the low_trip_value
+	 * @param low_trip_valueDataset the low_trip_valueDataset
 	 */
-	public DataNode setLow_trip_value(IDataset low_trip_value);
+	public DataNode setLow_trip_value(IDataset low_trip_valueDataset);
 
 	/**
 	 * Lower control bound of sensor reading if using run_control
@@ -455,7 +456,7 @@ public interface NXsensor extends NXobject {
 	 * 
 	 * @param low_trip_value the low_trip_value
 	 */
-	public DataNode setLow_trip_valueScalar(Double low_trip_value);
+	public DataNode setLow_trip_valueScalar(Double low_trip_valueValue);
 
 	/**
 	 * nominal setpoint or average value
@@ -479,9 +480,9 @@ public interface NXsensor extends NXobject {
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
 	 * 
-	 * @param value the value
+	 * @param valueDataset the valueDataset
 	 */
-	public DataNode setValue(IDataset value);
+	public DataNode setValue(IDataset valueDataset);
 
 	/**
 	 * nominal setpoint or average value
@@ -507,7 +508,7 @@ public interface NXsensor extends NXobject {
 	 * 
 	 * @param value the value
 	 */
-	public DataNode setValueScalar(Double value);
+	public DataNode setValueScalar(Double valueValue);
 
 	/**
 	 * Nominal/average first derivative of value
@@ -533,9 +534,9 @@ public interface NXsensor extends NXobject {
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
 	 * 
-	 * @param value_deriv1 the value_deriv1
+	 * @param value_deriv1Dataset the value_deriv1Dataset
 	 */
-	public DataNode setValue_deriv1(IDataset value_deriv1);
+	public DataNode setValue_deriv1(IDataset value_deriv1Dataset);
 
 	/**
 	 * Nominal/average first derivative of value
@@ -563,7 +564,7 @@ public interface NXsensor extends NXobject {
 	 * 
 	 * @param value_deriv1 the value_deriv1
 	 */
-	public DataNode setValue_deriv1Scalar(Double value_deriv1);
+	public DataNode setValue_deriv1Scalar(Double value_deriv1Value);
 
 	/**
 	 * Nominal/average second derivative of value
@@ -587,9 +588,9 @@ public interface NXsensor extends NXobject {
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
 	 * 
-	 * @param value_deriv2 the value_deriv2
+	 * @param value_deriv2Dataset the value_deriv2Dataset
 	 */
-	public DataNode setValue_deriv2(IDataset value_deriv2);
+	public DataNode setValue_deriv2(IDataset value_deriv2Dataset);
 
 	/**
 	 * Nominal/average second derivative of value
@@ -615,7 +616,7 @@ public interface NXsensor extends NXobject {
 	 * 
 	 * @param value_deriv2 the value_deriv2
 	 */
-	public DataNode setValue_deriv2Scalar(Double value_deriv2);
+	public DataNode setValue_deriv2Scalar(Double value_deriv2Value);
 
 	/**
 	 * Time history of sensor readings
@@ -627,9 +628,9 @@ public interface NXsensor extends NXobject {
 	/**
 	 * Time history of sensor readings
 	 * 
-	 * @param value_log the value_log
+	 * @param value_logGroup the value_logGroup
 	 */
-	public void setValue_log(NXlog value_log);
+	public void setValue_log(NXlog value_logGroup);
 
 	/**
 	 * Time history of first derivative of sensor readings
@@ -641,9 +642,9 @@ public interface NXsensor extends NXobject {
 	/**
 	 * Time history of first derivative of sensor readings
 	 * 
-	 * @param value_deriv1_log the value_deriv1_log
+	 * @param value_deriv1_logGroup the value_deriv1_logGroup
 	 */
-	public void setValue_deriv1_log(NXlog value_deriv1_log);
+	public void setValue_deriv1_log(NXlog value_deriv1_logGroup);
 
 	/**
 	 * Time history of second derivative of sensor readings
@@ -655,9 +656,9 @@ public interface NXsensor extends NXobject {
 	/**
 	 * Time history of second derivative of sensor readings
 	 * 
-	 * @param value_deriv2_log the value_deriv2_log
+	 * @param value_deriv2_logGroup the value_deriv2_logGroup
 	 */
-	public void setValue_deriv2_log(NXlog value_deriv2_log);
+	public void setValue_deriv2_log(NXlog value_deriv2_logGroup);
 
 	/**
 	 * <p>
@@ -685,9 +686,9 @@ public interface NXsensor extends NXobject {
 	 * <li><b>flow vorticity</b> </li></ul></p>
 	 * </p>
 	 * 
-	 * @param external_field_brief the external_field_brief
+	 * @param external_field_briefDataset the external_field_briefDataset
 	 */
-	public DataNode setExternal_field_brief(IDataset external_field_brief);
+	public DataNode setExternal_field_brief(IDataset external_field_briefDataset);
 
 	/**
 	 * <p>
@@ -717,7 +718,7 @@ public interface NXsensor extends NXobject {
 	 * 
 	 * @param external_field_brief the external_field_brief
 	 */
-	public DataNode setExternal_field_briefScalar(String external_field_brief);
+	public DataNode setExternal_field_briefScalar(String external_field_briefValue);
 
 	/**
 	 * For complex external fields not satisfied by External_field_brief
@@ -729,8 +730,34 @@ public interface NXsensor extends NXobject {
 	/**
 	 * For complex external fields not satisfied by External_field_brief
 	 * 
-	 * @param external_field_full the external_field_full
+	 * @param external_field_fullGroup the external_field_fullGroup
 	 */
-	public void setExternal_field_full(NXorientation external_field_full);
+	public void setExternal_field_full(NXorientation external_field_fullGroup);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

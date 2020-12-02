@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ public interface NXsource extends NXobject {
 	public static final String NX_TOP_UP = "top_up";
 	public static final String NX_LAST_FILL = "last_fill";
 	public static final String NX_LAST_FILL_ATTRIBUTE_TIME = "time";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * Effective distance from sample
 	 * Distance as seen by radiation from sample. This number should be negative
@@ -70,9 +71,9 @@ public interface NXsource extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param distance the distance
+	 * @param distanceDataset the distanceDataset
 	 */
-	public DataNode setDistance(IDataset distance);
+	public DataNode setDistance(IDataset distanceDataset);
 
 	/**
 	 * Effective distance from sample
@@ -98,7 +99,7 @@ public interface NXsource extends NXobject {
 	 * 
 	 * @param distance the distance
 	 */
-	public DataNode setDistanceScalar(Double distance);
+	public DataNode setDistanceScalar(Double distanceValue);
 
 	/**
 	 * Name of source
@@ -110,9 +111,9 @@ public interface NXsource extends NXobject {
 	/**
 	 * Name of source
 	 * 
-	 * @param name the name
+	 * @param nameDataset the nameDataset
 	 */
-	public DataNode setName(IDataset name);
+	public DataNode setName(IDataset nameDataset);
 
 	/**
 	 * Name of source
@@ -126,7 +127,7 @@ public interface NXsource extends NXobject {
 	 * 
 	 * @param name the name
 	 */
-	public DataNode setNameScalar(String name);
+	public DataNode setNameScalar(String nameValue);
 
 	/**
 	 * short name for source, perhaps the acronym
@@ -138,9 +139,9 @@ public interface NXsource extends NXobject {
 	/**
 	 * short name for source, perhaps the acronym
 	 * 
-	 * @param short_name the short_name
+	 * @param short_nameValue the short_nameValue
 	 */
-	public void setNameAttributeShort_name(String short_name);
+	public void setNameAttributeShort_name(String short_nameValue);
 
 	/**
 	 * type of radiation source (pick one from the enumerated list and spell exactly)
@@ -182,9 +183,9 @@ public interface NXsource extends NXobject {
 	 * <li><b>UV Plasma Source</b> </li></ul></p>
 	 * </p>
 	 * 
-	 * @param type the type
+	 * @param typeDataset the typeDataset
 	 */
-	public DataNode setType(IDataset type);
+	public DataNode setType(IDataset typeDataset);
 
 	/**
 	 * type of radiation source (pick one from the enumerated list and spell exactly)
@@ -228,7 +229,7 @@ public interface NXsource extends NXobject {
 	 * 
 	 * @param type the type
 	 */
-	public DataNode setTypeScalar(String type);
+	public DataNode setTypeScalar(String typeValue);
 
 	/**
 	 * type of radiation probe (pick one from the enumerated list and spell exactly)
@@ -262,9 +263,9 @@ public interface NXsource extends NXobject {
 	 * <li><b>proton</b> </li></ul></p>
 	 * </p>
 	 * 
-	 * @param probe the probe
+	 * @param probeDataset the probeDataset
 	 */
-	public DataNode setProbe(IDataset probe);
+	public DataNode setProbe(IDataset probeDataset);
 
 	/**
 	 * type of radiation probe (pick one from the enumerated list and spell exactly)
@@ -300,7 +301,7 @@ public interface NXsource extends NXobject {
 	 * 
 	 * @param probe the probe
 	 */
-	public DataNode setProbeScalar(String probe);
+	public DataNode setProbeScalar(String probeValue);
 
 	/**
 	 * Source power
@@ -320,9 +321,9 @@ public interface NXsource extends NXobject {
 	 * <b>Units:</b> NX_POWER
 	 * </p>
 	 * 
-	 * @param power the power
+	 * @param powerDataset the powerDataset
 	 */
-	public DataNode setPower(IDataset power);
+	public DataNode setPower(IDataset powerDataset);
 
 	/**
 	 * Source power
@@ -344,7 +345,7 @@ public interface NXsource extends NXobject {
 	 * 
 	 * @param power the power
 	 */
-	public DataNode setPowerScalar(Double power);
+	public DataNode setPowerScalar(Double powerValue);
 
 	/**
 	 * Source emittance (nm-rad) in X (horizontal) direction.
@@ -364,9 +365,9 @@ public interface NXsource extends NXobject {
 	 * <b>Units:</b> NX_EMITTANCE
 	 * </p>
 	 * 
-	 * @param emittance_x the emittance_x
+	 * @param emittance_xDataset the emittance_xDataset
 	 */
-	public DataNode setEmittance_x(IDataset emittance_x);
+	public DataNode setEmittance_x(IDataset emittance_xDataset);
 
 	/**
 	 * Source emittance (nm-rad) in X (horizontal) direction.
@@ -388,7 +389,7 @@ public interface NXsource extends NXobject {
 	 * 
 	 * @param emittance_x the emittance_x
 	 */
-	public DataNode setEmittance_xScalar(Double emittance_x);
+	public DataNode setEmittance_xScalar(Double emittance_xValue);
 
 	/**
 	 * Source emittance (nm-rad) in Y (horizontal) direction.
@@ -408,9 +409,9 @@ public interface NXsource extends NXobject {
 	 * <b>Units:</b> NX_EMITTANCE
 	 * </p>
 	 * 
-	 * @param emittance_y the emittance_y
+	 * @param emittance_yDataset the emittance_yDataset
 	 */
-	public DataNode setEmittance_y(IDataset emittance_y);
+	public DataNode setEmittance_y(IDataset emittance_yDataset);
 
 	/**
 	 * Source emittance (nm-rad) in Y (horizontal) direction.
@@ -432,7 +433,7 @@ public interface NXsource extends NXobject {
 	 * 
 	 * @param emittance_y the emittance_y
 	 */
-	public DataNode setEmittance_yScalar(Double emittance_y);
+	public DataNode setEmittance_yScalar(Double emittance_yValue);
 
 	/**
 	 * particle beam size in x
@@ -452,9 +453,9 @@ public interface NXsource extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param sigma_x the sigma_x
+	 * @param sigma_xDataset the sigma_xDataset
 	 */
-	public DataNode setSigma_x(IDataset sigma_x);
+	public DataNode setSigma_x(IDataset sigma_xDataset);
 
 	/**
 	 * particle beam size in x
@@ -476,7 +477,7 @@ public interface NXsource extends NXobject {
 	 * 
 	 * @param sigma_x the sigma_x
 	 */
-	public DataNode setSigma_xScalar(Double sigma_x);
+	public DataNode setSigma_xScalar(Double sigma_xValue);
 
 	/**
 	 * particle beam size in y
@@ -496,9 +497,9 @@ public interface NXsource extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param sigma_y the sigma_y
+	 * @param sigma_yDataset the sigma_yDataset
 	 */
-	public DataNode setSigma_y(IDataset sigma_y);
+	public DataNode setSigma_y(IDataset sigma_yDataset);
 
 	/**
 	 * particle beam size in y
@@ -520,7 +521,7 @@ public interface NXsource extends NXobject {
 	 * 
 	 * @param sigma_y the sigma_y
 	 */
-	public DataNode setSigma_yScalar(Double sigma_y);
+	public DataNode setSigma_yScalar(Double sigma_yValue);
 
 	/**
 	 * Source intensity/area (example: s-1 cm-2)
@@ -540,9 +541,9 @@ public interface NXsource extends NXobject {
 	 * <b>Units:</b> NX_FLUX
 	 * </p>
 	 * 
-	 * @param flux the flux
+	 * @param fluxDataset the fluxDataset
 	 */
-	public DataNode setFlux(IDataset flux);
+	public DataNode setFlux(IDataset fluxDataset);
 
 	/**
 	 * Source intensity/area (example: s-1 cm-2)
@@ -564,7 +565,7 @@ public interface NXsource extends NXobject {
 	 * 
 	 * @param flux the flux
 	 */
-	public DataNode setFluxScalar(Double flux);
+	public DataNode setFluxScalar(Double fluxValue);
 
 	/**
 	 * Source energy.
@@ -588,9 +589,9 @@ public interface NXsource extends NXobject {
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
 	 * 
-	 * @param energy the energy
+	 * @param energyDataset the energyDataset
 	 */
-	public DataNode setEnergy(IDataset energy);
+	public DataNode setEnergy(IDataset energyDataset);
 
 	/**
 	 * Source energy.
@@ -616,7 +617,7 @@ public interface NXsource extends NXobject {
 	 * 
 	 * @param energy the energy
 	 */
-	public DataNode setEnergyScalar(Double energy);
+	public DataNode setEnergyScalar(Double energyValue);
 
 	/**
 	 * Accelerator, X-ray tube, or storage ring current
@@ -636,9 +637,9 @@ public interface NXsource extends NXobject {
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
 	 * 
-	 * @param current the current
+	 * @param currentDataset the currentDataset
 	 */
-	public DataNode setCurrent(IDataset current);
+	public DataNode setCurrent(IDataset currentDataset);
 
 	/**
 	 * Accelerator, X-ray tube, or storage ring current
@@ -660,7 +661,7 @@ public interface NXsource extends NXobject {
 	 * 
 	 * @param current the current
 	 */
-	public DataNode setCurrentScalar(Double current);
+	public DataNode setCurrentScalar(Double currentValue);
 
 	/**
 	 * Accelerator voltage
@@ -680,9 +681,9 @@ public interface NXsource extends NXobject {
 	 * <b>Units:</b> NX_VOLTAGE
 	 * </p>
 	 * 
-	 * @param voltage the voltage
+	 * @param voltageDataset the voltageDataset
 	 */
-	public DataNode setVoltage(IDataset voltage);
+	public DataNode setVoltage(IDataset voltageDataset);
 
 	/**
 	 * Accelerator voltage
@@ -704,7 +705,7 @@ public interface NXsource extends NXobject {
 	 * 
 	 * @param voltage the voltage
 	 */
-	public DataNode setVoltageScalar(Double voltage);
+	public DataNode setVoltageScalar(Double voltageValue);
 
 	/**
 	 * Frequency of pulsed source
@@ -724,9 +725,9 @@ public interface NXsource extends NXobject {
 	 * <b>Units:</b> NX_FREQUENCY
 	 * </p>
 	 * 
-	 * @param frequency the frequency
+	 * @param frequencyDataset the frequencyDataset
 	 */
-	public DataNode setFrequency(IDataset frequency);
+	public DataNode setFrequency(IDataset frequencyDataset);
 
 	/**
 	 * Frequency of pulsed source
@@ -748,7 +749,7 @@ public interface NXsource extends NXobject {
 	 * 
 	 * @param frequency the frequency
 	 */
-	public DataNode setFrequencyScalar(Double frequency);
+	public DataNode setFrequencyScalar(Double frequencyValue);
 
 	/**
 	 * Period of pulsed source
@@ -768,9 +769,9 @@ public interface NXsource extends NXobject {
 	 * <b>Units:</b> NX_PERIOD
 	 * </p>
 	 * 
-	 * @param period the period
+	 * @param periodDataset the periodDataset
 	 */
-	public DataNode setPeriod(IDataset period);
+	public DataNode setPeriod(IDataset periodDataset);
 
 	/**
 	 * Period of pulsed source
@@ -792,7 +793,7 @@ public interface NXsource extends NXobject {
 	 * 
 	 * @param period the period
 	 */
-	public DataNode setPeriodScalar(Double period);
+	public DataNode setPeriodScalar(Double periodValue);
 
 	/**
 	 * Pulsed source target material
@@ -824,9 +825,9 @@ public interface NXsource extends NXobject {
 	 * <li><b>C</b> </li></ul></p>
 	 * </p>
 	 * 
-	 * @param target_material the target_material
+	 * @param target_materialDataset the target_materialDataset
 	 */
-	public DataNode setTarget_material(IDataset target_material);
+	public DataNode setTarget_material(IDataset target_materialDataset);
 
 	/**
 	 * Pulsed source target material
@@ -860,7 +861,7 @@ public interface NXsource extends NXobject {
 	 * 
 	 * @param target_material the target_material
 	 */
-	public DataNode setTarget_materialScalar(String target_material);
+	public DataNode setTarget_materialScalar(String target_materialValue);
 
 	/**
 	 * any source/facility related messages/events that
@@ -874,9 +875,9 @@ public interface NXsource extends NXobject {
 	 * any source/facility related messages/events that
 	 * occurred during the experiment
 	 * 
-	 * @param notes the notes
+	 * @param notesGroup the notesGroup
 	 */
-	public void setNotes(NXnote notes);
+	public void setNotes(NXnote notesGroup);
 
 	/**
 	 * For storage rings, description of the bunch pattern.
@@ -890,9 +891,9 @@ public interface NXsource extends NXobject {
 	 * For storage rings, description of the bunch pattern.
 	 * This is useful to describe irregular bunch patterns.
 	 * 
-	 * @param bunch_pattern the bunch_pattern
+	 * @param bunch_patternGroup the bunch_patternGroup
 	 */
-	public void setBunch_pattern(NXdata bunch_pattern);
+	public void setBunch_pattern(NXdata bunch_patternGroup);
 
 	/**
 	 * For storage rings, the number of bunches in use.
@@ -910,9 +911,9 @@ public interface NXsource extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * </p>
 	 * 
-	 * @param number_of_bunches the number_of_bunches
+	 * @param number_of_bunchesDataset the number_of_bunchesDataset
 	 */
-	public DataNode setNumber_of_bunches(IDataset number_of_bunches);
+	public DataNode setNumber_of_bunches(IDataset number_of_bunchesDataset);
 
 	/**
 	 * For storage rings, the number of bunches in use.
@@ -932,7 +933,7 @@ public interface NXsource extends NXobject {
 	 * 
 	 * @param number_of_bunches the number_of_bunches
 	 */
-	public DataNode setNumber_of_bunchesScalar(Long number_of_bunches);
+	public DataNode setNumber_of_bunchesScalar(Long number_of_bunchesValue);
 
 	/**
 	 * For storage rings, temporal length of the bunch
@@ -952,9 +953,9 @@ public interface NXsource extends NXobject {
 	 * <b>Units:</b> NX_TIME
 	 * </p>
 	 * 
-	 * @param bunch_length the bunch_length
+	 * @param bunch_lengthDataset the bunch_lengthDataset
 	 */
-	public DataNode setBunch_length(IDataset bunch_length);
+	public DataNode setBunch_length(IDataset bunch_lengthDataset);
 
 	/**
 	 * For storage rings, temporal length of the bunch
@@ -976,7 +977,7 @@ public interface NXsource extends NXobject {
 	 * 
 	 * @param bunch_length the bunch_length
 	 */
-	public DataNode setBunch_lengthScalar(Double bunch_length);
+	public DataNode setBunch_lengthScalar(Double bunch_lengthValue);
 
 	/**
 	 * For storage rings, time between bunches
@@ -996,9 +997,9 @@ public interface NXsource extends NXobject {
 	 * <b>Units:</b> NX_TIME
 	 * </p>
 	 * 
-	 * @param bunch_distance the bunch_distance
+	 * @param bunch_distanceDataset the bunch_distanceDataset
 	 */
-	public DataNode setBunch_distance(IDataset bunch_distance);
+	public DataNode setBunch_distance(IDataset bunch_distanceDataset);
 
 	/**
 	 * For storage rings, time between bunches
@@ -1020,7 +1021,7 @@ public interface NXsource extends NXobject {
 	 * 
 	 * @param bunch_distance the bunch_distance
 	 */
-	public DataNode setBunch_distanceScalar(Double bunch_distance);
+	public DataNode setBunch_distanceScalar(Double bunch_distanceValue);
 
 	/**
 	 * temporal width of source pulse
@@ -1040,9 +1041,9 @@ public interface NXsource extends NXobject {
 	 * <b>Units:</b> NX_TIME
 	 * </p>
 	 * 
-	 * @param pulse_width the pulse_width
+	 * @param pulse_widthDataset the pulse_widthDataset
 	 */
-	public DataNode setPulse_width(IDataset pulse_width);
+	public DataNode setPulse_width(IDataset pulse_widthDataset);
 
 	/**
 	 * temporal width of source pulse
@@ -1064,7 +1065,7 @@ public interface NXsource extends NXobject {
 	 * 
 	 * @param pulse_width the pulse_width
 	 */
-	public DataNode setPulse_widthScalar(Double pulse_width);
+	public DataNode setPulse_widthScalar(Double pulse_widthValue);
 
 	/**
 	 * source pulse shape
@@ -1076,9 +1077,9 @@ public interface NXsource extends NXobject {
 	/**
 	 * source pulse shape
 	 * 
-	 * @param pulse_shape the pulse_shape
+	 * @param pulse_shapeGroup the pulse_shapeGroup
 	 */
-	public void setPulse_shape(NXdata pulse_shape);
+	public void setPulse_shape(NXdata pulse_shapeGroup);
 
 	/**
 	 * source operating mode
@@ -1104,9 +1105,9 @@ public interface NXsource extends NXobject {
 	 * for storage rings</li></ul></p>
 	 * </p>
 	 * 
-	 * @param mode the mode
+	 * @param modeDataset the modeDataset
 	 */
-	public DataNode setMode(IDataset mode);
+	public DataNode setMode(IDataset modeDataset);
 
 	/**
 	 * source operating mode
@@ -1134,7 +1135,7 @@ public interface NXsource extends NXobject {
 	 * 
 	 * @param mode the mode
 	 */
-	public DataNode setModeScalar(String mode);
+	public DataNode setModeScalar(String modeValue);
 
 	/**
 	 * Is the synchrotron operating in top_up mode?
@@ -1152,9 +1153,9 @@ public interface NXsource extends NXobject {
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
 	 * 
-	 * @param top_up the top_up
+	 * @param top_upDataset the top_upDataset
 	 */
-	public DataNode setTop_up(IDataset top_up);
+	public DataNode setTop_up(IDataset top_upDataset);
 
 	/**
 	 * Is the synchrotron operating in top_up mode?
@@ -1174,7 +1175,7 @@ public interface NXsource extends NXobject {
 	 * 
 	 * @param top_up the top_up
 	 */
-	public DataNode setTop_upScalar(Boolean top_up);
+	public DataNode setTop_upScalar(Boolean top_upValue);
 
 	/**
 	 * For storage rings, the current at the end of the most recent injection.
@@ -1194,9 +1195,9 @@ public interface NXsource extends NXobject {
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
 	 * 
-	 * @param last_fill the last_fill
+	 * @param last_fillDataset the last_fillDataset
 	 */
-	public DataNode setLast_fill(IDataset last_fill);
+	public DataNode setLast_fill(IDataset last_fillDataset);
 
 	/**
 	 * For storage rings, the current at the end of the most recent injection.
@@ -1218,7 +1219,7 @@ public interface NXsource extends NXobject {
 	 * 
 	 * @param last_fill the last_fill
 	 */
-	public DataNode setLast_fillScalar(Number last_fill);
+	public DataNode setLast_fillScalar(Number last_fillValue);
 
 	/**
 	 * date and time of the most recent injection.
@@ -1230,9 +1231,9 @@ public interface NXsource extends NXobject {
 	/**
 	 * date and time of the most recent injection.
 	 * 
-	 * @param time the time
+	 * @param timeValue the timeValue
 	 */
-	public void setLast_fillAttributeTime(Date time);
+	public void setLast_fillAttributeTime(Date timeValue);
 
 	/**
 	 * "Engineering" location of source
@@ -1244,9 +1245,9 @@ public interface NXsource extends NXobject {
 	/**
 	 * "Engineering" location of source
 	 * 
-	 * @param geometry the geometry
+	 * @param geometryGroup the geometryGroup
 	 */
-	public void setGeometry(NXgeometry geometry);
+	public void setGeometry(NXgeometry geometryGroup);
 
 	/**
 	 * The wavelength or energy distribution of the source
@@ -1258,8 +1259,34 @@ public interface NXsource extends NXobject {
 	/**
 	 * The wavelength or energy distribution of the source
 	 * 
-	 * @param distribution the distribution
+	 * @param distributionGroup the distributionGroup
 	 */
-	public void setDistribution(NXdata distribution);
+	public void setDistribution(NXdata distributionGroup);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

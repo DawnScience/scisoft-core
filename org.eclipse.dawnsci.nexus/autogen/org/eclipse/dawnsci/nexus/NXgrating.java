@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public interface NXgrating extends NXobject {
 	public static final String NX_SUBSTRATE_ROUGHNESS = "substrate_roughness";
 	public static final String NX_COATING_ROUGHNESS = "coating_roughness";
 	public static final String NX_LAYER_THICKNESS = "layer_thickness";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * Blaze or trapezoidal angles, with the angle of the upstream facing edge listed first. Blazed gratings can be identified by the low value of the first-listed angle.
 	 * <p>
@@ -57,9 +58,9 @@ public interface NXgrating extends NXobject {
 	 * <b>Dimensions:</b> 1: 2;
 	 * </p>
 	 * 
-	 * @param angles the angles
+	 * @param anglesDataset the anglesDataset
 	 */
-	public DataNode setAngles(IDataset angles);
+	public DataNode setAngles(IDataset anglesDataset);
 
 	/**
 	 * Blaze or trapezoidal angles, with the angle of the upstream facing edge listed first. Blazed gratings can be identified by the low value of the first-listed angle.
@@ -83,7 +84,7 @@ public interface NXgrating extends NXobject {
 	 * 
 	 * @param angles the angles
 	 */
-	public DataNode setAnglesScalar(Double angles);
+	public DataNode setAnglesScalar(Double anglesValue);
 
 	/**
 	 * List of polynomial coefficients describing the spatial separation of lines/grooves as a function of position along the grating, in increasing powers of position. Gratings which do not have variable line spacing will only have a single coefficient (constant).
@@ -105,9 +106,9 @@ public interface NXgrating extends NXobject {
 	 * <b>Dimensions:</b>
 	 * </p>
 	 * 
-	 * @param period the period
+	 * @param periodDataset the periodDataset
 	 */
-	public DataNode setPeriod(IDataset period);
+	public DataNode setPeriod(IDataset periodDataset);
 
 	/**
 	 * List of polynomial coefficients describing the spatial separation of lines/grooves as a function of position along the grating, in increasing powers of position. Gratings which do not have variable line spacing will only have a single coefficient (constant).
@@ -131,7 +132,7 @@ public interface NXgrating extends NXobject {
 	 * 
 	 * @param period the period
 	 */
-	public DataNode setPeriodScalar(Double period);
+	public DataNode setPeriodScalar(Double periodValue);
 
 	/**
 	 * <p>
@@ -149,9 +150,9 @@ public interface NXgrating extends NXobject {
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 * 
-	 * @param duty_cycle the duty_cycle
+	 * @param duty_cycleDataset the duty_cycleDataset
 	 */
-	public DataNode setDuty_cycle(IDataset duty_cycle);
+	public DataNode setDuty_cycle(IDataset duty_cycleDataset);
 
 	/**
 	 * <p>
@@ -171,7 +172,7 @@ public interface NXgrating extends NXobject {
 	 * 
 	 * @param duty_cycle the duty_cycle
 	 */
-	public DataNode setDuty_cycleScalar(Double duty_cycle);
+	public DataNode setDuty_cycleScalar(Double duty_cycleValue);
 
 	/**
 	 * <p>
@@ -189,9 +190,9 @@ public interface NXgrating extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param depth the depth
+	 * @param depthDataset the depthDataset
 	 */
-	public DataNode setDepth(IDataset depth);
+	public DataNode setDepth(IDataset depthDataset);
 
 	/**
 	 * <p>
@@ -211,7 +212,7 @@ public interface NXgrating extends NXobject {
 	 * 
 	 * @param depth the depth
 	 */
-	public DataNode setDepthScalar(Double depth);
+	public DataNode setDepthScalar(Double depthValue);
 
 	/**
 	 * <p>
@@ -229,9 +230,9 @@ public interface NXgrating extends NXobject {
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 * 
-	 * @param diffraction_order the diffraction_order
+	 * @param diffraction_orderDataset the diffraction_orderDataset
 	 */
-	public DataNode setDiffraction_order(IDataset diffraction_order);
+	public DataNode setDiffraction_order(IDataset diffraction_orderDataset);
 
 	/**
 	 * <p>
@@ -251,7 +252,7 @@ public interface NXgrating extends NXobject {
 	 * 
 	 * @param diffraction_order the diffraction_order
 	 */
-	public DataNode setDiffraction_orderScalar(Long diffraction_order);
+	public DataNode setDiffraction_orderScalar(Long diffraction_orderValue);
 
 	/**
 	 * Angle between the incident beam and the utilised outgoing beam.
@@ -271,9 +272,9 @@ public interface NXgrating extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
 	 * 
-	 * @param deflection_angle the deflection_angle
+	 * @param deflection_angleDataset the deflection_angleDataset
 	 */
-	public DataNode setDeflection_angle(IDataset deflection_angle);
+	public DataNode setDeflection_angle(IDataset deflection_angleDataset);
 
 	/**
 	 * Angle between the incident beam and the utilised outgoing beam.
@@ -295,7 +296,7 @@ public interface NXgrating extends NXobject {
 	 * 
 	 * @param deflection_angle the deflection_angle
 	 */
-	public DataNode setDeflection_angleScalar(Double deflection_angle);
+	public DataNode setDeflection_angleScalar(Double deflection_angleValue);
 
 	/**
 	 * <p>
@@ -317,9 +318,9 @@ public interface NXgrating extends NXobject {
 	 * <li><b>argon</b> </li></ul></p>
 	 * </p>
 	 * 
-	 * @param interior_atmosphere the interior_atmosphere
+	 * @param interior_atmosphereDataset the interior_atmosphereDataset
 	 */
-	public DataNode setInterior_atmosphere(IDataset interior_atmosphere);
+	public DataNode setInterior_atmosphere(IDataset interior_atmosphereDataset);
 
 	/**
 	 * <p>
@@ -343,7 +344,7 @@ public interface NXgrating extends NXobject {
 	 * 
 	 * @param interior_atmosphere the interior_atmosphere
 	 */
-	public DataNode setInterior_atmosphereScalar(String interior_atmosphere);
+	public DataNode setInterior_atmosphereScalar(String interior_atmosphereValue);
 
 	/**
 	 * 
@@ -353,9 +354,9 @@ public interface NXgrating extends NXobject {
 	
 	/**
 	 * 
-	 * @param substrate_material the substrate_material
+	 * @param substrate_materialDataset the substrate_materialDataset
 	 */
-	public DataNode setSubstrate_material(IDataset substrate_material);
+	public DataNode setSubstrate_material(IDataset substrate_materialDataset);
 
 	/**
 	 * 
@@ -367,7 +368,7 @@ public interface NXgrating extends NXobject {
 	 * 
 	 * @param substrate_material the substrate_material
 	 */
-	public DataNode setSubstrate_materialScalar(String substrate_material);
+	public DataNode setSubstrate_materialScalar(String substrate_materialValue);
 
 	/**
 	 * <p>
@@ -385,9 +386,9 @@ public interface NXgrating extends NXobject {
 	 * <b>Units:</b> NX_MASS_DENSITY
 	 * </p>
 	 * 
-	 * @param substrate_density the substrate_density
+	 * @param substrate_densityDataset the substrate_densityDataset
 	 */
-	public DataNode setSubstrate_density(IDataset substrate_density);
+	public DataNode setSubstrate_density(IDataset substrate_densityDataset);
 
 	/**
 	 * <p>
@@ -407,7 +408,7 @@ public interface NXgrating extends NXobject {
 	 * 
 	 * @param substrate_density the substrate_density
 	 */
-	public DataNode setSubstrate_densityScalar(Double substrate_density);
+	public DataNode setSubstrate_densityScalar(Double substrate_densityValue);
 
 	/**
 	 * <p>
@@ -425,9 +426,9 @@ public interface NXgrating extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param substrate_thickness the substrate_thickness
+	 * @param substrate_thicknessDataset the substrate_thicknessDataset
 	 */
-	public DataNode setSubstrate_thickness(IDataset substrate_thickness);
+	public DataNode setSubstrate_thickness(IDataset substrate_thicknessDataset);
 
 	/**
 	 * <p>
@@ -447,7 +448,7 @@ public interface NXgrating extends NXobject {
 	 * 
 	 * @param substrate_thickness the substrate_thickness
 	 */
-	public DataNode setSubstrate_thicknessScalar(Double substrate_thickness);
+	public DataNode setSubstrate_thicknessScalar(Double substrate_thicknessValue);
 
 	/**
 	 * 
@@ -457,9 +458,9 @@ public interface NXgrating extends NXobject {
 	
 	/**
 	 * 
-	 * @param coating_material the coating_material
+	 * @param coating_materialDataset the coating_materialDataset
 	 */
-	public DataNode setCoating_material(IDataset coating_material);
+	public DataNode setCoating_material(IDataset coating_materialDataset);
 
 	/**
 	 * 
@@ -471,7 +472,7 @@ public interface NXgrating extends NXobject {
 	 * 
 	 * @param coating_material the coating_material
 	 */
-	public DataNode setCoating_materialScalar(String coating_material);
+	public DataNode setCoating_materialScalar(String coating_materialValue);
 
 	/**
 	 * <p>
@@ -489,9 +490,9 @@ public interface NXgrating extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param substrate_roughness the substrate_roughness
+	 * @param substrate_roughnessDataset the substrate_roughnessDataset
 	 */
-	public DataNode setSubstrate_roughness(IDataset substrate_roughness);
+	public DataNode setSubstrate_roughness(IDataset substrate_roughnessDataset);
 
 	/**
 	 * <p>
@@ -511,7 +512,7 @@ public interface NXgrating extends NXobject {
 	 * 
 	 * @param substrate_roughness the substrate_roughness
 	 */
-	public DataNode setSubstrate_roughnessScalar(Double substrate_roughness);
+	public DataNode setSubstrate_roughnessScalar(Double substrate_roughnessValue);
 
 	/**
 	 * <p>
@@ -529,9 +530,9 @@ public interface NXgrating extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param coating_roughness the coating_roughness
+	 * @param coating_roughnessDataset the coating_roughnessDataset
 	 */
-	public DataNode setCoating_roughness(IDataset coating_roughness);
+	public DataNode setCoating_roughness(IDataset coating_roughnessDataset);
 
 	/**
 	 * <p>
@@ -551,7 +552,7 @@ public interface NXgrating extends NXobject {
 	 * 
 	 * @param coating_roughness the coating_roughness
 	 */
-	public DataNode setCoating_roughnessScalar(Double coating_roughness);
+	public DataNode setCoating_roughnessScalar(Double coating_roughnessValue);
 
 	/**
 	 * An array describing the thickness of each layer
@@ -571,9 +572,9 @@ public interface NXgrating extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param layer_thickness the layer_thickness
+	 * @param layer_thicknessDataset the layer_thicknessDataset
 	 */
-	public DataNode setLayer_thickness(IDataset layer_thickness);
+	public DataNode setLayer_thickness(IDataset layer_thicknessDataset);
 
 	/**
 	 * An array describing the thickness of each layer
@@ -595,7 +596,7 @@ public interface NXgrating extends NXobject {
 	 * 
 	 * @param layer_thickness the layer_thickness
 	 */
-	public DataNode setLayer_thicknessScalar(Double layer_thickness);
+	public DataNode setLayer_thicknessScalar(Double layer_thicknessValue);
 
 	/**
 	 * A NXshape group describing the shape of the mirror
@@ -607,9 +608,9 @@ public interface NXgrating extends NXobject {
 	/**
 	 * A NXshape group describing the shape of the mirror
 	 * 
-	 * @param shape the shape
+	 * @param shapeGroup the shapeGroup
 	 */
-	public void setShape(NXshape shape);
+	public void setShape(NXshape shapeGroup);
 
 	/**
 	 * Numerical description of the surface figure of the mirror.
@@ -621,9 +622,9 @@ public interface NXgrating extends NXobject {
 	/**
 	 * Numerical description of the surface figure of the mirror.
 	 * 
-	 * @param figure_data the figure_data
+	 * @param figure_dataGroup the figure_dataGroup
 	 */
-	public void setFigure_data(NXdata figure_data);
+	public void setFigure_data(NXdata figure_dataGroup);
 
 	/**
 	 * "Engineering" position of the grating
@@ -635,10 +636,10 @@ public interface NXgrating extends NXobject {
 	/**
 	 * "Engineering" position of the grating
 	 * 
-	 * @param transformations the transformations
+	 * @param transformationsGroup the transformationsGroup
 	 */
-	public void setTransformations(NXtransformations transformations);
-  
+	public void setTransformations(NXtransformations transformationsGroup);
+
 	/**
 	 * Get a NXtransformations node by name:
 	 * <ul>
@@ -686,5 +687,31 @@ public interface NXgrating extends NXobject {
 	
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
 	
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

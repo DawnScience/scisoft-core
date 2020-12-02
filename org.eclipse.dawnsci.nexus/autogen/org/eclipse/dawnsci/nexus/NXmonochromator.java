@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,8 +32,11 @@ public interface NXmonochromator extends NXobject {
 
 	public static final String NX_WAVELENGTH = "wavelength";
 	public static final String NX_WAVELENGTH_ERROR = "wavelength_error";
+	public static final String NX_WAVELENGTH_ERRORS = "wavelength_errors";
 	public static final String NX_ENERGY = "energy";
 	public static final String NX_ENERGY_ERROR = "energy_error";
+	public static final String NX_ENERGY_ERRORS = "energy_errors";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * wavelength selected
 	 * <p>
@@ -52,9 +55,9 @@ public interface NXmonochromator extends NXobject {
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * </p>
 	 * 
-	 * @param wavelength the wavelength
+	 * @param wavelengthDataset the wavelengthDataset
 	 */
-	public DataNode setWavelength(IDataset wavelength);
+	public DataNode setWavelength(IDataset wavelengthDataset);
 
 	/**
 	 * wavelength selected
@@ -76,7 +79,7 @@ public interface NXmonochromator extends NXobject {
 	 * 
 	 * @param wavelength the wavelength
 	 */
-	public DataNode setWavelengthScalar(Double wavelength);
+	public DataNode setWavelengthScalar(Double wavelengthValue);
 
 	/**
 	 * wavelength standard deviation
@@ -85,8 +88,10 @@ public interface NXmonochromator extends NXobject {
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * </p>
 	 * 
+	 * @deprecated see https://github.com/nexusformat/definitions/issues/820
 	 * @return  the value.
 	 */
+	@Deprecated
 	public IDataset getWavelength_error();
 	
 	/**
@@ -96,9 +101,37 @@ public interface NXmonochromator extends NXobject {
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * </p>
 	 * 
+	 * @deprecated see https://github.com/nexusformat/definitions/issues/820
+	 * @param wavelength_errorDataset the wavelength_errorDataset
+	 */
+	@Deprecated
+	public DataNode setWavelength_error(IDataset wavelength_errorDataset);
+
+	/**
+	 * wavelength standard deviation
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_WAVELENGTH
+	 * </p>
+	 * 
+	 * @deprecated see https://github.com/nexusformat/definitions/issues/820
+	 * @return  the value.
+	 */
+	@Deprecated
+	public Double getWavelength_errorScalar();
+
+	/**
+	 * wavelength standard deviation
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_WAVELENGTH
+	 * </p>
+	 * 
+	 * @deprecated see https://github.com/nexusformat/definitions/issues/820
 	 * @param wavelength_error the wavelength_error
 	 */
-	public DataNode setWavelength_error(IDataset wavelength_error);
+	@Deprecated
+	public DataNode setWavelength_errorScalar(Double wavelength_errorValue);
 
 	/**
 	 * wavelength standard deviation
@@ -109,7 +142,18 @@ public interface NXmonochromator extends NXobject {
 	 * 
 	 * @return  the value.
 	 */
-	public Double getWavelength_errorScalar();
+	public IDataset getWavelength_errors();
+	
+	/**
+	 * wavelength standard deviation
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_WAVELENGTH
+	 * </p>
+	 * 
+	 * @param wavelength_errorsDataset the wavelength_errorsDataset
+	 */
+	public DataNode setWavelength_errors(IDataset wavelength_errorsDataset);
 
 	/**
 	 * wavelength standard deviation
@@ -118,9 +162,20 @@ public interface NXmonochromator extends NXobject {
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * </p>
 	 * 
-	 * @param wavelength_error the wavelength_error
+	 * @return  the value.
 	 */
-	public DataNode setWavelength_errorScalar(Double wavelength_error);
+	public Double getWavelength_errorsScalar();
+
+	/**
+	 * wavelength standard deviation
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_WAVELENGTH
+	 * </p>
+	 * 
+	 * @param wavelength_errors the wavelength_errors
+	 */
+	public DataNode setWavelength_errorsScalar(Double wavelength_errorsValue);
 
 	/**
 	 * energy selected
@@ -140,9 +195,9 @@ public interface NXmonochromator extends NXobject {
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
 	 * 
-	 * @param energy the energy
+	 * @param energyDataset the energyDataset
 	 */
-	public DataNode setEnergy(IDataset energy);
+	public DataNode setEnergy(IDataset energyDataset);
 
 	/**
 	 * energy selected
@@ -164,7 +219,7 @@ public interface NXmonochromator extends NXobject {
 	 * 
 	 * @param energy the energy
 	 */
-	public DataNode setEnergyScalar(Double energy);
+	public DataNode setEnergyScalar(Double energyValue);
 
 	/**
 	 * energy standard deviation
@@ -173,8 +228,10 @@ public interface NXmonochromator extends NXobject {
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
 	 * 
+	 * @deprecated see https://github.com/nexusformat/definitions/issues/820
 	 * @return  the value.
 	 */
+	@Deprecated
 	public IDataset getEnergy_error();
 	
 	/**
@@ -184,9 +241,11 @@ public interface NXmonochromator extends NXobject {
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
 	 * 
-	 * @param energy_error the energy_error
+	 * @deprecated see https://github.com/nexusformat/definitions/issues/820
+	 * @param energy_errorDataset the energy_errorDataset
 	 */
-	public DataNode setEnergy_error(IDataset energy_error);
+	@Deprecated
+	public DataNode setEnergy_error(IDataset energy_errorDataset);
 
 	/**
 	 * energy standard deviation
@@ -195,8 +254,10 @@ public interface NXmonochromator extends NXobject {
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
 	 * 
+	 * @deprecated see https://github.com/nexusformat/definitions/issues/820
 	 * @return  the value.
 	 */
+	@Deprecated
 	public Double getEnergy_errorScalar();
 
 	/**
@@ -206,9 +267,55 @@ public interface NXmonochromator extends NXobject {
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
 	 * 
+	 * @deprecated see https://github.com/nexusformat/definitions/issues/820
 	 * @param energy_error the energy_error
 	 */
-	public DataNode setEnergy_errorScalar(Double energy_error);
+	@Deprecated
+	public DataNode setEnergy_errorScalar(Double energy_errorValue);
+
+	/**
+	 * energy standard deviation
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ENERGY
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public IDataset getEnergy_errors();
+	
+	/**
+	 * energy standard deviation
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ENERGY
+	 * </p>
+	 * 
+	 * @param energy_errorsDataset the energy_errorsDataset
+	 */
+	public DataNode setEnergy_errors(IDataset energy_errorsDataset);
+
+	/**
+	 * energy standard deviation
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ENERGY
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public Double getEnergy_errorsScalar();
+
+	/**
+	 * energy standard deviation
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ENERGY
+	 * </p>
+	 * 
+	 * @param energy_errors the energy_errors
+	 */
+	public DataNode setEnergy_errorsScalar(Double energy_errorsValue);
 
 	/**
 	 * 
@@ -218,9 +325,9 @@ public interface NXmonochromator extends NXobject {
 	
 	/**
 	 * 
-	 * @param distribution the distribution
+	 * @param distributionGroup the distributionGroup
 	 */
-	public void setDistribution(NXdata distribution);
+	public void setDistribution(NXdata distributionGroup);
 
 	/**
 	 * 
@@ -230,9 +337,9 @@ public interface NXmonochromator extends NXobject {
 	
 	/**
 	 * 
-	 * @param geometry the geometry
+	 * @param geometryGroup the geometryGroup
 	 */
-	public void setGeometry(NXgeometry geometry);
+	public void setGeometry(NXgeometry geometryGroup);
 
 	/**
 	 * Use as many crystals as necessary to describe
@@ -244,10 +351,10 @@ public interface NXmonochromator extends NXobject {
 	/**
 	 * Use as many crystals as necessary to describe
 	 * 
-	 * @param crystal the crystal
+	 * @param crystalGroup the crystalGroup
 	 */
-	public void setCrystal(NXcrystal crystal);
-  
+	public void setCrystal(NXcrystal crystalGroup);
+
 	/**
 	 * Get a NXcrystal node by name:
 	 * <ul>
@@ -304,10 +411,10 @@ public interface NXmonochromator extends NXobject {
 	
 	/**
 	 * 
-	 * @param velocity_selector the velocity_selector
+	 * @param velocity_selectorGroup the velocity_selectorGroup
 	 */
-	public void setVelocity_selector(NXvelocity_selector velocity_selector);
-  
+	public void setVelocity_selector(NXvelocity_selector velocity_selectorGroup);
+
 	/**
 	 * Get a NXvelocity_selector node by name:
 	 * <ul>
@@ -362,10 +469,10 @@ public interface NXmonochromator extends NXobject {
 	/**
 	 * For diffraction grating based monochromators
 	 * 
-	 * @param grating the grating
+	 * @param gratingGroup the gratingGroup
 	 */
-	public void setGrating(NXgrating grating);
-  
+	public void setGrating(NXgrating gratingGroup);
+
 	/**
 	 * Get a NXgrating node by name:
 	 * <ul>
@@ -413,5 +520,31 @@ public interface NXmonochromator extends NXobject {
 	
 	public void setAllGrating(Map<String, NXgrating> grating);
 	
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,6 +52,7 @@ public interface NXevent_data extends NXobject {
 	public static final String NX_CUE_TIMESTAMP_ZERO = "cue_timestamp_zero";
 	public static final String NX_CUE_TIMESTAMP_ZERO_ATTRIBUTE_START = "start";
 	public static final String NX_CUE_INDEX = "cue_index";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * A list of timestamps for each event as it comes in.
 	 * <p>
@@ -72,9 +73,9 @@ public interface NXevent_data extends NXobject {
 	 * <b>Dimensions:</b> 1: i;
 	 * </p>
 	 * 
-	 * @param event_time_offset the event_time_offset
+	 * @param event_time_offsetDataset the event_time_offsetDataset
 	 */
-	public DataNode setEvent_time_offset(IDataset event_time_offset);
+	public DataNode setEvent_time_offset(IDataset event_time_offsetDataset);
 
 	/**
 	 * A list of timestamps for each event as it comes in.
@@ -98,7 +99,7 @@ public interface NXevent_data extends NXobject {
 	 * 
 	 * @param event_time_offset the event_time_offset
 	 */
-	public DataNode setEvent_time_offsetScalar(Number event_time_offset);
+	public DataNode setEvent_time_offsetScalar(Number event_time_offsetValue);
 
 	/**
 	 * There will be extra information in the NXdetector to convert
@@ -122,9 +123,9 @@ public interface NXevent_data extends NXobject {
 	 * <b>Dimensions:</b> 1: i;
 	 * </p>
 	 * 
-	 * @param event_id the event_id
+	 * @param event_idDataset the event_idDataset
 	 */
-	public DataNode setEvent_id(IDataset event_id);
+	public DataNode setEvent_id(IDataset event_idDataset);
 
 	/**
 	 * There will be extra information in the NXdetector to convert
@@ -150,7 +151,7 @@ public interface NXevent_data extends NXobject {
 	 * 
 	 * @param event_id the event_id
 	 */
-	public DataNode setEvent_idScalar(Long event_id);
+	public DataNode setEvent_idScalar(Long event_idValue);
 
 	/**
 	 * The time that each pulse started with respect to the offset
@@ -172,9 +173,9 @@ public interface NXevent_data extends NXobject {
 	 * <b>Dimensions:</b> 1: j;
 	 * </p>
 	 * 
-	 * @param event_time_zero the event_time_zero
+	 * @param event_time_zeroDataset the event_time_zeroDataset
 	 */
-	public DataNode setEvent_time_zero(IDataset event_time_zero);
+	public DataNode setEvent_time_zero(IDataset event_time_zeroDataset);
 
 	/**
 	 * The time that each pulse started with respect to the offset
@@ -198,7 +199,7 @@ public interface NXevent_data extends NXobject {
 	 * 
 	 * @param event_time_zero the event_time_zero
 	 */
-	public DataNode setEvent_time_zeroScalar(Number event_time_zero);
+	public DataNode setEvent_time_zeroScalar(Number event_time_zeroValue);
 
 	/**
 	 * ISO8601
@@ -210,9 +211,9 @@ public interface NXevent_data extends NXobject {
 	/**
 	 * ISO8601
 	 * 
-	 * @param offset the offset
+	 * @param offsetValue the offsetValue
 	 */
-	public void setEvent_time_zeroAttributeOffset(Date offset);
+	public void setEvent_time_zeroAttributeOffset(Date offsetValue);
 
 	/**
 	 * The index into the event_time_offset, event_id pair for
@@ -236,9 +237,9 @@ public interface NXevent_data extends NXobject {
 	 * <b>Dimensions:</b> 1: j;
 	 * </p>
 	 * 
-	 * @param event_index the event_index
+	 * @param event_indexDataset the event_indexDataset
 	 */
-	public DataNode setEvent_index(IDataset event_index);
+	public DataNode setEvent_index(IDataset event_indexDataset);
 
 	/**
 	 * The index into the event_time_offset, event_id pair for
@@ -264,7 +265,7 @@ public interface NXevent_data extends NXobject {
 	 * 
 	 * @param event_index the event_index
 	 */
-	public DataNode setEvent_indexScalar(Long event_index);
+	public DataNode setEvent_indexScalar(Long event_indexValue);
 
 	/**
 	 * If voltages from the ends of the detector are read out this
@@ -292,9 +293,9 @@ public interface NXevent_data extends NXobject {
 	 * <b>Dimensions:</b> 1: i; 2: k;
 	 * </p>
 	 * 
-	 * @param pulse_height the pulse_height
+	 * @param pulse_heightDataset the pulse_heightDataset
 	 */
-	public DataNode setPulse_height(IDataset pulse_height);
+	public DataNode setPulse_height(IDataset pulse_heightDataset);
 
 	/**
 	 * If voltages from the ends of the detector are read out this
@@ -324,7 +325,7 @@ public interface NXevent_data extends NXobject {
 	 * 
 	 * @param pulse_height the pulse_height
 	 */
-	public DataNode setPulse_heightScalar(Double pulse_height);
+	public DataNode setPulse_heightScalar(Double pulse_heightValue);
 
 	/**
 	 * Timestamps matching the corresponding cue_index into the
@@ -346,9 +347,9 @@ public interface NXevent_data extends NXobject {
 	 * <b>Units:</b> NX_TIME
 	 * </p>
 	 * 
-	 * @param cue_timestamp_zero the cue_timestamp_zero
+	 * @param cue_timestamp_zeroDataset the cue_timestamp_zeroDataset
 	 */
-	public DataNode setCue_timestamp_zero(IDataset cue_timestamp_zero);
+	public DataNode setCue_timestamp_zero(IDataset cue_timestamp_zeroDataset);
 
 	/**
 	 * Timestamps matching the corresponding cue_index into the
@@ -372,7 +373,7 @@ public interface NXevent_data extends NXobject {
 	 * 
 	 * @param cue_timestamp_zero the cue_timestamp_zero
 	 */
-	public DataNode setCue_timestamp_zeroScalar(Date cue_timestamp_zero);
+	public DataNode setCue_timestamp_zeroScalar(Date cue_timestamp_zeroValue);
 
 	/**
 	 * 
@@ -382,9 +383,9 @@ public interface NXevent_data extends NXobject {
 	
 	/**
 	 * 
-	 * @param start the start
+	 * @param startValue the startValue
 	 */
-	public void setCue_timestamp_zeroAttributeStart(Date start);
+	public void setCue_timestamp_zeroAttributeStart(Date startValue);
 
 	/**
 	 * Index into the event_id, event_time_offset pair matching the corresponding
@@ -404,9 +405,9 @@ public interface NXevent_data extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * </p>
 	 * 
-	 * @param cue_index the cue_index
+	 * @param cue_indexDataset the cue_indexDataset
 	 */
-	public DataNode setCue_index(IDataset cue_index);
+	public DataNode setCue_index(IDataset cue_indexDataset);
 
 	/**
 	 * Index into the event_id, event_time_offset pair matching the corresponding
@@ -428,6 +429,32 @@ public interface NXevent_data extends NXobject {
 	 * 
 	 * @param cue_index the cue_index
 	 */
-	public DataNode setCue_indexScalar(Long cue_index);
+	public DataNode setCue_indexScalar(Long cue_indexValue);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

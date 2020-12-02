@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,13 +66,13 @@ public class NXslitImpl extends NXobjectImpl implements NXslit {
 	}
 
 	@Override
-	public DataNode setDepends_on(IDataset depends_on) {
-		return setDataset(NX_DEPENDS_ON, depends_on);
+	public DataNode setDepends_on(IDataset depends_onDataset) {
+		return setDataset(NX_DEPENDS_ON, depends_onDataset);
 	}
 
 	@Override
-	public DataNode setDepends_onScalar(String depends_on) {
-		return setString(NX_DEPENDS_ON, depends_on);
+	public DataNode setDepends_onScalar(String depends_onValue) {
+		return setString(NX_DEPENDS_ON, depends_onValue);
 	}
 
 	@Override
@@ -86,13 +86,13 @@ public class NXslitImpl extends NXobjectImpl implements NXslit {
 	}
 
 	@Override
-	public DataNode setX_gap(IDataset x_gap) {
-		return setDataset(NX_X_GAP, x_gap);
+	public DataNode setX_gap(IDataset x_gapDataset) {
+		return setDataset(NX_X_GAP, x_gapDataset);
 	}
 
 	@Override
-	public DataNode setX_gapScalar(Number x_gap) {
-		return setField(NX_X_GAP, x_gap);
+	public DataNode setX_gapScalar(Number x_gapValue) {
+		return setField(NX_X_GAP, x_gapValue);
 	}
 
 	@Override
@@ -106,13 +106,23 @@ public class NXslitImpl extends NXobjectImpl implements NXslit {
 	}
 
 	@Override
-	public DataNode setY_gap(IDataset y_gap) {
-		return setDataset(NX_Y_GAP, y_gap);
+	public DataNode setY_gap(IDataset y_gapDataset) {
+		return setDataset(NX_Y_GAP, y_gapDataset);
 	}
 
 	@Override
-	public DataNode setY_gapScalar(Number y_gap) {
-		return setField(NX_Y_GAP, y_gap);
+	public DataNode setY_gapScalar(Number y_gapValue) {
+		return setField(NX_Y_GAP, y_gapValue);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

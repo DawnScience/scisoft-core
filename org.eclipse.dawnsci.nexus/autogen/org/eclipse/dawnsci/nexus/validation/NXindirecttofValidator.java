@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,7 +106,7 @@ public class NXindirecttofValidator extends AbstractNexusValidator implements Ne
 		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
 		validateFieldUnits("polar_angle", polar_angle, NX_ANGLE);
 		validateFieldRank("polar_angle", polar_angle, 1);
-		validateFieldDimensions("polar_angle", polar_angle, null, "ndet");
+		validateFieldDimensions("polar_angle", polar_angle, null, "nDet");
 
 		// validate field 'distance' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset distance = group.getDataset("distance");
@@ -114,6 +114,6 @@ public class NXindirecttofValidator extends AbstractNexusValidator implements Ne
 		validateFieldType("distance", distance, NX_FLOAT);
 		validateFieldUnits("distance", distance, NX_LENGTH);
 		validateFieldRank("distance", distance, 1);
-		validateFieldDimensions("distance", distance, null, "ndet");
+		validateFieldDimensions("distance", distance, null, "nDet");
 	}
 }

@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ public interface NXcollimator extends NXobject {
 	public static final String NX_BLADE_SPACING = "blade_spacing";
 	public static final String NX_ABSORBING_MATERIAL = "absorbing_material";
 	public static final String NX_TRANSMITTING_MATERIAL = "transmitting_material";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * position, shape and size
 	 * 
@@ -42,10 +43,10 @@ public interface NXcollimator extends NXobject {
 	/**
 	 * position, shape and size
 	 * 
-	 * @param geometry the geometry
+	 * @param geometryGroup the geometryGroup
 	 */
-	public void setGeometry(NXgeometry geometry);
-  
+	public void setGeometry(NXgeometry geometryGroup);
+
 	/**
 	 * Get a NXgeometry node by name:
 	 * <ul>
@@ -116,9 +117,9 @@ public interface NXcollimator extends NXobject {
 	 * <li><b>honeycomb</b> </li></ul></p>
 	 * </p>
 	 * 
-	 * @param type the type
+	 * @param typeDataset the typeDataset
 	 */
-	public DataNode setType(IDataset type);
+	public DataNode setType(IDataset typeDataset);
 
 	/**
 	 * <p>
@@ -144,7 +145,7 @@ public interface NXcollimator extends NXobject {
 	 * 
 	 * @param type the type
 	 */
-	public DataNode setTypeScalar(String type);
+	public DataNode setTypeScalar(String typeValue);
 
 	/**
 	 * Angular divergence of Soller collimator
@@ -164,9 +165,9 @@ public interface NXcollimator extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
 	 * 
-	 * @param soller_angle the soller_angle
+	 * @param soller_angleDataset the soller_angleDataset
 	 */
-	public DataNode setSoller_angle(IDataset soller_angle);
+	public DataNode setSoller_angle(IDataset soller_angleDataset);
 
 	/**
 	 * Angular divergence of Soller collimator
@@ -188,7 +189,7 @@ public interface NXcollimator extends NXobject {
 	 * 
 	 * @param soller_angle the soller_angle
 	 */
-	public DataNode setSoller_angleScalar(Double soller_angle);
+	public DataNode setSoller_angleScalar(Double soller_angleValue);
 
 	/**
 	 * divergence of collimator in local x direction
@@ -208,9 +209,9 @@ public interface NXcollimator extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
 	 * 
-	 * @param divergence_x the divergence_x
+	 * @param divergence_xDataset the divergence_xDataset
 	 */
-	public DataNode setDivergence_x(IDataset divergence_x);
+	public DataNode setDivergence_x(IDataset divergence_xDataset);
 
 	/**
 	 * divergence of collimator in local x direction
@@ -232,7 +233,7 @@ public interface NXcollimator extends NXobject {
 	 * 
 	 * @param divergence_x the divergence_x
 	 */
-	public DataNode setDivergence_xScalar(Double divergence_x);
+	public DataNode setDivergence_xScalar(Double divergence_xValue);
 
 	/**
 	 * divergence of collimator in local y direction
@@ -252,9 +253,9 @@ public interface NXcollimator extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
 	 * 
-	 * @param divergence_y the divergence_y
+	 * @param divergence_yDataset the divergence_yDataset
 	 */
-	public DataNode setDivergence_y(IDataset divergence_y);
+	public DataNode setDivergence_y(IDataset divergence_yDataset);
 
 	/**
 	 * divergence of collimator in local y direction
@@ -276,7 +277,7 @@ public interface NXcollimator extends NXobject {
 	 * 
 	 * @param divergence_y the divergence_y
 	 */
-	public DataNode setDivergence_yScalar(Double divergence_y);
+	public DataNode setDivergence_yScalar(Double divergence_yValue);
 
 	/**
 	 * Frequency of oscillating collimator
@@ -296,9 +297,9 @@ public interface NXcollimator extends NXobject {
 	 * <b>Units:</b> NX_FREQUENCY
 	 * </p>
 	 * 
-	 * @param frequency the frequency
+	 * @param frequencyDataset the frequencyDataset
 	 */
-	public DataNode setFrequency(IDataset frequency);
+	public DataNode setFrequency(IDataset frequencyDataset);
 
 	/**
 	 * Frequency of oscillating collimator
@@ -320,7 +321,7 @@ public interface NXcollimator extends NXobject {
 	 * 
 	 * @param frequency the frequency
 	 */
-	public DataNode setFrequencyScalar(Double frequency);
+	public DataNode setFrequencyScalar(Double frequencyValue);
 
 	/**
 	 * Log of frequency
@@ -332,9 +333,9 @@ public interface NXcollimator extends NXobject {
 	/**
 	 * Log of frequency
 	 * 
-	 * @param frequency_log the frequency_log
+	 * @param frequency_logGroup the frequency_logGroup
 	 */
-	public void setFrequency_log(NXlog frequency_log);
+	public void setFrequency_log(NXlog frequency_logGroup);
 
 	/**
 	 * blade thickness
@@ -354,9 +355,9 @@ public interface NXcollimator extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param blade_thickness the blade_thickness
+	 * @param blade_thicknessDataset the blade_thicknessDataset
 	 */
-	public DataNode setBlade_thickness(IDataset blade_thickness);
+	public DataNode setBlade_thickness(IDataset blade_thicknessDataset);
 
 	/**
 	 * blade thickness
@@ -378,7 +379,7 @@ public interface NXcollimator extends NXobject {
 	 * 
 	 * @param blade_thickness the blade_thickness
 	 */
-	public DataNode setBlade_thicknessScalar(Double blade_thickness);
+	public DataNode setBlade_thicknessScalar(Double blade_thicknessValue);
 
 	/**
 	 * blade spacing
@@ -398,9 +399,9 @@ public interface NXcollimator extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param blade_spacing the blade_spacing
+	 * @param blade_spacingDataset the blade_spacingDataset
 	 */
-	public DataNode setBlade_spacing(IDataset blade_spacing);
+	public DataNode setBlade_spacing(IDataset blade_spacingDataset);
 
 	/**
 	 * blade spacing
@@ -422,7 +423,7 @@ public interface NXcollimator extends NXobject {
 	 * 
 	 * @param blade_spacing the blade_spacing
 	 */
-	public DataNode setBlade_spacingScalar(Double blade_spacing);
+	public DataNode setBlade_spacingScalar(Double blade_spacingValue);
 
 	/**
 	 * name of absorbing material
@@ -434,9 +435,9 @@ public interface NXcollimator extends NXobject {
 	/**
 	 * name of absorbing material
 	 * 
-	 * @param absorbing_material the absorbing_material
+	 * @param absorbing_materialDataset the absorbing_materialDataset
 	 */
-	public DataNode setAbsorbing_material(IDataset absorbing_material);
+	public DataNode setAbsorbing_material(IDataset absorbing_materialDataset);
 
 	/**
 	 * name of absorbing material
@@ -450,7 +451,7 @@ public interface NXcollimator extends NXobject {
 	 * 
 	 * @param absorbing_material the absorbing_material
 	 */
-	public DataNode setAbsorbing_materialScalar(String absorbing_material);
+	public DataNode setAbsorbing_materialScalar(String absorbing_materialValue);
 
 	/**
 	 * name of transmitting material
@@ -462,9 +463,9 @@ public interface NXcollimator extends NXobject {
 	/**
 	 * name of transmitting material
 	 * 
-	 * @param transmitting_material the transmitting_material
+	 * @param transmitting_materialDataset the transmitting_materialDataset
 	 */
-	public DataNode setTransmitting_material(IDataset transmitting_material);
+	public DataNode setTransmitting_material(IDataset transmitting_materialDataset);
 
 	/**
 	 * name of transmitting material
@@ -478,6 +479,32 @@ public interface NXcollimator extends NXobject {
 	 * 
 	 * @param transmitting_material the transmitting_material
 	 */
-	public DataNode setTransmitting_materialScalar(String transmitting_material);
+	public DataNode setTransmitting_materialScalar(String transmitting_materialValue);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

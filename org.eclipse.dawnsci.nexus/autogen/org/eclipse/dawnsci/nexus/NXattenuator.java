@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ public interface NXattenuator extends NXobject {
 	public static final String NX_ATTENUATOR_TRANSMISSION = "attenuator_transmission";
 	public static final String NX_STATUS = "status";
 	public static final String NX_STATUS_ATTRIBUTE_TIME = "time";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * Distance from sample
 	 * <p>
@@ -52,9 +53,9 @@ public interface NXattenuator extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param distance the distance
+	 * @param distanceDataset the distanceDataset
 	 */
-	public DataNode setDistance(IDataset distance);
+	public DataNode setDistance(IDataset distanceDataset);
 
 	/**
 	 * Distance from sample
@@ -76,7 +77,7 @@ public interface NXattenuator extends NXobject {
 	 * 
 	 * @param distance the distance
 	 */
-	public DataNode setDistanceScalar(Double distance);
+	public DataNode setDistanceScalar(Double distanceValue);
 
 	/**
 	 * Type or composition of attenuator, e.g. polythene
@@ -88,9 +89,9 @@ public interface NXattenuator extends NXobject {
 	/**
 	 * Type or composition of attenuator, e.g. polythene
 	 * 
-	 * @param type the type
+	 * @param typeDataset the typeDataset
 	 */
-	public DataNode setType(IDataset type);
+	public DataNode setType(IDataset typeDataset);
 
 	/**
 	 * Type or composition of attenuator, e.g. polythene
@@ -104,7 +105,7 @@ public interface NXattenuator extends NXobject {
 	 * 
 	 * @param type the type
 	 */
-	public DataNode setTypeScalar(String type);
+	public DataNode setTypeScalar(String typeValue);
 
 	/**
 	 * Thickness of attenuator along beam direction
@@ -124,9 +125,9 @@ public interface NXattenuator extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param thickness the thickness
+	 * @param thicknessDataset the thicknessDataset
 	 */
-	public DataNode setThickness(IDataset thickness);
+	public DataNode setThickness(IDataset thicknessDataset);
 
 	/**
 	 * Thickness of attenuator along beam direction
@@ -148,7 +149,7 @@ public interface NXattenuator extends NXobject {
 	 * 
 	 * @param thickness the thickness
 	 */
-	public DataNode setThicknessScalar(Double thickness);
+	public DataNode setThicknessScalar(Double thicknessValue);
 
 	/**
 	 * Scattering cross section (coherent+incoherent)
@@ -168,9 +169,9 @@ public interface NXattenuator extends NXobject {
 	 * <b>Units:</b> NX_CROSS_SECTION
 	 * </p>
 	 * 
-	 * @param scattering_cross_section the scattering_cross_section
+	 * @param scattering_cross_sectionDataset the scattering_cross_sectionDataset
 	 */
-	public DataNode setScattering_cross_section(IDataset scattering_cross_section);
+	public DataNode setScattering_cross_section(IDataset scattering_cross_sectionDataset);
 
 	/**
 	 * Scattering cross section (coherent+incoherent)
@@ -192,7 +193,7 @@ public interface NXattenuator extends NXobject {
 	 * 
 	 * @param scattering_cross_section the scattering_cross_section
 	 */
-	public DataNode setScattering_cross_sectionScalar(Double scattering_cross_section);
+	public DataNode setScattering_cross_sectionScalar(Double scattering_cross_sectionValue);
 
 	/**
 	 * Absorption cross section
@@ -212,9 +213,9 @@ public interface NXattenuator extends NXobject {
 	 * <b>Units:</b> NX_CROSS_SECTION
 	 * </p>
 	 * 
-	 * @param absorption_cross_section the absorption_cross_section
+	 * @param absorption_cross_sectionDataset the absorption_cross_sectionDataset
 	 */
-	public DataNode setAbsorption_cross_section(IDataset absorption_cross_section);
+	public DataNode setAbsorption_cross_section(IDataset absorption_cross_sectionDataset);
 
 	/**
 	 * Absorption cross section
@@ -236,7 +237,7 @@ public interface NXattenuator extends NXobject {
 	 * 
 	 * @param absorption_cross_section the absorption_cross_section
 	 */
-	public DataNode setAbsorption_cross_sectionScalar(Double absorption_cross_section);
+	public DataNode setAbsorption_cross_sectionScalar(Double absorption_cross_sectionValue);
 
 	/**
 	 * The nominal amount of the beam that gets through
@@ -258,9 +259,9 @@ public interface NXattenuator extends NXobject {
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
 	 * 
-	 * @param attenuator_transmission the attenuator_transmission
+	 * @param attenuator_transmissionDataset the attenuator_transmissionDataset
 	 */
-	public DataNode setAttenuator_transmission(IDataset attenuator_transmission);
+	public DataNode setAttenuator_transmission(IDataset attenuator_transmissionDataset);
 
 	/**
 	 * The nominal amount of the beam that gets through
@@ -284,7 +285,7 @@ public interface NXattenuator extends NXobject {
 	 * 
 	 * @param attenuator_transmission the attenuator_transmission
 	 */
-	public DataNode setAttenuator_transmissionScalar(Double attenuator_transmission);
+	public DataNode setAttenuator_transmissionScalar(Double attenuator_transmissionValue);
 
 	/**
 	 * In or out or moving of the beam
@@ -308,9 +309,9 @@ public interface NXattenuator extends NXobject {
 	 * <li><b>moving</b> </li></ul></p>
 	 * </p>
 	 * 
-	 * @param status the status
+	 * @param statusDataset the statusDataset
 	 */
-	public DataNode setStatus(IDataset status);
+	public DataNode setStatus(IDataset statusDataset);
 
 	/**
 	 * In or out or moving of the beam
@@ -336,7 +337,7 @@ public interface NXattenuator extends NXobject {
 	 * 
 	 * @param status the status
 	 */
-	public DataNode setStatusScalar(String status);
+	public DataNode setStatusScalar(String statusValue);
 
 	/**
 	 * time stamp for this observation
@@ -348,8 +349,34 @@ public interface NXattenuator extends NXobject {
 	/**
 	 * time stamp for this observation
 	 * 
-	 * @param time the time
+	 * @param timeValue the timeValue
 	 */
-	public void setStatusAttributeTime(Date time);
+	public void setStatusAttributeTime(Date timeValue);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

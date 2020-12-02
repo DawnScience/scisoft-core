@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -186,13 +186,13 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		// validate that the group is not null
 		validateGroupNotNull("monochromator", NXmonochromator.class, group);
 
-		// validate field 'energy' of unknown type.
+		// validate field 'energy' of type NX_FLOAT.
 		final IDataset energy = group.getEnergy();
 		validateFieldNotNull("energy", energy);
 		validateFieldType("energy", energy, NX_FLOAT);
 		validateFieldUnits("energy", energy, NX_ENERGY);
 		validateFieldRank("energy", energy, 1);
-		validateFieldDimensions("energy", energy, null, "NumP");
+		validateFieldDimensions("energy", energy, null, "nP");
 	}
 
 	/**
@@ -208,8 +208,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		validateFieldNotNull("data", data);
 		validateFieldType("data", data, NX_NUMBER);
 		validateFieldUnits("data", data, NX_ANY);
-		validateFieldRank("data", data, 4);
-		validateFieldDimensions("data", data, null, "NumP");
+		validateFieldDimensions("data", data, null, "nP");
 	}
 
 	/**
@@ -226,7 +225,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		validateFieldType("data", data, NX_FLOAT);
 		validateFieldUnits("data", data, NX_ANY);
 		validateFieldRank("data", data, 1);
-		validateFieldDimensions("data", data, null, "NumP");
+		validateFieldDimensions("data", data, null, "nP");
 	}
 
 	/**
@@ -243,7 +242,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		validateFieldType("data", data, NX_FLOAT);
 		validateFieldUnits("data", data, NX_ANY);
 		validateFieldRank("data", data, 1);
-		validateFieldDimensions("data", data, null, "NumP");
+		validateFieldDimensions("data", data, null, "nP");
 	}
 
 	/**
@@ -260,7 +259,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		validateFieldType("data", data, NX_FLOAT);
 		validateFieldUnits("data", data, NX_ANY);
 		validateFieldRank("data", data, 1);
-		validateFieldDimensions("data", data, null, "NumP");
+		validateFieldDimensions("data", data, null, "nP");
 	}
 
 	/**
@@ -300,32 +299,31 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 				"detector image",
 				"generic scan");
 
-		// validate field 'data' of type NX_NUMBER.
-		final IDataset data = group.getData();
+		// validate field 'data' of type NX_NUMBER. Note: field not defined in base class.
+		final IDataset data = group.getDataset("data");
 		validateFieldNotNull("data", data);
 		validateFieldType("data", data, NX_NUMBER);
-		validateFieldDimensions("data", data, "NXdata", "n");
 
 		// validate field 'energy' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset energy = group.getDataset("energy");
 		validateFieldNotNull("energy", energy);
 		validateFieldType("energy", energy, NX_FLOAT);
 		validateFieldRank("energy", energy, 1);
-		validateFieldDimensions("energy", energy, null, "NumE");
+		validateFieldDimensions("energy", energy, null, "nE");
 
 		// validate field 'sample_y' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset sample_y = group.getDataset("sample_y");
 		validateFieldNotNull("sample_y", sample_y);
 		validateFieldType("sample_y", sample_y, NX_FLOAT);
 		validateFieldRank("sample_y", sample_y, 1);
-		validateFieldDimensions("sample_y", sample_y, null, "NumY");
+		validateFieldDimensions("sample_y", sample_y, null, "nY");
 
 		// validate field 'sample_x' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset sample_x = group.getDataset("sample_x");
 		validateFieldNotNull("sample_x", sample_x);
 		validateFieldType("sample_x", sample_x, NX_FLOAT);
 		validateFieldRank("sample_x", sample_x, 1);
-		validateFieldDimensions("sample_x", sample_x, null, "NumX");
+		validateFieldDimensions("sample_x", sample_x, null, "nX");
 	}
 
 	/**

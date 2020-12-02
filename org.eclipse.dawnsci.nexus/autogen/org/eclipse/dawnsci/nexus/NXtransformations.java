@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -55,18 +55,26 @@ import org.eclipse.january.dataset.IDataset;
  * :math:`o` is given the ``offset`` attribute, :math:`t` is given by the ``vector``
  * attribute multiplied by the field value, and :math:`R` is defined as a rotation
  * about an axis in the direction of ``vector``, of angle of the field value.
+ * NOTE
+ * One possible use of ``NXtransformations`` is to define the motors and
+ * transformations for a diffractometer (goniometer). Such use is mentioned
+ * in the ``NXinstrument`` base class. Use one ``NXtransformations`` group
+ * for each diffractometer and name the group appropriate to the device.
+ * Collecting the motors of a sample table or xyz-stage in an NXtransformation
+ * group is equally possible.
  * 
  */
 public interface NXtransformations extends NXobject {
 
-	public static final String NX_AXISNAME = "AXISNAME";
+	public static final String NX_AXISNAME = "axisname";
 	public static final String NX_AXISNAME_ATTRIBUTE_TRANSFORMATION_TYPE = "transformation_type";
 	public static final String NX_AXISNAME_ATTRIBUTE_VECTOR = "vector";
 	public static final String NX_AXISNAME_ATTRIBUTE_OFFSET = "offset";
 	public static final String NX_AXISNAME_ATTRIBUTE_OFFSET_UNITS = "offset_units";
 	public static final String NX_AXISNAME_ATTRIBUTE_DEPENDS_ON = "depends_on";
-	public static final String NX_AXISNAME_END = "AXISNAME_end";
-	public static final String NX_AXISNAME_INCREMENT_SET = "AXISNAME_increment_set";
+	public static final String NX_END_SUFFIX = "end";
+	public static final String NX_INCREMENT_SET_SUFFIX = "increment_set";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * Units need to be appropriate for translation or rotation
 	 * The name of this field is not forced. The user is free to use any name
@@ -80,9 +88,10 @@ public interface NXtransformations extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 * 
+	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public IDataset getAXISNAME();
+	public IDataset getAxisname(String axisname);
 	
 	/**
 	 * Units need to be appropriate for translation or rotation
@@ -97,9 +106,10 @@ public interface NXtransformations extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 * 
-	 * @param AXISNAME the AXISNAME
+	 * @param axisname the axisname
+	 * @param axisnameDataset the axisnameDataset
 	 */
-	public DataNode setAXISNAME(IDataset AXISNAME);
+	public DataNode setAxisname(String axisname, IDataset axisnameDataset);
 
 	/**
 	 * Units need to be appropriate for translation or rotation
@@ -114,9 +124,10 @@ public interface NXtransformations extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 * 
+	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public Number getAXISNAMEScalar();
+	public Number getAxisnameScalar(String axisname);
 
 	/**
 	 * Units need to be appropriate for translation or rotation
@@ -131,12 +142,14 @@ public interface NXtransformations extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 * 
-	 * @param AXISNAME the AXISNAME
+	 * @param axisname the axisname
+	 * @param axisname the axisname
 	 */
-	public DataNode setAXISNAMEScalar(Number AXISNAME);
-  
+	public DataNode setAxisnameScalar(String axisname, Number axisnameValue);
+
+	
 	/**
-	 * Get all AXISNAME fields:
+	 * Get all Axisname fields:
 	 *
 	 * Units need to be appropriate for translation or rotation
 	 * The name of this field is not forced. The user is free to use any name
@@ -149,10 +162,11 @@ public interface NXtransformations extends NXobject {
 	 * <b>Units:</b> NX_TRANSFORMATION
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
+	 * <p> <em>Note: this method returns ALL datasets within this group.</em> 
 	 * 
 	 * @return  a map from node names to the ? extends IDataset for that node.
 	 */
-	public Map<String, ? extends IDataset> getAllAXISNAME();
+	public Map<String, ? extends IDataset> getAllAxisname();
 
 	/**
 	 * The transformation_type may be ``translation``, in which case the
@@ -168,9 +182,10 @@ public interface NXtransformations extends NXobject {
 	 * <li><b>rotation</b> </li></ul></p>
 	 * </p>
 	 * 
+	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public String getAXISNAMEAttributeTransformation_type();
+	public String getAxisnameAttributeTransformation_type(String axisname);
 	
 	/**
 	 * The transformation_type may be ``translation``, in which case the
@@ -186,9 +201,10 @@ public interface NXtransformations extends NXobject {
 	 * <li><b>rotation</b> </li></ul></p>
 	 * </p>
 	 * 
-	 * @param transformation_type the transformation_type
+	 * @param axisname the axisname
+	 * @param transformation_typeValue the transformation_typeValue
 	 */
-	public void setAXISNAMEAttributeTransformation_type(String transformation_type);
+	public void setAxisnameAttributeTransformation_type(String axisname, String transformation_typeValue);
 
 	/**
 	 * Three values that define the axis for this transformation.
@@ -202,9 +218,10 @@ public interface NXtransformations extends NXobject {
 			
 	 * </p>
 	 * 
+	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public Number getAXISNAMEAttributeVector();
+	public Number getAxisnameAttributeVector(String axisname);
 	
 	/**
 	 * Three values that define the axis for this transformation.
@@ -218,9 +235,10 @@ public interface NXtransformations extends NXobject {
 			
 	 * </p>
 	 * 
-	 * @param vector the vector
+	 * @param axisname the axisname
+	 * @param vectorValue the vectorValue
 	 */
-	public void setAXISNAMEAttributeVector(Number vector);
+	public void setAxisnameAttributeVector(String axisname, Number vectorValue);
 
 	/**
 	 * A fixed offset applied before the transformation (three vector components).
@@ -229,9 +247,10 @@ public interface NXtransformations extends NXobject {
 			
 	 * </p>
 	 * 
+	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public Number getAXISNAMEAttributeOffset();
+	public Number getAxisnameAttributeOffset(String axisname);
 	
 	/**
 	 * A fixed offset applied before the transformation (three vector components).
@@ -240,39 +259,44 @@ public interface NXtransformations extends NXobject {
 			
 	 * </p>
 	 * 
-	 * @param offset the offset
+	 * @param axisname the axisname
+	 * @param offsetValue the offsetValue
 	 */
-	public void setAXISNAMEAttributeOffset(Number offset);
+	public void setAxisnameAttributeOffset(String axisname, Number offsetValue);
 
 	/**
 	 * Units of the offset. Values should be consistent with NX_LENGTH.
 	 * 
+	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public String getAXISNAMEAttributeOffset_units();
+	public String getAxisnameAttributeOffset_units(String axisname);
 	
 	/**
 	 * Units of the offset. Values should be consistent with NX_LENGTH.
 	 * 
-	 * @param offset_units the offset_units
+	 * @param axisname the axisname
+	 * @param offset_unitsValue the offset_unitsValue
 	 */
-	public void setAXISNAMEAttributeOffset_units(String offset_units);
+	public void setAxisnameAttributeOffset_units(String axisname, String offset_unitsValue);
 
 	/**
 	 * Points to the path to a field defining the axis on which this
 	 * depends or the string ".".
 	 * 
+	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public String getAXISNAMEAttributeDepends_on();
+	public String getAxisnameAttributeDepends_on(String axisname);
 	
 	/**
 	 * Points to the path to a field defining the axis on which this
 	 * depends or the string ".".
 	 * 
-	 * @param depends_on the depends_on
+	 * @param axisname the axisname
+	 * @param depends_onValue the depends_onValue
 	 */
-	public void setAXISNAMEAttributeDepends_on(String depends_on);
+	public void setAxisnameAttributeDepends_on(String axisname, String depends_onValue);
 
 	/**
 	 * ``AXISNAME_end`` is a placeholder for a name constructed from the actual
@@ -284,9 +308,10 @@ public interface NXtransformations extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 * 
+	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public IDataset getAXISNAME_end();
+	public IDataset getEnd(String axisname);
 	
 	/**
 	 * ``AXISNAME_end`` is a placeholder for a name constructed from the actual
@@ -298,9 +323,10 @@ public interface NXtransformations extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 * 
-	 * @param AXISNAME_end the AXISNAME_end
+	 * @param axisname the axisname
+	 * @param endDataset the endDataset
 	 */
-	public DataNode setAXISNAME_end(IDataset AXISNAME_end);
+	public DataNode setEnd(String axisname, IDataset endDataset);
 
 	/**
 	 * ``AXISNAME_end`` is a placeholder for a name constructed from the actual
@@ -312,9 +338,10 @@ public interface NXtransformations extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 * 
+	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public Number getAXISNAME_endScalar();
+	public Number getEndScalar(String axisname);
 
 	/**
 	 * ``AXISNAME_end`` is a placeholder for a name constructed from the actual
@@ -326,12 +353,14 @@ public interface NXtransformations extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 * 
-	 * @param AXISNAME_end the AXISNAME_end
+	 * @param axisname the axisname
+	 * @param end the end
 	 */
-	public DataNode setAXISNAME_endScalar(Number AXISNAME_end);
-  
+	public DataNode setEndScalar(String axisname, Number endValue);
+
+	
 	/**
-	 * Get all AXISNAME_end fields:
+	 * Get all End fields:
 	 *
 	 * ``AXISNAME_end`` is a placeholder for a name constructed from the actual
 	 * name of an axis to which ``_end`` has been appended.
@@ -341,10 +370,11 @@ public interface NXtransformations extends NXobject {
 	 * <b>Units:</b> NX_TRANSFORMATION
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
+	 * <p> <em>Note: this method returns ALL datasets within this group.</em> 
 	 * 
 	 * @return  a map from node names to the ? extends IDataset for that node.
 	 */
-	public Map<String, ? extends IDataset> getAllAXISNAME_end();
+	public Map<String, ? extends IDataset> getAllEnd();
 
 	/**
 	 * ``AXISNAME_increment_set`` is a placeholder for a name constructed from the actual
@@ -359,9 +389,10 @@ public interface NXtransformations extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 * 
+	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public IDataset getAXISNAME_increment_set();
+	public IDataset getIncrement_set(String axisname);
 	
 	/**
 	 * ``AXISNAME_increment_set`` is a placeholder for a name constructed from the actual
@@ -376,9 +407,10 @@ public interface NXtransformations extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 * 
-	 * @param AXISNAME_increment_set the AXISNAME_increment_set
+	 * @param axisname the axisname
+	 * @param increment_setDataset the increment_setDataset
 	 */
-	public DataNode setAXISNAME_increment_set(IDataset AXISNAME_increment_set);
+	public DataNode setIncrement_set(String axisname, IDataset increment_setDataset);
 
 	/**
 	 * ``AXISNAME_increment_set`` is a placeholder for a name constructed from the actual
@@ -393,9 +425,10 @@ public interface NXtransformations extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 * 
+	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public Number getAXISNAME_increment_setScalar();
+	public Number getIncrement_setScalar(String axisname);
 
 	/**
 	 * ``AXISNAME_increment_set`` is a placeholder for a name constructed from the actual
@@ -410,12 +443,14 @@ public interface NXtransformations extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 * 
-	 * @param AXISNAME_increment_set the AXISNAME_increment_set
+	 * @param axisname the axisname
+	 * @param increment_set the increment_set
 	 */
-	public DataNode setAXISNAME_increment_setScalar(Number AXISNAME_increment_set);
-  
+	public DataNode setIncrement_setScalar(String axisname, Number increment_setValue);
+
+	
 	/**
-	 * Get all AXISNAME_increment_set fields:
+	 * Get all Increment_set fields:
 	 *
 	 * ``AXISNAME_increment_set`` is a placeholder for a name constructed from the actual
 	 * name of an axis to which ``_increment_set`` has been appended.
@@ -428,9 +463,36 @@ public interface NXtransformations extends NXobject {
 	 * <b>Units:</b> NX_TRANSFORMATION
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
+	 * <p> <em>Note: this method returns ALL datasets within this group.</em> 
 	 * 
 	 * @return  a map from node names to the ? extends IDataset for that node.
 	 */
-	public Map<String, ? extends IDataset> getAllAXISNAME_increment_set();
+	public Map<String, ? extends IDataset> getAllIncrement_set();
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ public interface NXmonitor extends NXobject {
 	public static final String NX_DATA = "data";
 	public static final String NX_SAMPLED_FRACTION = "sampled_fraction";
 	public static final String NX_COUNT_TIME = "count_time";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * Count to a preset value based on either clock time (timer)
 	 * or received monitor counts (monitor).
@@ -65,9 +66,9 @@ public interface NXmonitor extends NXobject {
 	 * <li><b>timer</b> </li></ul></p>
 	 * </p>
 	 * 
-	 * @param mode the mode
+	 * @param modeDataset the modeDataset
 	 */
-	public DataNode setMode(IDataset mode);
+	public DataNode setMode(IDataset modeDataset);
 
 	/**
 	 * Count to a preset value based on either clock time (timer)
@@ -93,7 +94,7 @@ public interface NXmonitor extends NXobject {
 	 * 
 	 * @param mode the mode
 	 */
-	public DataNode setModeScalar(String mode);
+	public DataNode setModeScalar(String modeValue);
 
 	/**
 	 * Starting time of measurement
@@ -111,9 +112,9 @@ public interface NXmonitor extends NXobject {
 	 * <b>Type:</b> NX_DATE_TIME
 	 * </p>
 	 * 
-	 * @param start_time the start_time
+	 * @param start_timeDataset the start_timeDataset
 	 */
-	public DataNode setStart_time(IDataset start_time);
+	public DataNode setStart_time(IDataset start_timeDataset);
 
 	/**
 	 * Starting time of measurement
@@ -133,7 +134,7 @@ public interface NXmonitor extends NXobject {
 	 * 
 	 * @param start_time the start_time
 	 */
-	public DataNode setStart_timeScalar(Date start_time);
+	public DataNode setStart_timeScalar(Date start_timeValue);
 
 	/**
 	 * Ending time of measurement
@@ -151,9 +152,9 @@ public interface NXmonitor extends NXobject {
 	 * <b>Type:</b> NX_DATE_TIME
 	 * </p>
 	 * 
-	 * @param end_time the end_time
+	 * @param end_timeDataset the end_timeDataset
 	 */
-	public DataNode setEnd_time(IDataset end_time);
+	public DataNode setEnd_time(IDataset end_timeDataset);
 
 	/**
 	 * Ending time of measurement
@@ -173,7 +174,7 @@ public interface NXmonitor extends NXobject {
 	 * 
 	 * @param end_time the end_time
 	 */
-	public DataNode setEnd_timeScalar(Date end_time);
+	public DataNode setEnd_timeScalar(Date end_timeValue);
 
 	/**
 	 * preset value for time or monitor
@@ -193,9 +194,9 @@ public interface NXmonitor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 * 
-	 * @param preset the preset
+	 * @param presetDataset the presetDataset
 	 */
-	public DataNode setPreset(IDataset preset);
+	public DataNode setPreset(IDataset presetDataset);
 
 	/**
 	 * preset value for time or monitor
@@ -217,7 +218,7 @@ public interface NXmonitor extends NXobject {
 	 * 
 	 * @param preset the preset
 	 */
-	public DataNode setPresetScalar(Number preset);
+	public DataNode setPresetScalar(Number presetValue);
 
 	/**
 	 * Distance of monitor from sample
@@ -237,9 +238,9 @@ public interface NXmonitor extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param distance the distance
+	 * @param distanceDataset the distanceDataset
 	 */
-	public DataNode setDistance(IDataset distance);
+	public DataNode setDistance(IDataset distanceDataset);
 
 	/**
 	 * Distance of monitor from sample
@@ -261,7 +262,7 @@ public interface NXmonitor extends NXobject {
 	 * 
 	 * @param distance the distance
 	 */
-	public DataNode setDistanceScalar(Double distance);
+	public DataNode setDistanceScalar(Double distanceValue);
 
 	/**
 	 * Range (X-axis, Time-of-flight, etc.) over which the integral was calculated
@@ -283,9 +284,9 @@ public interface NXmonitor extends NXobject {
 	 * <b>Dimensions:</b> 1: 2;
 	 * </p>
 	 * 
-	 * @param range the range
+	 * @param rangeDataset the rangeDataset
 	 */
-	public DataNode setRange(IDataset range);
+	public DataNode setRange(IDataset rangeDataset);
 
 	/**
 	 * Range (X-axis, Time-of-flight, etc.) over which the integral was calculated
@@ -309,7 +310,7 @@ public interface NXmonitor extends NXobject {
 	 * 
 	 * @param range the range
 	 */
-	public DataNode setRangeScalar(Double range);
+	public DataNode setRangeScalar(Double rangeValue);
 
 	/**
 	 * Nominal reading to be used for normalisation purposes.
@@ -329,9 +330,9 @@ public interface NXmonitor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 * 
-	 * @param nominal the nominal
+	 * @param nominalDataset the nominalDataset
 	 */
-	public DataNode setNominal(IDataset nominal);
+	public DataNode setNominal(IDataset nominalDataset);
 
 	/**
 	 * Nominal reading to be used for normalisation purposes.
@@ -353,7 +354,7 @@ public interface NXmonitor extends NXobject {
 	 * 
 	 * @param nominal the nominal
 	 */
-	public DataNode setNominalScalar(Number nominal);
+	public DataNode setNominalScalar(Number nominalValue);
 
 	/**
 	 * Total integral monitor counts
@@ -373,9 +374,9 @@ public interface NXmonitor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 * 
-	 * @param integral the integral
+	 * @param integralDataset the integralDataset
 	 */
-	public DataNode setIntegral(IDataset integral);
+	public DataNode setIntegral(IDataset integralDataset);
 
 	/**
 	 * Total integral monitor counts
@@ -397,7 +398,7 @@ public interface NXmonitor extends NXobject {
 	 * 
 	 * @param integral the integral
 	 */
-	public DataNode setIntegralScalar(Number integral);
+	public DataNode setIntegralScalar(Number integralValue);
 
 	/**
 	 * Time variation of monitor counts
@@ -409,9 +410,9 @@ public interface NXmonitor extends NXobject {
 	/**
 	 * Time variation of monitor counts
 	 * 
-	 * @param integral_log the integral_log
+	 * @param integral_logGroup the integral_logGroup
 	 */
-	public void setIntegral_log(NXlog integral_log);
+	public void setIntegral_log(NXlog integral_logGroup);
 
 	/**
 	 * <p>
@@ -431,9 +432,9 @@ public interface NXmonitor extends NXobject {
 	 * <li><b>Scintillator</b> </li></ul></p>
 	 * </p>
 	 * 
-	 * @param type the type
+	 * @param typeDataset the typeDataset
 	 */
-	public DataNode setType(IDataset type);
+	public DataNode setType(IDataset typeDataset);
 
 	/**
 	 * <p>
@@ -455,7 +456,7 @@ public interface NXmonitor extends NXobject {
 	 * 
 	 * @param type the type
 	 */
-	public DataNode setTypeScalar(String type);
+	public DataNode setTypeScalar(String typeValue);
 
 	/**
 	 * Time-of-flight
@@ -477,9 +478,9 @@ public interface NXmonitor extends NXobject {
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
 	 * 
-	 * @param time_of_flight the time_of_flight
+	 * @param time_of_flightDataset the time_of_flightDataset
 	 */
-	public DataNode setTime_of_flight(IDataset time_of_flight);
+	public DataNode setTime_of_flight(IDataset time_of_flightDataset);
 
 	/**
 	 * Time-of-flight
@@ -503,7 +504,7 @@ public interface NXmonitor extends NXobject {
 	 * 
 	 * @param time_of_flight the time_of_flight
 	 */
-	public DataNode setTime_of_flightScalar(Double time_of_flight);
+	public DataNode setTime_of_flightScalar(Double time_of_flightValue);
 
 	/**
 	 * Monitor efficiency
@@ -525,9 +526,9 @@ public interface NXmonitor extends NXobject {
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
 	 * 
-	 * @param efficiency the efficiency
+	 * @param efficiencyDataset the efficiencyDataset
 	 */
-	public DataNode setEfficiency(IDataset efficiency);
+	public DataNode setEfficiency(IDataset efficiencyDataset);
 
 	/**
 	 * Monitor efficiency
@@ -551,7 +552,7 @@ public interface NXmonitor extends NXobject {
 	 * 
 	 * @param efficiency the efficiency
 	 */
-	public DataNode setEfficiencyScalar(Number efficiency);
+	public DataNode setEfficiencyScalar(Number efficiencyValue);
 
 	/**
 	 * Monitor data
@@ -573,9 +574,9 @@ public interface NXmonitor extends NXobject {
 	 * <b>Dimensions:</b> 0: n;
 	 * </p>
 	 * 
-	 * @param data the data
+	 * @param dataDataset the dataDataset
 	 */
-	public DataNode setData(IDataset data);
+	public DataNode setData(IDataset dataDataset);
 
 	/**
 	 * Monitor data
@@ -599,7 +600,7 @@ public interface NXmonitor extends NXobject {
 	 * 
 	 * @param data the data
 	 */
-	public DataNode setDataScalar(Number data);
+	public DataNode setDataScalar(Number dataValue);
 
 	/**
 	 * Proportion of incident beam sampled by the monitor (0<x<1)
@@ -619,9 +620,9 @@ public interface NXmonitor extends NXobject {
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
 	 * 
-	 * @param sampled_fraction the sampled_fraction
+	 * @param sampled_fractionDataset the sampled_fractionDataset
 	 */
-	public DataNode setSampled_fraction(IDataset sampled_fraction);
+	public DataNode setSampled_fraction(IDataset sampled_fractionDataset);
 
 	/**
 	 * Proportion of incident beam sampled by the monitor (0<x<1)
@@ -643,7 +644,7 @@ public interface NXmonitor extends NXobject {
 	 * 
 	 * @param sampled_fraction the sampled_fraction
 	 */
-	public DataNode setSampled_fractionScalar(Double sampled_fraction);
+	public DataNode setSampled_fractionScalar(Double sampled_fractionValue);
 
 	/**
 	 * Geometry of the monitor
@@ -655,10 +656,10 @@ public interface NXmonitor extends NXobject {
 	/**
 	 * Geometry of the monitor
 	 * 
-	 * @param geometry the geometry
+	 * @param geometryGroup the geometryGroup
 	 */
-	public void setGeometry(NXgeometry geometry);
-  
+	public void setGeometry(NXgeometry geometryGroup);
+
 	/**
 	 * Get a NXgeometry node by name:
 	 * <ul>
@@ -731,9 +732,9 @@ public interface NXmonitor extends NXobject {
 	 * <b>Units:</b> NX_TIME
 	 * </p>
 	 * 
-	 * @param count_time the count_time
+	 * @param count_timeDataset the count_timeDataset
 	 */
-	public DataNode setCount_time(IDataset count_time);
+	public DataNode setCount_time(IDataset count_timeDataset);
 
 	/**
 	 * Elapsed actual counting time, can be an array of size ``np``
@@ -761,6 +762,32 @@ public interface NXmonitor extends NXobject {
 	 * 
 	 * @param count_time the count_time
 	 */
-	public DataNode setCount_timeScalar(Double count_time);
+	public DataNode setCount_timeScalar(Double count_timeValue);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

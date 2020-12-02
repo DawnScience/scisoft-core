@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ public interface NXslit extends NXobject {
 	public static final String NX_DEPENDS_ON = "depends_on";
 	public static final String NX_X_GAP = "x_gap";
 	public static final String NX_Y_GAP = "y_gap";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * Points to the path of the last element in the geometry chain that places
 	 * this object in space.
@@ -51,9 +52,9 @@ public interface NXslit extends NXobject {
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
 	 * 
-	 * @param depends_on the depends_on
+	 * @param depends_onDataset the depends_onDataset
 	 */
-	public DataNode setDepends_on(IDataset depends_on);
+	public DataNode setDepends_on(IDataset depends_onDataset);
 
 	/**
 	 * Points to the path of the last element in the geometry chain that places
@@ -83,7 +84,7 @@ public interface NXslit extends NXobject {
 	 * 
 	 * @param depends_on the depends_on
 	 */
-	public DataNode setDepends_onScalar(String depends_on);
+	public DataNode setDepends_onScalar(String depends_onValue);
 
 	/**
 	 * Size of the gap opening in the first dimension of the local
@@ -105,9 +106,9 @@ public interface NXslit extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param x_gap the x_gap
+	 * @param x_gapDataset the x_gapDataset
 	 */
-	public DataNode setX_gap(IDataset x_gap);
+	public DataNode setX_gap(IDataset x_gapDataset);
 
 	/**
 	 * Size of the gap opening in the first dimension of the local
@@ -131,7 +132,7 @@ public interface NXslit extends NXobject {
 	 * 
 	 * @param x_gap the x_gap
 	 */
-	public DataNode setX_gapScalar(Number x_gap);
+	public DataNode setX_gapScalar(Number x_gapValue);
 
 	/**
 	 * Size of the gap opening in the second dimension of the local
@@ -153,9 +154,9 @@ public interface NXslit extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param y_gap the y_gap
+	 * @param y_gapDataset the y_gapDataset
 	 */
-	public DataNode setY_gap(IDataset y_gap);
+	public DataNode setY_gap(IDataset y_gapDataset);
 
 	/**
 	 * Size of the gap opening in the second dimension of the local
@@ -179,6 +180,32 @@ public interface NXslit extends NXobject {
 	 * 
 	 * @param y_gap the y_gap
 	 */
-	public DataNode setY_gapScalar(Number y_gap);
+	public DataNode setY_gapScalar(Number y_gapValue);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

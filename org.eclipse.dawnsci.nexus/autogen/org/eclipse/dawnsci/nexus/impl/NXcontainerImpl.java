@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,13 +101,13 @@ public class NXcontainerImpl extends NXobjectImpl implements NXcontainer {
 	}
 
 	@Override
-	public DataNode setName(IDataset name) {
-		return setDataset(NX_NAME, name);
+	public DataNode setName(IDataset nameDataset) {
+		return setDataset(NX_NAME, nameDataset);
 	}
 
 	@Override
-	public DataNode setNameScalar(String name) {
-		return setString(NX_NAME, name);
+	public DataNode setNameScalar(String nameValue) {
+		return setString(NX_NAME, nameValue);
 	}
 
 	@Override
@@ -121,13 +121,13 @@ public class NXcontainerImpl extends NXobjectImpl implements NXcontainer {
 	}
 
 	@Override
-	public DataNode setDescription(IDataset description) {
-		return setDataset(NX_DESCRIPTION, description);
+	public DataNode setDescription(IDataset descriptionDataset) {
+		return setDataset(NX_DESCRIPTION, descriptionDataset);
 	}
 
 	@Override
-	public DataNode setDescriptionScalar(String description) {
-		return setString(NX_DESCRIPTION, description);
+	public DataNode setDescriptionScalar(String descriptionValue) {
+		return setString(NX_DESCRIPTION, descriptionValue);
 	}
 
 	@Override
@@ -141,13 +141,13 @@ public class NXcontainerImpl extends NXobjectImpl implements NXcontainer {
 	}
 
 	@Override
-	public DataNode setChemical_formula(IDataset chemical_formula) {
-		return setDataset(NX_CHEMICAL_FORMULA, chemical_formula);
+	public DataNode setChemical_formula(IDataset chemical_formulaDataset) {
+		return setDataset(NX_CHEMICAL_FORMULA, chemical_formulaDataset);
 	}
 
 	@Override
-	public DataNode setChemical_formulaScalar(String chemical_formula) {
-		return setString(NX_CHEMICAL_FORMULA, chemical_formula);
+	public DataNode setChemical_formulaScalar(String chemical_formulaValue) {
+		return setString(NX_CHEMICAL_FORMULA, chemical_formulaValue);
 	}
 
 	@Override
@@ -161,13 +161,13 @@ public class NXcontainerImpl extends NXobjectImpl implements NXcontainer {
 	}
 
 	@Override
-	public DataNode setDensity(IDataset density) {
-		return setDataset(NX_DENSITY, density);
+	public DataNode setDensity(IDataset densityDataset) {
+		return setDataset(NX_DENSITY, densityDataset);
 	}
 
 	@Override
-	public DataNode setDensityScalar(Double density) {
-		return setField(NX_DENSITY, density);
+	public DataNode setDensityScalar(Double densityValue) {
+		return setField(NX_DENSITY, densityValue);
 	}
 
 	@Override
@@ -181,13 +181,13 @@ public class NXcontainerImpl extends NXobjectImpl implements NXcontainer {
 	}
 
 	@Override
-	public DataNode setPacking_fraction(IDataset packing_fraction) {
-		return setDataset(NX_PACKING_FRACTION, packing_fraction);
+	public DataNode setPacking_fraction(IDataset packing_fractionDataset) {
+		return setDataset(NX_PACKING_FRACTION, packing_fractionDataset);
 	}
 
 	@Override
-	public DataNode setPacking_fractionScalar(Double packing_fraction) {
-		return setField(NX_PACKING_FRACTION, packing_fraction);
+	public DataNode setPacking_fractionScalar(Double packing_fractionValue) {
+		return setField(NX_PACKING_FRACTION, packing_fractionValue);
 	}
 
 	@Override
@@ -201,44 +201,47 @@ public class NXcontainerImpl extends NXobjectImpl implements NXcontainer {
 	}
 
 	@Override
-	public DataNode setRelative_molecular_mass(IDataset relative_molecular_mass) {
-		return setDataset(NX_RELATIVE_MOLECULAR_MASS, relative_molecular_mass);
+	public DataNode setRelative_molecular_mass(IDataset relative_molecular_massDataset) {
+		return setDataset(NX_RELATIVE_MOLECULAR_MASS, relative_molecular_massDataset);
 	}
 
 	@Override
-	public DataNode setRelative_molecular_massScalar(Double relative_molecular_mass) {
-		return setField(NX_RELATIVE_MOLECULAR_MASS, relative_molecular_mass);
+	public DataNode setRelative_molecular_massScalar(Double relative_molecular_massValue) {
+		return setField(NX_RELATIVE_MOLECULAR_MASS, relative_molecular_massValue);
 	}
 
 	@Override
 	public NXbeam getBeam() {
+		// dataNodeName = NX_BEAM
 		return getChild("beam", NXbeam.class);
 	}
 
 	@Override
-	public void setBeam(NXbeam beam) {
-		putChild("beam", beam);
+	public void setBeam(NXbeam beamGroup) {
+		putChild("beam", beamGroup);
 	}
 
 	@Override
 	public NXshape getShape() {
+		// dataNodeName = NX_SHAPE
 		return getChild("shape", NXshape.class);
 	}
 
 	@Override
-	public void setShape(NXshape shape) {
-		putChild("shape", shape);
+	public void setShape(NXshape shapeGroup) {
+		putChild("shape", shapeGroup);
 	}
 
 	@Override
 	public NXtransformations getOrientation() {
+		// dataNodeName = NX_ORIENTATION
 		return getChild("orientation", NXtransformations.class);
 	}
 
 	@Override
-	public void setOrientation(NXtransformations orientation) {
-		putChild("orientation", orientation);
+	public void setOrientation(NXtransformations orientationGroup) {
+		putChild("orientation", orientationGroup);
 	}
-	// Unprocessed link: reference_measurement
+	// Unprocessed link:  reference_measurement
 
 }

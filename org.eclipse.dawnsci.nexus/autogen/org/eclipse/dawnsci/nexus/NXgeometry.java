@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ public interface NXgeometry extends NXobject {
 
 	public static final String NX_DESCRIPTION = "description";
 	public static final String NX_COMPONENT_INDEX = "component_index";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * shape/size information of component
 	 * 
@@ -44,10 +45,10 @@ public interface NXgeometry extends NXobject {
 	/**
 	 * shape/size information of component
 	 * 
-	 * @param shape the shape
+	 * @param shapeGroup the shapeGroup
 	 */
-	public void setShape(NXshape shape);
-  
+	public void setShape(NXshape shapeGroup);
+
 	/**
 	 * Get a NXshape node by name:
 	 * <ul>
@@ -106,10 +107,10 @@ public interface NXgeometry extends NXobject {
 	/**
 	 * translation of component
 	 * 
-	 * @param translation the translation
+	 * @param translationGroup the translationGroup
 	 */
-	public void setTranslation(NXtranslation translation);
-  
+	public void setTranslation(NXtranslation translationGroup);
+
 	/**
 	 * Get a NXtranslation node by name:
 	 * <ul>
@@ -168,10 +169,10 @@ public interface NXgeometry extends NXobject {
 	/**
 	 * orientation of component
 	 * 
-	 * @param orientation the orientation
+	 * @param orientationGroup the orientationGroup
 	 */
-	public void setOrientation(NXorientation orientation);
-  
+	public void setOrientation(NXorientation orientationGroup);
+
 	/**
 	 * Get a NXorientation node by name:
 	 * <ul>
@@ -234,9 +235,9 @@ public interface NXgeometry extends NXobject {
 	 * an additional reference point for components rather than the
 	 * location of a real component.
 	 * 
-	 * @param description the description
+	 * @param descriptionDataset the descriptionDataset
 	 */
-	public DataNode setDescription(IDataset description);
+	public DataNode setDescription(IDataset descriptionDataset);
 
 	/**
 	 * Optional description/label. Probably only present if we are
@@ -254,7 +255,7 @@ public interface NXgeometry extends NXobject {
 	 * 
 	 * @param description the description
 	 */
-	public DataNode setDescriptionScalar(String description);
+	public DataNode setDescriptionScalar(String descriptionValue);
 
 	/**
 	 * Position of the component along the beam path. The sample is at 0, components upstream
@@ -276,9 +277,9 @@ public interface NXgeometry extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * </p>
 	 * 
-	 * @param component_index the component_index
+	 * @param component_indexDataset the component_indexDataset
 	 */
-	public DataNode setComponent_index(IDataset component_index);
+	public DataNode setComponent_index(IDataset component_indexDataset);
 
 	/**
 	 * Position of the component along the beam path. The sample is at 0, components upstream
@@ -302,6 +303,32 @@ public interface NXgeometry extends NXobject {
 	 * 
 	 * @param component_index the component_index
 	 */
-	public DataNode setComponent_indexScalar(Long component_index);
+	public DataNode setComponent_indexScalar(Long component_indexValue);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

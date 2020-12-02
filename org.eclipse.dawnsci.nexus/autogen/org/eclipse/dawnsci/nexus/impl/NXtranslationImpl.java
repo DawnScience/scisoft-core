@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,12 +57,13 @@ public class NXtranslationImpl extends NXobjectImpl implements NXtranslation {
 
 	@Override
 	public NXgeometry getGeometry() {
+		// dataNodeName = NX_GEOMETRY
 		return getChild("geometry", NXgeometry.class);
 	}
 
 	@Override
-	public void setGeometry(NXgeometry geometry) {
-		putChild("geometry", geometry);
+	public void setGeometry(NXgeometry geometryGroup) {
+		putChild("geometry", geometryGroup);
 	}
 
 	@Override
@@ -76,13 +77,23 @@ public class NXtranslationImpl extends NXobjectImpl implements NXtranslation {
 	}
 
 	@Override
-	public DataNode setDistances(IDataset distances) {
-		return setDataset(NX_DISTANCES, distances);
+	public DataNode setDistances(IDataset distancesDataset) {
+		return setDataset(NX_DISTANCES, distancesDataset);
 	}
 
 	@Override
-	public DataNode setDistancesScalar(Double distances) {
-		return setField(NX_DISTANCES, distances);
+	public DataNode setDistancesScalar(Double distancesValue) {
+		return setField(NX_DISTANCES, distancesValue);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

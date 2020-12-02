@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,6 +42,7 @@ public interface NXmirror extends NXobject {
 	public static final String NX_ODD_LAYER_MATERIAL = "odd_layer_material";
 	public static final String NX_ODD_LAYER_DENSITY = "odd_layer_density";
 	public static final String NX_LAYER_THICKNESS = "layer_thickness";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * 
 	 * @return  the value.
@@ -50,10 +51,10 @@ public interface NXmirror extends NXobject {
 	
 	/**
 	 * 
-	 * @param geometry the geometry
+	 * @param geometryGroup the geometryGroup
 	 */
-	public void setGeometry(NXgeometry geometry);
-  
+	public void setGeometry(NXgeometry geometryGroup);
+
 	/**
 	 * Get a NXgeometry node by name:
 	 * <ul>
@@ -120,9 +121,9 @@ public interface NXmirror extends NXobject {
 	 * mirror with stacked, multiple layers as a reflecting surface</li></ul></p>
 	 * </p>
 	 * 
-	 * @param type the type
+	 * @param typeDataset the typeDataset
 	 */
-	public DataNode setType(IDataset type);
+	public DataNode setType(IDataset typeDataset);
 
 	/**
 	 * <p>
@@ -148,7 +149,7 @@ public interface NXmirror extends NXobject {
 	 * 
 	 * @param type the type
 	 */
-	public DataNode setTypeScalar(String type);
+	public DataNode setTypeScalar(String typeValue);
 
 	/**
 	 * description of this mirror
@@ -160,9 +161,9 @@ public interface NXmirror extends NXobject {
 	/**
 	 * description of this mirror
 	 * 
-	 * @param description the description
+	 * @param descriptionDataset the descriptionDataset
 	 */
-	public DataNode setDescription(IDataset description);
+	public DataNode setDescription(IDataset descriptionDataset);
 
 	/**
 	 * description of this mirror
@@ -176,7 +177,7 @@ public interface NXmirror extends NXobject {
 	 * 
 	 * @param description the description
 	 */
-	public DataNode setDescriptionScalar(String description);
+	public DataNode setDescriptionScalar(String descriptionValue);
 
 	/**
 	 * <p>
@@ -194,9 +195,9 @@ public interface NXmirror extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
 	 * 
-	 * @param incident_angle the incident_angle
+	 * @param incident_angleDataset the incident_angleDataset
 	 */
-	public DataNode setIncident_angle(IDataset incident_angle);
+	public DataNode setIncident_angle(IDataset incident_angleDataset);
 
 	/**
 	 * <p>
@@ -216,7 +217,7 @@ public interface NXmirror extends NXobject {
 	 * 
 	 * @param incident_angle the incident_angle
 	 */
-	public DataNode setIncident_angleScalar(Double incident_angle);
+	public DataNode setIncident_angleScalar(Double incident_angleValue);
 
 	/**
 	 * Reflectivity as function of wavelength
@@ -228,9 +229,9 @@ public interface NXmirror extends NXobject {
 	/**
 	 * Reflectivity as function of wavelength
 	 * 
-	 * @param reflectivity the reflectivity
+	 * @param reflectivityGroup the reflectivityGroup
 	 */
-	public void setReflectivity(NXdata reflectivity);
+	public void setReflectivity(NXdata reflectivityGroup);
 
 	/**
 	 * <p>
@@ -248,9 +249,9 @@ public interface NXmirror extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
 	 * 
-	 * @param bend_angle_x the bend_angle_x
+	 * @param bend_angle_xDataset the bend_angle_xDataset
 	 */
-	public DataNode setBend_angle_x(IDataset bend_angle_x);
+	public DataNode setBend_angle_x(IDataset bend_angle_xDataset);
 
 	/**
 	 * <p>
@@ -270,7 +271,7 @@ public interface NXmirror extends NXobject {
 	 * 
 	 * @param bend_angle_x the bend_angle_x
 	 */
-	public DataNode setBend_angle_xScalar(Double bend_angle_x);
+	public DataNode setBend_angle_xScalar(Double bend_angle_xValue);
 
 	/**
 	 * <p>
@@ -288,9 +289,9 @@ public interface NXmirror extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
 	 * 
-	 * @param bend_angle_y the bend_angle_y
+	 * @param bend_angle_yDataset the bend_angle_yDataset
 	 */
-	public DataNode setBend_angle_y(IDataset bend_angle_y);
+	public DataNode setBend_angle_y(IDataset bend_angle_yDataset);
 
 	/**
 	 * <p>
@@ -310,7 +311,7 @@ public interface NXmirror extends NXobject {
 	 * 
 	 * @param bend_angle_y the bend_angle_y
 	 */
-	public DataNode setBend_angle_yScalar(Double bend_angle_y);
+	public DataNode setBend_angle_yScalar(Double bend_angle_yValue);
 
 	/**
 	 * <p>
@@ -332,9 +333,9 @@ public interface NXmirror extends NXobject {
 	 * <li><b>argon</b> </li></ul></p>
 	 * </p>
 	 * 
-	 * @param interior_atmosphere the interior_atmosphere
+	 * @param interior_atmosphereDataset the interior_atmosphereDataset
 	 */
-	public DataNode setInterior_atmosphere(IDataset interior_atmosphere);
+	public DataNode setInterior_atmosphere(IDataset interior_atmosphereDataset);
 
 	/**
 	 * <p>
@@ -358,7 +359,7 @@ public interface NXmirror extends NXobject {
 	 * 
 	 * @param interior_atmosphere the interior_atmosphere
 	 */
-	public DataNode setInterior_atmosphereScalar(String interior_atmosphere);
+	public DataNode setInterior_atmosphereScalar(String interior_atmosphereValue);
 
 	/**
 	 * external material outside substrate
@@ -370,9 +371,9 @@ public interface NXmirror extends NXobject {
 	/**
 	 * external material outside substrate
 	 * 
-	 * @param external_material the external_material
+	 * @param external_materialDataset the external_materialDataset
 	 */
-	public DataNode setExternal_material(IDataset external_material);
+	public DataNode setExternal_material(IDataset external_materialDataset);
 
 	/**
 	 * external material outside substrate
@@ -386,7 +387,7 @@ public interface NXmirror extends NXobject {
 	 * 
 	 * @param external_material the external_material
 	 */
-	public DataNode setExternal_materialScalar(String external_material);
+	public DataNode setExternal_materialScalar(String external_materialValue);
 
 	/**
 	 * The m value for a supermirror, which defines the supermirror
@@ -408,9 +409,9 @@ public interface NXmirror extends NXobject {
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 * 
-	 * @param m_value the m_value
+	 * @param m_valueDataset the m_valueDataset
 	 */
-	public DataNode setM_value(IDataset m_value);
+	public DataNode setM_value(IDataset m_valueDataset);
 
 	/**
 	 * The m value for a supermirror, which defines the supermirror
@@ -434,7 +435,7 @@ public interface NXmirror extends NXobject {
 	 * 
 	 * @param m_value the m_value
 	 */
-	public DataNode setM_valueScalar(Double m_value);
+	public DataNode setM_valueScalar(Double m_valueValue);
 
 	/**
 	 * 
@@ -444,9 +445,9 @@ public interface NXmirror extends NXobject {
 	
 	/**
 	 * 
-	 * @param substrate_material the substrate_material
+	 * @param substrate_materialDataset the substrate_materialDataset
 	 */
-	public DataNode setSubstrate_material(IDataset substrate_material);
+	public DataNode setSubstrate_material(IDataset substrate_materialDataset);
 
 	/**
 	 * 
@@ -458,7 +459,7 @@ public interface NXmirror extends NXobject {
 	 * 
 	 * @param substrate_material the substrate_material
 	 */
-	public DataNode setSubstrate_materialScalar(String substrate_material);
+	public DataNode setSubstrate_materialScalar(String substrate_materialValue);
 
 	/**
 	 * <p>
@@ -476,9 +477,9 @@ public interface NXmirror extends NXobject {
 	 * <b>Units:</b> NX_MASS_DENSITY
 	 * </p>
 	 * 
-	 * @param substrate_density the substrate_density
+	 * @param substrate_densityDataset the substrate_densityDataset
 	 */
-	public DataNode setSubstrate_density(IDataset substrate_density);
+	public DataNode setSubstrate_density(IDataset substrate_densityDataset);
 
 	/**
 	 * <p>
@@ -498,7 +499,7 @@ public interface NXmirror extends NXobject {
 	 * 
 	 * @param substrate_density the substrate_density
 	 */
-	public DataNode setSubstrate_densityScalar(Double substrate_density);
+	public DataNode setSubstrate_densityScalar(Double substrate_densityValue);
 
 	/**
 	 * <p>
@@ -516,9 +517,9 @@ public interface NXmirror extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param substrate_thickness the substrate_thickness
+	 * @param substrate_thicknessDataset the substrate_thicknessDataset
 	 */
-	public DataNode setSubstrate_thickness(IDataset substrate_thickness);
+	public DataNode setSubstrate_thickness(IDataset substrate_thicknessDataset);
 
 	/**
 	 * <p>
@@ -538,7 +539,7 @@ public interface NXmirror extends NXobject {
 	 * 
 	 * @param substrate_thickness the substrate_thickness
 	 */
-	public DataNode setSubstrate_thicknessScalar(Double substrate_thickness);
+	public DataNode setSubstrate_thicknessScalar(Double substrate_thicknessValue);
 
 	/**
 	 * 
@@ -548,9 +549,9 @@ public interface NXmirror extends NXobject {
 	
 	/**
 	 * 
-	 * @param coating_material the coating_material
+	 * @param coating_materialDataset the coating_materialDataset
 	 */
-	public DataNode setCoating_material(IDataset coating_material);
+	public DataNode setCoating_material(IDataset coating_materialDataset);
 
 	/**
 	 * 
@@ -562,7 +563,7 @@ public interface NXmirror extends NXobject {
 	 * 
 	 * @param coating_material the coating_material
 	 */
-	public DataNode setCoating_materialScalar(String coating_material);
+	public DataNode setCoating_materialScalar(String coating_materialValue);
 
 	/**
 	 * <p>
@@ -580,9 +581,9 @@ public interface NXmirror extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param substrate_roughness the substrate_roughness
+	 * @param substrate_roughnessDataset the substrate_roughnessDataset
 	 */
-	public DataNode setSubstrate_roughness(IDataset substrate_roughness);
+	public DataNode setSubstrate_roughness(IDataset substrate_roughnessDataset);
 
 	/**
 	 * <p>
@@ -602,7 +603,7 @@ public interface NXmirror extends NXobject {
 	 * 
 	 * @param substrate_roughness the substrate_roughness
 	 */
-	public DataNode setSubstrate_roughnessScalar(Double substrate_roughness);
+	public DataNode setSubstrate_roughnessScalar(Double substrate_roughnessValue);
 
 	/**
 	 * <p>
@@ -620,9 +621,9 @@ public interface NXmirror extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param coating_roughness the coating_roughness
+	 * @param coating_roughnessDataset the coating_roughnessDataset
 	 */
-	public DataNode setCoating_roughness(IDataset coating_roughness);
+	public DataNode setCoating_roughness(IDataset coating_roughnessDataset);
 
 	/**
 	 * <p>
@@ -642,7 +643,7 @@ public interface NXmirror extends NXobject {
 	 * 
 	 * @param coating_roughness the coating_roughness
 	 */
-	public DataNode setCoating_roughnessScalar(Double coating_roughness);
+	public DataNode setCoating_roughnessScalar(Double coating_roughnessValue);
 
 	/**
 	 * 
@@ -652,9 +653,9 @@ public interface NXmirror extends NXobject {
 	
 	/**
 	 * 
-	 * @param even_layer_material the even_layer_material
+	 * @param even_layer_materialDataset the even_layer_materialDataset
 	 */
-	public DataNode setEven_layer_material(IDataset even_layer_material);
+	public DataNode setEven_layer_material(IDataset even_layer_materialDataset);
 
 	/**
 	 * 
@@ -666,7 +667,7 @@ public interface NXmirror extends NXobject {
 	 * 
 	 * @param even_layer_material the even_layer_material
 	 */
-	public DataNode setEven_layer_materialScalar(String even_layer_material);
+	public DataNode setEven_layer_materialScalar(String even_layer_materialValue);
 
 	/**
 	 * <p>
@@ -684,9 +685,9 @@ public interface NXmirror extends NXobject {
 	 * <b>Units:</b> NX_MASS_DENSITY
 	 * </p>
 	 * 
-	 * @param even_layer_density the even_layer_density
+	 * @param even_layer_densityDataset the even_layer_densityDataset
 	 */
-	public DataNode setEven_layer_density(IDataset even_layer_density);
+	public DataNode setEven_layer_density(IDataset even_layer_densityDataset);
 
 	/**
 	 * <p>
@@ -706,7 +707,7 @@ public interface NXmirror extends NXobject {
 	 * 
 	 * @param even_layer_density the even_layer_density
 	 */
-	public DataNode setEven_layer_densityScalar(Double even_layer_density);
+	public DataNode setEven_layer_densityScalar(Double even_layer_densityValue);
 
 	/**
 	 * 
@@ -716,9 +717,9 @@ public interface NXmirror extends NXobject {
 	
 	/**
 	 * 
-	 * @param odd_layer_material the odd_layer_material
+	 * @param odd_layer_materialDataset the odd_layer_materialDataset
 	 */
-	public DataNode setOdd_layer_material(IDataset odd_layer_material);
+	public DataNode setOdd_layer_material(IDataset odd_layer_materialDataset);
 
 	/**
 	 * 
@@ -730,7 +731,7 @@ public interface NXmirror extends NXobject {
 	 * 
 	 * @param odd_layer_material the odd_layer_material
 	 */
-	public DataNode setOdd_layer_materialScalar(String odd_layer_material);
+	public DataNode setOdd_layer_materialScalar(String odd_layer_materialValue);
 
 	/**
 	 * <p>
@@ -748,9 +749,9 @@ public interface NXmirror extends NXobject {
 	 * <b>Units:</b> NX_MASS_DENSITY
 	 * </p>
 	 * 
-	 * @param odd_layer_density the odd_layer_density
+	 * @param odd_layer_densityDataset the odd_layer_densityDataset
 	 */
-	public DataNode setOdd_layer_density(IDataset odd_layer_density);
+	public DataNode setOdd_layer_density(IDataset odd_layer_densityDataset);
 
 	/**
 	 * <p>
@@ -770,7 +771,7 @@ public interface NXmirror extends NXobject {
 	 * 
 	 * @param odd_layer_density the odd_layer_density
 	 */
-	public DataNode setOdd_layer_densityScalar(Double odd_layer_density);
+	public DataNode setOdd_layer_densityScalar(Double odd_layer_densityValue);
 
 	/**
 	 * An array describing the thickness of each layer
@@ -790,9 +791,9 @@ public interface NXmirror extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param layer_thickness the layer_thickness
+	 * @param layer_thicknessDataset the layer_thicknessDataset
 	 */
-	public DataNode setLayer_thickness(IDataset layer_thickness);
+	public DataNode setLayer_thickness(IDataset layer_thicknessDataset);
 
 	/**
 	 * An array describing the thickness of each layer
@@ -814,7 +815,7 @@ public interface NXmirror extends NXobject {
 	 * 
 	 * @param layer_thickness the layer_thickness
 	 */
-	public DataNode setLayer_thicknessScalar(Double layer_thickness);
+	public DataNode setLayer_thicknessScalar(Double layer_thicknessValue);
 
 	/**
 	 * A NXshape group describing the shape of the mirror
@@ -826,9 +827,9 @@ public interface NXmirror extends NXobject {
 	/**
 	 * A NXshape group describing the shape of the mirror
 	 * 
-	 * @param shape the shape
+	 * @param shapeGroup the shapeGroup
 	 */
-	public void setShape(NXshape shape);
+	public void setShape(NXshape shapeGroup);
 
 	/**
 	 * Numerical description of the surface figure of the mirror.
@@ -840,8 +841,34 @@ public interface NXmirror extends NXobject {
 	/**
 	 * Numerical description of the surface figure of the mirror.
 	 * 
-	 * @param figure_data the figure_data
+	 * @param figure_dataGroup the figure_dataGroup
 	 */
-	public void setFigure_data(NXdata figure_data);
+	public void setFigure_data(NXdata figure_dataGroup);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

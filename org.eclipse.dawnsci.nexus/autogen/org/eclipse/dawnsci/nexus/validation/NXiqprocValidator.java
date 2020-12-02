@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -215,18 +215,18 @@ public class NXiqprocValidator extends AbstractNexusValidator implements NexusAp
 		validateGroupNotNull(null, NXdata.class, group);
 		clearLocalGroupDimensionPlaceholderValues();
 
-		// validate field 'data' of type NX_INT.
-		final IDataset data = group.getData();
+		// validate field 'data' of type NX_INT. Note: field not defined in base class.
+		final IDataset data = group.getDataset("data");
 		validateFieldNotNull("data", data);
 		validateFieldType("data", data, NX_INT);
 		validateFieldRank("data", data, 3);
-		validateFieldDimensions("data", data, null, "NE", "NQX", "NQY");
+		validateFieldDimensions("data", data, null, "nVars", "nQX", "nQY");
 
 		// validate field 'variable' of unknown type. Note: field not defined in base class.
 		final IDataset variable = group.getDataset("variable");
 		validateFieldNotNull("variable", variable);
 		validateFieldRank("variable", variable, 1);
-		validateFieldDimensions("variable", variable, null, "NE");
+		validateFieldDimensions("variable", variable, null, "nVars");
 		// validate attribute 'varied_variable' of field 'variable'
 		final Attribute variable_attr_varied_variable = group.getAttribute("varied_variable");
 		validateAttributeNotNull("varied_variable", variable_attr_varied_variable);
@@ -236,12 +236,12 @@ public class NXiqprocValidator extends AbstractNexusValidator implements NexusAp
 		final IDataset qx = group.getDataset("qx");
 		validateFieldNotNull("qx", qx);
 		validateFieldRank("qx", qx, 1);
-		validateFieldDimensions("qx", qx, null, "NQX");
+		validateFieldDimensions("qx", qx, null, "nQX");
 
 		// validate field 'qy' of unknown type. Note: field not defined in base class.
 		final IDataset qy = group.getDataset("qy");
 		validateFieldNotNull("qy", qy);
 		validateFieldRank("qy", qy, 1);
-		validateFieldDimensions("qy", qy, null, "NQY");
+		validateFieldDimensions("qy", qy, null, "nQY");
 	}
 }

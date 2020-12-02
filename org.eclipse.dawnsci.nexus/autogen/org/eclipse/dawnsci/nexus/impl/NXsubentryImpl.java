@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,18 +90,18 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 	}
 
 	@Override
-	public void setAttributeDefault(String default_) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, default_);
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 	@Override
-	public String getAttributeIDF_Version() {
+	public String getAttributeIdf_version() {
 		return getAttrString(null, NX_ATTRIBUTE_IDF_VERSION);
 	}
 
 	@Override
-	public void setAttributeIDF_Version(String IDF_Version) {
-		setAttribute(null, NX_ATTRIBUTE_IDF_VERSION, IDF_Version);
+	public void setAttributeIdf_version(String idf_versionValue) {
+		setAttribute(null, NX_ATTRIBUTE_IDF_VERSION, idf_versionValue);
 	}
 
 	@Override
@@ -115,13 +115,13 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 	}
 
 	@Override
-	public DataNode setTitle(IDataset title) {
-		return setDataset(NX_TITLE, title);
+	public DataNode setTitle(IDataset titleDataset) {
+		return setDataset(NX_TITLE, titleDataset);
 	}
 
 	@Override
-	public DataNode setTitleScalar(String title) {
-		return setString(NX_TITLE, title);
+	public DataNode setTitleScalar(String titleValue) {
+		return setString(NX_TITLE, titleValue);
 	}
 
 	@Override
@@ -135,13 +135,13 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 	}
 
 	@Override
-	public DataNode setExperiment_identifier(IDataset experiment_identifier) {
-		return setDataset(NX_EXPERIMENT_IDENTIFIER, experiment_identifier);
+	public DataNode setExperiment_identifier(IDataset experiment_identifierDataset) {
+		return setDataset(NX_EXPERIMENT_IDENTIFIER, experiment_identifierDataset);
 	}
 
 	@Override
-	public DataNode setExperiment_identifierScalar(String experiment_identifier) {
-		return setString(NX_EXPERIMENT_IDENTIFIER, experiment_identifier);
+	public DataNode setExperiment_identifierScalar(String experiment_identifierValue) {
+		return setString(NX_EXPERIMENT_IDENTIFIER, experiment_identifierValue);
 	}
 
 	@Override
@@ -155,23 +155,24 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 	}
 
 	@Override
-	public DataNode setExperiment_description(IDataset experiment_description) {
-		return setDataset(NX_EXPERIMENT_DESCRIPTION, experiment_description);
+	public DataNode setExperiment_description(IDataset experiment_descriptionDataset) {
+		return setDataset(NX_EXPERIMENT_DESCRIPTION, experiment_descriptionDataset);
 	}
 
 	@Override
-	public DataNode setExperiment_descriptionScalar(String experiment_description) {
-		return setString(NX_EXPERIMENT_DESCRIPTION, experiment_description);
+	public DataNode setExperiment_descriptionScalar(String experiment_descriptionValue) {
+		return setString(NX_EXPERIMENT_DESCRIPTION, experiment_descriptionValue);
 	}
 
 	@Override
 	public NXnote getExperiment_documentation() {
+		// dataNodeName = NX_EXPERIMENT_DOCUMENTATION
 		return getChild("experiment_documentation", NXnote.class);
 	}
 
 	@Override
-	public void setExperiment_documentation(NXnote experiment_documentation) {
-		putChild("experiment_documentation", experiment_documentation);
+	public void setExperiment_documentation(NXnote experiment_documentationGroup) {
+		putChild("experiment_documentation", experiment_documentationGroup);
 	}
 
 	@Override
@@ -185,13 +186,13 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 	}
 
 	@Override
-	public DataNode setCollection_identifier(IDataset collection_identifier) {
-		return setDataset(NX_COLLECTION_IDENTIFIER, collection_identifier);
+	public DataNode setCollection_identifier(IDataset collection_identifierDataset) {
+		return setDataset(NX_COLLECTION_IDENTIFIER, collection_identifierDataset);
 	}
 
 	@Override
-	public DataNode setCollection_identifierScalar(String collection_identifier) {
-		return setString(NX_COLLECTION_IDENTIFIER, collection_identifier);
+	public DataNode setCollection_identifierScalar(String collection_identifierValue) {
+		return setString(NX_COLLECTION_IDENTIFIER, collection_identifierValue);
 	}
 
 	@Override
@@ -205,13 +206,13 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 	}
 
 	@Override
-	public DataNode setCollection_description(IDataset collection_description) {
-		return setDataset(NX_COLLECTION_DESCRIPTION, collection_description);
+	public DataNode setCollection_description(IDataset collection_descriptionDataset) {
+		return setDataset(NX_COLLECTION_DESCRIPTION, collection_descriptionDataset);
 	}
 
 	@Override
-	public DataNode setCollection_descriptionScalar(String collection_description) {
-		return setString(NX_COLLECTION_DESCRIPTION, collection_description);
+	public DataNode setCollection_descriptionScalar(String collection_descriptionValue) {
+		return setString(NX_COLLECTION_DESCRIPTION, collection_descriptionValue);
 	}
 
 	@Override
@@ -225,13 +226,13 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 	}
 
 	@Override
-	public DataNode setEntry_identifier(IDataset entry_identifier) {
-		return setDataset(NX_ENTRY_IDENTIFIER, entry_identifier);
+	public DataNode setEntry_identifier(IDataset entry_identifierDataset) {
+		return setDataset(NX_ENTRY_IDENTIFIER, entry_identifierDataset);
 	}
 
 	@Override
-	public DataNode setEntry_identifierScalar(String entry_identifier) {
-		return setString(NX_ENTRY_IDENTIFIER, entry_identifier);
+	public DataNode setEntry_identifierScalar(String entry_identifierValue) {
+		return setString(NX_ENTRY_IDENTIFIER, entry_identifierValue);
 	}
 
 	@Override
@@ -245,13 +246,13 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 	}
 
 	@Override
-	public DataNode setDefinition(IDataset definition) {
-		return setDataset(NX_DEFINITION, definition);
+	public DataNode setDefinition(IDataset definitionDataset) {
+		return setDataset(NX_DEFINITION, definitionDataset);
 	}
 
 	@Override
-	public DataNode setDefinitionScalar(String definition) {
-		return setString(NX_DEFINITION, definition);
+	public DataNode setDefinitionScalar(String definitionValue) {
+		return setString(NX_DEFINITION, definitionValue);
 	}
 
 	@Override
@@ -260,18 +261,18 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 	}
 
 	@Override
-	public void setDefinitionAttributeVersion(String version) {
-		setAttribute(NX_DEFINITION, NX_DEFINITION_ATTRIBUTE_VERSION, version);
+	public void setDefinitionAttributeVersion(String versionValue) {
+		setAttribute(NX_DEFINITION, NX_DEFINITION_ATTRIBUTE_VERSION, versionValue);
 	}
 
 	@Override
-	public String getDefinitionAttributeURL() {
+	public String getDefinitionAttributeUrl() {
 		return getAttrString(NX_DEFINITION, NX_DEFINITION_ATTRIBUTE_URL);
 	}
 
 	@Override
-	public void setDefinitionAttributeURL(String URL) {
-		setAttribute(NX_DEFINITION, NX_DEFINITION_ATTRIBUTE_URL, URL);
+	public void setDefinitionAttributeUrl(String urlValue) {
+		setAttribute(NX_DEFINITION, NX_DEFINITION_ATTRIBUTE_URL, urlValue);
 	}
 
 	@Override
@@ -285,13 +286,13 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 	}
 
 	@Override
-	public DataNode setDefinition_local(IDataset definition_local) {
-		return setDataset(NX_DEFINITION_LOCAL, definition_local);
+	public DataNode setDefinition_local(IDataset definition_localDataset) {
+		return setDataset(NX_DEFINITION_LOCAL, definition_localDataset);
 	}
 
 	@Override
-	public DataNode setDefinition_localScalar(String definition_local) {
-		return setString(NX_DEFINITION_LOCAL, definition_local);
+	public DataNode setDefinition_localScalar(String definition_localValue) {
+		return setString(NX_DEFINITION_LOCAL, definition_localValue);
 	}
 
 	@Override
@@ -300,18 +301,18 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 	}
 
 	@Override
-	public void setDefinition_localAttributeVersion(String version) {
-		setAttribute(NX_DEFINITION_LOCAL, NX_DEFINITION_LOCAL_ATTRIBUTE_VERSION, version);
+	public void setDefinition_localAttributeVersion(String versionValue) {
+		setAttribute(NX_DEFINITION_LOCAL, NX_DEFINITION_LOCAL_ATTRIBUTE_VERSION, versionValue);
 	}
 
 	@Override
-	public String getDefinition_localAttributeURL() {
+	public String getDefinition_localAttributeUrl() {
 		return getAttrString(NX_DEFINITION_LOCAL, NX_DEFINITION_LOCAL_ATTRIBUTE_URL);
 	}
 
 	@Override
-	public void setDefinition_localAttributeURL(String URL) {
-		setAttribute(NX_DEFINITION_LOCAL, NX_DEFINITION_LOCAL_ATTRIBUTE_URL, URL);
+	public void setDefinition_localAttributeUrl(String urlValue) {
+		setAttribute(NX_DEFINITION_LOCAL, NX_DEFINITION_LOCAL_ATTRIBUTE_URL, urlValue);
 	}
 
 	@Override
@@ -325,13 +326,13 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 	}
 
 	@Override
-	public DataNode setStart_time(IDataset start_time) {
-		return setDataset(NX_START_TIME, start_time);
+	public DataNode setStart_time(IDataset start_timeDataset) {
+		return setDataset(NX_START_TIME, start_timeDataset);
 	}
 
 	@Override
-	public DataNode setStart_timeScalar(Date start_time) {
-		return setDate(NX_START_TIME, start_time);
+	public DataNode setStart_timeScalar(Date start_timeValue) {
+		return setDate(NX_START_TIME, start_timeValue);
 	}
 
 	@Override
@@ -345,13 +346,13 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 	}
 
 	@Override
-	public DataNode setEnd_time(IDataset end_time) {
-		return setDataset(NX_END_TIME, end_time);
+	public DataNode setEnd_time(IDataset end_timeDataset) {
+		return setDataset(NX_END_TIME, end_timeDataset);
 	}
 
 	@Override
-	public DataNode setEnd_timeScalar(Date end_time) {
-		return setDate(NX_END_TIME, end_time);
+	public DataNode setEnd_timeScalar(Date end_timeValue) {
+		return setDate(NX_END_TIME, end_timeValue);
 	}
 
 	@Override
@@ -365,13 +366,13 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 	}
 
 	@Override
-	public DataNode setDuration(IDataset duration) {
-		return setDataset(NX_DURATION, duration);
+	public DataNode setDuration(IDataset durationDataset) {
+		return setDataset(NX_DURATION, durationDataset);
 	}
 
 	@Override
-	public DataNode setDurationScalar(Long duration) {
-		return setField(NX_DURATION, duration);
+	public DataNode setDurationScalar(Long durationValue) {
+		return setField(NX_DURATION, durationValue);
 	}
 
 	@Override
@@ -385,13 +386,13 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 	}
 
 	@Override
-	public DataNode setCollection_time(IDataset collection_time) {
-		return setDataset(NX_COLLECTION_TIME, collection_time);
+	public DataNode setCollection_time(IDataset collection_timeDataset) {
+		return setDataset(NX_COLLECTION_TIME, collection_timeDataset);
 	}
 
 	@Override
-	public DataNode setCollection_timeScalar(Double collection_time) {
-		return setField(NX_COLLECTION_TIME, collection_time);
+	public DataNode setCollection_timeScalar(Double collection_timeValue) {
+		return setField(NX_COLLECTION_TIME, collection_timeValue);
 	}
 
 	@Override
@@ -405,13 +406,13 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 	}
 
 	@Override
-	public DataNode setRun_cycle(IDataset run_cycle) {
-		return setDataset(NX_RUN_CYCLE, run_cycle);
+	public DataNode setRun_cycle(IDataset run_cycleDataset) {
+		return setDataset(NX_RUN_CYCLE, run_cycleDataset);
 	}
 
 	@Override
-	public DataNode setRun_cycleScalar(String run_cycle) {
-		return setString(NX_RUN_CYCLE, run_cycle);
+	public DataNode setRun_cycleScalar(String run_cycleValue) {
+		return setString(NX_RUN_CYCLE, run_cycleValue);
 	}
 
 	@Override
@@ -425,13 +426,13 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 	}
 
 	@Override
-	public DataNode setProgram_name(IDataset program_name) {
-		return setDataset(NX_PROGRAM_NAME, program_name);
+	public DataNode setProgram_name(IDataset program_nameDataset) {
+		return setDataset(NX_PROGRAM_NAME, program_nameDataset);
 	}
 
 	@Override
-	public DataNode setProgram_nameScalar(String program_name) {
-		return setString(NX_PROGRAM_NAME, program_name);
+	public DataNode setProgram_nameScalar(String program_nameValue) {
+		return setString(NX_PROGRAM_NAME, program_nameValue);
 	}
 
 	@Override
@@ -440,8 +441,8 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 	}
 
 	@Override
-	public void setProgram_nameAttributeVersion(String version) {
-		setAttribute(NX_PROGRAM_NAME, NX_PROGRAM_NAME_ATTRIBUTE_VERSION, version);
+	public void setProgram_nameAttributeVersion(String versionValue) {
+		setAttribute(NX_PROGRAM_NAME, NX_PROGRAM_NAME_ATTRIBUTE_VERSION, versionValue);
 	}
 
 	@Override
@@ -450,8 +451,8 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 	}
 
 	@Override
-	public void setProgram_nameAttributeConfiguration(String configuration) {
-		setAttribute(NX_PROGRAM_NAME, NX_PROGRAM_NAME_ATTRIBUTE_CONFIGURATION, configuration);
+	public void setProgram_nameAttributeConfiguration(String configurationValue) {
+		setAttribute(NX_PROGRAM_NAME, NX_PROGRAM_NAME_ATTRIBUTE_CONFIGURATION, configurationValue);
 	}
 
 	@Override
@@ -465,13 +466,13 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 	}
 
 	@Override
-	public DataNode setRevision(IDataset revision) {
-		return setDataset(NX_REVISION, revision);
+	public DataNode setRevision(IDataset revisionDataset) {
+		return setDataset(NX_REVISION, revisionDataset);
 	}
 
 	@Override
-	public DataNode setRevisionScalar(String revision) {
-		return setString(NX_REVISION, revision);
+	public DataNode setRevisionScalar(String revisionValue) {
+		return setString(NX_REVISION, revisionValue);
 	}
 
 	@Override
@@ -480,8 +481,8 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 	}
 
 	@Override
-	public void setRevisionAttributeComment(String comment) {
-		setAttribute(NX_REVISION, NX_REVISION_ATTRIBUTE_COMMENT, comment);
+	public void setRevisionAttributeComment(String commentValue) {
+		setAttribute(NX_REVISION, NX_REVISION_ATTRIBUTE_COMMENT, commentValue);
 	}
 
 	@Override
@@ -495,43 +496,46 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 	}
 
 	@Override
-	public DataNode setPre_sample_flightpath(IDataset pre_sample_flightpath) {
-		return setDataset(NX_PRE_SAMPLE_FLIGHTPATH, pre_sample_flightpath);
+	public DataNode setPre_sample_flightpath(IDataset pre_sample_flightpathDataset) {
+		return setDataset(NX_PRE_SAMPLE_FLIGHTPATH, pre_sample_flightpathDataset);
 	}
 
 	@Override
-	public DataNode setPre_sample_flightpathScalar(Double pre_sample_flightpath) {
-		return setField(NX_PRE_SAMPLE_FLIGHTPATH, pre_sample_flightpath);
+	public DataNode setPre_sample_flightpathScalar(Double pre_sample_flightpathValue) {
+		return setField(NX_PRE_SAMPLE_FLIGHTPATH, pre_sample_flightpathValue);
 	}
 
 	@Override
 	public NXnote getNotes() {
+		// dataNodeName = NX_NOTES
 		return getChild("notes", NXnote.class);
 	}
 
 	@Override
-	public void setNotes(NXnote notes) {
-		putChild("notes", notes);
+	public void setNotes(NXnote notesGroup) {
+		putChild("notes", notesGroup);
 	}
 
 	@Override
 	public NXnote getThumbnail() {
+		// dataNodeName = NX_THUMBNAIL
 		return getChild("thumbnail", NXnote.class);
 	}
 
 	@Override
-	public void setThumbnail(NXnote thumbnail) {
-		putChild("thumbnail", thumbnail);
+	public void setThumbnail(NXnote thumbnailGroup) {
+		putChild("thumbnail", thumbnailGroup);
 	}
 
 	@Override
 	public NXuser getUser() {
+		// dataNodeName = NX_USER
 		return getChild("user", NXuser.class);
 	}
 
 	@Override
-	public void setUser(NXuser user) {
-		putChild("user", user);
+	public void setUser(NXuser userGroup) {
+		putChild("user", userGroup);
 	}
 
 	@Override
@@ -556,12 +560,13 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 
 	@Override
 	public NXsample getSample() {
+		// dataNodeName = NX_SAMPLE
 		return getChild("sample", NXsample.class);
 	}
 
 	@Override
-	public void setSample(NXsample sample) {
-		putChild("sample", sample);
+	public void setSample(NXsample sampleGroup) {
+		putChild("sample", sampleGroup);
 	}
 
 	@Override
@@ -586,12 +591,13 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 
 	@Override
 	public NXinstrument getInstrument() {
+		// dataNodeName = NX_INSTRUMENT
 		return getChild("instrument", NXinstrument.class);
 	}
 
 	@Override
-	public void setInstrument(NXinstrument instrument) {
-		putChild("instrument", instrument);
+	public void setInstrument(NXinstrument instrumentGroup) {
+		putChild("instrument", instrumentGroup);
 	}
 
 	@Override
@@ -616,12 +622,13 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 
 	@Override
 	public NXcollection getCollection() {
+		// dataNodeName = NX_COLLECTION
 		return getChild("collection", NXcollection.class);
 	}
 
 	@Override
-	public void setCollection(NXcollection collection) {
-		putChild("collection", collection);
+	public void setCollection(NXcollection collectionGroup) {
+		putChild("collection", collectionGroup);
 	}
 
 	@Override
@@ -646,12 +653,13 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 
 	@Override
 	public NXmonitor getMonitor() {
+		// dataNodeName = NX_MONITOR
 		return getChild("monitor", NXmonitor.class);
 	}
 
 	@Override
-	public void setMonitor(NXmonitor monitor) {
-		putChild("monitor", monitor);
+	public void setMonitor(NXmonitor monitorGroup) {
+		putChild("monitor", monitorGroup);
 	}
 
 	@Override
@@ -676,12 +684,13 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 
 	@Override
 	public NXdata getData() {
+		// dataNodeName = NX_DATA
 		return getChild("data", NXdata.class);
 	}
 
 	@Override
-	public void setData(NXdata data) {
-		putChild("data", data);
+	public void setData(NXdata dataGroup) {
+		putChild("data", dataGroup);
 	}
 
 	@Override
@@ -706,12 +715,13 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 
 	@Override
 	public NXparameters getParameters() {
+		// dataNodeName = NX_PARAMETERS
 		return getChild("parameters", NXparameters.class);
 	}
 
 	@Override
-	public void setParameters(NXparameters parameters) {
-		putChild("parameters", parameters);
+	public void setParameters(NXparameters parametersGroup) {
+		putChild("parameters", parametersGroup);
 	}
 
 	@Override
@@ -736,12 +746,13 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 
 	@Override
 	public NXprocess getProcess() {
+		// dataNodeName = NX_PROCESS
 		return getChild("process", NXprocess.class);
 	}
 
 	@Override
-	public void setProcess(NXprocess process) {
-		putChild("process", process);
+	public void setProcess(NXprocess processGroup) {
+		putChild("process", processGroup);
 	}
 
 	@Override

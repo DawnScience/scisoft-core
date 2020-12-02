@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,13 +66,13 @@ public class NXpinholeImpl extends NXobjectImpl implements NXpinhole {
 	}
 
 	@Override
-	public DataNode setDepends_on(IDataset depends_on) {
-		return setDataset(NX_DEPENDS_ON, depends_on);
+	public DataNode setDepends_on(IDataset depends_onDataset) {
+		return setDataset(NX_DEPENDS_ON, depends_onDataset);
 	}
 
 	@Override
-	public DataNode setDepends_onScalar(String depends_on) {
-		return setString(NX_DEPENDS_ON, depends_on);
+	public DataNode setDepends_onScalar(String depends_onValue) {
+		return setString(NX_DEPENDS_ON, depends_onValue);
 	}
 
 	@Override
@@ -86,13 +86,23 @@ public class NXpinholeImpl extends NXobjectImpl implements NXpinhole {
 	}
 
 	@Override
-	public DataNode setDiameter(IDataset diameter) {
-		return setDataset(NX_DIAMETER, diameter);
+	public DataNode setDiameter(IDataset diameterDataset) {
+		return setDataset(NX_DIAMETER, diameterDataset);
 	}
 
 	@Override
-	public DataNode setDiameterScalar(Number diameter) {
-		return setField(NX_DIAMETER, diameter);
+	public DataNode setDiameterScalar(Number diameterValue) {
+		return setField(NX_DIAMETER, diameterValue);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

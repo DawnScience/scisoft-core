@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ public interface NXbending_magnet extends NXobject {
 	public static final String NX_DIVERGENCE_X_MINUS = "divergence_x_minus";
 	public static final String NX_DIVERGENCE_Y_PLUS = "divergence_y_plus";
 	public static final String NX_DIVERGENCE_Y_MINUS = "divergence_y_minus";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
@@ -49,9 +50,9 @@ public interface NXbending_magnet extends NXobject {
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
 	 * 
-	 * @param critical_energy the critical_energy
+	 * @param critical_energyDataset the critical_energyDataset
 	 */
-	public DataNode setCritical_energy(IDataset critical_energy);
+	public DataNode setCritical_energy(IDataset critical_energyDataset);
 
 	/**
 	 * <p>
@@ -71,7 +72,7 @@ public interface NXbending_magnet extends NXobject {
 	 * 
 	 * @param critical_energy the critical_energy
 	 */
-	public DataNode setCritical_energyScalar(Double critical_energy);
+	public DataNode setCritical_energyScalar(Double critical_energyValue);
 
 	/**
 	 * <p>
@@ -89,9 +90,9 @@ public interface NXbending_magnet extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param bending_radius the bending_radius
+	 * @param bending_radiusDataset the bending_radiusDataset
 	 */
-	public DataNode setBending_radius(IDataset bending_radius);
+	public DataNode setBending_radius(IDataset bending_radiusDataset);
 
 	/**
 	 * <p>
@@ -111,7 +112,7 @@ public interface NXbending_magnet extends NXobject {
 	 * 
 	 * @param bending_radius the bending_radius
 	 */
-	public DataNode setBending_radiusScalar(Double bending_radius);
+	public DataNode setBending_radiusScalar(Double bending_radiusValue);
 
 	/**
 	 * strength of magnetic field of dipole magnets
@@ -131,9 +132,9 @@ public interface NXbending_magnet extends NXobject {
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
 	 * 
-	 * @param magnetic_field the magnetic_field
+	 * @param magnetic_fieldDataset the magnetic_fieldDataset
 	 */
-	public DataNode setMagnetic_field(IDataset magnetic_field);
+	public DataNode setMagnetic_field(IDataset magnetic_fieldDataset);
 
 	/**
 	 * strength of magnetic field of dipole magnets
@@ -155,7 +156,7 @@ public interface NXbending_magnet extends NXobject {
 	 * 
 	 * @param magnetic_field the magnetic_field
 	 */
-	public DataNode setMagnetic_fieldScalar(Double magnetic_field);
+	public DataNode setMagnetic_fieldScalar(Double magnetic_fieldValue);
 
 	/**
 	 * An array of four numbers giving X+, X-, Y+ and Y- half divergence
@@ -175,9 +176,9 @@ public interface NXbending_magnet extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param accepted_photon_beam_divergence the accepted_photon_beam_divergence
+	 * @param accepted_photon_beam_divergenceDataset the accepted_photon_beam_divergenceDataset
 	 */
-	public DataNode setAccepted_photon_beam_divergence(IDataset accepted_photon_beam_divergence);
+	public DataNode setAccepted_photon_beam_divergence(IDataset accepted_photon_beam_divergenceDataset);
 
 	/**
 	 * An array of four numbers giving X+, X-, Y+ and Y- half divergence
@@ -199,7 +200,7 @@ public interface NXbending_magnet extends NXobject {
 	 * 
 	 * @param accepted_photon_beam_divergence the accepted_photon_beam_divergence
 	 */
-	public DataNode setAccepted_photon_beam_divergenceScalar(Double accepted_photon_beam_divergence);
+	public DataNode setAccepted_photon_beam_divergenceScalar(Double accepted_photon_beam_divergenceValue);
 
 	/**
 	 * Distance of source point from particle beam waist in X (horizontal) direction.
@@ -219,9 +220,9 @@ public interface NXbending_magnet extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param source_distance_x the source_distance_x
+	 * @param source_distance_xDataset the source_distance_xDataset
 	 */
-	public DataNode setSource_distance_x(IDataset source_distance_x);
+	public DataNode setSource_distance_x(IDataset source_distance_xDataset);
 
 	/**
 	 * Distance of source point from particle beam waist in X (horizontal) direction.
@@ -243,7 +244,7 @@ public interface NXbending_magnet extends NXobject {
 	 * 
 	 * @param source_distance_x the source_distance_x
 	 */
-	public DataNode setSource_distance_xScalar(Double source_distance_x);
+	public DataNode setSource_distance_xScalar(Double source_distance_xValue);
 
 	/**
 	 * Distance of source point from particle beam waist in Y (vertical) direction.
@@ -263,9 +264,9 @@ public interface NXbending_magnet extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param source_distance_y the source_distance_y
+	 * @param source_distance_yDataset the source_distance_yDataset
 	 */
-	public DataNode setSource_distance_y(IDataset source_distance_y);
+	public DataNode setSource_distance_y(IDataset source_distance_yDataset);
 
 	/**
 	 * Distance of source point from particle beam waist in Y (vertical) direction.
@@ -287,7 +288,7 @@ public interface NXbending_magnet extends NXobject {
 	 * 
 	 * @param source_distance_y the source_distance_y
 	 */
-	public DataNode setSource_distance_yScalar(Double source_distance_y);
+	public DataNode setSource_distance_yScalar(Double source_distance_yValue);
 
 	/**
 	 * Accepted photon beam divergence in X+ (horizontal outboard) direction.
@@ -309,9 +310,9 @@ public interface NXbending_magnet extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
 	 * 
-	 * @param divergence_x_plus the divergence_x_plus
+	 * @param divergence_x_plusDataset the divergence_x_plusDataset
 	 */
-	public DataNode setDivergence_x_plus(IDataset divergence_x_plus);
+	public DataNode setDivergence_x_plus(IDataset divergence_x_plusDataset);
 
 	/**
 	 * Accepted photon beam divergence in X+ (horizontal outboard) direction.
@@ -335,7 +336,7 @@ public interface NXbending_magnet extends NXobject {
 	 * 
 	 * @param divergence_x_plus the divergence_x_plus
 	 */
-	public DataNode setDivergence_x_plusScalar(Double divergence_x_plus);
+	public DataNode setDivergence_x_plusScalar(Double divergence_x_plusValue);
 
 	/**
 	 * Accepted photon beam divergence in X- (horizontal inboard) direction.
@@ -357,9 +358,9 @@ public interface NXbending_magnet extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
 	 * 
-	 * @param divergence_x_minus the divergence_x_minus
+	 * @param divergence_x_minusDataset the divergence_x_minusDataset
 	 */
-	public DataNode setDivergence_x_minus(IDataset divergence_x_minus);
+	public DataNode setDivergence_x_minus(IDataset divergence_x_minusDataset);
 
 	/**
 	 * Accepted photon beam divergence in X- (horizontal inboard) direction.
@@ -383,7 +384,7 @@ public interface NXbending_magnet extends NXobject {
 	 * 
 	 * @param divergence_x_minus the divergence_x_minus
 	 */
-	public DataNode setDivergence_x_minusScalar(Double divergence_x_minus);
+	public DataNode setDivergence_x_minusScalar(Double divergence_x_minusValue);
 
 	/**
 	 * Accepted photon beam divergence in Y+ (vertical upward) direction.
@@ -405,9 +406,9 @@ public interface NXbending_magnet extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
 	 * 
-	 * @param divergence_y_plus the divergence_y_plus
+	 * @param divergence_y_plusDataset the divergence_y_plusDataset
 	 */
-	public DataNode setDivergence_y_plus(IDataset divergence_y_plus);
+	public DataNode setDivergence_y_plus(IDataset divergence_y_plusDataset);
 
 	/**
 	 * Accepted photon beam divergence in Y+ (vertical upward) direction.
@@ -431,7 +432,7 @@ public interface NXbending_magnet extends NXobject {
 	 * 
 	 * @param divergence_y_plus the divergence_y_plus
 	 */
-	public DataNode setDivergence_y_plusScalar(Double divergence_y_plus);
+	public DataNode setDivergence_y_plusScalar(Double divergence_y_plusValue);
 
 	/**
 	 * Accepted photon beam divergence in Y- (vertical downward) direction.
@@ -453,9 +454,9 @@ public interface NXbending_magnet extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
 	 * 
-	 * @param divergence_y_minus the divergence_y_minus
+	 * @param divergence_y_minusDataset the divergence_y_minusDataset
 	 */
-	public DataNode setDivergence_y_minus(IDataset divergence_y_minus);
+	public DataNode setDivergence_y_minus(IDataset divergence_y_minusDataset);
 
 	/**
 	 * Accepted photon beam divergence in Y- (vertical downward) direction.
@@ -479,7 +480,7 @@ public interface NXbending_magnet extends NXobject {
 	 * 
 	 * @param divergence_y_minus the divergence_y_minus
 	 */
-	public DataNode setDivergence_y_minusScalar(Double divergence_y_minus);
+	public DataNode setDivergence_y_minusScalar(Double divergence_y_minusValue);
 
 	/**
 	 * bending magnet spectrum
@@ -491,9 +492,9 @@ public interface NXbending_magnet extends NXobject {
 	/**
 	 * bending magnet spectrum
 	 * 
-	 * @param spectrum the spectrum
+	 * @param spectrumGroup the spectrumGroup
 	 */
-	public void setSpectrum(NXdata spectrum);
+	public void setSpectrum(NXdata spectrumGroup);
 
 	/**
 	 * "Engineering" position of bending magnet
@@ -505,10 +506,10 @@ public interface NXbending_magnet extends NXobject {
 	/**
 	 * "Engineering" position of bending magnet
 	 * 
-	 * @param geometry the geometry
+	 * @param geometryGroup the geometryGroup
 	 */
-	public void setGeometry(NXgeometry geometry);
-  
+	public void setGeometry(NXgeometry geometryGroup);
+
 	/**
 	 * Get a NXgeometry node by name:
 	 * <ul>
@@ -556,5 +557,31 @@ public interface NXbending_magnet extends NXobject {
 	
 	public void setAllGeometry(Map<String, NXgeometry> geometry);
 	
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ public interface NXparameters extends NXobject {
 
 	public static final String NX_TERM = "term";
 	public static final String NX_TERM_ATTRIBUTE_UNITS = "units";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * A parameter (also known as a term) that is used in or results from processing.
 	 * <p>
@@ -39,9 +40,9 @@ public interface NXparameters extends NXobject {
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
 	 * 
-	 * @param term the term
+	 * @param termDataset the termDataset
 	 */
-	public DataNode setTerm(IDataset term);
+	public DataNode setTerm(IDataset termDataset);
 
 	/**
 	 * A parameter (also known as a term) that is used in or results from processing.
@@ -61,7 +62,7 @@ public interface NXparameters extends NXobject {
 	 * 
 	 * @param term the term
 	 */
-	public DataNode setTermScalar(String term);
+	public DataNode setTermScalar(String termValue);
 
 	/**
 	 * 
@@ -71,8 +72,34 @@ public interface NXparameters extends NXobject {
 	
 	/**
 	 * 
-	 * @param units the units
+	 * @param unitsValue the unitsValue
 	 */
-	public void setTermAttributeUnits(String units);
+	public void setTermAttributeUnits(String unitsValue);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

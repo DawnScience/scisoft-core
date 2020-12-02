@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,16 +22,17 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
  */
 public interface NXroot extends NXobject {
 
-	public static final String NX_ATTRIBUTE_NX_CLASS = "NX_class";
+	public static final String NX_ATTRIBUTE_NX_CLASS = "nx_class";
 	public static final String NX_ATTRIBUTE_FILE_TIME = "file_time";
 	public static final String NX_ATTRIBUTE_FILE_NAME = "file_name";
 	public static final String NX_ATTRIBUTE_FILE_UPDATE_TIME = "file_update_time";
-	public static final String NX_ATTRIBUTE_NEXUS_VERSION = "NeXus_version";
-	public static final String NX_ATTRIBUTE_HDF_VERSION = "HDF_version";
-	public static final String NX_ATTRIBUTE_HDF5_VERSION = "HDF5_Version";
-	public static final String NX_ATTRIBUTE_XML_VERSION = "XML_version";
+	public static final String NX_ATTRIBUTE_NEXUS_VERSION = "nexus_version";
+	public static final String NX_ATTRIBUTE_HDF_VERSION = "hdf_version";
+	public static final String NX_ATTRIBUTE_HDF5_VERSION = "hdf5_version";
+	public static final String NX_ATTRIBUTE_XML_VERSION = "xml_version";
 	public static final String NX_ATTRIBUTE_H5PY_VERSION = "h5py_version";
 	public static final String NX_ATTRIBUTE_CREATOR = "creator";
+	public static final String NX_ATTRIBUTE_CREATOR_VERSION = "creator_version";
 	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * The root of any NeXus data file is an ``NXroot`` class
@@ -44,7 +45,7 @@ public interface NXroot extends NXobject {
 	 * 
 	 * @return  the value.
 	 */
-	public String getAttributeNX_class();
+	public String getAttributeNx_class();
 	
 	/**
 	 * The root of any NeXus data file is an ``NXroot`` class
@@ -55,23 +56,23 @@ public interface NXroot extends NXobject {
 	 * <li><b>NXroot</b> </li></ul></p>
 	 * </p>
 	 * 
-	 * @param NX_class the NX_class
+	 * @param nx_classValue the nx_classValue
 	 */
-	public void setAttributeNX_class(String NX_class);
+	public void setAttributeNx_class(String nx_classValue);
 
 	/**
 	 * Date and time file was originally created
 	 * 
 	 * @return  the value.
 	 */
-	public String getAttributeFile_time();
+	public Date getAttributeFile_time();
 	
 	/**
 	 * Date and time file was originally created
 	 * 
-	 * @param file_time the file_time
+	 * @param file_timeValue the file_timeValue
 	 */
-	public void setAttributeFile_time(String file_time);
+	public void setAttributeFile_time(Date file_timeValue);
 
 	/**
 	 * File name of original NeXus file
@@ -83,23 +84,23 @@ public interface NXroot extends NXobject {
 	/**
 	 * File name of original NeXus file
 	 * 
-	 * @param file_name the file_name
+	 * @param file_nameValue the file_nameValue
 	 */
-	public void setAttributeFile_name(String file_name);
+	public void setAttributeFile_name(String file_nameValue);
 
 	/**
 	 * Date and time of last file change at close
 	 * 
 	 * @return  the value.
 	 */
-	public String getAttributeFile_update_time();
+	public Date getAttributeFile_update_time();
 	
 	/**
 	 * Date and time of last file change at close
 	 * 
-	 * @param file_update_time the file_update_time
+	 * @param file_update_timeValue the file_update_timeValue
 	 */
-	public void setAttributeFile_update_time(String file_update_time);
+	public void setAttributeFile_update_time(Date file_update_timeValue);
 
 	/**
 	 * Version of NeXus API used in writing the file.
@@ -109,7 +110,7 @@ public interface NXroot extends NXobject {
 	 * 
 	 * @return  the value.
 	 */
-	public String getAttributeNeXus_version();
+	public String getAttributeNexus_version();
 	
 	/**
 	 * Version of NeXus API used in writing the file.
@@ -117,23 +118,23 @@ public interface NXroot extends NXobject {
 	 * Note that this is different from the version of the
 	 * base class or application definition version number.
 	 * 
-	 * @param NeXus_version the NeXus_version
+	 * @param nexus_versionValue the nexus_versionValue
 	 */
-	public void setAttributeNeXus_version(String NeXus_version);
+	public void setAttributeNexus_version(String nexus_versionValue);
 
 	/**
 	 * Version of HDF (version 4) library used in writing the file
 	 * 
 	 * @return  the value.
 	 */
-	public String getAttributeHDF_version();
+	public String getAttributeHdf_version();
 	
 	/**
 	 * Version of HDF (version 4) library used in writing the file
 	 * 
-	 * @param HDF_version the HDF_version
+	 * @param hdf_versionValue the hdf_versionValue
 	 */
-	public void setAttributeHDF_version(String HDF_version);
+	public void setAttributeHdf_version(String hdf_versionValue);
 
 	/**
 	 * Version of HDF5 library used in writing the file.
@@ -142,30 +143,30 @@ public interface NXroot extends NXobject {
 	 * 
 	 * @return  the value.
 	 */
-	public String getAttributeHDF5_Version();
+	public String getAttributeHdf5_version();
 	
 	/**
 	 * Version of HDF5 library used in writing the file.
 	 * Note this attribute is spelled with uppercase "V",
 	 * different than other version attributes.
 	 * 
-	 * @param HDF5_Version the HDF5_Version
+	 * @param hdf5_versionValue the hdf5_versionValue
 	 */
-	public void setAttributeHDF5_Version(String HDF5_Version);
+	public void setAttributeHdf5_version(String hdf5_versionValue);
 
 	/**
 	 * Version of XML support library used in writing the XML file
 	 * 
 	 * @return  the value.
 	 */
-	public String getAttributeXML_version();
+	public String getAttributeXml_version();
 	
 	/**
 	 * Version of XML support library used in writing the XML file
 	 * 
-	 * @param XML_version the XML_version
+	 * @param xml_versionValue the xml_versionValue
 	 */
-	public void setAttributeXML_version(String XML_version);
+	public void setAttributeXml_version(String xml_versionValue);
 
 	/**
 	 * Version of h5py Python package used in writing the file
@@ -177,9 +178,9 @@ public interface NXroot extends NXobject {
 	/**
 	 * Version of h5py Python package used in writing the file
 	 * 
-	 * @param h5py_version the h5py_version
+	 * @param h5py_versionValue the h5py_versionValue
 	 */
-	public void setAttributeH5py_version(String h5py_version);
+	public void setAttributeH5py_version(String h5py_versionValue);
 
 	/**
 	 * facility or program where file originated
@@ -191,9 +192,23 @@ public interface NXroot extends NXobject {
 	/**
 	 * facility or program where file originated
 	 * 
-	 * @param creator the creator
+	 * @param creatorValue the creatorValue
 	 */
-	public void setAttributeCreator(String creator);
+	public void setAttributeCreator(String creatorValue);
+
+	/**
+	 * Version of facility or program used in writing the file
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeCreator_version();
+	
+	/**
+	 * Version of facility or program used in writing the file
+	 * 
+	 * @param creator_versionValue the creator_versionValue
+	 */
+	public void setAttributeCreator_version(String creator_versionValue);
 
 	/**
 	 * entries
@@ -205,10 +220,10 @@ public interface NXroot extends NXobject {
 	/**
 	 * entries
 	 * 
-	 * @param entry the entry
+	 * @param entryGroup the entryGroup
 	 */
-	public void setEntry(NXentry entry);
-  
+	public void setEntry(NXentry entryGroup);
+
 	/**
 	 * Get a NXentry node by name:
 	 * <ul>
@@ -266,7 +281,7 @@ public interface NXroot extends NXobject {
 	 * The value is the name of the default :ref:`NXentry` group.
 	 * It is recommended (as of NIAC2014) to use this attribute
 	 * to help define the path to the default dataset to be plotted.
-	 * See http://wiki.nexusformat.org/2014_How_to_find_default_data
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
 	 * 
 	 * @return  the value.
@@ -282,11 +297,11 @@ public interface NXroot extends NXobject {
 	 * The value is the name of the default :ref:`NXentry` group.
 	 * It is recommended (as of NIAC2014) to use this attribute
 	 * to help define the path to the default dataset to be plotted.
-	 * See http://wiki.nexusformat.org/2014_How_to_find_default_data
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
 	 * 
-	 * @param default_ the default
+	 * @param defaultValue the defaultValue
 	 */
-	public void setAttributeDefault(String default_);
+	public void setAttributeDefault(String defaultValue);
 
 }

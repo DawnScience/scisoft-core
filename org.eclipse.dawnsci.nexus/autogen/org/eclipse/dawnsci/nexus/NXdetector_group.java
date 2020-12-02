@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,20 +16,28 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.january.dataset.IDataset;
 
 /**
- * Logical grouping of detector elements.
- * This class is used to allow a logical
- * grouping of detector elements (e.g. which tube, bank or group of banks) to be
- * recorded in the file. As well as allowing you to e.g just select the "left" or
- * "east" detectors, it may also be useful for determining which elements belong to the
- * same PSD tube and hence have e.g. the same dead time.
- * For example, if we had "bank1" composed
- * of "tube1", "tube2" and "tube3" then group_names would be the string "bank1,
- * bank1/tube1, bank1/tube2,bank1/tube3" group_index would be {1,2,3,4} group_parent
- * would be {-1,1,1,1}
- * The mapping array is interpreted as
- * group 1 is a top level group containing groups 2, 3 and 4
- * A ``group_index`` array in
- * ``NXdetector`` gives the base group for a detector element.
+ * Logical grouping of detectors. When used, describes a group of detectors.
+ * Each detector is represented as an NXdetector
+ * with its own detector data array. Each detector data array
+ * may be further decomposed into array sections by use of
+ * NXdetector_module groups. Detectors can be grouped logically
+ * together using NXdetector_group. Groups can be further grouped
+ * hierarchically in a single NXdetector_group (for example, if
+ * there are multiple detectors at an endstation or multiple
+ * endstations at a facility). Alternatively, multiple
+ * NXdetector_groups can be provided.
+ * The groups are defined hierarchically, with names given
+ * in the group_names field, unique identifying indices given
+ * in the field group_index, and the level in the hierarchy
+ * given in the group_parent field. For example if an x-ray
+ * detector group, DET, consists of four detectors in a
+ * rectangular array::
+ * DTL DTR
+ * DLL DLR
+ * We could have::
+ * group_names: ["DET", "DTL", "DTR", "DLL", "DLR"]
+ * group_index: [1, 2, 3, 4, 5]
+ * group_parent: [-1, 1, 1, 1, 1]
  * 
  */
 public interface NXdetector_group extends NXobject {
@@ -38,37 +46,69 @@ public interface NXdetector_group extends NXobject {
 	public static final String NX_GROUP_INDEX = "group_index";
 	public static final String NX_GROUP_PARENT = "group_parent";
 	public static final String NX_GROUP_TYPE = "group_type";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
-	 * Comma separated list of name
+	 * An array of the names of the detectors given in NXdetector
+	 * groups or the names of hierarchical groupings of detectors
+	 * given as names of NXdetector_group groups or in
+	 * NXdetector_group group_names and group_parent fields as
+	 * having children.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 * 
 	 * @return  the value.
 	 */
 	public IDataset getGroup_names();
 	
 	/**
-	 * Comma separated list of name
+	 * An array of the names of the detectors given in NXdetector
+	 * groups or the names of hierarchical groupings of detectors
+	 * given as names of NXdetector_group groups or in
+	 * NXdetector_group group_names and group_parent fields as
+	 * having children.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 * 
-	 * @param group_names the group_names
+	 * @param group_namesDataset the group_namesDataset
 	 */
-	public DataNode setGroup_names(IDataset group_names);
+	public DataNode setGroup_names(IDataset group_namesDataset);
 
 	/**
-	 * Comma separated list of name
+	 * An array of the names of the detectors given in NXdetector
+	 * groups or the names of hierarchical groupings of detectors
+	 * given as names of NXdetector_group groups or in
+	 * NXdetector_group group_names and group_parent fields as
+	 * having children.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 * 
 	 * @return  the value.
 	 */
 	public String getGroup_namesScalar();
 
 	/**
-	 * Comma separated list of name
+	 * An array of the names of the detectors given in NXdetector
+	 * groups or the names of hierarchical groupings of detectors
+	 * given as names of NXdetector_group groups or in
+	 * NXdetector_group group_names and group_parent fields as
+	 * having children.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 * 
 	 * @param group_names the group_names
 	 */
-	public DataNode setGroup_namesScalar(String group_names);
+	public DataNode setGroup_namesScalar(String group_namesValue);
 
 	/**
-	 * Unique ID for group. A group_index array
-	 * in ``NXdetector`` gives the base group for a detector element.
+	 * An array of unique identifiers for detectors or groupings
+	 * of detectors.
+	 * Each ID is a unique ID for the corresponding detector or group
+	 * named in the field group_names. The IDs are positive integers
+	 * starting with 1.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: i;
@@ -79,20 +119,26 @@ public interface NXdetector_group extends NXobject {
 	public IDataset getGroup_index();
 	
 	/**
-	 * Unique ID for group. A group_index array
-	 * in ``NXdetector`` gives the base group for a detector element.
+	 * An array of unique identifiers for detectors or groupings
+	 * of detectors.
+	 * Each ID is a unique ID for the corresponding detector or group
+	 * named in the field group_names. The IDs are positive integers
+	 * starting with 1.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: i;
 	 * </p>
 	 * 
-	 * @param group_index the group_index
+	 * @param group_indexDataset the group_indexDataset
 	 */
-	public DataNode setGroup_index(IDataset group_index);
+	public DataNode setGroup_index(IDataset group_indexDataset);
 
 	/**
-	 * Unique ID for group. A group_index array
-	 * in ``NXdetector`` gives the base group for a detector element.
+	 * An array of unique identifiers for detectors or groupings
+	 * of detectors.
+	 * Each ID is a unique ID for the corresponding detector or group
+	 * named in the field group_names. The IDs are positive integers
+	 * starting with 1.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: i;
@@ -103,8 +149,11 @@ public interface NXdetector_group extends NXobject {
 	public Long getGroup_indexScalar();
 
 	/**
-	 * Unique ID for group. A group_index array
-	 * in ``NXdetector`` gives the base group for a detector element.
+	 * An array of unique identifiers for detectors or groupings
+	 * of detectors.
+	 * Each ID is a unique ID for the corresponding detector or group
+	 * named in the field group_names. The IDs are positive integers
+	 * starting with 1.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: i;
@@ -112,10 +161,12 @@ public interface NXdetector_group extends NXobject {
 	 * 
 	 * @param group_index the group_index
 	 */
-	public DataNode setGroup_indexScalar(Long group_index);
+	public DataNode setGroup_indexScalar(Long group_indexValue);
 
 	/**
-	 * Index of group parent in the hierarchy: -1 means no parent (i.e. a top level) group
+	 * An array of the hierarchical levels of the parents of detectors
+	 * or groupings of detectors.
+	 * A top-level grouping has parent level -1.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: ;
@@ -126,18 +177,22 @@ public interface NXdetector_group extends NXobject {
 	public IDataset getGroup_parent();
 	
 	/**
-	 * Index of group parent in the hierarchy: -1 means no parent (i.e. a top level) group
+	 * An array of the hierarchical levels of the parents of detectors
+	 * or groupings of detectors.
+	 * A top-level grouping has parent level -1.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
 	 * 
-	 * @param group_parent the group_parent
+	 * @param group_parentDataset the group_parentDataset
 	 */
-	public DataNode setGroup_parent(IDataset group_parent);
+	public DataNode setGroup_parent(IDataset group_parentDataset);
 
 	/**
-	 * Index of group parent in the hierarchy: -1 means no parent (i.e. a top level) group
+	 * An array of the hierarchical levels of the parents of detectors
+	 * or groupings of detectors.
+	 * A top-level grouping has parent level -1.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: ;
@@ -148,7 +203,9 @@ public interface NXdetector_group extends NXobject {
 	public Long getGroup_parentScalar();
 
 	/**
-	 * Index of group parent in the hierarchy: -1 means no parent (i.e. a top level) group
+	 * An array of the hierarchical levels of the parents of detectors
+	 * or groupings of detectors.
+	 * A top-level grouping has parent level -1.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: ;
@@ -156,7 +213,7 @@ public interface NXdetector_group extends NXobject {
 	 * 
 	 * @param group_parent the group_parent
 	 */
-	public DataNode setGroup_parentScalar(Long group_parent);
+	public DataNode setGroup_parentScalar(Long group_parentValue);
 
 	/**
 	 * Code number for group type, e.g. bank=1, tube=2 etc.
@@ -176,9 +233,9 @@ public interface NXdetector_group extends NXobject {
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
 	 * 
-	 * @param group_type the group_type
+	 * @param group_typeDataset the group_typeDataset
 	 */
-	public DataNode setGroup_type(IDataset group_type);
+	public DataNode setGroup_type(IDataset group_typeDataset);
 
 	/**
 	 * Code number for group type, e.g. bank=1, tube=2 etc.
@@ -200,6 +257,32 @@ public interface NXdetector_group extends NXobject {
 	 * 
 	 * @param group_type the group_type
 	 */
-	public DataNode setGroup_typeScalar(Long group_type);
+	public DataNode setGroup_typeScalar(Long group_typeValue);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

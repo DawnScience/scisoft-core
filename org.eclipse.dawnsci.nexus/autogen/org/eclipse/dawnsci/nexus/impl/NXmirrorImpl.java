@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,12 +62,13 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 
 	@Override
 	public NXgeometry getGeometry() {
+		// dataNodeName = NX_GEOMETRY
 		return getChild("geometry", NXgeometry.class);
 	}
 
 	@Override
-	public void setGeometry(NXgeometry geometry) {
-		putChild("geometry", geometry);
+	public void setGeometry(NXgeometry geometryGroup) {
+		putChild("geometry", geometryGroup);
 	}
 
 	@Override
@@ -101,13 +102,13 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public DataNode setType(IDataset type) {
-		return setDataset(NX_TYPE, type);
+	public DataNode setType(IDataset typeDataset) {
+		return setDataset(NX_TYPE, typeDataset);
 	}
 
 	@Override
-	public DataNode setTypeScalar(String type) {
-		return setString(NX_TYPE, type);
+	public DataNode setTypeScalar(String typeValue) {
+		return setString(NX_TYPE, typeValue);
 	}
 
 	@Override
@@ -121,13 +122,13 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public DataNode setDescription(IDataset description) {
-		return setDataset(NX_DESCRIPTION, description);
+	public DataNode setDescription(IDataset descriptionDataset) {
+		return setDataset(NX_DESCRIPTION, descriptionDataset);
 	}
 
 	@Override
-	public DataNode setDescriptionScalar(String description) {
-		return setString(NX_DESCRIPTION, description);
+	public DataNode setDescriptionScalar(String descriptionValue) {
+		return setString(NX_DESCRIPTION, descriptionValue);
 	}
 
 	@Override
@@ -141,23 +142,24 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public DataNode setIncident_angle(IDataset incident_angle) {
-		return setDataset(NX_INCIDENT_ANGLE, incident_angle);
+	public DataNode setIncident_angle(IDataset incident_angleDataset) {
+		return setDataset(NX_INCIDENT_ANGLE, incident_angleDataset);
 	}
 
 	@Override
-	public DataNode setIncident_angleScalar(Double incident_angle) {
-		return setField(NX_INCIDENT_ANGLE, incident_angle);
+	public DataNode setIncident_angleScalar(Double incident_angleValue) {
+		return setField(NX_INCIDENT_ANGLE, incident_angleValue);
 	}
 
 	@Override
 	public NXdata getReflectivity() {
+		// dataNodeName = NX_REFLECTIVITY
 		return getChild("reflectivity", NXdata.class);
 	}
 
 	@Override
-	public void setReflectivity(NXdata reflectivity) {
-		putChild("reflectivity", reflectivity);
+	public void setReflectivity(NXdata reflectivityGroup) {
+		putChild("reflectivity", reflectivityGroup);
 	}
 
 	@Override
@@ -171,13 +173,13 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public DataNode setBend_angle_x(IDataset bend_angle_x) {
-		return setDataset(NX_BEND_ANGLE_X, bend_angle_x);
+	public DataNode setBend_angle_x(IDataset bend_angle_xDataset) {
+		return setDataset(NX_BEND_ANGLE_X, bend_angle_xDataset);
 	}
 
 	@Override
-	public DataNode setBend_angle_xScalar(Double bend_angle_x) {
-		return setField(NX_BEND_ANGLE_X, bend_angle_x);
+	public DataNode setBend_angle_xScalar(Double bend_angle_xValue) {
+		return setField(NX_BEND_ANGLE_X, bend_angle_xValue);
 	}
 
 	@Override
@@ -191,13 +193,13 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public DataNode setBend_angle_y(IDataset bend_angle_y) {
-		return setDataset(NX_BEND_ANGLE_Y, bend_angle_y);
+	public DataNode setBend_angle_y(IDataset bend_angle_yDataset) {
+		return setDataset(NX_BEND_ANGLE_Y, bend_angle_yDataset);
 	}
 
 	@Override
-	public DataNode setBend_angle_yScalar(Double bend_angle_y) {
-		return setField(NX_BEND_ANGLE_Y, bend_angle_y);
+	public DataNode setBend_angle_yScalar(Double bend_angle_yValue) {
+		return setField(NX_BEND_ANGLE_Y, bend_angle_yValue);
 	}
 
 	@Override
@@ -211,13 +213,13 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public DataNode setInterior_atmosphere(IDataset interior_atmosphere) {
-		return setDataset(NX_INTERIOR_ATMOSPHERE, interior_atmosphere);
+	public DataNode setInterior_atmosphere(IDataset interior_atmosphereDataset) {
+		return setDataset(NX_INTERIOR_ATMOSPHERE, interior_atmosphereDataset);
 	}
 
 	@Override
-	public DataNode setInterior_atmosphereScalar(String interior_atmosphere) {
-		return setString(NX_INTERIOR_ATMOSPHERE, interior_atmosphere);
+	public DataNode setInterior_atmosphereScalar(String interior_atmosphereValue) {
+		return setString(NX_INTERIOR_ATMOSPHERE, interior_atmosphereValue);
 	}
 
 	@Override
@@ -231,13 +233,13 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public DataNode setExternal_material(IDataset external_material) {
-		return setDataset(NX_EXTERNAL_MATERIAL, external_material);
+	public DataNode setExternal_material(IDataset external_materialDataset) {
+		return setDataset(NX_EXTERNAL_MATERIAL, external_materialDataset);
 	}
 
 	@Override
-	public DataNode setExternal_materialScalar(String external_material) {
-		return setString(NX_EXTERNAL_MATERIAL, external_material);
+	public DataNode setExternal_materialScalar(String external_materialValue) {
+		return setString(NX_EXTERNAL_MATERIAL, external_materialValue);
 	}
 
 	@Override
@@ -251,13 +253,13 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public DataNode setM_value(IDataset m_value) {
-		return setDataset(NX_M_VALUE, m_value);
+	public DataNode setM_value(IDataset m_valueDataset) {
+		return setDataset(NX_M_VALUE, m_valueDataset);
 	}
 
 	@Override
-	public DataNode setM_valueScalar(Double m_value) {
-		return setField(NX_M_VALUE, m_value);
+	public DataNode setM_valueScalar(Double m_valueValue) {
+		return setField(NX_M_VALUE, m_valueValue);
 	}
 
 	@Override
@@ -271,13 +273,13 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public DataNode setSubstrate_material(IDataset substrate_material) {
-		return setDataset(NX_SUBSTRATE_MATERIAL, substrate_material);
+	public DataNode setSubstrate_material(IDataset substrate_materialDataset) {
+		return setDataset(NX_SUBSTRATE_MATERIAL, substrate_materialDataset);
 	}
 
 	@Override
-	public DataNode setSubstrate_materialScalar(String substrate_material) {
-		return setString(NX_SUBSTRATE_MATERIAL, substrate_material);
+	public DataNode setSubstrate_materialScalar(String substrate_materialValue) {
+		return setString(NX_SUBSTRATE_MATERIAL, substrate_materialValue);
 	}
 
 	@Override
@@ -291,13 +293,13 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public DataNode setSubstrate_density(IDataset substrate_density) {
-		return setDataset(NX_SUBSTRATE_DENSITY, substrate_density);
+	public DataNode setSubstrate_density(IDataset substrate_densityDataset) {
+		return setDataset(NX_SUBSTRATE_DENSITY, substrate_densityDataset);
 	}
 
 	@Override
-	public DataNode setSubstrate_densityScalar(Double substrate_density) {
-		return setField(NX_SUBSTRATE_DENSITY, substrate_density);
+	public DataNode setSubstrate_densityScalar(Double substrate_densityValue) {
+		return setField(NX_SUBSTRATE_DENSITY, substrate_densityValue);
 	}
 
 	@Override
@@ -311,13 +313,13 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public DataNode setSubstrate_thickness(IDataset substrate_thickness) {
-		return setDataset(NX_SUBSTRATE_THICKNESS, substrate_thickness);
+	public DataNode setSubstrate_thickness(IDataset substrate_thicknessDataset) {
+		return setDataset(NX_SUBSTRATE_THICKNESS, substrate_thicknessDataset);
 	}
 
 	@Override
-	public DataNode setSubstrate_thicknessScalar(Double substrate_thickness) {
-		return setField(NX_SUBSTRATE_THICKNESS, substrate_thickness);
+	public DataNode setSubstrate_thicknessScalar(Double substrate_thicknessValue) {
+		return setField(NX_SUBSTRATE_THICKNESS, substrate_thicknessValue);
 	}
 
 	@Override
@@ -331,13 +333,13 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public DataNode setCoating_material(IDataset coating_material) {
-		return setDataset(NX_COATING_MATERIAL, coating_material);
+	public DataNode setCoating_material(IDataset coating_materialDataset) {
+		return setDataset(NX_COATING_MATERIAL, coating_materialDataset);
 	}
 
 	@Override
-	public DataNode setCoating_materialScalar(String coating_material) {
-		return setString(NX_COATING_MATERIAL, coating_material);
+	public DataNode setCoating_materialScalar(String coating_materialValue) {
+		return setString(NX_COATING_MATERIAL, coating_materialValue);
 	}
 
 	@Override
@@ -351,13 +353,13 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public DataNode setSubstrate_roughness(IDataset substrate_roughness) {
-		return setDataset(NX_SUBSTRATE_ROUGHNESS, substrate_roughness);
+	public DataNode setSubstrate_roughness(IDataset substrate_roughnessDataset) {
+		return setDataset(NX_SUBSTRATE_ROUGHNESS, substrate_roughnessDataset);
 	}
 
 	@Override
-	public DataNode setSubstrate_roughnessScalar(Double substrate_roughness) {
-		return setField(NX_SUBSTRATE_ROUGHNESS, substrate_roughness);
+	public DataNode setSubstrate_roughnessScalar(Double substrate_roughnessValue) {
+		return setField(NX_SUBSTRATE_ROUGHNESS, substrate_roughnessValue);
 	}
 
 	@Override
@@ -371,13 +373,13 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public DataNode setCoating_roughness(IDataset coating_roughness) {
-		return setDataset(NX_COATING_ROUGHNESS, coating_roughness);
+	public DataNode setCoating_roughness(IDataset coating_roughnessDataset) {
+		return setDataset(NX_COATING_ROUGHNESS, coating_roughnessDataset);
 	}
 
 	@Override
-	public DataNode setCoating_roughnessScalar(Double coating_roughness) {
-		return setField(NX_COATING_ROUGHNESS, coating_roughness);
+	public DataNode setCoating_roughnessScalar(Double coating_roughnessValue) {
+		return setField(NX_COATING_ROUGHNESS, coating_roughnessValue);
 	}
 
 	@Override
@@ -391,13 +393,13 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public DataNode setEven_layer_material(IDataset even_layer_material) {
-		return setDataset(NX_EVEN_LAYER_MATERIAL, even_layer_material);
+	public DataNode setEven_layer_material(IDataset even_layer_materialDataset) {
+		return setDataset(NX_EVEN_LAYER_MATERIAL, even_layer_materialDataset);
 	}
 
 	@Override
-	public DataNode setEven_layer_materialScalar(String even_layer_material) {
-		return setString(NX_EVEN_LAYER_MATERIAL, even_layer_material);
+	public DataNode setEven_layer_materialScalar(String even_layer_materialValue) {
+		return setString(NX_EVEN_LAYER_MATERIAL, even_layer_materialValue);
 	}
 
 	@Override
@@ -411,13 +413,13 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public DataNode setEven_layer_density(IDataset even_layer_density) {
-		return setDataset(NX_EVEN_LAYER_DENSITY, even_layer_density);
+	public DataNode setEven_layer_density(IDataset even_layer_densityDataset) {
+		return setDataset(NX_EVEN_LAYER_DENSITY, even_layer_densityDataset);
 	}
 
 	@Override
-	public DataNode setEven_layer_densityScalar(Double even_layer_density) {
-		return setField(NX_EVEN_LAYER_DENSITY, even_layer_density);
+	public DataNode setEven_layer_densityScalar(Double even_layer_densityValue) {
+		return setField(NX_EVEN_LAYER_DENSITY, even_layer_densityValue);
 	}
 
 	@Override
@@ -431,13 +433,13 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public DataNode setOdd_layer_material(IDataset odd_layer_material) {
-		return setDataset(NX_ODD_LAYER_MATERIAL, odd_layer_material);
+	public DataNode setOdd_layer_material(IDataset odd_layer_materialDataset) {
+		return setDataset(NX_ODD_LAYER_MATERIAL, odd_layer_materialDataset);
 	}
 
 	@Override
-	public DataNode setOdd_layer_materialScalar(String odd_layer_material) {
-		return setString(NX_ODD_LAYER_MATERIAL, odd_layer_material);
+	public DataNode setOdd_layer_materialScalar(String odd_layer_materialValue) {
+		return setString(NX_ODD_LAYER_MATERIAL, odd_layer_materialValue);
 	}
 
 	@Override
@@ -451,13 +453,13 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public DataNode setOdd_layer_density(IDataset odd_layer_density) {
-		return setDataset(NX_ODD_LAYER_DENSITY, odd_layer_density);
+	public DataNode setOdd_layer_density(IDataset odd_layer_densityDataset) {
+		return setDataset(NX_ODD_LAYER_DENSITY, odd_layer_densityDataset);
 	}
 
 	@Override
-	public DataNode setOdd_layer_densityScalar(Double odd_layer_density) {
-		return setField(NX_ODD_LAYER_DENSITY, odd_layer_density);
+	public DataNode setOdd_layer_densityScalar(Double odd_layer_densityValue) {
+		return setField(NX_ODD_LAYER_DENSITY, odd_layer_densityValue);
 	}
 
 	@Override
@@ -471,33 +473,45 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public DataNode setLayer_thickness(IDataset layer_thickness) {
-		return setDataset(NX_LAYER_THICKNESS, layer_thickness);
+	public DataNode setLayer_thickness(IDataset layer_thicknessDataset) {
+		return setDataset(NX_LAYER_THICKNESS, layer_thicknessDataset);
 	}
 
 	@Override
-	public DataNode setLayer_thicknessScalar(Double layer_thickness) {
-		return setField(NX_LAYER_THICKNESS, layer_thickness);
+	public DataNode setLayer_thicknessScalar(Double layer_thicknessValue) {
+		return setField(NX_LAYER_THICKNESS, layer_thicknessValue);
 	}
 
 	@Override
 	public NXshape getShape() {
+		// dataNodeName = NX_SHAPE
 		return getChild("shape", NXshape.class);
 	}
 
 	@Override
-	public void setShape(NXshape shape) {
-		putChild("shape", shape);
+	public void setShape(NXshape shapeGroup) {
+		putChild("shape", shapeGroup);
 	}
 
 	@Override
 	public NXdata getFigure_data() {
+		// dataNodeName = NX_FIGURE_DATA
 		return getChild("figure_data", NXdata.class);
 	}
 
 	@Override
-	public void setFigure_data(NXdata figure_data) {
-		putChild("figure_data", figure_data);
+	public void setFigure_data(NXdata figure_dataGroup) {
+		putChild("figure_data", figure_dataGroup);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

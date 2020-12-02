@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -243,19 +243,22 @@ public class NXarpesValidator extends AbstractNexusValidator implements NexusApp
 		final IDataset sensor_size = group.getDataset("sensor_size");
 		validateFieldNotNull("sensor_size", sensor_size);
 		validateFieldType("sensor_size", sensor_size, NX_INT);
-		validateFieldRank("sensor_size", sensor_size, 2);
+		validateFieldRank("sensor_size", sensor_size, 1);
+		validateFieldDimensions("sensor_size", sensor_size, null, 2);
 
 		// validate field 'region_origin' of type NX_INT. Note: field not defined in base class.
 		final IDataset region_origin = group.getDataset("region_origin");
 		validateFieldNotNull("region_origin", region_origin);
 		validateFieldType("region_origin", region_origin, NX_INT);
-		validateFieldRank("region_origin", region_origin, 2);
+		validateFieldRank("region_origin", region_origin, 1);
+		validateFieldDimensions("region_origin", region_origin, null, 2);
 
 		// validate field 'region_size' of type NX_INT. Note: field not defined in base class.
 		final IDataset region_size = group.getDataset("region_size");
 		validateFieldNotNull("region_size", region_size);
 		validateFieldType("region_size", region_size, NX_INT);
-		validateFieldRank("region_size", region_size, 2);
+		validateFieldRank("region_size", region_size, 1);
+		validateFieldDimensions("region_size", region_size, null, 2);
 	}
 
 	/**

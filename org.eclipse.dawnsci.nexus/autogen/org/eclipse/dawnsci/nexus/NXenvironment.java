@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,9 +38,9 @@ public interface NXenvironment extends NXobject {
 	/**
 	 * Apparatus identification code/model number; e.g. OC100 011
 	 * 
-	 * @param name the name
+	 * @param nameDataset the nameDataset
 	 */
-	public DataNode setName(IDataset name);
+	public DataNode setName(IDataset nameDataset);
 
 	/**
 	 * Apparatus identification code/model number; e.g. OC100 011
@@ -54,7 +54,7 @@ public interface NXenvironment extends NXobject {
 	 * 
 	 * @param name the name
 	 */
-	public DataNode setNameScalar(String name);
+	public DataNode setNameScalar(String nameValue);
 
 	/**
 	 * Alternative short name, perhaps for dashboard display like a present Seblock name
@@ -66,9 +66,9 @@ public interface NXenvironment extends NXobject {
 	/**
 	 * Alternative short name, perhaps for dashboard display like a present Seblock name
 	 * 
-	 * @param short_name the short_name
+	 * @param short_nameDataset the short_nameDataset
 	 */
-	public DataNode setShort_name(IDataset short_name);
+	public DataNode setShort_name(IDataset short_nameDataset);
 
 	/**
 	 * Alternative short name, perhaps for dashboard display like a present Seblock name
@@ -82,7 +82,7 @@ public interface NXenvironment extends NXobject {
 	 * 
 	 * @param short_name the short_name
 	 */
-	public DataNode setShort_nameScalar(String short_name);
+	public DataNode setShort_nameScalar(String short_nameValue);
 
 	/**
 	 * Type of apparatus. This could be the SE codes in scheduling database; e.g. OC/100
@@ -94,9 +94,9 @@ public interface NXenvironment extends NXobject {
 	/**
 	 * Type of apparatus. This could be the SE codes in scheduling database; e.g. OC/100
 	 * 
-	 * @param type the type
+	 * @param typeDataset the typeDataset
 	 */
-	public DataNode setType(IDataset type);
+	public DataNode setType(IDataset typeDataset);
 
 	/**
 	 * Type of apparatus. This could be the SE codes in scheduling database; e.g. OC/100
@@ -110,7 +110,7 @@ public interface NXenvironment extends NXobject {
 	 * 
 	 * @param type the type
 	 */
-	public DataNode setTypeScalar(String type);
+	public DataNode setTypeScalar(String typeValue);
 
 	/**
 	 * Description of the apparatus; e.g. 100mm bore orange cryostat with Roots pump
@@ -122,9 +122,9 @@ public interface NXenvironment extends NXobject {
 	/**
 	 * Description of the apparatus; e.g. 100mm bore orange cryostat with Roots pump
 	 * 
-	 * @param description the description
+	 * @param descriptionDataset the descriptionDataset
 	 */
-	public DataNode setDescription(IDataset description);
+	public DataNode setDescription(IDataset descriptionDataset);
 
 	/**
 	 * Description of the apparatus; e.g. 100mm bore orange cryostat with Roots pump
@@ -138,7 +138,7 @@ public interface NXenvironment extends NXobject {
 	 * 
 	 * @param description the description
 	 */
-	public DataNode setDescriptionScalar(String description);
+	public DataNode setDescriptionScalar(String descriptionValue);
 
 	/**
 	 * Program controlling the apparatus; e.g. LabView VI name
@@ -150,9 +150,9 @@ public interface NXenvironment extends NXobject {
 	/**
 	 * Program controlling the apparatus; e.g. LabView VI name
 	 * 
-	 * @param program the program
+	 * @param programDataset the programDataset
 	 */
-	public DataNode setProgram(IDataset program);
+	public DataNode setProgram(IDataset programDataset);
 
 	/**
 	 * Program controlling the apparatus; e.g. LabView VI name
@@ -166,7 +166,7 @@ public interface NXenvironment extends NXobject {
 	 * 
 	 * @param program the program
 	 */
-	public DataNode setProgramScalar(String program);
+	public DataNode setProgramScalar(String programValue);
 
 	/**
 	 * The position and orientation of the apparatus
@@ -178,9 +178,9 @@ public interface NXenvironment extends NXobject {
 	/**
 	 * The position and orientation of the apparatus
 	 * 
-	 * @param position the position
+	 * @param positionGroup the positionGroup
 	 */
-	public void setPosition(NXgeometry position);
+	public void setPosition(NXgeometry positionGroup);
 
 	/**
 	 * Additional information, LabView logs, digital photographs, etc
@@ -192,10 +192,10 @@ public interface NXenvironment extends NXobject {
 	/**
 	 * Additional information, LabView logs, digital photographs, etc
 	 * 
-	 * @param note the note
+	 * @param noteGroup the noteGroup
 	 */
-	public void setNote(NXnote note);
-  
+	public void setNote(NXnote noteGroup);
+
 	/**
 	 * Get a NXnote node by name:
 	 * <ul>
@@ -252,10 +252,10 @@ public interface NXenvironment extends NXobject {
 	
 	/**
 	 * 
-	 * @param sensor the sensor
+	 * @param sensorGroup the sensorGroup
 	 */
-	public void setSensor(NXsensor sensor);
-  
+	public void setSensor(NXsensor sensorGroup);
+
 	/**
 	 * Get a NXsensor node by name:
 	 * <ul>

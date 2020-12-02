@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,9 +70,9 @@ public interface NXcontainer extends NXobject {
 	/**
 	 * Descriptive name of container.
 	 * 
-	 * @param name the name
+	 * @param nameDataset the nameDataset
 	 */
-	public DataNode setName(IDataset name);
+	public DataNode setName(IDataset nameDataset);
 
 	/**
 	 * Descriptive name of container.
@@ -86,7 +86,7 @@ public interface NXcontainer extends NXobject {
 	 * 
 	 * @param name the name
 	 */
-	public DataNode setNameScalar(String name);
+	public DataNode setNameScalar(String nameValue);
 
 	/**
 	 * Verbose description of container and how it fits into the wider
@@ -100,9 +100,9 @@ public interface NXcontainer extends NXobject {
 	 * Verbose description of container and how it fits into the wider
 	 * experimental set up.
 	 * 
-	 * @param description the description
+	 * @param descriptionDataset the descriptionDataset
 	 */
-	public DataNode setDescription(IDataset description);
+	public DataNode setDescription(IDataset descriptionDataset);
 
 	/**
 	 * Verbose description of container and how it fits into the wider
@@ -118,7 +118,7 @@ public interface NXcontainer extends NXobject {
 	 * 
 	 * @param description the description
 	 */
-	public DataNode setDescriptionScalar(String description);
+	public DataNode setDescriptionScalar(String descriptionValue);
 
 	/**
 	 * Chemical composition of the material the container is made from.
@@ -170,9 +170,9 @@ public interface NXcontainer extends NXobject {
 	 * alphabetic order of their symbol.
 	 * * This is the *Hill* system used by Chemical Abstracts.
 	 * 
-	 * @param chemical_formula the chemical_formula
+	 * @param chemical_formulaDataset the chemical_formulaDataset
 	 */
-	public DataNode setChemical_formula(IDataset chemical_formula);
+	public DataNode setChemical_formula(IDataset chemical_formulaDataset);
 
 	/**
 	 * Chemical composition of the material the container is made from.
@@ -226,7 +226,7 @@ public interface NXcontainer extends NXobject {
 	 * 
 	 * @param chemical_formula the chemical_formula
 	 */
-	public DataNode setChemical_formulaScalar(String chemical_formula);
+	public DataNode setChemical_formulaScalar(String chemical_formulaValue);
 
 	/**
 	 * Density of the material the container is made from.
@@ -248,9 +248,9 @@ public interface NXcontainer extends NXobject {
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
 	 * 
-	 * @param density the density
+	 * @param densityDataset the densityDataset
 	 */
-	public DataNode setDensity(IDataset density);
+	public DataNode setDensity(IDataset densityDataset);
 
 	/**
 	 * Density of the material the container is made from.
@@ -274,7 +274,7 @@ public interface NXcontainer extends NXobject {
 	 * 
 	 * @param density the density
 	 */
-	public DataNode setDensityScalar(Double density);
+	public DataNode setDensityScalar(Double densityValue);
 
 	/**
 	 * Fraction of the volume of the container occupied by the material
@@ -298,9 +298,9 @@ public interface NXcontainer extends NXobject {
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
 	 * 
-	 * @param packing_fraction the packing_fraction
+	 * @param packing_fractionDataset the packing_fractionDataset
 	 */
-	public DataNode setPacking_fraction(IDataset packing_fraction);
+	public DataNode setPacking_fraction(IDataset packing_fractionDataset);
 
 	/**
 	 * Fraction of the volume of the container occupied by the material
@@ -326,7 +326,7 @@ public interface NXcontainer extends NXobject {
 	 * 
 	 * @param packing_fraction the packing_fraction
 	 */
-	public DataNode setPacking_fractionScalar(Double packing_fraction);
+	public DataNode setPacking_fractionScalar(Double packing_fractionValue);
 
 	/**
 	 * Relative molecular mass of container.
@@ -348,9 +348,9 @@ public interface NXcontainer extends NXobject {
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
 	 * 
-	 * @param relative_molecular_mass the relative_molecular_mass
+	 * @param relative_molecular_massDataset the relative_molecular_massDataset
 	 */
-	public DataNode setRelative_molecular_mass(IDataset relative_molecular_mass);
+	public DataNode setRelative_molecular_mass(IDataset relative_molecular_massDataset);
 
 	/**
 	 * Relative molecular mass of container.
@@ -374,7 +374,7 @@ public interface NXcontainer extends NXobject {
 	 * 
 	 * @param relative_molecular_mass the relative_molecular_mass
 	 */
-	public DataNode setRelative_molecular_massScalar(Double relative_molecular_mass);
+	public DataNode setRelative_molecular_massScalar(Double relative_molecular_massValue);
 
 	/**
 	 * Details of beam incident on container, including the position
@@ -390,9 +390,9 @@ public interface NXcontainer extends NXobject {
 	 * relative to the sample (to determine whether the container is
 	 * upstream or downstream of the sample).
 	 * 
-	 * @param beam the beam
+	 * @param beamGroup the beamGroup
 	 */
-	public void setBeam(NXbeam beam);
+	public void setBeam(NXbeam beamGroup);
 
 	/**
 	 * Shape of the container. In combination with orientation this
@@ -408,9 +408,9 @@ public interface NXcontainer extends NXobject {
 	 * should allow the beampath through the container to be modelled to
 	 * allow the adsorption to be calculated.
 	 * 
-	 * @param shape the shape
+	 * @param shapeGroup the shapeGroup
 	 */
-	public void setShape(NXshape shape);
+	public void setShape(NXshape shapeGroup);
 
 	/**
 	 * The angle the container makes to the beam and how it may change
@@ -428,9 +428,9 @@ public interface NXcontainer extends NXobject {
 	 * the beampath through the container to be modelled to allow the
 	 * adsorption of the container to be calculated.
 	 * 
-	 * @param orientation the orientation
+	 * @param orientationGroup the orientationGroup
 	 */
-	public void setOrientation(NXtransformations orientation);
+	public void setOrientation(NXtransformations orientationGroup);
 	// Unprocessed link: reference_measurement
 
 }

@@ -128,7 +128,7 @@ public class NexusFileExternalLinkTest extends AbstractNexusFileTestBase {
 		extEntry.setData(extData);
 		
 		linkedDataset = DatasetFactory.createRange(10.0).reshape(2, 5);
-		extData.setData(linkedDataset);
+		extData.setData(NXdata.NX_DATA, linkedDataset);
 		
 		NexusTestUtils.saveNexusFile(externalFileTree);
 	}

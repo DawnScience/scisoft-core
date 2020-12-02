@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,13 +70,13 @@ public class NXnoteImpl extends NXobjectImpl implements NXnote {
 	}
 
 	@Override
-	public DataNode setAuthor(IDataset author) {
-		return setDataset(NX_AUTHOR, author);
+	public DataNode setAuthor(IDataset authorDataset) {
+		return setDataset(NX_AUTHOR, authorDataset);
 	}
 
 	@Override
-	public DataNode setAuthorScalar(String author) {
-		return setString(NX_AUTHOR, author);
+	public DataNode setAuthorScalar(String authorValue) {
+		return setString(NX_AUTHOR, authorValue);
 	}
 
 	@Override
@@ -90,13 +90,13 @@ public class NXnoteImpl extends NXobjectImpl implements NXnote {
 	}
 
 	@Override
-	public DataNode setDate(IDataset date) {
-		return setDataset(NX_DATE, date);
+	public DataNode setDate(IDataset dateDataset) {
+		return setDataset(NX_DATE, dateDataset);
 	}
 
 	@Override
-	public DataNode setDateScalar(Date date) {
-		return setDate(NX_DATE, date);
+	public DataNode setDateScalar(Date dateValue) {
+		return setDate(NX_DATE, dateValue);
 	}
 
 	@Override
@@ -110,13 +110,13 @@ public class NXnoteImpl extends NXobjectImpl implements NXnote {
 	}
 
 	@Override
-	public DataNode setType(IDataset type) {
-		return setDataset(NX_TYPE, type);
+	public DataNode setType(IDataset typeDataset) {
+		return setDataset(NX_TYPE, typeDataset);
 	}
 
 	@Override
-	public DataNode setTypeScalar(String type) {
-		return setString(NX_TYPE, type);
+	public DataNode setTypeScalar(String typeValue) {
+		return setString(NX_TYPE, typeValue);
 	}
 
 	@Override
@@ -130,13 +130,13 @@ public class NXnoteImpl extends NXobjectImpl implements NXnote {
 	}
 
 	@Override
-	public DataNode setFile_name(IDataset file_name) {
-		return setDataset(NX_FILE_NAME, file_name);
+	public DataNode setFile_name(IDataset file_nameDataset) {
+		return setDataset(NX_FILE_NAME, file_nameDataset);
 	}
 
 	@Override
-	public DataNode setFile_nameScalar(String file_name) {
-		return setString(NX_FILE_NAME, file_name);
+	public DataNode setFile_nameScalar(String file_nameValue) {
+		return setString(NX_FILE_NAME, file_nameValue);
 	}
 
 	@Override
@@ -150,13 +150,13 @@ public class NXnoteImpl extends NXobjectImpl implements NXnote {
 	}
 
 	@Override
-	public DataNode setDescription(IDataset description) {
-		return setDataset(NX_DESCRIPTION, description);
+	public DataNode setDescription(IDataset descriptionDataset) {
+		return setDataset(NX_DESCRIPTION, descriptionDataset);
 	}
 
 	@Override
-	public DataNode setDescriptionScalar(String description) {
-		return setString(NX_DESCRIPTION, description);
+	public DataNode setDescriptionScalar(String descriptionValue) {
+		return setString(NX_DESCRIPTION, descriptionValue);
 	}
 
 	@Override
@@ -170,13 +170,13 @@ public class NXnoteImpl extends NXobjectImpl implements NXnote {
 	}
 
 	@Override
-	public DataNode setSequence_index(IDataset sequence_index) {
-		return setDataset(NX_SEQUENCE_INDEX, sequence_index);
+	public DataNode setSequence_index(IDataset sequence_indexDataset) {
+		return setDataset(NX_SEQUENCE_INDEX, sequence_indexDataset);
 	}
 
 	@Override
-	public DataNode setSequence_indexScalar(Long sequence_index) {
-		return setField(NX_SEQUENCE_INDEX, sequence_index);
+	public DataNode setSequence_indexScalar(Long sequence_indexValue) {
+		return setField(NX_SEQUENCE_INDEX, sequence_indexValue);
 	}
 
 	@Override
@@ -190,13 +190,23 @@ public class NXnoteImpl extends NXobjectImpl implements NXnote {
 	}
 
 	@Override
-	public DataNode setData(IDataset data) {
-		return setDataset(NX_DATA, data);
+	public DataNode setData(IDataset dataDataset) {
+		return setDataset(NX_DATA, dataDataset);
 	}
 
 	@Override
-	public DataNode setDataScalar(Object data) {
-		return setField(NX_DATA, data);
+	public DataNode setDataScalar(Object dataValue) {
+		return setField(NX_DATA, dataValue);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

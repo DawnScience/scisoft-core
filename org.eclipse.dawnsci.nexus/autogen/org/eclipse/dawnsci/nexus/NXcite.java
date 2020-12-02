@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ public interface NXcite extends NXobject {
 	public static final String NX_DOI = "doi";
 	public static final String NX_ENDNOTE = "endnote";
 	public static final String NX_BIBTEX = "bibtex";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * This should describe the reason for including this reference.
 	 * For example: The dataset in this group was normalised using the method
@@ -50,9 +51,9 @@ public interface NXcite extends NXobject {
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
 	 * 
-	 * @param description the description
+	 * @param descriptionDataset the descriptionDataset
 	 */
-	public DataNode setDescription(IDataset description);
+	public DataNode setDescription(IDataset descriptionDataset);
 
 	/**
 	 * This should describe the reason for including this reference.
@@ -76,7 +77,7 @@ public interface NXcite extends NXobject {
 	 * 
 	 * @param description the description
 	 */
-	public DataNode setDescriptionScalar(String description);
+	public DataNode setDescriptionScalar(String descriptionValue);
 
 	/**
 	 * URL referencing the document or data.
@@ -94,9 +95,9 @@ public interface NXcite extends NXobject {
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
 	 * 
-	 * @param url the url
+	 * @param urlDataset the urlDataset
 	 */
-	public DataNode setUrl(IDataset url);
+	public DataNode setUrl(IDataset urlDataset);
 
 	/**
 	 * URL referencing the document or data.
@@ -116,7 +117,7 @@ public interface NXcite extends NXobject {
 	 * 
 	 * @param url the url
 	 */
-	public DataNode setUrlScalar(String url);
+	public DataNode setUrlScalar(String urlValue);
 
 	/**
 	 * DOI referencing the document or data.
@@ -134,9 +135,9 @@ public interface NXcite extends NXobject {
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
 	 * 
-	 * @param doi the doi
+	 * @param doiDataset the doiDataset
 	 */
-	public DataNode setDoi(IDataset doi);
+	public DataNode setDoi(IDataset doiDataset);
 
 	/**
 	 * DOI referencing the document or data.
@@ -156,7 +157,7 @@ public interface NXcite extends NXobject {
 	 * 
 	 * @param doi the doi
 	 */
-	public DataNode setDoiScalar(String doi);
+	public DataNode setDoiScalar(String doiValue);
 
 	/**
 	 * Bibliographic reference data in EndNote format.
@@ -174,9 +175,9 @@ public interface NXcite extends NXobject {
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
 	 * 
-	 * @param endnote the endnote
+	 * @param endnoteDataset the endnoteDataset
 	 */
-	public DataNode setEndnote(IDataset endnote);
+	public DataNode setEndnote(IDataset endnoteDataset);
 
 	/**
 	 * Bibliographic reference data in EndNote format.
@@ -196,7 +197,7 @@ public interface NXcite extends NXobject {
 	 * 
 	 * @param endnote the endnote
 	 */
-	public DataNode setEndnoteScalar(String endnote);
+	public DataNode setEndnoteScalar(String endnoteValue);
 
 	/**
 	 * Bibliographic reference data in BibTeX format.
@@ -214,9 +215,9 @@ public interface NXcite extends NXobject {
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
 	 * 
-	 * @param bibtex the bibtex
+	 * @param bibtexDataset the bibtexDataset
 	 */
-	public DataNode setBibtex(IDataset bibtex);
+	public DataNode setBibtex(IDataset bibtexDataset);
 
 	/**
 	 * Bibliographic reference data in BibTeX format.
@@ -236,6 +237,32 @@ public interface NXcite extends NXobject {
 	 * 
 	 * @param bibtex the bibtex
 	 */
-	public DataNode setBibtexScalar(String bibtex);
+	public DataNode setBibtexScalar(String bibtexValue);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

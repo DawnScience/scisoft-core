@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -79,33 +79,57 @@ public class NXmonochromatorImpl extends NXobjectImpl implements NXmonochromator
 	}
 
 	@Override
-	public DataNode setWavelength(IDataset wavelength) {
-		return setDataset(NX_WAVELENGTH, wavelength);
+	public DataNode setWavelength(IDataset wavelengthDataset) {
+		return setDataset(NX_WAVELENGTH, wavelengthDataset);
 	}
 
 	@Override
-	public DataNode setWavelengthScalar(Double wavelength) {
-		return setField(NX_WAVELENGTH, wavelength);
+	public DataNode setWavelengthScalar(Double wavelengthValue) {
+		return setField(NX_WAVELENGTH, wavelengthValue);
 	}
 
 	@Override
+	@Deprecated
 	public IDataset getWavelength_error() {
 		return getDataset(NX_WAVELENGTH_ERROR);
 	}
 
 	@Override
+	@Deprecated
 	public Double getWavelength_errorScalar() {
 		return getDouble(NX_WAVELENGTH_ERROR);
 	}
 
 	@Override
-	public DataNode setWavelength_error(IDataset wavelength_error) {
-		return setDataset(NX_WAVELENGTH_ERROR, wavelength_error);
+	@Deprecated
+	public DataNode setWavelength_error(IDataset wavelength_errorDataset) {
+		return setDataset(NX_WAVELENGTH_ERROR, wavelength_errorDataset);
 	}
 
 	@Override
-	public DataNode setWavelength_errorScalar(Double wavelength_error) {
-		return setField(NX_WAVELENGTH_ERROR, wavelength_error);
+	@Deprecated
+	public DataNode setWavelength_errorScalar(Double wavelength_errorValue) {
+		return setField(NX_WAVELENGTH_ERROR, wavelength_errorValue);
+	}
+
+	@Override
+	public IDataset getWavelength_errors() {
+		return getDataset(NX_WAVELENGTH_ERRORS);
+	}
+
+	@Override
+	public Double getWavelength_errorsScalar() {
+		return getDouble(NX_WAVELENGTH_ERRORS);
+	}
+
+	@Override
+	public DataNode setWavelength_errors(IDataset wavelength_errorsDataset) {
+		return setDataset(NX_WAVELENGTH_ERRORS, wavelength_errorsDataset);
+	}
+
+	@Override
+	public DataNode setWavelength_errorsScalar(Double wavelength_errorsValue) {
+		return setField(NX_WAVELENGTH_ERRORS, wavelength_errorsValue);
 	}
 
 	@Override
@@ -119,63 +143,90 @@ public class NXmonochromatorImpl extends NXobjectImpl implements NXmonochromator
 	}
 
 	@Override
-	public DataNode setEnergy(IDataset energy) {
-		return setDataset(NX_ENERGY, energy);
+	public DataNode setEnergy(IDataset energyDataset) {
+		return setDataset(NX_ENERGY, energyDataset);
 	}
 
 	@Override
-	public DataNode setEnergyScalar(Double energy) {
-		return setField(NX_ENERGY, energy);
+	public DataNode setEnergyScalar(Double energyValue) {
+		return setField(NX_ENERGY, energyValue);
 	}
 
 	@Override
+	@Deprecated
 	public IDataset getEnergy_error() {
 		return getDataset(NX_ENERGY_ERROR);
 	}
 
 	@Override
+	@Deprecated
 	public Double getEnergy_errorScalar() {
 		return getDouble(NX_ENERGY_ERROR);
 	}
 
 	@Override
-	public DataNode setEnergy_error(IDataset energy_error) {
-		return setDataset(NX_ENERGY_ERROR, energy_error);
+	@Deprecated
+	public DataNode setEnergy_error(IDataset energy_errorDataset) {
+		return setDataset(NX_ENERGY_ERROR, energy_errorDataset);
 	}
 
 	@Override
-	public DataNode setEnergy_errorScalar(Double energy_error) {
-		return setField(NX_ENERGY_ERROR, energy_error);
+	@Deprecated
+	public DataNode setEnergy_errorScalar(Double energy_errorValue) {
+		return setField(NX_ENERGY_ERROR, energy_errorValue);
+	}
+
+	@Override
+	public IDataset getEnergy_errors() {
+		return getDataset(NX_ENERGY_ERRORS);
+	}
+
+	@Override
+	public Double getEnergy_errorsScalar() {
+		return getDouble(NX_ENERGY_ERRORS);
+	}
+
+	@Override
+	public DataNode setEnergy_errors(IDataset energy_errorsDataset) {
+		return setDataset(NX_ENERGY_ERRORS, energy_errorsDataset);
+	}
+
+	@Override
+	public DataNode setEnergy_errorsScalar(Double energy_errorsValue) {
+		return setField(NX_ENERGY_ERRORS, energy_errorsValue);
 	}
 
 	@Override
 	public NXdata getDistribution() {
+		// dataNodeName = NX_DISTRIBUTION
 		return getChild("distribution", NXdata.class);
 	}
 
 	@Override
-	public void setDistribution(NXdata distribution) {
-		putChild("distribution", distribution);
+	public void setDistribution(NXdata distributionGroup) {
+		putChild("distribution", distributionGroup);
 	}
 
 	@Override
 	public NXgeometry getGeometry() {
+		// dataNodeName = NX_GEOMETRY
 		return getChild("geometry", NXgeometry.class);
 	}
 
 	@Override
-	public void setGeometry(NXgeometry geometry) {
-		putChild("geometry", geometry);
+	public void setGeometry(NXgeometry geometryGroup) {
+		putChild("geometry", geometryGroup);
 	}
 
 	@Override
 	public NXcrystal getCrystal() {
+		// dataNodeName = NX_CRYSTAL
 		return getChild("crystal", NXcrystal.class);
 	}
 
 	@Override
-	public void setCrystal(NXcrystal crystal) {
-		putChild("crystal", crystal);
+	public void setCrystal(NXcrystal crystalGroup) {
+		putChild("crystal", crystalGroup);
 	}
 
 	@Override
@@ -200,12 +251,13 @@ public class NXmonochromatorImpl extends NXobjectImpl implements NXmonochromator
 
 	@Override
 	public NXvelocity_selector getVelocity_selector() {
+		// dataNodeName = NX_VELOCITY_SELECTOR
 		return getChild("velocity_selector", NXvelocity_selector.class);
 	}
 
 	@Override
-	public void setVelocity_selector(NXvelocity_selector velocity_selector) {
-		putChild("velocity_selector", velocity_selector);
+	public void setVelocity_selector(NXvelocity_selector velocity_selectorGroup) {
+		putChild("velocity_selector", velocity_selectorGroup);
 	}
 
 	@Override
@@ -230,12 +282,13 @@ public class NXmonochromatorImpl extends NXobjectImpl implements NXmonochromator
 
 	@Override
 	public NXgrating getGrating() {
+		// dataNodeName = NX_GRATING
 		return getChild("grating", NXgrating.class);
 	}
 
 	@Override
-	public void setGrating(NXgrating grating) {
-		putChild("grating", grating);
+	public void setGrating(NXgrating gratingGroup) {
+		putChild("grating", gratingGroup);
 	}
 
 	@Override
@@ -256,6 +309,16 @@ public class NXmonochromatorImpl extends NXobjectImpl implements NXmonochromator
 	@Override
 	public void setAllGrating(Map<String, NXgrating> grating) {
 		setChildren(grating);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

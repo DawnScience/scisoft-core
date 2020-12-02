@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,13 +65,13 @@ public class NXflipperImpl extends NXobjectImpl implements NXflipper {
 	}
 
 	@Override
-	public DataNode setType(IDataset type) {
-		return setDataset(NX_TYPE, type);
+	public DataNode setType(IDataset typeDataset) {
+		return setDataset(NX_TYPE, typeDataset);
 	}
 
 	@Override
-	public DataNode setTypeScalar(String type) {
-		return setString(NX_TYPE, type);
+	public DataNode setTypeScalar(String typeValue) {
+		return setString(NX_TYPE, typeValue);
 	}
 
 	@Override
@@ -85,13 +85,13 @@ public class NXflipperImpl extends NXobjectImpl implements NXflipper {
 	}
 
 	@Override
-	public DataNode setFlip_turns(IDataset flip_turns) {
-		return setDataset(NX_FLIP_TURNS, flip_turns);
+	public DataNode setFlip_turns(IDataset flip_turnsDataset) {
+		return setDataset(NX_FLIP_TURNS, flip_turnsDataset);
 	}
 
 	@Override
-	public DataNode setFlip_turnsScalar(Double flip_turns) {
-		return setField(NX_FLIP_TURNS, flip_turns);
+	public DataNode setFlip_turnsScalar(Double flip_turnsValue) {
+		return setField(NX_FLIP_TURNS, flip_turnsValue);
 	}
 
 	@Override
@@ -105,13 +105,13 @@ public class NXflipperImpl extends NXobjectImpl implements NXflipper {
 	}
 
 	@Override
-	public DataNode setComp_turns(IDataset comp_turns) {
-		return setDataset(NX_COMP_TURNS, comp_turns);
+	public DataNode setComp_turns(IDataset comp_turnsDataset) {
+		return setDataset(NX_COMP_TURNS, comp_turnsDataset);
 	}
 
 	@Override
-	public DataNode setComp_turnsScalar(Double comp_turns) {
-		return setField(NX_COMP_TURNS, comp_turns);
+	public DataNode setComp_turnsScalar(Double comp_turnsValue) {
+		return setField(NX_COMP_TURNS, comp_turnsValue);
 	}
 
 	@Override
@@ -125,13 +125,13 @@ public class NXflipperImpl extends NXobjectImpl implements NXflipper {
 	}
 
 	@Override
-	public DataNode setGuide_turns(IDataset guide_turns) {
-		return setDataset(NX_GUIDE_TURNS, guide_turns);
+	public DataNode setGuide_turns(IDataset guide_turnsDataset) {
+		return setDataset(NX_GUIDE_TURNS, guide_turnsDataset);
 	}
 
 	@Override
-	public DataNode setGuide_turnsScalar(Double guide_turns) {
-		return setField(NX_GUIDE_TURNS, guide_turns);
+	public DataNode setGuide_turnsScalar(Double guide_turnsValue) {
+		return setField(NX_GUIDE_TURNS, guide_turnsValue);
 	}
 
 	@Override
@@ -145,13 +145,13 @@ public class NXflipperImpl extends NXobjectImpl implements NXflipper {
 	}
 
 	@Override
-	public DataNode setFlip_current(IDataset flip_current) {
-		return setDataset(NX_FLIP_CURRENT, flip_current);
+	public DataNode setFlip_current(IDataset flip_currentDataset) {
+		return setDataset(NX_FLIP_CURRENT, flip_currentDataset);
 	}
 
 	@Override
-	public DataNode setFlip_currentScalar(Double flip_current) {
-		return setField(NX_FLIP_CURRENT, flip_current);
+	public DataNode setFlip_currentScalar(Double flip_currentValue) {
+		return setField(NX_FLIP_CURRENT, flip_currentValue);
 	}
 
 	@Override
@@ -165,13 +165,13 @@ public class NXflipperImpl extends NXobjectImpl implements NXflipper {
 	}
 
 	@Override
-	public DataNode setComp_current(IDataset comp_current) {
-		return setDataset(NX_COMP_CURRENT, comp_current);
+	public DataNode setComp_current(IDataset comp_currentDataset) {
+		return setDataset(NX_COMP_CURRENT, comp_currentDataset);
 	}
 
 	@Override
-	public DataNode setComp_currentScalar(Double comp_current) {
-		return setField(NX_COMP_CURRENT, comp_current);
+	public DataNode setComp_currentScalar(Double comp_currentValue) {
+		return setField(NX_COMP_CURRENT, comp_currentValue);
 	}
 
 	@Override
@@ -185,13 +185,13 @@ public class NXflipperImpl extends NXobjectImpl implements NXflipper {
 	}
 
 	@Override
-	public DataNode setGuide_current(IDataset guide_current) {
-		return setDataset(NX_GUIDE_CURRENT, guide_current);
+	public DataNode setGuide_current(IDataset guide_currentDataset) {
+		return setDataset(NX_GUIDE_CURRENT, guide_currentDataset);
 	}
 
 	@Override
-	public DataNode setGuide_currentScalar(Double guide_current) {
-		return setField(NX_GUIDE_CURRENT, guide_current);
+	public DataNode setGuide_currentScalar(Double guide_currentValue) {
+		return setField(NX_GUIDE_CURRENT, guide_currentValue);
 	}
 
 	@Override
@@ -205,13 +205,23 @@ public class NXflipperImpl extends NXobjectImpl implements NXflipper {
 	}
 
 	@Override
-	public DataNode setThickness(IDataset thickness) {
-		return setDataset(NX_THICKNESS, thickness);
+	public DataNode setThickness(IDataset thicknessDataset) {
+		return setDataset(NX_THICKNESS, thicknessDataset);
 	}
 
 	@Override
-	public DataNode setThicknessScalar(Double thickness) {
-		return setField(NX_THICKNESS, thickness);
+	public DataNode setThicknessScalar(Double thicknessValue) {
+		return setField(NX_THICKNESS, thicknessValue);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

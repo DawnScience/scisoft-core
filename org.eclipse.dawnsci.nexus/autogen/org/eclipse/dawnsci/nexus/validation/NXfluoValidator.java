@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -177,14 +177,14 @@ public class NXfluoValidator extends AbstractNexusValidator implements NexusAppl
 		validateFieldType("data", data, NX_INT);
 		validateFieldUnits("data", data, NX_ANY);
 		validateFieldRank("data", data, 1);
-		validateFieldDimensions("data", data, null, "nenergy");
+		validateFieldDimensions("data", data, null, "nE");
 
 		// validate field 'energy' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset energy = group.getDataset("energy");
 		validateFieldNotNull("energy", energy);
 		validateFieldType("energy", energy, NX_FLOAT);
 		validateFieldRank("energy", energy, 1);
-		validateFieldDimensions("energy", energy, null, "nenergy");
+		validateFieldDimensions("energy", energy, null, "nE");
 	}
 
 	/**

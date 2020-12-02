@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -163,7 +163,7 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 		validateFieldType("data", data, NX_INT);
 		validateFieldUnits("data", data, NX_ANY);
 		validateFieldRank("data", data, 3);
-		validateFieldDimensions("data", data, null, "nBrightFrames", "xsize", "ysize");
+		validateFieldDimensions("data", data, null, "nBrightFrames", "xSize", "ySize");
 
 		// validate field 'sequence_number' of type NX_INT.
 		final IDataset sequence_number = group.getSequence_number();
@@ -187,7 +187,7 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 		validateFieldType("data", data, NX_INT);
 		validateFieldUnits("data", data, NX_ANY);
 		validateFieldRank("data", data, 3);
-		validateFieldDimensions("data", data, null, "nDarkFrames", "xsize", "ysize");
+		validateFieldDimensions("data", data, null, "nDarkFrames", "xSize", "ySize");
 
 		// validate field 'sequence_number' of type NX_INT.
 		final IDataset sequence_number = group.getSequence_number();
@@ -211,7 +211,7 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 		validateFieldType("data", data, NX_INT);
 		validateFieldUnits("data", data, NX_ANY);
 		validateFieldRank("data", data, 4);
-		validateFieldDimensions("data", data, null, "nSampleFrames", "nPhase", "xsize", "ysize");
+		validateFieldDimensions("data", data, null, "nSampleFrames", "nPhase", "xSize", "ySize");
 
 		// validate field 'sequence_number' of type NX_INT.
 		final IDataset sequence_number = group.getSequence_number();

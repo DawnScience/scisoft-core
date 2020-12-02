@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,13 +68,13 @@ public class NXcapillaryImpl extends NXobjectImpl implements NXcapillary {
 	}
 
 	@Override
-	public DataNode setType(IDataset type) {
-		return setDataset(NX_TYPE, type);
+	public DataNode setType(IDataset typeDataset) {
+		return setDataset(NX_TYPE, typeDataset);
 	}
 
 	@Override
-	public DataNode setTypeScalar(String type) {
-		return setString(NX_TYPE, type);
+	public DataNode setTypeScalar(String typeValue) {
+		return setString(NX_TYPE, typeValue);
 	}
 
 	@Override
@@ -88,13 +88,13 @@ public class NXcapillaryImpl extends NXobjectImpl implements NXcapillary {
 	}
 
 	@Override
-	public DataNode setManufacturer(IDataset manufacturer) {
-		return setDataset(NX_MANUFACTURER, manufacturer);
+	public DataNode setManufacturer(IDataset manufacturerDataset) {
+		return setDataset(NX_MANUFACTURER, manufacturerDataset);
 	}
 
 	@Override
-	public DataNode setManufacturerScalar(String manufacturer) {
-		return setString(NX_MANUFACTURER, manufacturer);
+	public DataNode setManufacturerScalar(String manufacturerValue) {
+		return setString(NX_MANUFACTURER, manufacturerValue);
 	}
 
 	@Override
@@ -108,13 +108,13 @@ public class NXcapillaryImpl extends NXobjectImpl implements NXcapillary {
 	}
 
 	@Override
-	public DataNode setMaximum_incident_angle(IDataset maximum_incident_angle) {
-		return setDataset(NX_MAXIMUM_INCIDENT_ANGLE, maximum_incident_angle);
+	public DataNode setMaximum_incident_angle(IDataset maximum_incident_angleDataset) {
+		return setDataset(NX_MAXIMUM_INCIDENT_ANGLE, maximum_incident_angleDataset);
 	}
 
 	@Override
-	public DataNode setMaximum_incident_angleScalar(Double maximum_incident_angle) {
-		return setField(NX_MAXIMUM_INCIDENT_ANGLE, maximum_incident_angle);
+	public DataNode setMaximum_incident_angleScalar(Double maximum_incident_angleValue) {
+		return setField(NX_MAXIMUM_INCIDENT_ANGLE, maximum_incident_angleValue);
 	}
 
 	@Override
@@ -128,33 +128,35 @@ public class NXcapillaryImpl extends NXobjectImpl implements NXcapillary {
 	}
 
 	@Override
-	public DataNode setAccepting_aperture(IDataset accepting_aperture) {
-		return setDataset(NX_ACCEPTING_APERTURE, accepting_aperture);
+	public DataNode setAccepting_aperture(IDataset accepting_apertureDataset) {
+		return setDataset(NX_ACCEPTING_APERTURE, accepting_apertureDataset);
 	}
 
 	@Override
-	public DataNode setAccepting_apertureScalar(Double accepting_aperture) {
-		return setField(NX_ACCEPTING_APERTURE, accepting_aperture);
+	public DataNode setAccepting_apertureScalar(Double accepting_apertureValue) {
+		return setField(NX_ACCEPTING_APERTURE, accepting_apertureValue);
 	}
 
 	@Override
 	public NXdata getGain() {
+		// dataNodeName = NX_GAIN
 		return getChild("gain", NXdata.class);
 	}
 
 	@Override
-	public void setGain(NXdata gain) {
-		putChild("gain", gain);
+	public void setGain(NXdata gainGroup) {
+		putChild("gain", gainGroup);
 	}
 
 	@Override
 	public NXdata getTransmission() {
+		// dataNodeName = NX_TRANSMISSION
 		return getChild("transmission", NXdata.class);
 	}
 
 	@Override
-	public void setTransmission(NXdata transmission) {
-		putChild("transmission", transmission);
+	public void setTransmission(NXdata transmissionGroup) {
+		putChild("transmission", transmissionGroup);
 	}
 
 	@Override
@@ -168,13 +170,13 @@ public class NXcapillaryImpl extends NXobjectImpl implements NXcapillary {
 	}
 
 	@Override
-	public DataNode setWorking_distance(IDataset working_distance) {
-		return setDataset(NX_WORKING_DISTANCE, working_distance);
+	public DataNode setWorking_distance(IDataset working_distanceDataset) {
+		return setDataset(NX_WORKING_DISTANCE, working_distanceDataset);
 	}
 
 	@Override
-	public DataNode setWorking_distanceScalar(Double working_distance) {
-		return setField(NX_WORKING_DISTANCE, working_distance);
+	public DataNode setWorking_distanceScalar(Double working_distanceValue) {
+		return setField(NX_WORKING_DISTANCE, working_distanceValue);
 	}
 
 	@Override
@@ -188,13 +190,23 @@ public class NXcapillaryImpl extends NXobjectImpl implements NXcapillary {
 	}
 
 	@Override
-	public DataNode setFocal_size(IDataset focal_size) {
-		return setDataset(NX_FOCAL_SIZE, focal_size);
+	public DataNode setFocal_size(IDataset focal_sizeDataset) {
+		return setDataset(NX_FOCAL_SIZE, focal_sizeDataset);
 	}
 
 	@Override
-	public DataNode setFocal_sizeScalar(Double focal_size) {
-		return setField(NX_FOCAL_SIZE, focal_size);
+	public DataNode setFocal_sizeScalar(Double focal_sizeValue) {
+		return setField(NX_FOCAL_SIZE, focal_sizeValue);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

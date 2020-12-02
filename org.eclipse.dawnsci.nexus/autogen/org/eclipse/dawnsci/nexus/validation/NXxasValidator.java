@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -176,7 +176,7 @@ public class NXxasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldType("energy", energy, NX_FLOAT);
 		validateFieldUnits("energy", energy, NX_ENERGY);
 		validateFieldRank("energy", energy, 1);
-		validateFieldDimensions("energy", energy, null, "np");
+		validateFieldDimensions("energy", energy, null, "nP");
 	}
 
 	/**
@@ -193,7 +193,7 @@ public class NXxasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldType("data", data, NX_INT);
 		validateFieldUnits("data", data, NX_ANY);
 		validateFieldRank("data", data, 1);
-		validateFieldDimensions("data", data, null, "np");
+		validateFieldDimensions("data", data, null, "nP");
 	}
 
 	/**
@@ -210,7 +210,7 @@ public class NXxasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldType("data", data, NX_INT);
 		validateFieldUnits("data", data, NX_ANY);
 		validateFieldRank("data", data, 1);
-		validateFieldDimensions("data", data, null, "np");
+		validateFieldDimensions("data", data, null, "nP");
 	}
 
 	/**
@@ -253,7 +253,7 @@ public class NXxasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldType("data", data, NX_INT);
 		validateFieldUnits("data", data, NX_ANY);
 		validateFieldRank("data", data, 1);
-		validateFieldDimensions("data", data, null, "np");
+		validateFieldDimensions("data", data, null, "nP");
 	}
 
 	/**

@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -68,13 +68,13 @@ public class NXshapeImpl extends NXobjectImpl implements NXshape {
 	}
 
 	@Override
-	public DataNode setShape(IDataset shape) {
-		return setDataset(NX_SHAPE, shape);
+	public DataNode setShape(IDataset shapeDataset) {
+		return setDataset(NX_SHAPE, shapeDataset);
 	}
 
 	@Override
-	public DataNode setShapeScalar(String shape) {
-		return setString(NX_SHAPE, shape);
+	public DataNode setShapeScalar(String shapeValue) {
+		return setString(NX_SHAPE, shapeValue);
 	}
 
 	@Override
@@ -88,13 +88,13 @@ public class NXshapeImpl extends NXobjectImpl implements NXshape {
 	}
 
 	@Override
-	public DataNode setSize(IDataset size) {
-		return setDataset(NX_SIZE, size);
+	public DataNode setSize(IDataset sizeDataset) {
+		return setDataset(NX_SIZE, sizeDataset);
 	}
 
 	@Override
-	public DataNode setSizeScalar(Double size) {
-		return setField(NX_SIZE, size);
+	public DataNode setSizeScalar(Double sizeValue) {
+		return setField(NX_SIZE, sizeValue);
 	}
 
 	@Override
@@ -108,13 +108,23 @@ public class NXshapeImpl extends NXobjectImpl implements NXshape {
 	}
 
 	@Override
-	public DataNode setDirection(IDataset direction) {
-		return setDataset(NX_DIRECTION, direction);
+	public DataNode setDirection(IDataset directionDataset) {
+		return setDataset(NX_DIRECTION, directionDataset);
 	}
 
 	@Override
-	public DataNode setDirectionScalar(String direction) {
-		return setString(NX_DIRECTION, direction);
+	public DataNode setDirectionScalar(String directionValue) {
+		return setString(NX_DIRECTION, directionValue);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

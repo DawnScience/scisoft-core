@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,9 +15,11 @@ import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 
 import java.util.Map;
 
+import java.util.stream.Collectors;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 
+import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NXroot;
 import org.eclipse.dawnsci.nexus.NXsubentry;
 import org.eclipse.dawnsci.nexus.NXentry;
@@ -39,28 +41,34 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 	@Override
 	public void validate(NXroot root) throws NexusValidationException {
-		// validate unnamed child group of type NXentry (possibly multiple)
-		final Map<String, NXentry> allEntry = root.getAllEntry();
-		for (final NXentry entry : allEntry.values()) {
-			validateGroup_NXentry(entry);
+		// validate unnamed child group of type NXentry (possibly multiple) and canSAS_class SASentry
+		final Map<String, NXentry> allSASentry = filterBycanSASClass(root.getAllEntry(), "SASentry");
+		for (final NXentry entry : allSASentry.values()) {
+			validateGroup_SASentry(entry);
 		}
 	}
 
 	@Override
 	public void validate(NXentry entry) throws NexusValidationException {
-		validateGroup_NXentry(entry);
+		validateGroup_SASentry(entry);
 	}
 
 	@Override
 	public void validate(NXsubentry subentry) throws NexusValidationException {
-		validateGroup_NXentry(subentry);
+		validateGroup_SASentry(subentry);
 	}
 
 
+	private <T extends NXobject> Map<String, T> filterBycanSASClass(Map<String, T> groups, String canSASclass) {
+		return groups.entrySet().stream()
+			.filter(entry -> canSASclass.equals(entry.getValue().getAttrString(null, "canSAS_class")))
+			.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+	}
+		
 	/**
 	 * Validate unnamed group of type NXentry.
 	 */
-	private void validateGroup_NXentry(final NXsubentry group) throws NexusValidationException {
+	private void validateGroup_SASentry(final NXsubentry group) throws NexusValidationException {
 		// validate that the group is not null
 		validateGroupNotNull(null, NXentry.class, group);
 
@@ -78,7 +86,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		final Attribute version_attr = group.getAttribute("version");
 		validateAttributeNotNull("version", version_attr);
 		validateAttributeEnumeration("version", version_attr,
-				"1.0");
+				"1.1");
 
 		// validate field 'definition' of unknown type.
 		final IDataset definition = group.getDefinition();
@@ -98,53 +106,47 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		validateAttributeNotNull("name", run_attr_name);
 
 
-		// validate unnamed child group of type NXdata (possibly multiple)
-		final Map<String, NXdata> allData = group.getAllData();
-		for (final NXdata data : allData.values()) {
-			validateGroup_NXentry_NXdata(data);
+		// validate unnamed child group of type NXdata (possibly multiple) and canSAS_class SASdata
+		final Map<String, NXdata> allSASdata = filterBycanSASClass(group.getAllData(), "SASdata");
+		for (final NXdata data : allSASdata.values()) {
+			validateGroup_SASentry_SASdata(data);
 		}
 
-		// validate unnamed child group of type NXinstrument (possibly multiple)
-		final Map<String, NXinstrument> allInstrument = group.getAllInstrument();
-		for (final NXinstrument instrument : allInstrument.values()) {
-			validateGroup_NXentry_NXinstrument(instrument);
+		// validate unnamed child group of type NXinstrument (possibly multiple) and canSAS_class SASinstrument
+		final Map<String, NXinstrument> allSASinstrument = filterBycanSASClass(group.getAllInstrument(), "SASinstrument");
+		for (final NXinstrument instrument : allSASinstrument.values()) {
+			validateGroup_SASentry_SASinstrument(instrument);
 		}
 
-		// validate unnamed child group of type NXsample (possibly multiple)
-		final Map<String, NXsample> allSample = group.getAllSample();
-		for (final NXsample sample : allSample.values()) {
-			validateGroup_NXentry_NXsample(sample);
+		// validate unnamed child group of type NXsample (possibly multiple) and canSAS_class SASsample
+		final Map<String, NXsample> allSASsample = filterBycanSASClass(group.getAllSample(), "SASsample");
+		for (final NXsample sample : allSASsample.values()) {
+			validateGroup_SASentry_SASsample(sample);
 		}
 
-		// validate unnamed child group of type NXprocess (possibly multiple)
-		final Map<String, NXprocess> allProcess = group.getAllProcess();
-		for (final NXprocess process : allProcess.values()) {
-			validateGroup_NXentry_NXprocess(process);
+		// validate unnamed child group of type NXprocess (possibly multiple) and canSAS_class SASprocess
+		final Map<String, NXprocess> allSASprocess = filterBycanSASClass(group.getAllProcess(), "SASprocess");
+		for (final NXprocess process : allSASprocess.values()) {
+			validateGroup_SASentry_SASprocess(process);
 		}
 
-		// validate unnamed child group of type NXcollection (possibly multiple)
-		final Map<String, NXcollection> allCollection = group.getAllCollection();
-		for (final NXcollection collection : allCollection.values()) {
-			validateGroup_NXentry_NXcollection(collection);
+		// validate unnamed child group of type NXcollection (possibly multiple) and canSAS_class SASnote
+		final Map<String, NXcollection> allSASnote = filterBycanSASClass(group.getAllCollection(), "SASnote");
+		for (final NXcollection collection : allSASnote.values()) {
+			validateGroup_SASentry_SASnote(collection);
 		}
 
-		// validate unnamed child group of type NXdata (possibly multiple)
-		// Manually commented out this section as it uses a duplicate local variable name
-		// This is due to NXcanSAS.nxdl.xml having two unnamed child group entries under NXentry.
-		// We should decide what to do about this. Commenting out for now as validator are not currently used.
-		// See http://jira.diamond.ac.uk/browse/DAQ-720
-	/*
-		final Map<String, NXdata> allData = group.getAllData();
-		for (final NXdata data : allData.values()) {
-			validateGroup_NXentry_NXdata(data);
+		// validate unnamed child group of type NXdata (possibly multiple) and canSAS_class SAStransmission_spectrum
+		final Map<String, NXdata> allSAStransmission_spectrum = filterBycanSASClass(group.getAllData(), "SAStransmission_spectrum");
+		for (final NXdata data : allSAStransmission_spectrum.values()) {
+			validateGroup_SASentry_SAStransmission_spectrum(data);
 		}
-	 */
 	}
 
 	/**
 	 * Validate unnamed group of type NXdata.
 	 */
-	private void validateGroup_NXentry_NXdata(final NXdata group) throws NexusValidationException {
+	private void validateGroup_SASentry_SASdata(final NXdata group) throws NexusValidationException {
 		// validate that the group is not null
 		validateGroupNotNull(null, NXdata.class, group);
 		clearLocalGroupDimensionPlaceholderValues();
@@ -322,7 +324,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate optional unnamed group of type NXinstrument.
 	 */
-	private void validateGroup_NXentry_NXinstrument(final NXinstrument group) throws NexusValidationException {
+	private void validateGroup_SASentry_SASinstrument(final NXinstrument group) throws NexusValidationException {
 		// validate that the group is not null
 		validateGroupNotNull(null, NXinstrument.class, group);
 
@@ -332,35 +334,35 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		validateAttributeEnumeration("canSAS_class", canSAS_class_attr,
 				"SASinstrument");
 
-		// validate unnamed child group of type NXaperture (possibly multiple)
-		final Map<String, NXaperture> allAperture = group.getAllAperture();
-		for (final NXaperture aperture : allAperture.values()) {
-			validateGroup_NXentry_NXinstrument_NXaperture(aperture);
+		// validate unnamed child group of type NXaperture (possibly multiple) and canSAS_class SASaperture
+		final Map<String, NXaperture> allSASaperture = filterBycanSASClass(group.getAllAperture(), "SASaperture");
+		for (final NXaperture aperture : allSASaperture.values()) {
+			validateGroup_SASentry_SASinstrument_SASaperture(aperture);
 		}
 
-		// validate unnamed child group of type NXcollimator (possibly multiple)
-		final Map<String, NXcollimator> allCollimator = group.getAllCollimator();
-		for (final NXcollimator collimator : allCollimator.values()) {
-			validateGroup_NXentry_NXinstrument_NXcollimator(collimator);
+		// validate unnamed child group of type NXcollimator (possibly multiple) and canSAS_class SAScollimation
+		final Map<String, NXcollimator> allSAScollimation = filterBycanSASClass(group.getAllCollimator(), "SAScollimation");
+		for (final NXcollimator collimator : allSAScollimation.values()) {
+			validateGroup_SASentry_SASinstrument_SAScollimation(collimator);
 		}
 
-		// validate unnamed child group of type NXdetector (possibly multiple)
-		final Map<String, NXdetector> allDetector = group.getAllDetector();
-		for (final NXdetector detector : allDetector.values()) {
-			validateGroup_NXentry_NXinstrument_NXdetector(detector);
+		// validate unnamed child group of type NXdetector (possibly multiple) and canSAS_class SASdetector
+		final Map<String, NXdetector> allSASdetector = filterBycanSASClass(group.getAllDetector(), "SASdetector");
+		for (final NXdetector detector : allSASdetector.values()) {
+			validateGroup_SASentry_SASinstrument_SASdetector(detector);
 		}
 
-		// validate unnamed child group of type NXsource (possibly multiple)
-		final Map<String, NXsource> allSource = group.getAllSource();
-		for (final NXsource source : allSource.values()) {
-			validateGroup_NXentry_NXinstrument_NXsource(source);
+		// validate unnamed child group of type NXsource (possibly multiple) and canSAS_class SASsource
+		final Map<String, NXsource> allSASsource = filterBycanSASClass(group.getAllSource(), "SASsource");
+		for (final NXsource source : allSASsource.values()) {
+			validateGroup_SASentry_SASinstrument_SASsource(source);
 		}
 	}
 
 	/**
 	 * Validate optional unnamed group of type NXaperture.
 	 */
-	private void validateGroup_NXentry_NXinstrument_NXaperture(final NXaperture group) throws NexusValidationException {
+	private void validateGroup_SASentry_SASinstrument_SASaperture(final NXaperture group) throws NexusValidationException {
 		// validate that the group is not null
 		validateGroupNotNull(null, NXaperture.class, group);
 
@@ -392,7 +394,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate optional unnamed group of type NXcollimator.
 	 */
-	private void validateGroup_NXentry_NXinstrument_NXcollimator(final NXcollimator group) throws NexusValidationException {
+	private void validateGroup_SASentry_SASinstrument_SAScollimation(final NXcollimator group) throws NexusValidationException {
 		// validate that the group is not null
 		validateGroupNotNull(null, NXcollimator.class, group);
 
@@ -420,7 +422,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate optional unnamed group of type NXdetector.
 	 */
-	private void validateGroup_NXentry_NXinstrument_NXdetector(final NXdetector group) throws NexusValidationException {
+	private void validateGroup_SASentry_SASinstrument_SASdetector(final NXdetector group) throws NexusValidationException {
 		// validate that the group is not null
 		validateGroupNotNull(null, NXdetector.class, group);
 		clearLocalGroupDimensionPlaceholderValues();
@@ -520,7 +522,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate optional unnamed group of type NXsource.
 	 */
-	private void validateGroup_NXentry_NXinstrument_NXsource(final NXsource group) throws NexusValidationException {
+	private void validateGroup_SASentry_SASinstrument_SASsource(final NXsource group) throws NexusValidationException {
 		// validate that the group is not null
 		validateGroupNotNull(null, NXsource.class, group);
 
@@ -606,7 +608,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate optional unnamed group of type NXsample.
 	 */
-	private void validateGroup_NXentry_NXsample(final NXsample group) throws NexusValidationException {
+	private void validateGroup_SASentry_SASsample(final NXsample group) throws NexusValidationException {
 		// validate that the group is not null
 		validateGroupNotNull(null, NXsample.class, group);
 		clearLocalGroupDimensionPlaceholderValues();
@@ -687,7 +689,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate optional unnamed group of type NXprocess.
 	 */
-	private void validateGroup_NXentry_NXprocess(final NXprocess group) throws NexusValidationException {
+	private void validateGroup_SASentry_SASprocess(final NXprocess group) throws NexusValidationException {
 		// validate that the group is not null
 		validateGroupNotNull(null, NXprocess.class, group);
 
@@ -721,20 +723,20 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		// validate unnamed child group of type NXnote (possibly multiple)
 		final Map<String, NXnote> allNote = group.getAllNote();
 		for (final NXnote note : allNote.values()) {
-			validateGroup_NXentry_NXprocess_NXnote(note);
+			validateGroup_SASentry_SASprocess_NXnote(note);
 		}
 
-		// validate unnamed child group of type NXcollection (possibly multiple)
-		final Map<String, NXcollection> allCollection = group.getChildren(NXcollection.class);
-		for (final NXcollection collection : allCollection.values()) {
-			validateGroup_NXentry_NXprocess_NXcollection(collection);
+		// validate unnamed child group of type NXcollection (possibly multiple) and canSAS_class SASprocessnote
+		final Map<String, NXcollection> allSASprocessnote = filterBycanSASClass(group.getChildren(NXcollection.class), "SASprocessnote");
+		for (final NXcollection collection : allSASprocessnote.values()) {
+			validateGroup_SASentry_SASprocess_SASprocessnote(collection);
 		}
 	}
 
 	/**
 	 * Validate optional unnamed group of type NXnote.
 	 */
-	private void validateGroup_NXentry_NXprocess_NXnote(final NXnote group) throws NexusValidationException {
+	private void validateGroup_SASentry_SASprocess_NXnote(final NXnote group) throws NexusValidationException {
 		// validate that the group is not null
 		validateGroupNotNull(null, NXnote.class, group);
 
@@ -743,7 +745,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate optional unnamed group of type NXcollection.
 	 */
-	private void validateGroup_NXentry_NXprocess_NXcollection(final NXcollection group) throws NexusValidationException {
+	private void validateGroup_SASentry_SASprocess_SASprocessnote(final NXcollection group) throws NexusValidationException {
 		// validate that the group is not null
 		validateGroupNotNull(null, NXcollection.class, group);
 
@@ -758,7 +760,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate optional unnamed group of type NXcollection.
 	 */
-	private void validateGroup_NXentry_NXcollection(final NXcollection group) throws NexusValidationException {
+	private void validateGroup_SASentry_SASnote(final NXcollection group) throws NexusValidationException {
 		// validate that the group is not null
 		validateGroupNotNull(null, NXcollection.class, group);
 
@@ -770,15 +772,10 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 	}
 
-	// Manually commented out this method as it has a duplicate name.
-	// This is due to NXcanSAS.nxdl.xml having two unnamed child group entries under NXentry.
-	// We should decide what to do about this. Commenting out for now as validator are not currently used.
-	// See http://jira.diamond.ac.uk/browse/DAQ-720
 	/**
 	 * Validate optional unnamed group of type NXdata.
 	 */
-/*
-	private void validateGroup_NXentry_NXdata(final NXdata group) throws NexusValidationException {
+	private void validateGroup_SASentry_SAStransmission_spectrum(final NXdata group) throws NexusValidationException {
 		// validate that the group is not null
 		validateGroupNotNull(null, NXdata.class, group);
 		clearLocalGroupDimensionPlaceholderValues();
@@ -833,5 +830,4 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		validateFieldType("Tdev", Tdev, NX_NUMBER);
 		validateFieldUnits("Tdev", Tdev, NX_DIMENSIONLESS);
 	}
- */
 }

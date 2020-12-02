@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -157,7 +157,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldType("ei", ei, NX_FLOAT);
 		validateFieldUnits("ei", ei, NX_ENERGY);
 		validateFieldRank("ei", ei, 1);
-		validateFieldDimensions("ei", ei, null, "np");
+		validateFieldDimensions("ei", ei, null, "nP");
 
 		// validate field 'rotation_angle' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset rotation_angle = group.getDataset("rotation_angle");
@@ -165,7 +165,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
 		validateFieldUnits("rotation_angle", rotation_angle, NX_ANGLE);
 		validateFieldRank("rotation_angle", rotation_angle, 1);
-		validateFieldDimensions("rotation_angle", rotation_angle, null, "np");
+		validateFieldDimensions("rotation_angle", rotation_angle, null, "nP");
 	}
 
 	/**
@@ -182,7 +182,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldType("ef", ef, NX_FLOAT);
 		validateFieldUnits("ef", ef, NX_ENERGY);
 		validateFieldRank("ef", ef, 1);
-		validateFieldDimensions("ef", ef, null, "np");
+		validateFieldDimensions("ef", ef, null, "nP");
 
 		// validate field 'rotation_angle' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset rotation_angle = group.getDataset("rotation_angle");
@@ -190,7 +190,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
 		validateFieldUnits("rotation_angle", rotation_angle, NX_ANGLE);
 		validateFieldRank("rotation_angle", rotation_angle, 1);
-		validateFieldDimensions("rotation_angle", rotation_angle, null, "np");
+		validateFieldDimensions("rotation_angle", rotation_angle, null, "nP");
 
 		// validate field 'polar_angle' of type NX_FLOAT.
 		final IDataset polar_angle = group.getPolar_angle();
@@ -198,7 +198,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
 		validateFieldUnits("polar_angle", polar_angle, NX_ANGLE);
 		validateFieldRank("polar_angle", polar_angle, 1);
-		validateFieldDimensions("polar_angle", polar_angle, null, "np");
+		validateFieldDimensions("polar_angle", polar_angle, null, "nP");
 	}
 
 	/**
@@ -215,7 +215,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldType("data", data, NX_INT);
 		validateFieldUnits("data", data, NX_ANY);
 		validateFieldRank("data", data, 1);
-		validateFieldDimensions("data", data, null, "np");
+		validateFieldDimensions("data", data, null, "nP");
 
 		// validate field 'polar_angle' of type NX_FLOAT.
 		final IDataset polar_angle = group.getPolar_angle();
@@ -223,7 +223,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
 		validateFieldUnits("polar_angle", polar_angle, NX_ANGLE);
 		validateFieldRank("polar_angle", polar_angle, 1);
-		validateFieldDimensions("polar_angle", polar_angle, null, "np");
+		validateFieldDimensions("polar_angle", polar_angle, null, "nP");
 	}
 
 	/**
@@ -244,7 +244,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldType("qh", qh, NX_FLOAT);
 		validateFieldUnits("qh", qh, NX_DIMENSIONLESS);
 		validateFieldRank("qh", qh, 1);
-		validateFieldDimensions("qh", qh, null, "np");
+		validateFieldDimensions("qh", qh, null, "nP");
 
 		// validate field 'qk' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset qk = group.getDataset("qk");
@@ -252,7 +252,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldType("qk", qk, NX_FLOAT);
 		validateFieldUnits("qk", qk, NX_DIMENSIONLESS);
 		validateFieldRank("qk", qk, 1);
-		validateFieldDimensions("qk", qk, null, "np");
+		validateFieldDimensions("qk", qk, null, "nP");
 
 		// validate field 'ql' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset ql = group.getDataset("ql");
@@ -260,7 +260,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldType("ql", ql, NX_FLOAT);
 		validateFieldUnits("ql", ql, NX_DIMENSIONLESS);
 		validateFieldRank("ql", ql, 1);
-		validateFieldDimensions("ql", ql, null, "np");
+		validateFieldDimensions("ql", ql, null, "nP");
 
 		// validate field 'en' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset en = group.getDataset("en");
@@ -268,7 +268,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldType("en", en, NX_FLOAT);
 		validateFieldUnits("en", en, NX_ENERGY);
 		validateFieldRank("en", en, 1);
-		validateFieldDimensions("en", en, null, "np");
+		validateFieldDimensions("en", en, null, "nP");
 
 		// validate field 'rotation_angle' of type NX_FLOAT.
 		final IDataset rotation_angle = group.getRotation_angle();
@@ -276,7 +276,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
 		validateFieldUnits("rotation_angle", rotation_angle, NX_ANGLE);
 		validateFieldRank("rotation_angle", rotation_angle, 1);
-		validateFieldDimensions("rotation_angle", rotation_angle, null, "np");
+		validateFieldDimensions("rotation_angle", rotation_angle, null, "nP");
 
 		// validate field 'polar_angle' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset polar_angle = group.getDataset("polar_angle");
@@ -284,7 +284,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
 		validateFieldUnits("polar_angle", polar_angle, NX_ANGLE);
 		validateFieldRank("polar_angle", polar_angle, 1);
-		validateFieldDimensions("polar_angle", polar_angle, null, "np");
+		validateFieldDimensions("polar_angle", polar_angle, null, "nP");
 
 		// validate field 'sgu' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset sgu = group.getDataset("sgu");
@@ -292,7 +292,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldType("sgu", sgu, NX_FLOAT);
 		validateFieldUnits("sgu", sgu, NX_ANGLE);
 		validateFieldRank("sgu", sgu, 1);
-		validateFieldDimensions("sgu", sgu, null, "np");
+		validateFieldDimensions("sgu", sgu, null, "nP");
 
 		// validate field 'sgl' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset sgl = group.getDataset("sgl");
@@ -300,7 +300,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldType("sgl", sgl, NX_FLOAT);
 		validateFieldUnits("sgl", sgl, NX_ANGLE);
 		validateFieldRank("sgl", sgl, 1);
-		validateFieldDimensions("sgl", sgl, null, "np");
+		validateFieldDimensions("sgl", sgl, null, "nP");
 
 		// validate field 'unit_cell' of type NX_FLOAT.
 		final IDataset unit_cell = group.getUnit_cell();
@@ -346,7 +346,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldType("data", data, NX_FLOAT);
 		validateFieldUnits("data", data, NX_ANY);
 		validateFieldRank("data", data, 1);
-		validateFieldDimensions("data", data, null, "np");
+		validateFieldDimensions("data", data, null, "nP");
 	}
 
 	/**

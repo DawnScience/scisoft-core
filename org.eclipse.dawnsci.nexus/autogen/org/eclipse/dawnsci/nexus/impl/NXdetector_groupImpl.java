@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,20 +20,28 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Logical grouping of detector elements.
- * This class is used to allow a logical
- * grouping of detector elements (e.g. which tube, bank or group of banks) to be
- * recorded in the file. As well as allowing you to e.g just select the "left" or
- * "east" detectors, it may also be useful for determining which elements belong to the
- * same PSD tube and hence have e.g. the same dead time.
- * For example, if we had "bank1" composed
- * of "tube1", "tube2" and "tube3" then group_names would be the string "bank1,
- * bank1/tube1, bank1/tube2,bank1/tube3" group_index would be {1,2,3,4} group_parent
- * would be {-1,1,1,1}
- * The mapping array is interpreted as
- * group 1 is a top level group containing groups 2, 3 and 4
- * A ``group_index`` array in
- * ``NXdetector`` gives the base group for a detector element.
+ * Logical grouping of detectors. When used, describes a group of detectors.
+ * Each detector is represented as an NXdetector
+ * with its own detector data array. Each detector data array
+ * may be further decomposed into array sections by use of
+ * NXdetector_module groups. Detectors can be grouped logically
+ * together using NXdetector_group. Groups can be further grouped
+ * hierarchically in a single NXdetector_group (for example, if
+ * there are multiple detectors at an endstation or multiple
+ * endstations at a facility). Alternatively, multiple
+ * NXdetector_groups can be provided.
+ * The groups are defined hierarchically, with names given
+ * in the group_names field, unique identifying indices given
+ * in the field group_index, and the level in the hierarchy
+ * given in the group_parent field. For example if an x-ray
+ * detector group, DET, consists of four detectors in a
+ * rectangular array::
+ * DTL DTR
+ * DLL DLR
+ * We could have::
+ * group_names: ["DET", "DTL", "DTR", "DLL", "DLR"]
+ * group_index: [1, 2, 3, 4, 5]
+ * group_parent: [-1, 1, 1, 1, 1]
  * 
  */
 public class NXdetector_groupImpl extends NXobjectImpl implements NXdetector_group {
@@ -78,13 +86,13 @@ public class NXdetector_groupImpl extends NXobjectImpl implements NXdetector_gro
 	}
 
 	@Override
-	public DataNode setGroup_names(IDataset group_names) {
-		return setDataset(NX_GROUP_NAMES, group_names);
+	public DataNode setGroup_names(IDataset group_namesDataset) {
+		return setDataset(NX_GROUP_NAMES, group_namesDataset);
 	}
 
 	@Override
-	public DataNode setGroup_namesScalar(String group_names) {
-		return setString(NX_GROUP_NAMES, group_names);
+	public DataNode setGroup_namesScalar(String group_namesValue) {
+		return setString(NX_GROUP_NAMES, group_namesValue);
 	}
 
 	@Override
@@ -98,13 +106,13 @@ public class NXdetector_groupImpl extends NXobjectImpl implements NXdetector_gro
 	}
 
 	@Override
-	public DataNode setGroup_index(IDataset group_index) {
-		return setDataset(NX_GROUP_INDEX, group_index);
+	public DataNode setGroup_index(IDataset group_indexDataset) {
+		return setDataset(NX_GROUP_INDEX, group_indexDataset);
 	}
 
 	@Override
-	public DataNode setGroup_indexScalar(Long group_index) {
-		return setField(NX_GROUP_INDEX, group_index);
+	public DataNode setGroup_indexScalar(Long group_indexValue) {
+		return setField(NX_GROUP_INDEX, group_indexValue);
 	}
 
 	@Override
@@ -118,13 +126,13 @@ public class NXdetector_groupImpl extends NXobjectImpl implements NXdetector_gro
 	}
 
 	@Override
-	public DataNode setGroup_parent(IDataset group_parent) {
-		return setDataset(NX_GROUP_PARENT, group_parent);
+	public DataNode setGroup_parent(IDataset group_parentDataset) {
+		return setDataset(NX_GROUP_PARENT, group_parentDataset);
 	}
 
 	@Override
-	public DataNode setGroup_parentScalar(Long group_parent) {
-		return setField(NX_GROUP_PARENT, group_parent);
+	public DataNode setGroup_parentScalar(Long group_parentValue) {
+		return setField(NX_GROUP_PARENT, group_parentValue);
 	}
 
 	@Override
@@ -138,13 +146,23 @@ public class NXdetector_groupImpl extends NXobjectImpl implements NXdetector_gro
 	}
 
 	@Override
-	public DataNode setGroup_type(IDataset group_type) {
-		return setDataset(NX_GROUP_TYPE, group_type);
+	public DataNode setGroup_type(IDataset group_typeDataset) {
+		return setDataset(NX_GROUP_TYPE, group_typeDataset);
 	}
 
 	@Override
-	public DataNode setGroup_typeScalar(Long group_type) {
-		return setField(NX_GROUP_TYPE, group_type);
+	public DataNode setGroup_typeScalar(Long group_typeValue) {
+		return setField(NX_GROUP_TYPE, group_typeValue);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

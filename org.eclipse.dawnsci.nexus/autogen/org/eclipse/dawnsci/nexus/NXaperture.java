@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,6 +25,7 @@ public interface NXaperture extends NXobject {
 
 	public static final String NX_MATERIAL = "material";
 	public static final String NX_DESCRIPTION = "description";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * location and shape of aperture
 	 * .. TODO: documentation needs improvement, contributions welcome
@@ -47,10 +48,10 @@ public interface NXaperture extends NXobject {
 	 * * Some base classes do this much better
 	 * * Such as where is the gap written?
 	 * 
-	 * @param geometry the geometry
+	 * @param geometryGroup the geometryGroup
 	 */
-	public void setGeometry(NXgeometry geometry);
-  
+	public void setGeometry(NXgeometry geometryGroup);
+
 	/**
 	 * Get a NXgeometry node by name:
 	 * <ul>
@@ -141,9 +142,9 @@ public interface NXaperture extends NXobject {
 	/**
 	 * Absorbing material of the aperture
 	 * 
-	 * @param material the material
+	 * @param materialDataset the materialDataset
 	 */
-	public DataNode setMaterial(IDataset material);
+	public DataNode setMaterial(IDataset materialDataset);
 
 	/**
 	 * Absorbing material of the aperture
@@ -157,7 +158,7 @@ public interface NXaperture extends NXobject {
 	 * 
 	 * @param material the material
 	 */
-	public DataNode setMaterialScalar(String material);
+	public DataNode setMaterialScalar(String materialValue);
 
 	/**
 	 * Description of aperture
@@ -169,9 +170,9 @@ public interface NXaperture extends NXobject {
 	/**
 	 * Description of aperture
 	 * 
-	 * @param description the description
+	 * @param descriptionDataset the descriptionDataset
 	 */
-	public DataNode setDescription(IDataset description);
+	public DataNode setDescription(IDataset descriptionDataset);
 
 	/**
 	 * Description of aperture
@@ -185,7 +186,7 @@ public interface NXaperture extends NXobject {
 	 * 
 	 * @param description the description
 	 */
-	public DataNode setDescriptionScalar(String description);
+	public DataNode setDescriptionScalar(String descriptionValue);
 
 	/**
 	 * describe any additional information in a note*
@@ -197,10 +198,10 @@ public interface NXaperture extends NXobject {
 	/**
 	 * describe any additional information in a note*
 	 * 
-	 * @param note the note
+	 * @param noteGroup the noteGroup
 	 */
-	public void setNote(NXnote note);
-  
+	public void setNote(NXnote noteGroup);
+
 	/**
 	 * Get a NXnote node by name:
 	 * <ul>
@@ -248,5 +249,31 @@ public interface NXaperture extends NXobject {
 	
 	public void setAllNote(Map<String, NXnote> note);
 	
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

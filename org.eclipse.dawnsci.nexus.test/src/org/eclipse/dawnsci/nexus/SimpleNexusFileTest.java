@@ -28,9 +28,8 @@ public class SimpleNexusFileTest extends AbstractNexusFileTestBase {
 		// create the root object of the nexus file
 		NXroot root = NexusNodeFactory.createNXroot();
 		root.setAttributeFile_name(FILE_NAME);
-		root.setAttributeFile_time("2014-09-08T09:07:11.939912");
-		root.setAttributeNeXus_version("4.3.0");
-		root.setAttributeHDF5_Version("1.8.9");
+		root.setAttributeNexus_version("4.3.0");
+		root.setAttributeHdf5_version("1.8.9");
 		root.setAttribute(null, "h5py_version", "2.3.0");
 
 		// create the single entry object of the nexus file

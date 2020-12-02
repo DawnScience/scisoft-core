@@ -518,7 +518,7 @@ public class NexusTemplateTest {
 		assertThat(scanEntry, is(notNullValue()));
 		final NXdata data = scanEntry.getData();
 		assertThat(data, is(notNullValue()));
-		final Node dataNode = data.getNode(NXdata.NX_DATA);
+		final Node dataNode = data.getNode("data");
 		assertThat(dataNode, is(notNullValue()));
 		
 		if (contextType == IN_MEMORY) {
@@ -612,7 +612,7 @@ public class NexusTemplateTest {
 		
 		NXdata nxData = entry.getData();
 		assertThat(nxData, is(notNullValue()));
-		assertThat(nxData.getDataNode(NXdata.NX_DATA), is(sameInstance(detectorDataNode)));
+		assertThat(nxData.getDataNode("data"), is(sameInstance(detectorDataNode)));
 	}
 
 }

@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -93,7 +93,7 @@ public class NXxeulerValidator extends AbstractNexusValidator implements NexusAp
 		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
 		validateFieldUnits("polar_angle", polar_angle, NX_ANGLE);
 		validateFieldRank("polar_angle", polar_angle, 1);
-		validateFieldDimensions("polar_angle", polar_angle, null, "np");
+		validateFieldDimensions("polar_angle", polar_angle, null, "nP");
 	}
 
 	/**
@@ -110,7 +110,7 @@ public class NXxeulerValidator extends AbstractNexusValidator implements NexusAp
 		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
 		validateFieldUnits("rotation_angle", rotation_angle, NX_ANGLE);
 		validateFieldRank("rotation_angle", rotation_angle, 1);
-		validateFieldDimensions("rotation_angle", rotation_angle, null, "np");
+		validateFieldDimensions("rotation_angle", rotation_angle, null, "nP");
 
 		// validate field 'chi' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset chi = group.getDataset("chi");
@@ -118,7 +118,7 @@ public class NXxeulerValidator extends AbstractNexusValidator implements NexusAp
 		validateFieldType("chi", chi, NX_FLOAT);
 		validateFieldUnits("chi", chi, NX_ANGLE);
 		validateFieldRank("chi", chi, 1);
-		validateFieldDimensions("chi", chi, null, "np");
+		validateFieldDimensions("chi", chi, null, "nP");
 
 		// validate field 'phi' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset phi = group.getDataset("phi");
@@ -126,7 +126,7 @@ public class NXxeulerValidator extends AbstractNexusValidator implements NexusAp
 		validateFieldType("phi", phi, NX_FLOAT);
 		validateFieldUnits("phi", phi, NX_ANGLE);
 		validateFieldRank("phi", phi, 1);
-		validateFieldDimensions("phi", phi, null, "np");
+		validateFieldDimensions("phi", phi, null, "nP");
 	}
 
 	/**

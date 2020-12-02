@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -75,13 +75,13 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public DataNode setMode(IDataset mode) {
-		return setDataset(NX_MODE, mode);
+	public DataNode setMode(IDataset modeDataset) {
+		return setDataset(NX_MODE, modeDataset);
 	}
 
 	@Override
-	public DataNode setModeScalar(String mode) {
-		return setString(NX_MODE, mode);
+	public DataNode setModeScalar(String modeValue) {
+		return setString(NX_MODE, modeValue);
 	}
 
 	@Override
@@ -95,13 +95,13 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public DataNode setStart_time(IDataset start_time) {
-		return setDataset(NX_START_TIME, start_time);
+	public DataNode setStart_time(IDataset start_timeDataset) {
+		return setDataset(NX_START_TIME, start_timeDataset);
 	}
 
 	@Override
-	public DataNode setStart_timeScalar(Date start_time) {
-		return setDate(NX_START_TIME, start_time);
+	public DataNode setStart_timeScalar(Date start_timeValue) {
+		return setDate(NX_START_TIME, start_timeValue);
 	}
 
 	@Override
@@ -115,13 +115,13 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public DataNode setEnd_time(IDataset end_time) {
-		return setDataset(NX_END_TIME, end_time);
+	public DataNode setEnd_time(IDataset end_timeDataset) {
+		return setDataset(NX_END_TIME, end_timeDataset);
 	}
 
 	@Override
-	public DataNode setEnd_timeScalar(Date end_time) {
-		return setDate(NX_END_TIME, end_time);
+	public DataNode setEnd_timeScalar(Date end_timeValue) {
+		return setDate(NX_END_TIME, end_timeValue);
 	}
 
 	@Override
@@ -135,13 +135,13 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public DataNode setPreset(IDataset preset) {
-		return setDataset(NX_PRESET, preset);
+	public DataNode setPreset(IDataset presetDataset) {
+		return setDataset(NX_PRESET, presetDataset);
 	}
 
 	@Override
-	public DataNode setPresetScalar(Number preset) {
-		return setField(NX_PRESET, preset);
+	public DataNode setPresetScalar(Number presetValue) {
+		return setField(NX_PRESET, presetValue);
 	}
 
 	@Override
@@ -155,13 +155,13 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public DataNode setDistance(IDataset distance) {
-		return setDataset(NX_DISTANCE, distance);
+	public DataNode setDistance(IDataset distanceDataset) {
+		return setDataset(NX_DISTANCE, distanceDataset);
 	}
 
 	@Override
-	public DataNode setDistanceScalar(Double distance) {
-		return setField(NX_DISTANCE, distance);
+	public DataNode setDistanceScalar(Double distanceValue) {
+		return setField(NX_DISTANCE, distanceValue);
 	}
 
 	@Override
@@ -175,13 +175,13 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public DataNode setRange(IDataset range) {
-		return setDataset(NX_RANGE, range);
+	public DataNode setRange(IDataset rangeDataset) {
+		return setDataset(NX_RANGE, rangeDataset);
 	}
 
 	@Override
-	public DataNode setRangeScalar(Double range) {
-		return setField(NX_RANGE, range);
+	public DataNode setRangeScalar(Double rangeValue) {
+		return setField(NX_RANGE, rangeValue);
 	}
 
 	@Override
@@ -195,13 +195,13 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public DataNode setNominal(IDataset nominal) {
-		return setDataset(NX_NOMINAL, nominal);
+	public DataNode setNominal(IDataset nominalDataset) {
+		return setDataset(NX_NOMINAL, nominalDataset);
 	}
 
 	@Override
-	public DataNode setNominalScalar(Number nominal) {
-		return setField(NX_NOMINAL, nominal);
+	public DataNode setNominalScalar(Number nominalValue) {
+		return setField(NX_NOMINAL, nominalValue);
 	}
 
 	@Override
@@ -215,23 +215,24 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public DataNode setIntegral(IDataset integral) {
-		return setDataset(NX_INTEGRAL, integral);
+	public DataNode setIntegral(IDataset integralDataset) {
+		return setDataset(NX_INTEGRAL, integralDataset);
 	}
 
 	@Override
-	public DataNode setIntegralScalar(Number integral) {
-		return setField(NX_INTEGRAL, integral);
+	public DataNode setIntegralScalar(Number integralValue) {
+		return setField(NX_INTEGRAL, integralValue);
 	}
 
 	@Override
 	public NXlog getIntegral_log() {
+		// dataNodeName = NX_INTEGRAL_LOG
 		return getChild("integral_log", NXlog.class);
 	}
 
 	@Override
-	public void setIntegral_log(NXlog integral_log) {
-		putChild("integral_log", integral_log);
+	public void setIntegral_log(NXlog integral_logGroup) {
+		putChild("integral_log", integral_logGroup);
 	}
 
 	@Override
@@ -245,13 +246,13 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public DataNode setType(IDataset type) {
-		return setDataset(NX_TYPE, type);
+	public DataNode setType(IDataset typeDataset) {
+		return setDataset(NX_TYPE, typeDataset);
 	}
 
 	@Override
-	public DataNode setTypeScalar(String type) {
-		return setString(NX_TYPE, type);
+	public DataNode setTypeScalar(String typeValue) {
+		return setString(NX_TYPE, typeValue);
 	}
 
 	@Override
@@ -265,13 +266,13 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public DataNode setTime_of_flight(IDataset time_of_flight) {
-		return setDataset(NX_TIME_OF_FLIGHT, time_of_flight);
+	public DataNode setTime_of_flight(IDataset time_of_flightDataset) {
+		return setDataset(NX_TIME_OF_FLIGHT, time_of_flightDataset);
 	}
 
 	@Override
-	public DataNode setTime_of_flightScalar(Double time_of_flight) {
-		return setField(NX_TIME_OF_FLIGHT, time_of_flight);
+	public DataNode setTime_of_flightScalar(Double time_of_flightValue) {
+		return setField(NX_TIME_OF_FLIGHT, time_of_flightValue);
 	}
 
 	@Override
@@ -285,13 +286,13 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public DataNode setEfficiency(IDataset efficiency) {
-		return setDataset(NX_EFFICIENCY, efficiency);
+	public DataNode setEfficiency(IDataset efficiencyDataset) {
+		return setDataset(NX_EFFICIENCY, efficiencyDataset);
 	}
 
 	@Override
-	public DataNode setEfficiencyScalar(Number efficiency) {
-		return setField(NX_EFFICIENCY, efficiency);
+	public DataNode setEfficiencyScalar(Number efficiencyValue) {
+		return setField(NX_EFFICIENCY, efficiencyValue);
 	}
 
 	@Override
@@ -305,13 +306,13 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public DataNode setData(IDataset data) {
-		return setDataset(NX_DATA, data);
+	public DataNode setData(IDataset dataDataset) {
+		return setDataset(NX_DATA, dataDataset);
 	}
 
 	@Override
-	public DataNode setDataScalar(Number data) {
-		return setField(NX_DATA, data);
+	public DataNode setDataScalar(Number dataValue) {
+		return setField(NX_DATA, dataValue);
 	}
 
 	@Override
@@ -325,23 +326,24 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public DataNode setSampled_fraction(IDataset sampled_fraction) {
-		return setDataset(NX_SAMPLED_FRACTION, sampled_fraction);
+	public DataNode setSampled_fraction(IDataset sampled_fractionDataset) {
+		return setDataset(NX_SAMPLED_FRACTION, sampled_fractionDataset);
 	}
 
 	@Override
-	public DataNode setSampled_fractionScalar(Double sampled_fraction) {
-		return setField(NX_SAMPLED_FRACTION, sampled_fraction);
+	public DataNode setSampled_fractionScalar(Double sampled_fractionValue) {
+		return setField(NX_SAMPLED_FRACTION, sampled_fractionValue);
 	}
 
 	@Override
 	public NXgeometry getGeometry() {
+		// dataNodeName = NX_GEOMETRY
 		return getChild("geometry", NXgeometry.class);
 	}
 
 	@Override
-	public void setGeometry(NXgeometry geometry) {
-		putChild("geometry", geometry);
+	public void setGeometry(NXgeometry geometryGroup) {
+		putChild("geometry", geometryGroup);
 	}
 
 	@Override
@@ -375,13 +377,23 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public DataNode setCount_time(IDataset count_time) {
-		return setDataset(NX_COUNT_TIME, count_time);
+	public DataNode setCount_time(IDataset count_timeDataset) {
+		return setDataset(NX_COUNT_TIME, count_timeDataset);
 	}
 
 	@Override
-	public DataNode setCount_timeScalar(Double count_time) {
-		return setField(NX_COUNT_TIME, count_time);
+	public DataNode setCount_timeScalar(Double count_timeValue) {
+		return setField(NX_COUNT_TIME, count_timeValue);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

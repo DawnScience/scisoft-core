@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ public interface NXprocess extends NXobject {
 	public static final String NX_SEQUENCE_INDEX = "sequence_index";
 	public static final String NX_VERSION = "version";
 	public static final String NX_DATE = "date";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * Name of the program used
 	 * <p>
@@ -44,9 +45,9 @@ public interface NXprocess extends NXobject {
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
 	 * 
-	 * @param program the program
+	 * @param programDataset the programDataset
 	 */
-	public DataNode setProgram(IDataset program);
+	public DataNode setProgram(IDataset programDataset);
 
 	/**
 	 * Name of the program used
@@ -66,7 +67,7 @@ public interface NXprocess extends NXobject {
 	 * 
 	 * @param program the program
 	 */
-	public DataNode setProgramScalar(String program);
+	public DataNode setProgramScalar(String programValue);
 
 	/**
 	 * Sequence index of processing,
@@ -88,9 +89,9 @@ public interface NXprocess extends NXobject {
 	 * <b>Type:</b> NX_POSINT
 	 * </p>
 	 * 
-	 * @param sequence_index the sequence_index
+	 * @param sequence_indexDataset the sequence_indexDataset
 	 */
-	public DataNode setSequence_index(IDataset sequence_index);
+	public DataNode setSequence_index(IDataset sequence_indexDataset);
 
 	/**
 	 * Sequence index of processing,
@@ -114,7 +115,7 @@ public interface NXprocess extends NXobject {
 	 * 
 	 * @param sequence_index the sequence_index
 	 */
-	public DataNode setSequence_indexScalar(Long sequence_index);
+	public DataNode setSequence_indexScalar(Long sequence_indexValue);
 
 	/**
 	 * Version of the program used
@@ -132,9 +133,9 @@ public interface NXprocess extends NXobject {
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
 	 * 
-	 * @param version the version
+	 * @param versionDataset the versionDataset
 	 */
-	public DataNode setVersion(IDataset version);
+	public DataNode setVersion(IDataset versionDataset);
 
 	/**
 	 * Version of the program used
@@ -154,7 +155,7 @@ public interface NXprocess extends NXobject {
 	 * 
 	 * @param version the version
 	 */
-	public DataNode setVersionScalar(String version);
+	public DataNode setVersionScalar(String versionValue);
 
 	/**
 	 * Date and time of processing.
@@ -172,9 +173,9 @@ public interface NXprocess extends NXobject {
 	 * <b>Type:</b> NX_DATE_TIME
 	 * </p>
 	 * 
-	 * @param date the date
+	 * @param dateDataset the dateDataset
 	 */
-	public DataNode setDate(IDataset date);
+	public DataNode setDate(IDataset dateDataset);
 
 	/**
 	 * Date and time of processing.
@@ -194,7 +195,7 @@ public interface NXprocess extends NXobject {
 	 * 
 	 * @param date the date
 	 */
-	public DataNode setDateScalar(Date date);
+	public DataNode setDateScalar(Date dateValue);
 
 	/**
 	 * The note will contain information about how the data was processed
@@ -214,10 +215,10 @@ public interface NXprocess extends NXobject {
 	 * can understand, or simple text.
 	 * The name will be numbered to allow for ordering of steps.
 	 * 
-	 * @param note the note
+	 * @param noteGroup the noteGroup
 	 */
-	public void setNote(NXnote note);
-  
+	public void setNote(NXnote noteGroup);
+
 	/**
 	 * Get a NXnote node by name:
 	 * <ul>
@@ -281,5 +282,31 @@ public interface NXprocess extends NXobject {
 	
 	public void setAllNote(Map<String, NXnote> note);
 	
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

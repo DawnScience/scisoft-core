@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -87,13 +87,13 @@ public class NXevent_dataImpl extends NXobjectImpl implements NXevent_data {
 	}
 
 	@Override
-	public DataNode setEvent_time_offset(IDataset event_time_offset) {
-		return setDataset(NX_EVENT_TIME_OFFSET, event_time_offset);
+	public DataNode setEvent_time_offset(IDataset event_time_offsetDataset) {
+		return setDataset(NX_EVENT_TIME_OFFSET, event_time_offsetDataset);
 	}
 
 	@Override
-	public DataNode setEvent_time_offsetScalar(Number event_time_offset) {
-		return setField(NX_EVENT_TIME_OFFSET, event_time_offset);
+	public DataNode setEvent_time_offsetScalar(Number event_time_offsetValue) {
+		return setField(NX_EVENT_TIME_OFFSET, event_time_offsetValue);
 	}
 
 	@Override
@@ -107,13 +107,13 @@ public class NXevent_dataImpl extends NXobjectImpl implements NXevent_data {
 	}
 
 	@Override
-	public DataNode setEvent_id(IDataset event_id) {
-		return setDataset(NX_EVENT_ID, event_id);
+	public DataNode setEvent_id(IDataset event_idDataset) {
+		return setDataset(NX_EVENT_ID, event_idDataset);
 	}
 
 	@Override
-	public DataNode setEvent_idScalar(Long event_id) {
-		return setField(NX_EVENT_ID, event_id);
+	public DataNode setEvent_idScalar(Long event_idValue) {
+		return setField(NX_EVENT_ID, event_idValue);
 	}
 
 	@Override
@@ -127,13 +127,13 @@ public class NXevent_dataImpl extends NXobjectImpl implements NXevent_data {
 	}
 
 	@Override
-	public DataNode setEvent_time_zero(IDataset event_time_zero) {
-		return setDataset(NX_EVENT_TIME_ZERO, event_time_zero);
+	public DataNode setEvent_time_zero(IDataset event_time_zeroDataset) {
+		return setDataset(NX_EVENT_TIME_ZERO, event_time_zeroDataset);
 	}
 
 	@Override
-	public DataNode setEvent_time_zeroScalar(Number event_time_zero) {
-		return setField(NX_EVENT_TIME_ZERO, event_time_zero);
+	public DataNode setEvent_time_zeroScalar(Number event_time_zeroValue) {
+		return setField(NX_EVENT_TIME_ZERO, event_time_zeroValue);
 	}
 
 	@Override
@@ -142,8 +142,8 @@ public class NXevent_dataImpl extends NXobjectImpl implements NXevent_data {
 	}
 
 	@Override
-	public void setEvent_time_zeroAttributeOffset(Date offset) {
-		setAttribute(NX_EVENT_TIME_ZERO, NX_EVENT_TIME_ZERO_ATTRIBUTE_OFFSET, offset);
+	public void setEvent_time_zeroAttributeOffset(Date offsetValue) {
+		setAttribute(NX_EVENT_TIME_ZERO, NX_EVENT_TIME_ZERO_ATTRIBUTE_OFFSET, offsetValue);
 	}
 
 	@Override
@@ -157,13 +157,13 @@ public class NXevent_dataImpl extends NXobjectImpl implements NXevent_data {
 	}
 
 	@Override
-	public DataNode setEvent_index(IDataset event_index) {
-		return setDataset(NX_EVENT_INDEX, event_index);
+	public DataNode setEvent_index(IDataset event_indexDataset) {
+		return setDataset(NX_EVENT_INDEX, event_indexDataset);
 	}
 
 	@Override
-	public DataNode setEvent_indexScalar(Long event_index) {
-		return setField(NX_EVENT_INDEX, event_index);
+	public DataNode setEvent_indexScalar(Long event_indexValue) {
+		return setField(NX_EVENT_INDEX, event_indexValue);
 	}
 
 	@Override
@@ -177,13 +177,13 @@ public class NXevent_dataImpl extends NXobjectImpl implements NXevent_data {
 	}
 
 	@Override
-	public DataNode setPulse_height(IDataset pulse_height) {
-		return setDataset(NX_PULSE_HEIGHT, pulse_height);
+	public DataNode setPulse_height(IDataset pulse_heightDataset) {
+		return setDataset(NX_PULSE_HEIGHT, pulse_heightDataset);
 	}
 
 	@Override
-	public DataNode setPulse_heightScalar(Double pulse_height) {
-		return setField(NX_PULSE_HEIGHT, pulse_height);
+	public DataNode setPulse_heightScalar(Double pulse_heightValue) {
+		return setField(NX_PULSE_HEIGHT, pulse_heightValue);
 	}
 
 	@Override
@@ -197,13 +197,13 @@ public class NXevent_dataImpl extends NXobjectImpl implements NXevent_data {
 	}
 
 	@Override
-	public DataNode setCue_timestamp_zero(IDataset cue_timestamp_zero) {
-		return setDataset(NX_CUE_TIMESTAMP_ZERO, cue_timestamp_zero);
+	public DataNode setCue_timestamp_zero(IDataset cue_timestamp_zeroDataset) {
+		return setDataset(NX_CUE_TIMESTAMP_ZERO, cue_timestamp_zeroDataset);
 	}
 
 	@Override
-	public DataNode setCue_timestamp_zeroScalar(Date cue_timestamp_zero) {
-		return setDate(NX_CUE_TIMESTAMP_ZERO, cue_timestamp_zero);
+	public DataNode setCue_timestamp_zeroScalar(Date cue_timestamp_zeroValue) {
+		return setDate(NX_CUE_TIMESTAMP_ZERO, cue_timestamp_zeroValue);
 	}
 
 	@Override
@@ -212,8 +212,8 @@ public class NXevent_dataImpl extends NXobjectImpl implements NXevent_data {
 	}
 
 	@Override
-	public void setCue_timestamp_zeroAttributeStart(Date start) {
-		setAttribute(NX_CUE_TIMESTAMP_ZERO, NX_CUE_TIMESTAMP_ZERO_ATTRIBUTE_START, start);
+	public void setCue_timestamp_zeroAttributeStart(Date startValue) {
+		setAttribute(NX_CUE_TIMESTAMP_ZERO, NX_CUE_TIMESTAMP_ZERO_ATTRIBUTE_START, startValue);
 	}
 
 	@Override
@@ -227,13 +227,23 @@ public class NXevent_dataImpl extends NXobjectImpl implements NXevent_data {
 	}
 
 	@Override
-	public DataNode setCue_index(IDataset cue_index) {
-		return setDataset(NX_CUE_INDEX, cue_index);
+	public DataNode setCue_index(IDataset cue_indexDataset) {
+		return setDataset(NX_CUE_INDEX, cue_indexDataset);
 	}
 
 	@Override
-	public DataNode setCue_indexScalar(Long cue_index) {
-		return setField(NX_CUE_INDEX, cue_index);
+	public DataNode setCue_indexScalar(Long cue_indexValue) {
+		return setField(NX_CUE_INDEX, cue_indexValue);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

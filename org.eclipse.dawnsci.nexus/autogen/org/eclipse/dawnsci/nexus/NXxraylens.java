@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ public interface NXxraylens extends NXobject {
 	public static final String NX_LENS_MATERIAL = "lens_material";
 	public static final String NX_GAS = "gas";
 	public static final String NX_GAS_PRESSURE = "gas_pressure";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * Geometry of the lens
 	 * <p>
@@ -60,9 +61,9 @@ public interface NXxraylens extends NXobject {
 	 * <li><b>hyperbolical</b> </li></ul></p>
 	 * </p>
 	 * 
-	 * @param lens_geometry the lens_geometry
+	 * @param lens_geometryDataset the lens_geometryDataset
 	 */
-	public DataNode setLens_geometry(IDataset lens_geometry);
+	public DataNode setLens_geometry(IDataset lens_geometryDataset);
 
 	/**
 	 * Geometry of the lens
@@ -92,7 +93,7 @@ public interface NXxraylens extends NXobject {
 	 * 
 	 * @param lens_geometry the lens_geometry
 	 */
-	public DataNode setLens_geometryScalar(String lens_geometry);
+	public DataNode setLens_geometryScalar(String lens_geometryValue);
 
 	/**
 	 * Is the device symmetric?
@@ -110,9 +111,9 @@ public interface NXxraylens extends NXobject {
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
 	 * 
-	 * @param symmetric the symmetric
+	 * @param symmetricDataset the symmetricDataset
 	 */
-	public DataNode setSymmetric(IDataset symmetric);
+	public DataNode setSymmetric(IDataset symmetricDataset);
 
 	/**
 	 * Is the device symmetric?
@@ -132,7 +133,7 @@ public interface NXxraylens extends NXobject {
 	 * 
 	 * @param symmetric the symmetric
 	 */
-	public DataNode setSymmetricScalar(Boolean symmetric);
+	public DataNode setSymmetricScalar(Boolean symmetricValue);
 
 	/**
 	 * Is the device cylindrical?
@@ -150,9 +151,9 @@ public interface NXxraylens extends NXobject {
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
 	 * 
-	 * @param cylindrical the cylindrical
+	 * @param cylindricalDataset the cylindricalDataset
 	 */
-	public DataNode setCylindrical(IDataset cylindrical);
+	public DataNode setCylindrical(IDataset cylindricalDataset);
 
 	/**
 	 * Is the device cylindrical?
@@ -172,7 +173,7 @@ public interface NXxraylens extends NXobject {
 	 * 
 	 * @param cylindrical the cylindrical
 	 */
-	public DataNode setCylindricalScalar(Boolean cylindrical);
+	public DataNode setCylindricalScalar(Boolean cylindricalValue);
 
 	/**
 	 * Orientation of the cylinder axis.
@@ -184,9 +185,9 @@ public interface NXxraylens extends NXobject {
 	/**
 	 * Orientation of the cylinder axis.
 	 * 
-	 * @param cylinder_orientation the cylinder_orientation
+	 * @param cylinder_orientationGroup the cylinder_orientationGroup
 	 */
-	public void setCylinder_orientation(NXnote cylinder_orientation);
+	public void setCylinder_orientation(NXnote cylinder_orientationGroup);
 
 	/**
 	 * The type of focus of the lens
@@ -210,9 +211,9 @@ public interface NXxraylens extends NXobject {
 	 * <li><b>point</b> </li></ul></p>
 	 * </p>
 	 * 
-	 * @param focus_type the focus_type
+	 * @param focus_typeDataset the focus_typeDataset
 	 */
-	public DataNode setFocus_type(IDataset focus_type);
+	public DataNode setFocus_type(IDataset focus_typeDataset);
 
 	/**
 	 * The type of focus of the lens
@@ -238,7 +239,7 @@ public interface NXxraylens extends NXobject {
 	 * 
 	 * @param focus_type the focus_type
 	 */
-	public DataNode setFocus_typeScalar(String focus_type);
+	public DataNode setFocus_typeScalar(String focus_typeValue);
 
 	/**
 	 * Thickness of the lens
@@ -258,9 +259,9 @@ public interface NXxraylens extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param lens_thickness the lens_thickness
+	 * @param lens_thicknessDataset the lens_thicknessDataset
 	 */
-	public DataNode setLens_thickness(IDataset lens_thickness);
+	public DataNode setLens_thickness(IDataset lens_thicknessDataset);
 
 	/**
 	 * Thickness of the lens
@@ -282,7 +283,7 @@ public interface NXxraylens extends NXobject {
 	 * 
 	 * @param lens_thickness the lens_thickness
 	 */
-	public DataNode setLens_thicknessScalar(Double lens_thickness);
+	public DataNode setLens_thicknessScalar(Double lens_thicknessValue);
 
 	/**
 	 * Length of the lens
@@ -302,9 +303,9 @@ public interface NXxraylens extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param lens_length the lens_length
+	 * @param lens_lengthDataset the lens_lengthDataset
 	 */
-	public DataNode setLens_length(IDataset lens_length);
+	public DataNode setLens_length(IDataset lens_lengthDataset);
 
 	/**
 	 * Length of the lens
@@ -326,7 +327,7 @@ public interface NXxraylens extends NXobject {
 	 * 
 	 * @param lens_length the lens_length
 	 */
-	public DataNode setLens_lengthScalar(Double lens_length);
+	public DataNode setLens_lengthScalar(Double lens_lengthValue);
 
 	/**
 	 * Radius of the curvature as measured in the middle of the lens
@@ -346,9 +347,9 @@ public interface NXxraylens extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param curvature the curvature
+	 * @param curvatureDataset the curvatureDataset
 	 */
-	public DataNode setCurvature(IDataset curvature);
+	public DataNode setCurvature(IDataset curvatureDataset);
 
 	/**
 	 * Radius of the curvature as measured in the middle of the lens
@@ -370,7 +371,7 @@ public interface NXxraylens extends NXobject {
 	 * 
 	 * @param curvature the curvature
 	 */
-	public DataNode setCurvatureScalar(Double curvature);
+	public DataNode setCurvatureScalar(Double curvatureValue);
 
 	/**
 	 * Diameter of the lens.
@@ -390,9 +391,9 @@ public interface NXxraylens extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param aperture the aperture
+	 * @param apertureDataset the apertureDataset
 	 */
-	public DataNode setAperture(IDataset aperture);
+	public DataNode setAperture(IDataset apertureDataset);
 
 	/**
 	 * Diameter of the lens.
@@ -414,7 +415,7 @@ public interface NXxraylens extends NXobject {
 	 * 
 	 * @param aperture the aperture
 	 */
-	public DataNode setApertureScalar(Double aperture);
+	public DataNode setApertureScalar(Double apertureValue);
 
 	/**
 	 * Number of lenses that make up the compound lens.
@@ -432,9 +433,9 @@ public interface NXxraylens extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * </p>
 	 * 
-	 * @param number_of_lenses the number_of_lenses
+	 * @param number_of_lensesDataset the number_of_lensesDataset
 	 */
-	public DataNode setNumber_of_lenses(IDataset number_of_lenses);
+	public DataNode setNumber_of_lenses(IDataset number_of_lensesDataset);
 
 	/**
 	 * Number of lenses that make up the compound lens.
@@ -454,7 +455,7 @@ public interface NXxraylens extends NXobject {
 	 * 
 	 * @param number_of_lenses the number_of_lenses
 	 */
-	public DataNode setNumber_of_lensesScalar(Long number_of_lenses);
+	public DataNode setNumber_of_lensesScalar(Long number_of_lensesValue);
 
 	/**
 	 * Material used to make the lens.
@@ -472,9 +473,9 @@ public interface NXxraylens extends NXobject {
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
 	 * 
-	 * @param lens_material the lens_material
+	 * @param lens_materialDataset the lens_materialDataset
 	 */
-	public DataNode setLens_material(IDataset lens_material);
+	public DataNode setLens_material(IDataset lens_materialDataset);
 
 	/**
 	 * Material used to make the lens.
@@ -494,7 +495,7 @@ public interface NXxraylens extends NXobject {
 	 * 
 	 * @param lens_material the lens_material
 	 */
-	public DataNode setLens_materialScalar(String lens_material);
+	public DataNode setLens_materialScalar(String lens_materialValue);
 
 	/**
 	 * Gas used to fill the lens
@@ -512,9 +513,9 @@ public interface NXxraylens extends NXobject {
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
 	 * 
-	 * @param gas the gas
+	 * @param gasDataset the gasDataset
 	 */
-	public DataNode setGas(IDataset gas);
+	public DataNode setGas(IDataset gasDataset);
 
 	/**
 	 * Gas used to fill the lens
@@ -534,7 +535,7 @@ public interface NXxraylens extends NXobject {
 	 * 
 	 * @param gas the gas
 	 */
-	public DataNode setGasScalar(String gas);
+	public DataNode setGasScalar(String gasValue);
 
 	/**
 	 * Gas pressure in the lens
@@ -554,9 +555,9 @@ public interface NXxraylens extends NXobject {
 	 * <b>Units:</b> NX_PRESSURE
 	 * </p>
 	 * 
-	 * @param gas_pressure the gas_pressure
+	 * @param gas_pressureDataset the gas_pressureDataset
 	 */
-	public DataNode setGas_pressure(IDataset gas_pressure);
+	public DataNode setGas_pressure(IDataset gas_pressureDataset);
 
 	/**
 	 * Gas pressure in the lens
@@ -578,6 +579,32 @@ public interface NXxraylens extends NXobject {
 	 * 
 	 * @param gas_pressure the gas_pressure
 	 */
-	public DataNode setGas_pressureScalar(Double gas_pressure);
+	public DataNode setGas_pressureScalar(Double gas_pressureValue);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

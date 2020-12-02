@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -71,12 +71,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 
 	@Override
 	public NXgeometry getGeometry() {
+		// dataNodeName = NX_GEOMETRY
 		return getChild("geometry", NXgeometry.class);
 	}
 
 	@Override
-	public void setGeometry(NXgeometry geometry) {
-		putChild("geometry", geometry);
+	public void setGeometry(NXgeometry geometryGroup) {
+		putChild("geometry", geometryGroup);
 	}
 
 	@Override
@@ -110,13 +111,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setUsage(IDataset usage) {
-		return setDataset(NX_USAGE, usage);
+	public DataNode setUsage(IDataset usageDataset) {
+		return setDataset(NX_USAGE, usageDataset);
 	}
 
 	@Override
-	public DataNode setUsageScalar(String usage) {
-		return setString(NX_USAGE, usage);
+	public DataNode setUsageScalar(String usageValue) {
+		return setString(NX_USAGE, usageValue);
 	}
 
 	@Override
@@ -130,13 +131,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setType(IDataset type) {
-		return setDataset(NX_TYPE, type);
+	public DataNode setType(IDataset typeDataset) {
+		return setDataset(NX_TYPE, typeDataset);
 	}
 
 	@Override
-	public DataNode setTypeScalar(String type) {
-		return setString(NX_TYPE, type);
+	public DataNode setTypeScalar(String typeValue) {
+		return setString(NX_TYPE, typeValue);
 	}
 
 	@Override
@@ -150,13 +151,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setChemical_formula(IDataset chemical_formula) {
-		return setDataset(NX_CHEMICAL_FORMULA, chemical_formula);
+	public DataNode setChemical_formula(IDataset chemical_formulaDataset) {
+		return setDataset(NX_CHEMICAL_FORMULA, chemical_formulaDataset);
 	}
 
 	@Override
-	public DataNode setChemical_formulaScalar(String chemical_formula) {
-		return setString(NX_CHEMICAL_FORMULA, chemical_formula);
+	public DataNode setChemical_formulaScalar(String chemical_formulaValue) {
+		return setString(NX_CHEMICAL_FORMULA, chemical_formulaValue);
 	}
 
 	@Override
@@ -170,13 +171,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setOrder_no(IDataset order_no) {
-		return setDataset(NX_ORDER_NO, order_no);
+	public DataNode setOrder_no(IDataset order_noDataset) {
+		return setDataset(NX_ORDER_NO, order_noDataset);
 	}
 
 	@Override
-	public DataNode setOrder_noScalar(Long order_no) {
-		return setField(NX_ORDER_NO, order_no);
+	public DataNode setOrder_noScalar(Long order_noValue) {
+		return setField(NX_ORDER_NO, order_noValue);
 	}
 
 	@Override
@@ -190,13 +191,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setCut_angle(IDataset cut_angle) {
-		return setDataset(NX_CUT_ANGLE, cut_angle);
+	public DataNode setCut_angle(IDataset cut_angleDataset) {
+		return setDataset(NX_CUT_ANGLE, cut_angleDataset);
 	}
 
 	@Override
-	public DataNode setCut_angleScalar(Double cut_angle) {
-		return setField(NX_CUT_ANGLE, cut_angle);
+	public DataNode setCut_angleScalar(Double cut_angleValue) {
+		return setField(NX_CUT_ANGLE, cut_angleValue);
 	}
 
 	@Override
@@ -210,13 +211,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setSpace_group(IDataset space_group) {
-		return setDataset(NX_SPACE_GROUP, space_group);
+	public DataNode setSpace_group(IDataset space_groupDataset) {
+		return setDataset(NX_SPACE_GROUP, space_groupDataset);
 	}
 
 	@Override
-	public DataNode setSpace_groupScalar(String space_group) {
-		return setString(NX_SPACE_GROUP, space_group);
+	public DataNode setSpace_groupScalar(String space_groupValue) {
+		return setString(NX_SPACE_GROUP, space_groupValue);
 	}
 
 	@Override
@@ -230,13 +231,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setUnit_cell(IDataset unit_cell) {
-		return setDataset(NX_UNIT_CELL, unit_cell);
+	public DataNode setUnit_cell(IDataset unit_cellDataset) {
+		return setDataset(NX_UNIT_CELL, unit_cellDataset);
 	}
 
 	@Override
-	public DataNode setUnit_cellScalar(Double unit_cell) {
-		return setField(NX_UNIT_CELL, unit_cell);
+	public DataNode setUnit_cellScalar(Double unit_cellValue) {
+		return setField(NX_UNIT_CELL, unit_cellValue);
 	}
 
 	@Override
@@ -250,13 +251,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setUnit_cell_a(IDataset unit_cell_a) {
-		return setDataset(NX_UNIT_CELL_A, unit_cell_a);
+	public DataNode setUnit_cell_a(IDataset unit_cell_aDataset) {
+		return setDataset(NX_UNIT_CELL_A, unit_cell_aDataset);
 	}
 
 	@Override
-	public DataNode setUnit_cell_aScalar(Double unit_cell_a) {
-		return setField(NX_UNIT_CELL_A, unit_cell_a);
+	public DataNode setUnit_cell_aScalar(Double unit_cell_aValue) {
+		return setField(NX_UNIT_CELL_A, unit_cell_aValue);
 	}
 
 	@Override
@@ -270,13 +271,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setUnit_cell_b(IDataset unit_cell_b) {
-		return setDataset(NX_UNIT_CELL_B, unit_cell_b);
+	public DataNode setUnit_cell_b(IDataset unit_cell_bDataset) {
+		return setDataset(NX_UNIT_CELL_B, unit_cell_bDataset);
 	}
 
 	@Override
-	public DataNode setUnit_cell_bScalar(Double unit_cell_b) {
-		return setField(NX_UNIT_CELL_B, unit_cell_b);
+	public DataNode setUnit_cell_bScalar(Double unit_cell_bValue) {
+		return setField(NX_UNIT_CELL_B, unit_cell_bValue);
 	}
 
 	@Override
@@ -290,13 +291,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setUnit_cell_c(IDataset unit_cell_c) {
-		return setDataset(NX_UNIT_CELL_C, unit_cell_c);
+	public DataNode setUnit_cell_c(IDataset unit_cell_cDataset) {
+		return setDataset(NX_UNIT_CELL_C, unit_cell_cDataset);
 	}
 
 	@Override
-	public DataNode setUnit_cell_cScalar(Double unit_cell_c) {
-		return setField(NX_UNIT_CELL_C, unit_cell_c);
+	public DataNode setUnit_cell_cScalar(Double unit_cell_cValue) {
+		return setField(NX_UNIT_CELL_C, unit_cell_cValue);
 	}
 
 	@Override
@@ -310,13 +311,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setUnit_cell_alpha(IDataset unit_cell_alpha) {
-		return setDataset(NX_UNIT_CELL_ALPHA, unit_cell_alpha);
+	public DataNode setUnit_cell_alpha(IDataset unit_cell_alphaDataset) {
+		return setDataset(NX_UNIT_CELL_ALPHA, unit_cell_alphaDataset);
 	}
 
 	@Override
-	public DataNode setUnit_cell_alphaScalar(Double unit_cell_alpha) {
-		return setField(NX_UNIT_CELL_ALPHA, unit_cell_alpha);
+	public DataNode setUnit_cell_alphaScalar(Double unit_cell_alphaValue) {
+		return setField(NX_UNIT_CELL_ALPHA, unit_cell_alphaValue);
 	}
 
 	@Override
@@ -330,13 +331,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setUnit_cell_beta(IDataset unit_cell_beta) {
-		return setDataset(NX_UNIT_CELL_BETA, unit_cell_beta);
+	public DataNode setUnit_cell_beta(IDataset unit_cell_betaDataset) {
+		return setDataset(NX_UNIT_CELL_BETA, unit_cell_betaDataset);
 	}
 
 	@Override
-	public DataNode setUnit_cell_betaScalar(Double unit_cell_beta) {
-		return setField(NX_UNIT_CELL_BETA, unit_cell_beta);
+	public DataNode setUnit_cell_betaScalar(Double unit_cell_betaValue) {
+		return setField(NX_UNIT_CELL_BETA, unit_cell_betaValue);
 	}
 
 	@Override
@@ -350,13 +351,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setUnit_cell_gamma(IDataset unit_cell_gamma) {
-		return setDataset(NX_UNIT_CELL_GAMMA, unit_cell_gamma);
+	public DataNode setUnit_cell_gamma(IDataset unit_cell_gammaDataset) {
+		return setDataset(NX_UNIT_CELL_GAMMA, unit_cell_gammaDataset);
 	}
 
 	@Override
-	public DataNode setUnit_cell_gammaScalar(Double unit_cell_gamma) {
-		return setField(NX_UNIT_CELL_GAMMA, unit_cell_gamma);
+	public DataNode setUnit_cell_gammaScalar(Double unit_cell_gammaValue) {
+		return setField(NX_UNIT_CELL_GAMMA, unit_cell_gammaValue);
 	}
 
 	@Override
@@ -370,13 +371,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setUnit_cell_volume(IDataset unit_cell_volume) {
-		return setDataset(NX_UNIT_CELL_VOLUME, unit_cell_volume);
+	public DataNode setUnit_cell_volume(IDataset unit_cell_volumeDataset) {
+		return setDataset(NX_UNIT_CELL_VOLUME, unit_cell_volumeDataset);
 	}
 
 	@Override
-	public DataNode setUnit_cell_volumeScalar(Double unit_cell_volume) {
-		return setField(NX_UNIT_CELL_VOLUME, unit_cell_volume);
+	public DataNode setUnit_cell_volumeScalar(Double unit_cell_volumeValue) {
+		return setField(NX_UNIT_CELL_VOLUME, unit_cell_volumeValue);
 	}
 
 	@Override
@@ -390,13 +391,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setOrientation_matrix(IDataset orientation_matrix) {
-		return setDataset(NX_ORIENTATION_MATRIX, orientation_matrix);
+	public DataNode setOrientation_matrix(IDataset orientation_matrixDataset) {
+		return setDataset(NX_ORIENTATION_MATRIX, orientation_matrixDataset);
 	}
 
 	@Override
-	public DataNode setOrientation_matrixScalar(Double orientation_matrix) {
-		return setField(NX_ORIENTATION_MATRIX, orientation_matrix);
+	public DataNode setOrientation_matrixScalar(Double orientation_matrixValue) {
+		return setField(NX_ORIENTATION_MATRIX, orientation_matrixValue);
 	}
 
 	@Override
@@ -410,13 +411,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setWavelength(IDataset wavelength) {
-		return setDataset(NX_WAVELENGTH, wavelength);
+	public DataNode setWavelength(IDataset wavelengthDataset) {
+		return setDataset(NX_WAVELENGTH, wavelengthDataset);
 	}
 
 	@Override
-	public DataNode setWavelengthScalar(Double wavelength) {
-		return setField(NX_WAVELENGTH, wavelength);
+	public DataNode setWavelengthScalar(Double wavelengthValue) {
+		return setField(NX_WAVELENGTH, wavelengthValue);
 	}
 
 	@Override
@@ -430,13 +431,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setD_spacing(IDataset d_spacing) {
-		return setDataset(NX_D_SPACING, d_spacing);
+	public DataNode setD_spacing(IDataset d_spacingDataset) {
+		return setDataset(NX_D_SPACING, d_spacingDataset);
 	}
 
 	@Override
-	public DataNode setD_spacingScalar(Double d_spacing) {
-		return setField(NX_D_SPACING, d_spacing);
+	public DataNode setD_spacingScalar(Double d_spacingValue) {
+		return setField(NX_D_SPACING, d_spacingValue);
 	}
 
 	@Override
@@ -450,13 +451,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setScattering_vector(IDataset scattering_vector) {
-		return setDataset(NX_SCATTERING_VECTOR, scattering_vector);
+	public DataNode setScattering_vector(IDataset scattering_vectorDataset) {
+		return setDataset(NX_SCATTERING_VECTOR, scattering_vectorDataset);
 	}
 
 	@Override
-	public DataNode setScattering_vectorScalar(Double scattering_vector) {
-		return setField(NX_SCATTERING_VECTOR, scattering_vector);
+	public DataNode setScattering_vectorScalar(Double scattering_vectorValue) {
+		return setField(NX_SCATTERING_VECTOR, scattering_vectorValue);
 	}
 
 	@Override
@@ -470,13 +471,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setReflection(IDataset reflection) {
-		return setDataset(NX_REFLECTION, reflection);
+	public DataNode setReflection(IDataset reflectionDataset) {
+		return setDataset(NX_REFLECTION, reflectionDataset);
 	}
 
 	@Override
-	public DataNode setReflectionScalar(Long reflection) {
-		return setField(NX_REFLECTION, reflection);
+	public DataNode setReflectionScalar(Long reflectionValue) {
+		return setField(NX_REFLECTION, reflectionValue);
 	}
 
 	@Override
@@ -490,13 +491,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setThickness(IDataset thickness) {
-		return setDataset(NX_THICKNESS, thickness);
+	public DataNode setThickness(IDataset thicknessDataset) {
+		return setDataset(NX_THICKNESS, thicknessDataset);
 	}
 
 	@Override
-	public DataNode setThicknessScalar(Double thickness) {
-		return setField(NX_THICKNESS, thickness);
+	public DataNode setThicknessScalar(Double thicknessValue) {
+		return setField(NX_THICKNESS, thicknessValue);
 	}
 
 	@Override
@@ -510,13 +511,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setDensity(IDataset density) {
-		return setDataset(NX_DENSITY, density);
+	public DataNode setDensity(IDataset densityDataset) {
+		return setDataset(NX_DENSITY, densityDataset);
 	}
 
 	@Override
-	public DataNode setDensityScalar(Number density) {
-		return setField(NX_DENSITY, density);
+	public DataNode setDensityScalar(Number densityValue) {
+		return setField(NX_DENSITY, densityValue);
 	}
 
 	@Override
@@ -530,13 +531,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setSegment_width(IDataset segment_width) {
-		return setDataset(NX_SEGMENT_WIDTH, segment_width);
+	public DataNode setSegment_width(IDataset segment_widthDataset) {
+		return setDataset(NX_SEGMENT_WIDTH, segment_widthDataset);
 	}
 
 	@Override
-	public DataNode setSegment_widthScalar(Double segment_width) {
-		return setField(NX_SEGMENT_WIDTH, segment_width);
+	public DataNode setSegment_widthScalar(Double segment_widthValue) {
+		return setField(NX_SEGMENT_WIDTH, segment_widthValue);
 	}
 
 	@Override
@@ -550,13 +551,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setSegment_height(IDataset segment_height) {
-		return setDataset(NX_SEGMENT_HEIGHT, segment_height);
+	public DataNode setSegment_height(IDataset segment_heightDataset) {
+		return setDataset(NX_SEGMENT_HEIGHT, segment_heightDataset);
 	}
 
 	@Override
-	public DataNode setSegment_heightScalar(Double segment_height) {
-		return setField(NX_SEGMENT_HEIGHT, segment_height);
+	public DataNode setSegment_heightScalar(Double segment_heightValue) {
+		return setField(NX_SEGMENT_HEIGHT, segment_heightValue);
 	}
 
 	@Override
@@ -570,13 +571,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setSegment_thickness(IDataset segment_thickness) {
-		return setDataset(NX_SEGMENT_THICKNESS, segment_thickness);
+	public DataNode setSegment_thickness(IDataset segment_thicknessDataset) {
+		return setDataset(NX_SEGMENT_THICKNESS, segment_thicknessDataset);
 	}
 
 	@Override
-	public DataNode setSegment_thicknessScalar(Double segment_thickness) {
-		return setField(NX_SEGMENT_THICKNESS, segment_thickness);
+	public DataNode setSegment_thicknessScalar(Double segment_thicknessValue) {
+		return setField(NX_SEGMENT_THICKNESS, segment_thicknessValue);
 	}
 
 	@Override
@@ -590,13 +591,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setSegment_gap(IDataset segment_gap) {
-		return setDataset(NX_SEGMENT_GAP, segment_gap);
+	public DataNode setSegment_gap(IDataset segment_gapDataset) {
+		return setDataset(NX_SEGMENT_GAP, segment_gapDataset);
 	}
 
 	@Override
-	public DataNode setSegment_gapScalar(Double segment_gap) {
-		return setField(NX_SEGMENT_GAP, segment_gap);
+	public DataNode setSegment_gapScalar(Double segment_gapValue) {
+		return setField(NX_SEGMENT_GAP, segment_gapValue);
 	}
 
 	@Override
@@ -610,13 +611,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setSegment_columns(IDataset segment_columns) {
-		return setDataset(NX_SEGMENT_COLUMNS, segment_columns);
+	public DataNode setSegment_columns(IDataset segment_columnsDataset) {
+		return setDataset(NX_SEGMENT_COLUMNS, segment_columnsDataset);
 	}
 
 	@Override
-	public DataNode setSegment_columnsScalar(Double segment_columns) {
-		return setField(NX_SEGMENT_COLUMNS, segment_columns);
+	public DataNode setSegment_columnsScalar(Double segment_columnsValue) {
+		return setField(NX_SEGMENT_COLUMNS, segment_columnsValue);
 	}
 
 	@Override
@@ -630,13 +631,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setSegment_rows(IDataset segment_rows) {
-		return setDataset(NX_SEGMENT_ROWS, segment_rows);
+	public DataNode setSegment_rows(IDataset segment_rowsDataset) {
+		return setDataset(NX_SEGMENT_ROWS, segment_rowsDataset);
 	}
 
 	@Override
-	public DataNode setSegment_rowsScalar(Double segment_rows) {
-		return setField(NX_SEGMENT_ROWS, segment_rows);
+	public DataNode setSegment_rowsScalar(Double segment_rowsValue) {
+		return setField(NX_SEGMENT_ROWS, segment_rowsValue);
 	}
 
 	@Override
@@ -650,13 +651,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setMosaic_horizontal(IDataset mosaic_horizontal) {
-		return setDataset(NX_MOSAIC_HORIZONTAL, mosaic_horizontal);
+	public DataNode setMosaic_horizontal(IDataset mosaic_horizontalDataset) {
+		return setDataset(NX_MOSAIC_HORIZONTAL, mosaic_horizontalDataset);
 	}
 
 	@Override
-	public DataNode setMosaic_horizontalScalar(Double mosaic_horizontal) {
-		return setField(NX_MOSAIC_HORIZONTAL, mosaic_horizontal);
+	public DataNode setMosaic_horizontalScalar(Double mosaic_horizontalValue) {
+		return setField(NX_MOSAIC_HORIZONTAL, mosaic_horizontalValue);
 	}
 
 	@Override
@@ -670,13 +671,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setMosaic_vertical(IDataset mosaic_vertical) {
-		return setDataset(NX_MOSAIC_VERTICAL, mosaic_vertical);
+	public DataNode setMosaic_vertical(IDataset mosaic_verticalDataset) {
+		return setDataset(NX_MOSAIC_VERTICAL, mosaic_verticalDataset);
 	}
 
 	@Override
-	public DataNode setMosaic_verticalScalar(Double mosaic_vertical) {
-		return setField(NX_MOSAIC_VERTICAL, mosaic_vertical);
+	public DataNode setMosaic_verticalScalar(Double mosaic_verticalValue) {
+		return setField(NX_MOSAIC_VERTICAL, mosaic_verticalValue);
 	}
 
 	@Override
@@ -690,13 +691,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setCurvature_horizontal(IDataset curvature_horizontal) {
-		return setDataset(NX_CURVATURE_HORIZONTAL, curvature_horizontal);
+	public DataNode setCurvature_horizontal(IDataset curvature_horizontalDataset) {
+		return setDataset(NX_CURVATURE_HORIZONTAL, curvature_horizontalDataset);
 	}
 
 	@Override
-	public DataNode setCurvature_horizontalScalar(Double curvature_horizontal) {
-		return setField(NX_CURVATURE_HORIZONTAL, curvature_horizontal);
+	public DataNode setCurvature_horizontalScalar(Double curvature_horizontalValue) {
+		return setField(NX_CURVATURE_HORIZONTAL, curvature_horizontalValue);
 	}
 
 	@Override
@@ -710,13 +711,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setCurvature_vertical(IDataset curvature_vertical) {
-		return setDataset(NX_CURVATURE_VERTICAL, curvature_vertical);
+	public DataNode setCurvature_vertical(IDataset curvature_verticalDataset) {
+		return setDataset(NX_CURVATURE_VERTICAL, curvature_verticalDataset);
 	}
 
 	@Override
-	public DataNode setCurvature_verticalScalar(Double curvature_vertical) {
-		return setField(NX_CURVATURE_VERTICAL, curvature_vertical);
+	public DataNode setCurvature_verticalScalar(Double curvature_verticalValue) {
+		return setField(NX_CURVATURE_VERTICAL, curvature_verticalValue);
 	}
 
 	@Override
@@ -730,13 +731,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setIs_cylindrical(IDataset is_cylindrical) {
-		return setDataset(NX_IS_CYLINDRICAL, is_cylindrical);
+	public DataNode setIs_cylindrical(IDataset is_cylindricalDataset) {
+		return setDataset(NX_IS_CYLINDRICAL, is_cylindricalDataset);
 	}
 
 	@Override
-	public DataNode setIs_cylindricalScalar(Boolean is_cylindrical) {
-		return setField(NX_IS_CYLINDRICAL, is_cylindrical);
+	public DataNode setIs_cylindricalScalar(Boolean is_cylindricalValue) {
+		return setField(NX_IS_CYLINDRICAL, is_cylindricalValue);
 	}
 
 	@Override
@@ -750,13 +751,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setCylindrical_orientation_angle(IDataset cylindrical_orientation_angle) {
-		return setDataset(NX_CYLINDRICAL_ORIENTATION_ANGLE, cylindrical_orientation_angle);
+	public DataNode setCylindrical_orientation_angle(IDataset cylindrical_orientation_angleDataset) {
+		return setDataset(NX_CYLINDRICAL_ORIENTATION_ANGLE, cylindrical_orientation_angleDataset);
 	}
 
 	@Override
-	public DataNode setCylindrical_orientation_angleScalar(Number cylindrical_orientation_angle) {
-		return setField(NX_CYLINDRICAL_ORIENTATION_ANGLE, cylindrical_orientation_angle);
+	public DataNode setCylindrical_orientation_angleScalar(Number cylindrical_orientation_angleValue) {
+		return setField(NX_CYLINDRICAL_ORIENTATION_ANGLE, cylindrical_orientation_angleValue);
 	}
 
 	@Override
@@ -770,13 +771,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setPolar_angle(IDataset polar_angle) {
-		return setDataset(NX_POLAR_ANGLE, polar_angle);
+	public DataNode setPolar_angle(IDataset polar_angleDataset) {
+		return setDataset(NX_POLAR_ANGLE, polar_angleDataset);
 	}
 
 	@Override
-	public DataNode setPolar_angleScalar(Double polar_angle) {
-		return setField(NX_POLAR_ANGLE, polar_angle);
+	public DataNode setPolar_angleScalar(Double polar_angleValue) {
+		return setField(NX_POLAR_ANGLE, polar_angleValue);
 	}
 
 	@Override
@@ -790,13 +791,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setAzimuthal_angle(IDataset azimuthal_angle) {
-		return setDataset(NX_AZIMUTHAL_ANGLE, azimuthal_angle);
+	public DataNode setAzimuthal_angle(IDataset azimuthal_angleDataset) {
+		return setDataset(NX_AZIMUTHAL_ANGLE, azimuthal_angleDataset);
 	}
 
 	@Override
-	public DataNode setAzimuthal_angleScalar(Double azimuthal_angle) {
-		return setField(NX_AZIMUTHAL_ANGLE, azimuthal_angle);
+	public DataNode setAzimuthal_angleScalar(Double azimuthal_angleValue) {
+		return setField(NX_AZIMUTHAL_ANGLE, azimuthal_angleValue);
 	}
 
 	@Override
@@ -810,13 +811,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setBragg_angle(IDataset bragg_angle) {
-		return setDataset(NX_BRAGG_ANGLE, bragg_angle);
+	public DataNode setBragg_angle(IDataset bragg_angleDataset) {
+		return setDataset(NX_BRAGG_ANGLE, bragg_angleDataset);
 	}
 
 	@Override
-	public DataNode setBragg_angleScalar(Double bragg_angle) {
-		return setField(NX_BRAGG_ANGLE, bragg_angle);
+	public DataNode setBragg_angleScalar(Double bragg_angleValue) {
+		return setField(NX_BRAGG_ANGLE, bragg_angleValue);
 	}
 
 	@Override
@@ -830,13 +831,13 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setTemperature(IDataset temperature) {
-		return setDataset(NX_TEMPERATURE, temperature);
+	public DataNode setTemperature(IDataset temperatureDataset) {
+		return setDataset(NX_TEMPERATURE, temperatureDataset);
 	}
 
 	@Override
-	public DataNode setTemperatureScalar(Double temperature) {
-		return setField(NX_TEMPERATURE, temperature);
+	public DataNode setTemperatureScalar(Double temperatureValue) {
+		return setField(NX_TEMPERATURE, temperatureValue);
 	}
 
 	@Override
@@ -850,53 +851,67 @@ public class NXcrystalImpl extends NXobjectImpl implements NXcrystal {
 	}
 
 	@Override
-	public DataNode setTemperature_coefficient(IDataset temperature_coefficient) {
-		return setDataset(NX_TEMPERATURE_COEFFICIENT, temperature_coefficient);
+	public DataNode setTemperature_coefficient(IDataset temperature_coefficientDataset) {
+		return setDataset(NX_TEMPERATURE_COEFFICIENT, temperature_coefficientDataset);
 	}
 
 	@Override
-	public DataNode setTemperature_coefficientScalar(Double temperature_coefficient) {
-		return setField(NX_TEMPERATURE_COEFFICIENT, temperature_coefficient);
+	public DataNode setTemperature_coefficientScalar(Double temperature_coefficientValue) {
+		return setField(NX_TEMPERATURE_COEFFICIENT, temperature_coefficientValue);
 	}
 
 	@Override
 	public NXlog getTemperature_log() {
+		// dataNodeName = NX_TEMPERATURE_LOG
 		return getChild("temperature_log", NXlog.class);
 	}
 
 	@Override
-	public void setTemperature_log(NXlog temperature_log) {
-		putChild("temperature_log", temperature_log);
+	public void setTemperature_log(NXlog temperature_logGroup) {
+		putChild("temperature_log", temperature_logGroup);
 	}
 
 	@Override
 	public NXdata getReflectivity() {
+		// dataNodeName = NX_REFLECTIVITY
 		return getChild("reflectivity", NXdata.class);
 	}
 
 	@Override
-	public void setReflectivity(NXdata reflectivity) {
-		putChild("reflectivity", reflectivity);
+	public void setReflectivity(NXdata reflectivityGroup) {
+		putChild("reflectivity", reflectivityGroup);
 	}
 
 	@Override
 	public NXdata getTransmission() {
+		// dataNodeName = NX_TRANSMISSION
 		return getChild("transmission", NXdata.class);
 	}
 
 	@Override
-	public void setTransmission(NXdata transmission) {
-		putChild("transmission", transmission);
+	public void setTransmission(NXdata transmissionGroup) {
+		putChild("transmission", transmissionGroup);
 	}
 
 	@Override
 	public NXshape getShape() {
+		// dataNodeName = NX_SHAPE
 		return getChild("shape", NXshape.class);
 	}
 
 	@Override
-	public void setShape(NXshape shape) {
-		putChild("shape", shape);
+	public void setShape(NXshape shapeGroup) {
+		putChild("shape", shapeGroup);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

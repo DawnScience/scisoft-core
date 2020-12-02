@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Geometry and logical description of a detector module.
+ * Geometry and logical description of a detector module. When used, child group to NXdetector.
  * Many detectors consist of multiple
  * smaller modules. Sometimes it is important to know the exact position of such
  * modules.
@@ -70,13 +70,13 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public DataNode setData_origin(IDataset data_origin) {
-		return setDataset(NX_DATA_ORIGIN, data_origin);
+	public DataNode setData_origin(IDataset data_originDataset) {
+		return setDataset(NX_DATA_ORIGIN, data_originDataset);
 	}
 
 	@Override
-	public DataNode setData_originScalar(Long data_origin) {
-		return setField(NX_DATA_ORIGIN, data_origin);
+	public DataNode setData_originScalar(Long data_originValue) {
+		return setField(NX_DATA_ORIGIN, data_originValue);
 	}
 
 	@Override
@@ -90,13 +90,13 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public DataNode setData_size(IDataset data_size) {
-		return setDataset(NX_DATA_SIZE, data_size);
+	public DataNode setData_size(IDataset data_sizeDataset) {
+		return setDataset(NX_DATA_SIZE, data_sizeDataset);
 	}
 
 	@Override
-	public DataNode setData_sizeScalar(Long data_size) {
-		return setField(NX_DATA_SIZE, data_size);
+	public DataNode setData_sizeScalar(Long data_sizeValue) {
+		return setField(NX_DATA_SIZE, data_sizeValue);
 	}
 
 	@Override
@@ -110,13 +110,13 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public DataNode setModule_offset(IDataset module_offset) {
-		return setDataset(NX_MODULE_OFFSET, module_offset);
+	public DataNode setModule_offset(IDataset module_offsetDataset) {
+		return setDataset(NX_MODULE_OFFSET, module_offsetDataset);
 	}
 
 	@Override
-	public DataNode setModule_offsetScalar(Number module_offset) {
-		return setField(NX_MODULE_OFFSET, module_offset);
+	public DataNode setModule_offsetScalar(Number module_offsetValue) {
+		return setField(NX_MODULE_OFFSET, module_offsetValue);
 	}
 
 	@Override
@@ -125,8 +125,8 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public void setModule_offsetAttributeTransformation_type(String transformation_type) {
-		setAttribute(NX_MODULE_OFFSET, NX_MODULE_OFFSET_ATTRIBUTE_TRANSFORMATION_TYPE, transformation_type);
+	public void setModule_offsetAttributeTransformation_type(String transformation_typeValue) {
+		setAttribute(NX_MODULE_OFFSET, NX_MODULE_OFFSET_ATTRIBUTE_TRANSFORMATION_TYPE, transformation_typeValue);
 	}
 
 	@Override
@@ -135,8 +135,8 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public void setModule_offsetAttributeVector(Number vector) {
-		setAttribute(NX_MODULE_OFFSET, NX_MODULE_OFFSET_ATTRIBUTE_VECTOR, vector);
+	public void setModule_offsetAttributeVector(Number vectorValue) {
+		setAttribute(NX_MODULE_OFFSET, NX_MODULE_OFFSET_ATTRIBUTE_VECTOR, vectorValue);
 	}
 
 	@Override
@@ -145,8 +145,8 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public void setModule_offsetAttributeOffset(Number offset) {
-		setAttribute(NX_MODULE_OFFSET, NX_MODULE_OFFSET_ATTRIBUTE_OFFSET, offset);
+	public void setModule_offsetAttributeOffset(Number offsetValue) {
+		setAttribute(NX_MODULE_OFFSET, NX_MODULE_OFFSET_ATTRIBUTE_OFFSET, offsetValue);
 	}
 
 	@Override
@@ -155,8 +155,8 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public void setModule_offsetAttributeOffset_units(String offset_units) {
-		setAttribute(NX_MODULE_OFFSET, NX_MODULE_OFFSET_ATTRIBUTE_OFFSET_UNITS, offset_units);
+	public void setModule_offsetAttributeOffset_units(String offset_unitsValue) {
+		setAttribute(NX_MODULE_OFFSET, NX_MODULE_OFFSET_ATTRIBUTE_OFFSET_UNITS, offset_unitsValue);
 	}
 
 	@Override
@@ -165,8 +165,8 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public void setModule_offsetAttributeDepends_on(String depends_on) {
-		setAttribute(NX_MODULE_OFFSET, NX_MODULE_OFFSET_ATTRIBUTE_DEPENDS_ON, depends_on);
+	public void setModule_offsetAttributeDepends_on(String depends_onValue) {
+		setAttribute(NX_MODULE_OFFSET, NX_MODULE_OFFSET_ATTRIBUTE_DEPENDS_ON, depends_onValue);
 	}
 
 	@Override
@@ -180,13 +180,13 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public DataNode setFast_pixel_direction(IDataset fast_pixel_direction) {
-		return setDataset(NX_FAST_PIXEL_DIRECTION, fast_pixel_direction);
+	public DataNode setFast_pixel_direction(IDataset fast_pixel_directionDataset) {
+		return setDataset(NX_FAST_PIXEL_DIRECTION, fast_pixel_directionDataset);
 	}
 
 	@Override
-	public DataNode setFast_pixel_directionScalar(Number fast_pixel_direction) {
-		return setField(NX_FAST_PIXEL_DIRECTION, fast_pixel_direction);
+	public DataNode setFast_pixel_directionScalar(Number fast_pixel_directionValue) {
+		return setField(NX_FAST_PIXEL_DIRECTION, fast_pixel_directionValue);
 	}
 
 	@Override
@@ -195,8 +195,8 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public void setFast_pixel_directionAttributeTransformation_type(String transformation_type) {
-		setAttribute(NX_FAST_PIXEL_DIRECTION, NX_FAST_PIXEL_DIRECTION_ATTRIBUTE_TRANSFORMATION_TYPE, transformation_type);
+	public void setFast_pixel_directionAttributeTransformation_type(String transformation_typeValue) {
+		setAttribute(NX_FAST_PIXEL_DIRECTION, NX_FAST_PIXEL_DIRECTION_ATTRIBUTE_TRANSFORMATION_TYPE, transformation_typeValue);
 	}
 
 	@Override
@@ -205,8 +205,8 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public void setFast_pixel_directionAttributeVector(Number vector) {
-		setAttribute(NX_FAST_PIXEL_DIRECTION, NX_FAST_PIXEL_DIRECTION_ATTRIBUTE_VECTOR, vector);
+	public void setFast_pixel_directionAttributeVector(Number vectorValue) {
+		setAttribute(NX_FAST_PIXEL_DIRECTION, NX_FAST_PIXEL_DIRECTION_ATTRIBUTE_VECTOR, vectorValue);
 	}
 
 	@Override
@@ -215,8 +215,8 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public void setFast_pixel_directionAttributeOffset(Number offset) {
-		setAttribute(NX_FAST_PIXEL_DIRECTION, NX_FAST_PIXEL_DIRECTION_ATTRIBUTE_OFFSET, offset);
+	public void setFast_pixel_directionAttributeOffset(Number offsetValue) {
+		setAttribute(NX_FAST_PIXEL_DIRECTION, NX_FAST_PIXEL_DIRECTION_ATTRIBUTE_OFFSET, offsetValue);
 	}
 
 	@Override
@@ -225,8 +225,8 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public void setFast_pixel_directionAttributeOffset_units(String offset_units) {
-		setAttribute(NX_FAST_PIXEL_DIRECTION, NX_FAST_PIXEL_DIRECTION_ATTRIBUTE_OFFSET_UNITS, offset_units);
+	public void setFast_pixel_directionAttributeOffset_units(String offset_unitsValue) {
+		setAttribute(NX_FAST_PIXEL_DIRECTION, NX_FAST_PIXEL_DIRECTION_ATTRIBUTE_OFFSET_UNITS, offset_unitsValue);
 	}
 
 	@Override
@@ -235,8 +235,8 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public void setFast_pixel_directionAttributeDepends_on(String depends_on) {
-		setAttribute(NX_FAST_PIXEL_DIRECTION, NX_FAST_PIXEL_DIRECTION_ATTRIBUTE_DEPENDS_ON, depends_on);
+	public void setFast_pixel_directionAttributeDepends_on(String depends_onValue) {
+		setAttribute(NX_FAST_PIXEL_DIRECTION, NX_FAST_PIXEL_DIRECTION_ATTRIBUTE_DEPENDS_ON, depends_onValue);
 	}
 
 	@Override
@@ -250,13 +250,13 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public DataNode setSlow_pixel_direction(IDataset slow_pixel_direction) {
-		return setDataset(NX_SLOW_PIXEL_DIRECTION, slow_pixel_direction);
+	public DataNode setSlow_pixel_direction(IDataset slow_pixel_directionDataset) {
+		return setDataset(NX_SLOW_PIXEL_DIRECTION, slow_pixel_directionDataset);
 	}
 
 	@Override
-	public DataNode setSlow_pixel_directionScalar(Number slow_pixel_direction) {
-		return setField(NX_SLOW_PIXEL_DIRECTION, slow_pixel_direction);
+	public DataNode setSlow_pixel_directionScalar(Number slow_pixel_directionValue) {
+		return setField(NX_SLOW_PIXEL_DIRECTION, slow_pixel_directionValue);
 	}
 
 	@Override
@@ -265,8 +265,8 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public void setSlow_pixel_directionAttributeTransformation_type(String transformation_type) {
-		setAttribute(NX_SLOW_PIXEL_DIRECTION, NX_SLOW_PIXEL_DIRECTION_ATTRIBUTE_TRANSFORMATION_TYPE, transformation_type);
+	public void setSlow_pixel_directionAttributeTransformation_type(String transformation_typeValue) {
+		setAttribute(NX_SLOW_PIXEL_DIRECTION, NX_SLOW_PIXEL_DIRECTION_ATTRIBUTE_TRANSFORMATION_TYPE, transformation_typeValue);
 	}
 
 	@Override
@@ -275,8 +275,8 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public void setSlow_pixel_directionAttributeVector(Number vector) {
-		setAttribute(NX_SLOW_PIXEL_DIRECTION, NX_SLOW_PIXEL_DIRECTION_ATTRIBUTE_VECTOR, vector);
+	public void setSlow_pixel_directionAttributeVector(Number vectorValue) {
+		setAttribute(NX_SLOW_PIXEL_DIRECTION, NX_SLOW_PIXEL_DIRECTION_ATTRIBUTE_VECTOR, vectorValue);
 	}
 
 	@Override
@@ -285,8 +285,8 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public void setSlow_pixel_directionAttributeOffset(Number offset) {
-		setAttribute(NX_SLOW_PIXEL_DIRECTION, NX_SLOW_PIXEL_DIRECTION_ATTRIBUTE_OFFSET, offset);
+	public void setSlow_pixel_directionAttributeOffset(Number offsetValue) {
+		setAttribute(NX_SLOW_PIXEL_DIRECTION, NX_SLOW_PIXEL_DIRECTION_ATTRIBUTE_OFFSET, offsetValue);
 	}
 
 	@Override
@@ -295,8 +295,8 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public void setSlow_pixel_directionAttributeOffset_units(String offset_units) {
-		setAttribute(NX_SLOW_PIXEL_DIRECTION, NX_SLOW_PIXEL_DIRECTION_ATTRIBUTE_OFFSET_UNITS, offset_units);
+	public void setSlow_pixel_directionAttributeOffset_units(String offset_unitsValue) {
+		setAttribute(NX_SLOW_PIXEL_DIRECTION, NX_SLOW_PIXEL_DIRECTION_ATTRIBUTE_OFFSET_UNITS, offset_unitsValue);
 	}
 
 	@Override
@@ -305,8 +305,18 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public void setSlow_pixel_directionAttributeDepends_on(String depends_on) {
-		setAttribute(NX_SLOW_PIXEL_DIRECTION, NX_SLOW_PIXEL_DIRECTION_ATTRIBUTE_DEPENDS_ON, depends_on);
+	public void setSlow_pixel_directionAttributeDepends_on(String depends_onValue) {
+		setAttribute(NX_SLOW_PIXEL_DIRECTION, NX_SLOW_PIXEL_DIRECTION_ATTRIBUTE_DEPENDS_ON, depends_onValue);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

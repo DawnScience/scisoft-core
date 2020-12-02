@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,6 +32,7 @@ public interface NXpositioner extends NXobject {
 	public static final String NX_VELOCITY = "velocity";
 	public static final String NX_ACCELERATION_TIME = "acceleration_time";
 	public static final String NX_CONTROLLER_RECORD = "controller_record";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * symbolic or mnemonic name (one word)
 	 * 
@@ -42,9 +43,9 @@ public interface NXpositioner extends NXobject {
 	/**
 	 * symbolic or mnemonic name (one word)
 	 * 
-	 * @param name the name
+	 * @param nameDataset the nameDataset
 	 */
-	public DataNode setName(IDataset name);
+	public DataNode setName(IDataset nameDataset);
 
 	/**
 	 * symbolic or mnemonic name (one word)
@@ -58,7 +59,7 @@ public interface NXpositioner extends NXobject {
 	 * 
 	 * @param name the name
 	 */
-	public DataNode setNameScalar(String name);
+	public DataNode setNameScalar(String nameValue);
 
 	/**
 	 * description of positioner
@@ -70,9 +71,9 @@ public interface NXpositioner extends NXobject {
 	/**
 	 * description of positioner
 	 * 
-	 * @param description the description
+	 * @param descriptionDataset the descriptionDataset
 	 */
-	public DataNode setDescription(IDataset description);
+	public DataNode setDescription(IDataset descriptionDataset);
 
 	/**
 	 * description of positioner
@@ -86,7 +87,7 @@ public interface NXpositioner extends NXobject {
 	 * 
 	 * @param description the description
 	 */
-	public DataNode setDescriptionScalar(String description);
+	public DataNode setDescriptionScalar(String descriptionValue);
 
 	/**
 	 * best known value of positioner - need [n] as may be scanned
@@ -108,9 +109,9 @@ public interface NXpositioner extends NXobject {
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
 	 * 
-	 * @param value the value
+	 * @param valueDataset the valueDataset
 	 */
-	public DataNode setValue(IDataset value);
+	public DataNode setValue(IDataset valueDataset);
 
 	/**
 	 * best known value of positioner - need [n] as may be scanned
@@ -134,7 +135,7 @@ public interface NXpositioner extends NXobject {
 	 * 
 	 * @param value the value
 	 */
-	public DataNode setValueScalar(Number value);
+	public DataNode setValueScalar(Number valueValue);
 
 	/**
 	 * raw value of positioner - need [n] as may be scanned
@@ -156,9 +157,9 @@ public interface NXpositioner extends NXobject {
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
 	 * 
-	 * @param raw_value the raw_value
+	 * @param raw_valueDataset the raw_valueDataset
 	 */
-	public DataNode setRaw_value(IDataset raw_value);
+	public DataNode setRaw_value(IDataset raw_valueDataset);
 
 	/**
 	 * raw value of positioner - need [n] as may be scanned
@@ -182,7 +183,7 @@ public interface NXpositioner extends NXobject {
 	 * 
 	 * @param raw_value the raw_value
 	 */
-	public DataNode setRaw_valueScalar(Number raw_value);
+	public DataNode setRaw_valueScalar(Number raw_valueValue);
 
 	/**
 	 * targeted (commanded) value of positioner - need [n] as may be scanned
@@ -204,9 +205,9 @@ public interface NXpositioner extends NXobject {
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
 	 * 
-	 * @param target_value the target_value
+	 * @param target_valueDataset the target_valueDataset
 	 */
-	public DataNode setTarget_value(IDataset target_value);
+	public DataNode setTarget_value(IDataset target_valueDataset);
 
 	/**
 	 * targeted (commanded) value of positioner - need [n] as may be scanned
@@ -230,7 +231,7 @@ public interface NXpositioner extends NXobject {
 	 * 
 	 * @param target_value the target_value
 	 */
-	public DataNode setTarget_valueScalar(Number target_value);
+	public DataNode setTarget_valueScalar(Number target_valueValue);
 
 	/**
 	 * maximum allowable difference between target_value and value
@@ -252,9 +253,9 @@ public interface NXpositioner extends NXobject {
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
 	 * 
-	 * @param tolerance the tolerance
+	 * @param toleranceDataset the toleranceDataset
 	 */
-	public DataNode setTolerance(IDataset tolerance);
+	public DataNode setTolerance(IDataset toleranceDataset);
 
 	/**
 	 * maximum allowable difference between target_value and value
@@ -278,7 +279,7 @@ public interface NXpositioner extends NXobject {
 	 * 
 	 * @param tolerance the tolerance
 	 */
-	public DataNode setToleranceScalar(Number tolerance);
+	public DataNode setToleranceScalar(Number toleranceValue);
 
 	/**
 	 * minimum allowed limit to set value
@@ -298,9 +299,9 @@ public interface NXpositioner extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 * 
-	 * @param soft_limit_min the soft_limit_min
+	 * @param soft_limit_minDataset the soft_limit_minDataset
 	 */
-	public DataNode setSoft_limit_min(IDataset soft_limit_min);
+	public DataNode setSoft_limit_min(IDataset soft_limit_minDataset);
 
 	/**
 	 * minimum allowed limit to set value
@@ -322,7 +323,7 @@ public interface NXpositioner extends NXobject {
 	 * 
 	 * @param soft_limit_min the soft_limit_min
 	 */
-	public DataNode setSoft_limit_minScalar(Number soft_limit_min);
+	public DataNode setSoft_limit_minScalar(Number soft_limit_minValue);
 
 	/**
 	 * maximum allowed limit to set value
@@ -342,9 +343,9 @@ public interface NXpositioner extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 * 
-	 * @param soft_limit_max the soft_limit_max
+	 * @param soft_limit_maxDataset the soft_limit_maxDataset
 	 */
-	public DataNode setSoft_limit_max(IDataset soft_limit_max);
+	public DataNode setSoft_limit_max(IDataset soft_limit_maxDataset);
 
 	/**
 	 * maximum allowed limit to set value
@@ -366,7 +367,7 @@ public interface NXpositioner extends NXobject {
 	 * 
 	 * @param soft_limit_max the soft_limit_max
 	 */
-	public DataNode setSoft_limit_maxScalar(Number soft_limit_max);
+	public DataNode setSoft_limit_maxScalar(Number soft_limit_maxValue);
 
 	/**
 	 * velocity of the positioner (distance moved per unit time)
@@ -386,9 +387,9 @@ public interface NXpositioner extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 * 
-	 * @param velocity the velocity
+	 * @param velocityDataset the velocityDataset
 	 */
-	public DataNode setVelocity(IDataset velocity);
+	public DataNode setVelocity(IDataset velocityDataset);
 
 	/**
 	 * velocity of the positioner (distance moved per unit time)
@@ -410,7 +411,7 @@ public interface NXpositioner extends NXobject {
 	 * 
 	 * @param velocity the velocity
 	 */
-	public DataNode setVelocityScalar(Number velocity);
+	public DataNode setVelocityScalar(Number velocityValue);
 
 	/**
 	 * time to ramp the velocity up to full speed
@@ -430,9 +431,9 @@ public interface NXpositioner extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 * 
-	 * @param acceleration_time the acceleration_time
+	 * @param acceleration_timeDataset the acceleration_timeDataset
 	 */
-	public DataNode setAcceleration_time(IDataset acceleration_time);
+	public DataNode setAcceleration_time(IDataset acceleration_timeDataset);
 
 	/**
 	 * time to ramp the velocity up to full speed
@@ -454,7 +455,7 @@ public interface NXpositioner extends NXobject {
 	 * 
 	 * @param acceleration_time the acceleration_time
 	 */
-	public DataNode setAcceleration_timeScalar(Number acceleration_time);
+	public DataNode setAcceleration_timeScalar(Number acceleration_timeValue);
 
 	/**
 	 * Hardware device record, e.g. EPICS process variable, taco/tango ...
@@ -466,9 +467,9 @@ public interface NXpositioner extends NXobject {
 	/**
 	 * Hardware device record, e.g. EPICS process variable, taco/tango ...
 	 * 
-	 * @param controller_record the controller_record
+	 * @param controller_recordDataset the controller_recordDataset
 	 */
-	public DataNode setController_record(IDataset controller_record);
+	public DataNode setController_record(IDataset controller_recordDataset);
 
 	/**
 	 * Hardware device record, e.g. EPICS process variable, taco/tango ...
@@ -482,6 +483,32 @@ public interface NXpositioner extends NXobject {
 	 * 
 	 * @param controller_record the controller_record
 	 */
-	public DataNode setController_recordScalar(String controller_record);
+	public DataNode setController_recordScalar(String controller_recordValue);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

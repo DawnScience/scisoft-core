@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -140,7 +140,7 @@ public class NXxrotValidator extends AbstractNexusValidator implements NexusAppl
 		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
 		validateFieldUnits("rotation_angle", rotation_angle, NX_ANGLE);
 		validateFieldRank("rotation_angle", rotation_angle, 1);
-		validateFieldDimensions("rotation_angle", rotation_angle, null, "np");
+		validateFieldDimensions("rotation_angle", rotation_angle, null, "nP");
 
 		// validate field 'rotation_angle_step' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset rotation_angle_step = group.getDataset("rotation_angle_step");
@@ -148,7 +148,7 @@ public class NXxrotValidator extends AbstractNexusValidator implements NexusAppl
 		validateFieldType("rotation_angle_step", rotation_angle_step, NX_FLOAT);
 		validateFieldUnits("rotation_angle_step", rotation_angle_step, NX_ANGLE);
 		validateFieldRank("rotation_angle_step", rotation_angle_step, 1);
-		validateFieldDimensions("rotation_angle_step", rotation_angle_step, null, "np");
+		validateFieldDimensions("rotation_angle_step", rotation_angle_step, null, "nP");
 	}
 
 	/**

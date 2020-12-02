@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,13 +69,13 @@ public class NXprocessImpl extends NXobjectImpl implements NXprocess {
 	}
 
 	@Override
-	public DataNode setProgram(IDataset program) {
-		return setDataset(NX_PROGRAM, program);
+	public DataNode setProgram(IDataset programDataset) {
+		return setDataset(NX_PROGRAM, programDataset);
 	}
 
 	@Override
-	public DataNode setProgramScalar(String program) {
-		return setString(NX_PROGRAM, program);
+	public DataNode setProgramScalar(String programValue) {
+		return setString(NX_PROGRAM, programValue);
 	}
 
 	@Override
@@ -89,13 +89,13 @@ public class NXprocessImpl extends NXobjectImpl implements NXprocess {
 	}
 
 	@Override
-	public DataNode setSequence_index(IDataset sequence_index) {
-		return setDataset(NX_SEQUENCE_INDEX, sequence_index);
+	public DataNode setSequence_index(IDataset sequence_indexDataset) {
+		return setDataset(NX_SEQUENCE_INDEX, sequence_indexDataset);
 	}
 
 	@Override
-	public DataNode setSequence_indexScalar(Long sequence_index) {
-		return setField(NX_SEQUENCE_INDEX, sequence_index);
+	public DataNode setSequence_indexScalar(Long sequence_indexValue) {
+		return setField(NX_SEQUENCE_INDEX, sequence_indexValue);
 	}
 
 	@Override
@@ -109,13 +109,13 @@ public class NXprocessImpl extends NXobjectImpl implements NXprocess {
 	}
 
 	@Override
-	public DataNode setVersion(IDataset version) {
-		return setDataset(NX_VERSION, version);
+	public DataNode setVersion(IDataset versionDataset) {
+		return setDataset(NX_VERSION, versionDataset);
 	}
 
 	@Override
-	public DataNode setVersionScalar(String version) {
-		return setString(NX_VERSION, version);
+	public DataNode setVersionScalar(String versionValue) {
+		return setString(NX_VERSION, versionValue);
 	}
 
 	@Override
@@ -129,23 +129,24 @@ public class NXprocessImpl extends NXobjectImpl implements NXprocess {
 	}
 
 	@Override
-	public DataNode setDate(IDataset date) {
-		return setDataset(NX_DATE, date);
+	public DataNode setDate(IDataset dateDataset) {
+		return setDataset(NX_DATE, dateDataset);
 	}
 
 	@Override
-	public DataNode setDateScalar(Date date) {
-		return setDate(NX_DATE, date);
+	public DataNode setDateScalar(Date dateValue) {
+		return setDate(NX_DATE, dateValue);
 	}
 
 	@Override
 	public NXnote getNote() {
+		// dataNodeName = NX_NOTE
 		return getChild("note", NXnote.class);
 	}
 
 	@Override
-	public void setNote(NXnote note) {
-		putChild("note", note);
+	public void setNote(NXnote noteGroup) {
+		putChild("note", noteGroup);
 	}
 
 	@Override
@@ -166,6 +167,16 @@ public class NXprocessImpl extends NXobjectImpl implements NXprocess {
 	@Override
 	public void setAllNote(Map<String, NXnote> note) {
 		setChildren(note);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

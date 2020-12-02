@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -89,6 +89,24 @@ import org.eclipse.dawnsci.nexus.*;
  * * The oldest method uses the ``axis`` attribute on each
  * *dimension scale* to identify
  * with an integer the axis whose value is the number of the dimension.
+ * .. index: !plot; axis label
+ * plot, axis units
+ * units
+ * dimension scale
+ * Each axis of the plot may be labeled with information from the
+ * dimension scale for that axis. The optional ``@long_name`` attribute
+ * is provided as the axis label default. If ``@long_name`` is not
+ * defined, then use the name of the dimension scale. A ``@units`` attribute,
+ * if available, may be added to the axis label for further description.
+ * See the section :ref:`Design-Units` for more information.
+ * .. index: !plot; axis title
+ * The optional ``title`` field, if available, provides a suggested
+ * title for the plot. If no ``title`` field is found in the :ref:`NXdata`
+ * group, look for a ``title`` field in the parent :ref:`NXentry` group,
+ * with a fallback to displaying the path to the :ref:`NXdata` group.
+ * NeXus is about how to find and annotate the data to be plotted
+ * but not to describe how the data is to be plotted.
+ * (https://www.nexusformat.org/NIAC2018Minutes.html#nxdata-plottype--attribute)
  * 
  */
 public class NXdataImpl extends NXobjectImpl implements NXdata {
@@ -123,13 +141,23 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	
 
 	@Override
+	public String getAttributeAuxiliary_signals() {
+		return getAttrString(null, NX_ATTRIBUTE_AUXILIARY_SIGNALS);
+	}
+
+	@Override
+	public void setAttributeAuxiliary_signals(String auxiliary_signalsValue) {
+		setAttribute(null, NX_ATTRIBUTE_AUXILIARY_SIGNALS, auxiliary_signalsValue);
+	}
+
+	@Override
 	public String getAttributeSignal() {
 		return getAttrString(null, NX_ATTRIBUTE_SIGNAL);
 	}
 
 	@Override
-	public void setAttributeSignal(String signal) {
-		setAttribute(null, NX_ATTRIBUTE_SIGNAL, signal);
+	public void setAttributeSignal(String signalValue) {
+		setAttribute(null, NX_ATTRIBUTE_SIGNAL, signalValue);
 	}
 
 	@Override
@@ -138,201 +166,179 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	}
 
 	@Override
-	public void setAttributeAxes(String axes) {
-		setAttribute(null, NX_ATTRIBUTE_AXES, axes);
+	public void setAttributeAxes(String axesValue) {
+		setAttribute(null, NX_ATTRIBUTE_AXES, axesValue);
 	}
 
 	@Override
-	public String getAttributeAXISNAME_indices() {
-		return getAttrString(null, NX_ATTRIBUTE_AXISNAME_INDICES);
+	public String getAttributeIndices(String axisname) {
+		return getAttrString(null, axisname + NX_ATTRIBUTE_INDICES);
 	}
 
 	@Override
-	public void setAttributeAXISNAME_indices(String AXISNAME_indices) {
-		setAttribute(null, NX_ATTRIBUTE_AXISNAME_INDICES, AXISNAME_indices);
+	public void setAttributeIndices(String axisname, String indicesValue) {
+		setAttribute(null, axisname + NX_ATTRIBUTE_INDICES, indicesValue);
 	}
 
 	@Override
-	public IDataset getVARIABLE() {
-		return getDataset(NX_VARIABLE);
+	public IDataset getVariable(String variable) {
+		return getDataset(variable);
 	}
 
 	@Override
-	public Number getVARIABLEScalar() {
-		return getNumber(NX_VARIABLE);
+	public Number getVariableScalar(String variable) {
+		return getNumber(variable);
 	}
 
 	@Override
-	public DataNode setVARIABLE(IDataset VARIABLE) {
-		return setDataset(NX_VARIABLE, VARIABLE);
+	public DataNode setVariable(String variable, IDataset variableDataset) {
+		return setDataset(variable, variableDataset);
 	}
 
 	@Override
-	public DataNode setVARIABLEScalar(Number VARIABLE) {
-		return setField(NX_VARIABLE, VARIABLE);
+	public DataNode setVariableScalar(String variable, Number variableValue) {
+		return setField(variable, variableValue);
 	}
 
 	@Override
-	public Map<String, IDataset> getAllVARIABLE() {
-		return getAllDatasets();
-	}
-
-	public void setVARIABLE(String name, IDataset VARIABLE) {
-		setDataset(name, VARIABLE);
+	public Map<String, IDataset> getAllVariable() {
+		return getAllDatasets(); // note: returns all datasets in the group!
 	}
 
 	@Override
-	public String getVARIABLEAttributeLong_name() {
-		return getAttrString(NX_VARIABLE, NX_VARIABLE_ATTRIBUTE_LONG_NAME);
+	public String getVariableAttributeLong_name(String variable) {
+		return getAttrString(variable, NX_VARIABLE_ATTRIBUTE_LONG_NAME);
 	}
 
 	@Override
-	public void setVARIABLEAttributeLong_name(String long_name) {
-		setAttribute(NX_VARIABLE, NX_VARIABLE_ATTRIBUTE_LONG_NAME, long_name);
+	public void setVariableAttributeLong_name(String variable, String long_nameValue) {
+		setAttribute(variable, NX_VARIABLE_ATTRIBUTE_LONG_NAME, long_nameValue);
 	}
 
 	@Override
-	public Boolean getVARIABLEAttributeDistribution() {
-		return getAttrBoolean(NX_VARIABLE, NX_VARIABLE_ATTRIBUTE_DISTRIBUTION);
+	public Boolean getVariableAttributeDistribution(String variable) {
+		return getAttrBoolean(variable, NX_VARIABLE_ATTRIBUTE_DISTRIBUTION);
 	}
 
 	@Override
-	public void setVARIABLEAttributeDistribution(Boolean distribution) {
-		setAttribute(NX_VARIABLE, NX_VARIABLE_ATTRIBUTE_DISTRIBUTION, distribution);
+	public void setVariableAttributeDistribution(String variable, Boolean distributionValue) {
+		setAttribute(variable, NX_VARIABLE_ATTRIBUTE_DISTRIBUTION, distributionValue);
 	}
 
 	@Override
-	public Long getVARIABLEAttributeFirst_good() {
-		return getAttrLong(NX_VARIABLE, NX_VARIABLE_ATTRIBUTE_FIRST_GOOD);
+	public Long getVariableAttributeFirst_good(String variable) {
+		return getAttrLong(variable, NX_VARIABLE_ATTRIBUTE_FIRST_GOOD);
 	}
 
 	@Override
-	public void setVARIABLEAttributeFirst_good(Long first_good) {
-		setAttribute(NX_VARIABLE, NX_VARIABLE_ATTRIBUTE_FIRST_GOOD, first_good);
+	public void setVariableAttributeFirst_good(String variable, Long first_goodValue) {
+		setAttribute(variable, NX_VARIABLE_ATTRIBUTE_FIRST_GOOD, first_goodValue);
 	}
 
 	@Override
-	public Long getVARIABLEAttributeLast_good() {
-		return getAttrLong(NX_VARIABLE, NX_VARIABLE_ATTRIBUTE_LAST_GOOD);
+	public Long getVariableAttributeLast_good(String variable) {
+		return getAttrLong(variable, NX_VARIABLE_ATTRIBUTE_LAST_GOOD);
 	}
 
 	@Override
-	public void setVARIABLEAttributeLast_good(Long last_good) {
-		setAttribute(NX_VARIABLE, NX_VARIABLE_ATTRIBUTE_LAST_GOOD, last_good);
+	public void setVariableAttributeLast_good(String variable, Long last_goodValue) {
+		setAttribute(variable, NX_VARIABLE_ATTRIBUTE_LAST_GOOD, last_goodValue);
 	}
 
 	@Override
 	@Deprecated
-	public Long getVARIABLEAttributeAxis() {
-		return getAttrLong(NX_VARIABLE, NX_VARIABLE_ATTRIBUTE_AXIS);
+	public Long getVariableAttributeAxis(String variable) {
+		return getAttrLong(variable, NX_VARIABLE_ATTRIBUTE_AXIS);
 	}
 
 	@Override
 	@Deprecated
-	public void setVARIABLEAttributeAxis(Long axis) {
-		setAttribute(NX_VARIABLE, NX_VARIABLE_ATTRIBUTE_AXIS, axis);
+	public void setVariableAttributeAxis(String variable, Long axisValue) {
+		setAttribute(variable, NX_VARIABLE_ATTRIBUTE_AXIS, axisValue);
 	}
 
 	@Override
-	public IDataset getVARIABLE_errors() {
-		return getDataset(NX_VARIABLE_ERRORS);
+	public IDataset getErrors(String variable) {
+		return getDataset(variable + NX_ERRORS_SUFFIX);
 	}
 
 	@Override
-	public Number getVARIABLE_errorsScalar() {
-		return getNumber(NX_VARIABLE_ERRORS);
+	public Number getErrorsScalar(String variable) {
+		return getNumber(variable + NX_ERRORS_SUFFIX);
 	}
 
 	@Override
-	public DataNode setVARIABLE_errors(IDataset VARIABLE_errors) {
-		return setDataset(NX_VARIABLE_ERRORS, VARIABLE_errors);
+	public DataNode setErrors(String variable, IDataset errorsDataset) {
+		return setDataset(variable + NX_ERRORS_SUFFIX, errorsDataset);
 	}
 
 	@Override
-	public DataNode setVARIABLE_errorsScalar(Number VARIABLE_errors) {
-		return setField(NX_VARIABLE_ERRORS, VARIABLE_errors);
+	public DataNode setErrorsScalar(String variable, Number errorsValue) {
+		return setField(variable + NX_ERRORS_SUFFIX, errorsValue);
 	}
 
 	@Override
-	public Map<String, IDataset> getAllVARIABLE_errors() {
-		return getAllDatasets();
-	}
-
-	public void setVARIABLE_errors(String name, IDataset VARIABLE_errors) {
-		setDataset(name, VARIABLE_errors);
+	public Map<String, IDataset> getAllErrors() {
+		return getAllDatasets(); // note: returns all datasets in the group!
 	}
 
 	@Override
-	public IDataset getData() {
-		return getDataset(NX_DATA);
+	public IDataset getData(String data) {
+		return getDataset(data);
 	}
 
 	@Override
-	public Number getDataScalar() {
-		return getNumber(NX_DATA);
+	public Number getDataScalar(String data) {
+		return getNumber(data);
 	}
 
 	@Override
-	public DataNode setData(IDataset data) {
-		return setDataset(NX_DATA, data);
+	public DataNode setData(String data, IDataset dataDataset) {
+		return setDataset(data, dataDataset);
 	}
 
 	@Override
-	public DataNode setDataScalar(Number data) {
-		return setField(NX_DATA, data);
+	public DataNode setDataScalar(String data, Number dataValue) {
+		return setField(data, dataValue);
 	}
 
 	@Override
 	public Map<String, IDataset> getAllData() {
-		return getAllDatasets();
-	}
-
-	public void setData(String name, IDataset data) {
-		setDataset(name, data);
+		return getAllDatasets(); // note: returns all datasets in the group!
 	}
 
 	@Override
 	@Deprecated
-	public Long getDataAttributeSignal() {
-		return getAttrLong(NX_DATA, NX_DATA_ATTRIBUTE_SIGNAL);
+	public Long getDataAttributeSignal(String data) {
+		return getAttrLong(data, NX_DATA_ATTRIBUTE_SIGNAL);
 	}
 
 	@Override
 	@Deprecated
-	public void setDataAttributeSignal(Long signal) {
-		setAttribute(NX_DATA, NX_DATA_ATTRIBUTE_SIGNAL, signal);
+	public void setDataAttributeSignal(String data, Long signalValue) {
+		setAttribute(data, NX_DATA_ATTRIBUTE_SIGNAL, signalValue);
 	}
 
 	@Override
 	@Deprecated
-	public String getDataAttributeAxes() {
-		return getAttrString(NX_DATA, NX_DATA_ATTRIBUTE_AXES);
+	public String getDataAttributeAxes(String data) {
+		return getAttrString(data, NX_DATA_ATTRIBUTE_AXES);
 	}
 
 	@Override
 	@Deprecated
-	public void setDataAttributeAxes(String axes) {
-		setAttribute(NX_DATA, NX_DATA_ATTRIBUTE_AXES, axes);
+	public void setDataAttributeAxes(String data, String axesValue) {
+		setAttribute(data, NX_DATA_ATTRIBUTE_AXES, axesValue);
 	}
 
 	@Override
-	public String getDataAttributeUncertainties() {
-		return getAttrString(NX_DATA, NX_DATA_ATTRIBUTE_UNCERTAINTIES);
+	public String getDataAttributeLong_name(String data) {
+		return getAttrString(data, NX_DATA_ATTRIBUTE_LONG_NAME);
 	}
 
 	@Override
-	public void setDataAttributeUncertainties(String uncertainties) {
-		setAttribute(NX_DATA, NX_DATA_ATTRIBUTE_UNCERTAINTIES, uncertainties);
-	}
-
-	@Override
-	public String getDataAttributeLong_name() {
-		return getAttrString(NX_DATA, NX_DATA_ATTRIBUTE_LONG_NAME);
-	}
-
-	@Override
-	public void setDataAttributeLong_name(String long_name) {
-		setAttribute(NX_DATA, NX_DATA_ATTRIBUTE_LONG_NAME, long_name);
+	public void setDataAttributeLong_name(String data, String long_nameValue) {
+		setAttribute(data, NX_DATA_ATTRIBUTE_LONG_NAME, long_nameValue);
 	}
 
 	@Override
@@ -346,13 +352,13 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	}
 
 	@Override
-	public DataNode setErrors(IDataset errors) {
-		return setDataset(NX_ERRORS, errors);
+	public DataNode setErrors(IDataset errorsDataset) {
+		return setDataset(NX_ERRORS, errorsDataset);
 	}
 
 	@Override
-	public DataNode setErrorsScalar(Number errors) {
-		return setField(NX_ERRORS, errors);
+	public DataNode setErrorsScalar(Number errorsValue) {
+		return setField(NX_ERRORS, errorsValue);
 	}
 
 	@Override
@@ -366,13 +372,13 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	}
 
 	@Override
-	public DataNode setScaling_factor(IDataset scaling_factor) {
-		return setDataset(NX_SCALING_FACTOR, scaling_factor);
+	public DataNode setScaling_factor(IDataset scaling_factorDataset) {
+		return setDataset(NX_SCALING_FACTOR, scaling_factorDataset);
 	}
 
 	@Override
-	public DataNode setScaling_factorScalar(Double scaling_factor) {
-		return setField(NX_SCALING_FACTOR, scaling_factor);
+	public DataNode setScaling_factorScalar(Double scaling_factorValue) {
+		return setField(NX_SCALING_FACTOR, scaling_factorValue);
 	}
 
 	@Override
@@ -386,13 +392,33 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	}
 
 	@Override
-	public DataNode setOffset(IDataset offset) {
-		return setDataset(NX_OFFSET, offset);
+	public DataNode setOffset(IDataset offsetDataset) {
+		return setDataset(NX_OFFSET, offsetDataset);
 	}
 
 	@Override
-	public DataNode setOffsetScalar(Double offset) {
-		return setField(NX_OFFSET, offset);
+	public DataNode setOffsetScalar(Double offsetValue) {
+		return setField(NX_OFFSET, offsetValue);
+	}
+
+	@Override
+	public IDataset getTitle() {
+		return getDataset(NX_TITLE);
+	}
+
+	@Override
+	public String getTitleScalar() {
+		return getString(NX_TITLE);
+	}
+
+	@Override
+	public DataNode setTitle(IDataset titleDataset) {
+		return setDataset(NX_TITLE, titleDataset);
+	}
+
+	@Override
+	public DataNode setTitleScalar(String titleValue) {
+		return setString(NX_TITLE, titleValue);
 	}
 
 	@Override
@@ -406,13 +432,13 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	}
 
 	@Override
-	public DataNode setX(IDataset x) {
-		return setDataset(NX_X, x);
+	public DataNode setX(IDataset xDataset) {
+		return setDataset(NX_X, xDataset);
 	}
 
 	@Override
-	public DataNode setXScalar(Double x) {
-		return setField(NX_X, x);
+	public DataNode setXScalar(Double xValue) {
+		return setField(NX_X, xValue);
 	}
 
 	@Override
@@ -426,13 +452,13 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	}
 
 	@Override
-	public DataNode setY(IDataset y) {
-		return setDataset(NX_Y, y);
+	public DataNode setY(IDataset yDataset) {
+		return setDataset(NX_Y, yDataset);
 	}
 
 	@Override
-	public DataNode setYScalar(Double y) {
-		return setField(NX_Y, y);
+	public DataNode setYScalar(Double yValue) {
+		return setField(NX_Y, yValue);
 	}
 
 	@Override
@@ -446,13 +472,13 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	}
 
 	@Override
-	public DataNode setZ(IDataset z) {
-		return setDataset(NX_Z, z);
+	public DataNode setZ(IDataset zDataset) {
+		return setDataset(NX_Z, zDataset);
 	}
 
 	@Override
-	public DataNode setZScalar(Double z) {
-		return setField(NX_Z, z);
+	public DataNode setZScalar(Double zValue) {
+		return setField(NX_Z, zValue);
 	}
 
 }

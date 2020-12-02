@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -162,7 +162,7 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 		validateFieldType("data", data, NX_INT);
 		validateFieldUnits("data", data, NX_ANY);
 		validateFieldRank("data", data, 3);
-		validateFieldDimensions("data", data, null, "nFrames", "xsize", "ysize");
+		validateFieldDimensions("data", data, null, "nFrames", "xSize", "ySize");
 
 		// validate field 'image_key' of type NX_INT. Note: field not defined in base class.
 		final IDataset image_key = group.getDataset("image_key");

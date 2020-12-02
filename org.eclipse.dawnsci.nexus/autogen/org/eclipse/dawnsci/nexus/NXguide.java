@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,6 +61,7 @@ public interface NXguide extends NXobject {
 	public static final String NX_SUBSTRATE_ROUGHNESS = "substrate_roughness";
 	public static final String NX_COATING_ROUGHNESS = "coating_roughness";
 	public static final String NX_NUMBER_SECTIONS = "number_sections";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * TODO: Explain what this NXgeometry group means. What is intended here?
 	 * 
@@ -71,10 +72,10 @@ public interface NXguide extends NXobject {
 	/**
 	 * TODO: Explain what this NXgeometry group means. What is intended here?
 	 * 
-	 * @param geometry the geometry
+	 * @param geometryGroup the geometryGroup
 	 */
-	public void setGeometry(NXgeometry geometry);
-  
+	public void setGeometry(NXgeometry geometryGroup);
+
 	/**
 	 * Get a NXgeometry node by name:
 	 * <ul>
@@ -133,9 +134,9 @@ public interface NXguide extends NXobject {
 	/**
 	 * A description of this particular instance of ``NXguide``.
 	 * 
-	 * @param description the description
+	 * @param descriptionDataset the descriptionDataset
 	 */
-	public DataNode setDescription(IDataset description);
+	public DataNode setDescription(IDataset descriptionDataset);
 
 	/**
 	 * A description of this particular instance of ``NXguide``.
@@ -149,7 +150,7 @@ public interface NXguide extends NXobject {
 	 * 
 	 * @param description the description
 	 */
-	public DataNode setDescriptionScalar(String description);
+	public DataNode setDescriptionScalar(String descriptionValue);
 
 	/**
 	 * TODO: documentation needed
@@ -169,9 +170,9 @@ public interface NXguide extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
 	 * 
-	 * @param incident_angle the incident_angle
+	 * @param incident_angleDataset the incident_angleDataset
 	 */
-	public DataNode setIncident_angle(IDataset incident_angle);
+	public DataNode setIncident_angle(IDataset incident_angleDataset);
 
 	/**
 	 * TODO: documentation needed
@@ -193,7 +194,7 @@ public interface NXguide extends NXobject {
 	 * 
 	 * @param incident_angle the incident_angle
 	 */
-	public DataNode setIncident_angleScalar(Double incident_angle);
+	public DataNode setIncident_angleScalar(Double incident_angleValue);
 
 	/**
 	 * Reflectivity as function of reflecting surface and wavelength
@@ -205,9 +206,9 @@ public interface NXguide extends NXobject {
 	/**
 	 * Reflectivity as function of reflecting surface and wavelength
 	 * 
-	 * @param reflectivity the reflectivity
+	 * @param reflectivityGroup the reflectivityGroup
 	 */
-	public void setReflectivity(NXdata reflectivity);
+	public void setReflectivity(NXdata reflectivityGroup);
 
 	/**
 	 * TODO: documentation needed
@@ -227,9 +228,9 @@ public interface NXguide extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
 	 * 
-	 * @param bend_angle_x the bend_angle_x
+	 * @param bend_angle_xDataset the bend_angle_xDataset
 	 */
-	public DataNode setBend_angle_x(IDataset bend_angle_x);
+	public DataNode setBend_angle_x(IDataset bend_angle_xDataset);
 
 	/**
 	 * TODO: documentation needed
@@ -251,7 +252,7 @@ public interface NXguide extends NXobject {
 	 * 
 	 * @param bend_angle_x the bend_angle_x
 	 */
-	public DataNode setBend_angle_xScalar(Double bend_angle_x);
+	public DataNode setBend_angle_xScalar(Double bend_angle_xValue);
 
 	/**
 	 * TODO: documentation needed
@@ -271,9 +272,9 @@ public interface NXguide extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
 	 * 
-	 * @param bend_angle_y the bend_angle_y
+	 * @param bend_angle_yDataset the bend_angle_yDataset
 	 */
-	public DataNode setBend_angle_y(IDataset bend_angle_y);
+	public DataNode setBend_angle_y(IDataset bend_angle_yDataset);
 
 	/**
 	 * TODO: documentation needed
@@ -295,7 +296,7 @@ public interface NXguide extends NXobject {
 	 * 
 	 * @param bend_angle_y the bend_angle_y
 	 */
-	public DataNode setBend_angle_yScalar(Double bend_angle_y);
+	public DataNode setBend_angle_yScalar(Double bend_angle_yValue);
 
 	/**
 	 * <p>
@@ -317,9 +318,9 @@ public interface NXguide extends NXobject {
 	 * <li><b>argon</b> </li></ul></p>
 	 * </p>
 	 * 
-	 * @param interior_atmosphere the interior_atmosphere
+	 * @param interior_atmosphereDataset the interior_atmosphereDataset
 	 */
-	public DataNode setInterior_atmosphere(IDataset interior_atmosphere);
+	public DataNode setInterior_atmosphere(IDataset interior_atmosphereDataset);
 
 	/**
 	 * <p>
@@ -343,7 +344,7 @@ public interface NXguide extends NXobject {
 	 * 
 	 * @param interior_atmosphere the interior_atmosphere
 	 */
-	public DataNode setInterior_atmosphereScalar(String interior_atmosphere);
+	public DataNode setInterior_atmosphereScalar(String interior_atmosphereValue);
 
 	/**
 	 * external material outside substrate
@@ -355,9 +356,9 @@ public interface NXguide extends NXobject {
 	/**
 	 * external material outside substrate
 	 * 
-	 * @param external_material the external_material
+	 * @param external_materialDataset the external_materialDataset
 	 */
-	public DataNode setExternal_material(IDataset external_material);
+	public DataNode setExternal_material(IDataset external_materialDataset);
 
 	/**
 	 * external material outside substrate
@@ -371,7 +372,7 @@ public interface NXguide extends NXobject {
 	 * 
 	 * @param external_material the external_material
 	 */
-	public DataNode setExternal_materialScalar(String external_material);
+	public DataNode setExternal_materialScalar(String external_materialValue);
 
 	/**
 	 * The ``m`` value for a supermirror, which defines the supermirror
@@ -393,9 +394,9 @@ public interface NXguide extends NXobject {
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
 	 * 
-	 * @param m_value the m_value
+	 * @param m_valueDataset the m_valueDataset
 	 */
-	public DataNode setM_value(IDataset m_value);
+	public DataNode setM_value(IDataset m_valueDataset);
 
 	/**
 	 * The ``m`` value for a supermirror, which defines the supermirror
@@ -419,7 +420,7 @@ public interface NXguide extends NXobject {
 	 * 
 	 * @param m_value the m_value
 	 */
-	public DataNode setM_valueScalar(Double m_value);
+	public DataNode setM_valueScalar(Double m_valueValue);
 
 	/**
 	 * TODO: documentation needed
@@ -439,9 +440,9 @@ public interface NXguide extends NXobject {
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
 	 * 
-	 * @param substrate_material the substrate_material
+	 * @param substrate_materialDataset the substrate_materialDataset
 	 */
-	public DataNode setSubstrate_material(IDataset substrate_material);
+	public DataNode setSubstrate_material(IDataset substrate_materialDataset);
 
 	/**
 	 * TODO: documentation needed
@@ -463,7 +464,7 @@ public interface NXguide extends NXobject {
 	 * 
 	 * @param substrate_material the substrate_material
 	 */
-	public DataNode setSubstrate_materialScalar(Double substrate_material);
+	public DataNode setSubstrate_materialScalar(Double substrate_materialValue);
 
 	/**
 	 * TODO: documentation needed
@@ -485,9 +486,9 @@ public interface NXguide extends NXobject {
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
 	 * 
-	 * @param substrate_thickness the substrate_thickness
+	 * @param substrate_thicknessDataset the substrate_thicknessDataset
 	 */
-	public DataNode setSubstrate_thickness(IDataset substrate_thickness);
+	public DataNode setSubstrate_thickness(IDataset substrate_thicknessDataset);
 
 	/**
 	 * TODO: documentation needed
@@ -511,7 +512,7 @@ public interface NXguide extends NXobject {
 	 * 
 	 * @param substrate_thickness the substrate_thickness
 	 */
-	public DataNode setSubstrate_thicknessScalar(Double substrate_thickness);
+	public DataNode setSubstrate_thicknessScalar(Double substrate_thicknessValue);
 
 	/**
 	 * TODO: documentation needed
@@ -531,9 +532,9 @@ public interface NXguide extends NXobject {
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
 	 * 
-	 * @param coating_material the coating_material
+	 * @param coating_materialDataset the coating_materialDataset
 	 */
-	public DataNode setCoating_material(IDataset coating_material);
+	public DataNode setCoating_material(IDataset coating_materialDataset);
 
 	/**
 	 * TODO: documentation needed
@@ -555,7 +556,7 @@ public interface NXguide extends NXobject {
 	 * 
 	 * @param coating_material the coating_material
 	 */
-	public DataNode setCoating_materialScalar(Double coating_material);
+	public DataNode setCoating_materialScalar(Double coating_materialValue);
 
 	/**
 	 * TODO: documentation needed
@@ -577,9 +578,9 @@ public interface NXguide extends NXobject {
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
 	 * 
-	 * @param substrate_roughness the substrate_roughness
+	 * @param substrate_roughnessDataset the substrate_roughnessDataset
 	 */
-	public DataNode setSubstrate_roughness(IDataset substrate_roughness);
+	public DataNode setSubstrate_roughness(IDataset substrate_roughnessDataset);
 
 	/**
 	 * TODO: documentation needed
@@ -603,7 +604,7 @@ public interface NXguide extends NXobject {
 	 * 
 	 * @param substrate_roughness the substrate_roughness
 	 */
-	public DataNode setSubstrate_roughnessScalar(Double substrate_roughness);
+	public DataNode setSubstrate_roughnessScalar(Double substrate_roughnessValue);
 
 	/**
 	 * TODO: documentation needed
@@ -625,9 +626,9 @@ public interface NXguide extends NXobject {
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
 	 * 
-	 * @param coating_roughness the coating_roughness
+	 * @param coating_roughnessDataset the coating_roughnessDataset
 	 */
-	public DataNode setCoating_roughness(IDataset coating_roughness);
+	public DataNode setCoating_roughness(IDataset coating_roughnessDataset);
 
 	/**
 	 * TODO: documentation needed
@@ -651,7 +652,7 @@ public interface NXguide extends NXobject {
 	 * 
 	 * @param coating_roughness the coating_roughness
 	 */
-	public DataNode setCoating_roughnessScalar(Double coating_roughness);
+	public DataNode setCoating_roughnessScalar(Double coating_roughnessValue);
 
 	/**
 	 * number of substrate sections (also called ``nsurf`` as an
@@ -673,9 +674,9 @@ public interface NXguide extends NXobject {
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 * 
-	 * @param number_sections the number_sections
+	 * @param number_sectionsDataset the number_sectionsDataset
 	 */
-	public DataNode setNumber_sections(IDataset number_sections);
+	public DataNode setNumber_sections(IDataset number_sectionsDataset);
 
 	/**
 	 * number of substrate sections (also called ``nsurf`` as an
@@ -699,6 +700,32 @@ public interface NXguide extends NXobject {
 	 * 
 	 * @param number_sections the number_sections
 	 */
-	public DataNode setNumber_sectionsScalar(Long number_sections);
+	public DataNode setNumber_sectionsScalar(Long number_sectionsValue);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

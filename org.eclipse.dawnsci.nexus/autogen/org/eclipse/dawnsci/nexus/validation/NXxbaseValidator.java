@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -171,7 +171,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		validateFieldType("data", data, NX_INT);
 		validateFieldUnits("data", data, NX_ANY);
 		validateFieldRank("data", data, 3);
-		validateFieldDimensions("data", data, null, "np", "number of x pixels", "number of y pixels");
+		validateFieldDimensions("data", data, null, "nP", "nXPixels", "nYPixels");
 		// validate attribute 'signal' of field 'data'
 		final Attribute data_attr_signal = group.getAttribute("signal");
 		validateAttributeNotNull("signal", data_attr_signal);
@@ -244,7 +244,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		validateFieldType("temperature", temperature, NX_FLOAT);
 		validateFieldUnits("temperature", temperature, NX_TEMPERATURE);
 		validateFieldRank("temperature", temperature, 1);
-		validateFieldDimensions("temperature", temperature, null, "NP");
+		validateFieldDimensions("temperature", temperature, null, "nP");
 
 		// validate field 'x_translation' of type NX_FLOAT.
 		final IDataset x_translation = group.getX_translation();

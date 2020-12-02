@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,13 +73,13 @@ public class NXcylindrical_geometryImpl extends NXobjectImpl implements NXcylind
 	}
 
 	@Override
-	public DataNode setVertices(IDataset vertices) {
-		return setDataset(NX_VERTICES, vertices);
+	public DataNode setVertices(IDataset verticesDataset) {
+		return setDataset(NX_VERTICES, verticesDataset);
 	}
 
 	@Override
-	public DataNode setVerticesScalar(Number vertices) {
-		return setField(NX_VERTICES, vertices);
+	public DataNode setVerticesScalar(Number verticesValue) {
+		return setField(NX_VERTICES, verticesValue);
 	}
 
 	@Override
@@ -93,13 +93,13 @@ public class NXcylindrical_geometryImpl extends NXobjectImpl implements NXcylind
 	}
 
 	@Override
-	public DataNode setCylinders(IDataset cylinders) {
-		return setDataset(NX_CYLINDERS, cylinders);
+	public DataNode setCylinders(IDataset cylindersDataset) {
+		return setDataset(NX_CYLINDERS, cylindersDataset);
 	}
 
 	@Override
-	public DataNode setCylindersScalar(Long cylinders) {
-		return setField(NX_CYLINDERS, cylinders);
+	public DataNode setCylindersScalar(Long cylindersValue) {
+		return setField(NX_CYLINDERS, cylindersValue);
 	}
 
 	@Override
@@ -113,13 +113,23 @@ public class NXcylindrical_geometryImpl extends NXobjectImpl implements NXcylind
 	}
 
 	@Override
-	public DataNode setDetector_number(IDataset detector_number) {
-		return setDataset(NX_DETECTOR_NUMBER, detector_number);
+	public DataNode setDetector_number(IDataset detector_numberDataset) {
+		return setDataset(NX_DETECTOR_NUMBER, detector_numberDataset);
 	}
 
 	@Override
-	public DataNode setDetector_numberScalar(Long detector_number) {
-		return setField(NX_DETECTOR_NUMBER, detector_number);
+	public DataNode setDetector_numberScalar(Long detector_numberValue) {
+		return setField(NX_DETECTOR_NUMBER, detector_numberValue);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

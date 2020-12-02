@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -67,13 +67,13 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	}
 
 	@Override
-	public DataNode setLens_geometry(IDataset lens_geometry) {
-		return setDataset(NX_LENS_GEOMETRY, lens_geometry);
+	public DataNode setLens_geometry(IDataset lens_geometryDataset) {
+		return setDataset(NX_LENS_GEOMETRY, lens_geometryDataset);
 	}
 
 	@Override
-	public DataNode setLens_geometryScalar(String lens_geometry) {
-		return setString(NX_LENS_GEOMETRY, lens_geometry);
+	public DataNode setLens_geometryScalar(String lens_geometryValue) {
+		return setString(NX_LENS_GEOMETRY, lens_geometryValue);
 	}
 
 	@Override
@@ -87,13 +87,13 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	}
 
 	@Override
-	public DataNode setSymmetric(IDataset symmetric) {
-		return setDataset(NX_SYMMETRIC, symmetric);
+	public DataNode setSymmetric(IDataset symmetricDataset) {
+		return setDataset(NX_SYMMETRIC, symmetricDataset);
 	}
 
 	@Override
-	public DataNode setSymmetricScalar(Boolean symmetric) {
-		return setField(NX_SYMMETRIC, symmetric);
+	public DataNode setSymmetricScalar(Boolean symmetricValue) {
+		return setField(NX_SYMMETRIC, symmetricValue);
 	}
 
 	@Override
@@ -107,23 +107,24 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	}
 
 	@Override
-	public DataNode setCylindrical(IDataset cylindrical) {
-		return setDataset(NX_CYLINDRICAL, cylindrical);
+	public DataNode setCylindrical(IDataset cylindricalDataset) {
+		return setDataset(NX_CYLINDRICAL, cylindricalDataset);
 	}
 
 	@Override
-	public DataNode setCylindricalScalar(Boolean cylindrical) {
-		return setField(NX_CYLINDRICAL, cylindrical);
+	public DataNode setCylindricalScalar(Boolean cylindricalValue) {
+		return setField(NX_CYLINDRICAL, cylindricalValue);
 	}
 
 	@Override
 	public NXnote getCylinder_orientation() {
+		// dataNodeName = NX_CYLINDER_ORIENTATION
 		return getChild("cylinder_orientation", NXnote.class);
 	}
 
 	@Override
-	public void setCylinder_orientation(NXnote cylinder_orientation) {
-		putChild("cylinder_orientation", cylinder_orientation);
+	public void setCylinder_orientation(NXnote cylinder_orientationGroup) {
+		putChild("cylinder_orientation", cylinder_orientationGroup);
 	}
 
 	@Override
@@ -137,13 +138,13 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	}
 
 	@Override
-	public DataNode setFocus_type(IDataset focus_type) {
-		return setDataset(NX_FOCUS_TYPE, focus_type);
+	public DataNode setFocus_type(IDataset focus_typeDataset) {
+		return setDataset(NX_FOCUS_TYPE, focus_typeDataset);
 	}
 
 	@Override
-	public DataNode setFocus_typeScalar(String focus_type) {
-		return setString(NX_FOCUS_TYPE, focus_type);
+	public DataNode setFocus_typeScalar(String focus_typeValue) {
+		return setString(NX_FOCUS_TYPE, focus_typeValue);
 	}
 
 	@Override
@@ -157,13 +158,13 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	}
 
 	@Override
-	public DataNode setLens_thickness(IDataset lens_thickness) {
-		return setDataset(NX_LENS_THICKNESS, lens_thickness);
+	public DataNode setLens_thickness(IDataset lens_thicknessDataset) {
+		return setDataset(NX_LENS_THICKNESS, lens_thicknessDataset);
 	}
 
 	@Override
-	public DataNode setLens_thicknessScalar(Double lens_thickness) {
-		return setField(NX_LENS_THICKNESS, lens_thickness);
+	public DataNode setLens_thicknessScalar(Double lens_thicknessValue) {
+		return setField(NX_LENS_THICKNESS, lens_thicknessValue);
 	}
 
 	@Override
@@ -177,13 +178,13 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	}
 
 	@Override
-	public DataNode setLens_length(IDataset lens_length) {
-		return setDataset(NX_LENS_LENGTH, lens_length);
+	public DataNode setLens_length(IDataset lens_lengthDataset) {
+		return setDataset(NX_LENS_LENGTH, lens_lengthDataset);
 	}
 
 	@Override
-	public DataNode setLens_lengthScalar(Double lens_length) {
-		return setField(NX_LENS_LENGTH, lens_length);
+	public DataNode setLens_lengthScalar(Double lens_lengthValue) {
+		return setField(NX_LENS_LENGTH, lens_lengthValue);
 	}
 
 	@Override
@@ -197,13 +198,13 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	}
 
 	@Override
-	public DataNode setCurvature(IDataset curvature) {
-		return setDataset(NX_CURVATURE, curvature);
+	public DataNode setCurvature(IDataset curvatureDataset) {
+		return setDataset(NX_CURVATURE, curvatureDataset);
 	}
 
 	@Override
-	public DataNode setCurvatureScalar(Double curvature) {
-		return setField(NX_CURVATURE, curvature);
+	public DataNode setCurvatureScalar(Double curvatureValue) {
+		return setField(NX_CURVATURE, curvatureValue);
 	}
 
 	@Override
@@ -217,13 +218,13 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	}
 
 	@Override
-	public DataNode setAperture(IDataset aperture) {
-		return setDataset(NX_APERTURE, aperture);
+	public DataNode setAperture(IDataset apertureDataset) {
+		return setDataset(NX_APERTURE, apertureDataset);
 	}
 
 	@Override
-	public DataNode setApertureScalar(Double aperture) {
-		return setField(NX_APERTURE, aperture);
+	public DataNode setApertureScalar(Double apertureValue) {
+		return setField(NX_APERTURE, apertureValue);
 	}
 
 	@Override
@@ -237,13 +238,13 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	}
 
 	@Override
-	public DataNode setNumber_of_lenses(IDataset number_of_lenses) {
-		return setDataset(NX_NUMBER_OF_LENSES, number_of_lenses);
+	public DataNode setNumber_of_lenses(IDataset number_of_lensesDataset) {
+		return setDataset(NX_NUMBER_OF_LENSES, number_of_lensesDataset);
 	}
 
 	@Override
-	public DataNode setNumber_of_lensesScalar(Long number_of_lenses) {
-		return setField(NX_NUMBER_OF_LENSES, number_of_lenses);
+	public DataNode setNumber_of_lensesScalar(Long number_of_lensesValue) {
+		return setField(NX_NUMBER_OF_LENSES, number_of_lensesValue);
 	}
 
 	@Override
@@ -257,13 +258,13 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	}
 
 	@Override
-	public DataNode setLens_material(IDataset lens_material) {
-		return setDataset(NX_LENS_MATERIAL, lens_material);
+	public DataNode setLens_material(IDataset lens_materialDataset) {
+		return setDataset(NX_LENS_MATERIAL, lens_materialDataset);
 	}
 
 	@Override
-	public DataNode setLens_materialScalar(String lens_material) {
-		return setString(NX_LENS_MATERIAL, lens_material);
+	public DataNode setLens_materialScalar(String lens_materialValue) {
+		return setString(NX_LENS_MATERIAL, lens_materialValue);
 	}
 
 	@Override
@@ -277,13 +278,13 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	}
 
 	@Override
-	public DataNode setGas(IDataset gas) {
-		return setDataset(NX_GAS, gas);
+	public DataNode setGas(IDataset gasDataset) {
+		return setDataset(NX_GAS, gasDataset);
 	}
 
 	@Override
-	public DataNode setGasScalar(String gas) {
-		return setString(NX_GAS, gas);
+	public DataNode setGasScalar(String gasValue) {
+		return setString(NX_GAS, gasValue);
 	}
 
 	@Override
@@ -297,13 +298,23 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	}
 
 	@Override
-	public DataNode setGas_pressure(IDataset gas_pressure) {
-		return setDataset(NX_GAS_PRESSURE, gas_pressure);
+	public DataNode setGas_pressure(IDataset gas_pressureDataset) {
+		return setDataset(NX_GAS_PRESSURE, gas_pressureDataset);
 	}
 
 	@Override
-	public DataNode setGas_pressureScalar(Double gas_pressure) {
-		return setField(NX_GAS_PRESSURE, gas_pressure);
+	public DataNode setGas_pressureScalar(Double gas_pressureValue) {
+		return setField(NX_GAS_PRESSURE, gas_pressureValue);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

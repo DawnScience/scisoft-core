@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -91,18 +91,17 @@ public class NXxlaueValidator extends AbstractNexusValidator implements NexusApp
 		validateGroupNotNull("distribution", NXdata.class, group);
 		clearLocalGroupDimensionPlaceholderValues();
 
-		// validate field 'data' of unknown type.
-		final IDataset data = group.getData();
+		// validate field 'data' of unknown type. Note: field not defined in base class.
+		final IDataset data = group.getDataset("data");
 		validateFieldNotNull("data", data);
-		validateFieldType("data", data, NX_NUMBER);
 		validateFieldRank("data", data, 1);
-		validateFieldDimensions("data", data, null, "ne");
+		validateFieldDimensions("data", data, null, "nE");
 
 		// validate field 'wavelength' of unknown type. Note: field not defined in base class.
 		final IDataset wavelength = group.getDataset("wavelength");
 		validateFieldNotNull("wavelength", wavelength);
 		validateFieldUnits("wavelength", wavelength, NX_WAVELENGTH);
 		validateFieldRank("wavelength", wavelength, 1);
-		validateFieldDimensions("wavelength", wavelength, null, "ne");
+		validateFieldDimensions("wavelength", wavelength, null, "nE");
 	}
 }

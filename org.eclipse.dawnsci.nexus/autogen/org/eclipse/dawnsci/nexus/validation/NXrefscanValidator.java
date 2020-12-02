@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -178,7 +178,7 @@ public class NXrefscanValidator extends AbstractNexusValidator implements NexusA
 		validateFieldType("data", data, NX_INT);
 		validateFieldUnits("data", data, NX_ANY);
 		validateFieldRank("data", data, 1);
-		validateFieldDimensions("data", data, null, "NP");
+		validateFieldDimensions("data", data, null, "nP");
 
 		// validate field 'polar_angle' of type NX_FLOAT.
 		final IDataset polar_angle = group.getPolar_angle();
@@ -186,7 +186,7 @@ public class NXrefscanValidator extends AbstractNexusValidator implements NexusA
 		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
 		validateFieldUnits("polar_angle", polar_angle, NX_ANGLE);
 		validateFieldRank("polar_angle", polar_angle, 1);
-		validateFieldDimensions("polar_angle", polar_angle, null, "NP");
+		validateFieldDimensions("polar_angle", polar_angle, null, "nP");
 	}
 
 	/**
@@ -207,7 +207,7 @@ public class NXrefscanValidator extends AbstractNexusValidator implements NexusA
 		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
 		validateFieldUnits("rotation_angle", rotation_angle, NX_ANGLE);
 		validateFieldRank("rotation_angle", rotation_angle, 1);
-		validateFieldDimensions("rotation_angle", rotation_angle, null, "NP");
+		validateFieldDimensions("rotation_angle", rotation_angle, null, "nP");
 	}
 
 	/**
@@ -237,7 +237,7 @@ public class NXrefscanValidator extends AbstractNexusValidator implements NexusA
 		validateFieldType("data", data, NX_FLOAT);
 		validateFieldUnits("data", data, NX_ANY);
 		validateFieldRank("data", data, 1);
-		validateFieldDimensions("data", data, null, "NP");
+		validateFieldDimensions("data", data, null, "nP");
 	}
 
 	/**

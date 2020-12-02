@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,7 @@ public interface NXflipper extends NXobject {
 	public static final String NX_COMP_CURRENT = "comp_current";
 	public static final String NX_GUIDE_CURRENT = "guide_current";
 	public static final String NX_THICKNESS = "thickness";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
@@ -47,9 +48,9 @@ public interface NXflipper extends NXobject {
 	 * <li><b>current-sheet</b> </li></ul></p>
 	 * </p>
 	 * 
-	 * @param type the type
+	 * @param typeDataset the typeDataset
 	 */
-	public DataNode setType(IDataset type);
+	public DataNode setType(IDataset typeDataset);
 
 	/**
 	 * <p>
@@ -71,7 +72,7 @@ public interface NXflipper extends NXobject {
 	 * 
 	 * @param type the type
 	 */
-	public DataNode setTypeScalar(String type);
+	public DataNode setTypeScalar(String typeValue);
 
 	/**
 	 * Linear density of turns (such as number of turns/cm) in flipping field coils
@@ -91,9 +92,9 @@ public interface NXflipper extends NXobject {
 	 * <b>Units:</b> NX_PER_LENGTH
 	 * </p>
 	 * 
-	 * @param flip_turns the flip_turns
+	 * @param flip_turnsDataset the flip_turnsDataset
 	 */
-	public DataNode setFlip_turns(IDataset flip_turns);
+	public DataNode setFlip_turns(IDataset flip_turnsDataset);
 
 	/**
 	 * Linear density of turns (such as number of turns/cm) in flipping field coils
@@ -115,7 +116,7 @@ public interface NXflipper extends NXobject {
 	 * 
 	 * @param flip_turns the flip_turns
 	 */
-	public DataNode setFlip_turnsScalar(Double flip_turns);
+	public DataNode setFlip_turnsScalar(Double flip_turnsValue);
 
 	/**
 	 * Linear density of turns (such as number of turns/cm) in compensating field coils
@@ -135,9 +136,9 @@ public interface NXflipper extends NXobject {
 	 * <b>Units:</b> NX_PER_LENGTH
 	 * </p>
 	 * 
-	 * @param comp_turns the comp_turns
+	 * @param comp_turnsDataset the comp_turnsDataset
 	 */
-	public DataNode setComp_turns(IDataset comp_turns);
+	public DataNode setComp_turns(IDataset comp_turnsDataset);
 
 	/**
 	 * Linear density of turns (such as number of turns/cm) in compensating field coils
@@ -159,7 +160,7 @@ public interface NXflipper extends NXobject {
 	 * 
 	 * @param comp_turns the comp_turns
 	 */
-	public DataNode setComp_turnsScalar(Double comp_turns);
+	public DataNode setComp_turnsScalar(Double comp_turnsValue);
 
 	/**
 	 * Linear density of turns (such as number of turns/cm) in guide field coils
@@ -179,9 +180,9 @@ public interface NXflipper extends NXobject {
 	 * <b>Units:</b> NX_PER_LENGTH
 	 * </p>
 	 * 
-	 * @param guide_turns the guide_turns
+	 * @param guide_turnsDataset the guide_turnsDataset
 	 */
-	public DataNode setGuide_turns(IDataset guide_turns);
+	public DataNode setGuide_turns(IDataset guide_turnsDataset);
 
 	/**
 	 * Linear density of turns (such as number of turns/cm) in guide field coils
@@ -203,7 +204,7 @@ public interface NXflipper extends NXobject {
 	 * 
 	 * @param guide_turns the guide_turns
 	 */
-	public DataNode setGuide_turnsScalar(Double guide_turns);
+	public DataNode setGuide_turnsScalar(Double guide_turnsValue);
 
 	/**
 	 * Flipping field coil current in "on" state"
@@ -223,9 +224,9 @@ public interface NXflipper extends NXobject {
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
 	 * 
-	 * @param flip_current the flip_current
+	 * @param flip_currentDataset the flip_currentDataset
 	 */
-	public DataNode setFlip_current(IDataset flip_current);
+	public DataNode setFlip_current(IDataset flip_currentDataset);
 
 	/**
 	 * Flipping field coil current in "on" state"
@@ -247,7 +248,7 @@ public interface NXflipper extends NXobject {
 	 * 
 	 * @param flip_current the flip_current
 	 */
-	public DataNode setFlip_currentScalar(Double flip_current);
+	public DataNode setFlip_currentScalar(Double flip_currentValue);
 
 	/**
 	 * Compensating field coil current in "on" state"
@@ -267,9 +268,9 @@ public interface NXflipper extends NXobject {
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
 	 * 
-	 * @param comp_current the comp_current
+	 * @param comp_currentDataset the comp_currentDataset
 	 */
-	public DataNode setComp_current(IDataset comp_current);
+	public DataNode setComp_current(IDataset comp_currentDataset);
 
 	/**
 	 * Compensating field coil current in "on" state"
@@ -291,7 +292,7 @@ public interface NXflipper extends NXobject {
 	 * 
 	 * @param comp_current the comp_current
 	 */
-	public DataNode setComp_currentScalar(Double comp_current);
+	public DataNode setComp_currentScalar(Double comp_currentValue);
 
 	/**
 	 * Guide field coil current in "on" state"
@@ -311,9 +312,9 @@ public interface NXflipper extends NXobject {
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
 	 * 
-	 * @param guide_current the guide_current
+	 * @param guide_currentDataset the guide_currentDataset
 	 */
-	public DataNode setGuide_current(IDataset guide_current);
+	public DataNode setGuide_current(IDataset guide_currentDataset);
 
 	/**
 	 * Guide field coil current in "on" state"
@@ -335,7 +336,7 @@ public interface NXflipper extends NXobject {
 	 * 
 	 * @param guide_current the guide_current
 	 */
-	public DataNode setGuide_currentScalar(Double guide_current);
+	public DataNode setGuide_currentScalar(Double guide_currentValue);
 
 	/**
 	 * thickness along path of neutron travel
@@ -355,9 +356,9 @@ public interface NXflipper extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param thickness the thickness
+	 * @param thicknessDataset the thicknessDataset
 	 */
-	public DataNode setThickness(IDataset thickness);
+	public DataNode setThickness(IDataset thicknessDataset);
 
 	/**
 	 * thickness along path of neutron travel
@@ -379,6 +380,32 @@ public interface NXflipper extends NXobject {
 	 * 
 	 * @param thickness the thickness
 	 */
-	public DataNode setThicknessScalar(Double thickness);
+	public DataNode setThicknessScalar(Double thicknessValue);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,12 +70,13 @@ public class NXgeometryImpl extends NXobjectImpl implements NXgeometry {
 
 	@Override
 	public NXshape getShape() {
+		// dataNodeName = NX_SHAPE
 		return getChild("shape", NXshape.class);
 	}
 
 	@Override
-	public void setShape(NXshape shape) {
-		putChild("shape", shape);
+	public void setShape(NXshape shapeGroup) {
+		putChild("shape", shapeGroup);
 	}
 
 	@Override
@@ -100,12 +101,13 @@ public class NXgeometryImpl extends NXobjectImpl implements NXgeometry {
 
 	@Override
 	public NXtranslation getTranslation() {
+		// dataNodeName = NX_TRANSLATION
 		return getChild("translation", NXtranslation.class);
 	}
 
 	@Override
-	public void setTranslation(NXtranslation translation) {
-		putChild("translation", translation);
+	public void setTranslation(NXtranslation translationGroup) {
+		putChild("translation", translationGroup);
 	}
 
 	@Override
@@ -130,12 +132,13 @@ public class NXgeometryImpl extends NXobjectImpl implements NXgeometry {
 
 	@Override
 	public NXorientation getOrientation() {
+		// dataNodeName = NX_ORIENTATION
 		return getChild("orientation", NXorientation.class);
 	}
 
 	@Override
-	public void setOrientation(NXorientation orientation) {
-		putChild("orientation", orientation);
+	public void setOrientation(NXorientation orientationGroup) {
+		putChild("orientation", orientationGroup);
 	}
 
 	@Override
@@ -169,13 +172,13 @@ public class NXgeometryImpl extends NXobjectImpl implements NXgeometry {
 	}
 
 	@Override
-	public DataNode setDescription(IDataset description) {
-		return setDataset(NX_DESCRIPTION, description);
+	public DataNode setDescription(IDataset descriptionDataset) {
+		return setDataset(NX_DESCRIPTION, descriptionDataset);
 	}
 
 	@Override
-	public DataNode setDescriptionScalar(String description) {
-		return setString(NX_DESCRIPTION, description);
+	public DataNode setDescriptionScalar(String descriptionValue) {
+		return setString(NX_DESCRIPTION, descriptionValue);
 	}
 
 	@Override
@@ -189,13 +192,23 @@ public class NXgeometryImpl extends NXobjectImpl implements NXgeometry {
 	}
 
 	@Override
-	public DataNode setComponent_index(IDataset component_index) {
-		return setDataset(NX_COMPONENT_INDEX, component_index);
+	public DataNode setComponent_index(IDataset component_indexDataset) {
+		return setDataset(NX_COMPONENT_INDEX, component_indexDataset);
 	}
 
 	@Override
-	public DataNode setComponent_indexScalar(Long component_index) {
-		return setField(NX_COMPONENT_INDEX, component_index);
+	public DataNode setComponent_indexScalar(Long component_indexValue) {
+		return setField(NX_COMPONENT_INDEX, component_indexValue);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

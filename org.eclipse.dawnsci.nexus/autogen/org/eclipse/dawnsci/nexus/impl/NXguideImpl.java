@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,12 +80,13 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 
 	@Override
 	public NXgeometry getGeometry() {
+		// dataNodeName = NX_GEOMETRY
 		return getChild("geometry", NXgeometry.class);
 	}
 
 	@Override
-	public void setGeometry(NXgeometry geometry) {
-		putChild("geometry", geometry);
+	public void setGeometry(NXgeometry geometryGroup) {
+		putChild("geometry", geometryGroup);
 	}
 
 	@Override
@@ -119,13 +120,13 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public DataNode setDescription(IDataset description) {
-		return setDataset(NX_DESCRIPTION, description);
+	public DataNode setDescription(IDataset descriptionDataset) {
+		return setDataset(NX_DESCRIPTION, descriptionDataset);
 	}
 
 	@Override
-	public DataNode setDescriptionScalar(String description) {
-		return setString(NX_DESCRIPTION, description);
+	public DataNode setDescriptionScalar(String descriptionValue) {
+		return setString(NX_DESCRIPTION, descriptionValue);
 	}
 
 	@Override
@@ -139,23 +140,24 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public DataNode setIncident_angle(IDataset incident_angle) {
-		return setDataset(NX_INCIDENT_ANGLE, incident_angle);
+	public DataNode setIncident_angle(IDataset incident_angleDataset) {
+		return setDataset(NX_INCIDENT_ANGLE, incident_angleDataset);
 	}
 
 	@Override
-	public DataNode setIncident_angleScalar(Double incident_angle) {
-		return setField(NX_INCIDENT_ANGLE, incident_angle);
+	public DataNode setIncident_angleScalar(Double incident_angleValue) {
+		return setField(NX_INCIDENT_ANGLE, incident_angleValue);
 	}
 
 	@Override
 	public NXdata getReflectivity() {
+		// dataNodeName = NX_REFLECTIVITY
 		return getChild("reflectivity", NXdata.class);
 	}
 
 	@Override
-	public void setReflectivity(NXdata reflectivity) {
-		putChild("reflectivity", reflectivity);
+	public void setReflectivity(NXdata reflectivityGroup) {
+		putChild("reflectivity", reflectivityGroup);
 	}
 
 	@Override
@@ -169,13 +171,13 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public DataNode setBend_angle_x(IDataset bend_angle_x) {
-		return setDataset(NX_BEND_ANGLE_X, bend_angle_x);
+	public DataNode setBend_angle_x(IDataset bend_angle_xDataset) {
+		return setDataset(NX_BEND_ANGLE_X, bend_angle_xDataset);
 	}
 
 	@Override
-	public DataNode setBend_angle_xScalar(Double bend_angle_x) {
-		return setField(NX_BEND_ANGLE_X, bend_angle_x);
+	public DataNode setBend_angle_xScalar(Double bend_angle_xValue) {
+		return setField(NX_BEND_ANGLE_X, bend_angle_xValue);
 	}
 
 	@Override
@@ -189,13 +191,13 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public DataNode setBend_angle_y(IDataset bend_angle_y) {
-		return setDataset(NX_BEND_ANGLE_Y, bend_angle_y);
+	public DataNode setBend_angle_y(IDataset bend_angle_yDataset) {
+		return setDataset(NX_BEND_ANGLE_Y, bend_angle_yDataset);
 	}
 
 	@Override
-	public DataNode setBend_angle_yScalar(Double bend_angle_y) {
-		return setField(NX_BEND_ANGLE_Y, bend_angle_y);
+	public DataNode setBend_angle_yScalar(Double bend_angle_yValue) {
+		return setField(NX_BEND_ANGLE_Y, bend_angle_yValue);
 	}
 
 	@Override
@@ -209,13 +211,13 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public DataNode setInterior_atmosphere(IDataset interior_atmosphere) {
-		return setDataset(NX_INTERIOR_ATMOSPHERE, interior_atmosphere);
+	public DataNode setInterior_atmosphere(IDataset interior_atmosphereDataset) {
+		return setDataset(NX_INTERIOR_ATMOSPHERE, interior_atmosphereDataset);
 	}
 
 	@Override
-	public DataNode setInterior_atmosphereScalar(String interior_atmosphere) {
-		return setString(NX_INTERIOR_ATMOSPHERE, interior_atmosphere);
+	public DataNode setInterior_atmosphereScalar(String interior_atmosphereValue) {
+		return setString(NX_INTERIOR_ATMOSPHERE, interior_atmosphereValue);
 	}
 
 	@Override
@@ -229,13 +231,13 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public DataNode setExternal_material(IDataset external_material) {
-		return setDataset(NX_EXTERNAL_MATERIAL, external_material);
+	public DataNode setExternal_material(IDataset external_materialDataset) {
+		return setDataset(NX_EXTERNAL_MATERIAL, external_materialDataset);
 	}
 
 	@Override
-	public DataNode setExternal_materialScalar(String external_material) {
-		return setString(NX_EXTERNAL_MATERIAL, external_material);
+	public DataNode setExternal_materialScalar(String external_materialValue) {
+		return setString(NX_EXTERNAL_MATERIAL, external_materialValue);
 	}
 
 	@Override
@@ -249,13 +251,13 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public DataNode setM_value(IDataset m_value) {
-		return setDataset(NX_M_VALUE, m_value);
+	public DataNode setM_value(IDataset m_valueDataset) {
+		return setDataset(NX_M_VALUE, m_valueDataset);
 	}
 
 	@Override
-	public DataNode setM_valueScalar(Double m_value) {
-		return setField(NX_M_VALUE, m_value);
+	public DataNode setM_valueScalar(Double m_valueValue) {
+		return setField(NX_M_VALUE, m_valueValue);
 	}
 
 	@Override
@@ -269,13 +271,13 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public DataNode setSubstrate_material(IDataset substrate_material) {
-		return setDataset(NX_SUBSTRATE_MATERIAL, substrate_material);
+	public DataNode setSubstrate_material(IDataset substrate_materialDataset) {
+		return setDataset(NX_SUBSTRATE_MATERIAL, substrate_materialDataset);
 	}
 
 	@Override
-	public DataNode setSubstrate_materialScalar(Double substrate_material) {
-		return setField(NX_SUBSTRATE_MATERIAL, substrate_material);
+	public DataNode setSubstrate_materialScalar(Double substrate_materialValue) {
+		return setField(NX_SUBSTRATE_MATERIAL, substrate_materialValue);
 	}
 
 	@Override
@@ -289,13 +291,13 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public DataNode setSubstrate_thickness(IDataset substrate_thickness) {
-		return setDataset(NX_SUBSTRATE_THICKNESS, substrate_thickness);
+	public DataNode setSubstrate_thickness(IDataset substrate_thicknessDataset) {
+		return setDataset(NX_SUBSTRATE_THICKNESS, substrate_thicknessDataset);
 	}
 
 	@Override
-	public DataNode setSubstrate_thicknessScalar(Double substrate_thickness) {
-		return setField(NX_SUBSTRATE_THICKNESS, substrate_thickness);
+	public DataNode setSubstrate_thicknessScalar(Double substrate_thicknessValue) {
+		return setField(NX_SUBSTRATE_THICKNESS, substrate_thicknessValue);
 	}
 
 	@Override
@@ -309,13 +311,13 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public DataNode setCoating_material(IDataset coating_material) {
-		return setDataset(NX_COATING_MATERIAL, coating_material);
+	public DataNode setCoating_material(IDataset coating_materialDataset) {
+		return setDataset(NX_COATING_MATERIAL, coating_materialDataset);
 	}
 
 	@Override
-	public DataNode setCoating_materialScalar(Double coating_material) {
-		return setField(NX_COATING_MATERIAL, coating_material);
+	public DataNode setCoating_materialScalar(Double coating_materialValue) {
+		return setField(NX_COATING_MATERIAL, coating_materialValue);
 	}
 
 	@Override
@@ -329,13 +331,13 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public DataNode setSubstrate_roughness(IDataset substrate_roughness) {
-		return setDataset(NX_SUBSTRATE_ROUGHNESS, substrate_roughness);
+	public DataNode setSubstrate_roughness(IDataset substrate_roughnessDataset) {
+		return setDataset(NX_SUBSTRATE_ROUGHNESS, substrate_roughnessDataset);
 	}
 
 	@Override
-	public DataNode setSubstrate_roughnessScalar(Double substrate_roughness) {
-		return setField(NX_SUBSTRATE_ROUGHNESS, substrate_roughness);
+	public DataNode setSubstrate_roughnessScalar(Double substrate_roughnessValue) {
+		return setField(NX_SUBSTRATE_ROUGHNESS, substrate_roughnessValue);
 	}
 
 	@Override
@@ -349,13 +351,13 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public DataNode setCoating_roughness(IDataset coating_roughness) {
-		return setDataset(NX_COATING_ROUGHNESS, coating_roughness);
+	public DataNode setCoating_roughness(IDataset coating_roughnessDataset) {
+		return setDataset(NX_COATING_ROUGHNESS, coating_roughnessDataset);
 	}
 
 	@Override
-	public DataNode setCoating_roughnessScalar(Double coating_roughness) {
-		return setField(NX_COATING_ROUGHNESS, coating_roughness);
+	public DataNode setCoating_roughnessScalar(Double coating_roughnessValue) {
+		return setField(NX_COATING_ROUGHNESS, coating_roughnessValue);
 	}
 
 	@Override
@@ -369,13 +371,23 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public DataNode setNumber_sections(IDataset number_sections) {
-		return setDataset(NX_NUMBER_SECTIONS, number_sections);
+	public DataNode setNumber_sections(IDataset number_sectionsDataset) {
+		return setDataset(NX_NUMBER_SECTIONS, number_sectionsDataset);
 	}
 
 	@Override
-	public DataNode setNumber_sectionsScalar(Long number_sections) {
-		return setField(NX_NUMBER_SECTIONS, number_sections);
+	public DataNode setNumber_sectionsScalar(Long number_sectionsValue) {
+		return setField(NX_NUMBER_SECTIONS, number_sectionsValue);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

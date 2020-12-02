@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -72,13 +72,13 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public DataNode setDistance(IDataset distance) {
-		return setDataset(NX_DISTANCE, distance);
+	public DataNode setDistance(IDataset distanceDataset) {
+		return setDataset(NX_DISTANCE, distanceDataset);
 	}
 
 	@Override
-	public DataNode setDistanceScalar(Double distance) {
-		return setField(NX_DISTANCE, distance);
+	public DataNode setDistanceScalar(Double distanceValue) {
+		return setField(NX_DISTANCE, distanceValue);
 	}
 
 	@Override
@@ -92,13 +92,13 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public DataNode setName(IDataset name) {
-		return setDataset(NX_NAME, name);
+	public DataNode setName(IDataset nameDataset) {
+		return setDataset(NX_NAME, nameDataset);
 	}
 
 	@Override
-	public DataNode setNameScalar(String name) {
-		return setString(NX_NAME, name);
+	public DataNode setNameScalar(String nameValue) {
+		return setString(NX_NAME, nameValue);
 	}
 
 	@Override
@@ -107,8 +107,8 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public void setNameAttributeShort_name(String short_name) {
-		setAttribute(NX_NAME, NX_NAME_ATTRIBUTE_SHORT_NAME, short_name);
+	public void setNameAttributeShort_name(String short_nameValue) {
+		setAttribute(NX_NAME, NX_NAME_ATTRIBUTE_SHORT_NAME, short_nameValue);
 	}
 
 	@Override
@@ -122,13 +122,13 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public DataNode setType(IDataset type) {
-		return setDataset(NX_TYPE, type);
+	public DataNode setType(IDataset typeDataset) {
+		return setDataset(NX_TYPE, typeDataset);
 	}
 
 	@Override
-	public DataNode setTypeScalar(String type) {
-		return setString(NX_TYPE, type);
+	public DataNode setTypeScalar(String typeValue) {
+		return setString(NX_TYPE, typeValue);
 	}
 
 	@Override
@@ -142,13 +142,13 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public DataNode setProbe(IDataset probe) {
-		return setDataset(NX_PROBE, probe);
+	public DataNode setProbe(IDataset probeDataset) {
+		return setDataset(NX_PROBE, probeDataset);
 	}
 
 	@Override
-	public DataNode setProbeScalar(String probe) {
-		return setString(NX_PROBE, probe);
+	public DataNode setProbeScalar(String probeValue) {
+		return setString(NX_PROBE, probeValue);
 	}
 
 	@Override
@@ -162,13 +162,13 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public DataNode setPower(IDataset power) {
-		return setDataset(NX_POWER, power);
+	public DataNode setPower(IDataset powerDataset) {
+		return setDataset(NX_POWER, powerDataset);
 	}
 
 	@Override
-	public DataNode setPowerScalar(Double power) {
-		return setField(NX_POWER, power);
+	public DataNode setPowerScalar(Double powerValue) {
+		return setField(NX_POWER, powerValue);
 	}
 
 	@Override
@@ -182,13 +182,13 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public DataNode setEmittance_x(IDataset emittance_x) {
-		return setDataset(NX_EMITTANCE_X, emittance_x);
+	public DataNode setEmittance_x(IDataset emittance_xDataset) {
+		return setDataset(NX_EMITTANCE_X, emittance_xDataset);
 	}
 
 	@Override
-	public DataNode setEmittance_xScalar(Double emittance_x) {
-		return setField(NX_EMITTANCE_X, emittance_x);
+	public DataNode setEmittance_xScalar(Double emittance_xValue) {
+		return setField(NX_EMITTANCE_X, emittance_xValue);
 	}
 
 	@Override
@@ -202,13 +202,13 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public DataNode setEmittance_y(IDataset emittance_y) {
-		return setDataset(NX_EMITTANCE_Y, emittance_y);
+	public DataNode setEmittance_y(IDataset emittance_yDataset) {
+		return setDataset(NX_EMITTANCE_Y, emittance_yDataset);
 	}
 
 	@Override
-	public DataNode setEmittance_yScalar(Double emittance_y) {
-		return setField(NX_EMITTANCE_Y, emittance_y);
+	public DataNode setEmittance_yScalar(Double emittance_yValue) {
+		return setField(NX_EMITTANCE_Y, emittance_yValue);
 	}
 
 	@Override
@@ -222,13 +222,13 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public DataNode setSigma_x(IDataset sigma_x) {
-		return setDataset(NX_SIGMA_X, sigma_x);
+	public DataNode setSigma_x(IDataset sigma_xDataset) {
+		return setDataset(NX_SIGMA_X, sigma_xDataset);
 	}
 
 	@Override
-	public DataNode setSigma_xScalar(Double sigma_x) {
-		return setField(NX_SIGMA_X, sigma_x);
+	public DataNode setSigma_xScalar(Double sigma_xValue) {
+		return setField(NX_SIGMA_X, sigma_xValue);
 	}
 
 	@Override
@@ -242,13 +242,13 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public DataNode setSigma_y(IDataset sigma_y) {
-		return setDataset(NX_SIGMA_Y, sigma_y);
+	public DataNode setSigma_y(IDataset sigma_yDataset) {
+		return setDataset(NX_SIGMA_Y, sigma_yDataset);
 	}
 
 	@Override
-	public DataNode setSigma_yScalar(Double sigma_y) {
-		return setField(NX_SIGMA_Y, sigma_y);
+	public DataNode setSigma_yScalar(Double sigma_yValue) {
+		return setField(NX_SIGMA_Y, sigma_yValue);
 	}
 
 	@Override
@@ -262,13 +262,13 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public DataNode setFlux(IDataset flux) {
-		return setDataset(NX_FLUX, flux);
+	public DataNode setFlux(IDataset fluxDataset) {
+		return setDataset(NX_FLUX, fluxDataset);
 	}
 
 	@Override
-	public DataNode setFluxScalar(Double flux) {
-		return setField(NX_FLUX, flux);
+	public DataNode setFluxScalar(Double fluxValue) {
+		return setField(NX_FLUX, fluxValue);
 	}
 
 	@Override
@@ -282,13 +282,13 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public DataNode setEnergy(IDataset energy) {
-		return setDataset(NX_ENERGY, energy);
+	public DataNode setEnergy(IDataset energyDataset) {
+		return setDataset(NX_ENERGY, energyDataset);
 	}
 
 	@Override
-	public DataNode setEnergyScalar(Double energy) {
-		return setField(NX_ENERGY, energy);
+	public DataNode setEnergyScalar(Double energyValue) {
+		return setField(NX_ENERGY, energyValue);
 	}
 
 	@Override
@@ -302,13 +302,13 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public DataNode setCurrent(IDataset current) {
-		return setDataset(NX_CURRENT, current);
+	public DataNode setCurrent(IDataset currentDataset) {
+		return setDataset(NX_CURRENT, currentDataset);
 	}
 
 	@Override
-	public DataNode setCurrentScalar(Double current) {
-		return setField(NX_CURRENT, current);
+	public DataNode setCurrentScalar(Double currentValue) {
+		return setField(NX_CURRENT, currentValue);
 	}
 
 	@Override
@@ -322,13 +322,13 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public DataNode setVoltage(IDataset voltage) {
-		return setDataset(NX_VOLTAGE, voltage);
+	public DataNode setVoltage(IDataset voltageDataset) {
+		return setDataset(NX_VOLTAGE, voltageDataset);
 	}
 
 	@Override
-	public DataNode setVoltageScalar(Double voltage) {
-		return setField(NX_VOLTAGE, voltage);
+	public DataNode setVoltageScalar(Double voltageValue) {
+		return setField(NX_VOLTAGE, voltageValue);
 	}
 
 	@Override
@@ -342,13 +342,13 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public DataNode setFrequency(IDataset frequency) {
-		return setDataset(NX_FREQUENCY, frequency);
+	public DataNode setFrequency(IDataset frequencyDataset) {
+		return setDataset(NX_FREQUENCY, frequencyDataset);
 	}
 
 	@Override
-	public DataNode setFrequencyScalar(Double frequency) {
-		return setField(NX_FREQUENCY, frequency);
+	public DataNode setFrequencyScalar(Double frequencyValue) {
+		return setField(NX_FREQUENCY, frequencyValue);
 	}
 
 	@Override
@@ -362,13 +362,13 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public DataNode setPeriod(IDataset period) {
-		return setDataset(NX_PERIOD, period);
+	public DataNode setPeriod(IDataset periodDataset) {
+		return setDataset(NX_PERIOD, periodDataset);
 	}
 
 	@Override
-	public DataNode setPeriodScalar(Double period) {
-		return setField(NX_PERIOD, period);
+	public DataNode setPeriodScalar(Double periodValue) {
+		return setField(NX_PERIOD, periodValue);
 	}
 
 	@Override
@@ -382,33 +382,35 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public DataNode setTarget_material(IDataset target_material) {
-		return setDataset(NX_TARGET_MATERIAL, target_material);
+	public DataNode setTarget_material(IDataset target_materialDataset) {
+		return setDataset(NX_TARGET_MATERIAL, target_materialDataset);
 	}
 
 	@Override
-	public DataNode setTarget_materialScalar(String target_material) {
-		return setString(NX_TARGET_MATERIAL, target_material);
+	public DataNode setTarget_materialScalar(String target_materialValue) {
+		return setString(NX_TARGET_MATERIAL, target_materialValue);
 	}
 
 	@Override
 	public NXnote getNotes() {
+		// dataNodeName = NX_NOTES
 		return getChild("notes", NXnote.class);
 	}
 
 	@Override
-	public void setNotes(NXnote notes) {
-		putChild("notes", notes);
+	public void setNotes(NXnote notesGroup) {
+		putChild("notes", notesGroup);
 	}
 
 	@Override
 	public NXdata getBunch_pattern() {
+		// dataNodeName = NX_BUNCH_PATTERN
 		return getChild("bunch_pattern", NXdata.class);
 	}
 
 	@Override
-	public void setBunch_pattern(NXdata bunch_pattern) {
-		putChild("bunch_pattern", bunch_pattern);
+	public void setBunch_pattern(NXdata bunch_patternGroup) {
+		putChild("bunch_pattern", bunch_patternGroup);
 	}
 
 	@Override
@@ -422,13 +424,13 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public DataNode setNumber_of_bunches(IDataset number_of_bunches) {
-		return setDataset(NX_NUMBER_OF_BUNCHES, number_of_bunches);
+	public DataNode setNumber_of_bunches(IDataset number_of_bunchesDataset) {
+		return setDataset(NX_NUMBER_OF_BUNCHES, number_of_bunchesDataset);
 	}
 
 	@Override
-	public DataNode setNumber_of_bunchesScalar(Long number_of_bunches) {
-		return setField(NX_NUMBER_OF_BUNCHES, number_of_bunches);
+	public DataNode setNumber_of_bunchesScalar(Long number_of_bunchesValue) {
+		return setField(NX_NUMBER_OF_BUNCHES, number_of_bunchesValue);
 	}
 
 	@Override
@@ -442,13 +444,13 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public DataNode setBunch_length(IDataset bunch_length) {
-		return setDataset(NX_BUNCH_LENGTH, bunch_length);
+	public DataNode setBunch_length(IDataset bunch_lengthDataset) {
+		return setDataset(NX_BUNCH_LENGTH, bunch_lengthDataset);
 	}
 
 	@Override
-	public DataNode setBunch_lengthScalar(Double bunch_length) {
-		return setField(NX_BUNCH_LENGTH, bunch_length);
+	public DataNode setBunch_lengthScalar(Double bunch_lengthValue) {
+		return setField(NX_BUNCH_LENGTH, bunch_lengthValue);
 	}
 
 	@Override
@@ -462,13 +464,13 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public DataNode setBunch_distance(IDataset bunch_distance) {
-		return setDataset(NX_BUNCH_DISTANCE, bunch_distance);
+	public DataNode setBunch_distance(IDataset bunch_distanceDataset) {
+		return setDataset(NX_BUNCH_DISTANCE, bunch_distanceDataset);
 	}
 
 	@Override
-	public DataNode setBunch_distanceScalar(Double bunch_distance) {
-		return setField(NX_BUNCH_DISTANCE, bunch_distance);
+	public DataNode setBunch_distanceScalar(Double bunch_distanceValue) {
+		return setField(NX_BUNCH_DISTANCE, bunch_distanceValue);
 	}
 
 	@Override
@@ -482,23 +484,24 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public DataNode setPulse_width(IDataset pulse_width) {
-		return setDataset(NX_PULSE_WIDTH, pulse_width);
+	public DataNode setPulse_width(IDataset pulse_widthDataset) {
+		return setDataset(NX_PULSE_WIDTH, pulse_widthDataset);
 	}
 
 	@Override
-	public DataNode setPulse_widthScalar(Double pulse_width) {
-		return setField(NX_PULSE_WIDTH, pulse_width);
+	public DataNode setPulse_widthScalar(Double pulse_widthValue) {
+		return setField(NX_PULSE_WIDTH, pulse_widthValue);
 	}
 
 	@Override
 	public NXdata getPulse_shape() {
+		// dataNodeName = NX_PULSE_SHAPE
 		return getChild("pulse_shape", NXdata.class);
 	}
 
 	@Override
-	public void setPulse_shape(NXdata pulse_shape) {
-		putChild("pulse_shape", pulse_shape);
+	public void setPulse_shape(NXdata pulse_shapeGroup) {
+		putChild("pulse_shape", pulse_shapeGroup);
 	}
 
 	@Override
@@ -512,13 +515,13 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public DataNode setMode(IDataset mode) {
-		return setDataset(NX_MODE, mode);
+	public DataNode setMode(IDataset modeDataset) {
+		return setDataset(NX_MODE, modeDataset);
 	}
 
 	@Override
-	public DataNode setModeScalar(String mode) {
-		return setString(NX_MODE, mode);
+	public DataNode setModeScalar(String modeValue) {
+		return setString(NX_MODE, modeValue);
 	}
 
 	@Override
@@ -532,13 +535,13 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public DataNode setTop_up(IDataset top_up) {
-		return setDataset(NX_TOP_UP, top_up);
+	public DataNode setTop_up(IDataset top_upDataset) {
+		return setDataset(NX_TOP_UP, top_upDataset);
 	}
 
 	@Override
-	public DataNode setTop_upScalar(Boolean top_up) {
-		return setField(NX_TOP_UP, top_up);
+	public DataNode setTop_upScalar(Boolean top_upValue) {
+		return setField(NX_TOP_UP, top_upValue);
 	}
 
 	@Override
@@ -552,13 +555,13 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public DataNode setLast_fill(IDataset last_fill) {
-		return setDataset(NX_LAST_FILL, last_fill);
+	public DataNode setLast_fill(IDataset last_fillDataset) {
+		return setDataset(NX_LAST_FILL, last_fillDataset);
 	}
 
 	@Override
-	public DataNode setLast_fillScalar(Number last_fill) {
-		return setField(NX_LAST_FILL, last_fill);
+	public DataNode setLast_fillScalar(Number last_fillValue) {
+		return setField(NX_LAST_FILL, last_fillValue);
 	}
 
 	@Override
@@ -567,28 +570,40 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public void setLast_fillAttributeTime(Date time) {
-		setAttribute(NX_LAST_FILL, NX_LAST_FILL_ATTRIBUTE_TIME, time);
+	public void setLast_fillAttributeTime(Date timeValue) {
+		setAttribute(NX_LAST_FILL, NX_LAST_FILL_ATTRIBUTE_TIME, timeValue);
 	}
 
 	@Override
 	public NXgeometry getGeometry() {
+		// dataNodeName = NX_GEOMETRY
 		return getChild("geometry", NXgeometry.class);
 	}
 
 	@Override
-	public void setGeometry(NXgeometry geometry) {
-		putChild("geometry", geometry);
+	public void setGeometry(NXgeometry geometryGroup) {
+		putChild("geometry", geometryGroup);
 	}
 
 	@Override
 	public NXdata getDistribution() {
+		// dataNodeName = NX_DISTRIBUTION
 		return getChild("distribution", NXdata.class);
 	}
 
 	@Override
-	public void setDistribution(NXdata distribution) {
-		putChild("distribution", distribution);
+	public void setDistribution(NXdata distributionGroup) {
+		putChild("distribution", distributionGroup);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

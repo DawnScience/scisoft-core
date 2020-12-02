@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -69,13 +69,13 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	}
 
 	@Override
-	public DataNode setType(IDataset type) {
-		return setDataset(NX_TYPE, type);
+	public DataNode setType(IDataset typeDataset) {
+		return setDataset(NX_TYPE, typeDataset);
 	}
 
 	@Override
-	public DataNode setTypeScalar(String type) {
-		return setString(NX_TYPE, type);
+	public DataNode setTypeScalar(String typeValue) {
+		return setString(NX_TYPE, typeValue);
 	}
 
 	@Override
@@ -89,13 +89,13 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	}
 
 	@Override
-	public DataNode setGap(IDataset gap) {
-		return setDataset(NX_GAP, gap);
+	public DataNode setGap(IDataset gapDataset) {
+		return setDataset(NX_GAP, gapDataset);
 	}
 
 	@Override
-	public DataNode setGapScalar(Double gap) {
-		return setField(NX_GAP, gap);
+	public DataNode setGapScalar(Double gapValue) {
+		return setField(NX_GAP, gapValue);
 	}
 
 	@Override
@@ -109,13 +109,13 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	}
 
 	@Override
-	public DataNode setTaper(IDataset taper) {
-		return setDataset(NX_TAPER, taper);
+	public DataNode setTaper(IDataset taperDataset) {
+		return setDataset(NX_TAPER, taperDataset);
 	}
 
 	@Override
-	public DataNode setTaperScalar(Double taper) {
-		return setField(NX_TAPER, taper);
+	public DataNode setTaperScalar(Double taperValue) {
+		return setField(NX_TAPER, taperValue);
 	}
 
 	@Override
@@ -129,13 +129,13 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	}
 
 	@Override
-	public DataNode setPhase(IDataset phase) {
-		return setDataset(NX_PHASE, phase);
+	public DataNode setPhase(IDataset phaseDataset) {
+		return setDataset(NX_PHASE, phaseDataset);
 	}
 
 	@Override
-	public DataNode setPhaseScalar(Double phase) {
-		return setField(NX_PHASE, phase);
+	public DataNode setPhaseScalar(Double phaseValue) {
+		return setField(NX_PHASE, phaseValue);
 	}
 
 	@Override
@@ -149,13 +149,13 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	}
 
 	@Override
-	public DataNode setPoles(IDataset poles) {
-		return setDataset(NX_POLES, poles);
+	public DataNode setPoles(IDataset polesDataset) {
+		return setDataset(NX_POLES, polesDataset);
 	}
 
 	@Override
-	public DataNode setPolesScalar(Long poles) {
-		return setField(NX_POLES, poles);
+	public DataNode setPolesScalar(Long polesValue) {
+		return setField(NX_POLES, polesValue);
 	}
 
 	@Override
@@ -169,13 +169,13 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	}
 
 	@Override
-	public DataNode setMagnetic_wavelength(IDataset magnetic_wavelength) {
-		return setDataset(NX_MAGNETIC_WAVELENGTH, magnetic_wavelength);
+	public DataNode setMagnetic_wavelength(IDataset magnetic_wavelengthDataset) {
+		return setDataset(NX_MAGNETIC_WAVELENGTH, magnetic_wavelengthDataset);
 	}
 
 	@Override
-	public DataNode setMagnetic_wavelengthScalar(Double magnetic_wavelength) {
-		return setField(NX_MAGNETIC_WAVELENGTH, magnetic_wavelength);
+	public DataNode setMagnetic_wavelengthScalar(Double magnetic_wavelengthValue) {
+		return setField(NX_MAGNETIC_WAVELENGTH, magnetic_wavelengthValue);
 	}
 
 	@Override
@@ -189,13 +189,13 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	}
 
 	@Override
-	public DataNode setK(IDataset k) {
-		return setDataset(NX_K, k);
+	public DataNode setK(IDataset kDataset) {
+		return setDataset(NX_K, kDataset);
 	}
 
 	@Override
-	public DataNode setKScalar(Double k) {
-		return setField(NX_K, k);
+	public DataNode setKScalar(Double kValue) {
+		return setField(NX_K, kValue);
 	}
 
 	@Override
@@ -209,13 +209,13 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	}
 
 	@Override
-	public DataNode setLength(IDataset length) {
-		return setDataset(NX_LENGTH, length);
+	public DataNode setLength(IDataset lengthDataset) {
+		return setDataset(NX_LENGTH, lengthDataset);
 	}
 
 	@Override
-	public DataNode setLengthScalar(Double length) {
-		return setField(NX_LENGTH, length);
+	public DataNode setLengthScalar(Double lengthValue) {
+		return setField(NX_LENGTH, lengthValue);
 	}
 
 	@Override
@@ -229,13 +229,13 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	}
 
 	@Override
-	public DataNode setPower(IDataset power) {
-		return setDataset(NX_POWER, power);
+	public DataNode setPower(IDataset powerDataset) {
+		return setDataset(NX_POWER, powerDataset);
 	}
 
 	@Override
-	public DataNode setPowerScalar(Double power) {
-		return setField(NX_POWER, power);
+	public DataNode setPowerScalar(Double powerValue) {
+		return setField(NX_POWER, powerValue);
 	}
 
 	@Override
@@ -249,13 +249,13 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	}
 
 	@Override
-	public DataNode setEnergy(IDataset energy) {
-		return setDataset(NX_ENERGY, energy);
+	public DataNode setEnergy(IDataset energyDataset) {
+		return setDataset(NX_ENERGY, energyDataset);
 	}
 
 	@Override
-	public DataNode setEnergyScalar(Double energy) {
-		return setField(NX_ENERGY, energy);
+	public DataNode setEnergyScalar(Double energyValue) {
+		return setField(NX_ENERGY, energyValue);
 	}
 
 	@Override
@@ -269,13 +269,13 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	}
 
 	@Override
-	public DataNode setBandwidth(IDataset bandwidth) {
-		return setDataset(NX_BANDWIDTH, bandwidth);
+	public DataNode setBandwidth(IDataset bandwidthDataset) {
+		return setDataset(NX_BANDWIDTH, bandwidthDataset);
 	}
 
 	@Override
-	public DataNode setBandwidthScalar(Double bandwidth) {
-		return setField(NX_BANDWIDTH, bandwidth);
+	public DataNode setBandwidthScalar(Double bandwidthValue) {
+		return setField(NX_BANDWIDTH, bandwidthValue);
 	}
 
 	@Override
@@ -289,33 +289,35 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	}
 
 	@Override
-	public DataNode setHarmonic(IDataset harmonic) {
-		return setDataset(NX_HARMONIC, harmonic);
+	public DataNode setHarmonic(IDataset harmonicDataset) {
+		return setDataset(NX_HARMONIC, harmonicDataset);
 	}
 
 	@Override
-	public DataNode setHarmonicScalar(Long harmonic) {
-		return setField(NX_HARMONIC, harmonic);
+	public DataNode setHarmonicScalar(Long harmonicValue) {
+		return setField(NX_HARMONIC, harmonicValue);
 	}
 
 	@Override
 	public NXdata getSpectrum() {
+		// dataNodeName = NX_SPECTRUM
 		return getChild("spectrum", NXdata.class);
 	}
 
 	@Override
-	public void setSpectrum(NXdata spectrum) {
-		putChild("spectrum", spectrum);
+	public void setSpectrum(NXdata spectrumGroup) {
+		putChild("spectrum", spectrumGroup);
 	}
 
 	@Override
 	public NXgeometry getGeometry() {
+		// dataNodeName = NX_GEOMETRY
 		return getChild("geometry", NXgeometry.class);
 	}
 
 	@Override
-	public void setGeometry(NXgeometry geometry) {
-		putChild("geometry", geometry);
+	public void setGeometry(NXgeometry geometryGroup) {
+		putChild("geometry", geometryGroup);
 	}
 
 	@Override
@@ -336,6 +338,16 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	@Override
 	public void setAllGeometry(Map<String, NXgeometry> geometry) {
 		setChildren(geometry);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

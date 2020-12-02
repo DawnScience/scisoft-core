@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,12 +60,13 @@ public class NXcollimatorImpl extends NXobjectImpl implements NXcollimator {
 
 	@Override
 	public NXgeometry getGeometry() {
+		// dataNodeName = NX_GEOMETRY
 		return getChild("geometry", NXgeometry.class);
 	}
 
 	@Override
-	public void setGeometry(NXgeometry geometry) {
-		putChild("geometry", geometry);
+	public void setGeometry(NXgeometry geometryGroup) {
+		putChild("geometry", geometryGroup);
 	}
 
 	@Override
@@ -99,13 +100,13 @@ public class NXcollimatorImpl extends NXobjectImpl implements NXcollimator {
 	}
 
 	@Override
-	public DataNode setType(IDataset type) {
-		return setDataset(NX_TYPE, type);
+	public DataNode setType(IDataset typeDataset) {
+		return setDataset(NX_TYPE, typeDataset);
 	}
 
 	@Override
-	public DataNode setTypeScalar(String type) {
-		return setString(NX_TYPE, type);
+	public DataNode setTypeScalar(String typeValue) {
+		return setString(NX_TYPE, typeValue);
 	}
 
 	@Override
@@ -119,13 +120,13 @@ public class NXcollimatorImpl extends NXobjectImpl implements NXcollimator {
 	}
 
 	@Override
-	public DataNode setSoller_angle(IDataset soller_angle) {
-		return setDataset(NX_SOLLER_ANGLE, soller_angle);
+	public DataNode setSoller_angle(IDataset soller_angleDataset) {
+		return setDataset(NX_SOLLER_ANGLE, soller_angleDataset);
 	}
 
 	@Override
-	public DataNode setSoller_angleScalar(Double soller_angle) {
-		return setField(NX_SOLLER_ANGLE, soller_angle);
+	public DataNode setSoller_angleScalar(Double soller_angleValue) {
+		return setField(NX_SOLLER_ANGLE, soller_angleValue);
 	}
 
 	@Override
@@ -139,13 +140,13 @@ public class NXcollimatorImpl extends NXobjectImpl implements NXcollimator {
 	}
 
 	@Override
-	public DataNode setDivergence_x(IDataset divergence_x) {
-		return setDataset(NX_DIVERGENCE_X, divergence_x);
+	public DataNode setDivergence_x(IDataset divergence_xDataset) {
+		return setDataset(NX_DIVERGENCE_X, divergence_xDataset);
 	}
 
 	@Override
-	public DataNode setDivergence_xScalar(Double divergence_x) {
-		return setField(NX_DIVERGENCE_X, divergence_x);
+	public DataNode setDivergence_xScalar(Double divergence_xValue) {
+		return setField(NX_DIVERGENCE_X, divergence_xValue);
 	}
 
 	@Override
@@ -159,13 +160,13 @@ public class NXcollimatorImpl extends NXobjectImpl implements NXcollimator {
 	}
 
 	@Override
-	public DataNode setDivergence_y(IDataset divergence_y) {
-		return setDataset(NX_DIVERGENCE_Y, divergence_y);
+	public DataNode setDivergence_y(IDataset divergence_yDataset) {
+		return setDataset(NX_DIVERGENCE_Y, divergence_yDataset);
 	}
 
 	@Override
-	public DataNode setDivergence_yScalar(Double divergence_y) {
-		return setField(NX_DIVERGENCE_Y, divergence_y);
+	public DataNode setDivergence_yScalar(Double divergence_yValue) {
+		return setField(NX_DIVERGENCE_Y, divergence_yValue);
 	}
 
 	@Override
@@ -179,23 +180,24 @@ public class NXcollimatorImpl extends NXobjectImpl implements NXcollimator {
 	}
 
 	@Override
-	public DataNode setFrequency(IDataset frequency) {
-		return setDataset(NX_FREQUENCY, frequency);
+	public DataNode setFrequency(IDataset frequencyDataset) {
+		return setDataset(NX_FREQUENCY, frequencyDataset);
 	}
 
 	@Override
-	public DataNode setFrequencyScalar(Double frequency) {
-		return setField(NX_FREQUENCY, frequency);
+	public DataNode setFrequencyScalar(Double frequencyValue) {
+		return setField(NX_FREQUENCY, frequencyValue);
 	}
 
 	@Override
 	public NXlog getFrequency_log() {
+		// dataNodeName = NX_FREQUENCY_LOG
 		return getChild("frequency_log", NXlog.class);
 	}
 
 	@Override
-	public void setFrequency_log(NXlog frequency_log) {
-		putChild("frequency_log", frequency_log);
+	public void setFrequency_log(NXlog frequency_logGroup) {
+		putChild("frequency_log", frequency_logGroup);
 	}
 
 	@Override
@@ -209,13 +211,13 @@ public class NXcollimatorImpl extends NXobjectImpl implements NXcollimator {
 	}
 
 	@Override
-	public DataNode setBlade_thickness(IDataset blade_thickness) {
-		return setDataset(NX_BLADE_THICKNESS, blade_thickness);
+	public DataNode setBlade_thickness(IDataset blade_thicknessDataset) {
+		return setDataset(NX_BLADE_THICKNESS, blade_thicknessDataset);
 	}
 
 	@Override
-	public DataNode setBlade_thicknessScalar(Double blade_thickness) {
-		return setField(NX_BLADE_THICKNESS, blade_thickness);
+	public DataNode setBlade_thicknessScalar(Double blade_thicknessValue) {
+		return setField(NX_BLADE_THICKNESS, blade_thicknessValue);
 	}
 
 	@Override
@@ -229,13 +231,13 @@ public class NXcollimatorImpl extends NXobjectImpl implements NXcollimator {
 	}
 
 	@Override
-	public DataNode setBlade_spacing(IDataset blade_spacing) {
-		return setDataset(NX_BLADE_SPACING, blade_spacing);
+	public DataNode setBlade_spacing(IDataset blade_spacingDataset) {
+		return setDataset(NX_BLADE_SPACING, blade_spacingDataset);
 	}
 
 	@Override
-	public DataNode setBlade_spacingScalar(Double blade_spacing) {
-		return setField(NX_BLADE_SPACING, blade_spacing);
+	public DataNode setBlade_spacingScalar(Double blade_spacingValue) {
+		return setField(NX_BLADE_SPACING, blade_spacingValue);
 	}
 
 	@Override
@@ -249,13 +251,13 @@ public class NXcollimatorImpl extends NXobjectImpl implements NXcollimator {
 	}
 
 	@Override
-	public DataNode setAbsorbing_material(IDataset absorbing_material) {
-		return setDataset(NX_ABSORBING_MATERIAL, absorbing_material);
+	public DataNode setAbsorbing_material(IDataset absorbing_materialDataset) {
+		return setDataset(NX_ABSORBING_MATERIAL, absorbing_materialDataset);
 	}
 
 	@Override
-	public DataNode setAbsorbing_materialScalar(String absorbing_material) {
-		return setString(NX_ABSORBING_MATERIAL, absorbing_material);
+	public DataNode setAbsorbing_materialScalar(String absorbing_materialValue) {
+		return setString(NX_ABSORBING_MATERIAL, absorbing_materialValue);
 	}
 
 	@Override
@@ -269,13 +271,23 @@ public class NXcollimatorImpl extends NXobjectImpl implements NXcollimator {
 	}
 
 	@Override
-	public DataNode setTransmitting_material(IDataset transmitting_material) {
-		return setDataset(NX_TRANSMITTING_MATERIAL, transmitting_material);
+	public DataNode setTransmitting_material(IDataset transmitting_materialDataset) {
+		return setDataset(NX_TRANSMITTING_MATERIAL, transmitting_materialDataset);
 	}
 
 	@Override
-	public DataNode setTransmitting_materialScalar(String transmitting_material) {
-		return setString(NX_TRANSMITTING_MATERIAL, transmitting_material);
+	public DataNode setTransmitting_materialScalar(String transmitting_materialValue) {
+		return setString(NX_TRANSMITTING_MATERIAL, transmitting_materialValue);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

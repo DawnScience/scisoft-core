@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -31,6 +31,7 @@ public interface NXinstrument extends NXobject {
 
 	public static final String NX_NAME = "name";
 	public static final String NX_NAME_ATTRIBUTE_SHORT_NAME = "short_name";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * Name of instrument
 	 * 
@@ -41,9 +42,9 @@ public interface NXinstrument extends NXobject {
 	/**
 	 * Name of instrument
 	 * 
-	 * @param name the name
+	 * @param nameDataset the nameDataset
 	 */
-	public DataNode setName(IDataset name);
+	public DataNode setName(IDataset nameDataset);
 
 	/**
 	 * Name of instrument
@@ -57,7 +58,7 @@ public interface NXinstrument extends NXobject {
 	 * 
 	 * @param name the name
 	 */
-	public DataNode setNameScalar(String name);
+	public DataNode setNameScalar(String nameValue);
 
 	/**
 	 * short name for instrument, perhaps the acronym
@@ -69,9 +70,9 @@ public interface NXinstrument extends NXobject {
 	/**
 	 * short name for instrument, perhaps the acronym
 	 * 
-	 * @param short_name the short_name
+	 * @param short_nameValue the short_nameValue
 	 */
-	public void setNameAttributeShort_name(String short_name);
+	public void setNameAttributeShort_name(String short_nameValue);
 
 	/**
 	 * 
@@ -81,10 +82,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param aperture the aperture
+	 * @param apertureGroup the apertureGroup
 	 */
-	public void setAperture(NXaperture aperture);
-  
+	public void setAperture(NXaperture apertureGroup);
+
 	/**
 	 * Get a NXaperture node by name:
 	 * <ul>
@@ -137,10 +138,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param attenuator the attenuator
+	 * @param attenuatorGroup the attenuatorGroup
 	 */
-	public void setAttenuator(NXattenuator attenuator);
-  
+	public void setAttenuator(NXattenuator attenuatorGroup);
+
 	/**
 	 * Get a NXattenuator node by name:
 	 * <ul>
@@ -193,10 +194,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param beam the beam
+	 * @param beamGroup the beamGroup
 	 */
-	public void setBeam(NXbeam beam);
-  
+	public void setBeam(NXbeam beamGroup);
+
 	/**
 	 * Get a NXbeam node by name:
 	 * <ul>
@@ -249,10 +250,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param beam_stop the beam_stop
+	 * @param beam_stopGroup the beam_stopGroup
 	 */
-	public void setBeam_stop(NXbeam_stop beam_stop);
-  
+	public void setBeam_stop(NXbeam_stop beam_stopGroup);
+
 	/**
 	 * Get a NXbeam_stop node by name:
 	 * <ul>
@@ -305,10 +306,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param bending_magnet the bending_magnet
+	 * @param bending_magnetGroup the bending_magnetGroup
 	 */
-	public void setBending_magnet(NXbending_magnet bending_magnet);
-  
+	public void setBending_magnet(NXbending_magnet bending_magnetGroup);
+
 	/**
 	 * Get a NXbending_magnet node by name:
 	 * <ul>
@@ -361,10 +362,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param collimator the collimator
+	 * @param collimatorGroup the collimatorGroup
 	 */
-	public void setCollimator(NXcollimator collimator);
-  
+	public void setCollimator(NXcollimator collimatorGroup);
+
 	/**
 	 * Get a NXcollimator node by name:
 	 * <ul>
@@ -417,10 +418,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param collection the collection
+	 * @param collectionGroup the collectionGroup
 	 */
-	public void setCollection(NXcollection collection);
-  
+	public void setCollection(NXcollection collectionGroup);
+
 	/**
 	 * Get a NXcollection node by name:
 	 * <ul>
@@ -473,10 +474,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param capillary the capillary
+	 * @param capillaryGroup the capillaryGroup
 	 */
-	public void setCapillary(NXcapillary capillary);
-  
+	public void setCapillary(NXcapillary capillaryGroup);
+
 	/**
 	 * Get a NXcapillary node by name:
 	 * <ul>
@@ -529,10 +530,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param crystal the crystal
+	 * @param crystalGroup the crystalGroup
 	 */
-	public void setCrystal(NXcrystal crystal);
-  
+	public void setCrystal(NXcrystal crystalGroup);
+
 	/**
 	 * Get a NXcrystal node by name:
 	 * <ul>
@@ -585,10 +586,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param detector the detector
+	 * @param detectorGroup the detectorGroup
 	 */
-	public void setDetector(NXdetector detector);
-  
+	public void setDetector(NXdetector detectorGroup);
+
 	/**
 	 * Get a NXdetector node by name:
 	 * <ul>
@@ -641,10 +642,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param detector_group the detector_group
+	 * @param detector_groupGroup the detector_groupGroup
 	 */
-	public void setDetector_group(NXdetector_group detector_group);
-  
+	public void setDetector_group(NXdetector_group detector_groupGroup);
+
 	/**
 	 * Get a NXdetector_group node by name:
 	 * <ul>
@@ -697,10 +698,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param disk_chopper the disk_chopper
+	 * @param disk_chopperGroup the disk_chopperGroup
 	 */
-	public void setDisk_chopper(NXdisk_chopper disk_chopper);
-  
+	public void setDisk_chopper(NXdisk_chopper disk_chopperGroup);
+
 	/**
 	 * Get a NXdisk_chopper node by name:
 	 * <ul>
@@ -753,10 +754,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param event_data the event_data
+	 * @param event_dataGroup the event_dataGroup
 	 */
-	public void setEvent_data(NXevent_data event_data);
-  
+	public void setEvent_data(NXevent_data event_dataGroup);
+
 	/**
 	 * Get a NXevent_data node by name:
 	 * <ul>
@@ -809,10 +810,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param fermi_chopper the fermi_chopper
+	 * @param fermi_chopperGroup the fermi_chopperGroup
 	 */
-	public void setFermi_chopper(NXfermi_chopper fermi_chopper);
-  
+	public void setFermi_chopper(NXfermi_chopper fermi_chopperGroup);
+
 	/**
 	 * Get a NXfermi_chopper node by name:
 	 * <ul>
@@ -865,10 +866,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param filter the filter
+	 * @param filterGroup the filterGroup
 	 */
-	public void setFilter(NXfilter filter);
-  
+	public void setFilter(NXfilter filterGroup);
+
 	/**
 	 * Get a NXfilter node by name:
 	 * <ul>
@@ -921,10 +922,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param flipper the flipper
+	 * @param flipperGroup the flipperGroup
 	 */
-	public void setFlipper(NXflipper flipper);
-  
+	public void setFlipper(NXflipper flipperGroup);
+
 	/**
 	 * Get a NXflipper node by name:
 	 * <ul>
@@ -977,10 +978,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param guide the guide
+	 * @param guideGroup the guideGroup
 	 */
-	public void setGuide(NXguide guide);
-  
+	public void setGuide(NXguide guideGroup);
+
 	/**
 	 * Get a NXguide node by name:
 	 * <ul>
@@ -1033,10 +1034,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param insertion_device the insertion_device
+	 * @param insertion_deviceGroup the insertion_deviceGroup
 	 */
-	public void setInsertion_device(NXinsertion_device insertion_device);
-  
+	public void setInsertion_device(NXinsertion_device insertion_deviceGroup);
+
 	/**
 	 * Get a NXinsertion_device node by name:
 	 * <ul>
@@ -1089,10 +1090,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param mirror the mirror
+	 * @param mirrorGroup the mirrorGroup
 	 */
-	public void setMirror(NXmirror mirror);
-  
+	public void setMirror(NXmirror mirrorGroup);
+
 	/**
 	 * Get a NXmirror node by name:
 	 * <ul>
@@ -1145,10 +1146,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param moderator the moderator
+	 * @param moderatorGroup the moderatorGroup
 	 */
-	public void setModerator(NXmoderator moderator);
-  
+	public void setModerator(NXmoderator moderatorGroup);
+
 	/**
 	 * Get a NXmoderator node by name:
 	 * <ul>
@@ -1201,10 +1202,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param monochromator the monochromator
+	 * @param monochromatorGroup the monochromatorGroup
 	 */
-	public void setMonochromator(NXmonochromator monochromator);
-  
+	public void setMonochromator(NXmonochromator monochromatorGroup);
+
 	/**
 	 * Get a NXmonochromator node by name:
 	 * <ul>
@@ -1257,10 +1258,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param polarizer the polarizer
+	 * @param polarizerGroup the polarizerGroup
 	 */
-	public void setPolarizer(NXpolarizer polarizer);
-  
+	public void setPolarizer(NXpolarizer polarizerGroup);
+
 	/**
 	 * Get a NXpolarizer node by name:
 	 * <ul>
@@ -1313,10 +1314,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param positioner the positioner
+	 * @param positionerGroup the positionerGroup
 	 */
-	public void setPositioner(NXpositioner positioner);
-  
+	public void setPositioner(NXpositioner positionerGroup);
+
 	/**
 	 * Get a NXpositioner node by name:
 	 * <ul>
@@ -1369,10 +1370,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param source the source
+	 * @param sourceGroup the sourceGroup
 	 */
-	public void setSource(NXsource source);
-  
+	public void setSource(NXsource sourceGroup);
+
 	/**
 	 * Get a NXsource node by name:
 	 * <ul>
@@ -1421,14 +1422,26 @@ public interface NXinstrument extends NXobject {
 	 * 
 	 * @return  the value.
 	 */
+	public NXtransformations getDiffractometer();
+	
+	/**
+	 * 
+	 * @param diffractometerGroup the diffractometerGroup
+	 */
+	public void setDiffractometer(NXtransformations diffractometerGroup);
+
+	/**
+	 * 
+	 * @return  the value.
+	 */
 	public NXvelocity_selector getVelocity_selector();
 	
 	/**
 	 * 
-	 * @param velocity_selector the velocity_selector
+	 * @param velocity_selectorGroup the velocity_selectorGroup
 	 */
-	public void setVelocity_selector(NXvelocity_selector velocity_selector);
-  
+	public void setVelocity_selector(NXvelocity_selector velocity_selectorGroup);
+
 	/**
 	 * Get a NXvelocity_selector node by name:
 	 * <ul>
@@ -1481,10 +1494,10 @@ public interface NXinstrument extends NXobject {
 	
 	/**
 	 * 
-	 * @param xraylens the xraylens
+	 * @param xraylensGroup the xraylensGroup
 	 */
-	public void setXraylens(NXxraylens xraylens);
-  
+	public void setXraylens(NXxraylens xraylensGroup);
+
 	/**
 	 * Get a NXxraylens node by name:
 	 * <ul>
@@ -1528,5 +1541,31 @@ public interface NXinstrument extends NXobject {
 	
 	public void setAllXraylens(Map<String, NXxraylens> xraylens);
 	
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

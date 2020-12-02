@@ -388,7 +388,8 @@
 	<xsl:variable name="getFieldDatasetMethod">
 		<xsl:choose>
 			<xsl:when test="$baseClassFieldDef">
-				<xsl:value-of select="'get' || dawnsci:capitalise-first(@name) || '()'"/>
+				<xsl:value-of select="'get' || dawnsci:capitalise-first(@name) || '(' ||
+					(if (@nameType = 'any') then ('String ' || @name) else '') || ')'"/>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:value-of select="'getDataset(&quot;' || @name || '&quot;)'"/>

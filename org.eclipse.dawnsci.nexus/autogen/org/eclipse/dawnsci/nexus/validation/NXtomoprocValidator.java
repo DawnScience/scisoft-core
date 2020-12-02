@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -197,12 +197,12 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 		validateGroupNotNull("data", NXdata.class, group);
 		clearLocalGroupDimensionPlaceholderValues();
 
-		// validate field 'data' of type NX_INT.
-		final IDataset data = group.getData();
+		// validate field 'data' of type NX_INT. Note: field not defined in base class.
+		final IDataset data = group.getDataset("data");
 		validateFieldNotNull("data", data);
 		validateFieldType("data", data, NX_INT);
 		validateFieldRank("data", data, 3);
-		validateFieldDimensions("data", data, null, "nx", "nx", "nz");
+		validateFieldDimensions("data", data, null, "nX", "nX", "nZ");
 		// validate attribute 'transform' of field 'data'
 		final Attribute data_attr_transform = group.getAttribute("transform");
 		validateAttributeNotNull("transform", data_attr_transform);
@@ -222,7 +222,7 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 		validateFieldType("x", x, NX_FLOAT);
 		validateFieldUnits("x", x, NX_ANY);
 		validateFieldRank("x", x, 1);
-		validateFieldDimensions("x", x, null, "nx");
+		validateFieldDimensions("x", x, null, "nX");
 
 		// validate field 'y' of type NX_FLOAT.
 		final IDataset y = group.getY();
@@ -230,7 +230,7 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 		validateFieldType("y", y, NX_FLOAT);
 		validateFieldUnits("y", y, NX_ANY);
 		validateFieldRank("y", y, 1);
-		validateFieldDimensions("y", y, null, "ny");
+		validateFieldDimensions("y", y, null, "nY");
 
 		// validate field 'z' of type NX_FLOAT.
 		final IDataset z = group.getZ();
@@ -238,6 +238,6 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 		validateFieldType("z", z, NX_FLOAT);
 		validateFieldUnits("z", z, NX_ANY);
 		validateFieldRank("z", z, 1);
-		validateFieldDimensions("z", z, null, "nz");
+		validateFieldDimensions("z", z, null, "nZ");
 	}
 }

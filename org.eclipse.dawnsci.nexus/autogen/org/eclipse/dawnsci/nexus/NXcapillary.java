@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ public interface NXcapillary extends NXobject {
 	public static final String NX_ACCEPTING_APERTURE = "accepting_aperture";
 	public static final String NX_WORKING_DISTANCE = "working_distance";
 	public static final String NX_FOCAL_SIZE = "focal_size";
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * Type of the capillary
 	 * <p>
@@ -52,9 +53,9 @@ public interface NXcapillary extends NXobject {
 	 * <li><b>conical_capillary</b> </li></ul></p>
 	 * </p>
 	 * 
-	 * @param type the type
+	 * @param typeDataset the typeDataset
 	 */
-	public DataNode setType(IDataset type);
+	public DataNode setType(IDataset typeDataset);
 
 	/**
 	 * Type of the capillary
@@ -82,7 +83,7 @@ public interface NXcapillary extends NXobject {
 	 * 
 	 * @param type the type
 	 */
-	public DataNode setTypeScalar(String type);
+	public DataNode setTypeScalar(String typeValue);
 
 	/**
 	 * The manufacturer of the capillary. This is actually important as
@@ -102,9 +103,9 @@ public interface NXcapillary extends NXobject {
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
 	 * 
-	 * @param manufacturer the manufacturer
+	 * @param manufacturerDataset the manufacturerDataset
 	 */
-	public DataNode setManufacturer(IDataset manufacturer);
+	public DataNode setManufacturer(IDataset manufacturerDataset);
 
 	/**
 	 * The manufacturer of the capillary. This is actually important as
@@ -126,7 +127,7 @@ public interface NXcapillary extends NXobject {
 	 * 
 	 * @param manufacturer the manufacturer
 	 */
-	public DataNode setManufacturerScalar(String manufacturer);
+	public DataNode setManufacturerScalar(String manufacturerValue);
 
 	/**
 	 * <p>
@@ -144,9 +145,9 @@ public interface NXcapillary extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
 	 * 
-	 * @param maximum_incident_angle the maximum_incident_angle
+	 * @param maximum_incident_angleDataset the maximum_incident_angleDataset
 	 */
-	public DataNode setMaximum_incident_angle(IDataset maximum_incident_angle);
+	public DataNode setMaximum_incident_angle(IDataset maximum_incident_angleDataset);
 
 	/**
 	 * <p>
@@ -166,7 +167,7 @@ public interface NXcapillary extends NXobject {
 	 * 
 	 * @param maximum_incident_angle the maximum_incident_angle
 	 */
-	public DataNode setMaximum_incident_angleScalar(Double maximum_incident_angle);
+	public DataNode setMaximum_incident_angleScalar(Double maximum_incident_angleValue);
 
 	/**
 	 * <p>
@@ -184,9 +185,9 @@ public interface NXcapillary extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
 	 * 
-	 * @param accepting_aperture the accepting_aperture
+	 * @param accepting_apertureDataset the accepting_apertureDataset
 	 */
-	public DataNode setAccepting_aperture(IDataset accepting_aperture);
+	public DataNode setAccepting_aperture(IDataset accepting_apertureDataset);
 
 	/**
 	 * <p>
@@ -206,7 +207,7 @@ public interface NXcapillary extends NXobject {
 	 * 
 	 * @param accepting_aperture the accepting_aperture
 	 */
-	public DataNode setAccepting_apertureScalar(Double accepting_aperture);
+	public DataNode setAccepting_apertureScalar(Double accepting_apertureValue);
 
 	/**
 	 * The gain of the capillary as a function of energy
@@ -218,9 +219,9 @@ public interface NXcapillary extends NXobject {
 	/**
 	 * The gain of the capillary as a function of energy
 	 * 
-	 * @param gain the gain
+	 * @param gainGroup the gainGroup
 	 */
-	public void setGain(NXdata gain);
+	public void setGain(NXdata gainGroup);
 
 	/**
 	 * The transmission of the capillary as a function of energy
@@ -232,9 +233,9 @@ public interface NXcapillary extends NXobject {
 	/**
 	 * The transmission of the capillary as a function of energy
 	 * 
-	 * @param transmission the transmission
+	 * @param transmissionGroup the transmissionGroup
 	 */
-	public void setTransmission(NXdata transmission);
+	public void setTransmission(NXdata transmissionGroup);
 
 	/**
 	 * <p>
@@ -252,9 +253,9 @@ public interface NXcapillary extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 * 
-	 * @param working_distance the working_distance
+	 * @param working_distanceDataset the working_distanceDataset
 	 */
-	public DataNode setWorking_distance(IDataset working_distance);
+	public DataNode setWorking_distance(IDataset working_distanceDataset);
 
 	/**
 	 * <p>
@@ -274,7 +275,7 @@ public interface NXcapillary extends NXobject {
 	 * 
 	 * @param working_distance the working_distance
 	 */
-	public DataNode setWorking_distanceScalar(Double working_distance);
+	public DataNode setWorking_distanceScalar(Double working_distanceValue);
 
 	/**
 	 * The focal size in FWHM
@@ -292,9 +293,9 @@ public interface NXcapillary extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * </p>
 	 * 
-	 * @param focal_size the focal_size
+	 * @param focal_sizeDataset the focal_sizeDataset
 	 */
-	public DataNode setFocal_size(IDataset focal_size);
+	public DataNode setFocal_size(IDataset focal_sizeDataset);
 
 	/**
 	 * The focal size in FWHM
@@ -314,6 +315,32 @@ public interface NXcapillary extends NXobject {
 	 * 
 	 * @param focal_size the focal_size
 	 */
-	public DataNode setFocal_sizeScalar(Double focal_size);
+	public DataNode setFocal_sizeScalar(Double focal_sizeValue);
+
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+	
+	/**
+	 * .. index:: plotting
+	 * Declares which child group contains a path leading
+	 * to a :ref:`NXdata` group.
+	 * It is recommended (as of NIAC2014) to use this attribute
+	 * to help define the path to the default dataset to be plotted.
+	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * for a summary of the discussion.
+	 * 
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 
 }

@@ -1,6 +1,6 @@
 /*-
  *******************************************************************************
- * Copyright (c) 2015 Diamond Light Source Ltd.
+ * Copyright (c) 2020 Diamond Light Source Ltd.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -70,13 +70,13 @@ public class NXoff_geometryImpl extends NXobjectImpl implements NXoff_geometry {
 	}
 
 	@Override
-	public DataNode setVertices(IDataset vertices) {
-		return setDataset(NX_VERTICES, vertices);
+	public DataNode setVertices(IDataset verticesDataset) {
+		return setDataset(NX_VERTICES, verticesDataset);
 	}
 
 	@Override
-	public DataNode setVerticesScalar(Number vertices) {
-		return setField(NX_VERTICES, vertices);
+	public DataNode setVerticesScalar(Number verticesValue) {
+		return setField(NX_VERTICES, verticesValue);
 	}
 
 	@Override
@@ -90,13 +90,13 @@ public class NXoff_geometryImpl extends NXobjectImpl implements NXoff_geometry {
 	}
 
 	@Override
-	public DataNode setWinding_order(IDataset winding_order) {
-		return setDataset(NX_WINDING_ORDER, winding_order);
+	public DataNode setWinding_order(IDataset winding_orderDataset) {
+		return setDataset(NX_WINDING_ORDER, winding_orderDataset);
 	}
 
 	@Override
-	public DataNode setWinding_orderScalar(Long winding_order) {
-		return setField(NX_WINDING_ORDER, winding_order);
+	public DataNode setWinding_orderScalar(Long winding_orderValue) {
+		return setField(NX_WINDING_ORDER, winding_orderValue);
 	}
 
 	@Override
@@ -110,13 +110,13 @@ public class NXoff_geometryImpl extends NXobjectImpl implements NXoff_geometry {
 	}
 
 	@Override
-	public DataNode setFaces(IDataset faces) {
-		return setDataset(NX_FACES, faces);
+	public DataNode setFaces(IDataset facesDataset) {
+		return setDataset(NX_FACES, facesDataset);
 	}
 
 	@Override
-	public DataNode setFacesScalar(Long faces) {
-		return setField(NX_FACES, faces);
+	public DataNode setFacesScalar(Long facesValue) {
+		return setField(NX_FACES, facesValue);
 	}
 
 	@Override
@@ -130,13 +130,23 @@ public class NXoff_geometryImpl extends NXobjectImpl implements NXoff_geometry {
 	}
 
 	@Override
-	public DataNode setDetector_faces(IDataset detector_faces) {
-		return setDataset(NX_DETECTOR_FACES, detector_faces);
+	public DataNode setDetector_faces(IDataset detector_facesDataset) {
+		return setDataset(NX_DETECTOR_FACES, detector_facesDataset);
 	}
 
 	@Override
-	public DataNode setDetector_facesScalar(Long detector_faces) {
-		return setField(NX_DETECTOR_FACES, detector_faces);
+	public DataNode setDetector_facesScalar(Long detector_facesValue) {
+		return setField(NX_DETECTOR_FACES, detector_facesValue);
+	}
+
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

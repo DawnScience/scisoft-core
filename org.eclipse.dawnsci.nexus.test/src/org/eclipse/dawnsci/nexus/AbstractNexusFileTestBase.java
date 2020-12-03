@@ -12,7 +12,6 @@ package org.eclipse.dawnsci.nexus;
 import static org.eclipse.dawnsci.nexus.test.utilities.NexusAssert.assertNexusTreesEqual;
 
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
-import org.eclipse.dawnsci.analysis.tree.impl.TreeFileImpl;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
 import org.junit.Before;
@@ -36,7 +35,7 @@ public abstract class AbstractNexusFileTestBase {
 	protected abstract NXroot createNXroot();
 
 	private TreeFile createNexusTree() {
-		final TreeFileImpl treeFile = NexusNodeFactory.createTreeFile(filePath);
+		final TreeFile treeFile = NexusNodeFactory.createTreeFile(filePath);
 		final NXroot root = createNXroot();
 		treeFile.setGroupNode(root);
 

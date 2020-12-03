@@ -25,9 +25,7 @@ import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.SymbolicNode;
-import org.eclipse.dawnsci.analysis.tree.impl.DataNodeImpl;
-import org.eclipse.dawnsci.analysis.tree.impl.GroupNodeImpl;
-import org.eclipse.dawnsci.analysis.tree.impl.SymbolicNodeImpl;
+import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
@@ -1043,8 +1041,8 @@ public class NexusFileTest {
 
 	@Test
 	public void testAddGroupNode() throws Exception {
-		GroupNode groupNode = new GroupNodeImpl("/base/g".hashCode());
-		DataNode dataNode = new DataNodeImpl("/base/g/d".hashCode());
+		GroupNode groupNode = TreeFactory.createGroupNode("/base/g".hashCode());
+		DataNode dataNode = TreeFactory.createDataNode("/base/g/d".hashCode());
 		Dataset dataset = DatasetFactory.createRange(10.0).reshape(2, 5);
 		dataset.setName("d");
 		dataNode.setDataset(dataset);
@@ -1070,9 +1068,9 @@ public class NexusFileTest {
 		attrData.setName("atr");
 		Attribute attr = nf.createAttribute(attrData);
 		GroupNode base = nf.getGroup("/a", false);
-		GroupNode b = new GroupNodeImpl("/a/b".hashCode());
+		GroupNode b = TreeFactory.createGroupNode("/a/b".hashCode());
 		b.addAttribute(attr);
-		GroupNode x = new GroupNodeImpl("/a/b/x".hashCode());
+		GroupNode x = TreeFactory.createGroupNode("/a/b/x".hashCode());
 		b.addGroupNode("x", x);
 		nf.addNode(base, "b", b);
 
@@ -1085,8 +1083,8 @@ public class NexusFileTest {
 
 	@Test
 	public void testAddLazyDataNode() throws Exception {
-		GroupNode g = new GroupNodeImpl("/base/g".hashCode());
-		DataNode lazyDataNode = new DataNodeImpl("/base/g/intarray".hashCode());
+		GroupNode g = TreeFactory.createGroupNode("/base/g".hashCode());
+		DataNode lazyDataNode = TreeFactory.createDataNode("/base/g/intarray".hashCode());
 		ILazyWriteableDataset lazy = NexusUtils.createLazyWriteableDataset("intarray", Integer.class,
 				new int[] { ILazyWriteableDataset.UNLIMITED, 10 }, null, null);
 		lazyDataNode.setDataset(lazy);
@@ -1111,14 +1109,14 @@ public class NexusFileTest {
 
 	@Test
 	public void testAddNodeWithHardlinks() throws Exception {
-		GroupNode g = new GroupNodeImpl("/base/g".hashCode());
-		GroupNode h = new GroupNodeImpl("/base/g/h".hashCode());
+		GroupNode g = TreeFactory.createGroupNode("/base/g".hashCode());
+		GroupNode h = TreeFactory.createGroupNode("/base/g/h".hashCode());
 		g.addGroupNode("h", h);
 		// /base/g/i = hardlink to /base/g/h
 		g.addGroupNode("i", h);
-		GroupNode j = new GroupNodeImpl("/base/g/j".hashCode());
+		GroupNode j = TreeFactory.createGroupNode("/base/g/j".hashCode());
 		g.addGroupNode("j", j);
-		GroupNode k = new GroupNodeImpl("/base/g/h/k".hashCode());
+		GroupNode k = TreeFactory.createGroupNode("/base/g/h/k".hashCode());
 		h.addGroupNode("k", k);
 		// /base/g/h/k/l hardlink to /base/g/j
 		k.addGroupNode("l", j);
@@ -1219,9 +1217,9 @@ public class NexusFileTest {
 			nf2.getGroup("/ext/group/a", true);
 			nf2.createData("/ext", data, true);
 		}
-		GroupNode g = new GroupNodeImpl("/g".hashCode());
-		SymbolicNode ed = new SymbolicNodeImpl("/g/ed".hashCode(), new URI(FILE2_NAME), null, "/ext/data");
-		SymbolicNode eg = new SymbolicNodeImpl("/g/eg".hashCode(), new URI(FILE2_NAME), null, "/ext/group/");
+		GroupNode g = TreeFactory.createGroupNode("/g".hashCode());
+		SymbolicNode ed = TreeFactory.createSymbolicNode("/g/ed".hashCode(), new URI(FILE2_NAME), null, "/ext/data");
+		SymbolicNode eg = TreeFactory.createSymbolicNode("/g/eg".hashCode(), new URI(FILE2_NAME), null, "/ext/group/");
 		g.addNode("ed", ed);
 		g.addNode("eg", eg);
 		nf.addNode("/g", g);

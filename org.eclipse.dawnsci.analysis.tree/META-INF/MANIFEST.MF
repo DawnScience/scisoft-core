@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.dawnsci.analysis.tree
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: org.eclipse.dawnsci.analysis.tree,
- org.eclipse.dawnsci.analysis.tree.impl
+ org.eclipse.dawnsci.analysis.tree.impl;x-internal:=true
 Require-Bundle: org.eclipse.january;bundle-version="2.0.0",
  org.eclipse.dawnsci.analysis.api;bundle-version="1.0.0",
  org.eclipse.dawnsci.analysis.dataset;bundle-version="1.0.0"

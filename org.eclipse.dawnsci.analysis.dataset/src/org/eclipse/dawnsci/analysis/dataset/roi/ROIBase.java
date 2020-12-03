@@ -223,4 +223,81 @@ public class ROIBase implements IROI, Serializable {
 	public double[] findHorizontalIntersections(double y) {
 		return null;
 	}
+
+	/**
+	 * @param a
+	 * @param b
+	 * @return true if a is within 1 ulp of, or greater than, b
+	 */
+	protected static boolean closelyEqOrGt(double a, double b) {
+		double d = a - b;
+		return d >= -Math.max(Math.ulp(a), Math.ulp(b));
+	}
+
+	/**
+	 * @param a
+	 * @param b
+	 * @return true if a is within 1 ulp of b
+	 */
+	protected static boolean closelyEq(double a, double b) {
+		double d = Math.abs(a - b);
+		return d <= Math.max(Math.ulp(a), Math.ulp(b));
+	}
+
+	/**
+	 * @param a
+	 * @param b
+	 * @return true if a is within 1 ulp of, or less than, b
+	 */
+	protected static boolean closelyEqOrLt(double a, double b) {
+		double d = a - b;
+		return d <= Math.max(Math.ulp(a), Math.ulp(b));
+	}
+
+	/**
+	 * @param a
+	 * @param b
+	 * @return true if a is not within 1 ulp of b
+	 */
+	protected static boolean notClose(double a, double b) {
+		double d = Math.abs(a - b);
+		return d > Math.max(Math.ulp(a), Math.ulp(b));
+	}
+
+	/**
+	 * Check if closely equal. Corresponding NaNs are consider equal.
+	 * @param a
+	 * @param b
+	 * @return true if every element of a is with in 1 ulp of the corresponding element b
+	 */
+	protected static boolean closelyEq(double[] a, double[] b) {
+		if (a == b) {
+			return true;
+		}
+		if (a == null || b == null) {
+			return false;
+		}
+
+		if (a.length != b.length) {
+			return false;
+		}
+
+		for (int i = 0; i < a.length; i++) {
+			double x = a[i], y = b[i];
+			if (Double.isNaN(x)) {
+				if (!Double.isNaN(y)) {
+					return false;
+				}
+			} else {
+				if (Double.isNaN(y)) {
+					return false;
+				}
+				if (notClose(x, y)) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
 }

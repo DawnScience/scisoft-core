@@ -17,18 +17,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.eclipse.dawnsci.analysis.api.roi.IParametricROI;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
-import org.eclipse.dawnsci.analysis.dataset.roi.CircularROI;
-import org.eclipse.dawnsci.analysis.dataset.roi.EllipticalROI;
-import org.eclipse.dawnsci.analysis.dataset.roi.HyperbolicROI;
-import org.eclipse.dawnsci.analysis.dataset.roi.LinearROI;
-import org.eclipse.dawnsci.analysis.dataset.roi.ParabolicROI;
-import org.eclipse.dawnsci.analysis.dataset.roi.PointROI;
-import org.eclipse.dawnsci.analysis.dataset.roi.PolygonalROI;
-import org.eclipse.dawnsci.analysis.dataset.roi.PolylineROI;
-import org.eclipse.dawnsci.analysis.dataset.roi.ROIUtils;
-import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
-import org.eclipse.dawnsci.analysis.dataset.roi.RingROI;
-import org.eclipse.dawnsci.analysis.dataset.roi.SectorROI;
 import org.junit.Test;
 
 public class ROITest {
@@ -494,6 +482,56 @@ public class ROITest {
 			assertFalse(s.containsPoint(lc.getPoint(a)));
 			assertTrue(s.isNearOutline(lc.getPoint(a), 1));
 			assertFalse(s.isNearOutline(lc.getPoint(a), 0.01));
+		}
+
+		// angle tests with symmetry
+		s.setSymmetry(SectorROI.CNINETY);
+		for (int i = 0; i < POINTS; i++) {
+			double a = 0.5*Math.PI + s.getAngle(0) + (i * ar)/(POINTS - 1);
+			assertTrue(s.containsPoint(sc.getPoint(a)));
+			assertFalse(s.containsPoint(lc.getPoint(a)));
+		}
+
+		s.setSymmetry(SectorROI.ACNINETY);
+		for (int i = 0; i < POINTS; i++) {
+			double a = -0.5*Math.PI + s.getAngle(0) + (i * ar)/(POINTS - 1);
+			assertTrue(s.containsPoint(sc.getPoint(a)));
+			assertFalse(s.containsPoint(lc.getPoint(a)));
+		}
+
+		s.setSymmetry(SectorROI.YREFLECT);
+		for (int i = 0; i < POINTS; i++) {
+			double a = s.getAngle(0) + (i * ar)/(POINTS - 1);
+			double[] p = sc.getPoint(a);
+			p[1] = 6 - p[1];
+			assertTrue(s.containsPoint(p));
+			p = lc.getPoint(a);
+			p[1] = 6 - p[1];
+			assertFalse(s.containsPoint(p));
+		}
+
+		s.setSymmetry(SectorROI.XREFLECT);
+		for (int i = 0; i < POINTS; i++) {
+			double a = s.getAngle(0) + (i * ar)/(POINTS - 1);
+			double[] p = sc.getPoint(a);
+			p[0] = 6 - p[0];
+			assertTrue(s.containsPoint(p));
+			p = lc.getPoint(a);
+			p[0] = 6 - p[0];
+			assertFalse(s.containsPoint(p));
+		}
+
+		s.setSymmetry(SectorROI.INVERT);
+		for (int i = 0; i < POINTS; i++) {
+			double a = s.getAngle(0) + (i * ar)/(POINTS - 1);
+			double[] p = sc.getPoint(a);
+			p[0] = 6 - p[0];
+			p[1] = 6 - p[1];
+			assertTrue(s.containsPoint(p));
+			p = lc.getPoint(a);
+			p[0] = 6 - p[0];
+			p[1] = 6 - p[1];
+			assertFalse(s.containsPoint(p));
 		}
 
 		s = new SectorROI(0, 0, 5, 10, 0, Math.PI);

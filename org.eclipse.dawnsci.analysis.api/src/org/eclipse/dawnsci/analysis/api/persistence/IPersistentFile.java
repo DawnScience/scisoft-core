@@ -11,9 +11,7 @@ package org.eclipse.dawnsci.analysis.api.persistence;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.dawnsci.analysis.api.diffraction.IPowderCalibrationInfo;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
-import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
@@ -313,34 +311,6 @@ public interface IPersistentFile extends AutoCloseable {
 	public List<String> getFunctionNames(IMonitor mon) throws Exception;
 
 	/**
-	 * @deprecated use the Persistent node factory and NexusFile, calling throws RuntimeException
-	 * to write nexus standard metadata
-	 * 
-	 * Method to set diffraction metadata<br>
-	 * This will write the data to entry/metadata<br>
-	 * If the metadata already exists, they will be overwritten.<br>
-	 * 
-	 * @param metadata
-	 * @throws Exception 
-	 */
-	@Deprecated()
-	public void setDiffractionMetadata(IDiffractionMetadata metadata) throws Exception;
-
-	/**
-	 * @deprecated use the NexusDiffractionCalibrationReader instead, calling throws RuntimeException
-	 * 
-	 * Method that returns Diffraction metadata.<br>
-	 * This method reads from entry/diffraction_metadata.<br>
-	 * 
-	 * @param mon
-	 * @return IDiffractionMetadata
-	 * @throws Exception
-	 *              is thrown if no correct entry is found in the file
-	 */
-	@Deprecated
-	public IDiffractionMetadata getDiffractionMetadata(IMonitor mon) throws Exception;
-
-	/**
 	 * Method that returns the version the persistent file.<br>
 	 * Saved as an attribute in the HDF5 file.
 	 * @return String
@@ -403,15 +373,6 @@ public interface IPersistentFile extends AutoCloseable {
 	 * @return a boolean
 	 */
 	public boolean containsFunction();
-	
-	/**
-	 * Method to store a powder calibration run in a NeXus file
-	 * @param calibrationImage
-	 * @param metadata
-	 * @param info
-	 * @throws Exception
-	 */
-	public void setPowderCalibrationInformation(IDataset calibrationImage, IDiffractionMetadata metadata, IPowderCalibrationInfo info) throws Exception;
 	
 	/**
 	 * Method to store a series of operations in a NeXus file

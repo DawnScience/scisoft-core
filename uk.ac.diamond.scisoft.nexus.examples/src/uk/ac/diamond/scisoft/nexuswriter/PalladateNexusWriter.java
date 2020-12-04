@@ -270,7 +270,7 @@ class PalladateNexusWriter {
 		try {
 			Dataset palladateActualData = DatasetUtils.sliceAndConvertLazyDataset(ProcessingUtils.getLazyDataset(null, palladateFileName, palladateDatasetName));
 			palladateActualData.resize(new int[]{1,1,palladateActualData.getShape()[0], palladateActualData.getShape()[1]});
-			palladateData.setData(palladateActualData);
+			palladateData.setData(NXdata.NX_DATA, palladateActualData);
 		} catch (DatasetException dE) {
 		}
 	}

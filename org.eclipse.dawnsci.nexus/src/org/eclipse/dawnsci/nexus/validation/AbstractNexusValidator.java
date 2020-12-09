@@ -401,7 +401,7 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	 * Clears the map of values of dimension placeholders, as these are local only to the current group.
 	 */
 	protected void clearLocalGroupDimensionPlaceholderValues() {
-		localGroupDimensionPlaceholderValues = new HashMap<String, Integer>();
+		localGroupDimensionPlaceholderValues = new HashMap<>();
 	}
 
 	private void validateEnumeration(String nodeName, String nodeType, IDataset dataset, String... permittedValues) throws NexusValidationException {

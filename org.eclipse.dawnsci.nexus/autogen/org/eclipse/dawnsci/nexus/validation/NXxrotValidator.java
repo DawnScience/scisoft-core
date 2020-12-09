@@ -61,6 +61,7 @@ public class NXxrotValidator extends AbstractNexusValidator implements NexusAppl
 		// validate field 'definition' of unknown type.
 		final IDataset definition = group.getDefinition();
 		validateFieldNotNull("definition", definition);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldEnumeration("definition", definition,
 				"NXxrot");
 
@@ -99,6 +100,7 @@ public class NXxrotValidator extends AbstractNexusValidator implements NexusAppl
 		// validate field 'polar_angle' of type NX_FLOAT.
 		final IDataset polar_angle = group.getPolar_angle();
 		validateFieldNotNull("polar_angle", polar_angle);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
 		validateFieldUnits("polar_angle", polar_angle, NX_ANGLE);
 		validateFieldRank("polar_angle", polar_angle, 3);
@@ -107,12 +109,14 @@ public class NXxrotValidator extends AbstractNexusValidator implements NexusAppl
 		// validate field 'beam_center_x' of type NX_FLOAT.
 		final IDataset beam_center_x = group.getBeam_center_x();
 		validateFieldNotNull("beam_center_x", beam_center_x);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("beam_center_x", beam_center_x, NX_FLOAT);
 		validateFieldUnits("beam_center_x", beam_center_x, NX_LENGTH);
 
 		// validate field 'beam_center_y' of type NX_FLOAT.
 		final IDataset beam_center_y = group.getBeam_center_y();
 		validateFieldNotNull("beam_center_y", beam_center_y);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("beam_center_y", beam_center_y, NX_FLOAT);
 		validateFieldUnits("beam_center_y", beam_center_y, NX_LENGTH);
 	}
@@ -127,6 +131,7 @@ public class NXxrotValidator extends AbstractNexusValidator implements NexusAppl
 		// validate field 'attenuator_transmission' of type NX_FLOAT.
 		final IDataset attenuator_transmission = group.getAttenuator_transmission();
 		validateFieldNotNull("attenuator_transmission", attenuator_transmission);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("attenuator_transmission", attenuator_transmission, NX_FLOAT);
 		validateFieldUnits("attenuator_transmission", attenuator_transmission, NX_ANY);
 	}
@@ -142,6 +147,7 @@ public class NXxrotValidator extends AbstractNexusValidator implements NexusAppl
 		// validate field 'rotation_angle' of type NX_FLOAT.
 		final IDataset rotation_angle = group.getRotation_angle();
 		validateFieldNotNull("rotation_angle", rotation_angle);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
 		validateFieldUnits("rotation_angle", rotation_angle, NX_ANGLE);
 		validateFieldRank("rotation_angle", rotation_angle, 1);
@@ -150,6 +156,7 @@ public class NXxrotValidator extends AbstractNexusValidator implements NexusAppl
 		// validate field 'rotation_angle_step' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset rotation_angle_step = group.getDataset("rotation_angle_step");
 		validateFieldNotNull("rotation_angle_step", rotation_angle_step);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("rotation_angle_step", rotation_angle_step, NX_FLOAT);
 		validateFieldUnits("rotation_angle_step", rotation_angle_step, NX_ANGLE);
 		validateFieldRank("rotation_angle_step", rotation_angle_step, 1);

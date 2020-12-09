@@ -58,6 +58,7 @@ public class NXxlaueplateValidator extends AbstractNexusValidator implements Nex
 		// validate field 'definition' of unknown type.
 		final IDataset definition = group.getDefinition();
 		validateFieldNotNull("definition", definition);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldEnumeration("definition", definition,
 				"NXxlaueplate");
 
@@ -87,6 +88,7 @@ public class NXxlaueplateValidator extends AbstractNexusValidator implements Nex
 		// validate field 'diameter' of type NX_FLOAT.
 		final IDataset diameter = group.getDiameter();
 		validateFieldNotNull("diameter", diameter);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("diameter", diameter, NX_FLOAT);
 		validateFieldUnits("diameter", diameter, NX_LENGTH);
 	}

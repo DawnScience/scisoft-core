@@ -60,6 +60,7 @@ public class NXxnbValidator extends AbstractNexusValidator implements NexusAppli
 		// validate field 'definition' of unknown type.
 		final IDataset definition = group.getDefinition();
 		validateFieldNotNull("definition", definition);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldEnumeration("definition", definition,
 				"NXxnb");
 
@@ -95,6 +96,7 @@ public class NXxnbValidator extends AbstractNexusValidator implements NexusAppli
 		// validate field 'polar_angle' of type NX_FLOAT.
 		final IDataset polar_angle = group.getPolar_angle();
 		validateFieldNotNull("polar_angle", polar_angle);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
 		validateFieldUnits("polar_angle", polar_angle, NX_ANGLE);
 		validateFieldRank("polar_angle", polar_angle, 1);
@@ -103,6 +105,7 @@ public class NXxnbValidator extends AbstractNexusValidator implements NexusAppli
 		// validate field 'tilt_angle' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset tilt_angle = group.getDataset("tilt_angle");
 		validateFieldNotNull("tilt_angle", tilt_angle);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("tilt_angle", tilt_angle, NX_FLOAT);
 		validateFieldUnits("tilt_angle", tilt_angle, NX_ANGLE);
 		validateFieldRank("tilt_angle", tilt_angle, 1);
@@ -120,6 +123,7 @@ public class NXxnbValidator extends AbstractNexusValidator implements NexusAppli
 		// validate field 'rotation_angle' of type NX_FLOAT.
 		final IDataset rotation_angle = group.getRotation_angle();
 		validateFieldNotNull("rotation_angle", rotation_angle);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
 		validateFieldUnits("rotation_angle", rotation_angle, NX_ANGLE);
 		validateFieldRank("rotation_angle", rotation_angle, 1);

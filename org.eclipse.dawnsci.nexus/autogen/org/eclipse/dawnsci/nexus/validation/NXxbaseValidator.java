@@ -66,15 +66,18 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		// validate field 'title' of unknown type.
 		final IDataset title = group.getTitle();
 		validateFieldNotNull("title", title);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 
 		// validate field 'start_time' of type NX_DATE_TIME.
 		final IDataset start_time = group.getStart_time();
 		validateFieldNotNull("start_time", start_time);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("start_time", start_time, NX_DATE_TIME);
 
 		// validate field 'definition' of unknown type.
 		final IDataset definition = group.getDefinition();
 		validateFieldNotNull("definition", definition);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldEnumeration("definition", definition,
 				"NXxbase");
 
@@ -121,6 +124,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		// validate field 'type' of unknown type.
 		final IDataset type = group.getType();
 		validateFieldNotNull("type", type);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldEnumeration("type", type,
 				"Spallation Neutron Source",
 				"Pulsed Reactor Neutron Source",
@@ -138,10 +142,12 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		// validate field 'name' of unknown type.
 		final IDataset name = group.getName();
 		validateFieldNotNull("name", name);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 
 		// validate field 'probe' of unknown type.
 		final IDataset probe = group.getProbe();
 		validateFieldNotNull("probe", probe);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldEnumeration("probe", probe,
 				"neutron",
 				"x-ray",
@@ -158,6 +164,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		// validate field 'wavelength' of type NX_FLOAT.
 		final IDataset wavelength = group.getWavelength();
 		validateFieldNotNull("wavelength", wavelength);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("wavelength", wavelength, NX_FLOAT);
 		validateFieldUnits("wavelength", wavelength, NX_WAVELENGTH);
 	}
@@ -173,13 +180,15 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		// validate field 'data' of type NX_INT.
 		final IDataset data = group.getData();
 		validateFieldNotNull("data", data);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_INT);
 		validateFieldUnits("data", data, NX_ANY);
 		validateFieldRank("data", data, 3);
 		validateFieldDimensions("data", data, null, "nP", "nXPixels", "nYPixels");
 		// validate attribute 'signal' of field 'data'
-		final Attribute data_attr_signal = group.getAttribute("signal");
+		final Attribute data_attr_signal = group.getDataNode("data").getAttribute("signal");
 		validateAttributeNotNull("signal", data_attr_signal);
+		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("signal", data_attr_signal, NX_POSINT);
 		validateAttributeEnumeration("signal", data_attr_signal,
 				"1");
@@ -188,6 +197,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		// validate field 'x_pixel_size' of type NX_FLOAT.
 		final IDataset x_pixel_size = group.getX_pixel_size();
 		validateFieldNotNull("x_pixel_size", x_pixel_size);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("x_pixel_size", x_pixel_size, NX_FLOAT);
 		validateFieldUnits("x_pixel_size", x_pixel_size, NX_LENGTH);
 		validateFieldRank("x_pixel_size", x_pixel_size, 2);
@@ -196,6 +206,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		// validate field 'y_pixel_size' of type NX_FLOAT.
 		final IDataset y_pixel_size = group.getY_pixel_size();
 		validateFieldNotNull("y_pixel_size", y_pixel_size);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("y_pixel_size", y_pixel_size, NX_FLOAT);
 		validateFieldUnits("y_pixel_size", y_pixel_size, NX_LENGTH);
 		validateFieldRank("y_pixel_size", y_pixel_size, 2);
@@ -204,6 +215,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		// validate field 'distance' of type NX_FLOAT.
 		final IDataset distance = group.getDistance();
 		validateFieldNotNull("distance", distance);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("distance", distance, NX_FLOAT);
 		validateFieldUnits("distance", distance, NX_LENGTH);
 		validateFieldRank("distance", distance, 3);
@@ -212,6 +224,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		// validate field 'frame_start_number' of type NX_INT.
 		final IDataset frame_start_number = group.getFrame_start_number();
 		validateFieldNotNull("frame_start_number", frame_start_number);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("frame_start_number", frame_start_number, NX_INT);
 	}
 
@@ -226,11 +239,13 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		// validate field 'name' of type NX_CHAR.
 		final IDataset name = group.getName();
 		validateFieldNotNull("name", name);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("name", name, NX_CHAR);
 
 		// validate field 'orientation_matrix' of type NX_FLOAT.
 		final IDataset orientation_matrix = group.getOrientation_matrix();
 		validateFieldNotNull("orientation_matrix", orientation_matrix);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("orientation_matrix", orientation_matrix, NX_FLOAT);
 		validateFieldRank("orientation_matrix", orientation_matrix, 2);
 		validateFieldDimensions("orientation_matrix", orientation_matrix, null, 3, 3);
@@ -238,6 +253,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		// validate field 'unit_cell' of type NX_FLOAT.
 		final IDataset unit_cell = group.getUnit_cell();
 		validateFieldNotNull("unit_cell", unit_cell);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("unit_cell", unit_cell, NX_FLOAT);
 		validateFieldUnits("unit_cell", unit_cell, NX_LENGTH);
 		validateFieldRank("unit_cell", unit_cell, 1);
@@ -246,6 +262,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		// validate field 'temperature' of type NX_FLOAT.
 		final IDataset temperature = group.getTemperature();
 		validateFieldNotNull("temperature", temperature);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("temperature", temperature, NX_FLOAT);
 		validateFieldUnits("temperature", temperature, NX_TEMPERATURE);
 		validateFieldRank("temperature", temperature, 1);
@@ -254,18 +271,21 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		// validate field 'x_translation' of type NX_FLOAT.
 		final IDataset x_translation = group.getX_translation();
 		validateFieldNotNull("x_translation", x_translation);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("x_translation", x_translation, NX_FLOAT);
 		validateFieldUnits("x_translation", x_translation, NX_LENGTH);
 
 		// validate field 'y_translation' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset y_translation = group.getDataset("y_translation");
 		validateFieldNotNull("y_translation", y_translation);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("y_translation", y_translation, NX_FLOAT);
 		validateFieldUnits("y_translation", y_translation, NX_LENGTH);
 
 		// validate field 'distance' of type NX_FLOAT.
 		final IDataset distance = group.getDistance();
 		validateFieldNotNull("distance", distance);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("distance", distance, NX_FLOAT);
 		validateFieldUnits("distance", distance, NX_LENGTH);
 	}
@@ -281,6 +301,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		// validate field 'mode' of unknown type.
 		final IDataset mode = group.getMode();
 		validateFieldNotNull("mode", mode);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldEnumeration("mode", mode,
 				"monitor",
 				"timer");
@@ -288,12 +309,14 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		// validate field 'preset' of type NX_FLOAT.
 		final IDataset preset = group.getPreset();
 		validateFieldNotNull("preset", preset);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("preset", preset, NX_FLOAT);
 		validateFieldUnits("preset", preset, NX_ANY);
 
 		// validate field 'integral' of type NX_FLOAT.
 		final IDataset integral = group.getIntegral();
 		validateFieldNotNull("integral", integral);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("integral", integral, NX_FLOAT);
 		validateFieldUnits("integral", integral, NX_ANY);
 	}

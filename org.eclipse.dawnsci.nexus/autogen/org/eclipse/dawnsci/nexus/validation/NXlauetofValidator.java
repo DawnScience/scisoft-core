@@ -62,6 +62,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		// validate field 'definition' of unknown type.
 		final IDataset definition = group.getDefinition();
 		validateFieldNotNull("definition", definition);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldEnumeration("definition", definition,
 				"NXlauetof");
 
@@ -100,6 +101,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		// validate field 'polar_angle' of type NX_FLOAT.
 		final IDataset polar_angle = group.getPolar_angle();
 		validateFieldNotNull("polar_angle", polar_angle);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
 		validateFieldUnits("polar_angle", polar_angle, NX_ANGLE);
 		validateFieldRank("polar_angle", polar_angle, 3);
@@ -108,6 +110,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		// validate field 'azimuthal_angle' of type NX_FLOAT.
 		final IDataset azimuthal_angle = group.getAzimuthal_angle();
 		validateFieldNotNull("azimuthal_angle", azimuthal_angle);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("azimuthal_angle", azimuthal_angle, NX_FLOAT);
 		validateFieldUnits("azimuthal_angle", azimuthal_angle, NX_ANGLE);
 		validateFieldRank("azimuthal_angle", azimuthal_angle, 3);
@@ -116,13 +119,15 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		// validate field 'data' of type NX_INT.
 		final IDataset data = group.getData();
 		validateFieldNotNull("data", data);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_INT);
 		validateFieldUnits("data", data, NX_ANY);
 		validateFieldRank("data", data, 3);
 		validateFieldDimensions("data", data, null, "nXPixels", "nYPixels", "nTOF");
 		// validate attribute 'signal' of field 'data'
-		final Attribute data_attr_signal = group.getAttribute("signal");
+		final Attribute data_attr_signal = group.getDataNode("data").getAttribute("signal");
 		validateAttributeNotNull("signal", data_attr_signal);
+		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("signal", data_attr_signal, NX_POSINT);
 		validateAttributeEnumeration("signal", data_attr_signal,
 				"1");
@@ -131,6 +136,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		// validate field 'x_pixel_size' of type NX_FLOAT.
 		final IDataset x_pixel_size = group.getX_pixel_size();
 		validateFieldNotNull("x_pixel_size", x_pixel_size);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("x_pixel_size", x_pixel_size, NX_FLOAT);
 		validateFieldUnits("x_pixel_size", x_pixel_size, NX_LENGTH);
 		validateFieldRank("x_pixel_size", x_pixel_size, 2);
@@ -139,6 +145,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		// validate field 'y_pixel_size' of type NX_FLOAT.
 		final IDataset y_pixel_size = group.getY_pixel_size();
 		validateFieldNotNull("y_pixel_size", y_pixel_size);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("y_pixel_size", y_pixel_size, NX_FLOAT);
 		validateFieldUnits("y_pixel_size", y_pixel_size, NX_LENGTH);
 		validateFieldRank("y_pixel_size", y_pixel_size, 2);
@@ -147,6 +154,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		// validate field 'distance' of type NX_FLOAT.
 		final IDataset distance = group.getDistance();
 		validateFieldNotNull("distance", distance);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("distance", distance, NX_FLOAT);
 		validateFieldUnits("distance", distance, NX_LENGTH);
 		validateFieldRank("distance", distance, 3);
@@ -155,6 +163,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		// validate field 'time_of_flight' of type NX_FLOAT.
 		final IDataset time_of_flight = group.getTime_of_flight();
 		validateFieldNotNull("time_of_flight", time_of_flight);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("time_of_flight", time_of_flight, NX_FLOAT);
 		validateFieldUnits("time_of_flight", time_of_flight, NX_TIME_OF_FLIGHT);
 		validateFieldRank("time_of_flight", time_of_flight, 1);
@@ -172,10 +181,12 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		// validate field 'name' of unknown type.
 		final IDataset name = group.getName();
 		validateFieldNotNull("name", name);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 
 		// validate field 'orientation_matrix' of type NX_FLOAT.
 		final IDataset orientation_matrix = group.getOrientation_matrix();
 		validateFieldNotNull("orientation_matrix", orientation_matrix);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("orientation_matrix", orientation_matrix, NX_FLOAT);
 		validateFieldRank("orientation_matrix", orientation_matrix, 2);
 		validateFieldDimensions("orientation_matrix", orientation_matrix, null, 3, 3);
@@ -183,6 +194,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		// validate field 'unit_cell' of type NX_FLOAT.
 		final IDataset unit_cell = group.getUnit_cell();
 		validateFieldNotNull("unit_cell", unit_cell);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("unit_cell", unit_cell, NX_FLOAT);
 		validateFieldUnits("unit_cell", unit_cell, NX_LENGTH);
 		validateFieldRank("unit_cell", unit_cell, 1);
@@ -200,6 +212,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		// validate field 'mode' of unknown type.
 		final IDataset mode = group.getMode();
 		validateFieldNotNull("mode", mode);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldEnumeration("mode", mode,
 				"monitor",
 				"timer");
@@ -207,12 +220,14 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		// validate field 'preset' of type NX_FLOAT.
 		final IDataset preset = group.getPreset();
 		validateFieldNotNull("preset", preset);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("preset", preset, NX_FLOAT);
 		validateFieldUnits("preset", preset, NX_ANY);
 
 		// validate field 'data' of type NX_INT.
 		final IDataset data = group.getData();
 		validateFieldNotNull("data", data);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_INT);
 		validateFieldUnits("data", data, NX_ANY);
 		validateFieldRank("data", data, 1);
@@ -221,6 +236,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		// validate field 'time_of_flight' of type NX_FLOAT.
 		final IDataset time_of_flight = group.getTime_of_flight();
 		validateFieldNotNull("time_of_flight", time_of_flight);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("time_of_flight", time_of_flight, NX_FLOAT);
 		validateFieldUnits("time_of_flight", time_of_flight, NX_TIME_OF_FLIGHT);
 		validateFieldRank("time_of_flight", time_of_flight, 1);

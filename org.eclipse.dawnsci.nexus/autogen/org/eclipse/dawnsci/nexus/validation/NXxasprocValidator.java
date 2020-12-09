@@ -66,14 +66,17 @@ public class NXxasprocValidator extends AbstractNexusValidator implements NexusA
 		// validate attribute 'entry'
 		final Attribute entry_attr = group.getAttribute("entry");
 		validateAttributeNotNull("entry", entry_attr);
+		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 
 		// validate field 'title' of unknown type.
 		final IDataset title = group.getTitle();
 		validateFieldNotNull("title", title);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 
 		// validate field 'definition' of unknown type.
 		final IDataset definition = group.getDefinition();
 		validateFieldNotNull("definition", definition);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldEnumeration("definition", definition,
 				"NXxasproc");
 
@@ -104,6 +107,7 @@ public class NXxasprocValidator extends AbstractNexusValidator implements NexusA
 		// validate field 'name' of unknown type.
 		final IDataset name = group.getName();
 		validateFieldNotNull("name", name);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 	}
 
 	/**
@@ -116,16 +120,19 @@ public class NXxasprocValidator extends AbstractNexusValidator implements NexusA
 		// validate field 'program' of type NX_CHAR.
 		final IDataset program = group.getProgram();
 		validateFieldNotNull("program", program);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("program", program, NX_CHAR);
 
 		// validate field 'version' of type NX_CHAR.
 		final IDataset version = group.getVersion();
 		validateFieldNotNull("version", version);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("version", version, NX_CHAR);
 
 		// validate field 'date' of type NX_DATE_TIME.
 		final IDataset date = group.getDate();
 		validateFieldNotNull("date", date);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("date", date, NX_DATE_TIME);
 
 		// validate child group 'parameters' of type NXparameters
@@ -142,6 +149,7 @@ public class NXxasprocValidator extends AbstractNexusValidator implements NexusA
 		// validate field 'raw_file' of type NX_CHAR. Note: field not defined in base class.
 		final IDataset raw_file = group.getDataset("raw_file");
 		validateFieldNotNull("raw_file", raw_file);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("raw_file", raw_file, NX_CHAR);
 	}
 
@@ -156,12 +164,14 @@ public class NXxasprocValidator extends AbstractNexusValidator implements NexusA
 		// validate field 'energy' of unknown type. Note: field not defined in base class.
 		final IDataset energy = group.getDataset("energy");
 		validateFieldNotNull("energy", energy);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldRank("energy", energy, 1);
 		validateFieldDimensions("energy", energy, null, "nP");
 
 		// validate field 'data' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset data = group.getDataset("data");
 		validateFieldNotNull("data", data);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_FLOAT);
 		validateFieldRank("data", data, 1);
 		validateFieldDimensions("data", data, null, "nP");

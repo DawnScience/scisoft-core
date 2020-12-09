@@ -65,10 +65,12 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 		// validate field 'title' of unknown type.
 		final IDataset title = group.getTitle();
 		validateFieldNotNull("title", title);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 
 		// validate field 'definition' of unknown type.
 		final IDataset definition = group.getDefinition();
 		validateFieldNotNull("definition", definition);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldEnumeration("definition", definition,
 				"NXtomoproc");
 
@@ -115,6 +117,7 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 		// validate field 'type' of unknown type.
 		final IDataset type = group.getType();
 		validateFieldNotNull("type", type);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldEnumeration("type", type,
 				"Spallation Neutron Source",
 				"Pulsed Reactor Neutron Source",
@@ -132,10 +135,12 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 		// validate field 'name' of unknown type.
 		final IDataset name = group.getName();
 		validateFieldNotNull("name", name);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 
 		// validate field 'probe' of unknown type.
 		final IDataset probe = group.getProbe();
 		validateFieldNotNull("probe", probe);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldEnumeration("probe", probe,
 				"neutron",
 				"x-ray",
@@ -153,6 +158,7 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 		// validate field 'name' of unknown type.
 		final IDataset name = group.getName();
 		validateFieldNotNull("name", name);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 	}
 
 	/**
@@ -165,16 +171,19 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 		// validate field 'program' of type NX_CHAR.
 		final IDataset program = group.getProgram();
 		validateFieldNotNull("program", program);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("program", program, NX_CHAR);
 
 		// validate field 'version' of type NX_CHAR.
 		final IDataset version = group.getVersion();
 		validateFieldNotNull("version", version);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("version", version, NX_CHAR);
 
 		// validate field 'date' of type NX_DATE_TIME.
 		final IDataset date = group.getDate();
 		validateFieldNotNull("date", date);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("date", date, NX_DATE_TIME);
 
 		// validate child group 'parameters' of type NXparameters
@@ -191,6 +200,7 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 		// validate field 'raw_file' of type NX_CHAR. Note: field not defined in base class.
 		final IDataset raw_file = group.getDataset("raw_file");
 		validateFieldNotNull("raw_file", raw_file);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("raw_file", raw_file, NX_CHAR);
 	}
 
@@ -205,25 +215,30 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 		// validate field 'data' of type NX_INT. Note: field not defined in base class.
 		final IDataset data = group.getDataset("data");
 		validateFieldNotNull("data", data);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_INT);
 		validateFieldRank("data", data, 3);
 		validateFieldDimensions("data", data, null, "nX", "nX", "nZ");
 		// validate attribute 'transform' of field 'data'
-		final Attribute data_attr_transform = group.getAttribute("transform");
+		final Attribute data_attr_transform = group.getDataNode("data").getAttribute("transform");
 		validateAttributeNotNull("transform", data_attr_transform);
+		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 
 		// validate attribute 'offset' of field 'data'
-		final Attribute data_attr_offset = group.getAttribute("offset");
+		final Attribute data_attr_offset = group.getDataNode("data").getAttribute("offset");
 		validateAttributeNotNull("offset", data_attr_offset);
+		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 
 		// validate attribute 'scaling' of field 'data'
-		final Attribute data_attr_scaling = group.getAttribute("scaling");
+		final Attribute data_attr_scaling = group.getDataNode("data").getAttribute("scaling");
 		validateAttributeNotNull("scaling", data_attr_scaling);
+		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 
 
 		// validate field 'x' of type NX_FLOAT.
 		final IDataset x = group.getX();
 		validateFieldNotNull("x", x);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("x", x, NX_FLOAT);
 		validateFieldUnits("x", x, NX_ANY);
 		validateFieldRank("x", x, 1);
@@ -232,6 +247,7 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 		// validate field 'y' of type NX_FLOAT.
 		final IDataset y = group.getY();
 		validateFieldNotNull("y", y);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("y", y, NX_FLOAT);
 		validateFieldUnits("y", y, NX_ANY);
 		validateFieldRank("y", y, 1);
@@ -240,6 +256,7 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 		// validate field 'z' of type NX_FLOAT.
 		final IDataset z = group.getZ();
 		validateFieldNotNull("z", z);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("z", z, NX_FLOAT);
 		validateFieldUnits("z", z, NX_ANY);
 		validateFieldRank("z", z, 1);

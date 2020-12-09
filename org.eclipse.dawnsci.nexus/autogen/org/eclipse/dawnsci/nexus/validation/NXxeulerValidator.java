@@ -60,6 +60,7 @@ public class NXxeulerValidator extends AbstractNexusValidator implements NexusAp
 		// validate field 'definition' of unknown type.
 		final IDataset definition = group.getDefinition();
 		validateFieldNotNull("definition", definition);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldEnumeration("definition", definition,
 				"NXxeuler");
 
@@ -95,6 +96,7 @@ public class NXxeulerValidator extends AbstractNexusValidator implements NexusAp
 		// validate field 'polar_angle' of type NX_FLOAT.
 		final IDataset polar_angle = group.getPolar_angle();
 		validateFieldNotNull("polar_angle", polar_angle);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
 		validateFieldUnits("polar_angle", polar_angle, NX_ANGLE);
 		validateFieldRank("polar_angle", polar_angle, 1);
@@ -112,6 +114,7 @@ public class NXxeulerValidator extends AbstractNexusValidator implements NexusAp
 		// validate field 'rotation_angle' of type NX_FLOAT.
 		final IDataset rotation_angle = group.getRotation_angle();
 		validateFieldNotNull("rotation_angle", rotation_angle);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
 		validateFieldUnits("rotation_angle", rotation_angle, NX_ANGLE);
 		validateFieldRank("rotation_angle", rotation_angle, 1);
@@ -120,6 +123,7 @@ public class NXxeulerValidator extends AbstractNexusValidator implements NexusAp
 		// validate field 'chi' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset chi = group.getDataset("chi");
 		validateFieldNotNull("chi", chi);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("chi", chi, NX_FLOAT);
 		validateFieldUnits("chi", chi, NX_ANGLE);
 		validateFieldRank("chi", chi, 1);
@@ -128,6 +132,7 @@ public class NXxeulerValidator extends AbstractNexusValidator implements NexusAp
 		// validate field 'phi' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset phi = group.getDataset("phi");
 		validateFieldNotNull("phi", phi);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("phi", phi, NX_FLOAT);
 		validateFieldUnits("phi", phi, NX_ANGLE);
 		validateFieldRank("phi", phi, 1);

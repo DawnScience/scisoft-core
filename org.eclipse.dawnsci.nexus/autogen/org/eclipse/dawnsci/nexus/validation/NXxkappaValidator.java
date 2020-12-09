@@ -60,6 +60,7 @@ public class NXxkappaValidator extends AbstractNexusValidator implements NexusAp
 		// validate field 'definition' of unknown type.
 		final IDataset definition = group.getDefinition();
 		validateFieldNotNull("definition", definition);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldEnumeration("definition", definition,
 				"NXxkappa");
 
@@ -95,6 +96,7 @@ public class NXxkappaValidator extends AbstractNexusValidator implements NexusAp
 		// validate field 'polar_angle' of type NX_FLOAT.
 		final IDataset polar_angle = group.getPolar_angle();
 		validateFieldNotNull("polar_angle", polar_angle);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
 		validateFieldUnits("polar_angle", polar_angle, NX_ANGLE);
 		validateFieldRank("polar_angle", polar_angle, 1);
@@ -112,6 +114,7 @@ public class NXxkappaValidator extends AbstractNexusValidator implements NexusAp
 		// validate field 'rotation_angle' of type NX_FLOAT.
 		final IDataset rotation_angle = group.getRotation_angle();
 		validateFieldNotNull("rotation_angle", rotation_angle);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
 		validateFieldUnits("rotation_angle", rotation_angle, NX_ANGLE);
 		validateFieldRank("rotation_angle", rotation_angle, 1);
@@ -120,6 +123,7 @@ public class NXxkappaValidator extends AbstractNexusValidator implements NexusAp
 		// validate field 'kappa' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset kappa = group.getDataset("kappa");
 		validateFieldNotNull("kappa", kappa);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("kappa", kappa, NX_FLOAT);
 		validateFieldUnits("kappa", kappa, NX_ANGLE);
 		validateFieldRank("kappa", kappa, 1);
@@ -128,6 +132,7 @@ public class NXxkappaValidator extends AbstractNexusValidator implements NexusAp
 		// validate field 'phi' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset phi = group.getDataset("phi");
 		validateFieldNotNull("phi", phi);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("phi", phi, NX_FLOAT);
 		validateFieldUnits("phi", phi, NX_ANGLE);
 		validateFieldRank("phi", phi, 1);
@@ -136,6 +141,7 @@ public class NXxkappaValidator extends AbstractNexusValidator implements NexusAp
 		// validate field 'alpha' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset alpha = group.getDataset("alpha");
 		validateFieldNotNull("alpha", alpha);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("alpha", alpha, NX_FLOAT);
 		validateFieldUnits("alpha", alpha, NX_ANGLE);
 	}

@@ -144,7 +144,7 @@
 	<!-- True if there can be multiple occurrences of this group. -->
 	<xsl:variable name="multiple" select="not(@name) and not(@maxOccurs='1')"/>
 	<!-- True if this group is optional (false if group is multiple) -->
-	<xsl:variable name="optional" select="not($multiple) and @minOccurs='0'"/>
+	<xsl:variable name="optional" select="not($multiple) and (@minOccurs='0' or @optional='true' or @recommended='true')"/>
 	
 	<xsl:variable name="canSASclass" select="dawnsci:canSASclass(current())"/>
 		
@@ -167,10 +167,8 @@
 			<!-- When the base class does not include the group, just use getChild("@name", @type.class)-->
 			<xsl:when test="not($baseClassGroupDef)">
 				<xsl:value-of select="$parentGroupVariableName"/>
-				<xsl:text>.getChild(</xsl:text>
-				<xsl:text>"</xsl:text><xsl:value-of select="@name"/><xsl:text>", </xsl:text>
-				<xsl:value-of select="@type"/>
-				<xsl:text>.class)</xsl:text>
+				<xsl:text>.getChild("</xsl:text><xsl:value-of select="@name"/><xsl:text>", </xsl:text>
+				<xsl:value-of select="@type"/><xsl:text>.class)</xsl:text>
 			</xsl:when>
 			<!-- In the general case, just do parentGroupName.getChildGroupName() -->
 			<xsl:otherwise>
@@ -208,7 +206,7 @@
 
 		<!-- For loop over values -->
 		<xsl:value-of select="dawnsci:tabs(2)"/>
-		<xsl:text>for (final </xsl:text><xsl:value-of select="@type"/><xsl:text> </xsl:text><xsl:value-of select="$groupNameInBaseClass"/>
+		<xsl:text>for (final </xsl:text><xsl:value-of select="@type || ' ' || $groupNameInBaseClass"/>
 		<xsl:text> : all</xsl:text><xsl:value-of select="$mapVariableName"/>
 		<xsl:text>.values()) {&#10;</xsl:text>
 	</xsl:if>
@@ -223,14 +221,11 @@
 	<!-- Invoke the method to validate the group. -->
 	<xsl:value-of select="dawnsci:tabs(if ($multiple or $optional) then 3 else 2)"/>
 	<xsl:value-of select="dawnsci:validateGroupMethodName($validateGroupMethodNamePrefix, current())"/>
-	<xsl:text>(</xsl:text>
-	<xsl:value-of select="$group"/>
-	<xsl:text>);&#10;</xsl:text>
+	<xsl:text>(</xsl:text><xsl:value-of select="$group"/><xsl:text>);&#10;</xsl:text>
 
 	<!-- Closing brace for either for loop (multiple) or null test (optional) -->
 	<xsl:if test="$multiple or $optional">
-		<xsl:value-of select="dawnsci:tabs(2)"/>
-		<xsl:text>}&#10;</xsl:text>
+		<xsl:value-of select="dawnsci:tabs(2)"/><xsl:text>}&#10;</xsl:text>
 	</xsl:if>
 	
 	<!-- Blank line if there are more groups. -->
@@ -268,11 +263,12 @@
 	<xsl:variable name="validateGroupMethodName" select="dawnsci:validateGroupMethodName($validateGroupMethodNamePrefix, current())"/>
 	<xsl:variable name="baseClass" select="$base-classes[@name = current()/@type]"/>
 	<xsl:variable name="isEntry" select="@type='NXentry' or @type='NXsubentry'"/>
+	<xsl:variable name="optional" select="@minOccurs='0' or @optional='true' or @recommended='true'"/>
 	
 	<!-- Javadoc comment for method. -->
 	<xsl:text>
 	/**
-	 * Validate </xsl:text><xsl:if test="@minOccurs='0'">optional </xsl:if><xsl:value-of select="if (@name) then 'group ''' || @name || '''' else 'unnamed group'"/> of type <xsl:value-of select="@type"/><xsl:text>.
+	 * Validate </xsl:text><xsl:if test="$optional">optional </xsl:if><xsl:value-of select="if (@name) then 'group ''' || @name || '''' else 'unnamed group'"/> of type <xsl:value-of select="@type"/><xsl:text>.
 	 */
 	private void </xsl:text>
 	
@@ -296,7 +292,7 @@
 	<xsl:value-of select="dawnsci:tabs(2)"/>
 	<xsl:text>validateGroupNotNull(</xsl:text>
 	<xsl:value-of select="if (@name) then '&quot;' || @name || '&quot;' else 'null'"/>
-	<xsl:text>, </xsl:text><xsl:value-of select="@type"/><xsl:text>.class, group);&#10;</xsl:text>
+	<xsl:value-of select="', ' || @type || '.class'"/><xsl:text>, group);&#10;</xsl:text>
 	
 	<!-- If the group has dimensions defined in the baseclass, clear the local group placeholder value cache. -->
 	<xsl:if test="$baseClass//nx:dim">
@@ -342,10 +338,12 @@
 	<!-- The variable name of the attribute -->
 	<xsl:variable name="attrVarName"
 		select="if ($fieldDef) then $fieldDef/@name || '_attr_' || @name else @name || '_attr'"/>
+	<xsl:variable name="optional" select="@optional='true'"/>
 	
 	<!-- Line comment: validate attribute 'attributeName' (of field 'fieldName'>)-->
 	<xsl:value-of select="dawnsci:tabs(2)"/>
-	<xsl:text>// validate attribute '</xsl:text><xsl:value-of select="@name"/><xsl:text>'</xsl:text>
+	<xsl:text>// validate </xsl:text><xsl:if test="$optional">optional </xsl:if>
+	<xsl:text>attribute '</xsl:text><xsl:value-of select="@name"/><xsl:text>'</xsl:text>
 	<xsl:if test="$fieldDef">
 		<xsl:text> of field '</xsl:text><xsl:value-of select="$fieldDef/@name"/><xsl:text>'</xsl:text>
 	</xsl:if>
@@ -354,20 +352,35 @@
 	<!-- Get the attribute from the group, e.g. final Attribute entryAttr = group.getAttribute("entry"); -->
 	<xsl:value-of select="dawnsci:tabs(2)"/>
 	<xsl:text>final Attribute </xsl:text>
-	<xsl:value-of select="$attrVarName"/><xsl:text> = group.getAttribute("</xsl:text>
-	<xsl:value-of select="@name"/><xsl:text>");&#10;</xsl:text>
-
-	<!-- Invoke method validateAttributeNotNull in abstract superclass to validate attribute not null. -->
+	<xsl:value-of select="$attrVarName"/><xsl:text> = group</xsl:text>
+	<xsl:if test="$fieldDef">
+		<xsl:text>.getDataNode("</xsl:text><xsl:value-of select="$fieldDef/@name"/><xsl:text>")</xsl:text>
+	</xsl:if>
+	<xsl:text>.getAttribute("</xsl:text><xsl:value-of select="@name"/><xsl:text>");&#10;</xsl:text>
+	
+	<!-- Null check for optional attributes, validate not null for mandatory attributes. -->
 	<xsl:value-of select="dawnsci:tabs(2)"/>
-	<xsl:text>validateAttributeNotNull("</xsl:text><xsl:value-of select="@name"/>
-	<xsl:text>", </xsl:text><xsl:value-of select="$attrVarName"/><xsl:text>);&#10;</xsl:text>
+	<xsl:choose>
+		<xsl:when test="$optional">
+			<xsl:text>if (</xsl:text><xsl:value-of select="$attrVarName"/><xsl:text> != null) {&#10;</xsl:text>
+		</xsl:when>
+		<xsl:otherwise>
+			<!-- Invoke method validateAttributeNotNull in abstract superclass to validate attribute not null. -->
+			<xsl:text>validateAttributeNotNull("</xsl:text><xsl:value-of select="@name"/>
+			<xsl:text>", </xsl:text><xsl:value-of select="$attrVarName"/><xsl:text>);&#10;</xsl:text>
+		</xsl:otherwise>
+	</xsl:choose>
+	
+	<xsl:variable name="tabLevel" select="if ($optional) then 3 else 2"/>
+	<xsl:value-of select="dawnsci:tabs($tabLevel)"/>
+	<xsl:text>// validate any properties of this attribute specified in the NXDL file: type, enumeration&#10;</xsl:text>
 	
 	<!-- Validate the attribute's type, if defined (either in the application definition or the base class)  -->
 	<xsl:call-template name="validate-dataset-type">
 		<xsl:with-param name="baseClassFieldOrAttributeDef" select="$baseClassAttributeDef"/>
 		<xsl:with-param name="nodeType" select="'attribute'"/>
 		<xsl:with-param name="variableName" select="$attrVarName"/>
-		<xsl:with-param name="tabLevel" select="2"/>
+		<xsl:with-param name="tabLevel" select="$tabLevel"/>
 	</xsl:call-template>
 	
 	<!-- Validate that the attribute's value belongs to the enumeration of permitted values, if defined  -->
@@ -375,12 +388,17 @@
 		<xsl:with-param name="baseClassFieldOrAttributeDef" select="$baseClassAttributeDef"/>
 		<xsl:with-param name="nodeType" select="'attribute'"/>
 		<xsl:with-param name="variableName" select="$attrVarName"/>
-		<xsl:with-param name="tabLevel" select="2"/>
+		<xsl:with-param name="tabLevel" select="$tabLevel"/>
 	</xsl:call-template>
+
+	<!-- Closing brace for null test (only if optional -->
+	<xsl:if test="$optional">
+		<xsl:value-of select="dawnsci:tabs(2)"/><xsl:text>}&#10;</xsl:text>
+	</xsl:if>
 
 	<!-- Blank line before next attribute / first field validation. -->
 	<xsl:text>&#10;</xsl:text>
-
+	
 </xsl:template> <!-- End of template for nx:attribute -->
 
 
@@ -390,8 +408,8 @@
 	
 	<!-- Field definition in base class, if it exists. -->
 	<xsl:variable name="baseClassFieldDef" select="$baseClass/nx:field[@name=current()/@name]"/>
-	<!-- True if the field is optional (minOccurrs = 0) -->
-	<xsl:variable name="optional" select="@minOccurs='0'"/>
+	<!-- True if the field is optional (minOccurs = 0) -->
+	<xsl:variable name="optional" select="@minOccurs='0' or @optional='true' or @recommended='true'"/>
 	<!-- The method call to get the field's dataset -->
 	<xsl:variable name="getFieldDatasetMethod">
 		<xsl:choose>
@@ -421,13 +439,12 @@
 	<xsl:value-of select="$getFieldDatasetMethod"/><xsl:text>;&#10;</xsl:text>
 	
 	<!-- Null check for optional fields, validate not null for mandatory fields. -->
+	<xsl:value-of select="dawnsci:tabs(2)"/>
 	<xsl:choose>
 		<xsl:when test="$optional">
-			<xsl:value-of select="dawnsci:tabs(2)"/>
 			<xsl:text>if (</xsl:text><xsl:value-of select="@name"/><xsl:text> != null) {&#10;</xsl:text>
 		</xsl:when>
 		<xsl:otherwise>
-			<xsl:value-of select="dawnsci:tabs(2)"/>
 			<xsl:text>validateFieldNotNull("</xsl:text><xsl:value-of select="@name"/><xsl:text>", </xsl:text>
 			<xsl:value-of select="@name"/><xsl:text>);&#10;</xsl:text>
 		</xsl:otherwise>
@@ -437,6 +454,10 @@
 	could be defined in the application definition only, the base class only or both.
 	Output is only produced if either the application definition or base class defines a type/unit/enumeration -->
 	<xsl:variable name="tabLevel" select="if ($optional) then 3 else 2"/>
+	
+	<xsl:variable name="tabLevel" select="if ($optional) then 3 else 2"/>
+	<xsl:value-of select="dawnsci:tabs($tabLevel)"/>
+	<xsl:text>// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions&#10;</xsl:text>
 
 	<!-- Validate the field's type if defined (either in the application definition or the base class)-->
 	<xsl:call-template name="validate-dataset-type">

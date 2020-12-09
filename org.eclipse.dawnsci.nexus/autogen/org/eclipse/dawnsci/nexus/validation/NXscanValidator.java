@@ -66,20 +66,24 @@ public class NXscanValidator extends AbstractNexusValidator implements NexusAppl
 		// validate field 'title' of unknown type.
 		final IDataset title = group.getTitle();
 		validateFieldNotNull("title", title);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 
 		// validate field 'start_time' of type NX_DATE_TIME.
 		final IDataset start_time = group.getStart_time();
 		validateFieldNotNull("start_time", start_time);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("start_time", start_time, NX_DATE_TIME);
 
 		// validate field 'end_time' of type NX_DATE_TIME.
 		final IDataset end_time = group.getEnd_time();
 		validateFieldNotNull("end_time", end_time);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("end_time", end_time, NX_DATE_TIME);
 
 		// validate field 'definition' of type NX_CHAR.
 		final IDataset definition = group.getDefinition();
 		validateFieldNotNull("definition", definition);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("definition", definition, NX_CHAR);
 		validateFieldEnumeration("definition", definition,
 				"NXscan");
@@ -134,6 +138,7 @@ public class NXscanValidator extends AbstractNexusValidator implements NexusAppl
 		// validate field 'data' of type NX_INT.
 		final IDataset data = group.getData();
 		validateFieldNotNull("data", data);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_INT);
 		validateFieldUnits("data", data, NX_ANY);
 		validateFieldRank("data", data, 3);
@@ -151,6 +156,7 @@ public class NXscanValidator extends AbstractNexusValidator implements NexusAppl
 		// validate field 'rotation_angle' of type NX_FLOAT.
 		final IDataset rotation_angle = group.getRotation_angle();
 		validateFieldNotNull("rotation_angle", rotation_angle);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
 		validateFieldUnits("rotation_angle", rotation_angle, NX_ANGLE);
 		validateFieldRank("rotation_angle", rotation_angle, 1);
@@ -168,6 +174,7 @@ public class NXscanValidator extends AbstractNexusValidator implements NexusAppl
 		// validate field 'data' of type NX_INT.
 		final IDataset data = group.getData();
 		validateFieldNotNull("data", data);
+		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_INT);
 		validateFieldUnits("data", data, NX_ANY);
 		validateFieldRank("data", data, 1);

@@ -72,6 +72,7 @@
 		<xsl:value-of select="$fileHeaderComment"/>		
 		<xsl:text>&#10;</xsl:text>
 		<xsl:text>package org.eclipse.dawnsci.nexus.validation;&#10;</xsl:text>
+		<xsl:text>&#10;</xsl:text>
 
 		<!-- Apply the templates for imports. -->
 		<xsl:apply-templates mode="imports" select="."/>
@@ -266,6 +267,7 @@
 	<xsl:param name="validateGroupMethodNamePrefix"/>
 	<xsl:variable name="validateGroupMethodName" select="dawnsci:validateGroupMethodName($validateGroupMethodNamePrefix, current())"/>
 	<xsl:variable name="baseClass" select="$base-classes[@name = current()/@type]"/>
+	<xsl:variable name="isEntry" select="@type='NXentry' or @type='NXsubentry'"/>
 	
 	<!-- Javadoc comment for method. -->
 	<xsl:text>
@@ -277,8 +279,14 @@
 	<!-- Method signature -->
 	<xsl:value-of select="$validateGroupMethodName"/>
 	<xsl:text>(final </xsl:text>
-	<xsl:value-of select="if (@type='NXentry') then 'NXsubentry' else @type"/>
+	<xsl:value-of select="if ($isEntry) then 'NXsubentry' else @type"/>
 	<xsl:text> group) throws NexusValidationException {&#10;</xsl:text>
+
+	<xsl:if test="$isEntry">
+		<xsl:value-of select="dawnsci:tabs(2)"/><xsl:text>// set the current entry, required for validating links&#10;</xsl:text>
+		<xsl:value-of select="dawnsci:tabs(2)"/><xsl:text>setEntry(group);&#10;</xsl:text>
+		<xsl:text>&#10;</xsl:text> <!-- blank line -->
+	</xsl:if>	
 	
 	<!-- Line comment for group null validation -->
 	<xsl:value-of select="dawnsci:tabs(2)"/>
@@ -298,8 +306,8 @@
 	
 	<xsl:text>&#10;</xsl:text> <!-- blank line -->
 	
-	<!-- Validate attribute and fields within the group. -->
-	<xsl:apply-templates select="nx:attribute|nx:field">
+	<!-- Validate attributes fields and links within the group. -->
+	<xsl:apply-templates select="nx:attribute|nx:field|nx:link">
 		<xsl:with-param name="baseClass" select="$baseClass"/>
 	</xsl:apply-templates>
 	
@@ -567,6 +575,21 @@
 	
 </xsl:template>
 
+<!-- Template matches a link to validate the DataNode is a link to the expected target. -->
+<xsl:template match="nx:link">
+	<xsl:value-of select="dawnsci:tabs(2)"/>
+	<xsl:text>// validate link '</xsl:text><xsl:value-of select="@name"/>
+	<xsl:text>' to location '</xsl:text><xsl:value-of select="@target"/><xsl:text>&#10;</xsl:text>
+	<xsl:value-of select="dawnsci:tabs(2)"/>final DataNode <xsl:value-of select="@name"/>
+	<xsl:text> = group.getDataNode("</xsl:text><xsl:value-of select="@name"/><xsl:text>");&#10;</xsl:text>
+
+	<xsl:value-of select="dawnsci:tabs(2)"/>
+	<xsl:text>validateDataNodeLink("</xsl:text><xsl:value-of select="@name"/>", <xsl:value-of select="@name"/>
+	<xsl:text>, "</xsl:text><xsl:value-of select="@target"/><xsl:text>");&#10;</xsl:text>
+	<xsl:text>&#10;</xsl:text> <!-- blank line -->
+	
+</xsl:template>
+
 <!-- Imports -->
 <xsl:template mode="imports" match="nx:definition">
 
@@ -585,6 +608,7 @@
 	</xsl:if>
 
 	<xsl:text>import org.eclipse.january.dataset.IDataset;&#10;</xsl:text>
+	<xsl:text>import org.eclipse.dawnsci.analysis.api.tree.DataNode;&#10;</xsl:text>
 	<xsl:if test="//nx:attribute">
 		<xsl:text>import org.eclipse.dawnsci.analysis.api.tree.Attribute;&#10;</xsl:text>
 	</xsl:if>

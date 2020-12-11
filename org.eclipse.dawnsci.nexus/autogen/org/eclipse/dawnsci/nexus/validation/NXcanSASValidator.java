@@ -10,6 +10,7 @@
  *******************************************************************************/
 
 package org.eclipse.dawnsci.nexus.validation;
+
 import static org.eclipse.dawnsci.nexus.validation.NexusDataType.*;
 import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 
@@ -17,6 +18,7 @@ import java.util.Map;
 
 import java.util.stream.Collectors;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 
 import org.eclipse.dawnsci.nexus.NXobject;
@@ -69,6 +71,9 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 	 * Validate unnamed group of type NXentry.
 	 */
 	private void validateGroup_SASentry(final NXsubentry group) throws NexusValidationException {
+		// set the current entry, required for validating links
+		setEntry(group);
+
 		// validate that the group is not null
 		validateGroupNotNull(null, NXentry.class, group);
 

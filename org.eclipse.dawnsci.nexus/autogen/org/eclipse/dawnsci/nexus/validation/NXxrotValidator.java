@@ -10,10 +10,12 @@
  *******************************************************************************/
 
 package org.eclipse.dawnsci.nexus.validation;
+
 import static org.eclipse.dawnsci.nexus.validation.NexusDataType.*;
 import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.dawnsci.nexus.NXroot;
 import org.eclipse.dawnsci.nexus.NXsubentry;
@@ -50,6 +52,9 @@ public class NXxrotValidator extends AbstractNexusValidator implements NexusAppl
 	 * Validate group 'entry' of type NXentry.
 	 */
 	private void validateGroup_entry(final NXsubentry group) throws NexusValidationException {
+		// set the current entry, required for validating links
+		setEntry(group);
+
 		// validate that the group is not null
 		validateGroupNotNull("entry", NXentry.class, group);
 
@@ -158,6 +163,10 @@ public class NXxrotValidator extends AbstractNexusValidator implements NexusAppl
 		// validate that the group is not null
 		validateGroupNotNull("name", NXdata.class, group);
 		clearLocalGroupDimensionPlaceholderValues();
+
+		// validate link 'rotation_angle' to location '/NXentry/NXsample/rotation_angle
+		final DataNode rotation_angle = group.getDataNode("rotation_angle");
+		validateDataNodeLink("rotation_angle", rotation_angle, "/NXentry/NXsample/rotation_angle");
 
 	}
 }

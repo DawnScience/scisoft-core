@@ -10,12 +10,14 @@
  *******************************************************************************/
 
 package org.eclipse.dawnsci.nexus.validation;
+
 import static org.eclipse.dawnsci.nexus.validation.NexusDataType.*;
 import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 
 import java.util.Map;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 
 import org.eclipse.dawnsci.nexus.NXroot;
@@ -55,6 +57,9 @@ public class NXxasprocValidator extends AbstractNexusValidator implements NexusA
 	 * Validate unnamed group of type NXentry.
 	 */
 	private void validateGroup_NXentry(final NXsubentry group) throws NexusValidationException {
+		// set the current entry, required for validating links
+		setEntry(group);
+
 		// validate that the group is not null
 		validateGroupNotNull(null, NXentry.class, group);
 

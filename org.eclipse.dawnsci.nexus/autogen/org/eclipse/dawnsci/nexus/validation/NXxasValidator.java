@@ -10,12 +10,14 @@
  *******************************************************************************/
 
 package org.eclipse.dawnsci.nexus.validation;
+
 import static org.eclipse.dawnsci.nexus.validation.NexusDataType.*;
 import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 
 import java.util.Map;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 
 import org.eclipse.dawnsci.nexus.NXroot;
@@ -58,6 +60,9 @@ public class NXxasValidator extends AbstractNexusValidator implements NexusAppli
 	 * Validate unnamed group of type NXentry.
 	 */
 	private void validateGroup_NXentry(final NXsubentry group) throws NexusValidationException {
+		// set the current entry, required for validating links
+		setEntry(group);
+
 		// validate that the group is not null
 		validateGroupNotNull(null, NXentry.class, group);
 
@@ -263,6 +268,14 @@ public class NXxasValidator extends AbstractNexusValidator implements NexusAppli
 		// validate that the group is not null
 		validateGroupNotNull(null, NXdata.class, group);
 		clearLocalGroupDimensionPlaceholderValues();
+
+		// validate link 'energy' to location '/entry/instrument/monochromator/energy
+		final DataNode energy = group.getDataNode("energy");
+		validateDataNodeLink("energy", energy, "/entry/instrument/monochromator/energy");
+
+		// validate link 'absorbed_beam' to location '/entry/instrument/absorbed_beam/data
+		final DataNode absorbed_beam = group.getDataNode("absorbed_beam");
+		validateDataNodeLink("absorbed_beam", absorbed_beam, "/entry/instrument/absorbed_beam/data");
 
 	}
 }

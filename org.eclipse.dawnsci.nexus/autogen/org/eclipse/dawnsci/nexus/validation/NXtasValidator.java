@@ -10,12 +10,14 @@
  *******************************************************************************/
 
 package org.eclipse.dawnsci.nexus.validation;
+
 import static org.eclipse.dawnsci.nexus.validation.NexusDataType.*;
 import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 
 import java.util.Map;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.dawnsci.nexus.NXroot;
 import org.eclipse.dawnsci.nexus.NXsubentry;
@@ -54,6 +56,9 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 	 * Validate group 'entry' of type NXentry.
 	 */
 	private void validateGroup_entry(final NXsubentry group) throws NexusValidationException {
+		// set the current entry, required for validating links
+		setEntry(group);
+
 		// validate that the group is not null
 		validateGroupNotNull("entry", NXentry.class, group);
 
@@ -356,6 +361,34 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		// validate that the group is not null
 		validateGroupNotNull(null, NXdata.class, group);
 		clearLocalGroupDimensionPlaceholderValues();
+
+		// validate link 'ei' to location '/NXentry/NXinstrument/monochromator:NXcrystal/ei
+		final DataNode ei = group.getDataNode("ei");
+		validateDataNodeLink("ei", ei, "/NXentry/NXinstrument/monochromator:NXcrystal/ei");
+
+		// validate link 'ef' to location '/NXentry/NXinstrument/analyzer:NXcrystal/ef
+		final DataNode ef = group.getDataNode("ef");
+		validateDataNodeLink("ef", ef, "/NXentry/NXinstrument/analyzer:NXcrystal/ef");
+
+		// validate link 'en' to location '/NXentry/NXsample/en
+		final DataNode en = group.getDataNode("en");
+		validateDataNodeLink("en", en, "/NXentry/NXsample/en");
+
+		// validate link 'qh' to location '/NXentry/NXsample/qh
+		final DataNode qh = group.getDataNode("qh");
+		validateDataNodeLink("qh", qh, "/NXentry/NXsample/qh");
+
+		// validate link 'qk' to location '/NXentry/NXsample/qk
+		final DataNode qk = group.getDataNode("qk");
+		validateDataNodeLink("qk", qk, "/NXentry/NXsample/qk");
+
+		// validate link 'ql' to location '/NXentry/NXsample/ql
+		final DataNode ql = group.getDataNode("ql");
+		validateDataNodeLink("ql", ql, "/NXentry/NXsample/ql");
+
+		// validate link 'data' to location '/NXentry/NXinstrument/NXdetector/data
+		final DataNode data = group.getDataNode("data");
+		validateDataNodeLink("data", data, "/NXentry/NXinstrument/NXdetector/data");
 
 	}
 }

@@ -10,12 +10,14 @@
  *******************************************************************************/
 
 package org.eclipse.dawnsci.nexus.validation;
+
 import static org.eclipse.dawnsci.nexus.validation.NexusDataType.*;
 import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 
 import java.util.Map;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 
 import org.eclipse.dawnsci.nexus.NXroot;
@@ -55,6 +57,9 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 	 * Validate group 'entry' of type NXentry.
 	 */
 	private void validateGroup_entry(final NXsubentry group) throws NexusValidationException {
+		// set the current entry, required for validating links
+		setEntry(group);
+
 		// validate that the group is not null
 		validateGroupNotNull("entry", NXentry.class, group);
 
@@ -300,6 +305,10 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		// validate that the group is not null
 		validateGroupNotNull(null, NXdata.class, group);
 		clearLocalGroupDimensionPlaceholderValues();
+
+		// validate link 'data' to location '/NXentry/NXinstrument/NXdetector/data
+		final DataNode data = group.getDataNode("data");
+		validateDataNodeLink("data", data, "/NXentry/NXinstrument/NXdetector/data");
 
 	}
 }

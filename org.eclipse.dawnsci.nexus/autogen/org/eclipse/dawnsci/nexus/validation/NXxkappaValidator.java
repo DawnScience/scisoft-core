@@ -10,10 +10,12 @@
  *******************************************************************************/
 
 package org.eclipse.dawnsci.nexus.validation;
+
 import static org.eclipse.dawnsci.nexus.validation.NexusDataType.*;
 import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.dawnsci.nexus.NXroot;
 import org.eclipse.dawnsci.nexus.NXsubentry;
@@ -49,6 +51,9 @@ public class NXxkappaValidator extends AbstractNexusValidator implements NexusAp
 	 * Validate group 'entry' of type NXentry.
 	 */
 	private void validateGroup_entry(final NXsubentry group) throws NexusValidationException {
+		// set the current entry, required for validating links
+		setEntry(group);
+
 		// validate that the group is not null
 		validateGroupNotNull("entry", NXentry.class, group);
 
@@ -142,6 +147,22 @@ public class NXxkappaValidator extends AbstractNexusValidator implements NexusAp
 		// validate that the group is not null
 		validateGroupNotNull("name", NXdata.class, group);
 		clearLocalGroupDimensionPlaceholderValues();
+
+		// validate link 'polar_angle' to location '/NXentry/NXinstrument/NXdetector/polar_angle
+		final DataNode polar_angle = group.getDataNode("polar_angle");
+		validateDataNodeLink("polar_angle", polar_angle, "/NXentry/NXinstrument/NXdetector/polar_angle");
+
+		// validate link 'rotation_angle' to location '/NXentry/NXsample/rotation_angle
+		final DataNode rotation_angle = group.getDataNode("rotation_angle");
+		validateDataNodeLink("rotation_angle", rotation_angle, "/NXentry/NXsample/rotation_angle");
+
+		// validate link 'kappa' to location '/NXentry/NXsample/kappa
+		final DataNode kappa = group.getDataNode("kappa");
+		validateDataNodeLink("kappa", kappa, "/NXentry/NXsample/kappa");
+
+		// validate link 'phi' to location '/NXentry/NXsample/phi
+		final DataNode phi = group.getDataNode("phi");
+		validateDataNodeLink("phi", phi, "/NXentry/NXsample/phi");
 
 	}
 }

@@ -10,12 +10,14 @@
  *******************************************************************************/
 
 package org.eclipse.dawnsci.nexus.validation;
+
 import static org.eclipse.dawnsci.nexus.validation.NexusDataType.*;
 import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 
 import java.util.Map;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 
 import org.eclipse.dawnsci.nexus.NXroot;
@@ -60,6 +62,9 @@ public class NXsastofValidator extends AbstractNexusValidator implements NexusAp
 	 * Validate unnamed group of type NXentry.
 	 */
 	private void validateGroup_NXentry(final NXsubentry group) throws NexusValidationException {
+		// set the current entry, required for validating links
+		setEntry(group);
+
 		// validate that the group is not null
 		validateGroupNotNull(null, NXentry.class, group);
 
@@ -351,6 +356,14 @@ public class NXsastofValidator extends AbstractNexusValidator implements NexusAp
 		// validate that the group is not null
 		validateGroupNotNull("data", NXdata.class, group);
 		clearLocalGroupDimensionPlaceholderValues();
+
+		// validate link 'data' to location '/NXentry/NXinstrument/NXdetector/data
+		final DataNode data = group.getDataNode("data");
+		validateDataNodeLink("data", data, "/NXentry/NXinstrument/NXdetector/data");
+
+		// validate link 'time_of_flight' to location '/NXentry/NXinstrument/NXdetector/time_of_flight
+		final DataNode time_of_flight = group.getDataNode("time_of_flight");
+		validateDataNodeLink("time_of_flight", time_of_flight, "/NXentry/NXinstrument/NXdetector/time_of_flight");
 
 	}
 }

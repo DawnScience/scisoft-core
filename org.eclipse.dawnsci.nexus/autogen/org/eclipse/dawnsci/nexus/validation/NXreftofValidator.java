@@ -10,10 +10,12 @@
  *******************************************************************************/
 
 package org.eclipse.dawnsci.nexus.validation;
+
 import static org.eclipse.dawnsci.nexus.validation.NexusDataType.*;
 import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.dawnsci.nexus.NXroot;
 import org.eclipse.dawnsci.nexus.NXsubentry;
@@ -51,6 +53,9 @@ public class NXreftofValidator extends AbstractNexusValidator implements NexusAp
 	 * Validate group 'entry' of type NXentry.
 	 */
 	private void validateGroup_entry(final NXsubentry group) throws NexusValidationException {
+		// set the current entry, required for validating links
+		setEntry(group);
+
 		// validate that the group is not null
 		validateGroupNotNull("entry", NXentry.class, group);
 
@@ -246,6 +251,14 @@ public class NXreftofValidator extends AbstractNexusValidator implements NexusAp
 		// validate that the group is not null
 		validateGroupNotNull("data", NXdata.class, group);
 		clearLocalGroupDimensionPlaceholderValues();
+
+		// validate link 'data' to location '/NXentry/NXinstrument/NXdetector/data
+		final DataNode data = group.getDataNode("data");
+		validateDataNodeLink("data", data, "/NXentry/NXinstrument/NXdetector/data");
+
+		// validate link 'time_binning' to location '/NXentry/NXinstrument/NXdetector/time_binning
+		final DataNode time_binning = group.getDataNode("time_binning");
+		validateDataNodeLink("time_binning", time_binning, "/NXentry/NXinstrument/NXdetector/time_binning");
 
 	}
 }

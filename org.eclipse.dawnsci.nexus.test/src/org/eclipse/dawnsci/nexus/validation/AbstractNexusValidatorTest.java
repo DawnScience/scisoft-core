@@ -15,8 +15,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
+import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
+import org.eclipse.dawnsci.nexus.NXdetector;
+import org.eclipse.dawnsci.nexus.NXentry;
+import org.eclipse.dawnsci.nexus.NXinstrument;
+import org.eclipse.dawnsci.nexus.NXpositioner;
 import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.NXtransformations;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
@@ -229,6 +234,56 @@ public class AbstractNexusValidatorTest {
 		validator.clearLocalGroupDimensionPlaceholderValues();
 		IDataset newGroupDataset = DatasetFactory.zeros(DoubleDataset.class, 3, 4);
 		validator.validateFieldDimensions("newGroupField", newGroupDataset, "group2", "xDim", "yDim");
+	}
+	
+	private DataNode createDataNodeForLink() {
+		final NXentry entry = NexusNodeFactory.createNXentry();
+		validator.setEntry(entry);
+		final NXinstrument instrument = NexusNodeFactory.createNXinstrument();
+		entry.setInstrument(instrument);
+		instrument.setPositioner("x", NexusNodeFactory.createNXpositioner());
+		instrument.setPositioner("y", NexusNodeFactory.createNXpositioner());
+		final NXdetector detector = NexusNodeFactory.createNXdetector();
+		instrument.setDetector(detector);
+		final DataNode data = NexusNodeFactory.createDataNode();
+		detector.addDataNode(NXdetector.NX_DATA, data);
+		return data;
+	}
+	
+	@Test
+	public void testValidateLink_ok() throws Exception {
+		final DataNode data = createDataNodeForLink();
+		validator.validateDataNodeLink(NXdetector.NX_DATA, data, "/NXentry/NXinstrument/NXdetector/data");
+	}
+
+	@Test(expected=NexusValidationException.class)
+	public void testValidateLink_wrongNexusClass() throws Exception {
+		final DataNode data = createDataNodeForLink();
+		validator.validateDataNodeLink(NXdetector.NX_DATA, data, "/NXentry/NXinstrument/detector:NXpositioner/data");
+	}
+	
+	@Test(expected=NexusValidationException.class)
+	public void testValidateLink_noSuchGroupNodeName() throws Exception {
+		final DataNode data = createDataNodeForLink();
+		validator.validateDataNodeLink(NXdetector.NX_DATA, data, "/NXentry/NXinstrument/detector2/data");
+	}
+	
+	@Test(expected=NexusValidationException.class)
+	public void testValidateLink_noSuchGroupNodeClass() throws Exception {
+		final DataNode data = createDataNodeForLink();
+		validator.validateDataNodeLink(NXdetector.NX_DATA, data, "/NXentry/NXinstrument/NXmirror/data");
+	}
+	
+	@Test(expected=NexusValidationException.class)
+	public void testValidateLink_ambiguousGroupPath() throws Exception {
+		final DataNode data = createDataNodeForLink();
+		validator.validateDataNodeLink(NXdetector.NX_DATA, data, "/NXentry/NXinstrument/NXpositioner/data");
+	}
+	
+	@Test(expected=NexusValidationException.class)
+	public void testValidateLink_noSuchDataNode() throws Exception {
+		final DataNode data = createDataNodeForLink();
+		validator.validateDataNodeLink(NXdetector.NX_DATA, data, "/NXentry/NXinstrument/NXdetector/noData");
 	}
 	
 	@Test

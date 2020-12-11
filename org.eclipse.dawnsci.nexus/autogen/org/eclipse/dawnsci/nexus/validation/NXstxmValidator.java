@@ -203,7 +203,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		validateFieldNotNull("energy", energy);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("energy", energy, NX_FLOAT);
-		validateFieldUnits("energy", energy, NX_ENERGY);
+		validateFieldUnits("energy", group.getDataNode("energy"), NX_ENERGY);
 		validateFieldRank("energy", energy, 1);
 		validateFieldDimensions("energy", energy, null, "nP");
 	}
@@ -221,7 +221,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		validateFieldNotNull("data", data);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_NUMBER);
-		validateFieldUnits("data", data, NX_ANY);
+		validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
 		validateFieldDimensions("data", data, null, "nP");
 	}
 
@@ -238,7 +238,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		validateFieldNotNull("data", data);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_FLOAT);
-		validateFieldUnits("data", data, NX_ANY);
+		validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
 		validateFieldRank("data", data, 1);
 		validateFieldDimensions("data", data, null, "nP");
 	}
@@ -256,7 +256,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		validateFieldNotNull("data", data);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_FLOAT);
-		validateFieldUnits("data", data, NX_ANY);
+		validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
 		validateFieldRank("data", data, 1);
 		validateFieldDimensions("data", data, null, "nP");
 	}
@@ -274,7 +274,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		validateFieldNotNull("data", data);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_FLOAT);
-		validateFieldUnits("data", data, NX_ANY);
+		validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
 		validateFieldRank("data", data, 1);
 		validateFieldDimensions("data", data, null, "nP");
 	}
@@ -292,7 +292,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		validateFieldNotNull("rotation_angle", rotation_angle);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
-		validateFieldUnits("rotation_angle", rotation_angle, NX_ANGLE);
+		validateFieldUnits("rotation_angle", group.getDataNode("rotation_angle"), NX_ANGLE);
 	}
 
 	/**
@@ -362,7 +362,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		validateFieldNotNull("data", data);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_FLOAT);
-		validateFieldUnits("data", data, NX_ANY);
+		validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
 		validateFieldDimensions("data", data, "NXmonitor", "n");
 	}
 }

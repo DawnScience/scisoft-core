@@ -9,6 +9,7 @@
 
 package org.eclipse.dawnsci.nexus.validation;
 
+import static org.eclipse.dawnsci.nexus.validation.AbstractNexusValidator.ATTRIBUTE_NAME_UNITS;
 import static org.junit.Assert.fail;
 
 import java.util.HashMap;
@@ -154,15 +155,34 @@ public class AbstractNexusValidatorTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testValidateFieldUnits_ok() throws Exception {
-		// TODO test units - how to create unit metadata 
+		final DataNode dataNode = NexusNodeFactory.createDataNode();
+		dataNode.addAttribute(TreeFactory.createAttribute(ATTRIBUTE_NAME_UNITS, "mm"));
+		dataNode.setDataset(DatasetFactory.zeros(DoubleDataset.class, 10));
+		validator.validateFieldUnits("distance", dataNode, NexusUnitCategory.NX_LENGTH);
 	}
 	
-	@Test
-	@Ignore
+	@Test(expected=NexusValidationException.class)
+	public void testValidateFieldUnits_attributeNotPreset() throws Exception {
+		final DataNode dataNode = NexusNodeFactory.createDataNode();
+		dataNode.setDataset(DatasetFactory.zeros(DoubleDataset.class, 10));
+		validator.validateFieldUnits("distance", dataNode, NexusUnitCategory.NX_LENGTH);
+	}
+	
+	@Test(expected=NexusValidationException.class)
+	public void testValidateFieldUnits_invalidUnits() throws Exception {
+		final DataNode dataNode = NexusNodeFactory.createDataNode();
+		dataNode.setDataset(DatasetFactory.zeros(DoubleDataset.class, 10));
+		dataNode.addAttribute(TreeFactory.createAttribute(ATTRIBUTE_NAME_UNITS, "blah"));
+		validator.validateFieldUnits("distance", dataNode, NexusUnitCategory.NX_LENGTH);
+	}
+	
+	@Test(expected=NexusValidationException.class)
 	public void testValidateFieldUnits_incompatibleUnits() throws Exception {
-		// TODO test units
+		final DataNode dataNode = NexusNodeFactory.createDataNode();
+		dataNode.setDataset(DatasetFactory.zeros(DoubleDataset.class, 10));
+		dataNode.addAttribute(TreeFactory.createAttribute(ATTRIBUTE_NAME_UNITS, "s"));
+		validator.validateFieldUnits("distance", dataNode, NexusUnitCategory.NX_LENGTH);
 	}
 	
 	@Test

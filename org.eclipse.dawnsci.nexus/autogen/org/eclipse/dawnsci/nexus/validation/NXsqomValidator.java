@@ -243,7 +243,7 @@ public class NXsqomValidator extends AbstractNexusValidator implements NexusAppl
 		final IDataset qx = group.getDataset("qx");
 		validateFieldNotNull("qx", qx);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldUnits("qx", qx, NX_WAVENUMBER);
+		validateFieldUnits("qx", group.getDataNode("qx"), NX_WAVENUMBER);
 		validateFieldRank("qx", qx, 1);
 		validateFieldDimensions("qx", qx, null, "nP");
 
@@ -251,7 +251,7 @@ public class NXsqomValidator extends AbstractNexusValidator implements NexusAppl
 		final IDataset qy = group.getDataset("qy");
 		validateFieldNotNull("qy", qy);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldUnits("qy", qy, NX_WAVENUMBER);
+		validateFieldUnits("qy", group.getDataNode("qy"), NX_WAVENUMBER);
 		validateFieldRank("qy", qy, 1);
 		validateFieldDimensions("qy", qy, null, "nP");
 
@@ -259,7 +259,7 @@ public class NXsqomValidator extends AbstractNexusValidator implements NexusAppl
 		final IDataset qz = group.getDataset("qz");
 		validateFieldNotNull("qz", qz);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldUnits("qz", qz, NX_WAVENUMBER);
+		validateFieldUnits("qz", group.getDataNode("qz"), NX_WAVENUMBER);
 		validateFieldRank("qz", qz, 1);
 		validateFieldDimensions("qz", qz, null, "nP");
 
@@ -268,7 +268,7 @@ public class NXsqomValidator extends AbstractNexusValidator implements NexusAppl
 		validateFieldNotNull("en", en);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("en", en, NX_FLOAT);
-		validateFieldUnits("en", en, NX_ENERGY);
+		validateFieldUnits("en", group.getDataNode("en"), NX_ENERGY);
 		validateFieldRank("en", en, 1);
 		validateFieldDimensions("en", en, null, "nP");
 	}

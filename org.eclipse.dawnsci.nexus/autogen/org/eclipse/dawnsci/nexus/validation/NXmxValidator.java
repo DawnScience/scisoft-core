@@ -178,7 +178,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		if (temperature != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("temperature", temperature, NX_NUMBER);
-			validateFieldUnits("temperature", temperature, NX_TEMPERATURE);
+			validateFieldUnits("temperature", group.getDataNode("temperature"), NX_TEMPERATURE);
 			validateFieldDimensions("temperature", temperature, "NXsample", "n_Temp");
 		}
 		// validate NXtransformations groups (special case)
@@ -248,7 +248,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		if (attenuator_transmission != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("attenuator_transmission", attenuator_transmission, NX_NUMBER);
-			validateFieldUnits("attenuator_transmission", attenuator_transmission, NX_UNITLESS);
+			validateFieldUnits("attenuator_transmission", group.getDataNode("attenuator_transmission"), NX_UNITLESS);
 		}
 	}
 
@@ -303,7 +303,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		if (data != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("data", data, NX_NUMBER);
-			validateFieldUnits("data", data, NX_ANY);
+			validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
 			validateFieldDimensions("data", data, null, "nP", "i", "j", "k");
 		}
 
@@ -317,7 +317,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		final IDataset time_per_channel = group.getDataset("time_per_channel");
 		if (time_per_channel != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-			validateFieldUnits("time_per_channel", time_per_channel, NX_TIME);
+			validateFieldUnits("time_per_channel", group.getDataNode("time_per_channel"), NX_TIME);
 		}
 
 		// validate optional field 'distance' of type NX_FLOAT.
@@ -325,7 +325,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		if (distance != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("distance", distance, NX_FLOAT);
-			validateFieldUnits("distance", distance, NX_LENGTH);
+			validateFieldUnits("distance", group.getDataNode("distance"), NX_LENGTH);
 			validateFieldRank("distance", distance, 3);
 			validateFieldDimensions("distance", distance, "NXdetector", "np", "i", "j");
 		}
@@ -342,7 +342,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		if (dead_time != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("dead_time", dead_time, NX_FLOAT);
-			validateFieldUnits("dead_time", dead_time, NX_TIME);
+			validateFieldUnits("dead_time", group.getDataNode("dead_time"), NX_TIME);
 			validateFieldRank("dead_time", dead_time, 3);
 			validateFieldDimensions("dead_time", dead_time, "NXdetector", "np", "i", "j");
 		}
@@ -352,7 +352,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		if (count_time != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("count_time", count_time, NX_NUMBER);
-			validateFieldUnits("count_time", count_time, NX_TIME);
+			validateFieldUnits("count_time", group.getDataNode("count_time"), NX_TIME);
 			validateFieldRank("count_time", count_time, 1);
 			validateFieldDimensions("count_time", count_time, "NXdetector", "np");
 		}
@@ -369,7 +369,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		if (beam_center_x != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("beam_center_x", beam_center_x, NX_FLOAT);
-			validateFieldUnits("beam_center_x", beam_center_x, NX_LENGTH);
+			validateFieldUnits("beam_center_x", group.getDataNode("beam_center_x"), NX_LENGTH);
 		}
 
 		// validate optional field 'beam_center_y' of type NX_FLOAT.
@@ -377,7 +377,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		if (beam_center_y != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("beam_center_y", beam_center_y, NX_FLOAT);
-			validateFieldUnits("beam_center_y", beam_center_y, NX_LENGTH);
+			validateFieldUnits("beam_center_y", group.getDataNode("beam_center_y"), NX_LENGTH);
 		}
 
 		// validate optional field 'angular_calibration_applied' of type NX_BOOLEAN.
@@ -461,7 +461,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		if (detector_readout_time != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("detector_readout_time", detector_readout_time, NX_FLOAT);
-			validateFieldUnits("detector_readout_time", detector_readout_time, NX_TIME);
+			validateFieldUnits("detector_readout_time", group.getDataNode("detector_readout_time"), NX_TIME);
 		}
 
 		// validate optional field 'frame_time' of type NX_FLOAT.
@@ -469,7 +469,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		if (frame_time != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("frame_time", frame_time, NX_FLOAT);
-			validateFieldUnits("frame_time", frame_time, NX_TIME);
+			validateFieldUnits("frame_time", group.getDataNode("frame_time"), NX_TIME);
 			validateFieldRank("frame_time", frame_time, 1);
 			validateFieldDimensions("frame_time", frame_time, "NXdetector", "NP");
 		}
@@ -511,14 +511,14 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		validateFieldNotNull("sensor_thickness", sensor_thickness);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("sensor_thickness", sensor_thickness, NX_FLOAT);
-		validateFieldUnits("sensor_thickness", sensor_thickness, NX_LENGTH);
+		validateFieldUnits("sensor_thickness", group.getDataNode("sensor_thickness"), NX_LENGTH);
 
 		// validate optional field 'threshold_energy' of type NX_FLOAT.
 		final IDataset threshold_energy = group.getThreshold_energy();
 		if (threshold_energy != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("threshold_energy", threshold_energy, NX_FLOAT);
-			validateFieldUnits("threshold_energy", threshold_energy, NX_ENERGY);
+			validateFieldUnits("threshold_energy", group.getDataNode("threshold_energy"), NX_ENERGY);
 		}
 
 		// validate optional field 'type' of unknown type.
@@ -583,7 +583,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		if (module_offset != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("module_offset", module_offset, NX_NUMBER);
-			validateFieldUnits("module_offset", module_offset, NX_LENGTH);
+			validateFieldUnits("module_offset", group.getDataNode("module_offset"), NX_LENGTH);
 		// validate attribute 'transformation_type' of field 'module_offset'
 		final Attribute module_offset_attr_transformation_type = group.getDataNode("module_offset").getAttribute("transformation_type");
 		validateAttributeNotNull("transformation_type", module_offset_attr_transformation_type);
@@ -615,7 +615,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		validateFieldNotNull("fast_pixel_direction", fast_pixel_direction);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("fast_pixel_direction", fast_pixel_direction, NX_NUMBER);
-		validateFieldUnits("fast_pixel_direction", fast_pixel_direction, NX_LENGTH);
+		validateFieldUnits("fast_pixel_direction", group.getDataNode("fast_pixel_direction"), NX_LENGTH);
 		// validate attribute 'transformation_type' of field 'fast_pixel_direction'
 		final Attribute fast_pixel_direction_attr_transformation_type = group.getDataNode("fast_pixel_direction").getAttribute("transformation_type");
 		validateAttributeNotNull("transformation_type", fast_pixel_direction_attr_transformation_type);
@@ -646,7 +646,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		validateFieldNotNull("slow_pixel_direction", slow_pixel_direction);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("slow_pixel_direction", slow_pixel_direction, NX_NUMBER);
-		validateFieldUnits("slow_pixel_direction", slow_pixel_direction, NX_LENGTH);
+		validateFieldUnits("slow_pixel_direction", group.getDataNode("slow_pixel_direction"), NX_LENGTH);
 		// validate attribute 'transformation_type' of field 'slow_pixel_direction'
 		final Attribute slow_pixel_direction_attr_transformation_type = group.getDataNode("slow_pixel_direction").getAttribute("transformation_type");
 		validateAttributeNotNull("transformation_type", slow_pixel_direction_attr_transformation_type);
@@ -686,7 +686,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		validateFieldNotNull("incident_wavelength", incident_wavelength);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("incident_wavelength", incident_wavelength, NX_FLOAT);
-		validateFieldUnits("incident_wavelength", incident_wavelength, NX_WAVELENGTH);
+		validateFieldUnits("incident_wavelength", group.getDataNode("incident_wavelength"), NX_WAVELENGTH);
 		validateFieldRank("incident_wavelength", incident_wavelength, 1);
 		validateFieldDimensions("incident_wavelength", incident_wavelength, "NXbeam", "i");
 
@@ -709,7 +709,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		if (incident_wavelength_spread != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("incident_wavelength_spread", incident_wavelength_spread, NX_FLOAT);
-			validateFieldUnits("incident_wavelength_spread", incident_wavelength_spread, NX_WAVELENGTH);
+			validateFieldUnits("incident_wavelength_spread", group.getDataNode("incident_wavelength_spread"), NX_WAVELENGTH);
 			validateFieldRank("incident_wavelength_spread", incident_wavelength_spread, 1);
 			validateFieldDimensions("incident_wavelength_spread", incident_wavelength_spread, "NXbeam", "i");
 		}
@@ -719,7 +719,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		if (flux != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("flux", flux, NX_FLOAT);
-			validateFieldUnits("flux", flux, NX_FLUX);
+			validateFieldUnits("flux", group.getDataNode("flux"), NX_FLUX);
 			validateFieldRank("flux", flux, 1);
 			validateFieldDimensions("flux", flux, "NXbeam", "i");
 		}
@@ -729,14 +729,14 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		validateFieldNotNull("total_flux", total_flux);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("total_flux", total_flux, NX_FLOAT);
-		validateFieldUnits("total_flux", total_flux, NX_FREQUENCY);
+		validateFieldUnits("total_flux", group.getDataNode("total_flux"), NX_FREQUENCY);
 
 		// validate optional field 'incident_beam_size' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset incident_beam_size = group.getDataset("incident_beam_size");
 		if (incident_beam_size != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("incident_beam_size", incident_beam_size, NX_FLOAT);
-			validateFieldUnits("incident_beam_size", incident_beam_size, NX_LENGTH);
+			validateFieldUnits("incident_beam_size", group.getDataNode("incident_beam_size"), NX_LENGTH);
 			validateFieldRank("incident_beam_size", incident_beam_size, 1);
 			validateFieldDimensions("incident_beam_size", incident_beam_size, null, 2);
 		}

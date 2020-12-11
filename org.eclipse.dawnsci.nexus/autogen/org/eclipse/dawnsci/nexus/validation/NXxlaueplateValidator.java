@@ -90,6 +90,6 @@ public class NXxlaueplateValidator extends AbstractNexusValidator implements Nex
 		validateFieldNotNull("diameter", diameter);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("diameter", diameter, NX_FLOAT);
-		validateFieldUnits("diameter", diameter, NX_LENGTH);
+		validateFieldUnits("diameter", group.getDataNode("diameter"), NX_LENGTH);
 	}
 }

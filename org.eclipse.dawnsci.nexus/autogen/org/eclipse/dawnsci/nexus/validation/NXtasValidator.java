@@ -166,7 +166,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldNotNull("ei", ei);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("ei", ei, NX_FLOAT);
-		validateFieldUnits("ei", ei, NX_ENERGY);
+		validateFieldUnits("ei", group.getDataNode("ei"), NX_ENERGY);
 		validateFieldRank("ei", ei, 1);
 		validateFieldDimensions("ei", ei, null, "nP");
 
@@ -175,7 +175,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldNotNull("rotation_angle", rotation_angle);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
-		validateFieldUnits("rotation_angle", rotation_angle, NX_ANGLE);
+		validateFieldUnits("rotation_angle", group.getDataNode("rotation_angle"), NX_ANGLE);
 		validateFieldRank("rotation_angle", rotation_angle, 1);
 		validateFieldDimensions("rotation_angle", rotation_angle, null, "nP");
 	}
@@ -193,7 +193,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldNotNull("ef", ef);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("ef", ef, NX_FLOAT);
-		validateFieldUnits("ef", ef, NX_ENERGY);
+		validateFieldUnits("ef", group.getDataNode("ef"), NX_ENERGY);
 		validateFieldRank("ef", ef, 1);
 		validateFieldDimensions("ef", ef, null, "nP");
 
@@ -202,7 +202,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldNotNull("rotation_angle", rotation_angle);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
-		validateFieldUnits("rotation_angle", rotation_angle, NX_ANGLE);
+		validateFieldUnits("rotation_angle", group.getDataNode("rotation_angle"), NX_ANGLE);
 		validateFieldRank("rotation_angle", rotation_angle, 1);
 		validateFieldDimensions("rotation_angle", rotation_angle, null, "nP");
 
@@ -211,7 +211,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldNotNull("polar_angle", polar_angle);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
-		validateFieldUnits("polar_angle", polar_angle, NX_ANGLE);
+		validateFieldUnits("polar_angle", group.getDataNode("polar_angle"), NX_ANGLE);
 		validateFieldRank("polar_angle", polar_angle, 1);
 		validateFieldDimensions("polar_angle", polar_angle, null, "nP");
 	}
@@ -229,7 +229,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldNotNull("data", data);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_INT);
-		validateFieldUnits("data", data, NX_ANY);
+		validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
 		validateFieldRank("data", data, 1);
 		validateFieldDimensions("data", data, null, "nP");
 
@@ -238,7 +238,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldNotNull("polar_angle", polar_angle);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
-		validateFieldUnits("polar_angle", polar_angle, NX_ANGLE);
+		validateFieldUnits("polar_angle", group.getDataNode("polar_angle"), NX_ANGLE);
 		validateFieldRank("polar_angle", polar_angle, 1);
 		validateFieldDimensions("polar_angle", polar_angle, null, "nP");
 	}
@@ -261,7 +261,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldNotNull("qh", qh);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("qh", qh, NX_FLOAT);
-		validateFieldUnits("qh", qh, NX_DIMENSIONLESS);
+		validateFieldUnits("qh", group.getDataNode("qh"), NX_DIMENSIONLESS);
 		validateFieldRank("qh", qh, 1);
 		validateFieldDimensions("qh", qh, null, "nP");
 
@@ -270,7 +270,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldNotNull("qk", qk);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("qk", qk, NX_FLOAT);
-		validateFieldUnits("qk", qk, NX_DIMENSIONLESS);
+		validateFieldUnits("qk", group.getDataNode("qk"), NX_DIMENSIONLESS);
 		validateFieldRank("qk", qk, 1);
 		validateFieldDimensions("qk", qk, null, "nP");
 
@@ -279,7 +279,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldNotNull("ql", ql);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("ql", ql, NX_FLOAT);
-		validateFieldUnits("ql", ql, NX_DIMENSIONLESS);
+		validateFieldUnits("ql", group.getDataNode("ql"), NX_DIMENSIONLESS);
 		validateFieldRank("ql", ql, 1);
 		validateFieldDimensions("ql", ql, null, "nP");
 
@@ -288,7 +288,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldNotNull("en", en);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("en", en, NX_FLOAT);
-		validateFieldUnits("en", en, NX_ENERGY);
+		validateFieldUnits("en", group.getDataNode("en"), NX_ENERGY);
 		validateFieldRank("en", en, 1);
 		validateFieldDimensions("en", en, null, "nP");
 
@@ -297,7 +297,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldNotNull("rotation_angle", rotation_angle);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
-		validateFieldUnits("rotation_angle", rotation_angle, NX_ANGLE);
+		validateFieldUnits("rotation_angle", group.getDataNode("rotation_angle"), NX_ANGLE);
 		validateFieldRank("rotation_angle", rotation_angle, 1);
 		validateFieldDimensions("rotation_angle", rotation_angle, null, "nP");
 
@@ -306,7 +306,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldNotNull("polar_angle", polar_angle);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
-		validateFieldUnits("polar_angle", polar_angle, NX_ANGLE);
+		validateFieldUnits("polar_angle", group.getDataNode("polar_angle"), NX_ANGLE);
 		validateFieldRank("polar_angle", polar_angle, 1);
 		validateFieldDimensions("polar_angle", polar_angle, null, "nP");
 
@@ -315,7 +315,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldNotNull("sgu", sgu);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("sgu", sgu, NX_FLOAT);
-		validateFieldUnits("sgu", sgu, NX_ANGLE);
+		validateFieldUnits("sgu", group.getDataNode("sgu"), NX_ANGLE);
 		validateFieldRank("sgu", sgu, 1);
 		validateFieldDimensions("sgu", sgu, null, "nP");
 
@@ -324,7 +324,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldNotNull("sgl", sgl);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("sgl", sgl, NX_FLOAT);
-		validateFieldUnits("sgl", sgl, NX_ANGLE);
+		validateFieldUnits("sgl", group.getDataNode("sgl"), NX_ANGLE);
 		validateFieldRank("sgl", sgl, 1);
 		validateFieldDimensions("sgl", sgl, null, "nP");
 
@@ -333,7 +333,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldNotNull("unit_cell", unit_cell);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("unit_cell", unit_cell, NX_FLOAT);
-		validateFieldUnits("unit_cell", unit_cell, NX_LENGTH);
+		validateFieldUnits("unit_cell", group.getDataNode("unit_cell"), NX_LENGTH);
 		validateFieldRank("unit_cell", unit_cell, 1);
 		validateFieldDimensions("unit_cell", unit_cell, null, 6);
 
@@ -342,7 +342,7 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldNotNull("orientation_matrix", orientation_matrix);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("orientation_matrix", orientation_matrix, NX_FLOAT);
-		validateFieldUnits("orientation_matrix", orientation_matrix, NX_DIMENSIONLESS);
+		validateFieldUnits("orientation_matrix", group.getDataNode("orientation_matrix"), NX_DIMENSIONLESS);
 		validateFieldRank("orientation_matrix", orientation_matrix, 1);
 		validateFieldDimensions("orientation_matrix", orientation_matrix, null, 9);
 	}
@@ -368,14 +368,14 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldNotNull("preset", preset);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("preset", preset, NX_FLOAT);
-		validateFieldUnits("preset", preset, NX_ANY);
+		validateFieldUnits("preset", group.getDataNode("preset"), NX_ANY);
 
 		// validate field 'data' of type NX_FLOAT.
 		final IDataset data = group.getData();
 		validateFieldNotNull("data", data);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_FLOAT);
-		validateFieldUnits("data", data, NX_ANY);
+		validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
 		validateFieldRank("data", data, 1);
 		validateFieldDimensions("data", data, null, "nP");
 	}

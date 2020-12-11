@@ -98,7 +98,7 @@ public class NXxeulerValidator extends AbstractNexusValidator implements NexusAp
 		validateFieldNotNull("polar_angle", polar_angle);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
-		validateFieldUnits("polar_angle", polar_angle, NX_ANGLE);
+		validateFieldUnits("polar_angle", group.getDataNode("polar_angle"), NX_ANGLE);
 		validateFieldRank("polar_angle", polar_angle, 1);
 		validateFieldDimensions("polar_angle", polar_angle, null, "nP");
 	}
@@ -116,7 +116,7 @@ public class NXxeulerValidator extends AbstractNexusValidator implements NexusAp
 		validateFieldNotNull("rotation_angle", rotation_angle);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
-		validateFieldUnits("rotation_angle", rotation_angle, NX_ANGLE);
+		validateFieldUnits("rotation_angle", group.getDataNode("rotation_angle"), NX_ANGLE);
 		validateFieldRank("rotation_angle", rotation_angle, 1);
 		validateFieldDimensions("rotation_angle", rotation_angle, null, "nP");
 
@@ -125,7 +125,7 @@ public class NXxeulerValidator extends AbstractNexusValidator implements NexusAp
 		validateFieldNotNull("chi", chi);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("chi", chi, NX_FLOAT);
-		validateFieldUnits("chi", chi, NX_ANGLE);
+		validateFieldUnits("chi", group.getDataNode("chi"), NX_ANGLE);
 		validateFieldRank("chi", chi, 1);
 		validateFieldDimensions("chi", chi, null, "nP");
 
@@ -134,7 +134,7 @@ public class NXxeulerValidator extends AbstractNexusValidator implements NexusAp
 		validateFieldNotNull("phi", phi);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("phi", phi, NX_FLOAT);
-		validateFieldUnits("phi", phi, NX_ANGLE);
+		validateFieldUnits("phi", group.getDataNode("phi"), NX_ANGLE);
 		validateFieldRank("phi", phi, 1);
 		validateFieldDimensions("phi", phi, null, "nP");
 	}

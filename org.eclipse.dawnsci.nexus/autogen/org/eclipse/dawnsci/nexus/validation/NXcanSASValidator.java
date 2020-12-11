@@ -215,7 +215,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		validateFieldNotNull("Q", Q);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("Q", Q, NX_NUMBER);
-		validateFieldUnits("Q", Q, NX_PER_LENGTH);
+		validateFieldUnits("Q", group.getDataNode("Q"), NX_PER_LENGTH);
 		// validate attribute 'units' of field 'Q'
 		final Attribute Q_attr_units = group.getDataNode("Q").getAttribute("units");
 		validateAttributeNotNull("units", Q_attr_units);
@@ -298,7 +298,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (Qdev != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("Qdev", Qdev, NX_NUMBER);
-			validateFieldUnits("Qdev", Qdev, NX_PER_LENGTH);
+			validateFieldUnits("Qdev", group.getDataNode("Qdev"), NX_PER_LENGTH);
 		// validate attribute 'units' of field 'Qdev'
 		final Attribute Qdev_attr_units = group.getDataNode("Qdev").getAttribute("units");
 		validateAttributeNotNull("units", Qdev_attr_units);
@@ -315,7 +315,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (dQw != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("dQw", dQw, NX_NUMBER);
-			validateFieldUnits("dQw", dQw, NX_PER_LENGTH);
+			validateFieldUnits("dQw", group.getDataNode("dQw"), NX_PER_LENGTH);
 		// validate attribute 'units' of field 'dQw'
 		final Attribute dQw_attr_units = group.getDataNode("dQw").getAttribute("units");
 		validateAttributeNotNull("units", dQw_attr_units);
@@ -332,7 +332,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (dQl != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("dQl", dQl, NX_NUMBER);
-			validateFieldUnits("dQl", dQl, NX_PER_LENGTH);
+			validateFieldUnits("dQl", group.getDataNode("dQl"), NX_PER_LENGTH);
 		// validate attribute 'units' of field 'dQl'
 		final Attribute dQl_attr_units = group.getDataNode("dQl").getAttribute("units");
 		validateAttributeNotNull("units", dQl_attr_units);
@@ -349,7 +349,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (Qmean != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("Qmean", Qmean, NX_NUMBER);
-			validateFieldUnits("Qmean", Qmean, NX_PER_LENGTH);
+			validateFieldUnits("Qmean", group.getDataNode("Qmean"), NX_PER_LENGTH);
 		// validate attribute 'units' of field 'Qmean'
 		final Attribute Qmean_attr_units = group.getDataNode("Qmean").getAttribute("units");
 		validateAttributeNotNull("units", Qmean_attr_units);
@@ -365,7 +365,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		final IDataset ShadowFactor = group.getDataset("ShadowFactor");
 		if (ShadowFactor != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-			validateFieldUnits("ShadowFactor", ShadowFactor, NX_DIMENSIONLESS);
+			validateFieldUnits("ShadowFactor", group.getDataNode("ShadowFactor"), NX_DIMENSIONLESS);
 		}
 	}
 
@@ -432,7 +432,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (x_gap != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("x_gap", x_gap, NX_NUMBER);
-			validateFieldUnits("x_gap", x_gap, NX_LENGTH);
+			validateFieldUnits("x_gap", group.getDataNode("x_gap"), NX_LENGTH);
 		}
 
 		// validate optional field 'y_gap' of type NX_NUMBER. Note: field not defined in base class.
@@ -440,7 +440,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (y_gap != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("y_gap", y_gap, NX_NUMBER);
-			validateFieldUnits("y_gap", y_gap, NX_LENGTH);
+			validateFieldUnits("y_gap", group.getDataNode("y_gap"), NX_LENGTH);
 		}
 	}
 
@@ -463,7 +463,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (length != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("length", length, NX_NUMBER);
-			validateFieldUnits("length", length, NX_LENGTH);
+			validateFieldUnits("length", group.getDataNode("length"), NX_LENGTH);
 		}
 
 		// validate optional field 'distance' of type NX_NUMBER. Note: field not defined in base class.
@@ -471,7 +471,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (distance != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("distance", distance, NX_NUMBER);
-			validateFieldUnits("distance", distance, NX_LENGTH);
+			validateFieldUnits("distance", group.getDataNode("distance"), NX_LENGTH);
 		}
 	}
 
@@ -500,7 +500,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (SDD != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("SDD", SDD, NX_NUMBER);
-			validateFieldUnits("SDD", SDD, NX_LENGTH);
+			validateFieldUnits("SDD", group.getDataNode("SDD"), NX_LENGTH);
 		}
 
 		// validate optional field 'slit_length' of type NX_NUMBER. Note: field not defined in base class.
@@ -508,7 +508,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (slit_length != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("slit_length", slit_length, NX_NUMBER);
-			validateFieldUnits("slit_length", slit_length, NX_PER_LENGTH);
+			validateFieldUnits("slit_length", group.getDataNode("slit_length"), NX_PER_LENGTH);
 		}
 
 		// validate optional field 'x_position' of type NX_NUMBER. Note: field not defined in base class.
@@ -516,7 +516,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (x_position != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("x_position", x_position, NX_NUMBER);
-			validateFieldUnits("x_position", x_position, NX_LENGTH);
+			validateFieldUnits("x_position", group.getDataNode("x_position"), NX_LENGTH);
 		}
 
 		// validate optional field 'y_position' of type NX_NUMBER. Note: field not defined in base class.
@@ -524,7 +524,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (y_position != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("y_position", y_position, NX_NUMBER);
-			validateFieldUnits("y_position", y_position, NX_LENGTH);
+			validateFieldUnits("y_position", group.getDataNode("y_position"), NX_LENGTH);
 		}
 
 		// validate optional field 'roll' of type NX_NUMBER. Note: field not defined in base class.
@@ -532,7 +532,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (roll != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("roll", roll, NX_NUMBER);
-			validateFieldUnits("roll", roll, NX_ANGLE);
+			validateFieldUnits("roll", group.getDataNode("roll"), NX_ANGLE);
 		}
 
 		// validate optional field 'pitch' of type NX_NUMBER. Note: field not defined in base class.
@@ -540,7 +540,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (pitch != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("pitch", pitch, NX_NUMBER);
-			validateFieldUnits("pitch", pitch, NX_ANGLE);
+			validateFieldUnits("pitch", group.getDataNode("pitch"), NX_ANGLE);
 		}
 
 		// validate optional field 'yaw' of type NX_NUMBER. Note: field not defined in base class.
@@ -548,7 +548,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (yaw != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("yaw", yaw, NX_NUMBER);
-			validateFieldUnits("yaw", yaw, NX_ANGLE);
+			validateFieldUnits("yaw", group.getDataNode("yaw"), NX_ANGLE);
 		}
 
 		// validate optional field 'beam_center_x' of type NX_FLOAT.
@@ -556,7 +556,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (beam_center_x != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("beam_center_x", beam_center_x, NX_FLOAT);
-			validateFieldUnits("beam_center_x", beam_center_x, NX_LENGTH);
+			validateFieldUnits("beam_center_x", group.getDataNode("beam_center_x"), NX_LENGTH);
 		}
 
 		// validate optional field 'beam_center_y' of type NX_FLOAT.
@@ -564,7 +564,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (beam_center_y != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("beam_center_y", beam_center_y, NX_FLOAT);
-			validateFieldUnits("beam_center_y", beam_center_y, NX_LENGTH);
+			validateFieldUnits("beam_center_y", group.getDataNode("beam_center_y"), NX_LENGTH);
 		}
 
 		// validate optional field 'x_pixel_size' of type NX_FLOAT.
@@ -572,7 +572,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (x_pixel_size != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("x_pixel_size", x_pixel_size, NX_FLOAT);
-			validateFieldUnits("x_pixel_size", x_pixel_size, NX_LENGTH);
+			validateFieldUnits("x_pixel_size", group.getDataNode("x_pixel_size"), NX_LENGTH);
 			validateFieldRank("x_pixel_size", x_pixel_size, 2);
 			validateFieldDimensions("x_pixel_size", x_pixel_size, "NXdetector", "i", "j");
 		}
@@ -582,7 +582,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (y_pixel_size != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("y_pixel_size", y_pixel_size, NX_FLOAT);
-			validateFieldUnits("y_pixel_size", y_pixel_size, NX_LENGTH);
+			validateFieldUnits("y_pixel_size", group.getDataNode("y_pixel_size"), NX_LENGTH);
 			validateFieldRank("y_pixel_size", y_pixel_size, 2);
 			validateFieldDimensions("y_pixel_size", y_pixel_size, "NXdetector", "i", "j");
 		}
@@ -639,7 +639,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (incident_wavelength != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("incident_wavelength", incident_wavelength, NX_NUMBER);
-			validateFieldUnits("incident_wavelength", incident_wavelength, NX_WAVELENGTH);
+			validateFieldUnits("incident_wavelength", group.getDataNode("incident_wavelength"), NX_WAVELENGTH);
 		}
 
 		// validate optional field 'wavelength_min' of type NX_NUMBER. Note: field not defined in base class.
@@ -647,7 +647,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (wavelength_min != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("wavelength_min", wavelength_min, NX_NUMBER);
-			validateFieldUnits("wavelength_min", wavelength_min, NX_WAVELENGTH);
+			validateFieldUnits("wavelength_min", group.getDataNode("wavelength_min"), NX_WAVELENGTH);
 		}
 
 		// validate optional field 'wavelength_max' of type NX_NUMBER. Note: field not defined in base class.
@@ -655,7 +655,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (wavelength_max != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("wavelength_max", wavelength_max, NX_NUMBER);
-			validateFieldUnits("wavelength_max", wavelength_max, NX_WAVELENGTH);
+			validateFieldUnits("wavelength_max", group.getDataNode("wavelength_max"), NX_WAVELENGTH);
 		}
 
 		// validate optional field 'incident_wavelength_spread' of type NX_NUMBER. Note: field not defined in base class.
@@ -663,7 +663,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (incident_wavelength_spread != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("incident_wavelength_spread", incident_wavelength_spread, NX_NUMBER);
-			validateFieldUnits("incident_wavelength_spread", incident_wavelength_spread, NX_WAVELENGTH);
+			validateFieldUnits("incident_wavelength_spread", group.getDataNode("incident_wavelength_spread"), NX_WAVELENGTH);
 		}
 
 		// validate optional field 'beam_size_x' of type NX_NUMBER. Note: field not defined in base class.
@@ -671,7 +671,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (beam_size_x != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("beam_size_x", beam_size_x, NX_NUMBER);
-			validateFieldUnits("beam_size_x", beam_size_x, NX_LENGTH);
+			validateFieldUnits("beam_size_x", group.getDataNode("beam_size_x"), NX_LENGTH);
 		}
 
 		// validate optional field 'beam_size_y' of type NX_NUMBER. Note: field not defined in base class.
@@ -679,7 +679,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (beam_size_y != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("beam_size_y", beam_size_y, NX_NUMBER);
-			validateFieldUnits("beam_size_y", beam_size_y, NX_LENGTH);
+			validateFieldUnits("beam_size_y", group.getDataNode("beam_size_y"), NX_LENGTH);
 		}
 	}
 
@@ -708,7 +708,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (thickness != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("thickness", thickness, NX_FLOAT);
-			validateFieldUnits("thickness", thickness, NX_LENGTH);
+			validateFieldUnits("thickness", group.getDataNode("thickness"), NX_LENGTH);
 		}
 
 		// validate optional field 'transmission' of type NX_NUMBER. Note: field not defined in base class.
@@ -716,7 +716,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (transmission != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("transmission", transmission, NX_NUMBER);
-			validateFieldUnits("transmission", transmission, NX_DIMENSIONLESS);
+			validateFieldUnits("transmission", group.getDataNode("transmission"), NX_DIMENSIONLESS);
 		}
 
 		// validate optional field 'temperature' of type NX_NUMBER.
@@ -724,7 +724,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (temperature != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("temperature", temperature, NX_NUMBER);
-			validateFieldUnits("temperature", temperature, NX_TEMPERATURE);
+			validateFieldUnits("temperature", group.getDataNode("temperature"), NX_TEMPERATURE);
 			validateFieldDimensions("temperature", temperature, "NXsample", "n_Temp");
 		}
 
@@ -739,7 +739,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (x_position != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("x_position", x_position, NX_NUMBER);
-			validateFieldUnits("x_position", x_position, NX_LENGTH);
+			validateFieldUnits("x_position", group.getDataNode("x_position"), NX_LENGTH);
 		}
 
 		// validate optional field 'y_position' of type NX_NUMBER. Note: field not defined in base class.
@@ -747,7 +747,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (y_position != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("y_position", y_position, NX_NUMBER);
-			validateFieldUnits("y_position", y_position, NX_LENGTH);
+			validateFieldUnits("y_position", group.getDataNode("y_position"), NX_LENGTH);
 		}
 
 		// validate optional field 'roll' of type NX_NUMBER. Note: field not defined in base class.
@@ -755,7 +755,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (roll != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("roll", roll, NX_NUMBER);
-			validateFieldUnits("roll", roll, NX_ANGLE);
+			validateFieldUnits("roll", group.getDataNode("roll"), NX_ANGLE);
 		}
 
 		// validate optional field 'pitch' of type NX_NUMBER. Note: field not defined in base class.
@@ -763,7 +763,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (pitch != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("pitch", pitch, NX_NUMBER);
-			validateFieldUnits("pitch", pitch, NX_ANGLE);
+			validateFieldUnits("pitch", group.getDataNode("pitch"), NX_ANGLE);
 		}
 
 		// validate optional field 'yaw' of type NX_NUMBER. Note: field not defined in base class.
@@ -771,7 +771,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		if (yaw != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("yaw", yaw, NX_NUMBER);
-			validateFieldUnits("yaw", yaw, NX_ANGLE);
+			validateFieldUnits("yaw", group.getDataNode("yaw"), NX_ANGLE);
 		}
 	}
 
@@ -915,14 +915,14 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		validateFieldNotNull("lambda", lambda);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("lambda", lambda, NX_NUMBER);
-		validateFieldUnits("lambda", lambda, NX_WAVELENGTH);
+		validateFieldUnits("lambda", group.getDataNode("lambda"), NX_WAVELENGTH);
 
 		// validate field 'T' of type NX_NUMBER. Note: field not defined in base class.
 		final IDataset T = group.getDataset("T");
 		validateFieldNotNull("T", T);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("T", T, NX_NUMBER);
-		validateFieldUnits("T", T, NX_DIMENSIONLESS);
+		validateFieldUnits("T", group.getDataNode("T"), NX_DIMENSIONLESS);
 		// validate attribute 'uncertainties' of field 'T'
 		final Attribute T_attr_uncertainties = group.getDataNode("T").getAttribute("uncertainties");
 		validateAttributeNotNull("uncertainties", T_attr_uncertainties);
@@ -934,6 +934,6 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		validateFieldNotNull("Tdev", Tdev);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("Tdev", Tdev, NX_NUMBER);
-		validateFieldUnits("Tdev", Tdev, NX_DIMENSIONLESS);
+		validateFieldUnits("Tdev", group.getDataNode("Tdev"), NX_DIMENSIONLESS);
 	}
 }

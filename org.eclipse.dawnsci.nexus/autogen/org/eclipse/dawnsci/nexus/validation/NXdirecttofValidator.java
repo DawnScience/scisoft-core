@@ -113,14 +113,14 @@ public class NXdirecttofValidator extends AbstractNexusValidator implements Nexu
 		validateFieldNotNull("rotation_speed", rotation_speed);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("rotation_speed", rotation_speed, NX_FLOAT);
-		validateFieldUnits("rotation_speed", rotation_speed, NX_FREQUENCY);
+		validateFieldUnits("rotation_speed", group.getDataNode("rotation_speed"), NX_FREQUENCY);
 
 		// validate field 'energy' of type NX_FLOAT.
 		final IDataset energy = group.getEnergy();
 		validateFieldNotNull("energy", energy);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("energy", energy, NX_FLOAT);
-		validateFieldUnits("energy", energy, NX_ENERGY);
+		validateFieldUnits("energy", group.getDataNode("energy"), NX_ENERGY);
 	}
 
 	/**
@@ -136,13 +136,13 @@ public class NXdirecttofValidator extends AbstractNexusValidator implements Nexu
 		validateFieldNotNull("rotation_speed", rotation_speed);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("rotation_speed", rotation_speed, NX_FLOAT);
-		validateFieldUnits("rotation_speed", rotation_speed, NX_FREQUENCY);
+		validateFieldUnits("rotation_speed", group.getDataNode("rotation_speed"), NX_FREQUENCY);
 
 		// validate field 'energy' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset energy = group.getDataset("energy");
 		validateFieldNotNull("energy", energy);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("energy", energy, NX_FLOAT);
-		validateFieldUnits("energy", energy, NX_ENERGY);
+		validateFieldUnits("energy", group.getDataNode("energy"), NX_ENERGY);
 	}
 }

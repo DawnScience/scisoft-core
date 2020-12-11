@@ -117,14 +117,14 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 		validateFieldNotNull("duration", duration);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("duration", duration, NX_FLOAT);
-		validateFieldUnits("duration", duration, NX_TIME);
+		validateFieldUnits("duration", group.getDataNode("duration"), NX_TIME);
 
 		// validate field 'collection_time' of type NX_FLOAT.
 		final IDataset collection_time = group.getCollection_time();
 		validateFieldNotNull("collection_time", collection_time);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("collection_time", collection_time, NX_FLOAT);
-		validateFieldUnits("collection_time", collection_time, NX_TIME);
+		validateFieldUnits("collection_time", group.getDataNode("collection_time"), NX_TIME);
 
 		// validate field 'run_cycle' of type NX_CHAR.
 		final IDataset run_cycle = group.getRun_cycle();
@@ -161,7 +161,7 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 		validateFieldNotNull("release_date", release_date);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("release_date", release_date, NX_CHAR);
-		validateFieldUnits("release_date", release_date, NX_TIME);
+		validateFieldUnits("release_date", group.getDataNode("release_date"), NX_TIME);
 
 		// validate child group 'user' of type NXuser
 		validateGroup_entry_user(group.getUser());
@@ -310,7 +310,7 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 		validateFieldNotNull("preparation_date", preparation_date);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("preparation_date", preparation_date, NX_CHAR);
-		validateFieldUnits("preparation_date", preparation_date, NX_TIME);
+		validateFieldUnits("preparation_date", group.getDataNode("preparation_date"), NX_TIME);
 
 		// validate field 'situation' of type NX_CHAR.
 		final IDataset situation = group.getSituation();
@@ -331,7 +331,7 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 		validateFieldNotNull("temperature", temperature);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("temperature", temperature, NX_FLOAT);
-		validateFieldUnits("temperature", temperature, NX_TEMPERATURE);
+		validateFieldUnits("temperature", group.getDataNode("temperature"), NX_TEMPERATURE);
 		validateFieldDimensions("temperature", temperature, "NXsample", "n_Temp");
 
 		// validate field 'magnetic_field' of type NX_FLOAT.
@@ -339,7 +339,7 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 		validateFieldNotNull("magnetic_field", magnetic_field);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("magnetic_field", magnetic_field, NX_FLOAT);
-		validateFieldUnits("magnetic_field", magnetic_field, NX_CURRENT);
+		validateFieldUnits("magnetic_field", group.getDataNode("magnetic_field"), NX_CURRENT);
 		validateFieldDimensions("magnetic_field", magnetic_field, "NXsample", "n_mField");
 
 		// validate field 'electric_field' of type NX_FLOAT.
@@ -347,7 +347,7 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 		validateFieldNotNull("electric_field", electric_field);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("electric_field", electric_field, NX_FLOAT);
-		validateFieldUnits("electric_field", electric_field, NX_VOLTAGE);
+		validateFieldUnits("electric_field", group.getDataNode("electric_field"), NX_VOLTAGE);
 		validateFieldDimensions("electric_field", electric_field, "NXsample", "n_eField");
 
 		// validate field 'stress_field' of type NX_FLOAT.
@@ -355,7 +355,7 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 		validateFieldNotNull("stress_field", stress_field);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("stress_field", stress_field, NX_FLOAT);
-		validateFieldUnits("stress_field", stress_field, NX_UNITLESS);
+		validateFieldUnits("stress_field", group.getDataNode("stress_field"), NX_UNITLESS);
 		validateFieldDimensions("stress_field", stress_field, "NXsample", "n_sField");
 
 		// validate field 'pressure' of type NX_FLOAT.
@@ -363,7 +363,7 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 		validateFieldNotNull("pressure", pressure);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("pressure", pressure, NX_FLOAT);
-		validateFieldUnits("pressure", pressure, NX_PRESSURE);
+		validateFieldUnits("pressure", group.getDataNode("pressure"), NX_PRESSURE);
 		validateFieldDimensions("pressure", pressure, "NXsample", "n_pField");
 	}
 }

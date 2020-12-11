@@ -108,7 +108,7 @@ public class NXxlaueValidator extends AbstractNexusValidator implements NexusApp
 		final IDataset wavelength = group.getDataset("wavelength");
 		validateFieldNotNull("wavelength", wavelength);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldUnits("wavelength", wavelength, NX_WAVELENGTH);
+		validateFieldUnits("wavelength", group.getDataNode("wavelength"), NX_WAVELENGTH);
 		validateFieldRank("wavelength", wavelength, 1);
 		validateFieldDimensions("wavelength", wavelength, null, "nE");
 	}

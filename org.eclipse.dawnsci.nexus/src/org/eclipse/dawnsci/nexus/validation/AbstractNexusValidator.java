@@ -22,6 +22,8 @@ import java.util.function.Function;
 import java.util.stream.StreamSupport;
 
 import javax.measure.Unit;
+import javax.measure.format.ParserException;
+
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
@@ -36,6 +38,8 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.metadata.MetadataType;
 import org.eclipse.january.metadata.UnitMetadata;
+
+import tec.units.indriya.format.SimpleUnitFormat;
 
 /**
  * Abstract superclass for Nexus application definition validators.
@@ -67,6 +71,8 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 		}
 		
 	}
+	
+	public static final String ATTRIBUTE_NAME_UNITS = "units";
 
 	private NXsubentry entry = null;
 	
@@ -171,31 +177,27 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	 * Validates that the given field has units consistent with the given unit category.
 	 * 
 	 * @param fieldName field name
-	 * @param dataset field value, an {@link IDataset}
+	 * @param dataNode the {@link DataNode} for the field
 	 * @param unitCategory expected unit category
 	 * @throws Exception if an unexpected exception occurs
 	 * @throws NexusValidationException if the field's units are not consistent with the given unit category
 	 */
-	protected void validateFieldUnits(final String fieldName, final IDataset dataset,
+	protected void validateFieldUnits(final String fieldName, final DataNode dataNode,
 			final NexusUnitCategory unitCategory) throws NexusValidationException {
-		List<? extends MetadataType> metadata;
+		final Attribute unitsAttribute = dataNode.getAttribute(ATTRIBUTE_NAME_UNITS);
+		if (unitsAttribute == null) {
+			failValidation(MessageFormat.format("No units attribute for field ''{0}'', expected ''{1}''.",
+					fieldName, unitCategory));
+		}
+		final String unitsStr = unitsAttribute.getFirstElement();
 		try {
-			metadata = dataset.getMetadata(UnitMetadata.class);
-		} catch (Exception e) {
-			throw new NexusValidationException("Could not get unit metadata for field '" + fieldName + "'", e);
-		}
-		// TODO why does getMetadata return a list? Can I assume I'm only interested in the first element?
-		if (metadata == null || metadata.isEmpty() || !metadata.get(0).getClass().equals(UnitMetadata.class)) {
-			failValidation("No unit metadata for field '" + fieldName + "', expected " + unitCategory);
-		}
-		
-		if (metadata.size() > 1) {
-			failValidation("Multiple unit metadata items found for field '" + fieldName + "'");
-		}
-		
-		Unit<?> unit = ((UnitMetadata) metadata.get(0)).getUnit();
-		if (!unitCategory.isCompatible(unit)) {
-			failValidation("Unit " + unit + " is not compatible with the unit category " + unitCategory);
+			final Unit<?> unit = SimpleUnitFormat.getInstance().parse(unitsStr);
+			if (!unitCategory.isCompatible(unit)) {
+				failValidation(MessageFormat.format("Units ''{0}'' for field ''{1}'' are not compatible with unit category ''{2}''",
+						unitsStr, fieldName, unitCategory));
+			}
+		} catch (ParserException e) {
+			failValidation(MessageFormat.format("Invalid units ''{0}'' for field ''{1}''.", unitsStr, fieldName)); 
 		}
 	}
 

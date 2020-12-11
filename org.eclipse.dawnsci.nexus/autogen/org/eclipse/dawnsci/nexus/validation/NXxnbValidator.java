@@ -98,7 +98,7 @@ public class NXxnbValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldNotNull("polar_angle", polar_angle);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
-		validateFieldUnits("polar_angle", polar_angle, NX_ANGLE);
+		validateFieldUnits("polar_angle", group.getDataNode("polar_angle"), NX_ANGLE);
 		validateFieldRank("polar_angle", polar_angle, 1);
 		validateFieldDimensions("polar_angle", polar_angle, null, "nP");
 
@@ -107,7 +107,7 @@ public class NXxnbValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldNotNull("tilt_angle", tilt_angle);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("tilt_angle", tilt_angle, NX_FLOAT);
-		validateFieldUnits("tilt_angle", tilt_angle, NX_ANGLE);
+		validateFieldUnits("tilt_angle", group.getDataNode("tilt_angle"), NX_ANGLE);
 		validateFieldRank("tilt_angle", tilt_angle, 1);
 		validateFieldDimensions("tilt_angle", tilt_angle, null, "nP");
 	}
@@ -125,7 +125,7 @@ public class NXxnbValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldNotNull("rotation_angle", rotation_angle);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
-		validateFieldUnits("rotation_angle", rotation_angle, NX_ANGLE);
+		validateFieldUnits("rotation_angle", group.getDataNode("rotation_angle"), NX_ANGLE);
 		validateFieldRank("rotation_angle", rotation_angle, 1);
 		validateFieldDimensions("rotation_angle", rotation_angle, null, "nP");
 	}

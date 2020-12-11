@@ -105,7 +105,7 @@ public class NXindirecttofValidator extends AbstractNexusValidator implements Ne
 		validateFieldNotNull("energy", energy);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("energy", energy, NX_FLOAT);
-		validateFieldUnits("energy", energy, NX_ENERGY);
+		validateFieldUnits("energy", group.getDataNode("energy"), NX_ENERGY);
 		validateFieldRank("energy", energy, 1);
 		validateFieldDimensions("energy", energy, null, "nDet");
 
@@ -114,7 +114,7 @@ public class NXindirecttofValidator extends AbstractNexusValidator implements Ne
 		validateFieldNotNull("polar_angle", polar_angle);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
-		validateFieldUnits("polar_angle", polar_angle, NX_ANGLE);
+		validateFieldUnits("polar_angle", group.getDataNode("polar_angle"), NX_ANGLE);
 		validateFieldRank("polar_angle", polar_angle, 1);
 		validateFieldDimensions("polar_angle", polar_angle, null, "nDet");
 
@@ -123,7 +123,7 @@ public class NXindirecttofValidator extends AbstractNexusValidator implements Ne
 		validateFieldNotNull("distance", distance);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("distance", distance, NX_FLOAT);
-		validateFieldUnits("distance", distance, NX_LENGTH);
+		validateFieldUnits("distance", group.getDataNode("distance"), NX_LENGTH);
 		validateFieldRank("distance", distance, 1);
 		validateFieldDimensions("distance", distance, null, "nDet");
 	}

@@ -11,27 +11,45 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.nexus.validation;
 
+import java.util.Arrays;
+
 import javax.measure.Unit;
 
 import si.uom.SI;
 import tec.units.indriya.AbstractUnit;
 
+/**
+ * An enumeration of unit types.
+ * Note: this class is derived from the file {@code nxdlType.xdl} which can be found on GitHub
+ * <a href="https://github.com/nexusformat/definitions/blob/master/nxdlTypes.xsd">here</a>.
+ * Generated documentation from that file can be found in the Nexus manual
+ * <a href="https://manual.nexusformat.org/nxdl-types.html#unit-categories-allowed-in-nxdl-specifications">here</a>.
+ * The file is hand-written, rather than auto-generated from that file using XSLT. 
+ * TODO: should we try to do this, see https://jira.diamond.ac.uk/browse/DAQ-3300
+ * @author Matthew Dickie
+ */
 public enum NexusUnitCategory {
 	
 	NX_ANGLE(SI.RADIAN),
 	
-	// TODO: check standard unit for this unit category (perhaps any units are ok?)
-	NX_ANY(AbstractUnit.ONE),
+	NX_ANY(null) {
+
+		@Override
+		public boolean isCompatible(Unit<?> unit) {
+			return true; // all units are accepted
+		}
+		
+	},
 	
 	NX_AREA(SI.SQUARE_METRE),
 	
 	NX_CHARGE(SI.COULOMB),
 	
-	NX_CROSS_SECTION(SI.SQUARE_METRE),
+	NX_CROSS_SECTION(SI.SQUARE_METRE), // alias of NX_AREA
 	
 	NX_CURRENT(SI.AMPERE),
 	
-	NX_DIMENSIONLESS(AbstractUnit.ONE),
+	NX_DIMENSIONLESS(AbstractUnit.ONE), // TODO is this right?
 	
 	/**
 	 * Emmittance, a length * angle, e.g. metre-radians
@@ -41,8 +59,7 @@ public enum NexusUnitCategory {
 	NX_ENERGY(SI.JOULE),
 	
 	/**
-	 * TODO: what unit of flux to use?
-	 * The nexus format documentation gives the example: s-1 cm-2,
+	 * some number (e.g. photons) per square meter per second.
 	 */
 	NX_FLUX(SI.SECOND.inverse().divide(SI.SQUARE_METRE)),
 	
@@ -69,13 +86,9 @@ public enum NexusUnitCategory {
 	
 	NX_PRESSURE(SI.PASCAL),
 	
-	/**
-	 * Alias to NX_NUMBER
-	 * TODO check unit for this category - could use sub-interface of Dimensionless
-	 */
-	NX_PULSES(AbstractUnit.ONE),
+	NX_PULSES(AbstractUnit.ONE), // TODO is this right?
 	
-	NX_SCATTERING_LENGTH_DENSITY(SI.SQUARE_METRE.inverse()),
+	NX_SCATTERING_LENGTH_DENSITY(SI.METRE.divide(SI.CUBIC_METRE)), // definition gives example m/m^3 
 	
 	NX_SOLID_ANGLE(SI.STERADIAN),
 	
@@ -89,23 +102,45 @@ public enum NexusUnitCategory {
 	NX_TIME_OF_FLIGHT(SI.SECOND),
 	
 	/**
-	 * TODO, what units for unitless? could we use a subinterface of Dimensionless?
+	 * From https://manual.nexusformat.org/nxdl-types.html:
+	 * units of the specified transformation
+	 * could be any of these: NX_LENGTH, NX_ANGLE, or NX_UNITLESS
+	 * Note: this unit type is not specified in application definition, but it is specified in the
+	 * NXtransformations base class definition.
 	 */
-	NX_UNITLESS(null),
+	NX_TRANSFORMATION(null) {
+
+		@Override
+		public boolean isCompatible(Unit<?> unit) {
+			return Arrays.asList(NX_LENGTH, NX_ANGLE, NX_UNITLESS).stream().anyMatch(cat -> cat.isCompatible(unit));
+		}
+		
+	},
+	
+	NX_UNITLESS(null) {
+
+		@Override
+		public boolean isCompatible(Unit<?> unit) {
+			return false; // no unit attribute is valid in this case
+		}
+		
+	},
 	
 	NX_VOLTAGE(SI.VOLT),
 	
 	NX_VOLUME(SI.CUBIC_METRE),
 	
-	NX_WAVELENGTH(SI.METRE),
+	NX_WAVELENGTH(SI.METRE), // example is angstrom
 	
-	NX_WAVENUMBER(SI.METRE.inverse());
+	NX_WAVENUMBER(SI.METRE.inverse()); // example is 1/nm or 1/angstrom
 	
 	private Unit<?> standardUnit;
 	
 	private NexusUnitCategory(Unit<?> unit) {
 		// make sure we have the standard unit
-		standardUnit = unit.getSystemUnit();
+		if (unit != null) {
+			standardUnit = unit.getSystemUnit();
+		}
 	}
 	
 	public boolean isCompatible(Unit<?> unit) {

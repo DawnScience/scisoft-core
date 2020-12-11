@@ -166,7 +166,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		validateFieldNotNull("wavelength", wavelength);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("wavelength", wavelength, NX_FLOAT);
-		validateFieldUnits("wavelength", wavelength, NX_WAVELENGTH);
+		validateFieldUnits("wavelength", group.getDataNode("wavelength"), NX_WAVELENGTH);
 	}
 
 	/**
@@ -182,7 +182,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		validateFieldNotNull("data", data);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_INT);
-		validateFieldUnits("data", data, NX_ANY);
+		validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
 		validateFieldRank("data", data, 3);
 		validateFieldDimensions("data", data, null, "nP", "nXPixels", "nYPixels");
 		// validate attribute 'signal' of field 'data'
@@ -199,7 +199,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		validateFieldNotNull("x_pixel_size", x_pixel_size);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("x_pixel_size", x_pixel_size, NX_FLOAT);
-		validateFieldUnits("x_pixel_size", x_pixel_size, NX_LENGTH);
+		validateFieldUnits("x_pixel_size", group.getDataNode("x_pixel_size"), NX_LENGTH);
 		validateFieldRank("x_pixel_size", x_pixel_size, 2);
 		validateFieldDimensions("x_pixel_size", x_pixel_size, "NXdetector", "i", "j");
 
@@ -208,7 +208,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		validateFieldNotNull("y_pixel_size", y_pixel_size);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("y_pixel_size", y_pixel_size, NX_FLOAT);
-		validateFieldUnits("y_pixel_size", y_pixel_size, NX_LENGTH);
+		validateFieldUnits("y_pixel_size", group.getDataNode("y_pixel_size"), NX_LENGTH);
 		validateFieldRank("y_pixel_size", y_pixel_size, 2);
 		validateFieldDimensions("y_pixel_size", y_pixel_size, "NXdetector", "i", "j");
 
@@ -217,7 +217,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		validateFieldNotNull("distance", distance);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("distance", distance, NX_FLOAT);
-		validateFieldUnits("distance", distance, NX_LENGTH);
+		validateFieldUnits("distance", group.getDataNode("distance"), NX_LENGTH);
 		validateFieldRank("distance", distance, 3);
 		validateFieldDimensions("distance", distance, "NXdetector", "np", "i", "j");
 
@@ -255,7 +255,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		validateFieldNotNull("unit_cell", unit_cell);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("unit_cell", unit_cell, NX_FLOAT);
-		validateFieldUnits("unit_cell", unit_cell, NX_LENGTH);
+		validateFieldUnits("unit_cell", group.getDataNode("unit_cell"), NX_LENGTH);
 		validateFieldRank("unit_cell", unit_cell, 1);
 		validateFieldDimensions("unit_cell", unit_cell, null, 6);
 
@@ -264,7 +264,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		validateFieldNotNull("temperature", temperature);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("temperature", temperature, NX_FLOAT);
-		validateFieldUnits("temperature", temperature, NX_TEMPERATURE);
+		validateFieldUnits("temperature", group.getDataNode("temperature"), NX_TEMPERATURE);
 		validateFieldRank("temperature", temperature, 1);
 		validateFieldDimensions("temperature", temperature, null, "nP");
 
@@ -273,21 +273,21 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		validateFieldNotNull("x_translation", x_translation);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("x_translation", x_translation, NX_FLOAT);
-		validateFieldUnits("x_translation", x_translation, NX_LENGTH);
+		validateFieldUnits("x_translation", group.getDataNode("x_translation"), NX_LENGTH);
 
 		// validate field 'y_translation' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset y_translation = group.getDataset("y_translation");
 		validateFieldNotNull("y_translation", y_translation);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("y_translation", y_translation, NX_FLOAT);
-		validateFieldUnits("y_translation", y_translation, NX_LENGTH);
+		validateFieldUnits("y_translation", group.getDataNode("y_translation"), NX_LENGTH);
 
 		// validate field 'distance' of type NX_FLOAT.
 		final IDataset distance = group.getDistance();
 		validateFieldNotNull("distance", distance);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("distance", distance, NX_FLOAT);
-		validateFieldUnits("distance", distance, NX_LENGTH);
+		validateFieldUnits("distance", group.getDataNode("distance"), NX_LENGTH);
 	}
 
 	/**
@@ -311,14 +311,14 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		validateFieldNotNull("preset", preset);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("preset", preset, NX_FLOAT);
-		validateFieldUnits("preset", preset, NX_ANY);
+		validateFieldUnits("preset", group.getDataNode("preset"), NX_ANY);
 
 		// validate field 'integral' of type NX_FLOAT.
 		final IDataset integral = group.getIntegral();
 		validateFieldNotNull("integral", integral);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("integral", integral, NX_FLOAT);
-		validateFieldUnits("integral", integral, NX_ANY);
+		validateFieldUnits("integral", group.getDataNode("integral"), NX_ANY);
 	}
 
 	/**

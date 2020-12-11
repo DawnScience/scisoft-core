@@ -103,7 +103,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		validateFieldNotNull("polar_angle", polar_angle);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
-		validateFieldUnits("polar_angle", polar_angle, NX_ANGLE);
+		validateFieldUnits("polar_angle", group.getDataNode("polar_angle"), NX_ANGLE);
 		validateFieldRank("polar_angle", polar_angle, 3);
 		validateFieldDimensions("polar_angle", polar_angle, "NXdetector", "np", "i", "j");
 
@@ -112,7 +112,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		validateFieldNotNull("azimuthal_angle", azimuthal_angle);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("azimuthal_angle", azimuthal_angle, NX_FLOAT);
-		validateFieldUnits("azimuthal_angle", azimuthal_angle, NX_ANGLE);
+		validateFieldUnits("azimuthal_angle", group.getDataNode("azimuthal_angle"), NX_ANGLE);
 		validateFieldRank("azimuthal_angle", azimuthal_angle, 3);
 		validateFieldDimensions("azimuthal_angle", azimuthal_angle, "NXdetector", "np", "i", "j");
 
@@ -121,7 +121,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		validateFieldNotNull("data", data);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_INT);
-		validateFieldUnits("data", data, NX_ANY);
+		validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
 		validateFieldRank("data", data, 3);
 		validateFieldDimensions("data", data, null, "nXPixels", "nYPixels", "nTOF");
 		// validate attribute 'signal' of field 'data'
@@ -138,7 +138,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		validateFieldNotNull("x_pixel_size", x_pixel_size);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("x_pixel_size", x_pixel_size, NX_FLOAT);
-		validateFieldUnits("x_pixel_size", x_pixel_size, NX_LENGTH);
+		validateFieldUnits("x_pixel_size", group.getDataNode("x_pixel_size"), NX_LENGTH);
 		validateFieldRank("x_pixel_size", x_pixel_size, 2);
 		validateFieldDimensions("x_pixel_size", x_pixel_size, "NXdetector", "i", "j");
 
@@ -147,7 +147,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		validateFieldNotNull("y_pixel_size", y_pixel_size);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("y_pixel_size", y_pixel_size, NX_FLOAT);
-		validateFieldUnits("y_pixel_size", y_pixel_size, NX_LENGTH);
+		validateFieldUnits("y_pixel_size", group.getDataNode("y_pixel_size"), NX_LENGTH);
 		validateFieldRank("y_pixel_size", y_pixel_size, 2);
 		validateFieldDimensions("y_pixel_size", y_pixel_size, "NXdetector", "i", "j");
 
@@ -156,7 +156,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		validateFieldNotNull("distance", distance);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("distance", distance, NX_FLOAT);
-		validateFieldUnits("distance", distance, NX_LENGTH);
+		validateFieldUnits("distance", group.getDataNode("distance"), NX_LENGTH);
 		validateFieldRank("distance", distance, 3);
 		validateFieldDimensions("distance", distance, "NXdetector", "np", "i", "j");
 
@@ -165,7 +165,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		validateFieldNotNull("time_of_flight", time_of_flight);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("time_of_flight", time_of_flight, NX_FLOAT);
-		validateFieldUnits("time_of_flight", time_of_flight, NX_TIME_OF_FLIGHT);
+		validateFieldUnits("time_of_flight", group.getDataNode("time_of_flight"), NX_TIME_OF_FLIGHT);
 		validateFieldRank("time_of_flight", time_of_flight, 1);
 		validateFieldDimensions("time_of_flight", time_of_flight, null, "nTOF");
 	}
@@ -196,7 +196,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		validateFieldNotNull("unit_cell", unit_cell);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("unit_cell", unit_cell, NX_FLOAT);
-		validateFieldUnits("unit_cell", unit_cell, NX_LENGTH);
+		validateFieldUnits("unit_cell", group.getDataNode("unit_cell"), NX_LENGTH);
 		validateFieldRank("unit_cell", unit_cell, 1);
 		validateFieldDimensions("unit_cell", unit_cell, null, 6);
 	}
@@ -222,14 +222,14 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		validateFieldNotNull("preset", preset);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("preset", preset, NX_FLOAT);
-		validateFieldUnits("preset", preset, NX_ANY);
+		validateFieldUnits("preset", group.getDataNode("preset"), NX_ANY);
 
 		// validate field 'data' of type NX_INT.
 		final IDataset data = group.getData();
 		validateFieldNotNull("data", data);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_INT);
-		validateFieldUnits("data", data, NX_ANY);
+		validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
 		validateFieldRank("data", data, 1);
 		validateFieldDimensions("data", data, null, "nTOF");
 
@@ -238,7 +238,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		validateFieldNotNull("time_of_flight", time_of_flight);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("time_of_flight", time_of_flight, NX_FLOAT);
-		validateFieldUnits("time_of_flight", time_of_flight, NX_TIME_OF_FLIGHT);
+		validateFieldUnits("time_of_flight", group.getDataNode("time_of_flight"), NX_TIME_OF_FLIGHT);
 		validateFieldRank("time_of_flight", time_of_flight, 1);
 		validateFieldDimensions("time_of_flight", time_of_flight, null, "nTOF");
 	}

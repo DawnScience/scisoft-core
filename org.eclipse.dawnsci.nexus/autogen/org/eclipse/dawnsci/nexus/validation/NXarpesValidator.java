@@ -180,7 +180,7 @@ public class NXarpesValidator extends AbstractNexusValidator implements NexusApp
 		validateFieldNotNull("energy", energy);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("energy", energy, NX_NUMBER);
-		validateFieldUnits("energy", energy, NX_ENERGY);
+		validateFieldUnits("energy", group.getDataNode("energy"), NX_ENERGY);
 	}
 
 	/**
@@ -196,7 +196,7 @@ public class NXarpesValidator extends AbstractNexusValidator implements NexusApp
 		validateFieldNotNull("data", data);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_NUMBER);
-		validateFieldUnits("data", data, NX_ANY);
+		validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
 		validateFieldRank("data", data, 4);
 		validateFieldDimensions("data", data, "NXdetector", "np", "i", "j", "tof");
 
@@ -228,39 +228,39 @@ public class NXarpesValidator extends AbstractNexusValidator implements NexusApp
 		validateFieldNotNull("entrance_slit_setting", entrance_slit_setting);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("entrance_slit_setting", entrance_slit_setting, NX_NUMBER);
-		validateFieldUnits("entrance_slit_setting", entrance_slit_setting, NX_ANY);
+		validateFieldUnits("entrance_slit_setting", group.getDataNode("entrance_slit_setting"), NX_ANY);
 
 		// validate field 'entrance_slit_size' of unknown type. Note: field not defined in base class.
 		final IDataset entrance_slit_size = group.getDataset("entrance_slit_size");
 		validateFieldNotNull("entrance_slit_size", entrance_slit_size);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldUnits("entrance_slit_size", entrance_slit_size, NX_LENGTH);
+		validateFieldUnits("entrance_slit_size", group.getDataNode("entrance_slit_size"), NX_LENGTH);
 
 		// validate field 'pass_energy' of unknown type. Note: field not defined in base class.
 		final IDataset pass_energy = group.getDataset("pass_energy");
 		validateFieldNotNull("pass_energy", pass_energy);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldUnits("pass_energy", pass_energy, NX_ENERGY);
+		validateFieldUnits("pass_energy", group.getDataNode("pass_energy"), NX_ENERGY);
 
 		// validate field 'time_per_channel' of unknown type. Note: field not defined in base class.
 		final IDataset time_per_channel = group.getDataset("time_per_channel");
 		validateFieldNotNull("time_per_channel", time_per_channel);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldUnits("time_per_channel", time_per_channel, NX_TIME);
+		validateFieldUnits("time_per_channel", group.getDataNode("time_per_channel"), NX_TIME);
 
 		// validate field 'angles' of type NX_NUMBER. Note: field not defined in base class.
 		final IDataset angles = group.getDataset("angles");
 		validateFieldNotNull("angles", angles);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("angles", angles, NX_NUMBER);
-		validateFieldUnits("angles", angles, NX_ANGLE);
+		validateFieldUnits("angles", group.getDataNode("angles"), NX_ANGLE);
 
 		// validate field 'energies' of type NX_NUMBER. Note: field not defined in base class.
 		final IDataset energies = group.getDataset("energies");
 		validateFieldNotNull("energies", energies);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("energies", energies, NX_NUMBER);
-		validateFieldUnits("energies", energies, NX_ENERGY);
+		validateFieldUnits("energies", group.getDataNode("energies"), NX_ENERGY);
 
 		// validate field 'sensor_size' of type NX_INT. Note: field not defined in base class.
 		final IDataset sensor_size = group.getDataset("sensor_size");
@@ -306,7 +306,7 @@ public class NXarpesValidator extends AbstractNexusValidator implements NexusApp
 		validateFieldNotNull("temperature", temperature);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("temperature", temperature, NX_NUMBER);
-		validateFieldUnits("temperature", temperature, NX_TEMPERATURE);
+		validateFieldUnits("temperature", group.getDataNode("temperature"), NX_TEMPERATURE);
 		validateFieldDimensions("temperature", temperature, "NXsample", "n_Temp");
 	}
 

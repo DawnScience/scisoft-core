@@ -173,7 +173,7 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 		validateFieldNotNull("data", data);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_INT);
-		validateFieldUnits("data", data, NX_ANY);
+		validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
 		validateFieldRank("data", data, 3);
 		validateFieldDimensions("data", data, null, "nFrames", "xSize", "ySize");
 
@@ -190,7 +190,7 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 		if (x_pixel_size != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("x_pixel_size", x_pixel_size, NX_FLOAT);
-			validateFieldUnits("x_pixel_size", x_pixel_size, NX_LENGTH);
+			validateFieldUnits("x_pixel_size", group.getDataNode("x_pixel_size"), NX_LENGTH);
 			validateFieldRank("x_pixel_size", x_pixel_size, 2);
 			validateFieldDimensions("x_pixel_size", x_pixel_size, "NXdetector", "i", "j");
 		}
@@ -200,7 +200,7 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 		if (y_pixel_size != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("y_pixel_size", y_pixel_size, NX_FLOAT);
-			validateFieldUnits("y_pixel_size", y_pixel_size, NX_LENGTH);
+			validateFieldUnits("y_pixel_size", group.getDataNode("y_pixel_size"), NX_LENGTH);
 			validateFieldRank("y_pixel_size", y_pixel_size, 2);
 			validateFieldDimensions("y_pixel_size", y_pixel_size, "NXdetector", "i", "j");
 		}
@@ -210,7 +210,7 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 		if (distance != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("distance", distance, NX_FLOAT);
-			validateFieldUnits("distance", distance, NX_LENGTH);
+			validateFieldUnits("distance", group.getDataNode("distance"), NX_LENGTH);
 			validateFieldRank("distance", distance, 3);
 			validateFieldDimensions("distance", distance, "NXdetector", "np", "i", "j");
 		}
@@ -248,7 +248,7 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 		validateFieldNotNull("rotation_angle", rotation_angle);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
-		validateFieldUnits("rotation_angle", rotation_angle, NX_ANGLE);
+		validateFieldUnits("rotation_angle", group.getDataNode("rotation_angle"), NX_ANGLE);
 		validateFieldRank("rotation_angle", rotation_angle, 1);
 		validateFieldDimensions("rotation_angle", rotation_angle, null, "nFrames");
 
@@ -257,7 +257,7 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 		if (x_translation != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("x_translation", x_translation, NX_FLOAT);
-			validateFieldUnits("x_translation", x_translation, NX_LENGTH);
+			validateFieldUnits("x_translation", group.getDataNode("x_translation"), NX_LENGTH);
 			validateFieldRank("x_translation", x_translation, 1);
 			validateFieldDimensions("x_translation", x_translation, null, "nFrames");
 		}
@@ -267,7 +267,7 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 		if (y_translation != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("y_translation", y_translation, NX_FLOAT);
-			validateFieldUnits("y_translation", y_translation, NX_LENGTH);
+			validateFieldUnits("y_translation", group.getDataNode("y_translation"), NX_LENGTH);
 			validateFieldRank("y_translation", y_translation, 1);
 			validateFieldDimensions("y_translation", y_translation, null, "nFrames");
 		}
@@ -277,7 +277,7 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 		if (z_translation != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("z_translation", z_translation, NX_FLOAT);
-			validateFieldUnits("z_translation", z_translation, NX_LENGTH);
+			validateFieldUnits("z_translation", group.getDataNode("z_translation"), NX_LENGTH);
 			validateFieldRank("z_translation", z_translation, 1);
 			validateFieldDimensions("z_translation", z_translation, null, "nFrames");
 		}
@@ -296,7 +296,7 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 		validateFieldNotNull("data", data);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_FLOAT);
-		validateFieldUnits("data", data, NX_ANY);
+		validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
 		validateFieldRank("data", data, 1);
 		validateFieldDimensions("data", data, null, "nFrames");
 	}

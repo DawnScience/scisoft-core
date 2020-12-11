@@ -240,7 +240,7 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 		validateFieldNotNull("x", x);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("x", x, NX_FLOAT);
-		validateFieldUnits("x", x, NX_ANY);
+		validateFieldUnits("x", group.getDataNode("x"), NX_ANY);
 		validateFieldRank("x", x, 1);
 		validateFieldDimensions("x", x, null, "nX");
 
@@ -249,7 +249,7 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 		validateFieldNotNull("y", y);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("y", y, NX_FLOAT);
-		validateFieldUnits("y", y, NX_ANY);
+		validateFieldUnits("y", group.getDataNode("y"), NX_ANY);
 		validateFieldRank("y", y, 1);
 		validateFieldDimensions("y", y, null, "nY");
 
@@ -258,7 +258,7 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 		validateFieldNotNull("z", z);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("z", z, NX_FLOAT);
-		validateFieldUnits("z", z, NX_ANY);
+		validateFieldUnits("z", group.getDataNode("z"), NX_ANY);
 		validateFieldRank("z", z, 1);
 		validateFieldDimensions("z", z, null, "nZ");
 	}

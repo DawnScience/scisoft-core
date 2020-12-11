@@ -534,12 +534,13 @@
 	<xsl:param name="tabLevel"/>
 	
 	<xsl:variable name="units" select="if (@units) then @units else $baseClassFieldDef/@units"/>
-
+	
 	<!-- Invoke method validateFieldUnits() in validator abstract superclass. -->
 	<xsl:if test="$units">
 		<xsl:value-of select="dawnsci:tabs($tabLevel)"/>
-		<xsl:text>validateFieldUnits("</xsl:text><xsl:value-of select="@name"/><xsl:text>", </xsl:text>
-		<xsl:value-of select="@name"/>, <xsl:value-of select="$units"/><xsl:text>);&#10;</xsl:text>
+		<xsl:text>validateFieldUnits("</xsl:text><xsl:value-of select="@name"/>
+		<xsl:text>", group.getDataNode("</xsl:text><xsl:value-of select="@name"/>
+		<xsl:text>"), </xsl:text><xsl:value-of select="$units"/><xsl:text>);&#10;</xsl:text>
 	</xsl:if>
 </xsl:template>
 

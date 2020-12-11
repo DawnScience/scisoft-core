@@ -19,13 +19,25 @@ import java.util.List;
 import org.eclipse.january.dataset.IDataset;
 
 /**
- * Enumeration of Data types allowed in NXDL specifications.
+ * Enumeration of Data types allowed in NXDL specifications. Call the {@link #validate(String, IDataset)}
+ * method to validate a dataset against the type. Note that we only validate that the type of dataset
+ * (i.e. the element type) is compatible for the nexus type. For types where the nexus type is more
+ * specific than merely the type of a dataset can express, this is not checked. For example, for NX_POSINT
+ * we check that the element type of the dataset an integer type, but do not check that all the values are
+ * positive. Doing this would require checking all the values in a dataset at the end of a scan.
  * 
  * <p>Source: <a href="http://download.nexusformat.org/doc/html/nxdl-types.html#data-types-allowed-in-nxdl-specifications">Data Types allowed in NXDL specifications</a>
  * 
- * TODO: establish the full list of valid classes
+ * TODO, can this be generated from nxdlTypes.xsd? See https://jira.diamond.ac.uk/browse/DAQ-3300
  */
 public enum NexusDataType {
+
+	/**
+	 * 	ISO8601 date/time stamp.
+	 *  Note, we don't properly validate this type. Currently it is unused in NXDL definitions, so doing this
+	 *  is not urgent.
+	 */
+	ISO8601(String.class), 
 	
 	/**
 	 * Any representation of binary data - if text, line terminator is [CR][LF]
@@ -50,12 +62,12 @@ public enum NexusDataType {
 	/**
 	 * any representation of a floating point number
 	 */
-	NX_FLOAT(Float.class, Double.class), // TODO: is double also allowed
+	NX_FLOAT(Float.class, Double.class),
 	
 	/**
 	 * any representation of an integer number
 	 */
-	NX_INT(Byte.class, Short.class, Integer.class, Long.class), // TODO Integer, etc also allowed
+	NX_INT(Byte.class, Short.class, Integer.class, Long.class),
 	
 	/**
 	 * any valid NeXus number representation
@@ -64,15 +76,17 @@ public enum NexusDataType {
 	
 	/**
 	 * any representation of a positive integer number (greater than zero)
-	 * TODO: add unsigned flag to IDataset
+	 * Note: we don't currently check the values are all positive. This could only be done
+	 * at the end of a scan, i.e. after all the data had been written.
 	 */
-	NX_POSINT(Long.class),
+	NX_POSINT(Byte.class, Short.class, Integer.class, Long.class),
 	
 	/**
 	 * any representation of an unsigned integer number (includes zero)
-	 * TODO: add unsigned flag to IDataset
+	 * Note: we don't currently check the values are all positive or zero. This could only be done
+	 * at the end of a scan, i.e. after all the data had been written.
 	 */
-	NX_UINT(Long.class);
+	NX_UINT(Byte.class, Short.class, Integer.class, Long.class);
 	
 	private List<Class<?>> javaClasses;
 	
@@ -80,6 +94,12 @@ public enum NexusDataType {
 		this.javaClasses = Arrays.asList(javaClasses);
 	}
 	
+	/**
+	 * Validate that the given dataset is valid according to this {@link NexusDataType}
+	 * @param fieldName
+	 * @param dataset
+	 * @throws NexusValidationException
+	 */
 	public void validate(final String fieldName, final IDataset dataset) throws NexusValidationException {
 		Class<?> elementClass = dataset.getElementClass();
 		for (Class<?> javaClass : javaClasses) {
@@ -89,7 +109,7 @@ public enum NexusDataType {
 		}
 		
 		final String errorMessage = MessageFormat.format("Unexpected elementClass for field %s"
-		+ " (declared type in NXDL application definition = %s). Element",
+				+ " (declared type in NXDL application definition = %s). Element",
 		fieldName, this.toString(), elementClass.getName());
 		throw new NexusValidationException(errorMessage);
 	}

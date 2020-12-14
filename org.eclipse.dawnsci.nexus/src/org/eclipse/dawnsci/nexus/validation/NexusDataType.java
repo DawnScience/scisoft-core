@@ -11,9 +11,9 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.nexus.validation;
 
-import java.sql.Date;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.eclipse.january.dataset.IDataset;
@@ -108,9 +108,9 @@ public enum NexusDataType {
 			}
 		}
 		
-		final String errorMessage = MessageFormat.format("Unexpected elementClass for field %s"
-				+ " (declared type in NXDL application definition = %s). Element",
-		fieldName, this.toString(), elementClass.getName());
+		final String errorMessage = MessageFormat.format("Unexpected elementClass for field ''{0}''"
+				+ " (declared type in NXDL application definition = ''{1}''). Element {2}",
+				fieldName, this.toString(), elementClass.getName());
 		throw new NexusValidationException(errorMessage);
 	}
 

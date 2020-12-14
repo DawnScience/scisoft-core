@@ -406,32 +406,34 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 		localGroupDimensionPlaceholderValues = new HashMap<>();
 	}
 
+	/**
+	 * Validate that the value of the given dataset is one of the permitted values for an enumeration.
+	 * @param nodeName node name
+	 * @param nodeType type of node, can be field or attribute
+	 * @param dataset dataset to validate
+	 * @param permittedValues permitted values
+	 * @throws NexusValidationException if the value of the dataset is not one of the permitted values
+	 */
 	private void validateEnumeration(String nodeName, String nodeType, IDataset dataset, String... permittedValues) throws NexusValidationException {
 		// note: this method assumes that the enumeration values are always strings
-		if (dataset.getRank() != 1) { // TODO confirm rank for enums: 0 or 1?
-			failValidation(MessageFormat.format("The enumeration {0} ''{1}'' must have a rank of 1", nodeType, nodeName));
+		if (dataset.getRank() > 1) { // allow rank for scalar datasets can be 0 or 1 
+			failValidation(MessageFormat.format("The enumeration {0} ''{1}'' must have a rank of 0 or 1", nodeType, nodeName));
 		}
 		
-		// the size of the field must be 1
-		if (dataset.getSize() != 1) {
+		// the size of scalar fields can be 0 or 1 (i.e. we treat one dimensional datasets of size 1 as scalar)
+		if (dataset.getSize() > 1) {
 			failValidation(MessageFormat.format("The enumeration {0} ''{1}'' must have a size of 1", nodeType, nodeName));
 		}
 		
-		String value = dataset.getString(0);
-		validateNotNull(MessageFormat.format(
-				"The value of the enumeration {0} ''{1}'' cannot be null", nodeType, nodeName), value);
+		final String value = dataset.getRank() == 0 ? dataset.getString() : dataset.getString(0);
+		validateNotNull(MessageFormat.format("The value of the enumeration {0} ''{1}'' cannot be null", nodeType, nodeName), value);
 		
-		boolean valuePermitted = false;
-		for (String permittedValue : permittedValues) {
-			if (value.equals(permittedValue)) {
-				valuePermitted = true;
-				break;
-			}
-		}
+		final boolean valuePermitted = Arrays.stream(permittedValues).anyMatch(enumVal -> enumVal.equals(value));
 		
 		if (!valuePermitted) {
 			failValidation(MessageFormat.format(
-					"The value of the {0} ''{1}'' must be one of the enumerated values.", nodeType, nodeName));
+					"The value of the {0} ''{1}'' is not contained in the enumeration of permitted values. "
+					+ "Value: {2}, permitted values: {3}", nodeType, nodeName, value, String.join(", ", permittedValues)));		
 		}
 	}
 

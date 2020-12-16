@@ -166,8 +166,26 @@ public class NXobjectTest {
 		
 		// check value after setting
 		final String name = "my sensor";
-		sensor.setField(NXsensor.NX_NAME, name);
+		sensor.setNameScalar(name); 
 		assertEquals(name, sensor.getString(NXsensor.NX_NAME)); 
+	}
+	
+	@Test
+	public void testGetSetStringTwice() {
+		// check value is initially null
+		NXsensor sensor = NexusNodeFactory.createNXsensor();
+		assertNull(sensor.getString(NXsensor.NX_NAME));
+		
+		// check value after setting
+		final String name = "my sensor";
+		sensor.setNameScalar(name);
+		assertEquals(name, sensor.getNameScalar()); 
+		assertEquals(name, sensor.getDataset(NXsensor.NX_NAME).getString());
+
+		final String newName = "my new sensor";
+		sensor.setNameScalar(newName);
+		assertEquals(newName, sensor.getString(NXsensor.NX_NAME)); 
+		assertEquals(newName, sensor.getDataset(NXsensor.NX_NAME).getString()); // fails before DAQ-3303
 	}
 	
 	@Test

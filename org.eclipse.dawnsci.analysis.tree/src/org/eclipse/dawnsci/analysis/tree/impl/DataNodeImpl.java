@@ -17,6 +17,7 @@ import java.io.Serializable;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.MetadataException;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDynamicDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
@@ -161,19 +162,25 @@ public class DataNodeImpl extends NodeImpl implements DataNode, Serializable {
 			}
 		}
 
+		final String result;
 		int size = a.getSize();
 		if (size == 0) {
-			return "";
+			result = "";
 		} else if (size == 1) {
-			return a.getString();
+			result = a.getString();
+		} else {
+			result = a.toString(true);
 		}
 
-		return a.toString(true);
+		text = result; // cache the value for any subsequent call
+		maxTextLength = text.getBytes().length;
+		return text;
 	}
 
 	@Override
 	public void setString(final String text) {
-		this.text = text;
+		setDataset(DatasetFactory.createFromObject(text));
+		this.text = text; // the cached value
 		if (text != null) {
 			maxTextLength = text.getBytes().length;
 			string = true;
@@ -221,6 +228,7 @@ public class DataNodeImpl extends NodeImpl implements DataNode, Serializable {
 
 		supported = true;
 		string = lazyDataset instanceof StringDataset || lazyDataset.getElementClass() == String.class;
+		text = null; // extracted by getString()
 	}
 
 	@Override

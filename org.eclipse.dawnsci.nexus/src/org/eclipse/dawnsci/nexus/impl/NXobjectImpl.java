@@ -282,6 +282,7 @@ public abstract class NXobjectImpl extends GroupNodeImpl implements NXobject {
 				throw new IllegalArgumentException("Node is not a string");
 			}
 			dataNode.setString(value);
+			cached.put(name, (Dataset) dataNode.getDataset());
 		} else {
 			// create a new dataset, create a new DataNode containing that dataset
 			StringDataset dataset = DatasetFactory.createFromObject(StringDataset.class, value);

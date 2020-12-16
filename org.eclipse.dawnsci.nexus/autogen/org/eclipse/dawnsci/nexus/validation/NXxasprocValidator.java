@@ -68,16 +68,19 @@ public class NXxasprocValidator extends AbstractNexusValidator implements NexusA
 		final Attribute entry_attr = group.getAttribute("entry");
 		validateAttributeNotNull("entry", entry_attr);
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
+		validateAttributeType("entry", entry_attr, NX_CHAR);
 
 		// validate field 'title' of unknown type.
 		final IDataset title = group.getTitle();
 		validateFieldNotNull("title", title);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("title", title, NX_CHAR);
 
 		// validate field 'definition' of unknown type.
 		final IDataset definition = group.getDefinition();
 		validateFieldNotNull("definition", definition);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("definition", definition, NX_CHAR);
 		validateFieldEnumeration("definition", definition,
 				"NXxasproc");
 
@@ -111,6 +114,7 @@ public class NXxasprocValidator extends AbstractNexusValidator implements NexusA
 		final IDataset name = group.getName();
 		validateFieldNotNull("name", name);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("name", name, NX_CHAR);
 	}
 
 	/**
@@ -168,6 +172,7 @@ public class NXxasprocValidator extends AbstractNexusValidator implements NexusA
 		final IDataset energy = group.getDataset("energy");
 		validateFieldNotNull("energy", energy);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("energy", energy, NX_CHAR);
 		validateFieldRank("energy", energy, 1);
 		validateFieldDimensions("energy", energy, null, "nP");
 

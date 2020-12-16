@@ -545,8 +545,9 @@
 	<xsl:param name="tabLevel"/>
 	<xsl:param name="variableName" select="@name"/> 
 	
-	<!-- The field or attribute's type. If defined in the app def, this overrides the base class -->
-	<xsl:variable name="type" select="if (@type) then @type else $baseClassFieldOrAttributeDef/@type"/>
+	<!-- The field or attribute's type. If defined in the app def, this overrides the base class, the default is NX_CHAR -->
+	<xsl:variable name="typeFromBaseClass" select="$baseClassFieldOrAttributeDef/@type"/>
+	<xsl:variable name="type" select="if (@type) then @type else (if($typeFromBaseClass) then $typeFromBaseClass else 'NX_CHAR')"/>
 
 	<!-- Invoke method validateFieldType() or validateAttributeType() in abstract superclass. -->
 	<xsl:if test="$type">

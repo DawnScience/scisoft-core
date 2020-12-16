@@ -70,16 +70,19 @@ public class NXiqprocValidator extends AbstractNexusValidator implements NexusAp
 		final Attribute entry_attr = group.getAttribute("entry");
 		validateAttributeNotNull("entry", entry_attr);
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
+		validateAttributeType("entry", entry_attr, NX_CHAR);
 
 		// validate field 'title' of unknown type.
 		final IDataset title = group.getTitle();
 		validateFieldNotNull("title", title);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("title", title, NX_CHAR);
 
 		// validate field 'definition' of unknown type.
 		final IDataset definition = group.getDefinition();
 		validateFieldNotNull("definition", definition);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("definition", definition, NX_CHAR);
 		validateFieldEnumeration("definition", definition,
 				"NXiqproc");
 
@@ -135,6 +138,7 @@ public class NXiqprocValidator extends AbstractNexusValidator implements NexusAp
 		final IDataset type = group.getType();
 		validateFieldNotNull("type", type);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("type", type, NX_CHAR);
 		validateFieldEnumeration("type", type,
 				"Spallation Neutron Source",
 				"Pulsed Reactor Neutron Source",
@@ -153,11 +157,13 @@ public class NXiqprocValidator extends AbstractNexusValidator implements NexusAp
 		final IDataset name = group.getName();
 		validateFieldNotNull("name", name);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("name", name, NX_CHAR);
 
 		// validate field 'probe' of unknown type.
 		final IDataset probe = group.getProbe();
 		validateFieldNotNull("probe", probe);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("probe", probe, NX_CHAR);
 		validateFieldEnumeration("probe", probe,
 				"neutron",
 				"x-ray",
@@ -176,6 +182,7 @@ public class NXiqprocValidator extends AbstractNexusValidator implements NexusAp
 		final IDataset name = group.getName();
 		validateFieldNotNull("name", name);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("name", name, NX_CHAR);
 	}
 
 	/**
@@ -247,18 +254,21 @@ public class NXiqprocValidator extends AbstractNexusValidator implements NexusAp
 		final IDataset variable = group.getDataset("variable");
 		validateFieldNotNull("variable", variable);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("variable", variable, NX_CHAR);
 		validateFieldRank("variable", variable, 1);
 		validateFieldDimensions("variable", variable, null, "nVars");
 		// validate attribute 'varied_variable' of field 'variable'
 		final Attribute variable_attr_varied_variable = group.getDataNode("variable").getAttribute("varied_variable");
 		validateAttributeNotNull("varied_variable", variable_attr_varied_variable);
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
+		validateAttributeType("varied_variable", variable_attr_varied_variable, NX_CHAR);
 
 
 		// validate field 'qx' of unknown type. Note: field not defined in base class.
 		final IDataset qx = group.getDataset("qx");
 		validateFieldNotNull("qx", qx);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("qx", qx, NX_CHAR);
 		validateFieldRank("qx", qx, 1);
 		validateFieldDimensions("qx", qx, null, "nQX");
 
@@ -266,6 +276,7 @@ public class NXiqprocValidator extends AbstractNexusValidator implements NexusAp
 		final IDataset qy = group.getDataset("qy");
 		validateFieldNotNull("qy", qy);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("qy", qy, NX_CHAR);
 		validateFieldRank("qy", qy, 1);
 		validateFieldDimensions("qy", qy, null, "nQY");
 	}

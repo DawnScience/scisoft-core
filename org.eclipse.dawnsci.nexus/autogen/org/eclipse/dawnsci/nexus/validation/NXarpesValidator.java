@@ -70,6 +70,7 @@ public class NXarpesValidator extends AbstractNexusValidator implements NexusApp
 		final Attribute entry_attr = group.getAttribute("entry");
 		validateAttributeNotNull("entry", entry_attr);
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
+		validateAttributeType("entry", entry_attr, NX_CHAR);
 
 		// validate field 'title' of type NX_CHAR.
 		final IDataset title = group.getTitle();
@@ -87,6 +88,7 @@ public class NXarpesValidator extends AbstractNexusValidator implements NexusApp
 		final IDataset definition = group.getDefinition();
 		validateFieldNotNull("definition", definition);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("definition", definition, NX_CHAR);
 		validateFieldEnumeration("definition", definition,
 				"NXarpes");
 
@@ -169,6 +171,7 @@ public class NXarpesValidator extends AbstractNexusValidator implements NexusApp
 		final IDataset probe = group.getProbe();
 		validateFieldNotNull("probe", probe);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("probe", probe, NX_CHAR);
 		validateFieldEnumeration("probe", probe,
 				"x-ray");
 	}
@@ -224,6 +227,7 @@ public class NXarpesValidator extends AbstractNexusValidator implements NexusApp
 		final IDataset entrance_slit_shape = group.getDataset("entrance_slit_shape");
 		validateFieldNotNull("entrance_slit_shape", entrance_slit_shape);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("entrance_slit_shape", entrance_slit_shape, NX_CHAR);
 		validateFieldEnumeration("entrance_slit_shape", entrance_slit_shape,
 				"curved",
 				"straight");
@@ -239,18 +243,21 @@ public class NXarpesValidator extends AbstractNexusValidator implements NexusApp
 		final IDataset entrance_slit_size = group.getDataset("entrance_slit_size");
 		validateFieldNotNull("entrance_slit_size", entrance_slit_size);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("entrance_slit_size", entrance_slit_size, NX_CHAR);
 		validateFieldUnits("entrance_slit_size", group.getDataNode("entrance_slit_size"), NX_LENGTH);
 
 		// validate field 'pass_energy' of unknown type. Note: field not defined in base class.
 		final IDataset pass_energy = group.getDataset("pass_energy");
 		validateFieldNotNull("pass_energy", pass_energy);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("pass_energy", pass_energy, NX_CHAR);
 		validateFieldUnits("pass_energy", group.getDataNode("pass_energy"), NX_ENERGY);
 
 		// validate field 'time_per_channel' of unknown type. Note: field not defined in base class.
 		final IDataset time_per_channel = group.getDataset("time_per_channel");
 		validateFieldNotNull("time_per_channel", time_per_channel);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("time_per_channel", time_per_channel, NX_CHAR);
 		validateFieldUnits("time_per_channel", group.getDataNode("time_per_channel"), NX_TIME);
 
 		// validate field 'angles' of type NX_NUMBER. Note: field not defined in base class.

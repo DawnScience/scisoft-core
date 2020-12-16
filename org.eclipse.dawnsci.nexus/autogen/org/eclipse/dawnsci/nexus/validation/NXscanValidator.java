@@ -68,6 +68,7 @@ public class NXscanValidator extends AbstractNexusValidator implements NexusAppl
 		final IDataset title = group.getTitle();
 		validateFieldNotNull("title", title);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("title", title, NX_CHAR);
 
 		// validate field 'start_time' of type NX_DATE_TIME.
 		final IDataset start_time = group.getStart_time();

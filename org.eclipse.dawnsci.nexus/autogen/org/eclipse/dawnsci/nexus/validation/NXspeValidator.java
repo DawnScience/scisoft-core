@@ -69,11 +69,13 @@ public class NXspeValidator extends AbstractNexusValidator implements NexusAppli
 		final IDataset program_name = group.getProgram_name();
 		validateFieldNotNull("program_name", program_name);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("program_name", program_name, NX_CHAR);
 
 		// validate field 'definition' of unknown type.
 		final IDataset definition = group.getDefinition();
 		validateFieldNotNull("definition", definition);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("definition", definition, NX_CHAR);
 		validateFieldEnumeration("definition", definition,
 				"NXSPE",
 				"NXspe");
@@ -81,6 +83,7 @@ public class NXspeValidator extends AbstractNexusValidator implements NexusAppli
 		final Attribute definition_attr_version = group.getDataNode("definition").getAttribute("version");
 		validateAttributeNotNull("version", definition_attr_version);
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
+		validateAttributeType("version", definition_attr_version, NX_CHAR);
 
 
 		// validate child group 'NXSPE_info' of type NXcollection

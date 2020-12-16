@@ -75,15 +75,65 @@ public class TomoValidatorTest {
 	}
 
 	@Test
-	public void testValidateOk() throws Exception {
+	public void testValidate_ok() throws Exception {
 		final NXentry entry = createNexusTree();
 		validate(entry);
 	}
 	
 	@Test(expected=NexusValidationException.class)
-	public void testValidateRequiredGroupNotPresent() throws Exception {
+	public void testValidate_requiredGroupNotPresent() throws Exception {
 		final NXentry entry = createNexusTree();
 		entry.removeGroupNode(entry.getSample());
+		validate(entry);
+	}
+	
+	@Test(expected=NexusValidationException.class)
+	public void testValidate_optionalGroupInvalid() throws Exception {
+		final NXentry entry = createNexusTree();
+		entry.getMonitor("control").removeDataNode(NXmonitor.NX_DATA);
+		validate(entry);
+	}
+	
+	@Test(expected=NexusValidationException.class)
+	public void testValidate_unnamedGroup_alternateName() throws Exception {
+		// check that the NXsource is still validated when given a different name
+		final NXentry entry = createNexusTree();
+		final NXinstrument instrument = entry.getInstrument();
+		final NXsource source = instrument.getSource();
+		source.setProbeScalar("no such enum");
+		instrument.removeGroupNode(source);
+		instrument.setSource("newName", source);
+		validate(entry);
+	}
+	
+	@Test(expected=NexusValidationException.class)
+	public void testValidate_unnamedMultipleGroup() throws Exception {
+		// only one instance of NXsource is allowed
+		final NXentry entry = createNexusTree();
+		entry.getInstrument().setSource("newSource", NexusNodeFactory.createNXsource());
+		validate(entry);
+	}
+	
+	@Test(expected=NexusValidationException.class)
+	public void testValidate_requiredFieldNotPresent() throws Exception {
+		final NXentry entry = createNexusTree();
+		entry.getSample().removeDataNode(NXsample.NX_ROTATION_ANGLE);
+		validate(entry);
+	}
+	
+	@Test(expected=NexusValidationException.class)
+	public void testValidate_optionalFieldInvalid() throws Exception {
+		final NXentry entry = createNexusTree();
+		final NXinstrument instrument = entry.getInstrument();
+		final NXsource source = instrument.getSource();
+		source.setProbeScalar("no such enum");
+		validate(entry);
+	}
+	
+	@Test(expected=NexusValidationException.class)
+	public void testValidate_invalidFieldType() throws Exception {
+		final NXentry entry = createNexusTree();
+		entry.setTitle(DatasetFactory.createFromObject(1.0));
 		validate(entry);
 	}
 	

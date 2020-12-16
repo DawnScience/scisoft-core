@@ -64,11 +64,13 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 		final Attribute index_attr = group.getAttribute("index");
 		validateAttributeNotNull("index", index_attr);
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
+		validateAttributeType("index", index_attr, NX_CHAR);
 
 		// validate field 'title' of unknown type.
 		final IDataset title = group.getTitle();
 		validateFieldNotNull("title", title);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("title", title, NX_CHAR);
 
 		// validate field 'experiment_identifier' of type NX_CHAR.
 		final IDataset experiment_identifier = group.getExperiment_identifier();
@@ -142,6 +144,7 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 		final IDataset definition = group.getDefinition();
 		validateFieldNotNull("definition", definition);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("definition", definition, NX_CHAR);
 		validateFieldEnumeration("definition", definition,
 				"NXarchive");
 
@@ -154,6 +157,7 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 		final Attribute program_attr_version = group.getDataNode("program").getAttribute("version");
 		validateAttributeNotNull("version", program_attr_version);
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
+		validateAttributeType("version", program_attr_version, NX_CHAR);
 
 
 		// validate field 'release_date' of type NX_CHAR. Note: field not defined in base class.
@@ -250,11 +254,13 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 		final IDataset name = group.getName();
 		validateFieldNotNull("name", name);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("name", name, NX_CHAR);
 
 		// validate field 'probe' of unknown type.
 		final IDataset probe = group.getProbe();
 		validateFieldNotNull("probe", probe);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("probe", probe, NX_CHAR);
 		validateFieldEnumeration("probe", probe,
 				"neutron",
 				"x-ray",
@@ -273,6 +279,7 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 		final IDataset name = group.getName();
 		validateFieldNotNull("name", name);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("name", name, NX_CHAR);
 
 		// validate field 'sample_id' of type NX_CHAR. Note: field not defined in base class.
 		final IDataset sample_id = group.getDataset("sample_id");

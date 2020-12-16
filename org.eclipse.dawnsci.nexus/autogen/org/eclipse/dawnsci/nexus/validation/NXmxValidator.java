@@ -75,6 +75,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		final Attribute version_attr = group.getAttribute("version");
 		if (version_attr != null) {
 			// validate any properties of this attribute specified in the NXDL file: type, enumeration
+			validateAttributeType("version", version_attr, NX_CHAR);
 			validateAttributeEnumeration("version", version_attr,
 					"1.0");
 		}
@@ -109,6 +110,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		final IDataset definition = group.getDefinition();
 		validateFieldNotNull("definition", definition);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("definition", definition, NX_CHAR);
 		validateFieldEnumeration("definition", definition,
 				"NXmx");
 
@@ -207,6 +209,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		final Attribute name_attr_short_name = group.getDataNode("name").getAttribute("short_name");
 		validateAttributeNotNull("short_name", name_attr_short_name);
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
+		validateAttributeType("short_name", name_attr_short_name, NX_CHAR);
 
 
 		// validate optional field 'time_zone' of type NX_DATE_TIME. Note: field not defined in base class.
@@ -320,12 +323,14 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		final IDataset description = group.getDescription();
 		if (description != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("description", description, NX_CHAR);
 		}
 
 		// validate optional field 'time_per_channel' of unknown type. Note: field not defined in base class.
 		final IDataset time_per_channel = group.getDataset("time_per_channel");
 		if (time_per_channel != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("time_per_channel", time_per_channel, NX_CHAR);
 			validateFieldUnits("time_per_channel", group.getDataNode("time_per_channel"), NX_TIME);
 		}
 
@@ -534,6 +539,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		final IDataset type = group.getType();
 		if (type != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("type", type, NX_CHAR);
 		}
 		// validate NXtransformations groups (special case)
 		final Map<String, NXtransformations> allTransformations = group.getChildren(NXtransformations.class);
@@ -599,6 +605,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		final Attribute module_offset_attr_transformation_type = group.getDataNode("module_offset").getAttribute("transformation_type");
 		validateAttributeNotNull("transformation_type", module_offset_attr_transformation_type);
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
+		validateAttributeType("transformation_type", module_offset_attr_transformation_type, NX_CHAR);
 		validateAttributeEnumeration("transformation_type", module_offset_attr_transformation_type,
 				"translation");
 
@@ -618,6 +625,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		final Attribute module_offset_attr_depends_on = group.getDataNode("module_offset").getAttribute("depends_on");
 		validateAttributeNotNull("depends_on", module_offset_attr_depends_on);
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
+		validateAttributeType("depends_on", module_offset_attr_depends_on, NX_CHAR);
 
 		}
 
@@ -631,6 +639,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		final Attribute fast_pixel_direction_attr_transformation_type = group.getDataNode("fast_pixel_direction").getAttribute("transformation_type");
 		validateAttributeNotNull("transformation_type", fast_pixel_direction_attr_transformation_type);
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
+		validateAttributeType("transformation_type", fast_pixel_direction_attr_transformation_type, NX_CHAR);
 		validateAttributeEnumeration("transformation_type", fast_pixel_direction_attr_transformation_type,
 				"translation");
 
@@ -650,6 +659,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		final Attribute fast_pixel_direction_attr_depends_on = group.getDataNode("fast_pixel_direction").getAttribute("depends_on");
 		validateAttributeNotNull("depends_on", fast_pixel_direction_attr_depends_on);
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
+		validateAttributeType("depends_on", fast_pixel_direction_attr_depends_on, NX_CHAR);
 
 
 		// validate field 'slow_pixel_direction' of type NX_NUMBER.
@@ -662,6 +672,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		final Attribute slow_pixel_direction_attr_transformation_type = group.getDataNode("slow_pixel_direction").getAttribute("transformation_type");
 		validateAttributeNotNull("transformation_type", slow_pixel_direction_attr_transformation_type);
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
+		validateAttributeType("transformation_type", slow_pixel_direction_attr_transformation_type, NX_CHAR);
 		validateAttributeEnumeration("transformation_type", slow_pixel_direction_attr_transformation_type,
 				"translation");
 
@@ -681,6 +692,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		final Attribute slow_pixel_direction_attr_depends_on = group.getDataNode("slow_pixel_direction").getAttribute("depends_on");
 		validateAttributeNotNull("depends_on", slow_pixel_direction_attr_depends_on);
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
+		validateAttributeType("depends_on", slow_pixel_direction_attr_depends_on, NX_CHAR);
 
 	}
 
@@ -768,6 +780,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		final IDataset incident_polarisation_stokes = group.getDataset("incident_polarisation_stokes");
 		if (incident_polarisation_stokes != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("incident_polarisation_stokes", incident_polarisation_stokes, NX_CHAR);
 			validateFieldRank("incident_polarisation_stokes", incident_polarisation_stokes, 2);
 			validateFieldDimensions("incident_polarisation_stokes", incident_polarisation_stokes, null, "nP", 4);
 		}
@@ -798,10 +811,12 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		final IDataset name = group.getName();
 		validateFieldNotNull("name", name);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("name", name, NX_CHAR);
 		// validate optional attribute 'short_name' of field 'name'
 		final Attribute name_attr_short_name = group.getDataNode("name").getAttribute("short_name");
 		if (name_attr_short_name != null) {
 			// validate any properties of this attribute specified in the NXDL file: type, enumeration
+			validateAttributeType("short_name", name_attr_short_name, NX_CHAR);
 		}
 
 	}

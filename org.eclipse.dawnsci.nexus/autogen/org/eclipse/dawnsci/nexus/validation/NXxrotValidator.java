@@ -62,6 +62,7 @@ public class NXxrotValidator extends AbstractNexusValidator implements NexusAppl
 		final IDataset definition = group.getDefinition();
 		validateFieldNotNull("definition", definition);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("definition", definition, NX_CHAR);
 		validateFieldEnumeration("definition", definition,
 				"NXxrot");
 

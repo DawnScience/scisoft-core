@@ -60,6 +60,7 @@ public class NXxlaueValidator extends AbstractNexusValidator implements NexusApp
 		final IDataset definition = group.getDefinition();
 		validateFieldNotNull("definition", definition);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("definition", definition, NX_CHAR);
 		validateFieldEnumeration("definition", definition,
 				"NXxlaue");
 
@@ -101,6 +102,7 @@ public class NXxlaueValidator extends AbstractNexusValidator implements NexusApp
 		final IDataset data = group.getDataset("data");
 		validateFieldNotNull("data", data);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("data", data, NX_CHAR);
 		validateFieldRank("data", data, 1);
 		validateFieldDimensions("data", data, null, "nE");
 
@@ -108,6 +110,7 @@ public class NXxlaueValidator extends AbstractNexusValidator implements NexusApp
 		final IDataset wavelength = group.getDataset("wavelength");
 		validateFieldNotNull("wavelength", wavelength);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("wavelength", wavelength, NX_CHAR);
 		validateFieldUnits("wavelength", group.getDataNode("wavelength"), NX_WAVELENGTH);
 		validateFieldRank("wavelength", wavelength, 1);
 		validateFieldDimensions("wavelength", wavelength, null, "nE");

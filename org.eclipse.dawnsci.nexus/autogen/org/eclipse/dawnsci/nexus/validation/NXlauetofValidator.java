@@ -63,6 +63,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		final IDataset definition = group.getDefinition();
 		validateFieldNotNull("definition", definition);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("definition", definition, NX_CHAR);
 		validateFieldEnumeration("definition", definition,
 				"NXlauetof");
 
@@ -182,6 +183,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		final IDataset name = group.getName();
 		validateFieldNotNull("name", name);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("name", name, NX_CHAR);
 
 		// validate field 'orientation_matrix' of type NX_FLOAT.
 		final IDataset orientation_matrix = group.getOrientation_matrix();
@@ -213,6 +215,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		final IDataset mode = group.getMode();
 		validateFieldNotNull("mode", mode);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("mode", mode, NX_CHAR);
 		validateFieldEnumeration("mode", mode,
 				"monitor",
 				"timer");

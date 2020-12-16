@@ -71,11 +71,13 @@ public class NXxasValidator extends AbstractNexusValidator implements NexusAppli
 		final Attribute entry_attr = group.getAttribute("entry");
 		validateAttributeNotNull("entry", entry_attr);
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
+		validateAttributeType("entry", entry_attr, NX_CHAR);
 
 		// validate field 'title' of unknown type.
 		final IDataset title = group.getTitle();
 		validateFieldNotNull("title", title);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("title", title, NX_CHAR);
 
 		// validate field 'start_time' of type NX_DATE_TIME.
 		final IDataset start_time = group.getStart_time();
@@ -87,6 +89,7 @@ public class NXxasValidator extends AbstractNexusValidator implements NexusAppli
 		final IDataset definition = group.getDefinition();
 		validateFieldNotNull("definition", definition);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("definition", definition, NX_CHAR);
 		validateFieldEnumeration("definition", definition,
 				"NXxas");
 
@@ -154,6 +157,7 @@ public class NXxasValidator extends AbstractNexusValidator implements NexusAppli
 		final IDataset type = group.getType();
 		validateFieldNotNull("type", type);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("type", type, NX_CHAR);
 		validateFieldEnumeration("type", type,
 				"Spallation Neutron Source",
 				"Pulsed Reactor Neutron Source",
@@ -172,11 +176,13 @@ public class NXxasValidator extends AbstractNexusValidator implements NexusAppli
 		final IDataset name = group.getName();
 		validateFieldNotNull("name", name);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("name", name, NX_CHAR);
 
 		// validate field 'probe' of unknown type.
 		final IDataset probe = group.getProbe();
 		validateFieldNotNull("probe", probe);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("probe", probe, NX_CHAR);
 		validateFieldEnumeration("probe", probe,
 				"x-ray");
 	}
@@ -246,6 +252,7 @@ public class NXxasValidator extends AbstractNexusValidator implements NexusAppli
 		final IDataset name = group.getName();
 		validateFieldNotNull("name", name);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("name", name, NX_CHAR);
 	}
 
 	/**
@@ -260,6 +267,7 @@ public class NXxasValidator extends AbstractNexusValidator implements NexusAppli
 		final IDataset mode = group.getMode();
 		validateFieldNotNull("mode", mode);
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+		validateFieldType("mode", mode, NX_CHAR);
 		validateFieldEnumeration("mode", mode,
 				"monitor",
 				"timer");

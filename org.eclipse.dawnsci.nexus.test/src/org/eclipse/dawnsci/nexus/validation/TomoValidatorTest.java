@@ -18,6 +18,7 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Random;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TomoValidatorTest {
@@ -114,6 +115,12 @@ public class TomoValidatorTest {
 		validate(entry);
 	}
 	
+	@Test
+	@Ignore
+	public void testValidateTransformations() throws Exception {
+		// TODO: DAQ-3305 test this with NXmx application definition
+	}
+	
 	@Test(expected=NexusValidationException.class)
 	public void testValidate_requiredFieldNotPresent() throws Exception {
 		final NXentry entry = createNexusTree();
@@ -135,6 +142,72 @@ public class TomoValidatorTest {
 		final NXentry entry = createNexusTree();
 		entry.setTitle(DatasetFactory.createFromObject(1.0));
 		validate(entry);
+	}
+	
+	@Test(expected=NexusValidationException.class)
+	public void testValidate_invalidFieldUnits_notSpecified() throws Exception {
+		final NXentry entry = createNexusTree();
+		final NXdetector detector = entry.getInstrument().getDetector();
+		detector.getDataNode(NXdetector.NX_DISTANCE).removeAttribute(ATTRIBUTE_NAME_UNITS);
+		validate(entry);
+	}
+	
+	@Test(expected=NexusValidationException.class)
+	public void testValidate_invalidFieldUnits_invalid() throws Exception {
+		final NXentry entry = createNexusTree();
+		final NXdetector detector = entry.getInstrument().getDetector();
+		detector.setAttribute(NXdetector.NX_DISTANCE, ATTRIBUTE_NAME_UNITS, "A");
+		validate(entry);
+	}
+	
+	@Test(expected=NexusValidationException.class)
+	public void testValidate_invalidFieldEnumerationValue_appDef() throws Exception {
+		// where the enumeration of permitted values is defined in the application definition
+		final NXentry entry = createNexusTree();
+		final NXsource source = entry.getInstrument().getSource();
+		source.setProbeScalar("no such enum");
+		validate(entry);
+	}
+	
+	@Test(expected=NexusValidationException.class)
+	public void testValidate_invalidFieldEnumerationValue_baseClass() throws Exception {
+		// where the enumeration of permitted values is defined in the base class definition
+		final NXentry entry = createNexusTree();
+		final NXsource source = entry.getInstrument().getSource();
+		source.setTypeScalar("Unknown type");
+		validate(entry);
+	}
+	
+	@Test(expected=NexusValidationException.class)
+	public void testValidate_invalidFieldDimensions_incorrectRank() throws Exception {
+		final NXentry entry = createNexusTree();
+		entry.getSample().setRotation_angle(DatasetFactory.zeros(NUM_FRAMES, 3));
+		validate(entry);		
+	}
+	
+	@Test(expected=NexusValidationException.class)
+	public void testValidate_invalidFieldDimensions_wrongSize() throws Exception {
+		final NXentry entry = createNexusTree();
+		entry.getSample().setRotation_angle(DatasetFactory.zeros(NUM_FRAMES + 1));
+		validate(entry);		
+	}
+	
+	@Test
+	@Ignore
+	public void testAttribute_requiredNotPresent() throws Exception {
+		// TODO: DAQ-3305 test this with NXmx application definition
+	}
+	
+	@Test
+	@Ignore
+	public void testAttribute_invalidType() throws Exception {
+		// TODO: DAQ-3305 test this with NXmx application definition
+	}
+	
+	@Test
+	@Ignore
+	public void testAttribute_invalidEnumeration() throws Exception {
+		// TODO: DAQ-3305 test this with NXmx application definition
 	}
 	
 }

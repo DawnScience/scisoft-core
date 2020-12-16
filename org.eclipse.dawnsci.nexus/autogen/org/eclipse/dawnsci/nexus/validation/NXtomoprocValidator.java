@@ -75,19 +75,21 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 				"NXtomoproc");
 
 		// validate unnamed child group of type NXinstrument (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXinstrument.class, false, true);
 		final Map<String, NXinstrument> allInstrument = group.getAllInstrument();
 		for (final NXinstrument instrument : allInstrument.values()) {
 			validateGroup_entry_NXinstrument(instrument);
 		}
 
 		// validate unnamed child group of type NXsample (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXsample.class, false, true);
 		final Map<String, NXsample> allSample = group.getAllSample();
 		for (final NXsample sample : allSample.values()) {
 			validateGroup_entry_NXsample(sample);
 		}
 
 		// validate child group 'reconstruction' of type NXprocess
-		validateGroup_entry_reconstruction(group.getProcess());
+		validateGroup_entry_reconstruction(group.getProcess("reconstruction"));
 
 		// validate child group 'data' of type NXdata
 		validateGroup_entry_data(group.getData());
@@ -101,6 +103,7 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 		validateGroupNotNull(null, NXinstrument.class, group);
 
 		// validate unnamed child group of type NXsource (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXsource.class, false, true);
 		final Map<String, NXsource> allSource = group.getAllSource();
 		for (final NXsource source : allSource.values()) {
 			validateGroup_entry_NXinstrument_NXsource(source);

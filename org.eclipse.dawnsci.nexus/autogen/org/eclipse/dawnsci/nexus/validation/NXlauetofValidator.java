@@ -73,10 +73,10 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		validateGroup_entry_sample(group.getSample());
 
 		// validate child group 'control' of type NXmonitor
-		validateGroup_entry_control(group.getMonitor());
+		validateGroup_entry_control(group.getMonitor("control"));
 
 		// validate child group 'name' of type NXdata
-		validateGroup_entry_name(group.getData());
+		validateGroup_entry_name(group.getData("name"));
 	}
 
 	/**

@@ -88,9 +88,10 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		validateGroup_entry_sample(group.getSample());
 
 		// validate child group 'control' of type NXmonitor
-		validateGroup_entry_control(group.getMonitor());
+		validateGroup_entry_control(group.getMonitor("control"));
 
 		// validate unnamed child group of type NXdata (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXdata.class, false, true);
 		final Map<String, NXdata> allData = group.getAllData();
 		for (final NXdata data : allData.values()) {
 			validateGroup_entry_NXdata(data);

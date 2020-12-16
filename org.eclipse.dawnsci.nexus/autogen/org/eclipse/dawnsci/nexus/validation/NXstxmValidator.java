@@ -38,6 +38,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 	@Override
 	public void validate(NXroot root) throws NexusValidationException {
 		// validate unnamed child group of type NXentry (possibly multiple)
+		validateUnnamedGroupOccurrences(root, NXentry.class, false, true);
 		final Map<String, NXentry> allEntry = root.getAllEntry();
 		for (final NXentry entry : allEntry.values()) {
 			validateGroup_NXentry(entry);
@@ -91,23 +92,27 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 				"NXstxm");
 
 		// validate unnamed child group of type NXinstrument
-		validateGroup_NXentry_NXinstrument(group.getInstrument());
+		validateUnnamedGroupOccurrences(group, NXinstrument.class, false, false);
+		final NXinstrument instrument = group.getAllInstrument().values().iterator().next();
+		validateGroup_NXentry_NXinstrument(instrument);
 
 		// validate unnamed child group of type NXsample (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXsample.class, false, true);
 		final Map<String, NXsample> allSample = group.getAllSample();
 		for (final NXsample sample : allSample.values()) {
 			validateGroup_NXentry_NXsample(sample);
 		}
 
 		// validate unnamed child group of type NXdata (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXdata.class, false, true);
 		final Map<String, NXdata> allData = group.getAllData();
 		for (final NXdata data : allData.values()) {
 			validateGroup_NXentry_NXdata(data);
 		}
 
 		// validate optional child group 'control' of type NXmonitor
-		if (group.getMonitor() != null) {
-			validateGroup_NXentry_control(group.getMonitor());
+		if (group.getMonitor("control") != null) {
+			validateGroup_NXentry_control(group.getMonitor("control"));
 		}
 	}
 
@@ -119,30 +124,33 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		validateGroupNotNull(null, NXinstrument.class, group);
 
 		// validate unnamed child group of type NXsource
-		validateGroup_NXentry_NXinstrument_NXsource(group.getSource());
+		validateUnnamedGroupOccurrences(group, NXsource.class, false, false);
+		final NXsource source = group.getAllSource().values().iterator().next();
+		validateGroup_NXentry_NXinstrument_NXsource(source);
 
 		// validate child group 'monochromator' of type NXmonochromator
 		validateGroup_NXentry_NXinstrument_monochromator(group.getMonochromator());
 
 		// validate unnamed child group of type NXdetector (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXdetector.class, false, true);
 		final Map<String, NXdetector> allDetector = group.getAllDetector();
 		for (final NXdetector detector : allDetector.values()) {
 			validateGroup_NXentry_NXinstrument_NXdetector(detector);
 		}
 
 		// validate optional child group 'sample_x' of type NXdetector
-		if (group.getDetector() != null) {
-			validateGroup_NXentry_NXinstrument_sample_x(group.getDetector());
+		if (group.getDetector("sample_x") != null) {
+			validateGroup_NXentry_NXinstrument_sample_x(group.getDetector("sample_x"));
 		}
 
 		// validate optional child group 'sample_y' of type NXdetector
-		if (group.getDetector() != null) {
-			validateGroup_NXentry_NXinstrument_sample_y(group.getDetector());
+		if (group.getDetector("sample_y") != null) {
+			validateGroup_NXentry_NXinstrument_sample_y(group.getDetector("sample_y"));
 		}
 
 		// validate optional child group 'sample_z' of type NXdetector
-		if (group.getDetector() != null) {
-			validateGroup_NXentry_NXinstrument_sample_z(group.getDetector());
+		if (group.getDetector("sample_z") != null) {
+			validateGroup_NXentry_NXinstrument_sample_z(group.getDetector("sample_z"));
 		}
 	}
 

@@ -29,7 +29,9 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
+import org.eclipse.dawnsci.nexus.NXinstrument;
 import org.eclipse.dawnsci.nexus.NXobject;
+import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.NXsubentry;
 import org.eclipse.dawnsci.nexus.NXtransformations;
 import org.eclipse.dawnsci.nexus.NexusBaseClass;
@@ -127,7 +129,29 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	 * @throws NexusValidationException
 	 */
 	protected void validateGroupNotNull(String groupName, Class<? extends NXobject> type, GroupNode groupNode) throws NexusValidationException {
-		validateNotNull((groupName == null ? "The unnamed group " : "The group '" + groupName + "' ") + "of type " + type.getSimpleName() + " must not be null", groupNode);
+		validateNotNull((groupName == null ? "The unnamed group " : "The group '" + groupName + "' ") + "of type " + type.getSimpleName() + " must be present", groupNode);
+	}
+	
+	/**
+	 * Validate the number of occurrences of an unnamed group.
+	 * @param <N>
+	 * @param nxClass
+	 * @param parentGroup
+	 * @param optional
+	 * @param multiple
+	 * @throws NexusValidationException
+	 */
+	protected void validateUnnamedGroupOccurrences(NXobject parentGroup, Class<? extends NXobject> nxClass, boolean optional, boolean multiple) throws NexusValidationException {
+		final Map<String, ?> childrenOfClass = parentGroup.getChildren(nxClass);
+		
+		if (!optional && childrenOfClass.isEmpty()) {
+			failValidation((multiple ? "At least one" : "The unnamed") + " group of type " + nxClass.getSimpleName() + " must be present");
+		}
+		
+		if (!multiple && childrenOfClass.size() > 1) {
+			failValidation("Only one group of type " + nxClass.getSimpleName() + " maybe specified. Found " + childrenOfClass.size() + ": " +
+					String.join(", ", childrenOfClass.keySet()));
+		}
 	}
 	
 	/**

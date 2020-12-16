@@ -41,6 +41,7 @@ public class NXsastofValidator extends AbstractNexusValidator implements NexusAp
 	@Override
 	public void validate(NXroot root) throws NexusValidationException {
 		// validate unnamed child group of type NXentry (possibly multiple)
+		validateUnnamedGroupOccurrences(root, NXentry.class, false, true);
 		final Map<String, NXentry> allEntry = root.getAllEntry();
 		for (final NXentry entry : allEntry.values()) {
 			validateGroup_NXentry(entry);
@@ -98,7 +99,7 @@ public class NXsastofValidator extends AbstractNexusValidator implements NexusAp
 		validateGroup_NXentry_sample(group.getSample());
 
 		// validate child group 'control' of type NXmonitor
-		validateGroup_NXentry_control(group.getMonitor());
+		validateGroup_NXentry_control(group.getMonitor("control"));
 
 		// validate child group 'data' of type NXdata
 		validateGroup_NXentry_data(group.getData());

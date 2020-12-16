@@ -97,18 +97,21 @@ public class NXtofsingleValidator extends AbstractNexusValidator implements Nexu
 		validateGroup_entry_user(group.getUser());
 
 		// validate unnamed child group of type NXinstrument (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXinstrument.class, false, true);
 		final Map<String, NXinstrument> allInstrument = group.getAllInstrument();
 		for (final NXinstrument instrument : allInstrument.values()) {
 			validateGroup_entry_NXinstrument(instrument);
 		}
 
 		// validate unnamed child group of type NXsample (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXsample.class, false, true);
 		final Map<String, NXsample> allSample = group.getAllSample();
 		for (final NXsample sample : allSample.values()) {
 			validateGroup_entry_NXsample(sample);
 		}
 
 		// validate unnamed child group of type NXmonitor (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXmonitor.class, false, true);
 		final Map<String, NXmonitor> allMonitor = group.getAllMonitor();
 		for (final NXmonitor monitor : allMonitor.values()) {
 			validateGroup_entry_NXmonitor(monitor);

@@ -76,6 +76,7 @@ public class NXindirecttofValidator extends AbstractNexusValidator implements Ne
 				"NXindirecttof");
 
 		// validate unnamed child group of type NXinstrument (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXinstrument.class, false, true);
 		final Map<String, NXinstrument> allInstrument = group.getAllInstrument();
 		for (final NXinstrument instrument : allInstrument.values()) {
 			validateGroup_entry_NXinstrument(instrument);
@@ -90,7 +91,7 @@ public class NXindirecttofValidator extends AbstractNexusValidator implements Ne
 		validateGroupNotNull(null, NXinstrument.class, group);
 
 		// validate child group 'analyser' of type NXmonochromator
-		validateGroup_entry_NXinstrument_analyser(group.getMonochromator());
+		validateGroup_entry_NXinstrument_analyser(group.getMonochromator("analyser"));
 	}
 
 	/**

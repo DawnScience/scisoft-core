@@ -156,6 +156,17 @@
 	<xsl:if test="$multiple"> (possibly multiple)</xsl:if>
 	<xsl:if test="$canSASclass"> and canSAS_class <xsl:value-of select="$canSASclass"/></xsl:if>
 	<xsl:text>&#10;</xsl:text>
+	
+	<!-- Validate the number of occurrences of an unnamed group. -->
+	<xsl:if test="not(@name)">
+		<xsl:value-of select="dawnsci:tabs(2)"/>
+		<xsl:text>validateUnnamedGroupOccurrences(</xsl:text>
+		<xsl:value-of select="$parentGroupVariableName"/><xsl:text>, </xsl:text>
+		<xsl:value-of select="@type"/><xsl:text>.class, </xsl:text>
+		<xsl:value-of select="if ($optional) then 'true' else 'false'"/><xsl:text>, </xsl:text>
+		<xsl:value-of select="if ($multiple) then 'true' else 'false'"/>
+		<xsl:text>);&#10;</xsl:text>
+	</xsl:if>
 
 	<!-- Variable for method call to get group (or just group name if multiple), used in invocation of validateGroupXXX method -->
 	<xsl:variable name="group">
@@ -165,21 +176,30 @@
 				<xsl:value-of select="$groupNameInBaseClass"/>
 			</xsl:when>
 			<!-- When the base class does not include the group, just use getChild("@name", @type.class)-->
-			<xsl:when test="not($baseClassGroupDef)">
+			<xsl:when test="@name and not($baseClassGroupDef)">
 				<xsl:value-of select="$parentGroupVariableName"/>
 				<xsl:text>.getChild("</xsl:text><xsl:value-of select="@name"/><xsl:text>", </xsl:text>
 				<xsl:value-of select="@type"/><xsl:text>.class)</xsl:text>
 			</xsl:when>
-			<!-- In the general case, just do parentGroupName.getChildGroupName() -->
-			<xsl:otherwise>
+			<xsl:when test="@name = $groupNameInBaseClass">
 				<xsl:value-of select="$parentGroupVariableName"/>
 				<xsl:text>.get</xsl:text><xsl:value-of select="dawnsci:capitalise-first($groupNameInBaseClass)"/>
 				<xsl:text>()</xsl:text>
+			</xsl:when>
+			<xsl:when test="@name">
+				<xsl:value-of select="$parentGroupVariableName"/>
+				<xsl:text>.get</xsl:text><xsl:value-of select="dawnsci:capitalise-first($groupNameInBaseClass)"/>
+				<xsl:text>("</xsl:text><xsl:value-of select="@name"/><xsl:text>")</xsl:text>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="substring(@type, 3)"></xsl:value-of>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:variable>
 	
 	<xsl:if test="$multiple">
+		<!-- Declare variable for map of all children of type by name, e.g.
+			<String, NXdata> allData = entry.getAllData(); -->
 		<xsl:variable name="mapVariableName" select="dawnsci:capitalise-first(if ($canSASclass) then $canSASclass else $groupNameInBaseClass)"/>
 		<!-- Line to get the map of all groups of the given type, e.g. final Map<String, NXSample> allSample = group.getAllSample() -->
 		<xsl:value-of select="dawnsci:tabs(2)"/>
@@ -209,6 +229,16 @@
 		<xsl:text>for (final </xsl:text><xsl:value-of select="@type || ' ' || $groupNameInBaseClass"/>
 		<xsl:text> : all</xsl:text><xsl:value-of select="$mapVariableName"/>
 		<xsl:text>.values()) {&#10;</xsl:text>
+	</xsl:if>
+	
+	<!-- Variable name for unnamed group (where non-multiple) -->
+	<xsl:if test="not(@name) and not($multiple)">
+		<xsl:value-of select="dawnsci:tabs(2)"/>
+		<xsl:text>final </xsl:text><xsl:value-of select="@type"/><xsl:text> </xsl:text>
+		<xsl:value-of select="$group"/><xsl:text> = </xsl:text>
+		<xsl:value-of select="$parentGroupVariableName"/>
+		<xsl:text>.getAll</xsl:text><xsl:value-of select="dawnsci:capitalise-first($groupNameInBaseClass)"/>
+		<xsl:text>().values().iterator().next();&#10;</xsl:text>
 	</xsl:if>
 	
 	<!-- Null test for optional groups -->

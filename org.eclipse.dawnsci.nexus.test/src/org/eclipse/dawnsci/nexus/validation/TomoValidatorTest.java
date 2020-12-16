@@ -47,7 +47,7 @@ public class TomoValidatorTest {
 		detector.setAttribute(NXdetector.NX_DATA, ATTRIBUTE_NAME_UNITS, "A");
 		detector.setDataset("image_key", DatasetFactory.zeros(IntegerDataset.class, NUM_FRAMES));
 		detector.setDistance(DatasetFactory.zeros(DETECTOR_DATA_DIMENSIONS).iadd(0.25)); // NXdetector.nxdl.xml required 3 dimensions!
-		detector.setAttribute(NXdetector.NX_DISTANCE, ATTRIBUTE_NAME_UNITS, "mm");
+		detector.setAttribute(NXdetector.NX_DISTANCE, ATTRIBUTE_NAME_UNITS, "mm"); // unit type is NXtomo.nxdl.xml is NX_ANY
 		
 		final NXsample sample = NexusNodeFactory.createNXsample();
 		entry.setSample(sample);
@@ -58,6 +58,7 @@ public class TomoValidatorTest {
 		final NXmonitor controlMonitor = NexusNodeFactory.createNXmonitor();
 		entry.setMonitor("control", controlMonitor);
 		controlMonitor.setData(Random.rand(NUM_FRAMES));
+		controlMonitor.setAttribute(NXmonitor.NX_DATA, ATTRIBUTE_NAME_UNITS, "A"); // unit type is NXtomo.nxdl.xml is NX_ANY
 		
 		final NXdata data = NexusNodeFactory.createNXdata();
 		entry.setData(data);

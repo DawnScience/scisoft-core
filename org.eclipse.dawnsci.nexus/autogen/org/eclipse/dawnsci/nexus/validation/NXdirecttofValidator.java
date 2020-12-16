@@ -77,6 +77,7 @@ public class NXdirecttofValidator extends AbstractNexusValidator implements Nexu
 				"NXdirecttof");
 
 		// validate unnamed child group of type NXinstrument (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXinstrument.class, false, true);
 		final Map<String, NXinstrument> allInstrument = group.getAllInstrument();
 		for (final NXinstrument instrument : allInstrument.values()) {
 			validateGroup_entry_NXinstrument(instrument);

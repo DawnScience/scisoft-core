@@ -81,24 +81,28 @@ public class NXmonopdValidator extends AbstractNexusValidator implements NexusAp
 				"NXmonopd");
 
 		// validate unnamed child group of type NXinstrument (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXinstrument.class, false, true);
 		final Map<String, NXinstrument> allInstrument = group.getAllInstrument();
 		for (final NXinstrument instrument : allInstrument.values()) {
 			validateGroup_entry_NXinstrument(instrument);
 		}
 
 		// validate unnamed child group of type NXsample (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXsample.class, false, true);
 		final Map<String, NXsample> allSample = group.getAllSample();
 		for (final NXsample sample : allSample.values()) {
 			validateGroup_entry_NXsample(sample);
 		}
 
 		// validate unnamed child group of type NXmonitor (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXmonitor.class, false, true);
 		final Map<String, NXmonitor> allMonitor = group.getAllMonitor();
 		for (final NXmonitor monitor : allMonitor.values()) {
 			validateGroup_entry_NXmonitor(monitor);
 		}
 
 		// validate unnamed child group of type NXdata (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXdata.class, false, true);
 		final Map<String, NXdata> allData = group.getAllData();
 		for (final NXdata data : allData.values()) {
 			validateGroup_entry_NXdata(data);
@@ -113,18 +117,21 @@ public class NXmonopdValidator extends AbstractNexusValidator implements NexusAp
 		validateGroupNotNull(null, NXinstrument.class, group);
 
 		// validate unnamed child group of type NXsource (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXsource.class, false, true);
 		final Map<String, NXsource> allSource = group.getAllSource();
 		for (final NXsource source : allSource.values()) {
 			validateGroup_entry_NXinstrument_NXsource(source);
 		}
 
 		// validate unnamed child group of type NXcrystal (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXcrystal.class, false, true);
 		final Map<String, NXcrystal> allCrystal = group.getAllCrystal();
 		for (final NXcrystal crystal : allCrystal.values()) {
 			validateGroup_entry_NXinstrument_NXcrystal(crystal);
 		}
 
 		// validate unnamed child group of type NXdetector (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXdetector.class, false, true);
 		final Map<String, NXdetector> allDetector = group.getAllDetector();
 		for (final NXdetector detector : allDetector.values()) {
 			validateGroup_entry_NXinstrument_NXdetector(detector);

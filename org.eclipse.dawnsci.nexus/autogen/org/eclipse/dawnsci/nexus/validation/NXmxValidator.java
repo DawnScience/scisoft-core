@@ -43,6 +43,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 	@Override
 	public void validate(NXroot root) throws NexusValidationException {
 		// validate unnamed child group of type NXentry (possibly multiple)
+		validateUnnamedGroupOccurrences(root, NXentry.class, false, true);
 		final Map<String, NXentry> allEntry = root.getAllEntry();
 		for (final NXentry entry : allEntry.values()) {
 			validateGroup_NXentry(entry);
@@ -112,24 +113,28 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 				"NXmx");
 
 		// validate unnamed child group of type NXdata (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXdata.class, false, true);
 		final Map<String, NXdata> allData = group.getAllData();
 		for (final NXdata data : allData.values()) {
 			validateGroup_NXentry_NXdata(data);
 		}
 
 		// validate unnamed child group of type NXsample (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXsample.class, false, true);
 		final Map<String, NXsample> allSample = group.getAllSample();
 		for (final NXsample sample : allSample.values()) {
 			validateGroup_NXentry_NXsample(sample);
 		}
 
 		// validate unnamed child group of type NXinstrument (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXinstrument.class, false, true);
 		final Map<String, NXinstrument> allInstrument = group.getAllInstrument();
 		for (final NXinstrument instrument : allInstrument.values()) {
 			validateGroup_NXentry_NXinstrument(instrument);
 		}
 
 		// validate unnamed child group of type NXsource (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXsource.class, false, true);
 		final Map<String, NXsource> allSource = group.getChildren(NXsource.class);
 		for (final NXsource source : allSource.values()) {
 			validateGroup_NXentry_NXsource(source);
@@ -212,24 +217,28 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		}
 
 		// validate unnamed child group of type NXattenuator (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXattenuator.class, false, true);
 		final Map<String, NXattenuator> allAttenuator = group.getAllAttenuator();
 		for (final NXattenuator attenuator : allAttenuator.values()) {
 			validateGroup_NXentry_NXinstrument_NXattenuator(attenuator);
 		}
 
 		// validate unnamed child group of type NXdetector_group (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXdetector_group.class, false, true);
 		final Map<String, NXdetector_group> allDetector_group = group.getAllDetector_group();
 		for (final NXdetector_group detector_group : allDetector_group.values()) {
 			validateGroup_NXentry_NXinstrument_NXdetector_group(detector_group);
 		}
 
 		// validate unnamed child group of type NXdetector (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXdetector.class, false, true);
 		final Map<String, NXdetector> allDetector = group.getAllDetector();
 		for (final NXdetector detector : allDetector.values()) {
 			validateGroup_NXentry_NXinstrument_NXdetector(detector);
 		}
 
 		// validate unnamed child group of type NXbeam (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXbeam.class, false, true);
 		final Map<String, NXbeam> allBeam = group.getAllBeam();
 		for (final NXbeam beam : allBeam.values()) {
 			validateGroup_NXentry_NXinstrument_NXbeam(beam);
@@ -531,12 +540,14 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		validateTransformations(allTransformations, depends_on.getString(0));
 
 		// validate unnamed child group of type NXcollection (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXcollection.class, false, true);
 		final Map<String, NXcollection> allCollection = group.getAllCollection();
 		for (final NXcollection collection : allCollection.values()) {
 			validateGroup_NXentry_NXinstrument_NXdetector_NXcollection(collection);
 		}
 
 		// validate unnamed child group of type NXdetector_module (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXdetector_module.class, false, true);
 		final Map<String, NXdetector_module> allDetector_module = group.getAllDetector_module();
 		for (final NXdetector_module detector_module : allDetector_module.values()) {
 			validateGroup_NXentry_NXinstrument_NXdetector_NXdetector_module(detector_module);
@@ -761,8 +772,8 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 			validateFieldDimensions("incident_polarisation_stokes", incident_polarisation_stokes, null, "nP", 4);
 		}
 		// validate optional child group 'incident_wavelength_spectrum' of type NXdata
-		if (group.getData() != null) {
-			validateGroup_NXentry_NXinstrument_NXbeam_incident_wavelength_spectrum(group.getData());
+		if (group.getData("incident_wavelength_spectrum") != null) {
+			validateGroup_NXentry_NXinstrument_NXbeam_incident_wavelength_spectrum(group.getData("incident_wavelength_spectrum"));
 		}
 	}
 

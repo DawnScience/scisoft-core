@@ -22,7 +22,6 @@ import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.nexus.NXdetector;
 import org.eclipse.dawnsci.nexus.NXentry;
 import org.eclipse.dawnsci.nexus.NXinstrument;
-import org.eclipse.dawnsci.nexus.NXpositioner;
 import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.NXtransformations;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
@@ -34,7 +33,6 @@ import org.eclipse.january.dataset.StringDataset;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -89,6 +87,48 @@ public class AbstractNexusValidatorTest {
 	@Test(expected = NexusValidationException.class)
 	public void testValidateGroupNotNull_nullGroup() throws Exception {
 		validator.validateGroupNotNull("groupName", NXsample.class, null);
+	}
+	
+	@Test
+	public void testValidateUnnamedGroup_required_ok() throws Exception {
+		final NXentry parentGroup = NexusNodeFactory.createNXentry();
+		parentGroup.setSample(NexusNodeFactory.createNXsample());
+		validator.validateUnnamedGroupOccurrences(parentGroup, NXsample.class, false, false);
+	}
+	
+	@Test(expected = NexusValidationException.class)
+	public void testValidateUnnamedGroup_required_notPresent() throws Exception {
+		final NXentry parentGroup = NexusNodeFactory.createNXentry();
+		validator.validateUnnamedGroupOccurrences(parentGroup, NXsample.class, false, false);
+	}
+
+	@Test(expected = NexusValidationException.class)
+	public void testValidateUnnamedGroup_requiredMultiple_notPresent() throws Exception {
+		final NXentry parentGroup = NexusNodeFactory.createNXentry();
+		validator.validateUnnamedGroupOccurrences(parentGroup, NXsample.class, false, true);
+	}
+	
+	@Test
+	public void testValidateUnnamedGroup_multiple_present() throws Exception {
+		final NXentry parentGroup = NexusNodeFactory.createNXentry();
+		parentGroup.setSample(NexusNodeFactory.createNXsample());
+		validator.validateUnnamedGroupOccurrences(parentGroup, NXsample.class, false, true);
+	}
+	
+	@Test
+	public void testValidateUnnamedGroup_multiple_multiplePresent() throws Exception {
+		final NXentry parentGroup = NexusNodeFactory.createNXentry();
+		parentGroup.setSample("sample1", NexusNodeFactory.createNXsample());
+		parentGroup.setSample("sample2", NexusNodeFactory.createNXsample());
+		validator.validateUnnamedGroupOccurrences(parentGroup, NXsample.class, false, true);
+	}
+	
+	@Test(expected = NexusValidationException.class)
+	public void testValidateUnnamedGroup_nonMultiple_multiplePresent() throws Exception {
+		final NXentry parentGroup = NexusNodeFactory.createNXentry();
+		parentGroup.setSample("sample1", NexusNodeFactory.createNXsample());
+		parentGroup.setSample("sample2", NexusNodeFactory.createNXsample());
+		validator.validateUnnamedGroupOccurrences(parentGroup, NXsample.class, false, false);
 	}
 	
 	@Test

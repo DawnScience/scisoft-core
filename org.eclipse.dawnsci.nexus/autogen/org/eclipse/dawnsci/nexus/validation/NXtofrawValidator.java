@@ -106,12 +106,14 @@ public class NXtofrawValidator extends AbstractNexusValidator implements NexusAp
 		validateGroup_entry_instrument(group.getInstrument());
 
 		// validate unnamed child group of type NXsample (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXsample.class, false, true);
 		final Map<String, NXsample> allSample = group.getAllSample();
 		for (final NXsample sample : allSample.values()) {
 			validateGroup_entry_NXsample(sample);
 		}
 
 		// validate unnamed child group of type NXmonitor (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXmonitor.class, false, true);
 		final Map<String, NXmonitor> allMonitor = group.getAllMonitor();
 		for (final NXmonitor monitor : allMonitor.values()) {
 			validateGroup_entry_NXmonitor(monitor);

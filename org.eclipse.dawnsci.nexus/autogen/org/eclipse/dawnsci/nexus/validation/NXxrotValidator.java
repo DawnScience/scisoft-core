@@ -72,7 +72,7 @@ public class NXxrotValidator extends AbstractNexusValidator implements NexusAppl
 		validateGroup_entry_sample(group.getSample());
 
 		// validate child group 'name' of type NXdata
-		validateGroup_entry_name(group.getData());
+		validateGroup_entry_name(group.getData("name"));
 	}
 
 	/**

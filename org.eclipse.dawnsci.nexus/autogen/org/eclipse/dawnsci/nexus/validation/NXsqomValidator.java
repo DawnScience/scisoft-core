@@ -38,6 +38,7 @@ public class NXsqomValidator extends AbstractNexusValidator implements NexusAppl
 	@Override
 	public void validate(NXroot root) throws NexusValidationException {
 		// validate unnamed child group of type NXentry (possibly multiple)
+		validateUnnamedGroupOccurrences(root, NXentry.class, false, true);
 		final Map<String, NXentry> allEntry = root.getAllEntry();
 		for (final NXentry entry : allEntry.values()) {
 			validateGroup_NXentry(entry);
@@ -86,15 +87,17 @@ public class NXsqomValidator extends AbstractNexusValidator implements NexusAppl
 		validateGroup_NXentry_instrument(group.getInstrument());
 
 		// validate unnamed child group of type NXsample (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXsample.class, false, true);
 		final Map<String, NXsample> allSample = group.getAllSample();
 		for (final NXsample sample : allSample.values()) {
 			validateGroup_NXentry_NXsample(sample);
 		}
 
 		// validate child group 'reduction' of type NXprocess
-		validateGroup_NXentry_reduction(group.getProcess());
+		validateGroup_NXentry_reduction(group.getProcess("reduction"));
 
 		// validate unnamed child group of type NXdata (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXdata.class, false, true);
 		final Map<String, NXdata> allData = group.getAllData();
 		for (final NXdata data : allData.values()) {
 			validateGroup_NXentry_NXdata(data);
@@ -114,6 +117,7 @@ public class NXsqomValidator extends AbstractNexusValidator implements NexusAppl
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("name", name, NX_CHAR);
 		// validate unnamed child group of type NXsource (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXsource.class, false, true);
 		final Map<String, NXsource> allSource = group.getAllSource();
 		for (final NXsource source : allSource.values()) {
 			validateGroup_NXentry_instrument_NXsource(source);

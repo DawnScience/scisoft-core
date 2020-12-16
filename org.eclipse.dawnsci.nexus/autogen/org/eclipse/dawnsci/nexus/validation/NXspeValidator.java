@@ -37,6 +37,7 @@ public class NXspeValidator extends AbstractNexusValidator implements NexusAppli
 	@Override
 	public void validate(NXroot root) throws NexusValidationException {
 		// validate unnamed child group of type NXentry (possibly multiple)
+		validateUnnamedGroupOccurrences(root, NXentry.class, false, true);
 		final Map<String, NXentry> allEntry = root.getAllEntry();
 		for (final NXentry entry : allEntry.values()) {
 			validateGroup_NXentry(entry);
@@ -83,18 +84,20 @@ public class NXspeValidator extends AbstractNexusValidator implements NexusAppli
 
 
 		// validate child group 'NXSPE_info' of type NXcollection
-		validateGroup_NXentry_NXSPE_info(group.getCollection());
+		validateGroup_NXentry_NXSPE_info(group.getCollection("NXSPE_info"));
 
 		// validate child group 'data' of type NXdata
 		validateGroup_NXentry_data(group.getData());
 
 		// validate unnamed child group of type NXinstrument (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXinstrument.class, false, true);
 		final Map<String, NXinstrument> allInstrument = group.getAllInstrument();
 		for (final NXinstrument instrument : allInstrument.values()) {
 			validateGroup_NXentry_NXinstrument(instrument);
 		}
 
 		// validate unnamed child group of type NXsample (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXsample.class, false, true);
 		final Map<String, NXsample> allSample = group.getAllSample();
 		for (final NXsample sample : allSample.values()) {
 			validateGroup_NXentry_NXsample(sample);
@@ -206,6 +209,7 @@ public class NXspeValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldType("name", name, NX_CHAR);
 
 		// validate unnamed child group of type NXfermi_chopper (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXfermi_chopper.class, false, true);
 		final Map<String, NXfermi_chopper> allFermi_chopper = group.getAllFermi_chopper();
 		for (final NXfermi_chopper fermi_chopper : allFermi_chopper.values()) {
 			validateGroup_NXentry_NXinstrument_NXfermi_chopper(fermi_chopper);

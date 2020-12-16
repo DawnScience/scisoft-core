@@ -92,7 +92,7 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 		validateGroup_entry_sample(group.getSample());
 
 		// validate child group 'control' of type NXmonitor
-		validateGroup_entry_control(group.getMonitor());
+		validateGroup_entry_control(group.getMonitor("control"));
 
 		// validate child group 'data' of type NXdata
 		validateGroup_entry_data(group.getData());
@@ -106,19 +106,20 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 		validateGroupNotNull("instrument", NXinstrument.class, group);
 
 		// validate unnamed child group of type NXsource (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXsource.class, false, true);
 		final Map<String, NXsource> allSource = group.getAllSource();
 		for (final NXsource source : allSource.values()) {
 			validateGroup_entry_instrument_NXsource(source);
 		}
 
 		// validate child group 'bright_field' of type NXdetector
-		validateGroup_entry_instrument_bright_field(group.getDetector());
+		validateGroup_entry_instrument_bright_field(group.getDetector("bright_field"));
 
 		// validate child group 'dark_field' of type NXdetector
-		validateGroup_entry_instrument_dark_field(group.getDetector());
+		validateGroup_entry_instrument_dark_field(group.getDetector("dark_field"));
 
 		// validate child group 'sample' of type NXdetector
-		validateGroup_entry_instrument_sample(group.getDetector());
+		validateGroup_entry_instrument_sample(group.getDetector("sample"));
 	}
 
 	/**

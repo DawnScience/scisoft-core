@@ -90,7 +90,7 @@ public class NXreftofValidator extends AbstractNexusValidator implements NexusAp
 		validateGroup_entry_sample(group.getSample());
 
 		// validate child group 'control' of type NXmonitor
-		validateGroup_entry_control(group.getMonitor());
+		validateGroup_entry_control(group.getMonitor("control"));
 
 		// validate child group 'data' of type NXdata
 		validateGroup_entry_data(group.getData());
@@ -110,7 +110,7 @@ public class NXreftofValidator extends AbstractNexusValidator implements NexusAp
 		validateFieldType("name", name, NX_CHAR);
 
 		// validate child group 'chopper' of type NXdisk_chopper
-		validateGroup_entry_instrument_chopper(group.getDisk_chopper());
+		validateGroup_entry_instrument_chopper(group.getDisk_chopper("chopper"));
 
 		// validate child group 'detector' of type NXdetector
 		validateGroup_entry_instrument_detector(group.getDetector());

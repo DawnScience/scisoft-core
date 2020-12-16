@@ -218,6 +218,7 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("description", description, NX_CHAR);
 		// validate unnamed child group of type NXsource (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXsource.class, false, true);
 		final Map<String, NXsource> allSource = group.getAllSource();
 		for (final NXsource source : allSource.values()) {
 			validateGroup_entry_instrument_NXsource(source);

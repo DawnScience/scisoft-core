@@ -93,7 +93,7 @@ public class NXrefscanValidator extends AbstractNexusValidator implements NexusA
 		validateGroup_entry_sample(group.getSample());
 
 		// validate child group 'control' of type NXmonitor
-		validateGroup_entry_control(group.getMonitor());
+		validateGroup_entry_control(group.getMonitor("control"));
 
 		// validate child group 'data' of type NXdata
 		validateGroup_entry_data(group.getData());
@@ -107,6 +107,7 @@ public class NXrefscanValidator extends AbstractNexusValidator implements NexusA
 		validateGroupNotNull("instrument", NXinstrument.class, group);
 
 		// validate unnamed child group of type NXsource (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXsource.class, false, true);
 		final Map<String, NXsource> allSource = group.getAllSource();
 		for (final NXsource source : allSource.values()) {
 			validateGroup_entry_instrument_NXsource(source);
@@ -116,6 +117,7 @@ public class NXrefscanValidator extends AbstractNexusValidator implements NexusA
 		validateGroup_entry_instrument_monochromator(group.getMonochromator());
 
 		// validate unnamed child group of type NXdetector (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXdetector.class, false, true);
 		final Map<String, NXdetector> allDetector = group.getAllDetector();
 		for (final NXdetector detector : allDetector.values()) {
 			validateGroup_entry_instrument_NXdetector(detector);

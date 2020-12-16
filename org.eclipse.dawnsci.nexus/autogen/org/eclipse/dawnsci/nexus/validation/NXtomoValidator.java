@@ -93,8 +93,8 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 		validateGroup_entry_sample(group.getSample());
 
 		// validate optional child group 'control' of type NXmonitor
-		if (group.getMonitor() != null) {
-			validateGroup_entry_control(group.getMonitor());
+		if (group.getMonitor("control") != null) {
+			validateGroup_entry_control(group.getMonitor("control"));
 		}
 
 		// validate child group 'data' of type NXdata
@@ -109,8 +109,10 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 		validateGroupNotNull("instrument", NXinstrument.class, group);
 
 		// validate optional unnamed child group of type NXsource
-		if (group.getSource() != null) {
-			validateGroup_entry_instrument_NXsource(group.getSource());
+		validateUnnamedGroupOccurrences(group, NXsource.class, true, false);
+		final NXsource source = group.getAllSource().values().iterator().next();
+		if (source != null) {
+			validateGroup_entry_instrument_NXsource(source);
 		}
 
 		// validate child group 'detector' of type NXdetector
@@ -320,6 +322,6 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 		// validate link 'image_key' to location '/NXentry/NXinstrument/detector:NXdetector/image_key
 		final DataNode image_key = group.getDataNode("image_key");
 		validateDataNodeLink("image_key", image_key, "/NXentry/NXinstrument/detector:NXdetector/image_key");
-
 	}
+	
 }

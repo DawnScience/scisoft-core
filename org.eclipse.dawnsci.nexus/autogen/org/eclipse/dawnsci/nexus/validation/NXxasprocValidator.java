@@ -36,6 +36,7 @@ public class NXxasprocValidator extends AbstractNexusValidator implements NexusA
 	@Override
 	public void validate(NXroot root) throws NexusValidationException {
 		// validate unnamed child group of type NXentry (possibly multiple)
+		validateUnnamedGroupOccurrences(root, NXentry.class, false, true);
 		final Map<String, NXentry> allEntry = root.getAllEntry();
 		for (final NXentry entry : allEntry.values()) {
 			validateGroup_NXentry(entry);
@@ -81,15 +82,17 @@ public class NXxasprocValidator extends AbstractNexusValidator implements NexusA
 				"NXxasproc");
 
 		// validate unnamed child group of type NXsample (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXsample.class, false, true);
 		final Map<String, NXsample> allSample = group.getAllSample();
 		for (final NXsample sample : allSample.values()) {
 			validateGroup_NXentry_NXsample(sample);
 		}
 
 		// validate child group 'XAS_data_reduction' of type NXprocess
-		validateGroup_NXentry_XAS_data_reduction(group.getProcess());
+		validateGroup_NXentry_XAS_data_reduction(group.getProcess("XAS_data_reduction"));
 
 		// validate unnamed child group of type NXdata (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXdata.class, false, true);
 		final Map<String, NXdata> allData = group.getAllData();
 		for (final NXdata data : allData.values()) {
 			validateGroup_NXentry_NXdata(data);

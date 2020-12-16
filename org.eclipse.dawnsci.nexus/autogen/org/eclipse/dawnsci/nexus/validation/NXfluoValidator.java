@@ -81,18 +81,21 @@ public class NXfluoValidator extends AbstractNexusValidator implements NexusAppl
 				"NXfluo");
 
 		// validate unnamed child group of type NXinstrument (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXinstrument.class, false, true);
 		final Map<String, NXinstrument> allInstrument = group.getAllInstrument();
 		for (final NXinstrument instrument : allInstrument.values()) {
 			validateGroup_entry_NXinstrument(instrument);
 		}
 
 		// validate unnamed child group of type NXsample (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXsample.class, false, true);
 		final Map<String, NXsample> allSample = group.getAllSample();
 		for (final NXsample sample : allSample.values()) {
 			validateGroup_entry_NXsample(sample);
 		}
 
 		// validate unnamed child group of type NXmonitor (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXmonitor.class, false, true);
 		final Map<String, NXmonitor> allMonitor = group.getAllMonitor();
 		for (final NXmonitor monitor : allMonitor.values()) {
 			validateGroup_entry_NXmonitor(monitor);
@@ -110,6 +113,7 @@ public class NXfluoValidator extends AbstractNexusValidator implements NexusAppl
 		validateGroupNotNull(null, NXinstrument.class, group);
 
 		// validate unnamed child group of type NXsource (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXsource.class, false, true);
 		final Map<String, NXsource> allSource = group.getAllSource();
 		for (final NXsource source : allSource.values()) {
 			validateGroup_entry_NXinstrument_NXsource(source);
@@ -119,7 +123,7 @@ public class NXfluoValidator extends AbstractNexusValidator implements NexusAppl
 		validateGroup_entry_NXinstrument_monochromator(group.getMonochromator());
 
 		// validate child group 'fluorescence' of type NXdetector
-		validateGroup_entry_NXinstrument_fluorescence(group.getDetector());
+		validateGroup_entry_NXinstrument_fluorescence(group.getDetector("fluorescence"));
 	}
 
 	/**

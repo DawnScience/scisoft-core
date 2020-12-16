@@ -38,6 +38,7 @@ public class NXarpesValidator extends AbstractNexusValidator implements NexusApp
 	@Override
 	public void validate(NXroot root) throws NexusValidationException {
 		// validate unnamed child group of type NXentry (possibly multiple)
+		validateUnnamedGroupOccurrences(root, NXentry.class, false, true);
 		final Map<String, NXentry> allEntry = root.getAllEntry();
 		for (final NXentry entry : allEntry.values()) {
 			validateGroup_NXentry(entry);
@@ -90,18 +91,21 @@ public class NXarpesValidator extends AbstractNexusValidator implements NexusApp
 				"NXarpes");
 
 		// validate unnamed child group of type NXinstrument (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXinstrument.class, false, true);
 		final Map<String, NXinstrument> allInstrument = group.getAllInstrument();
 		for (final NXinstrument instrument : allInstrument.values()) {
 			validateGroup_NXentry_NXinstrument(instrument);
 		}
 
 		// validate unnamed child group of type NXsample (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXsample.class, false, true);
 		final Map<String, NXsample> allSample = group.getAllSample();
 		for (final NXsample sample : allSample.values()) {
 			validateGroup_NXentry_NXsample(sample);
 		}
 
 		// validate unnamed child group of type NXdata (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXdata.class, false, true);
 		final Map<String, NXdata> allData = group.getAllData();
 		for (final NXdata data : allData.values()) {
 			validateGroup_NXentry_NXdata(data);
@@ -116,6 +120,7 @@ public class NXarpesValidator extends AbstractNexusValidator implements NexusApp
 		validateGroupNotNull(null, NXinstrument.class, group);
 
 		// validate unnamed child group of type NXsource (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXsource.class, false, true);
 		final Map<String, NXsource> allSource = group.getAllSource();
 		for (final NXsource source : allSource.values()) {
 			validateGroup_NXentry_NXinstrument_NXsource(source);
@@ -125,7 +130,7 @@ public class NXarpesValidator extends AbstractNexusValidator implements NexusApp
 		validateGroup_NXentry_NXinstrument_monochromator(group.getMonochromator());
 
 		// validate child group 'analyser' of type NXdetector
-		validateGroup_NXentry_NXinstrument_analyser(group.getDetector());
+		validateGroup_NXentry_NXinstrument_analyser(group.getDetector("analyser"));
 	}
 
 	/**

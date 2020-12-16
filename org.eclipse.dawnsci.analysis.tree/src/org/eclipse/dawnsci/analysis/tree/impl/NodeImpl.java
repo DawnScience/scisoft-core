@@ -60,6 +60,16 @@ public abstract class NodeImpl implements Node, Serializable {
 	public void addAttribute(final Attribute a) {
 		attributes.put(a.getName(), a);
 	}
+	
+	@Override
+	public void removeAttribute(String name) {
+		attributes.remove(name);
+	}
+
+	@Override
+	public void removeAttribute(Attribute attr) {
+		attributes.remove(attr.getName(), attr);
+	}
 
 	@Override
 	public Iterator<String> getAttributeNameIterator() {

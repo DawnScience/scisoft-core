@@ -53,9 +53,9 @@ public interface Node {
 
 	/**
 	 * Add given attribute to node
-	 * @param a
+	 * @param attr
 	 */
-	public void addAttribute(Attribute a);
+	public void addAttribute(Attribute attr);
 
 	/**
 	 * @return iterator over attribute names in node
@@ -66,6 +66,18 @@ public interface Node {
 	 * @return iterator over attribute names in node
 	 */
 	public Iterator<? extends Attribute> getAttributeIterator();
+	
+	/**
+	 * Remove the attribute with the given name from the node
+	 * @param name
+	 */
+	public void removeAttribute(String name);
+	
+	/**
+	 * Remove the given attribute from the node, if present.
+	 * @param attr
+	 */
+	public void removeAttribute(Attribute attr);
 	
 	/**
 	 * @return <code>true</code> if this node is a {@link GroupNode},

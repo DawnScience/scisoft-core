@@ -37,8 +37,8 @@ public class XPDFChainTest {
 	public static void before() throws Exception {
 		
 		OperationRunnerImpl.setRunner(ExecutionType.SERIES,   new SeriesRunner());
-		operationService.createOperations(operationService.getClass().getClassLoader(), "uk.ac.diamond.scisoft.xpdf.operations");
-		operationService.createOperations(operationService.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.operations");
+		operationService.createOperations(operationService.getClass(), "uk.ac.diamond.scisoft.xpdf.operations");
+		operationService.createOperations(operationService.getClass(), "uk.ac.diamond.scisoft.analysis.processing.operations");
 		new PersistJsonOperationsNode().setOperationService(operationService);
 		new LocalServiceManager().setLoaderService(new LoaderServiceImpl());
 		new org.dawnsci.persistence.ServiceLoader().setNexusFactory(new NexusFileFactoryHDF5());

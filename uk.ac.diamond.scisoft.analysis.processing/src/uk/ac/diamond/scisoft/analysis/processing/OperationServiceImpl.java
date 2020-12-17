@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -46,6 +47,9 @@ import org.eclipse.dawnsci.analysis.dataset.slicer.SourceInformation;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IDynamicDataset;
 import org.eclipse.january.dataset.ShapeUtils;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.wiring.BundleWiring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -428,9 +432,10 @@ public class OperationServiceImpl implements IOperationService {
 		checkOperations();
 		
 		Collection<IOperation<? extends IOperationModel, ? extends OperationData>> ret = new ArrayList<IOperation<? extends IOperationModel, ? extends OperationData>>(3);
+		Pattern pattern = Pattern.compile(regex);
 		for (String id : operations.keySet()) {
 			IOperation<? extends IOperationModel, ? extends OperationData> operation = operations.get(id);
-			if (matches(id, operation, regex)) {
+			if (matches(id, operation, pattern)) {
 				ret.add(operation);
 			}
 		}
@@ -456,28 +461,32 @@ public class OperationServiceImpl implements IOperationService {
 	public IOperation<? extends IOperationModel, ? extends OperationData> findFirst(String regex) throws Exception {
 		checkOperations();
 		
+		Pattern pattern = Pattern.compile(regex);
 		for (String id : operations.keySet()) {
 			IOperation<? extends IOperationModel, ? extends OperationData> operation = operations.get(id);
-			if (matches(id, operation, regex)) {
+			if (matches(id, operation, pattern)) {
 				return operation;
 			}
 		}
 		return null;
 	}
 
-     /**
+	/**
 	 * NOTE the regex will be matched as follows on the id of the operation:
-	 * 1. if matching on the id
-	 * 2. if matching the description in lower case.
-	 * 3. if indexOf the regex in the id is >=0
-	 * 4. if indexOf the regex in the description is >=0
+	 * <ol>
+	 * <li>if matching on the id</li>
+	 * <li>if matching the description in lower case</li>
+	 * <li>if indexOf the regex in the id is >=0</li>
+	 * <li>if indexOf the regex in the description is >=0</li>
+	 * </ol>
 	 */
-	private boolean matches(String id, IOperation<? extends IOperationModel, ? extends OperationData> operation, String regex) {
-		if (id.matches(regex)) return true;
+	private boolean matches(String id, IOperation<? extends IOperationModel, ? extends OperationData> operation, Pattern pattern) {
+		if (pattern.matcher(id).matches()) return true;
 		final String description = operation.getDescription();
-		if (description.matches(regex)) return true;
-		if (id.indexOf(regex)>=0) return true;
-		if (description.indexOf(regex)>=0) return true;
+		if (pattern.matcher(description).matches()) return true;
+		String regexp = pattern.pattern();
+		if (id.indexOf(regexp)>=0) return true;
+		if (description.indexOf(regexp)>=0) return true;
 		return false;
 	}
 
@@ -546,24 +555,56 @@ public class OperationServiceImpl implements IOperationService {
 	}
 
 	@Override
-	public void createOperations(ClassLoader cl, String pakage) throws Exception {
-		
-		final List<Class<?>> classes = ClassUtils.getClassesForPackage(cl, pakage);
+	public void createOperations(Class<?> c, String pkg) throws Exception {
+		List<Class<?>> classes = ClassUtils.getClassesForPackage(c.getClassLoader(), pkg);
+		if (classes.isEmpty()) {
+			classes = getClassesFromBundle(FrameworkUtil.getBundle(c), pkg.replace('.', '/'));
+		}
+
 		for (Class<?> class1 : classes) {
 			if (Modifier.isAbstract(class1.getModifiers())) continue;
 			if (IOperation.class.isAssignableFrom(class1)) {
-				
 				IOperation<? extends IOperationModel, ? extends OperationData> op = (IOperation<? extends IOperationModel, ? extends OperationData>) class1.newInstance();
 				if (operations==null) operations = new HashMap<>(31);
 				if (models == null) models = new HashMap<>();
 				
 				operations.put(op.getId(), op);
+				logger.debug("Adding operation: {}", op.getClass().getName());
 				if (op instanceof AbstractOperationBase) {
-					models.put(op.getId(), ((AbstractOperationBase) op).getModelClass());
+					Class mc = ((AbstractOperationBase) op).getModelClass();
+					models.put(op.getId(), mc);
+					logger.debug("    model: {}", mc.getName());
 				}
 			}
 		}
 	}
+
+	private static final String CLASS_EXT = ".class";
+	private static final Pattern INNER_CLASS = Pattern.compile("^.+\\$\\w+\\" + CLASS_EXT + "$");
+
+	private List<Class<?>> getClassesFromBundle(Bundle b, String pkgDir) {
+		final List<Class<?>> classes = new ArrayList<Class<?>>();
+		BundleWiring wiring = b.adapt(BundleWiring.class);
+		
+		Collection<String> entries = wiring.listResources(pkgDir, "*" + CLASS_EXT, BundleWiring.LISTRESOURCES_RECURSE);
+		for (String e : entries) {
+			if (INNER_CLASS.matcher(e).matches()) {
+				continue; // skip inner class files
+			}
+			String c = e.replace('/', '.');
+			int i = c.lastIndexOf(CLASS_EXT);
+			if (i >= 0) {
+				c = c.substring(0, i);
+			}
+			try {
+				classes.add(b.loadClass(c));
+			} catch (ClassNotFoundException ex) {
+				logger.error("Could not load class {}", c, ex);
+			}
+		}
+		return classes;
+	}
+
 
 	@Override
 	public String getName(String id) throws Exception{

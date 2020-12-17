@@ -21,6 +21,13 @@ public class NexusHDF5Loader extends HDF5Loader {
 
 	private static final Logger logger = LoggerFactory.getLogger(NexusHDF5Loader.class);
 
+	public NexusHDF5Loader() {
+	}
+
+	public NexusHDF5Loader(final String name) {
+		super(name);
+	}
+
 	@Override
 	public void augmentLink(NodeLink link) {
 		try {

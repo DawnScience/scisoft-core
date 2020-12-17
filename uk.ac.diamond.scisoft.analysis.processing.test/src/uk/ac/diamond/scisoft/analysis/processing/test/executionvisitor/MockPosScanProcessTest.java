@@ -64,7 +64,7 @@ public class MockPosScanProcessTest {
 		
 		new NexusFileExecutionVisitor().setPersistenceService(PersistenceServiceCreator.createPersistenceService());
 		service = new OperationServiceImpl();
-		service.createOperations(service.getClass().getClassLoader(), "uk.ac.diamond.scisoft.analysis.processing.test.executionvisitor");
+		service.createOperations(service.getClass(), "uk.ac.diamond.scisoft.analysis.processing.test.executionvisitor");
 	}
 	
 	@Test

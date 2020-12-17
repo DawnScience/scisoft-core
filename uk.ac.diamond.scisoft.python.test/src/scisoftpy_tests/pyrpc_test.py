@@ -19,36 +19,39 @@ Created on 1 May 2011
 
 @author: Jonah
 '''
+
+import unittest
+import scisoftpy.rpc as rpc
+
+PORT = 8713
+
 import os
-if os.name != 'java':
+SLEEP_PERIOD = 1.5 if os.name == 'java' else 0.1
 
-    import unittest
-    import scisoftpy.python.pyrpc as rpc
+def _start_new_thread(target):
+    import threading
+    t = threading.Thread(target=target)
+    t.start()
+    from time import sleep
+    sleep(SLEEP_PERIOD)
 
-    PORT = 8713
+def catTwoStrings(string1, string2):
+    return string1 + string2
 
-    def _start_new_thread(target):
-        import threading
-        t = threading.Thread(target=target)
-        t.start()
+class Test(unittest.TestCase):
 
-    def catTwoStrings(string1, string2):
-        return string1 + string2
+    def testBasic(self):
+        rpcserver = rpc.rpcserver(0)
+        rpcserver.add_handler("cat", catTwoStrings)
 
-    class Test(unittest.TestCase):
+        _start_new_thread(rpcserver.serve_forever)
+        try:
+            rpcclient = rpc.rpcclient(rpcserver.port)
+            result = rpcclient.cat("Hello, ", "World!")
+            self.assertEqual("Hello, World!", result)
+        finally:
+            rpcserver.shutdown()
+            rpcserver.close()
 
-        def testBasic(self):
-            rpcserver = rpc.rpcserver(PORT)
-            rpcserver.add_handler("cat", catTwoStrings)
-
-            _start_new_thread(rpcserver.serve_forever)
-            try:
-                rpcclient = rpc.rpcclient(PORT)
-                result = rpcclient.cat("Hello, ", "World!")
-                self.assertEqual("Hello, World!", result)
-            finally:
-                rpcserver.shutdown()
-                rpcserver.close()
-
-    if __name__ == '__main__':
-        unittest.main(verbosity=2)
+if __name__ == '__main__':
+    unittest.main(verbosity=2)

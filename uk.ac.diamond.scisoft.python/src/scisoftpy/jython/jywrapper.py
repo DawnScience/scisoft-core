@@ -23,4 +23,5 @@ datasetdescriptor=_datasetdescriptor
 
 # In java a wrapper isn't necessary, simply use a byte[]
 # Set to None so that if someone tries to instantiate it give an error
-binarywrapper=None
+def binarywrapper(b):
+    return b

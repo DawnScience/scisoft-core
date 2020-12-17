@@ -9,6 +9,9 @@
 
 package org.eclipse.dawnsci.analysis.api.persistence;
 
+import java.io.Serializable;
+import java.util.Map;
+
 import org.eclipse.dawnsci.analysis.api.diffraction.IPowderCalibrationInfo;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
@@ -29,7 +32,7 @@ public interface IPersistentNodeFactory {
 	public IOperation[] readOperationsFromTree(Tree tree) throws Exception;
 	
 	/**
-	 * Write operations to in memory tree
+	 * Write operations to in-memory tree
 	 * 
 	 * @param operations
 	 * @return node
@@ -37,7 +40,7 @@ public interface IPersistentNodeFactory {
 	public GroupNode writeOperationsToGroup(IOperation[] operations);
 	
 	/**
-	 * Write processing origin information to in memory tree
+	 * Write processing origin information to in-memory tree
 	 * 
 	 * @param origin
 	 * @return node
@@ -53,4 +56,18 @@ public interface IPersistentNodeFactory {
 	 * @return node
 	 */
 	public GroupNode writePowderCalibrationToFile(IDiffractionMetadata metadata, IDataset calibrationImage, IPowderCalibrationInfo info);
+
+	/**
+	 * Write auto-configured fields to in-memory tree
+	 * @param fields
+	 * @return group with note
+	 */
+	public GroupNode writeOperationFieldsToGroup(Map<String, Serializable> fields);
+
+	/**
+	 * Read auto-configured fields from an operation's note
+	 * @param note
+	 * @return map of field names and values
+	 */
+	public Map<String, Serializable> readOperationFields(GroupNode note);
 }

@@ -28,7 +28,7 @@ import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.builder.appdef.NexusApplicationBuilder;
 import org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder;
 import org.eclipse.dawnsci.nexus.impl.NXentryImpl;
-import org.eclipse.dawnsci.nexus.validation.NexusValidationException;
+import org.eclipse.dawnsci.nexus.validation.ValidationReport;
 
 /**
  * A builder for building a NeXus entry ({@link NXentry}).
@@ -159,9 +159,9 @@ public interface NexusEntryBuilder {
 	/**
 	 * Validate any {@link NXsubentry}s within this entry according to their
 	 * application definitions.
-	 * @throws NexusValidationException if the entry is invalid
+	 * @return a report detailing any validaton problems 
 	 */
-	public void validate() throws NexusValidationException;
+	public ValidationReport validate();
 
 	/**
 	 * Returns the name of the wrapped {@link NXentry} within the root node

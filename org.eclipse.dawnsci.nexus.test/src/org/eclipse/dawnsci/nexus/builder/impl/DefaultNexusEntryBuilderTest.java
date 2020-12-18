@@ -15,6 +15,7 @@ import static org.eclipse.dawnsci.nexus.NXentry.NX_ENTRY_IDENTIFIER;
 import static org.eclipse.dawnsci.nexus.NXentry.NX_EXPERIMENT_IDENTIFIER;
 import static org.eclipse.dawnsci.nexus.NXentry.NX_PROGRAM_NAME;
 import static org.eclipse.dawnsci.nexus.NexusBaseClass.NX_SAMPLE;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -22,7 +23,6 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 
 import java.util.Arrays;
 
@@ -44,7 +44,7 @@ import org.eclipse.dawnsci.nexus.builder.NexusEntryModification;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 import org.eclipse.dawnsci.nexus.builder.appdef.NexusApplicationBuilder;
 import org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder;
-import org.eclipse.dawnsci.nexus.validation.NexusValidationException;
+import org.eclipse.dawnsci.nexus.validation.ValidationReport;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -437,17 +437,13 @@ public class DefaultNexusEntryBuilderTest {
 		entryBuilder.getDataNode("groupnode");
 	}
 	
-	@Test(expected = NexusValidationException.class)
+	@Test
 	public void testValidate() throws Exception {
 		// Note: this method used to use Mockito to validate that each subentry was validated,
 		// however the plugin dependency on mockito appears to prevent plugin tests from running
 		entryBuilder.newApplication("subentry1", NexusApplicationDefinition.NX_TOMO);
-		entryBuilder.newApplication("subentry2", NexusApplicationDefinition.NX_TOMO);
-		entryBuilder.validate();
-		
-//		verify(subentry1).validate();
-//		verify(subentry2).validate();
-//		verifyNoMoreInteractions(subentry1, subentry2);
+		final ValidationReport validationReport = entryBuilder.validate();
+		assertThat(validationReport.isOk(), is(false));
 	}
 
 }

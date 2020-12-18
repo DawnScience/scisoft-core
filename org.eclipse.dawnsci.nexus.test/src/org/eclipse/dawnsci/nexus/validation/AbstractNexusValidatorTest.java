@@ -10,9 +10,14 @@
 package org.eclipse.dawnsci.nexus.validation;
 
 import static org.eclipse.dawnsci.nexus.validation.AbstractNexusValidator.ATTRIBUTE_NAME_UNITS;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.fail;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
@@ -25,11 +30,15 @@ import org.eclipse.dawnsci.nexus.NXinstrument;
 import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.NXtransformations;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
+import org.eclipse.dawnsci.nexus.validation.ValidationReportEntry.Level;
+import org.eclipse.dawnsci.nexus.validation.ValidationReportEntry.NodeType;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.StringDataset;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -58,24 +67,30 @@ public class AbstractNexusValidatorTest {
 	}
 	
 	@Test
-	public void testFailValidation() throws Exception {
-		final String message = "message";
-		try {
-			validator.failValidation(message);
-			fail(); // exception expected to be thrown
-		} catch (NexusValidationException e) {
-			Assert.assertEquals(message, e.getMessage());
-		}
+	public void testAddValidationEntry() throws Exception {
+		validator.addValidationEntry(Level.ERROR, NodeType.DATA_NODE, "fieldName", "message");
+		final ValidationReport report = validator.getValidationReport();
+		assertThat(report.isOk(), is(false));
+		assertThat(report.getValidationEntries(), contains(new ValidationReportEntry(
+				Level.ERROR, NodeType.DATA_NODE, "fieldName", "message")));
 	}
 	
 	@Test
-	public void testValidateNotNull_notNull() throws Exception {
-		validator.validateNotNull("", new Object());
+	public void testValidateConditionTrue() throws Exception {
+		validator.validate(true, Level.ERROR, NodeType.DATA_NODE, "fieldName", "message");
+		final ValidationReport report = validator.getValidationReport();
+		assertThat(report.isOk(), is(true));
+		assertThat(report.getValidationEntries(), is(empty()));
 	}
 	
-	@Test(expected = NexusValidationException.class)
-	public void testValidateNotNull_null() throws Exception {
-		validator.validateNotNull("", null);
+	@Test
+	public void testValidateConditionFalse() throws Exception {
+		validator.validate(true, Level.ERROR, NodeType.DATA_NODE, "fieldName", "message");
+		validator.addValidationEntry(Level.ERROR, NodeType.DATA_NODE, "fieldName", "message");
+		final ValidationReport report = validator.getValidationReport();
+		assertThat(report.isOk(), is(false));
+		assertThat(report.getValidationEntries(), contains(new ValidationReportEntry(
+				Level.ERROR, NodeType.DATA_NODE, "fieldName", "message")));
 	}
 	
 	@Test
@@ -84,189 +99,212 @@ public class AbstractNexusValidatorTest {
 		validator.validateGroupNotNull("groupName", NXsample.class, group);
 	}
 	
-	@Test(expected = NexusValidationException.class)
-	public void testValidateGroupNotNull_nullGroup() throws Exception {
+	@Test
+	public void testValidateGroupNotNull_nullGroup() {
 		validator.validateGroupNotNull("groupName", NXsample.class, null);
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
 	@Test
-	public void testValidateUnnamedGroup_required_ok() throws Exception {
+	public void testValidateUnnamedGroup_required_ok() {
 		final NXentry parentGroup = NexusNodeFactory.createNXentry();
 		parentGroup.setSample(NexusNodeFactory.createNXsample());
 		validator.validateUnnamedGroupOccurrences(parentGroup, NXsample.class, false, false);
 	}
 	
-	@Test(expected = NexusValidationException.class)
-	public void testValidateUnnamedGroup_required_notPresent() throws Exception {
+	@Test
+	public void testValidateUnnamedGroup_required_notPresent() {
 		final NXentry parentGroup = NexusNodeFactory.createNXentry();
 		validator.validateUnnamedGroupOccurrences(parentGroup, NXsample.class, false, false);
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 
-	@Test(expected = NexusValidationException.class)
-	public void testValidateUnnamedGroup_requiredMultiple_notPresent() throws Exception {
+	public void testValidateUnnamedGroup_multiple_nonePresent() {
 		final NXentry parentGroup = NexusNodeFactory.createNXentry();
 		validator.validateUnnamedGroupOccurrences(parentGroup, NXsample.class, false, true);
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
 	@Test
-	public void testValidateUnnamedGroup_multiple_present() throws Exception {
+	public void testValidateUnnamedGroup_multiple_onePresent() {
 		final NXentry parentGroup = NexusNodeFactory.createNXentry();
 		parentGroup.setSample(NexusNodeFactory.createNXsample());
 		validator.validateUnnamedGroupOccurrences(parentGroup, NXsample.class, false, true);
+		assertThat(validator.getValidationReport().isOk(), is(true));
 	}
 	
 	@Test
-	public void testValidateUnnamedGroup_multiple_multiplePresent() throws Exception {
+	public void testValidateUnnamedGroup_multiple_ok() {
 		final NXentry parentGroup = NexusNodeFactory.createNXentry();
 		parentGroup.setSample("sample1", NexusNodeFactory.createNXsample());
 		parentGroup.setSample("sample2", NexusNodeFactory.createNXsample());
 		validator.validateUnnamedGroupOccurrences(parentGroup, NXsample.class, false, true);
+		assertThat(validator.getValidationReport().isOk(), is(true));
 	}
 	
-	@Test(expected = NexusValidationException.class)
+	@Test
 	public void testValidateUnnamedGroup_nonMultiple_multiplePresent() throws Exception {
 		final NXentry parentGroup = NexusNodeFactory.createNXentry();
 		parentGroup.setSample("sample1", NexusNodeFactory.createNXsample());
 		parentGroup.setSample("sample2", NexusNodeFactory.createNXsample());
 		validator.validateUnnamedGroupOccurrences(parentGroup, NXsample.class, false, false);
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
 	@Test
-	public void testValidateFieldNotNull_nonNullField() throws Exception {
+	public void testValidateFieldNotNull_ok() {
 		IDataset dataset = DatasetFactory.zeros(IntegerDataset.class, null);
 		validator.validateFieldNotNull("fieldName", dataset);
-	}
-	
-	@Test(expected = NexusValidationException.class)
-	public void testValidateFieldNotNull_nullField() throws Exception {
-		validator.validateFieldNotNull("fieldName", null);
+		assertThat(validator.getValidationReport().isOk(), is(true));
 	}
 	
 	@Test
-	public void testValidateAttributeNotNull_notNull() throws Exception {
+	public void testValidateFieldNotNull_nullField() {
+		validator.validateFieldNotNull("fieldName", null);
+		assertThat(validator.getValidationReport().isOk(), is(false));
+	}
+	
+	@Test
+	public void testValidateAttributeNotNull_ok() {
 		Attribute attribute = TreeFactory.createAttribute("attributeName");
 		attribute.setValue("hello");
 		validator.validateAttributeNotNull("attributeName", attribute);
-	}
-	
-	@Test(expected = NexusValidationException.class)
-	public void testValidateAttributeNotNull_null() throws Exception {
-		validator.validateAttributeNotNull("attributeName", null);
+		assertThat(validator.getValidationReport().isOk(), is(true));
 	}
 	
 	@Test
-	public void testValidateFieldEnumeration_ok() throws Exception {
+	public void testValidateAttributeNotNull_null() {
+		validator.validateAttributeNotNull("attributeName", null);
+		assertThat(validator.getValidationReport().isOk(), is(false));
+	}
+	
+	@Test
+	public void testValidateFieldEnumeration_ok() {
 		StringDataset dataset = DatasetFactory.zeros(StringDataset.class, 1);
 		dataset.set("foo", 0);
 		validator.validateFieldEnumeration("enumField", dataset, "foo", "bar");
+		assertThat(validator.getValidationReport().isOk(), is(true));
 	}
 	
-	@Test(expected = NexusValidationException.class)
-	public void testValidateFieldEnumeration_illegalRank() throws Exception {
+	@Test
+	public void testValidateFieldEnumeration_illegalRank() {
 		StringDataset dataset = DatasetFactory.zeros(StringDataset.class, 3, 3);
 		dataset.set("foo", 0, 0);
 		validator.validateFieldEnumeration("enumField", dataset, "foo", "bar");
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
-	@Test(expected = NexusValidationException.class)
-	public void testValidateFieldEnumeration_illegalSize() throws Exception {
+	@Test
+	public void testValidateFieldEnumeration_illegalSize() {
 		StringDataset dataset = DatasetFactory.zeros(StringDataset.class, 2);
 		dataset.set("foo", 0);
 		validator.validateFieldEnumeration("enumField", dataset, "foo", "bar");
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
-	@Test(expected = NexusValidationException.class)
-	public void testValidateFieldEnumeration_illegalValue() throws Exception {
+	@Test
+	public void testValidateFieldEnumeration_illegalValue() {
 		StringDataset dataset = DatasetFactory.zeros(StringDataset.class, 2);
 		dataset.set("banana", 0);
 		validator.validateFieldEnumeration("enumField", dataset, "foo", "bar");
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
 	@Test
-	public void testValidateFieldType_ok() throws Exception {
+	public void testValidateFieldType_ok() {
 		IDataset dataset = DatasetFactory.zeros(DoubleDataset.class, 10);
 		validator.validateFieldType("doubleField", dataset, NexusDataType.NX_FLOAT);
-	}
-	
-	@Test(expected = NexusValidationException.class)
-	public void testValidateFieldType_incompatibleType() throws Exception {
-		IDataset dataset = DatasetFactory.zeros(DoubleDataset.class, 10);
-		validator.validateFieldType("doubleField", dataset, NexusDataType.NX_CHAR);
+		assertThat(validator.getValidationReport().isOk(), is(true));
 	}
 	
 	@Test
-	public void testValidateFieldUnits_ok() throws Exception {
+	public void testValidateFieldType_incompatibleType() {
+		IDataset dataset = DatasetFactory.zeros(DoubleDataset.class, 10);
+		validator.validateFieldType("doubleField", dataset, NexusDataType.NX_CHAR);
+		assertThat(validator.getValidationReport().isOk(), is(false));
+	}
+	
+	@Test
+	public void testValidateFieldUnits_ok() {
 		final DataNode dataNode = NexusNodeFactory.createDataNode();
 		dataNode.addAttribute(TreeFactory.createAttribute(ATTRIBUTE_NAME_UNITS, "mm"));
 		dataNode.setDataset(DatasetFactory.zeros(DoubleDataset.class, 10));
 		validator.validateFieldUnits("distance", dataNode, NexusUnitCategory.NX_LENGTH);
+		assertThat(validator.getValidationReport().isOk(), is(true));
 	}
 	
-	@Test(expected=NexusValidationException.class)
-	public void testValidateFieldUnits_attributeNotPreset() throws Exception {
+	@Test
+	public void testValidateFieldUnits_attributeNotPreset() {
 		final DataNode dataNode = NexusNodeFactory.createDataNode();
 		dataNode.setDataset(DatasetFactory.zeros(DoubleDataset.class, 10));
 		validator.validateFieldUnits("distance", dataNode, NexusUnitCategory.NX_LENGTH);
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
-	@Test(expected=NexusValidationException.class)
-	public void testValidateFieldUnits_invalidUnits() throws Exception {
+	@Test
+	public void testValidateFieldUnits_invalidUnits() {
 		final DataNode dataNode = NexusNodeFactory.createDataNode();
 		dataNode.setDataset(DatasetFactory.zeros(DoubleDataset.class, 10));
 		dataNode.addAttribute(TreeFactory.createAttribute(ATTRIBUTE_NAME_UNITS, "blah"));
 		validator.validateFieldUnits("distance", dataNode, NexusUnitCategory.NX_LENGTH);
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
-	@Test(expected=NexusValidationException.class)
-	public void testValidateFieldUnits_incompatibleUnits() throws Exception {
+	@Test
+	public void testValidateFieldUnits_incompatibleUnits() {
 		final DataNode dataNode = NexusNodeFactory.createDataNode();
 		dataNode.setDataset(DatasetFactory.zeros(DoubleDataset.class, 10));
 		dataNode.addAttribute(TreeFactory.createAttribute(ATTRIBUTE_NAME_UNITS, "s"));
 		validator.validateFieldUnits("distance", dataNode, NexusUnitCategory.NX_LENGTH);
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
 	@Test
-	public void testValidateRank_ok() throws Exception {
+	public void testValidateRank_ok() {
 		IDataset dataset = DatasetFactory.zeros(DoubleDataset.class, 10, 20, 30);
-		validator.validateFieldRank("rankField", dataset, 3); 
-	}
-	
-	@Test(expected = NexusValidationException.class)
-	public void testValidateRank_incorrectRank() throws Exception {
-		IDataset dataset = DatasetFactory.zeros(DoubleDataset.class, 10, 20);
-		validator.validateFieldRank("rankField", dataset, 3); 
+		validator.validateFieldRank("rankField", dataset, 3);
+		assertThat(validator.getValidationReport().isOk(), is(true));
 	}
 	
 	@Test
-	public void testValidateDimensions_integers_ok() throws Exception {
+	public void testValidateRank_incorrectRank() {
+		IDataset dataset = DatasetFactory.zeros(DoubleDataset.class, 10, 20);
+		validator.validateFieldRank("rankField", dataset, 3);
+		assertThat(validator.getValidationReport().isOk(), is(false));
+	}
+	
+	@Test
+	public void testValidateDimensions_integers_ok() {
 		IDataset dataset = DatasetFactory.zeros(DoubleDataset.class, 10, 20, 30);
 		validator.validateFieldDimensions("rankField", dataset, null, 10, 20, 30);
+		assertThat(validator.getValidationReport().isOk(), is(true));
 	}
 	
-	@Test(expected = NexusValidationException.class)
-	public void testValidateDimensions_integers_incorrect() throws Exception {
+	@Test
+	public void testValidateDimensions_integers_incorrect() {
 		IDataset dataset = DatasetFactory.zeros(DoubleDataset.class, 10, 20, 30);
 		validator.validateFieldDimensions("rankField", dataset, null, 10, 20, 40);
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
 	@Test
-	public void testValidateDimensionsPlaceholders_oneDataset_ok() throws Exception {
+	public void testValidateDimensionsPlaceholders_oneDataset_ok() {
 		int size = 10;
-		
 		IDataset dataset = DatasetFactory.zeros(DoubleDataset.class, size, size);
 		validator.validateFieldDimensions("field", dataset, null, "size", "size");
-	}
-	
-	@Test(expected = NexusValidationException.class)
-	public void testValidateDimensionsPlaceholders_oneDataset_yDimensionWrongSize() throws Exception {
-		int size = 10;
-		
-		IDataset dataset = DatasetFactory.zeros(DoubleDataset.class, size, size + 1);
-		validator.validateFieldDimensions("field", dataset, null, "size", "size");
+		assertThat(validator.getValidationReport().isOk(), is(true));
 	}
 	
 	@Test
-	public void testValidateDimensions_multipleDatasets_ok() throws Exception {
+	public void testValidateDimensionsPlaceholders_oneDataset_yDimensionWrongSize() {
+		int size = 10;
+		IDataset dataset = DatasetFactory.zeros(DoubleDataset.class, size, size + 1);
+		validator.validateFieldDimensions("field", dataset, null, "size", "size");
+		assertThat(validator.getValidationReport().isOk(), is(false));
+	}
+	
+	@Test
+	public void testValidateDimensions_multipleDatasets_ok() {
 		int xDim = 10;
 		int yDim = 20;
 		IDataset dataset1 = DatasetFactory.zeros(DoubleDataset.class, xDim, yDim);
@@ -275,18 +313,19 @@ public class AbstractNexusValidatorTest {
 		validator.validateFieldDimensions("field2", dataset2, null, "xDim", "yDim"); 
 	}
 	
-	@Test(expected = NexusValidationException.class)
-	public void testValidateDimensions_multipleDatasets_incorrect() throws Exception {
+	@Test
+	public void testValidateDimensions_multipleDatasets_incorrect() {
 		int xDim = 10;
 		int yDim = 20;
 		IDataset dataset1 = DatasetFactory.zeros(DoubleDataset.class, xDim, yDim);
-		validator.validateFieldDimensions("field1", dataset1, null, "xDim", "yDim"); 
+		validator.validateFieldDimensions("field1", dataset1, null, "xDim", "yDim");
 		IDataset dataset2 = DatasetFactory.zeros(DoubleDataset.class, xDim, yDim + 1);
-		validator.validateFieldDimensions("field2", dataset2, null, "xDim", "yDim"); 
+		validator.validateFieldDimensions("field2", dataset2, null, "xDim", "yDim");
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
 	@Test
-	public void testValidateDimensions_localGroup() throws Exception {
+	public void testValidateDimensions_localGroup() {
 		int xDim = 10;
 		int yDim = 20;
 		IDataset dataset1 = DatasetFactory.zeros(DoubleDataset.class, xDim, yDim);
@@ -320,34 +359,39 @@ public class AbstractNexusValidatorTest {
 		validator.validateDataNodeLink(NXdetector.NX_DATA, data, "/NXentry/NXinstrument/NXdetector/data");
 	}
 
-	@Test(expected=NexusValidationException.class)
+	@Test
 	public void testValidateLink_wrongNexusClass() throws Exception {
 		final DataNode data = createDataNodeForLink();
 		validator.validateDataNodeLink(NXdetector.NX_DATA, data, "/NXentry/NXinstrument/detector:NXpositioner/data");
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
-	@Test(expected=NexusValidationException.class)
+	@Test
 	public void testValidateLink_noSuchGroupNodeName() throws Exception {
 		final DataNode data = createDataNodeForLink();
 		validator.validateDataNodeLink(NXdetector.NX_DATA, data, "/NXentry/NXinstrument/detector2/data");
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
-	@Test(expected=NexusValidationException.class)
+	@Test
 	public void testValidateLink_noSuchGroupNodeClass() throws Exception {
 		final DataNode data = createDataNodeForLink();
 		validator.validateDataNodeLink(NXdetector.NX_DATA, data, "/NXentry/NXinstrument/NXmirror/data");
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
-	@Test(expected=NexusValidationException.class)
+	@Test
 	public void testValidateLink_ambiguousGroupPath() throws Exception {
 		final DataNode data = createDataNodeForLink();
 		validator.validateDataNodeLink(NXdetector.NX_DATA, data, "/NXentry/NXinstrument/NXpositioner/data");
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
-	@Test(expected=NexusValidationException.class)
+	@Test
 	public void testValidateLink_noSuchDataNode() throws Exception {
 		final DataNode data = createDataNodeForLink();
 		validator.validateDataNodeLink(NXdetector.NX_DATA, data, "/NXentry/NXinstrument/NXdetector/noData");
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
 	@Test
@@ -365,8 +409,8 @@ public class AbstractNexusValidatorTest {
 		validator.validateTransformations(transformations, "one");
 	}
 	
-	@Test(expected = NexusValidationException.class)
-	public void testValidateTransformations_missingFirstTransformation() throws Exception {
+	@Test
+	public void testValidateTransformations_missingFirstTransformation() {
 		final Map<String, NXtransformations> transformations = new HashMap<>();
 		
 		transformations.put("one", NexusNodeFactory.createNXtransformations());
@@ -378,9 +422,10 @@ public class AbstractNexusValidatorTest {
 		transformations.get("three").addAttribute(TreeFactory.createAttribute("depends_on", "."));
 		
 		validator.validateTransformations(transformations, "four");
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
-	@Test(expected = NexusValidationException.class)
+	@Test
 	public void testValidateTransformations_missingTransformation() throws Exception {
 		final Map<String, NXtransformations> transformations = new HashMap<>();
 		
@@ -393,9 +438,10 @@ public class AbstractNexusValidatorTest {
 		transformations.get("three").addAttribute(TreeFactory.createAttribute("depends_on", "four"));
 		
 		validator.validateTransformations(transformations, "one");
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
-	@Test(expected = NexusValidationException.class)
+	@Test
 	public void testValidateTransformations_circularDependency() throws Exception {
 		final Map<String, NXtransformations> transformations = new HashMap<>();
 		
@@ -408,6 +454,7 @@ public class AbstractNexusValidatorTest {
 		transformations.get("three").addAttribute(TreeFactory.createAttribute("depends_on", "one"));
 		
 		validator.validateTransformations(transformations, "one");
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 
 }

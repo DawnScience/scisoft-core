@@ -18,7 +18,7 @@ import org.eclipse.dawnsci.nexus.NXsubentry;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 import org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder;
-import org.eclipse.dawnsci.nexus.validation.NexusValidationException;
+import org.eclipse.dawnsci.nexus.validation.ValidationReport;
 
 /**
  * A interface for building {@link NXsubentry} for a NeXus application.
@@ -67,9 +67,9 @@ public interface NexusApplicationBuilder {
 
 	/**
 	 * Validates this NeXus application according to the NXDL application definition.
-	 * @throws NexusValidationException if the application is invalid 
+	 * @return a validation report detailing any validation problems 
 	 */
-	public void validate() throws NexusValidationException;
+	public ValidationReport validate();
 	
 
 }

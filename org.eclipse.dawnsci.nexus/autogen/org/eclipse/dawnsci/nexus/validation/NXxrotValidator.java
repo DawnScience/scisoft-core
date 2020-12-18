@@ -14,7 +14,7 @@ package org.eclipse.dawnsci.nexus.validation;
 import static org.eclipse.dawnsci.nexus.validation.NexusDataType.*;
 import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 
-import org.eclipse.january.dataset.IDataset;
+import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;import org.eclipse.january.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.dawnsci.nexus.NXroot;
@@ -31,36 +31,43 @@ import org.eclipse.dawnsci.nexus.NXdata;
  */
 public class NXxrotValidator extends AbstractNexusValidator implements NexusApplicationValidator {
 
+	public NXxrotValidator() {
+		super(NexusApplicationDefinition.NX_XROT);
+	}
+
 	@Override
-	public void validate(NXroot root) throws NexusValidationException {
+	public ValidationReport validate(NXroot root) {
 		// validate child group 'entry' of type NXentry
 		validateGroup_entry(root.getEntry());
+		return validationReport;
 	}
 
 	@Override
-	public void validate(NXentry entry) throws NexusValidationException {
+	public ValidationReport validate(NXentry entry) {
 		validateGroup_entry(entry);
+		return validationReport;
 	}
 
 	@Override
-	public void validate(NXsubentry subentry) throws NexusValidationException {
+	public ValidationReport validate(NXsubentry subentry) {
 		validateGroup_entry(subentry);
+		return validationReport;
 	}
 
 
 	/**
 	 * Validate group 'entry' of type NXentry.
 	 */
-	private void validateGroup_entry(final NXsubentry group) throws NexusValidationException {
+	private void validateGroup_entry(final NXsubentry group) {
 		// set the current entry, required for validating links
 		setEntry(group);
 
 		// validate that the group is not null
-		validateGroupNotNull("entry", NXentry.class, group);
+		if (!(validateGroupNotNull("entry", NXentry.class, group))) return;
 
 		// validate field 'definition' of unknown type.
 		final IDataset definition = group.getDefinition();
-		validateFieldNotNull("definition", definition);
+		if (!(validateFieldNotNull("definition", definition))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("definition", definition, NX_CHAR);
 		validateFieldEnumeration("definition", definition,
@@ -79,9 +86,9 @@ public class NXxrotValidator extends AbstractNexusValidator implements NexusAppl
 	/**
 	 * Validate group 'instrument' of type NXinstrument.
 	 */
-	private void validateGroup_entry_instrument(final NXinstrument group) throws NexusValidationException {
+	private void validateGroup_entry_instrument(final NXinstrument group) {
 		// validate that the group is not null
-		validateGroupNotNull("instrument", NXinstrument.class, group);
+		if (!(validateGroupNotNull("instrument", NXinstrument.class, group))) return;
 
 		// validate child group 'detector' of type NXdetector
 		validateGroup_entry_instrument_detector(group.getDetector());
@@ -93,14 +100,14 @@ public class NXxrotValidator extends AbstractNexusValidator implements NexusAppl
 	/**
 	 * Validate group 'detector' of type NXdetector.
 	 */
-	private void validateGroup_entry_instrument_detector(final NXdetector group) throws NexusValidationException {
+	private void validateGroup_entry_instrument_detector(final NXdetector group) {
 		// validate that the group is not null
-		validateGroupNotNull("detector", NXdetector.class, group);
+		if (!(validateGroupNotNull("detector", NXdetector.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'polar_angle' of type NX_FLOAT.
 		final IDataset polar_angle = group.getPolar_angle();
-		validateFieldNotNull("polar_angle", polar_angle);
+		if (!(validateFieldNotNull("polar_angle", polar_angle))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
 		validateFieldUnits("polar_angle", group.getDataNode("polar_angle"), NX_ANGLE);
@@ -109,14 +116,14 @@ public class NXxrotValidator extends AbstractNexusValidator implements NexusAppl
 
 		// validate field 'beam_center_x' of type NX_FLOAT.
 		final IDataset beam_center_x = group.getBeam_center_x();
-		validateFieldNotNull("beam_center_x", beam_center_x);
+		if (!(validateFieldNotNull("beam_center_x", beam_center_x))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("beam_center_x", beam_center_x, NX_FLOAT);
 		validateFieldUnits("beam_center_x", group.getDataNode("beam_center_x"), NX_LENGTH);
 
 		// validate field 'beam_center_y' of type NX_FLOAT.
 		final IDataset beam_center_y = group.getBeam_center_y();
-		validateFieldNotNull("beam_center_y", beam_center_y);
+		if (!(validateFieldNotNull("beam_center_y", beam_center_y))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("beam_center_y", beam_center_y, NX_FLOAT);
 		validateFieldUnits("beam_center_y", group.getDataNode("beam_center_y"), NX_LENGTH);
@@ -125,13 +132,13 @@ public class NXxrotValidator extends AbstractNexusValidator implements NexusAppl
 	/**
 	 * Validate group 'attenuator' of type NXattenuator.
 	 */
-	private void validateGroup_entry_instrument_attenuator(final NXattenuator group) throws NexusValidationException {
+	private void validateGroup_entry_instrument_attenuator(final NXattenuator group) {
 		// validate that the group is not null
-		validateGroupNotNull("attenuator", NXattenuator.class, group);
+		if (!(validateGroupNotNull("attenuator", NXattenuator.class, group))) return;
 
 		// validate field 'attenuator_transmission' of type NX_FLOAT.
 		final IDataset attenuator_transmission = group.getAttenuator_transmission();
-		validateFieldNotNull("attenuator_transmission", attenuator_transmission);
+		if (!(validateFieldNotNull("attenuator_transmission", attenuator_transmission))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("attenuator_transmission", attenuator_transmission, NX_FLOAT);
 		validateFieldUnits("attenuator_transmission", group.getDataNode("attenuator_transmission"), NX_ANY);
@@ -140,14 +147,14 @@ public class NXxrotValidator extends AbstractNexusValidator implements NexusAppl
 	/**
 	 * Validate group 'sample' of type NXsample.
 	 */
-	private void validateGroup_entry_sample(final NXsample group) throws NexusValidationException {
+	private void validateGroup_entry_sample(final NXsample group) {
 		// validate that the group is not null
-		validateGroupNotNull("sample", NXsample.class, group);
+		if (!(validateGroupNotNull("sample", NXsample.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'rotation_angle' of type NX_FLOAT.
 		final IDataset rotation_angle = group.getRotation_angle();
-		validateFieldNotNull("rotation_angle", rotation_angle);
+		if (!(validateFieldNotNull("rotation_angle", rotation_angle))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
 		validateFieldUnits("rotation_angle", group.getDataNode("rotation_angle"), NX_ANGLE);
@@ -156,7 +163,7 @@ public class NXxrotValidator extends AbstractNexusValidator implements NexusAppl
 
 		// validate field 'rotation_angle_step' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset rotation_angle_step = group.getDataset("rotation_angle_step");
-		validateFieldNotNull("rotation_angle_step", rotation_angle_step);
+		if (!(validateFieldNotNull("rotation_angle_step", rotation_angle_step))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("rotation_angle_step", rotation_angle_step, NX_FLOAT);
 		validateFieldUnits("rotation_angle_step", group.getDataNode("rotation_angle_step"), NX_ANGLE);
@@ -167,9 +174,9 @@ public class NXxrotValidator extends AbstractNexusValidator implements NexusAppl
 	/**
 	 * Validate group 'name' of type NXdata.
 	 */
-	private void validateGroup_entry_name(final NXdata group) throws NexusValidationException {
+	private void validateGroup_entry_name(final NXdata group) {
 		// validate that the group is not null
-		validateGroupNotNull("name", NXdata.class, group);
+		if (!(validateGroupNotNull("name", NXdata.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate link 'rotation_angle' to location '/NXentry/NXsample/rotation_angle

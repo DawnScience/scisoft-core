@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.nexus.validation;
 
-import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +26,7 @@ import org.eclipse.january.dataset.IDataset;
  * positive. Doing this would require checking all the values in a dataset at the end of a scan.
  * 
  * <p>Source: <a href="http://download.nexusformat.org/doc/html/nxdl-types.html#data-types-allowed-in-nxdl-specifications">Data Types allowed in NXDL specifications</a>
- * 
+ *
  * TODO, can this be generated from nxdlTypes.xsd? See https://jira.diamond.ac.uk/browse/DAQ-3300
  */
 public enum NexusDataType {
@@ -37,81 +36,75 @@ public enum NexusDataType {
 	 *  Note, we don't properly validate this type. Currently it is unused in NXDL definitions, so doing this
 	 *  is not urgent.
 	 */
-	ISO8601(String.class), 
-	
+	ISO8601(String.class),
+
 	/**
 	 * Any representation of binary data - if text, line terminator is [CR][LF]
 	 */
 	NX_BINARY(Object.class),
-	
+
 	/**
 	 * true/false value ( true | 1 | false | 0 )
 	 */
 	NX_BOOLEAN(Boolean.class),
-	
+
 	/**
 	 * any string representation
 	 */
 	NX_CHAR(String.class),
-	
+
 	/**
 	 * Alias for ISO8601. ISO 8601 date and time representation (http://www.w3.org/TR/NOTE-datetime)
 	 */
 	NX_DATE_TIME(Date.class),
-	
+
 	/**
 	 * any representation of a floating point number
 	 */
 	NX_FLOAT(Float.class, Double.class),
-	
+
 	/**
 	 * any representation of an integer number
 	 */
 	NX_INT(Byte.class, Short.class, Integer.class, Long.class),
-	
+
 	/**
 	 * any valid NeXus number representation
 	 */
 	NX_NUMBER(Number.class),
-	
+
 	/**
 	 * any representation of a positive integer number (greater than zero)
 	 * Note: we don't currently check the values are all positive. This could only be done
 	 * at the end of a scan, i.e. after all the data had been written.
 	 */
 	NX_POSINT(Byte.class, Short.class, Integer.class, Long.class),
-	
 	/**
 	 * any representation of an unsigned integer number (includes zero)
 	 * Note: we don't currently check the values are all positive or zero. This could only be done
 	 * at the end of a scan, i.e. after all the data had been written.
 	 */
 	NX_UINT(Byte.class, Short.class, Integer.class, Long.class);
-	
+
 	private List<Class<?>> javaClasses;
-	
+
 	private NexusDataType(final Class<?>... javaClasses) {
 		this.javaClasses = Arrays.asList(javaClasses);
 	}
-	
+
 	/**
 	 * Validate that the given dataset is valid according to this {@link NexusDataType}
 	 * @param fieldName
 	 * @param dataset
-	 * @throws NexusValidationException
 	 */
-	public void validate(final String fieldName, final IDataset dataset) throws NexusValidationException {
+	public boolean validate(final IDataset dataset) {
 		Class<?> elementClass = dataset.getElementClass();
 		for (Class<?> javaClass : javaClasses) {
 			if (javaClass.isAssignableFrom(elementClass)) {
-				return;
+				return true;
 			}
 		}
-		
-		final String errorMessage = MessageFormat.format("Unexpected elementClass for field ''{0}''"
-				+ " (declared type in NXDL application definition = ''{1}''). Element {2}",
-				fieldName, this.toString(), elementClass.getName());
-		throw new NexusValidationException(errorMessage);
+		return false;
 	}
 
 }

@@ -33,7 +33,7 @@ import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 import org.eclipse.dawnsci.nexus.builder.appdef.NexusApplicationBuilder;
 import org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder;
 import org.eclipse.dawnsci.nexus.validation.NXtomoValidator;
-import org.eclipse.dawnsci.nexus.validation.NexusValidationException;
+import org.eclipse.dawnsci.nexus.validation.ValidationReport;
 
 /**
  * Application builder for {@link NexusApplicationDefinition#NX_TOMO}
@@ -240,9 +240,9 @@ public class TomoApplicationBuilder extends AbstractNexusApplicationBuilder impl
 	 * @see org.eclipse.dawnsci.nexus.builder.appdef.NexusApplicationBuilder#validate()
 	 */
 	@Override
-	public void validate() throws NexusValidationException {
+	public ValidationReport validate() {
 		NXtomoValidator validator = new NXtomoValidator();
-		validator.validate(subentry);
+		return validator.validate(subentry);
 	}
 
 	/* (non-Javadoc)

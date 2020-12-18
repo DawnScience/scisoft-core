@@ -17,7 +17,7 @@ import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 import java.util.Map;
 
 import java.util.stream.Collectors;
-import org.eclipse.january.dataset.IDataset;
+import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;import org.eclipse.january.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 
@@ -41,24 +41,31 @@ import org.eclipse.dawnsci.nexus.NXcollection;
  */
 public class NXcanSASValidator extends AbstractNexusValidator implements NexusApplicationValidator {
 
+	public NXcanSASValidator() {
+		super(NexusApplicationDefinition.NX_CANSAS);
+	}
+
 	@Override
-	public void validate(NXroot root) throws NexusValidationException {
+	public ValidationReport validate(NXroot root) {
 		// validate unnamed child group of type NXentry (possibly multiple) and canSAS_class SASentry
 		validateUnnamedGroupOccurrences(root, NXentry.class, false, true);
 		final Map<String, NXentry> allSASentry = filterBycanSASClass(root.getAllEntry(), "SASentry");
 		for (final NXentry entry : allSASentry.values()) {
 			validateGroup_SASentry(entry);
 		}
+		return validationReport;
 	}
 
 	@Override
-	public void validate(NXentry entry) throws NexusValidationException {
+	public ValidationReport validate(NXentry entry) {
 		validateGroup_SASentry(entry);
+		return validationReport;
 	}
 
 	@Override
-	public void validate(NXsubentry subentry) throws NexusValidationException {
+	public ValidationReport validate(NXsubentry subentry) {
 		validateGroup_SASentry(subentry);
+		return validationReport;
 	}
 
 
@@ -71,12 +78,12 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate unnamed group of type NXentry.
 	 */
-	private void validateGroup_SASentry(final NXsubentry group) throws NexusValidationException {
+	private void validateGroup_SASentry(final NXsubentry group) {
 		// set the current entry, required for validating links
 		setEntry(group);
 
 		// validate that the group is not null
-		validateGroupNotNull(null, NXentry.class, group);
+		if (!(validateGroupNotNull(null, NXentry.class, group))) return;
 
 		// validate optional attribute 'default'
 		final Attribute default_attr = group.getAttribute("default");
@@ -87,7 +94,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate attribute 'canSAS_class'
 		final Attribute canSAS_class_attr = group.getAttribute("canSAS_class");
-		validateAttributeNotNull("canSAS_class", canSAS_class_attr);
+		if (!(validateAttributeNotNull("canSAS_class", canSAS_class_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("canSAS_class", canSAS_class_attr, NX_CHAR);
 		validateAttributeEnumeration("canSAS_class", canSAS_class_attr,
@@ -95,7 +102,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate attribute 'version'
 		final Attribute version_attr = group.getAttribute("version");
-		validateAttributeNotNull("version", version_attr);
+		if (!(validateAttributeNotNull("version", version_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("version", version_attr, NX_CHAR);
 		validateAttributeEnumeration("version", version_attr,
@@ -103,7 +110,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate field 'definition' of unknown type.
 		final IDataset definition = group.getDefinition();
-		validateFieldNotNull("definition", definition);
+		if (!(validateFieldNotNull("definition", definition))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("definition", definition, NX_CHAR);
 		validateFieldEnumeration("definition", definition,
@@ -111,13 +118,13 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate field 'title' of unknown type.
 		final IDataset title = group.getTitle();
-		validateFieldNotNull("title", title);
+		if (!(validateFieldNotNull("title", title))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("title", title, NX_CHAR);
 
 		// validate field 'run' of unknown type. Note: field not defined in base class.
 		final IDataset run = group.getDataset("run");
-		validateFieldNotNull("run", run);
+		if (!(validateFieldNotNull("run", run))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("run", run, NX_CHAR);
 		// validate optional attribute 'name' of field 'run'
@@ -174,14 +181,14 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate unnamed group of type NXdata.
 	 */
-	private void validateGroup_SASentry_SASdata(final NXdata group) throws NexusValidationException {
+	private void validateGroup_SASentry_SASdata(final NXdata group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXdata.class, group);
+		if (!(validateGroupNotNull(null, NXdata.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate attribute 'canSAS_class'
 		final Attribute canSAS_class_attr = group.getAttribute("canSAS_class");
-		validateAttributeNotNull("canSAS_class", canSAS_class_attr);
+		if (!(validateAttributeNotNull("canSAS_class", canSAS_class_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("canSAS_class", canSAS_class_attr, NX_CHAR);
 		validateAttributeEnumeration("canSAS_class", canSAS_class_attr,
@@ -189,7 +196,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate attribute 'signal'
 		final Attribute signal_attr = group.getAttribute("signal");
-		validateAttributeNotNull("signal", signal_attr);
+		if (!(validateAttributeNotNull("signal", signal_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("signal", signal_attr, NX_CHAR);
 		validateAttributeEnumeration("signal", signal_attr,
@@ -197,19 +204,19 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate attribute 'I_axes'
 		final Attribute I_axes_attr = group.getAttribute("I_axes");
-		validateAttributeNotNull("I_axes", I_axes_attr);
+		if (!(validateAttributeNotNull("I_axes", I_axes_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("I_axes", I_axes_attr, NX_CHAR);
 
 		// validate attribute 'Q_indices'
 		final Attribute Q_indices_attr = group.getAttribute("Q_indices");
-		validateAttributeNotNull("Q_indices", Q_indices_attr);
+		if (!(validateAttributeNotNull("Q_indices", Q_indices_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("Q_indices", Q_indices_attr, NX_INT);
 
 		// validate attribute 'mask'
 		final Attribute mask_attr = group.getAttribute("mask");
-		validateAttributeNotNull("mask", mask_attr);
+		if (!(validateAttributeNotNull("mask", mask_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("mask", mask_attr, NX_CHAR);
 
@@ -229,13 +236,13 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate field 'Q' of type NX_NUMBER. Note: field not defined in base class.
 		final IDataset Q = group.getDataset("Q");
-		validateFieldNotNull("Q", Q);
+		if (!(validateFieldNotNull("Q", Q))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("Q", Q, NX_NUMBER);
 		validateFieldUnits("Q", group.getDataNode("Q"), NX_PER_LENGTH);
 		// validate attribute 'units' of field 'Q'
 		final Attribute Q_attr_units = group.getDataNode("Q").getAttribute("units");
-		validateAttributeNotNull("units", Q_attr_units);
+		if (!(validateAttributeNotNull("units", Q_attr_units))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("units", Q_attr_units, NX_CHAR);
 		validateAttributeEnumeration("units", Q_attr_units,
@@ -267,12 +274,12 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate field 'I' of type NX_NUMBER. Note: field not defined in base class.
 		final IDataset I = group.getDataset("I");
-		validateFieldNotNull("I", I);
+		if (!(validateFieldNotNull("I", I))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("I", I, NX_NUMBER);
 		// validate attribute 'units' of field 'I'
 		final Attribute I_attr_units = group.getDataNode("I").getAttribute("units");
-		validateAttributeNotNull("units", I_attr_units);
+		if (!(validateAttributeNotNull("units", I_attr_units))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("units", I_attr_units, NX_CHAR);
 		validateAttributeEnumeration("units", I_attr_units,
@@ -304,7 +311,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 			validateFieldType("Idev", Idev, NX_NUMBER);
 		// validate attribute 'units' of field 'Idev'
 		final Attribute Idev_attr_units = group.getDataNode("Idev").getAttribute("units");
-		validateAttributeNotNull("units", Idev_attr_units);
+		if (!(validateAttributeNotNull("units", Idev_attr_units))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("units", Idev_attr_units, NX_CHAR);
 		validateAttributeEnumeration("units", Idev_attr_units,
@@ -324,7 +331,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 			validateFieldUnits("Qdev", group.getDataNode("Qdev"), NX_PER_LENGTH);
 		// validate attribute 'units' of field 'Qdev'
 		final Attribute Qdev_attr_units = group.getDataNode("Qdev").getAttribute("units");
-		validateAttributeNotNull("units", Qdev_attr_units);
+		if (!(validateAttributeNotNull("units", Qdev_attr_units))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("units", Qdev_attr_units, NX_CHAR);
 		validateAttributeEnumeration("units", Qdev_attr_units,
@@ -342,7 +349,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 			validateFieldUnits("dQw", group.getDataNode("dQw"), NX_PER_LENGTH);
 		// validate attribute 'units' of field 'dQw'
 		final Attribute dQw_attr_units = group.getDataNode("dQw").getAttribute("units");
-		validateAttributeNotNull("units", dQw_attr_units);
+		if (!(validateAttributeNotNull("units", dQw_attr_units))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("units", dQw_attr_units, NX_CHAR);
 		validateAttributeEnumeration("units", dQw_attr_units,
@@ -360,7 +367,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 			validateFieldUnits("dQl", group.getDataNode("dQl"), NX_PER_LENGTH);
 		// validate attribute 'units' of field 'dQl'
 		final Attribute dQl_attr_units = group.getDataNode("dQl").getAttribute("units");
-		validateAttributeNotNull("units", dQl_attr_units);
+		if (!(validateAttributeNotNull("units", dQl_attr_units))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("units", dQl_attr_units, NX_CHAR);
 		validateAttributeEnumeration("units", dQl_attr_units,
@@ -378,7 +385,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 			validateFieldUnits("Qmean", group.getDataNode("Qmean"), NX_PER_LENGTH);
 		// validate attribute 'units' of field 'Qmean'
 		final Attribute Qmean_attr_units = group.getDataNode("Qmean").getAttribute("units");
-		validateAttributeNotNull("units", Qmean_attr_units);
+		if (!(validateAttributeNotNull("units", Qmean_attr_units))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("units", Qmean_attr_units, NX_CHAR);
 		validateAttributeEnumeration("units", Qmean_attr_units,
@@ -400,13 +407,13 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate optional unnamed group of type NXinstrument.
 	 */
-	private void validateGroup_SASentry_SASinstrument(final NXinstrument group) throws NexusValidationException {
+	private void validateGroup_SASentry_SASinstrument(final NXinstrument group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXinstrument.class, group);
+		if (!(validateGroupNotNull(null, NXinstrument.class, group))) return;
 
 		// validate attribute 'canSAS_class'
 		final Attribute canSAS_class_attr = group.getAttribute("canSAS_class");
-		validateAttributeNotNull("canSAS_class", canSAS_class_attr);
+		if (!(validateAttributeNotNull("canSAS_class", canSAS_class_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("canSAS_class", canSAS_class_attr, NX_CHAR);
 		validateAttributeEnumeration("canSAS_class", canSAS_class_attr,
@@ -444,13 +451,13 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate optional unnamed group of type NXaperture.
 	 */
-	private void validateGroup_SASentry_SASinstrument_SASaperture(final NXaperture group) throws NexusValidationException {
+	private void validateGroup_SASentry_SASinstrument_SASaperture(final NXaperture group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXaperture.class, group);
+		if (!(validateGroupNotNull(null, NXaperture.class, group))) return;
 
 		// validate attribute 'canSAS_class'
 		final Attribute canSAS_class_attr = group.getAttribute("canSAS_class");
-		validateAttributeNotNull("canSAS_class", canSAS_class_attr);
+		if (!(validateAttributeNotNull("canSAS_class", canSAS_class_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("canSAS_class", canSAS_class_attr, NX_CHAR);
 		validateAttributeEnumeration("canSAS_class", canSAS_class_attr,
@@ -458,7 +465,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate field 'shape' of unknown type. Note: field not defined in base class.
 		final IDataset shape = group.getDataset("shape");
-		validateFieldNotNull("shape", shape);
+		if (!(validateFieldNotNull("shape", shape))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("shape", shape, NX_CHAR);
 
@@ -482,13 +489,13 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate optional unnamed group of type NXcollimator.
 	 */
-	private void validateGroup_SASentry_SASinstrument_SAScollimation(final NXcollimator group) throws NexusValidationException {
+	private void validateGroup_SASentry_SASinstrument_SAScollimation(final NXcollimator group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXcollimator.class, group);
+		if (!(validateGroupNotNull(null, NXcollimator.class, group))) return;
 
 		// validate attribute 'canSAS_class'
 		final Attribute canSAS_class_attr = group.getAttribute("canSAS_class");
-		validateAttributeNotNull("canSAS_class", canSAS_class_attr);
+		if (!(validateAttributeNotNull("canSAS_class", canSAS_class_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("canSAS_class", canSAS_class_attr, NX_CHAR);
 		validateAttributeEnumeration("canSAS_class", canSAS_class_attr,
@@ -514,14 +521,14 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate optional unnamed group of type NXdetector.
 	 */
-	private void validateGroup_SASentry_SASinstrument_SASdetector(final NXdetector group) throws NexusValidationException {
+	private void validateGroup_SASentry_SASinstrument_SASdetector(final NXdetector group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXdetector.class, group);
+		if (!(validateGroupNotNull(null, NXdetector.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate attribute 'canSAS_class'
 		final Attribute canSAS_class_attr = group.getAttribute("canSAS_class");
-		validateAttributeNotNull("canSAS_class", canSAS_class_attr);
+		if (!(validateAttributeNotNull("canSAS_class", canSAS_class_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("canSAS_class", canSAS_class_attr, NX_CHAR);
 		validateAttributeEnumeration("canSAS_class", canSAS_class_attr,
@@ -529,7 +536,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate field 'name' of unknown type. Note: field not defined in base class.
 		final IDataset name = group.getDataset("name");
-		validateFieldNotNull("name", name);
+		if (!(validateFieldNotNull("name", name))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("name", name, NX_CHAR);
 
@@ -629,13 +636,13 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate optional unnamed group of type NXsource.
 	 */
-	private void validateGroup_SASentry_SASinstrument_SASsource(final NXsource group) throws NexusValidationException {
+	private void validateGroup_SASentry_SASinstrument_SASsource(final NXsource group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXsource.class, group);
+		if (!(validateGroupNotNull(null, NXsource.class, group))) return;
 
 		// validate attribute 'canSAS_class'
 		final Attribute canSAS_class_attr = group.getAttribute("canSAS_class");
-		validateAttributeNotNull("canSAS_class", canSAS_class_attr);
+		if (!(validateAttributeNotNull("canSAS_class", canSAS_class_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("canSAS_class", canSAS_class_attr, NX_CHAR);
 		validateAttributeEnumeration("canSAS_class", canSAS_class_attr,
@@ -643,7 +650,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate field 'radiation' of unknown type. Note: field not defined in base class.
 		final IDataset radiation = group.getDataset("radiation");
-		validateFieldNotNull("radiation", radiation);
+		if (!(validateFieldNotNull("radiation", radiation))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("radiation", radiation, NX_CHAR);
 		validateFieldEnumeration("radiation", radiation,
@@ -727,14 +734,14 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate optional unnamed group of type NXsample.
 	 */
-	private void validateGroup_SASentry_SASsample(final NXsample group) throws NexusValidationException {
+	private void validateGroup_SASentry_SASsample(final NXsample group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXsample.class, group);
+		if (!(validateGroupNotNull(null, NXsample.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate attribute 'canSAS_class'
 		final Attribute canSAS_class_attr = group.getAttribute("canSAS_class");
-		validateAttributeNotNull("canSAS_class", canSAS_class_attr);
+		if (!(validateAttributeNotNull("canSAS_class", canSAS_class_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("canSAS_class", canSAS_class_attr, NX_CHAR);
 		validateAttributeEnumeration("canSAS_class", canSAS_class_attr,
@@ -742,7 +749,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate field 'name' of unknown type.
 		final IDataset name = group.getName();
-		validateFieldNotNull("name", name);
+		if (!(validateFieldNotNull("name", name))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("name", name, NX_CHAR);
 
@@ -822,13 +829,13 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate optional unnamed group of type NXprocess.
 	 */
-	private void validateGroup_SASentry_SASprocess(final NXprocess group) throws NexusValidationException {
+	private void validateGroup_SASentry_SASprocess(final NXprocess group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXprocess.class, group);
+		if (!(validateGroupNotNull(null, NXprocess.class, group))) return;
 
 		// validate attribute 'canSAS_class'
 		final Attribute canSAS_class_attr = group.getAttribute("canSAS_class");
-		validateAttributeNotNull("canSAS_class", canSAS_class_attr);
+		if (!(validateAttributeNotNull("canSAS_class", canSAS_class_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("canSAS_class", canSAS_class_attr, NX_CHAR);
 		validateAttributeEnumeration("canSAS_class", canSAS_class_attr,
@@ -880,22 +887,22 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate optional unnamed group of type NXnote.
 	 */
-	private void validateGroup_SASentry_SASprocess_NXnote(final NXnote group) throws NexusValidationException {
+	private void validateGroup_SASentry_SASprocess_NXnote(final NXnote group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXnote.class, group);
+		if (!(validateGroupNotNull(null, NXnote.class, group))) return;
 
 	}
 
 	/**
 	 * Validate optional unnamed group of type NXcollection.
 	 */
-	private void validateGroup_SASentry_SASprocess_SASprocessnote(final NXcollection group) throws NexusValidationException {
+	private void validateGroup_SASentry_SASprocess_SASprocessnote(final NXcollection group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXcollection.class, group);
+		if (!(validateGroupNotNull(null, NXcollection.class, group))) return;
 
 		// validate attribute 'canSAS_class'
 		final Attribute canSAS_class_attr = group.getAttribute("canSAS_class");
-		validateAttributeNotNull("canSAS_class", canSAS_class_attr);
+		if (!(validateAttributeNotNull("canSAS_class", canSAS_class_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("canSAS_class", canSAS_class_attr, NX_CHAR);
 		validateAttributeEnumeration("canSAS_class", canSAS_class_attr,
@@ -906,13 +913,13 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate optional unnamed group of type NXcollection.
 	 */
-	private void validateGroup_SASentry_SASnote(final NXcollection group) throws NexusValidationException {
+	private void validateGroup_SASentry_SASnote(final NXcollection group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXcollection.class, group);
+		if (!(validateGroupNotNull(null, NXcollection.class, group))) return;
 
 		// validate attribute 'canSAS_class'
 		final Attribute canSAS_class_attr = group.getAttribute("canSAS_class");
-		validateAttributeNotNull("canSAS_class", canSAS_class_attr);
+		if (!(validateAttributeNotNull("canSAS_class", canSAS_class_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("canSAS_class", canSAS_class_attr, NX_CHAR);
 		validateAttributeEnumeration("canSAS_class", canSAS_class_attr,
@@ -923,14 +930,14 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate optional unnamed group of type NXdata.
 	 */
-	private void validateGroup_SASentry_SAStransmission_spectrum(final NXdata group) throws NexusValidationException {
+	private void validateGroup_SASentry_SAStransmission_spectrum(final NXdata group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXdata.class, group);
+		if (!(validateGroupNotNull(null, NXdata.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate attribute 'canSAS_class'
 		final Attribute canSAS_class_attr = group.getAttribute("canSAS_class");
-		validateAttributeNotNull("canSAS_class", canSAS_class_attr);
+		if (!(validateAttributeNotNull("canSAS_class", canSAS_class_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("canSAS_class", canSAS_class_attr, NX_CHAR);
 		validateAttributeEnumeration("canSAS_class", canSAS_class_attr,
@@ -938,7 +945,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate attribute 'signal'
 		final Attribute signal_attr = group.getAttribute("signal");
-		validateAttributeNotNull("signal", signal_attr);
+		if (!(validateAttributeNotNull("signal", signal_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("signal", signal_attr, NX_CHAR);
 		validateAttributeEnumeration("signal", signal_attr,
@@ -946,7 +953,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate attribute 'T_axes'
 		final Attribute T_axes_attr = group.getAttribute("T_axes");
-		validateAttributeNotNull("T_axes", T_axes_attr);
+		if (!(validateAttributeNotNull("T_axes", T_axes_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("T_axes", T_axes_attr, NX_CHAR);
 		validateAttributeEnumeration("T_axes", T_axes_attr,
@@ -954,7 +961,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate attribute 'name'
 		final Attribute name_attr = group.getAttribute("name");
-		validateAttributeNotNull("name", name_attr);
+		if (!(validateAttributeNotNull("name", name_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("name", name_attr, NX_CHAR);
 
@@ -967,27 +974,27 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate field 'lambda' of type NX_NUMBER. Note: field not defined in base class.
 		final IDataset lambda = group.getDataset("lambda");
-		validateFieldNotNull("lambda", lambda);
+		if (!(validateFieldNotNull("lambda", lambda))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("lambda", lambda, NX_NUMBER);
 		validateFieldUnits("lambda", group.getDataNode("lambda"), NX_WAVELENGTH);
 
 		// validate field 'T' of type NX_NUMBER. Note: field not defined in base class.
 		final IDataset T = group.getDataset("T");
-		validateFieldNotNull("T", T);
+		if (!(validateFieldNotNull("T", T))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("T", T, NX_NUMBER);
 		validateFieldUnits("T", group.getDataNode("T"), NX_DIMENSIONLESS);
 		// validate attribute 'uncertainties' of field 'T'
 		final Attribute T_attr_uncertainties = group.getDataNode("T").getAttribute("uncertainties");
-		validateAttributeNotNull("uncertainties", T_attr_uncertainties);
+		if (!(validateAttributeNotNull("uncertainties", T_attr_uncertainties))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("uncertainties", T_attr_uncertainties, NX_CHAR);
 
 
 		// validate field 'Tdev' of type NX_NUMBER. Note: field not defined in base class.
 		final IDataset Tdev = group.getDataset("Tdev");
-		validateFieldNotNull("Tdev", Tdev);
+		if (!(validateFieldNotNull("Tdev", Tdev))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("Tdev", Tdev, NX_NUMBER);
 		validateFieldUnits("Tdev", group.getDataNode("Tdev"), NX_DIMENSIONLESS);

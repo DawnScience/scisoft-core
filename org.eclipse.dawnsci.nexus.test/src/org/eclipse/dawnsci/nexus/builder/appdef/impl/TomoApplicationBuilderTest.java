@@ -35,7 +35,7 @@ import org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusFileBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 import org.eclipse.dawnsci.nexus.builder.impl.DefaultNexusFileBuilder;
-import org.eclipse.dawnsci.nexus.validation.NexusValidationException;
+import org.eclipse.dawnsci.nexus.validation.ValidationReport;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
 import org.eclipse.january.dataset.LazyWriteableDataset;
@@ -290,10 +290,11 @@ public class TomoApplicationBuilderTest {
 				is(sameInstance((DataNode) detector.getDataNode("image_key")))); 
 	}
 	
-	@Test(expected = NexusValidationException.class)
+	@Test
 	public void testValidate() throws Exception {
 		// an empty subentry will fail validation
-		tomoBuilder.validate();
+		final ValidationReport report = tomoBuilder.validate();
+		assertThat(report.isOk(), is(false));
 	}
 
 }

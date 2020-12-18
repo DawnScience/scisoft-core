@@ -41,22 +41,7 @@ public abstract class AbstractNexusApplicationBuilder implements
 		this.nexusEntryModel = nexusEntryModel;
 		this.subentry = subentry;
 
-		subentry.setDefinitionScalar(getApplicationDefinitionName(appDef));
-	}
-	
-	/**
-	 * Returns the application definition name
-	 * @param applicationDefinition
-	 * @return
-	 */
-	protected String getApplicationDefinitionName(NexusApplicationDefinition applicationDefinition) {
-		final String appDefEnumName = applicationDefinition.name();
-		if (!appDefEnumName.startsWith("NX_")) {
-			// sanity check that app def begins with 'NX_' - highly unlikely
-			throw new RuntimeException("Application definition name doesn't begin with NX_");
-		}
-		
-		return appDefEnumName.substring(0, 2) + appDefEnumName.substring(3);
+		subentry.setDefinitionScalar(appDef.toString());
 	}
 	
 	/* (non-Javadoc)

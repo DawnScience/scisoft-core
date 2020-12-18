@@ -16,7 +16,7 @@ import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 
 import java.util.Map;
 
-import org.eclipse.january.dataset.IDataset;
+import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;import org.eclipse.january.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.dawnsci.nexus.NXroot;
@@ -34,54 +34,61 @@ import org.eclipse.dawnsci.nexus.NXdata;
  */
 public class NXtomophaseValidator extends AbstractNexusValidator implements NexusApplicationValidator {
 
+	public NXtomophaseValidator() {
+		super(NexusApplicationDefinition.NX_TOMOPHASE);
+	}
+
 	@Override
-	public void validate(NXroot root) throws NexusValidationException {
+	public ValidationReport validate(NXroot root) {
 		// validate child group 'entry' of type NXentry
 		validateGroup_entry(root.getEntry());
+		return validationReport;
 	}
 
 	@Override
-	public void validate(NXentry entry) throws NexusValidationException {
+	public ValidationReport validate(NXentry entry) {
 		validateGroup_entry(entry);
+		return validationReport;
 	}
 
 	@Override
-	public void validate(NXsubentry subentry) throws NexusValidationException {
+	public ValidationReport validate(NXsubentry subentry) {
 		validateGroup_entry(subentry);
+		return validationReport;
 	}
 
 
 	/**
 	 * Validate group 'entry' of type NXentry.
 	 */
-	private void validateGroup_entry(final NXsubentry group) throws NexusValidationException {
+	private void validateGroup_entry(final NXsubentry group) {
 		// set the current entry, required for validating links
 		setEntry(group);
 
 		// validate that the group is not null
-		validateGroupNotNull("entry", NXentry.class, group);
+		if (!(validateGroupNotNull("entry", NXentry.class, group))) return;
 
 		// validate field 'title' of unknown type.
 		final IDataset title = group.getTitle();
-		validateFieldNotNull("title", title);
+		if (!(validateFieldNotNull("title", title))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("title", title, NX_CHAR);
 
 		// validate field 'start_time' of type NX_DATE_TIME.
 		final IDataset start_time = group.getStart_time();
-		validateFieldNotNull("start_time", start_time);
+		if (!(validateFieldNotNull("start_time", start_time))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("start_time", start_time, NX_DATE_TIME);
 
 		// validate field 'end_time' of type NX_DATE_TIME.
 		final IDataset end_time = group.getEnd_time();
-		validateFieldNotNull("end_time", end_time);
+		if (!(validateFieldNotNull("end_time", end_time))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("end_time", end_time, NX_DATE_TIME);
 
 		// validate field 'definition' of unknown type.
 		final IDataset definition = group.getDefinition();
-		validateFieldNotNull("definition", definition);
+		if (!(validateFieldNotNull("definition", definition))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("definition", definition, NX_CHAR);
 		validateFieldEnumeration("definition", definition,
@@ -103,9 +110,9 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 	/**
 	 * Validate group 'instrument' of type NXinstrument.
 	 */
-	private void validateGroup_entry_instrument(final NXinstrument group) throws NexusValidationException {
+	private void validateGroup_entry_instrument(final NXinstrument group) {
 		// validate that the group is not null
-		validateGroupNotNull("instrument", NXinstrument.class, group);
+		if (!(validateGroupNotNull("instrument", NXinstrument.class, group))) return;
 
 		// validate unnamed child group of type NXsource (possibly multiple)
 		validateUnnamedGroupOccurrences(group, NXsource.class, false, true);
@@ -127,13 +134,13 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 	/**
 	 * Validate unnamed group of type NXsource.
 	 */
-	private void validateGroup_entry_instrument_NXsource(final NXsource group) throws NexusValidationException {
+	private void validateGroup_entry_instrument_NXsource(final NXsource group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXsource.class, group);
+		if (!(validateGroupNotNull(null, NXsource.class, group))) return;
 
 		// validate field 'type' of unknown type.
 		final IDataset type = group.getType();
-		validateFieldNotNull("type", type);
+		if (!(validateFieldNotNull("type", type))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("type", type, NX_CHAR);
 		validateFieldEnumeration("type", type,
@@ -152,13 +159,13 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 
 		// validate field 'name' of unknown type.
 		final IDataset name = group.getName();
-		validateFieldNotNull("name", name);
+		if (!(validateFieldNotNull("name", name))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("name", name, NX_CHAR);
 
 		// validate field 'probe' of unknown type.
 		final IDataset probe = group.getProbe();
-		validateFieldNotNull("probe", probe);
+		if (!(validateFieldNotNull("probe", probe))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("probe", probe, NX_CHAR);
 		validateFieldEnumeration("probe", probe,
@@ -170,14 +177,14 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 	/**
 	 * Validate group 'bright_field' of type NXdetector.
 	 */
-	private void validateGroup_entry_instrument_bright_field(final NXdetector group) throws NexusValidationException {
+	private void validateGroup_entry_instrument_bright_field(final NXdetector group) {
 		// validate that the group is not null
-		validateGroupNotNull("bright_field", NXdetector.class, group);
+		if (!(validateGroupNotNull("bright_field", NXdetector.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'data' of type NX_INT.
 		final IDataset data = group.getData();
-		validateFieldNotNull("data", data);
+		if (!(validateFieldNotNull("data", data))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_INT);
 		validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
@@ -186,7 +193,7 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 
 		// validate field 'sequence_number' of type NX_INT.
 		final IDataset sequence_number = group.getSequence_number();
-		validateFieldNotNull("sequence_number", sequence_number);
+		if (!(validateFieldNotNull("sequence_number", sequence_number))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("sequence_number", sequence_number, NX_INT);
 		validateFieldRank("sequence_number", sequence_number, 1);
@@ -196,14 +203,14 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 	/**
 	 * Validate group 'dark_field' of type NXdetector.
 	 */
-	private void validateGroup_entry_instrument_dark_field(final NXdetector group) throws NexusValidationException {
+	private void validateGroup_entry_instrument_dark_field(final NXdetector group) {
 		// validate that the group is not null
-		validateGroupNotNull("dark_field", NXdetector.class, group);
+		if (!(validateGroupNotNull("dark_field", NXdetector.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'data' of type NX_INT.
 		final IDataset data = group.getData();
-		validateFieldNotNull("data", data);
+		if (!(validateFieldNotNull("data", data))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_INT);
 		validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
@@ -212,7 +219,7 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 
 		// validate field 'sequence_number' of type NX_INT.
 		final IDataset sequence_number = group.getSequence_number();
-		validateFieldNotNull("sequence_number", sequence_number);
+		if (!(validateFieldNotNull("sequence_number", sequence_number))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("sequence_number", sequence_number, NX_INT);
 		validateFieldRank("sequence_number", sequence_number, 1);
@@ -222,14 +229,14 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 	/**
 	 * Validate group 'sample' of type NXdetector.
 	 */
-	private void validateGroup_entry_instrument_sample(final NXdetector group) throws NexusValidationException {
+	private void validateGroup_entry_instrument_sample(final NXdetector group) {
 		// validate that the group is not null
-		validateGroupNotNull("sample", NXdetector.class, group);
+		if (!(validateGroupNotNull("sample", NXdetector.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'data' of type NX_INT.
 		final IDataset data = group.getData();
-		validateFieldNotNull("data", data);
+		if (!(validateFieldNotNull("data", data))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_INT);
 		validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
@@ -238,7 +245,7 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 
 		// validate field 'sequence_number' of type NX_INT.
 		final IDataset sequence_number = group.getSequence_number();
-		validateFieldNotNull("sequence_number", sequence_number);
+		if (!(validateFieldNotNull("sequence_number", sequence_number))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("sequence_number", sequence_number, NX_INT);
 		validateFieldRank("sequence_number", sequence_number, 2);
@@ -246,7 +253,7 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 
 		// validate field 'x_pixel_size' of type NX_FLOAT.
 		final IDataset x_pixel_size = group.getX_pixel_size();
-		validateFieldNotNull("x_pixel_size", x_pixel_size);
+		if (!(validateFieldNotNull("x_pixel_size", x_pixel_size))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("x_pixel_size", x_pixel_size, NX_FLOAT);
 		validateFieldUnits("x_pixel_size", group.getDataNode("x_pixel_size"), NX_LENGTH);
@@ -255,7 +262,7 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 
 		// validate field 'y_pixel_size' of type NX_FLOAT.
 		final IDataset y_pixel_size = group.getY_pixel_size();
-		validateFieldNotNull("y_pixel_size", y_pixel_size);
+		if (!(validateFieldNotNull("y_pixel_size", y_pixel_size))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("y_pixel_size", y_pixel_size, NX_FLOAT);
 		validateFieldUnits("y_pixel_size", group.getDataNode("y_pixel_size"), NX_LENGTH);
@@ -264,7 +271,7 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 
 		// validate field 'distance' of type NX_FLOAT.
 		final IDataset distance = group.getDistance();
-		validateFieldNotNull("distance", distance);
+		if (!(validateFieldNotNull("distance", distance))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("distance", distance, NX_FLOAT);
 		validateFieldUnits("distance", group.getDataNode("distance"), NX_LENGTH);
@@ -275,20 +282,20 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 	/**
 	 * Validate group 'sample' of type NXsample.
 	 */
-	private void validateGroup_entry_sample(final NXsample group) throws NexusValidationException {
+	private void validateGroup_entry_sample(final NXsample group) {
 		// validate that the group is not null
-		validateGroupNotNull("sample", NXsample.class, group);
+		if (!(validateGroupNotNull("sample", NXsample.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'name' of unknown type.
 		final IDataset name = group.getName();
-		validateFieldNotNull("name", name);
+		if (!(validateFieldNotNull("name", name))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("name", name, NX_CHAR);
 
 		// validate field 'rotation_angle' of type NX_FLOAT.
 		final IDataset rotation_angle = group.getRotation_angle();
-		validateFieldNotNull("rotation_angle", rotation_angle);
+		if (!(validateFieldNotNull("rotation_angle", rotation_angle))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
 		validateFieldUnits("rotation_angle", group.getDataNode("rotation_angle"), NX_ANGLE);
@@ -297,7 +304,7 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 
 		// validate field 'x_translation' of type NX_FLOAT.
 		final IDataset x_translation = group.getX_translation();
-		validateFieldNotNull("x_translation", x_translation);
+		if (!(validateFieldNotNull("x_translation", x_translation))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("x_translation", x_translation, NX_FLOAT);
 		validateFieldUnits("x_translation", group.getDataNode("x_translation"), NX_LENGTH);
@@ -306,7 +313,7 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 
 		// validate field 'y_translation' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset y_translation = group.getDataset("y_translation");
-		validateFieldNotNull("y_translation", y_translation);
+		if (!(validateFieldNotNull("y_translation", y_translation))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("y_translation", y_translation, NX_FLOAT);
 		validateFieldUnits("y_translation", group.getDataNode("y_translation"), NX_LENGTH);
@@ -315,7 +322,7 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 
 		// validate field 'z_translation' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset z_translation = group.getDataset("z_translation");
-		validateFieldNotNull("z_translation", z_translation);
+		if (!(validateFieldNotNull("z_translation", z_translation))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("z_translation", z_translation, NX_FLOAT);
 		validateFieldUnits("z_translation", group.getDataNode("z_translation"), NX_LENGTH);
@@ -326,14 +333,14 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 	/**
 	 * Validate group 'control' of type NXmonitor.
 	 */
-	private void validateGroup_entry_control(final NXmonitor group) throws NexusValidationException {
+	private void validateGroup_entry_control(final NXmonitor group) {
 		// validate that the group is not null
-		validateGroupNotNull("control", NXmonitor.class, group);
+		if (!(validateGroupNotNull("control", NXmonitor.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'integral' of type NX_FLOAT.
 		final IDataset integral = group.getIntegral();
-		validateFieldNotNull("integral", integral);
+		if (!(validateFieldNotNull("integral", integral))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("integral", integral, NX_FLOAT);
 		validateFieldUnits("integral", group.getDataNode("integral"), NX_ANY);
@@ -344,9 +351,9 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 	/**
 	 * Validate group 'data' of type NXdata.
 	 */
-	private void validateGroup_entry_data(final NXdata group) throws NexusValidationException {
+	private void validateGroup_entry_data(final NXdata group) {
 		// validate that the group is not null
-		validateGroupNotNull("data", NXdata.class, group);
+		if (!(validateGroupNotNull("data", NXdata.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate link 'data' to location '/NXentry/NXinstrument/sample:NXdetector/data

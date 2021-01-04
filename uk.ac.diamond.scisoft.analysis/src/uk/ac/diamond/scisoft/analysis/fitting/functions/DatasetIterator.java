@@ -13,14 +13,12 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 
 /**
- * An iterator over the common input shape whose points have coordinates given by the
- * values in the datasets
+ * An iterator over the dataset whose points have coordinates given by its values
  */
 public class DatasetIterator extends CoordinatesIterator {
 	private Dataset v;
 
 	/**
-	 * All these datasets must have the same shape
 	 * @param value
 	 */
 	public DatasetIterator(Dataset value) {

@@ -48,6 +48,13 @@ public abstract class CoordinatesIterator implements Iterator<double[]> {
 	}
 
 	/**
+	 * @return position in dataset or indexes given by dataset
+	 */
+	public int[] getPosition() {
+		return pos;
+	}
+
+	/**
 	 * @return shape of iterator (can be null, if not known or applicable)
 	 */
 	public int[] getShape() {
@@ -112,5 +119,18 @@ public abstract class CoordinatesIterator implements Iterator<double[]> {
 			throw new IllegalArgumentException("Iterator created does not match given output shape");
 		}
 		return it;
+	}
+
+	/**
+	 * Create a coordinates iterator from given dataset
+	 * @param coords
+	 * @param asPosition if true then iterator's getPosition has values from coords
+	 * @return iterator
+	 */
+	static final public CoordinatesIterator createIterator(Dataset coords, boolean asPosition) {
+		if (asPosition) {
+			return new PositionDatasetIterator(coords);
+		}
+		return new DatasetIterator(coords);
 	}
 }

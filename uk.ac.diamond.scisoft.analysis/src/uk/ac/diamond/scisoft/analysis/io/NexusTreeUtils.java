@@ -57,6 +57,7 @@ import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.ShapeUtils;
+import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.Stats;
 import org.eclipse.january.dataset.StringDataset;
 import org.eclipse.january.metadata.AxesMetadata;
@@ -91,6 +92,9 @@ public class NexusTreeUtils {
 	private static final String DETECTOR_BEAMCENTERY = "beam_center_y";
 	private static final String DETECTOR_XPIXELNUMBER = "x_pixel_number";
 //	private static final String DETECTOR_YPIXELNUMBER = "y_pixel_number";
+	private static final String DETECTOR_PIXELMASK = "pixel_mask";
+	private static final String DETECTOR_SATURATION = "saturation_value";
+	private static final String DETECTOR_UNDERLOAD = "underload_value";
 
 	private static final String DMOD_DATASIZE = "data_size";
 	private static final String DMOD_DATAORIGIN = "data_origin";
@@ -1091,6 +1095,34 @@ public class NexusTreeUtils {
 					logger.warn("Detector module's data_size does not match detector data's shape. Correcting former");
 					dp.setPx(dataShape[rank - 1]);
 					dp.setPy(dataShape[rank - 2]);
+				}
+			}
+		}
+
+		Integer l = gNode.containsDataNode(DETECTOR_UNDERLOAD) ? parseIntArray(gNode.getDataNode(DETECTOR_UNDERLOAD))[0] : null;
+		Integer u = gNode.containsDataNode(DETECTOR_SATURATION) ? parseIntArray(gNode.getDataNode(DETECTOR_SATURATION))[0] : null;
+		Dataset mask = null;
+		if (gNode.containsDataNode(DETECTOR_PIXELMASK)) {
+			try {
+				mask = DatasetUtils.sliceAndConvertLazyDataset(gNode.getDataNode(DETECTOR_PIXELMASK).getDataset());
+			} catch (DatasetException e) {
+				logger.error("Cannot load pixel_mask", e);
+			}
+		}
+		for (DetectorProperties d : detectors) {
+			if (l != null) {
+				d.setLowerThreshold(l);
+			}
+			if (u != null) {
+				d.setUpperThreshold(u);
+			}
+			if (mask != null) {
+				try {
+					int x = d.getStartX();
+					int y = d.getStartY();
+					d.setMask(mask.getSliceView(new Slice(y, y + d.getPy()), new Slice(x, x + d.getPx())));
+				} catch (Exception e) {
+					logger.error("Cannot set detector mask slice", e);
 				}
 			}
 		}

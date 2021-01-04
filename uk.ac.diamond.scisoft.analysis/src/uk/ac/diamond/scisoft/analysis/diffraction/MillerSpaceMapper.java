@@ -43,6 +43,7 @@ import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.DatasetException;
+import org.eclipse.january.dataset.BooleanDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -55,6 +56,8 @@ import org.eclipse.january.dataset.PositionIterator;
 import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.dataset.StringDataset;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -63,6 +66,7 @@ import tec.units.indriya.unit.Units;
 import uk.ac.diamond.scisoft.analysis.crystallography.MillerSpace;
 import uk.ac.diamond.scisoft.analysis.crystallography.VersionUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.function.BicubicInterpolator;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.CoordinatesIterator;
 import uk.ac.diamond.scisoft.analysis.io.ImageStackLoader;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.NexusHDF5Loader;
@@ -90,6 +94,8 @@ interface PixelSplitter extends Cloneable {
  * Map datasets in a Nexus file from image coordinates to Miller space
  */
 public class MillerSpaceMapper {
+	private static final Logger logger = LoggerFactory.getLogger(MillerSpaceMapper.class);
+
 	private String detectorPath;
 	private String timePath; // path to exposure dataset
 	private String dataPath;
@@ -122,12 +128,14 @@ public class MillerSpaceMapper {
 	private boolean hasDeleted;
 	private boolean listMillerEntries;
 	private String entryPath;
-	private Dataset imageWeight;
 	private int begX;
 	private int endX;
 	private int begY;
 	private int endY;
 	private ForkJoinPool pool;
+	private Dataset mask; // non-zero values indicate that where pixels are ignored
+	private double lower = 0; // lower threshold, pixel values less than or equal to it are ignored
+	private double upper = Double.POSITIVE_INFINITY; // upper threshold, pixel values greater than or equal to it are ignored
 
 	private static final String VOLUME_NAME = "volume";
 	private static final String WEIGHT_NAME = "weight";
@@ -149,7 +157,7 @@ public class MillerSpaceMapper {
 		// Xeon E5-1630v3 has 4 cores/8 HTs
 		CORES = Runtime.getRuntime().availableProcessors();
 		cores = CORES;
-		System.out.printf("This computer has %d processors\n", cores);
+		logger.debug("This computer has {} processors", cores);
 	}
 
 	/**
@@ -158,11 +166,11 @@ public class MillerSpaceMapper {
 	 */
 	public static void setCores(int numberOfCores) {
 		if (numberOfCores <= 0) {
-			System.err.println("Warning number of cores must be > 0; setting to that found by JVM");
+			logger.warn("Warning number of cores must be > 0; setting to that found by JVM");
 			numberOfCores = CORES;
 		}
 		cores = numberOfCores;
-		System.out.printf("Cores set to %d\n", cores);
+		logger.trace("Cores set to {}", cores);
 	}
 
 	/**
@@ -493,8 +501,8 @@ public class MillerSpaceMapper {
 
 			findBoundingBoxes(tree, iters);
 			roundLimitsAndFindShapes();
-			System.err.println("Extent of the space was found to be " + Arrays.toString(vMin) + " to " + Arrays.toString(vMax));
-			System.err.println("with shape = " + Arrays.toString(vShape));
+			logger.warn("Extent of the space was found to be {} to {}", Arrays.toString(vMin), Arrays.toString(vMax));
+			logger.warn("with shape = {}", Arrays.toString(vShape));
 		}
 
 		if (reduceToNonZeroBB) {
@@ -504,7 +512,7 @@ public class MillerSpaceMapper {
 		DoubleDataset map = DatasetFactory.zeros(vShape);
 		DoubleDataset weight = DatasetFactory.zeros(vShape);
 
-		createImageWeight(tree, iters[0]);
+		createPixelMask(tree, iters[0]);
 
 		try {
 			mapToASpace(mapQ, tree, iters, map, weight);
@@ -517,13 +525,13 @@ public class MillerSpaceMapper {
 		Maths.dividez(map, weight, map); // normalize by tally
 	
 		if (reduceToNonZeroBB) {
-			System.err.println("Reduced to non-zero bounding box: " + Arrays.toString(sMin) + " to " + Arrays.toString(sMax));
+			logger.warn("Reduced to non-zero bounding box: {} to {}", Arrays.toString(sMin), Arrays.toString(sMax));
 			for (int i = 0; i < 3; i++) {
 				vMin[i] += sMin[i]*vDel[i];
 				sMax[i]++;
 				vShape[i] = sMax[i] - sMin[i];
 			}
-			System.err.println("so now start = " + Arrays.toString(qMin) + " for shape = " + Arrays.toString(vShape));
+			logger.warn("so now start = {} for shape = {}", Arrays.toString(qMin), Arrays.toString(vShape));
 			map = (DoubleDataset) map.getSlice(sMin, sMax, null);
 		}
 		return map;
@@ -533,7 +541,7 @@ public class MillerSpaceMapper {
 		int[] dshape = iters[0].getShape();
 
 		if (tree instanceof TreeFile) {
-			System.out.println("Mapping " + ((TreeFile) tree).getFilename() + " ...");
+			logger.debug("Mapping {} ...", ((TreeFile) tree).getFilename());
 		}
 		Dataset trans = NexusTreeUtils.parseAttenuator(attenuatorPath, tree);
 		if (trans != null && trans.getSize() != 1) {
@@ -777,7 +785,7 @@ public class MillerSpaceMapper {
 		boolean isOldGDA = isOLDI16GDA(tree);
 		while (iter.hasNext() && diter.hasNext()) {
 			if (!endsOnly || n == 0 || n == end) {
-				System.out.println("Image " + n);
+				logger.debug("Image {}", n);
 				DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
 				if (n == 0) {
 					initializeImageLimits(dp);
@@ -797,8 +805,8 @@ public class MillerSpaceMapper {
 
 		if (hDel != null) {
 			roundLimitsAndFindShapes();
-			System.err.println("Extent of the space was found to be " + Arrays.toString(hMin) + " to " + Arrays.toString(hMax));
-			System.err.println("with shape = " + Arrays.toString(hShape));
+			logger.warn("Extent of the space was found to be {} to {}", Arrays.toString(hMin), Arrays.toString(hMax));
+			logger.warn("with shape = {}", Arrays.toString(hShape));
 		}
 	}
 
@@ -815,7 +823,7 @@ public class MillerSpaceMapper {
 
 		qspace.qFromPixelPosition(x, y, q);
 		mspace.h(q, null, m);
-		System.out.printf("%d,%d: %s\n", x, y, m.toString());
+		logger.debug("{},{}: {}", x, y, m.toString());
 	}
 
 	private void mapImages(boolean mapQ, Tree tree, Dataset trans, ILazyDataset images, PositionIterator[] iters,
@@ -832,11 +840,11 @@ public class MillerSpaceMapper {
 		MillerSpace mspace = null;
 
 		int[] region = new int[] {(int) (begX*scale), (int) (endX*scale), (int) (begY*scale), (int) (endY*scale)};
-		Dataset iWeight = imageWeight;
-		if (iWeight != null && upSampler != null) {
-			iWeight = upSampler.value(iWeight).get(0);
-			if (!Arrays.equals(iWeight.getShapeRef(), ishape)) {
-				String msg = String.format("Image weight shape %s does not match image shape %s", Arrays.toString(iWeight.getShapeRef()), Arrays.toString(ishape));
+		Dataset iMask = mask;
+		if (iMask != null && upSampler != null) {
+			iMask = upSampler.value(iMask).get(0);
+			if (!Arrays.equals(iMask.getShapeRef(), ishape)) {
+				String msg = String.format("Image weight shape %s does not match image shape %s", Arrays.toString(iMask.getShapeRef()), Arrays.toString(ishape));
 				throw new IllegalArgumentException(msg);
 			}
 		}
@@ -871,13 +879,13 @@ public class MillerSpaceMapper {
 			image.setShape(s);
 			if (image.max().doubleValue() <= 0) {
 				String n = tree instanceof TreeFile ? " in " + ((TreeFile) tree).getFilename() : "";
-				System.err.println("Skipping image at " + Arrays.toString(pos) + n);
+				logger.warn("Skipping image at {} {}", Arrays.toString(pos), n);
 				continue;
 			}
 			if (upSampler != null) {
 				image = upSampler.value(image).get(0);
 			}
-			mapImageMultiThreaded(mapQ, region, qspace, mspace, image, iWeight, map, weight);
+			mapImageMultiThreaded(mapQ, region, qspace, mspace, iMask, image, map, weight);
 		}
 	}
 
@@ -890,17 +898,23 @@ public class MillerSpaceMapper {
 		max[2] = Math.max(max[2], v.z);
 	}
 
-	private void mapImage(PixelSplitter splitter, int[] sMinLocal, int[] sMaxLocal, final int[] region, final QSpace qspace, Matrix3d mTransform, final Dataset image, final Dataset iWeight, final DoubleDataset map, final DoubleDataset weight) {
+	private void mapImage(PixelSplitter splitter, int[] sMinLocal, int[] sMaxLocal, final int[] region, final QSpace qspace, Matrix3d mTransform, final Dataset mask, final Dataset image, final DoubleDataset map, final DoubleDataset weight) {
 		final int[] pos = new int[3]; // voxel position
 		final Vector3d v = new Vector3d();
 		final Vector3d dv = new Vector3d(); // delta in h
 
 		for (int y = region[2]; y < region[3]; y++) {
 			for (int x = region[0]; x < region[1]; x++) {
-				double value = image.getDouble(y, x);
-				if (iWeight != null) {
-					value *= iWeight.getDouble(y, x);
+				if (mask != null) {
+					if (mask.getBoolean(y, x)) {
+						continue;
+					}
 				}
+				double value = image.getDouble(y, x);
+				if (value <= lower || value >= upper) {
+					continue;
+				}
+
 				if (value > 0) {
 					qspace.qFromPixelPosition(x + 0.5, y + 0.5, v);
 
@@ -948,7 +962,7 @@ public class MillerSpaceMapper {
 	}
 
 	private void mapImageMultiThreaded(boolean mapQ, final int[] region, final QSpace qspace, final MillerSpace mspace,
-			final Dataset image, final Dataset iWeight, final DoubleDataset map, final DoubleDataset weight) {
+			final Dataset iMask, final Dataset image, final DoubleDataset map, final DoubleDataset weight) {
 		int size = pool.getParallelism();
 		final Matrix3d mTransform = mspace == null ? null : mspace.getMillerTransform();
 		double regionSize = region[3] - region[2];
@@ -956,7 +970,7 @@ public class MillerSpaceMapper {
 		int chunk = (int) Math.ceil(regionSize / size);
 		while (size > 1 && chunkSizeTooSmall(chunk, region, qspace, mTransform)) {
 			chunk = (int) Math.ceil(regionSize / --size);
-			System.err.println("Chunk too small so decrementing parallelism to " + size);
+			logger.warn("Chunk too small so decrementing parallelism to {}", size);
 		}
 
 		final List<JobConfig> jobs = new ArrayList<>(size);
@@ -972,7 +986,7 @@ public class MillerSpaceMapper {
 			int[] sMaxLocal = job.getSMaxLocal();
 			int[] regionSlice = new int[] { region[0], region[1], job.getStart(), job.getEnd() };
 
-			mapImage(job.getSplitter(), sMinLocal, sMaxLocal, regionSlice, qspace, mTransform, image, iWeight, map, weight);
+			mapImage(job.getSplitter(), sMinLocal, sMaxLocal, regionSlice, qspace, mTransform, iMask, image, map, weight);
 		};
 
 		try {
@@ -1083,7 +1097,7 @@ public class MillerSpaceMapper {
 			int[] s = Arrays.copyOfRange(image.getShapeRef(), srank, rank);
 			image.setShape(s);
 			if (image.max().doubleValue() <= 0) {
-				System.err.println("Skipping image at " + Arrays.toString(pos));
+				logger.warn("Skipping image at {}", Arrays.toString(pos));
 				continue;
 			}
 			if (upSampler != null) {
@@ -1144,7 +1158,7 @@ public class MillerSpaceMapper {
 		entryPath = bean.getEntryPath();
 		if (entryPath == null || entryPath.isEmpty()) {
 			link = NexusTreeUtils.findFirstNode(tree.getGroupNode(), NexusConstants.ENTRY);
-			System.out.println(NexusConstants.ENTRY + " found: " + link);
+			logger.trace("{} found: {}", NexusConstants.ENTRY, link);
 			entryPath = TreeUtils.getPath(tree, link.getDestination());
 		} else {
 			link = tree.findNodeLink(entryPath);
@@ -1157,7 +1171,7 @@ public class MillerSpaceMapper {
 		String instrumentName = bean.getInstrumentName();
 		if (instrumentName == null || instrumentName.isEmpty()) {
 			link = NexusTreeUtils.findFirstNode(entry, NexusConstants.INSTRUMENT);
-			System.out.println(NexusConstants.INSTRUMENT + " found: " + link);
+			logger.trace("{} found: {}", NexusConstants.INSTRUMENT, link);
 		} else {
 			link = entry.getNodeLink(instrumentName);
 		}
@@ -1169,7 +1183,7 @@ public class MillerSpaceMapper {
 		String detectorName = bean.getDetectorName();
 		if (detectorName == null || detectorName.isEmpty()) {
 			link = NexusTreeUtils.findFirstNode(instrument, NexusConstants.DETECTOR);
-			System.out.println(NexusConstants.DETECTOR + " found: " + link);
+			logger.trace("{} found: {}", NexusConstants.DETECTOR, link);
 		} else {
 			link = instrument.getNodeLink(detectorName);
 		}
@@ -1184,7 +1198,7 @@ public class MillerSpaceMapper {
 		String attenuatorName = bean.getAttenuatorName();
 		if (attenuatorName == null || attenuatorName.isEmpty()) {
 			link = NexusTreeUtils.findFirstNode(instrument, NexusConstants.ATTENUATOR);
-			System.out.println(NexusConstants.ATTENUATOR + " found: " + link);
+			logger.trace("{} found: {}", NexusConstants.ATTENUATOR, link);
 		} else {
 			link = instrument.getNodeLink(attenuatorName);
 		}
@@ -1194,7 +1208,7 @@ public class MillerSpaceMapper {
 			attenuatorPath = TreeUtils.getPath(tree, link.getDestination());
 		}
 		if (attenuatorPath == null) {
-			System.err.println("Could not find attenuator");
+			logger.warn("Could not find attenuator");
 		}
 
 		String dataName = bean.getDataName();
@@ -1203,13 +1217,13 @@ public class MillerSpaceMapper {
 			if (link == null) {
 				link = detector.getNodeLink(NexusConstants.DATA_DATA);
 			}
-			System.out.println("Data found: " + link);
+			logger.trace("{} found: {}", NexusConstants.DATA_DATA, link);
 		} else {
 			link = detector.getNodeLink(dataName);
 		}
 
 		if (link == null) {
-			System.err.println("Missing image data in " + detectorPath + " - synthesizing it");
+			logger.warn("Missing image data in {} - synthesizing it", detectorPath);
 			link = synthesizeMissingImageDataForI16(file, entry, detector);
 		}
 
@@ -1221,7 +1235,7 @@ public class MillerSpaceMapper {
 		String sampleName = bean.getSampleName();
 		if (sampleName == null || sampleName.isEmpty()) {
 			link = NexusTreeUtils.findFirstNode(entry, NexusConstants.SAMPLE);
-			System.out.println(NexusConstants.SAMPLE + " found: " + link);
+			logger.trace("{} found: {}", NexusConstants.SAMPLE, link);
 		} else {
 			link = entry.getNodeLink(sampleName);
 		}
@@ -1284,7 +1298,6 @@ public class MillerSpaceMapper {
 		setUpsamplingScale(bean.getScaleFactor());
 
 		// TODO compensate for count_time and other optional stuff (ring current in NXinstrument / NXsource)
-		// mask images
 		return a;
 	}
 
@@ -1304,7 +1317,7 @@ public class MillerSpaceMapper {
 			throw new ScanFileHolderException(String.format("I16 workaround: expecting directory starting with %s to exist", sn));
 		}
 		if (dirs.length > 1) {
-			System.err.printf("Warning: just using first of candidate directories: %s\n", Arrays.toString(dirs));
+			logger.warn("Warning: just using first of candidate directories: {}", Arrays.toString(dirs));
 		}
 
 		List<String> names;
@@ -1372,7 +1385,7 @@ public class MillerSpaceMapper {
 			allIters[i] = getPositionIterators(trees[i]);
 		}
 
-		createImageWeight(trees[0], allIters[0][0]);
+		createPixelMask(trees[0], allIters[0][0]);
 
 		if (findImageBB) {
 			if (qDel != null) {
@@ -1390,12 +1403,12 @@ public class MillerSpaceMapper {
 			roundLimitsAndFindShapes();
 
 			if (qDel != null) {
-				System.err.println("Extent of q space was found to be " + Arrays.toString(qMin) + " to " + Arrays.toString(qMax));
-				System.err.println("with shape = " + Arrays.toString(qShape));
+				logger.warn("Extent of q space was found to be {} to {}", Arrays.toString(qMin), Arrays.toString(qMax));
+				logger.warn("with shape = {}", Arrays.toString(qShape));
 			}
 			if (hDel != null) {
-				System.err.println("Extent of Miller space was found to be " + Arrays.toString(hMin) + " to " + Arrays.toString(hMax));
-				System.err.println("with shape = " + Arrays.toString(hShape));
+				logger.warn("Extent of Miller space was found to be {} to {}", Arrays.toString(hMin), Arrays.toString(hMax));
+				logger.warn("with shape = {}", Arrays.toString(hShape));
 			}
 		}
 
@@ -1420,26 +1433,51 @@ public class MillerSpaceMapper {
 		return new Dataset[][] {datasetA, datasetB};
 	}
 
-	private void createImageWeight(Tree tree, PositionIterator dIter) {
-		String wFile = bean.getWeightFilePath();
-		if (wFile != null) {
-			try {
-				imageWeight = DatasetUtils.convertToDataset(LoaderFactory.getData(wFile).getDataset(0));
-			} catch (Exception e1) {
-				System.err.println("Could not load image weight dataset from " + wFile);
-			} 
-		}
-
+	private void createPixelMask(Tree tree, PositionIterator dIter) {
 		int[] dpos = dIter.getPos();
 		DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
+		mask = dp.getMask();
+		lower = dp.getLowerThreshold();
+		upper = dp.getUpperThreshold();
+
+		String mFile = bean.getMaskFilePath();
+		if (mFile != null) {
+			Dataset tMask = null;
+			try {
+				tMask = DatasetUtils.convertToDataset(LoaderFactory.getData(mFile).getDataset(0));
+			} catch (Exception e) {
+				logger.warn("Could not load mask dataset from {}", mFile);
+			}
+
+			if (tMask != null) {
+				int[] shape = new int[] {dp.getPy(), dp.getPx()};
+				if (tMask.getShapeRef()[1] == 2) { // treat as list of positions in mask to set true
+					Dataset posn = DatasetUtils.createCompoundDatasetFromLastAxis(tMask, true);
+					CoordinatesIterator it = CoordinatesIterator.createIterator(posn, true);
+					int[] pos = it.getPosition();
+					mask = DatasetFactory.zeros(BooleanDataset.class, shape);
+					try {
+						while (it.hasNext()) {
+							mask.set(true, pos);
+						}
+					} catch (IllegalArgumentException e) {
+						logger.warn("Mask coordinates outside image bounds");
+					}
+				} else if (Arrays.equals(shape, tMask.getShapeRef())){
+					mask = tMask;
+				} else {
+					logger.warn("Loaded mask shape does not match image shape");
+				}
+			}
+		}
 		initializeImageLimits(dp);
 	}
 
 	private void initializeImageLimits(DetectorProperties dp) {
-		begX = 0;
-		endX = dp.getPx();
-		begY = 0;
-		endY = dp.getPy();
+		begX = dp.getStartX();
+		endX = begX + dp.getPx();
+		begY = dp.getStartY();
+		endY = begY + dp.getPy();
 
 		int[] region = bean.getRegion();
 		if (region != null) {
@@ -1480,13 +1518,13 @@ public class MillerSpaceMapper {
 			Maths.dividez(map, weight, map); // normalize by tally
 
 			if (reduceToNonZeroBB) {
-				System.err.println("Reduced to non-zero bounding box: " + Arrays.toString(sMin) + " to " + Arrays.toString(sMax));
+				logger.warn("Reduced to non-zero bounding box: {} to {}", Arrays.toString(sMin), Arrays.toString(sMax));
 				for (int i = 0; i < 3; i++) {
 					vMin[i] += sMin[i]*vDel[i];
 					sMax[i]++;
 					vShape[i] = sMax[i] - sMin[i];
 				}
-				System.err.println("so now start = " + Arrays.toString(vMin) + " for shape = " + Arrays.toString(vShape));
+				logger.warn("so now start = {} for shape = {}", Arrays.toString(vMin), Arrays.toString(vShape));
 				map = (DoubleDataset) map.getSlice(sMin, sMax, null);
 			}
 
@@ -1497,7 +1535,7 @@ public class MillerSpaceMapper {
 					createMillerSpaceAxes(a, vShape, vMin, null, vDel);
 				}
 			}
-			System.out.printf("For %d threads, processing took %dms\n", pool.getParallelism(), System.currentTimeMillis() - start);
+			logger.trace("For {} threads, processing took {}ms", pool.getParallelism(), System.currentTimeMillis() - start);
 			start = System.currentTimeMillis();
 
 			if (isErrorTest) {
@@ -1517,10 +1555,10 @@ public class MillerSpaceMapper {
 			}
 
 			saveVolume(output, bean, entryPath, volPath, map, weight, a);
-			System.out.printf("Saving took %dms\n", System.currentTimeMillis() - start);
+			logger.trace("Saving took {}ms", System.currentTimeMillis() - start);
 		} catch (IllegalArgumentException | OutOfMemoryError e) {
-			System.err.println("There is not enough memory to do this all at once!");
-			System.err.println("Now attempting to segment volume");
+			logger.warn("There is not enough memory to do this all at once!");
+			logger.warn("Now attempting to segment volume");
 			if (findImageBB) {
 				createMillerSpaceAxes(a, vShape, vMin, null, vDel);
 			}
@@ -1550,10 +1588,10 @@ public class MillerSpaceMapper {
 			}
 
 			if (map == null || weight == null) {
-				System.err.println("Cannot segment volume fine enough to fit in memory!");
+				logger.error("Cannot segment volume fine enough to fit in memory!", e);
 				throw e;
 			}
-			System.out.println("Mapping in " + parts + " parts");
+			logger.trace("Mapping in {} parts", parts);
 			boolean isFileNew = !hasDeleted;
 			if (isFileNew) {
 				HDF5FileFactory.deleteFile(output);
@@ -1604,11 +1642,11 @@ public class MillerSpaceMapper {
 			}
 			a[i] = DatasetFactory.createLinearSpace(DoubleDataset.class, mbeg, mend - mDelta[i], mShape[i]);
 			a[i].setName(names[i]);
-			System.out.print("Axis " + i + ": " + mbeg);
-			if (mShape[i] > 1) {
-				System.out.print(" -> " + a[i].getDouble(mShape[i] - 1));
+			if (mShape[i] == 1) {
+				logger.trace("Axis {}: {}; {}", i, mbeg, mend);
+			} else {
+				logger.trace("Axis {}: {} -> {}; {}", i, mbeg, a[i].getDouble(mShape[i] - 1), mend);
 			}
-			System.out.println("; " + mend);
 		}
 	}
 
@@ -1617,13 +1655,13 @@ public class MillerSpaceMapper {
 		if (dshape == null) {
 			throw new IllegalArgumentException("Could not parse detector scan shape from tree");
 		}
-//		System.err.println(Arrays.toString(dshape));
+//		logger.trace(Arrays.toString(dshape));
 
 		dshape = NexusTreeUtils.parseSampleScanShape(samplePath, tree, dshape);
 		if (dshape == null) {
 			throw new IllegalArgumentException("Could not parse sample scan shape from tree");
 		}
-//		System.err.println(Arrays.toString(dshape));
+//		logger.trace(Arrays.toString(dshape));
 
 		DataNode node = (DataNode) tree.findNodeLink(dataPath).getDestination();
 		ILazyDataset images = node.getDataset();
@@ -1702,7 +1740,7 @@ public class MillerSpaceMapper {
 				String relativePath = fileParent.relativize(Paths.get(inputs[i])).toString();
 				HDF5Utils.createExternalLink(file, destination, relativePath, entryPath);
 			} catch (IllegalArgumentException e) {
-				System.err.println("Could not create relative path between: " + file + " and " + inputs[i]);
+				logger.warn("Could not create relative path between: {} and {}", file, inputs[i]);
 				HDF5Utils.createExternalLink(file, destination, inputs[i], entryPath);
 			}
 		}
@@ -1868,7 +1906,7 @@ public class MillerSpaceMapper {
 				volumeOutput.setSlice(map, slice);
 				weightOutput.setSlice(weight, slice);
 			} catch (DatasetException e) {
-				System.err.println("Could not save part of volume");
+				logger.error("Could not save part of volume", e);
 				throw new ScanFileHolderException("Could not save part of volume", e);
 			}
 			now = System.currentTimeMillis();
@@ -1944,13 +1982,13 @@ public class MillerSpaceMapper {
 			volumeOutput.setSlice(tmap, slice);
 			weightOutput.setSlice(tweight, slice);
 		} catch (Exception e) {
-			System.err.println("Could not save last part of volume");
+			logger.error("Could not save last part of volume", e);
 			throw new ScanFileHolderException("Could not save last part of volume", e);
 		}
 		save += System.currentTimeMillis() - start;
 
-		System.out.printf("For %d threads, processing took %dms\n", pool.getParallelism(), process);
-		System.out.printf("Saving took %dms\n", save);
+		logger.trace("For {} threads, processing took {}ms", pool.getParallelism(), process);
+		logger.trace("Saving took {}ms", save);
 	}
 
 	private static final String INDICES = "indices";
@@ -2309,7 +2347,7 @@ public class MillerSpaceMapper {
 		private double[] qStep;
 
 		private int[] region; // masking ROI where only point within its bounds contribute to volume
-		private String weightFilePath; // file path to image weight 
+		private String maskFilePath; // file path to image weight 
 
 		public MillerSpaceMapperBean() {
 		}
@@ -2580,15 +2618,16 @@ public class MillerSpaceMapper {
 		}
 
 		/**
-		 * Set the file path to a weight dataset that will be applied to each pixel in image
-		 * @param weight file path
+		 * Set the file path to a mask dataset that will be applied to each pixel in image. If shape is (N,2) then treat as
+		 * list of index positions of pixels to ignore
+		 * @param mask file path
 		 */
-		public void setWeightFilePath(String weight) {
-			this.weightFilePath = weight;
+		public void setMaskFilePath(String weight) {
+			this.maskFilePath = weight;
 		}
 
-		public String getWeightFilePath() {
-			return weightFilePath;
+		public String getMaskFilePath() {
+			return maskFilePath;
 		}
 
 		@Override
@@ -2605,7 +2644,7 @@ public class MillerSpaceMapper {
 				copy.qStart = qStart == null ? null : qStart.clone();
 				copy.qStep = qStep == null ? null : qStep.clone();
 				copy.region = region == null ? null : region.clone();
-				copy.weightFilePath = weightFilePath;
+				copy.maskFilePath = maskFilePath;
 			} catch (CloneNotSupportedException e) {
 			}
 			return copy;
@@ -2639,7 +2678,7 @@ public class MillerSpaceMapper {
 			temp = Double.doubleToLongBits(splitterParameter);
 			result = prime * result + (int) (temp ^ (temp >>> 32));
 			result = prime * result + ((region == null) ? 0 : Arrays.hashCode(region));
-			result = prime * result + ((weightFilePath == null) ? 0 : weightFilePath.hashCode());
+			result = prime * result + ((maskFilePath == null) ? 0 : maskFilePath.hashCode());
 			return result;
 		}
 
@@ -2750,7 +2789,7 @@ public class MillerSpaceMapper {
 			if (!Arrays.equals(region, other.region)) {
 				return false;
 			}
-			if (!Objects.equals(weightFilePath, other.weightFilePath)) {
+			if (!Objects.equals(maskFilePath, other.maskFilePath)) {
 				return false;
 			}
 			return true;

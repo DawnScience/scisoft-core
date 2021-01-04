@@ -21,6 +21,7 @@ import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorPropertyEvent.EventType;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * This class will contain the information describing the properties of an area detector
@@ -64,6 +65,9 @@ public class DetectorProperties implements Serializable, Cloneable {
 
 	private transient Vector3d oldCentre;
 	private transient Vector3d oldShift;
+
+	private Dataset mask; // non-zero values indicate that where pixels are ignored
+	private double lower = Double.NEGATIVE_INFINITY, upper = Double.POSITIVE_INFINITY; // threshold values beyond which to ignore pixels
 
 	/**
 	 * Null constructor
@@ -1222,5 +1226,50 @@ public class DetectorProperties implements Serializable, Cloneable {
 		double[] bc = getBeamCentreCoords();
 		String text = Double.isNaN(bc[0]) ? "o = " + origin: "bc = " + Arrays.toString(bc);
 		return "DP: " + text + ", n = " + normal + ", d = " + getDetectorDistance() + ", th = " + Math.toDegrees(getTiltAngle()) + ", phi = " + getNormalAnglesInDegrees()[2];
+	}
+
+	/**
+	 * @return masking dataset where non-zero items indicate which pixels to ignore
+	 */
+	public Dataset getMask() {
+		return mask;
+	}
+
+	/**
+	 * Set a masking dataset where non-zero items indicate which pixels to ignore
+	 * @param mask
+	 */
+	public void setMask(Dataset mask) {
+		this.mask = mask;
+	}
+
+	/**
+	 * @return threshold value below which to ignore pixels
+	 */
+	public double getLowerThreshold() {
+		return lower;
+	}
+
+	/**
+	 * Set threshold value below which to ignore pixels
+	 * @param lower
+	 */
+	public void setLowerThreshold(double lower) {
+		this.lower = lower;
+	}
+
+	/**
+	 * @return threshold value above which to ignore pixels
+	 */
+	public double getUpperThreshold() {
+		return upper;
+	}
+
+	/**
+	 * Set threshold value above which to ignore pixels
+	 * @param upper
+	 */
+	public void setUpperThreshold(double upper) {
+		this.upper = upper;
 	}
 }

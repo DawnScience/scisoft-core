@@ -1076,6 +1076,25 @@ public class NexusTreeUtils {
 			}
 		}
 
+		// check recorded data_size in detector module is correct (for single module case only)
+		if (detectors.size() == 1) {
+			DetectorProperties dp = detectors.get(0);
+			DataNode idn = gNode.getDataNode("data");
+			if (idn == null) {
+				idn = gNode.getDataNode("image_data"); // for I16
+			}
+			if (idn != null) {
+				int[] dataShape = idn.getDataset().getShape();
+				int rank = dataShape.length;
+				// fastest dimension should match detector width (X) and next-fastest should match height (Y)
+				if (dp.getPx() != dataShape[rank - 1] || dp.getPy() != dataShape[rank - 2]) {
+					logger.warn("Detector module's data_size does not match detector data's shape. Correcting former");
+					dp.setPx(dataShape[rank - 1]);
+					dp.setPy(dataShape[rank - 2]);
+				}
+			}
+		}
+
 		// XXX NexusConstants.GEOMETRY support or not?
 		// with parseGeometry(m, l);
 
@@ -1226,7 +1245,7 @@ public class NexusTreeUtils {
 			case DMOD_DATAORIGIN:
 				origin = parseIntArray(l.getDestination(), 2);
 				break;
-			case DMOD_DATASIZE: // number of pixels in fast then slow; i.e. #cols, #rows
+			case DMOD_DATASIZE: // number of pixels in slow then fast; i.e. #rows, #cols
 				size = parseIntArray(l.getDestination(), 2);
 				break;
 			case DMOD_MODULEOFFSET:
@@ -1292,7 +1311,7 @@ public class NexusTreeUtils {
 		m1.getRotationScale(ori);
 		ori.mul(MatrixUtils.computeFSOrientation(xdir, ydir));
 		ori.transpose(); // as we need the passive transformation
-		DetectorProperties dp = new DetectorProperties(off, size[1], size[0], spd.magnitudes[0], fpd.magnitudes[0], ori);
+		DetectorProperties dp = new DetectorProperties(off, size[0], size[1], spd.magnitudes[0], fpd.magnitudes[0], ori);
 		dp.setStartX(origin[1]);
 		dp.setStartY(origin[0]);
 		return dp;
@@ -2339,7 +2358,7 @@ public class NexusTreeUtils {
 		g.addGroupNode("detector_module", sg);
 
 		addDataNode(sg, DMOD_DATAORIGIN, new int[] {0, 0}, null);
-		addDataNode(sg, DMOD_DATASIZE, new int[] {dp.getPx(), dp.getPy()}, null);
+		addDataNode(sg, DMOD_DATASIZE, new int[] {dp.getPy(), dp.getPx()}, null);
 
 		double[] zeros = new double[3]; 
 		addNXTransform(sg, DMOD_MODULEOFFSET, "mm", true, zeros, zeros, "mm", "../transformations/euler_c", 0);

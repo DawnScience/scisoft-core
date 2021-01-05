@@ -16,7 +16,6 @@ import org.junit.rules.TemporaryFolder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import uk.ac.diamond.scisoft.analysis.IOTestUtils;
-import uk.ac.diamond.scisoft.analysis.diffraction.MillerSpaceMapper.MillerSpaceMapperBean;
 
 public class MillerSpaceMapperBeanTest {
 	static String testFileFolder = "testfiles/gda/analysis/io/";
@@ -57,7 +56,7 @@ public class MillerSpaceMapperBeanTest {
 
 	@Test
 	public void createTestJSON() {
-		MillerSpaceMapperBean orig = MillerSpaceMapper.createI16MapperBean();
+		MillerSpaceMapperBean orig = new MillerSpaceMapperBean();
 		orig.setInputs("/scratch/images/i16/562926.nxs", "/scratch/images/i16/562927.nxs", "/scratch/images/i16/562928.nxs");
 		orig.setOutput("/scratch/tmp/562926.h5");
 		orig.setSplitterName("inverse");
@@ -83,7 +82,7 @@ public class MillerSpaceMapperBeanTest {
 
 	@Test
 	public void loadIncompleteJSON() {
-		MillerSpaceMapperBean orig = MillerSpaceMapper.createI16MapperBean();
+		MillerSpaceMapperBean orig = new MillerSpaceMapperBean();
 		orig.setInputs("/scratch/images/i16/562926.nxs", "/scratch/images/i16/562927.nxs", "/scratch/images/i16/562928.nxs");
 		orig.setOutput("/scratch/tmp/562926.h5");
 		orig.setSplitterName("inverse");
@@ -107,7 +106,7 @@ public class MillerSpaceMapperBeanTest {
 
 	@Test
 	public void loadExtraItemsJSON() {
-		MillerSpaceMapperBean orig = MillerSpaceMapper.createI16MapperBean();
+		MillerSpaceMapperBean orig = new MillerSpaceMapperBean();
 		orig.setInputs("/scratch/images/i16/562926.nxs", "/scratch/images/i16/562927.nxs", "/scratch/images/i16/562928.nxs");
 		orig.setOutput("/scratch/tmp/562926.h5");
 		orig.setSplitterName("inverse");
@@ -135,8 +134,7 @@ public class MillerSpaceMapperBeanTest {
 		String n = testFileFolder + "588193.nxs";
 		String[] inputPaths = { n, n };
 
-		MillerSpaceMapperBean mapperBean = MillerSpaceMapper.createI16MapperBean();
-		MillerSpaceMapper.setBeanWithAutoBox(mapperBean, inputPaths, dstPath, "inverse", 0.5, 2., true, new double[] {0.005}, null);
+		MillerSpaceMapperBean mapperBean = MillerSpaceMapperBean.createBeanWithAutoBox(inputPaths, dstPath, "inverse", 0.5, 2., true, new double[] {0.005}, null);
 		MillerSpaceMapper mapper = new MillerSpaceMapper(mapperBean);
 		mapper.mapToVolumeFile(true);
 

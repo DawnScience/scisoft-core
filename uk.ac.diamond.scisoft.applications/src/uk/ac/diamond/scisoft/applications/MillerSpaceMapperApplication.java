@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.MillerSpaceMapper;
-import uk.ac.diamond.scisoft.analysis.diffraction.MillerSpaceMapper.MillerSpaceMapperBean;
+import uk.ac.diamond.scisoft.analysis.diffraction.MillerSpaceMapperBean;
 
 /**
  * Used to execute the Miller Space mapper

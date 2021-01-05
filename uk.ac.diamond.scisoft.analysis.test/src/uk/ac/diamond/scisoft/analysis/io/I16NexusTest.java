@@ -49,7 +49,7 @@ import uk.ac.diamond.scisoft.analysis.crystallography.VersionUtils;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionSample;
 import uk.ac.diamond.scisoft.analysis.diffraction.MatrixUtils;
 import uk.ac.diamond.scisoft.analysis.diffraction.MillerSpaceMapper;
-import uk.ac.diamond.scisoft.analysis.diffraction.MillerSpaceMapper.MillerSpaceMapperBean;
+import uk.ac.diamond.scisoft.analysis.diffraction.MillerSpaceMapperBean;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 
 public class I16NexusTest {
@@ -97,7 +97,6 @@ public class I16NexusTest {
 		HDF5FileFactory.releaseFile(if1Path, true);
 		HDF5FileFactory.releaseFile(if2Path, true);
 
-		MillerSpaceMapperBean bean = new MillerSpaceMapperBean();
 		String[] inputs = { if1Path, if2Path };
 		String output = "output";
 		String splitterName = "someName";
@@ -107,8 +106,8 @@ public class I16NexusTest {
 		double[] millerStep = { 3, 4 };
 		double[] qStep = { 5, 6 };
 
-		MillerSpaceMapper.setBeanWithAutoBox(bean, inputs, output, splitterName, splitterParameter, scaleFactor,
-				reduceToNonZero, millerStep, qStep);
+		MillerSpaceMapperBean bean = MillerSpaceMapperBean.createBeanWithAutoBox(inputs, output, splitterName, splitterParameter, scaleFactor, reduceToNonZero,
+				millerStep, qStep);
 		Dataset v = DatasetFactory.zeros(4);
 		Dataset w = DatasetFactory.zeros(4);
 		String volPath = "path/to/vol/data";

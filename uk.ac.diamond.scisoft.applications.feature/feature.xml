@@ -2,14 +2,14 @@
 <feature
       id="uk.ac.diamond.scisoft.applications.feature"
       label="Scisoft Applications Feature"
-      version="1.0.0.qualifier">
+      version="1.1.0.qualifier">
 
    <description url="https://www.dawnsci.org/">
       This feature is required for using uk.ac.diamond.scisoft.applications without the other scisoft core features.
    </description>
 
    <copyright url="https://www.diamond.ac.uk/">
-      Copyright 2012-2019 Diamond Light Source Ltd.
+      Copyright 2012-2021 Diamond Light Source Ltd.
    </copyright>
 
    <license url="http://www.apache.org/licenses/LICENSE-2.0">

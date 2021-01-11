@@ -18,6 +18,7 @@ import java.io.Serializable;
  * Class for rectangular region of interest : perimeter type (with coloured edges)
  */
 public class PerimeterBoxROI extends RectangularROI implements Serializable {
+	private static final long serialVersionUID = -1347119035343644734L;
 
 	/**
 	 * Default square of 10 pixels

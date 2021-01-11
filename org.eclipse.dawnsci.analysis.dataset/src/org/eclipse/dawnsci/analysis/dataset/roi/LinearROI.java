@@ -22,6 +22,8 @@ import org.eclipse.dawnsci.analysis.api.roi.IParametricROI;
  * Class for linear regions of interest 
  */
 public class LinearROI extends OrientableROIBase implements IParametricROI, Serializable {
+	private static final long serialVersionUID = -3060629616248698030L;
+
 	private double len;    // length
 	private boolean crossHair; // enable secondary linear ROI that bisects at 90 degrees
 

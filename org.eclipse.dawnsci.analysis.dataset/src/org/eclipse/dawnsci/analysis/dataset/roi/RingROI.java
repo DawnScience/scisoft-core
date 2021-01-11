@@ -19,6 +19,8 @@ import java.util.Arrays;
  * Class for ring region of interest
  */
 public class RingROI extends ROIBase implements Serializable {
+	private static final long serialVersionUID = -2213526650424281858L;
+
 	protected double rad[]; // radii
 
 	protected boolean clippingCompensation; // compensate for clipping

@@ -20,6 +20,8 @@ import org.eclipse.dawnsci.analysis.api.roi.IParametricROI;
  * An elliptical region of interest with the start point as the centre
  */
 public class EllipticalROI extends OrientableROIBase implements IParametricROI {
+	private static final long serialVersionUID = -8275241628218597642L;
+
 	private double[] saxis; // semi-axes
 
 	/**

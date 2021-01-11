@@ -19,6 +19,7 @@ import java.util.Arrays;
  * Class for 2D point region of interest
  */
 public class PointROI extends ROIBase implements Serializable {
+	private static final long serialVersionUID = -10785937517137912L;
 
 	public PointROI() {
 		spt = new double[2];

@@ -22,6 +22,8 @@ import org.eclipse.dawnsci.analysis.api.roi.IParametricROI;
  * it can be represented as x-p = 4 a y^2 where p = 2 a
  */
 public class ParabolicROI extends OrientableROIBase implements IParametricROI, Serializable {
+	private static final long serialVersionUID = 1283292874662476917L;
+
 	private double tp;   // twice focal parameter (or latus rectum) 
 
 	/**

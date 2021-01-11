@@ -18,6 +18,7 @@ import java.io.Serializable;
  * Class for a FreeDraw ROI
  */
 public class FreeDrawROI extends PolylineROI implements Serializable {
+	private static final long serialVersionUID = 2853301007015812255L;
 
 	/**
 	 * Zero point line

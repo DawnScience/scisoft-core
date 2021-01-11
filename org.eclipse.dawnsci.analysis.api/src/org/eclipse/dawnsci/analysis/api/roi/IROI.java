@@ -24,6 +24,14 @@ import org.eclipse.january.INameable;
 public interface IROI extends Serializable, INameable {
 
 	/**
+	 * Set the start (or centre) point's i-th value
+	 * @param i index of dimension
+	 * @param value
+	 */
+	public void setValue(int i, double value);
+
+
+	/**
 	 * @param point The start (or centre) point to set
 	 */
 	public void setPoint(double[] point);
@@ -54,6 +62,12 @@ public interface IROI extends Serializable, INameable {
 	 * @return Returns copy of the start (or centre) point
 	 */
 	public double[] getPoint();
+
+	/**
+	 * @param i index of dimension
+	 * @return Returns the start (or centre) point's i-th value
+	 */
+	public double getValue(int i);
 
 	/**
 	 * @return Returns the start (or centre) point's x value

@@ -21,6 +21,7 @@ import org.eclipse.dawnsci.analysis.api.roi.IPolylineROI;
  * Class for a polygonal ROI is a closed form of a polyline ROI (end point is implicitly the start point)
  */
 public class PolygonalROI extends PolylineROI implements Serializable {
+	private static final long serialVersionUID = 7271915831667344417L;
 
 	public PolygonalROI() {
 		super();

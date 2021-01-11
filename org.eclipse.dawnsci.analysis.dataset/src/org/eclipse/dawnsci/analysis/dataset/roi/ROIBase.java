@@ -20,6 +20,8 @@ import org.eclipse.dawnsci.analysis.api.roi.IROI;
  * Base class for general region of interest
  */
 public class ROIBase implements IROI, Serializable {
+	private static final long serialVersionUID = 3637155644794033370L;
+
 	protected String name;
 	protected double spt[]; // start or centre coordinates
 	protected boolean plot;
@@ -70,6 +72,12 @@ public class ROIBase implements IROI, Serializable {
 	}
 
 	@Override
+	public void setValue(int i, double value) {
+		spt[i] = value;
+		setDirty();
+	}
+
+	@Override
 	public double[] getPointRef() {
 		return spt;
 	}
@@ -77,6 +85,11 @@ public class ROIBase implements IROI, Serializable {
 	@Override
 	public double[] getPoint() {
 		return spt.clone();
+	}
+
+	@Override
+	public double getValue(int i) {
+		return spt[i];
 	}
 
 	@Override

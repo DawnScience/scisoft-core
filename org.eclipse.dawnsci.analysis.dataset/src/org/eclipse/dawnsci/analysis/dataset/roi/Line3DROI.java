@@ -15,4 +15,5 @@ package org.eclipse.dawnsci.analysis.dataset.roi;
 import java.io.Serializable;
 
 public class Line3DROI extends LinearROI implements Serializable {
+	private static final long serialVersionUID = 7317903690575607930L;
 }

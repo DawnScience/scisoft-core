@@ -24,6 +24,7 @@ import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
  * Class for rectangular region of interest
  */
 public class RectangularROI extends OrientableROIBase implements IRectangularROI, Serializable {
+	private static final long serialVersionUID = 7789082943904047737L;
 
 	protected double[] len; // width and height. These should NOT be negative
 	private boolean clippingCompensation; // compensate for clipping

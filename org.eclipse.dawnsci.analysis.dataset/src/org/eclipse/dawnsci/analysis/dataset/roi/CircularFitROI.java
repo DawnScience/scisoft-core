@@ -24,6 +24,7 @@ import org.eclipse.january.dataset.IDataset;
  * A circular region of interest which fits the points in a polygonal region of interest
  */
 public class CircularFitROI extends CircularROI implements IFitROI, Serializable {
+	private static final long serialVersionUID = 7746266934851062970L;
 
 	private IPolylineROI proi;
 	private IConicSectionFitter fitter;

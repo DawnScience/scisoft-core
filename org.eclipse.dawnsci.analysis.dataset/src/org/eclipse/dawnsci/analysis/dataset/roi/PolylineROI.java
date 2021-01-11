@@ -28,6 +28,8 @@ import org.eclipse.january.dataset.DatasetFactory;
  * Class for a polyline ROI (really a list of point ROIs)
  */
 public class PolylineROI extends ROIBase implements IPolylineROI, Serializable {
+	private static final long serialVersionUID = -4787298012229223623L;
+
 	protected List<IROI> pts; // first element should point to this if size > 0
 
 	/**

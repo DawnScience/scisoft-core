@@ -12,6 +12,7 @@
 
 package org.eclipse.dawnsci.analysis.dataset.roi;
 
+import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.impl.function.LineSample;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
@@ -22,6 +23,7 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.Slice;
+import org.eclipse.january.dataset.SliceND;
 
 /**
  * Class with utils methods for slicing 3D datasets with ROIs
@@ -48,22 +50,16 @@ public class ROISliceUtils {
 	 * @param step
 	 * @return slices
 	 */
-	public static Slice[] getSlicesFromRectangularROI(RectangularROI roi, int step) {
+	public static Slice[] getSlicesFromRectangularROI(IRectangularROI roi, int step) {
 
 		Slice[] slices = new Slice[2];
 
-		int[] roiStart = roi.getIntPoint();
-		int[] roiLength = roi.getIntLengths();
-
-		if (roiLength[0] < 1) roiLength[0] = 1;
-		if (roiLength[1] < 1) roiLength[1] = 1;
-
-		slices[0] = new Slice(roiStart[0], roiStart[0] + roiLength[0], step);
-		slices[1] = new Slice(roiStart[1], roiStart[1] + roiLength[1], step);
-
+		for (int i = 0; i < 2; i++) {
+			slices[i] = new Slice(Math.max(0, (int) Math.floor(roi.getValue(i))), Math.max(1, (int) Math.ceil(roi.getValue(i) + roi.getLength(i))), step);
+		}
 		return slices;
 	}
-	
+
 	/**
 	 * Method to slice a dataset using an roi to define the sliced range <br>
 	 * Order must be at least 2 ints long and defines the x,y slice dimensions<br>
@@ -75,7 +71,7 @@ public class ROISliceUtils {
 	 * @return slices
 	 * @throws Exception 
 	 */
-	public static Dataset getDataset(ILazyDataset lz, RectangularROI roi, Slice[] slices, int[] order, int step, IMonitor monitor) throws Exception {
+	public static Dataset getDataset(ILazyDataset lz, IRectangularROI roi, Slice[] slices, int[] order, int step, IMonitor monitor) throws Exception {
 		
 		Slice[] roiSlice = getSlicesFromRectangularROI(roi, step);
 		if (monitor != null && monitor.isCancelled()) return null;
@@ -98,13 +94,12 @@ public class ROISliceUtils {
 	 * @param step
 	 * @return slice
 	 */
-	public static Slice getSliceFromRectangularXAxis1D(RectangularROI roi, IDataset axis, int step) {
+	public static Slice getSliceFromRectangularXAxis1D(IRectangularROI roi, IDataset axis, int step) {
 		
-		double[] roiStart = roi.getPoint();
-		double[] roiLength = roi.getLengths();
+		double roiStart = roi.getPointX();
 
-		int start = findPositionOfClosestValueInAxis(axis, roiStart[0]);
-		int end = findPositionOfClosestValueInAxis(axis,  roiStart[0]+roiLength[0]);
+		int start = findPositionOfClosestValueInAxis(axis, roiStart);
+		int end   = findPositionOfClosestValueInAxis(axis, roiStart + roi.getLength(0));
 		
 		if (start > end) {
 			int tmp = start;
@@ -112,7 +107,7 @@ public class ROISliceUtils {
 			end = tmp;
 		}
 		
-		Slice xSlice = new Slice(start, end+1, step);
+		Slice xSlice = new Slice(start, end + 1, step);
 
 		return xSlice;
 	}
@@ -132,9 +127,7 @@ public class ROISliceUtils {
 	 * @return dataset
 	 * @throws Exception 
 	 */
-	public static Dataset getAxisDatasetTrapzSum(ILazyDataset lz, IDataset axis, RectangularROI roi, Slice[] slices, int dim, int step, IMonitor monitor) throws Exception {
-		
-
+	public static Dataset getAxisDatasetTrapzSum(ILazyDataset lz, IDataset axis, IRectangularROI roi, Slice[] slices, int dim, int step, IMonitor monitor) throws Exception {
 		Slice[] sl = checkSlices(lz.getRank(), slices);
 
 		sl[dim] = getSliceFromRectangularXAxis1D(roi,axis, step);
@@ -165,10 +158,10 @@ public class ROISliceUtils {
 			datasetStart = datasetEnd;
 		}
 		
-		double[] roiStart = roi.getPoint();
-		double[] roiLength = roi.getLengths();
+		double roiStart = roi.getPointX();
+		double roiLength = roi.getLength(0);
 		
-		result.setName("sum_" + Double.toString(roiStart[0]) +"_" + Double.toString(roiStart[0] + roiLength[0]));
+		result.setName("sum_" + Double.toString(roiStart) +"_" + Double.toString(roiStart + roiLength));
 		
 		return result.squeeze();
 	}
@@ -186,7 +179,7 @@ public class ROISliceUtils {
 	 * @param step
 	 * @return dataset
 	 */
-	public static Dataset getTrapiziumArea(ILazyDataset lz, IDataset axis, RectangularROI roi, Slice[] slices, int dim, int step, IMonitor monitor) throws Exception {
+	public static Dataset getTrapeziumArea(ILazyDataset lz, IDataset axis, IRectangularROI roi, Slice[] slices, int dim, int step, IMonitor monitor) throws Exception {
 		Slice[] sl = checkSlices(lz.getRank(), slices);
 		if (monitor != null && monitor.isCancelled()) return null;
 		sl[dim] = getSliceFromRectangularXAxis1D(roi,axis, step);
@@ -221,13 +214,13 @@ public class ROISliceUtils {
 	 * @return dataset
 	 * @throws Exception 
 	 */
-	public static Dataset getAxisDatasetTrapzSumBaselined(ILazyDataset lz, IDataset axis, RectangularROI roi, Slice[] slices, int dim, int step,boolean baseline,IMonitor monitor) throws Exception {
+	public static Dataset getAxisDatasetTrapzSumBaselined(ILazyDataset lz, IDataset axis, IRectangularROI roi, Slice[] slices, int dim, int step,boolean baseline,IMonitor monitor) throws Exception {
 
-		final Dataset output = getAxisDatasetTrapzSum( lz,  axis,  roi,  slices,  dim,  step, monitor);
+		final Dataset output = getAxisDatasetTrapzSum(lz, axis, roi, slices, dim, step, monitor);
 		
 		if (baseline) {
 			if (monitor != null && monitor.isCancelled()) return null;
-			final Dataset datasetBasline = getTrapiziumArea( lz,  axis,  roi,  slices,  dim,  step, monitor);
+			final Dataset datasetBasline = getTrapeziumArea(lz, axis, roi, slices, dim, step, monitor);
 			output.isubtract(datasetBasline);
 			
 			if (output.getName() != null) {
@@ -254,18 +247,17 @@ public class ROISliceUtils {
 		
 		Slice[] sl = checkSlices(lz.getRank(), slices);
 		
-		int[] roiStart = roi.getIntPoint();
+		int roiStart = Math.max(0, (int) roi.getValue(1));
 		
-		Slice xSlice = new Slice(roiStart[1], roiStart[1]+1, 1);
+		Slice xSlice = new Slice(roiStart, roiStart + 1, 1);
 		
 		sl[dim] = xSlice;
 		if (monitor != null && monitor.isCancelled()) return null;
 		IDataset out = lz.getSlice(monitor, sl);
 		
 		return out.squeeze();
-
 	}
-	
+
 	/**
 	 * Method to return the dataset corresponding to the area selected by an y-axis range roi<br>
 	 * 
@@ -282,10 +274,10 @@ public class ROISliceUtils {
 		
 		Slice[] sl = checkSlices(lz.getRank(), slices);
 		
-		int[] roiStart = roi.getIntPoint();
-		int[] roiEnd = roi.getIntLengths();
+		int roiStart = Math.max(0, (int) roi.getValue(1));
+		int roiEnd = (int) Math.ceil(roiStart + roi.getLength(1));
 		
-		Slice xSlice = new Slice(roiStart[1], roiStart[1]+roiEnd[1], 1);
+		Slice xSlice = new Slice(roiStart, roiEnd, 1);
 		
 		sl[dim] = xSlice;
 		
@@ -370,5 +362,49 @@ public class ROISliceUtils {
 			}
 		}
 		return sl;
+	}
+
+	/**
+	 * Create Slice from given parameters
+	 * @param start
+	 * @param length
+	 * @param max
+	 * @return 1D slice that contains start, start+length (or null if values envelope 0,max)
+	 */
+	public static final Slice createSlice(double start, double length, int max) {
+		int lo = Math.max(0, (int) Math.floor(start));
+		int hi = Math.min(max, (int) Math.ceil(start + length));
+		return lo <= 0 && hi >= max ? null : new Slice(lo, hi);
+	}
+
+	/**
+	 * Create SliceND from given parameters
+	 * @param beg starting values in fastest to slowest order (i.e. X,Y,Z)
+	 * @param end ending values in fastest to slowest order (i.e. X,Y,Z)
+	 * @param shape shape in slowest to fastest order (i.e. Z,Y,X)
+	 * @return ND slice
+	 */
+	public static final SliceND createSliceND(double[] beg, double[] end, int[] shape) {
+		final int r = beg.length;
+		if (r != end.length || r != shape.length) {
+			throw new IllegalArgumentException("All input arrays must be same length");
+		}
+		int[] sStart = new int[r];
+		int[] sStop  = new int[r];
+		for (int i = 0, j = r - 1; i < r; i++, j--) {
+			sStart[i] = Math.max(0, (int) Math.floor(beg[j]));
+			sStop[i]  = Math.min(shape[i], (int) Math.ceil(end[j]));
+		}
+		return new SliceND(shape, sStart, sStop, null);
+	}
+
+	/**
+	 * Create SLiceND from rectangular ROI
+	 * @param rect
+	 * @param shape
+	 * @return ND slice
+	 */
+	public static final SliceND createSliceND(IRectangularROI rect, int[] shape) {
+		return createSliceND(rect.getPointRef(), rect.getEndPoint(), shape);
 	}
 }

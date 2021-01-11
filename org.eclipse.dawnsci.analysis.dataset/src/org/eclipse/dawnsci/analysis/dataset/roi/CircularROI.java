@@ -21,6 +21,8 @@ import org.eclipse.dawnsci.analysis.api.roi.IParametricROI;
  * A circular region of interest
  */
 public class CircularROI extends ROIBase implements IParametricROI, Serializable {
+	private static final long serialVersionUID = -7730702560575488117L;
+
 	private double rad;
 
 	/**

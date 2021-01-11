@@ -25,6 +25,7 @@ import org.eclipse.january.dataset.IDataset;
  * An elliptical region of interest which fits the points in a polygonal region of interest
  */
 public class EllipticalFitROI extends EllipticalROI implements IFitROI, Serializable {
+	private static final long serialVersionUID = -5618747401372603513L;
 
 	private IPolylineROI proi;
 	private boolean circleOnly;

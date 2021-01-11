@@ -22,6 +22,8 @@ import org.eclipse.dawnsci.analysis.api.roi.IParametricROI;
  * it can be represented as (x+l/e)^2 / a^2 - y^2 / b^2 = 1, where l = b^2/a and e = sqrt(1 + b^2/a^2)
  */
 public class HyperbolicROI extends OrientableROIBase implements IParametricROI, Serializable {
+	private static final long serialVersionUID = -3313279419572173883L;
+
 	private double l;   // semi-latus rectum
 	private double e;   // eccentricity
 

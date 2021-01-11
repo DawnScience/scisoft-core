@@ -15,6 +15,7 @@ package org.eclipse.dawnsci.analysis.dataset.roi;
 import java.io.Serializable;
 
 public class GridROI extends RectangularROI implements Serializable {
+	private static final long serialVersionUID = -5727295032179327758L;
 
 	double xSpacing = 50;
 	double ySpacing = 50;

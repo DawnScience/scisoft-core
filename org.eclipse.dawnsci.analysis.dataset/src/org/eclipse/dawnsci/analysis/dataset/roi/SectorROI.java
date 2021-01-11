@@ -25,6 +25,8 @@ import org.eclipse.dawnsci.analysis.dataset.coords.SectorCoords;
  * Class for sector region of interest
  */
 public class SectorROI extends RingROI implements Serializable {
+	private static final long serialVersionUID = -196594088345048726L;
+
 	protected double ang[]; // angles in radians
 	protected boolean combineSymmetry; // combine symmetry option for profile (where appropriate)
 

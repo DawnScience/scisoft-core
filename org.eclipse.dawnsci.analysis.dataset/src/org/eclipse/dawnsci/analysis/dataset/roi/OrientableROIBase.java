@@ -17,6 +17,8 @@ import java.io.Serializable;
 import org.eclipse.dawnsci.analysis.api.roi.IOrientableROI;
 
 public class OrientableROIBase extends ROIBase implements IOrientableROI, Serializable {
+	private static final long serialVersionUID = -1555913062137587994L;
+
 	protected double ang;     // angle in radians
 	protected double cang;
 	protected double sang;

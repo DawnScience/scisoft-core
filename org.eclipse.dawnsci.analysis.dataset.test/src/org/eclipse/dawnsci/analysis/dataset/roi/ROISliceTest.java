@@ -9,13 +9,11 @@
 
 package org.eclipse.dawnsci.analysis.dataset.roi;
 
-import org.eclipse.dawnsci.analysis.dataset.roi.LinearROI;
-import org.eclipse.dawnsci.analysis.dataset.roi.ROISliceUtils;
-import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.Slice;
+import org.eclipse.january.dataset.SliceND;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -124,7 +122,29 @@ public class ROISliceTest {
 		Assert.assertEquals(23,shape[0],0);
 		Assert.assertEquals(30,shape[1],0);
 	}
-	
-	
 
+	private void assertEquals(Slice a , Slice b) {
+		Assert.assertEquals(a.getStart(), b.getStart());
+		Assert.assertEquals(a.getStop(), b.getStop());
+		Assert.assertEquals(a.getStep(), b.getStep());
+	}
+
+	@Test
+	public void testCreateSlice() {
+		assertEquals(new Slice(0, 2), ROISliceUtils.createSlice(0.1, 1.5, 20));
+		assertEquals(new Slice(0, 4), ROISliceUtils.createSlice(0.25, 3.75, 20));
+	}
+
+	private void assertEquals(SliceND a , SliceND b) {
+		Assert.assertArrayEquals(a.getStart(), b.getStart());
+		Assert.assertArrayEquals(a.getStop(), b.getStop());
+		Assert.assertArrayEquals(a.getStep(), b.getStep());
+	}
+
+	@Test
+	public void testCreateSliceND() {
+		int[] shape = new int[] {20, 10};
+		RectangularROI roi = new RectangularROI(1, 2.3, 4.5, 6, 0);
+		assertEquals(new SliceND(shape, new int[] {2, 1}, new int[] {9, 6}, null), ROISliceUtils.createSliceND(roi, shape));
+	}
 }

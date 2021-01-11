@@ -18,6 +18,7 @@ import java.io.Serializable;
  * Class for rectangular region of interest : YAxis line type
  */
 public class YAxisLineBoxROI extends RectangularROI implements Serializable {
+	private static final long serialVersionUID = 3838477357898948744L;
 
 	/**
 	 * Default square of 10 pixels

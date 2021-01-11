@@ -167,6 +167,16 @@
             visible="true">
       </operation>
       <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.xrd2imageprocessing"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.DetectorEfficiencyCalculationOperation"
+            description="Calculate the efficiency of the detector as a function of the plate material and thickness, taking into account the differing angles that the radiation will travel through this medium."
+            icon="icons/PowderCorrection.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.twod.DetectorEfficiencyCalculationOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.DetectorEfficiencyCalculationModel"
+            name="Detector Efficiency Calculation"
+            visible="true">
+      </operation>
+      <operation
             category="uk.ac.diamond.scisoft.analysis.processing.xrd2integration"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.CakePixelIntegrationOperation"
             description="Remap a powder diffraction/SAXS image to q/2theta vs azimuthal angle. Requires Detector Calibration information to be in the pipeline (use Import Detector Calibration)."

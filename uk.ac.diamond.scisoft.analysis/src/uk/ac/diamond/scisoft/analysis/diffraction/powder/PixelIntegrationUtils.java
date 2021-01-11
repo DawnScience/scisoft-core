@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;
 import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.roi.XAxis;
+import uk.ac.diamond.scisoft.analysis.utils.ErrorPropagationUtils;
 
 public class PixelIntegrationUtils {
 	
@@ -604,6 +605,33 @@ public class PixelIntegrationUtils {
 		cor = Maths.subtract(1, cor);
 		cor.idivide(1-transmissionFactor);
 		correctionArray.idivide(cor);
+	}
+	
+	
+	/**
+	* This function returns a corrected dataset based on a detector's transmission factor
+	* derived from knowledge of the detector's sensor material, it's thickness, the energy 
+	* (or wavelength) of the radiation which interacted with it and the two-theta
+	* angle of each physical location wishing to be corrected.
+	* 
+	* @param  datasetToCorrect    The detector frame you wish to correct
+	* @param  twoThetaDataset     The dataset yielding the two-theta angles of each pixel 
+	*                             on the detector
+	* @param  transmissionFactor  The transmission factor of the detector's sensor at the 
+	*                             energy that the data was acquired at
+	* @return                     The corrected dataset
+	*/
+	public static Dataset detectorTranmissionCorrectionWithUncertainties(Dataset datasetToCorrect, Dataset twoThetaDataset, Dataset transmissionFactor) {
+		// Methodology from: J. Zaleski, G. Wu and P. Coppens, J. Appl. Cryst. (1998). 31, 302-304
+		Dataset correctionValueDataset = Maths.cos(twoThetaDataset);
+		
+		// K = [1 - exp(lnT/cos(a))]/(1-T) (Equation 1)
+		correctionValueDataset = Maths.divide(Maths.log(transmissionFactor), correctionValueDataset);
+		correctionValueDataset = Maths.exp(correctionValueDataset);
+		correctionValueDataset = Maths.divide(Maths.subtract(1, correctionValueDataset), Maths.subtract(1, transmissionFactor));			
+		
+		// I_corr = I_obs / K (1st line of text under Equation 1)
+		return ErrorPropagationUtils.divideWithUncertainty(datasetToCorrect, correctionValueDataset);
 	}
 	
 	public static void lorentzCorrection(Dataset correctionArray, Dataset tth) {

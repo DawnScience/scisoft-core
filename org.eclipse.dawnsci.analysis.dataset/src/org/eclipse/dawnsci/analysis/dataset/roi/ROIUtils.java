@@ -175,4 +175,21 @@ public class ROIUtils {
 
 		return xi;
 	}
+
+	/**
+	 * Trim rectangular region on all sides by given margin
+	 * @param r
+	 * @param margin
+	 */
+	public static void trimRectangularROI(RectangularROI r, double margin) {
+		r.setLengths(r.getLength(0) - 2*margin, r.getLength(1) - 2*margin);
+		double a = r.getAngle();
+		if (a == 0) {
+			r.setPoint(r.getValue(0) + margin, r.getValue(1) + margin);
+		} else {
+			double ca = Math.cos(a);
+			double sa = Math.sin(a);
+			r.setPoint(r.getValue(0) + margin*(ca - sa), r.getValue(1) + margin*(sa + ca));
+		}
+	}
 }

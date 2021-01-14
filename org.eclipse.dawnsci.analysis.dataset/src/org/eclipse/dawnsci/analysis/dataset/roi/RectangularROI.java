@@ -139,6 +139,20 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 	}
 
 	/**
+	 * 
+	 * @param r
+	 */
+	public RectangularROI(IRectangularROI r) {
+		this(r.getPointX(), r.getPointY(), r.getLength(0), r.getLength(1), r.getAngle());
+		if (r instanceof RectangularROI) {
+			RectangularROI rr = (RectangularROI) r;
+			clippingCompensation = rr.clippingCompensation;
+			name = rr.name;
+			plot = rr.plot;
+		}
+	}
+
+	/**
 	 * @param len (width, height) Non-Negative numbers for the width and height
 	 * @throws IllegalArgumentException if the width or height is negative (Not allowed to have negative width or height)
 	 */
@@ -279,10 +293,7 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 
 	@Override
 	public RectangularROI copy() {
-		RectangularROI c = new RectangularROI(spt[0], spt[1], len[0], len[1], ang, clippingCompensation);
-		c.name = name;
-		c.plot = plot;
-		return c;
+		return new RectangularROI(this);
 	}
 
 	/**

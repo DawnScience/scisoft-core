@@ -14,7 +14,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.xdi.XDI;
 import org.eclipse.dawnsci.xdi.XDIFile;
@@ -39,12 +38,12 @@ public class XDILoader extends AbstractFileLoader {
 	}
 	
 	@Override
-	public IDataHolder loadFile() throws ScanFileHolderException {
+	public DataHolder loadFile() throws ScanFileHolderException {
 		return loadFile((IMonitor)null);
 	}
 	
 	@Override
-	public IDataHolder loadFile(final IMonitor mon) throws ScanFileHolderException {
+	public DataHolder loadFile(final IMonitor mon) throws ScanFileHolderException {
 		DataHolder result = new DataHolder();
 		
 		try {

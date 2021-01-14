@@ -33,7 +33,7 @@ public class RixsImageCombinedReductionModel extends RixsImageReductionBaseModel
 	private int elCutoffSize = 1;
 
 	/**
-	 * @return option to work out which scan file to use
+	 * @return option to work out which scan file to use for elastic line
 	 */
 	public SCAN_OPTION getScanOption() {
 		return scanOption;

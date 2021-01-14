@@ -24,7 +24,7 @@ public class RixsImageReductionModel extends RixsImageReductionBaseModel {
 	@OperationModelField(label = "Elastic line fit file option", hint = "Use next (or same or previous) scan's processed fit file; manual override by given file")
 	private FIT_FILE_OPTION fitFileOption = FIT_FILE_OPTION.NEXT_SCAN;
 
-	@OperationModelField(label = "Elastic line fit file", file = FileType.EXISTING_FILE, hint = "Can be empty then calibration file is used", enableif = "fitFileOption.toString() == \"MANUAL_OVERRIDE\"")
+	@OperationModelField(label = "Elastic line fit file", file = FileType.EXISTING_FILE, hint = "Can be empty then calibration file is used", enableif = "fitFileOption == 'MANUAL_OVERRIDE'")
 	private String fitFile;
 
 	/**

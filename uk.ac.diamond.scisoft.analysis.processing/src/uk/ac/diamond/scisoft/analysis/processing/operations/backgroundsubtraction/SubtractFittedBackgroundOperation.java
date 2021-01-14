@@ -26,6 +26,8 @@ import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.impl.Signal;
+import org.eclipse.dawnsci.analysis.dataset.roi.ROISliceUtils;
+import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
 import org.eclipse.dawnsci.nexus.NexusConstants;
@@ -60,7 +62,9 @@ import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.metadata.FitMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.processing.operations.MetadataUtils;
 import uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractFittedBackgroundModel.BackgroundPixelPDF;
+import uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractFittedBackgroundModel.RegionCount;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.ElasticLineReduction;
+import uk.ac.diamond.scisoft.analysis.processing.operations.utils.KnownDetector;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 /**
@@ -76,20 +80,26 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 	private double threshold;
 	private OperationLog log = new OperationLog();
 	private String darkImageFile = null;
-	private Dataset smoothedDarkData;
-	private Dataset darkData;
+	private Dataset[] smoothedDarkData;
+	private Dataset[] darkData;
+	private SliceND fitSlice;
 	private boolean useBothROIs;
 	private int roiMax;
+	private IRectangularROI[] rois = new IRectangularROI[2];
 
 	protected List<IDataset> displayData = new ArrayList<>();
 	protected List<IDataset> auxData = new ArrayList<>();
 	private double darkImageCountTime;
-	private boolean autoFindShadowRegion = true;
 
 	/**
-	 * Auxiliary subentry. This must match the name field defined in the plugin extension
+	 * Auxiliary collection. This must match the name field defined in the plugin extension
 	 */
 	public static final String PROCESS_NAME = "Image background subtraction - Fitted to a PDF";
+
+	/**
+	 * Prefix for edge position in auxiliary data
+	 */
+	public static final String EDGE_POSITION_PREFIX = "edge_position_";
 
 	@Override
 	public String getFilenameSuffix() {
@@ -126,8 +136,29 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 			darkData = null;
 			smoothedDarkData = null;
 			break;
+		case SubtractFittedBackgroundModel.REGION_PROPERTY:
+			darkData = null;
+			smoothedDarkData = null;
+		case SubtractFittedBackgroundModel.FIT_REGION_PROPERTY:
+			fitSlice = null;
+			clippedBackground = null;
+			break;
 		default:
 			break;
+		}
+
+		if (name.startsWith(SubtractFittedBackgroundModel.REGION_PROPERTY) || name.equals(SubtractFittedBackgroundModel.FIT_REGION_PROPERTY)) {
+			updateROICount();
+			for (int i  = 0; i < roiMax; i++) {
+				IRectangularROI r = getROI(i);
+				if (r != null && r.getAngle() != 0) {
+					log.appendFailure("Rectangle %d must have angle set to 0", i, r);
+				}
+				r = getFitROI(i);
+				if (r != null && r.getAngle() != 0) {
+					log.appendFailure("Region %d must have angle set to 0", i, r);
+				}
+			}
 		}
 	}
 
@@ -155,6 +186,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 				imin = ((imin-delta+1)/delta) * delta;
 				imax = ((imax+delta-1)/delta) * delta;
 			}
+			imax = Math.max(imin + 1, imax); // numbers of bin >= 2
 			bins = DatasetFactory.createRange(IntegerDataset.class, imin, imax+1, delta);
 		}
 
@@ -219,21 +251,84 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 	 * Updates useBothROIs and roiMax so override for more
 	 */
 	protected void updateROICount() {
-		useBothROIs = model.getRoiA() != null && model.getRoiB() != null;
+		useBothROIs = model.getRegionCount() == RegionCount.Two;
 		roiMax = useBothROIs ? 2 : 1;
+		rois[0] = null;
+		rois[1] = null;
 	}
 
 	protected IRectangularROI getROI(int r) {
-		IRectangularROI roi;
-		if (useBothROIs) {
-			roi = r == 0 ? model.getRoiA() : model.getRoiB();
-		} else {
-			roi = model.getRoiA();
-			if (roi == null) {
-				roi = model.getRoiB();
+		IRectangularROI roi = rois[r];
+		if (roi == null) {
+			if (useBothROIs) {
+				roi = r == 0 ? model.getRoiA() : model.getRoiB();
+			} else {
+				roi = model.getRoiA();
 			}
 		}
 		return roi;
+	}
+
+	protected RectangularROI getFitROI(int r) {
+		IRectangularROI roi;
+		if (useBothROIs) {
+			if (r == 0) {
+				roi = model.getFitRegionA();
+			} else {
+				roi = model.getFitRegionB();
+				if (roi == null) {
+					roi = model.getFitRegionA();
+				}
+			}
+		} else {
+			roi = model.getFitRegionA();
+		}
+		if (roi != null) {
+			return roi instanceof RectangularROI ? (RectangularROI) roi : new RectangularROI(roi);
+		}
+		return null;
+	}
+
+	private RectangularROI getIntersection(IRectangularROI a, IRectangularROI b) {
+		if (a.getAngle() != 0 || b.getAngle() != 0) { // XXX perhaps validate at model level
+			return null;
+		}
+		double[] sa = a.getPointRef();
+		double[] ea = a.getEndPoint();
+		double[] sb = b.getPointRef();
+		double[] eb = b.getEndPoint();
+		double[] sc = new double[2];
+		double[] ec = new double[2];
+
+		if (!calcOverlap(0, sa, ea, sb, eb, sc, ec)) {
+			return null;
+		}
+
+		if (!calcOverlap(1, sa, ea, sb, eb, sc, ec)) {
+			return null;
+		}
+
+		return new RectangularROI(sc, ec);
+	}
+
+	private boolean calcOverlap(int i, double[] sa, double[] ea, double[] sb, double[] eb, double[] sc, double[] ec) {
+		double s0 = sa[i];
+		double s1 = sb[i];
+		double e0 = ea[i];
+		double e1 = eb[i];
+		if (s0 < s1) {
+			if (e0 < s1) {
+				return false;
+			}
+			sc[i] = s1;
+		} else {
+			if (s0 > e1) {
+				return false;
+			}
+			sc[i] = s0;
+		}
+		ec[i] = Math.min(e0, e1);
+		return true;
 	}
 
 	@Override
@@ -247,67 +342,82 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 			Dataset subtractImage = null;
 
 			Double darkOffset = model.getDarkOffset();
-			double[] scaleOffset;
-			if (model.isMode2D()) {
-				if (notValid(darkOffset)) {
-					scaleOffset = findDarkDataScaleAndOffset(in, smoothedDarkData);
-				} else {
-					scaleOffset = new double[] {model.getDarkScaling(), darkOffset};
+			for (int r = 0; r < roiMax; r++) {
+				IRectangularROI roi = getROI(r);
+				if (roi == null) {
+					roi = KnownDetector.getDefaultROI(detector, in.getShapeRef(), roiMax, r, MARGIN);
+					addToConfigured(r, roi);
+					rois[r] = roi;
 				}
-				auxData.add(ProcessingUtils.createNamedDataset(scaleOffset[1], "dark_offset"));
-				auxData.add(ProcessingUtils.createNamedDataset(scaleOffset[0], "dark_scale"));
 
-				subtractImage = scaleOffset[0] == 1 ? Maths.add(smoothedDarkData, scaleOffset[1]) : Maths.multiply(smoothedDarkData, scaleOffset[0]).iadd(scaleOffset[1]);
+				SliceND s = createSliceND(in.getShapeRef(), roi);
+				Dataset crop = in.getSliceView(s);
 
-				int[] shape = in.getShapeRef();
-				for (int r = 0; r < roiMax; r++) { // per rectangle
-					IRectangularROI roi = getROI(r);
-					SliceND s = null;
-					if (roi == null) {
-						s = new SliceND(shape, new Slice(1, -1));
+				/* TODO
+				 * Need to set rest of image to input so net image is zero there
+				 * or propagate regions to elastic line or RIXS image reduction
+				 * (can check in operation metadata)
+				 */
+				double[] scaleOffset;
+				if (model.isMode2D()) 
+				{
+					if (notValid(darkOffset)) {
+						scaleOffset = findDarkDataScaleAndOffset(crop, smoothedDarkData[r], r, roi);
 					} else {
-						Slice s0 = createSlice(roi.getPointX(), roi.getLength(0), shape[1]);
-						Slice s1 = createSlice(roi.getPointY(), roi.getLength(1), shape[0]);
-						s = new SliceND(shape, s1, s0);
+						scaleOffset = new double[] {model.getDarkScaling(), darkOffset};
 					}
+					auxData.add(ProcessingUtils.createNamedDataset(scaleOffset[1], "dark_offset_" + r));
+					auxData.add(ProcessingUtils.createNamedDataset(scaleOffset[0], "dark_scale_" + r));
 
-					Dataset darkFit = subtractImage.getSliceView(s).mean(1, true);
+					Dataset subtractCrop = scaleOffset[0] == 1 ? Maths.add(smoothedDarkData[r], scaleOffset[1]) : Maths.multiply(smoothedDarkData[r], scaleOffset[0]).iadd(scaleOffset[1]);
+					if (subtractImage == null) {
+						subtractImage = in.clone();
+					}
+					subtractImage.setSlice(subtractCrop, s);
+
+					Dataset darkFit = subtractCrop.mean(1, true);
 					auxData.add(ProcessingUtils.createNamedDataset(darkFit, "profile_fit_dark_" + r));
-					Dataset profile = in.getSliceView(s).mean(1, true);
+					Dataset profile = crop.mean(1, true);
 					cleanUpProfile(profile);
 					profile.setName("profile_" + r);
 					displayData.add(profile);
 					auxData.add(profile);
 					Dataset diff = Maths.subtract(profile, darkFit);
-					auxData.add(ProcessingUtils.createNamedDataset(diff, "profile_diff" + r));
+					auxData.add(ProcessingUtils.createNamedDataset(diff, "profile_diff_" + r));
 					displayData.add(darkFit);
-				}
-			} else {
-				Dataset profile = in.mean(1, true);
-				cleanUpProfile(profile);
-				profile.setName("profile");
-				auxData.add(profile);
 
-				if (notValid(darkOffset)) {
-					scaleOffset = findDarkDataScaleAndOffset(profile.reshape(-1), smoothedDarkData.reshape(-1));
 				} else {
-					scaleOffset = new double[] {model.getDarkScaling(), darkOffset};
-				}
-				auxData.add(ProcessingUtils.createNamedDataset(scaleOffset[1], "dark_offset"));
-				auxData.add(ProcessingUtils.createNamedDataset(scaleOffset[0], "dark_scale"));
+					Dataset profile = crop.mean(1, true);
+					cleanUpProfile(profile);
+					profile.setName("profile");
+					auxData.add(profile);
 
-				Dataset darkFit = scaleOffset[0] == 1 ? Maths.add(smoothedDarkData, scaleOffset[1]) : Maths.multiply(smoothedDarkData, scaleOffset[0]).iadd(scaleOffset[1]);
-				auxData.add(ProcessingUtils.createNamedDataset(darkFit, "profile_fit_dark"));
-				Dataset diff = Maths.subtract(profile, darkFit);
-				auxData.add(ProcessingUtils.createNamedDataset(diff, "profile_diff"));
-				subtractImage = darkFit.reshape(darkFit.getSize(), 1);
+					if (notValid(darkOffset)) {
+						scaleOffset = findDarkDataScaleAndOffset(profile.reshape(-1), smoothedDarkData[r].reshape(-1), r, roi);
+					} else {
+						scaleOffset = new double[] {model.getDarkScaling(), darkOffset};
+					}
+					auxData.add(ProcessingUtils.createNamedDataset(scaleOffset[1], "dark_offset"));
+					auxData.add(ProcessingUtils.createNamedDataset(scaleOffset[0], "dark_scale"));
 
-				displayData.add(darkData);
-				if (smoothedDarkData != darkData) {
-					displayData.add(smoothedDarkData);
+					Dataset darkFit = scaleOffset[0] == 1 ? Maths.add(smoothedDarkData[r], scaleOffset[1]) : Maths.multiply(smoothedDarkData[r], scaleOffset[0]).iadd(scaleOffset[1]);
+					auxData.add(ProcessingUtils.createNamedDataset(darkFit, "profile_fit_dark"));
+					Dataset diff = Maths.subtract(profile, darkFit);
+					auxData.add(ProcessingUtils.createNamedDataset(diff, "profile_diff"));
+					Dataset subtractCrop = darkFit.reshape(darkFit.getSize(), 1);
+
+					if (subtractImage == null) {
+						subtractImage = in.clone();
+					}
+					subtractImage.setSlice(subtractCrop, s);
+
+					displayData.add(darkData[r]);
+					if (smoothedDarkData != darkData) {
+						displayData.add(smoothedDarkData[r]);
+					}
+					displayData.add(darkFit);
+					displayData.add(profile);
 				}
-				displayData.add(darkFit);
-				displayData.add(profile);
 			}
 
 			return subtractImage;
@@ -331,6 +441,22 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		return DatasetUtils.select(Comparisons.lessThan(in, thr), in, thr);
 	}
 
+	public static final Slice createSlice(double start, double length, int max) {
+		int lo = Math.max(0, (int) Math.floor(start));
+		int hi = Math.min(max, (int) Math.ceil(start + length));
+		return lo <= 0 && hi >= max ? null : new Slice(lo, hi);
+	}
+
+	public static SliceND createSliceND(int[] shape, IRectangularROI roi) {
+		SliceND s = null;
+		if (roi == null) {
+			s = new SliceND(shape);
+		} else {
+			s = ROISliceUtils.createSliceND(roi, shape);
+		}
+		return s;
+	}
+
 	private void cleanUpProfile(Dataset profile) {
 		if (profile.getSize() == 0) {
 			return;
@@ -341,81 +467,135 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 	}
 
 	private static final int CLIP_END = -50; // clip end off
+	private Dataset clippedBackground = null;
+	private KnownDetector detector;
+	private static final String CLIPPED_BACKGROUND = "bg_dark_smoothed";
 
-	public static final Slice createSlice(double start, double length, int max) {
-		int lo = Math.max(0, (int) Math.floor(start));
-		int hi = Math.min(max, (int) Math.ceil(start + length));
-		return lo <= 0 && hi >= max ? null : new Slice(lo, hi);
-	}
+	private static final int MARGIN = 10; // margin by which to reduce regions
 
-	private double[] findDarkDataScaleAndOffset(Dataset in, Dataset smooth) {
-		boolean noShadow = !autoFindShadowRegion || notValid(model.getGaussianSmoothingLength());
-		IRectangularROI roi = model.getFitRegion();
+	private double[] findDarkDataScaleAndOffset(Dataset in, Dataset smooth, int r, IRectangularROI roi) {
 		in = in.getView(false);
 		in.clearMetadata(null);
-		if (noShadow || roi != null) { // don't bother to find shadow region
-			in = in.clone();
-			int[] shape = in.getShapeRef();
-			SliceND s;
-			if (roi == null) {
-				s = new SliceND(shape, new Slice(1, CLIP_END));
+
+		/* TODO
+		 * if two regions, does not single fit region intersect both
+		 * checks: intersections
+		 */
+		RectangularROI froi = getFitROI(r);
+		if (froi != null) {
+			froi = getIntersection(roi, froi);
+			if (froi == null) {
+				log.appendFailure("Failed to find intersect between match region and rectangle {}", r);
 			} else {
-				if (shape.length == 1) {
-					Slice s0 = createSlice(roi.getPointY(), roi.getLength(1), shape[0]);
-					s = new SliceND(shape, s0);
+				froi.setPoint(froi.getValue(0) - roi.getValue(0), froi.getValue(1) - roi.getValue(1)); // set relative to cropped input
+				log.appendFailure("Intersect between match region and rectangle {} is {}", r, froi);
+			}
+		}
+
+		boolean findDrop = froi == null && !notValid(model.getGaussianSmoothingLength());
+
+		if (findDrop) { // find drop zone to shadow region on the right by looking for trough in derivative
+			if (fitSlice == null) { // TODO need fitSlice for 2nd fit ROI...
+				Dataset y;
+				if (smooth.getRank() == 2) {
+					y = smooth.mean(1, true);
+					y.squeezeEnds();
+					cleanUpProfile(y);
 				} else {
-					Slice s0 = createSlice(roi.getPointX(), roi.getLength(0), shape[1]);
-					Slice s1 = createSlice(roi.getPointY(), roi.getLength(1), shape[0]);
-					s = new SliceND(shape, s1, s0);
+					y = smooth;
+				}
+
+				Dataset d = Maths.derivative(DatasetFactory.createRange(y.getSize()), y, 1);
+				int m = d.argMin(true);
+				log.append("Found edge drop centre at %d", m);
+				auxData.add(ProcessingUtils.createNamedDataset(m, EDGE_POSITION_PREFIX + r));
+
+				// work out full width at half-minimum to use for slicing fit region
+				double dmin = d.getDouble(m);
+				List<Double> z = DatasetUtils.crossings(d, dmin/2);
+				int pmax = z.size();
+				int b = 0;
+				int e = 0;
+				if (pmax == 0) {
+					log.appendFailure("No crossing of derivative of dark image profile found: no edge or shadow?");
+					return new double[] {1, 0};
+				} else {
+					int p = 0;
+					while (z.get(p) < m && ++p < pmax) { // find 1st crossing left of trough
+					}
+					double w = 1;
+					if (p == 0) { // only crossings to right of trough
+						w = 2*(z.get(p) - m);
+					} else if (p < pmax) {
+						w = z.get(p) - z.get(p - 1);
+					} else { // only crossings to left of trough
+						w = 2*(m - z.get(p - 1));
+					}
+					log.append("Full width at half minimum is %g", w);
+					// make slice across drop zone so many widths
+					w = Math.ceil(model.getDarkFWHMScaling() * w);
+					b = Math.max(m - (int) w, 0);
+					e = Math.min(m + (int) w, y.getSize() + CLIP_END);
+				}
+
+				int[] shape = in.getShapeRef();
+				froi = new RectangularROI(shape.length < 2 ? roi.getLength(0) : shape[1], e - b, 0);
+				froi.setValue(1, b);
+
+				fitSlice = createSliceND(shape, froi);
+
+				log.append("Using clipped region in %s to fit background", fitSlice);
+				clippedBackground = smooth.getSliceView(fitSlice);
+				clippedBackground.setName(CLIPPED_BACKGROUND);
+
+				if (clippedBackground.getSize() == 0) { // no trough
+					log.appendFailure("No drop zone to shadow region found");
+					fitSlice = null;
+					return new double[] {1, 0};
+				}
+
+				addConfiguredField(r == 0 ? "fitRegionA" : "fitRegionB", froi);
+			} else if (clippedBackground == null) {
+				clippedBackground = smooth.getSliceView(fitSlice);
+				clippedBackground.setName(CLIPPED_BACKGROUND);
+			}
+		} else {
+			if (fitSlice == null) {
+				int[] shape = in.getShapeRef();
+				if (froi == null) {
+					fitSlice = new SliceND(shape, new Slice(0, CLIP_END));
+				} else {
+					if (shape.length == 1) {
+						Slice s0 = ROISliceUtils.createSlice(froi.getValue(1), froi.getLength(1), shape[0]); // set start to zero as input has been cropped
+						fitSlice = new SliceND(shape, s0);
+					} else {
+						fitSlice = createSliceND(shape, froi);
+					}
 				}
 			}
-			smooth = smooth.getSlice(s);
-			in = in.getSlice(s);
-		} else { // find extent of shadow region on right by looking for trough
-			Dataset y;
-			if (smooth.getRank() == 2) {
-				y = smooth.mean(1, true);
-				y.squeezeEnds();
-				cleanUpProfile(y);
-			} else {
-				y = smooth;
+			if (clippedBackground == null) {
+				clippedBackground = smooth.getSliceView(fitSlice);
+				clippedBackground.setName(CLIPPED_BACKGROUND);
 			}
-
-			Dataset d = Maths.derivative(DatasetFactory.createRange(y.getSize()), y, 1);
-			int r = d.argMin(true);
-			double dmin = d.getDouble(r);
-			List<Double> z = DatasetUtils.crossings(d, dmin/2);
-			double w = z.get(1) - z.get(0);
-			int b = r + (int) Math.ceil(2.5 * w); // start slice at so many widths into shadow region
-			System.err.println("Crossings: " + z + " give start of " + b);
-
-			Slice s = new Slice(b, CLIP_END);
-			smooth = smooth.getSliceView(s);
-			if (smooth.getSize() == 0) { // no trough
-				log.appendFailure("No shadow region found to calculate offset for dark image");
-				return new double[] {1, 0};
-			}
-			in = in.getSliceView(s);
 		}
+
+		in = in.getSlice(fitSlice);
 		if (in.getRank() == 2) { // remove pixels cosmic ray events before fit
 			removeBlips2D(in);
 		}
 
-		double offset = ((Number) in.mean()).doubleValue() - ((Number) smooth.mean()).doubleValue();
-
-		if (noShadow && in.getRank() == 2) { // force to 1D to fit scale too
-			smooth = smooth.mean(1, true);
-			in = in.mean(1, true);
-		}
+		double offset = ((Number) in.mean()).doubleValue() - ((Number) clippedBackground.mean()).doubleValue();
 		IFunction f = new StraightLine();
+		IParameter scale = f.getParameter(0);
+		scale.setValue(1);
+		scale.setLimits(0.5, 2.0); // limits to prevent flipping
 		f.setParameterValues(1, offset);
-		auxData.add(ProcessingUtils.createNamedDataset(smooth, "bg_smooth"));
-		auxData.add(ProcessingUtils.createNamedDataset(in, "bg_cleaned"));
-		if (in.getRank() == 1) { // don't fit image as there's too many points for optimizer
-			fitFunction("Exception in dark data fit", f, smooth, in);
+		if (in.getRank() == 1) { // don't save 2D images as it duplicates input
+			auxData.add(ProcessingUtils.createNamedDataset(in, "bg_input_cleaned"));
 		}
+		fitFunction("Exception in dark data fit", f, clippedBackground, in);
 		System.err.println("Fit: " + f + " cf " + offset);
-		log.append("Dark image offset = %g", offset);
+		log.append("Dark image fit: %s", f);
 		return f.getParameterValues();
 	}
 
@@ -461,16 +641,17 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		return Operations.operate(new GaussianOperation(l), x, null);
 	}
 
-	private Dataset smoothFilter1D(Dataset darkProfile, Dataset g) {
+	private Dataset smoothFilter1D(Dataset darkProfile, Dataset g, int r) {
 		int n = g.getSize() / 2;
 		g.imultiply(1./((Number) g.sum(true)).doubleValue());
 		Dataset smoothed = Signal.convolveToSameShape(darkProfile.cast(DoubleDataset.class), g, null);
 		smoothed.setSlice(smoothed.getDouble(n), new Slice(n));
 		smoothed.setSlice(smoothed.getDouble(-n), new Slice(-n-1, null));
+		smoothed.setName("dark_smoothed_profile_" + r);
 		return smoothed;
 	}
 
-	private Dataset smoothFilter2D(Dataset darkImage, Dataset g) {
+	private Dataset smoothFilter2D(Dataset darkImage, Dataset g, int r) {
 		int n = g.getSize() / 2;
 		g = LinearAlgebra.outerProduct(g, g);
 		g.imultiply(1./((Number) g.sum(true)).doubleValue());
@@ -479,10 +660,11 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		smoothed.setSlice(smoothed.getSliceView(new Slice(-n, -n+1)), new Slice(-n+1, null));
 		smoothed.setSlice(smoothed.getSliceView(null, new Slice(n, n+1)), null, new Slice(n));
 		smoothed.setSlice(smoothed.getSliceView(null, new Slice(-n, -n+1)), null, new Slice(-n+1, null));
+		smoothed.setName("dark_smoothed_image_" + r);
 		return smoothed;
 	}
 
-	private void createDarkData(SliceFromSeriesMetadata ssm) {
+	private void createDarkData(String name) {
 		String file = model.getDarkImageFile();
 		if (file == null) {
 			smoothedDarkData = null;
@@ -495,12 +677,9 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 		if (!file.equals(darkImageFile) || darkData == null) {
 			darkImageFile = file;
-
-			String data = ssm.getDatasetName();
-	
 			ILazyDataset dark;
 			try {
-				dark = LocalServiceManager.getLoaderService().getData(file, null).getLazyDataset(data);
+				dark = LocalServiceManager.getLoaderService().getData(file, null).getLazyDataset(name);
 			} catch (Exception e) {
 				throw new OperationException(this, "Could not load dark image file", e);
 			}
@@ -515,7 +694,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 				} catch (DatasetException e) {
 					throw new OperationException(this, "Could not read in dark image", e);
 				}
-			} else {
+			} else if (dark.getRank() > 2) {
 				try {
 					d = LazyMaths.mean(dark, -2, -1);
 					int[] extra = ShapeUtils.getRemainingAxes(dark.getRank(), -2, -1);
@@ -523,26 +702,45 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 				} catch (DatasetException e) {
 					throw new OperationException(this, "Could not take average of dark image", e);
 				}
+			} else {
+				throw new OperationException(this, "Dark image should be at least 2D");
 			}
 
-			if (model.isMode2D()) {
-				darkData = d;
-				if (model.isRemoveOutliers()) { // remove pixels cosmic ray events
-					removeBlips2D(darkData);
+			if (detector != null && !Arrays.equals(detector.getShape(), d.getShapeRef())) {
+				throw new OperationException(this, "Dark image shape does not match input image shape");
+			}
+
+			// split into cropped regions
+			darkData = new Dataset[roiMax];
+			for (int r = 0; r < roiMax; r++) {
+				IRectangularROI roi = getROI(r);
+				if (roi == null) {
+					roi = KnownDetector.getDefaultROI(detector, d.getShapeRef(), roiMax, r, MARGIN);
+					addToConfigured(r, roi);
+					rois[r] = roi;
 				}
-			} else {
-				// average all so that only profile along row is left
-				if (model.isRemoveOutliers()) {
-					darkData = createProfileWithoutOutliers(d);
+				SliceND s = createSliceND(d.getShapeRef(), roi);
+				Dataset crop = d.getSliceView(s);
+
+				if (model.isMode2D()) {
+					darkData[r] = crop;
+					if (model.isRemoveOutliers()) { // remove pixels cosmic ray events
+						removeBlips2D(crop);
+					}
 				} else {
-					darkData = d.mean(1, true);
+					// average all so that only profile along row is left
+					if (model.isRemoveOutliers()) {
+						darkData[r] = createProfileWithoutOutliers(crop);
+					} else {
+						darkData[r] = crop.mean(1, true);
+					}
+					if (crop.getDouble() == 0) {
+						crop.set(0.5*(crop.getDouble(1) + crop.getDouble(2)), 0); // ensure 1st entry is non-zero
+					}
+					crop.setName("dark_profile_" + r);
+			
+					removeBlips1D(crop);
 				}
-				if (darkData.getDouble() == 0) {
-					darkData.set(0.5*(darkData.getDouble(1) + darkData.getDouble(2)), 0); // ensure 1st entry is non-zero
-				}
-				darkData.setName("dark_profile");
-		
-				removeBlips1D();
 			}
 		}
 
@@ -550,15 +748,22 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		if (notValid(smoothingLength)) {
 			smoothedDarkData = darkData;
 		} else {
-			Dataset g = createFilter(Math.abs(smoothingLength));
-			if (model.isMode2D()) {
-				smoothedDarkData = smoothFilter2D(darkData, g);
-				smoothedDarkData.setName("dark_smoothed_image");
-			} else {
-				smoothedDarkData = smoothFilter1D(darkData, g);
-				smoothedDarkData.setName("dark_smoothed_profile");
+			smoothedDarkData = new Dataset[roiMax];
+			for (int r = 0; r < roiMax; r++) {
+				Dataset g = createFilter(Math.abs(smoothingLength));
+				if (model.isMode2D()) {
+					smoothedDarkData[r] = smoothFilter2D(darkData[r], g, r);
+				} else {
+					smoothedDarkData[r] = smoothFilter1D(darkData[r], g, r);
+				}
 			}
 		}
+		clippedBackground = null;
+		fitSlice = null;
+	}
+
+	private void addToConfigured(int r, IRectangularROI roi) {
+		addConfiguredField(r == 0 ? "roiA" : "roiB", roi);
 	}
 
 	private final static boolean notValid(Double v) {
@@ -588,10 +793,10 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		log.append("Blips removed: %d", blips);
 	}
 
-	private void removeBlips1D() {
+	private void removeBlips1D(Dataset data) {
 		// does so by checking for differences that greater than FWHM (assumes symmetric central distribution)
 		// in zeroth dimension
-		Dataset diffs = Maths.difference(darkData, 1, 0);
+		Dataset diffs = Maths.difference(data, 1, 0);
 
 		// get FWHM
 		IFunction dpdf = fitDiffHistogram(diffs, false);
@@ -606,9 +811,9 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 			double yc = diffs.getElementDoubleAbs(it.index);
 			if (Math.abs(yp) > f && Math.abs(yc) > f && Math.signum(yp) != Math.signum(yc)) {
 				blips++;
-				double py = darkData.getElementDoubleAbs(i-1);
-				double ny = darkData.getElementDoubleAbs(i+1);
-				darkData.setObjectAbs(i, 0.5*(py + ny));
+				double py = data.getElementDoubleAbs(i-1);
+				double ny = data.getElementDoubleAbs(i+1);
+				data.setObjectAbs(i, 0.5*(py + ny));
 				yc = 0.5*(ny - py);
 			}
 			i++;
@@ -703,9 +908,11 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		SliceInformation si = ssm.getSliceInfo();
 		if (si.isFirstSlice()) {
 			log.clear();
+			updateROICount();
 
-			autoFindShadowRegion = isDataFromAndor(ssm, input);
-			createDarkData(ssm);
+			String name = ssm.getDatasetName();
+			detector = KnownDetector.getDetector(ssm.getFilePath(), name, input);
+			createDarkData(name);
 
 			if (smoothedDarkData != null) {
 				String filePath = ssm.getFilePath();
@@ -715,8 +922,6 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 				}
 			}
 		}
-
-		updateROICount();
 
 		OperationData op = super.process(input, monitor);
 
@@ -744,37 +949,29 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 			auxData.add(ProcessingUtils.createNamedDataset(fit, "histogram_fit"));
 
 			od.getData().addMetadata(new FitMetadataImpl(SubtractFittedBackgroundOperation.class).setFitFunction(pdf));
+			// TODO add edge positions too?
 		}
+
+		if (si.isFirstSlice()) {
+			setConfiguredFields(od);
+		}
+
 		od.setAuxData(auxData.toArray(new Serializable[auxData.size()]));
 
-		if (si.isLastSlice() && smoothedDarkData != null && smoothedDarkData != darkData) {
-			if (model.isMode2D()) {
-				od.setSummaryData(smoothedDarkData);
-			} else {
-				od.setSummaryData(darkData, smoothedDarkData);
+		if (si.isLastSlice()) {
+			if (smoothedDarkData != null && smoothedDarkData != darkData) {
+				if (model.isMode2D()) {
+					od.setSummaryData(smoothedDarkData, clippedBackground);
+				} else {
+					od.setSummaryData(darkData, smoothedDarkData, clippedBackground);
+				}
 			}
 		}
 
 		return od;
 	}
 
-	private static final String ANDOR = "andor";
-	private static final int[] ANDOR_SHAPE = new int[] {2048, 2048};
-
-	/**
-	 * Check if data is from Andor detector 
-	 * @param ssm
-	 * @param input 
-	 * @return true if dataset path contains "andor" and dataset has correct shape
-	 */
-	public static boolean isDataFromAndor(SliceFromSeriesMetadata ssm, IDataset input) {
-		String n = ssm.getDatasetName();
-		if (n.contains(ANDOR)) { // only true for Andor of given shape
-			int[] shape = input instanceof Dataset ? ((Dataset) input).getShapeRef() : input.getShape();
-			return shape.length >= 2 && ANDOR_SHAPE[0] == shape[shape.length - 2] && ANDOR_SHAPE[1] == shape[shape.length - 1];
-		}
-		return false;
-	}
+	
 
 	// make display datasets here to be recorded in file
 	public static void setDisplayData(OperationDataForDisplay od, Dataset x, Dataset h, Dataset fit) {

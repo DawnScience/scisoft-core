@@ -82,10 +82,10 @@ public class RixsImageReductionBaseModel extends RixsBaseModel {
 	@OperationModelField(label = "Zero energy offset", description = "Option to define the zero energy position", hint = "From elastic line fit; manual override by given values; or from first turning point", expertOnly = true)
 	private ENERGY_OFFSET energyOffsetOption = ENERGY_OFFSET.FROM_ELASTIC_LINE_FIT;
 
-	@OperationModelField(label = "Zero energy offset A", description = "Offset value for rectangle A", hint = "Position on energy axis in pixels", expertOnly = true)
+	@OperationModelField(label = "Zero energy offset A", description = "Offset value for rectangle A", hint = "Position on energy axis in pixels", enableif = "energyOffsetOption == 'MANUAL_OVERRIDE'", expertOnly = true)
 	private double energyOffsetA = Double.NaN;
 
-	@OperationModelField(label = "Zero energy offset B", description = "Offset value for rectangle B", hint = "Position on energy axis in pixels", expertOnly = true)
+	@OperationModelField(label = "Zero energy offset B", description = "Offset value for rectangle B", hint = "Position on energy axis in pixels", enableif = "energyOffsetOption == 'MANUAL_OVERRIDE'", expertOnly = true)
 	private double energyOffsetB = Double.NaN;
 
 	public enum XIP_OPTION {

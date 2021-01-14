@@ -29,6 +29,7 @@ import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.impl.Signal;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.dawnsci.analysis.dataset.roi.ROISliceUtils;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
@@ -52,7 +53,7 @@ import org.eclipse.january.metadata.MetadataFactory;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
-import uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractFittedBackgroundOperation;
+import uk.ac.diamond.scisoft.analysis.processing.operations.utils.KnownDetector;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 /**
@@ -66,6 +67,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	protected List<IDataset> displayData = new ArrayList<>();
 	protected List<IDataset> auxData = new ArrayList<>();
 	protected List<IDataset> summaryData = new ArrayList<>();
+
 	protected OperationLog log = new OperationLog();
 	protected int countsPerPhoton;
 	public static final int MAX_ROIS = 2;
@@ -77,7 +79,8 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	private double drainCurrent;
 	private BooleanDataset usedFrames = null;
 	private double detectorAngle = Double.NaN;
-	private double cropY = -1; // negative for no crop
+	private KnownDetector detector;
+	private IRectangularROI[] rois = new IRectangularROI[2];
 
 	@Override
 	public void setModel(T model) {
@@ -134,6 +137,8 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 
 	abstract boolean skipFrame(int size, int frame);
 
+	private static final int MARGIN = 10; // margin by which to reduce regions
+
 	@Override
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		displayData.clear();
@@ -142,6 +147,8 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		SliceFromSeriesMetadata smd = input.getFirstMetadata(SliceFromSeriesMetadata.class);
 		SliceInformation si = smd.getSliceInfo();
 		if (si.isFirstSlice()) {
+			detector = KnownDetector.getDetector(smd.getFilePath(), smd.getDatasetName(), input);
+
 			summaryData.clear();
 			log.clear();
 			if (usedFrames == null || usedFrames.getSize() != si.getTotalSlices()) {
@@ -152,10 +159,26 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			resetProcess(input, si.getTotalSlices());
 			updateFromModel(true, null);
 			parseNexusFile(smd.getFilePath());
-			if (model.isCropROI() && SubtractFittedBackgroundOperation.isDataFromAndor(smd, input)) {
+			double cropY = -1; // negative for no crop
+
+			if (model.isCropROI() && KnownDetector.getDetector(smd.getFilePath(), smd.getDatasetName(), input) == KnownDetector.ANDOR) {
 				cropY = calculateCropYForAndor(detectorAngle);
-			} else {
-				cropY = -1;
+			}
+
+			for (int r = 0; r < roiMax; r++) {
+				rois[r] = null;
+				IRectangularROI roi = getROI(r);
+				boolean configure = roi == null;
+				if (configure) {
+					roi = KnownDetector.getDefaultROI(detector, input.getShape(), roiMax, r, MARGIN);
+				}
+				if (cropY > 0) {
+					roi = cropROIForAndor(roi, cropY);
+				}
+				rois[r] = roi;
+				if (configure || cropY > 0) {
+					addConfiguredField(r == 0 ? "roiA" : "roiB", roi);
+				}
 			}
 		}
 
@@ -172,14 +195,9 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 
 		initializeProcess(input);
 
-		IRectangularROI roi;
 		IDataset result = input;
 		for (int r = 0; r < roiMax; r++) {
-			roi = getROI(r);
-			if (cropY > 0) {
-				roi = cropROIForAndor(roi);
-			}
-			result = processRegion(s, input, roi, r);
+			result = processRegion(s, input, rois[r], r);
 		}
 
 		OperationDataForDisplay od = new OperationDataForDisplay();
@@ -190,6 +208,9 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			od.setDisplayData(displayData.toArray(new IDataset[displayData.size()]));
 		}
 		od.setAuxData(auxData.toArray(new Serializable[auxData.size()]));
+		if (si.isFirstSlice()) {
+			setConfiguredFields(od);
+		}
 		return od;
 	}
 
@@ -209,15 +230,13 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	 * @param r
 	 * @return cropped ROI or original
 	 */
-	private IRectangularROI cropROIForAndor(IRectangularROI r) {
-		if (r instanceof RectangularROI) {
-			double ey = r.getEndPoint()[1];
-			if (cropY < ey) {
-				RectangularROI roi = ((RectangularROI) r).copy();
-				double[] l = roi.getLengths();
-				l[1] = Math.floor(l[1] + cropY - ey);
-				return roi;
-			}
+	private IRectangularROI cropROIForAndor(IRectangularROI r, double cropY) {
+		double ey = r.getValue(1) + r.getLength(1);
+
+		if (cropY < ey) {
+			RectangularROI roi = new RectangularROI(r);
+			roi.setLengths(roi.getLength(0), Math.floor(roi.getLength(1) + cropY - ey));
+			return roi;
 		}
 
 		return r;
@@ -245,15 +264,18 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	}
 
 	protected IRectangularROI getROI(int r) {
-		IRectangularROI roi;
-		if (useBothROIs) {
-			roi = r == 0 ? model.getRoiA() : model.getRoiB();
-		} else {
-			roi = model.getRoiA();
-			if (roi == null) {
-				roi = model.getRoiB();
+		IRectangularROI roi = rois[r];
+		if (roi == null) {
+			if (useBothROIs) {
+				roi = r == 0 ? model.getRoiA() : model.getRoiB();
+			} else {
+				roi = model.getRoiA();
+				if (roi == null) {
+					roi = model.getRoiB();
+				}
 			}
 		}
+
 		return roi;
 	}
 
@@ -398,7 +420,8 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 					try {
 						String[] names = NexusTreeUtils.parseStringArray(detector.getDataNode(DETECTOR_LOCAL_NAME), 1);
 						if (names[0].toLowerCase().contains(DETECTOR_NAME_XCAM)) {
-							countsPerPhoton = 1000; // TODO finalize good value
+							double energy = getEnergy(mdg);
+							countsPerPhoton = (int) (800 * (energy / 933.)); // rough estimate from XCAM commissioning
 						} else {
 							log.appendFailure("Unknown detector in Nexus file %s: %s = %s", filePath, DETECTOR_LOCAL_NAME, names[0]);
 						}
@@ -452,12 +475,21 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	private static final double[][] ANDOR_SENSITIVITY = new double[][] {{3.5, 1.9, 1.0}, {3.4, 1.8, 1.0}, {3.1, 1.8, 1.0}}; // in electrons per AD count
 
 	private int calculateCountsPerPhoton(GroupNode mdg) throws NexusException {
-		double energy = parseBeforeScanItem(mdg, "pgmEnergy"); // photon energy in eV
+		double energy = getEnergy(mdg);
 		try {
 			return (int) Math.floor(energy / andorSensitivity(mdg));
 		} catch (Exception e) {
 			throw new NexusException("Not an Andor detector:", e);
 		}
+	}
+
+	/**
+	 * @param mdg
+	 * @return photon energy in eV
+	 * @throws NexusException
+	 */
+	private double getEnergy(GroupNode mdg) throws NexusException {
+		return parseBeforeScanItem(mdg, "pgmEnergy");
 	}
 
 	/**
@@ -563,11 +595,11 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		return s[0] == null && s[1] == null ? in : in.getSliceView(s);
 	}
 
-	protected Slice[] getSlice(int[] shape, int axis, IRectangularROI r) {
+	private Slice[] getSlice(int[] shape, int axis, IRectangularROI r) {
 		double[] p = r.getPointRef();
-		Slice s0 = SubtractFittedBackgroundOperation.createSlice(p[axis], r.getLength(axis), shape[axis]);
+		Slice s0 = ROISliceUtils.createSlice(p[axis], r.getLength(axis), shape[axis]);
 		axis = 1 - axis;
-		Slice s1 = SubtractFittedBackgroundOperation.createSlice(p[axis], r.getLength(axis), shape[axis]);
+		Slice s1 = ROISliceUtils.createSlice(p[axis], r.getLength(axis), shape[axis]);
 
 		offset[0] = s0 == null ? 0 : s0.getStart();
 		offset[1] = s1 == null ? 0 : s1.getStart();

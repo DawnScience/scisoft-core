@@ -18,7 +18,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -76,7 +75,7 @@ public class XRMCLoader extends AbstractFileLoader {
 	}
 	
 	@Override
-	public IDataHolder loadFile() throws ScanFileHolderException {
+	public DataHolder loadFile() throws ScanFileHolderException {
 		DataHolder result = new DataHolder();
 		
 		XRMCInputStream in = null;

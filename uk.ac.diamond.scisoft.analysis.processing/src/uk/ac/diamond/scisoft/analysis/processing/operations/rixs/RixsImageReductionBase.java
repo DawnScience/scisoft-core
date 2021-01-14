@@ -14,8 +14,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistentNodeFactory;
@@ -72,6 +70,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	private double[] energyDispersion = new double[2];
 	private Dataset totalSum = null; // dataset of all event sums (so far)
 	private List<Dataset> allSums = new ArrayList<>(); // list of dataset of event sums in each image
+	private List<Dataset> allOffsets = new ArrayList<>(); // list of dataset of event base offsets in each image
 	private List<Dataset> allPositions = new ArrayList<>(); // list of dataset of event coords in each image
 	@SuppressWarnings("unchecked")
 	private List<Dataset>[] allSpectra = new List[] {new ArrayList<>(), new ArrayList<>()};
@@ -85,9 +84,6 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	public static final String PROCESS_NAME = "RIXS image reduction";
 
 	private static final String ENERGY_LOSS = "Energy loss";
-
-	// string that contains a set of digits before a period and another substring 
-	protected static final Pattern NUMBERED_FILE_REGEX = Pattern.compile(".*?([0-9]+)\\.\\w+");
 
 	@Override
 	public String getId() {
@@ -132,6 +128,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	@Override
 	protected void resetProcess(IDataset original, int total) {
 		totalSum = null;
+		resetList(allOffsets, total);
 		resetList(allPositions, total);
 		resetList(allSums, total);
 		for (int i = 0; i < 2; i++) {
@@ -140,6 +137,8 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		currentDataFile = null;
 	}
 
+	// TODO also need to read from OperationMetadata for previous SubtractFittedBackgroundModel
+	// and its regions
 	protected void initializeROIsFromFile(String file) {
 		if (file == null) {
 			return;
@@ -246,6 +245,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		if (eSum == null || eSum.getSize() == 0) {
 			log.appendFailure("No events found");
 			allSums.set(sn, null);
+			allOffsets.set(sn, null);
 			allPositions.set(sn, null);
 		} else {
 			// accumulate event sums and photons
@@ -256,6 +256,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			}
 			log.appendSuccess("Found %d photon events, current total = %s", eSum.getSize(), totalSum.getSize());
 			allSums.set(sn, eSum);
+			allOffsets.set(sn, events.get(4));
 			allPositions.set(sn, events.get(1));
 		}
 
@@ -263,8 +264,9 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		Dataset a = null;
 		Dataset h = null;
 		if (totalSum != null) {
-			double max = totalSum.max(true).doubleValue();
-			bins = DatasetFactory.createRange(IntegerDataset.class, totalSum.min(true).doubleValue(), max+1, 1);
+			double min = totalSum.min(true).doubleValue();
+			double max = Math.max(min + 1, totalSum.max(true).doubleValue()); // ensure that we get at least two bins
+			bins = DatasetFactory.createRange(IntegerDataset.class, min, max + 1, 1);
 			bins.setName("Event sum");
 			Histogram histo = new Histogram(bins);
 			h = histo.value(totalSum).get(0);
@@ -292,7 +294,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		if (od instanceof OperationDataForDisplay) {
 			odd = (OperationDataForDisplay) od;
 		} else {
-			odd = new OperationDataForDisplay(od == null ? null : od.getData());
+			odd = new OperationDataForDisplay(od);
 		}
 		odd.setShowSeparately(true);
 		odd.setLog(log);
@@ -312,12 +314,10 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		int l = path.lastIndexOf(File.separator) + 1;
 		String name = l == 0 ? path : path.substring(l);
 
-		Matcher m = NUMBERED_FILE_REGEX.matcher(name);
-		if (!m.matches()) {
+		Integer scan = ProcessingUtils.getScanNumber(name);
+		if (scan == null) {
 			throw new OperationException(this, "Current file path does not end with scan number (before file extension)");
 		}
-		String digits = m.group(1);
-		int scan = Integer.parseInt(digits);
 		String xipPath = path.substring(0, l).concat(String.format(XCAM_XIP_FILENAME, i, scan));
 
 		if (!new File(xipPath).exists()) {
@@ -792,6 +792,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		summaryData.add(t);
 	}
 
+	// TODO batch up spectra (i.e. combine several frames together for better SNR) [depends on exposure time and signal strength?]
 	// correlate spectra and makes summary data for them and sum up for spectrum
 	private void correlateSpectra(String prefix, int r, RegisterNoisyData1D reg, List<Double> shift, Dataset energies, Dataset spectra) {
 		Dataset[] sArray = new Dataset[spectra.getShapeRef()[0]];

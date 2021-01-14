@@ -12,14 +12,13 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.rixs;
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
-import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 
 /**
  * Base model for processing RIXS images
  */
 public class RixsBaseModel extends AbstractOperationModel {
 	@OperationModelField(label = "Rectangle A", description = "Region to search for elastic peak", enableif = "!(regionsFromFile ?: false)", expertOnly = true)
-	private IRectangularROI roiA = new RectangularROI(0, 1, 2048, 1600, 0);
+	private IRectangularROI roiA = null;
 
 	@OperationModelField(label = "Rectangle B", description = "Region to search for elastic peak", enableif = "!(regionsFromFile ?: false)", expertOnly = true)
 	private IRectangularROI roiB = null;

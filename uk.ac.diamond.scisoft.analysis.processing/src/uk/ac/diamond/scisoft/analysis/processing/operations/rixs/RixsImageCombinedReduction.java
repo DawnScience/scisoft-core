@@ -35,6 +35,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.processing.metadata.OperationMetadata;
 import uk.ac.diamond.scisoft.analysis.processing.metadata.OperationMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageCombinedReductionModel.SCAN_OPTION;
+import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImageCombinedReductionModel> {
 
@@ -107,20 +108,12 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 			File currentDir = file.getParentFile();
 			String currentName = file.getName();
 
-			Matcher m = NUMBERED_FILE_REGEX.matcher(currentName);
-			if (!m.matches()) {
+			String newName = ProcessingUtils.getNextScanString(currentName, getScanDelta(), "%s%s%s");
+			if (newName == null) {
 				throw new OperationException(this, "Current file path does not end with scan number");
 			}
-			String digits = m.group(1);
-			int scan = Integer.parseInt(digits);
-			if (model.getScanOption() == SCAN_OPTION.NEXT_SCAN) {
-				scan++;
-			} else if (model.getScanOption() == SCAN_OPTION.PREVIOUS_SCAN) {
-				scan--;
-			}
-			String format = String.format("%s%%0%dd%s", currentName.substring(0, m.start(1)), digits.length(), currentName.substring(m.end(1)));
 
-			elasticScanPath = new File(currentDir, String.format(format, scan)).getAbsolutePath();
+			elasticScanPath = new File(currentDir, newName).getAbsolutePath();
 		}
 
 		if (!useSingleFit) {
@@ -135,13 +128,32 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 
 			if (edata != null) {
 				for (Serializable s : edata.getSummaryData()) {
-					iSummaryData.add(DatasetFactory.createFromObject(s));
+					if (s != null) {
+						iSummaryData.add(DatasetFactory.createFromObject(s));
+					}
 				}
 			}
 
 			SliceInformation si = smd.getSliceInfo();
 			useSingleFit = extractFitData(si.getTotalSlices(), si.getSliceNumber(), edata.getAuxData());
 		}
+	}
+
+	protected int getScanDelta() {
+		int delta;
+		switch (model.getScanOption()) {
+		case NEXT_SCAN:
+			delta = 1;
+			break;
+		case PREVIOUS_SCAN:
+			delta = -1;
+			break;
+		case SAME_SCAN:
+		default:
+			delta = 0;
+			break;
+		}
+		return delta;
 	}
 
 	private OperationData fitElasticLine(IDataset original, SliceFromSeriesMetadata smd) {

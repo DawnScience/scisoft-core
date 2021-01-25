@@ -13,6 +13,7 @@
 package org.eclipse.dawnsci.analysis.api.tree;
 
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Fundamental unit of tree which can possess attributes
@@ -63,10 +64,15 @@ public interface Node {
 	public Iterator<String> getAttributeNameIterator();
 
 	/**
+	 * @return set of attribute names
+	 */
+	public Set<String> getAttributeNames();
+
+	/**
 	 * @return iterator over attribute names in node
 	 */
 	public Iterator<? extends Attribute> getAttributeIterator();
-	
+
 	/**
 	 * Remove the attribute with the given name from the node
 	 * @param name

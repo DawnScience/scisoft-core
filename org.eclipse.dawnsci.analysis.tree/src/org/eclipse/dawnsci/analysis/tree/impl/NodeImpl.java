@@ -15,6 +15,8 @@ package org.eclipse.dawnsci.analysis.tree.impl;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
@@ -79,6 +81,11 @@ public abstract class NodeImpl implements Node, Serializable {
 	@Override
 	public Iterator<? extends Attribute> getAttributeIterator() {
 		return attributes.values().iterator();
+	}
+	
+	@Override
+	public Set<String> getAttributeNames() {
+		return new LinkedHashSet<>(attributes.keySet());
 	}
 
 	@Override

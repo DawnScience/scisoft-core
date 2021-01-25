@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.january.dataset.ILazyDataset;
 
@@ -114,6 +115,13 @@ public interface GroupNode extends Node, Iterable<NodeLink> {
 	 * @return group node map
 	 */
 	public Map<String, GroupNode> getGroupNodeMap();
+	
+	/**
+	 * Get the set of names of group nodes. Includes the names of any {@link SymbolicNode} that
+	 * resolves to a {@link GroupNode}.
+	 * @return group node names
+	 */
+	public Set<String> getGroupNodeNames();
 
 	/**
 	 * Add (child) group node with given path and name 
@@ -184,6 +192,13 @@ public interface GroupNode extends Node, Iterable<NodeLink> {
 	 * @throws IllegalArgumentException if named node does not exist or is not a data node
 	 */
 	public void removeDataNode(String name);
+	
+	/**
+	 * Get the set of names of data nodes. Includes the names of any {@link SymbolicNode} that
+	 * resolves to a {@link DataNode}.
+	 * @return data node names
+	 */
+	public Set<String> getDataNodeNames();
 
 	/**
 	 * Remove the given data node from this group.
@@ -230,7 +245,12 @@ public interface GroupNode extends Node, Iterable<NodeLink> {
 	 * 		symbolic node
 	 */
 	public SymbolicNode getSymbolicNode(String name);
-	
+
+	/**
+	 * @return the set of names of {@link SymbolicNode}s
+	 */
+	public Set<String> getSymbolicNodeNames();
+
 	/**
 	 * Find name of node linked to this group
 	 * @param node
@@ -267,5 +287,5 @@ public interface GroupNode extends Node, Iterable<NodeLink> {
 	/**
 	 * @return names of nodes
 	 */
-	public Collection<String> getNames();
+	public Set<String> getNames();
 }

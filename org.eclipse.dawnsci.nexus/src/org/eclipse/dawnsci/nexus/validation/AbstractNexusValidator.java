@@ -15,11 +15,8 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.StreamSupport;
 
 import javax.measure.Unit;
 import javax.measure.format.ParserException;
@@ -28,18 +25,17 @@ import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
-import org.eclipse.dawnsci.analysis.api.tree.Tree;
-import org.eclipse.dawnsci.nexus.NXinstrument;
 import org.eclipse.dawnsci.nexus.NXobject;
-import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.NXsubentry;
 import org.eclipse.dawnsci.nexus.NXtransformations;
+import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;
 import org.eclipse.dawnsci.nexus.NexusBaseClass;
+import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
+import org.eclipse.dawnsci.nexus.validation.ValidationReportEntry.Level;
+import org.eclipse.dawnsci.nexus.validation.ValidationReportEntry.NodeType;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.metadata.MetadataType;
-import org.eclipse.january.metadata.UnitMetadata;
 
 import tec.units.indriya.format.SimpleUnitFormat;
 
@@ -75,50 +71,54 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	}
 	
 	public static final String ATTRIBUTE_NAME_UNITS = "units";
+	
+	private final NexusApplicationDefinition applicationDefinition; 
 
+	protected final ValidationReport validationReport = new ValidationReport();
+	
 	private NXsubentry entry = null;
 	
 	private Map<String, Integer> globalDimensionPlaceholderValues = new HashMap<>();
 	
 	private Map<String, Integer> localGroupDimensionPlaceholderValues = new HashMap<>();
 	
+	public AbstractNexusValidator(NexusApplicationDefinition appDef) {
+		this.applicationDefinition = appDef;
+	}
+	
 	protected void setEntry(NXsubentry entry) {
 		this.entry = entry;
 	}
 	
+	public NexusApplicationDefinition getApplicationDefinition() {
+		return applicationDefinition;
+	}
+	
+	protected ValidationReport getValidationReport() {
+		return validationReport;
+	}
+	
+	public void checkError() throws NexusException {
+		if (validationReport.isError()) {
+			final String validationSummary = validationReport.summarize(Level.ERROR);
+			throw new NexusException("The nexus file is invalid according to application definition " +
+					applicationDefinition + "\n" + validationSummary);
+		}
+	}
+
 	/**
 	 * Throw an {@link NexusValidationException} with the given message.
 	 * @param message message
-	 * @throws NexusValidationException always
 	 */
-	protected void failValidation(final String message) throws NexusValidationException {
-		if (message == null) {
-			throw new NexusValidationException(null);
-		} else {
-			throw new NexusValidationException(message);
-		}
+	protected void addValidationEntry(Level level, NodeType nodeType, String nodeName, final String message) {
+		validationReport.addValidationEntry(new ValidationReportEntry(level, nodeType, nodeName, message));
 	}
 	
-	/**
-	 * Validates that the given condition holds, throwing an {@link NexusValidationException} with the given message otherwise
-	 * @param message message
-	 * @param condition condition to check
-	 * @throws NexusValidationException if the condition does not hold
-	 */
-	protected void validate(String message, boolean condition) throws NexusValidationException {
+	protected boolean validate(boolean condition, Level level, NodeType nodeType, String nodeName, String message) {
 		if (!condition) {
-			failValidation(message);
+			addValidationEntry(level, nodeType, nodeName, message);
 		}
-	}
-	
-	/**
-	 * Validates that the given object is not <code>null</code>.
-	 * @param message message
-	 * @param object object to check for <code>null</code>
-	 * @throws NexusValidationException if the given object is <code>null</code>
-	 */
-	protected void validateNotNull(String message, Object object) throws NexusValidationException {
-		validate(message, object != null);
+		return condition;
 	}
 	
 	/**
@@ -126,10 +126,9 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	 * @param groupName name of group
 	 * @param type type of group
 	 * @param groupNode group node
-	 * @throws NexusValidationException
 	 */
-	protected void validateGroupNotNull(String groupName, Class<? extends NXobject> type, GroupNode groupNode) throws NexusValidationException {
-		validateNotNull((groupName == null ? "The unnamed group " : "The group '" + groupName + "' ") + "of type " + type.getSimpleName() + " must be present", groupNode);
+	protected boolean validateGroupNotNull(String groupName, Class<? extends NXobject> type, GroupNode groupNode) {
+		return validate(groupNode != null, Level.ERROR, NodeType.GROUP_NODE, groupName, " The group was null");
 	}
 	
 	/**
@@ -139,40 +138,41 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	 * @param parentGroup
 	 * @param optional
 	 * @param multiple
-	 * @throws NexusValidationException
 	 */
-	protected void validateUnnamedGroupOccurrences(NXobject parentGroup, Class<? extends NXobject> nxClass, boolean optional, boolean multiple) throws NexusValidationException {
+	protected boolean validateUnnamedGroupOccurrences(NXobject parentGroup, Class<? extends NXobject> nxClass, boolean optional, boolean multiple) {
 		final Map<String, ?> childrenOfClass = parentGroup.getChildren(nxClass);
 		
 		if (!optional && childrenOfClass.isEmpty()) {
-			failValidation((multiple ? "At least one" : "The unnamed") + " group of type " + nxClass.getSimpleName() + " must be present");
+			addValidationEntry(Level.ERROR, NodeType.GROUP_NODE, null, (multiple ? "At least one" : "The unnamed") + " group of type " + nxClass.getSimpleName() + " must be present");
+			return false;
+		}
+		if (!multiple && childrenOfClass.size() > 1) {
+			addValidationEntry(Level.ERROR, NodeType.GROUP_NODE, null, 
+					"Only one group of type " + nxClass.getSimpleName() + " maybe specified. Found " + childrenOfClass.size() + ": " + String.join(", ", childrenOfClass.keySet()));
+			return false;
 		}
 		
-		if (!multiple && childrenOfClass.size() > 1) {
-			failValidation("Only one group of type " + nxClass.getSimpleName() + " maybe specified. Found " + childrenOfClass.size() + ": " +
-					String.join(", ", childrenOfClass.keySet()));
-		}
+		return true;
 	}
 	
 	/**
 	 * Validates that the given field value is not <code>null</code>.
 	 * @param fieldName name of field
 	 * @param dataset the field value, an {@link IDataset}
-	 * @throws NexusValidationException if the field is <code>null</code>
+	 * @return 
 	 */
-	protected void validateFieldNotNull(String fieldName, IDataset dataset) throws NexusValidationException {
-		validateNotNull("The field " + fieldName + " must be set", dataset);
+	protected boolean validateFieldNotNull(String fieldName, IDataset dataset) {
+		return validate(dataset != null, Level.ERROR, NodeType.DATA_NODE, fieldName, "must be set");
 	}
 	
 	/**
 	 * Validates that the given attribute node is not <code>null</code>.
 	 * @param attributeName name of attribute
 	 * @param attribute attribute 
-	 * @throws NexusValidationException if the attribute is <code>null</code>
+	 * @return 
 	 */
-	protected void validateAttributeNotNull(String attributeName, Attribute attribute) throws NexusValidationException {
-		validateNotNull("The attribute " + attributeName + " must be set", attribute);
-		validateNotNull("The dataset for the attribute " + attributeName + " must be set", attribute.getValue());
+	protected boolean validateAttributeNotNull(String attributeName, Attribute attribute) {
+		return validate(attribute != null, Level.ERROR, NodeType.ATTRIBUTE, attributeName, "must be set");
 	}
 	
 	/**
@@ -180,10 +180,10 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	 * @param fieldName name of the field
 	 * @param dataset the field value, a {@link Dataset}
 	 * @param permittedValues the permitted values
-	 * @throws NexusValidationException if the value of the field is not one of the permitted values
+	 * @return 
 	 */
-	protected void validateFieldEnumeration(String fieldName, IDataset dataset, String... permittedValues) throws NexusValidationException {
-		validateEnumeration(fieldName, "field", dataset, permittedValues);
+	protected boolean validateFieldEnumeration(String fieldName, IDataset dataset, String... permittedValues) {
+		return validateEnumeration(fieldName, NodeType.DATA_NODE, dataset, permittedValues);
 	}
 	
 	/**
@@ -191,10 +191,16 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	 * @param fieldName field name
 	 * @param dataset field value, an {@link IDataset}
 	 * @param type expected type
-	 * @throws NexusValidationException if the type of the field is not that given
+	 * @return 
 	 */
-	protected void validateFieldType(final String fieldName, final IDataset dataset, final NexusDataType type) throws NexusValidationException {
-		type.validate(fieldName, dataset);
+	protected boolean validateFieldType(final String fieldName, final IDataset dataset, final NexusDataType type) {
+		if (!type.validate(dataset)) {
+			addValidationEntry(Level.ERROR, NodeType.DATA_NODE, fieldName,
+					"The dataset type is not compatible with the type " + type);
+			return false;
+		}
+		
+		return true;
 	}
 	
 	/**
@@ -204,25 +210,27 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	 * @param dataNode the {@link DataNode} for the field
 	 * @param unitCategory expected unit category
 	 * @throws Exception if an unexpected exception occurs
-	 * @throws NexusValidationException if the field's units are not consistent with the given unit category
 	 */
-	protected void validateFieldUnits(final String fieldName, final DataNode dataNode,
-			final NexusUnitCategory unitCategory) throws NexusValidationException {
+	protected boolean validateFieldUnits(final String fieldName, final DataNode dataNode, final NexusUnitCategory unitCategory) {
 		final Attribute unitsAttribute = dataNode.getAttribute(ATTRIBUTE_NAME_UNITS);
 		if (unitsAttribute == null) {
-			failValidation(MessageFormat.format("No units attribute for field ''{0}'', expected ''{1}''.",
-					fieldName, unitCategory));
+			addValidationEntry(Level.ERROR, NodeType.DATA_NODE, fieldName, MessageFormat.format("No units attributes specified, expected ''{1}''.", fieldName, unitCategory));
+			return false;
 		}
 		final String unitsStr = unitsAttribute.getFirstElement();
 		try {
 			final Unit<?> unit = SimpleUnitFormat.getInstance().parse(unitsStr);
 			if (!unitCategory.isCompatible(unit)) {
-				failValidation(MessageFormat.format("Units ''{0}'' for field ''{1}'' are not compatible with unit category ''{2}''",
-						unitsStr, fieldName, unitCategory));
+				addValidationEntry(Level.ERROR, NodeType.DATA_NODE, fieldName,
+						MessageFormat.format("Units ''{0}'' are not compatible with unit category ''{1}''.", unitsStr, unitCategory));
+				return false;
 			}
 		} catch (ParserException e) {
-			failValidation(MessageFormat.format("Invalid units ''{0}'' for field ''{1}''.", unitsStr, fieldName)); 
+			addValidationEntry(Level.ERROR, NodeType.DATA_NODE, fieldName, MessageFormat.format("Invalid units ''{0}''.", unitsStr));
+			return false;
 		}
+		
+		return true;
 	}
 
 	/**
@@ -230,13 +238,14 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	 * @param fieldName field name
 	 * @param dataset field value, an {@link IDataset}
 	 * @param rank expected rank
-	 * @throws NexusValidationException if the field does not have the expected rank
+	 * @return
 	 */
-	protected void validateFieldRank(final String fieldName, final IDataset dataset, final int rank)
-			throws NexusValidationException {
+	protected boolean validateFieldRank(final String fieldName, final IDataset dataset, final int rank) {
 		if (dataset.getRank() != rank) {
-			failValidation("The field " + fieldName + " has a rank of " + dataset.getRank() + ", expected " + rank); 
+			addValidationEntry(Level.WARNING, NodeType.DATA_NODE, fieldName, 
+					"Incorrect rank, was " +  dataset.getRank() + ", expected " + rank); 
 		}
+		return false;
 	}
 	
 	/**
@@ -247,19 +256,16 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	 * @param dimensions the dimensions, each value must be either an integer, interpreted as the expected size of
 	 *    that dimension, or a placeholder string, in which case the size of this dimension will be validated
 	 *    against any previous dimension with the same placeholder string
-	 * @throws NexusValidationException if a dimension did not have the expected size
 	 */
-	protected void validateFieldDimensions(final String fieldName,
-			final IDataset dataset, String groupName, Object... dimensions)
-			throws NexusValidationException {
+	protected void validateFieldDimensions(final String fieldName, final IDataset dataset, String groupName, Object... dimensions) {
 		final int[] shape = dataset.getShape();
 
 		for (int i = 0; i < dimensions.length; i++) {
 			if (dimensions[i] instanceof Integer) {
 				// the dimension value to validate against in an integer specifying exactly the expected dimension size to check
 				if (shape[i] != ((Integer) dimensions[i]).intValue()) {
-					failValidation(MessageFormat.format("The dimension with index {0} of field ''{1}'' expected to have size {2} was {3}", 
-							(i + 1), fieldName, dimensions[i], shape[i]));
+					addValidationEntry(Level.WARNING, NodeType.DATA_NODE, fieldName, MessageFormat.format(
+							"The dimension with index {0} has size {1}, expected {2}", (i + 1), shape[i], dimensions[i]));
 				}
 			} else if (dimensions[i] instanceof String) {
 				// the dimension value to validate against is a string placeholder
@@ -274,28 +280,33 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 				Integer expectedSize = getDimensionPlaceholderValue(dimensionPlaceholder, groupName != null, shape[i]);
 				if (expectedSize != null && shape[i] != expectedSize.intValue()) {
 					if (groupName != null) {
-						failValidation(MessageFormat.format("The dimension with index {0} of field ''{1}'' expected to have size {2} according to symbol ''{3}'' within group {4}, was {5}",
-								(i + 1), fieldName, expectedSize, dimensions[i], groupName, shape[i]));
+						addValidationEntry(Level.WARNING, NodeType.DATA_NODE, fieldName, MessageFormat.format(
+								"The dimension with index {0} has size {1}, expected {2} (according to symbol ''{3}'' within group {4}",
+								(i + 1), shape[i], expectedSize, dimensions[i], groupName));
 					} else {
-						failValidation(MessageFormat.format("The dimension with index {0} of field ''{1}'' expected to have size {2} according to symbol ''{3}'', was {4}",
-								(i + 1), fieldName, expectedSize, dimensions[i], shape[i]));
+						addValidationEntry(Level.WARNING, NodeType.DATA_NODE, fieldName, MessageFormat.format(
+								"The dimension with index {0} has size {1}, expected {2} (according to symbol ''{3}'')",
+								(i + 1), shape[i], expectedSize, dimensions[i]));
 					}
 				}
 			} else {
-				failValidation("Dimension size value must be an Integer or String, was: " + dimensions[i].getClass().getName());
+				// this method should never be called if with dimensions that are not an Integer or String
+				throw new IllegalStateException("Dimension size value must be an Integer or String, was: " + dimensions[i].getClass().getName());
 			}
 		}
 	}
 	
 	/**
 	 * Validates that the type of the given attribute is that given.
-	 * @param fieldName field name
+	 * @param attributeName field name
 	 * @param dataset field value, an {@link IDataset}
 	 * @param type expected type
-	 * @throws NexusValidationException if the type of the field is not that given
 	 */
-	protected void validateAttributeType(final String fieldName, final Attribute attribute, final NexusDataType type) throws NexusValidationException {
-		type.validate(fieldName, attribute.getValue());
+	protected void validateAttributeType(final String attributeName, final Attribute attribute, final NexusDataType type) {
+		if (!type.validate(attribute.getValue())) {
+			addValidationEntry(Level.ERROR, NodeType.ATTRIBUTE, attributeName,
+					"The dataset type is not compatible with the type " + type); 
+		}
 	}
 
 	/**
@@ -303,10 +314,9 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	 * @param attributeName name of the attribute
 	 * @param attribute the attribute
 	 * @param permittedValues the permitted values
-	 * @throws NexusValidationException if the value of the field is not one of the permitted values
 	 */
-	protected void validateAttributeEnumeration(String attributeName, Attribute attribute, String... permittedValues) throws NexusValidationException {
-		validateEnumeration(attributeName, "attribute", attribute.getValue(), permittedValues);
+	protected void validateAttributeEnumeration(String attributeName, Attribute attribute, String... permittedValues) {
+		validateEnumeration(attributeName, NodeType.ATTRIBUTE, attribute.getValue(), permittedValues);
 	}
 	
 	protected NexusPathSegment toNexusPathSegment(String segment) {
@@ -323,11 +333,12 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 		return new NexusPathSegment(segment, null);
 	}
 	
-	protected void validateDataNodeLink(String fieldName, DataNode dataNode, String targetPath) throws NexusValidationException {
+	protected void validateDataNodeLink(String fieldName, DataNode dataNode, String targetPath) {
 		final DataNode targetNode = getTargetNode(fieldName, targetPath);
-		if (targetNode != dataNode) { // data node should be same instance as target node
-			failValidation(MessageFormat.format("The field ''{0}'' is not a link to the data node at the target path ''{1}''",
-					fieldName, targetPath));
+		if (targetNode == null) {
+			addValidationEntry(Level.WARNING, NodeType.DATA_NODE, fieldName, "No data node at the expected target path: " + targetPath);
+		} else {
+			validate(targetNode == dataNode, Level.WARNING, NodeType.DATA_NODE, fieldName, "Not a link to the data node at the target path: " + targetPath);
 		}
 	}
 	
@@ -343,7 +354,7 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 			toArray(NexusPathSegment[]::new);
 	}
 
-	private DataNode getTargetNode(String fieldName, String targetPath) throws NexusValidationException {
+	private DataNode getTargetNode(String fieldName, String targetPath) {
 		final NexusPathSegment[] parsedTargetPath = parseTargetPath(targetPath);
 		
 		// The first segment is the entry we're validatings
@@ -361,12 +372,14 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 				// segment specifies a group name, get group and check nexus class if specified
 				final NXobject groupNode = (NXobject) currentGroup.getGroupNode(segment.getName());
 				if (groupNode == null) {
-					failValidation(MessageFormat.format("No group found with name ''{0}'' for field ''{1}'' with target path ''{2}''",
-							segment.getName(), fieldName, targetPath));
-				}
-				if (segment.getNexusBaseClass() != null && segment.getNexusBaseClass() != groupNode.getNexusBaseClass()) {
-					failValidation(MessageFormat.format("For field ''{0}'' for group ''{0}'' in target path ''{1}'' has unexpected nexus class ''{2}''.",
+					addValidationEntry(Level.WARNING, NodeType.DATA_NODE, fieldName, 
+							MessageFormat.format("No group found with name ''{0}'' with target path ''{1}''.", segment.getName(), targetPath));
+					return null;
+				} else if (segment.getNexusBaseClass() != null && segment.getNexusBaseClass() != groupNode.getNexusBaseClass()) {
+					addValidationEntry(Level.WARNING, NodeType.DATA_NODE, fieldName,
+							MessageFormat.format("Group ''{0}'' in target path ''{1}'' has unexpected nexus class ''{2}''.",
 							segment.getName(), targetPath, segment.getNexusBaseClass().getJavaClass().getSimpleName()));
+					return null;
 				}
 			}
 			
@@ -374,9 +387,13 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 			final Class<? extends NXobject> nexusClass = segment.getNexusBaseClass().getJavaClass();
 			final Map<String, ? extends NXobject> childGroups = currentGroup.getChildren(nexusClass);
 			if (childGroups.isEmpty()) {
-				failValidation(MessageFormat.format("No such target group of type ''{0}'' in target path ''{1}'' for field ''{2}''.", nexusClass.getSimpleName(), targetPath, fieldName));
+				addValidationEntry(Level.WARNING, NodeType.DATA_NODE, fieldName,
+						MessageFormat.format("No such target group of type ''{0}'' in target path ''{1}''", nexusClass.getSimpleName(), targetPath));
+				return null;
 			} else if (childGroups.size() > 1) {
-				failValidation(MessageFormat.format("Ambiguous target path ''{0}'' for field ''{1}'', multiple ''{2}'' groups found.", targetPath, fieldName, nexusClass.getSimpleName())); 
+				addValidationEntry(Level.WARNING, NodeType.DATA_NODE, fieldName,
+						MessageFormat.format("Ambiguous target path ''{0}'', multiple ''{1}'' groups found.", targetPath, nexusClass.getSimpleName()));
+				return null;
 			}
 			currentGroup = childGroups.values().iterator().next();
 		}
@@ -384,8 +401,9 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 		final NexusPathSegment lastSegment = parsedTargetPath[parsedTargetPath.length - 1];
 		final DataNode dataNode = currentGroup.getDataNode(lastSegment.getName());
 		if (dataNode == null) {
-			failValidation(MessageFormat.format("No DataNode found with name ''{0}'' for field ''{1}'' with target path ''{2}''",
-					lastSegment.getName(), fieldName, targetPath));
+			addValidationEntry(Level.WARNING, NodeType.DATA_NODE, fieldName,
+					MessageFormat.format("No DataNode found with name ''{0}'' for with target path ''{1}''", lastSegment.getName(), targetPath));
+			return null;
 		}
 		
 		return dataNode;
@@ -399,26 +417,29 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	 * final transformation is identified by having <code>"."</code> as the value of its depends_on attribute. 
 	 * @param transformations transformations
 	 * @param dependsOnStr the name of the first transformation
-	 * @throws NexusValidationException if an expected transformation does not exist
 	 */
-	protected void validateTransformations(final Map<String, NXtransformations> transformations, String dependsOnStr) throws NexusValidationException {
-		final Set<String> encounteredTransformationNames = new HashSet<String>();
+	protected void validateTransformations(final Map<String, NXtransformations> transformations, String dependsOnStr) {
+		final Set<String> encounteredTransformationNames = new HashSet<>();
 		do {
 			// get the tranformation with the given name
 			final NXtransformations transformation = transformations.get(dependsOnStr);
 			
 			// check that the transformation exists
 			if (transformation == null) {
-				failValidation("No such transformation: " + dependsOnStr);
+				addValidationEntry(Level.ERROR, NodeType.GROUP_NODE, dependsOnStr, "No such NXtransformation group: " + dependsOnStr);
+				return;
 			}
 			
 			// check we haven't already encountered this transformation, if so the
 			// transformations have a circular dependency
 			if (encounteredTransformationNames.contains(dependsOnStr)) {
-				failValidation("Circular dependency detected in transformations, transformation '" + dependsOnStr + "' encountered for second time.");
+				addValidationEntry(Level.ERROR, NodeType.GROUP_NODE, dependsOnStr,
+						"Circular dependency detected in transformations, transformation '" + dependsOnStr + "' encountered for second time.");
+				return;
 			}
+			
 			encounteredTransformationNames.add(dependsOnStr);
-			Attribute dependsOnAttr = transformation.getAttribute("depends_on");
+			final Attribute dependsOnAttr = transformation.getAttribute("depends_on");
 			dependsOnStr = (dependsOnAttr == null ? null : dependsOnAttr.getFirstElement());
 		} while (dependsOnStr != null && !dependsOnStr.equals(".")); // "." marks the final transformation
 	}
@@ -436,29 +457,35 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	 * @param nodeType type of node, can be field or attribute
 	 * @param dataset dataset to validate
 	 * @param permittedValues permitted values
-	 * @throws NexusValidationException if the value of the dataset is not one of the permitted values
+	 * @return
 	 */
-	private void validateEnumeration(String nodeName, String nodeType, IDataset dataset, String... permittedValues) throws NexusValidationException {
+	private boolean validateEnumeration(String nodeName, NodeType nodeType, IDataset dataset, String... permittedValues) {
 		// note: this method assumes that the enumeration values are always strings
-		if (dataset.getRank() > 1) { // allow rank for scalar datasets can be 0 or 1 
-			failValidation(MessageFormat.format("The enumeration {0} ''{1}'' must have a rank of 0 or 1", nodeType, nodeName));
+		if (dataset.getRank() > 1) { // scalar datasets can also be written as one-dimensional datasets of size one 
+			addValidationEntry(Level.ERROR, nodeType, nodeName, "the dataset for an enumeration must have rank 0 or 1");
+			return false;
 		}
 		
 		// the size of scalar fields can be 0 or 1 (i.e. we treat one dimensional datasets of size 1 as scalar)
 		if (dataset.getSize() > 1) {
-			failValidation(MessageFormat.format("The enumeration {0} ''{1}'' must have a size of 1", nodeType, nodeName));
+			addValidationEntry(Level.ERROR, nodeType, nodeName, "the dataset for an enumeration must have a size of 1");
+			return false;
 		}
 		
 		final String value = dataset.getRank() == 0 ? dataset.getString() : dataset.getString(0);
-		validateNotNull(MessageFormat.format("The value of the enumeration {0} ''{1}'' cannot be null", nodeType, nodeName), value);
+		if (value == null) {
+			addValidationEntry(Level.ERROR, nodeType, nodeName, "The value for the enumeration cannot be null");
+			return false;
+		}
 		
 		final boolean valuePermitted = Arrays.stream(permittedValues).anyMatch(enumVal -> enumVal.equals(value));
-		
 		if (!valuePermitted) {
-			failValidation(MessageFormat.format(
-					"The value of the {0} ''{1}'' is not contained in the enumeration of permitted values. "
-					+ "Value: {2}, permitted values: {3}", nodeType, nodeName, value, String.join(", ", permittedValues)));		
+			addValidationEntry(Level.ERROR, nodeType, nodeName, MessageFormat.format("The value ''{0}'' is not in the enumeration of permitted values: {1}",
+					value, String.join(", ", permittedValues)));
+			return false;
 		}
+		
+		return true;
 	}
 
 	/**
@@ -469,23 +496,12 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	 * @param actualDimensionSize
 	 * @return the dimension placeholder value
 	 */
-	private Integer getDimensionPlaceholderValue(String placeholder, boolean local, int actualDimensionSize) {
-		final Integer dimensionPlaceholderValue;
+	private int getDimensionPlaceholderValue(String placeholder, boolean local, int actualDimensionSize) {
 		if (local) {
-			dimensionPlaceholderValue = localGroupDimensionPlaceholderValues.get(placeholder);
-			if (dimensionPlaceholderValue == null) {
-				localGroupDimensionPlaceholderValues.put(placeholder, actualDimensionSize);
-			} else {
-				
-			}
-		} else {
-			dimensionPlaceholderValue = globalDimensionPlaceholderValues.get(placeholder);
-			if (dimensionPlaceholderValue == null) {
-				globalDimensionPlaceholderValues.put(placeholder, actualDimensionSize);
-			}
+			return localGroupDimensionPlaceholderValues.computeIfAbsent(placeholder, str -> actualDimensionSize);
 		}
 		
-		return dimensionPlaceholderValue;
+		return globalDimensionPlaceholderValues.computeIfAbsent(placeholder, str -> actualDimensionSize);
 	}
 	
 }

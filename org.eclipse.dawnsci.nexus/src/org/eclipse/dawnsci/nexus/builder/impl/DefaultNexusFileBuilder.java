@@ -24,10 +24,10 @@ import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.ServiceHolder;
+import org.eclipse.dawnsci.nexus.builder.NexusBuilderFile;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusFileBuilder;
-import org.eclipse.dawnsci.nexus.builder.NexusBuilderFile;
-import org.eclipse.dawnsci.nexus.validation.NexusValidationException;
+import org.eclipse.dawnsci.nexus.validation.ValidationReport;
 
 /**
  * Default implementation of {@link NexusFileBuilder}.
@@ -107,10 +107,15 @@ public class DefaultNexusFileBuilder implements NexusFileBuilder {
 	 * @see org.eclipse.dawnsci.nexus.builder.NexusFileBuilder#validate()
 	 */
 	@Override
-	public void validate() throws NexusValidationException {
-		for (NexusEntryBuilder entry : entries.values()) {
-			entry.validate();
+	public ValidationReport validate() {
+		if (entries.isEmpty()) return new ValidationReport();
+		if (entries.size() == 1) {
+			return entries.values().iterator().next().validate();
 		}
+		
+		final ValidationReport overallReport = new ValidationReport();
+		entries.values().stream().map(NexusEntryBuilder::validate).forEach(overallReport::merge);
+		return overallReport;
 	}
 
 	/* (non-Javadoc)

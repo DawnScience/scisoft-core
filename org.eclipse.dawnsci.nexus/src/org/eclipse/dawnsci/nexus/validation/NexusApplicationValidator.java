@@ -27,20 +27,20 @@ public interface NexusApplicationValidator {
 	 * @param root
 	 * @throws NexusValidationException
 	 */
-	public void validate(final NXroot root) throws NexusValidationException;
+	public ValidationReport validate(final NXroot root);
 	
 	/**
 	 * Validate the given nexus entry.
 	 * @param entry
 	 * @throws NexusValidationException
 	 */
-	public void validate(final NXentry entry) throws NexusValidationException;
+	public ValidationReport validate(final NXentry entry);
 	
 	/**
 	 * Validate the given nexus subentry.
 	 * @param subentry
 	 * @throws NexusValidationException
 	 */
-	public void validate(final NXsubentry subentry) throws NexusValidationException;
+	public ValidationReport validate(final NXsubentry subentry);
 
 }

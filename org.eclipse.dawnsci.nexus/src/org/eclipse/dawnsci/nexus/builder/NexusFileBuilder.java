@@ -16,7 +16,7 @@ import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.nexus.NXroot;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.impl.NXrootImpl;
-import org.eclipse.dawnsci.nexus.validation.NexusValidationException;
+import org.eclipse.dawnsci.nexus.validation.ValidationReport;
 
 /**
  * A builder for building a NeXus file. Wraps a {@link TreeFile} object.
@@ -63,10 +63,11 @@ public interface NexusFileBuilder {
 	
 	/**
 	 * Validates all entries within the NeXus file.
+	 * @return 
 	 * @throws NexusValidationException if one or more of the entries in the nexus file
 	 *   are invalid.
 	 */
-	public void validate() throws NexusValidationException;
+	public ValidationReport validate();
 
 	/**
 	 * Creates the NeXus file with the content as configured with this builder.

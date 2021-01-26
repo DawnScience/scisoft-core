@@ -16,38 +16,50 @@ package org.eclipse.dawnsci.nexus;
  */
 public enum NexusApplicationDefinition {
 
-	NX_TOFSINGLE,
-	NX_STXM,
-	NX_TOMO,
-	NX_XEULER,
-	NX_LAUETOF,
-	NX_XLAUE,
-	NX_XNB,
-	NX_REFTOF,
-	NX_ARCHIVE,
-	NX_SCAN,
-	NX_SAS,
-	NX_MONOPD,
-	NX_TOMOPROC,
-	NX_TOFRAW,
-	NX_SPE,
-	NX_XAS,
-	NX_MX,
-	NX_FLUO,
-	NX_XLAUEPLATE,
-	NX_DIRECTTOF,
-	NX_CANSAS,
-	NX_IQPROC,
-	NX_INDIRECTTOF,
-	NX_XKAPPA,
-	NX_XBASE,
-	NX_TAS,
-	NX_TOMOPHASE,
-	NX_XASPROC,
-	NX_ARPES,
-	NX_SQOM,
-	NX_SASTOF,
-	NX_TOFNPD,
-	NX_REFSCAN,
-	NX_XROT,
-}
+	NX_TOFSINGLE("NXtofsingle"),
+	NX_STXM("NXstxm"),
+	NX_TOMO("NXtomo"),
+	NX_XEULER("NXxeuler"),
+	NX_LAUETOF("NXlauetof"),
+	NX_XLAUE("NXxlaue"),
+	NX_XNB("NXxnb"),
+	NX_REFTOF("NXreftof"),
+	NX_ARCHIVE("NXarchive"),
+	NX_SCAN("NXscan"),
+	NX_SAS("NXsas"),
+	NX_MONOPD("NXmonopd"),
+	NX_TOMOPROC("NXtomoproc"),
+	NX_TOFRAW("NXtofraw"),
+	NX_SPE("NXspe"),
+	NX_XAS("NXxas"),
+	NX_MX("NXmx"),
+	NX_FLUO("NXfluo"),
+	NX_XLAUEPLATE("NXxlaueplate"),
+	NX_DIRECTTOF("NXdirecttof"),
+	NX_CANSAS("NXcanSAS"),
+	NX_IQPROC("NXiqproc"),
+	NX_INDIRECTTOF("NXindirecttof"),
+	NX_XKAPPA("NXxkappa"),
+	NX_XBASE("NXxbase"),
+	NX_TAS("NXtas"),
+	NX_TOMOPHASE("NXtomophase"),
+	NX_XASPROC("NXxasproc"),
+	NX_ARPES("NXarpes"),
+	NX_SQOM("NXsqom"),
+	NX_SASTOF("NXsastof"),
+	NX_TOFNPD("NXtofnpd"),
+	NX_REFSCAN("NXrefscan"),
+	NX_XROT("NXxrot");
+
+	private String name;
+	
+	private NexusApplicationDefinition(String name) {
+		this.name = name;
+	}
+	
+	@Override
+	public String toString() {
+		return name;
+	}
+	
+}		

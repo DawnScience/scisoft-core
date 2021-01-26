@@ -11,12 +11,13 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.nexus.builder.impl;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.Assert.assertThat;
 
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFileFactoryHDF5;
@@ -29,7 +30,8 @@ import org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusFileBuilder;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
-import org.eclipse.dawnsci.nexus.validation.NexusValidationException;
+import org.eclipse.dawnsci.nexus.validation.ValidationReport;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -143,20 +145,13 @@ public class DefaultNexusFileBuilderTest {
 		assertThat(entryBuilder.getNXentry(), sameInstance(nxRoot.getEntry("myentry")));
 	}
 	
-	@Test(expected = NexusValidationException.class)
+	@Test
 	public void testValidate() throws Exception {
-		// verify that calling validate() on the NexusFileBuilder invokes
-		// validate() on each of the child NexusEntryBuilder entities
-		// Note: this method used to use Mockito to validate that each entry was validated,
-		// however the plugin dependency on mockito appears to prevent plugin tests from running
-
 		NexusEntryBuilder nexusEntryBuilder = nexusFileBuilder.newEntry("entry1");
 		nexusEntryBuilder.newApplication(NexusApplicationDefinition.NX_TOMO);
-//		nexusFileBuilder.newEntry("entry2");
 		
-		nexusFileBuilder.validate();
-//		verify(entry1).validate();
-//		verify(entry2).validate();
-//		verifyNoMoreInteractions(entry1, entry2);
+		final ValidationReport validationReport = nexusFileBuilder.validate();
+		assertThat(validationReport.isOk(), is(false));
 	}
+	
 }

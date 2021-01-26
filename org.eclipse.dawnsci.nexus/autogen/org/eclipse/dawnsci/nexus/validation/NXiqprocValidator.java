@@ -16,7 +16,7 @@ import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 
 import java.util.Map;
 
-import org.eclipse.january.dataset.IDataset;
+import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;import org.eclipse.january.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 
@@ -35,52 +35,59 @@ import org.eclipse.dawnsci.nexus.NXdata;
  */
 public class NXiqprocValidator extends AbstractNexusValidator implements NexusApplicationValidator {
 
+	public NXiqprocValidator() {
+		super(NexusApplicationDefinition.NX_IQPROC);
+	}
+
 	@Override
-	public void validate(NXroot root) throws NexusValidationException {
+	public ValidationReport validate(NXroot root) {
 		// validate unnamed child group of type NXentry (possibly multiple)
 		validateUnnamedGroupOccurrences(root, NXentry.class, false, true);
 		final Map<String, NXentry> allEntry = root.getAllEntry();
 		for (final NXentry entry : allEntry.values()) {
 			validateGroup_NXentry(entry);
 		}
+		return validationReport;
 	}
 
 	@Override
-	public void validate(NXentry entry) throws NexusValidationException {
+	public ValidationReport validate(NXentry entry) {
 		validateGroup_NXentry(entry);
+		return validationReport;
 	}
 
 	@Override
-	public void validate(NXsubentry subentry) throws NexusValidationException {
+	public ValidationReport validate(NXsubentry subentry) {
 		validateGroup_NXentry(subentry);
+		return validationReport;
 	}
 
 
 	/**
 	 * Validate unnamed group of type NXentry.
 	 */
-	private void validateGroup_NXentry(final NXsubentry group) throws NexusValidationException {
+	private void validateGroup_NXentry(final NXsubentry group) {
 		// set the current entry, required for validating links
 		setEntry(group);
 
 		// validate that the group is not null
-		validateGroupNotNull(null, NXentry.class, group);
+		if (!(validateGroupNotNull(null, NXentry.class, group))) return;
 
 		// validate attribute 'entry'
 		final Attribute entry_attr = group.getAttribute("entry");
-		validateAttributeNotNull("entry", entry_attr);
+		if (!(validateAttributeNotNull("entry", entry_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("entry", entry_attr, NX_CHAR);
 
 		// validate field 'title' of unknown type.
 		final IDataset title = group.getTitle();
-		validateFieldNotNull("title", title);
+		if (!(validateFieldNotNull("title", title))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("title", title, NX_CHAR);
 
 		// validate field 'definition' of unknown type.
 		final IDataset definition = group.getDefinition();
-		validateFieldNotNull("definition", definition);
+		if (!(validateFieldNotNull("definition", definition))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("definition", definition, NX_CHAR);
 		validateFieldEnumeration("definition", definition,
@@ -110,13 +117,13 @@ public class NXiqprocValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate group 'instrument' of type NXinstrument.
 	 */
-	private void validateGroup_NXentry_instrument(final NXinstrument group) throws NexusValidationException {
+	private void validateGroup_NXentry_instrument(final NXinstrument group) {
 		// validate that the group is not null
-		validateGroupNotNull("instrument", NXinstrument.class, group);
+		if (!(validateGroupNotNull("instrument", NXinstrument.class, group))) return;
 
 		// validate field 'name' of type NX_CHAR.
 		final IDataset name = group.getName();
-		validateFieldNotNull("name", name);
+		if (!(validateFieldNotNull("name", name))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("name", name, NX_CHAR);
 		// validate unnamed child group of type NXsource (possibly multiple)
@@ -130,13 +137,13 @@ public class NXiqprocValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate unnamed group of type NXsource.
 	 */
-	private void validateGroup_NXentry_instrument_NXsource(final NXsource group) throws NexusValidationException {
+	private void validateGroup_NXentry_instrument_NXsource(final NXsource group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXsource.class, group);
+		if (!(validateGroupNotNull(null, NXsource.class, group))) return;
 
 		// validate field 'type' of unknown type.
 		final IDataset type = group.getType();
-		validateFieldNotNull("type", type);
+		if (!(validateFieldNotNull("type", type))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("type", type, NX_CHAR);
 		validateFieldEnumeration("type", type,
@@ -155,13 +162,13 @@ public class NXiqprocValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate field 'name' of unknown type.
 		final IDataset name = group.getName();
-		validateFieldNotNull("name", name);
+		if (!(validateFieldNotNull("name", name))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("name", name, NX_CHAR);
 
 		// validate field 'probe' of unknown type.
 		final IDataset probe = group.getProbe();
-		validateFieldNotNull("probe", probe);
+		if (!(validateFieldNotNull("probe", probe))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("probe", probe, NX_CHAR);
 		validateFieldEnumeration("probe", probe,
@@ -173,14 +180,14 @@ public class NXiqprocValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate unnamed group of type NXsample.
 	 */
-	private void validateGroup_NXentry_NXsample(final NXsample group) throws NexusValidationException {
+	private void validateGroup_NXentry_NXsample(final NXsample group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXsample.class, group);
+		if (!(validateGroupNotNull(null, NXsample.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'name' of unknown type.
 		final IDataset name = group.getName();
-		validateFieldNotNull("name", name);
+		if (!(validateFieldNotNull("name", name))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("name", name, NX_CHAR);
 	}
@@ -188,19 +195,19 @@ public class NXiqprocValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate group 'reduction' of type NXprocess.
 	 */
-	private void validateGroup_NXentry_reduction(final NXprocess group) throws NexusValidationException {
+	private void validateGroup_NXentry_reduction(final NXprocess group) {
 		// validate that the group is not null
-		validateGroupNotNull("reduction", NXprocess.class, group);
+		if (!(validateGroupNotNull("reduction", NXprocess.class, group))) return;
 
 		// validate field 'program' of type NX_CHAR.
 		final IDataset program = group.getProgram();
-		validateFieldNotNull("program", program);
+		if (!(validateFieldNotNull("program", program))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("program", program, NX_CHAR);
 
 		// validate field 'version' of type NX_CHAR.
 		final IDataset version = group.getVersion();
-		validateFieldNotNull("version", version);
+		if (!(validateFieldNotNull("version", version))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("version", version, NX_CHAR);
 
@@ -214,13 +221,13 @@ public class NXiqprocValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate group 'input' of type NXparameters.
 	 */
-	private void validateGroup_NXentry_reduction_input(final NXparameters group) throws NexusValidationException {
+	private void validateGroup_NXentry_reduction_input(final NXparameters group) {
 		// validate that the group is not null
-		validateGroupNotNull("input", NXparameters.class, group);
+		if (!(validateGroupNotNull("input", NXparameters.class, group))) return;
 
 		// validate field 'filenames' of type NX_CHAR. Note: field not defined in base class.
 		final IDataset filenames = group.getDataset("filenames");
-		validateFieldNotNull("filenames", filenames);
+		if (!(validateFieldNotNull("filenames", filenames))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("filenames", filenames, NX_CHAR);
 	}
@@ -228,23 +235,23 @@ public class NXiqprocValidator extends AbstractNexusValidator implements NexusAp
 	/**
 	 * Validate group 'output' of type NXparameters.
 	 */
-	private void validateGroup_NXentry_reduction_output(final NXparameters group) throws NexusValidationException {
+	private void validateGroup_NXentry_reduction_output(final NXparameters group) {
 		// validate that the group is not null
-		validateGroupNotNull("output", NXparameters.class, group);
+		if (!(validateGroupNotNull("output", NXparameters.class, group))) return;
 
 	}
 
 	/**
 	 * Validate unnamed group of type NXdata.
 	 */
-	private void validateGroup_NXentry_NXdata(final NXdata group) throws NexusValidationException {
+	private void validateGroup_NXentry_NXdata(final NXdata group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXdata.class, group);
+		if (!(validateGroupNotNull(null, NXdata.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'data' of type NX_INT. Note: field not defined in base class.
 		final IDataset data = group.getDataset("data");
-		validateFieldNotNull("data", data);
+		if (!(validateFieldNotNull("data", data))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_INT);
 		validateFieldRank("data", data, 3);
@@ -252,21 +259,21 @@ public class NXiqprocValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate field 'variable' of unknown type. Note: field not defined in base class.
 		final IDataset variable = group.getDataset("variable");
-		validateFieldNotNull("variable", variable);
+		if (!(validateFieldNotNull("variable", variable))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("variable", variable, NX_CHAR);
 		validateFieldRank("variable", variable, 1);
 		validateFieldDimensions("variable", variable, null, "nVars");
 		// validate attribute 'varied_variable' of field 'variable'
 		final Attribute variable_attr_varied_variable = group.getDataNode("variable").getAttribute("varied_variable");
-		validateAttributeNotNull("varied_variable", variable_attr_varied_variable);
+		if (!(validateAttributeNotNull("varied_variable", variable_attr_varied_variable))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("varied_variable", variable_attr_varied_variable, NX_CHAR);
 
 
 		// validate field 'qx' of unknown type. Note: field not defined in base class.
 		final IDataset qx = group.getDataset("qx");
-		validateFieldNotNull("qx", qx);
+		if (!(validateFieldNotNull("qx", qx))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("qx", qx, NX_CHAR);
 		validateFieldRank("qx", qx, 1);
@@ -274,7 +281,7 @@ public class NXiqprocValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate field 'qy' of unknown type. Note: field not defined in base class.
 		final IDataset qy = group.getDataset("qy");
-		validateFieldNotNull("qy", qy);
+		if (!(validateFieldNotNull("qy", qy))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("qy", qy, NX_CHAR);
 		validateFieldRank("qy", qy, 1);

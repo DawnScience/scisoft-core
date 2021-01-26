@@ -1,6 +1,8 @@
 package org.eclipse.dawnsci.nexus.validation;
 
 import static org.eclipse.dawnsci.nexus.validation.AbstractNexusValidator.ATTRIBUTE_NAME_UNITS;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -15,9 +17,12 @@ import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.NXsource;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Random;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -25,6 +30,18 @@ public class TomoValidatorTest {
 	
 	private static final int NUM_FRAMES = 5;
 	private static final int[] DETECTOR_DATA_DIMENSIONS = { NUM_FRAMES, 10, 10 };
+	
+	private NXtomoValidator validator;
+	
+	@Before
+	public void setUp() {
+		validator = new NXtomoValidator();
+	}
+	
+	@After
+	public void tearDown() {
+		validator = null;
+	}
 	
 	private NXentry createNexusTree() {
 		final NXentry entry = NexusNodeFactory.createNXentry();
@@ -70,32 +87,30 @@ public class TomoValidatorTest {
 		return entry;
 	}
 	
-	private void validate(NXentry entry) throws NexusValidationException {
-		final NexusApplicationValidator validator = new NXtomoValidator();
-		validator.validate(entry);
-	}
-
 	@Test
 	public void testValidate_ok() throws Exception {
 		final NXentry entry = createNexusTree();
-		validate(entry);
+		final ValidationReport report = validator.validate(entry);
+		assertThat(validator.getValidationReport().isOk(), is(true));
 	}
 	
-	@Test(expected=NexusValidationException.class)
+	@Test
 	public void testValidate_requiredGroupNotPresent() throws Exception {
 		final NXentry entry = createNexusTree();
 		entry.removeGroupNode(entry.getSample());
-		validate(entry);
+		validator.validate(entry);
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
-	@Test(expected=NexusValidationException.class)
+	@Test
 	public void testValidate_optionalGroupInvalid() throws Exception {
 		final NXentry entry = createNexusTree();
 		entry.getMonitor("control").removeDataNode(NXmonitor.NX_DATA);
-		validate(entry);
+		validator.validate(entry);
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
-	@Test(expected=NexusValidationException.class)
+	@Test
 	public void testValidate_unnamedGroup_alternateName() throws Exception {
 		// check that the NXsource is still validated when given a different name
 		final NXentry entry = createNexusTree();
@@ -104,15 +119,17 @@ public class TomoValidatorTest {
 		source.setProbeScalar("no such enum");
 		instrument.removeGroupNode(source);
 		instrument.setSource("newName", source);
-		validate(entry);
+		validator.validate(entry);
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
-	@Test(expected=NexusValidationException.class)
+	@Test
 	public void testValidate_unnamedMultipleGroup() throws Exception {
 		// only one instance of NXsource is allowed
 		final NXentry entry = createNexusTree();
 		entry.getInstrument().setSource("newSource", NexusNodeFactory.createNXsource());
-		validate(entry);
+		validator.validate(entry);
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
 	@Test
@@ -121,75 +138,84 @@ public class TomoValidatorTest {
 		// TODO: DAQ-3305 test this with NXmx application definition
 	}
 	
-	@Test(expected=NexusValidationException.class)
+	@Test
 	public void testValidate_requiredFieldNotPresent() throws Exception {
 		final NXentry entry = createNexusTree();
 		entry.getSample().removeDataNode(NXsample.NX_ROTATION_ANGLE);
-		validate(entry);
+		validator.validate(entry);
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
-	@Test(expected=NexusValidationException.class)
+	@Test
 	public void testValidate_optionalFieldInvalid() throws Exception {
 		final NXentry entry = createNexusTree();
 		final NXinstrument instrument = entry.getInstrument();
 		final NXsource source = instrument.getSource();
 		source.setProbeScalar("no such enum");
-		validate(entry);
+		validator.validate(entry);
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
-	@Test(expected=NexusValidationException.class)
+	@Test
 	public void testValidate_invalidFieldType() throws Exception {
 		final NXentry entry = createNexusTree();
 		entry.setTitle(DatasetFactory.createFromObject(1.0));
-		validate(entry);
+		validator.validate(entry);
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
-	@Test(expected=NexusValidationException.class)
+	@Test
 	public void testValidate_invalidFieldUnits_notSpecified() throws Exception {
 		final NXentry entry = createNexusTree();
 		final NXdetector detector = entry.getInstrument().getDetector();
 		detector.getDataNode(NXdetector.NX_DISTANCE).removeAttribute(ATTRIBUTE_NAME_UNITS);
-		validate(entry);
+		validator.validate(entry);
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
-	@Test(expected=NexusValidationException.class)
+	@Test
 	public void testValidate_invalidFieldUnits_invalid() throws Exception {
 		final NXentry entry = createNexusTree();
 		final NXdetector detector = entry.getInstrument().getDetector();
 		detector.setAttribute(NXdetector.NX_DISTANCE, ATTRIBUTE_NAME_UNITS, "A");
-		validate(entry);
+		validator.validate(entry);
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
-	@Test(expected=NexusValidationException.class)
+	@Test
 	public void testValidate_invalidFieldEnumerationValue_appDef() throws Exception {
 		// where the enumeration of permitted values is defined in the application definition
 		final NXentry entry = createNexusTree();
 		final NXsource source = entry.getInstrument().getSource();
 		source.setProbeScalar("no such enum");
-		validate(entry);
+		validator.validate(entry);
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
-	@Test(expected=NexusValidationException.class)
+	@Test
 	public void testValidate_invalidFieldEnumerationValue_baseClass() throws Exception {
 		// where the enumeration of permitted values is defined in the base class definition
 		final NXentry entry = createNexusTree();
 		final NXsource source = entry.getInstrument().getSource();
 		source.setTypeScalar("Unknown type");
-		validate(entry);
+		validator.validate(entry);
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
-	@Test(expected=NexusValidationException.class)
+	@Test
 	public void testValidate_invalidFieldDimensions_incorrectRank() throws Exception {
 		final NXentry entry = createNexusTree();
 		entry.getSample().setRotation_angle(DatasetFactory.zeros(NUM_FRAMES, 3));
-		validate(entry);		
+		validator.validate(entry);	
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
-	@Test(expected=NexusValidationException.class)
+	@Test
 	public void testValidate_invalidFieldDimensions_wrongSize() throws Exception {
 		final NXentry entry = createNexusTree();
 		entry.getSample().setRotation_angle(DatasetFactory.zeros(NUM_FRAMES + 1));
-		validate(entry);		
+		validator.validate(entry);
+		assertThat(validator.getValidationReport().isOk(), is(false));
 	}
 	
 	@Test

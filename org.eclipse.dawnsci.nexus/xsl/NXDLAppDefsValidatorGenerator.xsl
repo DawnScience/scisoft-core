@@ -84,10 +84,19 @@
 		<xsl:value-of select="$validatorClassName"/>
 		<xsl:text> extends AbstractNexusValidator implements NexusApplicationValidator {&#10;</xsl:text>
 		<xsl:text>&#10;</xsl:text>
+		
+		<!-- Create constructor. Calls super-constructor with the enum constant for this application definition. -->
+		<xsl:text>	public </xsl:text><xsl:value-of select="$validatorClassName"/><xsl:text>() {&#10;</xsl:text>
+		<xsl:text>		super(NexusApplicationDefinition.</xsl:text>
+		<xsl:value-of select="dawnsci:appdef-enum-name(@name)"/><xsl:text>);&#10;</xsl:text>
+		<xsl:text>	}&#10;&#10;</xsl:text>
 	
-		<!-- Each validator class overrides the validate() method in the superclass-->
+		<!-- Each validator class overrides the validate(NXroot), validate(NXentry) and validate(NXsubentry) methods
+		     in the superclass AbstractNexusValidation. -->
+
+		<!-- Override validate(NXroot) -->
 		<xsl:text>	@Override&#10;</xsl:text>
-		<xsl:text>	public void validate(NXroot root) throws NexusValidationException {&#10;</xsl:text>
+		<xsl:text>	public ValidationReport validate(NXroot root) {&#10;</xsl:text>
 	
 		<!-- For each group at the root level of the app def, invoke the generated validate method for that group. -->
 		<xsl:apply-templates select="nx:group" mode="invocation">
@@ -95,20 +104,25 @@
 			<xsl:with-param name="baseClass" select="$baseClass"/>
 			<xsl:with-param name="validateGroupMethodNamePrefix" select="$validateGroupMethodNamePrefix"/>
 		</xsl:apply-templates>
-		
+		<xsl:value-of select="dawnsci:tabs(2)"/><xsl:text>return validationReport;&#10;</xsl:text>
 		<xsl:text>	}&#10;&#10;</xsl:text> <!-- Closing brace for validate() method -->
 
 		<xsl:variable name="entryGroup" select="nx:group[@type='NXentry']"/>
 		
+		<!-- Override validate(NXentry) -->
 		<xsl:text>	@Override&#10;</xsl:text>
-		<xsl:text>	public void validate(NXentry entry) throws NexusValidationException {&#10;</xsl:text>
+		<xsl:text>	public ValidationReport validate(NXentry entry) {&#10;</xsl:text>
 		<xsl:value-of select="dawnsci:tabs(2) || dawnsci:validateGroupMethodName($validateGroupMethodNamePrefix, $entryGroup)"/>
 		<xsl:text>(entry);&#10;</xsl:text>
+		<xsl:value-of select="dawnsci:tabs(2)"/><xsl:text>return validationReport;&#10;</xsl:text>
 		<xsl:text>	}&#10;&#10;</xsl:text>
+		
+		<!-- Override validate(NXsubentry) -->
 		<xsl:text>	@Override&#10;</xsl:text>
-		<xsl:text>	public void validate(NXsubentry subentry) throws NexusValidationException {&#10;</xsl:text>
+		<xsl:text>	public ValidationReport validate(NXsubentry subentry) {&#10;</xsl:text>
 		<xsl:value-of select="dawnsci:tabs(2) || dawnsci:validateGroupMethodName($validateGroupMethodNamePrefix, $entryGroup)"/>
 		<xsl:text>(subentry);&#10;</xsl:text>
+		<xsl:value-of select="dawnsci:tabs(2)"/><xsl:text>return validationReport;&#10;</xsl:text>
 		<xsl:text>	}&#10;&#10;</xsl:text>
 		
 		<xsl:if test="@name = 'NXcanSAS'">
@@ -306,7 +320,7 @@
 	<xsl:value-of select="$validateGroupMethodName"/>
 	<xsl:text>(final </xsl:text>
 	<xsl:value-of select="if ($isEntry) then 'NXsubentry' else @type"/>
-	<xsl:text> group) throws NexusValidationException {&#10;</xsl:text>
+	<xsl:text> group) {&#10;</xsl:text>
 
 	<xsl:if test="$isEntry">
 		<xsl:value-of select="dawnsci:tabs(2)"/><xsl:text>// set the current entry, required for validating links&#10;</xsl:text>
@@ -320,9 +334,10 @@
 		
 	<!-- Invocation of method validateGroupNotNull in abstract superclass -->
 	<xsl:value-of select="dawnsci:tabs(2)"/>
-	<xsl:text>validateGroupNotNull(</xsl:text>
+	<xsl:text>if (!(validateGroupNotNull(</xsl:text>
 	<xsl:value-of select="if (@name) then '&quot;' || @name || '&quot;' else 'null'"/>
-	<xsl:value-of select="', ' || @type || '.class'"/><xsl:text>, group);&#10;</xsl:text>
+	<xsl:value-of select="', ' || @type || '.class'"/>
+	<xsl:text>, group))) return;&#10;</xsl:text>
 	
 	<!-- If the group has dimensions defined in the baseclass, clear the local group placeholder value cache. -->
 	<xsl:if test="$baseClass//nx:dim">
@@ -396,8 +411,8 @@
 		</xsl:when>
 		<xsl:otherwise>
 			<!-- Invoke method validateAttributeNotNull in abstract superclass to validate attribute not null. -->
-			<xsl:text>validateAttributeNotNull("</xsl:text><xsl:value-of select="@name"/>
-			<xsl:text>", </xsl:text><xsl:value-of select="$attrVarName"/><xsl:text>);&#10;</xsl:text>
+			<xsl:text>if (!(validateAttributeNotNull("</xsl:text><xsl:value-of select="@name"/>
+			<xsl:text>", </xsl:text><xsl:value-of select="$attrVarName"/><xsl:text>))) return;&#10;</xsl:text>
 		</xsl:otherwise>
 	</xsl:choose>
 	
@@ -475,8 +490,8 @@
 			<xsl:text>if (</xsl:text><xsl:value-of select="@name"/><xsl:text> != null) {&#10;</xsl:text>
 		</xsl:when>
 		<xsl:otherwise>
-			<xsl:text>validateFieldNotNull("</xsl:text><xsl:value-of select="@name"/><xsl:text>", </xsl:text>
-			<xsl:value-of select="@name"/><xsl:text>);&#10;</xsl:text>
+			<xsl:text>if (!(validateFieldNotNull("</xsl:text><xsl:value-of select="@name"/><xsl:text>", </xsl:text>
+			<xsl:value-of select="@name"/><xsl:text>))) return;&#10;</xsl:text>
 		</xsl:otherwise>
 	</xsl:choose>
 		
@@ -660,6 +675,7 @@
 		<xsl:text>import java.util.stream.Collectors;&#10;</xsl:text>
 	</xsl:if>
 
+	<xsl:text>import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;</xsl:text>
 	<xsl:text>import org.eclipse.january.dataset.IDataset;&#10;</xsl:text>
 	<xsl:text>import org.eclipse.dawnsci.analysis.api.tree.DataNode;&#10;</xsl:text>
 	<xsl:if test="//nx:attribute">
@@ -696,20 +712,33 @@ public enum NexusApplicationDefinition {
 
 </xsl:text>
 		<xsl:apply-templates mode="appdef-enum" select="$application-definitions"/>
-
-<xsl:text>}&#10;</xsl:text>
+		<xsl:text>
+	private String name;
+	
+	private NexusApplicationDefinition(String name) {
+		this.name = name;
+	}
+	
+	@Override
+	public String toString() {
+		return name;
+	}
+	
+}		
+</xsl:text>
 	</xsl:result-document>
 </xsl:template>
 
 <!-- Template to produce the enum value for a nexus application definition -->
 <xsl:template mode="appdef-enum" match="nx:definition">
-	<xsl:text>	</xsl:text><xsl:value-of select="dawnsci:appdef-enum-name(@name)"/><xsl:text>,&#10;</xsl:text>
+	<xsl:text>	</xsl:text><xsl:value-of select="dawnsci:appdef-enum-name(@name)"/>
+	<xsl:text>("</xsl:text><xsl:value-of select="@name"/><xsl:text>")</xsl:text>
+	<xsl:value-of select="if (position()=last()) then ';' else ','"/><xsl:text>&#10;</xsl:text>
 </xsl:template>
 
 <!-- A function to insert n tab characters into the output document. -->
 <xsl:function name="dawnsci:tabs" as="xs:string">
 	<xsl:param name="count" as="xs:integer"/>
-	
 	<xsl:sequence select="string-join((for $i in 1 to $count return '&#009;'), '')"/>
 </xsl:function>
 

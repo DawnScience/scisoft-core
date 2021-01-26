@@ -41,7 +41,7 @@ import org.eclipse.dawnsci.nexus.builder.appdef.NexusApplicationBuilder;
 import org.eclipse.dawnsci.nexus.builder.appdef.impl.DefaultApplicationFactory;
 import org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder;
 import org.eclipse.dawnsci.nexus.builder.data.impl.DefaultNexusDataBuilder;
-import org.eclipse.dawnsci.nexus.validation.NexusValidationException;
+import org.eclipse.dawnsci.nexus.validation.ValidationReport;
 
 /**
  * Default implementation of {@link NexusEntryBuilder}
@@ -267,10 +267,15 @@ public class DefaultNexusEntryBuilder implements NexusEntryBuilder {
 	 * @see org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder#validate()
 	 */
 	@Override
-	public void validate() throws NexusValidationException {
-		for (final NexusApplicationBuilder appDef : applications) {
-			appDef.validate();
+	public ValidationReport validate() {
+		if (applications.isEmpty()) return new ValidationReport();
+		if (applications.size() == 1) {
+			return applications.get(0).validate();
 		}
+
+		final ValidationReport overallReport = new ValidationReport();
+		applications.stream().map(NexusApplicationBuilder::validate).forEach(overallReport::merge);
+		return overallReport;
 	}
 
 	/**

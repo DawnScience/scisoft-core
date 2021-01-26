@@ -16,7 +16,7 @@ import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 
 import java.util.Map;
 
-import org.eclipse.january.dataset.IDataset;
+import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;import org.eclipse.january.dataset.IDataset;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 
@@ -40,36 +40,43 @@ import org.eclipse.dawnsci.nexus.NXsource;
  */
 public class NXmxValidator extends AbstractNexusValidator implements NexusApplicationValidator {
 
+	public NXmxValidator() {
+		super(NexusApplicationDefinition.NX_MX);
+	}
+
 	@Override
-	public void validate(NXroot root) throws NexusValidationException {
+	public ValidationReport validate(NXroot root) {
 		// validate unnamed child group of type NXentry (possibly multiple)
 		validateUnnamedGroupOccurrences(root, NXentry.class, false, true);
 		final Map<String, NXentry> allEntry = root.getAllEntry();
 		for (final NXentry entry : allEntry.values()) {
 			validateGroup_NXentry(entry);
 		}
+		return validationReport;
 	}
 
 	@Override
-	public void validate(NXentry entry) throws NexusValidationException {
+	public ValidationReport validate(NXentry entry) {
 		validateGroup_NXentry(entry);
+		return validationReport;
 	}
 
 	@Override
-	public void validate(NXsubentry subentry) throws NexusValidationException {
+	public ValidationReport validate(NXsubentry subentry) {
 		validateGroup_NXentry(subentry);
+		return validationReport;
 	}
 
 
 	/**
 	 * Validate unnamed group of type NXentry.
 	 */
-	private void validateGroup_NXentry(final NXsubentry group) throws NexusValidationException {
+	private void validateGroup_NXentry(final NXsubentry group) {
 		// set the current entry, required for validating links
 		setEntry(group);
 
 		// validate that the group is not null
-		validateGroupNotNull(null, NXentry.class, group);
+		if (!(validateGroupNotNull(null, NXentry.class, group))) return;
 
 		// validate optional attribute 'version'
 		final Attribute version_attr = group.getAttribute("version");
@@ -89,7 +96,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 
 		// validate field 'start_time' of type NX_DATE_TIME.
 		final IDataset start_time = group.getStart_time();
-		validateFieldNotNull("start_time", start_time);
+		if (!(validateFieldNotNull("start_time", start_time))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("start_time", start_time, NX_DATE_TIME);
 
@@ -102,13 +109,13 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 
 		// validate field 'end_time_estimated' of type NX_DATE_TIME. Note: field not defined in base class.
 		final IDataset end_time_estimated = group.getDataset("end_time_estimated");
-		validateFieldNotNull("end_time_estimated", end_time_estimated);
+		if (!(validateFieldNotNull("end_time_estimated", end_time_estimated))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("end_time_estimated", end_time_estimated, NX_DATE_TIME);
 
 		// validate field 'definition' of unknown type.
 		final IDataset definition = group.getDefinition();
-		validateFieldNotNull("definition", definition);
+		if (!(validateFieldNotNull("definition", definition))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("definition", definition, NX_CHAR);
 		validateFieldEnumeration("definition", definition,
@@ -146,9 +153,9 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 	/**
 	 * Validate unnamed group of type NXdata.
 	 */
-	private void validateGroup_NXentry_NXdata(final NXdata group) throws NexusValidationException {
+	private void validateGroup_NXentry_NXdata(final NXdata group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXdata.class, group);
+		if (!(validateGroupNotNull(null, NXdata.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate optional field 'data' of type NX_NUMBER. Note: field not defined in base class.
@@ -163,20 +170,20 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 	/**
 	 * Validate unnamed group of type NXsample.
 	 */
-	private void validateGroup_NXentry_NXsample(final NXsample group) throws NexusValidationException {
+	private void validateGroup_NXentry_NXsample(final NXsample group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXsample.class, group);
+		if (!(validateGroupNotNull(null, NXsample.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'name' of type NX_CHAR.
 		final IDataset name = group.getName();
-		validateFieldNotNull("name", name);
+		if (!(validateFieldNotNull("name", name))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("name", name, NX_CHAR);
 
 		// validate field 'depends_on' of type NX_CHAR. Note: field not defined in base class.
 		final IDataset depends_on = group.getDataset("depends_on");
-		validateFieldNotNull("depends_on", depends_on);
+		if (!(validateFieldNotNull("depends_on", depends_on))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("depends_on", depends_on, NX_CHAR);
 
@@ -196,18 +203,18 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 	/**
 	 * Validate unnamed group of type NXinstrument.
 	 */
-	private void validateGroup_NXentry_NXinstrument(final NXinstrument group) throws NexusValidationException {
+	private void validateGroup_NXentry_NXinstrument(final NXinstrument group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXinstrument.class, group);
+		if (!(validateGroupNotNull(null, NXinstrument.class, group))) return;
 
 		// validate field 'name' of type NX_CHAR.
 		final IDataset name = group.getName();
-		validateFieldNotNull("name", name);
+		if (!(validateFieldNotNull("name", name))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("name", name, NX_CHAR);
 		// validate attribute 'short_name' of field 'name'
 		final Attribute name_attr_short_name = group.getDataNode("name").getAttribute("short_name");
-		validateAttributeNotNull("short_name", name_attr_short_name);
+		if (!(validateAttributeNotNull("short_name", name_attr_short_name))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("short_name", name_attr_short_name, NX_CHAR);
 
@@ -251,9 +258,9 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 	/**
 	 * Validate optional unnamed group of type NXattenuator.
 	 */
-	private void validateGroup_NXentry_NXinstrument_NXattenuator(final NXattenuator group) throws NexusValidationException {
+	private void validateGroup_NXentry_NXinstrument_NXattenuator(final NXattenuator group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXattenuator.class, group);
+		if (!(validateGroupNotNull(null, NXattenuator.class, group))) return;
 
 		// validate optional field 'attenuator_transmission' of type NX_NUMBER.
 		final IDataset attenuator_transmission = group.getAttenuator_transmission();
@@ -267,20 +274,20 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 	/**
 	 * Validate optional unnamed group of type NXdetector_group.
 	 */
-	private void validateGroup_NXentry_NXinstrument_NXdetector_group(final NXdetector_group group) throws NexusValidationException {
+	private void validateGroup_NXentry_NXinstrument_NXdetector_group(final NXdetector_group group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXdetector_group.class, group);
+		if (!(validateGroupNotNull(null, NXdetector_group.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'group_names' of type NX_CHAR.
 		final IDataset group_names = group.getGroup_names();
-		validateFieldNotNull("group_names", group_names);
+		if (!(validateFieldNotNull("group_names", group_names))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("group_names", group_names, NX_CHAR);
 
 		// validate field 'group_index' of type NX_INT.
 		final IDataset group_index = group.getGroup_index();
-		validateFieldNotNull("group_index", group_index);
+		if (!(validateFieldNotNull("group_index", group_index))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("group_index", group_index, NX_INT);
 		validateFieldRank("group_index", group_index, 1);
@@ -288,7 +295,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 
 		// validate field 'group_parent' of type NX_INT.
 		final IDataset group_parent = group.getGroup_parent();
-		validateFieldNotNull("group_parent", group_parent);
+		if (!(validateFieldNotNull("group_parent", group_parent))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("group_parent", group_parent, NX_INT);
 		validateFieldRank("group_parent", group_parent, 1);
@@ -298,9 +305,9 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 	/**
 	 * Validate unnamed group of type NXdetector.
 	 */
-	private void validateGroup_NXentry_NXinstrument_NXdetector(final NXdetector group) throws NexusValidationException {
+	private void validateGroup_NXentry_NXinstrument_NXdetector(final NXdetector group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXdetector.class, group);
+		if (!(validateGroupNotNull(null, NXdetector.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate optional field 'depends_on' of type NX_CHAR. Note: field not defined in base class.
@@ -516,13 +523,13 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 
 		// validate field 'sensor_material' of type NX_CHAR.
 		final IDataset sensor_material = group.getSensor_material();
-		validateFieldNotNull("sensor_material", sensor_material);
+		if (!(validateFieldNotNull("sensor_material", sensor_material))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("sensor_material", sensor_material, NX_CHAR);
 
 		// validate field 'sensor_thickness' of type NX_FLOAT.
 		final IDataset sensor_thickness = group.getSensor_thickness();
-		validateFieldNotNull("sensor_thickness", sensor_thickness);
+		if (!(validateFieldNotNull("sensor_thickness", sensor_thickness))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("sensor_thickness", sensor_thickness, NX_FLOAT);
 		validateFieldUnits("sensor_thickness", group.getDataNode("sensor_thickness"), NX_LENGTH);
@@ -563,28 +570,28 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 	/**
 	 * Validate optional unnamed group of type NXcollection.
 	 */
-	private void validateGroup_NXentry_NXinstrument_NXdetector_NXcollection(final NXcollection group) throws NexusValidationException {
+	private void validateGroup_NXentry_NXinstrument_NXdetector_NXcollection(final NXcollection group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXcollection.class, group);
+		if (!(validateGroupNotNull(null, NXcollection.class, group))) return;
 
 	}
 
 	/**
 	 * Validate unnamed group of type NXdetector_module.
 	 */
-	private void validateGroup_NXentry_NXinstrument_NXdetector_NXdetector_module(final NXdetector_module group) throws NexusValidationException {
+	private void validateGroup_NXentry_NXinstrument_NXdetector_NXdetector_module(final NXdetector_module group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXdetector_module.class, group);
+		if (!(validateGroupNotNull(null, NXdetector_module.class, group))) return;
 
 		// validate field 'data_origin' of type NX_INT.
 		final IDataset data_origin = group.getData_origin();
-		validateFieldNotNull("data_origin", data_origin);
+		if (!(validateFieldNotNull("data_origin", data_origin))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data_origin", data_origin, NX_INT);
 
 		// validate field 'data_size' of type NX_INT.
 		final IDataset data_size = group.getData_size();
-		validateFieldNotNull("data_size", data_size);
+		if (!(validateFieldNotNull("data_size", data_size))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data_size", data_size, NX_INT);
 
@@ -603,7 +610,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 			validateFieldUnits("module_offset", group.getDataNode("module_offset"), NX_LENGTH);
 		// validate attribute 'transformation_type' of field 'module_offset'
 		final Attribute module_offset_attr_transformation_type = group.getDataNode("module_offset").getAttribute("transformation_type");
-		validateAttributeNotNull("transformation_type", module_offset_attr_transformation_type);
+		if (!(validateAttributeNotNull("transformation_type", module_offset_attr_transformation_type))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("transformation_type", module_offset_attr_transformation_type, NX_CHAR);
 		validateAttributeEnumeration("transformation_type", module_offset_attr_transformation_type,
@@ -611,19 +618,19 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 
 		// validate attribute 'vector' of field 'module_offset'
 		final Attribute module_offset_attr_vector = group.getDataNode("module_offset").getAttribute("vector");
-		validateAttributeNotNull("vector", module_offset_attr_vector);
+		if (!(validateAttributeNotNull("vector", module_offset_attr_vector))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("vector", module_offset_attr_vector, NX_NUMBER);
 
 		// validate attribute 'offset' of field 'module_offset'
 		final Attribute module_offset_attr_offset = group.getDataNode("module_offset").getAttribute("offset");
-		validateAttributeNotNull("offset", module_offset_attr_offset);
+		if (!(validateAttributeNotNull("offset", module_offset_attr_offset))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("offset", module_offset_attr_offset, NX_NUMBER);
 
 		// validate attribute 'depends_on' of field 'module_offset'
 		final Attribute module_offset_attr_depends_on = group.getDataNode("module_offset").getAttribute("depends_on");
-		validateAttributeNotNull("depends_on", module_offset_attr_depends_on);
+		if (!(validateAttributeNotNull("depends_on", module_offset_attr_depends_on))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("depends_on", module_offset_attr_depends_on, NX_CHAR);
 
@@ -631,13 +638,13 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 
 		// validate field 'fast_pixel_direction' of type NX_NUMBER.
 		final IDataset fast_pixel_direction = group.getFast_pixel_direction();
-		validateFieldNotNull("fast_pixel_direction", fast_pixel_direction);
+		if (!(validateFieldNotNull("fast_pixel_direction", fast_pixel_direction))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("fast_pixel_direction", fast_pixel_direction, NX_NUMBER);
 		validateFieldUnits("fast_pixel_direction", group.getDataNode("fast_pixel_direction"), NX_LENGTH);
 		// validate attribute 'transformation_type' of field 'fast_pixel_direction'
 		final Attribute fast_pixel_direction_attr_transformation_type = group.getDataNode("fast_pixel_direction").getAttribute("transformation_type");
-		validateAttributeNotNull("transformation_type", fast_pixel_direction_attr_transformation_type);
+		if (!(validateAttributeNotNull("transformation_type", fast_pixel_direction_attr_transformation_type))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("transformation_type", fast_pixel_direction_attr_transformation_type, NX_CHAR);
 		validateAttributeEnumeration("transformation_type", fast_pixel_direction_attr_transformation_type,
@@ -645,32 +652,32 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 
 		// validate attribute 'vector' of field 'fast_pixel_direction'
 		final Attribute fast_pixel_direction_attr_vector = group.getDataNode("fast_pixel_direction").getAttribute("vector");
-		validateAttributeNotNull("vector", fast_pixel_direction_attr_vector);
+		if (!(validateAttributeNotNull("vector", fast_pixel_direction_attr_vector))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("vector", fast_pixel_direction_attr_vector, NX_NUMBER);
 
 		// validate attribute 'offset' of field 'fast_pixel_direction'
 		final Attribute fast_pixel_direction_attr_offset = group.getDataNode("fast_pixel_direction").getAttribute("offset");
-		validateAttributeNotNull("offset", fast_pixel_direction_attr_offset);
+		if (!(validateAttributeNotNull("offset", fast_pixel_direction_attr_offset))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("offset", fast_pixel_direction_attr_offset, NX_NUMBER);
 
 		// validate attribute 'depends_on' of field 'fast_pixel_direction'
 		final Attribute fast_pixel_direction_attr_depends_on = group.getDataNode("fast_pixel_direction").getAttribute("depends_on");
-		validateAttributeNotNull("depends_on", fast_pixel_direction_attr_depends_on);
+		if (!(validateAttributeNotNull("depends_on", fast_pixel_direction_attr_depends_on))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("depends_on", fast_pixel_direction_attr_depends_on, NX_CHAR);
 
 
 		// validate field 'slow_pixel_direction' of type NX_NUMBER.
 		final IDataset slow_pixel_direction = group.getSlow_pixel_direction();
-		validateFieldNotNull("slow_pixel_direction", slow_pixel_direction);
+		if (!(validateFieldNotNull("slow_pixel_direction", slow_pixel_direction))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("slow_pixel_direction", slow_pixel_direction, NX_NUMBER);
 		validateFieldUnits("slow_pixel_direction", group.getDataNode("slow_pixel_direction"), NX_LENGTH);
 		// validate attribute 'transformation_type' of field 'slow_pixel_direction'
 		final Attribute slow_pixel_direction_attr_transformation_type = group.getDataNode("slow_pixel_direction").getAttribute("transformation_type");
-		validateAttributeNotNull("transformation_type", slow_pixel_direction_attr_transformation_type);
+		if (!(validateAttributeNotNull("transformation_type", slow_pixel_direction_attr_transformation_type))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("transformation_type", slow_pixel_direction_attr_transformation_type, NX_CHAR);
 		validateAttributeEnumeration("transformation_type", slow_pixel_direction_attr_transformation_type,
@@ -678,19 +685,19 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 
 		// validate attribute 'vector' of field 'slow_pixel_direction'
 		final Attribute slow_pixel_direction_attr_vector = group.getDataNode("slow_pixel_direction").getAttribute("vector");
-		validateAttributeNotNull("vector", slow_pixel_direction_attr_vector);
+		if (!(validateAttributeNotNull("vector", slow_pixel_direction_attr_vector))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("vector", slow_pixel_direction_attr_vector, NX_NUMBER);
 
 		// validate attribute 'offset' of field 'slow_pixel_direction'
 		final Attribute slow_pixel_direction_attr_offset = group.getDataNode("slow_pixel_direction").getAttribute("offset");
-		validateAttributeNotNull("offset", slow_pixel_direction_attr_offset);
+		if (!(validateAttributeNotNull("offset", slow_pixel_direction_attr_offset))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("offset", slow_pixel_direction_attr_offset, NX_NUMBER);
 
 		// validate attribute 'depends_on' of field 'slow_pixel_direction'
 		final Attribute slow_pixel_direction_attr_depends_on = group.getDataNode("slow_pixel_direction").getAttribute("depends_on");
-		validateAttributeNotNull("depends_on", slow_pixel_direction_attr_depends_on);
+		if (!(validateAttributeNotNull("depends_on", slow_pixel_direction_attr_depends_on))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("depends_on", slow_pixel_direction_attr_depends_on, NX_CHAR);
 
@@ -699,14 +706,14 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 	/**
 	 * Validate unnamed group of type NXbeam.
 	 */
-	private void validateGroup_NXentry_NXinstrument_NXbeam(final NXbeam group) throws NexusValidationException {
+	private void validateGroup_NXentry_NXinstrument_NXbeam(final NXbeam group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXbeam.class, group);
+		if (!(validateGroupNotNull(null, NXbeam.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'incident_wavelength' of type NX_FLOAT.
 		final IDataset incident_wavelength = group.getIncident_wavelength();
-		validateFieldNotNull("incident_wavelength", incident_wavelength);
+		if (!(validateFieldNotNull("incident_wavelength", incident_wavelength))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("incident_wavelength", incident_wavelength, NX_FLOAT);
 		validateFieldUnits("incident_wavelength", group.getDataNode("incident_wavelength"), NX_WAVELENGTH);
@@ -749,7 +756,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 
 		// validate field 'total_flux' of type NX_FLOAT. Note: field not defined in base class.
 		final IDataset total_flux = group.getDataset("total_flux");
-		validateFieldNotNull("total_flux", total_flux);
+		if (!(validateFieldNotNull("total_flux", total_flux))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("total_flux", total_flux, NX_FLOAT);
 		validateFieldUnits("total_flux", group.getDataNode("total_flux"), NX_FREQUENCY);
@@ -793,9 +800,9 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 	/**
 	 * Validate optional group 'incident_wavelength_spectrum' of type NXdata.
 	 */
-	private void validateGroup_NXentry_NXinstrument_NXbeam_incident_wavelength_spectrum(final NXdata group) throws NexusValidationException {
+	private void validateGroup_NXentry_NXinstrument_NXbeam_incident_wavelength_spectrum(final NXdata group) {
 		// validate that the group is not null
-		validateGroupNotNull("incident_wavelength_spectrum", NXdata.class, group);
+		if (!(validateGroupNotNull("incident_wavelength_spectrum", NXdata.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 	}
@@ -803,13 +810,13 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 	/**
 	 * Validate unnamed group of type NXsource.
 	 */
-	private void validateGroup_NXentry_NXsource(final NXsource group) throws NexusValidationException {
+	private void validateGroup_NXentry_NXsource(final NXsource group) {
 		// validate that the group is not null
-		validateGroupNotNull(null, NXsource.class, group);
+		if (!(validateGroupNotNull(null, NXsource.class, group))) return;
 
 		// validate field 'name' of unknown type.
 		final IDataset name = group.getName();
-		validateFieldNotNull("name", name);
+		if (!(validateFieldNotNull("name", name))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("name", name, NX_CHAR);
 		// validate optional attribute 'short_name' of field 'name'

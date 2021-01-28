@@ -155,8 +155,8 @@ public class OperationServiceImpl implements IOperationService {
 	        
 	        
 	        if (context.getExecutionType() == ExecutionType.PARALLEL){
-	        	IOperation[] operationSeries = context.getSeries();
-				for (IOperation op : operationSeries) {
+	        	IOperation<?,?>[] operationSeries = context.getSeries();
+				for (IOperation<?,?> op : operationSeries) {
 					Atomic atomic = op.getClass().getAnnotation(Atomic.class);
 					if (atomic == null) {
 						context.setExecutionType(ExecutionType.SERIES);
@@ -184,7 +184,7 @@ public class OperationServiceImpl implements IOperationService {
 				logger.error("Unable to set slice from service metadata on full data.");
 			}
 			
-			for (IOperation op : context.getSeries()) op.init();
+			for (IOperation<?,?> op : context.getSeries()) op.init();
 			
 			IOperationRunner runner = rservice.getRunner(context.getExecutionType());
 			runner.init(context);
@@ -205,7 +205,7 @@ public class OperationServiceImpl implements IOperationService {
 				}
 			}
 			
-			for (IOperation op : context.getSeries()) op.dispose();
+			for (IOperation<?,?> op : context.getSeries()) op.dispose();
 		}
 		
 		logmem();
@@ -266,8 +266,8 @@ public class OperationServiceImpl implements IOperationService {
 	 * @param firstSlice - may be null, image assumed if it is
 	 * @param series
 	 */
-	public void validate( IDataset firstSlice,
-			              IOperation<? extends IOperationModel, ? extends OperationData>... series) throws InvalidRankException, OperationException {
+	public void validate(IDataset firstSlice,
+			             @SuppressWarnings("unchecked") IOperation<? extends IOperationModel, ? extends OperationData>... series) throws InvalidRankException, OperationException {
 		       
 //		if (firstSlice==null) firstSlice = Random.rand(new int[]{1024, 1024});
         if (series[0].getInputRank()==OperationRank.SAME) {
@@ -350,15 +350,19 @@ public class OperationServiceImpl implements IOperationService {
 		return i == imax;
 	}
 
-	// Reads the declared operations from extension point, if they have not been already.
-	private synchronized void checkOperations() throws CoreException {
-		if (operations!=null) return;
-		
+	private void initialize() {
 		operations = new LinkedHashMap<>(31);
 		models     = new HashMap<>(31);
 		categoryOp = new HashMap<>(7);
 		categoryId = new HashMap<>(7);
 		opIdCategory = new HashMap<>();
+	}
+
+	// Reads the declared operations from extension point, if they have not been already.
+	private synchronized void checkOperations() throws CoreException {
+		if (operations!=null) return;
+		
+		initialize();
 		
 		IConfigurationElement[] eles = Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.dawnsci.analysis.api.operation");
 		for (IConfigurationElement e : eles) {
@@ -372,9 +376,9 @@ public class OperationServiceImpl implements IOperationService {
 		for (IConfigurationElement e : eles) {
 			if (!e.getName().equals("operation")) continue;
 			final String id = e.getAttribute("id");
-			IOperation<? extends IOperationModel, ? extends OperationData> op = null;
+			IOperation<?, ?> op = null;
 			try {
-				op = (IOperation<? extends IOperationModel, ? extends OperationData>) e.createExecutableExtension("class");
+				op = (IOperation<?, ?>) e.createExecutableExtension("class");
 			} catch (Exception e1) {
 				e1.printStackTrace();
 				continue;
@@ -396,9 +400,8 @@ public class OperationServiceImpl implements IOperationService {
 
 			final String model;
 			if (op instanceof AbstractOperationBase) {
-				final String name = e.getAttribute("name");
-				AbstractOperationBase<? extends IOperationModel, ? extends OperationData> aop = (AbstractOperationBase<? extends IOperationModel, ? extends OperationData>) op;
-				aop.setName(name);
+				AbstractOperationBase<?, ?> aop = (AbstractOperationBase<?, ?>) op;
+				aop.setName(e.getAttribute("name"));
 
 				final String desc = e.getAttribute("description");
 				if (desc!=null) aop.setDescription(desc);
@@ -518,9 +521,9 @@ public class OperationServiceImpl implements IOperationService {
 		// Now add all those with no category
 		final TreeSet<IOperation<? extends IOperationModel,? extends OperationData>> uncategorized = new TreeSet<>(new AbstractOperationBase.OperationComparator());
 		for (String id : operations.keySet()) {
-			final IOperation op = operations.get(id);
+			final IOperation<?, ?> op = operations.get(id);
 			if (op instanceof AbstractOperationBase) {
-				AbstractOperationBase<IOperationModel, OperationData> aop = (AbstractOperationBase<IOperationModel, OperationData>)op;
+				AbstractOperationBase<?, ?> aop = (AbstractOperationBase<?, ?>) op;
 				if (getCategory(aop.getId())==null) uncategorized.add(aop);
 			}
 		}
@@ -536,20 +539,23 @@ public class OperationServiceImpl implements IOperationService {
 		checkOperations();
 		final IOperation opValue = operations.get(operationId);
 		Objects.requireNonNull(opValue, "No operation available for id " + operationId);
-		final IOperation op = opValue.getClass().newInstance();
+		final IOperation op = opValue.getClass().getConstructor().newInstance();
+		AbstractOperationBase<?, ?> aop = null;
+		if (op instanceof AbstractOperationBase) {
+			aop = (AbstractOperationBase<?, ?>) op;
+		}
+
 		Class<? extends IOperationModel> modelClass = getModelClass(operationId);
-		if (modelClass == null && op instanceof AbstractOperationBase) {
-			modelClass =  ((AbstractOperationBase) op).getModelClass();
+		if (modelClass == null && aop != null) {
+			modelClass = aop.getModelClass();
 		}
 
 		if (modelClass == null) throw new RuntimeException("Model class not found! All operations require a model");
-			
-		op.setModel(modelClass.newInstance());
-		
-		if (op instanceof AbstractOperationBase) {
-			AbstractOperationBase<? extends IOperationModel, ? extends OperationData> aop = (AbstractOperationBase<? extends IOperationModel, ? extends OperationData>)op;
-			aop.setName(operations.get(operationId).getName());
-			aop.setDescription(operations.get(operationId).getDescription());
+
+		op.setModel(modelClass.getConstructor().newInstance());
+		if (aop != null) {
+			aop.setName(opValue.getName());
+			aop.setDescription(opValue.getDescription());
 		}
 		return op;
 	}
@@ -560,18 +566,19 @@ public class OperationServiceImpl implements IOperationService {
 		if (classes.isEmpty()) {
 			classes = getClassesFromBundle(FrameworkUtil.getBundle(c), pkg.replace('.', '/'));
 		}
+		if (operations == null) {
+			initialize();
+		}
 
 		for (Class<?> class1 : classes) {
 			if (Modifier.isAbstract(class1.getModifiers())) continue;
 			if (IOperation.class.isAssignableFrom(class1)) {
-				IOperation<? extends IOperationModel, ? extends OperationData> op = (IOperation<? extends IOperationModel, ? extends OperationData>) class1.newInstance();
-				if (operations==null) operations = new HashMap<>(31);
-				if (models == null) models = new HashMap<>();
+				IOperation<?, ?> op = (IOperation<?, ?>) class1.getConstructor().newInstance();
 				
 				operations.put(op.getId(), op);
-				logger.debug("Adding operation: {}", op.getClass().getName());
+				logger.debug("Adding operation: {}", class1.getName());
 				if (op instanceof AbstractOperationBase) {
-					Class mc = ((AbstractOperationBase) op).getModelClass();
+					Class<? extends IOperationModel> mc = ((AbstractOperationBase<?, ?>) op).getModelClass();
 					models.put(op.getId(), mc);
 					logger.debug("    model: {}", mc.getName());
 				}

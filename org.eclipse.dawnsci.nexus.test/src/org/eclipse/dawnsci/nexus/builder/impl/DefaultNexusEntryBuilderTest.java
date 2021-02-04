@@ -122,7 +122,7 @@ public class DefaultNexusEntryBuilderTest {
 	public void testAddDefaultGroups() {
 		assertThat(nxEntry.getNumberOfGroupNodes(), is(0));
 		entryBuilder.addDefaultGroups();
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
 		assertThat(nxEntry.getInstrument(), notNullValue(NXinstrument.class));
 		assertThat(nxEntry.getSample(), notNullValue(NXsample.class));
 	}
@@ -130,14 +130,14 @@ public class DefaultNexusEntryBuilderTest {
 	@Test
 	public void testAdd() throws NexusException {
 		entryBuilder.addDefaultGroups();
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
 		NXinstrument instrument = nxEntry.getInstrument();
 		assertThat(instrument.getNumberOfGroupNodes(), is(0));
 		
 		TestPositioner positionerProvider = new TestPositioner();
 		entryBuilder.add(positionerProvider);
 		
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
 		assertThat(instrument.getNumberOfGroupNodes(), is(1));
 		assertThat(instrument.getPositioner(), is(sameInstance(positionerProvider.getNexusObject())));
 	}
@@ -145,7 +145,7 @@ public class DefaultNexusEntryBuilderTest {
 	@Test
 	public void testAdd_namedGroup() throws NexusException {
 		entryBuilder.addDefaultGroups();
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
 		NXinstrument instrument = nxEntry.getInstrument();
 		assertThat(instrument.getNumberOfGroupNodes(), is(0));
 		
@@ -160,7 +160,7 @@ public class DefaultNexusEntryBuilderTest {
 	@Test
 	public void testAdd_positionerWithCollectionName() throws NexusException {
 		entryBuilder.addDefaultGroups();
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
 		NXinstrument instrument = nxEntry.getInstrument();
 		assertThat(instrument.getNumberOfGroupNodes(), is(0));
 		
@@ -168,7 +168,7 @@ public class DefaultNexusEntryBuilderTest {
 		positioner.setCollectionName("scannables");
 		entryBuilder.add(positioner);
 		
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
 		assertThat(instrument.getNumberOfGroupNodes(), is(1));
 		
 		NXcollection collection = instrument.getCollection("scannables");
@@ -181,7 +181,7 @@ public class DefaultNexusEntryBuilderTest {
 	@Test
 	public void testAdd_samplePositioner() throws NexusException {
 		entryBuilder.addDefaultGroups();
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
 		NXinstrument instrument = nxEntry.getInstrument();
 		assertThat(instrument.getNumberOfGroupNodes(), is(0));
 		NXsample sample = nxEntry.getSample();
@@ -209,12 +209,12 @@ public class DefaultNexusEntryBuilderTest {
 		};
 		
 		entryBuilder.addDefaultGroups();
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
 		NXsample oldSample = nxEntry.getSample();
 		assertThat(oldSample, is(notNullValue()));
 		
 		entryBuilder.add(sampleProvider);
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
 		assertThat(nxEntry.getSample(), is(sameInstance(sampleProvider.getNexusObject())));
 		assertThat(nxEntry.getSample(), is(not(sameInstance(oldSample))));
 	}
@@ -229,7 +229,7 @@ public class DefaultNexusEntryBuilderTest {
 		samplePositioner.setCategory(NX_SAMPLE);
 		
 		entryBuilder.addDefaultGroups();
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
 		NXinstrument instrument = nxEntry.getInstrument();
 		assertThat(instrument.getNumberOfGroupNodes(), is(0));
 		NXsample sample = nxEntry.getSample();
@@ -237,7 +237,7 @@ public class DefaultNexusEntryBuilderTest {
 
 		entryBuilder.addAll(Arrays.asList(xPositioner, yPositioner, zPositioner, samplePositioner, detector));
 		
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
 		assertThat(instrument.getNumberOfGroupNodes(), is(4));
 		assertThat(instrument.getPositioner("x"), is(sameInstance(xPositioner.getNexusObject())));
 		assertThat(instrument.getPositioner("y"), is(sameInstance(yPositioner.getNexusObject())));
@@ -249,7 +249,7 @@ public class DefaultNexusEntryBuilderTest {
 	@Test
 	public void testAddMetadata() throws NexusException {
 		entryBuilder.addDefaultGroups();
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
 		assertThat(nxEntry.getNumberOfDataNodes(), is(0));
 		
 		MapBasedMetadataProvider metadata = new MapBasedMetadataProvider();
@@ -262,7 +262,7 @@ public class DefaultNexusEntryBuilderTest {
 
 		entryBuilder.addMetadata(metadata);
 		
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
 		assertThat(nxEntry.getNumberOfDataNodes(), is(6));
 		assertThat(nxEntry.getEntry_identifierScalar(), is(equalTo("12345")));
 		assertThat(nxEntry.getExperiment_identifierScalar(), is(equalTo("myexperiment")));
@@ -284,14 +284,14 @@ public class DefaultNexusEntryBuilderTest {
 	@Test
 	public void testModifyEntry_nexusObjectProvider() throws Exception {
 		entryBuilder.addDefaultGroups();
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
 		NXinstrument instrument = nxEntry.getInstrument();
 		assertThat(instrument.getNumberOfGroupNodes(), is(0));
 		
 		TestPositioner positionerProvider = new TestPositioner();
 		entryBuilder.modifyEntry(positionerProvider);
 		
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
 		assertThat(instrument.getNumberOfGroupNodes(), is(1));
 		assertThat(instrument.getPositioner(), is(sameInstance(positionerProvider.getNexusObject())));
 	}
@@ -299,7 +299,7 @@ public class DefaultNexusEntryBuilderTest {
 	@Test
 	public void testModifyEntry_metadataProvider() throws Exception {
 		entryBuilder.addDefaultGroups();
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
 		assertThat(nxEntry.getNumberOfDataNodes(), is(0));
 		
 		MapBasedMetadataProvider metadata = new MapBasedMetadataProvider();
@@ -308,7 +308,7 @@ public class DefaultNexusEntryBuilderTest {
 
 		entryBuilder.addMetadata(metadata);
 		
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
 		assertThat(nxEntry.getNumberOfDataNodes(), is(2));
 		assertThat(nxEntry.getEntry_identifierScalar(), is(equalTo("12345")));
 		assertThat(nxEntry.getTitleScalar(), is(equalTo("Test Scan")));
@@ -326,7 +326,7 @@ public class DefaultNexusEntryBuilderTest {
 	@Test
 	public void testModifyEntry_collection() throws Exception {
 		entryBuilder.addDefaultGroups();
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
 		NXinstrument instrument = nxEntry.getInstrument();
 		assertThat(instrument.getNumberOfGroupNodes(), is(0));
 		assertThat(nxEntry.getDataNode("foo"), is(nullValue()));
@@ -338,7 +338,7 @@ public class DefaultNexusEntryBuilderTest {
 
 		entryBuilder.modifyEntry(Arrays.asList(positionerProvider, metadata, customModification));
 		
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
 		assertThat(instrument.getNumberOfGroupNodes(), is(1));
 		assertThat(instrument.getPositioner(), is(sameInstance(positionerProvider.getNexusObject())));
 		assertThat(nxEntry.getEntry_identifierScalar(), is(equalTo("12345")));
@@ -348,13 +348,13 @@ public class DefaultNexusEntryBuilderTest {
 	@Test
 	public void testCreateDefaultData() throws Exception {
 		entryBuilder.addDefaultGroups();
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
 		assertThat(nxEntry.getData(), is(nullValue()));
 
 		NexusDataBuilder dataBuilder = entryBuilder.createDefaultData();
 		
 		assertThat(dataBuilder, is(notNullValue()));
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(4));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
 		assertThat(nxEntry.getData(), is(notNullValue()));
 		assertThat(dataBuilder.getNxData(), is(sameInstance(nxEntry.getData())));
 	}
@@ -362,13 +362,13 @@ public class DefaultNexusEntryBuilderTest {
 	@Test
 	public void testNewData() throws Exception {
 		entryBuilder.addDefaultGroups();
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
 		assertThat(nxEntry.getData(), is(nullValue()));
 
 		NexusDataBuilder dataBuilder = entryBuilder.newData("testdata");
 		
 		assertThat(dataBuilder, is(notNullValue()));
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(4));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
 		assertThat(nxEntry.getData(), is(nullValue()));
 		assertThat(nxEntry.getData("testdata"), is(notNullValue()));
 		assertThat(dataBuilder.getNxData(), is(sameInstance(nxEntry.getData("testdata"))));
@@ -377,7 +377,7 @@ public class DefaultNexusEntryBuilderTest {
 	@Test
 	public void testSetInstrumentName() throws Exception {
 		entryBuilder.addDefaultGroups();
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
 		assertThat(nxEntry.getData(), is(nullValue()));
 		NXinstrument instrument = nxEntry.getInstrument();
 		assertThat(instrument.getNumberOfGroupNodes(), is(0));
@@ -394,26 +394,26 @@ public class DefaultNexusEntryBuilderTest {
 	@Test
 	public void testNewApplication() throws Exception {
 		entryBuilder.addDefaultGroups();
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
 		assertThat(nxEntry.getData(), is(nullValue()));
 		
 		NexusApplicationBuilder app = entryBuilder.newApplication(NexusApplicationDefinition.NX_TOMO);
 		
 		assertThat(app, is(notNullValue()));
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(4));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
 		assertThat(app.getNXsubentry(), is(sameInstance(nxEntry.getSubentry("tomo_entry"))));
 	}
 
 	@Test
 	public void testNewApplication_subentryName() throws Exception {
 		entryBuilder.addDefaultGroups();
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
 		assertThat(nxEntry.getData(), is(nullValue()));
 		
 		NexusApplicationBuilder app = entryBuilder.newApplication("appdef", NexusApplicationDefinition.NX_TOMO);
 		
 		assertThat(app, is(notNullValue()));
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(4));
+		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
 		assertThat(app.getNXsubentry(), is(sameInstance(nxEntry.getSubentry("appdef"))));
 	}
 	

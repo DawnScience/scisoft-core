@@ -256,11 +256,6 @@ public class DefaultNexusEntryBuilder implements NexusEntryBuilder {
 		nxSample = NexusNodeFactory.createNXsample();
 		defaultGroups.add(nxSample);
 		nxEntry.setSample(nxSample);
-		
-		NXuser nxUser = NexusNodeFactory.createNXuser(); // TODO how to add multiple users?
-		defaultGroups.add(nxUser);
-		nxEntry.setUser(nxUser);
-		
 	}
 
 	/* (non-Javadoc)

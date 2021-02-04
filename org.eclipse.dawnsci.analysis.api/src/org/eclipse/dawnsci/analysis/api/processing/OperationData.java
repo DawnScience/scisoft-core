@@ -45,6 +45,14 @@ public class OperationData {
 		this.auxData = aux;
 	}
 
+	public OperationData(OperationData od) {
+		data = od.data;
+		auxData = od.auxData;
+		log = od.log;
+		summaryData = od.summaryData;
+		configuredFields = od.configuredFields;
+	}
+
 	public void setData(IDataset data) {
 		this.data = data;
 	}

@@ -57,7 +57,7 @@ public abstract class AbstractOperationBase<T extends IOperationModel, D extends
 	}
 
 	/**
-	 * Set configured fields in operations data
+	 * Set configured fields in operation data
 	 * @param od
 	 */
 	protected void setConfiguredFields(OperationData od) {

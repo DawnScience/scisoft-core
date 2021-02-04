@@ -44,9 +44,19 @@ public class OperationDataForDisplay extends OperationData {
 	public OperationDataForDisplay(IDataset data) {
 		super(data);
 	}
-	
+
 	public OperationDataForDisplay(IDataset data, Serializable... aux) {
 		super(data, aux);
+	}
+
+	public OperationDataForDisplay(OperationData od) {
+		super(od);
+		if (od instanceof OperationDataForDisplay) {
+			OperationDataForDisplay odd = (OperationDataForDisplay) od;
+			displayData = odd.displayData;
+			showSeparately = odd.showSeparately;
+			plotOnOutputWindow = odd.plotOnOutputWindow;
+		}
 	}
 
 	public IDataset[] getDisplayData() {
@@ -75,6 +85,4 @@ public class OperationDataForDisplay extends OperationData {
 	public void setPlotOnOutputWindow(boolean plotOnOutputWindow) {
 		this.plotOnOutputWindow = plotOnOutputWindow;
 	}
-
-	
 }

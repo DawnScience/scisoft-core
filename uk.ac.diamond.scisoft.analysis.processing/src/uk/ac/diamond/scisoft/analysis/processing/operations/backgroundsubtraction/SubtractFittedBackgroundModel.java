@@ -23,6 +23,20 @@ public class SubtractFittedBackgroundModel extends AbstractOperationModel {
 		Gaussian;
 	}
 
+	enum RegionCount {
+		One,
+		Two;
+
+		@Override
+		public String toString() {
+			return String.valueOf(getCount());
+		}
+
+		public int getCount() {
+			return ordinal() + 1;
+		}
+	}
+
 	@OperationModelField(fieldPosition = 0, label = "Background PDF", expertOnly = true)
 	private BackgroundPixelPDF backgroundPDF = BackgroundPixelPDF.Gaussian;
 
@@ -41,23 +55,32 @@ public class SubtractFittedBackgroundModel extends AbstractOperationModel {
 	@OperationModelField(fieldPosition = 5, label = "Gaussian smoothing length parameter", hint = "Can be empty to disable smooth", enableif = "darkImageFile != null", expertOnly = true)
 	private Double gaussianSmoothingLength = 10.;
 
-	@OperationModelField(fieldPosition = 6, label = "Use dark image in 2D", hint = "Leave unchecked to use 1D", description = "Use 2D smoothed dark image rather than a summed 1D profile", enableif = "darkImageFile != null", expertOnly = true)
+	@OperationModelField(fieldPosition = 6, label = "Use dark image in 2D", hint = "Uncheck to use 1D", description = "Use 2D smoothed dark image rather than a summed 1D profile", enableif = "darkImageFile != null", expertOnly = true)
 	private boolean mode2D = true;
 
-	@OperationModelField(fieldPosition = 7, label = "Rectangle to match", description = "Image area of dark image to fit", hint = "Leave empty to automatically find shadow region", enableif = "darkImageFile != null", expertOnly = true)
-	private IRectangularROI fitRegion = null;
+	@OperationModelField(fieldPosition = 7, label = "Number of regions to use", hint = "1 or 2", min = 1, max = 2, description = "Specify number of regions of dark image", enableif = "darkImageFile != null", expertOnly = true)
+	private RegionCount regionCount = RegionCount.One;
 
-	@OperationModelField(fieldPosition = 8, label = "Offset dark image", hint = "Leave empty for operation to finding from shadow region", description = "Override offset value to add to dark image", enableif = "darkImageFile != null", expertOnly = true)
-	private Double darkOffset = null;
-
-	@OperationModelField(fieldPosition = 9, label = "Scale dark image", hint = "This factor is applied before the offset is added", description = "Override scaling of dark image", enableif = "darkOffset != null", expertOnly = true)
-	private double darkScaling = 1;
-
-	@OperationModelField(label = "Rectangle 0", description = "Region for profile 0", expertOnly = true)
+	@OperationModelField(fieldPosition = 8, label = "Rectangle 0", description = "Region for profile 0", expertOnly = true)
 	private IRectangularROI roiA = null;
 
-	@OperationModelField(label = "Rectangle 1", description = "Region for profile 1", expertOnly = true)
+	@OperationModelField(fieldPosition = 9, label = "Region in rectangle 0 to match", description = "Image area of dark image to fit", hint = "Leave empty to automatically find fit region; can span rectangle 1", enableif = "darkImageFile != null", expertOnly = true)
+	private IRectangularROI fitRegionA = null;
+
+	@OperationModelField(fieldPosition = 10, label = "Rectangle 1", description = "Region for profile 1", enableif = "regionCount == '2'", expertOnly = true)
 	private IRectangularROI roiB = null;
+
+	@OperationModelField(fieldPosition = 11, label = "Region in rectangle 1 to match", description = "Image area of dark image to fit", hint = "Leave empty to automatically find fit region (if region 0 does not intersect rectangle 1)", enableif = "darkImageFile != null && regionCount == '2'", expertOnly = true)
+	private IRectangularROI fitRegionB = null;
+
+	@OperationModelField(fieldPosition = 12, label = "Offset dark image", hint = "Leave empty for operation to finding from fitregion", description = "Override offset value to add to dark image", enableif = "darkImageFile != null", expertOnly = true)
+	private Double darkOffset = null;
+
+	@OperationModelField(fieldPosition = 13, label = "Scale dark image", hint = "This factor is applied before the offset is added", description = "Override scaling of dark image", enableif = "darkOffset != null", expertOnly = true)
+	private double darkScaling = 1;
+
+	@OperationModelField(fieldPosition = 14, label = "Drop zone width factor", hint = "Scaling for width of drop zone to match for dark image", description = "Override width scaling of drop-to-shadow zone used to find scaling and offset of dark image", enableif = "darkImageFile != null && darkOffset == null", expertOnly = true)
+	private double darkFWHMScaling = 2;
 
 	public static final int HISTOGRAM_MAX_BINS = 1024*1024;
 
@@ -120,17 +143,6 @@ public class SubtractFittedBackgroundModel extends AbstractOperationModel {
 		firePropertyChange(DARK_FILE_PROPERTY, this.darkImageFile, this.darkImageFile = darkImageFile);
 	}
 
-//	/**
-//	 * @return get region of interest (can be null to signify the entire image)
-//	 */
-//	public IRectangularROI getRoi() {
-//		return roi;
-//	}
-//
-//	public void setRoi(IRectangularROI roi) {
-//		firePropertyChange("setRoi", this.roi, this.roi = roi);
-//	}
-//
 	/**
 	 * @return length parameter used for Gaussian smoothing filter. If null or NaN then no smoothing
 	 */
@@ -158,17 +170,6 @@ public class SubtractFittedBackgroundModel extends AbstractOperationModel {
 	}
 
 	/**
-	 * @return region to fit (instead of finding shadow region)
-	 */
-	public IRectangularROI getFitRegion() {
-		return fitRegion;
-	}
-
-	public void setFitRegion(IRectangularROI fitRegion) {
-		firePropertyChange("setFitRegion", this.fitRegion, this.fitRegion = fitRegion);
-	}
-
-	/**
 	 * @return offset to add to dark image. If null or NaN then determine from shadow region
 	 */
 	public Double getDarkOffset() {
@@ -190,6 +191,19 @@ public class SubtractFittedBackgroundModel extends AbstractOperationModel {
 		firePropertyChange("setDarkScaling", this.darkScaling, this.darkScaling = darkScaling);
 	}
 
+	public static final String REGION_PROPERTY = "setRegion";
+
+	/**
+	 * @return number of regions to use
+	 */
+	public RegionCount getRegionCount() {
+		return regionCount;
+	}
+
+	public void setRegionCount(RegionCount regionCount) {
+		firePropertyChange(REGION_PROPERTY + "Count", this.regionCount, this.regionCount = regionCount);
+	}
+
 	/**
 	 * @return get first region of interest (can be null to signify the entire image)
 	 */
@@ -198,7 +212,7 @@ public class SubtractFittedBackgroundModel extends AbstractOperationModel {
 	}
 
 	public void setRoiA(IRectangularROI roi) {
-		firePropertyChange("setRoiA", this.roiA, this.roiA = roi);
+		firePropertyChange(REGION_PROPERTY, this.roiA, this.roiA = roi);
 	}
 
 	/**
@@ -209,6 +223,41 @@ public class SubtractFittedBackgroundModel extends AbstractOperationModel {
 	}
 
 	public void setRoiB(IRectangularROI roi) {
-		firePropertyChange("setRoiB", this.roiB, this.roiB = roi);
+		firePropertyChange(REGION_PROPERTY, this.roiB, this.roiB = roi);
+	}
+
+	public static final String FIT_REGION_PROPERTY = "setFitRegion";
+
+	/**
+	 * @return get first fit region of interest (can be null to signify find automatically)
+	 */
+	public IRectangularROI getFitRegionA() {
+		return fitRegionA;
+	}
+
+	public void setFitRegionA(IRectangularROI fitRegionA) {
+		firePropertyChange(FIT_REGION_PROPERTY, this.fitRegionA, this.fitRegionA = fitRegionA);
+	}
+
+	/**
+	 * @return get second fit region of interest (can be null to signify find automatically)
+	 */
+	public IRectangularROI getFitRegionB() {
+		return fitRegionB;
+	}
+
+	public void setFitRegionB(IRectangularROI fitRegionB) {
+		firePropertyChange(FIT_REGION_PROPERTY, this.fitRegionB, this.fitRegionB = fitRegionB);
+	}
+
+	/**
+	 * @return drop zone width scaling factor
+	 */
+	public double getDarkFWHMScaling() {
+		return darkFWHMScaling;
+	}
+
+	public void setDarkFWHMScaling(double darkFWHMScaling) {
+		firePropertyChange(FIT_REGION_PROPERTY, this.darkFWHMScaling, this.darkFWHMScaling = darkFWHMScaling);
 	}
 }

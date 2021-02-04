@@ -799,4 +799,139 @@ public class Utils {
 		}
 		return isWindows ? path.replace('\\', '/') : path;
 	}
+
+	private final static String DOUBLE_QUOTE = "\"";
+	private final static String ESCAPED_DOUBLE_QUOTE = "\\\"";
+
+	/**
+	 * @param text
+	 * @return true if trimmed text starts and ends with double quote
+	 */
+	public static boolean isDoubleQuoted(String text) {
+		String t = text.trim();
+		return t.startsWith(DOUBLE_QUOTE) && t.endsWith(DOUBLE_QUOTE);
+	}
+
+	/**
+	 * Quote string using double quotes with any internal double quotes escaped
+	 * @param text
+	 * @return quoted string
+	 */
+	public static String doubleQuote(String text) {
+		return isDoubleQuoted(text) ? text : DOUBLE_QUOTE + text.replace(DOUBLE_QUOTE, ESCAPED_DOUBLE_QUOTE) + DOUBLE_QUOTE;
+	}
+
+	/**
+	 * Unquote string with any internal double quotes escaped
+	 * @param text
+	 * @return unquoted string
+	 * @throws IllegalArgumentException when end quote is missing
+	 */
+	public static String doubleUnquote(String text) {
+		String t = text.trim();
+		if (t.startsWith(DOUBLE_QUOTE)) {
+			if (!t.endsWith(DOUBLE_QUOTE)) {
+				throw new IllegalArgumentException("String started with double quote but did not end with double quote");
+			}
+			t = t.substring(1, t.length() - 1);
+			return t.replace(ESCAPED_DOUBLE_QUOTE, DOUBLE_QUOTE);
+		}
+		return t;
+	}
+
+	private static int nextQuote(String t, int i) {
+		int q = i;
+		do {
+			q = t.indexOf(DOUBLE_QUOTE, q);
+		} while (q > i && t.charAt(q - 1) == '\\'); // ignore escaped quotes too
+
+		return q;
+	}
+
+	private static final char SPACE = ' ';
+
+
+	/**
+	 * Split text allowing for double quoting
+	 * @param text
+	 * @param delimiter
+	 * @param trim if true then trim spaces outside quoted parts
+	 * @return list of parts
+	 */
+	public static List<String> splitDoubleQuoted(String text, char delimiter, boolean trim) {
+		List<String> parts = new ArrayList<>();
+
+		String t = text;
+		int l = t.length();
+		int i = 0;
+		int q = nextQuote(t, i);
+		int b = -1; // start of quote; -ve means not in quote
+		while (i < l) {
+			int j = t.indexOf(delimiter, i);
+			if (trim && delimiter == SPACE) {
+				int k = j;
+				while (++k < l && t.charAt(k) == SPACE) {
+					j = k;
+				}
+			}
+			if (j < 0) { // finished
+				if (b >= 0 && nextQuote(t, q +1) < 0) {
+					logger.warn("Missing end quote");
+				}
+				String s = t.substring(b < 0 ? i : b);
+				parts.add(trim ? s.trim() : s);
+				break;
+			} else if (b >= 0) { // in quote
+				if (j > q) { // crossed next
+					// check correctness???
+					String s = t.substring(b, j);
+					parts.add(trim ? s.trim() : s);
+					b = -1;
+					q = nextQuote(t, q + 1);
+				}
+			} else if (q >= 0) { // before next quote
+				if (j < q) {
+					String s = t.substring(i, j);
+					parts.add(trim ? s.trim() : s);
+				} else {
+					b = i < q ? i : q;
+					q = nextQuote(t, q + 1);
+				}
+			} else {
+				String s = t.substring(i, j);
+				parts.add(trim ? s.trim() : s);
+			}
+			i = j + 1;
+		}
+		return parts;
+	}
+
+	/**
+	 * Parse values into an array
+	 * @param values
+	 * @param row (can be null then new array is created)
+	 * @return row
+	 */
+	public static Object[] parseValues(String[] values, Object[] row) {
+		int cols = values.length;
+		if (row == null || row.length < cols) {
+			row = new Object[cols];
+		}
+
+		for (int i = 0; i < cols; i++) {
+			String text = values[i].trim();
+			if (isDoubleQuoted(text)) {
+				row[i] = doubleUnquote(text);
+			} else {
+				Number parseValue = parseValue(text);
+				if (parseValue != null) {
+					row[i] = parseValue;
+				} else {
+					row[i] = text;
+				}
+			}
+		}
+
+		return row;
+	}
 }

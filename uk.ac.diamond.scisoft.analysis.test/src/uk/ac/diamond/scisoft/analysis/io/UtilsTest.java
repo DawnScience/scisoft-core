@@ -11,7 +11,9 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -22,6 +24,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -456,5 +459,55 @@ public class UtilsTest {
 		assertEquals("/blah/foo", Utils.translateToUnixPath("/blah/foo", true));
 		assertEquals("\\blah\\foo", Utils.translateToUnixPath("\\blah\\foo", false));
 		assertEquals("/blah/foo", Utils.translateToUnixPath("\\blah\\foo", true));
+	}
+
+	@Test
+	public void testDoubleQuote() {
+		assertFalse(Utils.isDoubleQuoted("hello world"));
+		assertFalse(Utils.isDoubleQuoted("'hello world"));
+		assertFalse(Utils.isDoubleQuoted("\"hello world"));
+		assertFalse(Utils.isDoubleQuoted("hello world\""));
+		assertTrue(Utils.isDoubleQuoted("\"hello world\""));
+
+		assertEquals("\"hello world\"", Utils.doubleQuote("hello world"));
+		assertEquals("\"'hello world\"", Utils.doubleQuote("'hello world"));
+		assertEquals("\"hello world\"", Utils.doubleQuote("\"hello world\""));
+		assertEquals("\"hello \\\"world\"", Utils.doubleQuote("hello \"world"));
+
+		assertEquals("hello world", Utils.doubleUnquote("hello world"));
+		assertEquals("'hello world", Utils.doubleUnquote("'hello world"));
+		assertEquals("hello world", Utils.doubleUnquote("\"hello world\""));
+		assertEquals("hello \"world", Utils.doubleUnquote("\"hello \\\"world\""));
+
+		assertThrows(IllegalArgumentException.class, () -> Utils.doubleUnquote("\"hello world"));
+	}
+
+	private static String[] splitCSV(String text, boolean trim) {
+		List<String> parts = Utils.splitDoubleQuoted(text, ',', trim);
+		return parts.toArray(new String[parts.size()]);
+	}
+
+	private static String[] splitSSV(String text, boolean trim) {
+		List<String> parts = Utils.splitDoubleQuoted(text, ' ', trim);
+		return parts.toArray(new String[parts.size()]);
+	}
+
+	@Test
+	public void testSplitDoubleQuoted() {
+		assertArrayEquals(new String[] {"hello", " world"}, splitCSV("hello, world", false));
+		assertArrayEquals(new String[] {"hello", "world"},  splitCSV("hello, world", true));
+		assertArrayEquals(new String[] {"\"hello, world\""}, splitCSV("\"hello, world\"", false));
+		assertArrayEquals(new String[] {"\"hello, world\""}, splitCSV("\"hello, world\"", true));
+		assertArrayEquals(new String[] {"\"hello, world,\"", " goodbye "}, splitCSV("\"hello, world,\", goodbye ", false));
+		assertArrayEquals(new String[] {"\"hello, world,\"", "goodbye"},   splitCSV("\"hello, world,\", goodbye ", true));
+		assertArrayEquals(new String[] {"\"hello, world\" ", " \"goodbye\""}, splitCSV("\"hello, world\" , \"goodbye\"", false));
+		assertArrayEquals(new String[] {"\"hello, world\"",  "\"goodbye\""},  splitCSV("\"hello, world\" , \"goodbye\"", true));
+		assertArrayEquals(new String[] {"\"hello, world\" ", " how are you", " \",goodbye\""}, splitCSV("\"hello, world\" , how are you, \",goodbye\"", false));
+		assertArrayEquals(new String[] {"\"hello, world\"",  "how are you",  "\",goodbye\""},  splitCSV("\"hello, world\" , how are you, \",goodbye\"", true));
+
+		assertArrayEquals(new String[] {"hello", "world"}, splitSSV("hello world", false));
+		assertArrayEquals(new String[] {"hello", "", "world"}, splitSSV("hello  world", false));
+		assertArrayEquals(new String[] {"hello", "world"}, splitSSV("hello  world", true));
+
 	}
 }

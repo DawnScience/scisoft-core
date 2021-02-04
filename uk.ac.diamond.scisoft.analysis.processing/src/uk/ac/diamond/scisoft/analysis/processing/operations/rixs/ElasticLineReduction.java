@@ -325,7 +325,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		if (od instanceof OperationDataForDisplay) {
 			odd = (OperationDataForDisplay) od;
 		} else {
-			odd = new OperationDataForDisplay(od.getData());
+			odd = new OperationDataForDisplay(od);
 		}
 		odd.setShowSeparately(true);
 		odd.setLog(log);
@@ -415,7 +415,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		double w = findFWHM(countedData, opt, peak, factor, x, s);
 		StraightLine line = getStraightLine(r);
 		line.getParameter(STRAIGHT_LINE_M).setValue(slope);
-		double pOffset = - slope * offset[0];
+		double pOffset = - slope * offset[0] + offset[1];
 		line.getParameter(STRAIGHT_LINE_C).setValue(pOffset + peak.getParameterValue(SPECTRA_PEAK_POSN));
 		log.append("Override with slope (%g) gives width = %g and line %s", slope, w, line);
 		residual = 0;
@@ -514,7 +514,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			optimizer.optimize(true, fn);
 			StraightLine line = getStraightLine(rn);
 			line.getParameter(STRAIGHT_LINE_M).setValue(slope.getValue());
-			double pOffset = -slope.getValue() * offset[0];
+			double pOffset = -slope.getValue() * offset[0] + offset[1];
 			line.getParameter(STRAIGHT_LINE_C).setValue(pOffset + peak.getParameterValue(SPECTRA_PEAK_POSN));
 
 			residual = peak.residual(true, sumImageAlongSlope(sin, slope.getValue(), false), null, sx);
@@ -777,6 +777,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 				} else {
 					try {
 						am = MetadataFactory.createMetadata(AxesMetadata.class, 1);
+						spectrum.addMetadata(am);
 					} catch (MetadataException e) {
 						// do nothing
 					}
@@ -1280,7 +1281,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 	private static List<Dataset> createHistogram(Dataset in) {
 		double min = Math.floor(findPositiveMin(in));
-		double max = Math.ceil(in.max(true).doubleValue());
+		double max = Math.max(min + 1, Math.ceil(in.max(true).doubleValue())); // numbers of bin >= 2
 		IntegerDataset bins = DatasetFactory.createRange(IntegerDataset.class, min, max+1, 100);
 
 		Histogram histo = new Histogram(bins);

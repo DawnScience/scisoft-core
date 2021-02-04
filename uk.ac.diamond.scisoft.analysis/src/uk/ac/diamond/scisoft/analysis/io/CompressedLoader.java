@@ -80,12 +80,14 @@ public class CompressedLoader extends AbstractFileLoader {
 	}
 	
 	@Override
-	public IDataHolder loadFile() throws ScanFileHolderException {
-		return loader.loadFile();
+	public DataHolder loadFile() throws ScanFileHolderException {
+		IDataHolder dh = loader.loadFile();
+		return dh instanceof DataHolder ? (DataHolder) dh : null;
 	}
 	@Override
-	public IDataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
-		return loader.loadFile(mon);
+	public DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
+		IDataHolder dh = loader.loadFile(mon);
+		return dh instanceof DataHolder ? (DataHolder) dh : null;
 	}
 	
 	@Override

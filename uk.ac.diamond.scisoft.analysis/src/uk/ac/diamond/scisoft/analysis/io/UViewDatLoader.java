@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -51,16 +50,16 @@ public class UViewDatLoader extends AbstractFileLoader {
 	}
 
 	@Override
-	public IDataHolder loadFile() throws ScanFileHolderException {
+	public DataHolder loadFile() throws ScanFileHolderException {
 		return loadFile((IMonitor) null);
 	}
 
 	private static final int IMAGE_LIMIT = 16*1024*1024; // 4k*4k pixels at most
 
 	@Override
-	public IDataHolder loadFile(final IMonitor mon) throws ScanFileHolderException {
+	public DataHolder loadFile(final IMonitor mon) throws ScanFileHolderException {
 		// first instantiate the return object.
-		final IDataHolder result = new DataHolder();
+		final DataHolder result = new DataHolder();
 
 		BufferedInputStream in = null;
 		try {

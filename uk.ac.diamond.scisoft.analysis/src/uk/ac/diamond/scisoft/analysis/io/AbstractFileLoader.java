@@ -68,13 +68,15 @@ public abstract class AbstractFileLoader implements IFileLoader, IMetaLoader {
 
 	abstract protected void clearMetadata();
 
+	public abstract DataHolder loadFile() throws ScanFileHolderException ;
+
 	@Override
 	public IMetadata getMetadata() {
 		return metadata;
 	}
 
 	@Override
-	public IDataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
+	public DataHolder loadFile(IMonitor mon) throws ScanFileHolderException {
 		return loadFile();
 	}
 

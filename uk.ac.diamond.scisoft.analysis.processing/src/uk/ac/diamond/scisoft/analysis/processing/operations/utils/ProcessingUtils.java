@@ -14,6 +14,8 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
@@ -217,5 +219,41 @@ public class ProcessingUtils {
 		if (val.getRank() != 0) throw new OperationException(op, "External data shape invalid");
 
 		return val;
+	}
+
+	// string that contains a set of digits before a period and another substring 
+	private static final Pattern NUMBERED_FILE_REGEX = Pattern.compile(".*?([0-9]+)\\.\\w+");
+
+	/**
+	 * Get Diamond scan number from file name
+	 * @param name expected to contain a set of digits before a period and another substring
+	 * @return scan number or null if name does not match expected pattern
+	 */
+	public static Integer getScanNumber(String name) {
+		Matcher m = NUMBERED_FILE_REGEX.matcher(name);
+		if (!m.matches()) {
+			return null;
+		}
+		String digits = m.group(1);
+		return Integer.valueOf(digits);
+	}
+
+	/**
+	 * Get formatted string from retrieved scan number
+	 * @param name expected to contain a set of digits before a period and another substring
+	 * @param delta change in scan number
+	 * @param format string containing formatting to insert prefix, new scan number string, suffix (i.e. must contain three %s)
+	 * @return formatted string or null if name does not match expected pattern
+	 */
+	public static String getNextScanString(String name, int delta, String format) {
+		Matcher m = NUMBERED_FILE_REGEX.matcher(name);
+		if (!m.matches()) {
+			return null;
+		}
+		String digits = m.group(1);
+		int scan = Integer.parseInt(digits) + delta;
+		String ss = String.format(String.format("%%0%dd", digits.length()), scan); // preserve zero-padding
+		String fmt = String.format(format, name.substring(0, m.start(1)), ss, name.substring(m.end(1)));
+		return String.format(fmt, scan);
 	}
 }

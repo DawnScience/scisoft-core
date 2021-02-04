@@ -12,7 +12,6 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.rixs;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
-import java.util.regex.Matcher;
 
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
@@ -104,21 +103,11 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 				File currentDir = file.getParentFile();
 				String currentName = file.getName();
 
-				Matcher m = NUMBERED_FILE_REGEX.matcher(currentName);
-				if (!m.matches()) {
+				String prefix = ProcessingUtils.getNextScanString(currentName, getFitDelta(), "%s%s_processed_%s");
+				if (prefix == null) {
 					throw new OperationException(this, "Current file path does not end with scan number (before file extension)");
 				}
-				String digits = m.group(1);
-				int scan = Integer.parseInt(digits);
-				if (model.getFitFileOption() == FIT_FILE_OPTION.NEXT_SCAN) {
-					scan++;
-				} else if (model.getFitFileOption() == FIT_FILE_OPTION.PREVIOUS_SCAN) {
-					scan--;
-				}
 
-				// ensure zero padding of scan number is correct
-				String format = String.format("%s%%0%dd_processed_%s", currentName.substring(0, m.start(1)), digits.length(), ElasticLineReduction.SUFFIX);
-				String prefix = String.format(format, scan);
 				OperationMetadata om = original.getFirstMetadata(OperationMetadata.class);
 				currentFitFile = getElasticFitFromFile(currentDir, prefix, om == null ? null : om.getOutputFilename());
 				if (!useSummaryFits) {
@@ -322,4 +311,20 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 		}
 	}
 
+	protected int getFitDelta() {
+		int delta;
+		switch (model.getFitFileOption()) {
+		case NEXT_SCAN:
+			delta = 1;
+			break;
+		case PREVIOUS_SCAN:
+			delta = -1;
+			break;
+		case SAME_SCAN:
+		default:
+			delta = 0;
+			break;
+		}
+		return delta;
+	}
 }

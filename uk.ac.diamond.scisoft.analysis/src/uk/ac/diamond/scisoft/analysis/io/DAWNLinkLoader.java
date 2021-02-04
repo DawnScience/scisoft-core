@@ -41,7 +41,7 @@ public class DAWNLinkLoader extends AbstractFileLoader {
 	private int[] shape;
 	
 	@Override
-	public IDataHolder loadFile() throws ScanFileHolderException {
+	public DataHolder loadFile() throws ScanFileHolderException {
 		fileName.toString();
 		
 		// first instantiate the return object.

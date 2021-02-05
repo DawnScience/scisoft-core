@@ -16,6 +16,8 @@ import org.eclipse.january.dataset.DoubleDataset;
  * Class which expands on the AFunction class to give the properties of a Gaussian. A 1D implementation
  */
 public class Gaussian extends APeak {
+	private static final long serialVersionUID = 8659824721733743658L;
+
 	private static final String NAME = "Gaussian";
 	private static final String DESC = "A Gaussian or normal distribution."
 			+ "\n    y(x) = A exp( -(x-posn)^2 / a^2 )"

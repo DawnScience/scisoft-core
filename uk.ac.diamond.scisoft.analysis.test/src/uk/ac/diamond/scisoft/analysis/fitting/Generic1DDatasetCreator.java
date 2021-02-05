@@ -11,16 +11,13 @@ package uk.ac.diamond.scisoft.analysis.fitting;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 
-import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.PeakType;
 
 public class Generic1DDatasetCreator {
-	
+
 	static final int dataRange = 100;
 	static final double peakPos = 50.0;
 	static final double defaultFWHM = 20.0;
@@ -41,25 +38,11 @@ public class Generic1DDatasetCreator {
 	static final DoubleDataset xAxis = DatasetFactory.createRange(0, dataRange, 1.);
 
 	private static DoubleDataset createDataset(IFunction f) {
-		CompositeFunction comp = new CompositeFunction();
-		comp.addFunction(f);
 		f.setParameterValues(peakPos, defaultFWHM, defaultArea);
-		return comp.calculateValues(xAxis);
-	}
-	
-	public static DoubleDataset createGaussianDataset() {
-		return createDataset(new Gaussian(0, dataRange, maxFWHM, maxArea));
+		return DatasetUtils.cast(DoubleDataset.class, f.calculateValues(xAxis));
 	}
 
-	public static DoubleDataset createLorentzianDataset() {
-		return createDataset(new Lorentzian(0, dataRange, maxFWHM, maxArea));
-	}
-
-	public static DoubleDataset createPearsonVII() {
-		return createDataset(new PearsonVII(0, dataRange, maxFWHM, maxArea));
-	}
-
-	public static DoubleDataset createPseudoVoigt() {
-		return createDataset(new PseudoVoigt(0, dataRange, maxFWHM, maxArea));
+	public static DoubleDataset createDataset(PeakType type) {
+		return createDataset(PeakType.createPeak(type, 0, dataRange, maxFWHM, maxArea));
 	}
 }

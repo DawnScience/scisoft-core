@@ -9,160 +9,172 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.january.dataset.DoubleDataset;
-import org.junit.Assert;
-import org.junit.Before;
+import org.eclipse.dawnsci.analysis.api.fitting.functions.IPeak;
+import org.eclipse.january.dataset.Dataset;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CompositeFunction;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.PeakType;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 
 public abstract class AbstractFittingTestBase {
 
-	protected static final String PSEUDO_VOIGT = "PseudoVoigt";
-	protected static final String PEARSON_VII = "PearsonVII";
-	protected static final String LORENTZIAN = "Lorentzian";
-	protected static final String GAUSSIAN = "Gaussian";
-	static DoubleDataset gaussian;
-	static DoubleDataset lorentzian;
-	static DoubleDataset pearsonVII;
-	static DoubleDataset pseudoVoigt;
-	static DoubleDataset xAxis;
-
 	static double accuracy;
-	static int smoothing;
-	static int numPeaks = -1;
-
 	static double pos;
 	static double fwhm;
 	static double area;
 	static double delta;
-	static List<CompositeFunction> fittedGaussian;
-	static List<CompositeFunction> fittedLorentzian;
-	static List<CompositeFunction> fittedPearsonVII;
-	static List<CompositeFunction> fittedPseudoVoigt;
+	static Map<PeakType, List<CompositeFunction>> fitted;
 
-	static Map<String, int[]> deltaFactor;
+	static Map<PeakType, int[]> deltaFactor;
+
 
 	abstract public IOptimizer createOptimizer();
 
-	@Before
-	public void doFitting() {
-		fittedGaussian = Generic1DFitter.fitPeakFunctions(xAxis, gaussian, Gaussian.class,
-				createOptimizer(), smoothing, numPeaks);
-		fittedLorentzian = Generic1DFitter.fitPeakFunctions(xAxis, lorentzian, Lorentzian.class,
-				createOptimizer(), smoothing, numPeaks);
-		fittedPearsonVII = Generic1DFitter.fitPeakFunctions(xAxis, pearsonVII, PearsonVII.class,
-				createOptimizer(), smoothing, numPeaks);
-		fittedPseudoVoigt = Generic1DFitter.fitPeakFunctions(xAxis, pseudoVoigt, PseudoVoigt.class,
-				createOptimizer(), smoothing, numPeaks);
-	}
-
 	@BeforeClass
 	public static void setupTestEnvironment() {
-
-		gaussian = Generic1DDatasetCreator.createGaussianDataset();
-		lorentzian = Generic1DDatasetCreator.createLorentzianDataset();
-		pearsonVII = Generic1DDatasetCreator.createPearsonVII();
-		pseudoVoigt = Generic1DDatasetCreator.createPseudoVoigt();
-		xAxis = Generic1DDatasetCreator.xAxis;
-
+		fitted = new HashMap<>();
 		accuracy = Generic1DDatasetCreator.accuracy;
-		smoothing = Generic1DDatasetCreator.smoothing;
-		numPeaks = Generic1DDatasetCreator.numPeaks;
-
 		pos = Generic1DDatasetCreator.peakPos;
 		fwhm = Generic1DDatasetCreator.defaultFWHM;
 		area = Generic1DDatasetCreator.defaultArea;
 		delta = Generic1DDatasetCreator.delta;
 	}
 
+	private IPeak getFittedPeak(PeakType type) {
+		return get(type).get(0).getPeak(0);
+	}
+
+	private List<CompositeFunction> get(PeakType type) {
+		if (!fitted.containsKey(type)) {
+			Dataset function = Generic1DDatasetCreator.createDataset(type);
+			fitted.put(type, Generic1DFitter.fitPeakFunctions(Generic1DDatasetCreator.xAxis, function, type.getPeakClass(),
+					createOptimizer(), Generic1DDatasetCreator.smoothing, Generic1DDatasetCreator.numPeaks));
+		}
+		return fitted.get(type);
+	}
+
+	private void testSize(PeakType type) {
+		assertEquals(1, get(type).size());
+	}
+
+	private void testPeakPos(PeakType type) {
+		checkClose(type + " pos", pos, getFittedPeak(type).getPosition(), delta);
+	}
+
+	private void testFWHM(PeakType type) {
+		checkClose(type + " fwhm", fwhm, getFittedPeak(type).getFWHM(), deltaFactor.get(type)[0]*delta);
+	}
+
+	private void testArea(PeakType type) {
+		checkClose(type + " area", area, getFittedPeak(type).getArea(), deltaFactor.get(type)[1]*delta);
+	}
+
 	@Test
 	public void testGaussianNumberOfPeaksFound() {
-		Assert.assertEquals(1, fittedGaussian.size());
+		testSize(PeakType.GAUSSIAN);
 	}
 
 	@Test
 	public void testGaussianPeakPos() {
-		checkClose(GAUSSIAN + " pos", pos, fittedGaussian.get(0).getPeak(0).getPosition(), delta);
+		testPeakPos(PeakType.GAUSSIAN);
 	}
 
 	@Test
 	public void testGaussianFWHM() {
-		checkClose(GAUSSIAN + " fwhm", fwhm, fittedGaussian.get(0).getPeak(0).getFWHM(), deltaFactor.get(GAUSSIAN)[0]*delta);
+		testFWHM(PeakType.GAUSSIAN);
 	}
 
 	@Test
 	public void testGaussianArea() {
-		checkClose(GAUSSIAN + " area", area, fittedGaussian.get(0).getPeak(0).getArea(), deltaFactor.get(GAUSSIAN)[1]*delta);
+		testArea(PeakType.GAUSSIAN);
 	}
 
 	@Test
 	public void testLorentzianNumberOfPeaksFound() {
-		Assert.assertEquals(1, fittedLorentzian.size());
+		testSize(PeakType.LORENTZIAN);
 	}
 
 	@Test
 	public void testLorentzianPeakPos() {
-		checkClose(LORENTZIAN + " pos", pos, fittedLorentzian.get(0).getPeak(0).getPosition(), delta);
+		testPeakPos(PeakType.LORENTZIAN);
 	}
 
 	@Test
 	public void testLorentzianFWHM() {
-		checkClose(LORENTZIAN + " fwhm", fwhm, fittedLorentzian.get(0).getPeak(0).getFWHM(), deltaFactor.get(LORENTZIAN)[0]*delta);
+		testFWHM(PeakType.LORENTZIAN);
 	}
 
 	@Test
 	public void testLorentzianArea() {
-		checkClose(LORENTZIAN + " area", area, fittedLorentzian.get(0).getPeak(0).getArea(), deltaFactor.get(LORENTZIAN)[1]*delta);
+		testArea(PeakType.LORENTZIAN);
 	}
 
 	@Test
 	public void testPearsonVIINumberOfPeaksFound() {
-		Assert.assertEquals(1, fittedPearsonVII.size());
+		testSize(PeakType.PEARSON_VII);
 	}
 
 	@Test
 	public void testPearsonVIIPeakPos() {
-		checkClose(PEARSON_VII + " pos", pos, fittedPearsonVII.get(0).getPeak(0).getPosition(), delta);
+		testPeakPos(PeakType.PEARSON_VII);
 	}
 
 	@Test
 	public void testPearsonVIIFWHM() {
-		checkClose(PEARSON_VII + " fwhm", fwhm, fittedPearsonVII.get(0).getPeak(0).getFWHM(), deltaFactor.get(PEARSON_VII)[0]*delta);
+		testFWHM(PeakType.PEARSON_VII);
 	}
 
 	@Test
 	public void testPearsonVIIArea() {
-		checkClose(PEARSON_VII + " area", area, fittedPearsonVII.get(0).getPeak(0).getArea(), deltaFactor.get(PEARSON_VII)[1]*delta);
+		testArea(PeakType.PEARSON_VII);
 	}
 
 	@Test
 	public void testPseudoVoigtNumberOfPeaksFound() {
-		Assert.assertEquals(1, fittedPseudoVoigt.size());
+		testSize(PeakType.PSEUDO_VOIGT);
 	}
 
 	@Test
 	public void testPseudoVoigtPeakPos() {
-		checkClose(PSEUDO_VOIGT + " pos", pos, fittedPseudoVoigt.get(0).getPeak(0).getPosition(), delta);
+		testPeakPos(PeakType.PSEUDO_VOIGT);
 	}
 
 	@Test
 	public void testPseudoVoigtFWHM() {
-		checkClose(PSEUDO_VOIGT + " fwhm", fwhm, fittedPseudoVoigt.get(0).getPeak(0).getFWHM(), deltaFactor.get(PSEUDO_VOIGT)[0]*delta);
+		testFWHM(PeakType.PSEUDO_VOIGT);
 	}
 
 	@Test
 	public void testPseudoVoigtArea() {
-		checkClose(PSEUDO_VOIGT + " area", area, fittedPseudoVoigt.get(0).getPeak(0).getArea(), deltaFactor.get(PSEUDO_VOIGT)[1]*delta);
+		testArea(PeakType.PSEUDO_VOIGT);
+	}
+
+	@Test
+	public void testVoigtNumberOfPeaksFound() {
+		testSize(PeakType.VOIGT);
+	}
+
+	@Test
+	public void testVoigtPeakPos() {
+		testPeakPos(PeakType.VOIGT);
+	}
+
+	@Test
+	public void testVoigtFWHM() {
+		testFWHM(PeakType.VOIGT);
+	}
+
+	@Test
+	public void testVoigtArea() {
+		testArea(PeakType.VOIGT);
 	}
 
 	boolean verbose = true;
@@ -171,6 +183,6 @@ public abstract class AbstractFittingTestBase {
 		if (verbose)
 			System.out.printf("%s: %.1f%%\n", msg, 100*(expected - calculated)/delta);
 
-		Assert.assertEquals(expected, calculated, delta);
+		assertEquals(expected, calculated, delta);
 	}
 }

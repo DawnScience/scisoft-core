@@ -209,7 +209,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		spectrum.clearMetadata(AxesMetadata.class);
 		// work out energy scale (needs calibration)
 		Dataset e = makeEnergyScale(result, offset[1], energyDispersion[rn]);
-		MetadataUtils.setAxes(spectrum, e);
+		MetadataUtils.setAxes(this, spectrum, e);
 		auxData.add(spectrum.getView(true));
 		allSpectra[rn].set(sn, spectrum.getView(true));
 		return spectrum;
@@ -274,7 +274,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	
 			a = Maths.log10(h);
 			a.setName("Log10 of " + h.getName());
-			MetadataUtils.setAxes(a, bins);
+			MetadataUtils.setAxes(this, a, bins);
 			displayData.add(a);
 		}
 
@@ -402,7 +402,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			// After last image, calculate splitting levels
 			Dataset x = bins.getSlice(new Slice(-1));
 			Dataset dh = Maths.derivative(x, h, 3);
-			MetadataUtils.setAxes(dh, bins);
+			MetadataUtils.setAxes(this, dh, bins);
 			displayData.set(0, dh);
 			List<Double> z = DatasetUtils.crossings(x, dh, 0);
 			log.append("Histogram derivative zero-crossings = %s", z);
@@ -451,7 +451,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 				if (side > 0) {
 					Dataset t;
 					t = DatasetFactory.createFromList(cY);
-					MetadataUtils.setAxes(t, ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cX), "x"));
+					MetadataUtils.setAxes(this, t, ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cX), "x"));
 					t.setName("photon_positions_" + r);
 					summaryData.add(t);
 					t = DatasetFactory.createFromList(cV);
@@ -541,7 +541,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 				}
 				Dataset t;
 				t = DatasetFactory.createFromList(cY);
-				MetadataUtils.setAxes(t, ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cX), "x"));
+				MetadataUtils.setAxes(this, t, ProcessingUtils.createNamedDataset(DatasetFactory.createFromList(cX), "x"));
 				int r = n / 2;
 				if (n % 2 == 0) {
 					log.append("Saving %d non-zero events from XIP for region %d", side, r);
@@ -601,7 +601,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 				Dataset nSpectrum = normalizeSpectrum(filePath, normPath, cSpectrum);
 				if (nSpectrum != null) {
 					nSpectrum.setName("normalized_correlated_spectrum_" + r);
-					MetadataUtils.setAxes(nSpectrum, ax);
+					MetadataUtils.setAxes(this, nSpectrum, ax);
 					summaryData.add(nSpectrum);
 				}
 			}
@@ -618,7 +618,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 
 			Dataset t = DatasetFactory.createFromObject(allSingle[r]);
 			t.setName("single_photon_spectra_" + r);
-			MetadataUtils.setAxes(t, null, energies);
+			MetadataUtils.setAxes(this, t, null, energies);
 			Dataset sSpectra = t;
 			summaryData.add(t);
 
@@ -629,7 +629,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 
 			t = DatasetFactory.createFromObject(allMultiple[r]);
 			t.setName("multiple_photon_spectra_" + r);
-			MetadataUtils.setAxes(t, null, energies);
+			MetadataUtils.setAxes(this, t, null, energies);
 			Dataset mSpectra = t;
 			summaryData.add(t);
 
@@ -652,12 +652,12 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 
 			sp = sSpectra.sum(0);
 			sp.setName("single_photon_spectrum_" + r);
-			MetadataUtils.setAxes(sp, energies);
+			MetadataUtils.setAxes(this, sp, energies);
 			summaryData.add(sp);
 
 			sp = mSpectra.sum(0);
 			sp.setName("multiple_photon_spectrum_" + r);
-			MetadataUtils.setAxes(sp, energies);
+			MetadataUtils.setAxes(this, sp, energies);
 			summaryData.add(sp);
 
 			if (model.getCorrelateOption() == CORRELATE_PHOTON.USE_INTENSITY_SHIFTS) {
@@ -702,7 +702,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 				Dataset sp = DatasetFactory.createFromObject(spectrum);
 				if (sp.max().intValue() > 0) {
 					sp.setName("xip_photon_spectrum_" + r);
-					MetadataUtils.setAxes(sp, energies);
+					MetadataUtils.setAxes(this, sp, energies);
 					summaryData.add(sp);
 				}
 			}
@@ -711,7 +711,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 				Dataset sp = DatasetFactory.createFromObject(spectrum);
 				if (sp.max().intValue() > 0) {
 					sp.setName("xip_eta_photon_spectrum_" + r);
-					MetadataUtils.setAxes(sp, energies);
+					MetadataUtils.setAxes(this, sp, energies);
 					summaryData.add(sp);
 				}
 			}
@@ -783,12 +783,12 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		prefix = "correlated_" + prefix;
 		Dataset t = DatasetFactory.createFromObject(allPhotonCounts[r]);
 		t.setName(prefix + "spectra_" + r);
-		MetadataUtils.setAxes(t, null, energies);
+		MetadataUtils.setAxes(this, t, null, energies);
 		summaryData.add(t);
 
 		t = t.sum(0);
 		t.setName(prefix + "spectrum_" + r);
-		MetadataUtils.setAxes(t, energies);
+		MetadataUtils.setAxes(this, t, energies);
 		summaryData.add(t);
 	}
 
@@ -820,12 +820,12 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		Dataset sp = stack(msArray);
 		prefix = "correlated_" + prefix;
 		sp.setName(prefix + "spectra_" + r);
-		MetadataUtils.setAxes(sp, null, energies);
+		MetadataUtils.setAxes(this, sp, null, energies);
 		summaryData.add(sp);
 
 		sp = sp.sum(0);
 		sp.setName(prefix + "spectrum_" + r);
-		MetadataUtils.setAxes(sp, energies);
+		MetadataUtils.setAxes(this, sp, energies);
 		summaryData.add(sp);
 
 		shift.clear();

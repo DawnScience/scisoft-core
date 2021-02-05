@@ -11,6 +11,8 @@ package uk.ac.diamond.scisoft.analysis.processing.operations;
 
 import java.util.Arrays;
 
+import org.eclipse.dawnsci.analysis.api.processing.IOperation;
+import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -78,6 +80,10 @@ public class MetadataUtils {
 	}
 
 	public static void setAxes(ILazyDataset d, ILazyDataset... axes) {
+		setAxes(null, d, axes);
+	}
+
+	public static void setAxes(IOperation<?, ?> op, ILazyDataset d, ILazyDataset... axes) {
 		if (d.getRank() == 0) {
 			return;
 		}
@@ -99,6 +105,10 @@ public class MetadataUtils {
 			}
 			d.addMetadata(am);
 		} catch (Exception e) {
+			logger.error("Could not set axes", e);
+			if (op != null) {
+				throw new OperationException(op, "Could not set axes", e);
+			}
 		}
 	}
 }

@@ -41,6 +41,7 @@ import org.eclipse.january.metadata.IMetadata;
  * The type of the dataset is set to equal the type of the first image.
  */
 public class ImageStackLoader implements ILazyLoader {
+	private static final long serialVersionUID = 4819702059158702208L;
 
 	private StringDataset filenames;
 	private int[] fShape; // filename shape
@@ -196,10 +197,33 @@ public class ImageStackLoader implements ILazyLoader {
 	public Dataset getDataset(IMonitor mon, SliceND slice) throws IOException {
 		int[] newShape = slice.getShape();
 
-		if (ShapeUtils.calcSize(newShape) == 0)
+		int size = ShapeUtils.calcSize(newShape);
+		if (size == 0)
 			return DatasetFactory.zeros(clazz, newShape);
 
 		int iRank = iShape.length;
+		if (iRank == 0) { // workaround January bug in SliceND
+			SliceNDIterator it = new SliceNDIterator(slice);
+			Dataset result = onlyOne || size == 1 ? null : DatasetFactory.zeros(clazz, newShape);
+			int[] pos = it.getUsedPos();
+			while (it.hasNext()) {
+				Dataset image;
+				try {
+					image = DatasetUtils.sliceAndConvertLazyDataset(getDatasetFromFile(pos, mon));
+				} catch (Exception e) {
+					throw new IOException(e);
+				}
+				if (result == null) {
+					result = DatasetUtils.convertToDataset(image);
+					result.setShape(newShape);
+					break;
+				}
+				result.set(image.getObject(), pos);
+			}
+
+			return result;
+		}
+
 		int nRank = newShape.length;
 		int[] missing = new int[iRank];
 		int start = nRank - iRank;
@@ -211,6 +235,9 @@ public class ImageStackLoader implements ILazyLoader {
 
 		int[] pos = it.getUsedPos();
 		SliceND iSlice = it.getOmittedSlice();
+		if (iSlice == null) {
+			iSlice = new SliceND(iShape);
+		}
 		int[] iShape = iSlice.getShape();
 		SliceND dSlice = it.getOutputSlice();
 		while (it.hasNext()) {

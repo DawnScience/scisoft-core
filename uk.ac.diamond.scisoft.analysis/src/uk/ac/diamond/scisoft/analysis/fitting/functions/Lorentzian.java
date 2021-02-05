@@ -23,6 +23,8 @@ import org.eclipse.january.dataset.DoubleDataset;
  * x(half) is the half width at half maximum, known as gamma
  */
 public class Lorentzian extends APeak {
+	private static final long serialVersionUID = 1163306734433900662L;
+
 	private static final String NAME = "Lorentzian";
 	private static final String DESC = "A Lorentzian function also known as a Breit-Wigner or Cauchy distribution."
 			+ "\n    y(x) = A a^2 / ( a^2 + (x - pos)^2 )"

@@ -16,6 +16,8 @@ import org.eclipse.january.dataset.DoubleDataset;
  * Class which expands on the AFunction class to give the properties of a Poisson distribution.
  */
 public class Poisson extends AFunction {
+	private static final long serialVersionUID = -119528563767225302L;
+
 	private static final String NAME = "Poisson";
 	private static final String DESC = "A Poisson distribution."
 			+ "\n    y(x) = A exp(-posn) posn^x / x!"
@@ -32,6 +34,22 @@ public class Poisson extends AFunction {
 	 */
 	public Poisson() {
 		super(PARAMS);
+		getParameter(0).setLowerLimit(0);
+	}
+
+	/**
+	 * Create a Poisson distribution function which takes the two parameters required, which are
+	 * 
+	 * <pre>
+	 *     Parameter 1	- Position
+	 *     Parameter 2	- Area
+	 * </pre>
+	 * 
+	 * @param params
+	 * 
+	 */
+	public Poisson(double... params) {
+		super(params);
 		getParameter(0).setLowerLimit(0);
 	}
 

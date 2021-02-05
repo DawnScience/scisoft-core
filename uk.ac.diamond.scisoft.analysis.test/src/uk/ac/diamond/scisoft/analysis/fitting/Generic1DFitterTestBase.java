@@ -29,6 +29,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Lorentzian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PearsonVII;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.PseudoVoigt;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.Voigt;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 
@@ -53,7 +54,7 @@ public abstract class Generic1DFitterTestBase {
 	@Before
 	public void setup() {
 		FunctionFactory.registerFunctions(true, Gaussian.class, 
-				Lorentzian.class, PseudoVoigt.class, PearsonVII.class);
+				Lorentzian.class, PseudoVoigt.class, PearsonVII.class, Voigt.class);
 	}
 
 	@Test
@@ -105,6 +106,22 @@ public abstract class Generic1DFitterTestBase {
 	}
 
 	@Test
+	public void testVoigt() {
+		int i = defaultPeakPos.length;
+		int[] peakPos = new int[i];
+		for (int j = 0; j < i; j++) {
+			peakPos[j] = defaultPeakPos[j];
+		}
+		DoubleDataset testingPeaks = generateVoigt(i);
+		try {
+			fittingTest(peakPos, testingPeaks, FunctionFactory.getPeakFunctionClass("Voigt"));
+		} catch (Exception e) {
+			System.out.println(e);
+			fail("The number of generated peaks did not match the number of peaks found using " + name + ": " + e);
+		}
+	}
+
+	@Test
 	public void testLorentzianFitting() {
 		int i = defaultPeakPos.length;
 		int[] peakPos = new int[i];
@@ -116,7 +133,7 @@ public abstract class Generic1DFitterTestBase {
 			fittingTest(peakPos, testingPeaks, FunctionFactory.getPeakFunctionClass("Lorentzian"));
 		} catch (Exception e) {
 			System.out.println(e);
-			fail("The number of generated peaks did not match the number of peaks found using " + name);
+			fail("The number of generated peaks did not match the number of peaks found using " + name + ": " + e);
 		}
 	}
 
@@ -126,6 +143,18 @@ public abstract class Generic1DFitterTestBase {
 			numPeaks = defaultPeakPos.length;
 		for (int i = 0; i < numPeaks; i++) {
 			function.addFunction(new PseudoVoigt(defaultPeakPos[i] - 20, defaultPeakPos[i] + 20, defaultFWHM,
+					defaultArea));
+		}
+		DoubleDataset data = function.calculateValues(xAxis);
+		return (DoubleDataset) Maths.add(data, generateNoisePlusBackground());
+	}
+
+	private DoubleDataset generateVoigt(int numPeaks) {
+		CompositeFunction function = new CompositeFunction();
+		if (numPeaks > defaultPeakPos.length)
+			numPeaks = defaultPeakPos.length;
+		for (int i = 0; i < numPeaks; i++) {
+			function.addFunction(new Voigt(defaultPeakPos[i] - 20, defaultPeakPos[i] + 20, defaultFWHM,
 					defaultArea));
 		}
 		DoubleDataset data = function.calculateValues(xAxis);

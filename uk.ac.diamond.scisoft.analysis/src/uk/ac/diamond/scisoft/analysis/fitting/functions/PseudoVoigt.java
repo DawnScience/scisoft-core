@@ -23,6 +23,8 @@ import org.eclipse.january.dataset.Maths;
  * PseudoVoigt Class
  */
 public class PseudoVoigt extends APeak {
+	private static final long serialVersionUID = 3516539717949367670L;
+
 	private static final String NAME = "PseudoVoigt";
 	private static final String DESC = "A pseudo Voigt function defined by a linear mixture of Lorentzian and Gaussian functions"
 			+ "\nwhere l_fhwm is Lorentzian full-width at half-maximum, g_fhwm is the Gaussian full-width,"
@@ -85,24 +87,22 @@ public class PseudoVoigt extends APeak {
 	public PseudoVoigt(IdentifiedPeak peakParameters) {
 		super(PARAMS.length);
 
-		IParameter p;
-		p = getParameter(POSN);
-		double range = peakParameters.getMaxXVal()-peakParameters.getMinXVal();
-		p.setValue(peakParameters.getPos());
-		p.setLimits(peakParameters.getMinXVal(), peakParameters.getMaxXVal());
+		setParameters(peakParameters);
+		setNames();
+	}
+
+	@Override
+	public void setParameters(IdentifiedPeak peak) {
+		super.setParameters(peak);
 
 		// Lorentzian FWHM
-		p = getParameter(FWHM);
-		p.setLimits(0, range);
-		double width = peakParameters.getFWHM();
-		p.setValue(width);
+		IParameter lw = getParameter(FWHM);
+		double width = 2*lw.getValue();
+		double range = lw.getUpperLimit()/2;
+		lw.setLimits(0, range);
+		lw.setValue(width);
 
-		// Area
-		// better fitting is generally found if sigma expands into the peak.
-		p = getParameter(AREA);
-		p.setLimits(0, peakParameters.getHeight()*range*4);
-		p.setValue(peakParameters.getArea()/2);
-		
+		IParameter p;
 		// Gaussian FWHM
 		p = getParameter(FWHMG);
 		p.setLimits(0, range);
@@ -124,13 +124,18 @@ public class PseudoVoigt extends APeak {
 		super(PARAMS.length);
 
 		internalSetPeakParameters(minPos, maxPos, maxFWHM, maxArea);
+	}
+
+	@Override
+	void internalSetPeakParameters(double minPeakPosition, double maxPeakPosition, double maxFWHM, double maxArea) {
+		super.internalSetPeakParameters(minPeakPosition, maxPeakPosition, maxFWHM, maxArea);
 
 		IParameter p;
 		// Gaussian FWHM
 		p = getParameter(FWHMG);
 		p.setLimits(0.0, maxFWHM);
-		p.setValue(maxFWHM / 5.0);
-		
+		p.setValue(maxFWHM / 2.0);
+
 		// Mix
 		p = getParameter(MIX);
 		p.setValue(0.5);

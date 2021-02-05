@@ -36,6 +36,7 @@ import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 
 public class Generic1DFitter implements Serializable {
+	private static final long serialVersionUID = -8837947420560616887L;
 
 	private static int DEFAULT_SMOOTHING = 3;
 	private static double DEFAULT_ACCURACY = 0.0001;
@@ -440,13 +441,10 @@ public class Generic1DFitter implements Serializable {
 						xdata.getElementDoubleAbs(forwardPos), Math.min(backTotal, forwardTotal),
 						slicedYData.peakToPeak().doubleValue(), backPos, forwardPos, crossings);
 				if (verbose) {
-					System.out.println("Back Position = " + xdata.getElementDoubleAbs(backPos) + " Peak Pos = "
-							+ xdata.getElementDoubleAbs(i) + " Forward Position = "
-							+ xdata.getElementDoubleAbs(forwardPos) + ". Y value at back pos = "
-							+ ydata.getElementDoubleAbs(backPos) + " Y value at forward pos = "
-							+ ydata.getElementDoubleAbs(forwardPos) + " height " + slicedYData.max() + " Area "
-							+ Math.min(backTotal, forwardTotal) + " sum of area variables "
-							+ (backTotal + forwardTotal));
+					System.out.printf("Back (%g, %g); Forward (%g, %g); Peak pos %g, height %g, area %g, sum of area %g\n",
+							xdata.getElementDoubleAbs(backPos), ydata.getElementDoubleAbs(backPos),
+							xdata.getElementDoubleAbs(forwardPos), ydata.getElementDoubleAbs(forwardPos),
+							xdata.getElementDoubleAbs(i), slicedYData.max(), Math.min(backTotal, forwardTotal), backTotal + forwardTotal);
 				}
 				peaks.add(newPeak);
 			}

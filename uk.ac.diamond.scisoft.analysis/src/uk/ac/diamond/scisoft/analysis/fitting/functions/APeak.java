@@ -21,6 +21,8 @@ import org.eclipse.dawnsci.analysis.api.fitting.functions.IPeak;
  * calcCachedParameters method.
  */
 public abstract class APeak extends AFunction implements IPeak {
+	private static final long serialVersionUID = -6553930392044609940L;
+
 	protected static final String[] PARAM_NAMES = new String[]{"posn", "fwhm", "area"};
 	protected static final String PEAK_DESC = "\nA peak function is described by"
 			+ "\n    'posn' is the position of maximum of the peak,"
@@ -35,6 +37,7 @@ public abstract class APeak extends AFunction implements IPeak {
 
 	public APeak(int n) {
 		super(n);
+		setNames();
 	}
 
 	/**
@@ -88,22 +91,26 @@ public abstract class APeak extends AFunction implements IPeak {
 		setNames();
 	}
 
-	protected void setParameters(IdentifiedPeak peakParameters) {
-		double range = peakParameters.getMaxXVal() - peakParameters.getMinXVal();
-		double maxArea = peakParameters.getHeight() * range * 4;
+	/**
+	 * Set parameters based on peak
+	 * @param peak
+	 */
+	public void setParameters(IdentifiedPeak peak) {
+		double range = peak.getMaxXVal() - peak.getMinXVal();
+		double maxArea = peak.getHeight() * range * 4;
 
 		IParameter p;
 		p = getParameter(POSN);
-		p.setValue(peakParameters.getPos());
-		p.setLimits(peakParameters.getMinXVal(), peakParameters.getMaxXVal());
+		p.setValue(peak.getPos());
+		p.setLimits(peak.getMinXVal(), peak.getMaxXVal());
 
 		p = getParameter(FWHM);
 		p.setLimits(0, range*2);
-		p.setValue(peakParameters.getFWHM() / 2);
+		p.setValue(peak.getFWHM() / 2);
 		
 		p = getParameter(AREA);
 		p.setLimits(-maxArea, maxArea);
-		p.setValue(peakParameters.getArea() / 2); // area better fitting is generally found if sigma expands into the peak.
+		p.setValue(peak.getArea() / 2); // area better fitting is generally found if sigma expands into the peak.
 	}
 
 	/**
@@ -126,7 +133,7 @@ public abstract class APeak extends AFunction implements IPeak {
 		internalSetPeakParameters(minPeakPosition, maxPeakPosition, maxFWHM, maxArea);
 	}
 
-	protected void internalSetPeakParameters(double minPeakPosition, double maxPeakPosition, double maxFWHM, double maxArea) {
+	void internalSetPeakParameters(double minPeakPosition, double maxPeakPosition, double maxFWHM, double maxArea) {
 		IParameter p;
 		p = getParameter(POSN);
 		p.setValue((maxPeakPosition + minPeakPosition) / 2.0);

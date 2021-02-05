@@ -144,9 +144,27 @@ public class ColumnTextLoader extends AbstractFileLoader {
 					headings[i] = Utils.doubleUnquote(h);
 				}
 			}
+			makeUnique(headings);
 		}
 
 		return l;
+	}
+
+	private static void makeUnique(String[] hdgs) {
+		int l = hdgs.length;
+		for (int i = 0; i < l; i++) {
+			String h = hdgs[i];
+			if (h != null) {
+				int k = 1;
+				for (int j = i + 1; j < l; j++) {
+					String t = hdgs[j];
+					while (h.equals(t)) {
+						t = String.format("%s_%d", h, k++);
+					}
+					hdgs[j] = t;
+				}
+			}
+		}
 	}
 
 	private void createMetadata(DataHolder dh) {

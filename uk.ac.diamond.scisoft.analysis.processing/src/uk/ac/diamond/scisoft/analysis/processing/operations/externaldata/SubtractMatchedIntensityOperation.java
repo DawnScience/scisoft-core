@@ -108,13 +108,15 @@ public class SubtractMatchedIntensityOperation extends AbstractOperation<Subtrac
 		Dataset reducedInternalDataSlice = reducedInternalData.get(1).getSlice(new Slice(internalIndexValues[0], internalIndexValues[1], 1));
 		
 		// First divide a by b in order to work out the difference factor and then take the mean for good stats
-		Dataset differenceFactorDataset = Maths.divide(reducedExternalDataSlice, reducedInternalDataSlice);
-		Dataset meanDifferenceFactor = DatasetFactory.createFromObject(differenceFactorDataset.mean(null), 1);
+		Dataset differenceFactorDataset = Maths.divide(reducedInternalDataSlice, reducedExternalDataSlice);
 
 		// Then do the multiplication and subtraction
-		Dataset subtractedFrame = ErrorPropagationUtils.subtractWithUncertainty(processedInternalData, ErrorPropagationUtils.divideWithUncertainty(processedExternalData, meanDifferenceFactor));
-		copyMetadata(input, subtractedFrame);
+		Double scalingFactor = differenceFactorDataset.mean(0, null).getDouble() * model.getScaling();
+		Dataset datasetToSubtract = Maths.multiply(processedExternalData, scalingFactor);
 		
+		Dataset subtractedFrame = ErrorPropagationUtils.subtractWithUncertainty(processedInternalData, datasetToSubtract);
+		copyMetadata(input, subtractedFrame);
+				
 		// Before returning the result
 		return new OperationData(subtractedFrame);
 	}

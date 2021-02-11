@@ -133,6 +133,20 @@ public interface NXaperture extends NXobject {
 	
 
 	/**
+	 * location and shape of each blade
+	 * 
+	 * @return  the value.
+	 */
+	public NXgeometry getBlade_geometry();
+	
+	/**
+	 * location and shape of each blade
+	 * 
+	 * @param blade_geometryGroup the blade_geometryGroup
+	 */
+	public void setBlade_geometry(NXgeometry blade_geometryGroup);
+
+	/**
 	 * Absorbing material of the aperture
 	 * 
 	 * @return  the value.

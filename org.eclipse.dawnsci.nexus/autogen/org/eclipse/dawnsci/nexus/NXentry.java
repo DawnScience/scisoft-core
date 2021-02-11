@@ -36,6 +36,8 @@ public interface NXentry extends NXsubentry {
 	public static final String NX_COLLECTION_IDENTIFIER = "collection_identifier";
 	public static final String NX_COLLECTION_DESCRIPTION = "collection_description";
 	public static final String NX_ENTRY_IDENTIFIER = "entry_identifier";
+	public static final String NX_ENTRY_IDENTIFIER_UUID = "entry_identifier_uuid";
+	public static final String NX_ENTRY_IDENTIFIER_UUID_ATTRIBUTE_VERSION = "version";
 	public static final String NX_FEATURES = "features";
 	public static final String NX_DEFINITION = "definition";
 	public static final String NX_DEFINITION_ATTRIBUTE_VERSION = "version";
@@ -475,6 +477,48 @@ public interface NXentry extends NXsubentry {
 	 * @param entry_identifier the entry_identifier
 	 */
 	public DataNode setEntry_identifierScalar(String entry_identifierValue);
+
+	/**
+	 * UUID identifier for the measurement.
+	 * 
+	 * @return  the value.
+	 */
+	public IDataset getEntry_identifier_uuid();
+	
+	/**
+	 * UUID identifier for the measurement.
+	 * 
+	 * @param entry_identifier_uuidDataset the entry_identifier_uuidDataset
+	 */
+	public DataNode setEntry_identifier_uuid(IDataset entry_identifier_uuidDataset);
+
+	/**
+	 * UUID identifier for the measurement.
+	 * 
+	 * @return  the value.
+	 */
+	public String getEntry_identifier_uuidScalar();
+
+	/**
+	 * UUID identifier for the measurement.
+	 * 
+	 * @param entry_identifier_uuid the entry_identifier_uuid
+	 */
+	public DataNode setEntry_identifier_uuidScalar(String entry_identifier_uuidValue);
+
+	/**
+	 * Version of UUID used
+	 * 
+	 * @return  the value.
+	 */
+	public String getEntry_identifier_uuidAttributeVersion();
+	
+	/**
+	 * Version of UUID used
+	 * 
+	 * @param versionValue the versionValue
+	 */
+	public void setEntry_identifier_uuidAttributeVersion(String versionValue);
 
 	/**
 	 * Reserved for future use by NIAC.

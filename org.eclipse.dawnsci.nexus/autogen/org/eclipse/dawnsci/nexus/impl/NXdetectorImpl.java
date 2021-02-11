@@ -782,6 +782,86 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
+	public IDataset getReal_time() {
+		return getDataset(NX_REAL_TIME);
+	}
+
+	@Override
+	public Number getReal_timeScalar() {
+		return getNumber(NX_REAL_TIME);
+	}
+
+	@Override
+	public DataNode setReal_time(IDataset real_timeDataset) {
+		return setDataset(NX_REAL_TIME, real_timeDataset);
+	}
+
+	@Override
+	public DataNode setReal_timeScalar(Number real_timeValue) {
+		return setField(NX_REAL_TIME, real_timeValue);
+	}
+
+	@Override
+	public IDataset getStart_time() {
+		return getDataset(NX_START_TIME);
+	}
+
+	@Override
+	public Double getStart_timeScalar() {
+		return getDouble(NX_START_TIME);
+	}
+
+	@Override
+	public DataNode setStart_time(IDataset start_timeDataset) {
+		return setDataset(NX_START_TIME, start_timeDataset);
+	}
+
+	@Override
+	public DataNode setStart_timeScalar(Double start_timeValue) {
+		return setField(NX_START_TIME, start_timeValue);
+	}
+
+	@Override
+	public Date getStart_timeAttributeStart() {
+		return getAttrDate(NX_START_TIME, NX_START_TIME_ATTRIBUTE_START);
+	}
+
+	@Override
+	public void setStart_timeAttributeStart(Date startValue) {
+		setAttribute(NX_START_TIME, NX_START_TIME_ATTRIBUTE_START, startValue);
+	}
+
+	@Override
+	public IDataset getStop_time() {
+		return getDataset(NX_STOP_TIME);
+	}
+
+	@Override
+	public Double getStop_timeScalar() {
+		return getDouble(NX_STOP_TIME);
+	}
+
+	@Override
+	public DataNode setStop_time(IDataset stop_timeDataset) {
+		return setDataset(NX_STOP_TIME, stop_timeDataset);
+	}
+
+	@Override
+	public DataNode setStop_timeScalar(Double stop_timeValue) {
+		return setField(NX_STOP_TIME, stop_timeValue);
+	}
+
+	@Override
+	public Date getStop_timeAttributeStart() {
+		return getAttrDate(NX_STOP_TIME, NX_STOP_TIME_ATTRIBUTE_START);
+	}
+
+	@Override
+	public void setStop_timeAttributeStart(Date startValue) {
+		setAttribute(NX_STOP_TIME, NX_STOP_TIME_ATTRIBUTE_START, startValue);
+	}
+
+	@Override
 	public IDataset getCalibration_date() {
 		return getDataset(NX_CALIBRATION_DATE);
 	}

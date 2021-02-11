@@ -256,6 +256,36 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	}
 
 	@Override
+	public IDataset getEntry_identifier_uuid() {
+		return getDataset(NX_ENTRY_IDENTIFIER_UUID);
+	}
+
+	@Override
+	public String getEntry_identifier_uuidScalar() {
+		return getString(NX_ENTRY_IDENTIFIER_UUID);
+	}
+
+	@Override
+	public DataNode setEntry_identifier_uuid(IDataset entry_identifier_uuidDataset) {
+		return setDataset(NX_ENTRY_IDENTIFIER_UUID, entry_identifier_uuidDataset);
+	}
+
+	@Override
+	public DataNode setEntry_identifier_uuidScalar(String entry_identifier_uuidValue) {
+		return setString(NX_ENTRY_IDENTIFIER_UUID, entry_identifier_uuidValue);
+	}
+
+	@Override
+	public String getEntry_identifier_uuidAttributeVersion() {
+		return getAttrString(NX_ENTRY_IDENTIFIER_UUID, NX_ENTRY_IDENTIFIER_UUID_ATTRIBUTE_VERSION);
+	}
+
+	@Override
+	public void setEntry_identifier_uuidAttributeVersion(String versionValue) {
+		setAttribute(NX_ENTRY_IDENTIFIER_UUID, NX_ENTRY_IDENTIFIER_UUID_ATTRIBUTE_VERSION, versionValue);
+	}
+
+	@Override
 	public IDataset getFeatures() {
 		return getDataset(NX_FEATURES);
 	}

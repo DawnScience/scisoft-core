@@ -170,11 +170,9 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 			validateGroup_SASentry_SASnote(collection);
 		}
 
-		// validate unnamed child group of type NXdata (possibly multiple) and canSAS_class SAStransmission_spectrum
-		validateUnnamedGroupOccurrences(group, NXdata.class, false, true);
-		final Map<String, NXdata> allSAStransmission_spectrum = filterBycanSASClass(group.getAllData(), "SAStransmission_spectrum");
-		for (final NXdata data : allSAStransmission_spectrum.values()) {
-			validateGroup_SASentry_SAStransmission_spectrum(data);
+		// validate optional child group 'TRANSMISSION_SPECTRUM' of type NXdata and canSAS_class SAStransmission_spectrum
+		if (group.getData("TRANSMISSION_SPECTRUM") != null) {
+			validateGroup_SASentry_TRANSMISSION_SPECTRUM(group.getData("TRANSMISSION_SPECTRUM"));
 		}
 	}
 
@@ -928,11 +926,11 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 	}
 
 	/**
-	 * Validate optional unnamed group of type NXdata.
+	 * Validate optional group 'TRANSMISSION_SPECTRUM' of type NXdata.
 	 */
-	private void validateGroup_SASentry_SAStransmission_spectrum(final NXdata group) {
+	private void validateGroup_SASentry_TRANSMISSION_SPECTRUM(final NXdata group) {
 		// validate that the group is not null
-		if (!(validateGroupNotNull(null, NXdata.class, group))) return;
+		if (!(validateGroupNotNull("TRANSMISSION_SPECTRUM", NXdata.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate attribute 'canSAS_class'

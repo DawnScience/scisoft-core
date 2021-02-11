@@ -91,6 +91,17 @@ public class NXapertureImpl extends NXobjectImpl implements NXaperture {
 	}
 
 	@Override
+	public NXgeometry getBlade_geometry() {
+		// dataNodeName = NX_BLADE_GEOMETRY
+		return getChild("blade_geometry", NXgeometry.class);
+	}
+
+	@Override
+	public void setBlade_geometry(NXgeometry blade_geometryGroup) {
+		putChild("blade_geometry", blade_geometryGroup);
+	}
+
+	@Override
 	public IDataset getMaterial() {
 		return getDataset(NX_MATERIAL);
 	}

@@ -78,6 +78,11 @@ public interface NXdetector extends NXobject {
 	public static final String NX_INPUT = "input";
 	public static final String NX_INPUT_ATTRIBUTE_LOCAL_NAME = "local_name";
 	public static final String NX_TYPE = "type";
+	public static final String NX_REAL_TIME = "real_time";
+	public static final String NX_START_TIME = "start_time";
+	public static final String NX_START_TIME_ATTRIBUTE_START = "start";
+	public static final String NX_STOP_TIME = "stop_time";
+	public static final String NX_STOP_TIME_ATTRIBUTE_START = "start";
 	public static final String NX_CALIBRATION_DATE = "calibration_date";
 	public static final String NX_LAYOUT = "layout";
 	public static final String NX_COUNT_TIME = "count_time";
@@ -1657,6 +1662,198 @@ public interface NXdetector extends NXobject {
 	 * @param efficiencyGroup the efficiencyGroup
 	 */
 	public void setEfficiency(NXdata efficiencyGroup);
+
+	/**
+	 * Real-time of the exposure (use this if exposure time varies for
+	 * each array element, otherwise use ``count_time`` field).
+	 * Most often there is a single real time value that is constant across
+	 * an entire image frame. In such cases, only a 1-D array is needed.
+	 * But there are detectors in which the real time
+	 * changes per pixel. In that case, more than one dimension is needed. Therefore
+	 * the rank of this field should be less than or equal to (detector rank + 1).
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_TIME
+	 * <b>Dimensions:</b> 1: np; 2: i; 3: j;
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public IDataset getReal_time();
+	
+	/**
+	 * Real-time of the exposure (use this if exposure time varies for
+	 * each array element, otherwise use ``count_time`` field).
+	 * Most often there is a single real time value that is constant across
+	 * an entire image frame. In such cases, only a 1-D array is needed.
+	 * But there are detectors in which the real time
+	 * changes per pixel. In that case, more than one dimension is needed. Therefore
+	 * the rank of this field should be less than or equal to (detector rank + 1).
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_TIME
+	 * <b>Dimensions:</b> 1: np; 2: i; 3: j;
+	 * </p>
+	 * 
+	 * @param real_timeDataset the real_timeDataset
+	 */
+	public DataNode setReal_time(IDataset real_timeDataset);
+
+	/**
+	 * Real-time of the exposure (use this if exposure time varies for
+	 * each array element, otherwise use ``count_time`` field).
+	 * Most often there is a single real time value that is constant across
+	 * an entire image frame. In such cases, only a 1-D array is needed.
+	 * But there are detectors in which the real time
+	 * changes per pixel. In that case, more than one dimension is needed. Therefore
+	 * the rank of this field should be less than or equal to (detector rank + 1).
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_TIME
+	 * <b>Dimensions:</b> 1: np; 2: i; 3: j;
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public Number getReal_timeScalar();
+
+	/**
+	 * Real-time of the exposure (use this if exposure time varies for
+	 * each array element, otherwise use ``count_time`` field).
+	 * Most often there is a single real time value that is constant across
+	 * an entire image frame. In such cases, only a 1-D array is needed.
+	 * But there are detectors in which the real time
+	 * changes per pixel. In that case, more than one dimension is needed. Therefore
+	 * the rank of this field should be less than or equal to (detector rank + 1).
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_TIME
+	 * <b>Dimensions:</b> 1: np; 2: i; 3: j;
+	 * </p>
+	 * 
+	 * @param real_time the real_time
+	 */
+	public DataNode setReal_timeScalar(Number real_timeValue);
+
+	/**
+	 * start time for each frame, with the ``start`` attribute as absolute reference
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * <b>Dimensions:</b> 1: np;
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public IDataset getStart_time();
+	
+	/**
+	 * start time for each frame, with the ``start`` attribute as absolute reference
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * <b>Dimensions:</b> 1: np;
+	 * </p>
+	 * 
+	 * @param start_timeDataset the start_timeDataset
+	 */
+	public DataNode setStart_time(IDataset start_timeDataset);
+
+	/**
+	 * start time for each frame, with the ``start`` attribute as absolute reference
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * <b>Dimensions:</b> 1: np;
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public Double getStart_timeScalar();
+
+	/**
+	 * start time for each frame, with the ``start`` attribute as absolute reference
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * <b>Dimensions:</b> 1: np;
+	 * </p>
+	 * 
+	 * @param start_time the start_time
+	 */
+	public DataNode setStart_timeScalar(Double start_timeValue);
+
+	/**
+	 * 
+	 * @return  the value.
+	 */
+	public Date getStart_timeAttributeStart();
+	
+	/**
+	 * 
+	 * @param startValue the startValue
+	 */
+	public void setStart_timeAttributeStart(Date startValue);
+
+	/**
+	 * stop time for each frame, with the ``start`` attribute as absolute reference
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * <b>Dimensions:</b> 1: np;
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public IDataset getStop_time();
+	
+	/**
+	 * stop time for each frame, with the ``start`` attribute as absolute reference
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * <b>Dimensions:</b> 1: np;
+	 * </p>
+	 * 
+	 * @param stop_timeDataset the stop_timeDataset
+	 */
+	public DataNode setStop_time(IDataset stop_timeDataset);
+
+	/**
+	 * stop time for each frame, with the ``start`` attribute as absolute reference
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * <b>Dimensions:</b> 1: np;
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public Double getStop_timeScalar();
+
+	/**
+	 * stop time for each frame, with the ``start`` attribute as absolute reference
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * <b>Dimensions:</b> 1: np;
+	 * </p>
+	 * 
+	 * @param stop_time the stop_time
+	 */
+	public DataNode setStop_timeScalar(Double stop_timeValue);
+
+	/**
+	 * 
+	 * @return  the value.
+	 */
+	public Date getStop_timeAttributeStart();
+	
+	/**
+	 * 
+	 * @param startValue the startValue
+	 */
+	public void setStop_timeAttributeStart(Date startValue);
 
 	/**
 	 * date of last calibration (geometry and/or efficiency) measurements

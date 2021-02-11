@@ -40,7 +40,7 @@ public class DefaultNexusFileBuilder implements NexusFileBuilder {
 
 	private final NXroot nxRoot;
 	
-	private Map<String, NexusEntryBuilder> entries = new HashMap<>();
+	private Map<String, NexusEntryBuilder> entryBuilders = new HashMap<>();
 	
 	private boolean fileCreated = false;
 
@@ -90,7 +90,7 @@ public class DefaultNexusFileBuilder implements NexusFileBuilder {
 			entryName = DEFAULT_ENTRY_NAME;
 		}
 		
-		if (entries.containsKey(entryName)) {
+		if (entryBuilders.containsKey(entryName)) {
 			throw new NexusException("An entry with the name " + entryName + " already exists");
 		}
 		
@@ -98,7 +98,7 @@ public class DefaultNexusFileBuilder implements NexusFileBuilder {
 		nxRoot.setEntry(entryName, entry);
 
 		DefaultNexusEntryBuilder entryModel = new DefaultNexusEntryBuilder(entryName, entry);
-		entries.put(entryName, entryModel);
+		entryBuilders.put(entryName, entryModel);
 		
 		return entryModel;
 	}
@@ -107,15 +107,29 @@ public class DefaultNexusFileBuilder implements NexusFileBuilder {
 	 * @see org.eclipse.dawnsci.nexus.builder.NexusFileBuilder#validate()
 	 */
 	@Override
-	public ValidationReport validate() {
-		if (entries.isEmpty()) return new ValidationReport();
-		if (entries.size() == 1) {
-			return entries.values().iterator().next().validate();
+	public ValidationReport validate() throws NexusException {
+		if (entryBuilders.isEmpty()) return new ValidationReport();
+		if (entryBuilders.size() == 1 && nxRoot.getAllEntry().size() == 1) {
+			// normal case, a single entry built by an entry builder
+			return entryBuilders.values().iterator().next().validate();
 		}
 		
-		final ValidationReport overallReport = new ValidationReport();
-		entries.values().stream().map(NexusEntryBuilder::validate).forEach(overallReport::merge);
-		return overallReport;
+		nxRoot.getAllEntry();
+
+		final ValidationReport validationReport = new ValidationReport();
+		final Map<String, NXentry> allEntries = nxRoot.getAllEntry();
+		for (String entryName : allEntries.keySet()) {
+			final NexusEntryBuilder entryBuilder;
+			if (entryBuilders.containsKey(entryName)) {
+				entryBuilder = entryBuilders.get(entryName);
+			} else {
+				// a nexus template may have added an entry without a builder, so create one in order to validate the entry
+				entryBuilder = new DefaultNexusEntryBuilder(entryName, allEntries.get(entryName));
+			}
+			validationReport.merge(entryBuilder.validate());
+		}
+		
+		return validationReport;
 	}
 
 	/* (non-Javadoc)

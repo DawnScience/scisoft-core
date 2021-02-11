@@ -19,6 +19,7 @@
 package org.eclipse.dawnsci.nexus.scan.impl;
 
 import static java.util.stream.Collectors.toList;
+import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.SYSTEM_PROPERTY_NAME_VALIDATE_NEXUS;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,6 +64,7 @@ import org.eclipse.dawnsci.nexus.scan.NexusScanModel;
 import org.eclipse.dawnsci.nexus.scan.ServiceHolder;
 import org.eclipse.dawnsci.nexus.template.NexusTemplate;
 import org.eclipse.dawnsci.nexus.template.NexusTemplateService;
+import org.eclipse.dawnsci.nexus.validation.ValidationReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +76,7 @@ class NexusScanFileImpl implements NexusScanFile {
 	private static final Logger logger = LoggerFactory.getLogger(NexusScanFileImpl.class);
 
 	private static final Map<NexusBaseClass, ScanRole> DEFAULT_SCAN_ROLES;
-
+	
 	static {
 		DEFAULT_SCAN_ROLES = new HashMap<>();// not an enum map as most base classes not mapped
 		DEFAULT_SCAN_ROLES.put(NexusBaseClass.NX_DETECTOR, ScanRole.DETECTOR);
@@ -162,12 +164,23 @@ class NexusScanFileImpl implements NexusScanFile {
 
 		try {
 			createEntry(fileBuilder);
-			applyTemplates(fileBuilder.getNexusTree());
+			applyTemplates(fileBuilder.getNexusTree());			
+			validate(fileBuilder);
+			
 			// create the file from the builder and open it
 			nexusBuilderFile = fileBuilder.createFile(async, useSwmr);
 			nexusBuilderFile.openToWrite();
 		} catch (NexusException e) {
 			throw new NexusException("Cannot create nexus file", e);
+		}
+	}
+	
+	private void validate(NexusFileBuilder fileBuilder) throws NexusException {
+		if (Boolean.getBoolean(SYSTEM_PROPERTY_NAME_VALIDATE_NEXUS)) {
+			final ValidationReport validationReport = fileBuilder.validate();
+			if (validationReport.isError()) {
+				throw new NexusException("The nexus file contains one or more invalid entries (or subentries) according to their application definitions. See log for details.");
+			}
 		}
 	}
 

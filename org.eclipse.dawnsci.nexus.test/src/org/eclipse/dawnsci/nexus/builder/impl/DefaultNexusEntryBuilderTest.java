@@ -33,6 +33,8 @@ import org.eclipse.dawnsci.nexus.NXinstrument;
 import org.eclipse.dawnsci.nexus.NXpositioner;
 import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.NXsource;
+import org.eclipse.dawnsci.nexus.NXsubentry;
+import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;
 import org.eclipse.dawnsci.nexus.NexusBaseClass;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
@@ -41,9 +43,10 @@ import org.eclipse.dawnsci.nexus.builder.CustomNexusEntryModification;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryModification;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
+import org.eclipse.dawnsci.nexus.builder.NexusObjectWrapper;
 import org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder;
+import org.eclipse.dawnsci.nexus.validation.ValidationReport;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class DefaultNexusEntryBuilderTest {
@@ -410,9 +413,28 @@ public class DefaultNexusEntryBuilderTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testValidate() throws Exception {
-		// TODO validation is not currently implemented 
+		// set the definition field to be 'NXtomo'. The entry will be invalid as the required groups are missing 
+		nxEntry.setDefinitionScalar(NexusApplicationDefinition.NX_TOMO.toString());
+		final ValidationReport validationReport = entryBuilder.validate();
+		assertThat(validationReport, is(notNullValue()));
+		assertThat(validationReport.isOk(), is(false));
+	}
+	
+	@Test
+	public void testValidateSubentry() throws Exception {
+		entryBuilder.addDefaultGroups();
+		
+		final NXsubentry tomoSubentry = NexusNodeFactory.createNXsubentry();
+		tomoSubentry.setDefinitionScalar(NexusApplicationDefinition.NX_TOMO.toString());
+		
+		// set the definition field to be 'NXtomo'. The entry will be invalid as the required groups are missing
+		final NexusObjectProvider<NXsubentry> subEntryProvider = new NexusObjectWrapper<>("tomo", tomoSubentry);
+		entryBuilder.add(subEntryProvider);
+		
+		final ValidationReport validationReport = entryBuilder.validate();
+		assertThat(validationReport, is(notNullValue()));
+		assertThat(validationReport.isOk(), is(false));
 	}
 
 }

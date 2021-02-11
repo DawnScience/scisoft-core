@@ -13,6 +13,7 @@
 package org.eclipse.dawnsci.nexus.builder;
 
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
+import org.eclipse.dawnsci.nexus.NXentry;
 import org.eclipse.dawnsci.nexus.NXroot;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.impl.NXrootImpl;
@@ -62,12 +63,12 @@ public interface NexusFileBuilder {
 	public NexusEntryBuilder newEntry(String entryName) throws NexusException;
 	
 	/**
-	 * Validates all entries within the NeXus file.
-	 * @return 
-	 * @throws NexusValidationException if one or more of the entries in the nexus file
-	 *   are invalid.
+	 * Validates any {@link NXentry}s in this file that declare application definitions
+	 * @return a report detailing any validation problems 
+	 * @throws NexusException if an error occurred validating the nexus file, note that this
+	 * 		exception is not thrown simply due to an invalid entry
 	 */
-	public ValidationReport validate();
+	public ValidationReport validate() throws NexusException;
 
 	/**
 	 * Creates the NeXus file with the content as configured with this builder.

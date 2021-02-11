@@ -136,11 +136,14 @@ public interface NexusEntryBuilder {
 	public DataNode getDataNode(String relativePath) throws NexusException;
 	
 	/**
-	 * Validates the contained {@link NXentry} according to its application definition, if one is defined,
-	 * (see {@link NXentry#getDefinitionScalar()}). Any {@link NXsubentry}
+	 * Validates the contained {@link NXentry} and any {@link NXsubentry}s within the entry  
+	 * according to their declared application definition, as determined by the fields
+	 * {@link NXentry#getDefinitionScalar()} and {@link NXsubentry#getDefinitionScalar()}.
 	 * @return a report detailing any validation problems 
+	 * @throws NexusException if an error occurred validating the entry, note: this exception
+	 * 		will not be thrown simply due to an invalid entry
 	 */
-	public ValidationReport validate();
+	public ValidationReport validate() throws NexusException;
 
 	/**
 	 * Returns the name of the wrapped {@link NXentry} within the root node

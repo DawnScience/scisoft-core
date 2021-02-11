@@ -22,7 +22,7 @@ public class ValidationReport {
 	private final List<ValidationReportEntry> validationEntries = new ArrayList<>();
 	
 	public void merge(ValidationReport report) {
-		validationEntries.addAll(getValidationEntries());
+		validationEntries.addAll(report.getValidationEntries());
 	}
 	
 	public List<ValidationReportEntry> getValidationEntries() {

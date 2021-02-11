@@ -1,11 +1,20 @@
 package org.eclipse.dawnsci.nexus.scan;
 
 import org.eclipse.dawnsci.nexus.NXentry;
+import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 
 public class NexusScanConstants {
 	
 	/**
+	 * If this system property is set to <code>true</code>, nexus files wil be validated at the
+	 * start of the scan.
+	 */
+	public static final String SYSTEM_PROPERTY_NAME_VALIDATE_NEXUS = "validateNexusFile";
+	
+	/**
 	 * Property name for the path within an external (linked) nexus file to the unique keys dataset.
+	 * This property belongs to the NexusObjectProvider,
+	 * @see {@link NexusObjectProvider#getPropertyValue(String)}
 	 */
 	public static final String PROPERTY_NAME_UNIQUE_KEYS_PATH = "uniqueKeys";
 	
@@ -18,6 +27,8 @@ public class NexusScanConstants {
 	 * This can be the case if device in the scan performs an inner scan, i.e. a malcolm device, or a
 	 * detector writes data while a position in the scan is being performed that required processing before
 	 * the position is completed, e.g. a detector that writes multiple frames for each scan position.
+	 * This property belongs to the NexusObjectProvider,
+	 * @see {@link NexusObjectProvider#getPropertyValue(String)}
 	 */
 	public static final String PROPERTY_NAME_SUPPRESS_GLOBAL_UNIQUE_KEYS = "suppressGlobalUniqueKeys";
 	

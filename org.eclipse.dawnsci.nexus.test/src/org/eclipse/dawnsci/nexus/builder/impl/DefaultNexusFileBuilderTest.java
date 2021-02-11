@@ -31,7 +31,6 @@ import org.eclipse.dawnsci.nexus.builder.NexusFileBuilder;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
 import org.eclipse.dawnsci.nexus.validation.ValidationReport;
-import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -147,7 +146,18 @@ public class DefaultNexusFileBuilderTest {
 	
 	@Test
 	public void testValidate() throws Exception {
-		// TODO validation is not currently supported
+		NXroot nxRoot = nexusFileBuilder.getNXroot();
+		assertThat(nxRoot.getChildren(NXentry.class).keySet(), empty());
+
+		NexusEntryBuilder entryBuilder = nexusFileBuilder.newEntry();
+		assertThat(nxRoot.getChildren(NXentry.class).keySet(), hasSize(1));
+		assertThat(entryBuilder.getNXentry(), notNullValue(NXentry.class));
+		final NXentry entry = entryBuilder.getNXentry();
+		entry.setDefinitionScalar(NexusApplicationDefinition.NX_TOMO.toString());
+		
+		final ValidationReport validationReport = nexusFileBuilder.validate();
+		assertThat(validationReport, is(notNullValue()));
+		assertThat(validationReport.isOk(), is(false));
 	}
 	
 }

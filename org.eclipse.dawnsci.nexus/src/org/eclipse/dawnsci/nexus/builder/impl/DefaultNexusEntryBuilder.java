@@ -26,8 +26,6 @@ import org.eclipse.dawnsci.nexus.NXentry;
 import org.eclipse.dawnsci.nexus.NXinstrument;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NXsample;
-import org.eclipse.dawnsci.nexus.NXuser;
-import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;
 import org.eclipse.dawnsci.nexus.NexusBaseClass;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
@@ -37,8 +35,6 @@ import org.eclipse.dawnsci.nexus.builder.NexusEntryModification;
 import org.eclipse.dawnsci.nexus.builder.NexusMetadataProvider;
 import org.eclipse.dawnsci.nexus.builder.NexusMetadataProvider.MetadataEntry;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
-import org.eclipse.dawnsci.nexus.builder.appdef.NexusApplicationBuilder;
-import org.eclipse.dawnsci.nexus.builder.appdef.impl.DefaultApplicationFactory;
 import org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder;
 import org.eclipse.dawnsci.nexus.builder.data.impl.DefaultNexusDataBuilder;
 import org.eclipse.dawnsci.nexus.validation.ValidationReport;
@@ -47,8 +43,6 @@ import org.eclipse.dawnsci.nexus.validation.ValidationReport;
  * Default implementation of {@link NexusEntryBuilder}
  */
 public class DefaultNexusEntryBuilder implements NexusEntryBuilder {
-
-	private static final String APPDEF_SUBENTRY_SUFFIX = "_entry";
 
 	private final String entryName;
 	
@@ -59,8 +53,6 @@ public class DefaultNexusEntryBuilder implements NexusEntryBuilder {
 	private NXsample nxSample = null;
 
 	private List<NXobject> defaultGroups = null;
-
-	private final List<NexusApplicationBuilder> applications = new ArrayList<>();
 
 	/**
 	 * Creates a new {@link DefaultNexusEntryBuilder}. This constructor should only be called
@@ -119,31 +111,6 @@ public class DefaultNexusEntryBuilder implements NexusEntryBuilder {
 		final NXdata nxData = NexusNodeFactory.createNXdata();
 		nxEntry.setData(name, nxData);
 		return new DefaultNexusDataBuilder(this, nxData);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder#newApplication(org.eclipse.dawnsci.nexus.NexusApplicationDefinition)
-	 */
-	@Override
-	public NexusApplicationBuilder newApplication(NexusApplicationDefinition applicationDefinition) throws NexusException {
-		final String appDefName = applicationDefinition.name();
-		final String subentryName = appDefName.substring(appDefName.indexOf('_') + 1).toLowerCase() + APPDEF_SUBENTRY_SUFFIX;
-
-		return newApplication(subentryName, applicationDefinition);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder#newApplication(java.lang.String, org.eclipse.dawnsci.nexus.NexusApplicationDefinition)
-	 */
-	@Override
-	public NexusApplicationBuilder newApplication(String subentryName,
-			NexusApplicationDefinition applicationDefinition)
-			throws NexusException {
-		final NexusApplicationBuilder appBuilder = DefaultApplicationFactory.getApplicationDefinitionFactory().newApplicationDefinitionModel(
-				this, applicationDefinition, subentryName);
-		applications.add(appBuilder);
-
-		return appBuilder;
 	}
 
 	/* (non-Javadoc)
@@ -263,14 +230,7 @@ public class DefaultNexusEntryBuilder implements NexusEntryBuilder {
 	 */
 	@Override
 	public ValidationReport validate() {
-		if (applications.isEmpty()) return new ValidationReport();
-		if (applications.size() == 1) {
-			return applications.get(0).validate();
-		}
-
-		final ValidationReport overallReport = new ValidationReport();
-		applications.stream().map(NexusApplicationBuilder::validate).forEach(overallReport::merge);
-		return overallReport;
+		throw new UnsupportedOperationException("validation is not currently supported");
 	}
 
 	/**

@@ -33,7 +33,6 @@ import org.eclipse.dawnsci.nexus.NXinstrument;
 import org.eclipse.dawnsci.nexus.NXpositioner;
 import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.NXsource;
-import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;
 import org.eclipse.dawnsci.nexus.NexusBaseClass;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
@@ -42,10 +41,9 @@ import org.eclipse.dawnsci.nexus.builder.CustomNexusEntryModification;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryModification;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
-import org.eclipse.dawnsci.nexus.builder.appdef.NexusApplicationBuilder;
 import org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder;
-import org.eclipse.dawnsci.nexus.validation.ValidationReport;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class DefaultNexusEntryBuilderTest {
@@ -392,32 +390,6 @@ public class DefaultNexusEntryBuilderTest {
 	}
 	
 	@Test
-	public void testNewApplication() throws Exception {
-		entryBuilder.addDefaultGroups();
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
-		assertThat(nxEntry.getData(), is(nullValue()));
-		
-		NexusApplicationBuilder app = entryBuilder.newApplication(NexusApplicationDefinition.NX_TOMO);
-		
-		assertThat(app, is(notNullValue()));
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
-		assertThat(app.getNXsubentry(), is(sameInstance(nxEntry.getSubentry("tomo_entry"))));
-	}
-
-	@Test
-	public void testNewApplication_subentryName() throws Exception {
-		entryBuilder.addDefaultGroups();
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
-		assertThat(nxEntry.getData(), is(nullValue()));
-		
-		NexusApplicationBuilder app = entryBuilder.newApplication("appdef", NexusApplicationDefinition.NX_TOMO);
-		
-		assertThat(app, is(notNullValue()));
-		assertThat(nxEntry.getNumberOfGroupNodes(), is(3));
-		assertThat(app.getNXsubentry(), is(sameInstance(nxEntry.getSubentry("appdef"))));
-	}
-	
-	@Test
 	public void testGetDataNode() throws Exception {
 		entryBuilder.addDefaultGroups();
 		nxEntry.setTitleScalar("My Entry");
@@ -438,12 +410,9 @@ public class DefaultNexusEntryBuilderTest {
 	}
 	
 	@Test
+	@Ignore
 	public void testValidate() throws Exception {
-		// Note: this method used to use Mockito to validate that each subentry was validated,
-		// however the plugin dependency on mockito appears to prevent plugin tests from running
-		entryBuilder.newApplication("subentry1", NexusApplicationDefinition.NX_TOMO);
-		final ValidationReport validationReport = entryBuilder.validate();
-		assertThat(validationReport.isOk(), is(false));
+		// TODO validation is not currently implemented 
 	}
 
 }

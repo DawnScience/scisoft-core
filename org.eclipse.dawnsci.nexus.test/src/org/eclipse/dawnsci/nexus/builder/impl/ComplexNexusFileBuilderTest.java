@@ -20,7 +20,6 @@ import org.eclipse.dawnsci.nexus.NXdetector;
 import org.eclipse.dawnsci.nexus.NXentry;
 import org.eclipse.dawnsci.nexus.NXpositioner;
 import org.eclipse.dawnsci.nexus.NXsource;
-import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;
 import org.eclipse.dawnsci.nexus.NexusBaseClass;
 import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
@@ -29,7 +28,6 @@ import org.eclipse.dawnsci.nexus.builder.AbstractNexusObjectProvider;
 import org.eclipse.dawnsci.nexus.builder.CustomNexusEntryModification;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryModification;
-import org.eclipse.dawnsci.nexus.builder.appdef.impl.TomoApplicationBuilder;
 import org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
@@ -265,23 +263,6 @@ public class ComplexNexusFileBuilderTest extends AbstractNexusFileBuilderTestBas
 //		dataBuilder.addDataDevice(detectorAxisDevice);
 	}
 	
-	protected void addApplicationDefinitions(NexusEntryBuilder nexusEntryModel) throws NexusException {
-		TomoApplicationBuilder appDefModel =
-				(TomoApplicationBuilder) nexusEntryModel.newApplication(NexusApplicationDefinition.NX_TOMO);
-		appDefModel.addDefaultGroups();
-		appDefModel.setTitle(nexusEntryModel.getDataNode(NXentry.NX_TITLE));
-		appDefModel.setControl(ioncIPositioner);
-		appDefModel.setSource(testSource);
-		appDefModel.setDetector(testDetector);
-		appDefModel.setSampleName("test sample");
-		appDefModel.setRotationAngle(tomoScanDevicePositioner);
-		appDefModel.setXTranslation(nexusEntryModel.getDataNode("before_scan/sample_stage/ss1_samplex"));
-		appDefModel.setYTranslation(nexusEntryModel.getDataNode("before_scan/sample_stage/ss1_sampley"));
-		appDefModel.setZTranslation(nexusEntryModel.getDataNode("before_scan/sample_stage/ss1_samplez"));
-		
-		appDefModel.newData(); 
-	}
-
 	@Override
 	protected String getTestClassName() {
 		return ComplexNexusFileBuilderTest.class.getCanonicalName();

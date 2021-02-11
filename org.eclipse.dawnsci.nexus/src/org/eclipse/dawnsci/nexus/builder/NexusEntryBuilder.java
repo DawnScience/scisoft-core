@@ -22,10 +22,8 @@ import org.eclipse.dawnsci.nexus.NXentry;
 import org.eclipse.dawnsci.nexus.NXinstrument;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NXsubentry;
-import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
-import org.eclipse.dawnsci.nexus.builder.appdef.NexusApplicationBuilder;
 import org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder;
 import org.eclipse.dawnsci.nexus.impl.NXentryImpl;
 import org.eclipse.dawnsci.nexus.validation.ValidationReport;
@@ -129,25 +127,6 @@ public interface NexusEntryBuilder {
 	public void setInstrumentName(String instrumentName);
 	
 	/**
-	 * Creates a new application wrapping an {@link NXsubentry} object within this entry.
-	 * @param applicationDefinition application definition enumeration constant
-	 * @return new {@link NexusApplicationBuilder}
-	 * @throws NexusException if the application could not be created for any reason
-	 */
-	public NexusApplicationBuilder newApplication(
-			NexusApplicationDefinition applicationDefinition) throws NexusException;
-	
-	/**
-	 * Creates a new application,
-	 * wrapping an {@link NXsubentry} with the given name.
-	 * @param applicationDefinition application definition enumeration constant
-	 * @return new {@link NexusApplicationBuilder}
-	 * @throws NexusException if the application could not be created for any reason
-	 */
-	public NexusApplicationBuilder newApplication(String entryName,
-			NexusApplicationDefinition applicationDefinition) throws NexusException;
-	
-	/**
 	 * Returns the data node with the given path relative to the wrapped {@link NXentryImpl}
 	 * @param relativePath
 	 * @return data node  the data node at the given relative path
@@ -157,9 +136,9 @@ public interface NexusEntryBuilder {
 	public DataNode getDataNode(String relativePath) throws NexusException;
 	
 	/**
-	 * Validate any {@link NXsubentry}s within this entry according to their
-	 * application definitions.
-	 * @return a report detailing any validaton problems 
+	 * Validates the contained {@link NXentry} according to its application definition, if one is defined,
+	 * (see {@link NXentry#getDefinitionScalar()}). Any {@link NXsubentry}
+	 * @return a report detailing any validation problems 
 	 */
 	public ValidationReport validate();
 

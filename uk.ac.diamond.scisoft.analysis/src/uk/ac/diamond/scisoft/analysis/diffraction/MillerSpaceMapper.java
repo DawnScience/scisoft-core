@@ -314,8 +314,8 @@ public class MillerSpaceMapper {
 				sMax[i]++;
 				vShape[i] = sMax[i] - sMin[i];
 			}
-			logger.warn("so now start = {} for shape = {}", Arrays.toString(qMin), Arrays.toString(vShape));
-			map = (DoubleDataset) map.getSlice(sMin, sMax, null);
+			logger.warn("so now start = {} for shape = {}", Arrays.toString(vMin), Arrays.toString(vShape));
+			map = (DoubleDataset) map.getSliceView(sMin, sMax, null);
 		}
 		return map;
 	}
@@ -1303,7 +1303,8 @@ public class MillerSpaceMapper {
 					vShape[i] = sMax[i] - sMin[i];
 				}
 				logger.warn("so now start = {} for shape = {}", Arrays.toString(vMin), Arrays.toString(vShape));
-				map = (DoubleDataset) map.getSlice(sMin, sMax, null);
+				map = (DoubleDataset) map.getSliceView(sMin, sMax, null);
+				weight = (DoubleDataset) weight.getSliceView(sMin, sMax, null);
 			}
 
 			if (findImageBB) {

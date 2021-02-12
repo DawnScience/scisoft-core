@@ -704,6 +704,10 @@
 		<xsl:value-of select="$fileHeaderComment"/>
 		<xsl:text>
 package org.eclipse.dawnsci.nexus;
+
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.dawnsci.nexus.validation.*;
 		
 /**
  * Enumeration of NeXus application definitions.
@@ -715,13 +719,36 @@ public enum NexusApplicationDefinition {
 		<xsl:text>
 	private String name;
 	
-	private NexusApplicationDefinition(String name) {
+	private Class&lt;? extends NexusApplicationValidator&gt; validatorClass; 
+	
+	private NexusApplicationDefinition(String name, Class&lt;? extends NexusApplicationValidator&gt; validatorClass) {
 		this.name = name;
+		this.validatorClass = validatorClass;
 	}
 	
 	@Override
 	public String toString() {
 		return name;
+	}
+	
+	/**
+	 * Returns the {@link NexusApplicationDefinition} constant for the given name string.
+	 * @param name
+	 * @return
+	 */
+	public static NexusApplicationDefinition fromName(String name) {
+		final String enumName = (name.substring(0, 2) + '_' + name.substring(2)).toUpperCase();
+		return valueOf(enumName);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public &lt;T extends NexusApplicationValidator&gt; T createNexusValidator() throws NexusException {
+		try {
+			return (T) validatorClass.getDeclaredConstructor().newInstance();
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			throw new NexusException("Could not create nexus validator class " + validatorClass.getSimpleName(), e);
+		}
 	}
 	
 }		
@@ -731,8 +758,10 @@ public enum NexusApplicationDefinition {
 
 <!-- Template to produce the enum value for a nexus application definition -->
 <xsl:template mode="appdef-enum" match="nx:definition">
+	<xsl:variable name="validatorClassName" select="@name || 'Validator'"/>
 	<xsl:text>	</xsl:text><xsl:value-of select="dawnsci:appdef-enum-name(@name)"/>
-	<xsl:text>("</xsl:text><xsl:value-of select="@name"/><xsl:text>")</xsl:text>
+	<xsl:text>("</xsl:text><xsl:value-of select="@name"/><xsl:text>", </xsl:text>
+	<xsl:value-of select="$validatorClassName"/><xsl:text>.class)</xsl:text>
 	<xsl:value-of select="if (position()=last()) then ';' else ','"/><xsl:text>&#10;</xsl:text>
 </xsl:template>
 

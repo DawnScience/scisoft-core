@@ -79,14 +79,14 @@ public class NexusFileStressTest {
 	}
 
 	/**
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@Test(expected=NullPointerException.class)
 	public void testMakeGroupNPE2() throws Exception {
 		NexusFile file = null;
 		try {
 			file = NexusTestUtils.createNexusFile(filename);
-			file.getGroup(null, "entry1", null, true);
+			file.getGroup(null, null, null, true);
 		}
 		finally {
 			if (file != null) file.close();
@@ -109,14 +109,14 @@ public class NexusFileStressTest {
 	}
 
 	/**
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	@Test(expected=NullPointerException.class)
 	public void testOpenGroupNPE2() throws Exception {
 		NexusFile file = null;
 		try {
 			file = NexusTestUtils.createNexusFile(filename);
-			file.getGroup(null, "entry1", null, false);
+			file.getGroup(null, null, null, false);
 		}
 		finally {
 			if (file != null) file.close();

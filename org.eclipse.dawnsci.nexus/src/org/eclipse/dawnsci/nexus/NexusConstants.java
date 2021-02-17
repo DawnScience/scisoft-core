@@ -35,12 +35,15 @@ public class NexusConstants {
 	public static final String CITE = "NXcite";
 	public static final String COLLECTION = "NXcollection";
 	public static final String COLLIMATOR = "NXcollimator";
+	public static final String CONTAINER = "NXcontainer";
 	public static final String CRYSTAL = "NXcrystal";
+	public static final String CSG = "NXcsg";
 	public static final String DATA = "NXdata";
 	public static final String DETECTORGROUP = "NXdetector_group";
 	public static final String DETECTORMODULE = "NXdetector_module";
 	public static final String DETECTOR = "NXdetector";
 	public static final String DISKCHOPPER = "NXdisk_chopper";
+	public static final String ELECTROSTATICKICKER = "NXelectro_kicker";
 	public static final String ENTRY = "NXentry";
 	public static final String ENVIRONMENT = "NXenvironment";
 	public static final String EVENTDATA = "NXevent_data";
@@ -59,32 +62,47 @@ public class NexusConstants {
 	public static final String INSERTIONDEVICE = "NXinsertion_device";
 	public static final String INSTRUMENT = "NXinstrument";
 	public static final String LOG = "NXlog";
+	public static final String MAGNETICKICKER = "NXmagnetic_kicker";
 	public static final String MIRROR = "NXmirror";
 	public static final String MODERATOR = "NXmoderator";
 	public static final String MONITOR = "NXmonitor";
 	public static final String MONOCHROMATOR = "NXmonochromator";
 	public static final String NOTE = "NXnote";
 	public static final String OBJECT = "NXobject";
+	public static final String OFFGEOTMETRY = "NXoff_geometry";
+	@Deprecated
 	public static final String ORIENTATION = "NXorientation";
 	public static final String PARAMETERS = "NXparameters";
+	public static final String PDB = "NXpdb";
 	public static final String PINHOLE = "NXpinhole";
 	public static final String POLARIZER = "NXpolarizer";
 	public static final String POSITIONER = "NXpositioner";
 	public static final String PROCESS = "NXprocess";
+	public static final String QUADRIC = "NXquadric";
+	public static final String QUADRUPOLE = "NXquadrupole";
 	public static final String REFLECTIONS = "NXreflections";
 	public static final String ROOT = "NXroot";
 	public static final String SAMPLECOMPONENT = "NXsample_component";
 	public static final String SAMPLE = "NXsample";
 	public static final String SENSOR = "NXsensor";
+	public static final String SEPARATOR = "NXseparator";
+	@Deprecated
 	public static final String SHAPE = "NXshape";
 	public static final String SLIT = "NXslit";
+	public static final String SNSEVENT = "NXsnsevent";
+	public static final String SNSHISTO = "NXsnshisto";
+	public static final String SOLENOIDMAGNET = "NXsolenoid_magnet";
+	public static final String SOLIDGEOMETRY = "NXsolid_geometry";
 	public static final String SOURCE = "NXsource";
+	public static final String SPINROTATOR = "NXspin_rotator";
 	public static final String SUBENTRY = "NXsubentry";
 	public static final String TRANSFORMATIONS = "NXtransformations";
+	@Deprecated
 	public static final String TRANSLATION = "NXtranslation";
 	public static final String USER = "NXuser";
 	public static final String VELOCITYSELECTOR = "NXvelocity_selector";
 	public static final String XRAYLENS = "NXxraylens";
+
 	public static final String DEFAULT = "default";
 
 	/**

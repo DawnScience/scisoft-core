@@ -256,7 +256,7 @@ public class NexusUtils {
 	public static DataNode writeDouble(NexusFile file, GroupNode group, String name, double value, String units) throws NexusException {
 		DataNode node = write(file, group, name, value);
 		if (units != null) {
-			writeStringAttribute(file, node,NexusConstants.UNITS, units);
+			writeStringAttribute(file, node, NexusConstants.UNITS, units);
 		}
 		return node;
 	}
@@ -905,11 +905,24 @@ public class NexusUtils {
 	/**
 	 * Create NeXus class
 	 * @param nxClass
-	 * @return class
+	 * @return NeXus class
 	 */
 	public static GroupNode createNXclass(String nxClass) {
 		GroupNode gn = TreeFactory.createGroupNode(1);
 		gn.addAttribute(createNXclassAttribute(nxClass));
 		return gn;
+	}
+
+	/**
+	 * Write NeXus class in file
+	 * @param file
+	 * @param group (can be null for root)
+	 * @param name name of NeXus class
+	 * @param nxClass name of class from {@link NexusConstants}
+	 * @return NeXus class
+	 * @throws NexusException
+	 */
+	public static GroupNode writeNXclass(NexusFile file, GroupNode group, String name, String nxClass) throws NexusException {
+		return file.getGroup(group, name, nxClass, true);
 	}
 }

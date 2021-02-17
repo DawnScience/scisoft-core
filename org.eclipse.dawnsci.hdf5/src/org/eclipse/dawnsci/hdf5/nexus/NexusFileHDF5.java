@@ -308,7 +308,7 @@ public class NexusFileHDF5 implements NexusFile {
 
 	@Override
 	public String getPath(Node node) {
-		return TreeUtils.getPath(tree,  node);
+		return TreeUtils.getPath(tree, node);
 	}
 
 	@Override
@@ -377,10 +377,10 @@ public class NexusFileHDF5 implements NexusFile {
 			String nxClass,
 			boolean createPathIfNecessary) throws NexusException {
 		String path = getPath(group);
-		if (path == null) {
-			throw new NullPointerException("Group path must not be null");
+		if (name == null) {
+			throw new NullPointerException("Name must not be null");
 		}
-		return getGroup(NexusUtils.addToAugmentPath(path,  name,  nxClass), createPathIfNecessary);
+		return getGroup(NexusUtils.addToAugmentPath(path, name, nxClass), createPathIfNecessary);
 	}
 
 	private void createGroupNode(long oid, GroupNode group, String path, String name, String nxClass)
@@ -1628,7 +1628,7 @@ public class NexusFileHDF5 implements NexusFile {
 	private String findExternalLink(String path) throws NexusException {
 		if (Tree.ROOT.equals(path)) return null;
 		ParsedNode[] parsedNodes = parseAugmentedPath(path);
-		StringBuilder currentPath = new StringBuilder(Tree.ROOT);
+		StringBuilder currentPath = new StringBuilder();
 		try {
 			for (ParsedNode node : parsedNodes) {
 				if (node.name.isEmpty()) {

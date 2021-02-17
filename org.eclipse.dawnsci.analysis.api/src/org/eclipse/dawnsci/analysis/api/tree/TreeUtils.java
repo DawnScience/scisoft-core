@@ -34,10 +34,13 @@ public class TreeUtils {
 	/**
 	 * Get the path which ends with {@value Node#SEPARATOR} if it refers to a group
 	 * @param tree
-	 * @param node
+	 * @param node (can be null for root node)
 	 * @return path to node, return null if not found
 	 */
 	public static String getPath(Tree tree, Node node) {
+		if (node == null) {
+			return Tree.ROOT;
+		}
 		GroupNode g = tree.getGroupNode();
 		if (g == node) {
 			return Tree.ROOT;

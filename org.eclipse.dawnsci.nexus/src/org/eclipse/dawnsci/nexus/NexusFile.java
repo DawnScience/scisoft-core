@@ -125,7 +125,7 @@ public interface NexusFile extends AutoCloseable {
 
 	/**
 	 * Get group in group with given name and create path if necessary
-	 * @param group
+	 * @param group (can be null for root)
 	 * @param name
 	 * @param nxClass
 	 * @param createPathIfNecessary

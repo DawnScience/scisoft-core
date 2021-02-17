@@ -1,6 +1,9 @@
 package org.eclipse.dawnsci.nexus.scan;
 
+import java.time.format.DateTimeFormatter;
+
 import org.eclipse.dawnsci.nexus.NXentry;
+import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 
 public class NexusScanConstants {
@@ -50,6 +53,9 @@ public class NexusScanConstants {
 	
 	public static final String ATTRIBUTE_NAME_UNITS = "units";
 	public static final String ATTRIBUTE_VALUE_MILLISECONDS = "ms";
+	
+	// The date format used for writing timestamps
+	public static final DateTimeFormatter MILLISECOND_DATE_FORMAT = NexusConstants.MILLISECOND_DATE_FORMAT;
 	
 	private NexusScanConstants() {
 		// private constructor to prevent instantiation

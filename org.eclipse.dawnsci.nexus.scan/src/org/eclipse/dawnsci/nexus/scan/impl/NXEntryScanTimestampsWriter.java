@@ -19,10 +19,11 @@
 package org.eclipse.dawnsci.nexus.scan.impl;
 
 import static java.time.temporal.ChronoUnit.MILLIS;
+import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.MILLISECOND_DATE_FORMAT;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
@@ -44,8 +45,6 @@ import org.slf4j.LoggerFactory;
 public class NXEntryScanTimestampsWriter {
 	
 	private static final Logger logger = LoggerFactory.getLogger(NXEntryScanTimestampsWriter.class);
-	// Always format with 3 decimal places of Millis, prevent truncating by default formatters being unreadable by DateDatasetImpl
-	private static final DateTimeFormatter MILLISECOND_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
 	
 	private static final int[] SINGLE_SHAPE = new int[] { 1 };
 	private static final int[] START_SHAPE = new int[] { 0 };

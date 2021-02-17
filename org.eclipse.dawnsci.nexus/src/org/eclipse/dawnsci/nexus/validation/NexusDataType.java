@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.nexus.validation;
 
+import static org.eclipse.dawnsci.nexus.NexusConstants.MILLISECOND_DATE_FORMAT;
+
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -56,7 +59,30 @@ public enum NexusDataType {
 	/**
 	 * Alias for ISO8601. ISO 8601 date and time representation (http://www.w3.org/TR/NOTE-datetime)
 	 */
-	NX_DATE_TIME(Date.class),
+	NX_DATE_TIME(String.class, Date.class) {
+
+		@Override
+		public boolean validate(IDataset dataset) {
+			if (!super.validate(dataset)) return false;
+			String dateStr = null;
+			// only validate a single value
+			if (dataset.getRank() == 0) {
+				dateStr = dataset.getString();
+			} else if (dataset.getRank() == 1 && dataset.getSize() == 1) {
+				dateStr = dataset.getString(0);
+			} else {
+				return true;
+			}
+			
+			try {
+				MILLISECOND_DATE_FORMAT.parse(dateStr);
+				return true;
+			} catch (DateTimeParseException e) {
+				return false;
+			}
+		}
+		
+	},
 
 	/**
 	 * any representation of a floating point number
@@ -93,7 +119,7 @@ public enum NexusDataType {
 	}
 
 	/**
-	 * Validate that the given dataset is valid according to this {@link NexusDataType}
+	 * Validate that the given dataset is valid according to thdataset.getElementClass();is {@link NexusDataType}
 	 * @param fieldName
 	 * @param dataset
 	 */

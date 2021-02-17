@@ -9,6 +9,8 @@
 
 package org.eclipse.dawnsci.nexus;
 
+import java.time.format.DateTimeFormatter;
+
 /**
  * Constants used to deal with NeXus files
  */
@@ -104,6 +106,12 @@ public class NexusConstants {
 	public static final String XRAYLENS = "NXxraylens";
 
 	public static final String DEFAULT = "default";
+	
+	/**
+	 * A {@link DateTimeFormatter} that formats dates as in ISO8601 format, always using
+	 * three digits for milliseconds.  
+	 */
+	public static final DateTimeFormatter MILLISECOND_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
 	/**
 	 * NXdata default data name

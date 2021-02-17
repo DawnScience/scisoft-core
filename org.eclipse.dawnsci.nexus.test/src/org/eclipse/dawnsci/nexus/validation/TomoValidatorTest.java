@@ -88,7 +88,7 @@ public class TomoValidatorTest {
 	@Test
 	public void testValidate_ok() throws Exception {
 		final NXentry entry = createNexusTree();
-		final ValidationReport report = validator.validate(entry);
+		validator.validate(entry);
 		assertThat(validator.getValidationReport().isOk(), is(true));
 	}
 	

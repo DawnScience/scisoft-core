@@ -20,6 +20,8 @@ import uk.ac.diamond.scisoft.analysis.utils.Faddeeva;
  * Class for a Voigt profile which is a Lorentzian convolved with a Gaussian
  */
 public class Voigt extends APeak {
+	private static final long serialVersionUID = 3888055012387345459L;
+
 	private static final String NAME = "Voigt";
 	private static final String DESC = "A Voigt profile which is a Lorentzian convolved with a Gaussian function."
 			+ "\n    y(x) = Convolve(Lorentzian(x; posn, l_fwhm, area), Gaussian(x; 0, g_fwhm, 1)"
@@ -30,6 +32,7 @@ public class Voigt extends APeak {
 	private static final double[] PARAMS = new double[] {0, 1, 1, 1};
 
 	private static final int FWHMG = AREA + 1;
+
 	public Voigt() {
 		this(PARAMS);
 	}
@@ -57,6 +60,29 @@ public class Voigt extends APeak {
 		getParameter(FWHMG).setLowerLimit(0.0);
 	}
 
+	/**
+	 * @param minPos
+	 * @param maxPos
+	 * @param maxFWHM
+	 * @param maxArea
+	 */
+	public Voigt(double minPos, double maxPos, double maxFWHM, double maxArea) {
+		super(PARAMS.length);
+
+		internalSetPeakParameters(minPos, maxPos, maxFWHM, maxArea);
+	}
+
+	@Override
+	void internalSetPeakParameters(double minPeakPosition, double maxPeakPosition, double maxFWHM, double maxArea) {
+		super.internalSetPeakParameters(minPeakPosition, maxPeakPosition, maxFWHM, maxArea);
+
+		IParameter p;
+		// Gaussian FWHM
+		p = getParameter(FWHMG);
+		p.setLimits(0.0, maxFWHM);
+		p.setValue(maxFWHM / 2.0);
+	}
+
 	public Voigt(IParameter... params) {
 		super(PARAMS.length);
 		if (params.length != PARAMS.length) { 
@@ -66,6 +92,31 @@ public class Voigt extends APeak {
 		setParameters(params);
 		getParameter(FWHM).setLowerLimit(0.0);
 		getParameter(FWHMG).setLowerLimit(0.0);
+	}
+
+	public Voigt(IdentifiedPeak peakParameters) {
+		super(PARAMS.length);
+
+		setParameters(peakParameters);
+		setNames();
+	}
+
+	@Override
+	public void setParameters(IdentifiedPeak peak) {
+		super.setParameters(peak);
+
+		// Lorentzian FWHM
+		IParameter lw = getParameter(FWHM);
+		double width = 2*lw.getValue();
+		double range = lw.getUpperLimit()/2;
+		lw.setLimits(0, range);
+		lw.setValue(width);
+
+		IParameter p;
+		// Gaussian FWHM
+		p = getParameter(FWHMG);
+		p.setLimits(0, range);
+		p.setValue(width);
 	}
 
 	@Override

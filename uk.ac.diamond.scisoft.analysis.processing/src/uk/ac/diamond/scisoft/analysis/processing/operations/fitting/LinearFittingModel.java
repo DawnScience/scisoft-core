@@ -35,4 +35,18 @@ public class LinearFittingModel extends AbstractOperationModel {
 	public void setFittingRange(double [] fittingRange) {
 		firePropertyChange("fittingRange", this.fittingRange, this.fittingRange = fittingRange);
 	}
+
+	@OperationModelField(label = "Transpose coordinates", description = "Determines whether to fit y vs x or x vs y")
+	private boolean transpose = false;
+
+	/**
+	 * @return true if fit to x vs y
+	 */
+	public boolean getTranspose() {
+		return transpose;
+	}
+
+	public void setTranspose(boolean transpose) {
+		firePropertyChange("transpose", this.transpose, this.transpose = transpose);
+	}
 }

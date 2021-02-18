@@ -886,7 +886,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		System.err.println("Fitted histo peak: " + dpdf + " in " + slice);
 		if (plot) {
 			IDataset t = dpdf.calculateValues(dx);
-			MetadataUtils.setAxes(t, dx);
+			MetadataUtils.setAxes(this, t, dx);
 			displayData.add(t);
 		}
 		return dpdf;
@@ -943,9 +943,9 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 			auxData.add(ProcessingUtils.createNamedDataset(pdf.getParameterValue(1), "pdf_fwhm"));
 			auxData.add(ProcessingUtils.createNamedDataset(pdf.getParameterValue(2), "pdf_area"));
 			auxData.add(ProcessingUtils.createNamedDataset(residual, "pdf_residual"));
-			MetadataUtils.setAxes(h, x);
+			MetadataUtils.setAxes(this, h, x);
 			auxData.add(ProcessingUtils.createNamedDataset(h, "histogram"));
-			MetadataUtils.setAxes(fit, x);
+			MetadataUtils.setAxes(this, fit, x);
 			auxData.add(ProcessingUtils.createNamedDataset(fit, "histogram_fit"));
 
 			od.getData().addMetadata(new FitMetadataImpl(SubtractFittedBackgroundOperation.class).setFitFunction(pdf));
@@ -971,18 +971,16 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		return od;
 	}
 
-	
-
 	// make display datasets here to be recorded in file
-	public static void setDisplayData(OperationDataForDisplay od, Dataset x, Dataset h, Dataset fit) {
+	private void setDisplayData(OperationDataForDisplay od, Dataset x, Dataset h, Dataset fit) {
 		Dataset a = Maths.log10(h);
 		a.setName("Log10 of " + h.getName());
 		Dataset b = Maths.log10(fit);
 		b.setName("Log10 of " + fit.getName());
 		// clamp values to above zero for nicer display 
 		b.setByBoolean(0, Comparisons.lessThan(b, 0));
-		MetadataUtils.setAxes(a, x);
-		MetadataUtils.setAxes(b, x);
+		MetadataUtils.setAxes(this, a, x);
+		MetadataUtils.setAxes(this, b, x);
 		od.setDisplayData(a, b);
 	}
 

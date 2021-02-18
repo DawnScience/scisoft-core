@@ -278,16 +278,16 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 				Dataset d;
 				if (n > 1) {
 					d = ProcessingUtils.createNamedDataset((Serializable) slopes, LINE_GRADIENT_FORMAT, r);
-					MetadataUtils.setAxes(d, posData);
+					MetadataUtils.setAxes(this, d, posData);
 					summaryData.add(d);
 					d = ProcessingUtils.createNamedDataset((Serializable) intercepts, LINE_INTERCEPT_FORMAT, r);
-					MetadataUtils.setAxes(d, posData);
+					MetadataUtils.setAxes(this, d, posData);
 					summaryData.add(d);
 				}
 				posData = DatasetFactory.createFromList(allPosition[r]);
 				posData.setName(positionName);
 				d = ProcessingUtils.createNamedDataset((Serializable) allResidual[r], LINE_RESIDUAL_FORMAT, r);
-				MetadataUtils.setAxes(d, posData);
+				MetadataUtils.setAxes(this, d, posData);
 				summaryData.add(d);
 
 				if (positionName.contains("energy")) {
@@ -459,7 +459,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		}
 
 		if (coords != null) {
-			MetadataUtils.setAxes(coords[1], coords[0]);
+			MetadataUtils.setAxes(this, coords[1], coords[0]);
 			coords[0].setName(fName + "_row");
 			coords[1].setName(fName + "_col");
 			summaryData.add(coords[1]);
@@ -557,16 +557,16 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		int pmin = fwhm.argMin(true);
 		log.append("Minimal FWHM at slope of %g ", slopes.getDouble(pmin));
 		fwhm.setName("tilted_profile_width_" + r);
-		MetadataUtils.setAxes(fwhm, slopes);
+		MetadataUtils.setAxes(this, fwhm, slopes);
 		auxData.add(fwhm.getView(true));
 		if (r == 0) {
 			displayData.add(fwhm);
 		}
 		summed.setName("tilted_profile_" + r);
-		MetadataUtils.setAxes(summed, slopes);
+		MetadataUtils.setAxes(this, summed, slopes);
 		auxData.add(summed);
 		fitted.setName("tilted_profile_fit_" + r);
-		MetadataUtils.setAxes(fitted, slopes);
+		MetadataUtils.setAxes(this, fitted, slopes);
 		auxData.add(fitted);
 
 		// crop limits to turning point of minimum
@@ -639,7 +639,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		fwhm.remove(fwhm.size() - 1);
 		Dataset widths = DatasetFactory.createFromList(fwhm);
 		widths.setName("fwhm");
-		MetadataUtils.setAxes(widths, DatasetFactory.createFromList(slopes));
+		MetadataUtils.setAxes(this, widths, DatasetFactory.createFromList(slopes));
 		displayData.add(widths);
 		slope.setLimits(min, max);
 		slope.setValue(s);
@@ -817,7 +817,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		String name = "intercept_fit_" + r;
 		energy.setName("Energy");
 		intercept.setName("intercept_" + r);
-		MetadataUtils.setAxes(intercept, energy);
+		MetadataUtils.setAxes(this, intercept, energy);
 
 		double ePTP = energy.peakToPeak().doubleValue();
 		if (ePTP == 0) {
@@ -944,22 +944,22 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			if (gAxis != null) {
 				gAxis.setName("Pixels");
 			}
-			MetadataUtils.setAxes(gSpectrum, ge, gAxis);
+			MetadataUtils.setAxes(this, gSpectrum, ge, gAxis);
 			summaryData.add(gSpectrum);
 			gSpectrumFit.setName(ESF_PREFIX + r);
-			MetadataUtils.setAxes(gSpectrumFit, ge, gAxis);
+			MetadataUtils.setAxes(this, gSpectrumFit, ge, gAxis);
 			summaryData.add(gSpectrumFit);
 			Dataset gp = DatasetFactory.createFromList(gPosn);
 			gp.setName(ESPOSN_PREFIX + r);
-			MetadataUtils.setAxes(gp, ge);
+			MetadataUtils.setAxes(this, gp, ge);
 			summaryData.add(gp);
 			Dataset gf = DatasetFactory.createFromList(gFWHM);
 			gf.setName(ESFWHM_PREFIX + r);
-			MetadataUtils.setAxes(gf, ge);
+			MetadataUtils.setAxes(this, gf, ge);
 			summaryData.add(gf);
 			Dataset ga = DatasetFactory.createFromList(gArea);
 			ga.setName(ESAREA_PREFIX + r);
-			MetadataUtils.setAxes(ga, ge);
+			MetadataUtils.setAxes(this, ga, ge);
 			summaryData.add(ga);
 
 			List<Double> gHeight = new ArrayList<>();
@@ -968,7 +968,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			}
 			Dataset gh = DatasetFactory.createFromList(gHeight);
 			gh.setName(ESHEIGHT_PREFIX + r);
-			MetadataUtils.setAxes(gh, ge);
+			MetadataUtils.setAxes(this, gh, ge);
 			summaryData.add(gh);
 		}
 		if (bPosition.size() > 0) {
@@ -976,7 +976,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			Dataset be = DatasetFactory.createFromList(bPosition);
 			be.setName(positionName);
 			bSpectrum.setName("bad_elastic_spectrum_" + r);
-			MetadataUtils.setAxes(bSpectrum, be);
+			MetadataUtils.setAxes(this, bSpectrum, be);
 			summaryData.add(bSpectrum);
 		}
 
@@ -986,7 +986,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	private Dataset generateFitForDisplay(IFunction f, Dataset x, Dataset d, String name) {
 		Dataset fit = DatasetUtils.convertToDataset(f.calculateValues(x));
 		fit.setName(name);
-		MetadataUtils.setAxes(fit, x);
+		MetadataUtils.setAxes(this, fit, x);
 		return fit.getView(false);
 	}
 
@@ -1143,7 +1143,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			allStrips = allStrips.getSliceView(null, new Slice(diff, null));
 		}
 		allStrips.setName("subprofile_" + r);
-		MetadataUtils.setAxes(allStrips, null, xSlice);
+		MetadataUtils.setAxes(this, allStrips, null, xSlice);
 		auxData.add(allStrips);
 
 		return new Dataset[] {row, col};

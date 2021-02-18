@@ -152,6 +152,7 @@ public class LoaderFactory {
 		registerLoaderWithException("dat", ExtendedSRSLoader2.class);
 		registerLoaderWithException("dat", SRSLoader.class);
 		registerLoaderWithException("dat", UViewDatLoader.class);
+		registerLoaderWithException("dat", ColumnTextLoader.class);
 		registerLoaderWithException("csv", CSVLoader.class);
 		registerLoaderWithException("rgb", RGBTextLoader.class);
 		registerLoaderWithException("txt", DatLoader.class);
@@ -779,7 +780,7 @@ public class LoaderFactory {
 			final Constructor<?> singleString = clazz.getConstructor(String.class);
 			loader = (AbstractFileLoader) singleString.newInstance(path);
 		} catch (NoSuchMethodException e) {
-			loader = clazz.newInstance();
+			loader = clazz.getConstructor().newInstance();
 
 			final Method setFile = loader.getClass().getMethod("setFile", String.class);
 			setFile.invoke(loader, path);

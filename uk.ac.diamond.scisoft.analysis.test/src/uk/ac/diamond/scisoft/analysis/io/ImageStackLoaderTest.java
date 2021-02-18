@@ -19,11 +19,12 @@ import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.ShortDataset;
+import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.dataset.StringDataset;
-import org.junit.Before;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.IOTestUtils;
@@ -33,11 +34,6 @@ public class ImageStackLoaderTest {
 	static final int sizex = 10, sizey = 20, range = sizex * sizey;
 	static final double abserr = 2.0; // maximum permitted absolute error (remember that JPEGs are lossy)
 
-	@Before
-	public void setUp() {
-	}
-
-	@SuppressWarnings("unused")
 	@Test
 	public void testInvalidArguments() throws Exception {
 		try {
@@ -63,13 +59,20 @@ public class ImageStackLoaderTest {
 	}
 
 	private void makeFile(String filePath, int multiplier) throws ScanFileHolderException {
-		Dataset data;
 		DataHolder dha = new DataHolder();
-		data = DatasetUtils.eye(ShortDataset.class, sizex, sizey, 0);
+		Dataset data = DatasetUtils.eye(ShortDataset.class, sizex, sizey, 0);
 		data.setShape(sizex, sizey);
 		data.imultiply(multiplier);
 		dha.addDataset("testing data", data);
 		new TIFFImageSaver(filePath,16,false).saveFile(dha);
+	}
+
+	private void makeSingleValueFile(String filePath, int multiplier) throws ScanFileHolderException {
+		DataHolder dha = new DataHolder();
+		Dataset data = DatasetFactory.createFromObject(Math.PI);
+		data.imultiply(multiplier);
+		dha.addDataset("testing data", data);
+		new ColumnTextSaver(filePath).saveFile(dha);
 	}
 
 	@Test
@@ -148,7 +151,6 @@ public class ImageStackLoaderTest {
 			int int2 = dataset.getInt(0, 0, sizex-1); //eye sets data along diagonal
 			assertEquals(multipliers[i], int2);
 		}
-	
 	}
 
 	@Test
@@ -313,8 +315,39 @@ public class ImageStackLoaderTest {
 				}
 			}
 		}
-		
-
 	}
-	
+
+	@Test
+	public void testSingleValueFiles() throws Exception {
+		String testScratchDirectoryName = IOTestUtils.setUpTest(ImageStackLoaderTest.class, "testSVFiles", true);
+		int[] multipliers= new int[]{1,2,3,4,5,6};
+		String[] imageFilenames = makeSingleValueFiles(testScratchDirectoryName, multipliers);
+
+		int[] dimensions = new int[] { imageFilenames.length };
+		ImageStackLoader loader = new ImageStackLoader(dimensions, imageFilenames);
+		assertEquals(DoubleDataset.class, loader.getInterface());
+		int[] shape = loader.getShape();
+		assertEquals(2, shape.length);
+		assertEquals(6, shape[0]);
+
+		// extract each file
+		SliceND s = new SliceND(shape, new Slice(1));
+		for( int i=0; i< multipliers.length;i++)
+		{
+			s.setSlice(0, i, i+1, 1);
+			Dataset dataset = loader.getDataset(null, s);
+			assertArrayEquals(new int[] {1, 1}, dataset.getShape());
+			assertEquals(multipliers[i] * Math.PI, dataset.getDouble(), 1e-6);
+		}
+	}
+
+	String [] makeSingleValueFiles(String testScratchDirectoryName, int[] multipliers) throws ScanFileHolderException{
+		String [] filePaths = new String[multipliers.length];
+		for( int i =0 ; i< multipliers.length;i++){
+			filePaths[i] = testScratchDirectoryName + File.separatorChar + "test" + i + ".dat";
+			makeSingleValueFile(filePaths[i], multipliers[i]);
+		}
+		return filePaths;
+	}
+
 }

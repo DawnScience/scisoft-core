@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.fitting;
 
 import java.util.HashMap;
 
+import uk.ac.diamond.scisoft.analysis.fitting.functions.PeakType;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
 
@@ -18,11 +19,12 @@ public class GeneticAlgFittingTest extends AbstractFittingTestBase {
 
 	static final long SEED = 12357L;
 	static {
-		deltaFactor = new HashMap<String, int[]>();
-		deltaFactor.put(GAUSSIAN, new int[] {1, 1});
-		deltaFactor.put(LORENTZIAN, new int[] {4, 6});
-		deltaFactor.put(PEARSON_VII, new int[] {1, 2});
-		deltaFactor.put(PSEUDO_VOIGT, new int[] {1, 7});
+		deltaFactor = new HashMap<PeakType, int[]>();
+		deltaFactor.put(PeakType.GAUSSIAN, new int[] {1, 1});
+		deltaFactor.put(PeakType.LORENTZIAN, new int[] {4, 6});
+		deltaFactor.put(PeakType.PEARSON_VII, new int[] {1, 2});
+		deltaFactor.put(PeakType.PSEUDO_VOIGT, new int[] {1, 7});
+		deltaFactor.put(PeakType.VOIGT, new int[] {25, 11});
 	}
 
 	@Override

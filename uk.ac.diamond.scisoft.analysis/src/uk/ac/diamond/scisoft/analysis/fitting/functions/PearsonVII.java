@@ -21,6 +21,8 @@ import org.eclipse.january.dataset.DoubleDataset;
  * Journal of Alloys and Compounds, 362(1-2), 206-217. doi:10.1016/S0925-8388(03)00585-1
  */
 public class PearsonVII extends APeak {
+	private static final long serialVersionUID = -3280968514935850841L;
+
 	private static final String NAME = "PearsonVII";
 	private static final String DESC = "The Pearson type VII distribution."
 			+ "\n    y(x) = A / [ 1 + (x - posn)^2 / a^2 ]^m"
@@ -29,6 +31,9 @@ public class PearsonVII extends APeak {
 			+ PEAK_DESC;
 	private static final String[] LOCAL_PARAM_NAMES = new String[] { PARAM_NAMES[0], PARAM_NAMES[1], PARAM_NAMES[2], "power" };
 	private static final double[] PARAMS = new double[] { 0, 0, 0, 1.0 };
+
+	private static final int POWER = AREA + 1;
+	private static final double DEF_POWER = 2;
 
 	public PearsonVII() {
 		this(PARAMS);
@@ -64,14 +69,16 @@ public class PearsonVII extends APeak {
 		getParameter(POWER).setUpperLimit(10.0);
 	}
 
-	private static final int POWER = AREA + 1;
-	private static final double DEF_POWER = 2;
-
 	public PearsonVII(IdentifiedPeak peakParameters) {
-		super(PARAMS.length); 
+		super(PARAMS.length);
 
 		setParameters(peakParameters);
+		setNames();
+	}
 
+	@Override
+	public void setParameters(IdentifiedPeak peak) {
+		super.setParameters(peak);
 		IParameter p;
 		p = getParameter(POWER);
 		p.setValue(DEF_POWER);
@@ -104,11 +111,16 @@ public class PearsonVII extends APeak {
 		super(PARAMS.length);
 
 		internalSetPeakParameters(minPeakPosition, maxPeakPosition, maxFWHM, maxArea);
+	}
+
+	@Override
+	void internalSetPeakParameters(double minPeakPosition, double maxPeakPosition, double maxFWHM, double maxArea) {
+		super.internalSetPeakParameters(minPeakPosition, maxPeakPosition, maxFWHM, maxArea);
 
 		IParameter p;
 		p = getParameter(POWER);
+		p.setValue(DEF_POWER);
 		p.setLimits(1.0, 10.0);
-		p.setValue(power);
 	}
 
 	@Override

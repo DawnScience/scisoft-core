@@ -25,18 +25,17 @@ import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.january.DatasetException;
 // Imports from org.eclipse.january
 import org.eclipse.january.IMonitor;
-import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.metadata.AxesMetadata;
-import org.eclipse.january.metadata.MetadataFactory;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
+import uk.ac.diamond.scisoft.analysis.processing.operations.MetadataUtils;
 
 
 // @author Tim Snow
@@ -53,9 +52,7 @@ public class LinearFittingOperation extends AbstractOperation<LinearFittingModel
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.fitting.LinearFittingOperation";
 	}
 
-
 	// Then we'll create some placeholders for data to be stored in
-	private Dataset fittedYaxis;
 	private Dataset xSlice;
 	private Dataset ySlice;
 
@@ -88,42 +85,36 @@ public class LinearFittingOperation extends AbstractOperation<LinearFittingModel
 		
 		// Extract out the y axis (intensity) from the input
 		Dataset yAxis = DatasetUtils.convertToDataset(inputDataset);
-		
+
+		if (model.getTranspose()) {
+			Dataset t = xAxis;
+			xAxis = yAxis;
+			yAxis = t.getSliceView();
+			yAxis.clearMetadata(AxesMetadata.class);
+			MetadataUtils.setAxes(this, yAxis, xAxis);
+		}
+
 		// Get out the start and end values of the fitting range
 		double[] fittingROI = model.getFittingRange();
 		
 		// Perform the fitting
-		StraightLine linearFit = this.fitLinearData(xAxis, yAxis, fittingROI, inputDataset.getSize());
+		StraightLine linearFit = fitLinearData(xAxis, yAxis, fittingROI);
 		
 		// Extract out the fitting parameters
 		double xGradient = linearFit.getParameterValue(0);
 		double constant = linearFit.getParameterValue(1);
 		
-		this.fittedYaxis = DatasetFactory.zeros(this.ySlice.getSize());
-		
 		// Assuming there were nice numbers, regenerate from the x-axis
+		Dataset fittedYaxis;
 		if (Double.isFinite(xGradient) && Double.isFinite(constant)) {
-			for (int loopIter = 0; loopIter < this.ySlice.getSize(); loopIter ++) {
-				// y = (m * x) + c
-				double fitVariable = (xGradient * this.xSlice.getDouble(loopIter)) + constant;
-				this.fittedYaxis.set(fitVariable, loopIter);
-			}	
+			fittedYaxis = linearFit.calculateValues(xSlice);
+		} else {
+			fittedYaxis = DatasetFactory.zeros(ySlice);
 		}
-		
-		// Just to see what's going on
-		AxesMetadata xAxisMetadata;
-		
-		// We'll create the xAxis used in the regression for plotting
-		try {
-			xAxisMetadata = MetadataFactory.createMetadata(AxesMetadata.class, 1);
-			xAxisMetadata.setAxis(0, this.xSlice);
-		} catch (MetadataException xAxisError) {
-			throw new OperationException(this, xAxisError.getMessage());
-		}
-		
+
 		// Filling the fit dataset with the processed x axis
-		this.fittedYaxis.setName("Linear Fit");
-		this.fittedYaxis.setMetadata(xAxisMetadata);
+		fittedYaxis.setName("Linear Fit");
+		MetadataUtils.setAxes(fittedYaxis, xSlice);
 		
 		// Creating a home for the gradient data
 		Dataset gradientDataset = DatasetFactory.createFromObject(xGradient, 1);
@@ -146,13 +137,13 @@ public class LinearFittingOperation extends AbstractOperation<LinearFittingModel
 		
 		// The output data to display
 		List<IDataset> displayData = new ArrayList<>();
-		displayData.add(this.ySlice);
+		displayData.add(ySlice);
 		displayData.add(fittedYaxis);
 		
 		// Then set up the operation data object, getting it ready to return everything
 		returnDataWithDisplay.setShowSeparately(true);
 		returnDataWithDisplay.setLog(log);
-		returnDataWithDisplay.setData(inputDataset);
+		returnDataWithDisplay.setData(yAxis);
 		returnDataWithDisplay.setDisplayData(displayData.toArray(new IDataset[displayData.size()]));
 		returnDataWithDisplay.setAuxData(gradientDataset, constantDataset);
 		
@@ -162,7 +153,7 @@ public class LinearFittingOperation extends AbstractOperation<LinearFittingModel
 	
 	
 	// A method to fit data, within limits, and calculate the linear fit returning the fitting parameters for plotting later
-	public StraightLine fitLinearData(Dataset xAxis, Dataset yAxis, double[] fittingROI, int dataLength) {
+	public StraightLine fitLinearData(Dataset xAxis, Dataset yAxis, double[] fittingROI) {
 		// Create some placeholders
 		int startIndex = 0;
 		int endIndex = 0;
@@ -170,13 +161,13 @@ public class LinearFittingOperation extends AbstractOperation<LinearFittingModel
 		// Assuming that we've been given some values
 		if (fittingROI == null) {
 			startIndex = 0;
-			endIndex = dataLength;
+			endIndex = xAxis.getSize();
 		} // Go and find them!
 		else {
 			// Just to make sure the indexing is right, lowest number first
 			if (fittingROI[0] < fittingROI[1]) {
 				startIndex = DatasetUtils.findIndexGreaterThanOrEqualTo(xAxis, fittingROI[0]);
-				endIndex = DatasetUtils.findIndexGreaterThanOrEqualTo(xAxis, fittingROI[1]);	
+				endIndex = DatasetUtils.findIndexGreaterThanOrEqualTo(xAxis, fittingROI[1]);
 			} // Or we handle for this
 			else {
 				startIndex = DatasetUtils.findIndexGreaterThanOrEqualTo(xAxis, fittingROI[1]);
@@ -186,8 +177,8 @@ public class LinearFittingOperation extends AbstractOperation<LinearFittingModel
 		
 		// Next up, we'll slice the datasets down to the size of interest
 		Slice regionOfInterest = new Slice(startIndex, endIndex, 1);
-		this.xSlice = xAxis.getSlice(regionOfInterest);
-		this.ySlice = yAxis.getSlice(regionOfInterest);
+		xSlice = xAxis.getSlice(regionOfInterest);
+		ySlice = yAxis.getSlice(regionOfInterest);
 		
 		// Set up a place to place the fitting parameters
 		StraightLine linearFit = new StraightLine();

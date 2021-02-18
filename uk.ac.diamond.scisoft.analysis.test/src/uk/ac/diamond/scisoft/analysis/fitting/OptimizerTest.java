@@ -23,6 +23,7 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.Add;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.IdentifiedPeak;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Offset;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.PeakType;
 import uk.ac.diamond.scisoft.analysis.optimize.AbstractOptimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
@@ -38,7 +39,7 @@ public class OptimizerTest  {
 
 	@Test
 	public void testOptimizer() {
-		DoubleDataset gaussian = Generic1DDatasetCreator.createGaussianDataset();
+		DoubleDataset gaussian = Generic1DDatasetCreator.createDataset(PeakType.GAUSSIAN);
 
 		List<IdentifiedPeak> peaks = Generic1DFitter.parseDataDerivative(Generic1DDatasetCreator.xAxis, gaussian, Generic1DDatasetCreator.smoothing);
 

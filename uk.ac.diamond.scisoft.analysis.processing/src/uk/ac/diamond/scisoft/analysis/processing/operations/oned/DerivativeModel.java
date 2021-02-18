@@ -14,10 +14,14 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 public class DerivativeModel extends AbstractOperationModel {
 
-	@OperationModelField(min=1,max =5, hint="Enter the derivative order, between 1 and 5",label = "Derivative Order" )
+	@OperationModelField(min = 1, max = 5, label = "Derivative order", hint = "Enter derivative order, between 1 and 5")
 	private int derivative = 1;
-	@OperationModelField(min=1, hint="Enter the smoothing size",label = "Smoothing" )
+
+	@OperationModelField(min = 1, label = "Smoothing length", hint = "Enter smoothing size")
 	private int smoothing = 1;
+
+	@OperationModelField(label = "Derivative dimension", description = "Index of dimension to differentiate", hint = "0 is 1st dimension; -1 is last")
+	private int axis = -1;
 
 	public int getDerivative() {
 		return derivative;
@@ -34,5 +38,15 @@ public class DerivativeModel extends AbstractOperationModel {
 	public void setDerivative(int derivative) {
 		firePropertyChange("derivative", this.derivative, this.derivative = derivative);
 	}
-	
+
+	/**
+	 * @return axis or dimension to take derivative
+	 */
+	public int getAxis() {
+		return axis;
+	}
+
+	public void setAxis(int axis) {
+		firePropertyChange("axis", this.axis, this.axis = axis);
+	}
 }

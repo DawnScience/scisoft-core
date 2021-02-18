@@ -29,6 +29,8 @@ import org.eclipse.january.dataset.DoubleDataset;
  *    Christianson et al., Phys. Rev. B, 66, 174105 - 10.1103/PhysRevB.66.174105
  */
 public class LorentzianSqr extends APeak {
+	private static final long serialVersionUID = -4258235862990855764L;
+
 	private static final String NAME = "LorentzianSqr";
 	private static final String DESC = "Similar to a Lorentzian, but smaller tails."
 			+ "\n    y(x) = A / [1 + ((x-posn)/a)^2 ]^2"

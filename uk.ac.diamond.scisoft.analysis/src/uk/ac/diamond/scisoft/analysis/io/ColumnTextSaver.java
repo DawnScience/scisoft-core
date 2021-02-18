@@ -124,8 +124,10 @@ public class ColumnTextSaver implements IFileSaver {
 			throw new ScanFileHolderException("Cannot save as first dataset has rank greater than 2");
 		}
 
-		boolean is1D = shape.length == 1;
-		int rows = shape[0];
+		boolean is1D = shape.length < 2;
+		boolean is0D = shape.length == 0;
+
+		int rows = is0D ? 1 : shape[0];
 
 		List<Dataset> data = new ArrayList<>();
 		data.add(DatasetUtils.convertToDataset(d));
@@ -168,16 +170,16 @@ public class ColumnTextSaver implements IFileSaver {
 						t = data.get(c);
 						if (r < t.getSize()) {
 							if (t.getElementClass().equals(String.class)) {
-								String text = t.getString(r);
+								String text = is0D ? t.getString() : t.getString(r);
 								int j = text.indexOf(delimiter);
 								if (j >= 0) {
 									text = Utils.doubleQuote(text);
 								}
 								bw.write(text);
 							} else if (cellFormat != null) {
-								bw.write(String.format(cellFormat, t.getObject(r)));
+								bw.write(String.format(cellFormat, is0D ? t.getObject() : t.getObject(r)));
 							} else {
-								bw.write(t.getString(r));
+								bw.write(is0D ? t.getString() : t.getString(r));
 							}
 						}
 						if (c != last) {

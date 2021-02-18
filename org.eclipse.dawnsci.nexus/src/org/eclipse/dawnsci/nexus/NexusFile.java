@@ -110,7 +110,7 @@ public interface NexusFile extends AutoCloseable {
 
 	/**
 	 * Get path of node from internal tree
-	 * @param node
+	 * @param node (can be null for root)
 	 * @return (depth-first) path of node
 	 */
 	public String getPath(Node node);
@@ -143,7 +143,7 @@ public interface NexusFile extends AutoCloseable {
 
 	/**
 	 * Get data node in group with given name
-	 * @param group
+	 * @param group (can be null for root)
 	 * @param name
 	 * @return node or null if data does not exist in group
 	 */
@@ -159,7 +159,7 @@ public interface NexusFile extends AutoCloseable {
 
 	/**
 	 * Add node to group. This will recursively add other nodes if the given node is a group node.
-	 * @param group
+	 * @param group  parent group (can be null for root)
 	 * @param name
 	 * @param node
 	 * @throws NexusException if node already exists in group with name
@@ -180,7 +180,7 @@ public interface NexusFile extends AutoCloseable {
 	 * Remove node from given group.
 	 * <p>
 	 * Note, this will <b>fail</b> if the file is in SWMR node
-	 * @param group parent group of node
+	 * @param group parent group of node (can be null for root)
 	 * @param name name of node in parent group
 	 * @throws NexusException
 	 */
@@ -254,7 +254,7 @@ public interface NexusFile extends AutoCloseable {
 
 	/**
 	 * Create data node in given group
-	 * @param group parent group
+	 * @param group parent group (can be null for root)
 	 * @param data dataset
 	 * @return node
 	 * @throws NexusException when node already exists
@@ -263,7 +263,7 @@ public interface NexusFile extends AutoCloseable {
 
 	/**
 	 * Create data node with given name in given group
-	 * @param group parent group
+	 * @param group parent group (can be null for root)
 	 * @param name name within group
 	 * @param data dataset
 	 * @return node
@@ -273,7 +273,7 @@ public interface NexusFile extends AutoCloseable {
 
 	/**
 	 * Create data node in given group
-	 * @param group
+	 * @param group parent group (can be null for root)
 	 * @param data
 	 * @param compression
 	 * @return node
@@ -283,7 +283,7 @@ public interface NexusFile extends AutoCloseable {
 
 	/**
 	 * Create data node with given name in given group
-	 * @param group parent group
+	 * @param group parent group (can be null for root)
 	 * @param data dataset
 	 * @param compression
 	 * @return node
@@ -293,7 +293,7 @@ public interface NexusFile extends AutoCloseable {
 
 	/**
 	 * Create data node in given group
-	 * @param group parent group
+	 * @param group parent group (can be null for root)
 	 * @param data dataset
 	 * @return node
 	 * @throws NexusException when node already exists
@@ -302,7 +302,7 @@ public interface NexusFile extends AutoCloseable {
 	
 	/**
 	 * Create data node with given name in given group
-	 * @param group parent group
+	 * @param group parent group (can be null for root)
 	 * @param name name within group
 	 * @param data dataset
 	 * @return
@@ -328,7 +328,7 @@ public interface NexusFile extends AutoCloseable {
 
 	/**
 	 * Add (and write) attribute(s) to given node
-	 * @param node
+	 * @param node (can be null for root)
 	 * @param attribute
 	 */
 	public void addAttribute(Node node, Attribute... attribute) throws NexusException;

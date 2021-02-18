@@ -265,7 +265,7 @@ public class NexusUtils {
 	 * Write the object into a field called 'name' at the group in the NeXus file.
 	 *
 	 * @param file
-	 * @param group
+	 * @param group (can be null for root)
 	 * @param name
 	 * @param value
 	 * @return data node
@@ -914,11 +914,11 @@ public class NexusUtils {
 	}
 
 	/**
-	 * Write NeXus class in file
+	 * Create and write new NeXus class in file
 	 * @param file
-	 * @param group (can be null for root)
+	 * @param group location of new group (can be null for root)
 	 * @param name name of NeXus class
-	 * @param nxClass name of class from {@link NexusConstants}
+	 * @param nxClass type of class from {@link NexusConstants}
 	 * @return NeXus class
 	 * @throws NexusException
 	 */

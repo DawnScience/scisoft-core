@@ -19,6 +19,7 @@
 package org.eclipse.dawnsci.nexus.scan;
 
 import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+import static java.time.temporal.ChronoUnit.MILLIS;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -61,7 +62,8 @@ public class NXEntryScanTimestampsWriter {
 
 	public void start() {
 		// write and cache scan start time
-		scanStartTime = ZonedDateTime.now();
+		// Truncated to millis as the string parser in DateDataset treats microseconds as milliseconds
+		scanStartTime = ZonedDateTime.now().truncatedTo(MILLIS);
 		entry.setStart_time(DatasetFactory.createFromObject(ISO_OFFSET_DATE_TIME.format(scanStartTime)));
 
 		// create lazy dataset for scan end time
@@ -78,9 +80,10 @@ public class NXEntryScanTimestampsWriter {
 
 	public void end() {
 		// write scan end time to lazy dataset
-		final ZonedDateTime scanEndTime = ZonedDateTime.now();
+		// Truncated to millis as the string parser in DateDataset treats microseconds as milliseconds
+		final ZonedDateTime scanEndTime = ZonedDateTime.now().truncatedTo(MILLIS);
 		try {
-			scanEndTimeDataset.setSlice(null, DatasetFactory.createFromObject(ISO_OFFSET_DATE_TIME.format(ZonedDateTime.from(scanEndTime))), null, null, null);
+			scanEndTimeDataset.setSlice(null, DatasetFactory.createFromObject(ISO_OFFSET_DATE_TIME.format(scanEndTime)), null, null, null);	
 		} catch (DatasetException e) {
 			logger.error("Could not set scan end",e);
 		}

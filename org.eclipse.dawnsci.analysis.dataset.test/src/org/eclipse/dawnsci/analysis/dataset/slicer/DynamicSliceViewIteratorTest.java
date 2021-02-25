@@ -7,12 +7,9 @@ import static org.junit.Assert.assertTrue;
 import org.eclipse.dawnsci.analysis.dataset.MockDynamicLazyDataset;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
-import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IDynamicDataset;
-import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Slice;
 import org.junit.Test;
 
@@ -23,9 +20,9 @@ public class DynamicSliceViewIteratorTest {
 		
 		int fastest = 6;
 		
-		MockDynamicLazyDataset mock = getData(fastest);
-		MockDynamicLazyDataset mockkey = getKey(fastest);
-		MockDynamicLazyDataset mockfinished = getFinished();
+		MockDynamicLazyDataset mock = DynamicSliceTestUtils.getData(fastest);
+		MockDynamicLazyDataset mockkey = DynamicSliceTestUtils.getKey(fastest);
+		MockDynamicLazyDataset mockfinished = DynamicSliceTestUtils.getFinished();
 		
 		DynamicSliceViewIterator iterator = new DynamicSliceViewIterator(mock, new IDynamicDataset[]{mockkey}, mockfinished, 2);
 		iterator.setMaxTimeout(1000);
@@ -40,9 +37,9 @@ public class DynamicSliceViewIteratorTest {
 		
 		int fastest = 6;
 		
-		MockDynamicLazyDataset mock = getData(fastest);
-		MockDynamicLazyDataset mockkey = getKey(fastest);
-		MockDynamicLazyDataset mockfinished = getFinished();
+		MockDynamicLazyDataset mock = DynamicSliceTestUtils.getData(fastest);
+		MockDynamicLazyDataset mockkey = DynamicSliceTestUtils.getKey(fastest);
+		MockDynamicLazyDataset mockfinished = DynamicSliceTestUtils.getFinished();
 		
 		mockkey.getParent().iadd(1);
 		mock.setAllowIncrement(true);
@@ -65,9 +62,9 @@ public class DynamicSliceViewIteratorTest {
 		int fastest = 6;
 		int end = 3;
 		
-		MockDynamicLazyDataset mock = getData(fastest);
-		MockDynamicLazyDataset mockkey = getKey(fastest);
-		MockDynamicLazyDataset mockfinished = getFinished();
+		MockDynamicLazyDataset mock = DynamicSliceTestUtils.getData(fastest);
+		MockDynamicLazyDataset mockkey = DynamicSliceTestUtils.getKey(fastest);
+		MockDynamicLazyDataset mockfinished = DynamicSliceTestUtils.getFinished();
 		
 		mockkey.getParent().getSliceView(new Slice[]{new Slice(0,end,1)}).iadd(1);
 		mock.setAllowIncrement(true);
@@ -92,9 +89,9 @@ public class DynamicSliceViewIteratorTest {
 		
 		int fastest = 5;
 		
-		MockDynamicLazyDataset mock = getData(fastest);
-		MockDynamicLazyDataset mockkey = getKey(fastest);
-		MockDynamicLazyDataset mockfinished = getFinished();
+		MockDynamicLazyDataset mock = DynamicSliceTestUtils.getData(fastest);
+		MockDynamicLazyDataset mockkey = DynamicSliceTestUtils.getKey(fastest);
+		MockDynamicLazyDataset mockfinished = DynamicSliceTestUtils.getFinished();
 		
 		DynamicSliceViewIterator iterator = new DynamicSliceViewIterator(mock, new IDynamicDataset[]{mockkey}, mockfinished, 2, true);
 		iterator.setMaxTimeout(2000);
@@ -179,43 +176,6 @@ public class DynamicSliceViewIteratorTest {
 		assertEquals(4, next.getDouble(0,0,0), 0.00000001);
 		
 		assertFalse(iterator.hasNext());
-
-		
 	}
-	
-	
-	private MockDynamicLazyDataset getData(int max) {
-		DoubleDataset d = DatasetFactory.createRange(DoubleDataset.class,max);
-		d.setShape(new int[]{max,1,1});
-		d = (DoubleDataset)DatasetUtils.tile(d, new int[]{1, 10, 11});
-		
-		int[][] shapes = new int[max][];
-		
-		for (int i = 0; i < max; i++) {
-			shapes[i] = new int[] {i+1,10,11};
-		}
-		
-		return new MockDynamicLazyDataset(shapes, d);
-	}
-	
-	private MockDynamicLazyDataset getKey(int max) {
-		IntegerDataset key = DatasetFactory.zeros(IntegerDataset.class, new int[]{max});
-		
-		int[][] shapes = new int[max][];
-		
-		for (int i = 0; i < max; i++) {
-			shapes[i] = new int[] {i+1};
-		}
-		
-		return new MockDynamicLazyDataset(shapes, key);
-	}
-	
-	private MockDynamicLazyDataset getFinished() {
-		IntegerDataset finished = DatasetFactory.zeros(IntegerDataset.class, new int[]{1});
-		return new MockDynamicLazyDataset(new int[][]{new int[]{1}}, finished);
-	}
-	
-	
-	
 
 }

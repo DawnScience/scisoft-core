@@ -1274,10 +1274,14 @@ public class NexusFileHDF5 implements NexusFile {
 			}
 		} else if (node instanceof SymbolicNode) {
 			SymbolicNode linkNode = (SymbolicNode) node;
-			if (linkNode.getSourceURI() == null || linkNode.getSourceURI().getPath() == null ||
-					linkNode.getSourceURI().getPath().equals("")) {
-				throw new NexusException("Symbolic link node does not specify a target file");
+			if (linkNode.getSourceURI() == null) {
+				// if no source uri is specified, create a hard link to the datanode at that path within this nexus file
+				DataNode linkedNode = getData(linkNode.getPath());
+				addNode(parentNode, name, linkedNode);  
+			} else if (linkNode.getSourceURI().getPath() == null || linkNode.getSourceURI().getPath().equals("")) {
+				throw new NexusException("Symbolic link node URI does not specify a target file");
 			}
+			
 			if (!parentNode.containsDataNode(name) && !parentNode.containsGroupNode(name)) {
 				createExternalLink(linkNode.getSourceURI().getPath(), parentPath, name, linkNode.getPath());
 			}

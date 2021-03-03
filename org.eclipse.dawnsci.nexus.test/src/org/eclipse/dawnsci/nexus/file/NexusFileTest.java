@@ -29,6 +29,7 @@ import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
+import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.NexusUtils;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
@@ -1257,4 +1258,26 @@ public class NexusFileTest {
 		}
 		assertEquals(target, readBack.getSlice());
 	}
+	
+	@Test
+	public void testAddInternalSymbolicNodeLink() throws Exception {
+		final String fieldValue = "fieldValue";
+		
+		GroupNode group1 = nf.getGroup("/group1", true); // group g created on disk
+		NexusUtils.writeString(nf, group1, "field", fieldValue);
+		
+		final GroupNode group2 = NexusNodeFactory.createGroupNode(); // new group only exists in memory at this point
+		final SymbolicNode link = NexusNodeFactory.createSymbolicNode(null, "/group1/field");
+		group2.addNode("link", link);
+		
+		nf.addNode("/group2", group2);
+		nf.close();
+		
+		nf.openToRead();
+		DataNode field = nf.getData("/group1/field");
+		assertEquals(fieldValue, field.getDataset().getSlice().getString());
+		DataNode fieldLink = nf.getData("/group2/link");
+		assertEquals(fieldValue, fieldLink.getDataset().getSlice().getString());
+	}
+	
 }

@@ -282,7 +282,12 @@ public interface IAxis {
 	 * @return true if axis format is done automatically, false if user format is to be used
 	 */
 	public boolean isAutoFormat();
-	
+
+	/**
+	 * @param set whether to autoscale
+	 */
+	public void setAutoscale(boolean autoscale);
+
 	/**
 	 * @param set whether autoscale sets axis range tight to the data or the end of axis is set to the nearest tickmark
 	 */

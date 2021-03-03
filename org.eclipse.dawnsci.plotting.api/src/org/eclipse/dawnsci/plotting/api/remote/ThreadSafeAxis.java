@@ -249,7 +249,11 @@ class ThreadSafeAxis extends ThreadSafeObject implements IAxis, Serializable {
 	@Override
 	public void setAxisAutoscaleTight(boolean axisTight) {
 		call(getMethodName(Thread.currentThread().getStackTrace()), axisTight);
+	}
 
+	@Override
+	public void setAutoscale(boolean autoscale) {
+		call(getMethodName(Thread.currentThread().getStackTrace()), autoscale);
 	}
 
 	@Override
@@ -260,7 +264,6 @@ class ThreadSafeAxis extends ThreadSafeObject implements IAxis, Serializable {
 	@Override
 	public void setInverted(boolean isInverted) {
 		call(getMethodName(Thread.currentThread().getStackTrace()), isInverted);
-		
 	}
 
 	@Override

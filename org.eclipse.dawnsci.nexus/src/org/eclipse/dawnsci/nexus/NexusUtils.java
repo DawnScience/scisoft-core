@@ -30,11 +30,14 @@ import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
 import org.eclipse.january.dataset.LazyWriteableDataset;
+import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
+import org.eclipse.january.metadata.AxesMetadata;
 
 /**
  * Utility methods for dealing with NeXus files.
@@ -924,5 +927,90 @@ public class NexusUtils {
 	 */
 	public static GroupNode writeNXclass(NexusFile file, GroupNode group, String name, String nxClass) throws NexusException {
 		return file.getGroup(group, name, nxClass, true);
+	}
+
+	/**
+	 * Create and write an NXdata group in file
+	 * @param file
+	 * @param group location of new group (can be null for root)
+	 * @param name name of new NXdata group
+	 * @param data signal data to place in new group (must be IDataset or ILazyWriteableDataset)
+	 * @param axes axes to place in new group
+	 * @return NXdata group
+	 * @throws NexusException
+	 */
+	public static GroupNode writeNXdata(NexusFile file, GroupNode group, String name, ILazyDataset data, ILazyDataset... axes) throws NexusException {
+		GroupNode g = file.getGroup(group, name, NexusConstants.DATA, true);
+		String dName = data.getName();
+		if (dName.isEmpty()) {
+			dName = NexusConstants.DATA_DATA;
+			data.setName(dName);
+		}
+		if (data instanceof IDataset) {
+			file.createData(g, (IDataset) data);
+		} else if (data instanceof ILazyWriteableDataset) {
+			file.createData(g, (ILazyWriteableDataset) data);
+		} else {
+			throw new IllegalArgumentException("Dataset must be IDataset or ILazyWriteableDataset");
+		}
+		if (axes == null || axes.length == 0) {
+			AxesMetadata am = data.getFirstMetadata(AxesMetadata.class);
+			if (am != null) {
+				axes = am.getAxes();
+			}
+		}
+
+		List<String> axisNames = new ArrayList<>();
+		List<int[]> indices = new ArrayList<>();
+		int rank = data.getRank();
+		int[] stdIndices = new int[rank];
+		int i = 0;
+		for (; i < rank; i++) {
+			stdIndices[i] = i;
+		}
+
+		i = 0;
+		for (ILazyDataset a : axes) {
+			if (a == null) {
+				axisNames.add(NexusConstants.DATA_AXESEMPTY);
+				indices.add(null);
+			} else {
+				String aName = a.getName();
+				if (aName.isEmpty()) {
+					aName = "axis-" + i;
+				}
+				try {
+					Dataset d = DatasetUtils.sliceAndConvertLazyDataset(a);
+					if (d.getRank() > 1 && ShapeUtils.squeezeShape(d.getShapeRef(), false).length == 1) {
+						d.squeeze();
+						indices.add(new int[] {i});
+					} else {
+						indices.add(stdIndices);
+					}
+					d.setName(aName);
+					axisNames.add(aName);
+					file.createData(g, d);
+				} catch (DatasetException e) {
+					throw new NexusException("Could not slice axis " + aName, e);
+				}
+			}
+			i++;
+		}
+
+		// axes attributes
+		writeAttribute(file, g, NexusConstants.DATA_SIGNAL, dName);
+		i = 0;
+		for (String a : axisNames) {
+			int[] ind = indices.get(i++);
+			if (ind != null || !a.equals(NexusConstants.DATA_AXESEMPTY)) {
+				writeAttribute(file, g, a + NexusConstants.DATA_INDICES_SUFFIX, ind);
+			}
+		}
+		while (i++ < data.getRank()) {
+			axisNames.add(NexusConstants.DATA_AXESEMPTY);
+		}
+		writeAttribute(file, g, NexusConstants.DATA_AXES, DatasetFactory.createFromList(axisNames));
+
+		return g;
 	}
 }

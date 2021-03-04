@@ -39,7 +39,7 @@ public class MetadataUtils {
 					try {
 						axes[j] = DatasetUtils.sliceAndConvertLazyDataset(axes[j]);
 					} catch (DatasetException e) {
-						logger.error("Could not replace lazydataset!");
+						logger.error("Could not replace lazy dataset!", e);
 					}
 				}
 				am.setAxis(i, axes);

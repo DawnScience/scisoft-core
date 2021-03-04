@@ -1434,8 +1434,7 @@ public class NexusFileHDF5 implements NexusFile {
 		String linkName = destination;
 		String nodeName;
 		if (useNameAtSource) {
-			int index = source.lastIndexOf(Node.SEPARATOR);
-			nodeName = source.substring(index + 1);
+			nodeName = sourceData.name;
 			linkName += nodeName;
 		} else {
 			destination = destination.substring(0, destination.lastIndexOf(Node.SEPARATOR));

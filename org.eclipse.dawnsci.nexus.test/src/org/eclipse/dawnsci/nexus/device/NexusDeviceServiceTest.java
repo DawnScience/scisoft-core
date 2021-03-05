@@ -107,7 +107,7 @@ public class NexusDeviceServiceTest {
 	
 	@Test
 	public void testNexusMetadataDevice() throws Exception {
-		final NexusMetadataDevice<NXaperture> nexusDevice = new NexusMetadataDevice<>("aperture", NexusBaseClass.NX_APERTURE);
+		final SimpleNexusMetadataDevice<NXaperture> nexusDevice = new SimpleNexusMetadataDevice<>("aperture", NexusBaseClass.NX_APERTURE);
 		final Map<String, Object> nexusMetadata = new HashMap<String, Object>();
 		nexusMetadata.put(NXaperture.NX_MATERIAL, "cobalt");
 		nexusMetadata.put(NXaperture.NX_DESCRIPTION, "description of aperture");

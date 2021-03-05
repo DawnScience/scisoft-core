@@ -19,7 +19,7 @@ import org.eclipse.dawnsci.nexus.builder.NexusObjectWrapper;
  * 
  * @author Matthew Dickie
  */
-public class NexusMetadataDevice<N extends NXobject> implements INexusDevice<N> {
+public class SimpleNexusMetadataDevice<N extends NXobject> implements INexusDevice<N> {
 	
 	private NexusBaseClass nexusBaseClass;
 	
@@ -27,12 +27,12 @@ public class NexusMetadataDevice<N extends NXobject> implements INexusDevice<N> 
 	
 	private Map<String, Object> nexusMetadata = new HashMap<>();
 	
-	public NexusMetadataDevice(String name, NexusBaseClass nexusClass) {
+	public SimpleNexusMetadataDevice(String name, NexusBaseClass nexusClass) {
 		this.name = name;
 		this.nexusBaseClass = nexusClass;
 	}
 	
-	public NexusMetadataDevice() {
+	public SimpleNexusMetadataDevice() {
 		// private constructor for spring instantiation
 	}
 

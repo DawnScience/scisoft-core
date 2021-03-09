@@ -212,7 +212,9 @@ public class FitPeakToRowsOperation extends AbstractOperation<FitPeakToRowsModel
 			try {
 				m = MetadataFactory.createMetadata(AxesMetadata.class,1);
 				m.setAxis(0, firstAxes[0].getSlice().squeeze());
-				position.setMetadata(m);
+				for (int i = 0; i < n; i++) {
+					results[i].setMetadata(m.clone());
+				}
 			} catch (Exception e) {
 				logger.error("Metadata building failed");
 			}

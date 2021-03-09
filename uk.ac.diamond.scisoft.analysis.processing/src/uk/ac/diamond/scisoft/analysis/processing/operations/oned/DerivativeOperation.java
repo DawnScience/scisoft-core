@@ -65,15 +65,19 @@ public class DerivativeOperation extends AbstractOperation<DerivativeModel, Oper
 
 		Dataset out = null;
 		final Dataset src = DatasetFactory.zeros(in.getElementsPerItem(), in.getClass(), len);
+		final Dataset axis = ax.getRank() > 1 ? DatasetFactory.zeros(ax.getClass(), len) : ax;
 		final PositionIterator pi = in.getPositionIterator(a);
 		final int[] pos = pi.getPos();
 		final boolean[] hit = pi.getOmit();
 
 		while (pi.hasNext()) {
 			in.copyItemsFromAxes(pos, hit, src);
+			if (ax.getRank() > 1) {
+				ax.copyItemsFromAxes(pos, hit, axis);
+			}
 			Dataset dest = src;
 			for (int i = 0; i < order; i++) {
-				dest = Maths.derivative(ax, dest, model.getSmoothing());
+				dest = Maths.derivative(axis, dest, model.getSmoothing());
 			}
 			if (out == null) {
 				out = DatasetFactory.zeros(in, dest.getClass());

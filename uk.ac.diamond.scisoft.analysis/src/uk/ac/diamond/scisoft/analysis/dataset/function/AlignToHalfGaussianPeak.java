@@ -333,10 +333,14 @@ public class AlignToHalfGaussianPeak implements DatasetToNumberFunction {
 			}
 			hwhm = Math.max(2, pw - pos);
 			// work out where zero crossing ends
-			beg = pos - 1;
-			while (dy.getDouble(beg) <= 0 && --beg >= 0) {
+			if (pos <= 0) {
+				beg = 0;
+			} else {
+				beg = pos - 1;
+				while (dy.getDouble(beg) <= 0 && --beg >= 0) {
+				}
+				beg++;
 			}
-			beg++;
 			end = Math.min(max, pos + 4*hwhm);
 		} else {
 			int pw = pos - 1;

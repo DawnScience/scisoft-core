@@ -1297,6 +1297,26 @@
             name="Add Frame">
       </operation>
       <operation
+	      category="uk.ac.diamond.scisoft.analysis.processing.internaldata"
+	      class="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalChannelAverageFrameOperation"
+	      description="Take a channel of data from an internally sourced 2D dataset and apply this to the primary dataset"
+	      icon="icons/template.png"
+	      id="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalChannelAverageFrameOperation"
+	      model="uk.ac.diamond.scisoft.analysis.processing.operations.internaldata.InternalChannelAverageFrameModel"
+	      name="Channel Average"
+	      visible="true">
+	</operation>
+	<operation
+	      category="uk.ac.diamond.scisoft.analysis.processing.externaldata"
+	      class="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalChannelAverageFrameOperation"
+	      description="Take a channel of data from an externally sourced 2D dataset and apply this to the primary dataset"
+	      icon="icons/template.png"
+	      id="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalChannelAverageFrameOperation"
+	      model="uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalChannelAverageFrameModel"
+	      name="Channel Average"
+	      visible="true">
+	</operation>
+	<operation
             class="uk.ac.diamond.scisoft.analysis.processing.operations.mask.MaskOutliersInQOperation"
             description="Mask outliers in a range of q, using the median absolute deviation value multiplied by a scale to determine the outlier value"
             icon="icons/template.png"

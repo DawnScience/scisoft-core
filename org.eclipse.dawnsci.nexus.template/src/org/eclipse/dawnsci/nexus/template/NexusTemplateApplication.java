@@ -20,7 +20,6 @@ public class NexusTemplateApplication implements IApplication {
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		logger.info("Starting Nexus Template Application");
-		System.err.println("Running Nexus Template Application");
 		final Map<?, ?> args = context.getArguments();
 		final String[] configuration = (String[]) args.get("application.args");
 		if (configuration.length != 2 || configuration[0].equals("-h")) {
@@ -30,18 +29,15 @@ public class NexusTemplateApplication implements IApplication {
 
 		final String templateFileName = configuration[0];
 		final String nexusFileName = configuration[1];
-		System.err.println("Using template file: " + templateFileName); // TODO remove
-		System.err.println("On Nexus file: " + nexusFileName); // TODO remove
 		final String nexusFileFullPath = new File(nexusFileName).getAbsolutePath();
 		
 		final NexusTemplateService nexusTemplateService = getNexusTemplateService();
 		logger.info("Applying template, template file = {}, nexus file = {}", templateFileName, nexusFileName);
-		System.err.println("Applying template file");
 		try {
 			final NexusTemplate template = nexusTemplateService.loadTemplate(templateFileName);
 			template.apply(nexusFileFullPath);
 			logger.info("Template applied successfully");
-			System.err.println("Template applied successfully");
+			System.out.println("Template applied successfully");
 		} catch (Exception e) {
 			logger.error("An error occurred applying the template", e);
 			System.err.println("An error occured applying the template");

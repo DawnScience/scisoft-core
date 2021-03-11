@@ -1,6 +1,7 @@
 package org.eclipse.dawnsci.nexus.validation;
 
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +73,18 @@ public class ValidationReport {
 	
 	public String toString() {
 		return summarize(Level.INFO);
+	}
+	
+	public int getNumberOfEntries() {
+		return validationEntries.size();
+	}
+	
+	public int getNumberOfEntries(Level level) {
+		return (int) validationEntries.stream().filter(entry -> entry.getLevel() == level).count();
+	}
+	
+	public List<ValidationReportEntry> getErrors() {
+		return validationEntries.stream().filter(entry -> entry.getLevel() == Level.ERROR).collect(toList());
 	}
 
 }

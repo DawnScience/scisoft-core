@@ -742,12 +742,12 @@ public enum NexusApplicationDefinition {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public &lt;T extends NexusApplicationValidator&gt; T createNexusValidator() throws NexusException {
+	public &lt;T extends NexusApplicationValidator&gt; T createNexusValidator() {
 		try {
 			return (T) validatorClass.getDeclaredConstructor().newInstance();
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
-			throw new NexusException("Could not create nexus validator class " + validatorClass.getSimpleName(), e);
+			throw new IllegalStateException("Could not create nexus validator class: " + validatorClass.getSimpleName(), e);
 		}
 	}
 	

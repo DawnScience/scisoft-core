@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.nexus.appender.INexusFileAppenderService;
 import org.eclipse.dawnsci.nexus.device.INexusDeviceAdapterFactory;
 import org.eclipse.dawnsci.nexus.device.INexusDeviceService;
+import org.eclipse.dawnsci.nexus.validation.NexusValidationService;
 
 public class ServiceHolder {
 	
@@ -24,6 +25,8 @@ public class ServiceHolder {
 	private static INexusFileAppenderService nexusFileAppenderService;
 	
 	private static INexusDeviceAdapterFactory<?> nexusDeviceAdapterFactory;
+	
+	private static NexusValidationService nexusValidationService;
 	
 	public static INexusFileFactory getNexusFileFactory() {
 		return nexusFileFactory;
@@ -55,6 +58,14 @@ public class ServiceHolder {
 	
 	public void setNexusDeviceAdapterFactory(INexusDeviceAdapterFactory<?> nexusDeviceAdapterFactory) {
 		ServiceHolder.nexusDeviceAdapterFactory = nexusDeviceAdapterFactory;
+	}
+	
+	public static NexusValidationService getNexusValidationService() {
+		return nexusValidationService;
+	}
+	
+	public void setNexusValidationService(NexusValidationService nexusValidationService) {
+		ServiceHolder.nexusValidationService = nexusValidationService;
 	}
 	
 }

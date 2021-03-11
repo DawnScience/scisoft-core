@@ -357,6 +357,19 @@ public class NexusUtils {
 		Attribute attr = file.createAttribute(a);
 		file.addAttribute(node, attr);
 	}
+	
+	/**
+	 * Loads and returns the entire nexus tree for the file at the given path.
+	 * @param filePath file path
+	 * @return nexus tree
+	 * @throws NexusException if the file could not be loaded for any reason
+	 */
+	public static TreeFile loadNexusTree(String filePath) throws NexusException {
+		try (NexusFile nexusFile = ServiceHolder.getNexusFileFactory().newNexusFile(filePath)) {
+			nexusFile.openToRead();
+			return loadNexusTree(nexusFile);
+		}
+	}
 
 	/**
 	 * Loads the entire nexus tree structure into memory. Note that this does not
@@ -364,7 +377,7 @@ public class NexusUtils {
 	 * as some may be {@link ILazyDataset}s.
 	 * @param filePath file path
 	 * @return TreeFile tree file representing nexus tree
-	 * @throws NexusException
+	 * @throws NexusException if the file could not be loaded for any reason
 	 */
 	public static TreeFile loadNexusTree(NexusFile nexusFile) throws NexusException {
 		// TODO FIXME mattd 2016-02-11 should it be possible to do this without

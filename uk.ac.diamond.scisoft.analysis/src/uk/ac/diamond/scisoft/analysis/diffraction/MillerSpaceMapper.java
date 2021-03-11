@@ -49,10 +49,13 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
+import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.LazyWriteableDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.PositionIterator;
 import org.eclipse.january.dataset.ShapeUtils;
+import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.dataset.StringDataset;
 import org.slf4j.Logger;
@@ -554,7 +557,7 @@ public class MillerSpaceMapper {
 	 * @throws ScanFileHolderException
 	 */
 	public void printMillerSpaceCorners(final boolean endsOnly) throws ScanFileHolderException {
-		processBean(bean.getInputs()[0]);
+		processBean(bean.getInputs()[0], true);
 
 		Tree tree = getTreeFromNexusFile(bean.getInputs()[0]);
 		PositionIterator[] iters = getPositionIterators(tree);
@@ -607,6 +610,185 @@ public class MillerSpaceMapper {
 		qspace.qFromPixelPosition(x, y, q);
 		mspace.h(q, null, m);
 		logger.debug("{},{}: {}", x, y, m.toString());
+	}
+
+	/**
+	 * Calculate coordinates of given pixel addresses
+	 * @param mapQ
+	 * @throws ScanFileHolderException
+	 */
+	public void calculateCoordinates(boolean mapQ) throws ScanFileHolderException {
+		IntegerDataset pIdx = DatasetFactory.createFromObject(IntegerDataset.class, bean.getPixelIndexes());
+		if (pIdx == null) {
+			throw new IllegalArgumentException("No pixel indexes defined");
+		}
+
+		String[] inputs = bean.getInputs();
+		if (inputs.length != 1) {
+			throw new IllegalArgumentException("Only one input file allowed");
+		}
+		processBean(inputs[0], false);
+
+
+		Tree tree = getTreeFromNexusFile(inputs[0]);
+		PositionIterator diter = getPositionIterators(tree)[0];
+		final int[] dpos = diter.getPos();
+		int nf = ShapeUtils.calcSize(diter.getShape());
+
+		int np = pIdx.getShapeRef()[0]; // Nx2 or Nx3
+		int ni = pIdx.getShapeRef()[1];
+		Vector3d q = new Vector3d();
+		Vector3d m = new Vector3d();
+		DoubleDataset coords = null;
+		IntegerDataset pInput = null;
+
+		boolean isOldGDA = isOLDI16GDA(tree);
+
+		if (ni == 2) {
+			logger.debug("Using first frame of {}", nf);
+
+			coords = DatasetFactory.zeros(np, 3);
+			pInput = DatasetFactory.zeros(IntegerDataset.class, np, 3);
+			if (diter.hasNext()) {
+				DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
+				DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, dpos);
+				DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
+				QSpace qspace = new QSpace(dp, env);
+				if (mapQ) {
+					for (int i = 0; i < np; i++) {
+						int r = pIdx.get(i, 0);
+						int c = pIdx.get(i, 1);
+						pInput.set(r, i, 1);
+						pInput.set(c, i, 2);
+						qspace.qFromPixelPosition(c, r, q);
+						coords.set(q.getX(), i, 0);
+						coords.set(q.getY(), i, 1);
+						coords.set(q.getZ(), i, 2);
+					}
+				} else {
+					MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
+	
+					for (int i = 0; i < np; i++) {
+						int r = pIdx.get(i, 0);
+						int c = pIdx.get(i, 1);
+						pInput.set(r, i, 1);
+						pInput.set(c, i, 2);
+						qspace.qFromPixelPosition(c, r, q);
+						mspace.h(q, null, m);
+						coords.set(m.getX(), i, 0);
+						coords.set(m.getY(), i, 1);
+						coords.set(m.getZ(), i, 2);
+					}
+				}
+			}
+		} else if (ni == 3) { // TODO multi-dimensional scans
+			Dataset pFrame = pIdx.getSlice((Slice) null, new Slice(1)).squeeze();
+			IntegerDataset order = DatasetUtils.indexSort(pFrame, 0);
+			Dataset sorted = pFrame.getByIndexes(order);
+			int z = DatasetUtils.findIndexGreaterThanOrEqualTo(sorted, 0);
+			IntegerDataset allFrames = null;
+			IndexIterator aiter = null;
+			int nt = 0;
+			if (z > 0) {
+				allFrames = (IntegerDataset) order.getSliceView(new Slice(z));
+				aiter = allFrames.getIterator();
+				nt += nf*z;
+			}
+			IntegerDataset singleFrames = null;
+			IndexIterator siter = null;
+			if (z < order.getSize()) {
+				singleFrames = (IntegerDataset) order.getSliceView(new Slice(z, null));
+				siter = singleFrames.getIterator();
+				nt += singleFrames.getSize();
+			}
+
+			coords = DatasetFactory.zeros(nt, 3);
+			pInput = DatasetFactory.zeros(IntegerDataset.class, nt, 3);
+			int k = 0;
+			int f = 0;
+			boolean keepStill = false;
+			while (diter.hasNext()) {
+				DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
+				DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, dpos);
+				DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
+				QSpace qspace = new QSpace(dp, env);
+				MillerSpace mspace = mapQ ? null : new MillerSpace(sample.getUnitCell(), env.getOrientation());
+
+				if (aiter != null) {
+					while (aiter.hasNext()) {
+						int i = allFrames.getAbs(aiter.index);
+
+						int r = pIdx.get(i, 1);
+						int c = pIdx.get(i, 2);
+						pInput.set(f, k, 0);
+						pInput.set(r, k, 1);
+						pInput.set(c, k, 2);
+						qspace.qFromPixelPosition(c, r, q);
+						if (mapQ) {
+							coords.set(q.getX(), k, 0);
+							coords.set(q.getY(), k, 1);
+							coords.set(q.getZ(), k, 2);
+						} else {
+							mspace.h(q, null, m);
+							coords.set(m.getX(), k, 0);
+							coords.set(m.getY(), k, 1);
+							coords.set(m.getZ(), k, 2);
+						}
+						k++;
+					}
+					aiter.reset();
+				}
+				if (siter != null) {
+					while (keepStill || siter.hasNext()) {
+						int i = singleFrames.getAbs(siter.index);
+						int cf = pIdx.get(i, 0);
+						keepStill = cf != f; 
+						if (keepStill) { // don't iterate next time
+							break;
+						}
+						int r = pIdx.get(i, 1);
+						int c = pIdx.get(i, 2);
+						pInput.set(f, k, 0);
+						pInput.set(r, k, 1);
+						pInput.set(c, k, 2);
+						qspace.qFromPixelPosition(c, r, q);
+						if (mapQ) {
+							coords.set(q.getX(), k, 0);
+							coords.set(q.getY(), k, 1);
+							coords.set(q.getZ(), k, 2);
+						} else {
+							mspace.h(q, null, m);
+							coords.set(m.getX(), k, 0);
+							coords.set(m.getY(), k, 1);
+							coords.set(m.getZ(), k, 2);
+						}
+						k++;
+					}
+				}
+				f++;
+			}
+		}
+
+		saveCoordinates(mapQ, pInput, coords);
+	}
+
+	private void saveCoordinates(boolean mapQ, Dataset indexes, Dataset coords) throws ScanFileHolderException {
+		String output = bean.getOutput();
+		String coordsName = mapQ ? "q_space" : "reciprocal_space";
+		String coordsPath = PROCESSED + Node.SEPARATOR + coordsName;
+
+		indexes.setName("pixel_indexes");
+		coords.setName("coordinates");
+
+		HDF5FileFactory.deleteFile(output);
+		writeNXclass(output, PROCESSED, NexusConstants.ENTRY);
+		writeNXclass(output, PROCESSPATH, NexusConstants.PROCESS);
+		writeDefaultAttributes(output, coordsName);
+		HDF5Utils.writeDataset(output, coordsPath, indexes);
+		HDF5Utils.writeDataset(output, coordsPath, coords);
+		saveAxesAndAttributes(output, coordsPath, coords.getName());
+		writeProcessingParameters(output, bean, coordsPath);
+		linkOriginalData(output, bean.getInputs(), entryPath);
 	}
 
 	private void mapImages(boolean mapQ, Tree tree, Dataset trans, ILazyDataset images, PositionIterator[] iters,
@@ -668,7 +850,7 @@ public class MillerSpaceMapper {
 			if (upSampler != null) {
 				image = upSampler.value(image).get(0);
 			}
-			mapImageMultiThreaded(mapQ, region, qspace, mspace, iMask, image, map, weight);
+			mapImageMultiThreaded(region, qspace, mspace, iMask, image, map, weight);
 		}
 	}
 
@@ -744,7 +926,7 @@ public class MillerSpaceMapper {
 		return false;
 	}
 
-	private void mapImageMultiThreaded(boolean mapQ, final int[] region, final QSpace qspace, final MillerSpace mspace,
+	private void mapImageMultiThreaded(final int[] region, final QSpace qspace, final MillerSpace mspace,
 			final Dataset iMask, final Dataset image, final DoubleDataset map, final DoubleDataset weight) {
 		int size = pool.getParallelism();
 		final Matrix3d mTransform = mspace == null ? null : mspace.getMillerTransform();
@@ -757,7 +939,7 @@ public class MillerSpaceMapper {
 		}
 
 		final List<JobConfig> jobs = new ArrayList<>(size);
-		int[] vshape = copyParameters(mapQ);
+		int[] vshape = copyParameters(mspace == null);
 		for (int i = 0; i < size; i++) {
 			int s = i * chunk + region[2];
 			int e = Math.min(s + chunk, region[3]);
@@ -929,7 +1111,13 @@ public class MillerSpaceMapper {
 		return index / 4;
 	}
 
-	private Dataset[][] processBean(String file) throws ScanFileHolderException {
+	/**
+	 * @param file
+	 * @param complete if true, get axes and set fields completely
+	 * @return q space and miller space axes
+	 * @throws ScanFileHolderException
+	 */
+	private Dataset[][] processBean(String file, boolean complete) throws ScanFileHolderException {
 		Tree tree = getTreeFromNexusFile(file);
 		NodeLink link;
 
@@ -971,23 +1159,17 @@ public class MillerSpaceMapper {
 		GroupNode detector = (GroupNode) link.getDestination();
 		detectorPath = TreeUtils.getPath(tree, detector);
 
-		timePath = detectorPath + "count_time";
-
-		String attenuatorName = bean.getAttenuatorName();
-		if (attenuatorName == null || attenuatorName.isEmpty()) {
-			link = NexusTreeUtils.findFirstNode(instrument, NexusConstants.ATTENUATOR);
-			logger.trace("{} found: {}", NexusConstants.ATTENUATOR, link);
+		String sampleName = bean.getSampleName();
+		if (sampleName == null || sampleName.isEmpty()) {
+			link = NexusTreeUtils.findFirstNode(entry, NexusConstants.SAMPLE);
+			logger.trace("{} found: {}", NexusConstants.SAMPLE, link);
 		} else {
-			link = instrument.getNodeLink(attenuatorName);
+			link = entry.getNodeLink(sampleName);
 		}
 		if (link == null || !link.isDestinationGroup()) {
-			attenuatorPath = null;
-		} else {
-			attenuatorPath = TreeUtils.getPath(tree, link.getDestination());
+			throw new ScanFileHolderException("Could not find sample");
 		}
-		if (attenuatorPath == null) {
-			logger.warn("Could not find attenuator");
-		}
+		samplePath = TreeUtils.getPath(tree, link.getDestination());
 
 		String dataName = bean.getDataName();
 		if (dataName == null || dataName.isEmpty()) {
@@ -1010,17 +1192,27 @@ public class MillerSpaceMapper {
 		}
 		dataPath = TreeUtils.getPath(tree, link.getDestination());
 
-		String sampleName = bean.getSampleName();
-		if (sampleName == null || sampleName.isEmpty()) {
-			link = NexusTreeUtils.findFirstNode(entry, NexusConstants.SAMPLE);
-			logger.trace("{} found: {}", NexusConstants.SAMPLE, link);
+		if (!complete) {
+			return null;
+		}
+
+		timePath = detectorPath + "count_time";
+
+		String attenuatorName = bean.getAttenuatorName();
+		if (attenuatorName == null || attenuatorName.isEmpty()) {
+			link = NexusTreeUtils.findFirstNode(instrument, NexusConstants.ATTENUATOR);
+			logger.trace("{} found: {}", NexusConstants.ATTENUATOR, link);
 		} else {
-			link = entry.getNodeLink(sampleName);
+			link = instrument.getNodeLink(attenuatorName);
 		}
 		if (link == null || !link.isDestinationGroup()) {
-			throw new ScanFileHolderException("Could not find sample");
+			attenuatorPath = null;
+		} else {
+			attenuatorPath = TreeUtils.getPath(tree, link.getDestination());
 		}
-		samplePath = TreeUtils.getPath(tree, link.getDestination());
+		if (attenuatorPath == null) {
+			logger.warn("Could not find attenuator");
+		}
 
 		this.splitter = PixelSplitter.createSplitter(bean.getSplitterName(), bean.getSplitterParameter());
 		listMillerEntries = bean.isListMillerEntries();
@@ -1149,11 +1341,11 @@ public class MillerSpaceMapper {
 		Dataset[] datasetA = null;
 		Dataset[] datasetB = null;
 
-		Dataset[][] a = processBean(bean.getInputs()[0]);
+		String[] inputs = bean.getInputs();
+		Dataset[][] a = processBean(inputs[0], true);
 		if (qDel == null && hDel == null && !listMillerEntries) {
 			throw new IllegalStateException("Both q space and Miller space parameters have not been defined");
 		}
-		String[] inputs = bean.getInputs();
 
 		int n = inputs.length;
 		Tree[] trees = new Tree[n];
@@ -1392,7 +1584,7 @@ public class MillerSpaceMapper {
 
 			mapAndSaveInParts(mapQ, trees, allIters, lazyVolume, lazyWeight, parts, map, weight);
 
-			saveAxesAndAttributes(output, volPath, a);
+			saveAxesAndAttributes(output, volPath, VOLUME_NAME, a);
 			writeProcessingParameters(output, bean, entryPath);
 			linkOriginalData(output, bean.getInputs(), entryPath);
 		}
@@ -1486,7 +1678,7 @@ public class MillerSpaceMapper {
 		w.setName(WEIGHT_NAME);
 		HDF5Utils.writeDataset(file, volPath, v);
 		HDF5Utils.writeDataset(file, volPath, w);
-		saveAxesAndAttributes(file, volPath, axes);
+		saveAxesAndAttributes(file, volPath, VOLUME_NAME, axes);
 		writeProcessingParameters(file, bean, entryPath);
 		linkOriginalData(file, bean.getInputs(), entryPath);
 	}
@@ -1569,13 +1761,13 @@ public class MillerSpaceMapper {
 		HDF5Utils.writeDataset(file, parentPath, dataset);
 	}
 
-	public static void saveAxesAndAttributes(String file, String volPath, Dataset... axes)
+	public static void saveAxesAndAttributes(String file, String dataPath, String dataName, Dataset... axes)
 			throws ScanFileHolderException {
 		String[] axisNames = new String[axes.length];
 		for (int i = 0; i < axes.length; i++) {
 			Dataset x = axes[i];
 			axisNames[i] = x.getName();
-			HDF5Utils.writeDataset(file, volPath, x);
+			HDF5Utils.writeDataset(file, dataPath, x);
 		}
 
 		List<Dataset> attrs = new ArrayList<>();
@@ -1585,21 +1777,23 @@ public class MillerSpaceMapper {
 		a.setName(NexusConstants.NXCLASS);
 		attrs.add(a);
 
-		a = DatasetFactory.createFromObject(VOLUME_NAME);
+		a = DatasetFactory.createFromObject(dataName);
 		a.setName(NexusConstants.DATA_SIGNAL);
 		attrs.add(a);
 
-		a = DatasetFactory.createFromObject(axisNames);
-		a.setName(NexusConstants.DATA_AXES);
-		attrs.add(a);
-
-		for (int i = 0; i < axisNames.length; i++) {
-			a = DatasetFactory.createFromObject(i);
-			a.setName(axisNames[i] + NexusConstants.DATA_INDICES_SUFFIX);
+		if (axisNames.length > 0) {
+			a = DatasetFactory.createFromObject(axisNames);
+			a.setName(NexusConstants.DATA_AXES);
 			attrs.add(a);
+	
+			for (int i = 0; i < axisNames.length; i++) {
+				a = DatasetFactory.createFromObject(i);
+				a.setName(axisNames[i] + NexusConstants.DATA_INDICES_SUFFIX);
+				attrs.add(a);
+			}
 		}
 
-		HDF5Utils.writeAttributes(file, volPath, true, attrs.toArray(new Dataset[attrs.size()]));
+		HDF5Utils.writeAttributes(file, dataPath, true, attrs.toArray(new Dataset[attrs.size()]));
 	}
 
 	/**

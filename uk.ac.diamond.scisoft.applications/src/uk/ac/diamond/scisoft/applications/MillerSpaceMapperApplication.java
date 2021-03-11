@@ -38,10 +38,7 @@ public class MillerSpaceMapperApplication implements IApplication {
 	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		Map<?,?> map = context.getArguments();
-		String[] args = (String[]) map.get("application.args");
-
-		
-		return main(args);
+		return main((String[]) map.get(IApplicationContext.APPLICATION_ARGS));
 	}
 
 	@Override
@@ -71,7 +68,19 @@ public class MillerSpaceMapperApplication implements IApplication {
 			MillerSpaceMapperBean bean = mapper.readValue(new File(path), MillerSpaceMapperBean.class);
 
 			MillerSpaceMapper msm = new MillerSpaceMapper(bean);
-			msm.mapToVolumeFile();
+			switch (bean.getOutputMode()) {
+			case Coords_Q:
+				msm.calculateCoordinates(true);
+				break;
+			case Coords_HKL:
+				msm.calculateCoordinates(false);
+				break;
+			case Volume_HKL:
+			default:
+				msm.mapToVolumeFile();
+				break;
+			}
+
 			return IApplication.EXIT_OK;
 		} catch (JsonParseException e) {
 			e.printStackTrace();

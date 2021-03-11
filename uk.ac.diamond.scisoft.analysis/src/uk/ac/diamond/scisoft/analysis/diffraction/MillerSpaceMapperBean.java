@@ -34,7 +34,6 @@ public class MillerSpaceMapperBean implements Cloneable {
 	private String detectorName;
 	private String dataName;
 	private String sampleName;
-	private String[] otherPaths;
 
 	private boolean listMillerEntries;
 
@@ -44,6 +43,26 @@ public class MillerSpaceMapperBean implements Cloneable {
 
 	private int[] region; // masking ROI where only point within its bounds contribute to volume
 	private String maskFilePath; // file path to image weight 
+
+	private OutputMode outputMode = OutputMode.Volume_HKL;
+
+	private int[][] pixelIndexes; // to used calculate coordinates at given pixels indexes
+
+	public enum OutputMode {
+		/**
+		 * Volume in Miller space
+		 */
+		Volume_HKL,
+		/**
+		 * Coordinates in Miller space
+		 */
+		Coords_HKL,
+		/**
+		 * Coordinates in q-space (momentum transfer)
+		 */
+		Coords_Q,
+		;
+	}
 
 	public MillerSpaceMapperBean() {
 	}
@@ -243,15 +262,12 @@ public class MillerSpaceMapperBean implements Cloneable {
 		this.sampleName = sampleName;
 	}
 
-	public String[] getOtherPaths() {
-		return otherPaths;
-	}
-
 	/**
-	 * @param otherPaths
+	 * @deprecated Does nothing but needed for backward compatibility with old JSON files
 	 */
-	public void setOtherPaths(String... otherPaths) {
-		this.otherPaths = otherPaths;
+	@SuppressWarnings("unused")
+	@Deprecated
+	private void setOtherPaths(String... otherPaths) {
 	}
 
 	public boolean isListMillerEntries() {
@@ -326,13 +342,36 @@ public class MillerSpaceMapperBean implements Cloneable {
 		return maskFilePath;
 	}
 
+	public OutputMode getOutputMode() {
+		return outputMode;
+	}
+
+	/**
+	 * Set output mode
+	 * @param outputMode
+	 */
+	public void setOutputMode(OutputMode outputMode) {
+		this.outputMode = outputMode;
+	}
+
+	public int[][] getPixelIndexes() {
+		return pixelIndexes;
+	}
+
+	/**
+	 * Set input pixel indexes (frame - optional, row, column)
+	 * @param pixelIndexes (can be Nx2 for first frame only or Nx3)
+	 */
+	public void setPixelIndexes(int[][] pixelIndexes) {
+		this.pixelIndexes = pixelIndexes;
+	}
+
 	@Override
 	protected MillerSpaceMapperBean clone() {
 		MillerSpaceMapperBean copy = null;
 		try {
 			copy = (MillerSpaceMapperBean) super.clone();
 			copy.inputs = Arrays.copyOf(inputs, inputs.length);
-			copy.otherPaths = otherPaths == null ? null : Arrays.copyOf(otherPaths, otherPaths.length);
 			copy.millerShape = millerShape == null ? null : millerShape.clone();
 			copy.millerStart = millerStart == null ? null : millerStart.clone();
 			copy.millerStep = millerStep == null ? null : millerStep.clone();
@@ -340,7 +379,10 @@ public class MillerSpaceMapperBean implements Cloneable {
 			copy.qStart = qStart == null ? null : qStart.clone();
 			copy.qStep = qStep == null ? null : qStep.clone();
 			copy.region = region == null ? null : region.clone();
-			copy.maskFilePath = maskFilePath;
+			if (pixelIndexes != null) {
+				copy.pixelIndexes = Arrays.stream(pixelIndexes)
+						.map(int[]::clone).toArray(int[][]::new);
+			}
 		} catch (CloneNotSupportedException e) {
 		}
 		return copy;
@@ -350,31 +392,32 @@ public class MillerSpaceMapperBean implements Cloneable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((attenuatorName == null) ? 0 : attenuatorName.hashCode());
-		result = prime * result + ((dataName == null) ? 0 : dataName.hashCode());
-		result = prime * result + ((detectorName == null) ? 0 : detectorName.hashCode());
-		result = prime * result + ((entryPath == null) ? 0 : entryPath.hashCode());
+		result = prime * result + Objects.hashCode(attenuatorName);
+		result = prime * result + Objects.hashCode(dataName);
+		result = prime * result + Objects.hashCode(detectorName);
+		result = prime * result + Objects.hashCode(entryPath);
 		result = prime * result + Arrays.hashCode(inputs);
-		result = prime * result + ((instrumentName == null) ? 0 : instrumentName.hashCode());
+		result = prime * result + Objects.hashCode(instrumentName);
 		result = prime * result + (listMillerEntries ? 1231 : 1237);
 		result = prime * result + Arrays.hashCode(millerShape);
 		result = prime * result + Arrays.hashCode(millerStart);
 		result = prime * result + Arrays.hashCode(millerStep);
-		result = prime * result + Arrays.hashCode(otherPaths);
-		result = prime * result + ((output == null) ? 0 : output.hashCode());
+		result = prime * result + Objects.hashCode(output);
 		result = prime * result + Arrays.hashCode(qShape);
 		result = prime * result + Arrays.hashCode(qStart);
 		result = prime * result + Arrays.hashCode(qStep);
 		result = prime * result + (reduceToNonZero ? 1231 : 1237);
-		result = prime * result + ((sampleName == null) ? 0 : sampleName.hashCode());
+		result = prime * result + Objects.hashCode(sampleName);
 		long temp;
 		temp = Double.doubleToLongBits(scaleFactor);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + ((splitterName == null) ? 0 : splitterName.hashCode());
+		result = prime * result + Objects.hashCode(splitterName);
 		temp = Double.doubleToLongBits(splitterParameter);
 		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + ((region == null) ? 0 : Arrays.hashCode(region));
-		result = prime * result + ((maskFilePath == null) ? 0 : maskFilePath.hashCode());
+		result = prime * result + Arrays.hashCode(region);
+		result = prime * result + Objects.hashCode(maskFilePath);
+		result = prime * result + Objects.hashCode(outputMode);
+		result = prime * result + Objects.hashCode(pixelIndexes);
 		return result;
 	}
 
@@ -440,9 +483,6 @@ public class MillerSpaceMapperBean implements Cloneable {
 		if (!Arrays.equals(millerStep, other.millerStep)) {
 			return false;
 		}
-		if (!Arrays.equals(otherPaths, other.otherPaths)) {
-			return false;
-		}
 		if (output == null) {
 			if (other.output != null) {
 				return false;
@@ -486,6 +526,12 @@ public class MillerSpaceMapperBean implements Cloneable {
 			return false;
 		}
 		if (!Objects.equals(maskFilePath, other.maskFilePath)) {
+			return false;
+		}
+		if (!outputMode.equals(other.outputMode)) {
+			return false;
+		}
+		if (!Arrays.deepEquals(pixelIndexes, other.pixelIndexes)) {
 			return false;
 		}
 		return true;

@@ -24,6 +24,7 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Maths;
 
 import uk.ac.diamond.scisoft.analysis.dataset.function.Interpolation1D;
@@ -77,17 +78,17 @@ public class SplineBaselineOperation extends AbstractOperation<SplineBaselineMod
 		
 		Dataset xaxis = null;
 		// Get the axis, or create one.
-		if (AbstractOperation.getFirstAxes(input) != null &&
-				AbstractOperation.getFirstAxes(input).length != 0 &&
-				AbstractOperation.getFirstAxes(input)[0] != null )
+		ILazyDataset[] firstAxes = getFirstAxes(input);
+		if (firstAxes != null && firstAxes.length != 0 && firstAxes[0] != null) {
 			try {
 				xaxis = DatasetUtils.sliceAndConvertLazyDataset(AbstractOperation.getFirstAxes(input)[0]);
 			} catch (DatasetException e) {
 				throw new OperationException(this, e);
 			}
-		else
+		} else {
 			xaxis = DatasetFactory.createRange(DoubleDataset.class, input.getSize());
-		
+		}
+
 		// y values at the xs
 		Dataset ys = Maths.interpolate(xaxis, input, knots, null, null);
 

@@ -181,7 +181,9 @@ public class FitPeakToRowsOperation extends AbstractOperation<FitPeakToRowsModel
 			try {
 				
 				Dataset next = DatasetUtils.convertToDataset(it.next().getSlice()).squeeze();
-				Dataset ax = DatasetUtils.convertToDataset(getFirstAxes(next)[0].getSlice());
+				ILazyDataset[] axes = getFirstAxes(next);
+				Dataset ax = axes == null || axes[0] == null ? DatasetFactory.createRange(next.getSize()) :
+						DatasetUtils.sliceAndConvertLazyDataset(axes[0]);;
 				if (f == null) {
 					IdentifiedPeak foundPeak = Generic1DFitter.parseDataDerivative(ax, next, 1).get(0);
 					peak = PeakType.createPeak(model.getPeakType(), foundPeak);

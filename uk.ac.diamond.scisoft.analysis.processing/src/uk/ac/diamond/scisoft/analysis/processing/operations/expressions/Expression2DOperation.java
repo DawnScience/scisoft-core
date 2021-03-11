@@ -81,9 +81,9 @@ public class Expression2DOperation<T extends Expression2DModel> extends Expressi
 		ILazyDataset[] axes = getFirstAxes(input);
 		IDataset axisx = null;
 		IDataset axisy = null;
-		if (axes != null ) {
+		if (axes != null) {
 			try {
-				if (axes[0] != null) {
+				if (axes[1] != null) {
 					axisx= axes[1].getSlice().squeeze();
 				}
 

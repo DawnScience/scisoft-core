@@ -19,8 +19,6 @@ import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Random;
-import org.hamcrest.MatcherAssert;
-import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;

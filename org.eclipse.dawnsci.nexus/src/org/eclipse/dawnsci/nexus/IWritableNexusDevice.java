@@ -28,7 +28,6 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
 import org.eclipse.january.dataset.SliceND;
 
-
 /**
  * An {@link INexusDevice} that can be write data to its dataset at each point in the scan. This is
  * required if the device does already not write its data at each point in the scan in the method
@@ -40,6 +39,8 @@ import org.eclipse.january.dataset.SliceND;
  */
 public interface IWritableNexusDevice<N extends NXobject> extends INexusDevice<N> {
 
+	public static final int[] SCALAR_DATASET_SHAPE = new int[0];
+	
 	/**
 	 * Write the given data object at the given scan slice.
 	 *
@@ -75,6 +76,10 @@ public interface IWritableNexusDevice<N extends NXobject> extends INexusDevice<N
 		if (dataset.getRank() == 0 || dataset.getRank() == 1 && dataset.getSize() == 1) {
 			sliceND = scanSlice; // special case for single-valued datasets, just use the scan shape
 		} else {
+			if (dataset.getRank() == 1 && dataset.getSize() == 1) {
+				dataset.setShape(SCALAR_DATASET_SHAPE);
+			}
+			
 			// append zeros to the start array, and the dataset shape to the stop array
 			final int[] dataShape = dataset.getShape();
 			final int[] start = IntStream.concat(Arrays.stream(scanSlice.getStart()),

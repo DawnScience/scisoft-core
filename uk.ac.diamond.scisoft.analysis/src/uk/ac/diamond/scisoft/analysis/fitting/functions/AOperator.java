@@ -21,6 +21,8 @@ import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
  * An abstract operator
  */
 abstract public class AOperator extends AFunction implements IOperator {
+	private static final long serialVersionUID = 1L;
+
 	protected List<IParameter> params; // unique parameters
 
 	public AOperator() {

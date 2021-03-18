@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base abstract class for IFunction implementation. At a minimum, the fillWithValues() method needs
+ * Base abstract class for IFunction implementation. At a minimum, getNoOfParamers and fillWithValues() methods need
  * to be added. The fillWithPartialDerivativeValues() and/or calculatePartialDerivativeValues()
  * methods can be overridden if exact derivatives are needed.
  * 
@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
  * parent operator's update parameters method.
  */
 public abstract class AFunction implements IFunction, Serializable {
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * Setup the logging facilities
@@ -114,6 +115,10 @@ public abstract class AFunction implements IFunction, Serializable {
 	 *            An array of starting parameter values as doubles.
 	 */
 	public AFunction(double... params) {
+		if (params.length != getNoOfParameters() && getNoOfParameters() > 0) {
+			throw new IllegalArgumentException("Incorrect number of parameters given");
+		}
+
 		parameters = createParameters(params.length);
 
 		setParameterValues(params);
@@ -127,6 +132,10 @@ public abstract class AFunction implements IFunction, Serializable {
 	 *            An array of parameters
 	 */
 	public AFunction(IParameter... params) {
+		if (params.length != getNoOfParameters() && getNoOfParameters() > 0) {
+			throw new IllegalArgumentException("Incorrect number of parameters given");
+		}
+
 		parameters = createParameters(params.length);
 
 		setParameters(params);
@@ -200,11 +209,6 @@ public abstract class AFunction implements IFunction, Serializable {
 			params[i] = parameters[i];
 		}
 		return params;
-	}
-
-	@Override
-	public int getNoOfParameters() {
-		return parameters.length;
 	}
 
 	@Override

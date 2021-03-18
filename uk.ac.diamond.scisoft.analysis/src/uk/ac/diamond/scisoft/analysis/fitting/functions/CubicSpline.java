@@ -16,6 +16,8 @@ import org.eclipse.january.dataset.DoubleDataset;
  * Basically an implementation of a simple cubic spline calculator
  */
 public class CubicSpline extends AFunction {
+	private static final long serialVersionUID = 2016450265145295052L;
+
 	private static String NAME = "CubicSpline";
 	private static String DESC = "Construct a cubic spline given points - this is not a fitting function";
 
@@ -23,8 +25,10 @@ public class CubicSpline extends AFunction {
 
 	private transient double[] x = null, y = null;
 
+	private static final int PARAMS = 4;
+
 	public CubicSpline() {
-		this(4);
+		this(PARAMS);
 	}
 
 	public CubicSpline(int numberOfParameters) {
@@ -60,6 +64,11 @@ public class CubicSpline extends AFunction {
 		super(ystartpoints);
 		setNames();
 		x = xpoints;
+	}
+
+	@Override
+	public int getNoOfParameters() {
+		return PARAMS;
 	}
 
 	@Override

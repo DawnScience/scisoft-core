@@ -21,6 +21,8 @@ import org.eclipse.january.dataset.DoubleDataset;
  * Multiply several functions (missing functions are treated as unity)
  */
 public class Multiply extends ANaryOperator implements IOperator {
+	private static final long serialVersionUID = 3385434349380938643L;
+
 	private static final String NAME = "Multiply";
 	private static final String DESC = "Multiply several functions together";
 

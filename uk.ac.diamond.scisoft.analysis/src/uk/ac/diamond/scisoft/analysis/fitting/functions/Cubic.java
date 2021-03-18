@@ -21,6 +21,8 @@ import org.eclipse.january.dataset.Maths;
  * y(x) = ax^3 + bx^2 + cx + d
  */
 public class Cubic extends AFunction {
+	private static final long serialVersionUID = 5812862800814773667L;
+
 	private static final String NAME = "Cubic";
 	private static final String DESC = "A cubic function."
 			+ "\n    y(x) = a*x^3 + b*x^2 + c*x + d";
@@ -62,7 +64,7 @@ public class Cubic extends AFunction {
 	 *            maximum boundary for the D parameter
 	 */
 	public Cubic(double minA, double maxA, double minB, double maxB, double minC, double maxC, double minD, double maxD) {
-		super(4);
+		super(PARAM_NAMES.length);
 
 		getParameter(0).setLimits(minA,maxA);
 		getParameter(0).setValue((minA + maxA) / 2.0);
@@ -75,6 +77,11 @@ public class Cubic extends AFunction {
 
 		getParameter(3).setLimits(minD,maxD);
 		getParameter(3).setValue((minD + maxD) / 2.0);
+	}
+
+	@Override
+	public int getNoOfParameters() {
+		return PARAM_NAMES.length;
 	}
 
 	@Override

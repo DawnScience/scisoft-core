@@ -18,6 +18,7 @@ import org.eclipse.january.dataset.DoubleDataset;
  * y(x) = Fermi(mu1, kT1, scale) - Fermi(mu2,kT2, scale)
  */
 public class Box extends AFunction {
+	private static final long serialVersionUID = -5586886039607583168L;
 
 	private static final String NAME = "Box";
 	private static final String DESC = "A rounded step function defined by Fermi functions."
@@ -28,7 +29,7 @@ public class Box extends AFunction {
 	private double mu1, kT1, mu2, kT2, scale;
 	private Fermi fermi1, fermi2; 
 
-	public Box(){
+	public Box() {
 		this(params);
 	}
 
@@ -50,6 +51,11 @@ public class Box extends AFunction {
 		
 		fermi1 = new Fermi(fermi1Params);
 		fermi2 = new Fermi(fermi2Params);
+	}
+
+	@Override
+	public int getNoOfParameters() {
+		return params.length;
 	}
 
 	@Override

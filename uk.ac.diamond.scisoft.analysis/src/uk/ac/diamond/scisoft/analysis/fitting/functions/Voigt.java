@@ -102,6 +102,11 @@ public class Voigt extends APeak {
 	}
 
 	@Override
+	public int getNoOfParameters() {
+		return PARAMS.length;
+	}
+
+	@Override
 	public void setParameters(IdentifiedPeak peak) {
 		super.setParameters(peak);
 

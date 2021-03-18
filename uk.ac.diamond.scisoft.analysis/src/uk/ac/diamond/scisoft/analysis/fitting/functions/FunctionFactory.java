@@ -115,7 +115,7 @@ public final class FunctionFactory {
 	 * @throws Exception
 	 */
 	public static void registerFunction(Class<? extends IFunction> clazz, String fnName, Boolean ignoreDuplicates, Set<String> useCaseList) throws Exception {
-		final IFunction function = clazz.newInstance();
+		final IFunction function = clazz.getDeclaredConstructor().newInstance();
 		final String name;
 		
 		//Register with a different name to the one in the class
@@ -177,22 +177,6 @@ public final class FunctionFactory {
 	}
 
 	/**
-	 * Returns an instance of a function
-	 * @param name of registered function
-	 * @return IFunction
-	 * @throws IllegalArgumentException if not found or could not create 
-	 */
-	public static IFunction getFunction(String name) {
-		Class<? extends IFunction> functionClass = getFunctionClass(name);
-		try {
-			return functionClass.newInstance();
-		} catch (Exception e) {
-			logger.error("Could not create instance of {}", functionClass, e);
-			throw new IllegalArgumentException("Could not create instance of " + functionClass, e);
-		}
-	}
-
-	/**
 	 * Returns an instance of a function with given arguments
 	 * @param name of registered function
 	 * @param args arguments for constructor
@@ -202,7 +186,8 @@ public final class FunctionFactory {
 	public static IFunction getFunction(String name, double... args) {
 		Class<? extends IFunction> functionClass = getFunctionClass(name);
 		try {
-			final Constructor<? extends IFunction> c = functionClass.getConstructor(double[].class);
+			final Constructor<? extends IFunction> c = args == null || args.length == 0 ? functionClass.getConstructor()
+					: functionClass.getConstructor(double[].class);
 			return c.newInstance(args);
 		} catch (Exception e) {
 			logger.error("Could not create instance of {}", functionClass, e);
@@ -234,7 +219,7 @@ public final class FunctionFactory {
 	public static IPeak getPeakFunction(String name) {
 		Class<? extends IPeak> peakClass = getPeakFunctionClass(name);
 		try {
-			return peakClass.newInstance();
+			return peakClass.getDeclaredConstructor().newInstance();
 		} catch (Exception e) {
 			logger.error("Could not create instance of {}", peakClass, e);
 			throw new IllegalArgumentException("Could not create instance of " + peakClass, e);

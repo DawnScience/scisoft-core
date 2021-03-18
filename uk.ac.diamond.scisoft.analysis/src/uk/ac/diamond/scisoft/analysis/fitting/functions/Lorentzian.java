@@ -79,6 +79,11 @@ public class Lorentzian extends APeak {
 	}
 
 	@Override
+	public int getNoOfParameters() {
+		return PARAMS.length;
+	}
+
+	@Override
 	protected void setNames() {
 		setNames(NAME, DESC, PARAM_NAMES);
 	}

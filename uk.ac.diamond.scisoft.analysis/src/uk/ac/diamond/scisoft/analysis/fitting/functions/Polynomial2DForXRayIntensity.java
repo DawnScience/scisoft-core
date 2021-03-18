@@ -31,13 +31,14 @@ import org.ejml.data.Complex64F;
  * y(x) = a_0 x^n + a_1 x^(n-1) + a_2 x^(n-2) + ... + a_(n-1) x + a_n
  */
 public class Polynomial2DForXRayIntensity extends AFunction {
+	private static final long serialVersionUID = -8755972998518887834L;
+
 	private static final String NAME = "Polynomial2D";
 	private static final String DESC = "A polynomial of degree n."
 			+ "\n    y(x) = a_0 x^n + a_1 x^(n-1) + a_2 x^(n-2) + ... + a_(n-1) x + a_n";
 	private transient double[] a;
-	private transient int nparams; // actually degree + 1
 	private transient int degree;
-	private transient int noFunctions;
+	private transient int noFunctions;  // actually degree + 1
 
 	/**
 	 * Basic constructor, not advisable to use
@@ -53,7 +54,6 @@ public class Polynomial2DForXRayIntensity extends AFunction {
 	public Polynomial2DForXRayIntensity(int degree) {
 		super((int) (Math.pow((degree+1),2)));
 		this.degree = degree;
-		nparams = (int) Math.pow((degree+1),2);
 		noFunctions = (int) Math.pow((degree+1),2);
 		parameters = createParameters(noFunctions);
 		
@@ -88,7 +88,7 @@ public class Polynomial2DForXRayIntensity extends AFunction {
 		if (min.length != max.length) {
 			throw new IllegalArgumentException("Bound arrays must be of equal length");
 		}
-		nparams = min.length;
+		int nparams = min.length;
 		parameters = new Parameter[nparams];
 		a = new double[nparams];
 
@@ -102,11 +102,9 @@ public class Polynomial2DForXRayIntensity extends AFunction {
 
 	@Override
 	public int getNoOfParameters(){
-		return nparams;
+		return parameters == null ? -1 : parameters.length;
 	}
-	
-	
-	
+
 	@Override
 	protected void setNames() {
 		if (isDirty() && noFunctions < getNoOfParameters()) {
@@ -466,7 +464,6 @@ public class Polynomial2DForXRayIntensity extends AFunction {
 	 * @param degree
 	 */
 	public void setDegree(int degree) {
-		nparams = (int) Math.pow((degree+1),2);
 		noFunctions = (int) Math.pow((degree+1),2);
 		parameters = createParameters(noFunctions);
 		dirty = true;
@@ -484,15 +481,15 @@ public class Polynomial2DForXRayIntensity extends AFunction {
 		
 		DecimalFormat df = new DecimalFormat("0.#####E0");
 		
-		for (int i = nparams-1; i >= 2; i--) {
-			out.append(df.format(parameters[nparams - 1 -i].getValue()));
+		for (int i = noFunctions-1; i >= 2; i--) {
+			out.append(df.format(parameters[noFunctions - 1 -i].getValue()));
 			out.append(String.format("x^%d + ", i));
 		}
 		
-		if (nparams >= 2)
-			out.append(df.format(parameters[nparams-2].getValue()) + "x + ");
-		if (nparams >= 1)
-			out.append(df.format(parameters[nparams-1].getValue()));
+		if (noFunctions >= 2)
+			out.append(df.format(parameters[noFunctions-2].getValue()) + "x + ");
+		if (noFunctions >= 1)
+			out.append(df.format(parameters[noFunctions-1].getValue()));
 		
 		return out.toString();
 	}

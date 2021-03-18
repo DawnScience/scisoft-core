@@ -37,6 +37,8 @@ import org.eclipse.january.dataset.DoubleDataset;
  * </ol>
  */
 public class Step extends AFunction {
+	private static final long serialVersionUID = -2632855678062562995L;
+
 	private static String NAME = "Step";
 	private static String DESC = "A step function with inner and outer levels."
 			+ "\n    y(x) = base,                 if x < pmin or x > pmax,"
@@ -53,6 +55,10 @@ public class Step extends AFunction {
 	}
 
 	public Step(IParameter... params) {
+		super(params);
+	}
+
+	public Step(double[] params) {
 		super(params);
 	}
 
@@ -91,7 +97,7 @@ public class Step extends AFunction {
 	public Step(double minY, double maxY, double minX1, double maxX1, double minX2, double maxX2, double minH1,
 			double maxH1, double minH2, double maxH2, double minW, double maxW, double minPos, double maxPos) {
 
-		super(7);
+		super(PARAM_NAMES.length);
 
 		IParameter p;
 		p = getParameter(0);
@@ -128,6 +134,11 @@ public class Step extends AFunction {
 		p.setLowerLimit(minPos);
 		p.setUpperLimit(maxPos);
 		p.setValue((minPos + maxPos) / 2.0);
+	}
+
+	@Override
+	public int getNoOfParameters() {
+		return PARAM_NAMES.length;
 	}
 
 	@Override

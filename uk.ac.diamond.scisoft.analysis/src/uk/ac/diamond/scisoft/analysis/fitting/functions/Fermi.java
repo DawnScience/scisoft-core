@@ -19,7 +19,8 @@ import org.eclipse.january.dataset.DoubleDataset;
  * y(x) = scale / (exp((x - mu)/kT) + 1) + C
  */
 public class Fermi extends AFunction implements Serializable {
-	
+	private static final long serialVersionUID = -2086282272374614960L;
+
 	private static final String NAME = "Fermi";
 	private static final String DESC = "A Fermi-Dirac distribution."
 			+ "\n    y(x) = scale / (exp((x - mu)/kT) + 1) + C";
@@ -63,7 +64,7 @@ public class Fermi extends AFunction implements Serializable {
 	public Fermi(double minMu, double maxMu, double minkT, double maxkT,
 					double minScale, double maxScale, double minC, double maxC) {
 
-		super(4);
+		super(PARAMS.length);
 
 		IParameter p;
 		p = getParameter(0);
@@ -81,6 +82,11 @@ public class Fermi extends AFunction implements Serializable {
 		p = getParameter(3);
 		p.setLimits(minC, maxC);
 		p.setValue((minC + maxC) / 2.0);
+	}
+
+	@Override
+	public int getNoOfParameters() {
+		return PARAMS.length;
 	}
 
 	@Override

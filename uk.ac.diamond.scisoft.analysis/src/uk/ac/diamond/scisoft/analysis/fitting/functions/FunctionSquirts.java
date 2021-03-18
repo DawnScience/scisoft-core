@@ -23,7 +23,8 @@ import org.eclipse.january.dataset.Dataset;
  * Used as a brain dump for tool data into a place with no UI dependencies.
  */
 public class FunctionSquirts implements Serializable {
-	
+	private static final long serialVersionUID = 5051827819880365431L;
+
 	private List<IdentifiedPeak> identifiedPeaks;
 	private IROI                 fitBounds;
 	
@@ -48,6 +49,8 @@ public class FunctionSquirts implements Serializable {
 	 * This thing may consist of multiple items of data.
 	 */
 	public static final class Squirt  implements Serializable {
+		private static final long serialVersionUID = 6939920699781991404L;
+
 		private IROI           bounds;
 		private AFunction         function;
 		private String            name;

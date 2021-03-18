@@ -25,6 +25,8 @@ import org.slf4j.LoggerFactory;
  * are normalized by the diagonal elements.
  */
 public class GaussianND extends AFunction {
+	private static final long serialVersionUID = 512262312319470425L;
+
 	private static String NAME = "GaussianND";
 	private static String DESC = "An N-dimensional Gaussian function."
 			+ "\nThe parameters are mean peak position coordinates (N), volume (1),"
@@ -39,6 +41,9 @@ public class GaussianND extends AFunction {
 	 */
 	private static transient final Logger logger = LoggerFactory.getLogger(GaussianND.class);
 
+	/**
+	 * 1D Gaussian
+	 */
 	public GaussianND() {
 		super(new double[]{0,0,0});
 	}
@@ -124,6 +129,11 @@ public class GaussianND extends AFunction {
 				p.setUpperLimit(1);
 			}
 		}
+	}
+
+	@Override
+	public int getNoOfParameters() {
+		return parameters == null ? -1 : parameters.length;
 	}
 
 	@Override

@@ -17,6 +17,8 @@ import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
  * A binary operator that uses two functions
  */
 abstract public class ABinaryOperator extends AOperator implements IOperator {
+	private static final long serialVersionUID = -5385015675706560719L;
+
 	IFunction fa;
 	IFunction fb;
 

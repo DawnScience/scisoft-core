@@ -20,6 +20,8 @@ import uk.ac.diamond.scisoft.analysis.utils.Faddeeva;
  * Class for a modified Fano profile convolved with a Gaussian
  */
 public class FanoGaussian extends AFunction {
+	private static final long serialVersionUID = 1178920870716388629L;
+
 	private static final String NAME = "Fano-Gaussian";
 	private static final String DESC = "A modified Fano profile convolved Gaussian function."
 			+ "\n    y(x) = Convolve(MFano(x; posn, l_fwhm, q), Gaussian(x; 0, g_fwhm, area)"
@@ -83,6 +85,11 @@ public class FanoGaussian extends AFunction {
 		getParameter(AREA).setLowerLimit(0.0);
 		getParameter(FWHMG).setLowerLimit(0.0);
 		getParameter(FANO).setLowerLimit(Q_LOWER);
+	}
+
+	@Override
+	public int getNoOfParameters() {
+		return PARAMS.length;
 	}
 
 	@Override

@@ -20,6 +20,8 @@ import org.eclipse.january.dataset.Maths;
  * Class that wrappers the function y(x) = ax^2 + bx + c
  */
 public class Quadratic extends AFunction {
+	private static final long serialVersionUID = -5198404635244906223L;
+
 	private static final String NAME = "Quadratic";
 	private static final String DESC = "A quadratic function or parabola."
 			+ "\n    y(x) = a*x^2 + b*x + c";
@@ -78,6 +80,11 @@ public class Quadratic extends AFunction {
 	 */
 	public Quadratic(double[] params) {
 		super(params);
+	}
+
+	@Override
+	public int getNoOfParameters() {
+		return PARAM_NAMES.length;
 	}
 
 	@Override

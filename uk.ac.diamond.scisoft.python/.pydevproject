@@ -21,10 +21,6 @@
 <path>${BUNDLE_POOL_LOC}/plugins/org.ddogleg_0.6.0.SNAPSHOT.jar</path>
 <path>${BUNDLE_POOL_LOC}/plugins/org.eclipse.january_2.3.0.v201909112144.jar</path>
 <path>${BUNDLE_POOL_LOC}/plugins/org.eclipse.january.asserts_2.3.0.v201909092132.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/org.eclipse.swt_3.114.0.v20200304-0601.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/org.eclipse.swt.gtk.linux.x86_64_3.114.0.v20200304-0601.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/org.eclipse.swt.cocoa.macosx.x86_64_3.114.0.v20200304-0601.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/org.eclipse.swt.win32.win32.x86_64_3.114.0.v20200304-0601.jar</path>
 <path>${BUNDLE_POOL_LOC}/plugins/org.uncommons.maths_1.2.3.jar</path>
 <path>${BUNDLE_POOL_LOC}/plugins/si.uom.si-quantity_0.9.0.jar</path>
 <path>${BUNDLE_POOL_LOC}/plugins/si.uom.si-units_0.9.0.jar</path>

@@ -15,13 +15,17 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
-
+import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.SliceND;
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 
+
+import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 import uk.ac.diamond.scisoft.analysis.utils.ErrorPropagationUtils;
 
 
@@ -52,12 +56,16 @@ public class ExternalChannelAverageFrameOperation extends AbstractOperation<Exte
 	@Override
 	public OperationData process(IDataset inputDataset, IMonitor monitor) throws OperationException {
 		// Checks to start with
-		Dataset operatorDataset = DataUtils.getExternalFrameMatching(inputDataset, null, null, model.getFilePath(), model.getDatasetName(), this);
-
-		if (operatorDataset == null) {
+		SliceFromSeriesMetadata sliceMetadata = inputDataset.getFirstMetadata(SliceFromSeriesMetadata.class);
+		ILazyDataset lazyOperatorDataset = ProcessingUtils.getLazyDataset(this, model.getFilePath(), model.getDatasetName());
+		Dataset operatorDataset;
+		
+		try {
+			operatorDataset = DatasetUtils.convertToDataset(lazyOperatorDataset.getSlice(sliceMetadata.getSliceFromInput())).squeeze();
+		} catch (DatasetException e) {
 			throw new OperationException(this, "The dataset requested returned no data");
 		}
-		
+
 		int[] frameShape = operatorDataset.getShape();
 		
 		if (frameShape.length != 2) {
@@ -93,7 +101,7 @@ public class ExternalChannelAverageFrameOperation extends AbstractOperation<Exte
 
 		// Manipulate the inputDataset
 		Dataset outputDataset = DatasetUtils.convertToDataset(inputDataset);
-
+		
 		switch (model.getMathematicalOperator().getInt()) {
 			case 1:	outputDataset = ErrorPropagationUtils.addWithUncertainty(outputDataset, averageValue);
 					break;

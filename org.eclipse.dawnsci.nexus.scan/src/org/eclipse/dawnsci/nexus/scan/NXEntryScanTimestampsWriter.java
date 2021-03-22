@@ -18,12 +18,10 @@
 
 package org.eclipse.dawnsci.nexus.scan;
 
-import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 import static java.time.temporal.ChronoUnit.MILLIS;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
-
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
@@ -43,13 +41,14 @@ import org.slf4j.LoggerFactory;
  * as we need to use lazy datasets and write data at the end of the scan. TODO find a better way of doing this.
  */
 public class NXEntryScanTimestampsWriter {
-
+	
 	private static final Logger logger = LoggerFactory.getLogger(NXEntryScanTimestampsWriter.class);
 
 	private static final int[] SINGLE_SHAPE = new int[] { 1 };
+	private static final int[] START_SHAPE = new int[] { 0 };
 
 	private static final String ATTRIBUTE_NAME_UNITS = "units";
-	private static final String ATTRIBUTE_VALUE_SECONDS = "s";
+	private static final String ATTRIBUTE_VALUE_MILLISECONDS = "ms";
 
 	private final NXentry entry;
 	private ILazyWriteableDataset scanEndTimeDataset;
@@ -64,7 +63,7 @@ public class NXEntryScanTimestampsWriter {
 		// write and cache scan start time
 		// Truncated to millis as the string parser in DateDataset treats microseconds as milliseconds
 		scanStartTime = ZonedDateTime.now().truncatedTo(MILLIS);
-		entry.setStart_time(DatasetFactory.createFromObject(ISO_OFFSET_DATE_TIME.format(scanStartTime)));
+		entry.setStart_time(DatasetFactory.createFromObject(scanStartTime.toString()));
 
 		// create lazy dataset for scan end time
 		scanEndTimeDataset = new LazyWriteableDataset(NXentry.NX_END_TIME, String.class, SINGLE_SHAPE, SINGLE_SHAPE, SINGLE_SHAPE, null);
@@ -73,8 +72,7 @@ public class NXEntryScanTimestampsWriter {
 		// create lazy dataset for scan duration, with units attribute
 		scanDurationDataset = new LazyWriteableDataset(NXentry.NX_DURATION, Long.class, SINGLE_SHAPE, SINGLE_SHAPE, SINGLE_SHAPE, null);
 		final DataNode durationDataNode = entry.createDataNode(NXentry.NX_DURATION, scanDurationDataset);
-		final Attribute unitsAttribute = TreeFactory.createAttribute(ATTRIBUTE_NAME_UNITS);
-		unitsAttribute.setValue(ATTRIBUTE_VALUE_SECONDS);
+		final Attribute unitsAttribute = TreeFactory.createAttribute(ATTRIBUTE_NAME_UNITS, ATTRIBUTE_VALUE_MILLISECONDS);
 		durationDataNode.addAttribute(unitsAttribute);
 	}
 
@@ -83,7 +81,7 @@ public class NXEntryScanTimestampsWriter {
 		// Truncated to millis as the string parser in DateDataset treats microseconds as milliseconds
 		final ZonedDateTime scanEndTime = ZonedDateTime.now().truncatedTo(MILLIS);
 		try {
-			scanEndTimeDataset.setSlice(null, DatasetFactory.createFromObject(ISO_OFFSET_DATE_TIME.format(scanEndTime)), null, null, null);	
+			scanEndTimeDataset.setSlice(null, DatasetFactory.createFromObject(scanEndTime.toString()), START_SHAPE, SINGLE_SHAPE, SINGLE_SHAPE);	
 		} catch (DatasetException e) {
 			logger.error("Could not set scan end",e);
 		}
@@ -91,7 +89,7 @@ public class NXEntryScanTimestampsWriter {
 		// write scan duration to dataset
 		final Duration scanDuration = Duration.between(scanStartTime, scanEndTime);
 		try {
-			scanDurationDataset.setSlice(null, DatasetFactory.createFromObject(scanDuration.getSeconds()), null, null, null);
+			scanDurationDataset.setSlice(null, DatasetFactory.createFromObject(scanDuration.toMillis()), START_SHAPE, SINGLE_SHAPE, SINGLE_SHAPE);
 		} catch (DatasetException e) {
 			logger.error("Could set scan duration",e);
 		}

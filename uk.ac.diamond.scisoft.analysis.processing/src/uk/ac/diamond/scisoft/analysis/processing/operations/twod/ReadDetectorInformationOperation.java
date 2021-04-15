@@ -58,7 +58,7 @@ public class ReadDetectorInformationOperation extends AbstractOperation<ReadDete
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		SliceFromSeriesMetadata ssm = input.getFirstMetadata(SliceFromSeriesMetadata.class);
 		input = input.getSliceView();
-		DetectorInformation d = getDetectorInformation(model,ssm.getFilePath(), ssm.getParent());
+		DetectorInformation d = getDetectorInformation(model,ssm.getFilePath(), ssm.getParent(), ssm.getDatasetName());
 		input.setMetadata(d.metadata);
 		if (d.mask != null) {
 			MaskMetadata mm;
@@ -73,7 +73,7 @@ public class ReadDetectorInformationOperation extends AbstractOperation<ReadDete
 		return new OperationData(input);
 	}
 	
-	private DetectorInformation getDetectorInformation(ReadDetectorInformationModel mod, String path, ILazyDataset parent) {
+	private DetectorInformation getDetectorInformation(ReadDetectorInformationModel mod, String path, ILazyDataset parent, String name) {
 
 		DetectorInformation localInfo = info;
 		if (localInfo == null) {
@@ -83,8 +83,7 @@ public class ReadDetectorInformationOperation extends AbstractOperation<ReadDete
 					DetectorInformation i = new DetectorInformation();
 					try {
 						if (model.isReadGeometry()) {
-							IDiffractionMetadata md = NexusDiffractionCalibrationReader.getDiffractionMetadataFromNexus(path, parent);
-//						if (md == null) throw new OperationException(this, "File does not contain metadata");
+							IDiffractionMetadata md = NexusDiffractionCalibrationReader.getDiffractionMetadataFromNexus(path, parent, name);
 							i.metadata = md;
 						}
 						
@@ -93,7 +92,6 @@ public class ReadDetectorInformationOperation extends AbstractOperation<ReadDete
 							if (d != null) {
 								i.mask = Comparisons.equalTo(d, 0);
 							}
-//						else throw new OperationException(this, "File does not contain mask");
 						}
 					} catch (Exception e) {
 						throw new OperationException(this, e);

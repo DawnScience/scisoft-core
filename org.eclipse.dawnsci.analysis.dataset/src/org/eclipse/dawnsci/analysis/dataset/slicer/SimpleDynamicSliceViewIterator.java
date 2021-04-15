@@ -125,14 +125,11 @@ public class SimpleDynamicSliceViewIterator implements ISliceViewIterator {
 
 	@Override
 	public ILazyDataset next() {
-		SliceND current = iterator.getCurrentSlice().clone();
-		ILazyDataset view;
-		try {
-			view = lazy.getSlice(current);
-		} catch (DatasetException e) {
-			logger.error("Could not get data from lazy dataset", e);
-			return null;
-		}
+
+		SliceND current = iterator.getCurrentSlice();
+		current = SliceND.createSlice(lazy, current.getStart(), current.getStop(),current.getStep());
+		
+		ILazyDataset view = lazy.getSliceView(current);
 		view.clearMetadata(SliceFromSeriesMetadata.class);
 		
 		int count = iterator.getCount();

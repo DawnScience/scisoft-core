@@ -32,6 +32,8 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -39,6 +41,7 @@ import org.eclipse.january.dataset.ILazyDataset;
  */
 public class NexusDiffractionCalibrationReader {
 
+	private static final Logger logger = LoggerFactory.getLogger(NexusDiffractionCalibrationReader.class);
 
 	public static IDiffractionMetadata getDiffractionMetadataFromNexus(final String filePath, final ILazyDataset parent) throws DatasetException {
 		return getDiffractionMetadataFromNexus(filePath, parent, null);
@@ -89,10 +92,18 @@ public class NexusDiffractionCalibrationReader {
 		// Search for all NXdetectors related to parent. If parent is null, then this results in finding all NXdetectors
 		Map<String, NodeLink> dnl = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getFinder(parent), false, null);
 		
+		if (parent != null && dnl.size() != 1) {
+			logger.warn("Lazy datasets provided but NXdetector not found by equality test");
+		}
+		
 		// If the above did not find exactly one NXdetector, try searching again, this time keying from the provided dataset name
 		if (dnl.size() != 1 && datasetName != null){
 			String s = stripDataName(datasetName);
 			dnl = TreeUtils.treeBreadthFirstSearch(tree.getGroupNode(), getFinder(s), true, null);
+		}
+		
+		if (datasetName != null && dnl.size() != 1) {
+			logger.warn("Dataset name provided but NXdetector not found by test");
 		}
 		
 		// If the above did not find exactly one NX detector, try again, without filtering, and only get the first found

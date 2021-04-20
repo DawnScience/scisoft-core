@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.nexus.test.utilities;
 
-import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
 import static org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder.ATTR_NAME_AXES;
 import static org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder.ATTR_NAME_SIGNAL;
 import static org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder.ATTR_NAME_TARGET;
@@ -27,8 +26,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.lang.reflect.Array;
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -434,33 +434,34 @@ public class NexusAssert {
 
 		Dataset startTimes = DatasetUtils.convertToDataset(pointStartTimesDataset);
 		Dataset endTimes = DatasetUtils.convertToDataset(pointEndTimesDataset);
+		
+		final DateDataset startTimeDateDataset = DatasetUtils.cast(DateDataset.class, startTimes);
+		final DateDataset endTimeDateDataset = DatasetUtils.cast(DateDataset.class, endTimes);
 
 		IndexIterator iterator = startTimes.getIterator(true);
 
 		if (!snake || sizes.length == 1) {
-			LocalDateTime prevEnd = null;
+			Date prevEnd = null;
 			while (iterator.hasNext()) {
-				String startString = startTimes.getString(iterator.getPos());
-				String endString = endTimes.getString(iterator.getPos());
-				LocalDateTime start = LocalDateTime.parse(startString, ISO_DATE_TIME);
-				LocalDateTime end = LocalDateTime.parse(endString, ISO_DATE_TIME);
-				assertTrue(start.isBefore(end) || start.isEqual(end));
+				Date start = startTimeDateDataset.getDate(iterator.getPos());
+				Date end =endTimeDateDataset.getDate(iterator.getPos());
+				assertTrue(!end.before(start));
 				if (prevEnd != null) {
-					assertTrue(start.isAfter(prevEnd) || start.isEqual(prevEnd));
+					assertTrue(!start.before(prevEnd));
 				}
 				prevEnd = end;
 			}
 		} else {
-			String[] flatStartTimes = flattenSnakeDataset(pointStartTimesDataset, foldedGrid);
-			String[] flatEndTimes = flattenSnakeDataset(pointEndTimesDataset, foldedGrid);
+			final Date[] flatStartTimes = flattenSnakeDataset(startTimeDateDataset, foldedGrid, Date.class);
+			final Date[] flatEndTimes = flattenSnakeDataset(endTimeDateDataset, foldedGrid, Date.class);
 
-			LocalDateTime previousEnd = null;
+			Date previousEnd = null;
 			for (int index = 0; index < flatStartTimes.length; index++) {
-				LocalDateTime start = LocalDateTime.parse(flatStartTimes[index], ISO_DATE_TIME);
-				LocalDateTime end = LocalDateTime.parse(flatEndTimes[index], ISO_DATE_TIME);
-				assertTrue(start.isBefore(end) || start.isEqual(end));
+				Date start = flatStartTimes[index];
+				Date end = flatEndTimes[index];
+				assertTrue(!start.after(end));
 				if (previousEnd != null) {
-					assertTrue(start.isAfter(previousEnd) || start.isEqual(previousEnd));
+					assertTrue(!previousEnd.after(start));
 				}
 				previousEnd = end;
 			}
@@ -468,14 +469,16 @@ public class NexusAssert {
 
 	}
 
-	private static String[] flattenSnakeDataset(IDataset dataset, boolean foldedGrid) {
+	@SuppressWarnings("unchecked")
+	private static <T> T[] flattenSnakeDataset(IDataset dataset, boolean foldedGrid, Class<T> datasetType) {
 		int pointIndex = 1;
 		int[] shape = dataset.getShape();
 		int flatArraySize = 1;
 		for (int axisPoints : shape) {
 			flatArraySize *= axisPoints;
 		}
-		String[] flatDataset = new String[flatArraySize];
+		
+		T[] flatDataset = (T[]) Array.newInstance(datasetType, flatArraySize);
 		PositionIterator iter = new PositionIterator(shape);
 
 		// the PositionIterator iterates through all points top to bottom, left to right
@@ -490,7 +493,12 @@ public class NexusAssert {
 		int expectedLineEnd = lineSize;
 		int expectedInnerScanEnd = innerScanSize - (oddNumRows ? 0 : lineSize - 1);
 		while (iter.hasNext()) { // hasNext also increments the position iterator (ugh!)
-			flatDataset[pointIndex - 1] = dataset.getString(iter.getPos());
+			if (datasetType.equals(Date.class)) {
+				// DateDatasetImpl does not override getObject from StringDataset
+				flatDataset[pointIndex - 1] = (T) ((DateDataset) dataset).getDate(iter.getPos());
+			} else {
+				flatDataset[pointIndex - 1] = (T) dataset.getObject(iter.getPos());
+			}
 
 			if (!foldedGrid && !isBottomToTopInnerScan && pointIndex == expectedInnerScanEnd) {
 				// end of top to bottom inner scan, next is bottom to top

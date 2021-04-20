@@ -22,6 +22,7 @@ import static java.time.temporal.ChronoUnit.MILLIS;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
@@ -43,7 +44,9 @@ import org.slf4j.LoggerFactory;
 public class NXEntryScanTimestampsWriter {
 	
 	private static final Logger logger = LoggerFactory.getLogger(NXEntryScanTimestampsWriter.class);
-
+	// Always format with 3 decimal places of Millis, prevent truncating by default formatters being unreadable by DateDatasetImpl
+	private static final DateTimeFormatter MILLISECOND_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+	
 	private static final int[] SINGLE_SHAPE = new int[] { 1 };
 	private static final int[] START_SHAPE = new int[] { 0 };
 
@@ -63,7 +66,7 @@ public class NXEntryScanTimestampsWriter {
 		// write and cache scan start time
 		// Truncated to millis as the string parser in DateDataset treats microseconds as milliseconds
 		scanStartTime = ZonedDateTime.now().truncatedTo(MILLIS);
-		entry.setStart_time(DatasetFactory.createFromObject(scanStartTime.toString()));
+		entry.setStart_time(DatasetFactory.createFromObject(MILLISECOND_DATE_FORMAT.format(scanStartTime)));
 
 		// create lazy dataset for scan end time
 		scanEndTimeDataset = new LazyWriteableDataset(NXentry.NX_END_TIME, String.class, SINGLE_SHAPE, SINGLE_SHAPE, SINGLE_SHAPE, null);
@@ -81,7 +84,7 @@ public class NXEntryScanTimestampsWriter {
 		// Truncated to millis as the string parser in DateDataset treats microseconds as milliseconds
 		final ZonedDateTime scanEndTime = ZonedDateTime.now().truncatedTo(MILLIS);
 		try {
-			scanEndTimeDataset.setSlice(null, DatasetFactory.createFromObject(scanEndTime.toString()), START_SHAPE, SINGLE_SHAPE, SINGLE_SHAPE);	
+			scanEndTimeDataset.setSlice(null, DatasetFactory.createFromObject(MILLISECOND_DATE_FORMAT.format(ZonedDateTime.from(scanEndTime))), START_SHAPE, SINGLE_SHAPE, SINGLE_SHAPE);
 		} catch (DatasetException e) {
 			logger.error("Could not set scan end",e);
 		}

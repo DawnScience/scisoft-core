@@ -35,9 +35,6 @@ public class JythonPath {
 	private static final String JYTHON_BUNDLE_LOC = JYTHON_BUNDLE + ".location";
 	private static final String JYTHON_EXEC= "jython.jar";
 	private static final String JYTHON_MAJOR_VERSION = "2";
-	private static final String JYTHON_MINOR_VERSION = "7";
-	private static final String JYTHON_VERSION = JYTHON_MAJOR_VERSION + "." + JYTHON_MINOR_VERSION;
-	private static final String JYTHON_DIR = "jython" + JYTHON_VERSION;
 	private static final String JANUARY_PREFIX = "org.eclipse.january";
 
 	/**
@@ -53,7 +50,6 @@ public class JythonPath {
 		"ch.qos.logback.beagle",
 		"org.dawb.workbench.jmx",
 		GIT_REPO_ENDING,
-		JYTHON_DIR,
 		"org.dawnsci.persistence.test", // Required for I11 LDE script (we don't want the tests!)
 		"target", // for Maven builds
 	};
@@ -194,8 +190,6 @@ public class JythonPath {
 				throw new Exception("Please set the property '" + JYTHON_BUNDLE_LOC + "' for this test to work!");
 			jyBundleLoc = new File(System.getProperty(JYTHON_BUNDLE_LOC));
 		}
-		jyBundleLoc = new File(jyBundleLoc, JYTHON_DIR);
-
 		logger.info("Jython bundle found at: {}", jyBundleLoc);
 		return jyBundleLoc;
 	}

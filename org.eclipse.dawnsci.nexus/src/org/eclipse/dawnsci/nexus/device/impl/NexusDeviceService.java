@@ -73,15 +73,10 @@ public class NexusDeviceService implements INexusDeviceService {
 		
 		// Get the existing nexus device if there is one
 		@SuppressWarnings("unchecked")
-		final INexusDevice<N> existingNexusDevice = (INexusDevice<N>) nexusDecorators.get(deviceName);
-		if (existingNexusDevice instanceof INexusDeviceDecorator<?>) {
-			// If it is a decorator, set the decorated nexus device to be the one passed in.
-			((INexusDeviceDecorator<N>) existingNexusDevice).setDecorated(nexusDevice);
-			return existingNexusDevice;
-		}
+		final INexusDevice<N> decorator = (INexusDevice<N>) nexusDecorators.get(deviceName);
+		((INexusDeviceDecorator<N>) decorator).setDecorated(nexusDevice);
 		
-		// otherwise use the passed in nexusDevice, replacing the old one in the caches 
-		return nexusDevice;
+		return decorator;
 	}
 
 	@Override

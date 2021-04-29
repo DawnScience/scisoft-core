@@ -15,7 +15,7 @@ import org.eclipse.dawnsci.nexus.NXobject;
 
 /**
  * Axis data device.
- * @author wgp76868
+ * @author Matthew Dickie
  *
  * @param <N>
  */

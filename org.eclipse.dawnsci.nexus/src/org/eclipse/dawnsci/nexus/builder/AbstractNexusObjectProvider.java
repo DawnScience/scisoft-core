@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.dawnsci.nexus.NXdata;
@@ -138,8 +139,6 @@ public abstract class AbstractNexusObjectProvider<N extends NXobject> implements
 		if (additionalDataFieldNames.length > 0) {
 			this.axisDataFieldNames.addAll(Arrays.asList(additionalDataFieldNames));
 		}
-		// field names should be prefixed by the device name for axis devices (e.g. positioners)
-		setUseDeviceNameInNXdata(nexusBaseClass != NexusBaseClass.NX_DETECTOR);
 		
 		this.additionalPrimaryDataFieldNames = new ArrayList<>();
 	}
@@ -492,8 +491,8 @@ public abstract class AbstractNexusObjectProvider<N extends NXobject> implements
 		return getNexusObject().getLazyWritableDataset(fieldName);
 	}
 	
-	public Boolean getUseDeviceNameInNXdata() {
-		return useDeviceNameInNXdata;
+	public Optional<Boolean> isUseDeviceNameInNXdata() {
+		return Optional.ofNullable(useDeviceNameInNXdata);
 	}
 	
 	public void setUseDeviceNameInNXdata(boolean useDeviceNameInNXdata) {

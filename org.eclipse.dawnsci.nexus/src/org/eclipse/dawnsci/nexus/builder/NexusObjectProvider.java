@@ -13,6 +13,7 @@
 package org.eclipse.dawnsci.nexus.builder;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.dawnsci.nexus.NXcollection;
@@ -184,15 +185,35 @@ public interface NexusObjectProvider<N extends NXobject> extends NexusEntryModif
 	public int[] getDimensionMappings(String primaryDataFieldName, String axisDataFieldName);
 	
 	/**
-	 * Returns whether the names of the fields within the nexus object should be prefixed with the
-	 * device name when linked to from an {@link NXdata} group. If this method returns
-	 * <code>true</code> and just one data field
-	 * from this device is added to the {@link NXdata}, then the device name will be used as the
-	 * name of the field.
-	 * @return <code>true</code> to use the device name when linking fields in an {@link NXdata}
-	 *     group, <code>false</code> to not use the device name, <code>null</code> unspecified  
+	 * Returns whether the name of this device name (as returned by {@link #getName()}
+	 * should be used in the names of the links created within {@link NXdata} groups to
+	 * the fields within the nexus object for this instance. If this is not the
+	 * case, the links to the fields created in the {@link NXdata} group will have
+	 * the same name as they do in the nexus object for this instance (i.e.
+	 * that returned by {@link #getNexusObject()}.
+	 * <p>
+	 * If this method returns an empty {@link Optional} then the default behaviour
+	 * is to use the device name in the names of the links in the {@link NXdata}
+	 * for this device for the axes device for the {@link NXdata} group (often these
+	 * are the devices being scanned, whose nexus object is an {@link NXpositioner}),
+	 * but not for the primary data device
+	 * <p>    
+	 * If the device name is to be used in the name of the links created then:
+	 * <ul>
+	 * <li>If a single field from this device is added to the {@link NXdata} group
+	 * then that link will simply have the same name as this device.</li>
+	 * <li>If multiple fields from this devices are added to an {@link NXdata} group
+	 * then name of the link created within the {@link NXdata} group will be the
+	 * name of the device, followed by an underscore, followed by the name of the
+	 * field within the nexus object for this instance.   
+	 * </ul>
+	 * 
+	 * @return an {@link Optional} containing {@link Boolean#TRUE} to use the device
+	 *     name when linking fields in an {@link NXdata} group, {@link Boolean#FALSE}
+	 *     to not use the device name, and an empty optional to use the default behaviour,
+	 *     i.e. use the device name for axis devices only  
 	 */
-	public Boolean getUseDeviceNameInNXdata();
+	public Optional<Boolean> isUseDeviceNameInNXdata();
 	
 	/**
 	 * Returns the value of the application defined property of this object with the given name.

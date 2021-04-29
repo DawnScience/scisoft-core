@@ -336,7 +336,7 @@ public class DataDeviceBuilder<N extends NXobject> {
 		}
 		
 		// if a destination name prefix has been set, use that
-		if (destinationFieldName == null && destinationFieldNamePrefix != null) {
+		if (destinationFieldNamePrefix != null) {
 			return destinationFieldNamePrefix + destinationFieldName;
 		}
 		
@@ -361,8 +361,8 @@ public class DataDeviceBuilder<N extends NXobject> {
 			return useDeviceName.booleanValue();
 		}
 		
-		if (nexusObjectProvider.getUseDeviceNameInNXdata() != null) {
-			return nexusObjectProvider.getUseDeviceNameInNXdata();
+		if (nexusObjectProvider.isUseDeviceNameInNXdata().isPresent()) {
+			return nexusObjectProvider.isUseDeviceNameInNXdata().get();
 		}
 		
 		return !isPrimary;

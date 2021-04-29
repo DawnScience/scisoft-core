@@ -25,8 +25,6 @@ import org.eclipse.dawnsci.nexus.NXobject;
  * sub-interface of {@link NXobject}. The method {@link #getFieldNode(String)} should return
  * the node with the given name from the.
  * <p>
- * This is an abstract interface. Any class which implements this interface should also implement
- * either {@link PrimaryDataDevice} (which sh
  * 
  * @param <N> the sub-interface of {@link NXobject} that the nexus object was created from 
  * 

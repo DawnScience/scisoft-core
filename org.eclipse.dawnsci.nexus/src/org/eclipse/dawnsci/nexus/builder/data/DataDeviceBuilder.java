@@ -124,8 +124,6 @@ public class DataDeviceBuilder<N extends NXobject> {
 	
 	private Boolean useDeviceName = null;
 	
-	private String destinationFieldNamePrefix = null;
-
 	private int numberOfAxisFieldsToAdd;
 	
 	/**
@@ -226,10 +224,6 @@ public class DataDeviceBuilder<N extends NXobject> {
 	
 	public void setUseDeviceName(boolean useDeviceName) {
 		this.useDeviceName = useDeviceName;
-	}
-	
-	public void setDestinationFieldNamePrefix(String prefix) {
-		destinationFieldNamePrefix = prefix;
 	}
 	
 	public void setDestinationFieldName(String sourceFieldName, String destinationFieldName) {
@@ -333,11 +327,6 @@ public class DataDeviceBuilder<N extends NXobject> {
 		if (overriddenDestinationFieldNames != null &&
 				overriddenDestinationFieldNames.containsKey(sourceFieldName)) {
 			return overriddenDestinationFieldNames.get(sourceFieldName);
-		}
-		
-		// if a destination name prefix has been set, use that
-		if (destinationFieldNamePrefix != null) {
-			return destinationFieldNamePrefix + destinationFieldName;
 		}
 		
 		if (useDeviceName()) {

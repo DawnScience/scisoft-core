@@ -55,33 +55,20 @@ public class CakePixelIntegrationOperation extends AbstractPixelIntegrationOpera
 		return;
 
 	}
-
 	
-	@Override
-	protected IPixelIntegrationCache getCache(
-			CakePixelIntegrationModel model, IDiffractionMetadata md, int[] shape) {
-
-		IPixelIntegrationCache lcache = cache;
-		if (lcache == null) {
-			synchronized(this) {
-				lcache = cache;
-				if (lcache == null) {
-					PixelIntegrationBean bean = new PixelIntegrationBean();
-					bean.setUsePixelSplitting(model.isPixelSplitting());
-					if (model.getNumberOfBins()!=null)bean.setNumberOfBinsRadial(model.getNumberOfBins());
-					if (model.getNumberOfBins2ndAxis() != null) bean.setNumberOfBinsAzimuthal(model.getNumberOfBins2ndAxis());
-					bean.setxAxis(model.getAxisType());
-					bean.setRadialRange(model.getRadialRange());
-					bean.setAzimuthalRange(model.getAzimuthalRange());
-					bean.setAzimuthalIntegration(true);
-					bean.setTo1D(false);
-					bean.setShape(shape);
-					bean.setLog(model.isLogRadial());
-					bean.setSanitise(model.getSanitise());
-					cache = lcache = new PixelIntegrationCache(metadata, bean);
-				}
-			}
-		}
-		return lcache;
+	protected IPixelIntegrationCache buildCache(CakePixelIntegrationModel model, IDiffractionMetadata md, int[] shape) {
+		PixelIntegrationBean bean = new PixelIntegrationBean();
+		bean.setUsePixelSplitting(model.isPixelSplitting());
+		if (model.getNumberOfBins()!=null)bean.setNumberOfBinsRadial(model.getNumberOfBins());
+		if (model.getNumberOfBins2ndAxis() != null) bean.setNumberOfBinsAzimuthal(model.getNumberOfBins2ndAxis());
+		bean.setxAxis(model.getAxisType());
+		bean.setRadialRange(model.getRadialRange());
+		bean.setAzimuthalRange(model.getAzimuthalRange());
+		bean.setAzimuthalIntegration(true);
+		bean.setTo1D(false);
+		bean.setShape(shape);
+		bean.setLog(model.isLogRadial());
+		bean.setSanitise(model.getSanitise());
+		return new PixelIntegrationCache(md, bean);
 	}
 }

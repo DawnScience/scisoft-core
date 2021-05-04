@@ -51,31 +51,19 @@ public class AzimuthalPixelIntegrationOperation<T extends AzimuthalPixelIntegrat
 		data.setMetadata(amd);
 		
 	}
-
-	@Override
-	protected IPixelIntegrationCache getCache(
-			AzimuthalPixelIntegrationModel model, IDiffractionMetadata md, int[] shape) {
-
-		IPixelIntegrationCache lcache = cache;
-		if (lcache == null) {
-			synchronized(this) {
-				lcache = cache;
-				if (lcache == null) {
-					PixelIntegrationBean bean = new PixelIntegrationBean();
-					bean.setUsePixelSplitting(model.isPixelSplitting());
-					if (model.getNumberOfBins() != null) bean.setNumberOfBinsRadial(model.getNumberOfBins());
-					bean.setxAxis(model.getAxisType());
-					bean.setRadialRange(model.getRadialRange());
-					bean.setAzimuthalRange(model.getAzimuthalRange());
-					bean.setAzimuthalIntegration(true);
-					bean.setTo1D(true);
-					bean.setLog(model.isLogRadial());
-					bean.setShape(shape);
-					bean.setSanitise(model.getSanitise());
-					cache = lcache = new PixelIntegrationCache(metadata, bean);
-				}
-			}
-		}
-		return lcache;
+	
+	protected IPixelIntegrationCache buildCache(T model, IDiffractionMetadata md, int[] shape) {
+		PixelIntegrationBean bean = new PixelIntegrationBean();
+		bean.setUsePixelSplitting(model.isPixelSplitting());
+		if (model.getNumberOfBins() != null) bean.setNumberOfBinsRadial(model.getNumberOfBins());
+		bean.setxAxis(model.getAxisType());
+		bean.setRadialRange(model.getRadialRange());
+		bean.setAzimuthalRange(model.getAzimuthalRange());
+		bean.setAzimuthalIntegration(true);
+		bean.setTo1D(true);
+		bean.setLog(model.isLogRadial());
+		bean.setShape(shape);
+		bean.setSanitise(model.getSanitise());
+		return new PixelIntegrationCache(md, bean);
 	}
 }

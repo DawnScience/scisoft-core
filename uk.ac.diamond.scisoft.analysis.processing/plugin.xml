@@ -1706,6 +1706,27 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.POSDetectorErrorModel"
             name="General Detector Error - Scaled">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.MovingBeamAzimuthalPixelIntegrationOperation"
+            icon="icons/MovingPowderIntegration.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.MovingBeamAzimuthalPixelIntegrationOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationModel"
+            name="Moving Beam Azimuthal Integration">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.MovingBeamRadialPixelIntegrationOperation"
+            icon="icons/MovingPowderIntegrationRadial.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.MovingBeamRadialPixelIntegrationOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.AzimuthalPixelIntegrationModel"
+            name="Moving Beam Radial Integration">
+      </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.MovingBeamCakePixelIntgrationOperation"
+            icon="icons/MovingPowderCake.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.MovingBeamCakePixelIntgrationOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.CakePixelIntegrationModel"
+            name="Moving Beam Cake Remapping">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

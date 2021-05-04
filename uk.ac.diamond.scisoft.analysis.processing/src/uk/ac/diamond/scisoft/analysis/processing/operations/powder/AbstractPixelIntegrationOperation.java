@@ -23,14 +23,19 @@ import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 
+import uk.ac.diamond.scisoft.analysis.diffraction.powder.DiffractionCoordinateCache;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.IPixelIntegrationCache;
 import uk.ac.diamond.scisoft.analysis.diffraction.powder.PixelIntegration;
 import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
 
 public abstract class AbstractPixelIntegrationOperation<T extends PixelIntegrationModel> extends AbstractOperation<T, OperationData> {
 
+	private static final Logger logger = LoggerFactory.getLogger(AbstractPixelIntegrationOperation.class);
+	
 	protected volatile IPixelIntegrationCache cache;
 	protected IDiffractionMetadata metadata;
 	private PropertyChangeListener listener;
@@ -46,21 +51,8 @@ public abstract class AbstractPixelIntegrationOperation<T extends PixelIntegrati
 		IDiffractionMetadata md = getFirstDiffractionMetadata(input);
 
 		if (md == null) throw new OperationException(this, "No detector geometry information!");
-		
-		if (metadata == null) {
-			metadata = md;
-			cache = null;
-		} else {
-			boolean dee = metadata.getDiffractionCrystalEnvironment().equals(md.getDiffractionCrystalEnvironment());
-			boolean dpe = metadata.getDetector2DProperties().equals(md.getDetector2DProperties());
-			
-			if (!dpe || !dee) {
-				metadata = md;
-				cache = null;
-			}
-		}
 
-		IPixelIntegrationCache lcache = getCache(model, metadata, input.getShape());
+		IPixelIntegrationCache lcache = getCache(model, md, input.getShape());
 
 		ILazyDataset mask = getFirstMask(input);
 		IDataset m = null;
@@ -79,10 +71,25 @@ public abstract class AbstractPixelIntegrationOperation<T extends PixelIntegrati
 		setAxes(data, out);
 		
 		//Persist Diffraction metadata along the pipe.
-		addDiffractionMetadata(data, metadata);
+		addDiffractionMetadata(data, metadata != null ? metadata : md);
 
 		return new OperationData(data);
 
+	}
+	
+	private void checkCaches(IDiffractionMetadata md) {
+		if (metadata == null) {
+			metadata = md;
+			cache = null;
+		} else {
+			boolean dee = metadata.getDiffractionCrystalEnvironment().equals(md.getDiffractionCrystalEnvironment());
+			boolean dpe = metadata.getDetector2DProperties().equals(md.getDetector2DProperties());
+			
+			if (!dpe || !dee) {
+				metadata = md;
+				cache = null;
+			}
+		}
 	}
 	
 	@Override
@@ -124,5 +131,34 @@ public abstract class AbstractPixelIntegrationOperation<T extends PixelIntegrati
 	
 	protected abstract void setAxes(IDataset data, List<Dataset> out);
 	
-	protected abstract IPixelIntegrationCache getCache(T model, IDiffractionMetadata md, int[] shape);
+	private IPixelIntegrationCache getCache(T model, IDiffractionMetadata md, int[] shape) {
+		
+		if (useCache()) {
+			
+			checkCaches(md);
+			
+			DiffractionCoordinateCache.getInstance().setDisabled(false);
+			IPixelIntegrationCache lcache = cache;
+			if (lcache == null) {
+				synchronized(this) {
+					logger.debug("Blocking to build cache");
+					lcache = cache;
+					if (lcache == null) {
+						cache = lcache = buildCache(model, metadata, shape);
+					}
+				}
+			}
+			return lcache;
+		} else {
+			DiffractionCoordinateCache.getInstance().setDisabled(true);
+			return buildCache(model, md, shape);
+		}
+		
+	}
+	
+	protected abstract IPixelIntegrationCache buildCache(T model, IDiffractionMetadata md, int[] shape);
+	
+	protected boolean useCache() {
+		return true;
+	}
 }

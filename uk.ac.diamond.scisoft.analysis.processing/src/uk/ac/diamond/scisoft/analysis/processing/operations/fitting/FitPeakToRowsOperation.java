@@ -183,7 +183,7 @@ public class FitPeakToRowsOperation extends AbstractOperation<FitPeakToRowsModel
 				Dataset next = DatasetUtils.convertToDataset(it.next().getSlice()).squeeze();
 				ILazyDataset[] axes = getFirstAxes(next);
 				Dataset ax = axes == null || axes[0] == null ? DatasetFactory.createRange(next.getSize()) :
-						DatasetUtils.sliceAndConvertLazyDataset(axes[0]);;
+						DatasetUtils.convertToDataset(axes[0].getSlice());
 				if (f == null) {
 					IdentifiedPeak foundPeak = Generic1DFitter.parseDataDerivative(ax, next, 1).get(0);
 					peak = PeakType.createPeak(model.getPeakType(), foundPeak);
@@ -203,6 +203,7 @@ public class FitPeakToRowsOperation extends AbstractOperation<FitPeakToRowsModel
 				for (int i = 0; i < n; i++) {
 					results[i].set(peak.getParameterValue(i), count);
 				}
+				f = null;
 			} catch (Exception e) {
 				log.appendFailure("Could not fit %d-th row", count, e);
 			}

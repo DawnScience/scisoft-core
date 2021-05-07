@@ -15,6 +15,8 @@ import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 
+import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
+
 public class DiffractionMetadataUtils {
 	
 	/**
@@ -57,5 +59,28 @@ public class DiffractionMetadataUtils {
 	public static void copyNewOverOld(IDiffractionMetadata newDM, IDiffractionMetadata oldDM) throws IllegalArgumentException{
 		copyNewOverOld(newDM.getDiffractionCrystalEnvironment(), oldDM.getDiffractionCrystalEnvironment());
 		copyNewOverOld(newDM.getDetector2DProperties(), oldDM.getDetector2DProperties());
+	}
+	
+	/** 
+	 * Static method to get a DiffractionMetadata to compensate for a source movement of x,y,z of the reference system 
+	 */
+	public static IDiffractionMetadata getOffsetMetadata(final IDiffractionMetadata originalMeta, double sourceX, double sourceY, double sourceZ){
+		
+		DetectorProperties dp = originalMeta.getDetector2DProperties().clone();
+		DiffractionCrystalEnvironment ce = originalMeta.getDiffractionCrystalEnvironment().clone();
+		Vector3d origin = dp.getOrigin();
+		Vector3d offset = new Vector3d(sourceX,sourceY,sourceZ);
+		offset.sub(origin, offset);
+		dp.setOrigin(offset);
+		return new DiffractionMetadata("", dp,ce);
+		
+	}
+	
+	/* 
+	 * Static method to get a DiffractionMetadata to compensate for a source movement of x,y,z of the reference system 
+	 */
+	public static  IDiffractionMetadata getOffsetMetadata(IDiffractionMetadata originalMeta, double[] sourceOffsets) { 
+		return getOffsetMetadata(originalMeta, sourceOffsets[0], sourceOffsets[1], sourceOffsets[2]);
+		
 	}
 }

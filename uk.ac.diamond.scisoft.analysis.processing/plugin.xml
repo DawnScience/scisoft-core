@@ -1727,6 +1727,19 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.powder.CakePixelIntegrationModel"
             name="Moving Beam Cake Remapping">
       </operation>
+      <category
+            id="uk.ac.diamond.scisoft.analysis.processing.movingbeamoperations"
+            name="Moving Beam Operations">
+      </category>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.movingbeamoperations"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.movingbeam.DiffractionMetadataImportOperation"
+            description="Read detector geometry associated with a calibrated position as part of a moving beam analysis pipeline"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.movingbeam.DiffractionMetadataImportOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.movingbeam.DiffractionMetadataImportModel"
+            name="Import Detector Calibration"
+            visible="true">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

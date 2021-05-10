@@ -464,7 +464,13 @@ public class NexusFileHDF5 implements NexusFile {
 						}
 					}
 					String childPath = TreeUtils.join(path, linkName);
-					H5O_info_t objectInfo = H5.H5Oget_info_by_name(fileId, childPath, HDF5Constants.H5O_INFO_BASIC, HDF5Constants.H5P_DEFAULT);
+					H5O_info_t objectInfo;
+					try {
+						objectInfo = H5.H5Oget_info_by_name(fileId, childPath, HDF5Constants.H5O_INFO_BASIC, HDF5Constants.H5P_DEFAULT);
+					} catch (HDF5LibraryException e) {
+						logger.warn("Ignoring error from link for file {}, childPath {}", path, childPath);
+						continue;
+					}
 					if (objectInfo.type == HDF5Constants.H5O_TYPE_GROUP) {
 						createGroupNode(childPath.hashCode(), group, path, linkName, "");
 					} else if (objectInfo.type == HDF5Constants.H5O_TYPE_DATASET) {

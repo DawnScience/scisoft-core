@@ -154,7 +154,7 @@ public class MillerSpaceMapper {
 			numberOfCores = CORES;
 		}
 		cores = numberOfCores;
-		logger.trace("Cores set to {}", cores);
+		logger.info("Cores set to {}", cores);
 	}
 
 	/**
@@ -682,24 +682,37 @@ public class MillerSpaceMapper {
 				}
 			}
 		} else if (ni == 3) { // TODO multi-dimensional scans
-			Dataset pFrame = pIdx.getSlice((Slice) null, new Slice(1)).squeeze();
-			IntegerDataset order = DatasetUtils.indexSort(pFrame, 0);
-			Dataset sorted = pFrame.getByIndexes(order);
-			int z = DatasetUtils.findIndexGreaterThanOrEqualTo(sorted, 0);
 			IntegerDataset allFrames = null;
 			IndexIterator aiter = null;
-			int nt = 0;
-			if (z > 0) {
-				allFrames = (IntegerDataset) order.getSliceView(new Slice(z));
-				aiter = allFrames.getIterator();
-				nt += nf*z;
-			}
 			IntegerDataset singleFrames = null;
 			IndexIterator siter = null;
-			if (z < order.getSize()) {
-				singleFrames = (IntegerDataset) order.getSliceView(new Slice(z, null));
-				siter = singleFrames.getIterator();
-				nt += singleFrames.getSize();
+			int nt = 0;
+			if (np == 1) {
+				IntegerDataset frames = DatasetFactory.zeros(IntegerDataset.class, 1);
+				if (pIdx.get(0, 0) < 0) {
+					allFrames = frames;
+					aiter = allFrames.getIterator();
+					nt += nf;
+				} else {
+					singleFrames = frames;
+					siter = singleFrames.getIterator();
+					nt++;
+				}
+			} else {
+				Dataset pFrame = pIdx.getSlice((Slice) null, new Slice(1)).squeeze();
+				IntegerDataset order = DatasetUtils.indexSort(pFrame, 0);
+				Dataset sorted = pFrame.getByIndexes(order);
+				int z = DatasetUtils.findIndexGreaterThanOrEqualTo(sorted, 0);
+				if (z > 0) {
+					allFrames = (IntegerDataset) order.getSliceView(new Slice(z));
+					aiter = allFrames.getIterator();
+					nt += nf*z;
+				}
+				if (z < order.getSize()) {
+					singleFrames = (IntegerDataset) order.getSliceView(new Slice(z, null));
+					siter = singleFrames.getIterator();
+					nt += singleFrames.getSize();
+				}
 			}
 
 			coords = DatasetFactory.zeros(nt, 3);
@@ -791,6 +804,27 @@ public class MillerSpaceMapper {
 		linkOriginalData(output, bean.getInputs(), entryPath);
 	}
 
+	/**
+	 * Block upscale an image that does not interpolate values
+	 * @param m
+	 * @param mshape
+	 * @return upscaled image
+	 */
+	private Dataset upscaleMask(Dataset m, int[] mshape) {
+		if (scale == 1) {
+			return m;
+		}
+		IntegerDataset im = DatasetFactory.zeros(IntegerDataset.class, mshape);
+		for (int i = 0; i < mshape[0]; i++) {
+			int k = (int) Math.floor(i / scale);
+			for (int j = 0; j < mshape[1]; j++) {
+				int l = (int) Math.floor(j / scale);
+				im.setItem(m.getInt(k, l), i, j);
+			}
+		}
+		return im;
+	}
+
 	private void mapImages(boolean mapQ, Tree tree, Dataset trans, ILazyDataset images, PositionIterator[] iters,
 			DoubleDataset map, DoubleDataset weight, int[] ishape, BicubicInterpolator upSampler) throws DatasetException {
 		PositionIterator diter = iters[0];
@@ -807,14 +841,16 @@ public class MillerSpaceMapper {
 		int[] region = new int[] {(int) (begX*scale), (int) (endX*scale), (int) (begY*scale), (int) (endY*scale)};
 		Dataset iMask = mask;
 		if (iMask != null && upSampler != null) {
-			iMask = upSampler.value(iMask).get(0);
-			if (!Arrays.equals(iMask.getShapeRef(), ishape)) {
-				String msg = String.format("Image weight shape %s does not match image shape %s", Arrays.toString(iMask.getShapeRef()), Arrays.toString(ishape));
-				throw new IllegalArgumentException(msg);
-			}
+			iMask = upscaleMask(iMask, ishape);
+//			iMask = upSampler.value(iMask).get(0);
+//			if (!Arrays.equals(iMask.getShapeRef(), ishape)) {
+//				String msg = String.format("Image weight shape %s does not match image shape %s", Arrays.toString(iMask.getShapeRef()), Arrays.toString(ishape));
+//				throw new IllegalArgumentException(msg);
+//			}
 		}
 		boolean isOldGDA = isOLDI16GDA(tree);
 		while (iter.hasNext() && diter.hasNext()) {
+			logger.info("Mapping image at {} in {}", Arrays.toString(dpos), Arrays.toString(diter.getShape()));
 			DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
 			dp.setHPxSize(dp.getHPxSize() / scale);
 			dp.setVPxSize(dp.getVPxSize() / scale);
@@ -834,6 +870,10 @@ public class MillerSpaceMapper {
 			Dataset image = DatasetUtils.convertToDataset(images.getSlice(pos, stop, null));
 			if (trans != null) {
 				double t = trans.getSize() == 1 ? trans.getElementDoubleAbs(0) : trans.getDouble(dpos); 
+				if (t == 0) {
+					logger.warn("Exposure time or transmission was zero; setting to 1");
+					t = 1;
+				}
 				if (image.hasFloatingPointElements()) {
 					image.idivide(t);
 				} else {
@@ -876,7 +916,7 @@ public class MillerSpaceMapper {
 					}
 				}
 				double value = image.getDouble(y, x);
-				if (value <= lower || value >= upper) {
+				if (!Double.isFinite(value) || value <= lower || value >= upper) {
 					continue;
 				}
 
@@ -1173,9 +1213,9 @@ public class MillerSpaceMapper {
 
 		String dataName = bean.getDataName();
 		if (dataName == null || dataName.isEmpty()) {
-			link = NexusTreeUtils.findFirstSignalDataNode(detector);
+			link = detector.getNodeLink(NexusConstants.DATA_DATA);
 			if (link == null) {
-				link = detector.getNodeLink(NexusConstants.DATA_DATA);
+				link = NexusTreeUtils.findFirstSignalDataNode(detector);
 			}
 			logger.trace("{} found: {}", NexusConstants.DATA_DATA, link);
 		} else {
@@ -1482,6 +1522,7 @@ public class MillerSpaceMapper {
 			DoubleDataset weight = DatasetFactory.zeros(vShape);
 
 			for (int i = 0; i < trees.length; i++) {
+				logger.info("Processing file {}/{}: {}", i+1, trees.length, bean.getInputs()[i]);
 				Tree tree = trees[i];
 				mapToASpace(mapQ, tree, allIters[i], map, weight);
 			}
@@ -1506,7 +1547,7 @@ public class MillerSpaceMapper {
 					createMillerSpaceAxes(a, vShape, vMin, null, vDel);
 				}
 			}
-			logger.trace("For {} threads, processing took {}ms", pool.getParallelism(), System.currentTimeMillis() - start);
+			logger.info("For {} threads, processing took {}ms", pool.getParallelism(), System.currentTimeMillis() - start);
 			start = System.currentTimeMillis();
 
 			if (isErrorTest) {
@@ -1526,7 +1567,7 @@ public class MillerSpaceMapper {
 			}
 
 			saveVolume(output, bean, entryPath, volPath, map, weight, a);
-			logger.trace("Saving took {}ms", System.currentTimeMillis() - start);
+			logger.info("Saving took {}ms", System.currentTimeMillis() - start);
 		} catch (IllegalArgumentException | OutOfMemoryError e) {
 			logger.warn("There is not enough memory to do this all at once!");
 			logger.warn("Now attempting to segment volume");
@@ -1562,7 +1603,7 @@ public class MillerSpaceMapper {
 				logger.error("Cannot segment volume fine enough to fit in memory!", e);
 				throw e;
 			}
-			logger.trace("Mapping in {} parts", parts);
+			logger.info("Mapping in {} parts", parts);
 			boolean isFileNew = !hasDeleted;
 			if (isFileNew) {
 				HDF5FileFactory.deleteFile(output);
@@ -1708,10 +1749,10 @@ public class MillerSpaceMapper {
 		for (int i = 0; i < inputs.length; i++) {
 			String destination = String.format("/entry%d", i);
 			try {
-				String relativePath = fileParent.relativize(Paths.get(inputs[i])).toString();
+				String relativePath = fileParent.relativize(Paths.get(inputs[i]).toAbsolutePath()).toString();
 				HDF5Utils.createExternalLink(file, destination, relativePath, entryPath);
 			} catch (IllegalArgumentException e) {
-				logger.warn("Could not create relative path between: {} and {}", file, inputs[i]);
+				logger.warn("Could not create relative path between: {} and {}", file, inputs[i], e);
 				HDF5Utils.createExternalLink(file, destination, inputs[i], entryPath);
 			}
 		}
@@ -1830,11 +1871,13 @@ public class MillerSpaceMapper {
 		PositionIterator[] iters;
 		start = System.currentTimeMillis();
 		for (int p = 0; p < (parts-1); p++) {
+			logger.info("Mapping in part: {}/{}", p+1, parts);
 			// shift min
 			vMin[0] = oMin + vstart[0] * vDel[0];
 			vMax[0] = vMin[0] + ml * vDel[0];
 
 			for (int t = 0; t < n; t++) {
+				logger.info("    Processing file {}/{}: {}", t + 1, n, bean.getInputs()[t]);
 				tree = trees[t];
 				iters = allIters[t];
 				DataNode node = (DataNode) tree.findNodeLink(dataPath).getDestination();
@@ -1893,6 +1936,7 @@ public class MillerSpaceMapper {
 		}
 
 		// last part
+		logger.info("Mapping in last part: {}", parts);
 		vMin[0] = oMin + vstart[0] * vDel[0];
 		vMax[0] = oMax;
 		int vl = hShape[0];
@@ -1902,6 +1946,7 @@ public class MillerSpaceMapper {
 		}
 
 		for (int t = 0; t < n; t++) {
+			logger.info("    Processing file {}/{}: {}", t + 1, n, bean.getInputs()[t]);
 			tree = trees[t];
 			iters = allIters[t];
 			DataNode node = (DataNode) tree.findNodeLink(dataPath).getDestination();
@@ -1960,8 +2005,8 @@ public class MillerSpaceMapper {
 		}
 		save += System.currentTimeMillis() - start;
 
-		logger.trace("For {} threads, processing took {}ms", pool.getParallelism(), process);
-		logger.trace("Saving took {}ms", save);
+		logger.info("For {} threads, processing took {}ms", pool.getParallelism(), process);
+		logger.info("Saving took {}ms", save);
 	}
 
 	private static final String INDICES = "indices";

@@ -12,6 +12,8 @@ package uk.ac.diamond.scisoft.analysis.crystallography;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
+import uk.ac.diamond.scisoft.analysis.diffraction.MatrixUtils;
+
 
 /**
  * Reciprocal cell that is dual to a unit cell.
@@ -26,14 +28,17 @@ public class ReciprocalCell extends UnitCell {
 		a.cross(l.b, l.c);
 		double volumeInv = 1. / a.dot(l.a);
 		a.scale(volumeInv);
+		MatrixUtils.santise(a);
 
 		b = new Vector3d(); // b*
 		b.cross(l.c, l.a);
 		b.scale(volumeInv);
+		MatrixUtils.santise(b);
 
 		c = new Vector3d(); // c*
 		c.cross(l.a, l.b);
 		c.scale(volumeInv);
+		MatrixUtils.santise(c);
 
 		calculateAll();
 	}

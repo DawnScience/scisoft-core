@@ -87,10 +87,10 @@ public class MillerSpace {
 	}
 
 	/**
-	 * Set sample rotation using a set of Euler angles in ZXZ order  
-	 * @param alpha
-	 * @param beta
-	 * @param gamma
+	 * Set sample rotation using a set of Euler angles in ZXZ order
+	 * @param alpha angle about horizontal axis (parallel to beam)
+	 * @param beta  angle about horizontal axis (perpendicular to beam, outward from ring))
+	 * @param gamma angle about horizontal axis (parallel to beam)
 	 */
 	public void setRotationEulerZXZ(final double alpha, final double beta, final double gamma) {
 		ta.rotZ(alpha);
@@ -102,10 +102,10 @@ public class MillerSpace {
 	}
 
 	/**
-	 * Set sample rotation using a set of Euler angles in ZYZ order  
-	 * @param alpha
-	 * @param beta
-	 * @param gamma
+	 * Set sample rotation using a set of Euler angles in ZYZ order
+	 * @param alpha angle about horizontal axis (parallel to beam)
+	 * @param beta  angle about vertical axis (upward)
+	 * @param gamma angle about horizontal axis (parallel to beam)
 	 */
 	public void setRotationEulerZYZ(final double alpha, final double beta, final double gamma) {
 		ta.rotZ(alpha);
@@ -117,16 +117,18 @@ public class MillerSpace {
 	}
 
 	/**
-	 * Set sample rotation using a set of angles in H.You's convention
+	 * Set sample rotation using a set of angles in H.You's convention where
+	 * at zeros the sample mount normal is pointing horizontally outward from ring.
+	 * The arguments are given in order from ground to sample mount.
 	 * 
 	 * <p>
 	 * H.You, "Angle calculations for a '4S+2D' six-circle diffractometer',
 	 * J.Appl.Cryst., v32, pp614-23 (1999)
 	 * 
-	 * @param mu rotation angle about vertical axis
-	 * @param eta rotation angle about horizontal axis (perpendicular to beam)
+	 * @param mu rotation angle about vertical axis (from laboratory frame)
+	 * @param eta rotation angle about horizontal axis (perpendicular to beam, into ring)
 	 * @param chi rotation angle about horizontal axis (parallel to beam)
-	 * @param phi rotation angle about horizontal axis (perpendicular to beam)
+	 * @param phi rotation angle about horizontal axis (perpendicular to beam, into ring)
 	 */
 	public void setRotationYouConvention(final double mu, final double eta, final double chi, final double phi) {
 		ta.rotY(mu);

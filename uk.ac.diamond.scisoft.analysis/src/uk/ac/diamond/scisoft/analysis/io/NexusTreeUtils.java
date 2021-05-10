@@ -1043,7 +1043,9 @@ public class NexusTreeUtils {
 			first = canonicalizeDependsOn(path, tree, first);
 			if (!ftrans.containsKey(first)) {
 				Transform ta = parseTransformation(first.substring(0, first.lastIndexOf(Node.SEPARATOR)), tree, tree.findNodeLink(first), pos);
-				ftrans.put(first, ta);
+				if (ta != null) {
+					ftrans.put(first, ta);
+				}
 			}
 		}
 
@@ -1056,13 +1058,12 @@ public class NexusTreeUtils {
 				try {
 					Transform nt = parseTransformation(dpath.substring(0, dpath.lastIndexOf(Node.SEPARATOR)), tree, l, pos);
 					mtrans.put(nt.name, nt);
-//					System.err.println("Found " + nt.name + " which points to " + nt.depend);
 					dpath = nt.depend;
 				} catch (IllegalArgumentException e) {
-					logger.error("Could not find dependency: {}", dpath);
+					logger.error("Could not find dependency: {}", dpath, e);
 					break;
 				} catch (Exception e) {
-					logger.error("Problem parsing transformation: {}", dpath);
+					logger.error("Problem parsing transformation: {}", dpath, e);
 					break;
 				}
 			}
@@ -1485,20 +1486,31 @@ public class NexusTreeUtils {
 
 	public static void parseForDCE(String wavelengthName, String energyName, GroupNode gNode, DiffractionCrystalEnvironment sample, int... pos) {
 		DataNode wavelength = gNode.getDataNode(wavelengthName);
-		if (wavelength == null) {
-			logger.warn("Wavelength {} was missing in {}", wavelengthName, gNode);
-		} else {
+		if (wavelength != null) {
 			Dataset w = getConvertedData(wavelength, NonSI.ANGSTROM);
 			sample.setWavelength(w.getSize() == 1 ? w.getElementDoubleAbs(0) : w.getDouble(pos));
-			return;
+		} else {
+			DataNode energy = gNode.getDataNode(energyName);
+			if (energy != null) {
+				Dataset e = getConvertedData(energy, MetricPrefix.KILO(NonSI.ELECTRON_VOLT));
+				sample.setWavelengthFromEnergykeV(e.getSize() == 1 ? e.getElementDoubleAbs(0) : e.getDouble(pos));
+			} else {
+				logger.error("Both wavelength {} and energy {} was missing in {}", wavelengthName, energyName, gNode);
+				throw new IllegalArgumentException("Could not read wavelength or energy of beam"); 
+			}
 		}
 
-		DataNode energy = gNode.getDataNode(energyName);
-		if (energy == null) {
-			logger.warn("Energy {} was missing in {}", energyName, gNode);
+		GroupNode tNode = getGroup(findFirstNode(gNode, NexusConstants.TRANSFORMATIONS));
+		if (tNode == null) {
+			logger.warn("Beam transformation was missing in {}", gNode);
 		} else {
-			Dataset e = getConvertedData(energy, MetricPrefix.KILO(NonSI.ELECTRON_VOLT));
-			sample.setWavelengthFromEnergykeV(e.getSize() == 1 ? e.getElementDoubleAbs(0) : e.getDouble(pos));
+			DataNode direction = tNode.getDataNode("direction");
+			if (direction == null) {
+				logger.warn("Direction was missing in {}", gNode);
+			} else {
+				double[] d = parseDoubleArray(direction.getAttribute("vector"), 3);
+				sample.setBeamDirection(new Vector3d(d));
+			}
 		}
 	}
 
@@ -1709,14 +1721,15 @@ public class NexusTreeUtils {
 				}
 				try {
 					Transform nt = parseTransformation(dpath.substring(0, dpath.lastIndexOf(Node.SEPARATOR)), tree, l, pos);
-					mtrans.put(nt.name, nt);
-//					System.err.println("Found " + nt.name + " which points to " + nt.depend);
-					dpath = nt.depend;
+					if (nt != null) {
+						mtrans.put(nt.name, nt);
+						dpath = nt.depend;
+					}
 				} catch (IllegalArgumentException e) {
-					logger.error("Could not find dependency: {}", dpath);
+					logger.error("Could not find dependency: {}", dpath, e);
 					break;
 				} catch (Exception e) {
-					logger.error("Problem parsing transformation: {}", dpath);
+					logger.error("Problem parsing transformation: {}", dpath, e);
 					break;
 				}
 			}
@@ -1792,42 +1805,53 @@ public class NexusTreeUtils {
 			return null;
 		}
 
-		double value = dataset.getSize() == 1 ? dataset.getElementDoubleAbs(0) : dataset.getDouble(pos);
-		double[] vector = parseDoubleArray(dNode.getAttribute("vector"), 3);
-		if (vector == null) {
-			return null;
-		}
-		Vector3d v3 = new Vector3d(vector);
-		Matrix4d m4 = null;
 		String type = getFirstString(dNode.getAttribute("transformation_type"));
-		String units = getFirstString(dNode.getAttribute(NexusConstants.UNITS));
-		switch(type) {
-		case "translation":
-			Matrix3d m3 = new Matrix3d();
-			m3.setIdentity();
-//			v3.normalize(); // XXX I16 written with magnitude too
-			v3.scale(convertIfNecessary(MILLIMETRE, units, value));
-			m4 = new Matrix4d(m3, v3, 1);
-			break;
-		case "rotation":
-			AxisAngle4d aa = new AxisAngle4d(v3, convertIfNecessary(Units.RADIAN, units, value));
-			m4 = new Matrix4d();
-			m4.set(aa);
-			break;
-		default:
-			throw new IllegalArgumentException("Transformations node has wrong type");
-		}
+		Matrix4d m4 = new Matrix4d();
+		if (type == null) { // general axis for documentation which we will keep in chain
+			m4.setIdentity();
+		} else {
+			double value = dataset.getSize() == 1 ? dataset.getElementDoubleAbs(0) : dataset.getDouble(pos);
+			double[] vector = null;
+			try {
+				vector = parseDoubleArray(dNode.getAttribute("vector"), 3);
+				if (vector == null) {
+					logger.error("Vector attribute of '{}' is missing", link.getName());
+				}
+			} catch (IllegalArgumentException e) {
+				logger.error("Vector attribute of '{}' has wrong length", link.getName());
+			}
+			if (vector == null) {
+				return null;
+			}
+			Vector3d v3 = new Vector3d(vector);
+			String units = getFirstString(dNode.getAttribute(NexusConstants.UNITS));
+			switch(type) {
+			case "translation":
+				Matrix3d m3 = new Matrix3d();
+				m3.setIdentity();
+//				v3.normalize(); // XXX I16 written with magnitude too
+				v3.scale(convertIfNecessary(MILLIMETRE, units, value));
+				m4.set(m3, v3, 1);
+				break;
+			case "rotation":
+				AxisAngle4d aa = new AxisAngle4d(v3, convertIfNecessary(Units.RADIAN, units, value));
+				m4.set(aa);
+				break;
+			default:
+				throw new IllegalArgumentException("Transformations field has unknown type");
+			}
 
-		double[] offset = null;
-		try {
-			offset = parseDoubleArray(dNode.getAttribute("offset"), 3);
-		} catch (IllegalArgumentException e) {
-			logger.error("Offset has wrong length");
-		}
-		if (offset != null) {
-			convertIfNecessary(MILLIMETRE, getFirstString(dNode.getAttribute("offset_units")), offset);
-			for (int i = 0; i < 3; i++) {
-				m4.setElement(i, 3, offset[i] + m4.getElement(i, 3));
+			double[] offset = null;
+			try {
+				offset = parseDoubleArray(dNode.getAttribute("offset"), 3);
+			} catch (IllegalArgumentException e) {
+				logger.error("Offset attribute of '{}' has wrong length", link.getName());
+			}
+			if (offset != null) {
+				convertIfNecessary(MILLIMETRE, getFirstString(dNode.getAttribute("offset_units")), offset);
+				for (int i = 0; i < 3; i++) {
+					m4.setElement(i, 3, offset[i] + m4.getElement(i, 3));
+				}
 			}
 		}
 

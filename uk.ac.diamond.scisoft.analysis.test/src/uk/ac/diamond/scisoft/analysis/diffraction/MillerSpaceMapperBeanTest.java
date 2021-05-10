@@ -110,15 +110,6 @@ public class MillerSpaceMapperBeanTest {
 
 	@Test
 	public void loadExtraItemsJSON() {
-		MillerSpaceMapperBean orig = new MillerSpaceMapperBean();
-		orig.setInputs("/scratch/images/i16/562926.nxs", "/scratch/images/i16/562927.nxs", "/scratch/images/i16/562928.nxs");
-		orig.setOutput("/scratch/tmp/562926.h5");
-		orig.setSplitterName("inverse");
-		orig.setSplitterParameter(0.5);
-		orig.setScaleFactor(2);
-		orig.setReduceToNonZero(true);
-		orig.setMillerStep(0.002);
-
 		ObjectMapper mapper = new ObjectMapper();
 		String testName = "testfiles/i16-extra.json";
 		File f = null;
@@ -180,6 +171,31 @@ public class MillerSpaceMapperBeanTest {
 		assertEquals("NXentry", d[0].getString());
 		assertEquals("NXentry", e[0].getString());
 	}
+
+	@Test
+	public void testMSCoordinatesSSingle() throws ScanFileHolderException, IOException, NexusException {
+		int[][] shapes = testMSMCoordinates(false, "MScoords-ssingle-", new int[][] {
+			{94, 293}, // mid-point
+		});
+		assertArrayEquals(new int[] {1, 3}, shapes[0]);
+	}
+
+	@Test
+	public void testMSCoordinatesSAll() throws ScanFileHolderException, IOException, NexusException {
+		int[][] shapes = testMSMCoordinates(false, "MScoords-sall-", new int[][] {
+			{-1, 94, 293}, // mid-point
+		});
+		assertArrayEquals(new int[] {51, 3}, shapes[0]);
+	}
+
+	@Test
+	public void testMSCoordinatesSSelect() throws ScanFileHolderException, IOException, NexusException {
+		int[][] shapes = testMSMCoordinates(false, "MScoords-sselect-", new int[][] {
+			{25, 94, 293}, // mid-point
+		});
+		assertArrayEquals(new int[] {1, 3}, shapes[0]);
+	}
+
 
 	@Test
 	public void testMSCoordinatesSingle() throws ScanFileHolderException, IOException, NexusException {

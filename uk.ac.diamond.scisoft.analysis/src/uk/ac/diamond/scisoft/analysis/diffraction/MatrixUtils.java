@@ -179,6 +179,28 @@ public class MatrixUtils {
 	}
 
 	/**
+	 * Reset entries that are less than or equal to 1 unit of least precision of
+	 * the vector's magnitude
+	 * @param v
+	 */
+	public static void santise(Vector3d v) {
+		double min = Math.ulp(Math.hypot(v.x, Math.hypot(v.y, v.z)));
+		double t;
+		t = Math.abs(v.x);
+		if (t <= min) {
+			v.setX(0);
+		}
+		t = Math.abs(v.y);
+		if (t <= min) {
+			v.setY(0);
+		}
+		t = Math.abs(v.z);
+		if (t <= min) {
+			v.setZ(0);
+		}
+	}
+
+	/**
 	 * Test to see if expected value is close to actual value within given tolerances
 	 * @param e expected value
 	 * @param a actual value

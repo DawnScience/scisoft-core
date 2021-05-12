@@ -393,9 +393,6 @@ class NexusScanFileImpl implements NexusScanFile {
 	private void createNXDataGroups(NexusEntryBuilder entryBuilder, NexusObjectProvider<?> detector) throws NexusException {
 		List<NexusObjectProvider<?>> scannables = nexusObjectProviders.get(ScanRole.SCANNABLE);
 		List<NexusObjectProvider<?>> monitors = new LinkedList<>(nexusObjectProviders.get(ScanRole.MONITOR_PER_POINT));
-		if (nexusScanModel.getMetadataWriter() != null) {
-			monitors.remove(nexusScanModel.getMetadataWriter().getNexusProvider(nexusScanModel.getNexusScanInfo()));
-		}
 
 		// determine the primary device - i.e. the device whose primary dataset to make the @signal field
 		NexusObjectProvider<?> primaryDevice = null;

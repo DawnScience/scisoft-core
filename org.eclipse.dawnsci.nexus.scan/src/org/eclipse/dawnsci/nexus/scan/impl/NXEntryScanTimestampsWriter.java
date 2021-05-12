@@ -16,7 +16,7 @@
  * with GDA. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.eclipse.dawnsci.nexus.scan;
+package org.eclipse.dawnsci.nexus.scan.impl;
 
 import static java.time.temporal.ChronoUnit.MILLIS;
 

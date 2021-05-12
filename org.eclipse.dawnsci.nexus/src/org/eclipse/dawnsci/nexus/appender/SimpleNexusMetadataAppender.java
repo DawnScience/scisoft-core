@@ -7,25 +7,24 @@ import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.context.NexusContext;
-import org.eclipse.dawnsci.nexus.context.NexusContextFactory;
 
 /**
- * A {@link NexusObjectAppender} that appends metadata as scalar fields according to the
+ * A simple {@link NexusObjectAppender} that appends metadata as scalar fields according to the
  * {@link Map} as set by {@link #setNexusMetadata(Map)}.
  * 
  * @author Matthew Dickie
  *
  * @param <N> type of nexus object to append
  */
-public class NexusMetadataAppender<N extends NXobject> extends AbstractNexusContextAppender<N> {
+public class SimpleNexusMetadataAppender<N extends NXobject> extends AbstractNexusContextAppender<N> {
 
 	private Map<String, Object> nexusMetadata = new HashMap<>();
 	
-	public NexusMetadataAppender() {
+	public SimpleNexusMetadataAppender() {
 		// no-arg constructor for easier spring configuration
 	}
 	
-	public NexusMetadataAppender(String name) {
+	public SimpleNexusMetadataAppender(String name) {
 		setName(name);
 	}
 	

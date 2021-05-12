@@ -40,7 +40,7 @@ import org.eclipse.dawnsci.nexus.NexusScanInfo;
 import org.eclipse.dawnsci.nexus.NexusUtils;
 import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.appender.NexusNodeCopyAppender;
-import org.eclipse.dawnsci.nexus.appender.NexusMetadataAppender;
+import org.eclipse.dawnsci.nexus.appender.SimpleNexusMetadataAppender;
 import org.eclipse.dawnsci.nexus.appender.NexusObjectAppender;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectWrapper;
@@ -189,8 +189,8 @@ public class NexusDeviceServiceTest {
 	}
 	
 	@Test
-	public void testNexusMetadataAppender() throws Exception {
-		final NexusMetadataAppender<NXpositioner> metadataAppender = new NexusMetadataAppender<>("testPositioner");
+	public void testSimpleNexusMetadataAppender() throws Exception {
+		final SimpleNexusMetadataAppender<NXpositioner> metadataAppender = new SimpleNexusMetadataAppender<>("testPositioner");
 		final Map<String, Object> nexusMetadata = new HashMap<>();
 		nexusMetadata.put(NXpositioner.NX_NAME, "testPositioner");
 		nexusMetadata.put(NXpositioner.NX_ACCELERATION_TIME, 10.23);

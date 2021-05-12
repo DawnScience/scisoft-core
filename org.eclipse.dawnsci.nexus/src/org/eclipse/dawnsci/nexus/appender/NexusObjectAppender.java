@@ -87,11 +87,15 @@ public class NexusObjectAppender<N extends NXobject> extends AbstractNexusDecora
 	
 	
 	/**
-	 * Appends a nexus object. Override this method if no changes need to be made to the
+	 * Appends additional nodes to a nexus object.
+	 * <p>
+	 * Override this method if no changes need to be made to the
 	 * {@link AbstractNexusObjectProvider} (e.g. names of data fields, etc).
 	 * @param nexusObject nexus object to append
+	 * @throws NexusException if the nexus object could not be appended to for any reason
 	 */
 	protected void appendNexusObject(N nexusObject) throws NexusException {
+		// subclasses should override this default implementation as necessary.
 		appender.ifPresent(dec -> dec.accept(nexusObject));
 	}
 	

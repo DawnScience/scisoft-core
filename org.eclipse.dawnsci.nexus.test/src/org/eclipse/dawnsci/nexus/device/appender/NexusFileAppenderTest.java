@@ -26,7 +26,7 @@ import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.appender.AbstractNexusContextAppender;
 import org.eclipse.dawnsci.nexus.appender.INexusFileAppenderService;
-import org.eclipse.dawnsci.nexus.appender.NexusMetadataAppender;
+import org.eclipse.dawnsci.nexus.appender.SimpleNexusMetadataAppender;
 import org.eclipse.dawnsci.nexus.appender.impl.NexusFileAppenderService;
 import org.eclipse.dawnsci.nexus.context.NexusContext;
 import org.eclipse.dawnsci.nexus.context.NexusContextFactory;
@@ -171,7 +171,7 @@ public class NexusFileAppenderTest {
 	public void testAppendNexusMetadata() throws Exception {
 		// Arrange
 		final String fileName = "metadata.nxs";
-		final NexusMetadataAppender<NXdetector> appender = new NexusMetadataAppender<>("detector");
+		final SimpleNexusMetadataAppender<NXdetector> appender = new SimpleNexusMetadataAppender<>("detector");
 		final Map<String, Object> metadata = new HashMap<>();
 		metadata.put(NXdetector.NX_LOCAL_NAME, "mydetector");
 		metadata.put(NXdetector.NX_DETECTOR_NUMBER, 2);

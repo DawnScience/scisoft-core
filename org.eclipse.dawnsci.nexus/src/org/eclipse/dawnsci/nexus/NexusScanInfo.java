@@ -68,6 +68,8 @@ public class NexusScanInfo {
 	
 	private String filePath;
 	
+	private long estimatedScanTime = -1; // in ms, or -1 if not specified
+	
 	public NexusScanInfo() {
 		this(Collections.emptyList());
 	}
@@ -89,6 +91,14 @@ public class NexusScanInfo {
 	
 	public void setRank(int rank) {
 		this.rank = rank;
+	}
+	
+	public void setEstimatedScanTime(long estimatedScanTime) {
+		this.estimatedScanTime = estimatedScanTime;
+	}
+	
+	public long getEstimatedScanTime() {
+		return estimatedScanTime;
 	}
 	
 	private void setDeviceNames(ScanRole scanRole, Collection<String> names) {

@@ -72,11 +72,11 @@ public class NexusAssert {
 	private static final String FIELD_NAME_SCAN_ESTIMATED_DURATION = "scan_estimated_duration";
 	private static final String FIELD_NAME_SCAN_DEAD_TIME = "scan_dead_time";
 	private static final String FIELD_NAME_SCAN_DEAD_TIME_PERCENT = "scan_dead_time_percent";
-	private static final String FIELD_NAME_SCAN_SHAPE    = "scan_shape";
+	private static final String FIELD_NAME_SCAN_SHAPE = "scan_shape";
 	private static final String FIELD_NAME_POINT_START_TIME = "point_start_times";
 	private static final String FIELD_NAME_POINT_END_TIME = "point_end_times";
-	private static final String GROUP_NAME_SOLSTICE_SCAN = "solstice_scan";
-	private static final String GROUP_NAME_KEYS          = "keys";
+	private static final String GROUP_NAME_DIAMOND_SCAN = "diamond_scan";
+	private static final String GROUP_NAME_KEYS = "keys";
 
 	private static final String MOCK_VISIT_ID = "test-mock";
 	
@@ -344,35 +344,35 @@ public class NexusAssert {
 		assertScanTimeStamps(startTimeNode, endTimeNode, durationNode);
 	}
 
-	public static void assertSolsticeScanGroup(NXentry entry, boolean snake, boolean foldedGrid, int... sizes) {
-		assertSolsticeScanGroup(entry, false, snake, foldedGrid, sizes);
+	public static void assertDiamondScanGroup(NXentry entry, boolean snake, boolean foldedGrid, int... sizes) {
+		assertDiamondScanGroup(entry, false, snake, foldedGrid, sizes);
 	}
 
-	public static void assertSolsticeScanGroup(NXentry entry, boolean malcolmScan, boolean snake, boolean foldedGrid,
+	public static void assertDiamondScanGroup(NXentry entry, boolean malcolmScan, boolean snake, boolean foldedGrid,
 			int... sizes) {
-		assertSolsticeScanGroup(entry, malcolmScan, snake, foldedGrid, null, sizes);
+		assertDiamondScanGroup(entry, malcolmScan, snake, foldedGrid, null, sizes);
 	}
 
-	public static void assertSolsticeScanGroup(NXentry entry, boolean malcolmScan, boolean snake, boolean foldedGrid,
+	public static void assertDiamondScanGroup(NXentry entry, boolean malcolmScan, boolean snake, boolean foldedGrid,
 			List<String> expectedExternalFiles, int... sizes) {
 		assertScanFinished(entry);
 
-		NXcollection solsticeScanCollection = entry.getCollection(GROUP_NAME_SOLSTICE_SCAN);
-		assertNotNull(solsticeScanCollection);
+		final NXcollection diamondScanCollection = entry.getCollection(GROUP_NAME_DIAMOND_SCAN);
+		assertNotNull(diamondScanCollection);
 
-		assertScanShape(solsticeScanCollection, sizes);
-		assertScanTimes(solsticeScanCollection);
+		assertScanShape(diamondScanCollection, sizes);
+		assertScanTimes(diamondScanCollection);
 
-		NXcollection keysCollection = (NXcollection) solsticeScanCollection.getGroupNode(GROUP_NAME_KEYS);
+		final NXcollection keysCollection = (NXcollection) diamondScanCollection.getGroupNode(GROUP_NAME_KEYS);
 		assertNotNull(keysCollection);
 
 		// workaround for StaticGenerator with StaticModel of size 1 producing scan of
 		// rank 1 and shape { 1 }
 		assertUniqueKeys(malcolmScan, snake, foldedGrid, expectedExternalFiles, keysCollection, sizes);
 
-		assertNXTimeStamps(solsticeScanCollection);
+		assertNXTimeStamps(diamondScanCollection);
 		if (!(sizes.length == 0 || malcolmScan)) {
-			assertPointTimeStamps(solsticeScanCollection, sizes, snake, foldedGrid);
+			assertPointTimeStamps(diamondScanCollection, sizes, snake, foldedGrid);
 		}
 	}
 	
@@ -406,11 +406,10 @@ public class NexusAssert {
 		
 	}
 
-	private static void assertPointTimeStamps(NXcollection solsticeScanCollection, int[] sizes, boolean snake,
-			boolean foldedGrid) {
-
-		DataNode pointStartTimesNode = solsticeScanCollection.getDataNode(FIELD_NAME_POINT_START_TIME);
-		DataNode pointEndTimesNode = solsticeScanCollection.getDataNode(FIELD_NAME_POINT_END_TIME);
+	private static void assertPointTimeStamps(NXcollection diamondScanCollection, int[] sizes,
+			boolean snake, boolean foldedGrid) {
+		final DataNode pointStartTimesNode = diamondScanCollection.getDataNode(FIELD_NAME_POINT_START_TIME);
+		final DataNode pointEndTimesNode = diamondScanCollection.getDataNode(FIELD_NAME_POINT_END_TIME);
 
 		assertNotNull(pointStartTimesNode);
 		assertNotNull(pointEndTimesNode);
@@ -426,25 +425,22 @@ public class NexusAssert {
 		assertEquals(String.class, pointStartTimesDataset.getElementClass());
 		assertEquals(String.class, pointEndTimesDataset.getElementClass());
 
-		assertTrue(pointStartTimesDataset.getRank() == pointEndTimesDataset.getRank());
-		assertEquals(sizes.length, pointStartTimesDataset.getRank());
-
-		assertArrayEquals(pointStartTimesDataset.getShape(), pointEndTimesDataset.getShape());
 		assertArrayEquals(sizes, pointStartTimesDataset.getShape());
+		assertArrayEquals(sizes, pointEndTimesDataset.getShape());
 
-		Dataset startTimes = DatasetUtils.convertToDataset(pointStartTimesDataset);
-		Dataset endTimes = DatasetUtils.convertToDataset(pointEndTimesDataset);
+		final Dataset startTimes = DatasetUtils.convertToDataset(pointStartTimesDataset);
+		final Dataset endTimes = DatasetUtils.convertToDataset(pointEndTimesDataset);
 		
 		final DateDataset startTimeDateDataset = DatasetUtils.cast(DateDataset.class, startTimes);
 		final DateDataset endTimeDateDataset = DatasetUtils.cast(DateDataset.class, endTimes);
 
-		IndexIterator iterator = startTimes.getIterator(true);
+		final IndexIterator iterator = startTimes.getIterator(true);
 
 		if (!snake || sizes.length == 1) {
 			Date prevEnd = null;
 			while (iterator.hasNext()) {
 				Date start = startTimeDateDataset.getDate(iterator.getPos());
-				Date end =endTimeDateDataset.getDate(iterator.getPos());
+				Date end = endTimeDateDataset.getDate(iterator.getPos());
 				assertTrue(!end.before(start));
 				if (prevEnd != null) {
 					assertTrue(!start.before(prevEnd));
@@ -535,10 +531,10 @@ public class NexusAssert {
 		return flatDataset;
 	}
 
-	private static void assertScanShape(NXcollection solsticeScanCollection, int... sizes) {
-		DataNode shapeDataNode = solsticeScanCollection.getDataNode(FIELD_NAME_SCAN_SHAPE);
+	private static void assertScanShape(NXcollection diamondScanCollection, int... sizes) {
+		final DataNode shapeDataNode = diamondScanCollection.getDataNode(FIELD_NAME_SCAN_SHAPE);
 		assertNotNull(shapeDataNode);
-		IDataset shapeDataset;
+		final IDataset shapeDataset;
 		try {
 			shapeDataset = shapeDataNode.getDataset().getSlice();
 		} catch (DatasetException e) {
@@ -558,11 +554,11 @@ public class NexusAssert {
 		}
 	}
 
-	private static void assertScanTimes(NXcollection solsticeScanCollection) {
+	private static void assertScanTimes(NXcollection diamondScanCollection) {
 		// check the estimated scan duration dataset
-		final DataNode estimatedTimeDataNode = solsticeScanCollection.getDataNode(FIELD_NAME_SCAN_ESTIMATED_DURATION);
+		final DataNode estimatedTimeDataNode = diamondScanCollection.getDataNode(FIELD_NAME_SCAN_ESTIMATED_DURATION);
 		assertNotNull(estimatedTimeDataNode);
-		IDataset estimatedTimeDataset;
+		final IDataset estimatedTimeDataset;
 		try {
 			estimatedTimeDataset = estimatedTimeDataNode.getDataset().getSlice();
 		} catch (DatasetException e) {
@@ -575,7 +571,7 @@ public class NexusAssert {
 		final long estimatedtime = estimatedTimeDataset.getLong();
 
 		// check the actual scan duration dataset
-		final DataNode actualTimeDataNode = solsticeScanCollection.getDataNode(NXentry.NX_DURATION);
+		final DataNode actualTimeDataNode = diamondScanCollection.getDataNode(NXentry.NX_DURATION);
 		assertNotNull(actualTimeDataNode);
 		IDataset actualTimeDataset;
 		try {
@@ -594,9 +590,9 @@ public class NexusAssert {
 		final long scanDurationMs = actualTimeDataset.getLong(0);
 
 		// check the scan dead time dataset
-		final DataNode deadTimeDataNode = solsticeScanCollection.getDataNode(FIELD_NAME_SCAN_DEAD_TIME);
+		final DataNode deadTimeDataNode = diamondScanCollection.getDataNode(FIELD_NAME_SCAN_DEAD_TIME);
 		assertNotNull(deadTimeDataNode);
-		IDataset deadTimeDataset;
+		final IDataset deadTimeDataset;
 		try {
 			deadTimeDataset = deadTimeDataNode.getDataset().getSlice();
 		} catch (DatasetException e) {
@@ -614,7 +610,7 @@ public class NexusAssert {
 		assertEquals(estimatedtime + deadTime, scanDurationMs);
 
 		// check the percentage dead time
-		final DataNode deadTimePercentDataNode = solsticeScanCollection.getDataNode(FIELD_NAME_SCAN_DEAD_TIME_PERCENT);
+		final DataNode deadTimePercentDataNode = diamondScanCollection.getDataNode(FIELD_NAME_SCAN_DEAD_TIME_PERCENT);
 		assertNotNull(deadTimePercentDataNode);
 		IDataset deadTimePercentDataset;
 		try {
@@ -744,7 +740,7 @@ public class NexusAssert {
 	}
 
 	private static void assertScanFinished(NXentry entry, boolean finished) {
-		NXcollection scanPointsCollection = entry.getCollection(GROUP_NAME_SOLSTICE_SCAN);
+		NXcollection scanPointsCollection = entry.getCollection(GROUP_NAME_DIAMOND_SCAN);
 		assertNotNull(scanPointsCollection);
 
 		// check the scan finished boolean is set to true

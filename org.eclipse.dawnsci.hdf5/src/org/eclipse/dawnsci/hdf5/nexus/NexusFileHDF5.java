@@ -359,8 +359,9 @@ public class NexusFileHDF5 implements NexusFile {
 			NodeData node = getNode(plainPath, false);
 			NodeType type = node.type;
 			if (type == NodeType.DATASET) {
-				String parentPath = plainPath.substring(0, plainPath.lastIndexOf(Node.SEPARATOR));
-				String name = plainPath.substring(plainPath.lastIndexOf(Node.SEPARATOR) + 1, plainPath.length());
+				int i = plainPath.lastIndexOf(Node.SEPARATOR);
+				String parentPath = plainPath.substring(0, i);
+				String name = plainPath.substring(i + 1, plainPath.length());
 				GroupNode parentNode = getGroup(parentPath, true);
 				return getData(parentNode, name);
 			} else if (type == NodeType.GROUP) {
@@ -386,7 +387,7 @@ public class NexusFileHDF5 implements NexusFile {
 	private void createGroupNode(long oid, GroupNode group, String path, String name, String nxClass)
 			throws NexusException {
 		GroupNode g;
-		long fileAddr = getLinkTarget(path + Node.SEPARATOR + name);
+		long fileAddr = getLinkTarget(TreeUtils.join(path, name));
 		if (!nodeMap.containsKey(fileAddr)) {
 			// create the new group, a subclass of NXobject if nxClass is set. Note nxClass is not yet known when loading
 			if (nxClass == null || nxClass.equals("")) {
@@ -402,7 +403,7 @@ public class NexusFileHDF5 implements NexusFile {
 			if (nxClass != null && !nxClass.isEmpty()) {
 				g.addAttribute(TreeFactory.createAttribute(NexusConstants.NXCLASS, nxClass, false));
 			}
-			cacheAttributes(path + Node.SEPARATOR + name, g);
+			cacheAttributes(TreeUtils.join(path, name), g);
 			// if the new attributes now includes an nxClass attribute, create
 			// the appropriate subclass of NXobject (TODO is there a better way of doing this?)
 			if (!(g instanceof NXobject) && g.getAttribute(NexusConstants.NXCLASS) != null) {
@@ -410,7 +411,7 @@ public class NexusFileHDF5 implements NexusFile {
 				if (nxClass != null && !nxClass.isEmpty()) {
 					try {
 						g = NexusNodeFactory.createNXobjectForClass(nxClass, oid);
-						cacheAttributes(path + Node.SEPARATOR + name, g);
+						cacheAttributes(TreeUtils.join(path, name), g);
 					} catch (IllegalArgumentException e) {
 						logger.warn("Attribute {} was {} but not a known one", NexusConstants.NXCLASS, nxClass);
 					}
@@ -456,7 +457,7 @@ public class NexusFileHDF5 implements NexusFile {
 			for (long i = 0; i < groupInfo.nlinks; i++) {
 				//we have to open the object itself to handle external links
 				//H5.H5Lget_name_by_idx(fileId, "X", ....) will fail if X is an external link node, as will similar methods
-				try (HDF5Resource objResource = new HDF5ObjectResource( H5.H5Oopen(fileId, path, HDF5Constants.H5P_DEFAULT) )) {
+				try (HDF5Resource objResource = new HDF5ObjectResource(H5.H5Oopen(fileId, path, HDF5Constants.H5P_DEFAULT) )) {
 					long objId = objResource.getResource();
 					String linkName = H5.H5Lget_name_by_idx(objId, ".", HDF5Constants.H5_INDEX_NAME,
 							HDF5Constants.H5_ITER_INC, i, HDF5Constants.H5P_DEFAULT);
@@ -467,7 +468,7 @@ public class NexusFileHDF5 implements NexusFile {
 						String extFilePath = linkTarget[1];
 						if (!new File(extFilePath).exists()) {
 							// link may be relative
-							extFilePath = fileDir + Node.SEPARATOR + extFilePath;
+							extFilePath = TreeUtils.join(fileDir, extFilePath);
 							if (!new File(extFilePath).exists()) {
 								//TODO: cache "lazy" node
 								//this results on a potentially invalid cache
@@ -487,7 +488,7 @@ public class NexusFileHDF5 implements NexusFile {
 							continue;
 						}
 					}
-					String childPath = path + linkName;
+					String childPath = TreeUtils.join(path, linkName);
 					H5O_info_t objectInfo = H5.H5Oget_info_by_name(fileId, childPath, HDF5Constants.H5O_INFO_BASIC, HDF5Constants.H5P_DEFAULT);
 					if (objectInfo.type == HDF5Constants.H5O_TYPE_GROUP) {
 						createGroupNode(childPath.hashCode(), group, path, linkName, "");
@@ -529,7 +530,7 @@ public class NexusFileHDF5 implements NexusFile {
 		//we're interested in into our own cache
 		Node childNode;
 		try (NexusFileHDF5 extFile = new NexusFileHDF5(fileName)) {
-			String fullPathInExtFile = externalMountPoint + Node.SEPARATOR + pathAfterMount;
+			String fullPathInExtFile = TreeUtils.join(externalMountPoint, pathAfterMount);
 			extFile.openToRead();
 			ParsedNode[] parsed = parseAugmentedPath(internalMountPoint);
 			String nodeName = parsed[parsed.length - 1].name;
@@ -677,7 +678,7 @@ public class NexusFileHDF5 implements NexusFile {
 			}
 			return type;
 		} catch (HDF5LibraryException e) {
-			throw new NexusException("Could not get object information", e);
+			throw new NexusException("Could not get object information for " + absolutePath, e);
 		}
 	}
 
@@ -936,14 +937,13 @@ public class NexusFileHDF5 implements NexusFile {
 		if (parentNode.name == null) {
 			return null;
 		}
-		String parentPath = path.endsWith(Node.SEPARATOR) ? path : path + Node.SEPARATOR;
 		if (name == null) {
 			name = data.getName();
 		}
 		if (name == null || name.isEmpty()) {
 			throw new NullPointerException("Dataset name must be defined");
 		}
-		String dataPath = parentPath + name;
+		String dataPath = TreeUtils.join(path, name);
 		if (isPathValid(dataPath)) {
 			throw new NexusException("Object already exists at specified location: " + dataPath);
 		}
@@ -1023,7 +1023,7 @@ public class NexusFileHDF5 implements NexusFile {
 			throw new NexusException("Could not create dataset " + name, e);
 		}
 
-		HDF5LazySaver saver = new HDF5LazySaver(null, fileName, parentPath + Node.SEPARATOR + name,
+		HDF5LazySaver saver = new HDF5LazySaver(null, fileName, dataPath,
 				name, iShape, itemSize, clazz, false, iMaxShape, iChunks, fillValue);
 
 		saver.setAlreadyCreated();
@@ -1094,7 +1094,7 @@ public class NexusFileHDF5 implements NexusFile {
 			throw new NullPointerException("Dataset name must be defined");
 		}
 
-		String dataPath = (parentNode.path == null ? "" : parentNode.path + parentNode.name) + Node.SEPARATOR + name;
+		String dataPath = TreeUtils.join(parentNode.path == null ? "" : parentNode.path + parentNode.name, name);
 		if (isPathValid(dataPath)) {
 			throw new NexusException("Object already exists at specified location: " + dataPath);
 		}
@@ -1203,7 +1203,7 @@ public class NexusFileHDF5 implements NexusFile {
 		} else {
 			throw new IllegalArgumentException("Cannot remove node " + name + ": it is not in group " + path);
 		}
-		path += Node.SEPARATOR + name;
+		path = TreeUtils.join(path, name);
 		long fileAddr = getLinkTarget(path);
 		nodeMap.remove(fileAddr);
 		try {
@@ -1217,7 +1217,7 @@ public class NexusFileHDF5 implements NexusFile {
 
 	private void recursivelyUpdateTree(String parentPath, String name, Node node) throws NexusException {
 		String nxClass = node.containsAttribute(NexusConstants.NXCLASS) ? node.getAttribute(NexusConstants.NXCLASS).getFirstElement() : "";
-		String fullPath = parentPath + Node.SEPARATOR + (name == null ? "" : name);
+		String fullPath = TreeUtils.join(parentPath, name == null ? "" : name);
 		fullPath = fullPath.replaceAll("//", "/");
 		NodeData parentNodeData = getNode(parentPath, false);
 		GroupNode parentNode = (GroupNode) parentNodeData.node;
@@ -1231,7 +1231,7 @@ public class NexusFileHDF5 implements NexusFile {
 			GroupNode updatingGroupNode = (GroupNode) node;
 			if (!parentNode.containsGroupNode(name)) {
 				if (nxClass.isEmpty()) {
-					logger.warn("Adding node at " + fullPath + " without an NXclass");
+					logger.warn("Adding node at {} without an NXclass", fullPath);
 				}
 				long id = openGroup(fullPath, nxClass, true);
 				closeNode(id);
@@ -1471,7 +1471,7 @@ public class NexusFileHDF5 implements NexusFile {
 		}
 		//create the destination node (the path on our side of the link)
 		getGroupNode(destinationParent, true);
-		String linkName = destinationParent + Node.SEPARATOR + linkNodeName;
+		String linkName = TreeUtils.join(destinationParent, linkNodeName);
 		try (HDF5Resource linkAccess = new HDF5PropertiesResource(H5.H5Pcreate(HDF5Constants.H5P_LINK_ACCESS));
 				HDF5Resource fileAccess = new HDF5PropertiesResource(H5.H5Pcreate(HDF5Constants.H5P_FILE_ACCESS))) {
 			long lapl = linkAccess.getResource();

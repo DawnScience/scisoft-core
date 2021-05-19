@@ -306,5 +306,9 @@ public class DiffractionMetadataImportOperation
 
 		((AbstractOperationModel) this.model).addPropertyChangeListener(listener);
 	}
-
+	
+	@Override
+	public void init() {
+		cache = null;
+	}
 }

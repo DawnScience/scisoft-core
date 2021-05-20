@@ -960,9 +960,7 @@ public class DetectorProperties implements Serializable, Cloneable {
 	 * @return point of intersection of vector with detector
 	 */
 	public Vector3d intersect(final Vector3d v) {
-		Vector3d pos = new Vector3d();
-		intersect(v, pos);
-		return pos;
+		return intersect(v, null, null);
 	}
 
 	/**
@@ -971,15 +969,67 @@ public class DetectorProperties implements Serializable, Cloneable {
 	 * @param v
 	 *            vector (does not have to be a unit vector)
 	 * @param p
-	 *            position vector of intersection
+	 *            output position vector of intersection
 	 */
 	public void intersect(final Vector3d v, Vector3d p) {
+		intersect(v, null, p);
+	}
+
+	/**
+	 * Calculate point of intersection of line with detector
+	 * 
+	 * @param v
+	 *            line direction vector (does not have to be a unit vector)
+	 * @param p0
+	 *            line position vector (can be null for line through origin)
+	 * @param p
+	 *            output position vector of intersection (can be null)
+	 * @return p (if not null) or new vector with intersection coordinates
+	 */
+	public Vector3d intersect(final Vector3d v, final Vector3d p0, Vector3d p) {
 		double t = normal.dot(v);
 		if (t == 0) {
-			throw new IllegalArgumentException("No intersection possible as vector is parallel to detector");
+			throw new IllegalStateException("No intersection possible as vector is parallel to detector");
 		}
-		t = normal.dot(origin) / t;
-		p.scale(t, v);
+		if (p == null) {
+			p = new Vector3d();
+		}
+		if (p0 == null) {
+			t = normal.dot(origin) / t;
+			p.scale(t, v);
+		} else {
+			p.sub(origin, p0);
+			t = normal.dot(p) / t;
+			p.scaleAdd(t, v, p0);
+		}
+		return p;
+	}
+
+	/**
+	 * Calculate intersection coordinates
+	 * @param v
+	 *            line direction vector (can be null for default beam vector, does not have to be a unit vector)
+	 * @param p0
+	 *            line position vector (can be null for line through origin)
+	 * @param coords
+	 *            output pixel coordinates (can be null)
+	 * @return coords (if not null) or new array with intersection coordinates
+	 */
+	public double[] intersectPreciseCoords(Vector3d v, final Vector3d p0, double[] coords) {
+		if (coords == null) {
+			coords = new double[2];
+		}
+		if (v == null) {
+			v = beamVector;
+		}
+
+		try {
+			pixelCoords(intersect(v, p0, null), coords);
+		} catch (IllegalStateException e) {
+			coords[0] = Double.NaN;
+			coords[1] = Double.NaN;
+		}
+		return coords;
 	}
 
 	private Vector3d[] cornerPositions() {

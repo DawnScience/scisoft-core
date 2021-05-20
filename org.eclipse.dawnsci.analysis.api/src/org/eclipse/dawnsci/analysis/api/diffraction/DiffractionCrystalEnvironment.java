@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.vecmath.Matrix3d;
+import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironmentEvent.EventType;
 
@@ -39,7 +40,10 @@ public class DiffractionCrystalEnvironment implements Serializable, Cloneable {
 	private Matrix3d orientation;
 
 	// TODO move controller away from model?
-	private transient Set<IDiffractionCrystalEnvironmentListener> diffCrystEnvListeners; 
+	private transient Set<IDiffractionCrystalEnvironmentListener> diffCrystEnvListeners;
+	private final static Vector3d DEFAULT_DIR = new Vector3d(0, 0, 1);
+
+	private Vector3d dirn = new Vector3d(DEFAULT_DIR);
 
 	/**
 	 * @param wavelength in Angstroms
@@ -322,5 +326,32 @@ public class DiffractionCrystalEnvironment implements Serializable, Cloneable {
 	@Override
 	public String toString() {
 		return "CE: " + wavelength;
+	}
+
+	/**
+	 * Set beam direction
+	 * @param direction (can be null to reset)
+	 */
+	public void setBeamDirection(Vector3d direction) {
+		if (direction == null) {
+			dirn.set(DEFAULT_DIR);
+		} else {
+			double l = direction.lengthSquared();
+			if (l == 0) {
+				throw new IllegalArgumentException("Must be non-zero in length");
+			}
+			if (l == 1) {
+				dirn.set(direction);
+			} else {
+				dirn.normalize(direction);
+			}
+		}
+	}
+
+	/**
+	 * @return direction along beam
+	 */
+	public Vector3d getBeamVector() {
+		return dirn;
 	}
 }

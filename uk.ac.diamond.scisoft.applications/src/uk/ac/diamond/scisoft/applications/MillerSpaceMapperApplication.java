@@ -46,10 +46,10 @@ public class MillerSpaceMapperApplication implements IApplication {
 		// do nothing
 	}
 
+	private static final String CORES = "-cores";
 	private static final String BEAN_PATH = "-bean";
 
 	private Integer main(String[] args) {
-
 		try {
 			int n = args.length;
 			int i = 0;
@@ -57,8 +57,9 @@ public class MillerSpaceMapperApplication implements IApplication {
 			for (; i < n; i++) {
 				String a = args[i];
 				if (a.equals(BEAN_PATH)) {
-					path  = args[i+1];
-					break;
+					path  = args[++i];
+				} else if (a.equals(CORES)) {
+					MillerSpaceMapper.setCores(Integer.parseInt(args[++i]));
 				}
 			}
 			if (path == null) {

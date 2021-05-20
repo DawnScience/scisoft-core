@@ -20,6 +20,8 @@ import org.eclipse.january.dataset.DoubleDataset;
  * Divide two functions (missing functions are treated as unity)
  */
 public class Divide extends ABinaryOperator implements IOperator {
+	private static final long serialVersionUID = 1757643683801452463L;
+
 	private static final String NAME = "Divide";
 	private static final String DESC = "Divide one function by another";
 

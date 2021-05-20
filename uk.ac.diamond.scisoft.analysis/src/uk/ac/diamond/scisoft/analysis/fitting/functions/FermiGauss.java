@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  * Class for a convolution of the Fermi function and a Gaussian
  */
 public class FermiGauss extends AFunction implements Serializable {
-	private static final int NUMBER_OF_PARAMETERS = 6;
+	private static final long serialVersionUID = 4931877654913957182L;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FermiGauss.class);
 	static final double K2EV_CONVERSION_FACTOR = 8.6173324e-5; // Boltzmann constant in eV/K
@@ -69,7 +69,7 @@ public class FermiGauss extends AFunction implements Serializable {
 					double minDOSslope, double maxDOSslope, double minDOSheight, double maxDOSheight,
 					double minBKheight, double maxBKheight, double minFWHM, double maxFWHM) {
 
-		super(NUMBER_OF_PARAMETERS);
+		super(PARAMS.length);
 
 		IParameter p;
 		p = getParameter(0);
@@ -95,6 +95,11 @@ public class FermiGauss extends AFunction implements Serializable {
 		p = getParameter(5);
 		p.setLimits(minFWHM, maxFWHM);
 		p.setValue((minFWHM + maxFWHM) / 2.0);
+	}
+
+	@Override
+	public int getNoOfParameters() {
+		return PARAMS.length;
 	}
 
 	@Override

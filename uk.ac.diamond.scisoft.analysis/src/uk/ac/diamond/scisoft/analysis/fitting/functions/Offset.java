@@ -17,6 +17,8 @@ import org.eclipse.january.dataset.DoubleDataset;
  * This class basically wraps the function y(x) = c
  */
 public class Offset extends AFunction {
+	private static final long serialVersionUID = 5892199348737768467L;
+
 	private static final String NAME = "Offset";
 	private static final String DESCRIPTION = "An offset or constant."
 			+ "\n    y(x) = c";
@@ -26,7 +28,7 @@ public class Offset extends AFunction {
 	 * Constructor which simply creates the right number of parameters, but probably isn't that much good
 	 */
 	public Offset() {
-		super(1);
+		super(PARAM_NAMES.length);
 	}
 
 	/**
@@ -50,12 +52,18 @@ public class Offset extends AFunction {
 	 *            Maximum value the offset can take
 	 */
 	public Offset(double minOffset, double maxOffset) {
-		super(1);
+		super(PARAM_NAMES.length);
 
 		IParameter p = getParameter(0);
 		p.setValue((minOffset + maxOffset) / 2.0);
 		p.setLowerLimit(minOffset);
 		p.setUpperLimit(maxOffset);
+	}
+
+
+	@Override
+	public int getNoOfParameters() {
+		return PARAM_NAMES.length;
 	}
 
 	@Override

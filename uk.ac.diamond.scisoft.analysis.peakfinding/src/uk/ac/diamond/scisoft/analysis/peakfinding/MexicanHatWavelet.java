@@ -45,7 +45,11 @@ public class MexicanHatWavelet extends AFunction {
 		//Default values
 		super(100,10);
 	}
-	
+
+	@Override
+	public int getNoOfParameters() {
+		return PARAM_NAMES.length;
+	}
 
 	@Override
 	public double val(double... values) {

@@ -17,6 +17,8 @@ import org.eclipse.january.dataset.DoubleDataset;
  * This class implements the function y(x) = m*x + c
  */
 public class StraightLine extends AFunction {
+	private static final long serialVersionUID = -5292924983249690869L;
+
 	private static final String NAME = "Linear";
 	private static final String DESC = "A linear function or straight line."
 			+ "\n    y(x) = m*x + c";
@@ -26,7 +28,7 @@ public class StraightLine extends AFunction {
 	 * Basic constructor, not advisable to use.
 	 */
 	public StraightLine() {
-		super(2);
+		super(PARAM_NAMES.length);
 	}
 
 	public StraightLine(double[] params) {
@@ -50,7 +52,7 @@ public class StraightLine extends AFunction {
 	 *            Maximum value allowed for c
 	 */
 	public StraightLine(double minM, double maxM, double minC, double maxC) {
-		super(2);
+		super(PARAM_NAMES.length);
 
 		IParameter p;
 		p = getParameter(0);
@@ -62,6 +64,11 @@ public class StraightLine extends AFunction {
 		p.setLowerLimit(minC);
 		p.setUpperLimit(maxC);
 		p.setValue((minC + maxC) / 2.0);
+	}
+
+	@Override
+	public int getNoOfParameters() {
+		return PARAM_NAMES.length;
 	}
 
 	@Override

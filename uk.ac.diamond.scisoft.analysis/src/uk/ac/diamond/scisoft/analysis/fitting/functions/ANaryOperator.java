@@ -20,6 +20,8 @@ import org.eclipse.january.IMonitor;
  * A n-ary operator that uses n > 0 functions
  */
 abstract public class ANaryOperator extends AOperator implements IOperator {
+	private static final long serialVersionUID = -1L;
+
 	protected List<IFunction> functions;
 
 	public ANaryOperator() {

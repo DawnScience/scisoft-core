@@ -649,6 +649,8 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 	private class FWHMForSpectrum extends AFunction {
 		private static final long serialVersionUID = 5751477494591603033L;
+
+		private static final int PARAMS = 1;
 		final Dataset image;
 		private IFunction peak;
 		private Dataset rx;
@@ -656,12 +658,17 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		private ApacheOptimizer opt;
 
 		public FWHMForSpectrum(ApacheOptimizer opt, Dataset rx, Dataset image, IFunction peak, double factor) {
-			super(1);
+			super(PARAMS);
 			this.opt = opt;
 			this.image = image;
 			this.peak = peak;
 			this.rx = rx;
 			this.factor = factor;
+		}
+
+		@Override
+		public int getNoOfParameters() {
+			return PARAMS;
 		}
 
 		@Override

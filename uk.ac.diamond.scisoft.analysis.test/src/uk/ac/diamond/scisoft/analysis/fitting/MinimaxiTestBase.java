@@ -39,14 +39,20 @@ abstract class MinimaxiTestBase {
 
 	class Function extends AFunction {
 		private static final long serialVersionUID = 1L;
+		private static final int PARAMS = 1;
 
 		public Function() {
-			super(1);
+			super(PARAMS);
 		}
 
 		static final double gMinPos = -6.83085195573;
 		static final double lMinPos = 6.15340115458;
 		static final double lMaxPos = 1.42745080114;
+
+		@Override
+		public int getNoOfParameters() {
+			return PARAMS;
+		}
 
 		@Override
 		protected void setNames() {

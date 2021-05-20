@@ -18,24 +18,28 @@ import org.eclipse.january.dataset.DoubleDataset;
  * parameters have different definitions
  */
 public class DiffGaussian extends AFunction {
-	/**
-	 * <pre>
-	 * g(x) = a*exp(-b*(x-pos)^2)
-	 * p0 = pos
-	 * p1 = a
-	 * p2 = b
-	 * g'(x) = -2*a*b*(x-pos)*exp(-b*(x-pos)^2)
-	 * </pre>
-	 */
+	private static final long serialVersionUID = -2611860773626103521L;
+
+	private static final String NAME = "DiffGaussian";
+	private static final String DESC = "Derivative of Gaussian wrt to x"
+			+ "\n    g(x) = a exp( -b * (x-posn)^2 )"
+			+ "\nso  y(x) = -2*a*b*(x-pos)*exp(-b*(x-pos)^2)";
+	private static final String[] PARAM_NAMES = new String[] {"pos", "a", "b"};
+
 	public DiffGaussian() {
-		super(3);
+		super(PARAM_NAMES.length);
 		getParameter(1).setLowerLimit(0);
 		getParameter(2).setLowerLimit(0);
 	}
 
 	@Override
+	public int getNoOfParameters() {
+		return PARAM_NAMES.length;
+	}
+
+	@Override
 	protected void setNames() {
-		setNames("DiffGaussian", "Derivative of Gaussian wrt to x", "position", "amplitude", "inverse squared length");
+		setNames(NAME, DESC, PARAM_NAMES);
 	}
 
 	private double pos;

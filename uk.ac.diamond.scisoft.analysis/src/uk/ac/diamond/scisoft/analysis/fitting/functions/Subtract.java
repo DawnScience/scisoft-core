@@ -18,6 +18,8 @@ import org.eclipse.january.dataset.DoubleDataset;
  * Subtract two functions (missing functions are treated as zero)
  */
 public class Subtract extends ABinaryOperator implements IOperator {
+	private static final long serialVersionUID = 7234201646875963659L;
+
 	private static final String NAME = "Subtract";
 	private static final String DESC = "Subtract one function from another";
 

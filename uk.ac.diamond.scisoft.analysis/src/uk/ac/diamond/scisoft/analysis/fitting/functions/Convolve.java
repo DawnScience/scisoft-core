@@ -24,6 +24,8 @@ import org.eclipse.january.dataset.Slice;
  * Convolve two functions where the second function is the kernel
  */
 public class Convolve extends ABinaryOperator implements IOperator {
+	private static final long serialVersionUID = 4129261574134837515L;
+
 	private static final String NAME = "Convolve";
 	private static final String DESC = "Convolve one function with a kernel";
 

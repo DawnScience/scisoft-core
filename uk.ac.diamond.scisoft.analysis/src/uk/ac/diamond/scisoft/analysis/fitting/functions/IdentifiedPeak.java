@@ -16,7 +16,8 @@ import java.util.List;
  * Class describing the parameters of a peak
  */
 public class IdentifiedPeak implements Serializable {
-	
+	private static final long serialVersionUID = 5223822463688621142L;
+
 	public IdentifiedPeak() {
 	}
 

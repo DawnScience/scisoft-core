@@ -54,6 +54,11 @@ public class Poisson extends AFunction {
 	}
 
 	@Override
+	public int getNoOfParameters() {
+		return PARAMS.length;
+	}
+
+	@Override
 	public double val(double... values) {
 		if (isDirty()) {
 			calcCachedParameters();

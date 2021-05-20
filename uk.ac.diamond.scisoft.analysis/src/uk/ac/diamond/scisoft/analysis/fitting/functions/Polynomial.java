@@ -33,6 +33,8 @@ import org.ejml.data.Complex64F;
  * y(x) = a_0 x^n + a_1 x^(n-1) + a_2 x^(n-2) + ... + a_(n-1) x + a_n
  */
 public class Polynomial extends AFunction {
+	private static final long serialVersionUID = 1292642929924352497L;
+
 	private static final String NAME = "Polynomial";
 	private static final String DESC = "A polynomial of degree n."
 			+ "\n    y(x) = a_0 x^n + a_1 x^(n-1) + a_2 x^(n-2) + ... + a_(n-1) x + a_n";
@@ -96,6 +98,11 @@ public class Polynomial extends AFunction {
 		}
 
 		setNames();
+	}
+
+	@Override
+	public int getNoOfParameters() {
+		return parameters == null ? -1 : parameters.length;
 	}
 
 	@Override

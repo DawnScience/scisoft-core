@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
  * Class which wraps a single parameter for a function and allows for its change
  */
 public class Parameter implements Serializable, IParameter {
+	private static final long serialVersionUID = -1361679374137762568L;
 
 	/**
 	 * Setup the logging facilities

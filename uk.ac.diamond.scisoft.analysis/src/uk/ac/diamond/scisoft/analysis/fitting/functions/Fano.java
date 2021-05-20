@@ -17,6 +17,8 @@ import org.eclipse.january.dataset.DoubleDataset;
  * Class to provide a Fano resonance profile
  */
 public class Fano extends AFunction {
+	private static final long serialVersionUID = -8140827833009417130L;
+
 	private static final String NAME = "Fano";
 	private static final String DESC = "A Fano resonance profile."
 			+ "\n    y(x) = sigma [ q w / 2 + (x-r) ]^2 / [ w^2/4 + (x-r)^2 ]"
@@ -60,6 +62,11 @@ public class Fano extends AFunction {
 		}
 
 		setParameters(params);
+	}
+
+	@Override
+	public int getNoOfParameters() {
+		return PARAMS.length;
 	}
 
 	@Override

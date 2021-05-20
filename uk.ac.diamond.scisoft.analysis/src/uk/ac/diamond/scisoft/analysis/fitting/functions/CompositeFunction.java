@@ -22,6 +22,7 @@ import org.eclipse.january.dataset.Maths;
  * functions
  */
 public class CompositeFunction extends Add {
+	private static final long serialVersionUID = 1943549879412445035L;
 
 	/**
 	 * This constructor is simply to start an empty composite function.

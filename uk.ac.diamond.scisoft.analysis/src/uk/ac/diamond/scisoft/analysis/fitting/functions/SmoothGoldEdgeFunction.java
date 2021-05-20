@@ -19,8 +19,6 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 
-import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
-import uk.ac.diamond.scisoft.analysis.fitting.functions.CoordinatesIterator;
 import uk.ac.diamond.scisoft.analysis.optimize.ApachePolynomial;
 
 public class SmoothGoldEdgeFunction extends AFunction implements
@@ -72,6 +70,11 @@ public class SmoothGoldEdgeFunction extends AFunction implements
 		if (params.length != PARAMS.length) 
 			throw new IllegalArgumentException("A SmoothGoldEdgeFunction requires 2 parameters, and it has only been given "+params.length);
 		setParameters(params);
+	}
+
+	@Override
+	public int getNoOfParameters() {
+		return PARAMS.length;
 	}
 
 	@Override

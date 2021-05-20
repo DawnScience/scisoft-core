@@ -75,6 +75,13 @@ if os.name == 'java':
             self.assertAlmostEqual(f.residual(True, d, None, x), 0)
             self.assertAlmostEqual(ff.residual(True, dd, None, x), 0)
 
+        def testFunctions(self):
+            from scisoftpy.jython.function import _nparamsdict
+            for f in _nparamsdict:
+                x = [1.5]* _nparamsdict[f]
+                ff = f(x)
+                print('At {}, fit function {} is {}'.format(x, ff._jfunc().name, ff))
+
         def testFit(self):
             d = dnp.array([ 3.5733e+00, 2.1821e+00, 1.8313e+00, 1.9893e+00, 8.3145e-01,
                 9.8761e-01, 7.1809e-01, 8.6756e-01, 2.3144e-01, 6.6659e-01, 3.8420e-01,

@@ -22,6 +22,8 @@ import org.eclipse.january.dataset.DoubleDataset;
  * Add several functions (missing functions are treated as zero)
  */
 public class Add extends ANaryOperator implements IOperator, Serializable {
+	private static final long serialVersionUID = -8067422272909679706L;
+
 	private static final String NAME = "Add";
 	private static final String DESC = "Add several functions together";
 

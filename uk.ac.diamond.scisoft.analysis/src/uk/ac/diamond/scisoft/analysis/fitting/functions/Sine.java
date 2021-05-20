@@ -12,6 +12,8 @@ package uk.ac.diamond.scisoft.analysis.fitting.functions;
 import org.eclipse.january.dataset.DoubleDataset;
 
 public class Sine extends AFunction {
+	private static final long serialVersionUID = 3407526292210298660L;
+
 	private static final String FUNCTION_NAME = "Sine";
 	private static final String DESC = "Sine function: amplitude * sin(angular_frequency * x + phase) + DC_offset";
 	private static final String[] PARAM_NAMES = { "amplitude", "angular_frequency", "phase", "DC_offset" };
@@ -29,9 +31,14 @@ public class Sine extends AFunction {
 
 	public Sine(double[] params) {
 		super(params);
-		if (params.length != 4) {
+		if (params.length != DEFAULT_PARAMS.length) {
 			throw new IllegalArgumentException("Constructor requires 4 parameters");
 		}
+	}
+
+	@Override
+	public int getNoOfParameters() {
+		return DEFAULT_PARAMS.length;
 	}
 
 	@Override

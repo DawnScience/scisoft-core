@@ -25,6 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JexlExpressionFunction extends AFunction {
+	private static final long serialVersionUID = 5890065540868528669L;
+
 	private static Logger logger = LoggerFactory.getLogger(JexlExpressionFunction.class);
 	/**
 	 * The name of the required variable (the x in y(x)=...)
@@ -70,6 +72,8 @@ public class JexlExpressionFunction extends AFunction {
 	}
 
 	public static class JexlExpressionFunctionException extends Exception {
+		private static final long serialVersionUID = 1387977712552752054L;
+
 		private JexlExpressionFunctionError error;
 
 		private JexlExpressionFunctionException(
@@ -141,6 +145,11 @@ public class JexlExpressionFunction extends AFunction {
 			// No engine available
 			this.engine = null;
 		}
+	}
+
+	@Override
+	public int getNoOfParameters() {
+		return parameters == null ? 0 : parameters.length;
 	}
 
 	@Override

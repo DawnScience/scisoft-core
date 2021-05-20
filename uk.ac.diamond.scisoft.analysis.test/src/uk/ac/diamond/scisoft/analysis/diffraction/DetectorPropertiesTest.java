@@ -9,10 +9,10 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.junit.Assert.assertArrayEquals;
 
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
@@ -142,12 +142,12 @@ public class DetectorPropertiesTest {
 		DetectorProperties det = new DetectorProperties(detectorOrigin, imageSizePix[0], imageSizePix[1],
 				pixelSize, pixelSize, orientationMatrix);
 
-		double[] bc1 = det.getBeamCentreCoords();
+		double[] bc1 = det.intersectPreciseCoords(null, null, null);
 		System.out.printf("Initial centre: %f, %f\n", bc1[0], bc1[1]);
 		bc1[0] -= 75;
 		bc1[1] += 120;
 		det.setBeamCentreCoords(bc1);
-		double[] bc2 = det.getBeamCentreCoords();
+		double[] bc2 = det.intersectPreciseCoords(null, null, null);
 		assertEquals("X coord", bc1[0], bc2[0], 1e-7);
 		assertEquals("Y coord", bc1[1], bc2[1], 1e-7);
 	}
@@ -324,7 +324,7 @@ public class DetectorPropertiesTest {
 		assertEquals("Detector origin, y", 550, o.y, 1e-7);
 		assertEquals("Detector origin, z", 600, o.z, 1e-7);
 
-		double[] c = det.getBeamCentreCoords();
+		double[] c = det.intersectPreciseCoords(null, null, null);
 		assertEquals("Beam centre, x", 500, c[0], 1e-7);
 		assertEquals("Beam centre, y", 550, c[1], 1e-7);
 
@@ -338,11 +338,11 @@ public class DetectorPropertiesTest {
 		assertEquals("Beam centre distance", 600, det.getBeamCentreDistance(), 1e-7);
 		assertEquals("Detector distance", 600, det.getDetectorDistance(), 1e-7);
 
-		c = det.getBeamCentreCoords();
+		c = det.intersectPreciseCoords(null, null, null);
 		det.setNormalAnglesInDegrees(30, 0, 0);
 		assertEquals("Beam centre distance", 600, det.getBeamCentreDistance(), 1e-7);
 		assertEquals("Detector distance", 600*Math.cos(Math.toRadians(30)), det.getDetectorDistance(), 1e-7);
-		double[] d = det.getBeamCentreCoords();
+		double[] d = det.intersectPreciseCoords(null, null, null);
 		assertEquals("Beam centre, x", c[0], d[0], 1e-7);
 		assertEquals("Beam centre, y", c[1], d[1], 1e-7);
 	}
@@ -425,29 +425,29 @@ public class DetectorPropertiesTest {
 		// check sequence of normal angle changes through no-intersection cases and its effect on beam centre distance
 		det.setNormalAnglesInDegrees(70, 0, 0);
 		double dist = det.getBeamCentreDistance();
-		double[] centre = det.getBeamCentreCoords();
+		double[] centre = det.intersectPreciseCoords(null, null, null);
 		det.setNormalAnglesInDegrees(90, 0, 0);
 
 		assertTrue("No intersection", Double.isInfinite(det.getBeamCentreDistance()));
-		double[] centre2 = det.getBeamCentreCoords();
+		double[] centre2 = det.intersectPreciseCoords(null, null, null);
 		assertTrue("No intersection", Double.isNaN(centre2[0]));
 		assertTrue("No intersection", Double.isNaN(centre2[1]));
 
 		det.setNormalAnglesInDegrees(70, 0, 0);
 		assertEquals("Restored", dist, det.getBeamCentreDistance(), 1e-7);
-		centre2 = det.getBeamCentreCoords();
+		centre2 = det.intersectPreciseCoords(null, null, null);
 		assertEquals("Restored", centre[0], centre2[0], 1e-7);
 		assertEquals("Restored", centre[1], centre2[1], 1e-7);
 
 		det.setNormalAnglesInDegrees(70, 5, 0);
 		dist = det.getBeamCentreDistance();
-		centre = det.getBeamCentreCoords();
+		centre = det.intersectPreciseCoords(null, null, null);
 		det.setNormalAnglesInDegrees(70, 0, 0);
 		det.setNormalAnglesInDegrees(90, 0, 0);
 		det.setNormalAnglesInDegrees(90, 5, 0);
 //		det.setNormalAnglesInDegrees(70, 0, 0);
 		det.setNormalAnglesInDegrees(70, 5, 0);
-		centre2 = det.getBeamCentreCoords();
+		centre2 = det.intersectPreciseCoords(null, null, null);
 		assertEquals("Restored", dist, det.getBeamCentreDistance(), 1e-7);
 		assertEquals("Restored", centre[0], centre2[0], 1e-7);
 		assertEquals("Restored", centre[1], centre2[1], 1e-7);

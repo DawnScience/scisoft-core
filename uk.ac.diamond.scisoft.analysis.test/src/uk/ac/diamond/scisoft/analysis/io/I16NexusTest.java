@@ -79,8 +79,11 @@ public class I16NexusTest {
 	@Test
 	public void testMSMWritesNexusFile() throws ScanFileHolderException, IOException {
 		File if1 = File.createTempFile("src", ".h5");
+		if1.deleteOnExit();
 		File if2 = File.createTempFile("src", ".h5");
+		if2.deleteOnExit();
 		File dst = File.createTempFile("writeMSM_hdf5", ".h5");
+		dst.deleteOnExit();
 		String if1Path = if1.getAbsolutePath();
 		String if2Path = if2.getAbsolutePath();
 		String dstPath = dst.getAbsolutePath();
@@ -126,6 +129,7 @@ public class I16NexusTest {
 	@Test
 	public void testMSMProcessing() throws ScanFileHolderException, IOException, NexusException {
 		File dst = File.createTempFile("MSMProcessing_hdf5", ".h5");
+		dst.deleteOnExit();
 		String dstPath = dst.getAbsolutePath();
 		String n = testFileFolder + "588193.nxs";
 		String[] inputPaths = { n, n };

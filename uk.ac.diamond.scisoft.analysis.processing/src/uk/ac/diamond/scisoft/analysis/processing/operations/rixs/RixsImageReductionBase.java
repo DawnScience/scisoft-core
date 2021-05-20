@@ -46,6 +46,7 @@ import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.metadata.AxesMetadata;
@@ -59,6 +60,7 @@ import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.operations.MetadataUtils;
+import uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractFittedBackgroundOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionBaseModel.CORRELATE_ORDER;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionBaseModel.CORRELATE_PHOTON;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionBaseModel.ENERGY_OFFSET;
@@ -74,6 +76,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	private List<Dataset> allPositions = new ArrayList<>(); // list of dataset of event coords in each image
 	@SuppressWarnings("unchecked")
 	private List<Dataset>[] allSpectra = new List[] {new ArrayList<>(), new ArrayList<>()};
+	private List<Dataset> allHistos = new ArrayList<>();
 
 	protected String currentDataFile = null;
 	private MultiRange selection;
@@ -131,6 +134,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		resetList(allOffsets, total);
 		resetList(allPositions, total);
 		resetList(allSums, total);
+		resetList(allHistos, total);
 		for (int i = 0; i < 2; i++) {
 			resetList(allSpectra[i], total);
 		}
@@ -258,6 +262,16 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			allSums.set(sn, eSum);
 			allOffsets.set(sn, events.get(4));
 			allPositions.set(sn, events.get(1));
+			if (model.isSaveAllPositions()) {
+				Dataset values = events.get(3);
+				List<Dataset> hs = SubtractFittedBackgroundOperation.createHistogram(values, true, 1);
+				Dataset h = hs.get(0);
+				Dataset x = hs.get(1).getSliceView(new Slice(-1));
+				System.out.printf("Image %d: found pixel values in [%d, %d]\n", sn, x.getInt(), x.getInt(-1));
+				MetadataUtils.setAxes(this, h, x);
+				allHistos.set(sn, h);
+			}
+
 		}
 
 		IntegerDataset bins = null;
@@ -405,7 +419,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			MetadataUtils.setAxes(this, dh, bins);
 			displayData.set(0, dh);
 			List<Double> z = DatasetUtils.crossings(x, dh, 0);
-			log.append("Histogram derivative zero-crossings = %s", z);
+			log.append("Histogram derivative zero-crossings = %s", z.subList(0, Math.max(5, z.size())));
 			single = (int) Math.floor(z.get(0));
 			multiple = single + countsPerPhoton; // (int) Math.floor(z.get(1)); // TODO
 			log.appendSuccess("Setting limits for single photon as [%d, %d)", single, multiple);
@@ -716,6 +730,33 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 				}
 			}
 		}
+
+		if (model.isSaveAllPositions()) { // add total histogram to summary data
+			int min = Integer.MAX_VALUE;
+			int max = -1;
+			for (Dataset hi : allHistos) {
+				if (hi != null) {
+					Dataset x = MetadataUtils.getAxes(hi)[0];
+					min = Math.min(min, x.getInt());
+					max = Math.max(max, x.getInt(-1));
+				}
+			}
+
+			IntegerDataset intensity = DatasetFactory.createRange(IntegerDataset.class, min, max + 1, 1);
+			intensity.setName("intensity");
+			LongDataset totalHistogram = DatasetFactory.zeros(LongDataset.class, intensity.getSize());
+			totalHistogram.setName("event_histogram");
+			for (Dataset hi : allHistos) {
+				if (hi != null) {
+					Dataset x = MetadataUtils.getAxes(hi)[0];
+					int beg = x.getInt();
+					int end = x.getInt(-1) + 1;
+					totalHistogram.getSliceView(new Slice(beg - min, end - min)).iadd(hi);
+				}
+			}
+			MetadataUtils.setAxes(totalHistogram, intensity);
+			summaryData.add(totalHistogram);
+		}
 	}
 
 	private boolean[][] findRegionsInCCDs(int[] shape) {
@@ -890,9 +931,9 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	private static Dataset[] toArray(List<Dataset> d) {
 		int imax = d.size();
 		int minSize = Integer.MAX_VALUE;
-		for (Dataset s : d) {
-			if (s != null) {
-				int size = s.getSize();
+		for (Dataset di : d) {
+			if (di != null) {
+				int size = di.getSize();
 				if (size < minSize) {
 					minSize = size;
 				}
@@ -900,8 +941,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		}
 		Dataset[] a = new Dataset[imax];
 		int j = 0;
-		for (int i = 0; i < imax; i++) {
-			Dataset di = d.get(i);
+		for (Dataset di : d) {
 			if (di != null) {
 				di = di.getView(true).squeeze();
 				if (di.getSize() > minSize) {

@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -63,6 +64,7 @@ import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.dataset.PositionIterator;
 import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.dataset.StringDataset;
+import org.junit.Assert;
 
 public class NexusAssert {
 	
@@ -757,10 +759,22 @@ public class NexusAssert {
 		assertArrayEquals(new int[] { 1 }, dataset.getShape());
 		assertEquals(finished, dataset.getBoolean(0));
 	}
-
+	
+	public static void assertUnits(NXobject nexusObject, String fieldName, String expectedUnits) {
+		final DataNode dataNode = nexusObject.getDataNode(fieldName);
+		assertNotNull(dataNode);
+		assertUnits(dataNode, expectedUnits);
+	}
+	
 	public static void assertUnits(DataNode dataNode, String expectedUnits) {
-		final Attribute expectedUnitsAttr = TreeFactory.createAttribute(ATTR_NAME_UNITS, expectedUnits);
-		org.eclipse.dawnsci.nexus.test.utilities.NexusAssert.assertAttributesEquals(null, expectedUnitsAttr, dataNode.getAttribute(ATTR_NAME_UNITS));
+		if (expectedUnits == null) {
+			assertNull(dataNode.getAttribute(ATTR_NAME_UNITS));
+		} else {
+			final Attribute expectedUnitsAttr = TreeFactory.createAttribute(ATTR_NAME_UNITS, expectedUnits);
+			final Attribute actualUnitsAttr = dataNode.getAttribute(ATTR_NAME_UNITS);
+			assertNotNull("units not specified, expected " + expectedUnits, actualUnitsAttr);
+			assertAttributesEquals(null, expectedUnitsAttr, actualUnitsAttr);
+		}
 	}
 	
 	public static void assertNXentryMetadata(NXentry entry) {

@@ -47,7 +47,7 @@ public class OperationBean implements IOperationBean {
 	//node where the unique/finished datasets are located (live processing)
 	private String				 dataKey;
 	//clear processing file at finish
-	private boolean   			 deleteProcessingFile = true;
+	private boolean   			 deleteProcessingFile = false;
 	//detector is overwriting data
 	private boolean 			 monitorForOverwrite = false;
 	

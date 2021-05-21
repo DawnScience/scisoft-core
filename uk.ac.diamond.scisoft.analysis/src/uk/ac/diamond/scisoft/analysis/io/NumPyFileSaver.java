@@ -117,9 +117,11 @@ public class NumPyFileSaver implements IFileSaver {
 				shapeTuple.append(shape[j]);
 				shapeTuple.append(", ");
 			}
-			shapeTuple.deleteCharAt(shapeTuple.length() - 1); // remove final space
-			if (shape.length > 1) {
-				shapeTuple.deleteCharAt(shapeTuple.length() - 1); // remove final comma
+			if (shapeTuple.length() > 0) {
+				shapeTuple.deleteCharAt(shapeTuple.length() - 1); // remove final space
+				if (shape.length > 1) {
+					shapeTuple.deleteCharAt(shapeTuple.length() - 1); // remove final comma
+				}
 			}
 
 			// format looks like this, and always in this order: 

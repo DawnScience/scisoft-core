@@ -44,6 +44,7 @@ import uk.ac.diamond.scisoft.analysis.io.NumPyFileSaver;
 public class NumPyTest {
 
 	protected static final String PYTHON_NUMPY_PRINT_MATCHES = "print(exp.dtype==act.dtype and isinstance((exp==act), numpy.ndarray) and (exp==act).all())";
+	protected static final String PYTHON_NUMPY_ZERO_RANK_PRINT_MATCHES = "print(exp.dtype==act.dtype and isinstance((exp==act), numpy.bool_) and (exp==act).all())";
 
 	/**
 	 * Return a self deleting temp file
@@ -72,7 +73,7 @@ public class NumPyTest {
 		new NumPyFileSaver(loc.toString(), unsigned).saveFile(dh);
 	}
 
-	static int[][] shapesToTest = { { 1 }, { 100 }, { 1000000 }, { 10, 10 }, { 5, 6, 7, 8 } };
+	static int[][] shapesToTest = { {}, { 1 }, { 100 }, { 1000000 }, { 10, 10 }, { 5, 6, 7, 8 } };
 	static Object[][] types = new Object[][] { { "'|b1'", BooleanDataset.class}, { "'|i1'", ByteDataset.class},
 		{ "'<i2'", ShortDataset.class}, { "'<i4'", IntegerDataset.class}, { "'<i8'", LongDataset.class},
 		{ "'|u1'", ByteDataset.class, true }, { "'<u2'", ShortDataset.class, true }, { "'<u4'", IntegerDataset.class, true },
@@ -118,8 +119,12 @@ public class NumPyTest {
 		for (int i = 0; i < shape.length; i++) {
 			this.len *= shape[i];
 		}
-		this.shapeStr = ArrayUtils.toString(shape);
-		this.shapeStr = this.shapeStr.substring(1, shapeStr.length() - 1);
+		if (shape.length == 0) {
+			this.shapeStr = "()";
+		} else {
+			this.shapeStr = ArrayUtils.toString(shape);
+			this.shapeStr = this.shapeStr.substring(1, shapeStr.length() - 1);
+		}
 		// System.out.println(this.toString());
 	}
 
@@ -193,7 +198,8 @@ public class NumPyTest {
 		File loc = getTempFile();
 		saveNumPyFile(ds, loc, unsigned);
 
-		String script = createNumPyArray(" act=numpy.load(r'" + loc.toString() + "');" + PYTHON_NUMPY_PRINT_MATCHES);
+		String matches = shape.length == 0 ? PYTHON_NUMPY_ZERO_RANK_PRINT_MATCHES : PYTHON_NUMPY_PRINT_MATCHES;
+		String script = createNumPyArray(" act=numpy.load(r'" + loc.toString() + "');" + matches);
 		String pythonStdout = PythonHelper.runPythonScript(script, false);
 		Assert.assertTrue(toString(), Boolean.parseBoolean(pythonStdout.trim()));
 	}

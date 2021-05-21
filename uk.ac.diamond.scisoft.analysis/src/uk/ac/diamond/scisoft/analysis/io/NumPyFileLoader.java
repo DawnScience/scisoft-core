@@ -176,7 +176,7 @@ public class NumPyFileLoader extends AbstractFileLoader {
 		String[] shapeTupleStrArray = shapeTupleStr.split(", ?");
 		ArrayList<Integer> shapeList = new ArrayList<Integer>();
 		if (shapeTupleStrArray.length == 1 && "".equals(shapeTupleStrArray[0])) {
-			shapeList.add(1);
+			// do nothing for zero-ranked arrays
 		} else {
 			for (int i = 0; i < shapeTupleStrArray.length; i++) {
 				shapeList.add(Integer.parseInt(shapeTupleStrArray[i].replace("L", "")));

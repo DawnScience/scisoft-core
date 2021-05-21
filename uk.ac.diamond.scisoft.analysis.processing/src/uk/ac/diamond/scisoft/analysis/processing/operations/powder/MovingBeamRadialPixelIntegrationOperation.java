@@ -9,11 +9,13 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.powder;
 
+import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.IDataset;
 
+@Atomic
 public class MovingBeamRadialPixelIntegrationOperation extends RadialPixelIntegrationOperation {
 
 protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {

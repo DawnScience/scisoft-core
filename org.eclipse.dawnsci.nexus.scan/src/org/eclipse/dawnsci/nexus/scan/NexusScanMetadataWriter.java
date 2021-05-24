@@ -106,6 +106,10 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		this.hardwareScan = hardwareScan;
 	}
 	
+	public boolean isHardwareScan() {
+		return hardwareScan;
+	}
+	
 	public void setNexusObjectProviders(Map<ScanRole, List<NexusObjectProvider<?>>> nexusObjectProviderMap) {
 		final EnumSet<ScanRole> deviceTypes = EnumSet.complementOf(EnumSet.of(ScanRole.MONITOR_PER_SCAN, ScanRole.NONE));
 		final List<NexusObjectProvider<?>> nexusObjectProviderList = nexusObjectProviderMap.entrySet().stream()

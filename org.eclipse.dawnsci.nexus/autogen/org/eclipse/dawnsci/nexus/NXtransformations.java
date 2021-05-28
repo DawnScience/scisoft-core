@@ -23,7 +23,7 @@ import org.eclipse.january.dataset.IDataset;
  * type specified, but are useful in understanding coordinate frames within which
  * transformations are done, or in documenting important directions, such as the
  * direction of gravity.
- * A nested sequence of transformations lists the offset and rotation steps
+ * A nested sequence of transformations lists the translation and rotation steps
  * needed to describe the position and orientation of any movable or fixed device.
  * There will be one or more transformations (axes) defined by one or more fields
  * for each transformation. The all-caps name ``AXISNAME`` designates the
@@ -52,7 +52,7 @@ import org.eclipse.january.dataset.IDataset;
  * where :math:`R` is the usual 3x3 rotation matrix, :math:`o` is an offset vector,
  * :math:`0_3` is a row of 3 zeros, :math:`I_3` is the 3x3 identity matrix and
  * :math:`t` is the translation vector.
- * :math:`o` is given the ``offset`` attribute, :math:`t` is given by the ``vector``
+ * :math:`o` is given by the ``offset`` attribute, :math:`t` is given by the ``vector``
  * attribute multiplied by the field value, and :math:`R` is defined as a rotation
  * about an axis in the direction of ``vector``, of angle of the field value.
  * NOTE
@@ -212,7 +212,8 @@ public interface NXtransformations extends NXobject {
 	 * dimensionless. For ``rotation`` axes, the direction should be
 	 * chosen for a right-handed rotation with increasing angle.
 	 * For ``translation`` axes the direction should be chosen for
-	 * increasing displacement.
+	 * increasing displacement. For general axes, an appropriate direction
+	 * should be chosen.
 	 * <p>
 				 1: 3;
 			
@@ -229,7 +230,8 @@ public interface NXtransformations extends NXobject {
 	 * dimensionless. For ``rotation`` axes, the direction should be
 	 * chosen for a right-handed rotation with increasing angle.
 	 * For ``translation`` axes the direction should be chosen for
-	 * increasing displacement.
+	 * increasing displacement. For general axes, an appropriate direction
+	 * should be chosen.
 	 * <p>
 				 1: 3;
 			
@@ -242,6 +244,8 @@ public interface NXtransformations extends NXobject {
 
 	/**
 	 * A fixed offset applied before the transformation (three vector components).
+	 * This is not intended to be a substitute for a fixed ``translation`` axis but, for example,
+	 * as the mechanical offset from mounting the axis to its dependency.
 	 * <p>
 				 1: 3;
 			
@@ -254,6 +258,8 @@ public interface NXtransformations extends NXobject {
 	
 	/**
 	 * A fixed offset applied before the transformation (three vector components).
+	 * This is not intended to be a substitute for a fixed ``translation`` axis but, for example,
+	 * as the mechanical offset from mounting the axis to its dependency.
 	 * <p>
 				 1: 3;
 			

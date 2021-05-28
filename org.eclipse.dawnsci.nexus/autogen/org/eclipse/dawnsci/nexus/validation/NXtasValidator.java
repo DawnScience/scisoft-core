@@ -410,9 +410,9 @@ public class NXtasValidator extends AbstractNexusValidator implements NexusAppli
 		final DataNode ei = group.getDataNode("ei");
 		validateDataNodeLink("ei", ei, "/NXentry/NXinstrument/monochromator:NXcrystal/ei");
 
-		// validate link 'ef' to location '/NXentry/NXinstrument/analyzer:NXcrystal/ef
+		// validate link 'ef' to location '/NXentry/NXinstrument/analyser:NXcrystal/ef
 		final DataNode ef = group.getDataNode("ef");
-		validateDataNodeLink("ef", ef, "/NXentry/NXinstrument/analyzer:NXcrystal/ef");
+		validateDataNodeLink("ef", ef, "/NXentry/NXinstrument/analyser:NXcrystal/ef");
 
 		// validate link 'en' to location '/NXentry/NXsample/en
 		final DataNode en = group.getDataNode("en");

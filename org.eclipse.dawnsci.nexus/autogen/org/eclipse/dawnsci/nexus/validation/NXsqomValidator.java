@@ -257,29 +257,29 @@ public class NXsqomValidator extends AbstractNexusValidator implements NexusAppl
 		validateFieldRank("data", data, 1);
 		validateFieldDimensions("data", data, null, "nP");
 
-		// validate field 'qx' of unknown type. Note: field not defined in base class.
+		// validate field 'qx' of type NX_NUMBER. Note: field not defined in base class.
 		final IDataset qx = group.getDataset("qx");
 		if (!(validateFieldNotNull("qx", qx))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("qx", qx, NX_CHAR);
+		validateFieldType("qx", qx, NX_NUMBER);
 		validateFieldUnits("qx", group.getDataNode("qx"), NX_WAVENUMBER);
 		validateFieldRank("qx", qx, 1);
 		validateFieldDimensions("qx", qx, null, "nP");
 
-		// validate field 'qy' of unknown type. Note: field not defined in base class.
+		// validate field 'qy' of type NX_NUMBER. Note: field not defined in base class.
 		final IDataset qy = group.getDataset("qy");
 		if (!(validateFieldNotNull("qy", qy))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("qy", qy, NX_CHAR);
+		validateFieldType("qy", qy, NX_NUMBER);
 		validateFieldUnits("qy", group.getDataNode("qy"), NX_WAVENUMBER);
 		validateFieldRank("qy", qy, 1);
 		validateFieldDimensions("qy", qy, null, "nP");
 
-		// validate field 'qz' of unknown type. Note: field not defined in base class.
+		// validate field 'qz' of type NX_NUMBER. Note: field not defined in base class.
 		final IDataset qz = group.getDataset("qz");
 		if (!(validateFieldNotNull("qz", qz))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("qz", qz, NX_CHAR);
+		validateFieldType("qz", qz, NX_NUMBER);
 		validateFieldUnits("qz", group.getDataNode("qz"), NX_WAVENUMBER);
 		validateFieldRank("qz", qz, 1);
 		validateFieldDimensions("qz", qz, null, "nP");

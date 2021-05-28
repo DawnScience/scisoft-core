@@ -257,11 +257,11 @@ public class NXiqprocValidator extends AbstractNexusValidator implements NexusAp
 		validateFieldRank("data", data, 3);
 		validateFieldDimensions("data", data, null, "nVars", "nQX", "nQY");
 
-		// validate field 'variable' of unknown type. Note: field not defined in base class.
+		// validate field 'variable' of type NX_NUMBER. Note: field not defined in base class.
 		final IDataset variable = group.getDataset("variable");
 		if (!(validateFieldNotNull("variable", variable))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("variable", variable, NX_CHAR);
+		validateFieldType("variable", variable, NX_NUMBER);
 		validateFieldRank("variable", variable, 1);
 		validateFieldDimensions("variable", variable, null, "nVars");
 		// validate attribute 'varied_variable' of field 'variable'
@@ -271,19 +271,19 @@ public class NXiqprocValidator extends AbstractNexusValidator implements NexusAp
 		validateAttributeType("varied_variable", variable_attr_varied_variable, NX_CHAR);
 
 
-		// validate field 'qx' of unknown type. Note: field not defined in base class.
+		// validate field 'qx' of type NX_NUMBER. Note: field not defined in base class.
 		final IDataset qx = group.getDataset("qx");
 		if (!(validateFieldNotNull("qx", qx))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("qx", qx, NX_CHAR);
+		validateFieldType("qx", qx, NX_NUMBER);
 		validateFieldRank("qx", qx, 1);
 		validateFieldDimensions("qx", qx, null, "nQX");
 
-		// validate field 'qy' of unknown type. Note: field not defined in base class.
+		// validate field 'qy' of type NX_NUMBER. Note: field not defined in base class.
 		final IDataset qy = group.getDataset("qy");
 		if (!(validateFieldNotNull("qy", qy))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("qy", qy, NX_CHAR);
+		validateFieldType("qy", qy, NX_NUMBER);
 		validateFieldRank("qy", qy, 1);
 		validateFieldDimensions("qy", qy, null, "nQY");
 	}

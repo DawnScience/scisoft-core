@@ -26,7 +26,7 @@
    </plugins>
 
    <features>
-      <feature id="org.eclipse.dawnsci.nexus.template.feature"/>
+      <feature id="org.eclipse.dawnsci.nexus.feature" installMode="root"/>
    </features>
 
    <configurations>

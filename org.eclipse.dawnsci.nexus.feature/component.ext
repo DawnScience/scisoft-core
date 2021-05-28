@@ -7,4 +7,6 @@
     xsi:schemaLocation="http://www.eclipse.org/oomph/targlets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Targlets.ecore">
   <requirement
       name="org.eclipse.dawnsci.nexus.validation.product"/>
+  <requirement
+      name="org.eclipse.dawnsci.nexus.template.product"/>
 </targlets:ComponentExtension>

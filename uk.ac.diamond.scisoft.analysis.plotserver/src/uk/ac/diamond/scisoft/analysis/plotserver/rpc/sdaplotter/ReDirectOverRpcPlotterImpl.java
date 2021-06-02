@@ -223,23 +223,22 @@ public class ReDirectOverRpcPlotterImpl implements ISDAPlotter {
 
 	@Override
 	public void createAxis(String plotName, String title, int side) throws Exception {
-		throw new UnsupportedOperationException("Method unsupported in python, please use the py4j connection to maniplulate axes from cpython!");
+		throw new UnsupportedOperationException("Method unsupported in python due to not being in plot.py");
 	}
 
 	@Override
 	public void renameActiveXAxis(String plotName, String xAxisTitle) throws Exception {
-		throw new UnsupportedOperationException("Method unsupported in python, please use the py4j connection to maniplulate axes from cpython!");
+		throw new UnsupportedOperationException("Method unsupported in python due to not being in plot.py");
 	}
 
 	@Override
 	public void renameActiveYAxis(String plotName, String yAxisTitle) throws Exception {
-		throw new UnsupportedOperationException("Method unsupported in python, please use the py4j connection to maniplulate axes from cpython!");
+		throw new UnsupportedOperationException("Method unsupported in python due to not being in plot.py");
 	}
 
 	@Override
 	public void volumePlot(String plotName, IDataset xValues, IDataset yValues, IDataset zValues, IDataset volume)
 			throws Exception {
 		request("volume", volume, xValues, yValues, zValues, plotName);
-		
 	}
 }

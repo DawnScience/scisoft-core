@@ -313,5 +313,8 @@ def _create_list(arg):
         return circle_list()
     raise ValueError("ROI not recognised")
 
-
-from .pyprofile import profile  # @UnusedImport
+def profile(data, roi, step=None, mask=None):
+    '''Calculate a profile with given roi (a step value is required for a linear ROI)
+    mask is used when clipping compensation is set true (for rectangular and sector ROI)
+    '''
+    raise NotImplementedError('Function no longer supported in Python')

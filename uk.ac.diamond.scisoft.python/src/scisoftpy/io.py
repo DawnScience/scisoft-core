@@ -129,7 +129,8 @@ def load(name, format=None, formats=None, withmetadata=True, ascolour=False, war
         loaders = _loaders
     else:
         loaders = [ _iformats[f] for f in lformats ]
-        loaders.append(_fallback_loader)
+        if _fallback_loader is not None:
+            loaders.append(_fallback_loader)
 
     errors = []
     if loaders:

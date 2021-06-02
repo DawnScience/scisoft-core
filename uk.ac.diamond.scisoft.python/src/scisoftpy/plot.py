@@ -1013,7 +1013,7 @@ else:
 '''
 name  - the name of the plot to get or if none, the current active plotting system.
 '''
-def getPlottingSystem(name=None):  
+def getPlottingSystem(name=None):
     if name is None:
         name = _PVNAME
     return _ps.getPlottingSystem(name)
@@ -1022,7 +1022,7 @@ def getPlottingSystem(name=None):
 Creates a color that can be used with the plotting system
 For instance to set trace color.
 '''  
-def createColor(r, g, b):    
+def createColor(r, g, b):
     return _ps.createColor(r,g,b)
 
 '''

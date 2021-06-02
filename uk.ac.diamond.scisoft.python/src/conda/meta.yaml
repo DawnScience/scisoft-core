@@ -1,5 +1,5 @@
 {% set name = "scisoftpy" %}
-{% set version = "2.20.0" %}
+{% set version = "2.23.0" %}
 
 package:
   name: {{ name }}
@@ -23,7 +23,6 @@ requirements:
     - h5py
     - numpy
     - pillow
-    - py4j
     - python
     - six
     - subprocess32  # [unix and py2k]

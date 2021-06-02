@@ -593,39 +593,10 @@ PGMLoader = ImageLoader
 
 
 class LoaderFactoryDelegate(PythonLoader):
-    def load(self, warn=True):
-        # py4j gymnastics to get access to Java LoaderFactory
-        from . import py4jutils as utils #@UnresolvedImport
-        try:
-            java = utils.get_gateway().jvm
-        except:
-            raise io_exception("No Py4J gateway so cannot use Java loaders")
-        loader_factory = java.uk.ac.diamond.scisoft.analysis.io.LoaderFactory
-        jdh = loader_factory.getData(self.name, self.load_metadata, None)
-        # convert to Python
-        data = utils.convert_datasets(jdh.getList())
-        names = jdh.getNames()
-        basenames = []
-        from os import path as _path
-        for n in names: # remove bits of path so sanitising works
-            if _path.exists(n):
-                basenames.append(_path.basename(n))
-            else:
-                basenames.append(n)
-
-        if len(data) != len(basenames):
-            raise io_exception("Number of names does not match number of datasets")
-
-        metadata = None
-        if self.load_metadata:
-            meta = jdh.getMetadata()
-            if meta:
-                mnames = meta.getMetaNames()
-                if mnames:
-                    mnames = java.java.util.ArrayList(mnames) # make it iterable
-                    metadata = [ (k, meta.getMetaValue(k)) for k in mnames if k is not None ]
-
-        return DataHolder(list(zip(basenames, data)), metadata, warn)
+    '''
+    TODO replace with one through XML-RPC
+    '''
+    pass
 
 _pngsave = ImageSaver
 _jpegsave = ImageSaver
@@ -660,9 +631,9 @@ input_formats = { "png": PNGLoader, "gif": ImageLoader,
                "text": TextLoader,
                "npy": NumPyLoader
                }
-fallback_loader = LoaderFactoryDelegate
+fallback_loader = None
 colour_loaders  = [ PNGLoader, ImageLoader, JPEGLoader, TIFFLoader ]
-loaders = [ fallback_loader, PNGLoader, ADSCLoader, CrysLoader, MARLoader, CBFLoader, XMapLoader, BinaryLoader, SRSLoader, PGMLoader, TextLoader ]
+loaders = [ PNGLoader, ADSCLoader, CrysLoader, MARLoader, CBFLoader, XMapLoader, BinaryLoader, SRSLoader, PGMLoader, TextLoader ]
 
 output_formats = { "png": _pngsave, "gif": _imgsave, "jpeg": _jpegsave, "tiff": _tiffsave, "text": _rawtxtsave,
               "binary": _rawbinsave, "npy": NumPySaver }

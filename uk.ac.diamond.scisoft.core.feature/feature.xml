@@ -277,20 +277,6 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="py4j-java"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.py4j.defaultserver"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.january"
          download-size="0"
          install-size="0"

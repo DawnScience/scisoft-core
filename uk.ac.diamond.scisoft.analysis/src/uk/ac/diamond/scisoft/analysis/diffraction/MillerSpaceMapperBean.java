@@ -41,7 +41,7 @@ public class MillerSpaceMapperBean implements Cloneable {
 	private double[] qStart;
 	private double[] qStep;
 
-	private int[] region; // masking ROI where only point within its bounds contribute to volume
+	private int[] region; // masking ROI where only points within its bounds contribute to volume
 	private String maskFilePath; // file path to image weight 
 
 	private OutputMode outputMode = OutputMode.Volume_HKL;
@@ -53,6 +53,10 @@ public class MillerSpaceMapperBean implements Cloneable {
 		 * Volume in Miller space
 		 */
 		Volume_HKL,
+		/**
+		 * Volume in Miller space
+		 */
+		Volume_Q,
 		/**
 		 * Coordinates in Miller space
 		 */

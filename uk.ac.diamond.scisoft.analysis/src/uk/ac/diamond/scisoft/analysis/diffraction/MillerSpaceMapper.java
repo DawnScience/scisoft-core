@@ -323,7 +323,7 @@ public class MillerSpaceMapper {
 		return map;
 	}
 
-	private void mapToASpace(boolean mapQ, Tree tree, PositionIterator[] iters, DoubleDataset map, DoubleDataset weight) throws ScanFileHolderException, DatasetException {
+	private int mapToASpace(boolean mapQ, Tree tree, PositionIterator[] iters, DoubleDataset map, DoubleDataset weight) throws ScanFileHolderException, DatasetException {
 		int[] dshape = iters[0].getShape();
 
 		if (tree instanceof TreeFile) {
@@ -355,18 +355,15 @@ public class MillerSpaceMapper {
 		if (images == null) {
 			throw new ScanFileHolderException("Image data is empty");
 		}
-		int rank = images.getRank();
-		int[] ishape = Arrays.copyOfRange(images.getShape(), rank - 2, rank);
+		int[] ishape = new int[] {Math.max(0, endY - begY), Math.max(0, endX - begX), };
 	
-		BicubicInterpolator upSampler = null;
 		if (scale != 1) {
 			for (int i = 0; i < ishape.length; i++) {
 				ishape[i] *= scale;
 			}
-			upSampler = new BicubicInterpolator(ishape);
 		}
 
-		mapImages(mapQ, tree, trans, images, iters, map, weight, ishape, upSampler);
+		return mapImages(mapQ, tree, trans, images, iters, map, weight, ishape);
 	}
 
 	private void listToASpace(Tree tree, PositionIterator[] iters, ILazyWriteableDataset lazy) throws ScanFileHolderException, DatasetException {
@@ -825,23 +822,23 @@ public class MillerSpaceMapper {
 		return im;
 	}
 
-	private void mapImages(boolean mapQ, Tree tree, Dataset trans, ILazyDataset images, PositionIterator[] iters,
-			DoubleDataset map, DoubleDataset weight, int[] ishape, BicubicInterpolator upSampler) throws DatasetException {
-		PositionIterator diter = iters[0];
-		PositionIterator iter = iters[1];
+	private int mapImages(boolean mapQ, Tree tree, Dataset trans, ILazyDataset images, PositionIterator[] iters,
+			DoubleDataset map, DoubleDataset weight, int[] ishape) throws DatasetException {
+		PositionIterator diter = iters[0]; // scan iterator
+		PositionIterator iter = iters[1]; // data iterator (omits image axes)
 		iter.reset();
 		diter.reset();
 		int[] dpos = diter.getPos();
 		int[] pos = iter.getPos();
+		int[] start = pos.clone();
 		int[] stop = iter.getStop().clone();
 		int rank  = pos.length;
 		int srank = rank - 2;
 		MillerSpace mspace = null;
 
-		int[] region = new int[] {(int) (begX*scale), (int) (endX*scale), (int) (begY*scale), (int) (endY*scale)};
 		Dataset iMask = mask;
-		if (iMask != null && upSampler != null) {
-			iMask = upscaleMask(iMask, ishape);
+		if (iMask != null && scale != 1) {
+			iMask = upscaleMask(iMask.getSliceView(new Slice(begY, endY), new Slice(begX, endX)), ishape);
 //			iMask = upSampler.value(iMask).get(0);
 //			if (!Arrays.equals(iMask.getShapeRef(), ishape)) {
 //				String msg = String.format("Image weight shape %s does not match image shape %s", Arrays.toString(iMask.getShapeRef()), Arrays.toString(ishape));
@@ -849,16 +846,28 @@ public class MillerSpaceMapper {
 //			}
 		}
 		boolean isOldGDA = isOLDI16GDA(tree);
+		int ni = 0;
+
+		start[srank] = begY;
+		start[srank + 1] = begX;
+		stop[srank] = endY;
+		stop[srank + 1] = endX;
 		while (iter.hasNext() && diter.hasNext()) {
 			logger.info("Mapping image at {} in {}", Arrays.toString(dpos), Arrays.toString(diter.getShape()));
 			DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
-			dp.setHPxSize(dp.getHPxSize() / scale);
-			dp.setVPxSize(dp.getVPxSize() / scale);
-			if (upSampler != null) {
-				dp.setPx(ishape[0]);
-				dp.setPy(ishape[1]);
+			if (scale == 1) {
+				dp.setStartX(dp.getStartX() - begX);
+				dp.setStartY(dp.getStartY() - begY);
+			} else {
+				dp.setStartX(dp.getStartX() - (int) Math.floor(begX*scale));
+				dp.setStartY(dp.getStartY() - (int) Math.floor(begY*scale));
+				dp.setHPxSize(dp.getHPxSize() / scale);
+				dp.setVPxSize(dp.getVPxSize() / scale);
+				dp.setPx(ishape[1]);
+				dp.setPy(ishape[0]);
 			}
 			for (int i = 0; i < srank; i++) {
+				start[i] = pos[i];
 				stop[i] = pos[i] + 1;
 			}
 			DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, dpos);
@@ -867,17 +876,15 @@ public class MillerSpaceMapper {
 			if (!mapQ) {
 				mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
 			}
-			Dataset image = DatasetUtils.convertToDataset(images.getSlice(pos, stop, null));
+			logger.info("Slicing image start:{}, stop:{}", Arrays.toString(start), Arrays.toString(stop));
+			Dataset image = DatasetUtils.convertToDataset(images.getSlice(start, stop, null));
+			
+			double tFactor = 1;
 			if (trans != null) {
-				double t = trans.getSize() == 1 ? trans.getElementDoubleAbs(0) : trans.getDouble(dpos); 
-				if (t == 0) {
-					logger.warn("Exposure time or transmission was zero; setting to 1");
-					t = 1;
-				}
-				if (image.hasFloatingPointElements()) {
-					image.idivide(t);
-				} else {
-					image = Maths.divide(image, t);
+				tFactor = trans.getSize() == 1 ? trans.getElementDoubleAbs(0) : trans.getDouble(dpos); 
+				if (tFactor == 0) {
+					logger.warn("Exposure time or transmission was zero; no correction applied");
+					tFactor = 1;
 				}
 			}
 			int[] s = Arrays.copyOfRange(image.getShapeRef(), srank, rank);
@@ -887,11 +894,12 @@ public class MillerSpaceMapper {
 				logger.warn("Skipping image at {} {}", Arrays.toString(pos), n);
 				continue;
 			}
-			if (upSampler != null) {
-				image = upSampler.value(image).get(0);
-			}
-			mapImageMultiThreaded(region, qspace, mspace, iMask, image, map, weight);
+			mapImageMultiThreaded(tFactor, qspace, mspace, iMask, image, ishape, map, weight);
+
+			ni++;
 		}
+
+		return ni;
 	}
 
 	private static void minMax(double[] min, double[] max, Vector3d v) {
@@ -903,32 +911,56 @@ public class MillerSpaceMapper {
 		max[2] = Math.max(max[2], v.z);
 	}
 
-	private void mapImage(PixelSplitter splitter, int[] sMinLocal, int[] sMaxLocal, final int[] region, final QSpace qspace, Matrix3d mTransform, final Dataset mask, final Dataset image, final DoubleDataset map, final DoubleDataset weight) {
+	private void mapImage(final double tFactor, final BicubicInterpolator upSampler, PixelSplitter splitter, int[] sMinLocal, int[] sMaxLocal, final int[] region, final QSpace qspace, Matrix3d mTransform, final Dataset mask, final Dataset image, final DoubleDataset map, final DoubleDataset weight) {
+		logger.debug("Map image region: {}", Arrays.toString(region));
+		final int yStart = region[2];
+		final int yStop  = region[3];
+		int iStart = scale == 1 ? yStart : (int) Math.round(yStart/scale);
+		int iStop  = scale == 1 ? yStart : (int) Math.round(yStop/scale);
+		int yOff = 0;
+		if (scale != 1) {
+			// interpolator at boundaries gives different values
+			int[] iShape = image.getShapeRef();
+			upSampler.setInputShape(iStop - iStart, iShape[1]);
+			if (iStart > 1) {
+				iStart = iStart - 1;
+				yOff = (int) scale;
+			}
+			iStop = Math.min(iStop + 4, iShape[0]);
+		}
+		Dataset iView = image.getSliceView(new Slice(iStart, iStop));
+		Dataset mView = mask == null ? null : mask.getSliceView(new Slice(yStart, yStop));
+		final int ySize = yStop - yStart;
+
 		final int[] pos = new int[3]; // voxel position
 		final Vector3d v = new Vector3d();
 		final Vector3d dv = new Vector3d(); // delta in h
 
-		for (int y = region[2]; y < region[3]; y++) {
-			for (int x = region[0]; x < region[1]; x++) {
-				if (mask != null) {
-					if (mask.getBoolean(y, x)) {
+		final int xStart = region[0];
+		final int xStop  = region[1];
+		for (int y = 0; y < ySize; y++) {
+			int py = y + yStart; // on detector (rather than sliced dataset)
+			for (int x = xStart; x < xStop; x++) {
+				if (mView != null) {
+					if (mView.getBoolean(y, x)) {
 						continue;
 					}
 				}
-				double value = image.getDouble(y, x);
+
+				double value = upSampler == null ? iView.getDouble(y, x) : upSampler.interpolate(y + yOff, x, iView);
 				if (!Double.isFinite(value) || value <= lower || value >= upper) {
 					continue;
 				}
 
 				if (value > 0) {
-					qspace.qFromPixelPosition(x + 0.5, y + 0.5, v);
+					qspace.qFromPixelPosition(x + 0.5, py + 0.5, v);
 
 					if (mTransform != null) {
 						mTransform.transform(v);
 					}
 
 					if (convertToVoxel(v, dv, pos)) {
-						value /= qspace.calculateSolidAngle(x, y);
+						value *= tFactor/qspace.calculateSolidAngle(x, py);
 						if (reduceToNonZeroBB) {
 							minMax(sMinLocal, sMaxLocal, pos);
 						}
@@ -939,14 +971,21 @@ public class MillerSpaceMapper {
 		}
 	}
 
-	private boolean chunkSizeTooSmall(final int chunk, final int[] region, final QSpace qspace,
+	private static final int MIN_CHUNK = 128;
+
+	private boolean chunkSizeTooSmall(final int chunk, final int rows, final QSpace qspace,
 			final Matrix3d mTransform) {
+
+		if (chunk < MIN_CHUNK) {
+			logger.debug("Chunk smaller than min: {} < {}", chunk, MIN_CHUNK);
+			return true;
+		}
 
 		final Vector3d v = new Vector3d();
 		Vector3d ov = null;
-		double xCoord = region[0] + 0.5;
+		double xCoord = 0.5;
 		double[] voxelSides = mTransform == null ? qDel : hDel;
-		for (int y = region[2]; y < region[3]; y += chunk) {
+		for (int y = 0; y < rows; y += chunk) {
 			qspace.qFromPixelPosition(xCoord, y + 0.5, v);
 			if (mTransform != null) {
 				mTransform.transform(v);
@@ -954,9 +993,10 @@ public class MillerSpaceMapper {
 
 			if (ov == null) {
 				ov = new Vector3d(v);
-			} else {
+			} else { // check if pixels from adjoining bands map to same voxel
 				if (Math.abs(v.x - ov.x) < voxelSides[0] && Math.abs(v.y - ov.y) < voxelSides[1]
 						&& Math.abs(v.z - ov.z) < voxelSides[2]) {
+					logger.debug("Chunk is small enough for voxel contention");
 					return true;
 				}
 				ov.set(v);
@@ -966,38 +1006,49 @@ public class MillerSpaceMapper {
 		return false;
 	}
 
-	private void mapImageMultiThreaded(final int[] region, final QSpace qspace, final MillerSpace mspace,
-			final Dataset iMask, final Dataset image, final DoubleDataset map, final DoubleDataset weight) {
-		int size = pool.getParallelism();
+	private void mapImageMultiThreaded(final double tFactor, final QSpace qspace, final MillerSpace mspace,
+			final Dataset iMask, final Dataset image, final int[] ishape, final DoubleDataset map, final DoubleDataset weight) {
 		final Matrix3d mTransform = mspace == null ? null : mspace.getMillerTransform();
-		double regionSize = region[3] - region[2];
+		int size = pool.getParallelism();
+		if (size == 1) {
+			BicubicInterpolator upSampler = scale == 1 ? null : new BicubicInterpolator(ishape);
+			int[] regionSlice = new int[] { 0, ishape[1], 0, ishape[0] };
+			mapImage(tFactor, upSampler, splitter, sMin, sMax, regionSlice, qspace, mTransform, iMask, image, map, weight);
+			return;
+		}
+		final int rows = ishape[0];
+		double regionSize = rows;
 
 		int chunk = (int) Math.ceil(regionSize / size);
-		while (size > 1 && chunkSizeTooSmall(chunk, region, qspace, mTransform)) {
+		while (size > 1 && chunkSizeTooSmall(chunk, rows, qspace, mTransform)) {
 			chunk = (int) Math.ceil(regionSize / --size);
 			logger.warn("Chunk too small so decrementing parallelism to {}", size);
 		}
+		logger.info("Splitting images to bands of {} rows across {} threads", chunk, size);
 
 		final List<JobConfig> jobs = new ArrayList<>(size);
 		int[] vshape = copyParameters(mspace == null);
+		chunk = (int) (Math.ceil(chunk/scale)*scale); // round up to be divisible by scale
 		for (int i = 0; i < size; i++) {
-			int s = i * chunk + region[2];
-			int e = Math.min(s + chunk, region[3]);
-			jobs.add(new JobConfig(splitter.clone(), s, e, vshape));
+			int s = i * chunk;
+			int e = Math.min(s + chunk, rows);
+			logger.info("Chunk {}: {} -> {}", i, s, e);
+			BicubicInterpolator upSampler = scale == 1 ? null : new BicubicInterpolator(new int[] {e - s, ishape[1]});
+			jobs.add(new JobConfig(upSampler, splitter.clone(), s, e, vshape));
 		}
 
 		Consumer<JobConfig> subTask = job -> {
 			int[] sMinLocal = job.getSMinLocal();
 			int[] sMaxLocal = job.getSMaxLocal();
-			int[] regionSlice = new int[] { region[0], region[1], job.getStart(), job.getEnd() };
+			int[] regionSlice = new int[] { 0, ishape[1], job.getStart(), job.getEnd() };
 
-			mapImage(job.getSplitter(), sMinLocal, sMaxLocal, regionSlice, qspace, mTransform, iMask, image, map, weight);
+			mapImage(tFactor, job.getUpScaler(), job.getSplitter(), sMinLocal, sMaxLocal, regionSlice, qspace, mTransform, iMask, image, map, weight);
 		};
 
 		try {
 			pool.submit(() -> jobs.parallelStream().forEach(subTask)).get();
 		} catch (InterruptedException | ExecutionException e) {
-			throw new RuntimeException("Multithreaded jobs did not finish sucessfully", e);
+			throw new RuntimeException("Multithreaded jobs did not finish successfully", e);
 		}
 
 		if (reduceToNonZeroBB) {
@@ -1444,7 +1495,7 @@ public class MillerSpaceMapper {
 	}
 
 	private void createPixelMask(Tree tree, PositionIterator dIter) {
-		int[] dpos = dIter.getPos();
+		int[] dpos = new int[dIter.getPos().length]; // use detector from first scan position
 		DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
 		mask = dp.getMask();
 		lower = dp.getLowerThreshold();
@@ -1521,10 +1572,13 @@ public class MillerSpaceMapper {
 			DoubleDataset map = DatasetFactory.zeros(vShape);
 			DoubleDataset weight = DatasetFactory.zeros(vShape);
 
+			int nt = 0;
 			for (int i = 0; i < trees.length; i++) {
 				logger.info("Processing file {}/{}: {}", i+1, trees.length, bean.getInputs()[i]);
 				Tree tree = trees[i];
-				mapToASpace(mapQ, tree, allIters[i], map, weight);
+				int ni = mapToASpace(mapQ, tree, allIters[i], map, weight);
+				nt += ni;
+				logger.info("    processed {} images", ni);
 			}
 			Maths.dividez(map, weight, map); // normalize by tally
 
@@ -1547,7 +1601,8 @@ public class MillerSpaceMapper {
 					createMillerSpaceAxes(a, vShape, vMin, null, vDel);
 				}
 			}
-			logger.info("For {} threads, processing took {}ms", pool.getParallelism(), System.currentTimeMillis() - start);
+			long process = System.currentTimeMillis() - start;
+			logger.info("For {} threads, processing took {}ms ({}ms/frame)", pool.getParallelism(), process, process/nt);
 			start = System.currentTimeMillis();
 
 			if (isErrorTest) {
@@ -1698,7 +1753,7 @@ public class MillerSpaceMapper {
 		}
 		PositionIterator iter = new PositionIterator(images.getShape(), axes);
 
-		return new PositionIterator[] {diter, iter};
+		return new PositionIterator[] {diter, iter}; // scan iterator, image data iterator (ignores frame dimensions)
 	}
 
 	/**
@@ -1869,6 +1924,7 @@ public class MillerSpaceMapper {
 		long now = -1;
 		Tree tree;
 		PositionIterator[] iters;
+		int nt = 0;
 		start = System.currentTimeMillis();
 		for (int p = 0; p < (parts-1); p++) {
 			logger.info("Mapping in part: {}/{}", p+1, parts);
@@ -1901,17 +1957,16 @@ public class MillerSpaceMapper {
 					trans = trans == null ? time : Maths.multiply(trans, time);
 				}
 
-				int rank = iters[1].getPos().length;
-				int[] ishape = Arrays.copyOfRange(images.getShape(), rank - 2, rank);
-				BicubicInterpolator upSampler = null;
+				int[] ishape = new int[] {Math.max(0, endY - begY), Math.max(0, endX - begX), };
 				if (scale != 1) {
 					for (int i = 0; i < ishape.length; i++) {
 						ishape[i] *= scale;
 					}
-					upSampler = new BicubicInterpolator(ishape);
 				}
 
-				mapImages(mapQ, tree, trans, images, iters, map, weight, ishape, upSampler);
+				int ni = mapImages(mapQ, tree, trans, images, iters, map, weight, ishape);
+				nt += ni;
+				logger.info("        processed {} images", ni);
 			}
 			Maths.dividez(map, weight, map); // normalize by tally
 			now = System.currentTimeMillis();
@@ -1969,15 +2024,15 @@ public class MillerSpaceMapper {
 
 			int rank = iters[1].getPos().length;
 			int[] ishape = Arrays.copyOfRange(images.getShape(), rank - 2, rank);
-			BicubicInterpolator upSampler = null;
 			if (scale != 1) {
 				for (int i = 0; i < ishape.length; i++) {
 					ishape[i] *= scale;
 				}
-				upSampler = new BicubicInterpolator(ishape);
 			}
 
-			mapImages(mapQ, tree, trans, images, iters, map, weight, ishape, upSampler);
+			int ni = mapImages(mapQ, tree, trans, images, iters, map, weight, ishape);
+			nt += ni;
+			logger.info("        processed {} images", ni);
 		}
 		Maths.dividez(map, weight, map); // normalize by tally
 		now = System.currentTimeMillis();
@@ -2005,7 +2060,7 @@ public class MillerSpaceMapper {
 		}
 		save += System.currentTimeMillis() - start;
 
-		logger.info("For {} threads, processing took {}ms", pool.getParallelism(), process);
+		logger.info("For {} threads, processing took {}ms ({}ms/frame)", pool.getParallelism(), process, process/nt);
 		logger.info("Saving took {}ms", save);
 	}
 
@@ -2223,6 +2278,7 @@ public class MillerSpaceMapper {
 	}
 
 	class JobConfig {
+		private BicubicInterpolator upScaler;
 		private PixelSplitter pSplitter;
 		private int start;
 		private int end;
@@ -2230,13 +2286,18 @@ public class MillerSpaceMapper {
 		private int[] sMinLocal;
 		private int[] sMaxLocal;
 
-		public JobConfig(PixelSplitter splitter, int start, int end, int[] vshape) {
+		public JobConfig(BicubicInterpolator upScaler, PixelSplitter splitter, int start, int end, int[] vshape) {
+			this.upScaler = upScaler;
 			this.pSplitter = splitter;
 			this.start = start;
 			this.end = end;
 			this.sMinLocal = new int[vshape.length];
 			this.sMaxLocal = new int[vshape.length];
 			initializeVolumeBoundingBox(vshape, sMinLocal, sMaxLocal);
+		}
+
+		public BicubicInterpolator getUpScaler() {
+			return upScaler;
 		}
 
 		public PixelSplitter getSplitter() {

@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
+import static uk.ac.diamond.scisoft.analysis.diffraction.PixelSplitter.addToDatasets;
+
 import javax.vecmath.Vector3d;
 
 import org.eclipse.january.dataset.DoubleDataset;
@@ -27,7 +29,6 @@ public class InverseSplitter implements PixelSplitter {
 	}
 
 	double[] weights = new double[8];
-	double factor;
 
 	/**
 	 * Calculate weights
@@ -48,19 +49,22 @@ public class InverseSplitter implements PixelSplitter {
 		final double czs = cz * cz;
 
 		weights[0] = calcWeight(dxs + dys + dzs);
-		weights[1] = calcWeight(cxs + dys + dzs);
+		weights[1] = calcWeight(dxs + dys + czs);
 		weights[2] = calcWeight(dxs + cys + dzs);
-		weights[3] = calcWeight(cxs + cys + dzs);
-		weights[4] = calcWeight(dxs + dys + czs);
+		weights[3] = calcWeight(dxs + cys + czs);
+		weights[4] = calcWeight(cxs + dys + dzs);
 		weights[5] = calcWeight(cxs + dys + czs);
-		weights[6] = calcWeight(dxs + cys + czs);
+		weights[6] = calcWeight(cxs + cys + dzs);
 		weights[7] = calcWeight(cxs + cys + czs);
 
 		double tw = weights[1] + weights[2] + weights[3] + weights[4] + weights[5] + weights[6] + weights[7];
 		if (Double.isInfinite(weights[0])) {
 			weights[0] = 1e3 * tw; // make voxel an arbitrary factor larger
 		}
-		factor = 1./(weights[0] + tw);
+		double factor = 1./(weights[0] + tw);
+		for (int i = 0; i < weights.length; i++) {
+			weights[i] *= factor;
+		}
 	}
 
 	@Override
@@ -72,84 +76,70 @@ public class InverseSplitter implements PixelSplitter {
 	public void splitValue(DoubleDataset volume, DoubleDataset weight, final double[] vsize, Vector3d dh, int[] pos, double value) {
 		calcWeights(vsize, dh.x, dh.y, dh.z);
 		int[] vShape = volume.getShapeRef();
+		final int lmax = vShape[0];
+		final int mmax = vShape[1];
+		final int nmax = vShape[2];
+		final int idx = volume.get1DIndex(pos);
 
 		double w;
-		int[] lpos = pos.clone();
 
-		w = factor * weights[0];
-		InverseSplitter.addToDataset(volume, lpos, w * value);
-		InverseSplitter.addToDataset(weight, lpos, w);
+		w = weights[0];
+		int i = idx;
+		addToDatasets(i, volume, w * value, weight, w);
 
-		int l = ++lpos[0];
-		if (l >= 0 && l < vShape[0]) {
-			w = factor * weights[1];
+		int n = pos[2] + 1;
+		if (n >= 0 && n < nmax) {
+			w = weights[1];
 			if (w > 0) {
-				InverseSplitter.addToDataset(volume, lpos, w * value);
-				InverseSplitter.addToDataset(weight, lpos, w);
+				addToDatasets(i + 1, volume, w * value, weight, w);
 			}
 		}
-		lpos[0]--;
 
-		int m = ++lpos[1];
-		if (m >= 0 && m < vShape[1]) {
-			w = factor * weights[2];
+		int m = pos[1] + 1;
+		if (m >= 0 && m < mmax) {
+			w = weights[2];
+			i = nmax + i;
 			if (w > 0) {
-				InverseSplitter.addToDataset(volume, lpos, w * value);
-				InverseSplitter.addToDataset(weight, lpos, w);
+				addToDatasets(i, volume, w * value, weight, w);
 			}
 
-			l = ++lpos[0];
-			if (l >= 0 && l < vShape[0]) {
-				w = factor * weights[3];
+			if (n >= 0 && n < nmax) {
+				w = weights[3];
 				if (w > 0) {
-					InverseSplitter.addToDataset(volume, lpos, w * value);
-					InverseSplitter.addToDataset(weight, lpos, w);
+					addToDatasets(i + 1, volume, w * value, weight, w);
 				}
 			}
-			lpos[0]--;
 		}
-		lpos[1]--;
 
-		int n = ++lpos[2];
-		if (n >= 0 && n < vShape[2]) {
-			w = factor * weights[4];
+		int l = pos[0] + 1;
+		if (l >= 0 && l < lmax) {
+			w = weights[4];
+			i = mmax * nmax + idx;
 			if (w > 0) {
-				InverseSplitter.addToDataset(volume, lpos, w * value);
-				InverseSplitter.addToDataset(weight, lpos, w);
+				addToDatasets(i, volume, w * value, weight, w);
 			}
 
-			l = ++lpos[0];
-			if (l >= 0 && l < vShape[0]) {
-				w = factor * weights[5];
+			if (n >= 0 && n < nmax) {
+				w = weights[5];
 				if (w > 0) {
-					InverseSplitter.addToDataset(volume, lpos, w * value);
-					InverseSplitter.addToDataset(weight, lpos, w);
+					addToDatasets(i + 1, volume, w * value, weight, w);
 				}
 			}
-			lpos[0]--;
 
-			m = ++lpos[1];
-			if (m >= 0 && m < vShape[1]) {
-				w = factor * weights[6];
+			if (m >= 0 && m < mmax) {
+				w = weights[6];
+				i = nmax + i;
 				if (w > 0) {
-					InverseSplitter.addToDataset(volume, lpos, w * value);
-					InverseSplitter.addToDataset(weight, lpos, w);
+					addToDatasets(i, volume, w * value, weight, w);
 				}
 
-				l = ++lpos[0];
-				if (l >= 0 && l < vShape[0]) {
-					w = factor * weights[7];
+				if (n >= 0 && n < lmax) {
+					w = weights[7];
 					if (w > 0) {
-						InverseSplitter.addToDataset(volume, lpos, w * value);
-						InverseSplitter.addToDataset(weight, lpos, w);
+						addToDatasets(i + 1, volume, w * value, weight, w);
 					}
 				}
 			}
 		}
-	}
-
-	protected static void addToDataset(DoubleDataset d, final int[] pos, double v) {
-		final int index = d.get1DIndex(pos);
-		d.setAbs(index, d.getAbs(index) + v);
 	}
 }

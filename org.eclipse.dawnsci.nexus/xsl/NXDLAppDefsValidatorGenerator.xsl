@@ -28,11 +28,15 @@
 <!-- The path containing the Java source tree to write to -->
 <xsl:param name="javaSourcePath" select="'../src'"/>
 <xsl:param name="javaOutputPath" select="'../autogen'"/>
+<xsl:param name="extraDefinitionsPath" select="'../nxdl'"/>
 
 <xsl:output name="text-format" method="text" omit-xml-declaration="yes" indent="no"/>
 
 <xsl:variable name="base-classes" select="collection($nxdlDefinitionsPath || '/base_classes?select=*.nxdl.xml')/nx:definition"/>
-<xsl:variable name="application-definitions" select="collection($nxdlDefinitionsPath || '/applications?select=*.nxdl.xml')/nx:definition"/>
+<xsl:variable name="diamond-app-def" select="./NXdiamond.nxdl.xml"/>
+<xsl:variable name="nexus-application-definitions" select="collection($nxdlDefinitionsPath || '/applications?select=*.nxdl.xml')/nx:definition"/>
+<xsl:variable name="extra-application-definitions" select="collection($extraDefinitionsPath || '/?select=*.nxdl.xml')/nx:definition"/>
+<xsl:variable name="application-definitions" select="$nexus-application-definitions | $extra-application-definitions"/>
 
 <xsl:variable name="fileHeaderComment">/*-
  *******************************************************************************

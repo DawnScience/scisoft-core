@@ -53,7 +53,8 @@ public enum NexusApplicationDefinition {
 	NX_STXM("NXstxm", NXstxmValidator.class),
 	NX_TOMOPROC("NXtomoproc", NXtomoprocValidator.class),
 	NX_SQOM("NXsqom", NXsqomValidator.class),
-	NX_MX("NXmx", NXmxValidator.class);
+	NX_MX("NXmx", NXmxValidator.class),
+	NX_DIAMOND("NXdiamond", NXdiamondValidator.class);
 
 	private String name;
 	

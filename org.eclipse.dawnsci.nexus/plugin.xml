@@ -11,16 +11,6 @@
       </application>
    </extension>
    
-   <extension id="product" point="org.eclipse.core.runtime.products">
-   	  <product
-   	  		application="org.eclipse.dawnsci.nexus.validation.application"
-   	  		name="org.eclipse.dawnsci.nexus.validation.product">
-   	  	 <property
-   	  	 		name="appName"
-   	  	 		value="org.eclipse.dawnsci.nexus.validation.product">
-   	  	 </property>
-   	  </product>
-   </extension>
    <extension
          id="validation"
          point="org.eclipse.core.runtime.products">

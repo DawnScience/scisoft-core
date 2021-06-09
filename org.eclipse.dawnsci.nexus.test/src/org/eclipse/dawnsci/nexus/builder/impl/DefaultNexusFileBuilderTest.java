@@ -30,6 +30,7 @@ import org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusFileBuilder;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
+import org.eclipse.dawnsci.nexus.validation.NexusValidationServiceImpl;
 import org.eclipse.dawnsci.nexus.validation.ValidationReport;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -42,6 +43,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
 public class DefaultNexusFileBuilderTest {
+	
 	@Parameters
 	public static Object[] data() {
 		return new Object[] {true, false};
@@ -50,7 +52,7 @@ public class DefaultNexusFileBuilderTest {
 	@Parameter
 	public boolean async;
 
-	private static final String fileName = "testFile.nx5";
+	private static final String TEST_FILE_NAME = "testFile.nx5";
 	
 	private static String testScratchDirectoryName;
 	
@@ -65,12 +67,13 @@ public class DefaultNexusFileBuilderTest {
 		testScratchDirectoryName = TestUtils.generateDirectorynameFromClassname(
 				DefaultNexusFileBuilderTest.class.getSimpleName());
 		TestUtils.makeScratchDirectory(testScratchDirectoryName);
+		new ServiceHolder().setNexusValidationService(new NexusValidationServiceImpl());
 	}
 	
 	@Before
 	public void setUp() {
 		String s = async ? "Async" : "Sync";
-		filePath = testScratchDirectoryName + s + fileName;
+		filePath = testScratchDirectoryName + s + TEST_FILE_NAME;
 		fileInSubDirPath = testScratchDirectoryName +  "subdir/" + filePath; 
 		nexusFileBuilder = new DefaultNexusFileBuilder(filePath);
 	}

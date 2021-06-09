@@ -31,6 +31,7 @@ import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;
 import org.eclipse.dawnsci.nexus.NexusBaseClass;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
+import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.builder.CustomNexusEntryModification;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryModification;
@@ -233,28 +234,9 @@ public class DefaultNexusEntryBuilder implements NexusEntryBuilder {
 	 */
 	@Override
 	public ValidationReport validate() throws NexusException {
-		// validate the main entry itself
-		final ValidationReport validationReport = validate(nxEntry);
-		
-		// validate any subentries
-		for (NXsubentry subentry : nxEntry.getAllSubentry().values()) {
-			validationReport.merge(validate(subentry));
-		}
-		
-		return validationReport;
+		return ServiceHolder.getNexusValidationService().validateEntry(nxEntry);
 	}
 	
-	private ValidationReport validate(NXsubentry entry) throws NexusException {
-		final String definitionStr = entry.getDefinitionScalar();
-		if (definitionStr == null) {
-			 return new ValidationReport();
-		}
-		
-		final NexusApplicationDefinition definition = NexusApplicationDefinition.fromName(definitionStr);
-		final NexusApplicationValidator validator = definition.createNexusValidator();
-		return validator.validate(entry);
-	}
-
 	/**
 	 * Adds the new nexus object to the first skeleton class instance that it
 	 * can be added to, unless category is specified, in which case it is added to the first

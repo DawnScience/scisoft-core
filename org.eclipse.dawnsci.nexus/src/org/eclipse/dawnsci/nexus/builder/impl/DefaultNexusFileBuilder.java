@@ -108,28 +108,7 @@ public class DefaultNexusFileBuilder implements NexusFileBuilder {
 	 */
 	@Override
 	public ValidationReport validate() throws NexusException {
-		if (entryBuilders.isEmpty()) return new ValidationReport();
-		if (entryBuilders.size() == 1 && nxRoot.getAllEntry().size() == 1) {
-			// normal case, a single entry built by an entry builder
-			return entryBuilders.values().iterator().next().validate();
-		}
-		
-		nxRoot.getAllEntry();
-
-		final ValidationReport validationReport = new ValidationReport();
-		final Map<String, NXentry> allEntries = nxRoot.getAllEntry();
-		for (String entryName : allEntries.keySet()) {
-			final NexusEntryBuilder entryBuilder;
-			if (entryBuilders.containsKey(entryName)) {
-				entryBuilder = entryBuilders.get(entryName);
-			} else {
-				// a nexus template may have added an entry without a builder, so create one in order to validate the entry
-				entryBuilder = new DefaultNexusEntryBuilder(entryName, allEntries.get(entryName));
-			}
-			validationReport.merge(entryBuilder.validate());
-		}
-		
-		return validationReport;
+		return ServiceHolder.getNexusValidationService().validateNexusTree(treeFile);
 	}
 
 	/* (non-Javadoc)

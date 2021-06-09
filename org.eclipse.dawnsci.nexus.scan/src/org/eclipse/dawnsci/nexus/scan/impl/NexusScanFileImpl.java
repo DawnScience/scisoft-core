@@ -174,16 +174,6 @@ class NexusScanFileImpl implements NexusScanFile {
 		}
 	}
 	
-	private void validate(NexusFileBuilder fileBuilder) throws NexusException {
-		if (Boolean.getBoolean(SYSTEM_PROPERTY_NAME_VALIDATE_NEXUS)) {
-			final ValidationReport validationReport = fileBuilder.validate();
-			if (validationReport.isError()) { // note we log an error rather than throwing an exception if the nexus file is invalid
-//				throw new NexusException("The nexus file contains one or more invalid entries (or subentries) according to their application definitions. See log for details.");
-				logger.error("The nexus file {} is invalid, see log for details", filePath);
-			}
-		}
-	}
-
 	@Override
 	public int flush() throws NexusException {
 		return nexusBuilderFile.flush();
@@ -197,6 +187,17 @@ class NexusScanFileImpl implements NexusScanFile {
 		entryFieldBuilder.end();
 		validate(fileBuilder);
 		nexusBuilderFile.close();
+	}
+
+	private void validate(NexusFileBuilder fileBuilder) throws NexusException {
+		if (Boolean.getBoolean(SYSTEM_PROPERTY_NAME_VALIDATE_NEXUS)) {
+			final ValidationReport validationReport =
+					ServiceHolder.getNexusValidationService().validateNexusTree(fileBuilder.getNexusTree());
+			if (validationReport.isError()) { // note we log an error rather than throwing an exception if the nexus file is invalid
+//				throw new NexusException("The nexus file contains one or more invalid entries (or subentries) according to their application definitions. See log for details.");
+				logger.error("The nexus file {} is invalid, see log for details", filePath);
+			}
+		}
 	}
 
 	private void applyTemplates(Tree tree) throws NexusException {

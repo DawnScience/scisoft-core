@@ -38,6 +38,7 @@ import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;
 import org.eclipse.dawnsci.nexus.NexusBaseClass;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
+import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.builder.AbstractNexusObjectProvider;
 import org.eclipse.dawnsci.nexus.builder.CustomNexusEntryModification;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder;
@@ -45,8 +46,10 @@ import org.eclipse.dawnsci.nexus.builder.NexusEntryModification;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectWrapper;
 import org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder;
+import org.eclipse.dawnsci.nexus.validation.NexusValidationServiceImpl;
 import org.eclipse.dawnsci.nexus.validation.ValidationReport;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class DefaultNexusEntryBuilderTest {
@@ -107,6 +110,12 @@ public class DefaultNexusEntryBuilderTest {
 	private NexusEntryBuilder entryBuilder;
 	
 	private NXentry nxEntry;
+	
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
+		new ServiceHolder().setNexusValidationService(new NexusValidationServiceImpl());
+	}
+
 	
 	@Before
 	public void setUp() throws Exception {

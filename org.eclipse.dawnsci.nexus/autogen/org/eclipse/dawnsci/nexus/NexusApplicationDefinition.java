@@ -80,7 +80,7 @@ public enum NexusApplicationDefinition {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T extends NexusApplicationValidator> T createNexusValidator() { 
+	public <T extends NexusApplicationValidator> T createNexusValidator() {
 		try {
 			return (T) validatorClass.getDeclaredConstructor().newInstance();
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException

@@ -250,9 +250,10 @@
 		<xsl:value-of select="dawnsci:tabs(2)"/>
 		<xsl:text>final </xsl:text><xsl:value-of select="@type"/><xsl:text> </xsl:text>
 		<xsl:value-of select="$group"/><xsl:text> = </xsl:text>
+		<xsl:text>getFirstGroupOrNull(</xsl:text>
 		<xsl:value-of select="$parentGroupVariableName"/>
 		<xsl:text>.getAll</xsl:text><xsl:value-of select="dawnsci:capitalise-first($groupNameInBaseClass)"/>
-		<xsl:text>().values().iterator().next();&#10;</xsl:text>
+		<xsl:text>());&#10;</xsl:text>
 	</xsl:if>
 	
 	<!-- Null test for optional groups -->
@@ -293,7 +294,7 @@
 	<!-- Call to validate transformations -->
 	<!-- Note: we assume that this field has a preceding sibling 'depends_on' -->
 	<xsl:value-of select="dawnsci:tabs(2)"/>
-	<xsl:text>validateTransformations(allTransformations, depends_on.getString(0));&#10;</xsl:text>
+	<xsl:text>validateTransformations(allTransformations, depends_on);&#10;</xsl:text>
 
 	<!-- Blank line if there are more groups. -->
 	<xsl:if test="following-sibling::nx:group"><xsl:text>&#10;</xsl:text></xsl:if>
@@ -457,7 +458,7 @@
 	<xsl:variable name="optional" select="@minOccurs='0' or @optional='true' or @recommended='true'"/>
 	<!-- The method call to get the field's dataset -->
 	<xsl:variable name="getFieldDatasetMethod">
-		<xsl:choose>
+		<!-- <xsl:choose>
 			<xsl:when test="$baseClassFieldDef">
 				<xsl:value-of select="'get' || dawnsci:capitalise-first(@name) || '(' ||
 					(if (@nameType = 'any') then ('String ' || @name) else '') || ')'"/>
@@ -465,7 +466,8 @@
 			<xsl:otherwise>
 				<xsl:value-of select="'getDataset(&quot;' || @name || '&quot;)'"/>
 			</xsl:otherwise>
-		</xsl:choose>
+		</xsl:choose> -->
+		<xsl:value-of select="'getLazyDataset(&quot;' || @name || '&quot;)'"/>
 	</xsl:variable>
 	
 	<!-- Line comment for field validation: validate (optional)? field 'fieldName' of type 'NXtype' -->
@@ -477,9 +479,9 @@
 	<xsl:if test="not($baseClassFieldDef)"> Note: field not defined in base class.</xsl:if>
 	<xsl:text>&#10;</xsl:text>
 	
-	<!-- Line to get the field's dataset, e.g. final IDataset title = group.getTitle(); -->
+	<!-- Line to get the field's dataset, e.g. final ILazyDataset title = group.getTitle(); -->
 	<xsl:value-of select="dawnsci:tabs(2)"/>
-	<xsl:text>final IDataset </xsl:text>
+	<xsl:text>final ILazyDataset </xsl:text>
 	<xsl:value-of select="@name"/><xsl:text> = group.</xsl:text>
 	<xsl:value-of select="$getFieldDatasetMethod"/><xsl:text>;&#10;</xsl:text>
 	
@@ -677,6 +679,7 @@
 
 	<xsl:text>import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;</xsl:text>
 	<xsl:text>import org.eclipse.january.dataset.IDataset;&#10;</xsl:text>
+	<xsl:text>import org.eclipse.january.dataset.ILazyDataset;&#10;</xsl:text>
 	<xsl:text>import org.eclipse.dawnsci.analysis.api.tree.DataNode;&#10;</xsl:text>
 	<xsl:if test="//nx:attribute">
 		<xsl:text>import org.eclipse.dawnsci.analysis.api.tree.Attribute;&#10;</xsl:text>

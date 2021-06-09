@@ -91,11 +91,23 @@ public interface NXobject extends GroupNode {
 	 * Gets the dataset for the field with the given name, if it exists, otherwise <code>null</code>.
 	 * Note that this method should only be used for small datasets, i.e. those set before the scan.
 	 * To get the dataset for larger datasets (i.e. data acquired during the scan) use
-	 * <code>getDataNode(name).getDataset()</code> which returns an {@link ILazyDataset}.
+	 * <code>getDataNode(name).getDataset()</code> which returns an {@link ILazyDataset}. 
 	 * @param name dataset name
 	 * @return the dataset for the field with the given name, or <code>null</code> if the no such dataset exists
+	 * @throws IllegalStateException if the dataset is too large to load into memory
 	 */
 	public IDataset getDataset(String name);
+	
+	/**
+	 * Gets the dataset for the field with the given name, if it exists, otherwise <code>null</code>.
+	 * This method will work for all kinds of dataset as {@link ILazyDataset} is the common
+	 * superinterface for dataset. The type of dataset may be a {@link Dataset} for an in-memory
+	 * dataset, an {@link ILazyDataset} for a dataset to be read from a file, or an
+	 * {@link ILazyWriteableDataset} for a dataset intended to be written to during the scan. 
+	 * @param name dataset name
+	 * @return the {@link ILazyDataset} for the given name
+	 */
+	public ILazyDataset getLazyDataset(String name);
 	
 	/**
 	 * Creates and adds a new {@link ILazyWriteableDataset} to this group for the given field name,

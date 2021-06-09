@@ -15,6 +15,7 @@ import static org.eclipse.dawnsci.nexus.validation.NexusDataType.*;
 import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 
 import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.dawnsci.nexus.NXroot;
@@ -65,7 +66,7 @@ public class NXxnbValidator extends AbstractNexusValidator implements NexusAppli
 		if (!(validateGroupNotNull("entry", NXentry.class, group))) return;
 
 		// validate field 'definition' of unknown type.
-		final IDataset definition = group.getDefinition();
+		final ILazyDataset definition = group.getLazyDataset("definition");
 		if (!(validateFieldNotNull("definition", definition))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("definition", definition, NX_CHAR);
@@ -102,7 +103,7 @@ public class NXxnbValidator extends AbstractNexusValidator implements NexusAppli
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'polar_angle' of type NX_FLOAT.
-		final IDataset polar_angle = group.getPolar_angle();
+		final ILazyDataset polar_angle = group.getLazyDataset("polar_angle");
 		if (!(validateFieldNotNull("polar_angle", polar_angle))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
@@ -111,7 +112,7 @@ public class NXxnbValidator extends AbstractNexusValidator implements NexusAppli
 		validateFieldDimensions("polar_angle", polar_angle, null, "nP");
 
 		// validate field 'tilt_angle' of type NX_FLOAT. Note: field not defined in base class.
-		final IDataset tilt_angle = group.getDataset("tilt_angle");
+		final ILazyDataset tilt_angle = group.getLazyDataset("tilt_angle");
 		if (!(validateFieldNotNull("tilt_angle", tilt_angle))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("tilt_angle", tilt_angle, NX_FLOAT);
@@ -129,7 +130,7 @@ public class NXxnbValidator extends AbstractNexusValidator implements NexusAppli
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'rotation_angle' of type NX_FLOAT.
-		final IDataset rotation_angle = group.getRotation_angle();
+		final ILazyDataset rotation_angle = group.getLazyDataset("rotation_angle");
 		if (!(validateFieldNotNull("rotation_angle", rotation_angle))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);

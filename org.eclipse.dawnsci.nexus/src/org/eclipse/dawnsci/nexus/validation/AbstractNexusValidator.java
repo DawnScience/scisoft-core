@@ -26,6 +26,7 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.nexus.NXobject;
+import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.NXsubentry;
 import org.eclipse.dawnsci.nexus.NXtransformations;
 import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;
@@ -34,8 +35,10 @@ import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.validation.ValidationReportEntry.Level;
 import org.eclipse.dawnsci.nexus.validation.ValidationReportEntry.NodeType;
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 
 import tec.units.indriya.format.SimpleUnitFormat;
 
@@ -155,13 +158,17 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 		return true;
 	}
 	
+	protected <N extends NXobject> N getFirstGroupOrNull(Map<String, N> groupsOfType) {
+		return groupsOfType.isEmpty() ? null : groupsOfType.values().iterator().next();
+	}
+	
 	/**
 	 * Validates that the given field value is not <code>null</code>.
 	 * @param fieldName name of field
 	 * @param dataset the field value, an {@link IDataset}
 	 * @return 
 	 */
-	public boolean validateFieldNotNull(String fieldName, IDataset dataset) {
+	public boolean validateFieldNotNull(String fieldName, ILazyDataset dataset) {
 		return validate(dataset != null, Level.ERROR, NodeType.DATA_NODE, fieldName, "must be set");
 	}
 	
@@ -182,7 +189,7 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	 * @param permittedValues the permitted values
 	 * @return 
 	 */
-	public boolean validateFieldEnumeration(String fieldName, IDataset dataset, String... permittedValues) {
+	public boolean validateFieldEnumeration(String fieldName, ILazyDataset dataset, String... permittedValues) {
 		return validateEnumeration(fieldName, NodeType.DATA_NODE, dataset, permittedValues);
 	}
 	
@@ -193,11 +200,16 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	 * @param type expected type
 	 * @return 
 	 */
-	public boolean validateFieldType(final String fieldName, final IDataset dataset, final NexusDataType type) {
-		if (!type.validate(dataset)) {
+	public boolean validateFieldType(final String fieldName, final ILazyDataset dataset, final NexusDataType type) {
+		try {
+			if (!type.validate(dataset)) {
+				addValidationEntry(Level.ERROR, NodeType.DATA_NODE, fieldName,
+						"The dataset type is not compatible with the type " + type);
+				return false;
+			}
+		} catch (NexusException e) {
 			addValidationEntry(Level.ERROR, NodeType.DATA_NODE, fieldName,
-					"The dataset type is not compatible with the type " + type);
-			return false;
+					"Could not validate dataset according to type " + type); 
 		}
 		
 		return true;
@@ -240,7 +252,7 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	 * @param rank expected rank
 	 * @return
 	 */
-	public boolean validateFieldRank(final String fieldName, final IDataset dataset, final int rank) {
+	public boolean validateFieldRank(final String fieldName, final ILazyDataset dataset, final int rank) {
 		if (dataset.getRank() != rank) {
 			addValidationEntry(Level.WARNING, NodeType.DATA_NODE, fieldName, 
 					"Incorrect rank, was " +  dataset.getRank() + ", expected " + rank); 
@@ -257,7 +269,7 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	 *    that dimension, or a placeholder string, in which case the size of this dimension will be validated
 	 *    against any previous dimension with the same placeholder string
 	 */
-	public void validateFieldDimensions(final String fieldName, final IDataset dataset, String groupName, Object... dimensions) {
+	public void validateFieldDimensions(final String fieldName, final ILazyDataset dataset, String groupName, Object... dimensions) {
 		final int[] shape = dataset.getShape();
 
 		for (int i = 0; i < dimensions.length; i++) {
@@ -303,9 +315,14 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	 * @param type expected type
 	 */
 	public void validateAttributeType(final String attributeName, final Attribute attribute, final NexusDataType type) {
-		if (!type.validate(attribute.getValue())) {
+		try {
+			if (!type.validate(attribute.getValue())) {
+				addValidationEntry(Level.ERROR, NodeType.ATTRIBUTE, attributeName,
+						"The dataset type is not compatible with the type " + type); 
+			}
+		} catch (NexusException e) {
 			addValidationEntry(Level.ERROR, NodeType.ATTRIBUTE, attributeName,
-					"The dataset type is not compatible with the type " + type); 
+					"Could not validate dataset according to type " + type); 
 		}
 	}
 
@@ -409,6 +426,19 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 		return dataNode;
 	}
 	
+	public void validateTransformations(final Map<String, NXtransformations> transformations, ILazyDataset dependsOn) {
+		try {
+			final IDataset dependsOnDataset = dependsOn.getSlice();
+			final String dependsOnStr =
+					dependsOnDataset.getRank() == 0 ? dependsOnDataset.getString() : dependsOnDataset.getString(0);
+			validateTransformations(transformations, dependsOnStr);
+		} catch (DatasetException e) {
+			addValidationEntry(Level.ERROR, NodeType.DATA_NODE, "depends_on",
+					"Could not load dataset"); 
+		}
+		
+	}
+
 	
 	/**
 	 * Validate the given transformations. Transformations have an order, whereby the initial dependsOnStr
@@ -455,20 +485,28 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	 * Validate that the value of the given dataset is one of the permitted values for an enumeration.
 	 * @param nodeName node name
 	 * @param nodeType type of node, can be field or attribute
-	 * @param dataset dataset to validate
+	 * @param lazyDataset dataset to validate
 	 * @param permittedValues permitted values
 	 * @return
 	 */
-	private boolean validateEnumeration(String nodeName, NodeType nodeType, IDataset dataset, String... permittedValues) {
+	private boolean validateEnumeration(String nodeName, NodeType nodeType, ILazyDataset lazyDataset, String... permittedValues) {
 		// note: this method assumes that the enumeration values are always strings
-		if (dataset.getRank() > 1) { // scalar datasets can also be written as one-dimensional datasets of size one 
+		if (lazyDataset.getRank() > 1) { // scalar datasets can also be written as one-dimensional datasets of size one 
 			addValidationEntry(Level.ERROR, nodeType, nodeName, "the dataset for an enumeration must have rank 0 or 1");
 			return false;
 		}
 		
 		// the size of scalar fields can be 0 or 1 (i.e. we treat one dimensional datasets of size 1 as scalar)
-		if (dataset.getSize() > 1) {
+		if (lazyDataset.getSize() > 1) {
 			addValidationEntry(Level.ERROR, nodeType, nodeName, "the dataset for an enumeration must have a size of 1");
+			return false;
+		}
+		
+		final IDataset dataset;
+		try {
+			dataset = lazyDataset.getSlice();
+		} catch (DatasetException e) {
+			addValidationEntry(Level.ERROR, nodeType, nodeName, "the dataset could not be read");
 			return false;
 		}
 		

@@ -15,6 +15,7 @@ import static org.eclipse.dawnsci.nexus.validation.NexusDataType.*;
 import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 
 import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.dawnsci.nexus.NXroot;
@@ -64,7 +65,7 @@ public class NXxlaueValidator extends AbstractNexusValidator implements NexusApp
 		if (!(validateGroupNotNull("entry", NXentry.class, group))) return;
 
 		// validate field 'definition' of unknown type.
-		final IDataset definition = group.getDefinition();
+		final ILazyDataset definition = group.getLazyDataset("definition");
 		if (!(validateFieldNotNull("definition", definition))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("definition", definition, NX_CHAR);
@@ -106,7 +107,7 @@ public class NXxlaueValidator extends AbstractNexusValidator implements NexusApp
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'data' of unknown type. Note: field not defined in base class.
-		final IDataset data = group.getDataset("data");
+		final ILazyDataset data = group.getLazyDataset("data");
 		if (!(validateFieldNotNull("data", data))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_CHAR);
@@ -114,7 +115,7 @@ public class NXxlaueValidator extends AbstractNexusValidator implements NexusApp
 		validateFieldDimensions("data", data, null, "nE");
 
 		// validate field 'wavelength' of unknown type. Note: field not defined in base class.
-		final IDataset wavelength = group.getDataset("wavelength");
+		final ILazyDataset wavelength = group.getLazyDataset("wavelength");
 		if (!(validateFieldNotNull("wavelength", wavelength))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("wavelength", wavelength, NX_CHAR);

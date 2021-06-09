@@ -17,6 +17,7 @@ import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 import java.util.Map;
 
 import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.dawnsci.nexus.NXroot;
@@ -65,19 +66,19 @@ public class NXindirecttofValidator extends AbstractNexusValidator implements Ne
 		if (!(validateGroupNotNull("entry", NXentry.class, group))) return;
 
 		// validate field 'title' of unknown type.
-		final IDataset title = group.getTitle();
+		final ILazyDataset title = group.getLazyDataset("title");
 		if (!(validateFieldNotNull("title", title))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("title", title, NX_CHAR);
 
 		// validate field 'start_time' of type NX_DATE_TIME.
-		final IDataset start_time = group.getStart_time();
+		final ILazyDataset start_time = group.getLazyDataset("start_time");
 		if (!(validateFieldNotNull("start_time", start_time))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("start_time", start_time, NX_DATE_TIME);
 
 		// validate field 'definition' of unknown type.
-		final IDataset definition = group.getDefinition();
+		final ILazyDataset definition = group.getLazyDataset("definition");
 		if (!(validateFieldNotNull("definition", definition))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("definition", definition, NX_CHAR);
@@ -111,7 +112,7 @@ public class NXindirecttofValidator extends AbstractNexusValidator implements Ne
 		if (!(validateGroupNotNull("analyser", NXmonochromator.class, group))) return;
 
 		// validate field 'energy' of type NX_FLOAT.
-		final IDataset energy = group.getEnergy();
+		final ILazyDataset energy = group.getLazyDataset("energy");
 		if (!(validateFieldNotNull("energy", energy))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("energy", energy, NX_FLOAT);
@@ -120,7 +121,7 @@ public class NXindirecttofValidator extends AbstractNexusValidator implements Ne
 		validateFieldDimensions("energy", energy, null, "nDet");
 
 		// validate field 'polar_angle' of type NX_FLOAT. Note: field not defined in base class.
-		final IDataset polar_angle = group.getDataset("polar_angle");
+		final ILazyDataset polar_angle = group.getLazyDataset("polar_angle");
 		if (!(validateFieldNotNull("polar_angle", polar_angle))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
@@ -129,7 +130,7 @@ public class NXindirecttofValidator extends AbstractNexusValidator implements Ne
 		validateFieldDimensions("polar_angle", polar_angle, null, "nDet");
 
 		// validate field 'distance' of type NX_FLOAT. Note: field not defined in base class.
-		final IDataset distance = group.getDataset("distance");
+		final ILazyDataset distance = group.getLazyDataset("distance");
 		if (!(validateFieldNotNull("distance", distance))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("distance", distance, NX_FLOAT);

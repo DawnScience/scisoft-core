@@ -138,6 +138,11 @@ public abstract class NXobjectImpl extends GroupNodeImpl implements NXobject {
 		return getCached(name);
 	}
 	
+	public ILazyDataset getLazyDataset(String name) {
+		final DataNode dataNode = getDataNode(name);
+		return dataNode == null ? null : dataNode.getDataset();
+	}
+	
 	@Override
 	public ILazyWriteableDataset getLazyWritableDataset(String name) {
 		if (containsDataNode(name)) {

@@ -18,7 +18,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.eclipse.dawnsci.nexus.NexusException;
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.ILazyWriteableDataset;
 
 /**
  * Enumeration of Data types allowed in NXDL specifications. Call the {@link #validate(String, IDataset)}
@@ -62,8 +66,19 @@ public enum NexusDataType {
 	NX_DATE_TIME(String.class, Date.class) {
 
 		@Override
-		public boolean validate(IDataset dataset) {
-			if (!super.validate(dataset)) return false;
+		public boolean validate(ILazyDataset lazyDataset) throws NexusException {
+			if (!super.validate(lazyDataset)) return false;
+			
+			// we only validate single values (TODO: should we validate a per-point dataset?)
+			if (lazyDataset.getSize() != 1) return true;
+			
+			final IDataset dataset;
+			try {
+				dataset = lazyDataset.getSlice();
+			} catch (DatasetException e) {
+				throw new NexusException("Could not read dataset", e);
+			}
+			
 			String dateStr = null;
 			// only validate a single value
 			if (dataset.getRank() == 0) {
@@ -122,8 +137,9 @@ public enum NexusDataType {
 	 * Validate that the given dataset is valid according to thdataset.getElementClass();is {@link NexusDataType}
 	 * @param fieldName
 	 * @param dataset
+	 * @throws NexusException 
 	 */
-	public boolean validate(final IDataset dataset) {
+	public boolean validate(final ILazyDataset dataset) throws NexusException {
 		Class<?> elementClass = dataset.getElementClass();
 		for (Class<?> javaClass : javaClasses) {
 			if (javaClass.isAssignableFrom(elementClass)) {

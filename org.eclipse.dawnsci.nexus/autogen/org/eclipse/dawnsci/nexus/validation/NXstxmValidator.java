@@ -17,6 +17,7 @@ import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 import java.util.Map;
 
 import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.dawnsci.nexus.NXroot;
@@ -74,25 +75,25 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		if (!(validateGroupNotNull(null, NXentry.class, group))) return;
 
 		// validate field 'title' of unknown type.
-		final IDataset title = group.getTitle();
+		final ILazyDataset title = group.getLazyDataset("title");
 		if (!(validateFieldNotNull("title", title))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("title", title, NX_CHAR);
 
 		// validate field 'start_time' of type NX_DATE_TIME.
-		final IDataset start_time = group.getStart_time();
+		final ILazyDataset start_time = group.getLazyDataset("start_time");
 		if (!(validateFieldNotNull("start_time", start_time))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("start_time", start_time, NX_DATE_TIME);
 
 		// validate field 'end_time' of type NX_DATE_TIME.
-		final IDataset end_time = group.getEnd_time();
+		final ILazyDataset end_time = group.getLazyDataset("end_time");
 		if (!(validateFieldNotNull("end_time", end_time))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("end_time", end_time, NX_DATE_TIME);
 
 		// validate field 'definition' of type NX_CHAR.
-		final IDataset definition = group.getDefinition();
+		final ILazyDataset definition = group.getLazyDataset("definition");
 		if (!(validateFieldNotNull("definition", definition))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("definition", definition, NX_CHAR);
@@ -101,7 +102,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 
 		// validate unnamed child group of type NXinstrument
 		validateUnnamedGroupOccurrences(group, NXinstrument.class, false, false);
-		final NXinstrument instrument = group.getAllInstrument().values().iterator().next();
+		final NXinstrument instrument = getFirstGroupOrNull(group.getAllInstrument());
 		validateGroup_NXentry_NXinstrument(instrument);
 
 		// validate unnamed child group of type NXsample (possibly multiple)
@@ -133,7 +134,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 
 		// validate unnamed child group of type NXsource
 		validateUnnamedGroupOccurrences(group, NXsource.class, false, false);
-		final NXsource source = group.getAllSource().values().iterator().next();
+		final NXsource source = getFirstGroupOrNull(group.getAllSource());
 		validateGroup_NXentry_NXinstrument_NXsource(source);
 
 		// validate child group 'monochromator' of type NXmonochromator
@@ -170,7 +171,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		if (!(validateGroupNotNull(null, NXsource.class, group))) return;
 
 		// validate field 'type' of unknown type.
-		final IDataset type = group.getType();
+		final ILazyDataset type = group.getLazyDataset("type");
 		if (!(validateFieldNotNull("type", type))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("type", type, NX_CHAR);
@@ -189,13 +190,13 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 				"UV Plasma Source");
 
 		// validate field 'name' of unknown type.
-		final IDataset name = group.getName();
+		final ILazyDataset name = group.getLazyDataset("name");
 		if (!(validateFieldNotNull("name", name))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("name", name, NX_CHAR);
 
 		// validate field 'probe' of unknown type.
-		final IDataset probe = group.getProbe();
+		final ILazyDataset probe = group.getLazyDataset("probe");
 		if (!(validateFieldNotNull("probe", probe))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("probe", probe, NX_CHAR);
@@ -218,7 +219,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		if (!(validateGroupNotNull("monochromator", NXmonochromator.class, group))) return;
 
 		// validate field 'energy' of type NX_FLOAT.
-		final IDataset energy = group.getEnergy();
+		final ILazyDataset energy = group.getLazyDataset("energy");
 		if (!(validateFieldNotNull("energy", energy))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("energy", energy, NX_FLOAT);
@@ -236,7 +237,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'data' of type NX_NUMBER.
-		final IDataset data = group.getData();
+		final ILazyDataset data = group.getLazyDataset("data");
 		if (!(validateFieldNotNull("data", data))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_NUMBER);
@@ -253,7 +254,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'data' of type NX_FLOAT.
-		final IDataset data = group.getData();
+		final ILazyDataset data = group.getLazyDataset("data");
 		if (!(validateFieldNotNull("data", data))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_FLOAT);
@@ -271,7 +272,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'data' of type NX_FLOAT.
-		final IDataset data = group.getData();
+		final ILazyDataset data = group.getLazyDataset("data");
 		if (!(validateFieldNotNull("data", data))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_FLOAT);
@@ -289,7 +290,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'data' of type NX_FLOAT.
-		final IDataset data = group.getData();
+		final ILazyDataset data = group.getLazyDataset("data");
 		if (!(validateFieldNotNull("data", data))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_FLOAT);
@@ -307,7 +308,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'rotation_angle' of type NX_FLOAT.
-		final IDataset rotation_angle = group.getRotation_angle();
+		final ILazyDataset rotation_angle = group.getLazyDataset("rotation_angle");
 		if (!(validateFieldNotNull("rotation_angle", rotation_angle))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
@@ -323,7 +324,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'stxm_scan_type' of unknown type. Note: field not defined in base class.
-		final IDataset stxm_scan_type = group.getDataset("stxm_scan_type");
+		final ILazyDataset stxm_scan_type = group.getLazyDataset("stxm_scan_type");
 		if (!(validateFieldNotNull("stxm_scan_type", stxm_scan_type))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("stxm_scan_type", stxm_scan_type, NX_CHAR);
@@ -339,13 +340,13 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 				"generic scan");
 
 		// validate field 'data' of type NX_NUMBER. Note: field not defined in base class.
-		final IDataset data = group.getDataset("data");
+		final ILazyDataset data = group.getLazyDataset("data");
 		if (!(validateFieldNotNull("data", data))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_NUMBER);
 
 		// validate field 'energy' of type NX_FLOAT. Note: field not defined in base class.
-		final IDataset energy = group.getDataset("energy");
+		final ILazyDataset energy = group.getLazyDataset("energy");
 		if (!(validateFieldNotNull("energy", energy))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("energy", energy, NX_FLOAT);
@@ -353,7 +354,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		validateFieldDimensions("energy", energy, null, "nE");
 
 		// validate field 'sample_y' of type NX_FLOAT. Note: field not defined in base class.
-		final IDataset sample_y = group.getDataset("sample_y");
+		final ILazyDataset sample_y = group.getLazyDataset("sample_y");
 		if (!(validateFieldNotNull("sample_y", sample_y))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("sample_y", sample_y, NX_FLOAT);
@@ -361,7 +362,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		validateFieldDimensions("sample_y", sample_y, null, "nY");
 
 		// validate field 'sample_x' of type NX_FLOAT. Note: field not defined in base class.
-		final IDataset sample_x = group.getDataset("sample_x");
+		final ILazyDataset sample_x = group.getLazyDataset("sample_x");
 		if (!(validateFieldNotNull("sample_x", sample_x))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("sample_x", sample_x, NX_FLOAT);
@@ -378,7 +379,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'data' of type NX_FLOAT.
-		final IDataset data = group.getData();
+		final ILazyDataset data = group.getLazyDataset("data");
 		if (!(validateFieldNotNull("data", data))) return;
 		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 		validateFieldType("data", data, NX_FLOAT);

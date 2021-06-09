@@ -1740,6 +1740,15 @@
             name="Import Detector Calibration"
             visible="true">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.movingbeamoperations"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.movingbeam.NearestDiffractionMetadataImportOperation"
+            description="Use a series of reference calibrations to provide the nearest diffraction geometry description for scan points"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.movingbeam.NearestDiffractionMetadataImportOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.movingbeam.NearestDiffractionMetadataImportModel"
+            name="Nearest Calibration Import Model"
+            visible="true">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

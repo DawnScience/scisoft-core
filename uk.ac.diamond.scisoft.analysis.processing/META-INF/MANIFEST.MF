@@ -24,7 +24,7 @@ Require-Bundle: org.eclipse.january;bundle-version="2.3.0",
  javax.vecmath;bundle-version="1.5.2",
  org.dawnsci.boofcv;bundle-version="1.0.0",
  com.github.tschoonj.xraylib;bundle-version="3.2.1"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Import-Package: org.osgi.framework;version="1.7.0",
  org.slf4j;version="1.7.6"

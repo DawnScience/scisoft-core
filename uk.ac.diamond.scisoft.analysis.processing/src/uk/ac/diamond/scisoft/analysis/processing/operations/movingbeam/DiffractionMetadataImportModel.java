@@ -33,6 +33,8 @@ public class DiffractionMetadataImportModel extends AbstractOperationModel {
 	@OperationModelField(hint="Set the override position", enableif = "overridePosition", label="New position",fieldPosition = 6)
 	private double[] currentPosition = new double[2]; 
 	
+	
+	
 
 	public String getFilePath() {
 		return filePath;

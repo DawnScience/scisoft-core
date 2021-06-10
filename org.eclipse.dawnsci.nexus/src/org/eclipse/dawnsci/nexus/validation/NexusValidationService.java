@@ -1,5 +1,7 @@
 package org.eclipse.dawnsci.nexus.validation;
 
+import java.util.function.Supplier;
+
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.nexus.NXentry;
 import org.eclipse.dawnsci.nexus.NXroot;
@@ -11,6 +13,18 @@ import org.eclipse.dawnsci.nexus.NexusException;
  * to produce a {@link ValidationReport} detailing any validation issues.
  */
 public interface NexusValidationService {
+	
+	/**
+	 * Sets whether to validate according to the Diamond Default Nexus File Structure,
+	 * as well as any application definitions that are declared
+	 * on the entry and/or subentries. This validator will be invoked when calling
+	 * {@link #validateEntry(NXentry)} and on the first {@link NXentry} in a nexus tree
+	 * when calling {@link #validateNexusFile(String)}, {@link #validateNexusTree(Tree)
+	 * or #validateNexusTree(NXroot).
+	 * @param validateDiamond <code>true</code> to validate diamond default nexus
+	 *     structure, <code>false</code> otherwise
+	 */
+	public void setValidateDiamond(boolean validateDiamond);
 	
 	/**
 	 * Validates the nexus file at the given path, producing a {@link ValidationReport}.

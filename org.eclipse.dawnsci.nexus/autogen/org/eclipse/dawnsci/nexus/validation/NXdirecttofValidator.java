@@ -16,7 +16,7 @@ import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 
 import java.util.Map;
 
-import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;import org.eclipse.january.dataset.IDataset;
+import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
@@ -68,23 +68,29 @@ public class NXdirecttofValidator extends AbstractNexusValidator implements Nexu
 
 		// validate field 'title' of unknown type.
 		final ILazyDataset title = group.getLazyDataset("title");
-		if (!(validateFieldNotNull("title", title))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("title", title, NX_CHAR);
+		validateFieldNotNull("title", title);
+		if (title != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("title", title, NX_CHAR);
+		}
 
 		// validate field 'start_time' of type NX_DATE_TIME.
 		final ILazyDataset start_time = group.getLazyDataset("start_time");
-		if (!(validateFieldNotNull("start_time", start_time))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("start_time", start_time, NX_DATE_TIME);
+		validateFieldNotNull("start_time", start_time);
+		if (start_time != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("start_time", start_time, NX_DATE_TIME);
+		}
 
 		// validate field 'definition' of unknown type.
 		final ILazyDataset definition = group.getLazyDataset("definition");
-		if (!(validateFieldNotNull("definition", definition))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("definition", definition, NX_CHAR);
-		validateFieldEnumeration("definition", definition,
-				"NXdirecttof");
+		validateFieldNotNull("definition", definition);
+		if (definition != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("definition", definition, NX_CHAR);
+			validateFieldEnumeration("definition", definition,
+					"NXdirecttof");
+		}
 
 		// validate unnamed child group of type NXinstrument (possibly multiple)
 		validateUnnamedGroupOccurrences(group, NXinstrument.class, false, true);
@@ -121,17 +127,21 @@ public class NXdirecttofValidator extends AbstractNexusValidator implements Nexu
 
 		// validate field 'rotation_speed' of type NX_FLOAT.
 		final ILazyDataset rotation_speed = group.getLazyDataset("rotation_speed");
-		if (!(validateFieldNotNull("rotation_speed", rotation_speed))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("rotation_speed", rotation_speed, NX_FLOAT);
-		validateFieldUnits("rotation_speed", group.getDataNode("rotation_speed"), NX_FREQUENCY);
+		validateFieldNotNull("rotation_speed", rotation_speed);
+		if (rotation_speed != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("rotation_speed", rotation_speed, NX_FLOAT);
+			validateFieldUnits("rotation_speed", group.getDataNode("rotation_speed"), NX_FREQUENCY);
+		}
 
 		// validate field 'energy' of type NX_FLOAT.
 		final ILazyDataset energy = group.getLazyDataset("energy");
-		if (!(validateFieldNotNull("energy", energy))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("energy", energy, NX_FLOAT);
-		validateFieldUnits("energy", group.getDataNode("energy"), NX_ENERGY);
+		validateFieldNotNull("energy", energy);
+		if (energy != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("energy", energy, NX_FLOAT);
+			validateFieldUnits("energy", group.getDataNode("energy"), NX_ENERGY);
+		}
 	}
 
 	/**
@@ -144,16 +154,20 @@ public class NXdirecttofValidator extends AbstractNexusValidator implements Nexu
 
 		// validate field 'rotation_speed' of type NX_FLOAT.
 		final ILazyDataset rotation_speed = group.getLazyDataset("rotation_speed");
-		if (!(validateFieldNotNull("rotation_speed", rotation_speed))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("rotation_speed", rotation_speed, NX_FLOAT);
-		validateFieldUnits("rotation_speed", group.getDataNode("rotation_speed"), NX_FREQUENCY);
+		validateFieldNotNull("rotation_speed", rotation_speed);
+		if (rotation_speed != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("rotation_speed", rotation_speed, NX_FLOAT);
+			validateFieldUnits("rotation_speed", group.getDataNode("rotation_speed"), NX_FREQUENCY);
+		}
 
 		// validate field 'energy' of type NX_FLOAT. Note: field not defined in base class.
 		final ILazyDataset energy = group.getLazyDataset("energy");
-		if (!(validateFieldNotNull("energy", energy))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("energy", energy, NX_FLOAT);
-		validateFieldUnits("energy", group.getDataNode("energy"), NX_ENERGY);
+		validateFieldNotNull("energy", energy);
+		if (energy != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("energy", energy, NX_FLOAT);
+			validateFieldUnits("energy", group.getDataNode("energy"), NX_ENERGY);
+		}
 	}
 }

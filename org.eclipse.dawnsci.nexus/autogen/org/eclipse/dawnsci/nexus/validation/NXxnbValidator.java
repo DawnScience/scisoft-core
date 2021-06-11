@@ -14,7 +14,7 @@ package org.eclipse.dawnsci.nexus.validation;
 import static org.eclipse.dawnsci.nexus.validation.NexusDataType.*;
 import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 
-import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;import org.eclipse.january.dataset.IDataset;
+import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
@@ -67,11 +67,13 @@ public class NXxnbValidator extends AbstractNexusValidator implements NexusAppli
 
 		// validate field 'definition' of unknown type.
 		final ILazyDataset definition = group.getLazyDataset("definition");
-		if (!(validateFieldNotNull("definition", definition))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("definition", definition, NX_CHAR);
-		validateFieldEnumeration("definition", definition,
-				"NXxnb");
+		validateFieldNotNull("definition", definition);
+		if (definition != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("definition", definition, NX_CHAR);
+			validateFieldEnumeration("definition", definition,
+					"NXxnb");
+		}
 
 		// validate child group 'instrument' of type NXinstrument
 		validateGroup_entry_instrument(group.getInstrument());
@@ -104,21 +106,25 @@ public class NXxnbValidator extends AbstractNexusValidator implements NexusAppli
 
 		// validate field 'polar_angle' of type NX_FLOAT.
 		final ILazyDataset polar_angle = group.getLazyDataset("polar_angle");
-		if (!(validateFieldNotNull("polar_angle", polar_angle))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
-		validateFieldUnits("polar_angle", group.getDataNode("polar_angle"), NX_ANGLE);
-		validateFieldRank("polar_angle", polar_angle, 1);
-		validateFieldDimensions("polar_angle", polar_angle, null, "nP");
+		validateFieldNotNull("polar_angle", polar_angle);
+		if (polar_angle != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("polar_angle", polar_angle, NX_FLOAT);
+			validateFieldUnits("polar_angle", group.getDataNode("polar_angle"), NX_ANGLE);
+			validateFieldRank("polar_angle", polar_angle, 1);
+			validateFieldDimensions("polar_angle", polar_angle, null, "nP");
+		}
 
 		// validate field 'tilt_angle' of type NX_FLOAT. Note: field not defined in base class.
 		final ILazyDataset tilt_angle = group.getLazyDataset("tilt_angle");
-		if (!(validateFieldNotNull("tilt_angle", tilt_angle))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("tilt_angle", tilt_angle, NX_FLOAT);
-		validateFieldUnits("tilt_angle", group.getDataNode("tilt_angle"), NX_ANGLE);
-		validateFieldRank("tilt_angle", tilt_angle, 1);
-		validateFieldDimensions("tilt_angle", tilt_angle, null, "nP");
+		validateFieldNotNull("tilt_angle", tilt_angle);
+		if (tilt_angle != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("tilt_angle", tilt_angle, NX_FLOAT);
+			validateFieldUnits("tilt_angle", group.getDataNode("tilt_angle"), NX_ANGLE);
+			validateFieldRank("tilt_angle", tilt_angle, 1);
+			validateFieldDimensions("tilt_angle", tilt_angle, null, "nP");
+		}
 	}
 
 	/**
@@ -131,12 +137,14 @@ public class NXxnbValidator extends AbstractNexusValidator implements NexusAppli
 
 		// validate field 'rotation_angle' of type NX_FLOAT.
 		final ILazyDataset rotation_angle = group.getLazyDataset("rotation_angle");
-		if (!(validateFieldNotNull("rotation_angle", rotation_angle))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
-		validateFieldUnits("rotation_angle", group.getDataNode("rotation_angle"), NX_ANGLE);
-		validateFieldRank("rotation_angle", rotation_angle, 1);
-		validateFieldDimensions("rotation_angle", rotation_angle, null, "nP");
+		validateFieldNotNull("rotation_angle", rotation_angle);
+		if (rotation_angle != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
+			validateFieldUnits("rotation_angle", group.getDataNode("rotation_angle"), NX_ANGLE);
+			validateFieldRank("rotation_angle", rotation_angle, 1);
+			validateFieldDimensions("rotation_angle", rotation_angle, null, "nP");
+		}
 	}
 
 	/**

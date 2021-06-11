@@ -16,7 +16,7 @@ import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 
 import java.util.Map;
 
-import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;import org.eclipse.january.dataset.IDataset;
+import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
@@ -71,29 +71,37 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 
 		// validate field 'title' of unknown type.
 		final ILazyDataset title = group.getLazyDataset("title");
-		if (!(validateFieldNotNull("title", title))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("title", title, NX_CHAR);
+		validateFieldNotNull("title", title);
+		if (title != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("title", title, NX_CHAR);
+		}
 
 		// validate field 'start_time' of type NX_DATE_TIME.
 		final ILazyDataset start_time = group.getLazyDataset("start_time");
-		if (!(validateFieldNotNull("start_time", start_time))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("start_time", start_time, NX_DATE_TIME);
+		validateFieldNotNull("start_time", start_time);
+		if (start_time != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("start_time", start_time, NX_DATE_TIME);
+		}
 
 		// validate field 'end_time' of type NX_DATE_TIME.
 		final ILazyDataset end_time = group.getLazyDataset("end_time");
-		if (!(validateFieldNotNull("end_time", end_time))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("end_time", end_time, NX_DATE_TIME);
+		validateFieldNotNull("end_time", end_time);
+		if (end_time != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("end_time", end_time, NX_DATE_TIME);
+		}
 
 		// validate field 'definition' of unknown type.
 		final ILazyDataset definition = group.getLazyDataset("definition");
-		if (!(validateFieldNotNull("definition", definition))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("definition", definition, NX_CHAR);
-		validateFieldEnumeration("definition", definition,
-				"NXtomophase");
+		validateFieldNotNull("definition", definition);
+		if (definition != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("definition", definition, NX_CHAR);
+			validateFieldEnumeration("definition", definition,
+					"NXtomophase");
+		}
 
 		// validate child group 'instrument' of type NXinstrument
 		validateGroup_entry_instrument(group.getInstrument());
@@ -141,38 +149,44 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 
 		// validate field 'type' of unknown type.
 		final ILazyDataset type = group.getLazyDataset("type");
-		if (!(validateFieldNotNull("type", type))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("type", type, NX_CHAR);
-		validateFieldEnumeration("type", type,
-				"Spallation Neutron Source",
-				"Pulsed Reactor Neutron Source",
-				"Reactor Neutron Source",
-				"Synchrotron X-ray Source",
-				"Pulsed Muon Source",
-				"Rotating Anode X-ray",
-				"Fixed Tube X-ray",
-				"UV Laser",
-				"Free-Electron Laser",
-				"Optical Laser",
-				"Ion Source",
-				"UV Plasma Source");
+		validateFieldNotNull("type", type);
+		if (type != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("type", type, NX_CHAR);
+			validateFieldEnumeration("type", type,
+					"Spallation Neutron Source",
+					"Pulsed Reactor Neutron Source",
+					"Reactor Neutron Source",
+					"Synchrotron X-ray Source",
+					"Pulsed Muon Source",
+					"Rotating Anode X-ray",
+					"Fixed Tube X-ray",
+					"UV Laser",
+					"Free-Electron Laser",
+					"Optical Laser",
+					"Ion Source",
+					"UV Plasma Source");
+		}
 
 		// validate field 'name' of unknown type.
 		final ILazyDataset name = group.getLazyDataset("name");
-		if (!(validateFieldNotNull("name", name))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("name", name, NX_CHAR);
+		validateFieldNotNull("name", name);
+		if (name != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("name", name, NX_CHAR);
+		}
 
 		// validate field 'probe' of unknown type.
 		final ILazyDataset probe = group.getLazyDataset("probe");
-		if (!(validateFieldNotNull("probe", probe))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("probe", probe, NX_CHAR);
-		validateFieldEnumeration("probe", probe,
-				"neutron",
-				"x-ray",
-				"electron");
+		validateFieldNotNull("probe", probe);
+		if (probe != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("probe", probe, NX_CHAR);
+			validateFieldEnumeration("probe", probe,
+					"neutron",
+					"x-ray",
+					"electron");
+		}
 	}
 
 	/**
@@ -185,20 +199,24 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 
 		// validate field 'data' of type NX_INT.
 		final ILazyDataset data = group.getLazyDataset("data");
-		if (!(validateFieldNotNull("data", data))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("data", data, NX_INT);
-		validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
-		validateFieldRank("data", data, 3);
-		validateFieldDimensions("data", data, null, "nBrightFrames", "xSize", "ySize");
+		validateFieldNotNull("data", data);
+		if (data != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("data", data, NX_INT);
+			validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
+			validateFieldRank("data", data, 3);
+			validateFieldDimensions("data", data, null, "nBrightFrames", "xSize", "ySize");
+		}
 
 		// validate field 'sequence_number' of type NX_INT.
 		final ILazyDataset sequence_number = group.getLazyDataset("sequence_number");
-		if (!(validateFieldNotNull("sequence_number", sequence_number))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("sequence_number", sequence_number, NX_INT);
-		validateFieldRank("sequence_number", sequence_number, 1);
-		validateFieldDimensions("sequence_number", sequence_number, null, "nBrightFrames");
+		validateFieldNotNull("sequence_number", sequence_number);
+		if (sequence_number != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("sequence_number", sequence_number, NX_INT);
+			validateFieldRank("sequence_number", sequence_number, 1);
+			validateFieldDimensions("sequence_number", sequence_number, null, "nBrightFrames");
+		}
 	}
 
 	/**
@@ -211,20 +229,24 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 
 		// validate field 'data' of type NX_INT.
 		final ILazyDataset data = group.getLazyDataset("data");
-		if (!(validateFieldNotNull("data", data))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("data", data, NX_INT);
-		validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
-		validateFieldRank("data", data, 3);
-		validateFieldDimensions("data", data, null, "nDarkFrames", "xSize", "ySize");
+		validateFieldNotNull("data", data);
+		if (data != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("data", data, NX_INT);
+			validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
+			validateFieldRank("data", data, 3);
+			validateFieldDimensions("data", data, null, "nDarkFrames", "xSize", "ySize");
+		}
 
 		// validate field 'sequence_number' of type NX_INT.
 		final ILazyDataset sequence_number = group.getLazyDataset("sequence_number");
-		if (!(validateFieldNotNull("sequence_number", sequence_number))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("sequence_number", sequence_number, NX_INT);
-		validateFieldRank("sequence_number", sequence_number, 1);
-		validateFieldDimensions("sequence_number", sequence_number, null, "nDarkFrames");
+		validateFieldNotNull("sequence_number", sequence_number);
+		if (sequence_number != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("sequence_number", sequence_number, NX_INT);
+			validateFieldRank("sequence_number", sequence_number, 1);
+			validateFieldDimensions("sequence_number", sequence_number, null, "nDarkFrames");
+		}
 	}
 
 	/**
@@ -237,47 +259,57 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 
 		// validate field 'data' of type NX_INT.
 		final ILazyDataset data = group.getLazyDataset("data");
-		if (!(validateFieldNotNull("data", data))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("data", data, NX_INT);
-		validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
-		validateFieldRank("data", data, 4);
-		validateFieldDimensions("data", data, null, "nSampleFrames", "nPhase", "xSize", "ySize");
+		validateFieldNotNull("data", data);
+		if (data != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("data", data, NX_INT);
+			validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
+			validateFieldRank("data", data, 4);
+			validateFieldDimensions("data", data, null, "nSampleFrames", "nPhase", "xSize", "ySize");
+		}
 
 		// validate field 'sequence_number' of type NX_INT.
 		final ILazyDataset sequence_number = group.getLazyDataset("sequence_number");
-		if (!(validateFieldNotNull("sequence_number", sequence_number))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("sequence_number", sequence_number, NX_INT);
-		validateFieldRank("sequence_number", sequence_number, 2);
-		validateFieldDimensions("sequence_number", sequence_number, null, "nSampleFrames", "nPhase");
+		validateFieldNotNull("sequence_number", sequence_number);
+		if (sequence_number != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("sequence_number", sequence_number, NX_INT);
+			validateFieldRank("sequence_number", sequence_number, 2);
+			validateFieldDimensions("sequence_number", sequence_number, null, "nSampleFrames", "nPhase");
+		}
 
 		// validate field 'x_pixel_size' of type NX_FLOAT.
 		final ILazyDataset x_pixel_size = group.getLazyDataset("x_pixel_size");
-		if (!(validateFieldNotNull("x_pixel_size", x_pixel_size))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("x_pixel_size", x_pixel_size, NX_FLOAT);
-		validateFieldUnits("x_pixel_size", group.getDataNode("x_pixel_size"), NX_LENGTH);
-		validateFieldRank("x_pixel_size", x_pixel_size, 2);
-		validateFieldDimensions("x_pixel_size", x_pixel_size, "NXdetector", "i", "j");
+		validateFieldNotNull("x_pixel_size", x_pixel_size);
+		if (x_pixel_size != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("x_pixel_size", x_pixel_size, NX_FLOAT);
+			validateFieldUnits("x_pixel_size", group.getDataNode("x_pixel_size"), NX_LENGTH);
+			validateFieldRank("x_pixel_size", x_pixel_size, 2);
+			validateFieldDimensions("x_pixel_size", x_pixel_size, "NXdetector", "i", "j");
+		}
 
 		// validate field 'y_pixel_size' of type NX_FLOAT.
 		final ILazyDataset y_pixel_size = group.getLazyDataset("y_pixel_size");
-		if (!(validateFieldNotNull("y_pixel_size", y_pixel_size))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("y_pixel_size", y_pixel_size, NX_FLOAT);
-		validateFieldUnits("y_pixel_size", group.getDataNode("y_pixel_size"), NX_LENGTH);
-		validateFieldRank("y_pixel_size", y_pixel_size, 2);
-		validateFieldDimensions("y_pixel_size", y_pixel_size, "NXdetector", "i", "j");
+		validateFieldNotNull("y_pixel_size", y_pixel_size);
+		if (y_pixel_size != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("y_pixel_size", y_pixel_size, NX_FLOAT);
+			validateFieldUnits("y_pixel_size", group.getDataNode("y_pixel_size"), NX_LENGTH);
+			validateFieldRank("y_pixel_size", y_pixel_size, 2);
+			validateFieldDimensions("y_pixel_size", y_pixel_size, "NXdetector", "i", "j");
+		}
 
 		// validate field 'distance' of type NX_FLOAT.
 		final ILazyDataset distance = group.getLazyDataset("distance");
-		if (!(validateFieldNotNull("distance", distance))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("distance", distance, NX_FLOAT);
-		validateFieldUnits("distance", group.getDataNode("distance"), NX_LENGTH);
-		validateFieldRank("distance", distance, 3);
-		validateFieldDimensions("distance", distance, "NXdetector", "np", "i", "j");
+		validateFieldNotNull("distance", distance);
+		if (distance != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("distance", distance, NX_FLOAT);
+			validateFieldUnits("distance", group.getDataNode("distance"), NX_LENGTH);
+			validateFieldRank("distance", distance, 3);
+			validateFieldDimensions("distance", distance, "NXdetector", "np", "i", "j");
+		}
 	}
 
 	/**
@@ -290,45 +322,55 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 
 		// validate field 'name' of unknown type.
 		final ILazyDataset name = group.getLazyDataset("name");
-		if (!(validateFieldNotNull("name", name))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("name", name, NX_CHAR);
+		validateFieldNotNull("name", name);
+		if (name != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("name", name, NX_CHAR);
+		}
 
 		// validate field 'rotation_angle' of type NX_FLOAT.
 		final ILazyDataset rotation_angle = group.getLazyDataset("rotation_angle");
-		if (!(validateFieldNotNull("rotation_angle", rotation_angle))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
-		validateFieldUnits("rotation_angle", group.getDataNode("rotation_angle"), NX_ANGLE);
-		validateFieldRank("rotation_angle", rotation_angle, 1);
-		validateFieldDimensions("rotation_angle", rotation_angle, null, "nSampleFrames");
+		validateFieldNotNull("rotation_angle", rotation_angle);
+		if (rotation_angle != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
+			validateFieldUnits("rotation_angle", group.getDataNode("rotation_angle"), NX_ANGLE);
+			validateFieldRank("rotation_angle", rotation_angle, 1);
+			validateFieldDimensions("rotation_angle", rotation_angle, null, "nSampleFrames");
+		}
 
 		// validate field 'x_translation' of type NX_FLOAT.
 		final ILazyDataset x_translation = group.getLazyDataset("x_translation");
-		if (!(validateFieldNotNull("x_translation", x_translation))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("x_translation", x_translation, NX_FLOAT);
-		validateFieldUnits("x_translation", group.getDataNode("x_translation"), NX_LENGTH);
-		validateFieldRank("x_translation", x_translation, 1);
-		validateFieldDimensions("x_translation", x_translation, null, "nSampleFrames");
+		validateFieldNotNull("x_translation", x_translation);
+		if (x_translation != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("x_translation", x_translation, NX_FLOAT);
+			validateFieldUnits("x_translation", group.getDataNode("x_translation"), NX_LENGTH);
+			validateFieldRank("x_translation", x_translation, 1);
+			validateFieldDimensions("x_translation", x_translation, null, "nSampleFrames");
+		}
 
 		// validate field 'y_translation' of type NX_FLOAT. Note: field not defined in base class.
 		final ILazyDataset y_translation = group.getLazyDataset("y_translation");
-		if (!(validateFieldNotNull("y_translation", y_translation))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("y_translation", y_translation, NX_FLOAT);
-		validateFieldUnits("y_translation", group.getDataNode("y_translation"), NX_LENGTH);
-		validateFieldRank("y_translation", y_translation, 1);
-		validateFieldDimensions("y_translation", y_translation, null, "nSampleFrames");
+		validateFieldNotNull("y_translation", y_translation);
+		if (y_translation != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("y_translation", y_translation, NX_FLOAT);
+			validateFieldUnits("y_translation", group.getDataNode("y_translation"), NX_LENGTH);
+			validateFieldRank("y_translation", y_translation, 1);
+			validateFieldDimensions("y_translation", y_translation, null, "nSampleFrames");
+		}
 
 		// validate field 'z_translation' of type NX_FLOAT. Note: field not defined in base class.
 		final ILazyDataset z_translation = group.getLazyDataset("z_translation");
-		if (!(validateFieldNotNull("z_translation", z_translation))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("z_translation", z_translation, NX_FLOAT);
-		validateFieldUnits("z_translation", group.getDataNode("z_translation"), NX_LENGTH);
-		validateFieldRank("z_translation", z_translation, 1);
-		validateFieldDimensions("z_translation", z_translation, null, "nSampleFrames");
+		validateFieldNotNull("z_translation", z_translation);
+		if (z_translation != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("z_translation", z_translation, NX_FLOAT);
+			validateFieldUnits("z_translation", group.getDataNode("z_translation"), NX_LENGTH);
+			validateFieldRank("z_translation", z_translation, 1);
+			validateFieldDimensions("z_translation", z_translation, null, "nSampleFrames");
+		}
 	}
 
 	/**
@@ -341,12 +383,14 @@ public class NXtomophaseValidator extends AbstractNexusValidator implements Nexu
 
 		// validate field 'integral' of type NX_FLOAT.
 		final ILazyDataset integral = group.getLazyDataset("integral");
-		if (!(validateFieldNotNull("integral", integral))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("integral", integral, NX_FLOAT);
-		validateFieldUnits("integral", group.getDataNode("integral"), NX_ANY);
-		validateFieldRank("integral", integral, 1);
-		validateFieldDimensions("integral", integral, null, "nDarkFrames + nBrightFrames + nSampleFrame");
+		validateFieldNotNull("integral", integral);
+		if (integral != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("integral", integral, NX_FLOAT);
+			validateFieldUnits("integral", group.getDataNode("integral"), NX_ANY);
+			validateFieldRank("integral", integral, 1);
+			validateFieldDimensions("integral", integral, null, "nDarkFrames + nBrightFrames + nSampleFrame");
+		}
 	}
 
 	/**

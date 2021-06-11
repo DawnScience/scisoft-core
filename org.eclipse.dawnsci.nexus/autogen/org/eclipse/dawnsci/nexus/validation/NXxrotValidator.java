@@ -14,7 +14,7 @@ package org.eclipse.dawnsci.nexus.validation;
 import static org.eclipse.dawnsci.nexus.validation.NexusDataType.*;
 import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 
-import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;import org.eclipse.january.dataset.IDataset;
+import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
@@ -68,11 +68,13 @@ public class NXxrotValidator extends AbstractNexusValidator implements NexusAppl
 
 		// validate field 'definition' of unknown type.
 		final ILazyDataset definition = group.getLazyDataset("definition");
-		if (!(validateFieldNotNull("definition", definition))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("definition", definition, NX_CHAR);
-		validateFieldEnumeration("definition", definition,
-				"NXxrot");
+		validateFieldNotNull("definition", definition);
+		if (definition != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("definition", definition, NX_CHAR);
+			validateFieldEnumeration("definition", definition,
+					"NXxrot");
+		}
 
 		// validate child group 'instrument' of type NXinstrument
 		validateGroup_entry_instrument(group.getInstrument());
@@ -108,26 +110,32 @@ public class NXxrotValidator extends AbstractNexusValidator implements NexusAppl
 
 		// validate field 'polar_angle' of type NX_FLOAT.
 		final ILazyDataset polar_angle = group.getLazyDataset("polar_angle");
-		if (!(validateFieldNotNull("polar_angle", polar_angle))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("polar_angle", polar_angle, NX_FLOAT);
-		validateFieldUnits("polar_angle", group.getDataNode("polar_angle"), NX_ANGLE);
-		validateFieldRank("polar_angle", polar_angle, 3);
-		validateFieldDimensions("polar_angle", polar_angle, "NXdetector", "np", "i", "j");
+		validateFieldNotNull("polar_angle", polar_angle);
+		if (polar_angle != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("polar_angle", polar_angle, NX_FLOAT);
+			validateFieldUnits("polar_angle", group.getDataNode("polar_angle"), NX_ANGLE);
+			validateFieldRank("polar_angle", polar_angle, 3);
+			validateFieldDimensions("polar_angle", polar_angle, "NXdetector", "np", "i", "j");
+		}
 
 		// validate field 'beam_center_x' of type NX_FLOAT.
 		final ILazyDataset beam_center_x = group.getLazyDataset("beam_center_x");
-		if (!(validateFieldNotNull("beam_center_x", beam_center_x))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("beam_center_x", beam_center_x, NX_FLOAT);
-		validateFieldUnits("beam_center_x", group.getDataNode("beam_center_x"), NX_LENGTH);
+		validateFieldNotNull("beam_center_x", beam_center_x);
+		if (beam_center_x != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("beam_center_x", beam_center_x, NX_FLOAT);
+			validateFieldUnits("beam_center_x", group.getDataNode("beam_center_x"), NX_LENGTH);
+		}
 
 		// validate field 'beam_center_y' of type NX_FLOAT.
 		final ILazyDataset beam_center_y = group.getLazyDataset("beam_center_y");
-		if (!(validateFieldNotNull("beam_center_y", beam_center_y))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("beam_center_y", beam_center_y, NX_FLOAT);
-		validateFieldUnits("beam_center_y", group.getDataNode("beam_center_y"), NX_LENGTH);
+		validateFieldNotNull("beam_center_y", beam_center_y);
+		if (beam_center_y != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("beam_center_y", beam_center_y, NX_FLOAT);
+			validateFieldUnits("beam_center_y", group.getDataNode("beam_center_y"), NX_LENGTH);
+		}
 	}
 
 	/**
@@ -139,10 +147,12 @@ public class NXxrotValidator extends AbstractNexusValidator implements NexusAppl
 
 		// validate field 'attenuator_transmission' of type NX_FLOAT.
 		final ILazyDataset attenuator_transmission = group.getLazyDataset("attenuator_transmission");
-		if (!(validateFieldNotNull("attenuator_transmission", attenuator_transmission))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("attenuator_transmission", attenuator_transmission, NX_FLOAT);
-		validateFieldUnits("attenuator_transmission", group.getDataNode("attenuator_transmission"), NX_ANY);
+		validateFieldNotNull("attenuator_transmission", attenuator_transmission);
+		if (attenuator_transmission != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("attenuator_transmission", attenuator_transmission, NX_FLOAT);
+			validateFieldUnits("attenuator_transmission", group.getDataNode("attenuator_transmission"), NX_ANY);
+		}
 	}
 
 	/**
@@ -155,21 +165,25 @@ public class NXxrotValidator extends AbstractNexusValidator implements NexusAppl
 
 		// validate field 'rotation_angle' of type NX_FLOAT.
 		final ILazyDataset rotation_angle = group.getLazyDataset("rotation_angle");
-		if (!(validateFieldNotNull("rotation_angle", rotation_angle))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
-		validateFieldUnits("rotation_angle", group.getDataNode("rotation_angle"), NX_ANGLE);
-		validateFieldRank("rotation_angle", rotation_angle, 1);
-		validateFieldDimensions("rotation_angle", rotation_angle, null, "nP");
+		validateFieldNotNull("rotation_angle", rotation_angle);
+		if (rotation_angle != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
+			validateFieldUnits("rotation_angle", group.getDataNode("rotation_angle"), NX_ANGLE);
+			validateFieldRank("rotation_angle", rotation_angle, 1);
+			validateFieldDimensions("rotation_angle", rotation_angle, null, "nP");
+		}
 
 		// validate field 'rotation_angle_step' of type NX_FLOAT. Note: field not defined in base class.
 		final ILazyDataset rotation_angle_step = group.getLazyDataset("rotation_angle_step");
-		if (!(validateFieldNotNull("rotation_angle_step", rotation_angle_step))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("rotation_angle_step", rotation_angle_step, NX_FLOAT);
-		validateFieldUnits("rotation_angle_step", group.getDataNode("rotation_angle_step"), NX_ANGLE);
-		validateFieldRank("rotation_angle_step", rotation_angle_step, 1);
-		validateFieldDimensions("rotation_angle_step", rotation_angle_step, null, "nP");
+		validateFieldNotNull("rotation_angle_step", rotation_angle_step);
+		if (rotation_angle_step != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("rotation_angle_step", rotation_angle_step, NX_FLOAT);
+			validateFieldUnits("rotation_angle_step", group.getDataNode("rotation_angle_step"), NX_ANGLE);
+			validateFieldRank("rotation_angle_step", rotation_angle_step, 1);
+			validateFieldDimensions("rotation_angle_step", rotation_angle_step, null, "nP");
+		}
 	}
 
 	/**

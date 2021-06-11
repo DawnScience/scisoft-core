@@ -38,8 +38,8 @@ public class NexusValidationServiceTest {
 		final ValidationReport report = validationService.validateSubentry(subentry);
 		assertThat(report.isOk(), is(false));
 		assertThat(report.isError(), is(true));
-		assertThat(report.getNumberOfEntries(), is(1)); // empty NXmx entry has 1 validation error
-		assertThat(report.getErrors(), hasSize(1));
+		assertThat(report.getNumberOfEntries(), is(6));
+		assertThat(report.getErrors(), hasSize(6));
 	}
 	
 	@Test
@@ -59,8 +59,8 @@ public class NexusValidationServiceTest {
 		final ValidationReport report = validationService.validateEntry(entry);
 		assertThat(report.isOk(), is(false));
 		assertThat(report.isError(), is(true));
-		assertThat(report.getNumberOfEntries(), is(1));
-		assertThat(report.getErrors(), hasSize(1));
+		assertThat(report.getNumberOfEntries(), is(6));
+		assertThat(report.getErrors(), hasSize(6));
 	}
 	
 	@Test
@@ -76,8 +76,8 @@ public class NexusValidationServiceTest {
 		final ValidationReport report = validationService.validateEntry(entry);
 		assertThat(report.isOk(), is(false));
 		assertThat(report.isError(), is(true));
-		assertThat(report.getNumberOfEntries(), is(4)); // empty NXtomo group has 3 validation errors
-		assertThat(report.getErrors(), hasSize(4));
+		assertThat(report.getNumberOfEntries(), is(9));
+		assertThat(report.getErrors(), hasSize(9));
 	}
 	
 	private NXroot createNexusRoot() {
@@ -104,8 +104,8 @@ public class NexusValidationServiceTest {
 		final ValidationReport report = validationService.validateNexusTree(root);
 		assertThat(report.isOk(), is(false));
 		assertThat(report.isError(), is(true));
-		assertThat(report.getNumberOfEntries(), is(4));
-		assertThat(report.getErrors(), hasSize(4));
+		assertThat(report.getNumberOfEntries(), is(24));
+		assertThat(report.getErrors(), hasSize(24));
 	}
 
 	@Test
@@ -117,8 +117,8 @@ public class NexusValidationServiceTest {
 		final ValidationReport report = validationService.validateNexusTree(treeFile);
 		assertThat(report.isOk(), is(false));
 		assertThat(report.isError(), is(true));
-		assertThat(report.getNumberOfEntries(), is(4));
-		assertThat(report.getErrors(), hasSize(4));
+		assertThat(report.getNumberOfEntries(), is(24));
+		assertThat(report.getErrors(), hasSize(24));
 	}
 
 	@Test
@@ -133,8 +133,8 @@ public class NexusValidationServiceTest {
 		final ValidationReport report = validationService.validateNexusFile(filePath);
 		assertThat(report.isOk(), is(false));
 		assertThat(report.isError(), is(true));
-		assertThat(report.getNumberOfEntries(), is(4));
-		assertThat(report.getErrors(), hasSize(4));
+		assertThat(report.getNumberOfEntries(), is(24));
+		assertThat(report.getErrors(), hasSize(24));
 	}
 
 }

@@ -14,7 +14,7 @@ package org.eclipse.dawnsci.nexus.validation;
 import static org.eclipse.dawnsci.nexus.validation.NexusDataType.*;
 import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 
-import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;import org.eclipse.january.dataset.IDataset;
+import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
@@ -65,11 +65,13 @@ public class NXxlaueplateValidator extends AbstractNexusValidator implements Nex
 
 		// validate field 'definition' of unknown type.
 		final ILazyDataset definition = group.getLazyDataset("definition");
-		if (!(validateFieldNotNull("definition", definition))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("definition", definition, NX_CHAR);
-		validateFieldEnumeration("definition", definition,
-				"NXxlaueplate");
+		validateFieldNotNull("definition", definition);
+		if (definition != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("definition", definition, NX_CHAR);
+			validateFieldEnumeration("definition", definition,
+					"NXxlaueplate");
+		}
 
 		// validate child group 'instrument' of type NXinstrument
 		validateGroup_entry_instrument(group.getInstrument());
@@ -96,9 +98,11 @@ public class NXxlaueplateValidator extends AbstractNexusValidator implements Nex
 
 		// validate field 'diameter' of type NX_FLOAT.
 		final ILazyDataset diameter = group.getLazyDataset("diameter");
-		if (!(validateFieldNotNull("diameter", diameter))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("diameter", diameter, NX_FLOAT);
-		validateFieldUnits("diameter", group.getDataNode("diameter"), NX_LENGTH);
+		validateFieldNotNull("diameter", diameter);
+		if (diameter != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("diameter", diameter, NX_FLOAT);
+			validateFieldUnits("diameter", group.getDataNode("diameter"), NX_LENGTH);
+		}
 	}
 }

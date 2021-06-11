@@ -17,7 +17,7 @@ import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 import java.util.Map;
 
 import java.util.stream.Collectors;
-import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;import org.eclipse.january.dataset.IDataset;
+import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
@@ -111,23 +111,28 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate field 'definition' of unknown type.
 		final ILazyDataset definition = group.getLazyDataset("definition");
-		if (!(validateFieldNotNull("definition", definition))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("definition", definition, NX_CHAR);
-		validateFieldEnumeration("definition", definition,
-				"NXcanSAS");
+		validateFieldNotNull("definition", definition);
+		if (definition != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("definition", definition, NX_CHAR);
+			validateFieldEnumeration("definition", definition,
+					"NXcanSAS");
+		}
 
 		// validate field 'title' of unknown type.
 		final ILazyDataset title = group.getLazyDataset("title");
-		if (!(validateFieldNotNull("title", title))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("title", title, NX_CHAR);
+		validateFieldNotNull("title", title);
+		if (title != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("title", title, NX_CHAR);
+		}
 
 		// validate field 'run' of unknown type. Note: field not defined in base class.
 		final ILazyDataset run = group.getLazyDataset("run");
-		if (!(validateFieldNotNull("run", run))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("run", run, NX_CHAR);
+		validateFieldNotNull("run", run);
+		if (run != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("run", run, NX_CHAR);
 		// validate optional attribute 'name' of field 'run'
 		final Attribute run_attr_name = group.getDataNode("run").getAttribute("name");
 		if (run_attr_name != null) {
@@ -135,6 +140,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 			validateAttributeType("name", run_attr_name, NX_CHAR);
 		}
 
+		}
 
 		// validate unnamed child group of type NXdata (possibly multiple) and canSAS_class SASdata
 		validateUnnamedGroupOccurrences(group, NXdata.class, false, true);
@@ -235,10 +241,11 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate field 'Q' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset Q = group.getLazyDataset("Q");
-		if (!(validateFieldNotNull("Q", Q))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("Q", Q, NX_NUMBER);
-		validateFieldUnits("Q", group.getDataNode("Q"), NX_PER_LENGTH);
+		validateFieldNotNull("Q", Q);
+		if (Q != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("Q", Q, NX_NUMBER);
+			validateFieldUnits("Q", group.getDataNode("Q"), NX_PER_LENGTH);
 		// validate attribute 'units' of field 'Q'
 		final Attribute Q_attr_units = group.getDataNode("Q").getAttribute("units");
 		if (!(validateAttributeNotNull("units", Q_attr_units))) return;
@@ -270,12 +277,14 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 			validateAttributeType("resolutions_description", Q_attr_resolutions_description, NX_CHAR);
 		}
 
+		}
 
 		// validate field 'I' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset I = group.getLazyDataset("I");
-		if (!(validateFieldNotNull("I", I))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("I", I, NX_NUMBER);
+		validateFieldNotNull("I", I);
+		if (I != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("I", I, NX_NUMBER);
 		// validate attribute 'units' of field 'I'
 		final Attribute I_attr_units = group.getDataNode("I").getAttribute("units");
 		if (!(validateAttributeNotNull("units", I_attr_units))) return;
@@ -302,10 +311,11 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 			validateAttributeType("scaling_factor", I_attr_scaling_factor, NX_CHAR);
 		}
 
+		}
 
 		// validate optional field 'Idev' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset Idev = group.getLazyDataset("Idev");
-		if (Idev != null) {
+				if (Idev != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("Idev", Idev, NX_NUMBER);
 		// validate attribute 'units' of field 'Idev'
@@ -324,7 +334,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'Qdev' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset Qdev = group.getLazyDataset("Qdev");
-		if (Qdev != null) {
+				if (Qdev != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("Qdev", Qdev, NX_NUMBER);
 			validateFieldUnits("Qdev", group.getDataNode("Qdev"), NX_PER_LENGTH);
@@ -342,7 +352,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'dQw' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset dQw = group.getLazyDataset("dQw");
-		if (dQw != null) {
+				if (dQw != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("dQw", dQw, NX_NUMBER);
 			validateFieldUnits("dQw", group.getDataNode("dQw"), NX_PER_LENGTH);
@@ -360,7 +370,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'dQl' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset dQl = group.getLazyDataset("dQl");
-		if (dQl != null) {
+				if (dQl != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("dQl", dQl, NX_NUMBER);
 			validateFieldUnits("dQl", group.getDataNode("dQl"), NX_PER_LENGTH);
@@ -378,7 +388,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'Qmean' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset Qmean = group.getLazyDataset("Qmean");
-		if (Qmean != null) {
+				if (Qmean != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("Qmean", Qmean, NX_NUMBER);
 			validateFieldUnits("Qmean", group.getDataNode("Qmean"), NX_PER_LENGTH);
@@ -396,7 +406,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'ShadowFactor' of unknown type. Note: field not defined in base class.
 		final ILazyDataset ShadowFactor = group.getLazyDataset("ShadowFactor");
-		if (ShadowFactor != null) {
+				if (ShadowFactor != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("ShadowFactor", ShadowFactor, NX_CHAR);
 			validateFieldUnits("ShadowFactor", group.getDataNode("ShadowFactor"), NX_DIMENSIONLESS);
@@ -464,13 +474,15 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate field 'shape' of unknown type. Note: field not defined in base class.
 		final ILazyDataset shape = group.getLazyDataset("shape");
-		if (!(validateFieldNotNull("shape", shape))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("shape", shape, NX_CHAR);
+		validateFieldNotNull("shape", shape);
+		if (shape != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("shape", shape, NX_CHAR);
+		}
 
 		// validate optional field 'x_gap' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset x_gap = group.getLazyDataset("x_gap");
-		if (x_gap != null) {
+				if (x_gap != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("x_gap", x_gap, NX_NUMBER);
 			validateFieldUnits("x_gap", group.getDataNode("x_gap"), NX_LENGTH);
@@ -478,7 +490,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'y_gap' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset y_gap = group.getLazyDataset("y_gap");
-		if (y_gap != null) {
+				if (y_gap != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("y_gap", y_gap, NX_NUMBER);
 			validateFieldUnits("y_gap", group.getDataNode("y_gap"), NX_LENGTH);
@@ -502,7 +514,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'length' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset length = group.getLazyDataset("length");
-		if (length != null) {
+				if (length != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("length", length, NX_NUMBER);
 			validateFieldUnits("length", group.getDataNode("length"), NX_LENGTH);
@@ -510,7 +522,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'distance' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset distance = group.getLazyDataset("distance");
-		if (distance != null) {
+				if (distance != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("distance", distance, NX_NUMBER);
 			validateFieldUnits("distance", group.getDataNode("distance"), NX_LENGTH);
@@ -535,13 +547,15 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate field 'name' of unknown type. Note: field not defined in base class.
 		final ILazyDataset name = group.getLazyDataset("name");
-		if (!(validateFieldNotNull("name", name))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("name", name, NX_CHAR);
+		validateFieldNotNull("name", name);
+		if (name != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("name", name, NX_CHAR);
+		}
 
 		// validate optional field 'SDD' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset SDD = group.getLazyDataset("SDD");
-		if (SDD != null) {
+				if (SDD != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("SDD", SDD, NX_NUMBER);
 			validateFieldUnits("SDD", group.getDataNode("SDD"), NX_LENGTH);
@@ -549,7 +563,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'slit_length' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset slit_length = group.getLazyDataset("slit_length");
-		if (slit_length != null) {
+				if (slit_length != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("slit_length", slit_length, NX_NUMBER);
 			validateFieldUnits("slit_length", group.getDataNode("slit_length"), NX_PER_LENGTH);
@@ -557,7 +571,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'x_position' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset x_position = group.getLazyDataset("x_position");
-		if (x_position != null) {
+				if (x_position != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("x_position", x_position, NX_NUMBER);
 			validateFieldUnits("x_position", group.getDataNode("x_position"), NX_LENGTH);
@@ -565,7 +579,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'y_position' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset y_position = group.getLazyDataset("y_position");
-		if (y_position != null) {
+				if (y_position != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("y_position", y_position, NX_NUMBER);
 			validateFieldUnits("y_position", group.getDataNode("y_position"), NX_LENGTH);
@@ -573,7 +587,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'roll' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset roll = group.getLazyDataset("roll");
-		if (roll != null) {
+				if (roll != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("roll", roll, NX_NUMBER);
 			validateFieldUnits("roll", group.getDataNode("roll"), NX_ANGLE);
@@ -581,7 +595,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'pitch' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset pitch = group.getLazyDataset("pitch");
-		if (pitch != null) {
+				if (pitch != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("pitch", pitch, NX_NUMBER);
 			validateFieldUnits("pitch", group.getDataNode("pitch"), NX_ANGLE);
@@ -589,7 +603,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'yaw' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset yaw = group.getLazyDataset("yaw");
-		if (yaw != null) {
+				if (yaw != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("yaw", yaw, NX_NUMBER);
 			validateFieldUnits("yaw", group.getDataNode("yaw"), NX_ANGLE);
@@ -597,7 +611,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'beam_center_x' of type NX_FLOAT.
 		final ILazyDataset beam_center_x = group.getLazyDataset("beam_center_x");
-		if (beam_center_x != null) {
+				if (beam_center_x != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("beam_center_x", beam_center_x, NX_FLOAT);
 			validateFieldUnits("beam_center_x", group.getDataNode("beam_center_x"), NX_LENGTH);
@@ -605,7 +619,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'beam_center_y' of type NX_FLOAT.
 		final ILazyDataset beam_center_y = group.getLazyDataset("beam_center_y");
-		if (beam_center_y != null) {
+				if (beam_center_y != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("beam_center_y", beam_center_y, NX_FLOAT);
 			validateFieldUnits("beam_center_y", group.getDataNode("beam_center_y"), NX_LENGTH);
@@ -613,7 +627,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'x_pixel_size' of type NX_FLOAT.
 		final ILazyDataset x_pixel_size = group.getLazyDataset("x_pixel_size");
-		if (x_pixel_size != null) {
+				if (x_pixel_size != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("x_pixel_size", x_pixel_size, NX_FLOAT);
 			validateFieldUnits("x_pixel_size", group.getDataNode("x_pixel_size"), NX_LENGTH);
@@ -623,7 +637,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'y_pixel_size' of type NX_FLOAT.
 		final ILazyDataset y_pixel_size = group.getLazyDataset("y_pixel_size");
-		if (y_pixel_size != null) {
+				if (y_pixel_size != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("y_pixel_size", y_pixel_size, NX_FLOAT);
 			validateFieldUnits("y_pixel_size", group.getDataNode("y_pixel_size"), NX_LENGTH);
@@ -649,41 +663,43 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate field 'radiation' of unknown type. Note: field not defined in base class.
 		final ILazyDataset radiation = group.getLazyDataset("radiation");
-		if (!(validateFieldNotNull("radiation", radiation))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("radiation", radiation, NX_CHAR);
-		validateFieldEnumeration("radiation", radiation,
-				"Spallation Neutron Source",
-				"Pulsed Reactor Neutron Source",
-				"Reactor Neutron Source",
-				"Synchrotron X-ray Source",
-				"Pulsed Muon Source",
-				"Rotating Anode X-ray",
-				"Fixed Tube X-ray",
-				"UV Laser",
-				"Free-Electron Laser",
-				"Optical Laser",
-				"Ion Source",
-				"UV Plasma Source",
-				"neutron",
-				"x-ray",
-				"muon",
-				"electron",
-				"ultraviolet",
-				"visible light",
-				"positron",
-				"proton");
+		validateFieldNotNull("radiation", radiation);
+		if (radiation != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("radiation", radiation, NX_CHAR);
+			validateFieldEnumeration("radiation", radiation,
+					"Spallation Neutron Source",
+					"Pulsed Reactor Neutron Source",
+					"Reactor Neutron Source",
+					"Synchrotron X-ray Source",
+					"Pulsed Muon Source",
+					"Rotating Anode X-ray",
+					"Fixed Tube X-ray",
+					"UV Laser",
+					"Free-Electron Laser",
+					"Optical Laser",
+					"Ion Source",
+					"UV Plasma Source",
+					"neutron",
+					"x-ray",
+					"muon",
+					"electron",
+					"ultraviolet",
+					"visible light",
+					"positron",
+					"proton");
+		}
 
 		// validate optional field 'beam_shape' of unknown type. Note: field not defined in base class.
 		final ILazyDataset beam_shape = group.getLazyDataset("beam_shape");
-		if (beam_shape != null) {
+				if (beam_shape != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("beam_shape", beam_shape, NX_CHAR);
 		}
 
 		// validate optional field 'incident_wavelength' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset incident_wavelength = group.getLazyDataset("incident_wavelength");
-		if (incident_wavelength != null) {
+				if (incident_wavelength != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("incident_wavelength", incident_wavelength, NX_NUMBER);
 			validateFieldUnits("incident_wavelength", group.getDataNode("incident_wavelength"), NX_WAVELENGTH);
@@ -691,7 +707,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'wavelength_min' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset wavelength_min = group.getLazyDataset("wavelength_min");
-		if (wavelength_min != null) {
+				if (wavelength_min != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("wavelength_min", wavelength_min, NX_NUMBER);
 			validateFieldUnits("wavelength_min", group.getDataNode("wavelength_min"), NX_WAVELENGTH);
@@ -699,7 +715,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'wavelength_max' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset wavelength_max = group.getLazyDataset("wavelength_max");
-		if (wavelength_max != null) {
+				if (wavelength_max != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("wavelength_max", wavelength_max, NX_NUMBER);
 			validateFieldUnits("wavelength_max", group.getDataNode("wavelength_max"), NX_WAVELENGTH);
@@ -707,7 +723,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'incident_wavelength_spread' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset incident_wavelength_spread = group.getLazyDataset("incident_wavelength_spread");
-		if (incident_wavelength_spread != null) {
+				if (incident_wavelength_spread != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("incident_wavelength_spread", incident_wavelength_spread, NX_NUMBER);
 			validateFieldUnits("incident_wavelength_spread", group.getDataNode("incident_wavelength_spread"), NX_WAVELENGTH);
@@ -715,7 +731,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'beam_size_x' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset beam_size_x = group.getLazyDataset("beam_size_x");
-		if (beam_size_x != null) {
+				if (beam_size_x != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("beam_size_x", beam_size_x, NX_NUMBER);
 			validateFieldUnits("beam_size_x", group.getDataNode("beam_size_x"), NX_LENGTH);
@@ -723,7 +739,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'beam_size_y' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset beam_size_y = group.getLazyDataset("beam_size_y");
-		if (beam_size_y != null) {
+				if (beam_size_y != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("beam_size_y", beam_size_y, NX_NUMBER);
 			validateFieldUnits("beam_size_y", group.getDataNode("beam_size_y"), NX_LENGTH);
@@ -748,13 +764,15 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate field 'name' of unknown type.
 		final ILazyDataset name = group.getLazyDataset("name");
-		if (!(validateFieldNotNull("name", name))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("name", name, NX_CHAR);
+		validateFieldNotNull("name", name);
+		if (name != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("name", name, NX_CHAR);
+		}
 
 		// validate optional field 'thickness' of type NX_FLOAT.
 		final ILazyDataset thickness = group.getLazyDataset("thickness");
-		if (thickness != null) {
+				if (thickness != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("thickness", thickness, NX_FLOAT);
 			validateFieldUnits("thickness", group.getDataNode("thickness"), NX_LENGTH);
@@ -762,7 +780,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'transmission' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset transmission = group.getLazyDataset("transmission");
-		if (transmission != null) {
+				if (transmission != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("transmission", transmission, NX_NUMBER);
 			validateFieldUnits("transmission", group.getDataNode("transmission"), NX_DIMENSIONLESS);
@@ -770,7 +788,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'temperature' of type NX_NUMBER.
 		final ILazyDataset temperature = group.getLazyDataset("temperature");
-		if (temperature != null) {
+				if (temperature != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("temperature", temperature, NX_NUMBER);
 			validateFieldUnits("temperature", group.getDataNode("temperature"), NX_TEMPERATURE);
@@ -779,14 +797,14 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'details' of unknown type. Note: field not defined in base class.
 		final ILazyDataset details = group.getLazyDataset("details");
-		if (details != null) {
+				if (details != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("details", details, NX_CHAR);
 		}
 
 		// validate optional field 'x_position' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset x_position = group.getLazyDataset("x_position");
-		if (x_position != null) {
+				if (x_position != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("x_position", x_position, NX_NUMBER);
 			validateFieldUnits("x_position", group.getDataNode("x_position"), NX_LENGTH);
@@ -794,7 +812,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'y_position' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset y_position = group.getLazyDataset("y_position");
-		if (y_position != null) {
+				if (y_position != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("y_position", y_position, NX_NUMBER);
 			validateFieldUnits("y_position", group.getDataNode("y_position"), NX_LENGTH);
@@ -802,7 +820,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'roll' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset roll = group.getLazyDataset("roll");
-		if (roll != null) {
+				if (roll != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("roll", roll, NX_NUMBER);
 			validateFieldUnits("roll", group.getDataNode("roll"), NX_ANGLE);
@@ -810,7 +828,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'pitch' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset pitch = group.getLazyDataset("pitch");
-		if (pitch != null) {
+				if (pitch != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("pitch", pitch, NX_NUMBER);
 			validateFieldUnits("pitch", group.getDataNode("pitch"), NX_ANGLE);
@@ -818,7 +836,7 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'yaw' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset yaw = group.getLazyDataset("yaw");
-		if (yaw != null) {
+				if (yaw != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("yaw", yaw, NX_NUMBER);
 			validateFieldUnits("yaw", group.getDataNode("yaw"), NX_ANGLE);
@@ -842,28 +860,28 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate optional field 'name' of unknown type. Note: field not defined in base class.
 		final ILazyDataset name = group.getLazyDataset("name");
-		if (name != null) {
+				if (name != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("name", name, NX_CHAR);
 		}
 
 		// validate optional field 'date' of type NX_DATE_TIME.
 		final ILazyDataset date = group.getLazyDataset("date");
-		if (date != null) {
+				if (date != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("date", date, NX_DATE_TIME);
 		}
 
 		// validate optional field 'description' of unknown type. Note: field not defined in base class.
 		final ILazyDataset description = group.getLazyDataset("description");
-		if (description != null) {
+				if (description != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("description", description, NX_CHAR);
 		}
 
 		// validate optional field 'term' of unknown type. Note: field not defined in base class.
 		final ILazyDataset term = group.getLazyDataset("term");
-		if (term != null) {
+				if (term != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("term", term, NX_CHAR);
 		}
@@ -973,29 +991,35 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 
 		// validate field 'lambda' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset lambda = group.getLazyDataset("lambda");
-		if (!(validateFieldNotNull("lambda", lambda))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("lambda", lambda, NX_NUMBER);
-		validateFieldUnits("lambda", group.getDataNode("lambda"), NX_WAVELENGTH);
+		validateFieldNotNull("lambda", lambda);
+		if (lambda != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("lambda", lambda, NX_NUMBER);
+			validateFieldUnits("lambda", group.getDataNode("lambda"), NX_WAVELENGTH);
+		}
 
 		// validate field 'T' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset T = group.getLazyDataset("T");
-		if (!(validateFieldNotNull("T", T))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("T", T, NX_NUMBER);
-		validateFieldUnits("T", group.getDataNode("T"), NX_DIMENSIONLESS);
+		validateFieldNotNull("T", T);
+		if (T != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("T", T, NX_NUMBER);
+			validateFieldUnits("T", group.getDataNode("T"), NX_DIMENSIONLESS);
 		// validate attribute 'uncertainties' of field 'T'
 		final Attribute T_attr_uncertainties = group.getDataNode("T").getAttribute("uncertainties");
 		if (!(validateAttributeNotNull("uncertainties", T_attr_uncertainties))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("uncertainties", T_attr_uncertainties, NX_CHAR);
 
+		}
 
 		// validate field 'Tdev' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset Tdev = group.getLazyDataset("Tdev");
-		if (!(validateFieldNotNull("Tdev", Tdev))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("Tdev", Tdev, NX_NUMBER);
-		validateFieldUnits("Tdev", group.getDataNode("Tdev"), NX_DIMENSIONLESS);
+		validateFieldNotNull("Tdev", Tdev);
+		if (Tdev != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("Tdev", Tdev, NX_NUMBER);
+			validateFieldUnits("Tdev", group.getDataNode("Tdev"), NX_DIMENSIONLESS);
+		}
 	}
 }

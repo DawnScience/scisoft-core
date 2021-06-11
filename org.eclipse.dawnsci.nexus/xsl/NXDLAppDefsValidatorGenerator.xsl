@@ -491,22 +491,17 @@
 	
 	<!-- Null check for optional fields, validate not null for mandatory fields. -->
 	<xsl:value-of select="dawnsci:tabs(2)"/>
-	<xsl:choose>
-		<xsl:when test="$optional">
-			<xsl:text>if (</xsl:text><xsl:value-of select="@name"/><xsl:text> != null) {&#10;</xsl:text>
-		</xsl:when>
-		<xsl:otherwise>
-			<xsl:text>if (!(validateFieldNotNull("</xsl:text><xsl:value-of select="@name"/><xsl:text>", </xsl:text>
-			<xsl:value-of select="@name"/><xsl:text>))) return;&#10;</xsl:text>
-		</xsl:otherwise>
-	</xsl:choose>
+	<xsl:if test="not($optional)">
+		<xsl:text>validateFieldNotNull("</xsl:text><xsl:value-of select="@name"/><xsl:text>", </xsl:text>
+		<xsl:value-of select="@name"/><xsl:text>);&#10;</xsl:text>
+	</xsl:if>
+	<xsl:value-of select="dawnsci:tabs(2)"/>
+	<xsl:text>if (</xsl:text><xsl:value-of select="@name"/><xsl:text> != null) {&#10;</xsl:text>
 		
 	<!-- Note: have to call-templates rather than apply-templates as type/unit/enumeration
 	could be defined in the application definition only, the base class only or both.
 	Output is only produced if either the application definition or base class defines a type/unit/enumeration -->
-	<xsl:variable name="tabLevel" select="if ($optional) then 3 else 2"/>
-	
-	<xsl:variable name="tabLevel" select="if ($optional) then 3 else 2"/>
+	<xsl:variable name="tabLevel" select="3"/>
 	<xsl:value-of select="dawnsci:tabs($tabLevel)"/>
 	<xsl:text>// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions&#10;</xsl:text>
 
@@ -544,10 +539,8 @@
 		<xsl:with-param name="baseClassFieldDef" select="$baseClassFieldDef"/>
 	</xsl:apply-templates>
 
-	<!-- Closing brace for null test (only if optional) -->
-	<xsl:if test="$optional">
-		<xsl:value-of select="dawnsci:tabs(2)"/><xsl:text>}&#10;</xsl:text>
-	</xsl:if>
+	<!-- Closing brace for null test -->
+	<xsl:value-of select="dawnsci:tabs(2)"/><xsl:text>}&#10;</xsl:text>
 	
 	<!-- Blank line before validating next field -->
 	<xsl:if test="following-sibling::nx:field|following-sibling::nx:group">
@@ -681,8 +674,7 @@
 		<xsl:text>import java.util.stream.Collectors;&#10;</xsl:text>
 	</xsl:if>
 
-	<xsl:text>import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;</xsl:text>
-	<xsl:text>import org.eclipse.january.dataset.IDataset;&#10;</xsl:text>
+	<xsl:text>import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;&#10;</xsl:text>
 	<xsl:text>import org.eclipse.january.dataset.ILazyDataset;&#10;</xsl:text>
 	<xsl:text>import org.eclipse.dawnsci.analysis.api.tree.DataNode;&#10;</xsl:text>
 	<xsl:if test="//nx:attribute">

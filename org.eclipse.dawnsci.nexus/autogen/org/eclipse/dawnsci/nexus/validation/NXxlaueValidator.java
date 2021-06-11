@@ -14,7 +14,7 @@ package org.eclipse.dawnsci.nexus.validation;
 import static org.eclipse.dawnsci.nexus.validation.NexusDataType.*;
 import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 
-import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;import org.eclipse.january.dataset.IDataset;
+import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
@@ -66,11 +66,13 @@ public class NXxlaueValidator extends AbstractNexusValidator implements NexusApp
 
 		// validate field 'definition' of unknown type.
 		final ILazyDataset definition = group.getLazyDataset("definition");
-		if (!(validateFieldNotNull("definition", definition))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("definition", definition, NX_CHAR);
-		validateFieldEnumeration("definition", definition,
-				"NXxlaue");
+		validateFieldNotNull("definition", definition);
+		if (definition != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("definition", definition, NX_CHAR);
+			validateFieldEnumeration("definition", definition,
+					"NXxlaue");
+		}
 
 		// validate child group 'instrument' of type NXinstrument
 		validateGroup_entry_instrument(group.getInstrument());
@@ -108,19 +110,23 @@ public class NXxlaueValidator extends AbstractNexusValidator implements NexusApp
 
 		// validate field 'data' of unknown type. Note: field not defined in base class.
 		final ILazyDataset data = group.getLazyDataset("data");
-		if (!(validateFieldNotNull("data", data))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("data", data, NX_CHAR);
-		validateFieldRank("data", data, 1);
-		validateFieldDimensions("data", data, null, "nE");
+		validateFieldNotNull("data", data);
+		if (data != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("data", data, NX_CHAR);
+			validateFieldRank("data", data, 1);
+			validateFieldDimensions("data", data, null, "nE");
+		}
 
 		// validate field 'wavelength' of unknown type. Note: field not defined in base class.
 		final ILazyDataset wavelength = group.getLazyDataset("wavelength");
-		if (!(validateFieldNotNull("wavelength", wavelength))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("wavelength", wavelength, NX_CHAR);
-		validateFieldUnits("wavelength", group.getDataNode("wavelength"), NX_WAVELENGTH);
-		validateFieldRank("wavelength", wavelength, 1);
-		validateFieldDimensions("wavelength", wavelength, null, "nE");
+		validateFieldNotNull("wavelength", wavelength);
+		if (wavelength != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("wavelength", wavelength, NX_CHAR);
+			validateFieldUnits("wavelength", group.getDataNode("wavelength"), NX_WAVELENGTH);
+			validateFieldRank("wavelength", wavelength, 1);
+			validateFieldDimensions("wavelength", wavelength, null, "nE");
+		}
 	}
 }

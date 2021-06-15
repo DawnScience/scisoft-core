@@ -17,6 +17,7 @@ import javax.measure.Unit;
 
 import si.uom.SI;
 import tec.units.indriya.AbstractUnit;
+import tec.units.indriya.unit.Units;
 
 /**
  * An enumeration of unit types.
@@ -30,7 +31,7 @@ import tec.units.indriya.AbstractUnit;
  */
 public enum NexusUnitCategory {
 	
-	NX_ANGLE(SI.RADIAN),
+	NX_ANGLE(Units.RADIAN),
 	
 	NX_ANY(null) {
 
@@ -39,67 +40,71 @@ public enum NexusUnitCategory {
 			return true; // all units are accepted
 		}
 		
+		public boolean isRequired() {
+			return false;
+		}
+		
 	},
 	
-	NX_AREA(SI.SQUARE_METRE),
+	NX_AREA(Units.SQUARE_METRE),
 	
-	NX_CHARGE(SI.COULOMB),
+	NX_CHARGE(Units.COULOMB),
 	
-	NX_CROSS_SECTION(SI.SQUARE_METRE), // alias of NX_AREA
+	NX_CROSS_SECTION(Units.SQUARE_METRE), // alias of NX_AREA
 	
-	NX_CURRENT(SI.AMPERE),
+	NX_CURRENT(Units.AMPERE),
 	
 	NX_DIMENSIONLESS(AbstractUnit.ONE), // TODO is this right?
 	
 	/**
 	 * Emmittance, a length * angle, e.g. metre-radians
 	 */
-	NX_EMITTANCE(SI.METRE.multiply(SI.RADIAN)),
+	NX_EMITTANCE(Units.METRE.multiply(Units.RADIAN)),
 	
-	NX_ENERGY(SI.JOULE),
+	NX_ENERGY(Units.JOULE),
 	
 	/**
 	 * some number (e.g. photons) per square meter per second.
 	 */
-	NX_FLUX(SI.SECOND.inverse().divide(SI.SQUARE_METRE)),
+	NX_FLUX(Units.SECOND.inverse().divide(Units.SQUARE_METRE)),
 	
-	NX_FREQUENCY(SI.HERTZ),
+	NX_FREQUENCY(Units.HERTZ),
 	
-	NX_LENGTH(SI.METRE),
+	NX_LENGTH(Units.METRE),
 	
-	NX_MASS(SI.KILOGRAM),
+	NX_MASS(Units.KILOGRAM),
 	
-	NX_MASS_DENSITY(SI.KILOGRAM.divide(SI.CUBIC_METRE)),
+	NX_MASS_DENSITY(Units.KILOGRAM.divide(Units.CUBIC_METRE)),
 	
-	NX_MOLECULAR_WEIGHT(SI.KILOGRAM.divide(SI.MOLE)),
+	NX_MOLECULAR_WEIGHT(Units.KILOGRAM.divide(Units.MOLE)),
 	
 	/**
 	 * Alias to {@link #NX_TIME}
 	 */
-	NX_PERIOD(SI.SECOND),
+	NX_PERIOD(Units.SECOND),
 	
-	NX_PER_AREA(SI.SQUARE_METRE.inverse()),
+	NX_PER_AREA(Units.SQUARE_METRE.inverse()),
 	
-	NX_PER_LENGTH(SI.METRE.inverse()),
+	NX_PER_LENGTH(Units.METRE.inverse()),
 	
-	NX_POWER(SI.WATT),
+	NX_POWER(Units.WATT),
 	
-	NX_PRESSURE(SI.PASCAL),
+	NX_PRESSURE(Units.PASCAL),
 	
 	NX_PULSES(AbstractUnit.ONE), // TODO is this right?
 	
-	NX_SCATTERING_LENGTH_DENSITY(SI.METRE.divide(SI.CUBIC_METRE)), // definition gives example m/m^3 
+	NX_SCATTERING_LENGTH_DENSITY(Units.METRE.divide(Units.CUBIC_METRE)), // definition gives example m/m^3 
 	
-	NX_SOLID_ANGLE(SI.STERADIAN),
+	NX_SOLID_ANGLE(Units.STERADIAN),
 	
-	NX_TEMPERATURE(SI.KELVIN),
+	NX_TEMPERATURE(Units.KELVIN),
 	
-	NX_TIME(SI.SECOND),
+	NX_TIME(Units.SECOND),
 	
 	/**
 	 * Alias to {@link #NX_TIME}
 	 */
-	NX_TIME_OF_FLIGHT(SI.SECOND),
+	NX_TIME_OF_FLIGHT(Units.SECOND),
 	
 	/**
 	 * From https://manual.nexusformat.org/nxdl-types.html:
@@ -112,7 +117,14 @@ public enum NexusUnitCategory {
 
 		@Override
 		public boolean isCompatible(Unit<?> unit) {
+			// Note: we should validate according to the unit category according to the value of the
+			// 'transformations_type' attribute of the NXtransformations group. See DAQ-3588
 			return Arrays.asList(NX_LENGTH, NX_ANGLE, NX_UNITLESS).stream().anyMatch(cat -> cat.isCompatible(unit));
+		}
+		
+		public boolean isRequired() {
+			// units not required for NX_UNITLESS case
+			return false;
 		}
 		
 	},
@@ -124,15 +136,19 @@ public enum NexusUnitCategory {
 			return false; // no unit attribute is valid in this case
 		}
 		
+		public boolean isRequired() {
+			return false;
+		}
+		
 	},
 	
-	NX_VOLTAGE(SI.VOLT),
+	NX_VOLTAGE(Units.VOLT),
 	
-	NX_VOLUME(SI.CUBIC_METRE),
+	NX_VOLUME(Units.CUBIC_METRE),
 	
-	NX_WAVELENGTH(SI.METRE), // example is angstrom
+	NX_WAVELENGTH(Units.METRE), // example is angstrom
 	
-	NX_WAVENUMBER(SI.METRE.inverse()); // example is 1/nm or 1/angstrom
+	NX_WAVENUMBER(SI.RECIPROCAL_METRE); // example is 1/nm or 1/angstrom
 	
 	private Unit<?> standardUnit;
 	
@@ -145,6 +161,10 @@ public enum NexusUnitCategory {
 	
 	public boolean isCompatible(Unit<?> unit) {
 		return unit.getSystemUnit().equals(standardUnit);
+	}
+	
+	public boolean isRequired() {
+		return true;
 	}
 
 }

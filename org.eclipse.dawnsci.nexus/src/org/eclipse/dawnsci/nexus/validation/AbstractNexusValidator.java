@@ -26,7 +26,6 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.nexus.NXobject;
-import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.NXsubentry;
 import org.eclipse.dawnsci.nexus.NXtransformations;
 import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;
@@ -40,6 +39,8 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 
+import si.uom.NonSI;
+import si.uom.SI;
 import tec.units.indriya.format.SimpleUnitFormat;
 
 /**
@@ -71,6 +72,12 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 			return nexusBaseClass;
 		}
 		
+	}
+	
+	static {
+		// ensure units classes are loaded and initialized, required for SimpleUnitFormat to parse their units strings
+		SI.getInstance();
+		NonSI.getInstance();
 	}
 	
 	public static final String ATTRIBUTE_NAME_UNITS = "units";
@@ -226,9 +233,14 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	public boolean validateFieldUnits(final String fieldName, final DataNode dataNode, final NexusUnitCategory unitCategory) {
 		final Attribute unitsAttribute = dataNode.getAttribute(ATTRIBUTE_NAME_UNITS);
 		if (unitsAttribute == null) {
-			addValidationEntry(Level.ERROR, NodeType.DATA_NODE, fieldName, MessageFormat.format("No units attributes specified, expected ''{1}''.", fieldName, unitCategory));
-			return false;
+			if (unitCategory.isRequired()) {
+				addValidationEntry(Level.ERROR, NodeType.DATA_NODE, fieldName, MessageFormat.format("No units attributes specified, expected ''{1}''.", fieldName, unitCategory));
+				return false;
+			} else {
+				return true; // units not required
+			}
 		}
+		
 		final String unitsStr = unitsAttribute.getFirstElement();
 		try {
 			final Unit<?> unit = SimpleUnitFormat.getInstance().parse(unitsStr);
@@ -244,7 +256,7 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 		
 		return true;
 	}
-
+	
 	/**
 	 * Validates that the given field has the expected rank.
 	 * @param fieldName field name

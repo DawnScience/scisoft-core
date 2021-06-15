@@ -255,6 +255,14 @@ public class AbstractNexusValidatorTest {
 	}
 	
 	@Test
+	public void testValidateFieldUnits_unitless() {
+		final DataNode dataNode = NexusNodeFactory.createDataNode();
+		dataNode.setDataset(DatasetFactory.zeros(DoubleDataset.class, 10));
+		validator.validateFieldUnits("distance", dataNode, NexusUnitCategory.NX_UNITLESS);
+		assertThat(validator.getValidationReport().isOk(), is(true));
+	}
+	
+	@Test
 	public void testValidateRank_ok() {
 		IDataset dataset = DatasetFactory.zeros(DoubleDataset.class, 10, 20, 30);
 		validator.validateFieldRank("rankField", dataset, 3);

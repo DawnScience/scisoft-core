@@ -45,11 +45,13 @@ import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.NexusScanInfo;
 import org.eclipse.dawnsci.nexus.NexusScanInfo.ScanRole;
+import org.eclipse.dawnsci.nexus.builder.CustomNexusEntryModification;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectWrapper;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
 import org.eclipse.january.dataset.LazyWriteableDataset;
 import org.eclipse.january.dataset.SliceND;
@@ -60,28 +62,27 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 	
 	private static final Logger logger = LoggerFactory.getLogger(NexusScanMetadataWriter.class);
 	
-	// Always format with 3 decimal places of Millis, prevent truncating by default formatters being unreadable by DateDatasetImpl
 	private static final String DEFAULT_NAME = NexusScanMetadataWriter.class.getSimpleName();
 	
 	public static final int[] SINGLE_SHAPE = new int[] { 1 };
 	public static final int[] START_SHAPE = new int[] { 0 };
 	public static final int[] ONE_D_UNLIMITED_SHAPE = new int[] { -1 };
 	
-	// Writing Datasets
-	private ILazyWriteableDataset uniqueKeysDataset;
-	private ILazyWriteableDataset scanFinishedDataset;
-	private ILazyWriteableDataset scanDurationDataset;
-	private ILazyWriteableDataset scanDeadTimeDataset;
-	private ILazyWriteableDataset scanDeadTimePercentDataset;
-	private ILazyWriteableDataset scanStartTimeDataset;
-	private ILazyWriteableDataset scanEndTimeDataset;
-	private ILazyWriteableDataset pointStartTimeStamps;
-	private ILazyWriteableDataset pointEndTimeStamps;
+	// Writing Datasets. Protected fields to allow overwriting by Bluesky Implementation for tests/futureproofing
+	protected ILazyWriteableDataset uniqueKeysDataset;
+	protected ILazyWriteableDataset scanFinishedDataset;
+	protected ILazyWriteableDataset scanDurationDataset;
+	protected ILazyWriteableDataset scanDeadTimeDataset;
+	protected ILazyWriteableDataset scanDeadTimePercentDataset;
+	protected ILazyWriteableDataset scanStartTimeDataset;
+	protected ILazyWriteableDataset scanEndTimeDataset;
+	protected ILazyWriteableDataset pointStartTimeStamps;
+	protected ILazyWriteableDataset pointEndTimeStamps;
 	
 	private NexusObjectProvider<NXcollection> nexusProvider;
 	private List<NexusObjectProvider<?>> nexusObjectProviders = null;
 	
-	private NexusScanInfo scanInfo = null;
+	protected NexusScanInfo scanInfo = null;
 	private final String name;
 	private ZonedDateTime scanStartTime = null;
 	
@@ -356,7 +357,7 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		logger.info("Scan completed in {}", scanDuration);
 	}
 	
-	private void writeScalarData(String datasetName, ILazyWriteableDataset dataset, Object data) throws NexusException {
+	protected void writeScalarData(String datasetName, ILazyWriteableDataset dataset, Object data) throws NexusException {
 		final Dataset datasetToWrite = createDataset(data);
 		try {
 			dataset.setSlice(null, datasetToWrite, START_SHAPE, SINGLE_SHAPE, SINGLE_SHAPE);
@@ -364,5 +365,14 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 			throw new NexusException("Could not write " + datasetName + " to NeXus file");
 		}
 	}
+	
+	@Override
+	// Write timestamps also to the /entry/
+    public CustomNexusEntryModification getCustomNexusModification() {
+        return nXentry ->
+        {   nXentry.setStart_time((IDataset) scanStartTimeDataset);
+            nXentry.setEnd_time((IDataset) scanEndTimeDataset);
+            nXentry.setDuration((IDataset) scanDurationDataset); };
+    }
 
 }

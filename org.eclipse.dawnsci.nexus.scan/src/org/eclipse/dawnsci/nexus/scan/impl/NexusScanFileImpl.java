@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.nexus.IMultipleNexusDevice;
 import org.eclipse.dawnsci.nexus.INexusDevice;
+import org.eclipse.dawnsci.nexus.NXcollection;
 import org.eclipse.dawnsci.nexus.NXdata;
 import org.eclipse.dawnsci.nexus.NXentry;
 import org.eclipse.dawnsci.nexus.NXobject;
@@ -89,7 +90,6 @@ class NexusScanFileImpl implements NexusScanFile {
 	private final String filePath;
 	private NexusFileBuilder fileBuilder;
 	private NexusBuilderFile nexusBuilderFile;
-	private NXEntryScanTimestampsWriter entryFieldBuilder;
 
 	// we need to cache various things as they are used more than once
 	/**
@@ -185,7 +185,6 @@ class NexusScanFileImpl implements NexusScanFile {
 	 * @throws NexusException 
 	 */
 	public void scanFinished() throws NexusException {
-		entryFieldBuilder.end();
 		validate(fileBuilder);
 		nexusBuilderFile.close();
 	}
@@ -341,18 +340,13 @@ class NexusScanFileImpl implements NexusScanFile {
 
 		addScanMetadata(entryBuilder, nexusScanModel.getNexusMetadataProviders());
 
-		entryFieldBuilder = new NXEntryScanTimestampsWriter(entryBuilder.getNXentry());
-		entryFieldBuilder.start();
-
 		// add all the devices to the entry. Per-scan monitors are added first.
 		for (ScanRole deviceType : EnumSet.allOf(ScanRole.class)) {
 			addDevicesToEntry(entryBuilder, deviceType);
 		}
 		
 		// add the nexus object for the metadata entry (TODO: merge with above)?
-		if (nexusScanModel.getMetadataWriter() != null) {
-			entryBuilder.add(nexusScanModel.getMetadataWriter().getNexusProvider(nexusScanModel.getNexusScanInfo()));
-		}
+		addMetadatadeviceToEntry(entryBuilder, nexusScanModel.getMetadataWriter());
 
 		// create the NXdata groups
 		createNexusDataGroups(entryBuilder);
@@ -369,6 +363,14 @@ class NexusScanFileImpl implements NexusScanFile {
 		for (CustomNexusEntryModification customModification : customModifications) {
 			entryBuilder.modifyEntry(customModification);
 		}
+	}
+	
+	private void addMetadatadeviceToEntry(NexusEntryBuilder entryBuilder, INexusDevice<NXcollection> metadataDevice) throws NexusException {
+		if (metadataDevice == null) return;
+		if (metadataDevice.getCustomNexusModification() != null) {
+			entryBuilder.modifyEntry(metadataDevice.getCustomNexusModification());
+		}
+		entryBuilder.add(metadataDevice.getNexusProvider(nexusScanModel.getNexusScanInfo()));
 	}
 
 	private void addScanMetadata(NexusEntryBuilder entryBuilder, List<NexusMetadataProvider> nexusMetadataProviders) throws NexusException {
@@ -450,16 +452,6 @@ class NexusScanFileImpl implements NexusScanFile {
 			createNXDataGroup(entryBuilder, primaryDevice, primaryDeviceType, monitors,
 					scannables, dataGroupName, dataFieldName);
 		}
-		
-		setDefaultDataGroupName(entryBuilder);
-	}
-
-	private void setDefaultDataGroupName(NexusEntryBuilder entryBuilder) throws NexusException {
-		// get the list of data group names, note as GroupNodeImpl uses a LinkedHashMap for child nodes, insertion order is preserved
-		final List<String> dataGroupNames = new ArrayList<>(entryBuilder.getNXentry().getAllData().keySet());
-		final IDefaultDataGroupCalculator calculator = ServiceHolder.getDefaultDataGroupConfiguration();
-		final String defaultDataGroupName = calculator.getDefaultDataGroupName(dataGroupNames);
-		entryBuilder.setDefaultDataGroupName(defaultDataGroupName);
 	}
 
 	/**
@@ -468,10 +460,10 @@ class NexusScanFileImpl implements NexusScanFile {
 	 * @param primaryDevice the primary device (e.g. a detector or monitor)
 	 * @param primaryDeviceType the type of the primary device
 	 * @param monitors the monitors
+	 * @param scannedDevices the devices being scanned
 	 * @param dataGroupName the name of the {@link NXdata} group within the parent {@link NXentry}
 	 * @param primaryDataFieldName the name that the primary data field name
 	 *   (i.e. the <code>@signal</code> field) should have within the NXdata group
-	 * @param scannedDevice the devices being scanned
 	 * @throws NexusException
 	 */
 	private void createNXDataGroup(NexusEntryBuilder entryBuilder,

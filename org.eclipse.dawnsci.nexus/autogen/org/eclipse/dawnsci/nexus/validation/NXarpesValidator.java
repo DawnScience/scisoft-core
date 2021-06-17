@@ -74,7 +74,7 @@ public class NXarpesValidator extends AbstractNexusValidator implements NexusApp
 		// validate that the group is not null
 		if (!(validateGroupNotNull(null, NXentry.class, group))) return;
 
-		// validate attribute 'entry'
+		// validate attribute 'entry' of type NX_CHAR.
 		final Attribute entry_attr = group.getAttribute("entry");
 		if (!(validateAttributeNotNull("entry", entry_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
@@ -96,7 +96,7 @@ public class NXarpesValidator extends AbstractNexusValidator implements NexusApp
 			validateFieldType("start_time", start_time, NX_DATE_TIME);
 		}
 
-		// validate field 'definition' of unknown type.
+		// validate field 'definition' of type NX_CHAR.
 		final ILazyDataset definition = group.getLazyDataset("definition");
 		validateFieldNotNull("definition", definition);
 		if (definition != null) {
@@ -185,7 +185,7 @@ public class NXarpesValidator extends AbstractNexusValidator implements NexusApp
 			validateFieldType("name", name, NX_CHAR);
 		}
 
-		// validate field 'probe' of unknown type.
+		// validate field 'probe' of type NX_CHAR.
 		final ILazyDataset probe = group.getLazyDataset("probe");
 		validateFieldNotNull("probe", probe);
 		if (probe != null) {
@@ -240,7 +240,7 @@ public class NXarpesValidator extends AbstractNexusValidator implements NexusApp
 			validateFieldType("lens_mode", lens_mode, NX_CHAR);
 		}
 
-		// validate field 'acquisition_mode' of unknown type.
+		// validate field 'acquisition_mode' of type NX_CHAR.
 		final ILazyDataset acquisition_mode = group.getLazyDataset("acquisition_mode");
 		validateFieldNotNull("acquisition_mode", acquisition_mode);
 		if (acquisition_mode != null) {
@@ -251,7 +251,7 @@ public class NXarpesValidator extends AbstractNexusValidator implements NexusApp
 					"fixed");
 		}
 
-		// validate field 'entrance_slit_shape' of unknown type. Note: field not defined in base class.
+		// validate field 'entrance_slit_shape' of type NX_CHAR. Note: field not defined in base class.
 		final ILazyDataset entrance_slit_shape = group.getLazyDataset("entrance_slit_shape");
 		validateFieldNotNull("entrance_slit_shape", entrance_slit_shape);
 		if (entrance_slit_shape != null) {
@@ -271,7 +271,7 @@ public class NXarpesValidator extends AbstractNexusValidator implements NexusApp
 			validateFieldUnits("entrance_slit_setting", group.getDataNode("entrance_slit_setting"), NX_ANY);
 		}
 
-		// validate field 'entrance_slit_size' of unknown type. Note: field not defined in base class.
+		// validate field 'entrance_slit_size' of type NX_CHAR. Note: field not defined in base class.
 		final ILazyDataset entrance_slit_size = group.getLazyDataset("entrance_slit_size");
 		validateFieldNotNull("entrance_slit_size", entrance_slit_size);
 		if (entrance_slit_size != null) {
@@ -280,7 +280,7 @@ public class NXarpesValidator extends AbstractNexusValidator implements NexusApp
 			validateFieldUnits("entrance_slit_size", group.getDataNode("entrance_slit_size"), NX_LENGTH);
 		}
 
-		// validate field 'pass_energy' of unknown type. Note: field not defined in base class.
+		// validate field 'pass_energy' of type NX_CHAR. Note: field not defined in base class.
 		final ILazyDataset pass_energy = group.getLazyDataset("pass_energy");
 		validateFieldNotNull("pass_energy", pass_energy);
 		if (pass_energy != null) {
@@ -289,7 +289,7 @@ public class NXarpesValidator extends AbstractNexusValidator implements NexusApp
 			validateFieldUnits("pass_energy", group.getDataNode("pass_energy"), NX_ENERGY);
 		}
 
-		// validate field 'time_per_channel' of unknown type. Note: field not defined in base class.
+		// validate field 'time_per_channel' of type NX_CHAR. Note: field not defined in base class.
 		final ILazyDataset time_per_channel = group.getLazyDataset("time_per_channel");
 		validateFieldNotNull("time_per_channel", time_per_channel);
 		if (time_per_channel != null) {

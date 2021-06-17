@@ -78,13 +78,13 @@ public class NXsasValidator extends AbstractNexusValidator implements NexusAppli
 		// validate that the group is not null
 		if (!(validateGroupNotNull(null, NXentry.class, group))) return;
 
-		// validate attribute 'entry'
+		// validate attribute 'entry' of type NX_CHAR.
 		final Attribute entry_attr = group.getAttribute("entry");
 		if (!(validateAttributeNotNull("entry", entry_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("entry", entry_attr, NX_CHAR);
 
-		// validate field 'title' of unknown type.
+		// validate field 'title' of type NX_CHAR.
 		final ILazyDataset title = group.getLazyDataset("title");
 		validateFieldNotNull("title", title);
 		if (title != null) {
@@ -108,7 +108,7 @@ public class NXsasValidator extends AbstractNexusValidator implements NexusAppli
 			validateFieldType("end_time", end_time, NX_DATE_TIME);
 		}
 
-		// validate field 'definition' of unknown type.
+		// validate field 'definition' of type NX_CHAR.
 		final ILazyDataset definition = group.getLazyDataset("definition");
 		validateFieldNotNull("definition", definition);
 		if (definition != null) {
@@ -165,7 +165,7 @@ public class NXsasValidator extends AbstractNexusValidator implements NexusAppli
 		// validate that the group is not null
 		if (!(validateGroupNotNull("source", NXsource.class, group))) return;
 
-		// validate field 'type' of unknown type.
+		// validate field 'type' of type NX_CHAR.
 		final ILazyDataset type = group.getLazyDataset("type");
 		validateFieldNotNull("type", type);
 		if (type != null) {
@@ -186,7 +186,7 @@ public class NXsasValidator extends AbstractNexusValidator implements NexusAppli
 					"UV Plasma Source");
 		}
 
-		// validate field 'name' of unknown type.
+		// validate field 'name' of type NX_CHAR.
 		final ILazyDataset name = group.getLazyDataset("name");
 		validateFieldNotNull("name", name);
 		if (name != null) {
@@ -194,7 +194,7 @@ public class NXsasValidator extends AbstractNexusValidator implements NexusAppli
 			validateFieldType("name", name, NX_CHAR);
 		}
 
-		// validate field 'probe' of unknown type.
+		// validate field 'probe' of type NX_CHAR.
 		final ILazyDataset probe = group.getLazyDataset("probe");
 		validateFieldNotNull("probe", probe);
 		if (probe != null) {
@@ -402,7 +402,7 @@ public class NXsasValidator extends AbstractNexusValidator implements NexusAppli
 		if (!(validateGroupNotNull("sample", NXsample.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
-		// validate field 'name' of unknown type.
+		// validate field 'name' of type NX_CHAR.
 		final ILazyDataset name = group.getLazyDataset("name");
 		validateFieldNotNull("name", name);
 		if (name != null) {
@@ -428,7 +428,7 @@ public class NXsasValidator extends AbstractNexusValidator implements NexusAppli
 		if (!(validateGroupNotNull("control", NXmonitor.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
-		// validate field 'mode' of unknown type.
+		// validate field 'mode' of type NX_CHAR.
 		final ILazyDataset mode = group.getLazyDataset("mode");
 		validateFieldNotNull("mode", mode);
 		if (mode != null) {

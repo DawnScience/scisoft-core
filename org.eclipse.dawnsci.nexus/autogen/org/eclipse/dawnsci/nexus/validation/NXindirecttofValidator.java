@@ -65,7 +65,7 @@ public class NXindirecttofValidator extends AbstractNexusValidator implements Ne
 		// validate that the group is not null
 		if (!(validateGroupNotNull("entry", NXentry.class, group))) return;
 
-		// validate field 'title' of unknown type.
+		// validate field 'title' of type NX_CHAR.
 		final ILazyDataset title = group.getLazyDataset("title");
 		validateFieldNotNull("title", title);
 		if (title != null) {
@@ -81,7 +81,7 @@ public class NXindirecttofValidator extends AbstractNexusValidator implements Ne
 			validateFieldType("start_time", start_time, NX_DATE_TIME);
 		}
 
-		// validate field 'definition' of unknown type.
+		// validate field 'definition' of type NX_CHAR.
 		final ILazyDataset definition = group.getLazyDataset("definition");
 		validateFieldNotNull("definition", definition);
 		if (definition != null) {

@@ -67,7 +67,7 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 		// validate that the group is not null
 		if (!(validateGroupNotNull("entry", NXentry.class, group))) return;
 
-		// validate optional field 'title' of unknown type.
+		// validate optional field 'title' of type NX_CHAR.
 		final ILazyDataset title = group.getLazyDataset("title");
 				if (title != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
@@ -88,7 +88,7 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 			validateFieldType("end_time", end_time, NX_DATE_TIME);
 		}
 
-		// validate field 'definition' of unknown type.
+		// validate field 'definition' of type NX_CHAR.
 		final ILazyDataset definition = group.getLazyDataset("definition");
 		validateFieldNotNull("definition", definition);
 		if (definition != null) {
@@ -138,7 +138,7 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 		// validate that the group is not null
 		if (!(validateGroupNotNull(null, NXsource.class, group))) return;
 
-		// validate optional field 'type' of unknown type.
+		// validate optional field 'type' of type NX_CHAR.
 		final ILazyDataset type = group.getLazyDataset("type");
 				if (type != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
@@ -158,14 +158,14 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 					"UV Plasma Source");
 		}
 
-		// validate optional field 'name' of unknown type.
+		// validate optional field 'name' of type NX_CHAR.
 		final ILazyDataset name = group.getLazyDataset("name");
 				if (name != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("name", name, NX_CHAR);
 		}
 
-		// validate optional field 'probe' of unknown type.
+		// validate optional field 'probe' of type NX_CHAR.
 		final ILazyDataset probe = group.getLazyDataset("probe");
 				if (probe != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
@@ -259,7 +259,7 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 		if (!(validateGroupNotNull("sample", NXsample.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
-		// validate field 'name' of unknown type.
+		// validate field 'name' of type NX_CHAR.
 		final ILazyDataset name = group.getLazyDataset("name");
 		validateFieldNotNull("name", name);
 		if (name != null) {

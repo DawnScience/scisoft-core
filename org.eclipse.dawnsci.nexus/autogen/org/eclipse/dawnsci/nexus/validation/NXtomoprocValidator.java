@@ -70,7 +70,7 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 		// validate that the group is not null
 		if (!(validateGroupNotNull("entry", NXentry.class, group))) return;
 
-		// validate field 'title' of unknown type.
+		// validate field 'title' of type NX_CHAR.
 		final ILazyDataset title = group.getLazyDataset("title");
 		validateFieldNotNull("title", title);
 		if (title != null) {
@@ -78,7 +78,7 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 			validateFieldType("title", title, NX_CHAR);
 		}
 
-		// validate field 'definition' of unknown type.
+		// validate field 'definition' of type NX_CHAR.
 		final ILazyDataset definition = group.getLazyDataset("definition");
 		validateFieldNotNull("definition", definition);
 		if (definition != null) {
@@ -131,7 +131,7 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 		// validate that the group is not null
 		if (!(validateGroupNotNull(null, NXsource.class, group))) return;
 
-		// validate field 'type' of unknown type.
+		// validate field 'type' of type NX_CHAR.
 		final ILazyDataset type = group.getLazyDataset("type");
 		validateFieldNotNull("type", type);
 		if (type != null) {
@@ -152,7 +152,7 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 					"UV Plasma Source");
 		}
 
-		// validate field 'name' of unknown type.
+		// validate field 'name' of type NX_CHAR.
 		final ILazyDataset name = group.getLazyDataset("name");
 		validateFieldNotNull("name", name);
 		if (name != null) {
@@ -160,7 +160,7 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 			validateFieldType("name", name, NX_CHAR);
 		}
 
-		// validate field 'probe' of unknown type.
+		// validate field 'probe' of type NX_CHAR.
 		final ILazyDataset probe = group.getLazyDataset("probe");
 		validateFieldNotNull("probe", probe);
 		if (probe != null) {
@@ -181,7 +181,7 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 		if (!(validateGroupNotNull(null, NXsample.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
-		// validate field 'name' of unknown type.
+		// validate field 'name' of type NX_CHAR.
 		final ILazyDataset name = group.getLazyDataset("name");
 		validateFieldNotNull("name", name);
 		if (name != null) {
@@ -257,19 +257,19 @@ public class NXtomoprocValidator extends AbstractNexusValidator implements Nexus
 			validateFieldType("data", data, NX_INT);
 			validateFieldRank("data", data, 3);
 			validateFieldDimensions("data", data, null, "nX", "nX", "nZ");
-		// validate attribute 'transform' of field 'data'
+		// validate attribute 'transform' of field 'data' of type NX_CHAR.
 		final Attribute data_attr_transform = group.getDataNode("data").getAttribute("transform");
 		if (!(validateAttributeNotNull("transform", data_attr_transform))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("transform", data_attr_transform, NX_CHAR);
 
-		// validate attribute 'offset' of field 'data'
+		// validate attribute 'offset' of field 'data' of type NX_CHAR.
 		final Attribute data_attr_offset = group.getDataNode("data").getAttribute("offset");
 		if (!(validateAttributeNotNull("offset", data_attr_offset))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("offset", data_attr_offset, NX_CHAR);
 
-		// validate attribute 'scaling' of field 'data'
+		// validate attribute 'scaling' of field 'data' of type NX_CHAR.
 		final Attribute data_attr_scaling = group.getDataNode("data").getAttribute("scaling");
 		if (!(validateAttributeNotNull("scaling", data_attr_scaling))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration

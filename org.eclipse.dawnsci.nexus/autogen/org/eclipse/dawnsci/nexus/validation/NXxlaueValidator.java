@@ -64,7 +64,7 @@ public class NXxlaueValidator extends AbstractNexusValidator implements NexusApp
 		// validate that the group is not null
 		if (!(validateGroupNotNull("entry", NXentry.class, group))) return;
 
-		// validate field 'definition' of unknown type.
+		// validate field 'definition' of type NX_CHAR.
 		final ILazyDataset definition = group.getLazyDataset("definition");
 		validateFieldNotNull("definition", definition);
 		if (definition != null) {
@@ -108,7 +108,7 @@ public class NXxlaueValidator extends AbstractNexusValidator implements NexusApp
 		if (!(validateGroupNotNull("distribution", NXdata.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
-		// validate field 'data' of unknown type. Note: field not defined in base class.
+		// validate field 'data' of type NX_CHAR. Note: field not defined in base class.
 		final ILazyDataset data = group.getLazyDataset("data");
 		validateFieldNotNull("data", data);
 		if (data != null) {
@@ -118,7 +118,7 @@ public class NXxlaueValidator extends AbstractNexusValidator implements NexusApp
 			validateFieldDimensions("data", data, null, "nE");
 		}
 
-		// validate field 'wavelength' of unknown type. Note: field not defined in base class.
+		// validate field 'wavelength' of type NX_CHAR. Note: field not defined in base class.
 		final ILazyDataset wavelength = group.getLazyDataset("wavelength");
 		validateFieldNotNull("wavelength", wavelength);
 		if (wavelength != null) {

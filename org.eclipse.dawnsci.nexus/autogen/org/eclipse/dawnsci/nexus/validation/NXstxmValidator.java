@@ -74,7 +74,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		// validate that the group is not null
 		if (!(validateGroupNotNull(null, NXentry.class, group))) return;
 
-		// validate field 'title' of unknown type.
+		// validate field 'title' of type NX_CHAR.
 		final ILazyDataset title = group.getLazyDataset("title");
 		validateFieldNotNull("title", title);
 		if (title != null) {
@@ -178,7 +178,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		// validate that the group is not null
 		if (!(validateGroupNotNull(null, NXsource.class, group))) return;
 
-		// validate field 'type' of unknown type.
+		// validate field 'type' of type NX_CHAR.
 		final ILazyDataset type = group.getLazyDataset("type");
 		validateFieldNotNull("type", type);
 		if (type != null) {
@@ -199,7 +199,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 					"UV Plasma Source");
 		}
 
-		// validate field 'name' of unknown type.
+		// validate field 'name' of type NX_CHAR.
 		final ILazyDataset name = group.getLazyDataset("name");
 		validateFieldNotNull("name", name);
 		if (name != null) {
@@ -207,7 +207,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 			validateFieldType("name", name, NX_CHAR);
 		}
 
-		// validate field 'probe' of unknown type.
+		// validate field 'probe' of type NX_CHAR.
 		final ILazyDataset probe = group.getLazyDataset("probe");
 		validateFieldNotNull("probe", probe);
 		if (probe != null) {
@@ -349,7 +349,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 		if (!(validateGroupNotNull(null, NXdata.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
-		// validate field 'stxm_scan_type' of unknown type. Note: field not defined in base class.
+		// validate field 'stxm_scan_type' of type NX_CHAR. Note: field not defined in base class.
 		final ILazyDataset stxm_scan_type = group.getLazyDataset("stxm_scan_type");
 		validateFieldNotNull("stxm_scan_type", stxm_scan_type);
 		if (stxm_scan_type != null) {

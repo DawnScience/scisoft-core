@@ -67,7 +67,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		// validate that the group is not null
 		if (!(validateGroupNotNull("entry", NXentry.class, group))) return;
 
-		// validate field 'definition' of unknown type.
+		// validate field 'definition' of type NX_CHAR.
 		final ILazyDataset definition = group.getLazyDataset("definition");
 		validateFieldNotNull("definition", definition);
 		if (definition != null) {
@@ -140,7 +140,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 			validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
 			validateFieldRank("data", data, 3);
 			validateFieldDimensions("data", data, null, "nXPixels", "nYPixels", "nTOF");
-		// validate attribute 'signal' of field 'data'
+		// validate attribute 'signal' of field 'data' of type NX_POSINT.
 		final Attribute data_attr_signal = group.getDataNode("data").getAttribute("signal");
 		if (!(validateAttributeNotNull("signal", data_attr_signal))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
@@ -203,7 +203,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		if (!(validateGroupNotNull("sample", NXsample.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
-		// validate field 'name' of unknown type.
+		// validate field 'name' of type NX_CHAR.
 		final ILazyDataset name = group.getLazyDataset("name");
 		validateFieldNotNull("name", name);
 		if (name != null) {
@@ -241,7 +241,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 		if (!(validateGroupNotNull("control", NXmonitor.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
-		// validate field 'mode' of unknown type.
+		// validate field 'mode' of type NX_CHAR.
 		final ILazyDataset mode = group.getLazyDataset("mode");
 		validateFieldNotNull("mode", mode);
 		if (mode != null) {

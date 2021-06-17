@@ -145,11 +145,13 @@ public class NXdiamondValidator extends AbstractNexusValidator implements NexusA
 
 		// validate field 'name' of type NX_CHAR.
 		final ILazyDataset name = group.getLazyDataset("name");
-		if (!(validateFieldNotNull("name", name))) return;
-		// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-		validateFieldType("name", name, NX_CHAR);
-		validateFieldEnumeration("name", name,
-				"Diamond Light Source");
+		validateFieldNotNull("name", name);
+		if (name != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("name", name, NX_CHAR);
+			validateFieldEnumeration("name", name,
+					"Diamond Light Source");
+		}
 
 		// validate field 'type' of type NX_CHAR.
 		final ILazyDataset type = group.getLazyDataset("type");
@@ -179,7 +181,7 @@ public class NXdiamondValidator extends AbstractNexusValidator implements NexusA
 		// validate that the group is not null
 		if (!(validateGroupNotNull(null, NXinsertion_device.class, group))) return;
 
-		// validate field 'type' of unknown type.
+		// validate field 'type' of type NX_CHAR.
 		final ILazyDataset type = group.getLazyDataset("type");
 		validateFieldNotNull("type", type);
 		if (type != null) {
@@ -242,7 +244,7 @@ public class NXdiamondValidator extends AbstractNexusValidator implements NexusA
 		// validate that the group is not null
 		if (!(validateGroupNotNull(null, NXuser.class, group))) return;
 
-		// validate field 'name' of unknown type.
+		// validate field 'name' of type NX_CHAR.
 		final ILazyDataset name = group.getLazyDataset("name");
 		validateFieldNotNull("name", name);
 		if (name != null) {
@@ -250,7 +252,7 @@ public class NXdiamondValidator extends AbstractNexusValidator implements NexusA
 			validateFieldType("name", name, NX_CHAR);
 		}
 
-		// validate field 'facility_user_id' of unknown type.
+		// validate field 'facility_user_id' of type NX_CHAR.
 		final ILazyDataset facility_user_id = group.getLazyDataset("facility_user_id");
 		validateFieldNotNull("facility_user_id", facility_user_id);
 		if (facility_user_id != null) {

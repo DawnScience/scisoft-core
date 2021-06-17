@@ -67,7 +67,7 @@ public class NXreftofValidator extends AbstractNexusValidator implements NexusAp
 		// validate that the group is not null
 		if (!(validateGroupNotNull("entry", NXentry.class, group))) return;
 
-		// validate field 'title' of unknown type.
+		// validate field 'title' of type NX_CHAR.
 		final ILazyDataset title = group.getLazyDataset("title");
 		validateFieldNotNull("title", title);
 		if (title != null) {
@@ -91,7 +91,7 @@ public class NXreftofValidator extends AbstractNexusValidator implements NexusAp
 			validateFieldType("end_time", end_time, NX_DATE_TIME);
 		}
 
-		// validate field 'definition' of unknown type.
+		// validate field 'definition' of type NX_CHAR.
 		final ILazyDataset definition = group.getLazyDataset("definition");
 		validateFieldNotNull("definition", definition);
 		if (definition != null) {
@@ -237,7 +237,7 @@ public class NXreftofValidator extends AbstractNexusValidator implements NexusAp
 		if (!(validateGroupNotNull("sample", NXsample.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
-		// validate field 'name' of unknown type.
+		// validate field 'name' of type NX_CHAR.
 		final ILazyDataset name = group.getLazyDataset("name");
 		validateFieldNotNull("name", name);
 		if (name != null) {
@@ -263,7 +263,7 @@ public class NXreftofValidator extends AbstractNexusValidator implements NexusAp
 		if (!(validateGroupNotNull("control", NXmonitor.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
-		// validate field 'mode' of unknown type.
+		// validate field 'mode' of type NX_CHAR.
 		final ILazyDataset mode = group.getLazyDataset("mode");
 		validateFieldNotNull("mode", mode);
 		if (mode != null) {

@@ -73,7 +73,7 @@ public class NXspeValidator extends AbstractNexusValidator implements NexusAppli
 		// validate that the group is not null
 		if (!(validateGroupNotNull(null, NXentry.class, group))) return;
 
-		// validate field 'program_name' of unknown type.
+		// validate field 'program_name' of type NX_CHAR.
 		final ILazyDataset program_name = group.getLazyDataset("program_name");
 		validateFieldNotNull("program_name", program_name);
 		if (program_name != null) {
@@ -81,7 +81,7 @@ public class NXspeValidator extends AbstractNexusValidator implements NexusAppli
 			validateFieldType("program_name", program_name, NX_CHAR);
 		}
 
-		// validate field 'definition' of unknown type.
+		// validate field 'definition' of type NX_CHAR.
 		final ILazyDataset definition = group.getLazyDataset("definition");
 		validateFieldNotNull("definition", definition);
 		if (definition != null) {
@@ -90,7 +90,7 @@ public class NXspeValidator extends AbstractNexusValidator implements NexusAppli
 			validateFieldEnumeration("definition", definition,
 					"NXSPE",
 					"NXspe");
-		// validate attribute 'version' of field 'definition'
+		// validate attribute 'version' of field 'definition' of type NX_CHAR.
 		final Attribute definition_attr_version = group.getDataNode("definition").getAttribute("version");
 		if (!(validateAttributeNotNull("version", definition_attr_version))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration

@@ -72,13 +72,13 @@ public class NXxasprocValidator extends AbstractNexusValidator implements NexusA
 		// validate that the group is not null
 		if (!(validateGroupNotNull(null, NXentry.class, group))) return;
 
-		// validate attribute 'entry'
+		// validate attribute 'entry' of type NX_CHAR.
 		final Attribute entry_attr = group.getAttribute("entry");
 		if (!(validateAttributeNotNull("entry", entry_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("entry", entry_attr, NX_CHAR);
 
-		// validate field 'title' of unknown type.
+		// validate field 'title' of type NX_CHAR.
 		final ILazyDataset title = group.getLazyDataset("title");
 		validateFieldNotNull("title", title);
 		if (title != null) {
@@ -86,7 +86,7 @@ public class NXxasprocValidator extends AbstractNexusValidator implements NexusA
 			validateFieldType("title", title, NX_CHAR);
 		}
 
-		// validate field 'definition' of unknown type.
+		// validate field 'definition' of type NX_CHAR.
 		final ILazyDataset definition = group.getLazyDataset("definition");
 		validateFieldNotNull("definition", definition);
 		if (definition != null) {
@@ -122,7 +122,7 @@ public class NXxasprocValidator extends AbstractNexusValidator implements NexusA
 		if (!(validateGroupNotNull(null, NXsample.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
-		// validate field 'name' of unknown type.
+		// validate field 'name' of type NX_CHAR.
 		final ILazyDataset name = group.getLazyDataset("name");
 		validateFieldNotNull("name", name);
 		if (name != null) {
@@ -190,7 +190,7 @@ public class NXxasprocValidator extends AbstractNexusValidator implements NexusA
 		if (!(validateGroupNotNull(null, NXdata.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
-		// validate field 'energy' of unknown type. Note: field not defined in base class.
+		// validate field 'energy' of type NX_CHAR. Note: field not defined in base class.
 		final ILazyDataset energy = group.getLazyDataset("energy");
 		validateFieldNotNull("energy", energy);
 		if (energy != null) {

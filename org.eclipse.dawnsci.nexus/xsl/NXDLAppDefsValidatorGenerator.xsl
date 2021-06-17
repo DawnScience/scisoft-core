@@ -390,13 +390,21 @@
 		select="if ($fieldDef) then $fieldDef/@name || '_attr_' || @name else @name || '_attr'"/>
 	<xsl:variable name="optional" select="@optional='true'"/>
 	
-	<!-- Line comment: validate attribute 'attributeName' (of field 'fieldName'>)-->
+	<!-- The type of the attribute. If defined in the app def, this overrides the base class, the default is NX_CHAR -->
+	<xsl:variable name="type">
+		<xsl:call-template name="calculate-type">
+			<xsl:with-param name="baseClassDef" select="$baseClassAttributeDef"/>
+		</xsl:call-template>
+	</xsl:variable>
+ 
+	<!-- Line comment: validate attribute 'attributeName' (of field 'fieldName') of type 'type'-->
 	<xsl:value-of select="dawnsci:tabs(2)"/>
 	<xsl:text>// validate </xsl:text><xsl:if test="$optional">optional </xsl:if>
 	<xsl:text>attribute '</xsl:text><xsl:value-of select="@name"/><xsl:text>'</xsl:text>
 	<xsl:if test="$fieldDef">
 		<xsl:text> of field '</xsl:text><xsl:value-of select="$fieldDef/@name"/><xsl:text>'</xsl:text>
 	</xsl:if>
+	<xsl:text> of type </xsl:text><xsl:value-of select="$type"/><xsl:text>.</xsl:text>
 	<xsl:text>&#10;</xsl:text>
 
 	<!-- Get the attribute from the group, e.g. final Attribute entryAttr = group.getAttribute("entry"); -->
@@ -427,9 +435,9 @@
 	
 	<!-- Validate the attribute's type, if defined (either in the application definition or the base class)  -->
 	<xsl:call-template name="validate-dataset-type">
-		<xsl:with-param name="baseClassFieldOrAttributeDef" select="$baseClassAttributeDef"/>
 		<xsl:with-param name="nodeType" select="'attribute'"/>
 		<xsl:with-param name="variableName" select="$attrVarName"/>
+		<xsl:with-param name="type" select="$type"/>
 		<xsl:with-param name="tabLevel" select="$tabLevel"/>
 	</xsl:call-template>
 	
@@ -474,12 +482,18 @@
 		<xsl:value-of select="'getLazyDataset(&quot;' || @name || '&quot;)'"/>
 	</xsl:variable>
 	
+	<!-- The type of the field. If defined in the app def, this overrides the base class, the default is NX_CHAR -->
+	<xsl:variable name="type">
+		<xsl:call-template name="calculate-type">
+			<xsl:with-param name="baseClassDef" select="$baseClassFieldDef"/>
+		</xsl:call-template>
+	</xsl:variable>
+ 
 	<!-- Line comment for field validation: validate (optional)? field 'fieldName' of type 'NXtype' -->
 	<xsl:value-of select="dawnsci:tabs(2)"/>
 	<xsl:text>// validate </xsl:text><xsl:if test="$optional">optional </xsl:if>
 	<xsl:text>field '</xsl:text><xsl:value-of select="@name"/>
-	<xsl:text>' of </xsl:text>
-	<xsl:value-of select="if (@type) then 'type ' || @type else 'unknown type'"/><xsl:text>.</xsl:text>
+	<xsl:text>' of type </xsl:text><xsl:value-of select="$type"/><xsl:text>.</xsl:text>
 	<xsl:if test="not($baseClassFieldDef)"> Note: field not defined in base class.</xsl:if>
 	<xsl:text>&#10;</xsl:text>
 	
@@ -507,8 +521,8 @@
 
 	<!-- Validate the field's type if defined (either in the application definition or the base class)-->
 	<xsl:call-template name="validate-dataset-type">
-		<xsl:with-param name="baseClassFieldOrAttributeDef" select="$baseClassFieldDef"/>
 		<xsl:with-param name="nodeType" select="'field'"/>
+		<xsl:with-param name="type" select="$type"/>
 		<xsl:with-param name="tabLevel" select="$tabLevel"/>
 	</xsl:call-template>
 
@@ -553,16 +567,12 @@
 <!-- Template to validate the type of a field or attribute's dataset -->
 <xsl:template name="validate-dataset-type">
 	<!-- The definition in the base class for the field or attribute -->
-	<xsl:param name="baseClassFieldOrAttributeDef"/>
 	<!-- The node type: 'field' or 'attribute' -->
 	<xsl:param name="nodeType"/>
 	<xsl:param name="tabLevel"/>
-	<xsl:param name="variableName" select="@name"/> 
+	<xsl:param name="type"/>
+	<xsl:param name="variableName" select="@name"/>
 	
-	<!-- The field or attribute's type. If defined in the app def, this overrides the base class, the default is NX_CHAR -->
-	<xsl:variable name="typeFromBaseClass" select="$baseClassFieldOrAttributeDef/@type"/>
-	<xsl:variable name="type" select="if (@type) then @type else (if($typeFromBaseClass) then $typeFromBaseClass else 'NX_CHAR')"/>
-
 	<!-- Invoke method validateFieldType() or validateAttributeType() in abstract superclass. -->
 	<xsl:if test="$type">
 		<xsl:value-of select="dawnsci:tabs($tabLevel)"/>
@@ -753,6 +763,11 @@ public enum NexusApplicationDefinition {
 }		
 </xsl:text>
 	</xsl:result-document>
+</xsl:template>
+
+<xsl:template name="calculate-type">
+	<xsl:param name="baseClassDef"/>
+	<xsl:value-of select="if (@type) then @type else (if ($baseClassDef/@type) then $baseClassDef/@type else 'NX_CHAR')"/>
 </xsl:template>
 
 <!-- Template to produce the enum value for a nexus application definition -->

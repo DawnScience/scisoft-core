@@ -68,13 +68,13 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 		// validate that the group is not null
 		if (!(validateGroupNotNull("entry", NXentry.class, group))) return;
 
-		// validate attribute 'index'
+		// validate attribute 'index' of type NX_CHAR.
 		final Attribute index_attr = group.getAttribute("index");
 		if (!(validateAttributeNotNull("index", index_attr))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
 		validateAttributeType("index", index_attr, NX_CHAR);
 
-		// validate field 'title' of unknown type.
+		// validate field 'title' of type NX_CHAR.
 		final ILazyDataset title = group.getLazyDataset("title");
 		validateFieldNotNull("title", title);
 		if (title != null) {
@@ -172,7 +172,7 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 			validateFieldType("revision", revision, NX_CHAR);
 		}
 
-		// validate field 'definition' of unknown type.
+		// validate field 'definition' of type NX_CHAR.
 		final ILazyDataset definition = group.getLazyDataset("definition");
 		validateFieldNotNull("definition", definition);
 		if (definition != null) {
@@ -188,7 +188,7 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 		if (program != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("program", program, NX_CHAR);
-		// validate attribute 'version' of field 'program'
+		// validate attribute 'version' of field 'program' of type NX_CHAR.
 		final Attribute program_attr_version = group.getDataNode("program").getAttribute("version");
 		if (!(validateAttributeNotNull("version", program_attr_version))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
@@ -300,7 +300,7 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 					"Fixed Tube X-Ray");
 		}
 
-		// validate field 'name' of unknown type.
+		// validate field 'name' of type NX_CHAR.
 		final ILazyDataset name = group.getLazyDataset("name");
 		validateFieldNotNull("name", name);
 		if (name != null) {
@@ -308,7 +308,7 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 			validateFieldType("name", name, NX_CHAR);
 		}
 
-		// validate field 'probe' of unknown type.
+		// validate field 'probe' of type NX_CHAR.
 		final ILazyDataset probe = group.getLazyDataset("probe");
 		validateFieldNotNull("probe", probe);
 		if (probe != null) {
@@ -329,7 +329,7 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 		if (!(validateGroupNotNull("sample", NXsample.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
-		// validate field 'name' of unknown type.
+		// validate field 'name' of type NX_CHAR.
 		final ILazyDataset name = group.getLazyDataset("name");
 		validateFieldNotNull("name", name);
 		if (name != null) {

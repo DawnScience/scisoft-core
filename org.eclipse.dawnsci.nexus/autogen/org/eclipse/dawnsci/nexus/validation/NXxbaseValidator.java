@@ -71,7 +71,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		// validate that the group is not null
 		if (!(validateGroupNotNull("entry", NXentry.class, group))) return;
 
-		// validate field 'title' of unknown type.
+		// validate field 'title' of type NX_CHAR.
 		final ILazyDataset title = group.getLazyDataset("title");
 		validateFieldNotNull("title", title);
 		if (title != null) {
@@ -87,7 +87,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 			validateFieldType("start_time", start_time, NX_DATE_TIME);
 		}
 
-		// validate field 'definition' of unknown type.
+		// validate field 'definition' of type NX_CHAR.
 		final ILazyDataset definition = group.getLazyDataset("definition");
 		validateFieldNotNull("definition", definition);
 		if (definition != null) {
@@ -138,7 +138,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		// validate that the group is not null
 		if (!(validateGroupNotNull("source", NXsource.class, group))) return;
 
-		// validate field 'type' of unknown type.
+		// validate field 'type' of type NX_CHAR.
 		final ILazyDataset type = group.getLazyDataset("type");
 		validateFieldNotNull("type", type);
 		if (type != null) {
@@ -159,7 +159,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 					"UV Plasma Source");
 		}
 
-		// validate field 'name' of unknown type.
+		// validate field 'name' of type NX_CHAR.
 		final ILazyDataset name = group.getLazyDataset("name");
 		validateFieldNotNull("name", name);
 		if (name != null) {
@@ -167,7 +167,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 			validateFieldType("name", name, NX_CHAR);
 		}
 
-		// validate field 'probe' of unknown type.
+		// validate field 'probe' of type NX_CHAR.
 		final ILazyDataset probe = group.getLazyDataset("probe");
 		validateFieldNotNull("probe", probe);
 		if (probe != null) {
@@ -214,7 +214,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 			validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
 			validateFieldRank("data", data, 3);
 			validateFieldDimensions("data", data, null, "nP", "nXPixels", "nYPixels");
-		// validate attribute 'signal' of field 'data'
+		// validate attribute 'signal' of field 'data' of type NX_POSINT.
 		final Attribute data_attr_signal = group.getDataNode("data").getAttribute("signal");
 		if (!(validateAttributeNotNull("signal", data_attr_signal))) return;
 		// validate any properties of this attribute specified in the NXDL file: type, enumeration
@@ -350,7 +350,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		if (!(validateGroupNotNull("control", NXmonitor.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
-		// validate field 'mode' of unknown type.
+		// validate field 'mode' of type NX_CHAR.
 		final ILazyDataset mode = group.getLazyDataset("mode");
 		validateFieldNotNull("mode", mode);
 		if (mode != null) {

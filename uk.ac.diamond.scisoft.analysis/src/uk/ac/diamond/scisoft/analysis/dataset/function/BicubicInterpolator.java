@@ -26,13 +26,12 @@ public class BicubicInterpolator implements DatasetToDatasetFunction {
 
 	int[] shape;
 
-	public BicubicInterpolator(int[] newShape) {
+	public BicubicInterpolator(int... newShape) {
 		if (newShape == null || newShape.length != 2) {
 			throw new IllegalArgumentException("Shape must be 2D");
 		}
 		shape = newShape;
 	}
-
 
 	// parameters used with the interpolation, for speeding up the process
 	private double a00, a01, a02, a03;
@@ -41,25 +40,25 @@ public class BicubicInterpolator implements DatasetToDatasetFunction {
 	private double a30, a31, a32, a33;
 
 	/**
-	 * @param p A 4x4 array containing the values of the 16 surrounding points
+	 * @param p array containing the values of the 16 surrounding points
 	 */
-	protected void calculateParameters(double[][] p) {
-		a00 = p[1][1];
-		a01 = -.5*p[1][0] + .5*p[1][2];
-		a02 = p[1][0] - 2.5*p[1][1] + 2*p[1][2] - .5*p[1][3];
-		a03 = -.5*p[1][0] + 1.5*p[1][1] - 1.5*p[1][2] + .5*p[1][3];
-		a10 = -.5*p[0][1] + .5*p[2][1];
-		a11 = .25*p[0][0] - .25*p[0][2] - .25*p[2][0] + .25*p[2][2];
-		a12 = -.5*p[0][0] + 1.25*p[0][1] - p[0][2] + .25*p[0][3] + .5*p[2][0] - 1.25*p[2][1] + p[2][2] - .25*p[2][3];
-		a13 = .25*p[0][0] - .75*p[0][1] + .75*p[0][2] - .25*p[0][3] - .25*p[2][0] + .75*p[2][1] - .75*p[2][2] + .25*p[2][3];
-		a20 = p[0][1] - 2.5*p[1][1] + 2*p[2][1] - .5*p[3][1];
-		a21 = -.5*p[0][0] + .5*p[0][2] + 1.25*p[1][0] - 1.25*p[1][2] - p[2][0] + p[2][2] + .25*p[3][0] - .25*p[3][2];
-		a22 = p[0][0] - 2.5*p[0][1] + 2*p[0][2] - .5*p[0][3] - 2.5*p[1][0] + 6.25*p[1][1] - 5*p[1][2] + 1.25*p[1][3] + 2*p[2][0] - 5*p[2][1] + 4*p[2][2] - p[2][3] - .5*p[3][0] + 1.25*p[3][1] - p[3][2] + .25*p[3][3];
-		a23 = -.5*p[0][0] + 1.5*p[0][1] - 1.5*p[0][2] + .5*p[0][3] + 1.25*p[1][0] - 3.75*p[1][1] + 3.75*p[1][2] - 1.25*p[1][3] - p[2][0] + 3*p[2][1] - 3*p[2][2] + p[2][3] + .25*p[3][0] - .75*p[3][1] + .75*p[3][2] - .25*p[3][3];
-		a30 = -.5*p[0][1] + 1.5*p[1][1] - 1.5*p[2][1] + .5*p[3][1];
-		a31 = .25*p[0][0] - .25*p[0][2] - .75*p[1][0] + .75*p[1][2] + .75*p[2][0] - .75*p[2][2] - .25*p[3][0] + .25*p[3][2];
-		a32 = -.5*p[0][0] + 1.25*p[0][1] - p[0][2] + .25*p[0][3] + 1.5*p[1][0] - 3.75*p[1][1] + 3*p[1][2] - .75*p[1][3] - 1.5*p[2][0] + 3.75*p[2][1] - 3*p[2][2] + .75*p[2][3] + .5*p[3][0] - 1.25*p[3][1] + p[3][2] - .25*p[3][3];
-		a33 = .25*p[0][0] - .75*p[0][1] + .75*p[0][2] - .25*p[0][3] - .75*p[1][0] + 2.25*p[1][1] - 2.25*p[1][2] + .75*p[1][3] + .75*p[2][0] - 2.25*p[2][1] + 2.25*p[2][2] - .75*p[2][3] - .25*p[3][0] + .75*p[3][1] - .75*p[3][2] + .25*p[3][3];
+	protected void calculateParameters(double[] p) {
+		a00 = p[1*4+1];
+		a01 = -.5*p[1*4+0] + .5*p[1*4+2];
+		a02 = p[1*4+0] - 2.5*p[1*4+1] + 2*p[1*4+2] - .5*p[1*4+3];
+		a03 = -.5*p[1*4+0] + 1.5*p[1*4+1] - 1.5*p[1*4+2] + .5*p[1*4+3];
+		a10 = -.5*p[0*4+1] + .5*p[2*4+1];
+		a11 = .25*p[0*4+0] - .25*p[0*4+2] - .25*p[2*4+0] + .25*p[2*4+2];
+		a12 = -.5*p[0*4+0] + 1.25*p[0*4+1] - p[0*4+2] + .25*p[0*4+3] + .5*p[2*4+0] - 1.25*p[2*4+1] + p[2*4+2] - .25*p[2*4+3];
+		a13 = .25*p[0*4+0] - .75*p[0*4+1] + .75*p[0*4+2] - .25*p[0*4+3] - .25*p[2*4+0] + .75*p[2*4+1] - .75*p[2*4+2] + .25*p[2*4+3];
+		a20 = p[0*4+1] - 2.5*p[1*4+1] + 2*p[2*4+1] - .5*p[3*4+1];
+		a21 = -.5*p[0*4+0] + .5*p[0*4+2] + 1.25*p[1*4+0] - 1.25*p[1*4+2] - p[2*4+0] + p[2*4+2] + .25*p[3*4+0] - .25*p[3*4+2];
+		a22 = p[0*4+0] - 2.5*p[0*4+1] + 2*p[0*4+2] - .5*p[0*4+3] - 2.5*p[1*4+0] + 6.25*p[1*4+1] - 5*p[1*4+2] + 1.25*p[1*4+3] + 2*p[2*4+0] - 5*p[2*4+1] + 4*p[2*4+2] - p[2*4+3] - .5*p[3*4+0] + 1.25*p[3*4+1] - p[3*4+2] + .25*p[3*4+3];
+		a23 = -.5*p[0*4+0] + 1.5*p[0*4+1] - 1.5*p[0*4+2] + .5*p[0*4+3] + 1.25*p[1*4+0] - 3.75*p[1*4+1] + 3.75*p[1*4+2] - 1.25*p[1*4+3] - p[2*4+0] + 3*p[2*4+1] - 3*p[2*4+2] + p[2*4+3] + .25*p[3*4+0] - .75*p[3*4+1] + .75*p[3*4+2] - .25*p[3*4+3];
+		a30 = -.5*p[0*4+1] + 1.5*p[1*4+1] - 1.5*p[2*4+1] + .5*p[3*4+1];
+		a31 = .25*p[0*4+0] - .25*p[0*4+2] - .75*p[1*4+0] + .75*p[1*4+2] + .75*p[2*4+0] - .75*p[2*4+2] - .25*p[3*4+0] + .25*p[3*4+2];
+		a32 = -.5*p[0*4+0] + 1.25*p[0*4+1] - p[0*4+2] + .25*p[0*4+3] + 1.5*p[1*4+0] - 3.75*p[1*4+1] + 3*p[1*4+2] - .75*p[1*4+3] - 1.5*p[2*4+0] + 3.75*p[2*4+1] - 3*p[2*4+2] + .75*p[2*4+3] + .5*p[3*4+0] - 1.25*p[3*4+1] + p[3*4+2] - .25*p[3*4+3];
+		a33 = .25*p[0*4+0] - .75*p[0*4+1] + .75*p[0*4+2] - .25*p[0*4+3] - .75*p[1*4+0] + 2.25*p[1*4+1] - 2.25*p[1*4+2] + .75*p[1*4+3] + .75*p[2*4+0] - 2.25*p[2*4+1] + 2.25*p[2*4+2] - .75*p[2*4+3] - .25*p[3*4+0] + .75*p[3*4+1] - .75*p[3*4+2] + .25*p[3*4+3];
 	}
 
 	/**
@@ -73,46 +72,104 @@ public class BicubicInterpolator implements DatasetToDatasetFunction {
 	 * @param y The vertical distance between the point and the four points below it, between 0 and 1
 	 * @return the interpolated value
 	 */
-	public double bicubicInterpolate (double x, double y) {
-		// only this needs to be called per point
+	public double bicubicInterpolate(double x, double y) {
 		double x2 = x * x;
 		double x3 = x2 * x;
 		double y2 = y * y;
 		double y3 = y2 * y;
 
-		return a00 + a01 * y + a02 * y2 + a03 * y3 +
-		a10 * x + a11 * x * y + a12 * x * y2 + a13 * x * y3 +
-		a20 * x2 + a21 * x2 * y + a22 * x2 * y2 + a23 * x2 * y3 +
-		a30 * x3 + a31 * x3 * y + a32 * x3 * y2 + a33 * x3 * y3;
+		double bc;
+		bc  = x3 * (a33 * y3 + a32 * y2 + a31 * y + a30);
+		bc += x2 * (a23 * y3 + a22 * y2 + a21 * y + a20);
+		bc += x  * (a13 * y3 + a12 * y2 + a11 * y + a10);
+		return bc + a03 * y3 + a02 * y2 + a01 * y + a00;
 	}
 
-	double[][] result = new double[4][4];
+	double[] result = new double[4*4];
 
-	protected double[][] generateSurroundingPoints(int x, int y, final Dataset ds, final int[] dShape) {
+	protected double[] generateSurroundingPoints(int x, int y, final Dataset ds, final int[] dShape) {
 		x--; // start to left
 		y--; // and below
+		int k = 0;
+		int pmax = dShape[0] - 1;
+		int qmax = dShape[1] - 1;
 		for (int i = 0; i < 4; i++) {
+			int p = x + i;
+			if (p < 0) {
+				p = 0;
+			} else if (p > pmax) {
+				p = pmax;
+			}
+
 			for (int j = 0; j < 4; j++)  {
-				result[i][j] = getPoint(x + i, y + j, ds, dShape);
+				int q = y + j;
+				if (q < 0) {
+					q = 0;
+				} else if (q > qmax) {
+					q = qmax;
+				}
+				result[k++] = ds.getDouble(p, q);
 			}
 		}
 		return result;
 	}
 
-	private double getPoint(int i, int j, final Dataset ds, final int[] dShape) {
-		// first check the bounds
-		if (i < 0) {
-			i = 0;
-		} else if (i >= dShape[0]) {
-			i = dShape[0] - 1;
-		}
-		if (j < 0) {
-			j = 0;
-		} else if (j >= dShape[1]) {
-			j = dShape[1] - 1;
+	/**
+	 * Calculate parameters for given point in dataset
+	 * @param x
+	 * @param y
+	 * @param ds
+	 */
+	public void calculateParameters(int x, int y, final Dataset ds) {
+		calculateParameters(generateSurroundingPoints(x, y, ds, ds.getShapeRef()));
+	}
+
+	private transient double osx, osy;
+	private transient int ofx, ofy;
+	private transient int oi, oj;
+
+	/**
+	 * Set input shape before using {@link #interpolate(int, int, Dataset)} if dataset
+	 * has different shape (to avoid boundary issues)
+	 * @param iShape
+	 */
+	public void setInputShape(int... iShape) {
+		osx = iShape[0] / (double) shape[0];
+		ofx = ((int) (1/osx - 1))/2; // offset to left to centre sample points
+		osy = iShape[1] / (double) shape[1];
+		ofy = ((int) (1/osy - 1))/2;
+	}
+
+	/**
+	 * Interpolate at given coordinates
+	 * @param x
+	 * @param y
+	 * @param ds original dataset
+	 * @return bicubic interpolated value
+	 */
+	public double interpolate(int x, int y, Dataset ds) {
+		if (osx == 0) {
+			setInputShape(ds.getShapeRef());
+			calculateParameters(oi, oj, ds);
 		}
 
-		return ds.getDouble(i, j);
+		double cdx = osx * (x - ofx);
+		int ci = (int) cdx;
+		double cdy = osy * (y - ofy);
+		int cj = (int) cdy;
+
+		if (ci != oi || cj != oj) {
+			oi = ci;
+			oj = cj;
+			calculateParameters(oi, oj, ds);
+		}
+
+		cdx -= ci;
+		cdy -= cj;
+		if (cdx == 0 && cdy == 0) {
+			return ds.getDouble(ci, cj);
+		}
+		return bicubicInterpolate(cdx, cdy);
 	}
 
 	@Override
@@ -126,44 +183,40 @@ public class BicubicInterpolator implements DatasetToDatasetFunction {
 			if (dShape == null || dShape.length != 2) {
 				throw new IllegalArgumentException("Shape must be 2D");
 			}
-			// first create the dataset which we will put the data into
-			DoubleDataset dds = DatasetFactory.zeros(DoubleDataset.class, shape);
+
+			DoubleDataset dds = DatasetFactory.zeros(shape);
 
 			// calculate the new step size
-			double dx = (dShape[0] - 1.0) / (shape[0] - 1.0);
-			double dy = (dShape[1] - 1.0) / (shape[1] - 1.0);
-			double xscale = 1./dx;
-			double yscale = 1./dy;
+			double dx = dShape[0] / (double) shape[0];
+			int ox = ((int) (1/dx - 1))/2; // offset to left to centre sample points
+			double dy = dShape[1] / (double) shape[1];
+			int oy = ((int) (1/dy - 1))/2;
 
-			for (int i = 0; i < dShape[0] - 1; i++) {
-				for (int j = 0; j < dShape[1] - 1; j++) {
+			for (int x = 0; x < shape[0]; x++) {
+				double xpos = (x - ox)*dx; // scaled position in given dataset
+				int i = (int) xpos;
+				xpos -= i;
 
-					// at this point we can make the pre-calculation to save time
-					calculateParameters(generateSurroundingPoints(i, j, d, dShape));
-
-					int xstart = (int) (i * xscale);
-					int xend   = (int) ((i + 1) * xscale);
-					int ystart = (int) (j * yscale);
-					int yend   = (int) ((j + 1) * yscale);
-
-					for (int x = xstart; x <= xend; x++) {
-						for (int y = ystart; y <= yend; y++) {
-
-							// find the position
-							double xpos = x * dx;
-							double ypos = y * dy;
-
-							// remove any whole component
-							xpos -= i;
-							ypos -= j;
-
-							dds.setItem(bicubicInterpolate(xpos, ypos), x, y);
-						}
-					}					
+				int lj = -1; // last j
+				for (int y = 0; y < shape[1]; y++) {
+					double ypos = (y - oy)*dy;
+					int j = (int) ypos;
+					ypos -= j;
+					if (j != lj) { // only calculate parameters when moving on to new point
+						calculateParameters(generateSurroundingPoints(i, j, d, dShape));
+						lj = j;
+					}
+					double v;
+					if (xpos == 0 && ypos == 0) {
+						v = d.getDouble(i, j);
+					} else {
+						v = bicubicInterpolate(xpos, ypos);
+					}
+					dds.setItem(v, x, y);
 				}
 			}
 
-			result.add(dds);			
+			result.add(dds);
 		}
 
 		return result;

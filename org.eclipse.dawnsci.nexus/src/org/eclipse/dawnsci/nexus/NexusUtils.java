@@ -10,6 +10,8 @@
 
 package org.eclipse.dawnsci.nexus;
 
+import static org.eclipse.dawnsci.nexus.NexusFile.NXCLASS_SEPARATOR;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -44,9 +46,9 @@ import org.eclipse.january.metadata.AxesMetadata;
  */
 public class NexusUtils {
 
-	final static int CHUNK_TARGET_SIZE = 1024 * 1024; // 1 MB
+	private static final int CHUNK_TARGET_SIZE = 1024 * 1024; // 1 MB
 
-	final static ChunkingStrategy DEFAULT_CHUNK_STRATEGY = ChunkingStrategy.SKEW_LAST;
+	public static final ChunkingStrategy DEFAULT_CHUNK_STRATEGY = ChunkingStrategy.SKEW_LAST;
 
 	/**
 	 * Possible strategies for estimating chunking
@@ -63,6 +65,43 @@ public class NexusUtils {
 		 * Good for writing large detector images frame by frame.
 		 */
 		SKEW_LAST
+	}
+	
+	/**
+	 * An element of an augmented NeXus node path, i.e. where each group element specifies
+	 * the Nexus class, e.g. {@code /entry:NXentry/instrument:NXinstrument/det:NXdetector/data}
+	 */
+	public static final class AugmentedPathElement {
+		
+		public final String name;
+		public final String nxClass;
+		
+		public AugmentedPathElement(String name, String nxClass) {
+			this.name = name;
+			this.nxClass = nxClass;
+		}
+	}
+	
+	private NexusBaseClass getBaseClassForName(String nxClass) {
+		// NXgoniometer is a special case - some beamlines use it, but it's not an
+		// official NeXus base class
+		if (nxClass.equals("NXgoniometer")) {
+			return NexusBaseClass.NX_COLLECTION;
+		}
+
+		return NexusBaseClass.getBaseClassForName(nxClass);
+	}
+
+	public static AugmentedPathElement[] parseAugmentedPath(String path) {
+		if (!path.startsWith(Tree.ROOT)) {
+			throw new IllegalArgumentException("Path (" + path + ") must be absolute");
+		}
+		
+		return Arrays.stream(path.split(Node.SEPARATOR)) // split segments by delimiter '/'
+			.map(p -> p.split(NXCLASS_SEPARATOR, 2)) // split each segment by Nx_class separator ':' to produce pairs (String[] of size 2, or 1 if no NXclass) 
+			.map(pair -> new AugmentedPathElement(pair[0], pair.length > 1 ? pair[1] : "")) // convert pairs to AugmentedPathElement
+			.toArray(AugmentedPathElement[]::new); // convert to array
+		
 	}
 
 	/**
@@ -107,7 +146,7 @@ public class NexusUtils {
 		}
 		path.append(name);
 		if (nxClass != null) {
-			path.append(NexusFile.NXCLASS_SEPARATOR).append(nxClass);
+			path.append(NXCLASS_SEPARATOR).append(nxClass);
 		}
 		return path;
 	}
@@ -119,7 +158,7 @@ public class NexusUtils {
 	 */
 	public static String stripAugmentedPath(String augmentedPath) {
 		int i;
-		while ((i = augmentedPath.indexOf(NexusFile.NXCLASS_SEPARATOR)) >= 0) {
+		while ((i = augmentedPath.indexOf(NXCLASS_SEPARATOR)) >= 0) {
 			int j = augmentedPath.indexOf(Node.SEPARATOR, i);
 			augmentedPath = j >= 0 ? augmentedPath.substring(0, i) + augmentedPath.substring(j)
 					: augmentedPath.substring(0, i);

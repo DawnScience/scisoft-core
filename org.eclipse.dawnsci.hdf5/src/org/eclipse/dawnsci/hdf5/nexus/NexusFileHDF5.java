@@ -50,6 +50,7 @@ import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.NexusUtils;
+import org.eclipse.dawnsci.nexus.NexusUtils.AugmentedPathElement;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -171,16 +172,7 @@ public class NexusFileHDF5 implements NexusFile {
 		}
 	}
 
-	final class ParsedNode {
-		public final String name;
-		public final String nxClass;
-		ParsedNode(String name, String nxClass) {
-			this.name = name;
-			this.nxClass = nxClass;
-		}
-	}
-
-	final class NodeData {
+	private static final class NodeData {
 		public final String name;
 		public final String nxClass;
 		public final String path;
@@ -214,20 +206,6 @@ public class NexusFileHDF5 implements NexusFile {
 		} else {
 			throw new IllegalStateException("File (" + fileName + ") is already open");
 		}
-	}
-
-	private ParsedNode[] parseAugmentedPath(String path) {
-		if (!path.startsWith(Tree.ROOT)) {
-			throw new IllegalArgumentException("Path (" + path + ") must be absolute");
-		}
-		String[] parts = path.split(Node.SEPARATOR);
-		ParsedNode[] nodes = new ParsedNode[parts.length];
-		int i = 0;
-		for (String p : parts) {
-			String[] pair = p.split(NXCLASS_SEPARATOR, 2);
-			nodes[i++] = new ParsedNode(pair[0], pair.length > 1 ? pair[1] : "");
-		}
-		return nodes;
 	}
 
 	private void assertOpen() {
@@ -532,7 +510,7 @@ public class NexusFileHDF5 implements NexusFile {
 		try (NexusFileHDF5 extFile = new NexusFileHDF5(fileName)) {
 			String fullPathInExtFile = TreeUtils.join(externalMountPoint, pathAfterMount);
 			extFile.openToRead();
-			ParsedNode[] parsed = parseAugmentedPath(internalMountPoint);
+			AugmentedPathElement[] parsed = NexusUtils.parseAugmentedPath(internalMountPoint);
 			String nodeName = parsed[parsed.length - 1].name;
 			switch(extFile.getNodeType(externalMountPoint)) {
 			case DATASET:
@@ -579,7 +557,7 @@ public class NexusFileHDF5 implements NexusFile {
 	 * Cannot create data nodes
 	 */
 	private NodeData getNode(String augmentedPath, boolean createPathIfNecessary) throws NexusException {
-		ParsedNode[] parsedNodes = parseAugmentedPath(augmentedPath);
+		AugmentedPathElement[] parsedNodes = NexusUtils.parseAugmentedPath(augmentedPath);
 		StringBuilder pathBuilder = new StringBuilder(Tree.ROOT);
 		String parentPath = pathBuilder.toString();
 		GroupNode group = tree.getGroupNode();
@@ -587,7 +565,7 @@ public class NexusFileHDF5 implements NexusFile {
 			return new NodeData(Tree.ROOT, null, null, group, NodeType.GROUP);
 		}
 		Node node = group;
-		ParsedNode parsedNode = parsedNodes[0];
+		AugmentedPathElement parsedNode = parsedNodes[0];
 		NodeType type = null;
 		//traverse to target node
 		for (int i = 0; i < parsedNodes.length; i++) {
@@ -1630,10 +1608,10 @@ public class NexusFileHDF5 implements NexusFile {
 	 */
 	private String findExternalLink(String path) throws NexusException {
 		if (Tree.ROOT.equals(path)) return null;
-		ParsedNode[] parsedNodes = parseAugmentedPath(path);
+		AugmentedPathElement[] parsedNodes = NexusUtils.parseAugmentedPath(path);
 		StringBuilder currentPath = new StringBuilder();
 		try {
-			for (ParsedNode node : parsedNodes) {
+			for (AugmentedPathElement node : parsedNodes) {
 				if (node.name.isEmpty()) {
 					continue;
 				}
@@ -1705,10 +1683,10 @@ public class NexusFileHDF5 implements NexusFile {
 	}
 
 	private boolean testLinkExists(String path) throws NexusException {
-		ParsedNode[] parsedNodes = parseAugmentedPath(path);
+		AugmentedPathElement[] parsedNodes = NexusUtils.parseAugmentedPath(path);
 		StringBuilder currentPath = new StringBuilder(Tree.ROOT);
 		try {
-			for (ParsedNode parsedNode : parsedNodes) {
+			for (AugmentedPathElement parsedNode : parsedNodes) {
 				if (parsedNode.name == null || parsedNode.name.isEmpty()) {
 					continue;
 				}

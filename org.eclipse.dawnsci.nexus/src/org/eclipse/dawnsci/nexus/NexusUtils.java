@@ -12,6 +12,7 @@ package org.eclipse.dawnsci.nexus;
 
 import static org.eclipse.dawnsci.nexus.NexusFile.NXCLASS_SEPARATOR;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -82,7 +83,7 @@ public class NexusUtils {
 		}
 	}
 	
-	private NexusBaseClass getBaseClassForName(String nxClass) {
+	private static NexusBaseClass getBaseClassForName(String nxClass) {
 		// NXgoniometer is a special case - some beamlines use it, but it's not an
 		// official NeXus base class
 		if (nxClass.equals("NXgoniometer")) {
@@ -91,19 +92,23 @@ public class NexusUtils {
 
 		return NexusBaseClass.getBaseClassForName(nxClass);
 	}
-
+	
 	public static AugmentedPathElement[] parseAugmentedPath(String path) {
-		if (!path.startsWith(Tree.ROOT)) {
+		return parseAugmentedPath(path, false);
+	}
+	
+	public static AugmentedPathElement[] parseAugmentedPath(String path, boolean relative) {
+		if (!relative && !path.startsWith(Tree.ROOT)) {
 			throw new IllegalArgumentException("Path (" + path + ") must be absolute");
 		}
 		
 		return Arrays.stream(path.split(Node.SEPARATOR)) // split segments by delimiter '/'
+			.skip(relative ? 0: 1)
 			.map(p -> p.split(NXCLASS_SEPARATOR, 2)) // split each segment by Nx_class separator ':' to produce pairs (String[] of size 2, or 1 if no NXclass) 
 			.map(pair -> new AugmentedPathElement(pair[0], pair.length > 1 ? pair[1] : "")) // convert pairs to AugmentedPathElement
 			.toArray(AugmentedPathElement[]::new); // convert to array
-		
 	}
-
+	
 	/**
 	 * Create a (top-level) NeXus augmented path
 	 * @param name
@@ -164,6 +169,94 @@ public class NexusUtils {
 					: augmentedPath.substring(0, i);
 		}
 		return augmentedPath;
+	}
+	
+	/**
+	 * Adds the given {@link DataNode} at the given augmented path (a path where the NXclass for
+	 * group nodes are specified. 
+	 * <p><em>Note:</em>This method operates on an in-memory nexus tree, no changes are saved to disk.
+	 * @param nexusObject nexus object
+	 * @param dataNode data node to add
+	 * @param dataNodePath path at which to add the data node, an as augmented pat
+	 * @throws NexusException 
+	 */
+	public static void addDataNode(NXobject nexusObject, DataNode dataNode, String dataNodePath) throws NexusException {
+		final int lastSeparatorIndex = dataNodePath.lastIndexOf(Node.SEPARATOR);
+		final NXobject parentGroup;
+		final String dataNodeName;
+		if (lastSeparatorIndex == -1) { // simple case, path is just a name
+			parentGroup = nexusObject;
+			dataNodeName = dataNodePath;
+		} else {
+			final String parentGroupPath = dataNodePath.substring(0, lastSeparatorIndex);
+			parentGroup = getGroupNode(nexusObject, parentGroupPath, true);
+			dataNodeName = dataNodePath.substring(lastSeparatorIndex + 1);
+		}
+		
+		parentGroup.addDataNode(dataNodeName, dataNode);
+	}
+	
+	/**
+	 * Get the group node with the given augmented path within the given root node,
+	 * optionally creating it if it does not already exist.
+	 * <p><em>Note:</em>This method operates on an in-memory nexus tree, no changes are saved to disk.
+	 * @param root the root node from which
+	 * @param augmentedPath
+	 * @return group node with given augmented path
+	 * @throws NexusException if no node exists as the given path and {@code create} is false, or
+	 *    the node at the given path is not a group node
+	 */
+	public static NXobject getGroupNode(NXobject root, String augmentedPath, boolean create) throws NexusException {
+		// check to see if the group node already exists and we can just return it
+		final String plainPath = NexusUtils.stripAugmentedPath(augmentedPath);
+		final NodeLink link = root.findNodeLink(plainPath);
+		if (link == null) {
+			if (!create) {
+				throw new NexusException("No group found at given path.");
+			}
+		} else {
+			if (link.isDestinationGroup()) {
+				GroupNode dest = (GroupNode) link.getDestination();
+				if (!(dest instanceof NXobject)) {
+					throw new NexusException("Group node is not an NXobject " + augmentedPath);
+				}
+				return (NXobject) dest;
+			}
+			throw new NexusException("A node already exists at the specified path which is not a group node: " + augmentedPath);
+		}
+
+		// we have to create the group node
+		// first parse the augmented path into segments
+		final AugmentedPathElement[] parsedPath = NexusUtils.parseAugmentedPath(augmentedPath, true);
+		NXobject groupNode = root;
+		for (AugmentedPathElement parsedPathSegment : parsedPath) {
+			final String name = parsedPathSegment.name;
+			final String nxClass = parsedPathSegment.nxClass;
+
+			GroupNode childNode = groupNode.getGroupNode(name);
+			if (childNode == null) {
+				// group node does not exist, so we create it
+				final NexusBaseClass baseClass = getBaseClassForName(nxClass);
+				childNode = NexusNodeFactory.createNXobjectForClass(baseClass);
+				groupNode.addGroupNode(name, childNode);
+			} else {
+				// group already exists, check it has the expected NX_class
+				if (!(childNode instanceof NXobject)) {
+					throw new NexusException(MessageFormat.format("The group ''{0}'' already exists and is not an NXobject", name));
+				}
+
+				final NexusBaseClass expectedBaseClass = getBaseClassForName(nxClass);
+				final NexusBaseClass actualNexusBaseClass = ((NXobject) childNode).getNexusBaseClass();
+				if (expectedBaseClass != actualNexusBaseClass) {
+					throw new NexusException(MessageFormat.format("The group ''{0}'' already exists and has NX_class ''{1}'', expected ''{2}''",
+							name, actualNexusBaseClass, expectedBaseClass));
+				}
+			}
+
+			groupNode = (NXobject) childNode;
+		}
+
+		return groupNode;
 	}
 
 	/**

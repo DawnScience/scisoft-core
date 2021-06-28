@@ -782,8 +782,8 @@ def setroi(bean, roi=None, send=False, name=None):
     '''Set region of interest in bean
 
     Arguments:
-    bean -- GUI bean (if None, retrieve from and update to plot view of given name)
-    roi  -- ROI to set
+    bean -- GUI bean
+    roi  -- ROI to set (if None, then use first arg as roi and retrieve bean from and update to plot view of given name)
     send -- flag to update plot
     name -- name of plot view to use (if None, use default name)
     '''
@@ -860,8 +860,8 @@ def getrois(bean=None, roi=None, name=None):
 def setrois(bean, roilist=None, send=False, name=None):
     '''Set list/dict of regions of interest in bean
     Arguments:
-    bean    -- GUI bean (if None, retrieve from and update to plot view of given name)
-    roilist -- ROI list to set
+    bean -- GUI bean
+    roilist  -- ROI list to set (if None, then use first arg as roilist and retrieve bean from and update to plot view of given name)
     send    -- flag to update plot
     name    -- name of plot view to use (if None, use default name)
     '''

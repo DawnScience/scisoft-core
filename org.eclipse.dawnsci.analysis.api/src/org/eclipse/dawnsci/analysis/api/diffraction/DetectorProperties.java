@@ -69,11 +69,16 @@ public class DetectorProperties implements Serializable, Cloneable {
 	private Dataset mask; // non-zero values indicate that where pixels are ignored
 	private double lower = Double.NEGATIVE_INFINITY, upper = Double.POSITIVE_INFINITY; // threshold values beyond which to ignore pixels
 
+	private transient double distance;
+	private transient Vector3d closestPoint;
+
 	/**
 	 * Null constructor
 	 */
 	public DetectorProperties() {
 		normal = new Vector3d(0, 0, -1);
+		origin = new Vector3d();
+		computeClosestPoint();
 	}
 
 	/**
@@ -336,6 +341,7 @@ public class DetectorProperties implements Serializable, Cloneable {
 		orientation = other.orientation;
 		invOrientation = other.invOrientation;
 
+		computeClosestPoint();
 		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, EventType.GEOMETRY));
 	}
 
@@ -366,6 +372,16 @@ public class DetectorProperties implements Serializable, Cloneable {
 
 		if (invOrientation != null)
 			invOrientation.transform(normal); // use active transformation
+
+		computeClosestPoint();
+	}
+
+	private void computeClosestPoint() {
+		distance = -normal.dot(origin);
+		if (closestPoint == null) {
+			closestPoint = new Vector3d();
+		}
+		closestPoint.scale(normal.dot(origin), normal);
 	}
 
 	/**
@@ -406,6 +422,7 @@ public class DetectorProperties implements Serializable, Cloneable {
 	public void setOrigin(Vector3d origin) {
 		this.origin = origin;
 		// Tell listeners
+		computeClosestPoint();
 		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, EventType.ORIGIN));
 	}
 
@@ -432,6 +449,7 @@ public class DetectorProperties implements Serializable, Cloneable {
 		Vector3d b = new Vector3d(beamVector);
 		b.scale(distance);
 		origin.add(b);
+		computeClosestPoint();
 		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, EventType.ORIGIN));
 	}
 
@@ -440,16 +458,14 @@ public class DetectorProperties implements Serializable, Cloneable {
 	 * @return distance from sample to closest point on detector 
 	 */
 	public double getDetectorDistance() {
-		return -normal.dot(origin);
+		return distance;
 	}
 
 	/**
 	 * @return point on detector closest to origin
 	 */
 	public Vector3d getClosestPoint() {
-		Vector3d q = new Vector3d();
-		q.scale(normal.dot(origin), normal);
-		return q;
+		return new Vector3d(closestPoint);
 	}
 
 	/**
@@ -460,6 +476,7 @@ public class DetectorProperties implements Serializable, Cloneable {
 		Vector3d b = new Vector3d(normal);
 		b.scale(getDetectorDistance()-distance);
 		origin.add(b);
+		computeClosestPoint();
 		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, EventType.ORIGIN));
 	}
 
@@ -785,6 +802,7 @@ public class DetectorProperties implements Serializable, Cloneable {
 				centre.add(shift);
 				origin = centre;
 			}
+			computeClosestPoint();
 		}
 
 		fireDetectorPropertyListeners(new DetectorPropertyEvent(this, EventType.NORMAL));
@@ -1099,6 +1117,7 @@ public class DetectorProperties implements Serializable, Cloneable {
 			Vector3d oc = getBeamCentrePosition(); // old beam centre
 			oc.sub(pixelPosition(coords[0], coords[1]));
 			origin.add(oc); // shift origin accordingly
+			computeClosestPoint();
 		} catch (IllegalStateException e) {
 			// do nothing
 		}
@@ -1209,24 +1228,50 @@ public class DetectorProperties implements Serializable, Cloneable {
 	}
 
 	/**
-	 * Calculate solid angle subtended by pixel
+	 * Calculate solid angle subtended by pixel at origin
 	 * @param x
 	 * @param y
 	 * @return solid angle
 	 */
 	public double calculateSolidAngle(final int x, final int y) {
-		Vector3d a = pixelPosition(x, y);
-		Vector3d ab = getPixelRow();
-		Vector3d ac = getPixelColumn();
+		double[] centre = pixelPreciseCoords(closestPoint);
+		double a = hPxSize*(x - centre[0]);
+		double b = vPxSize*(y - centre[1]);
+		return calculatePixelSolidAngle(a, b, distance, hPxSize, vPxSize);
+	}
 
-		Vector3d b = new Vector3d();
-		Vector3d c = new Vector3d();
-		b.add(a, ab);
-		c.add(a, ac);
-		double s = calculatePlaneTriangleSolidAngle(a, b, c);
+	/**
+	 * Calculate solid angle of rectangle that has corner is perpendicular to origin
+	 * @param a one side of rectangle
+	 * @param b other side of rectangle
+	 * @param c perpendicular distance
+	 * @return solid angle
+	 */
+	public static double calculatePixelSolidAngle(double a, double b, double c, double da, double db) {
+		// From Frank S. Crawford Jr, "Solid Angle subtended by a finite rectangular counter", technical report, UCRL-1753,
+		// Radiation Laboratory, University of California (1953);
+		// also, A. Khadjavi, "Calculation of Solid Angle Subtended by Rectangular Apertures", JOSA, 58, v10, pp1417-8 (1968)
+		return calculateRectangleSolidAngle(a + da, b + db, c)
+				+ calculateRectangleSolidAngle(a, b, c)
+				- calculateRectangleSolidAngle(a + da, b, c)
+				- calculateRectangleSolidAngle(a, b + db, c);
+	}
 
-		a.add(b, ac);
-		return s + calculatePlaneTriangleSolidAngle(b, a, c); // order is important
+	/**
+	 * Calculate solid angle of rectangle that has its corner perpendicular to origin
+	 * @param a one side of rectangle
+	 * @param b other side of rectangle
+	 * @param c perpendicular distance
+	 * @return solid angle
+	 */
+	public static double calculateRectangleSolidAngle(double a, double b, double c) {
+		double alpha = a/c;
+		double beta = b/c;
+		double gamma = alpha*beta/Math.sqrt(1 + alpha*alpha + beta*beta);
+		if (Math.abs(gamma) < 5/32.) { // < 0.1% accuracy
+			return gamma * (1 - gamma*gamma*(1./3));
+		}
+		return Math.atan(gamma);
 	}
 
 	/**

@@ -135,13 +135,13 @@ public class FitPeakToRowsOperation extends AbstractOperation<FitPeakToRowsModel
 					int[] shape = axis.getShapeRef();
 					SliceNDIterator it = new SliceNDIterator(new SliceND(shape), 1);
 					it.hasNext();
-					Dataset a = axis.getSliceView(it.getCurrentSlice());
+					Dataset a = axis.getSliceView(it.getCurrentSlice()).squeeze();
 					Monotonicity m = Comparisons.findMonotonicity(a);
-					index = ROISliceUtils.findPositionOfClosestValueInAxis(axis, f);
+					index = ROISliceUtils.findPositionOfClosestValueInAxis(a, f);
 					boolean isInc = m == Monotonicity.NONDECREASING || m == Monotonicity.STRICTLY_INCREASING;
 					
 					while (it.hasNext()) {
-						a = axis.getSliceView(it.getCurrentSlice());
+						a = axis.getSliceView(it.getCurrentSlice()).squeeze();
 						if (isInc) {
 							index = Math.max(index, ROISliceUtils.findPositionOfClosestValueInAxis(a, f));
 						} else {

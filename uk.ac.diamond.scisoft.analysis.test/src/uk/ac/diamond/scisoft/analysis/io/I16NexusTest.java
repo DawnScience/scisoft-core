@@ -107,10 +107,9 @@ public class I16NexusTest {
 		double scaleFactor = 2;
 		boolean reduceToNonZero = true;
 		double[] millerStep = { 3, 4 };
-		double[] qStep = { 5, 6 };
 
 		MillerSpaceMapperBean bean = MillerSpaceMapperBean.createBeanWithAutoBox(inputs, output, splitterName, splitterParameter, scaleFactor, reduceToNonZero,
-				millerStep, qStep);
+				false, millerStep);
 		Dataset v = DatasetFactory.zeros(4);
 		Dataset w = DatasetFactory.zeros(4);
 		String volPath = "path/to/vol/data";

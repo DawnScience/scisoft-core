@@ -75,27 +75,10 @@ public class MillerSpaceMapperApplication implements IApplication {
 			MillerSpaceMapper msm = new MillerSpaceMapper(bean);
 			switch (bean.getOutputMode()) {
 			case Coords_Q:
-				msm.calculateCoordinates(true);
-				break;
 			case Coords_HKL:
-				msm.calculateCoordinates(false);
+				msm.calculateCoordinates();
 				break;
 			case Volume_Q:
-				double[] s = bean.getMillerStep();
-				if (s != null) {
-					bean.setQStep(s);
-					bean.setMillerStep(null);
-				}
-				s = bean.getMillerStart();
-				if (s != null) {
-					bean.setQStart(s);
-					bean.setMillerStart(null);
-				}
-				int[] ss = bean.getMillerShape();
-				if (ss != null) {
-					bean.setQShape(ss);
-					bean.setMillerShape(null);
-				}
 			case Volume_HKL:
 			default:
 				msm.mapToVolumeFile();

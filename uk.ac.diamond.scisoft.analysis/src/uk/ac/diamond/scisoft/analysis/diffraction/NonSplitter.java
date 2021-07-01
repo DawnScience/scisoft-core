@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
+import static uk.ac.diamond.scisoft.analysis.diffraction.PixelSplitter.addToDatasets;
+
 import javax.vecmath.Vector3d;
 
 import org.eclipse.january.dataset.DoubleDataset;
@@ -19,8 +21,8 @@ import org.eclipse.january.dataset.DoubleDataset;
 public class NonSplitter implements PixelSplitter {
 	@Override
 	public void splitValue(DoubleDataset volume, DoubleDataset weight, final double[] vsize, Vector3d dh, int[] pos, double value) {
-		InverseSplitter.addToDataset(volume, pos, value);
-		InverseSplitter.addToDataset(weight, pos, 1);
+		int idx = volume.get1DIndex(pos);
+		addToDatasets(idx, volume, value, weight, 1);
 	}
 
 	@Override

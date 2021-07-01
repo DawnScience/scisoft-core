@@ -30,6 +30,25 @@ public interface PixelSplitter extends Cloneable {
 
 	public PixelSplitter clone();
 
+	/**
+	 * Add values to datasets at given index
+	 * @param index
+	 * @param da dataset
+	 * @param va value
+	 * @param db dataset
+	 * @param vb value
+	 */
+	static void addToDatasets(final int index, final DoubleDataset da, double va, final DoubleDataset db, double vb) {
+		da.setAbs(index, da.getAbs(index) + va);
+		db.setAbs(index, db.getAbs(index) + vb);
+	}
+
+	/**
+	 * Create a pixel splitter of given name
+	 * @param splitter name
+	 * @param p parameter
+	 * @return pixel splitter
+	 */
 	static PixelSplitter createSplitter(String splitter, double p) {
 		if (splitter == null || splitter.isEmpty() || splitter.equals("nearest")) {
 			return new NonSplitter();

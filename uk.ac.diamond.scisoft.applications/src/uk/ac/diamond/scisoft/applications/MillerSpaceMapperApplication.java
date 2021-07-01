@@ -49,6 +49,10 @@ public class MillerSpaceMapperApplication implements IApplication {
 	private static final String CORES = "-cores";
 	private static final String BEAN_PATH = "-bean";
 
+	/**
+	 * @param args can have -cores argument and must have -bean argument
+	 * @return exit code
+	 */
 	private Integer main(String[] args) {
 		try {
 			int n = args.length;
@@ -76,6 +80,22 @@ public class MillerSpaceMapperApplication implements IApplication {
 			case Coords_HKL:
 				msm.calculateCoordinates(false);
 				break;
+			case Volume_Q:
+				double[] s = bean.getMillerStep();
+				if (s != null) {
+					bean.setQStep(s);
+					bean.setMillerStep(null);
+				}
+				s = bean.getMillerStart();
+				if (s != null) {
+					bean.setQStart(s);
+					bean.setMillerStart(null);
+				}
+				int[] ss = bean.getMillerShape();
+				if (ss != null) {
+					bean.setQShape(ss);
+					bean.setMillerShape(null);
+				}
 			case Volume_HKL:
 			default:
 				msm.mapToVolumeFile();

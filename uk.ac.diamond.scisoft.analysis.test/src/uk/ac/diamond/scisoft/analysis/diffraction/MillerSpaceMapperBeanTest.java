@@ -33,22 +33,7 @@ public class MillerSpaceMapperBeanTest {
 	@Rule
 	public TemporaryFolder tempFolder = new TemporaryFolder();
 
-	@Test
-	public void testWriteRead() {
-		MillerSpaceMapperBean orig = new MillerSpaceMapperBean();
-		orig.setInputs("blah");
-
-		ObjectMapper mapper = new ObjectMapper();
-		String testName = "output.json";
-		File f = null;
-		try {
-			f = tempFolder.newFile(testName);
-			mapper.writeValue(f, orig);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			Assert.fail("Could not write file");
-		}
-
+	private void testRead(ObjectMapper mapper, MillerSpaceMapperBean orig, File f) {
 		try {
 			MillerSpaceMapperBean copy = mapper.readValue(f, MillerSpaceMapperBean.class);
 			assertEquals(orig, copy);
@@ -56,70 +41,81 @@ public class MillerSpaceMapperBeanTest {
 			e1.printStackTrace();
 			Assert.fail("Could not read file");
 		}
+	}
+
+	private void testWriteRead(MillerSpaceMapperBean orig, File f) {
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			mapper.writeValue(f, orig);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			Assert.fail("Could not write file");
+		}
+
+		testRead(mapper, orig, f);
+	}
+
+	@Test
+	public void testWriteRead() throws Exception {
+		MillerSpaceMapperBean orig = new MillerSpaceMapperBean();
+		orig.setInputs("blah");
+		File f = tempFolder.newFile("output.json");
+		testWriteRead(orig, f);
+	}
+
+	private MillerSpaceMapperBean createBean() {
+		MillerSpaceMapperBean orig = new MillerSpaceMapperBean();
+		orig.setInputs("/scratch/images/i16/562926.nxs", "/scratch/images/i16/562927.nxs", "/scratch/images/i16/562928.nxs");
+		orig.setOutput("/scratch/tmp/562926.h5");
+		orig.setSplitterName("inverse");
+		orig.setSplitterParameter(0.5);
+		orig.setScaleFactor(2);
+		orig.setReduceToNonZero(true);
+		orig.setStep(0.002);
+		return orig;
 	}
 
 	@Test
 	public void createTestJSON() {
-		MillerSpaceMapperBean orig = new MillerSpaceMapperBean();
-		orig.setInputs("/scratch/images/i16/562926.nxs", "/scratch/images/i16/562927.nxs", "/scratch/images/i16/562928.nxs");
-		orig.setOutput("/scratch/tmp/562926.h5");
-		orig.setSplitterName("inverse");
-		orig.setSplitterParameter(0.5);
-		orig.setScaleFactor(2);
-		orig.setReduceToNonZero(true);
-		orig.setMillerStep(0.002);
+		String testName = "test-scratch/i16.json";
+		File f = new File(testName);
+		File p = f.getParentFile();
+		if (!p.isDirectory()) {
+			p.mkdir();
+		}
+		testWriteRead(createBean(), f);
+	}
+
+	private void loadJSON(String testFile) {
+		MillerSpaceMapperBean orig = createBean();
 
 		ObjectMapper mapper = new ObjectMapper();
-		String testName = "test-scratch/i16.json";
-		try {
-			File f = new File(testName);
-			File p = f.getParentFile();
-			if (!p.isDirectory()) {
-				p.mkdir();
-			}
-			mapper.writeValue(f, orig);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			Assert.fail("Could not write file");
-		}
+		testRead(mapper, orig, new File(testFile));
+	}
+
+	@Test
+	public void loadCurrentJSON() {
+		loadJSON("testfiles/i16.json");
+	}
+
+	@Test
+	public void loadOldJSON() {
+		loadJSON("testfiles/i16-old.json");
 	}
 
 	@Test
 	public void loadIncompleteJSON() {
-		MillerSpaceMapperBean orig = new MillerSpaceMapperBean();
-		orig.setInputs("/scratch/images/i16/562926.nxs", "/scratch/images/i16/562927.nxs", "/scratch/images/i16/562928.nxs");
-		orig.setOutput("/scratch/tmp/562926.h5");
-		orig.setSplitterName("inverse");
-		orig.setSplitterParameter(0.5);
-		orig.setScaleFactor(2);
-		orig.setReduceToNonZero(true);
-		orig.setMillerStep(0.002);
-
-		ObjectMapper mapper = new ObjectMapper();
-		String testName = "testfiles/i16-short.json";
-		File f = null;
-		try {
-			f = new File(testName);
-			MillerSpaceMapperBean copy = mapper.readValue(f, MillerSpaceMapperBean.class);
-			assertEquals(orig, copy);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-			Assert.fail("Could not read file");
-		}
+		loadJSON("testfiles/i16-short.json");
 	}
 
-	@Test
-	public void loadExtraItemsJSON() {
+	@Test(expected=IOException.class)
+	public void loadExtraItemsJSON() throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
 		String testName = "testfiles/i16-extra.json";
 		File f = null;
-		try {
-			f = new File(testName);
-			mapper.readValue(f, MillerSpaceMapperBean.class);
-			Assert.fail("Should not have been able to read file");
-		} catch (IOException e1) {
-			// should throw exception
-		}
+		f = new File(testName);
+		mapper.readValue(f, MillerSpaceMapperBean.class);
+		Assert.fail("Should not have been able to read file");
 	}
 
 	@Test
@@ -131,7 +127,7 @@ public class MillerSpaceMapperBeanTest {
 		String n = testFileFolder + "588193.nxs";
 		String[] inputPaths = { n, n };
 
-		MillerSpaceMapperBean mapperBean = MillerSpaceMapperBean.createBeanWithAutoBox(inputPaths, dstPath, "inverse", 0.5, 2., true, new double[] {0.005}, null);
+		MillerSpaceMapperBean mapperBean = MillerSpaceMapperBean.createBeanWithAutoBox(inputPaths, dstPath, "inverse", 0.5, 2., true, false, 0.005);
 		MillerSpaceMapper mapper = new MillerSpaceMapper(mapperBean);
 		mapper.mapToVolumeFile(true);
 
@@ -266,7 +262,7 @@ public class MillerSpaceMapperBeanTest {
 		String[] inputPaths = { n };
 
 		// pil100k is 195x487
-		MillerSpaceMapperBean mapperBean = MillerSpaceMapperBean.createBeanWithAutoBox(inputPaths, dstPath, "inverse", 0.5, 2., true, new double[] {0.005}, null);
+		MillerSpaceMapperBean mapperBean = MillerSpaceMapperBean.createBeanWithAutoBox(inputPaths, dstPath, "inverse", 0.5, 2., true, false, 0.005);
 		mapperBean.setPixelIndexes(indexes);
 		MillerSpaceMapper mapper = new MillerSpaceMapper(mapperBean);
 		mapper.calculateCoordinates(mapQ);

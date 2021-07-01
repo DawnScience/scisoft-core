@@ -22,10 +22,6 @@ public class MillerSpaceMapperBean implements Cloneable {
 	private double splitterParameter;
 	private double scaleFactor;
 
-	private int[] millerShape;
-	private double[] millerStart;
-	private double[] millerStep;
-
 	private boolean reduceToNonZero;
 
 	private String entryPath;
@@ -37,9 +33,9 @@ public class MillerSpaceMapperBean implements Cloneable {
 
 	private boolean listMillerEntries;
 
-	private int[] qShape;
-	private double[] qStart;
-	private double[] qStep;
+	private int[] shape;
+	private double[] start;
+	private double[] step;
 
 	private int[] region; // masking ROI where only points within its bounds contribute to volume
 	private String maskFilePath; // file path to image weight 
@@ -54,7 +50,7 @@ public class MillerSpaceMapperBean implements Cloneable {
 		 */
 		Volume_HKL,
 		/**
-		 * Volume in Miller space
+		 * Volume in q-space (lab frame)
 		 */
 		Volume_Q,
 		/**
@@ -145,45 +141,49 @@ public class MillerSpaceMapperBean implements Cloneable {
 	}
 
 	/**
-	 * @return shape of volume in Miller space (can be null to be autoset)
-	 */
-	public int[] getMillerShape() {
-		return millerShape;
-	}
-
-	/**
 	 * @param millerShape shape of volume in Miller space (can be null to be autoset)
+	 * @deprecated For deserialization only
 	 */
-	public void setMillerShape(int[] millerShape) {
-		this.millerShape = millerShape;
-	}
-
-	/**
-	 * @return starting coordinates of volume (can be null to be autoset)
-	 */
-	public double[] getMillerStart() {
-		return millerStart;
+	@SuppressWarnings("unused")
+	@Deprecated
+	private void setMillerShape(int[] millerShape) {
+		if (millerShape != null) {
+			if (shape != null) {
+				throw new IllegalArgumentException("Changing shape after it has already been set is forbidden.");
+			}
+			shape = millerShape;
+		}
 	}
 
 	/**
 	 * @param millerStart starting coordinates of volume (can be null to be autoset)
+	 * @deprecated For deserialization only
 	 */
-	public void setMillerStart(double[] millerStart) {
-		this.millerStart = millerStart;
-	}
-
-	/**
-	 * @return sides of voxels in Miller space
-	 */
-	public double[] getMillerStep() {
-		return millerStep;
+	@SuppressWarnings("unused")
+	@Deprecated
+	private void setMillerStart(double[] millerStart) {
+		if (millerStart != null) {
+			if (start != null) {
+				throw new IllegalArgumentException("Changing start after it has already been set is forbidden.");
+			}
+			start = millerStart;
+		}
 	}
 
 	/**
 	 * @param millerStep sides of voxels in Miller space
+	 * @deprecated For deserialization only
 	 */
-	public void setMillerStep(double... millerStep) {
-		this.millerStep = millerStep;
+	@SuppressWarnings("unused")
+	@Deprecated
+	private void setMillerStep(double... millerStep) {
+		if (millerStep != null) {
+			if (step != null) {
+				throw new IllegalArgumentException("Changing step after it has already been set is forbidden.");
+			}
+			outputMode = OutputMode.Volume_HKL;
+			step = millerStep;
+		}
 	}
 
 	/**
@@ -285,37 +285,83 @@ public class MillerSpaceMapperBean implements Cloneable {
 		this.listMillerEntries = listMillerEntries;
 	}
 
-	public int[] getQShape() {
-		return qShape;
-	}
-
 	/**
 	 * @param qShape shape of q space volume (can be null)
+	 * @deprecated For deserialization only
 	 */
-	public void setQShape(int[] qShape) {
-		this.qShape = qShape;
-	}
-
-	public double[] getQStart() {
-		return qStart;
+	@SuppressWarnings("unused")
+	@Deprecated
+	private void setQShape(int[] qShape) {
+		if (qShape != null) {
+			if (shape != null) {
+				throw new IllegalArgumentException("Changing shape after it has already been set is forbidden.");
+			}
+			shape = qShape;
+		}
 	}
 
 	/**
 	 * @param qStart starting coordinates of volume of q space (can be null)
+	 * @deprecated For deserialization only
 	 */
-	public void setQStart(double[] qStart) {
-		this.qStart = qStart;
-	}
-
-	public double[] getQStep() {
-		return qStep;
+	@SuppressWarnings("unused")
+	@Deprecated
+	private void setQStart(double[] qStart) {
+		if (qStart != null) {
+			if (start!= null) {
+				throw new IllegalArgumentException("Changing start after it has already been set is forbidden.");
+			}
+			start = qStart;
+		}
 	}
 
 	/**
 	 * @param qStep sides of voxels in q space (can be null)
+	 * @deprecated For deserialization only
 	 */
-	public void setQStep(double... qStep) {
-		this.qStep = qStep;
+	@SuppressWarnings("unused")
+	@Deprecated
+	private void setQStep(double... qStep) {
+		if (qStep != null) {
+			if (step != null) {
+				throw new IllegalArgumentException("Changing step after it has already been set is forbidden.");
+			}
+			outputMode = OutputMode.Volume_Q;
+			step = qStep;
+		}
+	}
+
+	public int[] getShape() {
+		return shape;
+	}
+
+	/**
+	 * @param shape shape of volume (can be null)
+	 */
+	public void setShape(int[] shape) {
+		this.shape = shape;
+	}
+
+	public double[] getStart() {
+		return start;
+	}
+
+	/**
+	 * @param start starting coordinates of volume (can be null)
+	 */
+	public void setStart(double[] start) {
+		this.start = start;
+	}
+
+	public double[] getStep() {
+		return step;
+	}
+
+	/**
+	 * @param step sides of voxels (can be null if not in a volume mode)
+	 */
+	public void setStep(double... step) {
+		this.step = step;
 	}
 
 	/**
@@ -376,12 +422,15 @@ public class MillerSpaceMapperBean implements Cloneable {
 		try {
 			copy = (MillerSpaceMapperBean) super.clone();
 			copy.inputs = Arrays.copyOf(inputs, inputs.length);
-			copy.millerShape = millerShape == null ? null : millerShape.clone();
-			copy.millerStart = millerStart == null ? null : millerStart.clone();
-			copy.millerStep = millerStep == null ? null : millerStep.clone();
-			copy.qShape = qShape == null ? null : qShape.clone();
-			copy.qStart = qStart == null ? null : qStart.clone();
-			copy.qStep = qStep == null ? null : qStep.clone();
+//			copy.millerShape = millerShape == null ? null : millerShape.clone();
+//			copy.millerStart = millerStart == null ? null : millerStart.clone();
+//			copy.millerStep = millerStep == null ? null : millerStep.clone();
+//			copy.qShape = qShape == null ? null : qShape.clone();
+//			copy.qStart = qStart == null ? null : qStart.clone();
+//			copy.qStep = qStep == null ? null : qStep.clone();
+			copy.shape = shape == null ? null : shape.clone();
+			copy.start = start == null ? null : start.clone();
+			copy.step  = step  == null ? null : step.clone();
 			copy.region = region == null ? null : region.clone();
 			if (pixelIndexes != null) {
 				copy.pixelIndexes = Arrays.stream(pixelIndexes)
@@ -403,13 +452,16 @@ public class MillerSpaceMapperBean implements Cloneable {
 		result = prime * result + Arrays.hashCode(inputs);
 		result = prime * result + Objects.hashCode(instrumentName);
 		result = prime * result + (listMillerEntries ? 1231 : 1237);
-		result = prime * result + Arrays.hashCode(millerShape);
-		result = prime * result + Arrays.hashCode(millerStart);
-		result = prime * result + Arrays.hashCode(millerStep);
+//		result = prime * result + Arrays.hashCode(millerShape);
+//		result = prime * result + Arrays.hashCode(millerStart);
+//		result = prime * result + Arrays.hashCode(millerStep);
 		result = prime * result + Objects.hashCode(output);
-		result = prime * result + Arrays.hashCode(qShape);
-		result = prime * result + Arrays.hashCode(qStart);
-		result = prime * result + Arrays.hashCode(qStep);
+//		result = prime * result + Arrays.hashCode(qShape);
+//		result = prime * result + Arrays.hashCode(qStart);
+//		result = prime * result + Arrays.hashCode(qStep);
+		result = prime * result + Arrays.hashCode(shape);
+		result = prime * result + Arrays.hashCode(start);
+		result = prime * result + Arrays.hashCode(step);
 		result = prime * result + (reduceToNonZero ? 1231 : 1237);
 		result = prime * result + Objects.hashCode(sampleName);
 		long temp;
@@ -436,91 +488,51 @@ public class MillerSpaceMapperBean implements Cloneable {
 		if (!(obj instanceof MillerSpaceMapperBean)) {
 			return false;
 		}
+
 		MillerSpaceMapperBean other = (MillerSpaceMapperBean) obj;
-		if (attenuatorName == null) {
-			if (other.attenuatorName != null) {
-				return false;
-			}
-		} else if (!attenuatorName.equals(other.attenuatorName)) {
+		if (!Objects.equals(attenuatorName, other.attenuatorName)) {
 			return false;
 		}
-		if (dataName == null) {
-			if (other.dataName != null) {
-				return false;
-			}
-		} else if (!dataName.equals(other.dataName)) {
+		if (!Objects.equals(dataName, other.dataName)) {
 			return false;
 		}
-		if (detectorName == null) {
-			if (other.detectorName != null) {
-				return false;
-			}
-		} else if (!detectorName.equals(other.detectorName)) {
+		if (!Objects.equals(detectorName, other.detectorName)) {
 			return false;
 		}
-		if (entryPath == null) {
-			if (other.entryPath != null) {
-				return false;
-			}
-		} else if (!entryPath.equals(other.entryPath)) {
+		if (!Objects.equals(entryPath, other.entryPath)) {
 			return false;
 		}
 		if (!Arrays.equals(inputs, other.inputs)) {
 			return false;
 		}
-		if (instrumentName == null) {
-			if (other.instrumentName != null) {
-				return false;
-			}
-		} else if (!instrumentName.equals(other.instrumentName)) {
+		if (!Objects.equals(instrumentName, other.instrumentName)) {
 			return false;
 		}
 		if (listMillerEntries != other.listMillerEntries) {
 			return false;
 		}
-		if (!Arrays.equals(millerShape, other.millerShape)) {
+		if (!Objects.equals(output, other.output)) {
 			return false;
 		}
-		if (!Arrays.equals(millerStart, other.millerStart)) {
+		if (!Arrays.equals(shape, other.shape)) {
 			return false;
 		}
-		if (!Arrays.equals(millerStep, other.millerStep)) {
+		if (!Arrays.equals(start, other.start)) {
 			return false;
 		}
-		if (output == null) {
-			if (other.output != null) {
-				return false;
-			}
-		} else if (!output.equals(other.output)) {
-			return false;
-		}
-		if (!Arrays.equals(qShape, other.qShape)) {
-			return false;
-		}
-		if (!Arrays.equals(qStart, other.qStart)) {
-			return false;
-		}
-		if (!Arrays.equals(qStep, other.qStep)) {
+		if (!Arrays.equals(step, other.step)) {
 			return false;
 		}
 		if (reduceToNonZero != other.reduceToNonZero) {
 			return false;
 		}
-		if (sampleName == null) {
-			if (other.sampleName != null) {
-				return false;
-			}
-		} else if (!sampleName.equals(other.sampleName)) {
+		if (!Objects.equals(sampleName, other.sampleName)) {
 			return false;
 		}
 		if (Double.doubleToLongBits(scaleFactor) != Double.doubleToLongBits(other.scaleFactor)) {
 			return false;
 		}
-		if (splitterName == null) {
-			if (other.splitterName != null) {
-				return false;
-			}
-		} else if (!splitterName.equals(other.splitterName)) {
+		if (!Objects.equals(splitterName, other.splitterName)) {
 			return false;
 		}
 		if (Double.doubleToLongBits(splitterParameter) != Double.doubleToLongBits(other.splitterParameter)) {
@@ -541,6 +553,30 @@ public class MillerSpaceMapperBean implements Cloneable {
 		return true;
 	}
 
+	public static boolean isVolume(MillerSpaceMapperBean bean) {
+		switch (bean.getOutputMode()) {
+		case Coords_HKL:
+		case Coords_Q:
+			return false;
+		case Volume_HKL:
+		case Volume_Q:
+		default:
+			return true;
+		}
+	}
+
+	public static boolean isQSpace(MillerSpaceMapperBean bean) {
+		switch (bean.getOutputMode()) {
+		case Coords_Q:
+		case Volume_Q:
+			return true;
+		case Coords_HKL:
+		case Volume_HKL:
+		default:
+			return false;
+		}
+	}
+
 	/**
 	 * Create bean to process Nexus file with automatic bounding box setting
 	 * @param inputs Nexus files
@@ -556,12 +592,12 @@ public class MillerSpaceMapperBean implements Cloneable {
 		bean.setSplitterParameter(0);
 		bean.setScaleFactor(scale);
 		bean.setReduceToNonZero(false);
-		bean.setMillerShape(null);
-		bean.setMillerStart(null);
-		bean.setMillerStep(null);
-		bean.setQShape(null);
-		bean.setQStart(null);
-		bean.setQStep(null);
+		bean.setShape(null);
+		bean.setStart(null);
+		bean.setStep(null);
+//		bean.setQShape(null);
+//		bean.setQStart(null);
+//		bean.setQStep(null);
 		bean.setListMillerEntries(true);
 		return bean;
 	}
@@ -574,11 +610,11 @@ public class MillerSpaceMapperBean implements Cloneable {
 	 * @param p splitter parameter
 	 * @param scale upsampling factor
 	 * @param reduceToNonZero if true, reduce output to sub-volume with non-zero data
-	 * @param mDelta sides of voxels in Miller space
-	 * @param qDelta sides of voxels in q space
+	 * @param isQSpace if true, map to q space otherwise map to Miller space
+	 * @param mDelta sides of voxels in volume
 	 * @return bean
 	 */
-	public static MillerSpaceMapperBean createBeanWithAutoBox(String[] inputs, String output, String splitter, double p, double scale, boolean reduceToNonZero, double[] mDelta, double[] qDelta) {
+	public static MillerSpaceMapperBean createBeanWithAutoBox(String[] inputs, String output, String splitter, double p, double scale, boolean reduceToNonZero, boolean isQSpace, double... mDelta) {
 		MillerSpaceMapperBean bean = new MillerSpaceMapperBean();
 		bean.setInputs(inputs);
 		bean.setOutput(output);
@@ -586,12 +622,8 @@ public class MillerSpaceMapperBean implements Cloneable {
 		bean.setSplitterParameter(p);
 		bean.setScaleFactor(scale);
 		bean.setReduceToNonZero(reduceToNonZero);
-		bean.setMillerShape(null);
-		bean.setMillerStart(null);
-		bean.setMillerStep(mDelta);
-		bean.setQShape(null);
-		bean.setQStart(null);
-		bean.setQStep(qDelta);
+		bean.setOutputMode(isQSpace ? OutputMode.Volume_Q : OutputMode.Volume_HKL);
+		bean.setStep(mDelta);
 		bean.setListMillerEntries(false);
 		return bean;
 	}
@@ -603,15 +635,13 @@ public class MillerSpaceMapperBean implements Cloneable {
 	 * @param splitter name of pixel splitting algorithm. Can be "gaussian", "inverse", or null, "", or "nearest" for the default.
 	 * @param p splitter parameter
 	 * @param scale upsampling factor
-	 * @param mShape shape of Miller space volume
-	 * @param mStart start coordinates in Miller space
-	 * @param mDelta sides of voxels in Miller space
-	 * @param qShape shape of q space volume
-	 * @param qStart start coordinates in q space
-	 * @param qDelta sides of voxels in q space
+	 * @param mShape shape of volume
+	 * @param mStart start coordinates
+	 * @param mDelta sides of voxels
+	 * @param isQSpace if true then map to q space otherwise to Miller space
 	 * @return bean
 	 */
-	public static MillerSpaceMapperBean createBean(String[] inputs, String output, String splitter, double p, double scale, int[] mShape, double[] mStart, double[] mDelta, int[] qShape, double[] qStart, double[] qDelta) {
+	public static MillerSpaceMapperBean createBean(String[] inputs, String output, String splitter, double p, double scale, int[] mShape, double[] mStart, double[] mDelta, boolean isQSpace) {
 		MillerSpaceMapperBean bean = new MillerSpaceMapperBean();
 		bean.setInputs(inputs);
 		bean.setOutput(output);
@@ -619,12 +649,12 @@ public class MillerSpaceMapperBean implements Cloneable {
 		bean.setSplitterParameter(p);
 		bean.setScaleFactor(scale);
 		bean.setReduceToNonZero(false);
-		bean.setMillerShape(mShape);
-		bean.setMillerStart(mStart);
-		bean.setMillerStep(mDelta);
-		bean.setQShape(qShape);
-		bean.setQStart(qStart);
-		bean.setQStep(qDelta);
+		if (isQSpace) {
+			bean.setOutputMode(OutputMode.Volume_Q);
+		}
+		bean.setShape(mShape);
+		bean.setStart(mStart);
+		bean.setStep(mDelta);
 		bean.setListMillerEntries(false);
 		return bean;
 	}

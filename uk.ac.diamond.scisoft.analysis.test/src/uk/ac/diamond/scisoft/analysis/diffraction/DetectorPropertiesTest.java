@@ -632,7 +632,7 @@ public class DetectorPropertiesTest {
 		Vector3d a = new Vector3d(1, -1, 1);
 		Vector3d b = new Vector3d(1, 1, 1);
 		Vector3d c = new Vector3d(1, -1, -1);
-		// half of a cube side
+		// half of a cube side with right angle corner at vertex a
 		double s = DetectorProperties.calculatePlaneTriangleSolidAngle(a, b, c);
 		assertEquals(4.*Math.PI/12, s, 1e-12);
 
@@ -656,6 +656,88 @@ public class DetectorPropertiesTest {
 			// ratio of solid angle subtended to that estimated by area by distance squared
 			// tends to cos(alpha)^3
 			assertEquals(factor, s/(r*r), factor*r/2.682);
+		}
+	}
+
+	@Test
+	public void testSolidAngle2() {
+		double sx = 0.5;
+		double dx = 1.0;
+		double sy = 0.5;
+		double dy = 2.0;
+		double s = expectedRectangle(sx, dx, sy, dy);
+
+		double s2 = DetectorProperties.calculatePixelSolidAngle(sx, sy, 1, dx, dy);
+		assertEquals(s, s2, 1e-12);
+
+		sx = -0.25;
+		s = expectedRectangle(sx, dx, sy, dy);
+		s2 = DetectorProperties.calculatePixelSolidAngle(sx, sy, 1, dx, dy);
+		assertEquals(s, s2, 1e-5);
+
+		sx = 0.5;
+		sy = -0.5;
+		s = expectedRectangle(sx, dx, sy, dy);
+		s2 = DetectorProperties.calculatePixelSolidAngle(sx, sy, 1, dx, dy);
+		assertEquals(s, s2, 1e-5);
+
+		sx = -0.25;
+		s = expectedRectangle(sx, dx, sy, dy);
+		s2 = DetectorProperties.calculatePixelSolidAngle(sx, sy, 1, dx, dy);
+		assertEquals(s, s2, 1e-5);
+
+		double a = 1.;
+		for (int i = 0; i < 16; i++) {
+			checkExactSolidAngle(a, 0.5, 1);
+			a *= 0.5;
+		}
+	}
+
+	private static double expectedRectangle(double sx, double dx, double sy, double dy) {
+		Vector3d a = new Vector3d(sx, sy, 1);
+		Vector3d b = new Vector3d(sx+dx, sy, 1);
+		Vector3d c = new Vector3d(sx+dx, sy+dy, 1);
+		Vector3d d = new Vector3d(sx, sy+dy, 1);
+		return DetectorProperties.calculatePlaneTriangleSolidAngle(a, b, c)
+				+ DetectorProperties.calculatePlaneTriangleSolidAngle(c, d, a);
+	}
+
+	public static void checkExactSolidAngle(double a, double b, double c) {
+		double alpha = a/c;
+		double beta = b/c;
+		double gamma = alpha*beta;
+		double expected = Math.atan(gamma/Math.sqrt(1 + alpha*alpha + beta*beta));
+		assertEquals(expected, DetectorProperties.calculateRectangleSolidAngle(a,  b, c), Math.abs(expected)/1024.);
+	}
+
+	private double calculateSolidAngleOld(DetectorProperties dp, int x, int y) {
+		Vector3d a = dp.pixelPosition(x, y);
+		Vector3d ab = dp.getPixelRow();
+		Vector3d ac = dp.getPixelColumn();
+
+		Vector3d b = new Vector3d();
+		Vector3d c = new Vector3d();
+		b.add(a, ab);
+		c.add(a, ac);
+		double s = DetectorProperties.calculatePlaneTriangleSolidAngle(a, b, c);
+
+		a.add(b, ac);
+		return s + DetectorProperties.calculatePlaneTriangleSolidAngle(b, a, c); // order is important
+	}
+
+	@Test
+	public void testSolidAngleI07() {
+		DetectorProperties dp = new DetectorProperties(898, 59.84, 11.22, 2069, 515, 0.055, 0.055);
+		dp.setStartX(800);
+		dp.setPx(400);
+		dp.setStartY(200);
+		dp.setPy(200);
+		for (int j = 0; j < 200; j++) {
+			for (int i = 0; i < 400; i++) {
+				double sa = dp.calculateSolidAngle(i, j);
+				double sb = calculateSolidAngleOld(dp, i, j);
+				assertEquals(sb, sa, 1e-12);
+			}
 		}
 	}
 

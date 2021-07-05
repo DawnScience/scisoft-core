@@ -384,7 +384,14 @@ public class MillerSpaceMapper {
 			if (program != null && program.startsWith("GDA")) {
 				try {
 					g = (GroupNode) NexusTreeUtils.requireNode(g, NexusConstants.USER);
-					String user = NexusTreeUtils.parseStringArray(g.getDataNode("username"), 1)[0];
+					d = g.getDataNode("username"); // check old non-NeXus field
+					if (d == null) {
+						d = g.getDataNode("name");
+						if (d == null) {
+							return false;
+						}
+					}
+					String user = NexusTreeUtils.parseStringArray(d, 1)[0];
 					if (user != null && user.equals("i16user")) {
 						// program name given as "GDA 9.14.0", need version 9.15+
 						String version = program.substring(program.indexOf(" ")).trim();
@@ -1659,7 +1666,10 @@ public class MillerSpaceMapper {
 			throw new ScanFileHolderException("Image data must be at least 2D");
 		}
 		if (dshape.length != srank) {
-			throw new ScanFileHolderException("Scan shape must be 2 dimensions less than image data");
+			int[] nshape = ShapeUtils.squeezeShape(dshape, true);
+			if (nshape.length != srank) {
+				logger.warn("Scan shape must be 2 dimensions less than image data");
+			}
 		}
 
 		int[] axes = new int[2];

@@ -369,7 +369,7 @@ public class MillerSpaceMapper {
 			for (int i = 0; i < ishape.length; i++) {
 				ishape[i] *= scale;
 			}
-			upSampler = new BicubicInterpolator(ishape);
+			upSampler = new BicubicInterpolator(true, ishape);
 		}
 
 		doImages(tree, trans, images, iters, lazy, ishape, upSampler);
@@ -972,7 +972,7 @@ public class MillerSpaceMapper {
 		final Matrix3d mTransform = mspace == null ? null : mspace.getMillerTransform();
 		int size = pool.getParallelism();
 		if (size == 1) {
-			BicubicInterpolator upSampler = scale == 1 ? null : new BicubicInterpolator(ishape);
+			BicubicInterpolator upSampler = scale == 1 ? null : new BicubicInterpolator(true, ishape);
 			int[] regionSlice = new int[] { 0, ishape[1], 0, ishape[0] };
 			mapImage(tFactor, upSampler, splitter, sMin, sMax, regionSlice, qspace, mTransform, iMask, image, map, weight);
 			return;
@@ -993,7 +993,7 @@ public class MillerSpaceMapper {
 			int s = i * chunk;
 			int e = Math.min(s + chunk, rows);
 			logger.info("Chunk {}: {} -> {}", i, s, e);
-			BicubicInterpolator upSampler = scale == 1 ? null : new BicubicInterpolator(new int[] {e - s, ishape[1]});
+			BicubicInterpolator upSampler = scale == 1 ? null : new BicubicInterpolator(true, e - s, ishape[1]);
 			jobs.add(new JobConfig(upSampler, splitter.clone(), s, e, vShape));
 		}
 

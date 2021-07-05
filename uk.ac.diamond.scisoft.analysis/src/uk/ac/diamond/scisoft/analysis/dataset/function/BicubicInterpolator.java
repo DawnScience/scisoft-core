@@ -20,17 +20,31 @@ import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 
 /**
- * Function acts as a 2D interpolator using cubic interpolation 
+ * Function acts as a 2D interpolator using cubic interpolation
  */
 public class BicubicInterpolator implements DatasetToDatasetFunction {
 
-	int[] shape;
+	private int[] shape;
 
-	public BicubicInterpolator(int... newShape) {
+	/**
+	 * Create a bicubic interpolation
+	 * @param extendBorders if true, extend interpolation beyond borders
+	 * @param newShape new output shape
+	 */
+	public BicubicInterpolator(boolean extendBorders, int... newShape) {
 		if (newShape == null || newShape.length != 2) {
 			throw new IllegalArgumentException("Shape must be 2D");
 		}
 		shape = newShape;
+		this.extendBorders = extendBorders;
+	}
+
+	/**
+	 * Create a bicubic interpolation. Equivalent to {@code BicubicInterpolator(false, newShape)}
+	 * @param newShape new output shape
+	 */
+	public BicubicInterpolator(int... newShape) {
+		this(false, newShape);
 	}
 
 	// parameters used with the interpolation, for speeding up the process
@@ -38,6 +52,8 @@ public class BicubicInterpolator implements DatasetToDatasetFunction {
 	private double a10, a11, a12, a13;
 	private double a20, a21, a22, a23;
 	private double a30, a31, a32, a33;
+
+	private boolean extendBorders;
 
 	/**
 	 * @param p array containing the values of the 16 surrounding points
@@ -134,10 +150,17 @@ public class BicubicInterpolator implements DatasetToDatasetFunction {
 	 * @param iShape
 	 */
 	public void setInputShape(int... iShape) {
-		osx = iShape[0] / (double) shape[0];
-		ofx = ((int) (1/osx - 1))/2; // offset to left to centre sample points
-		osy = iShape[1] / (double) shape[1];
-		ofy = ((int) (1/osy - 1))/2;
+		if (extendBorders) {
+			osx = iShape[0] / (double) shape[0];
+			ofx = ((int) (1/osx - 1))/2; // offset to left to centre sample points
+			osy = iShape[1] / (double) shape[1];
+			ofy = ((int) (1/osy - 1))/2;
+		} else {
+			osx = (iShape[0] - 1)/ (shape[0] - 1.0);
+			ofx = 0;
+			osy = (iShape[1] - 1)/ (shape[1] - 1.0);
+			ofy = 0;
+		}
 	}
 
 	/**
@@ -187,10 +210,19 @@ public class BicubicInterpolator implements DatasetToDatasetFunction {
 			DoubleDataset dds = DatasetFactory.zeros(shape);
 
 			// calculate the new step size
-			double dx = dShape[0] / (double) shape[0];
-			int ox = ((int) (1/dx - 1))/2; // offset to left to centre sample points
-			double dy = dShape[1] / (double) shape[1];
-			int oy = ((int) (1/dy - 1))/2;
+			double dx, dy;
+			int ox, oy;
+			if (extendBorders) {
+				dx = dShape[0] / (double) shape[0];
+				ox = ((int) (1/dx - 1))/2; // offset to left to centre sample points
+				dy = dShape[1] / (double) shape[1];
+				oy = ((int) (1/dy - 1))/2;
+			} else {
+				dx = (dShape[0] - 1)/ (shape[0] - 1.0);
+				ox = 0;
+				dy = (dShape[1] - 1)/ (shape[1] - 1.0);
+				oy = 0;
+			}
 
 			for (int x = 0; x < shape[0]; x++) {
 				double xpos = (x - ox)*dx; // scaled position in given dataset

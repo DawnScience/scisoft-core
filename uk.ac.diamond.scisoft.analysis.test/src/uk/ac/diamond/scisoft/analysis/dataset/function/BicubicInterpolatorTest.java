@@ -66,7 +66,7 @@ public class BicubicInterpolatorTest {
 		DoubleDataset ds = DatasetFactory.createRange(9);
 		ds.setShape(3, 3);
 
-		BicubicInterpolator bicube = new BicubicInterpolator(5, 5);
+		BicubicInterpolator bicube = new BicubicInterpolator(true, 5, 5);
 		List<? extends Dataset> ds2 = bicube.value(ds);
 
 		assertEquals(8.288, ds2.get(0).peakToPeak().doubleValue(), DELTA);
@@ -77,7 +77,7 @@ public class BicubicInterpolatorTest {
 		DoubleDataset ds = DatasetFactory.createRange(24);
 		ds.setShape(6, 4);
 
-		BicubicInterpolator bicube = new BicubicInterpolator(15, 10);
+		BicubicInterpolator bicube = new BicubicInterpolator(true, 15, 10);
 		Dataset ds2 = bicube.value(ds).get(0);
 
 		assertEquals(0.0, ds2.getDouble(0,0), DELTA);
@@ -100,11 +100,11 @@ public class BicubicInterpolatorTest {
 		assertEquals(16.0, bicube.interpolate(10, 0, ds), DELTA);
 		assertEquals(17.792, bicube.interpolate(11, 0, ds), DELTA);
 
-		bicube = new BicubicInterpolator(12, 8);
+		bicube = new BicubicInterpolator(true, 12, 8);
 		ds2 = bicube.value(ds).get(0);
 		assertEquals(ds2.getDouble(5,0), bicube.interpolate(5, 0, ds), DELTA);
 
-		bicube = new BicubicInterpolator(18, 12);
+		bicube = new BicubicInterpolator(true, 18, 12);
 		ds2 = bicube.value(ds).get(0);
 		assertEquals(ds2.getDouble(5,0), bicube.interpolate(5, 0, ds), DELTA);
 	}

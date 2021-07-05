@@ -1,7 +1,5 @@
 package org.eclipse.dawnsci.nexus.validation;
 
-import java.util.function.Supplier;
-
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.nexus.NXentry;
 import org.eclipse.dawnsci.nexus.NXroot;

@@ -26,8 +26,6 @@ import org.eclipse.dawnsci.nexus.NXentry;
 import org.eclipse.dawnsci.nexus.NXinstrument;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NXsample;
-import org.eclipse.dawnsci.nexus.NXsubentry;
-import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;
 import org.eclipse.dawnsci.nexus.NexusBaseClass;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
@@ -40,7 +38,6 @@ import org.eclipse.dawnsci.nexus.builder.NexusMetadataProvider.MetadataEntry;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 import org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder;
 import org.eclipse.dawnsci.nexus.builder.data.impl.DefaultNexusDataBuilder;
-import org.eclipse.dawnsci.nexus.validation.NexusApplicationValidator;
 import org.eclipse.dawnsci.nexus.validation.ValidationReport;
 
 /**

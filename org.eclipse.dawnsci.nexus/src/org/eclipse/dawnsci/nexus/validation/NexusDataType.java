@@ -22,7 +22,6 @@ import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.january.dataset.ILazyWriteableDataset;
 
 /**
  * Enumeration of Data types allowed in NXDL specifications. Call the {@link #validate(String, IDataset)}

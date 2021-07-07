@@ -1749,6 +1749,13 @@
             name="Nearest Calibration Import Model"
             visible="true">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.image.LocateInRowsOperation"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.image.LocateInRowsOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.image.LocateInRowsModel"
+            description="Locate where min/max/crossing occurs in each row of an image"
+            name="Locate in rows of image">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

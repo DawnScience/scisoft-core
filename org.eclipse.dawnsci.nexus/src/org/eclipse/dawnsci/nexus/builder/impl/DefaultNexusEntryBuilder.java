@@ -191,6 +191,15 @@ public class DefaultNexusEntryBuilder implements NexusEntryBuilder {
 		nxInstrument.setNameScalar(instrumentName);
 	}
 
+	@Override
+	public void setDefaultDataGroupName(String dataGroupName) throws NexusException {
+		if (!nxEntry.getAllData().keySet().contains(dataGroupName)) {
+			throw new NexusException("No such NXdata group: " + dataGroupName);
+		}
+		
+		nxEntry.setAttributeDefault(dataGroupName);
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder#getDataNode(java.lang.String)
 	 */

@@ -59,6 +59,7 @@ import org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder;
 import org.eclipse.dawnsci.nexus.builder.data.PrimaryDataDevice;
 import org.eclipse.dawnsci.nexus.device.INexusDeviceService;
 import org.eclipse.dawnsci.nexus.device.SimpleNexusDevice;
+import org.eclipse.dawnsci.nexus.scan.IDefaultDataGroupCalculator;
 import org.eclipse.dawnsci.nexus.scan.NexusScanFile;
 import org.eclipse.dawnsci.nexus.scan.NexusScanModel;
 import org.eclipse.dawnsci.nexus.scan.ServiceHolder;
@@ -449,6 +450,16 @@ class NexusScanFileImpl implements NexusScanFile {
 			createNXDataGroup(entryBuilder, primaryDevice, primaryDeviceType, monitors,
 					scannables, dataGroupName, dataFieldName);
 		}
+		
+		setDefaultDataGroupName(entryBuilder);
+	}
+
+	private void setDefaultDataGroupName(NexusEntryBuilder entryBuilder) throws NexusException {
+		// get the list of data group names, note as GroupNodeImpl uses a LinkedHashMap for child nodes, insertion order is preserved
+		final List<String> dataGroupNames = new ArrayList<>(entryBuilder.getNXentry().getAllData().keySet());
+		final IDefaultDataGroupCalculator calculator = ServiceHolder.getDefaultDataGroupConfiguration();
+		final String defaultDataGroupName = calculator.getDefaultDataGroupName(dataGroupNames);
+		entryBuilder.setDefaultDataGroupName(defaultDataGroupName);
 	}
 
 	/**
@@ -457,10 +468,10 @@ class NexusScanFileImpl implements NexusScanFile {
 	 * @param primaryDevice the primary device (e.g. a detector or monitor)
 	 * @param primaryDeviceType the type of the primary device
 	 * @param monitors the monitors
-	 * @param scannedDevice the devices being scanned
 	 * @param dataGroupName the name of the {@link NXdata} group within the parent {@link NXentry}
 	 * @param primaryDataFieldName the name that the primary data field name
 	 *   (i.e. the <code>@signal</code> field) should have within the NXdata group
+	 * @param scannedDevice the devices being scanned
 	 * @throws NexusException
 	 */
 	private void createNXDataGroup(NexusEntryBuilder entryBuilder,

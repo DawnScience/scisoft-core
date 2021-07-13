@@ -121,6 +121,15 @@ public interface NexusEntryBuilder {
 	public NexusDataBuilder newData(String name) throws NexusException;
 	
 	/**
+	 * Sets the name of the default nexus data group. This must be the name of a {@link NXdata}
+	 * group within this entry, in which case {@link NXentry#setAttributeDefault(String)} 
+	 * is called, otherwise a {@link NexusException} is thrown. 
+	 * @param the name of the default data group
+	 * @throws NexusException if a data group with the given name is not present
+	 */
+	public void setDefaultDataGroupName(String name) throws NexusException;
+	
+	/**
 	 * Sets the name of the {@link NXinstrument} object within this entry.
 	 * @param instrumentName instrument name
 	 */

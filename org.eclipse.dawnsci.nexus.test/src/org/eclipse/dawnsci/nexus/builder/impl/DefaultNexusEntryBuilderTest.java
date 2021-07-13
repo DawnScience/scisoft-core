@@ -402,6 +402,22 @@ public class DefaultNexusEntryBuilderTest {
 	}
 	
 	@Test
+	public void testSetDefaultDataGroupName() throws Exception {
+		final String dataGroupName = "testData";
+
+		entryBuilder.addDefaultGroups();
+		entryBuilder.newData(dataGroupName);
+		entryBuilder.setDefaultDataGroupName(dataGroupName);
+		assertThat(entryBuilder.getNXentry().getAttributeDefault(), is(equalTo(dataGroupName)));
+	}
+	
+	@Test(expected = NexusException.class)
+	public void testSetDefaultDataGroupNoSuchDataGroup() throws Exception {
+		entryBuilder.addDefaultGroups();
+		entryBuilder.setDefaultDataGroupName("nonExists");
+	}
+	
+	@Test
 	public void testGetDataNode() throws Exception {
 		entryBuilder.addDefaultGroups();
 		nxEntry.setTitleScalar("My Entry");

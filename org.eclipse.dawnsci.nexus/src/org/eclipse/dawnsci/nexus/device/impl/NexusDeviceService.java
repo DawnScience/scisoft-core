@@ -34,6 +34,13 @@ public class NexusDeviceService implements INexusDeviceService {
 		}
 	}
 	
+	public <N extends NXobject> void unregister(INexusDevice<N> nexusDevice) {
+		if (nexusDevice.getName() == null) {
+			throw new IllegalArgumentException("the nexus device name is not set");
+		}
+		nexusDevices.remove(nexusDevice.getName());
+	}
+	
 	@Override
 	public boolean hasNexusDevice(String name) {
 		return nexusDevices.containsKey(name);

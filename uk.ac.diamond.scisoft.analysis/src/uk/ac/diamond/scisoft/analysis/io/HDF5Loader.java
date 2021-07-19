@@ -1012,7 +1012,7 @@ public class HDF5Loader extends AbstractFileLoader {
 
 			if (lMap != null)
 				lMap.put(cpath, dataset);
-			if (aMap != null && dataset instanceof Dataset) { // zero-rank dataset
+			if (aMap != null && dataset instanceof Dataset && dataset.getSize() <= 1) { // zero-rank dataset
 				Dataset a = (Dataset) dataset;
 				aMap.put(cpath, a.getRank() == 0 ? a.getString() : a.getString(0));
 			}

@@ -157,9 +157,8 @@ public class NexusConstants {
 	public static final String DATA_AXESSET_SUFFIX = "_set";
 
 	/**
-	 * @deprecated legacy attribute name of main dataset
+	 * NXdata default name for errors field (was legacy attribute name of main dataset)
 	 */
-	@Deprecated
 	public static final String DATA_ERRORS = "errors";
 	/**
 	 * @deprecated legacy attribute name

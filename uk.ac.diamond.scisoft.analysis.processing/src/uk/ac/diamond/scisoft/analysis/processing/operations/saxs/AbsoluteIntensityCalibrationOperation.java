@@ -1,5 +1,5 @@
 /*-
- * Copyright (c) 2016 Diamond Light Source Ltd.
+ * Copyright (c) 2021 Diamond Light Source Ltd.
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -10,10 +10,9 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.saxs;
 
 
-import java.io.IOException;
 // Imports from java
+import java.io.IOException;
 import java.net.URL;
-
 // Imports from org.apache
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
@@ -21,9 +20,10 @@ import org.apache.commons.math3.analysis.interpolation.UnivariateInterpolator;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.eclipse.core.runtime.FileLocator;
 // Imports from org.eclipse.core
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 // Imports from org.eclipse.dawnsci
+import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
@@ -43,7 +43,6 @@ import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
 // Imports from org.osgi
 import org.osgi.framework.Bundle;
-
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 
@@ -106,8 +105,9 @@ public class AbsoluteIntensityCalibrationOperation extends AbstractOperation<Abs
 			if (model.getUseInternalCalibrant() == true) {
 				// By opening the default file
 				Bundle bundle = Platform.getBundle("uk.ac.diamond.scisoft.analysis.processing");
-				URL calibrantFileURL = bundle.getEntry("data/GlassyCarbon_T.dat");
-				DataHolder calibrantData = (DataHolder) LoaderFactory.getData(FileLocator.resolve(calibrantFileURL).getPath());
+				URL fileURL = FileLocator.find(bundle, new Path("data/GlassyCarbon_T.dat"), null);
+				URL calibrantURL = FileLocator.toFileURL(fileURL);;
+				DataHolder calibrantData = (DataHolder) LoaderFactory.getData(calibrantURL.getPath());
 				// and extracting out the relevant datasets
 				calibrantQdataset = (DoubleDataset) calibrantData.getDataset(0).squeezeEnds();
 				calibrantIdataset = (DoubleDataset) calibrantData.getDataset(1).squeezeEnds();

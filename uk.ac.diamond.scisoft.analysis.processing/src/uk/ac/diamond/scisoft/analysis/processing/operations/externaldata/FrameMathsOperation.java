@@ -50,8 +50,10 @@ public abstract class FrameMathsOperation<T extends SelectedFramesModel> extends
 		
 		Dataset output = performOperation(DatasetUtils.convertToDataset(input), d);
 		copyMetadata(input, output);
-
-		return new OperationData(output);
+		
+		OperationData returnDataset = new OperationData(output);
+		if (model.isSaveCorrectedFrame()) returnDataset.setAuxData(d);
+		return returnDataset;
 	}
 
 

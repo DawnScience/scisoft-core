@@ -118,7 +118,9 @@ public class SubtractMatchedIntensityOperation extends AbstractOperation<Subtrac
 		copyMetadata(input, subtractedFrame);
 				
 		// Before returning the result
-		return new OperationData(subtractedFrame);
+		OperationData returnDataset = new OperationData(subtractedFrame);
+		if (model.isSaveCorrectedFrame()) returnDataset.setAuxData(datasetToSubtract);
+		return returnDataset;
 	}
 	
 	

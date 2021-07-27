@@ -44,4 +44,11 @@ public class SelectedFramesModel extends AbstractOperationModel {
 	public void setScaling(double scaling) {
 		firePropertyChange("scaling", this.scaling, this.scaling = scaling);
 	}
+	
+	@OperationModelField(label = "Save subtraction frame?", hint="When checked the corrected frame that was used for the subtraction will be saved in the results file as an auxillary dataset.", fieldPosition = 99)
+	private boolean saveCorrectedFrame = false;
+	
+	public boolean isSaveCorrectedFrame() {
+		return saveCorrectedFrame;
+	}
 }

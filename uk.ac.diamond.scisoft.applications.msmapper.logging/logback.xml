@@ -1,0 +1,49 @@
+<configuration debug="false">
+
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>DEBUG</level>
+		</filter>
+
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} %-5level %msg %n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="DebugFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>ERROR</level>
+		</filter>
+
+		<file>${java.io.tmpdir}/${user.name}-msmapper.log</file>
+
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<fileNamePattern>${java.io.tmpdir}/${user.name}-msmapper_%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<!-- or whenever the file size reaches 20MB -->
+				<maxFileSize>20MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+
+			<!-- keep 1 days' worth of history as we are only a GUI -->
+			<maxHistory>1</maxHistory>
+
+			<cleanHistoryOnStart>true</cleanHistoryOnStart>
+		</rollingPolicy>
+
+		<encoder>
+			<pattern>%d %-5level %logger - %m %ex %n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="org.apache.commons" level="ERROR"/>
+
+	<logger name="hdf.hdf5lib" level="ERROR"/>
+
+	<root level="ALL">
+		<appender-ref ref="DebugFILE" />
+		<appender-ref ref="STDOUT" />
+	</root>
+
+</configuration>

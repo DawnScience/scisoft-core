@@ -79,6 +79,7 @@
 			<id>dawn-msmapper</id>
 			<modules>
 				<module>uk.ac.diamond.scisoft.applications.feature</module>
+				<module>uk.ac.diamond.scisoft.applications.msmapper.logging</module>
 				<module>uk.ac.diamond.scisoft.applications.msmapper.product</module>
 			</modules>
 		</profile>

@@ -766,7 +766,7 @@ public class MillerSpaceMapper {
 		writeDefaultAttributes(output, coordsName);
 		HDF5Utils.writeDataset(output, coordsPath, indexes);
 		HDF5Utils.writeDataset(output, coordsPath, coords);
-		saveAxesAndAttributes(output, coordsPath, coords.getName());
+		saveAxesAndAttributes(output, coordsPath, coords.getName(), null);
 		writeProcessingParameters(output, bean, coordsPath);
 		linkOriginalData(output, bean.getInputs(), entryPath);
 	}
@@ -1645,7 +1645,7 @@ public class MillerSpaceMapper {
 
 			mapAndSaveInParts(mapQ, trees, allIters, lazyVolume, lazyWeight, parts, map, weight);
 
-			saveAxesAndAttributes(output, volPath, VOLUME_NAME, a);
+			saveAxesAndAttributes(output, volPath, VOLUME_NAME, new String[] {WEIGHT_NAME}, a);
 			writeProcessingParameters(output, bean, entryPath);
 			linkOriginalData(output, bean.getInputs(), entryPath);
 		}
@@ -1734,7 +1734,7 @@ public class MillerSpaceMapper {
 		w.setName(WEIGHT_NAME);
 		HDF5Utils.writeDataset(file, volPath, v);
 		HDF5Utils.writeDataset(file, volPath, w);
-		saveAxesAndAttributes(file, volPath, VOLUME_NAME, axes);
+		saveAxesAndAttributes(file, volPath, VOLUME_NAME, new String[] {WEIGHT_NAME}, axes);
 		writeProcessingParameters(file, bean, entryPath);
 		linkOriginalData(file, bean.getInputs(), entryPath);
 	}
@@ -1817,7 +1817,7 @@ public class MillerSpaceMapper {
 		HDF5Utils.writeDataset(file, parentPath, dataset);
 	}
 
-	public static void saveAxesAndAttributes(String file, String dataPath, String dataName, Dataset... axes)
+	public static void saveAxesAndAttributes(String file, String dataPath, String dataName, String[] auxSignals, Dataset... axes)
 			throws ScanFileHolderException {
 		String[] axisNames = new String[axes.length];
 		for (int i = 0; i < axes.length; i++) {
@@ -1836,6 +1836,12 @@ public class MillerSpaceMapper {
 		a = DatasetFactory.createFromObject(dataName);
 		a.setName(NexusConstants.DATA_SIGNAL);
 		attrs.add(a);
+
+		if (auxSignals != null && auxSignals.length > 0) {
+			a = DatasetFactory.createFromObject(auxSignals);
+			a.setName(NexusConstants.DATA_AUX_SIGNALS);
+			attrs.add(a);
+		}
 
 		if (axisNames.length > 0) {
 			a = DatasetFactory.createFromObject(axisNames);

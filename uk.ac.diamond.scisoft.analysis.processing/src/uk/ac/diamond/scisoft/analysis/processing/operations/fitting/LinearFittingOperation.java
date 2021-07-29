@@ -145,7 +145,7 @@ public class LinearFittingOperation extends AbstractOperation<LinearFittingModel
 		returnDataWithDisplay.setLog(log);
 		returnDataWithDisplay.setData(yAxis);
 		returnDataWithDisplay.setDisplayData(displayData.toArray(new IDataset[displayData.size()]));
-		returnDataWithDisplay.setAuxData(gradientDataset, constantDataset);
+		returnDataWithDisplay.setAuxData(gradientDataset, constantDataset, fittedYaxis);
 		
 		// Then return it
 		return returnDataWithDisplay;

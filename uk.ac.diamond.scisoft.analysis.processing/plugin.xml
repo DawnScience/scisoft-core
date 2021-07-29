@@ -497,6 +497,14 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.CropAroundPeak2DModel"
             name="Crop Around Peak [2D]">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.twod.FrameMathsFromPeakOperation"
+            description="Perform a mathematical operation on an integrated value from the most prominent peak on a frame"
+            icon="icons/Crop_nD.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.twod.FrameMathsFromPeakOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.twod.FrameMathsFromPeakModel"
+            name="Perform Maths on Frame From Integrated Peak Value">
+      </operation>
       <runner
             class="uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner">
       </runner>

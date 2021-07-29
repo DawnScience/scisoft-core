@@ -102,15 +102,16 @@ public class ExternalChannelAverageFrameOperation extends AbstractOperation<Exte
 		// Manipulate the inputDataset
 		Dataset outputDataset = DatasetUtils.convertToDataset(inputDataset);
 		
-		switch (model.getMathematicalOperator().getInt()) {
-			case 1:	outputDataset = ErrorPropagationUtils.addWithUncertainty(outputDataset, averageValue);
-					break;
-			case 2:	outputDataset = ErrorPropagationUtils.subtractWithUncertainty(outputDataset, averageValue);
-					break;
-			case 3:	outputDataset = ErrorPropagationUtils.divideWithUncertainty(outputDataset, averageValue);
-					break;
-			case 4:	outputDataset = ErrorPropagationUtils.multiplyWithUncertainty(outputDataset, averageValue);
-					break;
+		switch (model.getMathematicalOperator()) {
+			case ADD:		outputDataset = ErrorPropagationUtils.addWithUncertainty(outputDataset, averageValue);
+							break;
+			case SUBTRACT:	outputDataset = ErrorPropagationUtils.subtractWithUncertainty(outputDataset, averageValue);
+							break;
+			case DIVIDE:	outputDataset = ErrorPropagationUtils.divideWithUncertainty(outputDataset, averageValue);
+							break;
+			case MULTIPLY:	outputDataset = ErrorPropagationUtils.multiplyWithUncertainty(outputDataset, averageValue);
+							break;
+			default:		throw new OperationException(this, "The mathematical operator selected is not supported.");
 		}
 		
 		// Finally, return the result

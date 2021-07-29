@@ -126,6 +126,10 @@ public class NexusConstants {
 	 */
 	public static final String DATA_SIGNAL = "signal";
 	/**
+	 * NXdata attribute that points to auxiliary datasets
+	 */
+	public static final String DATA_AUX_SIGNALS = "auxiliary_signals";
+	/**
 	 * NXdata attribute that maps dimensions of main dataset to axis datasets
 	 */
 	public static final String DATA_AXES = "axes";
@@ -148,8 +152,10 @@ public class NexusConstants {
 	 */
 	public static final String DATA_INDICES_SUFFIX = "_indices";
 	/**
-	 * Suffix for names of datasets
+	 * @deprecated This never was a standard suffix for the name of error datasets or attributes
+	 * pointing to them
 	 */
+	@Deprecated
 	public static final String DATA_UNCERTAINTY_SUFFIX ="_uncertainty";
 	/**
 	 * Suffix for names of datasets that contain set values (for axes)

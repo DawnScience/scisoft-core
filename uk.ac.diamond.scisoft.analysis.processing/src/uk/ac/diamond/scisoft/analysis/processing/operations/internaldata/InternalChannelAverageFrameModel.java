@@ -12,6 +12,9 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.internaldata;
 
 
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
+
+import uk.ac.diamond.scisoft.analysis.processing.MathematicalOperators;
+
 import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 
 
@@ -19,36 +22,6 @@ import org.eclipse.dawnsci.analysis.api.processing.model.AbstractOperationModel;
 
 
 public class InternalChannelAverageFrameModel extends AbstractOperationModel {
-	
-	
-	public enum MathematicalOperator {
-		ADD(1,"Add"),
-		SUBTRACT(2,"Subtract"),
-		DIVIDE(3, "Divide"),
-		MULTIPLY(4, "Multiply");
-
-		private final int operatorInt;
-		private final String displayName;
-
-		MathematicalOperator(int operatorInt, String displayName) {
-			this.operatorInt = operatorInt;
-			this.displayName = displayName;
-		}
-
-		public int getInt() {
-			return this.operatorInt;
-		}
-
-		public String getDisplayName() {
-			return this.displayName;
-		}
-
-		@Override
-		public String toString() {
-			return this.displayName;
-		}
-	}
-	
 	
 	public enum AveragingDirection {
 		Y(0,"Y"),
@@ -114,13 +87,13 @@ public class InternalChannelAverageFrameModel extends AbstractOperationModel {
 	
 	
 	@OperationModelField(label = "Mathematical Operator", hint = "The mathematical operator you wish to apply", fieldPosition = 5)
-	private MathematicalOperator mathematicalOperator = MathematicalOperator.ADD;
+	private MathematicalOperators mathematicalOperator = MathematicalOperators.ADD;
 	
-	public MathematicalOperator getMathematicalOperator() {
+	public MathematicalOperators getMathematicalOperator() {
 		return mathematicalOperator;
 	}
 	
-	public void setMathematicalOperator(MathematicalOperator mathematicalOperator) {
+	public void setMathematicalOperator(MathematicalOperators mathematicalOperator) {
 		firePropertyChange("mathematicalOperator", this.mathematicalOperator, this.mathematicalOperator = mathematicalOperator);
 	}
 	

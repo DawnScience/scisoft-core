@@ -20,5 +20,3 @@ try:
 except Exception as e:
     import sys
     print("h5py could not be imported", e, file=sys.stderr)
-    print("NAPI not supported yet", file=sys.stderr)
-#    from .pynapi import HDF5Loader #@Reimport @UnusedImport

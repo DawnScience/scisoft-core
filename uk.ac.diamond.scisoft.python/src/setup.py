@@ -5,7 +5,7 @@ import os
 
 py2 = sys.hexversion < 0x03000000
 
-INSTALL_REQUIRES = ['h5py < 3', 'pillow', 'numpy', 'six']
+INSTALL_REQUIRES = ['h5py', 'pillow', 'numpy', 'six']
 
 if py2 and os.name == 'posix':
     INSTALL_REQUIRES.append('subprocess32')

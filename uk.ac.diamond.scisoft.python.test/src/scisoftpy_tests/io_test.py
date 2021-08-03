@@ -117,6 +117,15 @@ class Test(unittest.TestCase):
         self.assertAlmostEqual(cx[4,2].real, 0.6922704317579508, places=17)
         self.assertAlmostEqual(cx[4,2].imag, -1.8087566023531674, places=17)
 
+    def testLoadingHDFStrings(self):
+        f = IOTestFolder + "NexusLoaderTest/"
+        t = dnp.io.load(f + 'unicode.h5')
+        # check can use string attributes as keys
+        from scisoftpy.nexus.utils import _text_type
+        for k in t.attrs:
+            if k.startswith('scalar'):
+                self.assertTrue(isinstance(t.attrs[k], _text_type))
+
     def testLoadingHDF5Scalars(self):
         f = IOTestFolder + "NexusLoaderTest/"
         nm = dnp.io.load(f + "scalar.h5", format=['hdf5'])
@@ -127,7 +136,13 @@ class Test(unittest.TestCase):
         d = nm['s_a_string'][...]
         self.assertEqual(d, b'hello!')
         d = nm['s_u_string'][...]
-        self.assertEqual(d, u'hello!')
+        
+        hello_text = u'hello!'
+        if os.name != 'java':
+            import h5py
+            if h5py.version.version_tuple[0] > 2:
+                hello_text = b'hello!' # h5py >= 3 will return bytes
+        self.assertEqual(d, hello_text) # h5py >= 3 will return bytes
 
     def checkTree(self, t):
         print(t)

@@ -66,6 +66,9 @@ class _lazydataset(object):
 #        print 'new shape:', nshape
 
         if self.chunking is None:
+            if len(self.shape) == 0 and key is Ellipsis:
+                return ds[...]
+
             nslices = [ s if s else slice(None) for s in slices ]
             v = ds[tuple(nslices)]
             if isinstance(v, ndarray):
@@ -185,7 +188,9 @@ class HDF5Loader(object):
 
         attrs = []
         for k,v in node.attrs.items():
-            if isinstance(v, ndgeneric):
+            if isinstance(v, bytes): # for Python3
+                v = v.decode()
+            elif isinstance(v, ndgeneric):
                 if v.dtype.kind in 'SUa':
                     v = str(v)
                 else:

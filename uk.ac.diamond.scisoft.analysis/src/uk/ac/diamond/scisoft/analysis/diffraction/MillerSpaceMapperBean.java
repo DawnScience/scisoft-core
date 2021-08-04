@@ -43,6 +43,7 @@ public class MillerSpaceMapperBean implements Cloneable {
 	private OutputMode outputMode = OutputMode.Volume_HKL;
 
 	private int[][] pixelIndexes; // to used calculate coordinates at given pixels indexes
+	private String images;
 
 	public enum OutputMode {
 		/**
@@ -134,6 +135,7 @@ public class MillerSpaceMapperBean implements Cloneable {
 	}
 
 	/**
+	 * Set scale for upsampling images
 	 * @param scaleFactor upsampling factor
 	 */
 	public void setScaleFactor(double scaleFactor) {
@@ -194,7 +196,8 @@ public class MillerSpaceMapperBean implements Cloneable {
 	}
 
 	/**
-	 * @param reduceToNonZero if true, attempts to reduce output to sub-volume with non-zero data
+	 * Set to reduce output to sub-volume with non-zero data
+	 * @param reduceToNonZero
 	 */
 	public void setReduceToNonZero(boolean reduceToNonZero) {
 		this.reduceToNonZero = reduceToNonZero;
@@ -416,18 +419,24 @@ public class MillerSpaceMapperBean implements Cloneable {
 		this.pixelIndexes = pixelIndexes;
 	}
 
+	/**
+	 * Set images selection by slice string
+	 * @param images slice string
+	 */
+	public void setImages(String images) {
+		this.images = images;
+	}
+
+	public String getImages() {
+		return images;
+	}
+
 	@Override
 	protected MillerSpaceMapperBean clone() {
 		MillerSpaceMapperBean copy = null;
 		try {
 			copy = (MillerSpaceMapperBean) super.clone();
 			copy.inputs = Arrays.copyOf(inputs, inputs.length);
-//			copy.millerShape = millerShape == null ? null : millerShape.clone();
-//			copy.millerStart = millerStart == null ? null : millerStart.clone();
-//			copy.millerStep = millerStep == null ? null : millerStep.clone();
-//			copy.qShape = qShape == null ? null : qShape.clone();
-//			copy.qStart = qStart == null ? null : qStart.clone();
-//			copy.qStep = qStep == null ? null : qStep.clone();
 			copy.shape = shape == null ? null : shape.clone();
 			copy.start = start == null ? null : start.clone();
 			copy.step  = step  == null ? null : step.clone();
@@ -436,6 +445,7 @@ public class MillerSpaceMapperBean implements Cloneable {
 				copy.pixelIndexes = Arrays.stream(pixelIndexes)
 						.map(int[]::clone).toArray(int[][]::new);
 			}
+			copy.images = images;
 		} catch (CloneNotSupportedException e) {
 		}
 		return copy;
@@ -452,13 +462,7 @@ public class MillerSpaceMapperBean implements Cloneable {
 		result = prime * result + Arrays.hashCode(inputs);
 		result = prime * result + Objects.hashCode(instrumentName);
 		result = prime * result + (listMillerEntries ? 1231 : 1237);
-//		result = prime * result + Arrays.hashCode(millerShape);
-//		result = prime * result + Arrays.hashCode(millerStart);
-//		result = prime * result + Arrays.hashCode(millerStep);
 		result = prime * result + Objects.hashCode(output);
-//		result = prime * result + Arrays.hashCode(qShape);
-//		result = prime * result + Arrays.hashCode(qStart);
-//		result = prime * result + Arrays.hashCode(qStep);
 		result = prime * result + Arrays.hashCode(shape);
 		result = prime * result + Arrays.hashCode(start);
 		result = prime * result + Arrays.hashCode(step);
@@ -474,6 +478,7 @@ public class MillerSpaceMapperBean implements Cloneable {
 		result = prime * result + Objects.hashCode(maskFilePath);
 		result = prime * result + Objects.hashCode(outputMode);
 		result = prime * result + Objects.hashCode(pixelIndexes);
+		result = prime * result + Objects.hashCode(images);
 		return result;
 	}
 
@@ -550,6 +555,9 @@ public class MillerSpaceMapperBean implements Cloneable {
 		if (!Arrays.deepEquals(pixelIndexes, other.pixelIndexes)) {
 			return false;
 		}
+		if (!Objects.equals(images, other.images)) {
+			return false;
+		}
 		return true;
 	}
 
@@ -595,9 +603,6 @@ public class MillerSpaceMapperBean implements Cloneable {
 		bean.setShape(null);
 		bean.setStart(null);
 		bean.setStep(null);
-//		bean.setQShape(null);
-//		bean.setQStart(null);
-//		bean.setQStep(null);
 		bean.setListMillerEntries(true);
 		return bean;
 	}

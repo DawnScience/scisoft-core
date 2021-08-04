@@ -5,7 +5,7 @@
 
 	<groupId>uk.ac.diamond</groupId>
 	<artifactId>uk.ac.diamond.scisoft.applications.msmapper.product</artifactId>
-	<version>1.2.0-SNAPSHOT</version>
+	<version>1.3.0-SNAPSHOT</version>
 	<packaging>eclipse-repository</packaging>
 
 	<parent>

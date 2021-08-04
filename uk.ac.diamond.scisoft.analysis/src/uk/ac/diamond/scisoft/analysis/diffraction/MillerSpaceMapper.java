@@ -113,6 +113,10 @@ public class MillerSpaceMapper {
 	private double upper = Double.POSITIVE_INFINITY; // upper threshold, pixel values greater than or equal to it are ignored
 
 	private boolean isQSpace;
+	private long loadTimeTotal;
+
+	private Slice imagesSlice;
+	private int imagesNumber;
 
 	private static final String VOLUME_NAME = "volume";
 	private static final String WEIGHT_NAME = "weight";
@@ -822,9 +826,15 @@ public class MillerSpaceMapper {
 		stop[srank] = endY;
 		stop[srank + 1] = endX;
 
-		Dataset image = getNextImage(images, iter, start, stop);
+		int miss = imagesSlice.getStart() + 1;
+		Dataset image = getNextImage(miss, images, iter, start, stop);
+		while (image != null && ni < imagesNumber) {
+			while (miss-- > 0 && diter.hasNext()) {
+			}
+			if (miss > 0) {
+				break;
+			}
 
-		while (image != null && diter.hasNext()) {
 			logger.info("Mapping image at {} in {}", Arrays.toString(dpos), Arrays.toString(diter.getShape()));
 			DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
 			if (scale == 1) {
@@ -861,15 +871,20 @@ public class MillerSpaceMapper {
 			image = mapImageMultiThreaded(images, iter, start, stop, tFactor, qspace, mspace, iMask, image, ishape, map, weight);
 
 			ni++;
+			miss = imagesSlice.getStep();
 		}
 
 		return ni;
 	}
 
-	private static Dataset getNextImage(ILazyDataset images, PositionIterator iter, int[] start, int[] stop) throws DatasetException {
-		if (!iter.hasNext()) {
+	private Dataset getNextImage(int miss, ILazyDataset images, PositionIterator iter, int[] start, int[] stop) throws DatasetException {
+		while (miss-- > 0 && iter.hasNext()) {
+		}
+		if (miss > 0) {
 			return null;
 		}
+
+		long begin = System.currentTimeMillis();
 		int[] pos = iter.getPos();
 		for (int i = 0; i < (pos.length - 2); i++) {
 			start[i] = pos[i];
@@ -881,6 +896,8 @@ public class MillerSpaceMapper {
 		} catch (DatasetException e) {
 			logger.error("Could not get data from lazy dataset", e);
 			throw e;
+		} finally {
+			loadTimeTotal += System.currentTimeMillis() - begin;
 		}
 	}
 
@@ -997,7 +1014,7 @@ public class MillerSpaceMapper {
 			int[] regionSlice = new int[] { 0, ishape[1], 0, ishape[0] };
 			mapImage(tFactor, upSampler, splitter, sMin, sMax, regionSlice, qspace, mTransform, iMask, image, map, weight);
 
-			return getNextImage(images, iter, start, stop);
+			return getNextImage(imagesSlice.getStep(), images, iter, start, stop);
 		}
 
 		final int rows = ishape[0];
@@ -1026,7 +1043,7 @@ public class MillerSpaceMapper {
 		Consumer<JobConfig> subTask = job -> {
 			if (job.getSplitter() == null) {
 				try {
-					job.setData(getNextImage(images, iter, start, stop));
+					job.setData(getNextImage(imagesSlice.getStep(), images, iter, start, stop));
 				} catch (DatasetException e) {
 					job.setException(e);
 				}
@@ -1285,6 +1302,14 @@ public class MillerSpaceMapper {
 		}
 		dataPath = TreeUtils.getPath(tree, link.getDestination());
 
+		isQSpace = MillerSpaceMapperBean.isQSpace(bean);
+
+		imagesNumber = -1;
+		imagesSlice = bean.getImages() == null ? new Slice(): Slice.convertFromString(bean.getImages())[0];
+		if (imagesSlice.getStart() == null) {
+			imagesSlice.setStart(0);
+		}
+
 		if (!complete) {
 			return null;
 		}
@@ -1310,7 +1335,6 @@ public class MillerSpaceMapper {
 		this.splitter = PixelSplitter.createSplitter(bean.getSplitterName(), bean.getSplitterParameter());
 		listMillerEntries = bean.isListMillerEntries();
 
-		isQSpace = MillerSpaceMapperBean.isQSpace(bean);
 		Dataset[][] a = new Dataset[2][];
 		double[] delta = bean.getStep();
 		a[0] = new Dataset[3];
@@ -1537,6 +1561,7 @@ public class MillerSpaceMapper {
 		String[] volAxisNames = mapQ ? Q_VOLUME_AXES : MILLER_VOLUME_AXES;
 		String volPath = TreeUtils.join(PROCESSED, volName);
 
+		loadTimeTotal = 0;
 		try {
 			DoubleDataset map = DatasetFactory.zeros(vShape);
 			DoubleDataset weight = DatasetFactory.zeros(vShape);
@@ -1568,6 +1593,7 @@ public class MillerSpaceMapper {
 			}
 			long process = System.currentTimeMillis() - start;
 			logger.info("For {} threads, processing took {}ms ({}ms/frame)", pool.getParallelism(), process, process/nt);
+			logger.info("                loading {} frames took {}ms ({}ms/frame)", nt, loadTimeTotal, loadTimeTotal/nt);
 			start = System.currentTimeMillis();
 
 			if (isErrorTest) {
@@ -1693,8 +1719,6 @@ public class MillerSpaceMapper {
 			throw new ScanFileHolderException("Image data is empty");
 		}
 
-		PositionIterator diter = new PositionIterator(dshape);
-
 		int rank = images.getRank();
 		int srank = rank - 2;
 		if (srank < 0) {
@@ -1706,6 +1730,12 @@ public class MillerSpaceMapper {
 				logger.warn("Scan shape must be 2 dimensions less than image data");
 			}
 		}
+
+		PositionIterator diter = new PositionIterator(dshape);
+
+		imagesSlice.setLength(ShapeUtils.calcSize(dshape));
+		imagesNumber = imagesSlice.getNumSteps();
+		logger.debug("Selecting {} images using slice: {}", imagesNumber, imagesSlice);
 
 		int[] axes = new int[2];
 		for (int i = 0; i < axes.length; i++) {
@@ -1892,6 +1922,7 @@ public class MillerSpaceMapper {
 		PositionIterator[] iters;
 		int nt = 0;
 		start = System.currentTimeMillis();
+		loadTimeTotal = 0;
 		for (int p = 0; p < (parts-1); p++) {
 			logger.info("Mapping in part: {}/{}", p+1, parts);
 			// shift min
@@ -2027,6 +2058,7 @@ public class MillerSpaceMapper {
 		save += System.currentTimeMillis() - start;
 
 		logger.info("For {} threads, processing took {}ms ({}ms/frame)", pool.getParallelism(), process, process/nt);
+		logger.info("                loading {} frames took {}ms ({}ms/frame)", nt, loadTimeTotal, loadTimeTotal/nt);
 		logger.info("Saving took {}ms", save);
 	}
 

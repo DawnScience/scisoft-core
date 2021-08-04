@@ -59,11 +59,12 @@ public class MillerSpaceMapperBeanTest {
 	public void testWriteRead() throws Exception {
 		MillerSpaceMapperBean orig = new MillerSpaceMapperBean();
 		orig.setInputs("blah");
+		orig.setImages("1::4");
 		File f = tempFolder.newFile("output.json");
 		testWriteRead(orig, f);
 	}
 
-	private MillerSpaceMapperBean createBean() {
+	private MillerSpaceMapperBean createBean(boolean makeNew) {
 		MillerSpaceMapperBean orig = new MillerSpaceMapperBean();
 		orig.setInputs("/scratch/images/i16/562926.nxs", "/scratch/images/i16/562927.nxs", "/scratch/images/i16/562928.nxs");
 		orig.setOutput("/scratch/tmp/562926.h5");
@@ -72,6 +73,9 @@ public class MillerSpaceMapperBeanTest {
 		orig.setScaleFactor(2);
 		orig.setReduceToNonZero(true);
 		orig.setStep(0.002);
+		if (makeNew) {
+			orig.setImages("1::4");
+		}
 		return orig;
 	}
 
@@ -83,11 +87,11 @@ public class MillerSpaceMapperBeanTest {
 		if (!p.isDirectory()) {
 			p.mkdir();
 		}
-		testWriteRead(createBean(), f);
+		testWriteRead(createBean(false), f);
 	}
 
-	private void loadJSON(String testFile) {
-		MillerSpaceMapperBean orig = createBean();
+	private void loadJSON(String testFile, boolean makeNew) {
+		MillerSpaceMapperBean orig = createBean(makeNew);
 
 		ObjectMapper mapper = new ObjectMapper();
 		testRead(mapper, orig, new File(testFile));
@@ -95,17 +99,17 @@ public class MillerSpaceMapperBeanTest {
 
 	@Test
 	public void loadCurrentJSON() {
-		loadJSON("testfiles/i16.json");
+		loadJSON("testfiles/i16.json", false);
 	}
 
 	@Test
 	public void loadOldJSON() {
-		loadJSON("testfiles/i16-old.json");
+		loadJSON("testfiles/i16-old.json", false);
 	}
 
 	@Test
 	public void loadIncompleteJSON() {
-		loadJSON("testfiles/i16-short.json");
+		loadJSON("testfiles/i16-short.json", false);
 	}
 
 	@Test(expected=IOException.class)
@@ -116,6 +120,11 @@ public class MillerSpaceMapperBeanTest {
 		f = new File(testName);
 		mapper.readValue(f, MillerSpaceMapperBean.class);
 		Assert.fail("Should not have been able to read file");
+	}
+
+	@Test
+	public void loadNewJSON() throws Exception {
+		loadJSON("testfiles/i16-new.json", true);
 	}
 
 	@Test

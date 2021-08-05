@@ -437,7 +437,7 @@ public class MillerSpaceMapper {
 			for (int i = 0; i < 3; i++) {
 				vMin[i] = vDel[i] * Math.floor(vMin[i] / vDel[i]);
 				vMax[i] = vDel[i] * (Math.ceil(vMax[i] / vDel[i]) + 1);
-				vShape[i] = (int) (Math.floor((vMax[i] - vMin[i] + vDel[i]) / vDel[i]));
+				vShape[i] = (int) (Math.floor((vMax[i] - vMin[i]) / vDel[i]));
 			}
 		}
 	}
@@ -1106,18 +1106,27 @@ public class MillerSpaceMapper {
 		double dv, vd;
 
 		dv = v.x - vMin[0];
+		if (dv < 0) {
+			return false;
+		}
 		vd = vDel[0];
 		p = (int) Math.floor(dv / vd);
 		deltaV.x = dv - p * vd;
 		pos[0] = p;
 
 		dv = v.y - vMin[1];
+		if (dv < 0) {
+			return false;
+		}
 		vd = vDel[1];
 		p = (int) Math.floor(dv / vd);
 		deltaV.y = dv - p * vd;
 		pos[1] = p;
 
 		dv = v.z - vMin[2];
+		if (dv < 0) {
+			return false;
+		}
 		vd = vDel[2];
 		p = (int) Math.floor(dv / vd);
 		deltaV.z = dv - p * vd;

@@ -22,6 +22,12 @@ public interface INexusDeviceService {
 	public <N extends NXobject> void register(INexusDevice<N> nexusDevice);
 	
 	/**
+	 * Unregisters the given nexus device from this service.
+	 * @param nexusDevice the nexus device to unregister
+	 * @param <N> subclass of {@link NXobject} created by this device
+	 */
+	public <N extends NXobject> void unregister(INexusDevice<N> nexusDevice);
+	/**
 	 * Returns whether a nexus device is registered with the given name. 
 	 * @param name name
 	 * @return <code>true</code> if a nexus device with the given name is registered,

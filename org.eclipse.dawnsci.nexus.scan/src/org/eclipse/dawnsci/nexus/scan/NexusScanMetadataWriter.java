@@ -173,7 +173,7 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		scanDurationDataset = createScalarWriteableDataset(scanMetadataCollection,
 				FIELD_NAME_SCAN_DURATION, Long.class, ATTRIBUTE_VALUE_MILLISECONDS);
 		scanDeadTimeDataset = createScalarWriteableDataset(scanMetadataCollection,
-				FIELD_NAME_SCAN_DEAD_TIME, Long.class, null);
+				FIELD_NAME_SCAN_DEAD_TIME, Long.class, ATTRIBUTE_VALUE_MILLISECONDS);
 		scanDeadTimePercentDataset = createScalarWriteableDataset(scanMetadataCollection,
 				FIELD_NAME_SCAN_DEAD_TIME_PERCENT, Float.class, null);
 		

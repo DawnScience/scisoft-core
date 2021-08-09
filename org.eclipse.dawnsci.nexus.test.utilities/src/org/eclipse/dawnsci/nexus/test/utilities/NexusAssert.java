@@ -361,6 +361,7 @@ public class NexusAssert {
 
 		final NXcollection diamondScanCollection = entry.getCollection(GROUP_NAME_DIAMOND_SCAN);
 		assertNotNull(diamondScanCollection);
+		assertTimesMatch(entry, diamondScanCollection);
 
 		assertScanShape(diamondScanCollection, sizes);
 		assertScanTimes(diamondScanCollection);
@@ -376,6 +377,16 @@ public class NexusAssert {
 		if (!(sizes.length == 0 || malcolmScan)) {
 			assertPointTimeStamps(diamondScanCollection, sizes, snake, foldedGrid);
 		}
+	}
+	
+	private static void assertTimesMatch(NXentry entry, NXcollection metadataCollection) {
+		// We shouldn't have 2 different values for Start/End/Duration
+		final String startTimeString = metadataCollection.getString(NXentry.NX_START_TIME);
+		final String endTimeString = metadataCollection.getString(NXentry.NX_END_TIME);
+		final Long duration = metadataCollection.getLong(NXentry.NX_DURATION);
+		assertThat(startTimeString, is(equalTo(entry.getStart_time().getString(0))));
+		assertThat(endTimeString, is(equalTo(entry.getEnd_time().getString(0))));
+		assertThat(duration, is(equalTo(entry.getDurationScalar())));
 	}
 	
 	private static void assertScanTimeStamps(final DataNode startTimeNode, final DataNode endTimeNode,

@@ -40,6 +40,7 @@ import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.nexus.INexusDevice;
 import org.eclipse.dawnsci.nexus.NXcollection;
+import org.eclipse.dawnsci.nexus.NXentry;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
@@ -88,6 +89,8 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 	
 	private boolean hardwareScan = false;
 	private boolean writeGlobalUniqueKeys;
+
+	private NXcollection scanMetadataCollection;
 	
 	public NexusScanMetadataWriter() {
 		this(DEFAULT_NAME);
@@ -151,7 +154,7 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		
 		scanStartTime = ZonedDateTime.now().truncatedTo(MILLIS); // record the current time
 
-		final NXcollection scanMetadataCollection = NexusNodeFactory.createNXcollection();
+		scanMetadataCollection = NexusNodeFactory.createNXcollection();
 		
 		// write the scan rank
 		scanMetadataCollection.setField(FIELD_NAME_SCAN_RANK, scanInfo.getRank());
@@ -367,12 +370,15 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 	}
 	
 	@Override
-	// Write timestamps also to the /entry/
-    public CustomNexusEntryModification getCustomNexusModification() {
-        return nXentry ->
-        {   nXentry.setStart_time((IDataset) scanStartTimeDataset);
-            nXentry.setEnd_time((IDataset) scanEndTimeDataset);
-            nXentry.setDuration((IDataset) scanDurationDataset); };
-    }
+	public CustomNexusEntryModification getCustomNexusModification() {
+		return this::modifyEntry;
+	}
+	
+	public void modifyEntry(NXentry entry) {
+		// Write timestamps also to the /entry/
+		entry.addDataNode(NXentry.NX_START_TIME, scanMetadataCollection.getDataNode(FIELD_NAME_SCAN_START_TIME));
+		entry.addDataNode(NXentry.NX_END_TIME, scanMetadataCollection.getDataNode(FIELD_NAME_SCAN_END_TIME));
+		entry.addDataNode(NXentry.NX_DURATION, scanMetadataCollection.getDataNode(FIELD_NAME_SCAN_DURATION));
+	}
 
 }

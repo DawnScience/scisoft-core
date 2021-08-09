@@ -367,10 +367,10 @@ class NexusScanFileImpl implements NexusScanFile {
 	
 	private void addMetadatadeviceToEntry(NexusEntryBuilder entryBuilder, INexusDevice<NXcollection> metadataDevice) throws NexusException {
 		if (metadataDevice == null) return;
+		entryBuilder.add(metadataDevice.getNexusProvider(nexusScanModel.getNexusScanInfo()));
 		if (metadataDevice.getCustomNexusModification() != null) {
 			entryBuilder.modifyEntry(metadataDevice.getCustomNexusModification());
 		}
-		entryBuilder.add(metadataDevice.getNexusProvider(nexusScanModel.getNexusScanInfo()));
 	}
 
 	private void addScanMetadata(NexusEntryBuilder entryBuilder, List<NexusMetadataProvider> nexusMetadataProviders) throws NexusException {
@@ -452,6 +452,16 @@ class NexusScanFileImpl implements NexusScanFile {
 			createNXDataGroup(entryBuilder, primaryDevice, primaryDeviceType, monitors,
 					scannables, dataGroupName, dataFieldName);
 		}
+		
+		setDefaultDataGroupName(entryBuilder);
+	}
+
+	private void setDefaultDataGroupName(NexusEntryBuilder entryBuilder) throws NexusException {
+		// get the list of data group names, note as GroupNodeImpl uses a LinkedHashMap for child nodes, insertion order is preserved
+		final List<String> dataGroupNames = new ArrayList<>(entryBuilder.getNXentry().getAllData().keySet());
+		final IDefaultDataGroupCalculator calculator = ServiceHolder.getDefaultDataGroupConfiguration();
+		final String defaultDataGroupName = calculator.getDefaultDataGroupName(dataGroupNames);
+		entryBuilder.setDefaultDataGroupName(defaultDataGroupName);
 	}
 
 	/**

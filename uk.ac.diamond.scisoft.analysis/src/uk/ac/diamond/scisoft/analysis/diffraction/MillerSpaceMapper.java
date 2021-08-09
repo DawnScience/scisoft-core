@@ -961,7 +961,7 @@ public class MillerSpaceMapper {
 					if (convertToVoxel(v, dv, pos)) {
 						value *= tFactor/qspace.calculateSolidAngle(x, py);
 						if (reduceToNonZeroBB) {
-							minMax(sMinLocal, sMaxLocal, pos);
+							minMax(splitter.doesSpread(), sMinLocal, sMaxLocal, pos);
 						}
 						splitter.splitValue(map, weight, vDel, dv, pos, value);
 					}
@@ -1065,8 +1065,7 @@ public class MillerSpaceMapper {
 		if (reduceToNonZeroBB) {
 			for (JobConfig j : jobs) {
 				if (j.getSMinLocal() != null) {
-					minMax(sMin, sMax, j.getSMinLocal());
-					minMax(sMin, sMax, j.getSMaxLocal());
+					minMax(sMin, sMax, j.getSMinLocal(), j.getSMaxLocal());
 				}
 			}
 		}
@@ -1078,13 +1077,35 @@ public class MillerSpaceMapper {
 		return loadJob.getData();
 	}
 
-	private static void minMax(final int[] min, final int[] max, final int[] p) {
-		min[0] = Math.min(min[0], p[0]);
-		max[0] = Math.max(max[0], p[0]);
-		min[1] = Math.min(min[1], p[1]);
-		max[1] = Math.max(max[1], p[1]);
-		min[2] = Math.min(min[2], p[2]);
-		max[2] = Math.max(max[2], p[2]);
+	private static void minMax(boolean spreads, final int[] min, final int[] max, final int[] p) {
+		int t = p[0];
+		min[0] = Math.min(min[0], t);
+		if (spreads) {
+			t++;
+		}
+		max[0] = Math.max(max[0], t);
+		t = p[1];
+		min[1] = Math.min(min[1], t);
+		if (spreads) {
+			t++;
+		}
+		max[1] = Math.max(max[1], t);
+		t = p[2];
+		min[2] = Math.min(min[2], t);
+		if (spreads) {
+			t++;
+		}
+		max[2] = Math.max(max[2], t);
+	}
+
+	private static void minMax(final int[] min, final int[] max, final int[] lmin, final int[] lmax) {
+		min[0] = Math.min(min[0], lmin[0]);
+		min[1] = Math.min(min[1], lmin[1]);
+		min[2] = Math.min(min[2], lmin[2]);
+
+		max[0] = Math.max(max[0], lmax[0]);
+		max[1] = Math.max(max[1], lmax[1]);
+		max[2] = Math.max(max[2], lmax[2]);
 	}
 
 	/**
@@ -1602,7 +1623,7 @@ public class MillerSpaceMapper {
 			}
 			long process = System.currentTimeMillis() - start;
 			logger.info("For {} threads, processing took {}ms ({}ms/frame)", pool.getParallelism(), process, process/nt);
-			logger.info("                loading {} frames took {}ms ({}ms/frame)", nt, loadTimeTotal, loadTimeTotal/nt);
+			logger.info("               loading {} frames took {}ms ({}ms/frame)", nt, loadTimeTotal, loadTimeTotal/nt);
 			start = System.currentTimeMillis();
 
 			if (isErrorTest) {

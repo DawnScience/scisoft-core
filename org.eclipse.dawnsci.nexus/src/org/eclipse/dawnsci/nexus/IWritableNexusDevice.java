@@ -71,8 +71,9 @@ public interface IWritableNexusDevice<N extends NXobject> extends INexusDevice<N
 		final Dataset dataset = data instanceof Dataset ? (Dataset) data : DatasetFactory.createFromObject(data);
 
 		final SliceND sliceND;
-		if (dataset.getRank() == 0) {
-			sliceND = scanSlice;
+		
+		if (dataset.getRank() == 0 || dataset.getRank() == 1 && dataset.getSize() == 1) {
+			sliceND = scanSlice; // special case for single-valued datasets, just use the scan shape
 		} else {
 			// append zeros to the start array, and the dataset shape to the stop array
 			final int[] dataShape = dataset.getShape();

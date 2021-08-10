@@ -238,7 +238,7 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 					addLinkToInternalDataset(uniqueKeysCollection, nexusObjectProvider, uniqueKeysPath);
 				} else {
 					for (String externalFileName : nexusObjectProvider.getExternalFileNames()) {
-						addLinkToExternalFile(uniqueKeysCollection, externalFileName, uniqueKeysPath);
+						addLinkToExternalFile(uniqueKeysCollection, externalFileName, uniqueKeysPath, nexusObjectProvider.getName());
 					}
 				}
 			}
@@ -265,14 +265,24 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 	 * @param uniqueKeysPath path to unique keys dataset in external file
 	 */
 	private void addLinkToExternalFile(final NXobject uniqueKeysCollection,
-			String externalFileName, String uniqueKeysPath) {
-		// we just use the final segment of the file name as the dataset name,
-		// This assumes that we won't have files with the same name in different dirs
-		// Note: the name doesn't matter for processing purposes
-		final String datasetName = Paths.get(externalFileName).getFileName().toString();
+			String externalFileName, String uniqueKeysPath, String deviceName) {
+		// If the external file contains the name of the device, we use the name of the
+		// device, otherwise we try to find the most useful part of the file name
+		// Note: the name doesn't matter for processing purposes for DAWN, but not
+		// having changing indices within the key makes it easier to use elsewhere.
+		final String datasetName = getDatasetName(deviceName, Paths.get(externalFileName).getFileName().toString());
 		if (uniqueKeysCollection.getSymbolicNode(datasetName) == null) {
 			uniqueKeysCollection.addExternalLink(datasetName, externalFileName, uniqueKeysPath);
 		}
+	}
+	
+	private String getDatasetName(String deviceName, String externalFileName) {
+		deviceName = deviceName.toLowerCase();
+		externalFileName = externalFileName.toLowerCase();
+		if (externalFileName.contains(deviceName)) return deviceName;
+		externalFileName = externalFileName.split("\\.")[0];
+		final int substringStart = externalFileName.lastIndexOf("-") + 1;
+		return externalFileName.substring(substringStart);
 	}
 
 	private ILazyWriteableDataset createScalarWriteableDataset(final NXobject groupNode, String fieldName,

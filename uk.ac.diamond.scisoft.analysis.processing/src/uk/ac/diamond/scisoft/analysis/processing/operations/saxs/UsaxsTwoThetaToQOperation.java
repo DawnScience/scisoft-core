@@ -43,6 +43,7 @@ import si.uom.NonSI;
 import si.uom.SI;
 import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsTwoThetaToQModel.YawUnits;
 import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.UsaxsTwoThetaToQModel.qUnits;
+import uk.ac.diamond.scisoft.analysis.processing.operations.utils.AttenuationCalculationUtils;
 // Imports from uk.ac.diamond.scisoft
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
@@ -55,10 +56,6 @@ public class UsaxsTwoThetaToQOperation extends AbstractOperation<UsaxsTwoThetaTo
 	
 	// First, set up a logger
 	private static final Logger logger = LoggerFactory.getLogger(UsaxsTwoThetaToQOperation.class);
-	
-	
-	// Then the private variables for this class
-	private String ENERGYDATASETPATH = "/entry1/instrument/monochromator/energy";
 	
 	
 	@Override
@@ -114,9 +111,17 @@ public class UsaxsTwoThetaToQOperation extends AbstractOperation<UsaxsTwoThetaTo
 		}
 		
 		// Now work out the wavelength
-		double beamEnergy = ProcessingUtils.getDataset(this, fileLocation, this.ENERGYDATASETPATH).getDouble(0);
-		double wavelength = DiffractionCrystalEnvironment.calculateWavelength(beamEnergy);
+		double beamEnergy = Double.NaN;
 		
+		try {
+			beamEnergy = AttenuationCalculationUtils.getEnergyFromDatasetMetadata(input);
+		} catch (IllegalArgumentException error) {
+			logger.error("Problem ascertaining beam energy", error);
+			throw new OperationException(this, "Problem ascertaining beam energy");
+		}
+
+		double wavelength = DiffractionCrystalEnvironment.calculateWavelength(beamEnergy);
+
 		// Get our axis iterator
 		IndexIterator dataIterator = xAxis.getIterator();
 		

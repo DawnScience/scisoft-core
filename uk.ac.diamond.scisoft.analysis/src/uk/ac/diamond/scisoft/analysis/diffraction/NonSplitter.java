@@ -26,6 +26,11 @@ public class NonSplitter implements PixelSplitter {
 	}
 
 	@Override
+	public boolean doesSpread() {
+		return false;
+	}
+
+	@Override
 	public NonSplitter clone() {
 		return new NonSplitter();
 	}

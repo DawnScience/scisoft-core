@@ -437,7 +437,7 @@ public class MillerSpaceMapper {
 			for (int i = 0; i < 3; i++) {
 				vMin[i] = vDel[i] * Math.floor(vMin[i] / vDel[i]);
 				vMax[i] = vDel[i] * (Math.ceil(vMax[i] / vDel[i]) + 1);
-				vShape[i] = (int) (Math.floor((vMax[i] - vMin[i] + vDel[i]) / vDel[i]));
+				vShape[i] = (int) (Math.floor((vMax[i] - vMin[i]) / vDel[i]));
 			}
 		}
 	}
@@ -961,7 +961,7 @@ public class MillerSpaceMapper {
 					if (convertToVoxel(v, dv, pos)) {
 						value *= tFactor/qspace.calculateSolidAngle(x, py);
 						if (reduceToNonZeroBB) {
-							minMax(sMinLocal, sMaxLocal, pos);
+							minMax(splitter.doesSpread(), sMinLocal, sMaxLocal, pos);
 						}
 						splitter.splitValue(map, weight, vDel, dv, pos, value);
 					}
@@ -1065,8 +1065,7 @@ public class MillerSpaceMapper {
 		if (reduceToNonZeroBB) {
 			for (JobConfig j : jobs) {
 				if (j.getSMinLocal() != null) {
-					minMax(sMin, sMax, j.getSMinLocal());
-					minMax(sMin, sMax, j.getSMaxLocal());
+					minMax(sMin, sMax, j.getSMinLocal(), j.getSMaxLocal());
 				}
 			}
 		}
@@ -1078,13 +1077,35 @@ public class MillerSpaceMapper {
 		return loadJob.getData();
 	}
 
-	private static void minMax(final int[] min, final int[] max, final int[] p) {
-		min[0] = Math.min(min[0], p[0]);
-		max[0] = Math.max(max[0], p[0]);
-		min[1] = Math.min(min[1], p[1]);
-		max[1] = Math.max(max[1], p[1]);
-		min[2] = Math.min(min[2], p[2]);
-		max[2] = Math.max(max[2], p[2]);
+	private static void minMax(boolean spreads, final int[] min, final int[] max, final int[] p) {
+		int t = p[0];
+		min[0] = Math.min(min[0], t);
+		if (spreads) {
+			t++;
+		}
+		max[0] = Math.max(max[0], t);
+		t = p[1];
+		min[1] = Math.min(min[1], t);
+		if (spreads) {
+			t++;
+		}
+		max[1] = Math.max(max[1], t);
+		t = p[2];
+		min[2] = Math.min(min[2], t);
+		if (spreads) {
+			t++;
+		}
+		max[2] = Math.max(max[2], t);
+	}
+
+	private static void minMax(final int[] min, final int[] max, final int[] lmin, final int[] lmax) {
+		min[0] = Math.min(min[0], lmin[0]);
+		min[1] = Math.min(min[1], lmin[1]);
+		min[2] = Math.min(min[2], lmin[2]);
+
+		max[0] = Math.max(max[0], lmax[0]);
+		max[1] = Math.max(max[1], lmax[1]);
+		max[2] = Math.max(max[2], lmax[2]);
 	}
 
 	/**
@@ -1106,18 +1127,27 @@ public class MillerSpaceMapper {
 		double dv, vd;
 
 		dv = v.x - vMin[0];
+		if (dv < 0) {
+			return false;
+		}
 		vd = vDel[0];
 		p = (int) Math.floor(dv / vd);
 		deltaV.x = dv - p * vd;
 		pos[0] = p;
 
 		dv = v.y - vMin[1];
+		if (dv < 0) {
+			return false;
+		}
 		vd = vDel[1];
 		p = (int) Math.floor(dv / vd);
 		deltaV.y = dv - p * vd;
 		pos[1] = p;
 
 		dv = v.z - vMin[2];
+		if (dv < 0) {
+			return false;
+		}
 		vd = vDel[2];
 		p = (int) Math.floor(dv / vd);
 		deltaV.z = dv - p * vd;
@@ -1593,7 +1623,7 @@ public class MillerSpaceMapper {
 			}
 			long process = System.currentTimeMillis() - start;
 			logger.info("For {} threads, processing took {}ms ({}ms/frame)", pool.getParallelism(), process, process/nt);
-			logger.info("                loading {} frames took {}ms ({}ms/frame)", nt, loadTimeTotal, loadTimeTotal/nt);
+			logger.info("               loading {} frames took {}ms ({}ms/frame)", nt, loadTimeTotal, loadTimeTotal/nt);
 			start = System.currentTimeMillis();
 
 			if (isErrorTest) {

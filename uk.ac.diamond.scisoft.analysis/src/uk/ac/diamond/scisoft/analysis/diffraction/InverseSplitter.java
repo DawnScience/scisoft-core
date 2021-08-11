@@ -30,6 +30,11 @@ public class InverseSplitter implements PixelSplitter {
 
 	double[] weights = new double[8];
 
+	@Override
+	public boolean doesSpread() {
+		return true;
+	}
+
 	/**
 	 * Calculate weights
 	 * @param vd size of voxel

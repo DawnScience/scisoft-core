@@ -28,6 +28,11 @@ public interface PixelSplitter extends Cloneable {
 	 */
 	public void splitValue(DoubleDataset volume, DoubleDataset weight, final double[] vsize, final Vector3d dh, final int[] pos, final double value);
 
+	/**
+	 * @return true if pixel is spread over 8 voxels
+	 */
+	public boolean doesSpread();
+
 	public PixelSplitter clone();
 
 	/**

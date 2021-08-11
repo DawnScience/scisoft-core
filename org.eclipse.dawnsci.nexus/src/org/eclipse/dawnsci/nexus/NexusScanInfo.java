@@ -66,6 +66,8 @@ public class NexusScanInfo {
 	
 	private int[] shape;
 	
+	private String scanCommand;
+	
 	private String filePath;
 	
 	private long estimatedScanTime = -1; // in ms, or -1 if not specified
@@ -159,6 +161,14 @@ public class NexusScanInfo {
 	public void setShape(int[] shape) {
 		this.shape = shape;
 	}
+	
+	public String getScanCommand() {
+		return scanCommand;
+	}
+
+	public void setScanCommand(String scanCommand) {
+		this.scanCommand = scanCommand;
+	}
 
 	/**
 	 * Returns the {@link ScanRole} of the device with the given name within the scan. If the device
@@ -237,7 +247,9 @@ public class NexusScanInfo {
 
 	@Override
 	public String toString() {
-		return "NexusScanInfo [rank=" + rank + ", axisNames=" + getScannableNames() + "]";
+		return "NexusScanInfo [rank=" + rank + ", deviceNames=" + deviceNames + ", shape=" + Arrays.toString(shape)
+				+ ", scanCommand=" + scanCommand + ", filePath=" + filePath + ", estimatedScanTime=" + estimatedScanTime
+				+ "]";
 	}
 
 }

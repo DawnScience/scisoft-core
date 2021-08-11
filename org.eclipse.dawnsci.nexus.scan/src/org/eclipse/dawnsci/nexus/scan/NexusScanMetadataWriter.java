@@ -6,6 +6,7 @@ import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.ATTRIBUTE_NAME_U
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.ATTRIBUTE_VALUE_MILLISECONDS;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_POINT_END_TIME;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_POINT_START_TIME;
+import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_SCAN_COMMAND;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_SCAN_DEAD_TIME;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_SCAN_DEAD_TIME_PERCENT;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_SCAN_DURATION;
@@ -25,7 +26,6 @@ import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.PROPERTY_NAME_UN
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -52,7 +52,6 @@ import org.eclipse.dawnsci.nexus.builder.NexusObjectWrapper;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
 import org.eclipse.january.dataset.LazyWriteableDataset;
 import org.eclipse.january.dataset.SliceND;
@@ -158,6 +157,11 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		
 		// write the scan rank
 		scanMetadataCollection.setField(FIELD_NAME_SCAN_RANK, scanInfo.getRank());
+		
+		// write the scan command, if available
+		if (scanInfo.getScanCommand() != null) {
+			scanMetadataCollection.setField(FIELD_NAME_SCAN_COMMAND, scanInfo.getScanCommand());
+		}
 		
 		// write the scan shape
 		logger.info("Estimated scan shape {}", scanInfo.getShape());
@@ -379,6 +383,10 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		entry.addDataNode(NXentry.NX_START_TIME, scanMetadataCollection.getDataNode(FIELD_NAME_SCAN_START_TIME));
 		entry.addDataNode(NXentry.NX_END_TIME, scanMetadataCollection.getDataNode(FIELD_NAME_SCAN_END_TIME));
 		entry.addDataNode(NXentry.NX_DURATION, scanMetadataCollection.getDataNode(FIELD_NAME_SCAN_DURATION));
+		entry.addDataNode(FIELD_NAME_SCAN_SHAPE, scanMetadataCollection.getDataNode(FIELD_NAME_SCAN_SHAPE));
+		if (scanMetadataCollection.containsDataNode(FIELD_NAME_SCAN_COMMAND)) {
+			entry.addDataNode(FIELD_NAME_SCAN_COMMAND, scanMetadataCollection.getDataNode(FIELD_NAME_SCAN_COMMAND)); 
+		}
 	}
 
 }

@@ -19,6 +19,8 @@ import h5py #@UnresolvedImport
 
 if h5py.version.version_tuple[0] < 2:
     raise ImportError("Installed h5py is too old - it must be at least version 2")
+elif h5py.version.version_tuple[0] > 2:
+    print("Warning string datasets in HDF5 files now return bytes objects (use .decode() to convert to strings)", file=sys.stderr)
 
 from ..nexus.hdf5 import HDF5tree as _tree
 from ..nexus.hdf5 import HDF5group as _group
@@ -66,6 +68,9 @@ class _lazydataset(object):
 #        print 'new shape:', nshape
 
         if self.chunking is None:
+            if len(self.shape) == 0 and key is Ellipsis:
+                return ds[...]
+
             nslices = [ s if s else slice(None) for s in slices ]
             v = ds[tuple(nslices)]
             if isinstance(v, ndarray):
@@ -185,7 +190,9 @@ class HDF5Loader(object):
 
         attrs = []
         for k,v in node.attrs.items():
-            if isinstance(v, ndgeneric):
+            if isinstance(v, bytes): # for Python3
+                v = v.decode()
+            elif isinstance(v, ndgeneric):
                 if v.dtype.kind in 'SUa':
                     v = str(v)
                 else:

@@ -1200,5 +1200,27 @@ class Test(unittest.TestCase):
         a = np.array(self.q)
         self.checkitems(self.q, np.copy(a))
 
+    def testClip(self):
+        a = np.arange(8, dtype=np.float)
+        answer = [2., 2., 2., 3., 4., 5., 5.5, 5.5, ]
+        self.checkitems(answer, np.clip(a, 2., 5.5))
+        r = np.zeros((8,), dtype=a.dtype)
+        np.clip(a, 2., 5.5, r)
+        self.checkitems(answer, r)
+
+    def testMaxMinSelect(self):
+        a = np.array([2., 2., 2., 3., 4., 5., 5.5, 5.5])
+        b = np.array([2.5, 1., 2., 3.5, -4., 65., 5.5, 15.5])
+        abmin = [2.,1.,2., 3.,-4.,5.,5.5,5.5]
+        self.checkitems(abmin, np.minimum(a, b))
+        r = np.zeros((8,), dtype=a.dtype)
+        np.minimum(a, b, r)
+        self.checkitems(abmin, r)
+
+        abmax = [2.5,2.,2., 3.5,4.,65.,5.5,15.5]
+        self.checkitems(abmax, np.maximum(a, b))
+        np.maximum(a, b, r)
+        self.checkitems(abmax, r)
+
 if __name__ == '__main__':
     unittest.main(verbosity=2)

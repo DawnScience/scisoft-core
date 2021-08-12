@@ -381,17 +381,17 @@ def negative(a, out=None):
 @_wrap('a', 'a_min', 'a_max')
 def clip(a, a_min, a_max, out=None):
     '''Clip input to given bounds (replace NaNs with midpoint of bounds)'''
-    return _maths.clip(a, a_min, a_max, out)
+    return _maths.clip(a, out, a_min, a_max)
 
 @_wrap('a', 'b')
 def maximum(a, b, out=None):
     '''Item-wise maximum'''
-    return _maths.maximum(a, b)
+    return _maths.maximum(a, b, out)
 
 @_wrap('a', 'b')
 def minimum(a, b, out=None):
     '''Item-wise minimum'''
-    return _maths.minimum(a, b)
+    return _maths.minimum(a, b, out)
 
 @_keepdims
 @_wrap('a')

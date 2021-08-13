@@ -179,6 +179,8 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		AxesMetadata amd = ld.getFirstMetadata(AxesMetadata.class);
 		ILazyDataset[] firstAxes = amd == null ? null : amd.getAxis(0);
 		if (firstAxes == null || firstAxes.length == 0 || firstAxes[0] == null) {
+			positionName = "frame";
+			position = DatasetFactory.createFromObject(smd.getSliceInfo().getSliceNumber());
 			return;
 		}
 		positionName = firstAxes[0].getName();
@@ -757,8 +759,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	}
 
 	private void processFit(int sn, int rn, Dataset in, double m, double c, double r) {
-		double p = position == null ? 0 : position.getDouble();
-		allPosition[rn].set(sn, p);
+		allPosition[rn].set(sn, position.getDouble());
 		allSpectra[rn].set(sn, null);
 		if (Double.isFinite(c)) {
 			allIntercept[rn].set(sn, c);

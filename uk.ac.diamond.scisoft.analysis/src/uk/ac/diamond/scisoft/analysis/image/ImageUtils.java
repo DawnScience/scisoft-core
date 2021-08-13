@@ -138,8 +138,8 @@ public class ImageUtils {
 	 * @param it iterator
 	 * @param coord values of coordinates
 	 * @param c central value
-	 * @param xsum
-	 * @return return centroid values, total and minimum or null if central value not maximum
+	 * @param xsum centroid values, total and minimum
+	 * @return return peak type
 	 */
 	private static final PEAK_TYPE processWindow(final DoubleDataset box, final IndexIterator it, final DoubleDataset coord, final double c, final double[] xsum) {
 		final int[] pos = it.getPos();

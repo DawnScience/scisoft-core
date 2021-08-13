@@ -81,6 +81,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	private double detectorAngle = Double.NaN;
 	private KnownDetector detector;
 	private IRectangularROI[] rois = new IRectangularROI[2];
+	protected double xrayEnergy;
 
 	@Override
 	public void setModel(T model) {
@@ -413,7 +414,9 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			}
 
 			countsPerPhoton = -1;
+			xrayEnergy = -1;
 			try {
+				xrayEnergy = getEnergy(mdg);
 				countsPerPhoton = calculateCountsPerPhoton(mdg);
 			} catch (Exception e) {
 				if (detector.containsDataNode(DETECTOR_LOCAL_NAME)) {

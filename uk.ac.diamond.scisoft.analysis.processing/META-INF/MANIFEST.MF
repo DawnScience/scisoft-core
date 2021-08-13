@@ -23,7 +23,8 @@ Require-Bundle: org.eclipse.january;bundle-version="2.3.0",
  org.apache.commons.lang3;bundle-version="3.1.0",
  javax.vecmath;bundle-version="1.5.2",
  org.dawnsci.boofcv;bundle-version="1.0.0",
- com.github.tschoonj.xraylib;bundle-version="3.2.1"
+ com.github.tschoonj.xraylib;bundle-version="3.2.1",
+ org.apache.commons.csv;bundle-version="1.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Import-Package: org.osgi.framework;version="1.7.0",

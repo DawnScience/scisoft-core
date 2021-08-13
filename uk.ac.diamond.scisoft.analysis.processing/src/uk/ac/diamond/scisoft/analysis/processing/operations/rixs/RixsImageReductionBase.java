@@ -11,10 +11,17 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.rixs;
 
 import java.io.File;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistentNodeFactory;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
@@ -61,6 +68,7 @@ import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.operations.MetadataUtils;
 import uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractFittedBackgroundOperation;
+import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsBaseModel.ENERGY_DIRECTION;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionBaseModel.CORRELATE_ORDER;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionBaseModel.CORRELATE_PHOTON;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionBaseModel.ENERGY_OFFSET;
@@ -80,6 +88,9 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 
 	protected String currentDataFile = null;
 	private MultiRange selection;
+	private String centroidFilePath;
+	Map<Double, Dataset> xLookup, yLookup;
+	Dataset xBase, yBase;
 
 	/**
 	 * Auxiliary subentry. This must match the name field defined in the plugin extension
@@ -125,7 +136,75 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			energyDispersion[1] = energyDispersion[0];
 		}
 
+		String lookup = model.getCentroidLookupFile();
+		if (lookup == null) {
+			centroidFilePath = null;
+			xLookup = null;
+			yLookup = null;
+		} else if (!lookup.equals(centroidFilePath)) {
+			try {
+				initializeLookupTables(lookup, model.getEnergyDirection() == ENERGY_DIRECTION.FAST);
+			} catch (Exception e) {
+				if (throwEx) {
+					throw new OperationException(this, "Could not load centroid correction tables", e);
+				}
+			}
+		}
+
 		updateROICount();
+	}
+
+	private void initializeLookupTables(String lookupFile, boolean xAsFirstDimension) throws Exception {
+		CSVParser parser = CSVParser.parse(new File(lookupFile), StandardCharsets.US_ASCII, CSVFormat.DEFAULT);
+		boolean isX = false;
+		boolean isY = false;
+		Map<Double, Dataset> xLookup = new HashMap<>();
+		Map<Double, Dataset> yLookup = new HashMap<>();
+		int xLength = 0;
+		int yLength = 0;
+		for (CSVRecord r : parser) {
+			int n = r.size();
+			if (n == 1) {
+				String dirn = r.get(0);
+				if (dirn.equalsIgnoreCase("x")) {
+					isX = true;
+					isY = false;
+				} else if (dirn.equalsIgnoreCase("y")) {
+					isX = false;
+					isY = true;
+				}
+			} else if (n > 0) {
+				if (isX || isY) {
+					double e = Double.parseDouble(r.get(0));
+					double[] values = new double[n - 1];
+					int j = 0;
+					for (int i = 1; i < n; i++) {
+						values[j++] = Double.parseDouble(r.get(i)) + 0.5; // shift back half-pixel as used for histogram
+					}
+					Dataset d = DatasetFactory.createFromObject(values);
+					if (isX) {
+						xLength = d.getSize();
+						xLookup.put(e, d);
+					} else {
+						yLength = d.getSize();
+						yLookup.put(e, d);
+					}
+				}
+			}
+		}
+
+		if (xAsFirstDimension) {
+			this.xLookup = xLookup;
+			this.yLookup = yLookup;
+			xBase = DatasetFactory.createLinearSpace(DoubleDataset.class, 0, 1, xLength);
+			yBase = DatasetFactory.createLinearSpace(DoubleDataset.class, 0, 1, yLength);
+		} else {
+			this.xLookup = yLookup;
+			this.yLookup = xLookup;
+			xBase = DatasetFactory.createLinearSpace(DoubleDataset.class, 0, 1, yLength);
+			yBase = DatasetFactory.createLinearSpace(DoubleDataset.class, 0, 1, xLength);
+		}
+		centroidFilePath = lookupFile;
 	}
 
 	@Override
@@ -261,7 +340,11 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			log.appendSuccess("Found %d photon events, current total = %s", eSum.getSize(), totalSum.getSize());
 			allSums.set(sn, eSum);
 			allOffsets.set(sn, events.get(4));
-			allPositions.set(sn, events.get(1));
+			Dataset posn = events.get(1);
+			if (xLookup != null) {
+				posn = correctCentroid(posn);
+			}
+			allPositions.set(sn, posn);
 			if (model.isSaveAllPositions()) {
 				Dataset values = events.get(3);
 				List<Dataset> hs = SubtractFittedBackgroundOperation.createHistogram(values, true, 1);
@@ -316,6 +399,44 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		odd.setAuxData(auxData.toArray(new Serializable[auxData.size()]));
 		odd.setSummaryData(summaryData.toArray(new Serializable[summaryData.size()]));
 		return odd;
+	}
+
+	private Dataset correctCentroid(Dataset posn) {
+		Dataset correction = getCorrection(xLookup);
+		Dataset oldX = posn.getSlice((Slice) null, new Slice(1)).squeeze();
+		Dataset newX = correctCoord(xBase, correction, oldX);
+
+		correction = getCorrection(yLookup);
+		Dataset oldY = posn.getSlice((Slice) null, new Slice(1,2)).squeeze();
+		Dataset newY = correctCoord(yBase, correction, oldY);
+
+		newX.setShape(-1,1);
+		newY.setShape(-1,1);
+		return DatasetUtils.concatenate(new Dataset[] {newX, newY}, 1);
+	}
+
+	private Dataset correctCoord(Dataset base, Dataset correction, Dataset coords) {
+		if (correction == null) {
+			return coords;
+		}
+		coords.isubtract(0.5); // same half-pixel shift as used in position histogram
+		IntegerDataset iCoords = DatasetUtils.copy(IntegerDataset.class, coords);
+		coords.isubtract(iCoords);
+		Dataset nCoords = Maths.interpolate(base, correction, coords, null, null);
+		return nCoords.iadd(iCoords);
+	}
+
+	private Dataset getCorrection(Map<Double, Dataset> lookup) {
+		double delta = Double.POSITIVE_INFINITY;
+		Dataset found = null;
+		for (Entry<Double, Dataset> e : lookup.entrySet()) {
+			double d = Math.abs(e.getKey() - xrayEnergy);
+			if (d < delta) {
+				delta = d;
+				found = e.getValue();
+			}
+		}
+		return found;
 	}
 
 	private static final String XCAM_XIP_FILENAME = "xcam-xpi%d-%d.hdf"; // eg. xcam-xip2-143781.hdf

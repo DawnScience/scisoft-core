@@ -100,6 +100,9 @@ public class RixsImageReductionBaseModel extends RixsBaseModel {
 	@OperationModelField(label = "Save centroids", description = "Option to save all centroid positions and values", expertOnly = true)
 	private boolean saveAllPositions = false;
 
+	@OperationModelField(label = "Centroid correction file", description = "This is used to locate a file containing lookup tables for centroid correction", file = FileType.EXISTING_FILE, hint = "File path for correction tables")
+	private String centroidLookupFile = null;
+
 	/**
 	 * @return option for zero energy offset
 	 */
@@ -285,5 +288,16 @@ public class RixsImageReductionBaseModel extends RixsBaseModel {
 
 	public void setSaveAllPositions(boolean saveAllPositions) {
 		firePropertyChange("setSaveAllPositions", this.saveAllPositions, this.saveAllPositions = saveAllPositions);
+	}
+
+	/**
+	 * @return file path to lookup tables for centroid correction
+	 */
+	public String getCentroidLookupFile() {
+		return centroidLookupFile;
+	}
+
+	public void setCentroidLookupFile(String centroidLookupFile) {
+		firePropertyChange("setCentroidLookupFile", this.centroidLookupFile, this.centroidLookupFile = centroidLookupFile);
 	}
 }

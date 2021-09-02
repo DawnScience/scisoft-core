@@ -11,22 +11,26 @@ package uk.ac.diamond.scisoft.analysis.plotserver;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Optional;
 
 public class OneDDataFilePlotDefinition implements Serializable{
-	public String url; 
-	public String x_axis; 
-	public String[] y_axes;
-	
-	public Map<String, String> yAxesMap;	
+
+	private static final long serialVersionUID = 1003557293586489308L;
+
+	private String url;
+	private String xAxis;
+	private String[] yAxes;
+	private Integer scanNumber;
+
+	private Map<String, String> yAxesMap;
 
 	public OneDDataFilePlotDefinition(String url, String xAxis, String[] yAxes) {
 		super();
 		this.url = url;
-		x_axis = xAxis;
-		y_axes = yAxes;
+		this.xAxis = xAxis;
+		this.yAxes = yAxes;
 	}
-	
-	
+
 	public Map<String, String> getyAxesMap() {
 		return yAxesMap;
 	}
@@ -38,6 +42,24 @@ public class OneDDataFilePlotDefinition implements Serializable{
 	public void setyAxesMap(Map<String, String> yAxesMap) {
 		this.yAxesMap = yAxesMap;
 	}
-	
-	
+
+	public void setScanNumber(int scanNumber) {
+		this.scanNumber = scanNumber;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public String getXAxis() {
+		return xAxis;
+	}
+
+	public String[] getYAxes() {
+		return yAxes;
+	}
+
+	public Optional<Integer> getScanNumber() {
+		return Optional.ofNullable(scanNumber);
+	}
 }

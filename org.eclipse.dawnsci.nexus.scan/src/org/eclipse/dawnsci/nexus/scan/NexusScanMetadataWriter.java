@@ -74,7 +74,6 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 	protected ILazyWriteableDataset scanDurationDataset;
 	protected ILazyWriteableDataset scanDeadTimeDataset;
 	protected ILazyWriteableDataset scanDeadTimePercentDataset;
-	protected ILazyWriteableDataset scanStartTimeDataset;
 	protected ILazyWriteableDataset scanEndTimeDataset;
 	protected ILazyWriteableDataset pointStartTimeStamps;
 	protected ILazyWriteableDataset pointEndTimeStamps;
@@ -151,8 +150,6 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 	protected NXcollection createNexusObject(NexusScanInfo scanInfo) {
 		this.scanInfo = scanInfo;
 		
-		scanStartTime = ZonedDateTime.now().truncatedTo(MILLIS); // record the current time
-
 		scanMetadataCollection = NexusNodeFactory.createNXcollection();
 		
 		// write the scan rank
@@ -167,6 +164,11 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		logger.info("Estimated scan shape {}", scanInfo.getShape());
 		scanMetadataCollection.setDataset(FIELD_NAME_SCAN_SHAPE, DatasetFactory.createFromObject(scanInfo.getShape()));
 		
+		// write the scan start time
+		scanStartTime = ZonedDateTime.now().truncatedTo(MILLIS); // record the current time
+		scanMetadataCollection.setField(FIELD_NAME_SCAN_START_TIME, createDataset(scanStartTime));
+		
+		// write the estimated scan time
 		final long estimatedScanTimeMillis = scanInfo.getEstimatedScanTime();
 		logger.info("Estimated scan time {}ms", estimatedScanTimeMillis);
 		final DataNode estimatedDurationNode = scanMetadataCollection.setField(FIELD_NAME_SCAN_ESTIMATED_DURATION, estimatedScanTimeMillis);
@@ -193,7 +195,6 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		final NXcollection keysCollection = createUniqueKeysCollection(scanInfo);
 		scanMetadataCollection.addGroupNode(GROUP_NAME_UNIQUE_KEYS, keysCollection);
 
-		scanStartTimeDataset = createScalarWriteableDataset(scanMetadataCollection, FIELD_NAME_SCAN_START_TIME, String.class, null);
 		scanEndTimeDataset = createScalarWriteableDataset(scanMetadataCollection, FIELD_NAME_SCAN_END_TIME, String.class, null);
 		
 		if (!hardwareScan) {
@@ -350,7 +351,6 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 
 		// mark the scan as finishing and write scan timing information,  
 		writeScalarData("scan finished", scanFinishedDataset, 1);
-		writeScalarData("start time", scanStartTimeDataset, scanStartTime);
 		writeScalarData("end time", scanEndTimeDataset, scanEndTime);
 		writeScalarData("duration", scanDurationDataset, scanDuration.toMillis());
 		writeScalarData("scan dead time", scanDeadTimeDataset, scanDeadTime.toMillis());

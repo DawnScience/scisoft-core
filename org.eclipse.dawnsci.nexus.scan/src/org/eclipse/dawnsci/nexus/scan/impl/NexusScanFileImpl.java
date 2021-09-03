@@ -190,7 +190,7 @@ class NexusScanFileImpl implements NexusScanFile {
 	}
 
 	private void validate(NexusFileBuilder fileBuilder) throws NexusException {
-		if (Boolean.getBoolean(SYSTEM_PROPERTY_NAME_VALIDATE_NEXUS)) {
+		if (Boolean.getBoolean(SYSTEM_PROPERTY_NAME_VALIDATE_NEXUS) || Boolean.getBoolean("GDA/gda."+SYSTEM_PROPERTY_NAME_VALIDATE_NEXUS)) {
 			final ValidationReport validationReport =
 					ServiceHolder.getNexusValidationService().validateNexusTree(fileBuilder.getNexusTree());
 			if (validationReport.isError()) { // note we log an error rather than throwing an exception if the nexus file is invalid

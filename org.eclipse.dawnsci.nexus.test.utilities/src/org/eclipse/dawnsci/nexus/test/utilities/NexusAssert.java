@@ -384,8 +384,8 @@ public class NexusAssert {
 		final String startTimeString = metadataCollection.getString(NXentry.NX_START_TIME);
 		final String endTimeString = metadataCollection.getString(NXentry.NX_END_TIME);
 		final Long duration = metadataCollection.getLong(NXentry.NX_DURATION);
-		assertThat(startTimeString, is(equalTo(entry.getStart_time().getString(0))));
-		assertThat(endTimeString, is(equalTo(entry.getEnd_time().getString(0))));
+		assertThat(startTimeString, is(equalTo(entry.getStart_time().getString()))); // scalar field
+		assertThat(endTimeString, is(equalTo(entry.getEnd_time().getString(0)))); // 1D dataset of size 1
 		assertThat(duration, is(equalTo(entry.getDurationScalar())));
 	}
 	

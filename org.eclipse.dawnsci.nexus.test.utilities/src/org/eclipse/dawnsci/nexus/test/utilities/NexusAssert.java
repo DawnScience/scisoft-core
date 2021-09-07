@@ -411,8 +411,8 @@ public class NexusAssert {
 		// As truncating to milliseconds, could end the same milli as starting, so check that end is at least not before start.
 		assertTrue(!endTimeDateDataset.getDate().before(startTimeDateDataset.getDate()));
 
-		final long scanDuration = Duration.between(startTimeDateDataset.getDate().toInstant(), 
-				endTimeDateDataset.getDate().toInstant()).toMillis();		
+		final long scanDuration = Duration.between(startTimeDateDataset.getDate().toInstant(),
+				endTimeDateDataset.getDate().toInstant()).toMillis();
 		assertEquals(scanDuration, durationDataset.getLong());
 		
 	}

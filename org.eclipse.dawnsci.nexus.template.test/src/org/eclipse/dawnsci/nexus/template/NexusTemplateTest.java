@@ -42,7 +42,9 @@ import org.eclipse.dawnsci.nexus.context.NexusContextType;
 import org.eclipse.dawnsci.nexus.template.impl.NexusTemplateServiceImpl;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
+import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.StringDataset;
@@ -568,11 +570,11 @@ public class NexusTemplateTest {
 		assertThat(startTime.getShape(), is(equalTo(new int[0])));
 		assertThat(startTime.getString(), is(equalTo("2019-05-28T17:56:40.351+01:00")));
 		
-		IDataset endTime = entry.getDataset(NXentry.NX_END_TIME);
+		Dataset endTime = DatasetUtils.convertToDataset(entry.getDataset(NXentry.NX_END_TIME));
 		assertThat(endTime, is(notNullValue()));
 		assertTrue(endTime instanceof StringDataset);
-		assertThat(endTime.getShape(), is(equalTo(new int[] { 1 })));
-		assertThat(endTime.getString(0), is(equalTo("2019-05-28T17:56:40.895+01:00")));
+		assertThat(endTime.getShape(), is(equalTo(new int[] { 1 }))); // TODO change to new int[0] when there's a new p45-example.nxs 
+		assertThat(endTime.getString(), is(equalTo("2019-05-28T17:56:40.895+01:00")));
 
 		assertThat(entry.getDefinitionScalar(), is(equalTo("NXscan")));
 		

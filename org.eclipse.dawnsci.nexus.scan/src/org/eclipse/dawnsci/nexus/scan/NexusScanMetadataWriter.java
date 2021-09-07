@@ -64,8 +64,8 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 	
 	private static final String DEFAULT_NAME = NexusScanMetadataWriter.class.getSimpleName();
 	
+	public static final int[] SCALAR_SHAPE = new int[0];
 	public static final int[] SINGLE_SHAPE = new int[] { 1 };
-	public static final int[] START_SHAPE = new int[] { 0 };
 	public static final int[] ONE_D_UNLIMITED_SHAPE = new int[] { -1 };
 	
 	// Writing Datasets. Protected fields to allow overwriting by Bluesky Implementation for tests/futureproofing
@@ -289,7 +289,7 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 	private ILazyWriteableDataset createScalarWriteableDataset(final NXobject groupNode, String fieldName,
 			Class<?> dataClass, String unitsStr) {
 		final ILazyWriteableDataset writeableDataset = new LazyWriteableDataset(fieldName, dataClass,
-				SINGLE_SHAPE, SINGLE_SHAPE, SINGLE_SHAPE, null);
+				SCALAR_SHAPE, null, null, null);
 		final DataNode dataNode = groupNode.createDataNode(fieldName, writeableDataset);
 		if (unitsStr != null) {
 			setUnits(dataNode, unitsStr);
@@ -360,7 +360,12 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		final float deadTimePercent = ((float) scanDeadTime.toMillis() / scanDuration.toMillis()) * 100.0f;
 
 		// mark the scan as finishing and write scan timing information,  
-		writeScalarData("scan finished", scanFinishedDataset, 1);
+		try {
+			scanFinishedDataset.setSlice(null, DatasetFactory.createFromObject(1), new SliceND(scanFinishedDataset.getShape()));
+		} catch (DatasetException e) {
+			throw new NexusException("Could not write scan finished to NeXus file");
+		}
+
 		writeScalarData("end time", scanEndTimeDataset, scanEndTime);
 		writeScalarData("duration", scanDurationDataset, scanDuration.toMillis());
 		writeScalarData("scan dead time", scanDeadTimeDataset, scanDeadTime.toMillis());
@@ -377,7 +382,7 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 	protected void writeScalarData(String datasetName, ILazyWriteableDataset dataset, Object data) throws NexusException {
 		final Dataset datasetToWrite = createDataset(data);
 		try {
-			dataset.setSlice(null, datasetToWrite, START_SHAPE, SINGLE_SHAPE, SINGLE_SHAPE);
+			dataset.setSlice(null, datasetToWrite, new SliceND(SCALAR_SHAPE));
 		} catch (Exception e) {
 			throw new NexusException("Could not write " + datasetName + " to NeXus file");
 		}

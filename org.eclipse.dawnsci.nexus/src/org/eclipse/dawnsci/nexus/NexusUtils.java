@@ -1102,6 +1102,8 @@ public class NexusUtils {
 			AxesMetadata am = data.getFirstMetadata(AxesMetadata.class);
 			if (am != null) {
 				axes = am.getAxes();
+			} else {
+				axes = new ILazyDataset[0];
 			}
 		}
 

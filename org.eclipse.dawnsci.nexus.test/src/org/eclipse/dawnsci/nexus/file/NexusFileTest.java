@@ -266,6 +266,14 @@ public class NexusFileTest {
 		assertSame(dataset, dataNode.getDataset());
 
 		assertSame(dataNode, parentGroup.getDataNode("data"));
+
+		int[] sShape = {};
+		ILazyWriteableDataset scalar = new LazyWriteableDataset("scalar", Double.class, sShape, sShape, null, null);
+		DataNode scalarNode = nf.createData(parentGroup, scalar);
+		scalar.setSlice(null, DatasetFactory.createFromObject(12.), new SliceND(new int[0]));
+		assertSame(scalar, scalarNode.getDataset());
+		assertSame(scalarNode, parentGroup.getDataNode("scalar"));
+		assertEquals(12.0, scalar.getDataset().getSlice((SliceND) null).getDouble(), 1e-15);
 	}
 
 	@Test
@@ -291,6 +299,12 @@ public class NexusFileTest {
 		assertSame(dataset, dataNode.getDataset());
 
 		assertSame(dataNode, parentGroup.getDataNode("data"));
+
+		Dataset scalar = DatasetFactory.createFromObject(12.0);
+		scalar.setName("scalar");
+		DataNode scalarNode = nf.createData(parentGroup, scalar);
+		assertSame(scalar, scalarNode.getDataset());
+		assertSame(scalarNode, parentGroup.getDataNode("scalar"));
 	}
 
 	@Test

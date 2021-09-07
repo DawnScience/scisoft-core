@@ -174,13 +174,11 @@ public class NexusFileHDF5 implements NexusFile {
 
 	private static final class NodeData {
 		public final String name;
-		public final String nxClass;
 		public final String path;
 		public final Node node;
 		public final NodeType type;
-		NodeData(String name, String nxClass, String path, Node node, NodeType type) {
+		NodeData(String name, String path, Node node, NodeType type) {
 			this.name = name;
-			this.nxClass = nxClass;
 			this.path = path;
 			this.node = node;
 			this.type = type;
@@ -562,7 +560,7 @@ public class NexusFileHDF5 implements NexusFile {
 		String parentPath = pathBuilder.toString();
 		GroupNode group = tree.getGroupNode();
 		if (parsedNodes.length < 1) {
-			return new NodeData(Tree.ROOT, null, null, group, NodeType.GROUP);
+			return new NodeData(Tree.ROOT, null, group, NodeType.GROUP);
 		}
 		Node node = group;
 		AugmentedPathElement parsedNode = parsedNodes[0];
@@ -640,7 +638,7 @@ public class NexusFileHDF5 implements NexusFile {
 			}
 			node = group;
 		}
-		return new NodeData(parsedNode.name, parsedNode.nxClass, parentPath, node, type);
+		return new NodeData(parsedNode.name, parentPath, node, type);
 	}
 
 	private NodeType getNodeType(String absolutePath) throws NexusException {
@@ -928,6 +926,7 @@ public class NexusFileHDF5 implements NexusFile {
 
 		int itemSize = 1;
 		Class<? extends Dataset> clazz = InterfaceUtils.getInterfaceFromClass(data.getElementsPerItem(), data.getElementClass());
+		final boolean isScalar = data.getRank() == 0;
 		int[] iShape = data.getShape();
 		int[] iMaxShape = data.getMaxShape();
 		int[] iChunks = data.getChunking();
@@ -946,7 +945,8 @@ public class NexusFileHDF5 implements NexusFile {
 		long hdfType = getHDF5Type(data);
 		try {
 			try (HDF5Resource hdfDatatype = new HDF5DatatypeResource(H5.H5Tcopy(hdfType));
-					HDF5Resource hdfDataspace = new HDF5DataspaceResource(H5.H5Screate_simple(shape.length, shape, maxShape));
+					HDF5Resource hdfDataspace = new HDF5DataspaceResource(isScalar ? H5.H5Screate(HDF5Constants.H5S_SCALAR)
+							: H5.H5Screate_simple(shape.length, shape, maxShape));
 					HDF5Resource hdfProperties = new HDF5PropertiesResource(H5.H5Pcreate(HDF5Constants.H5P_DATASET_CREATE))) {
 
 				final long hdfPropertiesId = hdfProperties.getResource();
@@ -1079,7 +1079,7 @@ public class NexusFileHDF5 implements NexusFile {
 
 		boolean stringDataset = data.getElementClass().equals(String.class);//ngd.isChar();
 		final boolean isScalar = data.getRank() == 0;
-		final long[] shape = HDF5Utils.toLongArray(data.getShape());
+		final long[] shape = isScalar ? new long[0] : HDF5Utils.toLongArray(data.getShape());
 
 		long type = getHDF5Type(data);
 
@@ -1339,12 +1339,7 @@ public class NexusFileHDF5 implements NexusFile {
 					try (HDF5Resource attributeResource = new HDF5AttributeResource(
 							H5.H5Acreate_by_name(fileId, path, attrName, datatypeId, dataspaceId,
 									HDF5Constants.H5P_DEFAULT, HDF5Constants.H5P_DEFAULT, HDF5Constants.H5P_DEFAULT))) {
-
-						if (stringDataset) {
-							H5.H5Awrite(attributeResource.getResource(), datatypeId, buffer);
-						} else {
-							H5.H5Awrite(attributeResource.getResource(), datatypeId, buffer);
-						}
+						H5.H5Awrite(attributeResource.getResource(), datatypeId, buffer);
 					}
 				}
 				node.addAttribute(attr);

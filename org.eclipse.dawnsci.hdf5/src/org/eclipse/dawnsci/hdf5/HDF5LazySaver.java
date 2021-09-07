@@ -156,11 +156,11 @@ public class HDF5LazySaver extends HDF5LazyLoader implements ILazyAsyncSaver, Se
 				}
 			}
 			if (zeroes) {
-				trueShape = slice.getSourceShape().clone();
+				trueShape = slice == null ? data.getShape() : slice.getSourceShape().clone();
 			}
 			initialize();
 		}
-		if (data.getRank() == 0) {
+		if (data.getRank() == 0 && slice != null) {
 			data = data.getSliceView();
 			data.setShape(slice.getShape());
 		}
@@ -181,7 +181,9 @@ public class HDF5LazySaver extends HDF5LazyLoader implements ILazyAsyncSaver, Se
 					fid.decrementCount();
 				}
 			}
-			expandShape(slice);
+			if (slice != null) {
+				expandShape(slice);
+			}
 			if (mon != null) {
 				if (mon.isCancelled()) {
 					return;

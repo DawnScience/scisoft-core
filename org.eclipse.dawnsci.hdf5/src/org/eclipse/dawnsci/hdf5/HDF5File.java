@@ -158,7 +158,7 @@ public class HDF5File {
 			}
 			if (!service.isShutdown()) {
 				try {
-					service.submit(new WriteJob(destination, data, slice));
+					service.submit(new WriteJob(destination, data, slice == null ? null : slice.clone()));
 					return true;
 				} catch (RejectedExecutionException e) {
 				}

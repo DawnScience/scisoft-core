@@ -863,15 +863,16 @@ public class MillerSpaceMapper {
 			}
 			int[] s = Arrays.copyOfRange(image.getShapeRef(), srank, rank);
 			image.setShape(s);
+			miss = imagesSlice.getStep();
 			if (image.max().doubleValue() <= 0) {
 				String n = tree instanceof TreeFile ? " in " + ((TreeFile) tree).getFilename() : "";
 				logger.warn("Skipping image at {} {}", Arrays.toString(pos), n);
-				continue;
+				image = getNextImage(miss, images, iter, start, stop);
+			} else {
+				image = mapImageMultiThreaded(images, iter, start, stop, tFactor, qspace, mspace, iMask, image, ishape, map, weight);
 			}
-			image = mapImageMultiThreaded(images, iter, start, stop, tFactor, qspace, mspace, iMask, image, ishape, map, weight);
 
 			ni++;
-			miss = imagesSlice.getStep();
 		}
 
 		return ni;

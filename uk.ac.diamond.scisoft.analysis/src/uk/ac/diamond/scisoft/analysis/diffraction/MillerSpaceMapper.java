@@ -88,7 +88,7 @@ public class MillerSpaceMapper {
 
 	private int[] vShape;
 
-	private boolean findImageBB; // find bounding box for image
+	private boolean findResultBB; // find bounding box for result dataset
 	private boolean reduceToNonZeroBB; // reduce data non-zero only
 	private int[] sMin = new int[3]; // volume shape min and max 
 	private int[] sMax = new int[3];
@@ -252,7 +252,7 @@ public class MillerSpaceMapper {
 		Tree tree = getTreeFromNexusFile(filePath);
 		PositionIterator[] iters = getPositionIterators(tree);
 	
-		if (findImageBB) {
+		if (findResultBB) {
 			Arrays.fill(vMin, Double.POSITIVE_INFINITY);
 			Arrays.fill(vMax, Double.NEGATIVE_INFINITY);
 
@@ -1117,7 +1117,7 @@ public class MillerSpaceMapper {
 	 * @return true if within bounds
 	 */
 	private boolean convertToVoxel(final Vector3d v, final Vector3d deltaV, final int[] pos) {
-		if (!findImageBB) {
+		if (!findResultBB) {
 			if (v.x < vMin[0] || v.x >= vMax[0] || v.y < vMin[1] || v.y >= vMax[1] || 
 					v.z < vMin[2] || v.z >= vMax[2]) {
 				return false;
@@ -1255,10 +1255,10 @@ public class MillerSpaceMapper {
 	/**
 	 * @param file
 	 * @param complete if true, get axes and set fields completely
-	 * @return q space and miller space axes
+	 * @return axes to volume
 	 * @throws ScanFileHolderException
 	 */
-	private Dataset[][] processBean(String file, boolean complete) throws ScanFileHolderException {
+	private Dataset[] processBean(String file, boolean complete) throws ScanFileHolderException {
 		Tree tree = getTreeFromNexusFile(file);
 		NodeLink link;
 
@@ -1366,9 +1366,8 @@ public class MillerSpaceMapper {
 		this.splitter = PixelSplitter.createSplitter(bean.getSplitterName(), bean.getSplitterParameter());
 		listMillerEntries = bean.isListMillerEntries();
 
-		Dataset[][] a = new Dataset[2][];
 		double[] delta = bean.getStep();
-		a[0] = new Dataset[3];
+		Dataset[] axes = new Dataset[3];
 		if (delta != null && delta.length > 0) {
 			double[] stop = new double[3];
 			if (delta.length == 1) {
@@ -1381,11 +1380,11 @@ public class MillerSpaceMapper {
 			int[] shape = bean.getShape();
 			double[] start = bean.getStart();
 			if (shape == null || start == null) {
-				findImageBB = true;
+				findResultBB = true;
 				shape = new int[3];
 				start = new double[3];
 			} else {
-				createVolumeAxes(isQSpace ? Q_VOLUME_AXES : MILLER_VOLUME_AXES, a[0], shape, start, stop, delta);
+				createVolumeAxes(isQSpace ? Q_VOLUME_AXES : MILLER_VOLUME_AXES, axes, shape, start, stop, delta);
 			}
 			setBoundingBox(shape, start, stop, delta);
 		}
@@ -1394,7 +1393,7 @@ public class MillerSpaceMapper {
 		setUpsamplingScale(bean.getScaleFactor());
 
 		// TODO compensate for count_time and other optional stuff (ring current in NXinstrument / NXsource)
-		return a;
+		return axes;
 	}
 
 	private static final String I16_IMAGE_DATA = "image_data";
@@ -1448,10 +1447,10 @@ public class MillerSpaceMapper {
 
 	/**
 	 * Map images from given Nexus files to a volume in Miller (aka HKL) space and save to a HDF5 file
-	 * @return Datasets
+	 * @return axis datasets
 	 * @throws ScanFileHolderException
 	 */
-	public Dataset[][] mapToVolumeFile() throws ScanFileHolderException {
+	public Dataset[] mapToVolumeFile() throws ScanFileHolderException {
 		return mapToVolumeFile(false);
 	}
 
@@ -1459,16 +1458,15 @@ public class MillerSpaceMapper {
 	 * Map images from given Nexus files to a volume in Miller (aka HKL) space and save to a HDF5 file
 	 * 
 	 * @param isErrorTest
-	 * @return Datasets
+	 * @return axis datasets
 	 * @throws ScanFileHolderException
 	 */
-	Dataset[][] mapToVolumeFile(boolean isErrorTest) throws ScanFileHolderException {
+	Dataset[] mapToVolumeFile(boolean isErrorTest) throws ScanFileHolderException {
 		hasDeleted = false; // reset state
 		Dataset[] datasetA = null;
-		Dataset[] datasetB = null;
 
 		String[] inputs = bean.getInputs();
-		Dataset[][] a = processBean(inputs[0], true);
+		Dataset[] axes = processBean(inputs[0], true);
 		if (vDel == null && !listMillerEntries) {
 			throw new IllegalStateException("Volume parameters have not been defined");
 		}
@@ -1484,7 +1482,7 @@ public class MillerSpaceMapper {
 		createPixelMask(trees[0], allIters[0][0]);
 
 		boolean mapQ = MillerSpaceMapperBean.isQSpace(bean);
-		if (findImageBB) {
+		if (findResultBB) {
 			if (vDel != null) {
 				Arrays.fill(vMin, Double.POSITIVE_INFINITY);
 				Arrays.fill(vMax, Double.NEGATIVE_INFINITY);
@@ -1503,7 +1501,7 @@ public class MillerSpaceMapper {
 
 		try {
 			if (vDel != null) {
-				datasetA = processTrees(mapQ, trees, allIters, a[0], isErrorTest);
+				datasetA = processTrees(mapQ, trees, allIters, axes, isErrorTest);
 			}
 
 			if (listMillerEntries) {
@@ -1515,7 +1513,7 @@ public class MillerSpaceMapper {
 			throw new ScanFileHolderException("Could not get data from lazy dataset", e);
 		}
 
-		return new Dataset[][] {datasetA, datasetB};
+		return datasetA;
 	}
 
 	private void createPixelMask(Tree tree, PositionIterator dIter) {
@@ -1579,7 +1577,7 @@ public class MillerSpaceMapper {
 		}
 	}
 
-	private Dataset[] processTrees(boolean mapQ, Tree[] trees, PositionIterator[][] allIters, Dataset[] a,
+	private Dataset[] processTrees(boolean mapQ, Tree[] trees, PositionIterator[][] allIters, Dataset[] axes,
 			boolean isErrorTest) throws ScanFileHolderException, DatasetException {
 		long start = System.currentTimeMillis();
 		String output = bean.getOutput();
@@ -1619,8 +1617,8 @@ public class MillerSpaceMapper {
 				weight = (DoubleDataset) weight.getSliceView(sMin, sMax, null);
 			}
 
-			if (findImageBB) {
-				createVolumeAxes(volAxisNames, a, vShape, vMin, null, vDel);
+			if (findResultBB) {
+				createVolumeAxes(volAxisNames, axes, vShape, vMin, null, vDel);
 			}
 			long process = System.currentTimeMillis() - start;
 			logger.info("For {} threads, processing took {}ms ({}ms/frame)", pool.getParallelism(), process, process/nt);
@@ -1643,17 +1641,17 @@ public class MillerSpaceMapper {
 				writeDefaultAttributes(output, volName);
 			}
 
-			saveVolume(output, bean, entryPath, volPath, map, weight, a);
+			saveVolume(output, bean, entryPath, volPath, map, weight, axes);
 			logger.info("Saving took {}ms", System.currentTimeMillis() - start);
 		} catch (IllegalArgumentException | OutOfMemoryError e) {
 			logger.warn("There is not enough memory to do this all at once!");
 			logger.warn("Now attempting to segment volume");
-			if (findImageBB) {
-				createVolumeAxes(volAxisNames, a, vShape, vMin, null, vDel);
+			if (findResultBB) {
+				createVolumeAxes(volAxisNames, axes, vShape, vMin, null, vDel);
 			}
 
 			// unset these as code does not or should not handle them
-			findImageBB = false;
+			findResultBB = false;
 			reduceToNonZeroBB = false;
 
 			int parts = 1;
@@ -1702,11 +1700,11 @@ public class MillerSpaceMapper {
 
 			mapAndSaveInParts(mapQ, trees, allIters, lazyVolume, lazyWeight, parts, map, weight);
 
-			saveAxesAndAttributes(output, volPath, VOLUME_NAME, new String[] {WEIGHT_NAME}, a);
+			saveAxesAndAttributes(output, volPath, VOLUME_NAME, new String[] {WEIGHT_NAME}, axes);
 			writeProcessingParameters(output, bean, entryPath);
 			linkOriginalData(output, bean.getInputs(), entryPath);
 		}
-		return a;
+		return axes;
 	}
 
 	private static void writeDefaultAttributes(String file, String volName) throws ScanFileHolderException {
@@ -1714,19 +1712,19 @@ public class MillerSpaceMapper {
 		createAndWriteAttribute(file, PROCESSED, NexusConstants.DEFAULT, volName);
 	}
 
-	private static void createVolumeAxes(String[] names, Dataset[] a, int[] mShape, double[] mStart, double[] mStop, double[] mDelta) {
+	private static void createVolumeAxes(String[] names, Dataset[] axes, int[] mShape, double[] mStart, double[] mStop, double[] mDelta) {
 		for (int i = 0; i < names.length; i++) {
 			double mbeg = mStart[i];
 			double mend = mbeg + mShape[i] * mDelta[i];
 			if (mStop != null) {
 				mStop[i] = mend;
 			}
-			a[i] = DatasetFactory.createLinearSpace(DoubleDataset.class, mbeg, mend - mDelta[i], mShape[i]);
-			a[i].setName(names[i]);
+			axes[i] = DatasetFactory.createLinearSpace(DoubleDataset.class, mbeg, mend - mDelta[i], mShape[i]);
+			axes[i].setName(names[i]);
 			if (mShape[i] == 1) {
 				logger.trace("Axis {}: {}; {}", i, mbeg, mend);
 			} else {
-				logger.trace("Axis {}: {} -> {}; {}", i, mbeg, a[i].getDouble(mShape[i] - 1), mend);
+				logger.trace("Axis {}: {} -> {}; {}", i, mbeg, axes[i].getDouble(mShape[i] - 1), mend);
 			}
 		}
 	}

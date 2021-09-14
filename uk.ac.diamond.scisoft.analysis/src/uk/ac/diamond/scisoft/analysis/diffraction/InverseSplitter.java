@@ -93,7 +93,8 @@ public class InverseSplitter implements PixelSplitter {
 		addToDatasets(i, volume, w * value, weight, w);
 
 		int n = pos[2] + 1;
-		if (n >= 0 && n < nmax) {
+		final boolean nPOInRange = n >= 0 && n < nmax;
+		if (nPOInRange) {
 			w = weights[1];
 			if (w > 0) {
 				addToDatasets(i + 1, volume, w * value, weight, w);
@@ -101,14 +102,15 @@ public class InverseSplitter implements PixelSplitter {
 		}
 
 		int m = pos[1] + 1;
-		if (m >= 0 && m < mmax) {
+		final boolean mPOInRange = m >= 0 && m < mmax;
+		if (mPOInRange) {
 			w = weights[2];
 			i = nmax + i;
 			if (w > 0) {
 				addToDatasets(i, volume, w * value, weight, w);
 			}
 
-			if (n >= 0 && n < nmax) {
+			if (nPOInRange) {
 				w = weights[3];
 				if (w > 0) {
 					addToDatasets(i + 1, volume, w * value, weight, w);
@@ -124,21 +126,21 @@ public class InverseSplitter implements PixelSplitter {
 				addToDatasets(i, volume, w * value, weight, w);
 			}
 
-			if (n >= 0 && n < nmax) {
+			if (nPOInRange) {
 				w = weights[5];
 				if (w > 0) {
 					addToDatasets(i + 1, volume, w * value, weight, w);
 				}
 			}
 
-			if (m >= 0 && m < mmax) {
+			if (mPOInRange) {
 				w = weights[6];
 				i = nmax + i;
 				if (w > 0) {
 					addToDatasets(i, volume, w * value, weight, w);
 				}
 
-				if (n >= 0 && n < lmax) {
+				if (nPOInRange) {
 					w = weights[7];
 					if (w > 0) {
 						addToDatasets(i + 1, volume, w * value, weight, w);

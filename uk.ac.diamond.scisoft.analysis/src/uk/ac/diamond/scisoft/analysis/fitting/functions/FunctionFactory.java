@@ -186,8 +186,11 @@ public final class FunctionFactory {
 	public static IFunction getFunction(String name, double... args) {
 		Class<? extends IFunction> functionClass = getFunctionClass(name);
 		try {
-			final Constructor<? extends IFunction> c = args == null || args.length == 0 ? functionClass.getConstructor()
-					: functionClass.getConstructor(double[].class);
+			if (args == null || args.length == 0) {
+				final Constructor<? extends IFunction> c = functionClass.getConstructor();
+				return c.newInstance();
+			}
+			final Constructor<? extends IFunction> c = functionClass.getConstructor(double[].class);
 			return c.newInstance(args);
 		} catch (Exception e) {
 			logger.error("Could not create instance of {}", functionClass, e);

@@ -114,8 +114,8 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 		len = new double[2];
 		double lx = ept[0] - spt[0];
 		double ly = ept[1] - spt[1];
-		if (lx > 0) {
-			if (ly > 0) {
+		if (lx >= 0) {
+			if (ly >= 0) {
 				len[0] = lx;
 				len[1] = ly;
 				ang = 0;
@@ -125,7 +125,7 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 				ang = Math.PI * 1.5;
 			}
 		} else {
-			if (ly > 0) {
+			if (ly >= 0) {
 				len[0] = -lx;
 				len[1] = ly;
 				ang = Math.PI * 0.5;

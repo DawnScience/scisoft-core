@@ -16,14 +16,12 @@ import static java.util.stream.Collectors.toCollection;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import java.util.Set;
 
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
@@ -590,26 +588,22 @@ public class GroupNodeImpl extends NodeImpl implements GroupNode, Serializable {
 
 	@Override
 	public Set<String> getGroupNodeNames() {
-		return getNames().stream().filter(name -> getResolvedNode(name).isGroupNode()).collect(toCollection(LinkedHashSet::new));
+		return getNames().stream().filter(this::containsGroupNode).collect(toCollection(LinkedHashSet::new));
 	}
 	
 	@Override
 	public Set<String> getDataNodeNames() {
-		return getNames().stream().filter(name -> getResolvedNode(name).isDataNode()).collect(toCollection(LinkedHashSet::new));
+		return getNames().stream().filter(this::containsDataNode).collect(toCollection(LinkedHashSet::new));
 	}
 
 	@Override
 	public Set<String> getSymbolicNodeNames() {
-		return getNames().stream().filter(name -> getNode(name).isSymbolicNode()).collect(toCollection(LinkedHashSet::new));
+		return getNames().stream().filter(this::containsSymbolicNode).collect(toCollection(LinkedHashSet::new));
 	}
-
-	private Node getResolvedNode(String nodeName) {
-		Node node = getNode(nodeName);
-		while (node instanceof SymbolicNode) {
-			node = ((SymbolicNode) node).getNode();
-		}
-
-		return node; 
+	
+	public boolean hasSymbolicNode(String nodeName) {
+		final Node node = getNode(nodeName);
+		return node != null && node.isSymbolicNode();
 	}
-
+	
 }

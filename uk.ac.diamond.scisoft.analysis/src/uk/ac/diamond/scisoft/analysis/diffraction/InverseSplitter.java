@@ -81,9 +81,9 @@ public class InverseSplitter implements PixelSplitter {
 	public void splitValue(DoubleDataset volume, DoubleDataset weight, final double[] vsize, Vector3d dh, int[] pos, double value) {
 		calcWeights(vsize, dh.x, dh.y, dh.z);
 		int[] vShape = volume.getShapeRef();
-		final int lmax = vShape[0];
-		final int mmax = vShape[1];
-		final int nmax = vShape[2];
+		final int lMax = vShape[0];
+		final int mMax = vShape[1];
+		final int nMax = vShape[2];
 		final int idx = volume.get1DIndex(pos);
 
 		double w;
@@ -92,8 +92,8 @@ public class InverseSplitter implements PixelSplitter {
 		int i = idx;
 		addToDatasets(i, volume, w * value, weight, w);
 
-		int n = pos[2] + 1;
-		final boolean nPOInRange = n >= 0 && n < nmax;
+		final int n = pos[2] + 1;
+		final boolean nPOInRange = n >= 0 && n < nMax;
 		if (nPOInRange) {
 			w = weights[1];
 			if (w > 0) {
@@ -101,11 +101,11 @@ public class InverseSplitter implements PixelSplitter {
 			}
 		}
 
-		int m = pos[1] + 1;
-		final boolean mPOInRange = m >= 0 && m < mmax;
+		final int m = pos[1] + 1;
+		final boolean mPOInRange = m >= 0 && m < mMax;
 		if (mPOInRange) {
 			w = weights[2];
-			i = nmax + i;
+			i = nMax + i;
 			if (w > 0) {
 				addToDatasets(i, volume, w * value, weight, w);
 			}
@@ -118,10 +118,10 @@ public class InverseSplitter implements PixelSplitter {
 			}
 		}
 
-		int l = pos[0] + 1;
-		if (l >= 0 && l < lmax) {
+		final int l = pos[0] + 1;
+		if (l >= 0 && l < lMax) {
 			w = weights[4];
-			i = mmax * nmax + idx;
+			i = mMax * nMax + idx;
 			if (w > 0) {
 				addToDatasets(i, volume, w * value, weight, w);
 			}
@@ -135,7 +135,7 @@ public class InverseSplitter implements PixelSplitter {
 
 			if (mPOInRange) {
 				w = weights[6];
-				i = nmax + i;
+				i = nMax + i;
 				if (w > 0) {
 					addToDatasets(i, volume, w * value, weight, w);
 				}

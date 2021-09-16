@@ -435,9 +435,10 @@ public class MillerSpaceMapper {
 	private void roundLimitsAndFindShapes() {
 		if (vDel != null) {
 			for (int i = 0; i < 3; i++) {
-				vMin[i] = vDel[i] * Math.floor(vMin[i] / vDel[i]);
-				vMax[i] = vDel[i] * (Math.ceil(vMax[i] / vDel[i]) + 1);
-				vShape[i] = (int) (Math.floor((vMax[i] - vMin[i]) / vDel[i]));
+				double d = vDel[i];
+				vMin[i] = d * Math.floor(vMin[i] / d);
+				vMax[i] = d * (Math.ceil(vMax[i] / d) + 1);
+				vShape[i] = (int) (Math.floor((vMax[i] - vMin[i]) / d));
 			}
 		}
 	}
@@ -916,7 +917,7 @@ public class MillerSpaceMapper {
 		final int yStart = region[2];
 		final int yStop  = region[3];
 		int iStart = scale == 1 ? yStart : (int) Math.round(yStart/scale);
-		int iStop  = scale == 1 ? yStart : (int) Math.round(yStop/scale);
+		int iStop  = scale == 1 ? yStop  : (int) Math.round(yStop/scale);
 		int yOff = 0;
 		if (scale != 1) {
 			// interpolator at boundaries gives different values
@@ -1714,17 +1715,19 @@ public class MillerSpaceMapper {
 
 	private static void createVolumeAxes(String[] names, Dataset[] axes, int[] mShape, double[] mStart, double[] mStop, double[] mDelta) {
 		for (int i = 0; i < names.length; i++) {
+			int l = mShape[i];
 			double mbeg = mStart[i];
-			double mend = mbeg + mShape[i] * mDelta[i];
+			double mend = mbeg + l * mDelta[i];
 			if (mStop != null) {
 				mStop[i] = mend;
 			}
-			axes[i] = DatasetFactory.createLinearSpace(DoubleDataset.class, mbeg, mend - mDelta[i], mShape[i]);
-			axes[i].setName(names[i]);
-			if (mShape[i] == 1) {
+			DoubleDataset a = DatasetFactory.createRange(l);
+			axes[i] = a.imultiply(mDelta[i]).iadd(mbeg);
+			a.setName(names[i]);
+			if (l == 1) {
 				logger.trace("Axis {}: {}; {}", i, mbeg, mend);
 			} else {
-				logger.trace("Axis {}: {} -> {}; {}", i, mbeg, axes[i].getDouble(mShape[i] - 1), mend);
+				logger.trace("Axis {}: {} -> {}; {}", i, mbeg, axes[i].getDouble(l - 1), mend);
 			}
 		}
 	}

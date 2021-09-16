@@ -136,6 +136,12 @@
             id="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.NotFunctionFittingTool"
             name="NotFunctionFittingTool">
       </usecase>
+      <function
+            class="uk.ac.diamond.scisoft.analysis.fitting.functions.Planck"
+            id="uk.ac.diamond.scisoft.analysis.fitting.functions.Planck"
+            name="Planck"
+            usecase1="uk.ac.diamond.scisoft.analysis.fitting.function.usecase.FunctionType">
+      </function>
    </extension>
 
 

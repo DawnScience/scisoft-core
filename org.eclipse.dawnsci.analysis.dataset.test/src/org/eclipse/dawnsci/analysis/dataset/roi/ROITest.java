@@ -224,6 +224,14 @@ public class ROITest {
 		assertTrue(r.containsPoint(r.getPointX(), r.getPointY()));
 		assertTrue(r.containsPoint(2, r.getPointY()));
 		assertFalse(r.containsPoint(-2, r.getPointY()));
+		
+		RectangularROI horizontalRoi = new RectangularROI(new double[] {0., 0.},  new double[] {1., 0.});
+		assertEquals(horizontalRoi.getLength(0), 1., 1e-9);
+		assertEquals(horizontalRoi.getLength(1), 0., 1e-9);
+		
+		RectangularROI verticalRoi = new RectangularROI(new double[] {0., 0.},  new double[] {0., 1.});
+		assertEquals(verticalRoi.getLength(0), 0., 1e-9);
+		assertEquals(verticalRoi.getLength(1), 1., 1e-9);
 	}
 
 	public RectangularROI boundingBox(RectangularROI r) {

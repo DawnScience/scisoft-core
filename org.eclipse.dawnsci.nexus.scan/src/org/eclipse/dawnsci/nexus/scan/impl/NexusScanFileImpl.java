@@ -33,6 +33,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -250,7 +251,7 @@ class NexusScanFileImpl implements NexusScanFile {
 		// TODO: This may be easier if IMultipleNexusDevice returned multiple INexusDevices, but this would be a breaking API change
 		// (although the old method could be kept as deprecated and a default implementation provided
 		final Map<ScanRole, List<INexusDevice<?>>> oldNexusDevices = nexusScanModel.getNexusDevices();
-		final Map<ScanRole, List<INexusDevice<?>>> newNexusDevices = new EnumMap<ScanRole, List<INexusDevice<?>>>(ScanRole.class);
+		final Map<ScanRole, List<INexusDevice<?>>> newNexusDevices = new EnumMap<>(ScanRole.class);
 
 		// if an IMultipleNexusDevice is present in a list of devices by scan role, all nexus objects are assume to have the same role
 		for (Map.Entry<ScanRole, List<INexusDevice<?>>> nexusDevicesForScanRoleEntry : oldNexusDevices.entrySet()) {
@@ -282,8 +283,9 @@ class NexusScanFileImpl implements NexusScanFile {
 
 		// if an IMultipleNexusDevice is present in the ScanModel directly (usuually this will be a malcolm device)
 		// then we decide the ScanRole for each nexus device based on the nexus base class of the provider
-		if (nexusScanModel.getMultipleNexusDevice().isPresent()) {
-			final IMultipleNexusDevice multipleNexusDevice = nexusScanModel.getMultipleNexusDevice().get();
+		final Optional<IMultipleNexusDevice> optMultipleNexusDevice = nexusScanModel.getMultipleNexusDevice();
+		if (optMultipleNexusDevice.isPresent()) {
+			final IMultipleNexusDevice multipleNexusDevice = optMultipleNexusDevice.get();
 			try {
 				for (NexusObjectProvider<?> nexusProvider : multipleNexusDevice.getNexusProviders(info)) {
 					final ScanRole scanRole = DEFAULT_SCAN_ROLES.get(nexusProvider.getNexusBaseClass());
@@ -346,7 +348,7 @@ class NexusScanFileImpl implements NexusScanFile {
 		}
 		
 		// add the nexus object for the metadata entry (TODO: merge with above)?
-		addMetadatadeviceToEntry(entryBuilder, nexusScanModel.getMetadataWriter());
+		addMetadataDeviceToEntry(entryBuilder, nexusScanModel.getMetadataWriter());
 
 		// create the NXdata groups
 		createNexusDataGroups(entryBuilder);
@@ -355,9 +357,9 @@ class NexusScanFileImpl implements NexusScanFile {
 	private void addDevicesToEntry(NexusEntryBuilder entryBuilder, ScanRole deviceType) throws NexusException {
 		entryBuilder.addAll(nexusObjectProviders.get(deviceType));
 
-		List<CustomNexusEntryModification> customModifications =
+		final List<CustomNexusEntryModification> customModifications =
 				nexusScanModel.getNexusDevices().get(deviceType).stream().
-				map(d -> d.getCustomNexusModification()).
+				map(INexusDevice::getCustomNexusModification).
 				filter(Objects::nonNull).
 				collect(Collectors.toList());
 		for (CustomNexusEntryModification customModification : customModifications) {
@@ -365,7 +367,7 @@ class NexusScanFileImpl implements NexusScanFile {
 		}
 	}
 	
-	private void addMetadatadeviceToEntry(NexusEntryBuilder entryBuilder, INexusDevice<NXcollection> metadataDevice) throws NexusException {
+	private void addMetadataDeviceToEntry(NexusEntryBuilder entryBuilder, INexusDevice<NXcollection> metadataDevice) throws NexusException {
 		if (metadataDevice == null) return;
 		entryBuilder.add(metadataDevice.getNexusProvider(nexusScanModel.getNexusScanInfo()));
 		if (metadataDevice.getCustomNexusModification() != null) {
@@ -385,8 +387,7 @@ class NexusScanFileImpl implements NexusScanFile {
 	 * @throws NexusException
 	 */
 	private void createNexusDataGroups(final NexusEntryBuilder entryBuilder) throws NexusException {
-
-		Set<ScanRole> deviceTypes = EnumSet.of(ScanRole.DETECTOR, ScanRole.SCANNABLE, ScanRole.MONITOR_PER_POINT);
+		final Set<ScanRole> deviceTypes = EnumSet.of(ScanRole.DETECTOR, ScanRole.SCANNABLE, ScanRole.MONITOR_PER_POINT);
 		if (deviceTypes.stream().allMatch(t -> nexusObjectProviders.get(t).isEmpty())) {
 			throw new NexusException("The scan must include at least one device in order to write a NeXus file.");
 		}
@@ -408,8 +409,8 @@ class NexusScanFileImpl implements NexusScanFile {
 	}
 
 	private void createNXDataGroups(NexusEntryBuilder entryBuilder, NexusObjectProvider<?> detector) throws NexusException {
-		List<NexusObjectProvider<?>> scannables = nexusObjectProviders.get(ScanRole.SCANNABLE);
-		List<NexusObjectProvider<?>> monitors = new LinkedList<>(nexusObjectProviders.get(ScanRole.MONITOR_PER_POINT));
+		final List<NexusObjectProvider<?>> scannables = nexusObjectProviders.get(ScanRole.SCANNABLE);
+		final List<NexusObjectProvider<?>> monitors = new LinkedList<>(nexusObjectProviders.get(ScanRole.MONITOR_PER_POINT));
 
 		// determine the primary device - i.e. the device whose primary dataset to make the @signal field
 		NexusObjectProvider<?> primaryDevice = null;
@@ -441,8 +442,8 @@ class NexusScanFileImpl implements NexusScanFile {
 		}
 
 		// create the NXdata group for the primary data field
-		String primaryDeviceName = primaryDevice.getName();
-		String primaryDataFieldName = primaryDevice.getPrimaryDataFieldName();
+		final String primaryDeviceName = primaryDevice.getName();
+		final String primaryDataFieldName = primaryDevice.getPrimaryDataFieldName();
 		createNXDataGroup(entryBuilder, primaryDevice, primaryDeviceType, monitors,
 				scannables, primaryDeviceName, primaryDataFieldName);
 
@@ -507,11 +508,8 @@ class NexusScanFileImpl implements NexusScanFile {
 		}
 
 		// add the scannables to the data builder
-		Iterator<NexusObjectProvider<?>> scannablesIter = scannedDevices.iterator();
-		while (scannablesIter.hasNext()) {
-			final NexusObjectProvider<?> scannable = scannablesIter.next();
-			final Integer defaultAxisForDimensionIndex =
-					defaultAxisIndexForScannable.get(scannable.getName());
+		for (NexusObjectProvider<?> scannable : scannedDevices) {
+			final Integer defaultAxisForDimensionIndex = defaultAxisIndexForScannable.get(scannable.getName());
 			dataBuilder.addAxisDevice(getAxisDataDevice(scannable, defaultAxisForDimensionIndex));
 		}
 	}
@@ -553,15 +551,13 @@ class NexusScanFileImpl implements NexusScanFile {
 		return defaultAxisIndexForScannableMap;
 	}
 
-	private <N extends NXobject> PrimaryDataDevice<N> createPrimaryDataDevice(
-			NexusObjectProvider<N> nexusObjectProvider,
+	private <N extends NXobject> PrimaryDataDevice<N> createPrimaryDataDevice(NexusObjectProvider<N> nexusObjectProvider,
 			ScanRole primaryDeviceType, String signalDataFieldName) throws NexusException {
 
 		if (primaryDeviceType == ScanRole.SCANNABLE) {
 			// using scannable as primary device as well as a scannable
 			// only use main data field (e.g. value for an NXpositioner)
-			DataDeviceBuilder<N> dataDeviceBuilder = DataDeviceBuilder.newPrimaryDataDeviceBuilder(
-					nexusObjectProvider);
+			final DataDeviceBuilder<N> dataDeviceBuilder = DataDeviceBuilder.newPrimaryDataDeviceBuilder(nexusObjectProvider);
 			dataDeviceBuilder.setAxisFields();
 			return (PrimaryDataDevice<N>) dataDeviceBuilder.build();
 		}
@@ -581,8 +577,7 @@ class NexusScanFileImpl implements NexusScanFile {
 	 * @return the data device
 	 * @throws NexusException
 	 */
-	private AxisDataDevice<?> getAxisDataDevice(NexusObjectProvider<?> nexusObjectProvider,
-			Integer scanIndex) throws NexusException {
+	private AxisDataDevice<?> getAxisDataDevice(NexusObjectProvider<?> nexusObjectProvider, Integer scanIndex) throws NexusException {
 		AxisDataDevice<?> dataDevice = dataDevices.get(nexusObjectProvider);
 		if (dataDevice == null) {
 			dataDevice = createAxisDataDevice(nexusObjectProvider, scanIndex);

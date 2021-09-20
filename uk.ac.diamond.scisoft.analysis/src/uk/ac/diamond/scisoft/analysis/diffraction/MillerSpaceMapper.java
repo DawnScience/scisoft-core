@@ -986,6 +986,7 @@ public class MillerSpaceMapper {
 		Vector3d ov = null;
 		double xCoord = 0.5;
 		double[] voxelSides = vDel;
+		final double safetyFactor = 1./4;
 		for (int y = 0; y < rows; y += chunk) {
 			qspace.qFromPixelPosition(xCoord, y + 0.5, v);
 			if (mTransform != null) {
@@ -995,9 +996,11 @@ public class MillerSpaceMapper {
 			if (ov == null) {
 				ov = new Vector3d(v);
 			} else { // check if pixels from adjoining bands map to same voxel
-				if (Math.abs(v.x - ov.x) < voxelSides[0] && Math.abs(v.y - ov.y) < voxelSides[1]
-						&& Math.abs(v.z - ov.z) < voxelSides[2]) {
-					logger.debug("Chunk is small enough for voxel contention");
+				if (Math.abs(v.x - ov.x) * safetyFactor < voxelSides[0]
+						&& Math.abs(v.y - ov.y) * safetyFactor < voxelSides[1]
+						&& Math.abs(v.z - ov.z) * safetyFactor < voxelSides[2]) {
+					v.sub(ov);
+					logger.debug("Chunk is small enough for voxel contention: difference {} < {} (with safety factor {})", v, voxelSides, safetyFactor);
 					return true;
 				}
 				ov.set(v);

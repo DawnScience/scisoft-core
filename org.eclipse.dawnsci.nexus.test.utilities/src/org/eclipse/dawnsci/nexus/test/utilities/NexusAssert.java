@@ -356,7 +356,7 @@ public class NexusAssert {
 	}
 
 	public static void assertDiamondScanGroup(NXentry entry, boolean malcolmScan, boolean snake, boolean foldedGrid,
-			List<String> expectedExternalFiles, int... sizes) {
+			List<String> expectedUniqueKeysPath, int... sizes) {
 		assertScanFinished(entry);
 
 		final NXcollection diamondScanCollection = entry.getCollection(GROUP_NAME_DIAMOND_SCAN);
@@ -371,7 +371,7 @@ public class NexusAssert {
 
 		// workaround for StaticGenerator with StaticModel of size 1 producing scan of
 		// rank 1 and shape { 1 }
-		assertUniqueKeys(malcolmScan, snake, foldedGrid, expectedExternalFiles, keysCollection, sizes);
+		assertUniqueKeys(malcolmScan, snake, foldedGrid, expectedUniqueKeysPath, keysCollection, sizes);
 
 		assertNXTimeStamps(diamondScanCollection);
 		if (!(sizes.length == 0 || malcolmScan)) {
@@ -641,15 +641,15 @@ public class NexusAssert {
 	}
 
 	private static void assertUniqueKeys(boolean malcolmScan, boolean snake, boolean foldedGrid,
-			List<String> expectedExternalFiles, NXcollection keysCollection, int[] sizes) {
+			List<String> expectedUniqueKeysPath, NXcollection keysCollection, int[] sizes) {
 		if (sizes.length == 0) {
 			sizes = new int[] { 1 };
 		}
 		if (!malcolmScan) {
 			assertUniqueKeys(keysCollection, snake, foldedGrid, sizes);
 		}
-		if (expectedExternalFiles != null && !expectedExternalFiles.isEmpty()) {
-			assertUniqueKeysExternalFileLinks(keysCollection, expectedExternalFiles, sizes);
+		if (expectedUniqueKeysPath != null && !expectedUniqueKeysPath.isEmpty()) {
+			assertUniqueKeysExternalFileLinks(keysCollection, expectedUniqueKeysPath, sizes);
 		}
 	}
 
@@ -735,10 +735,9 @@ public class NexusAssert {
 	}
 
 	private static void assertUniqueKeysExternalFileLinks(NXcollection keysCollection,
-			List<String> expectedExternalFiles, int[] sizes) {
-		for (String externalFileName : expectedExternalFiles) {
-			String datasetName = externalFileName.replace("/", "__");
-			DataNode dataNode = keysCollection.getDataNode(datasetName);
+			List<String> expectedUniquekeyPaths, int[] sizes) {
+		for (String expectedUniquekeyPath : expectedUniquekeyPaths) {
+			DataNode dataNode = keysCollection.getDataNode(expectedUniquekeyPath);
 			assertNotNull(dataNode);
 			assertEquals(sizes.length, dataNode.getRank());
 		}

@@ -271,11 +271,35 @@ public class ROISliceUtils {
 	 * @throws Exception 
 	 */
 	public static Dataset getYAxisDataset2DAverage(ILazyDataset lz, RectangularROI roi, Slice[] slices, int dim, IMonitor monitor) throws Exception{
+		return getAxisDataset2DAverage(lz, roi, slices, dim, monitor, false);
+
+	}
+	
+	/**
+	 * Method to return the dataset corresponding to the area selected by an x-axis range roi<br>
+	 * 
+	 * Only for ROIs on 1D plots.
+	 * 
+	 * @param lz
+	 * @param roi
+	 * @param slices
+	 * @param dim
+	 * @return dataset
+	 * @throws Exception 
+	 */
+	public static Dataset getXAxisDataset2DAverage(ILazyDataset lz, RectangularROI roi, Slice[] slices, int dim, IMonitor monitor) throws Exception{
+		return getAxisDataset2DAverage(lz, roi, slices, dim, monitor, true);
+
+	}
+	
+	private static Dataset getAxisDataset2DAverage(ILazyDataset lz, RectangularROI roi, Slice[] slices, int dim, IMonitor monitor, boolean isX) throws Exception{
+		
+		int roiDim = isX ? 0 : 1;
 		
 		Slice[] sl = checkSlices(lz.getRank(), slices);
 		
-		int roiStart = Math.max(0, (int) roi.getValue(1));
-		int roiEnd = (int) Math.ceil(roiStart + roi.getLength(1));
+		int roiStart = Math.max(0, (int) roi.getValue(roiDim));
+		int roiEnd = (int) Math.ceil(roiStart + roi.getLength(roiDim));
 		
 		Slice xSlice = new Slice(roiStart, roiEnd, 1);
 		

@@ -231,6 +231,13 @@ public class ColumnTextSaver implements IFileSaver {
 			if (headings.length != columns) {
 				logger.warn("There is a mismatch between the number of headings ({}) and data columns ({})", headings.length, columns);
 			}
+			
+			if (delimiter == TAB) {
+				//DAWN expects tab delimited files
+				// to have heading starting with a comment char
+				writer.write(ColumnTextLoader.COMMENT);
+			}
+			
 			writer.write(createRow(headings));
 			writer.newLine();
 		} else if (is1d) {

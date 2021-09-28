@@ -19,7 +19,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -107,7 +108,8 @@ public class MillerSpaceMapper {
 	private int endX;
 	private int begY;
 	private int endY;
-	private ForkJoinPool pool;
+	private ExecutorService pool;
+	private int poolSize;
 	private Dataset mask; // non-zero values indicate that where pixels are ignored
 	private double lower = 0; // lower threshold, pixel values less than or equal to it are ignored
 	private double upper = Double.POSITIVE_INFINITY; // upper threshold, pixel values greater than or equal to it are ignored
@@ -161,7 +163,8 @@ public class MillerSpaceMapper {
 	 */
 	public MillerSpaceMapper(MillerSpaceMapperBean bean) {
 		this.bean = bean.clone();
-		pool = new ForkJoinPool(cores);
+		poolSize = cores;
+		pool = Executors.newFixedThreadPool(poolSize);
 	}
 
 	/**
@@ -212,7 +215,7 @@ public class MillerSpaceMapper {
 		if (vDel == null) {
 			throw new IllegalStateException("Miller space parameters have not been defined");
 		}
-		return mapToASpace(false, filePath);
+		return mapToAVolume(false, filePath);
 	}
 
 	/**
@@ -225,7 +228,7 @@ public class MillerSpaceMapper {
 		if (vDel == null) {
 			throw new IllegalStateException("q space parameters have not been defined");
 		}
-		return mapToASpace(true, filePath);
+		return mapToAVolume(true, filePath);
 	}
 
 	private Tree getTreeFromNexusFile(String file) {
@@ -242,13 +245,13 @@ public class MillerSpaceMapper {
 	}
 
 	/**
-	 * Map images from given Nexus file to a volume in q space
+	 * Map images from given Nexus file to a volume
 	 * @param mapQ
 	 * @param filePath path to Nexus file
 	 * @return dataset
 	 * @throws ScanFileHolderException
 	 */
-	private Dataset mapToASpace(boolean mapQ, String filePath) throws ScanFileHolderException {
+	private Dataset mapToAVolume(boolean mapQ, String filePath) throws ScanFileHolderException {
 		Tree tree = getTreeFromNexusFile(filePath);
 		PositionIterator[] iters = getPositionIterators(tree);
 	
@@ -268,11 +271,11 @@ public class MillerSpaceMapper {
 
 		DoubleDataset map = DatasetFactory.zeros(vShape);
 		DoubleDataset weight = DatasetFactory.zeros(vShape);
+		splitter.setDatasets(map, weight);
 
 		createPixelMask(tree, iters[0]);
-
 		try {
-			mapToASpace(mapQ, tree, iters, map, weight);
+			mapToAVolume(mapQ, tree, iters);
 		} catch (ScanFileHolderException sfhe) {
 			throw sfhe;
 		} catch (DatasetException e) {
@@ -294,7 +297,7 @@ public class MillerSpaceMapper {
 		return map;
 	}
 
-	private int mapToASpace(boolean mapQ, Tree tree, PositionIterator[] iters, DoubleDataset map, DoubleDataset weight) throws ScanFileHolderException, DatasetException {
+	private int mapToAVolume(boolean mapQ, Tree tree, PositionIterator[] iters) throws ScanFileHolderException, DatasetException {
 		int[] dshape = iters[0].getShape();
 
 		if (tree instanceof TreeFile) {
@@ -334,10 +337,10 @@ public class MillerSpaceMapper {
 			}
 		}
 
-		return mapImages(mapQ, tree, trans, images, iters, map, weight, ishape);
+		return mapImagesToVolume(mapQ, tree, trans, images, iters, ishape);
 	}
 
-	private void listToASpace(Tree tree, PositionIterator[] iters, ILazyWriteableDataset lazy) throws ScanFileHolderException, DatasetException {
+	private void mapToAList(Tree tree, PositionIterator[] iters, ILazyWriteableDataset lazy) throws ScanFileHolderException, DatasetException {
 		int[] dshape = iters[0].getShape();
 		Dataset trans = NexusTreeUtils.parseAttenuator(attenuatorPath, tree);
 		if (trans != null && trans.getSize() != 1) {
@@ -376,7 +379,7 @@ public class MillerSpaceMapper {
 			upSampler = new BicubicInterpolator(true, ishape);
 		}
 
-		doImages(tree, trans, images, iters, lazy, ishape, upSampler);
+		mapImagesToList(tree, trans, images, iters, lazy, ishape, upSampler);
 	}
 
 	private boolean isOLDI16GDA(Tree t) {
@@ -521,7 +524,7 @@ public class MillerSpaceMapper {
 	 * @throws ScanFileHolderException
 	 */
 	public void printMillerSpaceCorners(final boolean endsOnly) throws ScanFileHolderException {
-		processBean(bean.getInputs()[0], true);
+		initializeFromBean(bean.getInputs()[0], true);
 
 		Tree tree = getTreeFromNexusFile(bean.getInputs()[0]);
 		PositionIterator[] iters = getPositionIterators(tree);
@@ -599,7 +602,7 @@ public class MillerSpaceMapper {
 		if (inputs.length != 1) {
 			throw new IllegalArgumentException("Only one input file allowed");
 		}
-		processBean(inputs[0], false);
+		initializeFromBean(inputs[0], false);
 
 
 		Tree tree = getTreeFromNexusFile(inputs[0]);
@@ -797,8 +800,8 @@ public class MillerSpaceMapper {
 		return im;
 	}
 
-	private int mapImages(boolean mapQ, Tree tree, Dataset trans, ILazyDataset images, PositionIterator[] iters,
-			DoubleDataset map, DoubleDataset weight, int[] ishape) throws DatasetException {
+	private int mapImagesToVolume(boolean mapQ, Tree tree, Dataset trans, ILazyDataset images, PositionIterator[] iters,
+			int[] ishape) throws DatasetException {
 		PositionIterator diter = iters[0]; // scan iterator
 		PositionIterator iter = iters[1]; // data iterator (omits image axes)
 		iter.reset();
@@ -870,7 +873,7 @@ public class MillerSpaceMapper {
 				logger.warn("Skipping image at {} {}", Arrays.toString(pos), n);
 				image = getNextImage(miss, images, iter, start, stop);
 			} else {
-				image = mapImageMultiThreaded(images, iter, start, stop, tFactor, qspace, mspace, iMask, image, ishape, map, weight);
+				image = mapImageToVolumeMultiThreaded(images, iter, start, stop, tFactor, qspace, mspace, iMask, image, ishape);
 			}
 
 			ni++;
@@ -912,7 +915,7 @@ public class MillerSpaceMapper {
 		max[2] = Math.max(max[2], v.z);
 	}
 
-	private void mapImage(final double tFactor, final BicubicInterpolator upSampler, PixelSplitter splitter, int[] sMinLocal, int[] sMaxLocal, final int[] region, final QSpace qspace, Matrix3d mTransform, final Dataset mask, final Dataset image, final DoubleDataset map, final DoubleDataset weight) {
+	private void mapImageToVolume(final double tFactor, final BicubicInterpolator upSampler, PixelSplitter splitter, int[] sMinLocal, int[] sMaxLocal, final int[] region, final QSpace qspace, Matrix3d mTransform, final Dataset mask, final Dataset image) {
 		logger.debug("Map image region: {}", Arrays.toString(region));
 		final int yStart = region[2];
 		final int yStop  = region[3];
@@ -965,7 +968,7 @@ public class MillerSpaceMapper {
 						if (reduceToNonZeroBB) {
 							minMax(splitter.doesSpread(), sMinLocal, sMaxLocal, pos);
 						}
-						splitter.splitValue(map, weight, vDel, dv, pos, value);
+						splitter.splitValue(vDel, dv, pos, value);
 					}
 				}
 			}
@@ -1010,14 +1013,14 @@ public class MillerSpaceMapper {
 		return false;
 	}
 
-	private Dataset mapImageMultiThreaded(ILazyDataset images, PositionIterator iter, int[] start, int[] stop, final double tFactor, final QSpace qspace, final MillerSpace mspace,
-			final Dataset iMask, final Dataset image, final int[] ishape, final DoubleDataset map, final DoubleDataset weight) throws DatasetException {
+	private Dataset mapImageToVolumeMultiThreaded(ILazyDataset images, PositionIterator iter, int[] start, int[] stop, final double tFactor, final QSpace qspace, final MillerSpace mspace,
+			final Dataset iMask, final Dataset image, final int[] ishape) throws DatasetException {
 		final Matrix3d mTransform = mspace == null ? null : mspace.getMillerTransform();
-		int size = pool.getParallelism() - 1; // reserve for loading next image
+		int size = poolSize - 1; // reserve for loading next image
 		if (size == 0) {
 			BicubicInterpolator upSampler = scale == 1 ? null : new BicubicInterpolator(true, ishape);
 			int[] regionSlice = new int[] { 0, ishape[1], 0, ishape[0] };
-			mapImage(tFactor, upSampler, splitter, sMin, sMax, regionSlice, qspace, mTransform, iMask, image, map, weight);
+			mapImageToVolume(tFactor, upSampler, splitter, sMin, sMax, regionSlice, qspace, mTransform, iMask, image);
 
 			return getNextImage(imagesSlice.getStep(), images, iter, start, stop);
 		}
@@ -1058,7 +1061,7 @@ public class MillerSpaceMapper {
 			int[] sMaxLocal = job.getSMaxLocal();
 			int[] regionSlice = new int[] { 0, ishape[1], job.getStart(), job.getEnd() };
 
-			mapImage(tFactor, job.getUpScaler(), job.getSplitter(), sMinLocal, sMaxLocal, regionSlice, qspace, mTransform, iMask, image, map, weight);
+			mapImageToVolume(tFactor, job.getUpScaler(), job.getSplitter(), sMinLocal, sMaxLocal, regionSlice, qspace, mTransform, iMask, image);
 		};
 
 		try {
@@ -1161,7 +1164,7 @@ public class MillerSpaceMapper {
 		return true;
 	}
 
-	private void doImages(Tree tree, Dataset trans, ILazyDataset images, PositionIterator[] iters,
+	private void mapImagesToList(Tree tree, Dataset trans, ILazyDataset images, PositionIterator[] iters,
 			ILazyWriteableDataset lazy, int[] ishape, BicubicInterpolator upSampler) throws DatasetException, ScanFileHolderException {
 		PositionIterator diter = iters[0];
 		PositionIterator iter = iters[1];
@@ -1214,7 +1217,7 @@ public class MillerSpaceMapper {
 			if (list == null || list.getSize() != 4*image.getSize()) {
 				list = DatasetFactory.zeros(image.getSize(), 4);
 			}
-			int length = doImage(s, qspace, mspace, image, list);
+			int length = mapImageToList(s, qspace, mspace, image, list);
 			appendDataset(lazy, list, length);
 		}
 	}
@@ -1233,7 +1236,7 @@ public class MillerSpaceMapper {
 		}
 	}
 
-	private int doImage(int[] s, QSpace qspace, MillerSpace mspace, Dataset image, DoubleDataset list) {
+	private int mapImageToList(int[] s, QSpace qspace, MillerSpace mspace, Dataset image, DoubleDataset list) {
 		Vector3d q = new Vector3d();
 		double value;
 		Vector3d h = new Vector3d();
@@ -1257,12 +1260,13 @@ public class MillerSpaceMapper {
 	}
 
 	/**
-	 * @param file
+	 * Initialize from bean and NeXus file
+	 * @param file NeXus file
 	 * @param complete if true, get axes and set fields completely
 	 * @return axes to volume
 	 * @throws ScanFileHolderException
 	 */
-	private Dataset[] processBean(String file, boolean complete) throws ScanFileHolderException {
+	private Dataset[] initializeFromBean(String file, boolean complete) throws ScanFileHolderException {
 		Tree tree = getTreeFromNexusFile(file);
 		NodeLink link;
 
@@ -1470,7 +1474,7 @@ public class MillerSpaceMapper {
 		Dataset[] datasetA = null;
 
 		String[] inputs = bean.getInputs();
-		Dataset[] axes = processBean(inputs[0], true);
+		Dataset[] axes = initializeFromBean(inputs[0], true);
 		if (vDel == null && !listMillerEntries) {
 			throw new IllegalStateException("Volume parameters have not been defined");
 		}
@@ -1505,11 +1509,11 @@ public class MillerSpaceMapper {
 
 		try {
 			if (vDel != null) {
-				datasetA = processTrees(mapQ, trees, allIters, axes, isErrorTest);
+				datasetA = processTreesToVolume(mapQ, trees, allIters, axes, isErrorTest);
 			}
 
 			if (listMillerEntries) {
-				processTreesForList(trees, allIters);
+				processTreesToList(trees, allIters);
 			}
 		} catch (ScanFileHolderException sfhe) {
 			throw sfhe;
@@ -1581,7 +1585,7 @@ public class MillerSpaceMapper {
 		}
 	}
 
-	private Dataset[] processTrees(boolean mapQ, Tree[] trees, PositionIterator[][] allIters, Dataset[] axes,
+	private Dataset[] processTreesToVolume(boolean mapQ, Tree[] trees, PositionIterator[][] allIters, Dataset[] axes,
 			boolean isErrorTest) throws ScanFileHolderException, DatasetException {
 		long start = System.currentTimeMillis();
 		String output = bean.getOutput();
@@ -1598,12 +1602,13 @@ public class MillerSpaceMapper {
 		try {
 			DoubleDataset map = DatasetFactory.zeros(vShape);
 			DoubleDataset weight = DatasetFactory.zeros(vShape);
+			splitter.setDatasets(map, weight);
 
 			int nt = 0;
 			for (int i = 0; i < trees.length; i++) {
 				logger.info("Processing file {}/{}: {}", i+1, trees.length, bean.getInputs()[i]);
 				Tree tree = trees[i];
-				int ni = mapToASpace(mapQ, tree, allIters[i], map, weight);
+				int ni = mapToAVolume(mapQ, tree, allIters[i]);
 				nt += ni;
 				logger.info("    processed {} images", ni);
 			}
@@ -1625,7 +1630,7 @@ public class MillerSpaceMapper {
 				createVolumeAxes(volAxisNames, axes, vShape, vMin, null, vDel);
 			}
 			long process = System.currentTimeMillis() - start;
-			logger.info("For {} threads, processing took {}ms ({}ms/frame)", pool.getParallelism(), process, process/nt);
+			logger.info("For {} threads, processing took {}ms ({}ms/frame)", poolSize, process, process/nt);
 			logger.info("               loading {} frames took {}ms ({}ms/frame)", nt, loadTimeTotal, loadTimeTotal/nt);
 			start = System.currentTimeMillis();
 
@@ -1682,6 +1687,8 @@ public class MillerSpaceMapper {
 				logger.error("Cannot segment volume fine enough to fit in memory!", e);
 				throw e;
 			}
+			splitter.setDatasets(map, weight);
+
 			logger.info("Mapping in {} parts", parts);
 			boolean isFileNew = !hasDeleted;
 			if (isFileNew) {
@@ -1702,7 +1709,7 @@ public class MillerSpaceMapper {
 				writeDefaultAttributes(output, volName);
 			}
 
-			mapAndSaveInParts(mapQ, trees, allIters, lazyVolume, lazyWeight, parts, map, weight);
+			mapToVolumeAndSaveInParts(mapQ, trees, allIters, lazyVolume, lazyWeight, parts, map, weight);
 
 			saveAxesAndAttributes(output, volPath, VOLUME_NAME, new String[] {WEIGHT_NAME}, axes);
 			writeProcessingParameters(output, bean, entryPath);
@@ -1937,7 +1944,7 @@ public class MillerSpaceMapper {
 	 * @throws ScanFileHolderException
 	 * @throws DatasetException
 	 */
-	private void mapAndSaveInParts(boolean mapQ, Tree[] trees, PositionIterator[][] allIters,
+	private void mapToVolumeAndSaveInParts(boolean mapQ, Tree[] trees, PositionIterator[][] allIters,
 			LazyWriteableDataset volumeOutput, LazyWriteableDataset weightOutput, int parts, DoubleDataset map,
 			DoubleDataset weight) throws ScanFileHolderException, DatasetException {
 		int n = trees.length;
@@ -1996,7 +2003,7 @@ public class MillerSpaceMapper {
 					}
 				}
 
-				int ni = mapImages(mapQ, tree, trans, images, iters, map, weight, ishape);
+				int ni = mapImagesToVolume(mapQ, tree, trans, images, iters, ishape);
 				nt += ni;
 				logger.info("        processed {} images", ni);
 			}
@@ -2062,7 +2069,7 @@ public class MillerSpaceMapper {
 				}
 			}
 
-			int ni = mapImages(mapQ, tree, trans, images, iters, map, weight, ishape);
+			int ni = mapImagesToVolume(mapQ, tree, trans, images, iters, ishape);
 			nt += ni;
 			logger.info("        processed {} images", ni);
 		}
@@ -2092,7 +2099,7 @@ public class MillerSpaceMapper {
 		}
 		save += System.currentTimeMillis() - start;
 
-		logger.info("For {} threads, processing took {}ms ({}ms/frame)", pool.getParallelism(), process, process/nt);
+		logger.info("For {} threads, processing took {}ms ({}ms/frame)", poolSize, process, process/nt);
 		logger.info("                loading {} frames took {}ms ({}ms/frame)", nt, loadTimeTotal, loadTimeTotal/nt);
 		logger.info("Saving took {}ms", save);
 	}
@@ -2100,7 +2107,7 @@ public class MillerSpaceMapper {
 	private static final String INDICES = "indices";
 	private static final String millerIndicesPath = TreeUtils.join(PROCESSED, INDICES);
 
-	private void processTreesForList(Tree[] trees, PositionIterator[][] allIters)
+	private void processTreesToList(Tree[] trees, PositionIterator[][] allIters)
 			throws ScanFileHolderException, DatasetException {
 		String output = bean.getOutput();
 		boolean isFileNew = !hasDeleted;
@@ -2121,7 +2128,7 @@ public class MillerSpaceMapper {
 
 		for (int i = 0; i < trees.length; i++) {
 			Tree tree = trees[i];
-			listToASpace(tree, allIters[i], lazy);
+			mapToAList(tree, allIters[i], lazy);
 		}
 		writeProcessingParameters(output, bean, entryPath);
 		linkOriginalData(output, bean.getInputs(), entryPath);

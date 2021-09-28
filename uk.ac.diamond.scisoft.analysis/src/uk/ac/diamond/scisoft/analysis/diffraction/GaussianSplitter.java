@@ -22,7 +22,9 @@ class GaussianSplitter extends InverseSplitter {
 	@Override
 	public GaussianSplitter clone() {
 		GaussianSplitter c = new GaussianSplitter(1);
-		c.f = this.f;
+		c.output = output;
+		c.weight = weight;
+		c.f = f;
 		return c;
 	}
 

@@ -22,7 +22,9 @@ public class ExponentialSplitter extends InverseSplitter {
 	@Override
 	public ExponentialSplitter clone() {
 		ExponentialSplitter c = new ExponentialSplitter(1);
-		c.f = this.f;
+		c.output = output;
+		c.weight = weight;
+		c.f = f;
 		return c;
 	}
 

@@ -14,19 +14,24 @@ import javax.vecmath.Vector3d;
 import org.eclipse.january.dataset.DoubleDataset;
 
 /**
- * Intensity value splitter that splits an image pixel value and adds the pieces to close-by voxels
+ * Intensity value splitter that splits an image pixel value and adds the pieces to close-by pixels/voxels
  */
 public interface PixelSplitter extends Cloneable {
 	/**
-	 * Spread a pixel intensity value over voxels near position
-	 * @param volume dataset that holds the voxel values
+	 * Set datasets for splitter to use
+	 * @param output dataset that holds the output values
 	 * @param weight dataset that holds the relative contributions from each pixel
+	 */
+	public void setDatasets(DoubleDataset output, DoubleDataset weight);
+
+	/**
+	 * Spread a pixel intensity value over voxels near position
 	 * @param vsize voxel size in reciprocal space
 	 * @param dh offset in reciprocal space from voxel corner
 	 * @param pos position in volume
 	 * @param value pixel intensity to split
 	 */
-	public void splitValue(DoubleDataset volume, DoubleDataset weight, final double[] vsize, final Vector3d dh, final int[] pos, final double value);
+	public void splitValue(final double[] vsize, final Vector3d dh, final int[] pos, final double value);
 
 	/**
 	 * @return true if pixel is spread over 8 voxels
@@ -34,19 +39,6 @@ public interface PixelSplitter extends Cloneable {
 	public boolean doesSpread();
 
 	public PixelSplitter clone();
-
-	/**
-	 * Add values to datasets at given index
-	 * @param index
-	 * @param da dataset
-	 * @param va value
-	 * @param db dataset
-	 * @param vb value
-	 */
-	static void addToDatasets(final int index, final DoubleDataset da, double va, final DoubleDataset db, double vb) {
-		da.setAbs(index, da.getAbs(index) + va);
-		db.setAbs(index, db.getAbs(index) + vb);
-	}
 
 	/**
 	 * Create a pixel splitter of given name

@@ -9,8 +9,6 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
-import static uk.ac.diamond.scisoft.analysis.diffraction.PixelSplitter.addToDatasets;
-
 import javax.vecmath.Vector3d;
 
 import org.eclipse.january.dataset.DoubleDataset;
@@ -19,6 +17,15 @@ import org.eclipse.january.dataset.DoubleDataset;
  * Split pixel over eight voxels with weight determined by 1/distance
  */
 public class InverseSplitter implements PixelSplitter {
+	protected DoubleDataset output;
+	protected DoubleDataset weight;
+
+	@Override
+	public void setDatasets(DoubleDataset output, DoubleDataset weight) {
+		this.output = output;
+		this.weight = weight;
+	}
+
 	/**
 	 * Weight function of distance squared
 	 * @param squaredDistance 
@@ -74,30 +81,44 @@ public class InverseSplitter implements PixelSplitter {
 
 	@Override
 	public InverseSplitter clone() {
-		return new InverseSplitter();
+		InverseSplitter c = new InverseSplitter();
+		c.output = output;
+		c.weight = weight;
+		return c;
+	}
+
+	/**
+	 * Add values to datasets at given index
+	 * @param index
+	 * @param va value
+	 * @param vb value
+	 */
+	void addToDatasets(final int index, double va, double vb) {
+		output.setAbs(index, output.getAbs(index) + va);
+		weight.setAbs(index, weight.getAbs(index) + vb);
 	}
 
 	@Override
-	public void splitValue(DoubleDataset volume, DoubleDataset weight, final double[] vsize, Vector3d dh, int[] pos, double value) {
+	public void splitValue(final double[] vsize, Vector3d dh, int[] pos, double value) {
 		calcWeights(vsize, dh.x, dh.y, dh.z);
-		int[] vShape = volume.getShapeRef();
+		int[] vShape = output.getShapeRef();
 		final int lMax = vShape[0];
 		final int mMax = vShape[1];
 		final int nMax = vShape[2];
-		final int idx = volume.get1DIndex(pos);
+		final int idx = output.get1DIndex(pos);
 
 		double w;
 
 		w = weights[0];
 		int i = idx;
-		addToDatasets(i, volume, w * value, weight, w);
+		addToDatasets(i, w * value, w);
 
 		final int n = pos[2] + 1;
 		final boolean nPOInRange = n >= 0 && n < nMax;
 		if (nPOInRange) {
 			w = weights[1];
 			if (w > 0) {
-				addToDatasets(i + 1, volume, w * value, weight, w);
+				addToDatasets(i + 1, w * value, w);
 			}
 		}
 
@@ -107,13 +128,13 @@ public class InverseSplitter implements PixelSplitter {
 			w = weights[2];
 			i = nMax + i;
 			if (w > 0) {
-				addToDatasets(i, volume, w * value, weight, w);
+				addToDatasets(i, w * value, w);
 			}
 
 			if (nPOInRange) {
 				w = weights[3];
 				if (w > 0) {
-					addToDatasets(i + 1, volume, w * value, weight, w);
+					addToDatasets(i + 1, w * value, w);
 				}
 			}
 		}
@@ -123,13 +144,13 @@ public class InverseSplitter implements PixelSplitter {
 			w = weights[4];
 			i = mMax * nMax + idx;
 			if (w > 0) {
-				addToDatasets(i, volume, w * value, weight, w);
+				addToDatasets(i, w * value, w);
 			}
 
 			if (nPOInRange) {
 				w = weights[5];
 				if (w > 0) {
-					addToDatasets(i + 1, volume, w * value, weight, w);
+					addToDatasets(i + 1, w * value, w);
 				}
 			}
 
@@ -137,13 +158,13 @@ public class InverseSplitter implements PixelSplitter {
 				w = weights[6];
 				i = nMax + i;
 				if (w > 0) {
-					addToDatasets(i, volume, w * value, weight, w);
+					addToDatasets(i, w * value, w);
 				}
 
 				if (nPOInRange) {
 					w = weights[7];
 					if (w > 0) {
-						addToDatasets(i + 1, volume, w * value, weight, w);
+						addToDatasets(i + 1, w * value, w);
 					}
 				}
 			}

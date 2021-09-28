@@ -92,6 +92,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	private String centroidFilePath;
 	Map<Double, Dataset> xLookup, yLookup;
 	Dataset xBase, yBase;
+	private Number normValue = null;
 
 	/**
 	 * Auxiliary subentry. This must match the name field defined in the plugin extension
@@ -220,6 +221,13 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			resetList(allSpectra[i], total);
 		}
 		currentDataFile = null;
+
+		normValue = null;
+		String normPath = model.getNormalizationPath();
+		if (normPath != null && !normPath.isEmpty()) {
+			SliceFromSeriesMetadata smd = original.getFirstMetadata(SliceFromSeriesMetadata.class);
+			initializeNormDataset(smd.getFilePath(), normPath);
+		}
 	}
 
 	// TODO also need to read from OperationMetadata for previous SubtractFittedBackgroundModel
@@ -287,7 +295,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 
 	@Override
 	IDataset processImageRegion(int sn, IDataset original, int rn, Dataset in) {
-		Dataset[] result = makeSpectrum(rn, in, model.getSlopeOverride(), model.isClipSpectra());
+		Dataset[] result = makeSpectrum(rn, in);
 		Dataset spectrum = result[1];
 		spectrum.setName("spectrum_" + rn);
 
@@ -725,9 +733,13 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			sp.setName("total_spectrum_" + r);
 			summaryData.add(sp);
 
+			int ind = model.getCorrelateOrder() == CORRELATE_ORDER.FIRST ? 0 : sArray.length - 1;
+			AxesMetadata am = sArray[ind].getFirstMetadata(AxesMetadata.class);
 			Dataset ax = null;
 			try {
-				ax = DatasetUtils.sliceAndConvertLazyDataset(sp.getFirstMetadata(AxesMetadata.class).getAxis(0)[0]);
+				if (am != null) {
+					ax = DatasetUtils.sliceAndConvertLazyDataset(am.getAxis(0)[0]);
+				}
 			} catch (Exception e) {
 			}
 
@@ -752,14 +764,11 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 
 			List<Double> shift = new ArrayList<>();
 			Dataset cSpectrum = correlateSpectra("", r, reg, shift, ax, sArray);
-			String normPath = model.getNormalizationPath();
-			if (normPath != null && !normPath.isEmpty()) {
-				Dataset nSpectrum = normalizeSpectrum(filePath, normPath, cSpectrum);
-				if (nSpectrum != null) {
-					nSpectrum.setName("normalized_correlated_spectrum_" + r);
-					MetadataUtils.setAxes(this, nSpectrum, ax);
-					summaryData.add(nSpectrum);
-				}
+			if (normValue != null) {
+				Dataset nSpectrum = Maths.divide(cSpectrum, normValue);
+				nSpectrum.setName("normalized_correlated_spectrum_" + r);
+				MetadataUtils.setAxes(this, nSpectrum, ax);
+				summaryData.add(nSpectrum);
 			}
 
 			if (bins == null) {
@@ -941,24 +950,29 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		return regionInCCDs;
 	}
 
-	protected Dataset normalizeSpectrum(String filePath, String dataPath, Dataset spectrum) {
+	private void initializeNormDataset(String filePath, String dataPath) {
 		try {
 			Tree t = LocalServiceManager.getLoaderService().getData(filePath, null).getTree();
 			NodeLink l = t.findNodeLink(dataPath);
 			if (l == null) {
 				log.append("No normalization dataset at %s from file %s", dataPath, filePath);
 			} else if (l.isDestinationData()) {
-				Dataset n = DatasetUtils.sliceAndConvertLazyDataset(((DataNode) l.getDestination()).getDataset());
-				if (n == null) {
-					throw new OperationException(this, "Could not read normalization dataset at " + dataPath + " in " + filePath);
+				Dataset norm = DatasetUtils.sliceAndConvertLazyDataset(((DataNode) l.getDestination()).getDataset());
+				if (norm == null) {
+					throw new OperationException(this, "Could not read dataset");
 				}
-				return Maths.divide(spectrum, n.getByBoolean(getUsedFrames()).sum(true));
+
+				if (norm.max().doubleValue() < 0) {
+					log.appendFailure("Warning: normalization dataset at %s has all values < 0 so negating values", dataPath);
+					norm.imultiply(-1);
+				} else if (norm.min().doubleValue() < 0) {
+					throw new OperationException(this, "Normalization dataset has some values < 0");
+				}
+				normValue = (Number) norm.getByBoolean(getUsedFrames()).sum();
 			}
 		} catch (Exception e) {
-			log.appendFailure("Could not read normalization dataset %s from file %s: %s", dataPath, filePath, e);
+			log.appendFailure("Could not set normalization dataset %s from file %s: %s", dataPath, filePath, e);
 		}
-
-		return null;
 	}
 
 	// make summary data for spectra and sum up for spectrum
@@ -1006,6 +1020,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		MetadataUtils.setAxes(this, sp, null, energies);
 		summaryData.add(sp);
 
+		sp = Maths.clip(sp, 0, Double.POSITIVE_INFINITY);
 		sp = sp.sum(0);
 		sp.setName(prefix + "spectrum_" + r);
 		MetadataUtils.setAxes(this, sp, energies);
@@ -1107,16 +1122,22 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 
 	private static Dataset accumulate(Dataset... d) {
 		Dataset sp = null;
+		AxesMetadata am = null;
 		for (Dataset s : d) {
 			if (s == null) {
 				continue;
 			}
+			if (am == null) {
+				am = s.getFirstMetadata(AxesMetadata.class);
+			}
+			s = Maths.clip(s, 0, Double.POSITIVE_INFINITY);
 			if (sp == null) {
-				sp = s.clone();
+				sp = s;
 			} else {
 				sp.iadd(s);
 			}
 		}
+		sp.setMetadata(am);
 		return sp;
 	}
 
@@ -1143,13 +1164,12 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	/**
 	 * @param rn
 	 * @param in
-	 * @param slope override value
-	 * @param clip if true, clip columns where rows contribute from outside image 
 	 * @return elastic line position and spectrum datasets
 	 */
-	private Dataset[] makeSpectrum(int rn, Dataset in, Double slope, boolean clip) {
+	private Dataset[] makeSpectrum(int rn, Dataset in) {
 		StraightLine line = getStraightLine(rn);
 
+		Double slope = model.getSlopeOverride();
 		if (slope == null) {
 			slope = line.getParameterValue(STRAIGHT_LINE_M);
 		}
@@ -1157,12 +1177,16 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 				? line.getParameterValue(STRAIGHT_LINE_C)
 				: rn == 0 ? model.getEnergyOffsetA() : model.getEnergyOffsetB();
 
-		Dataset[] results = makeSpectrum(in, offset[0], slope, intercept, clip);
+		Dataset[] results = makeSpectrum(in, offset[0], slope, intercept, model.isClipSpectra(), model.isNormalizeByRows());
 
 		if (model.getEnergyOffsetOption() == ENERGY_OFFSET.TURNING_POINT) {
 			results[0].isubtract(findTurningPoint(false, results[1]));
 		}
 		return results;
+	}
+
+	public static Dataset[] makeSpectrum(Dataset in, int rOffset, double slope, double intercept, boolean clip) {
+		return makeSpectrum(in, rOffset, slope, intercept, clip, true);
 	}
 
 	/**
@@ -1172,10 +1196,11 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	 * @param rOffset ROI offset
 	 * @param slope line slope
 	 * @param intercept line intercept
-	 * @param clip if true, clip columns where rows contribute from outside image 
+	 * @param clip if true, clip columns where rows contribute from outside image
+	 * @param average if true, average rather than just summing to calculate spectrum
 	 * @return elastic line position and spectrum datasets
 	 */
-	public static Dataset[] makeSpectrum(Dataset in, int rOffset, double slope, double intercept, boolean clip) {
+	public static Dataset[] makeSpectrum(Dataset in, int rOffset, double slope, double intercept, boolean clip, boolean average) {
 		int rows = in.getShapeRef()[0];
 		Dataset elastic = DatasetFactory.createRange(rows);
 		if (rOffset != 0) {
@@ -1188,7 +1213,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			elastic.iadd(intercept);
 		}
 	
-		Dataset spectrum = makeSpectrum(in, slope, clip);
+		Dataset spectrum = makeSpectrum(in, slope, clip, average);
 		AxesMetadata am = spectrum.getFirstMetadata(AxesMetadata.class);
 		if (am != null) {
 			try { // adjust for shift by clipping

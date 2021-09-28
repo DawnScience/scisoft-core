@@ -80,7 +80,7 @@ public class SubtractFittedBackgroundModel extends AbstractOperationModel {
 	private double darkScaling = 1;
 
 	@OperationModelField(fieldPosition = 14, label = "Drop zone width factor", hint = "Scaling for width of drop zone to match for dark image", description = "Override width scaling of drop-to-shadow zone used to find scaling and offset of dark image", enableif = "darkImageFile != null && darkOffset == null", expertOnly = true)
-	private double darkFWHMScaling = 2;
+	private double darkFWHMScaling = 5;
 
 	public static final int HISTOGRAM_MAX_BINS = 1024*1024;
 

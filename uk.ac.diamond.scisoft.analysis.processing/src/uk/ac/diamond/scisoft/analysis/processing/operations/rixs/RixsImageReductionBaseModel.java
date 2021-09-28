@@ -55,8 +55,8 @@ public class RixsImageReductionBaseModel extends RixsBaseModel {
 	@OperationModelField(label = "Correlation energy range", description = "Energy range to use correlate spectra", hint = "Start and end energies (separated by a comma)", expertOnly = true)
 	private double[] energyRange = null;
 
-	@OperationModelField(label = "Normalize spectra by region size", description = "If true, then divide summed spectra by number of constituent spectra", expertOnly = true)
-	private boolean normalizeByRegionSize = true;
+	@OperationModelField(label = "Average spectrum along slope", description = "If true, then take average rather than sum along slope to create each spectrum ", expertOnly = true)
+	private boolean normalizeByRows = false;
 
 	@OperationModelField(label = "Normalization dataset", description = "Use named dataset to normalize spectra", expertOnly = true, dataset = "currentFilePath")
 	private String normalizationPath = "/entry1/m4c1/m4c1";
@@ -227,12 +227,21 @@ public class RixsImageReductionBaseModel extends RixsBaseModel {
 	/**
 	 * @return true if spectra should be normalized by region size
 	 */
-	public boolean isNormalizeByRegionSize() {
-		return normalizeByRegionSize;
+	public boolean isNormalizeByRows() {
+		return normalizeByRows;
 	}
 
-	public void setNormalizeByRegionSize(boolean normalizeByRegionSize) {
-		firePropertyChange("setNormalizeByRegionSize", this.normalizeByRegionSize, this.normalizeByRegionSize = normalizeByRegionSize);
+	public void setNormalizeByRows(boolean normalizeByRows) {
+		firePropertyChange("setNormalizeByRows", this.normalizeByRows, this.normalizeByRows = normalizeByRows);
+	}
+
+	/*
+	 * @deprecated For deserialization only, needed for backward compatibility
+	 */
+	@SuppressWarnings("unused")
+	@Deprecated
+	private void setNormalizeByRegionSize(boolean normalizeByRegionSize) {
+		setNormalizeByRows(!normalizeByRegionSize); // take complement as previously it did nothing
 	}
 
 	/**

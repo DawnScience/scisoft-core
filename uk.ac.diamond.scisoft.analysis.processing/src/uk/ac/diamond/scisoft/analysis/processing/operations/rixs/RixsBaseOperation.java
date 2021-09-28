@@ -309,11 +309,13 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		return lines[r >= lines.length ? 0 : r]; // in case number of ROIs have increased
 	}
 
-	protected static Dataset makeSpectrum(Dataset in, double slope, boolean clip) {
+	protected static Dataset makeSpectrum(Dataset in, double slope, boolean clip, boolean average) {
 		Dataset spectrum;
 		if (Double.isFinite(slope)) {
 			spectrum = sumImageAlongSlope(in, slope, clip);
-			Maths.clip(spectrum, spectrum, 0, Double.POSITIVE_INFINITY);
+			if (average) {
+				spectrum.idivide(in.getShapeRef()[0]);
+			}
 		} else {
 			int rows = in.getShapeRef()[0];
 			spectrum = DatasetFactory.zeros(rows).fill(Double.NaN);

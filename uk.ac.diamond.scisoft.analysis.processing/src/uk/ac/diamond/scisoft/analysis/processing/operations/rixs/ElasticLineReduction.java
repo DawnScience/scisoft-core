@@ -766,7 +766,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			allSlope[rn].set(sn, m);
 			allResidual[rn].set(sn, r);
 			if (useSpectrum && in != null) {
-				Dataset spectrum = makeSpectrum(in, m, model.isClipSpectra());
+				Dataset spectrum = makeSpectrum(in, m, model.isClipSpectra(), false);
 				spectrum.setName(ES_PREFIX + rn);
 				int rows = spectrum.getShapeRef()[0];
 				Dataset elastic = DatasetFactory.createRange(rows);

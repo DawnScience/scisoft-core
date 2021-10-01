@@ -138,7 +138,7 @@ public class MillerSpaceMapperBeanTest {
 
 		MillerSpaceMapperBean mapperBean = MillerSpaceMapperBean.createBeanWithAutoBox(inputPaths, dstPath, "inverse", 0.5, 2., true, false, 0.005);
 		MillerSpaceMapper mapper = new MillerSpaceMapper(mapperBean);
-		mapper.mapToVolumeFile(true);
+		mapper.mapToOutputFile(true);
 
 		Dataset[] a = HDF5Utils.readAttributes(dstPath, "/");
 		Dataset[] b = HDF5Utils.readAttributes(dstPath, "/processed");

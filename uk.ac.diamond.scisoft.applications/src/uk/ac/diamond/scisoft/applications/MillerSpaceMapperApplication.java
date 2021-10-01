@@ -78,10 +78,17 @@ public class MillerSpaceMapperApplication implements IApplication {
 			case Coords_HKL:
 				msm.calculateCoordinates();
 				break;
+			case Area_HK:
+			case Area_KL:
+			case Area_LH:
+			case Area_QPP:
+			case Area_QXY:
+			case Area_QYZ:
+			case Area_QZX:
 			case Volume_Q:
 			case Volume_HKL:
 			default:
-				msm.mapToVolumeFile();
+				msm.mapToOutputFile();
 				break;
 			}
 

@@ -247,7 +247,9 @@ class NexusScanFileImpl implements NexusScanFile {
 	}
 
 	private Map<ScanRole, List<INexusDevice<?>>> getNexusDevices(NexusScanInfo info) throws NexusException {
-		// expand any IMultipleNexusDevices
+		// expand any IMultipleNexusDevices into INexusDevices. This is necessary as INexusDeviceDecorators
+		// may exist, e.g. a NexusMetadataAppender may be defined in spring for a malcolm controlled detector.
+		
 		// TODO: This may be easier if IMultipleNexusDevice returned multiple INexusDevices, but this would be a breaking API change
 		// (although the old method could be kept as deprecated and a default implementation provided
 		final Map<ScanRole, List<INexusDevice<?>>> oldNexusDevices = nexusScanModel.getNexusDevices();
@@ -266,9 +268,10 @@ class NexusScanFileImpl implements NexusScanFile {
 				// decorate all nexus devices, expand any multiple nexus devices in the list of devices by scan role
 				final List<INexusDevice<?>> newNexusDevicesForScanRole = new ArrayList<>();
 				for (INexusDevice<?> nexusDevice : oldNexusDevicesForScanRole) {
-					newNexusDevicesForScanRole.add(nexusDeviceService.decorateNexusDevice(nexusDevice));
 					if (nexusDevice instanceof IMultipleNexusDevice) {
 						newNexusDevicesForScanRole.addAll(createNexusDevicesForMultiple((IMultipleNexusDevice) nexusDevice, info));
+					} else {
+						newNexusDevicesForScanRole.add(nexusDeviceService.decorateNexusDevice(nexusDevice));
 					}
 				}
 
@@ -306,23 +309,15 @@ class NexusScanFileImpl implements NexusScanFile {
 		return newNexusDevices;
 	}
 
-	private List<INexusDevice<?>> createNexusDevicesForMultiple(IMultipleNexusDevice multiNexusDevice, NexusScanInfo info) {
+	private List<INexusDevice<?>> createNexusDevicesForMultiple(IMultipleNexusDevice multiNexusDevice, NexusScanInfo info) throws NexusException {
 		// convert a multiNexusDevice into multiple INexusDevices wrapping the returned NexusObjectProviders
 		// note, this method is only used when all the devices are assumed to have the same role, i.e. not for a malcolm device
-		try {
-			final List<NexusObjectProvider<?>> nexusObjectProviders = multiNexusDevice.getNexusProviders(info);
-			if (nexusObjectProviders == null || nexusObjectProviders.isEmpty()) {
-				return Collections.emptyList();
-			}
-
-			final List<INexusDevice<?>> nexusDevices = new ArrayList<>(nexusObjectProviders.size());
-			for (NexusObjectProvider<?> nexusObjectProvider : nexusObjectProviders) {
-				nexusDevices.add(createSimpleNexusDevice(nexusObjectProvider));
-			}
-			return nexusDevices;
-		} catch (NexusException e) {
-			throw new RuntimeException(new NexusException("Could not get nexus provider for device: " + multiNexusDevice.getName(), e));
+		final List<NexusObjectProvider<?>> nexusObjectProviders = multiNexusDevice.getNexusProviders(info);
+		if (nexusObjectProviders == null || nexusObjectProviders.isEmpty()) {
+			return Collections.emptyList();
 		}
+
+		return nexusObjectProviders.stream().map(this::createSimpleNexusDevice).collect(toList());
 	}
 
 	private <N extends NXobject> INexusDevice<N> createSimpleNexusDevice(NexusObjectProvider<N> nexusObjectProvider) {
@@ -532,7 +527,7 @@ class NexusScanFileImpl implements NexusScanFile {
 			Collection<String> dimensionNamesForIndex = dimensionNamesIter.next();
 			//need to iterate or the _indices attibute defaults to [0]
 			Iterator<String> it = dimensionNamesForIndex.iterator();
-			while (it.hasNext()){
+			while (it.hasNext()) {
 				String scannableName = it.next();
 				if (defaultAxisIndexForScannableMap.containsKey(scannableName)) {
 					// already seen this scannable name for another index,

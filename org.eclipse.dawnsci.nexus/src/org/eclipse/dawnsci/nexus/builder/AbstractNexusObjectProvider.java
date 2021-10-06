@@ -323,7 +323,7 @@ public abstract class AbstractNexusObjectProvider<N extends NXobject> implements
 
 	@Override
 	public List<String> getAxisDataFieldNames() {
-		return new ArrayList<String>(axisDataFieldNames);
+		return new ArrayList<>(axisDataFieldNames);
 	}
 
 	/**

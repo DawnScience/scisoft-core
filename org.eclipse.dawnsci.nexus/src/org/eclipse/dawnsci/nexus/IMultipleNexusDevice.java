@@ -28,6 +28,8 @@ public interface IMultipleNexusDevice {
 	
 	/**
 	 * Returns the object providers required for writing correct NeXus files.
+	 * Note that if a nexus device also implements {@link INexusDevice}, and this method returns a non-null value,
+	 * then {@link INexusDevice#getNexusProvider(NexusScanInfo)} will not be called. 
 	 * 
 	 * @see INexusDevice#getNexusProvider(NexusScanInfo)
 	 * 

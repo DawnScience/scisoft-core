@@ -119,7 +119,7 @@ public class DefaultNexusEntryBuilder implements NexusEntryBuilder {
 	 */
 	@Override
 	public List<NXobject> addAll(Collection<? extends NexusObjectProvider<?>> nexusObjectProviders) throws NexusException {
-		final List<NXobject> nexusObjects = new ArrayList<NXobject>(nexusObjectProviders.size());
+		final List<NXobject> nexusObjects = new ArrayList<>(nexusObjectProviders.size());
 		for (final NexusObjectProvider<?> nexusObjectProvider : nexusObjectProviders) {
 			final NXobject nexusObject = add(nexusObjectProvider);
 			nexusObjects.add(nexusObject);

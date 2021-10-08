@@ -63,6 +63,7 @@ import org.eclipse.dawnsci.nexus.device.INexusDeviceService;
 import org.eclipse.dawnsci.nexus.device.SimpleNexusDevice;
 import org.eclipse.dawnsci.nexus.scan.IDefaultDataGroupCalculator;
 import org.eclipse.dawnsci.nexus.scan.NexusScanFile;
+import org.eclipse.dawnsci.nexus.scan.NexusScanMetadataWriter;
 import org.eclipse.dawnsci.nexus.scan.NexusScanModel;
 import org.eclipse.dawnsci.nexus.scan.ServiceHolder;
 import org.eclipse.dawnsci.nexus.template.NexusTemplate;
@@ -123,6 +124,9 @@ class NexusScanFileImpl implements NexusScanFile {
 
 		// convert this to a map of nexus object providers for each type
 		nexusObjectProviders = extractNexusProviders();
+		if (nexusScanModel.getMetadataWriter() instanceof NexusScanMetadataWriter) {
+			((NexusScanMetadataWriter) nexusScanModel.getMetadataWriter()).setNexusObjectProviders(nexusObjectProviders);
+		}
 	}
 	
 	@Override

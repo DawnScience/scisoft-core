@@ -74,7 +74,7 @@ public interface IPlottingSystemViewer<T> extends IAxisSystem, IRegionSystem, IA
 	 * @param clazz
 	 * @return
 	 */
-	public <U extends ITrace> U createTrace(String name, Class<? extends ITrace> clazz);
+	public <U extends ITrace> U createTrace(String name, Class<U> clazz);
 	
 	/**
 	 * Short cut method for creating several line traces in one go.
@@ -470,7 +470,7 @@ public interface IPlottingSystemViewer<T> extends IAxisSystem, IRegionSystem, IA
 		}
 
 		@Override
-		public <U extends ITrace> U createTrace(String name, Class<? extends ITrace> clazz){
+		public <U extends ITrace> U createTrace(String name, Class<U> clazz){
 			
 			return null;
 		}

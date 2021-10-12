@@ -24,6 +24,7 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.nexus.NXdata;
 import org.eclipse.dawnsci.nexus.NXobject;
+import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 import org.eclipse.dawnsci.nexus.builder.data.impl.AxisDataDeviceImpl;
@@ -336,7 +337,7 @@ public class DataDeviceBuilder<N extends NXobject> {
 				destinationFieldName = deviceName;
 			} else {
 				// otherwise prepend the device name to the source field name
-				destinationFieldName = deviceName + '_' + sourceFieldName;
+				destinationFieldName = deviceName + NexusConstants.FIELD_SEPERATOR + sourceFieldName;
 			}
 		} else {
 			destinationFieldName = sourceFieldName;

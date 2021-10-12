@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
@@ -404,8 +405,6 @@ public class NexusFileHDF5 implements NexusFile {
 		}
 		group.addGroupNode(name, g);
 	}
-
-	public static final Charset UTF8 = Charset.forName("UTF-8");
 
 	private void cacheAttributes(String path, Node node) throws NexusException {
 		try {
@@ -1280,7 +1279,6 @@ public class NexusFileHDF5 implements NexusFile {
 	@Override
 	public void addAttribute(String path, Attribute... attribute) throws NexusException {
 		assertCanWrite();
-		Charset utf8 = Charset.forName("UTF-8");
 		for (Attribute attr : attribute) {
 			String attrName = attr.getName();
 			if (attrName == null || attrName.isEmpty()) {
@@ -1320,7 +1318,7 @@ public class NexusFileHDF5 implements NexusFile {
 						byte[][] stringbuffers = new byte[strCount][];
 						int i = 0;
 						for (String str : strings) {
-							stringbuffers[i] = str.getBytes(utf8);
+							stringbuffers[i] = str.getBytes(StandardCharsets.UTF_8);
 							int l = stringbuffers[i].length;
 							if (l > maxLength) maxLength = l;
 							i++;

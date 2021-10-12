@@ -137,11 +137,15 @@ public class NexusConstants {
 	 * NXdata attribute that points to error datasets (may also be legacy if attached to main dataset)
 	 */
 	public static final String DATA_UNCERTAINTIES = "uncertainties";
-
+	
 	/**
 	 * NXdata indicate no default for axis in axes attribute
 	 */
 	public static final String DATA_AXESEMPTY = ".";
+	/**
+	 * NXdata seperator for non-primary fields of detector or scannable.
+	 */
+	public static final String FIELD_SEPERATOR = ".";
 
 	/**
 	 * Suffix for name of error datasets
@@ -156,7 +160,7 @@ public class NexusConstants {
 	 * pointing to them
 	 */
 	@Deprecated
-	public static final String DATA_UNCERTAINTY_SUFFIX ="_uncertainty";
+	public static final String DATA_UNCERTAINTY_SUFFIX = "_uncertainty";
 	/**
 	 * Suffix for names of datasets that contain set values (for axes)
 	 */
@@ -166,6 +170,7 @@ public class NexusConstants {
 	 * NXdata default name for errors field (was legacy attribute name of main dataset)
 	 */
 	public static final String DATA_ERRORS = "errors";
+	
 	/**
 	 * @deprecated legacy attribute name
 	 */

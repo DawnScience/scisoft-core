@@ -363,6 +363,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	}
 
 	private static final String DETECTOR_LOCAL_NAME = "local_name";
+	private static final String DETECTOR_NAME_ANDOR = "andor";
 	private static final String DETECTOR_NAME_XCAM = "xcam";
 
 	/**
@@ -411,45 +412,62 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			currentCountTime = DatasetUtils.sliceAndConvertLazyDataset(detector.getDataNode("count_time").getDataset());
 
 			GroupNode mdg = entry.getGroupNode("before_scan");
-			if (mdg == null) {
-				throw new NexusException("File does not contain a before_scan collection");
+			if (mdg != null) {
+				parseOldDLSNeXus(filePath, detector, mdg);
+			} else if (entry.containsGroupNode("diamond_scan")) {
+				parseNewDLSNexus(filePath, instrument, detector);
+			} else {
+				throw new NexusException("File does not contain a before_scan or diamond_scan collection");
 			}
 
-			countsPerPhoton = -1;
-			xrayEnergy = -1;
-			try {
-				xrayEnergy = getEnergy(mdg);
-				countsPerPhoton = calculateCountsPerPhoton(mdg);
-			} catch (Exception e) {
-				if (detector.containsDataNode(DETECTOR_LOCAL_NAME)) {
-					try {
-						String[] names = NexusTreeUtils.parseStringArray(detector.getDataNode(DETECTOR_LOCAL_NAME), 1);
-						if (names[0].toLowerCase().contains(DETECTOR_NAME_XCAM)) {
-							double energy = getEnergy(mdg);
-							countsPerPhoton = (int) (800 * (energy / 933.)); // rough estimate from XCAM commissioning
-						} else {
-							log.appendFailure("Unknown detector in Nexus file %s: %s = %s", filePath, DETECTOR_LOCAL_NAME, names[0]);
-						}
-					} catch (Exception e1) {
-						log.appendFailure("Could not read %s in NXdetector from Nexus file %s: %s", DETECTOR_LOCAL_NAME, filePath, e1);
-					}
-				} else {
-					log.appendFailure("Could not calculate counts per photon from Nexus file %s: %s", filePath, e);
-				}
-				if (countsPerPhoton < 0) {
-					countsPerPhoton = model.getCountsPerPhoton();
-				}
-			}
-
-			drainCurrent = parseBeforeScanItem(mdg, "draincurrent");
-			detectorAngle = parseBeforeScanItem(mdg, "specgamma");
-
-			// TODO ring current, other things
 		} catch (Exception e) {
 			log.appendFailure("Could not parse Nexus file %s: %s", filePath, e);
 		}
 
 		log.append("Counts per single photon event = %d", countsPerPhoton);
+	}
+
+
+	private double getDouble(GroupNode g, String name) throws NexusException {
+		try {
+			return NexusTreeUtils.getFirstDouble(g.getDataNode(name));
+		} catch (NexusException e) {
+			log.appendFailure("Could not read value from %s", name, e);
+			throw e;
+		}
+	}
+
+	private void parseOldDLSNeXus(String filePath, GroupNode detector, GroupNode mdg) throws NexusException {
+		countsPerPhoton = -1;
+		xrayEnergy = -1;
+		try {
+			xrayEnergy = getEnergy(mdg);
+			countsPerPhoton = calculateCountsPerPhoton(mdg);
+		} catch (Exception e) {
+			if (detector.containsDataNode(DETECTOR_LOCAL_NAME)) {
+				try {
+					String[] names = NexusTreeUtils.getStringArray(detector.getDataNode(DETECTOR_LOCAL_NAME), 1);
+					if (names[0].toLowerCase().contains(DETECTOR_NAME_XCAM)) {
+						double energy = getEnergy(mdg);
+						countsPerPhoton = (int) (800 * (energy / 933.)); // rough estimate from XCAM commissioning
+					} else {
+						log.appendFailure("Unknown detector in Nexus file %s: %s = %s", filePath, DETECTOR_LOCAL_NAME, names[0]);
+					}
+				} catch (Exception e1) {
+					log.appendFailure("Could not read %s in NXdetector from Nexus file %s: %s", DETECTOR_LOCAL_NAME, filePath, e1);
+				}
+			} else {
+				log.appendFailure("Could not calculate counts per photon from Nexus file %s: %s", filePath, e);
+			}
+			if (countsPerPhoton < 0) {
+				countsPerPhoton = model.getCountsPerPhoton();
+			}
+		}
+
+		drainCurrent = parseBeforeScanItem(mdg, "draincurrent");
+		detectorAngle = parseBeforeScanItem(mdg, "specgamma");
+
+		// TODO ring current, other things
 	}
 
 	/**
@@ -480,9 +498,11 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	private static final double[][] ANDOR_SENSITIVITY = new double[][] {{3.5, 1.9, 1.0}, {3.4, 1.8, 1.0}, {3.1, 1.8, 1.0}}; // in electrons per AD count
 
 	private int calculateCountsPerPhoton(GroupNode mdg) throws NexusException {
-		double energy = getEnergy(mdg);
 		try {
-			return (int) Math.floor(energy / andorSensitivity(mdg));
+			int gain = (int) parseBeforeScanItem(mdg, "andorPreampGain");
+			double speed = parseBeforeScanItem(mdg, "andorADCSpeed");
+
+			return (int) Math.floor(xrayEnergy / andorSensitivity(gain, speed));
 		} catch (Exception e) {
 			throw new NexusException("Not an Andor detector:", e);
 		}
@@ -498,21 +518,19 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	}
 
 	/**
-	 * @param mdg
+	 * @param gain
+	 * @param speed
 	 * @return photon energy sensitivity (eV/AD count)
 	 * @throws NexusException
 	 */
-	private double andorSensitivity(GroupNode mdg) throws NexusException {
-		int gain = (int) parseBeforeScanItem(mdg, "andorPreampGain");
-		double speed = parseBeforeScanItem(mdg, "andorADCSpeed");
-
+	private double andorSensitivity(int gain, double speed) throws NexusException {
 		int gi = Arrays.binarySearch(ANDOR_PREAMP_GAIN, gain);
 		if (gi < 0) {
 			throw new OperationException(this, "Gain value not allowed");
 		}
 		int si = Arrays.binarySearch(ANDOR_AD_RATE, speed);
 		if (si < 0) {
-			throw new OperationException(this, "Gain value not allowed");
+			throw new OperationException(this, "ADC speed value not allowed");
 		}
 
 		return ANDOR_SENSITIVITY[si][gi] * PAIR_PRODUCTION_ENERGY;
@@ -527,7 +545,48 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		if (id == null) {
 			throw new NexusException("Before_scan collection has group but does not contain data node " + name);
 		}
-		return NexusTreeUtils.parseDoubleArray(id)[0];
+		return NexusTreeUtils.getFirstDouble(id);
+	}
+
+	private void parseNewDLSNexus(String filePath, GroupNode instrument, GroupNode detector) {
+		xrayEnergy = -1;
+		countsPerPhoton = -1;
+		try {
+			GroupNode mono = NexusTreeUtils.getDefaultNXobject(instrument, null, NexusConstants.MONOCHROMATOR);
+			xrayEnergy = getDouble(mono, "energy");
+		} catch (Exception e) {
+			log.appendFailure("Could not read X-ray energy from NXmonochromator from Nexus file %s: %s", filePath, e);
+		}
+
+		try {
+			String dName = NexusTreeUtils.getFirstString(detector.getDataNode(DETECTOR_LOCAL_NAME));
+			GroupNode settings = detector.getGroupNode(dName + "_settings");
+			dName = dName.toLowerCase();
+			if (dName.contains(DETECTOR_NAME_ANDOR)) {
+				int gain = (int) getDouble(settings, "preamp_gain");
+				double speed = getDouble(settings, "adc_speed");
+				countsPerPhoton = (int) Math.floor(xrayEnergy / andorSensitivity(gain, speed));
+			} else if (dName.contains(DETECTOR_NAME_XCAM)) {
+				countsPerPhoton = (int) (800 * (xrayEnergy / 933.)); // rough estimate from XCAM commissioning
+			} else {
+				log.appendFailure("Unknown detector in Nexus file %s: %s = %s", filePath, DETECTOR_LOCAL_NAME, dName);
+			}
+		} catch (Exception e) {
+			log.appendFailure("Could not calculate counts per photon from Nexus file %s: %s", filePath, e);
+			if (countsPerPhoton < 0) {
+				countsPerPhoton = model.getCountsPerPhoton();
+			}
+		}
+
+		try {
+			GroupNode manipulator = instrument.getGroupNode("manipulator");
+			drainCurrent = getDouble(manipulator, "draincurrent");
+			GroupNode spectrometer = instrument.getGroupNode("spectrometer");
+			detectorAngle = getDouble(spectrometer, "specgamma");
+		} catch (Exception e) {
+			log.appendFailure("Could not read drain current or spectrometer gamma values from Nexus file %s: %s", filePath, e);
+		}
+		// TODO ring current, other things
 	}
 
 	// TODO work-in-progress on structure of NeXus RIXS application definition
@@ -558,15 +617,16 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	 * Parse detector and set fields
 	 * @param detector
 	 * @param pEnergy photon energy in eV
+	 * @throws NexusException 
 	 */
-	protected void parseDesiredNXrixs(GroupNode detector, double pEnergy) {
+	protected void parseDesiredNXrixs(GroupNode detector, double pEnergy) throws NexusException {
 		String ed = detector.getDataNode("energy_direction").getString();
 		model.setEnergyDirection(ed.toLowerCase().equals("slow") ? RixsBaseModel.ENERGY_DIRECTION.SLOW : RixsBaseModel.ENERGY_DIRECTION.FAST);
 
 		// energy required for each photoelectron [eV / e^-]
-		double pe = NexusTreeUtils.parseDoubleArray(detector.getDataNode("photoelectrons_energy"))[0];
+		double pe = NexusTreeUtils.getFirstDouble(detector.getDataNode("photoelectrons_energy"));
 		// digitization of photoelectron to AD units [ADu / e^-]
-		double ds = NexusTreeUtils.parseDoubleArray(detector.getDataNode("detector_sensitivity"))[0];
+		double ds = NexusTreeUtils.getFirstDouble(detector.getDataNode("detector_sensitivity"));
 
 		countsPerPhoton = (int) Math.floor(pEnergy * ds / pe);
 	}

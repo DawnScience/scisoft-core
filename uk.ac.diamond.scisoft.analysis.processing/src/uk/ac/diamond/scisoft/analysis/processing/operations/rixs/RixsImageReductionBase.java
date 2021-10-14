@@ -285,7 +285,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 				throw new NexusException("File does not contain a result dataset");
 			}
 
-			return NexusTreeUtils.parseDoubleArray(d);
+			return NexusTreeUtils.getDoubleArray(d);
 		} catch (Exception e) {
 			log.appendFailure("Could not parse Nexus file %s:%s", elasticLineFile, e);
 		}

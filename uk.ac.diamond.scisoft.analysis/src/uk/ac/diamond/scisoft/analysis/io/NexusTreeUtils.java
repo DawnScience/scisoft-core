@@ -1038,7 +1038,7 @@ public class NexusTreeUtils {
 
 		// initial dependency chain
 		NodeLink nl = gNode.getNodeLink(TRANSFORMATIONS_DEPENDSON);
-		String first = nl == null ? null : parseStringArray(nl.getDestination(), 1)[0];
+		String first = nl == null ? null : getStringArray(nl.getDestination(), 1)[0];
 		if (first != null) {
 			first = canonicalizeDependsOn(path, tree, first);
 			if (!ftrans.containsKey(first)) {
@@ -1100,8 +1100,8 @@ public class NexusTreeUtils {
 			}
 		}
 
-		Integer l = gNode.containsDataNode(DETECTOR_UNDERLOAD) ? parseIntArray(gNode.getDataNode(DETECTOR_UNDERLOAD))[0] : null;
-		Integer u = gNode.containsDataNode(DETECTOR_SATURATION) ? parseIntArray(gNode.getDataNode(DETECTOR_SATURATION))[0] : null;
+		Integer l = gNode.containsDataNode(DETECTOR_UNDERLOAD) ? getIntArray(gNode.getDataNode(DETECTOR_UNDERLOAD))[0] : null;
+		Integer u = gNode.containsDataNode(DETECTOR_SATURATION) ? getIntArray(gNode.getDataNode(DETECTOR_SATURATION))[0] : null;
 		Dataset mask = null;
 		if (gNode.containsDataNode(DETECTOR_PIXELMASK)) {
 			try {
@@ -1276,10 +1276,10 @@ public class NexusTreeUtils {
 			String name = l.getName();
 			switch(name) {
 			case DMOD_DATAORIGIN:
-				origin = parseIntArray(l.getDestination(), 2);
+				origin = getIntArray(l.getDestination(), 2);
 				break;
 			case DMOD_DATASIZE: // number of pixels in slow then fast; i.e. #rows, #cols
-				size = parseIntArray(l.getDestination(), 2);
+				size = getIntArray(l.getDestination(), 2);
 				break;
 			case DMOD_MODULEOFFSET:
 				mo = parseTransformation(path, tree, l, pos);
@@ -1412,7 +1412,7 @@ public class NexusTreeUtils {
 			throw new IllegalArgumentException("Geometry subnode is missing dataset");
 		}
 		DataNode dNode = (DataNode) l.getDestination();
-		DoubleDataset ds = (DoubleDataset) getCastAndCacheData(dNode, DoubleDataset.class);
+		DoubleDataset ds = getCastAndCacheData(dNode, DoubleDataset.class);
 		if (ds == null) {
 			logger.warn("Geometry subnode {} has an empty dataset", link.getName());
 			return;
@@ -1657,7 +1657,7 @@ public class NexusTreeUtils {
 			logger.error("Sample {} must have a {} field", link.getName(), TRANSFORMATIONS_DEPENDSON);
 			throw new IllegalArgumentException("Sample " + link.getName() + " must have a " + TRANSFORMATIONS_DEPENDSON + " field");
 		}
-		String dep = canonicalizeDependsOn(path, tree, parseStringArray(nl.getDestination(), 1)[0]);
+		String dep = canonicalizeDependsOn(path, tree, getStringArray(nl.getDestination(), 1)[0]);
 		return parseNodeShape(path, tree, tree.findNodeLink(dep), shape);
 	}
 
@@ -1757,7 +1757,7 @@ public class NexusTreeUtils {
 		Matrix3d m3 = new Matrix3d();
 		NodeLink nl = gNode.getNodeLink(TRANSFORMATIONS_DEPENDSON);
 		if (nl != null && nl.isDestinationData()) {
-			String dep = canonicalizeDependsOn(path, tree, parseStringArray(nl.getDestination(), 1)[0]);
+			String dep = canonicalizeDependsOn(path, tree, getStringArray(nl.getDestination(), 1)[0]);
 			Matrix4d m = calcForwardTransform(ftrans, dep);
 			m.getRotationScale(m3);
 		} else {
@@ -1776,7 +1776,7 @@ public class NexusTreeUtils {
 			return null;
 		}
 
-		double[] matrix = parseDoubleArray(link.getDestination(), 9);
+		double[] matrix = getDoubleArray(link.getDestination(), 9);
 
 		return new Matrix3d(matrix);
 	}
@@ -1787,7 +1787,7 @@ public class NexusTreeUtils {
 			return null;
 		}
 
-		double[] parms = parseDoubleArray(link.getDestination(), 6);
+		double[] parms = getDoubleArray(link.getDestination(), 6);
 
 		return new UnitCell(parms);
 	}
@@ -2050,6 +2050,7 @@ public class NexusTreeUtils {
 		}
 		return nodes;
 	}
+
 	/**
 	 * @param attr
 	 * @return string or null
@@ -2098,31 +2099,49 @@ public class NexusTreeUtils {
 	}
 
 	/**
-	 * Parse elements of data node as string array. Converts if parsable
+	 * Get elements of data node as string array. Converts if exists
 	 * @param n
 	 * @return string array or null if not a data node
 	 */
-	public static String[] parseStringArray(Node n) {
+	public static String[] getStringArray(Node n) {
 		if (n == null || !(n instanceof DataNode))
 			return null;
 
-		StringDataset id = (StringDataset) getCastAndCacheData((DataNode) n, StringDataset.class);
-		return id.getData();
+		StringDataset sd = getCastAndCacheData((DataNode) n, StringDataset.class);
+		return sd.getData();
 	}
 
 	/**
-	 * Parse elements of data node as string array. Converts if parsable
+	 * Get elements of data node as string array. Converts if exists
 	 * @param n
 	 * @param length
-	 * @return string array
-	 * @throws IllegalArgumentException if node exists and is not of required length 
+	 * @return string array or null if not a data node
+	 * @throws IllegalArgumentException if node exists and is not of required length
 	 */
-	public static String[] parseStringArray(Node n, int length) {
-		String[] array = parseStringArray(n);
+	public static String[] getStringArray(Node n, int length) {
+		String[] array = getStringArray(n);
 		if (array != null && array.length != length) {
 			throw new IllegalArgumentException("Data node does not have array of required length");
 		}
 		return array;
+	}
+
+	/**
+	 * Get first element of data node as String. Converts if exists
+	 * @param n node
+	 * @return string value
+	 * @throws NexusException if node is null or not a data node
+	 */
+	public static String getFirstString(Node n) throws NexusException {
+		if (n == null || !(n instanceof DataNode)) {
+			throw new NexusException("Node is null or not a data node");
+		}
+
+		StringDataset sd = getCastAndCacheData((DataNode) n, StringDataset.class);
+		if (sd == null) {
+			throw new NexusException("Dataset is not defined in data node");
+		}
+		return sd.getString();
 	}
 
 	/**
@@ -2144,7 +2163,7 @@ public class NexusTreeUtils {
 	 * @param attr
 	 * @param length
 	 * @return integer array
-	 * @throws IllegalArgumentException if attribute exists and is not of required length 
+	 * @throws IllegalArgumentException if attribute exists and is not of required length
 	 */
 	public static int[] parseIntArray(Attribute attr, int length) {
 		int[] array = parseIntArray(attr);
@@ -2179,14 +2198,14 @@ public class NexusTreeUtils {
 	}
 
 	/**
-	 * Parse elements of data node as integer array. Converts if parsable
+	 * Get elements of data node as integer array. Converts if exists
 	 * @param n
 	 * @param length
 	 * @return integer array
-	 * @throws IllegalArgumentException if node exists and is not of required length 
+	 * @throws IllegalArgumentException if node exists and is not of required length
 	 */
-	public static int[] parseIntArray(Node n, int length) {
-		int[] array = parseIntArray(n);
+	public static int[] getIntArray(Node n, int length) {
+		int[] array = getIntArray(n);
 		if (array == null || array.length != length) {
 			throw new IllegalArgumentException("Data node does not have array of required length");
 		}
@@ -2194,19 +2213,37 @@ public class NexusTreeUtils {
 	}
 
 	/**
-	 * Parse elements of data node as integer array. Converts if parsable
+	 * Get elements of data node as integer array. Converts if exists
 	 * @param n
 	 * @return integer array or null if not a data node or data node is empty
 	 */
-	public static int[] parseIntArray(Node n) {
+	public static int[] getIntArray(Node n) {
 		if (n == null || !(n instanceof DataNode))
 			return null;
 
-		IntegerDataset id = (IntegerDataset) getCastAndCacheData((DataNode) n, IntegerDataset.class);
+		IntegerDataset id = getCastAndCacheData((DataNode) n, IntegerDataset.class);
 		if (id == null) {
 			return null;
 		}
 		return id.getData();
+	}
+
+	/**
+	 * Get first element of data node as double. Converts if exists
+	 * @param n node
+	 * @return double value
+	 * @throws NexusException if node is null or not a data node
+	 */
+	public static int getFirstInt(Node n) throws NexusException {
+		if (n == null || !(n instanceof DataNode)) {
+			throw new NexusException("Node is null or not a data node");
+		}
+
+		IntegerDataset id = getCastAndCacheData((DataNode) n, IntegerDataset.class);
+		if (id == null) {
+			throw new NexusException("Dataset is not defined in data node");
+		}
+		return id.getInt();
 	}
 
 	/**
@@ -2228,7 +2265,7 @@ public class NexusTreeUtils {
 	 * @param attr
 	 * @param length
 	 * @return double array
-	 * @throws IllegalArgumentException if attribute exists and is not of required length 
+	 * @throws IllegalArgumentException if attribute exists and is not of required length
 	 */
 	public static double[] parseDoubleArray(Attribute attr, int length) {
 		double[] array = parseDoubleArray(attr);
@@ -2263,14 +2300,14 @@ public class NexusTreeUtils {
 	}
 
 	/**
-	 * Parse elements of data node as double array. Converts if parsable
+	 * Get elements of data node as double array. Converts if exists
 	 * @param n
 	 * @param length
 	 * @return double array
-	 * @throws IllegalArgumentException if node exists and is not of required length 
+	 * @throws IllegalArgumentException if node exists and is not of required length
 	 */
-	public static double[] parseDoubleArray(Node n, int length) {
-		double[] array = parseDoubleArray(n);
+	public static double[] getDoubleArray(Node n, int length) {
+		double[] array = getDoubleArray(n);
 		if (array == null || array.length != length) {
 			throw new IllegalArgumentException("Data node does not have array of required length");
 		}
@@ -2278,20 +2315,38 @@ public class NexusTreeUtils {
 	}
 
 	/**
-	 * Parse elements of data node as double array. Converts if parsable
+	 * Parse elements of data node as double array. Converts if exists
 	 * @param n
 	 * @return double array or null if not a data node or data node is empty
 	 */
-	public static double[] parseDoubleArray(Node n) {
+	public static double[] getDoubleArray(Node n) {
 		if (n == null || !(n instanceof DataNode)) {
 			return null;
 		}
 
-		DoubleDataset dd = (DoubleDataset) getCastAndCacheData((DataNode) n, DoubleDataset.class);
+		DoubleDataset dd = getCastAndCacheData((DataNode) n, DoubleDataset.class);
 		if (dd == null) {
 			return null;
 		}
 		return dd.getData();
+	}
+
+	/**
+	 * Get first element of data node as double. Converts if exists
+	 * @param n node
+	 * @return double value
+	 * @throws NexusException if node is null or not a data node
+	 */
+	public static double getFirstDouble(Node n) throws NexusException {
+		if (n == null || !(n instanceof DataNode)) {
+			throw new NexusException("Node is null or not a data node");
+		}
+
+		DoubleDataset dd = getCastAndCacheData((DataNode) n, DoubleDataset.class);
+		if (dd == null) {
+			throw new NexusException("Dataset is not defined in data node");
+		}
+		return dd.getDouble();
 	}
 
 	/**
@@ -2326,7 +2381,8 @@ public class NexusTreeUtils {
 		return getCastAndCacheData(dNode, null);
 	}
 
-	private static Dataset getCastAndCacheData(DataNode dNode, Class<? extends Dataset> clazz) {
+	@SuppressWarnings("unchecked")
+	private static <D extends Dataset> D getCastAndCacheData(DataNode dNode, Class<D> clazz) {
 		ILazyDataset ld = dNode.getDataset();
 		Dataset dataset;
 		if (ld == null) {
@@ -2347,11 +2403,11 @@ public class NexusTreeUtils {
 			dataset = dataset.cast(clazz);
 			dNode.setDataset(dataset);
 		}
-		return dataset;
+		return (D) dataset;
 	}
 
 	private static DoubleDataset getConvertedData(DataNode data, Unit<? extends Quantity<?>> unit) {
-		DoubleDataset values = (DoubleDataset) getCastAndCacheData(data, DoubleDataset.class);
+		DoubleDataset values = getCastAndCacheData(data, DoubleDataset.class);
 		if (values != null) {
 			values = values.clone(); // necessary to stop clobbering cached values
 			convertIfNecessary(unit, getFirstString(data.getAttribute(NexusConstants.UNITS)), values.getData());

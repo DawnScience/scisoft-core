@@ -34,7 +34,7 @@ public class I21ScanUtils {
 	public static final String SCAN_TYPE_ELASTIC = "elastic_reference";
 	public static final String SCAN_TYPE_SAMPLE = "sample";
 
-	public static final String GDA_METADATA = "before_scan";
+	public static final String GDA_METADATA_SUFFIX = "_scan";
 
 	/**
 	 * Class representing a collection of scans for I21's RIXS experiments
@@ -85,7 +85,7 @@ public class I21ScanUtils {
 			for (NodeLink l : g) {
 				if (l.isDestinationGroup()) {
 					GroupNode d = (GroupNode) l.getDestination();
-					if (l.getName().equals(GDA_METADATA) && NexusTreeUtils.isNXClass(d, NexusConstants.COLLECTION)) {
+					if (l.getName().endsWith(GDA_METADATA_SUFFIX) && NexusTreeUtils.isNXClass(d, NexusConstants.COLLECTION)) {
 						retrieveScanInfo(d);
 						return;
 					}
@@ -95,20 +95,20 @@ public class I21ScanUtils {
 		}
 
 		private void retrieveScanInfo(GroupNode g) {
-			int rank = NexusTreeUtils.parseIntArray(g.getDataNode(SCAN_LEVELS), 1)[0];
+			int rank = NexusTreeUtils.getIntArray(g.getDataNode(SCAN_LEVELS), 1)[0];
 			shape = new int[rank];
 			posn = new int[rank];
 			names = new String[rank];
-			origin = NexusTreeUtils.parseIntArray(g.getDataNode(SCAN_ORIGIN_ID), 1)[0];
+			origin = NexusTreeUtils.getIntArray(g.getDataNode(SCAN_ORIGIN_ID), 1)[0];
 
-			String type = NexusTreeUtils.parseStringArray(g.getDataNode(SCAN_TYPE), 1)[0];
+			String type = NexusTreeUtils.getStringArray(g.getDataNode(SCAN_TYPE), 1)[0];
 			int otherID;
 			if (SCAN_TYPE_SAMPLE.equals(type)) {
 				isSample = true;
-				otherID = NexusTreeUtils.parseIntArray(g.getDataNode(ELASTIC_SCAN), 1)[0];
+				otherID = NexusTreeUtils.getIntArray(g.getDataNode(ELASTIC_SCAN), 1)[0];
 			} else if (SCAN_TYPE_ELASTIC.equals(type)) {
 				isSample = false;
-				otherID = NexusTreeUtils.parseIntArray(g.getDataNode(SAMPLE_SCAN), 1)[0];
+				otherID = NexusTreeUtils.getIntArray(g.getDataNode(SAMPLE_SCAN), 1)[0];
 			} else {
 				throw new IllegalArgumentException("Sample type is not valid");
 			}
@@ -120,9 +120,9 @@ public class I21ScanUtils {
 
 			for (int i = 0; i < rank; i++) {
 				String prefix = String.format(SCAN_FORMAT, i);
-				shape[i] = NexusTreeUtils.parseIntArray(g.getDataNode(prefix + "length"), 1)[0];
-				posn[i] = NexusTreeUtils.parseIntArray(g.getDataNode(prefix + "index"), 1)[0];
-				names[i] = NexusTreeUtils.parseStringArray(g.getDataNode(prefix + "name"), 1)[0];
+				shape[i] = NexusTreeUtils.getIntArray(g.getDataNode(prefix + "length"), 1)[0];
+				posn[i] = NexusTreeUtils.getIntArray(g.getDataNode(prefix + "index"), 1)[0];
+				names[i] = NexusTreeUtils.getStringArray(g.getDataNode(prefix + "name"), 1)[0];
 			}
 
 			size = ShapeUtils.calcSize(shape);

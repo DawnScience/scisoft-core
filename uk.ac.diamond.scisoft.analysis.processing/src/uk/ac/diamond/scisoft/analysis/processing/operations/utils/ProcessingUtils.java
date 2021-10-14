@@ -26,6 +26,7 @@ import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.nexus.NexusConstants;
+import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -120,8 +121,12 @@ public class ProcessingUtils {
 			if (NexusTreeUtils.isNXClass(g, NexusConstants.NOTE)) {
 				DataNode n = g.getDataNode("name");
 				if (n != null) {
-					if (processName.equals(NexusTreeUtils.parseStringArray(n)[0])) {
-						return g;
+					try {
+						if (processName.equals(NexusTreeUtils.getFirstString(n))) {
+							return g;
+						}
+					} catch (NexusException e) {
+						throw new OperationException(operation, "'name' dataset not found in " + NexusConstants.PROCESS);
 					}
 				}
 			}

@@ -384,9 +384,9 @@ public class MillerSpaceMapper {
 		GroupNode g = (GroupNode) nl.getDestination();
 		DataNode d = g.getDataNode("program_name");
 		if (d != null) {
-			String program = NexusTreeUtils.parseStringArray(d, 1)[0];
-			if (program != null && program.startsWith("GDA")) {
-				try {
+			try {
+				String program = NexusTreeUtils.getFirstString(d);
+				if (program != null && program.startsWith("GDA")) {
 					g = (GroupNode) NexusTreeUtils.requireNode(g, NexusConstants.USER);
 					d = g.getDataNode("username"); // check old non-NeXus field
 					if (d == null) {
@@ -395,15 +395,15 @@ public class MillerSpaceMapper {
 							return false;
 						}
 					}
-					String user = NexusTreeUtils.parseStringArray(d, 1)[0];
+					String user = NexusTreeUtils.getFirstString(d);
 					if (user != null && user.equals("i16user")) {
 						// program name given as "GDA 9.14.0", need version 9.15+
 						String version = program.substring(program.indexOf(" ")).trim();
 						return VersionUtils.isOldVersion("9.15.0", version);
 					}
-				} catch (NexusException e) {
-					// do nothing
 				}
+			} catch (NexusException e) {
+				// do nothing
 			}
 		}
 		return false;
@@ -1430,7 +1430,7 @@ public class MillerSpaceMapper {
 			throw new ScanFileHolderException("I16 workaround: collating image file names", e1);
 		}
 
-		StringDataset pd = DatasetFactory.createFromObject(StringDataset.class, names, NexusTreeUtils.parseIntArray(dn));
+		StringDataset pd = DatasetFactory.createFromObject(StringDataset.class, names, NexusTreeUtils.getIntArray(dn));
 
 		DataNode node = TreeFactory.createDataNode(-1);
 		node.addAttribute(TreeFactory.createAttribute(NexusConstants.DATA_SIGNAL, 1));

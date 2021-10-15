@@ -1989,6 +1989,15 @@ public class NexusTreeUtils {
 	 * @return node link to first or null
 	 */
 	public static NodeLink findFirstSignalDataNode(GroupNode group) {
+		String signal = getFirstString(group.getAttribute(NexusConstants.DATA_SIGNAL));
+		if (signal != null) {
+			if (group.containsDataNode(signal)) {
+				return group.getNodeLink(signal);
+			}
+			logger.warn("Signal {} not found in group {}", signal, group);
+		}
+
+		// Check according to pre-2014 standard
 		for (NodeLink l : group) {
 			if (l.isDestinationData()) {
 				DataNode d = (DataNode) l.getDestination();
@@ -2010,6 +2019,25 @@ public class NexusTreeUtils {
 			if (isNXClass(g, NexusConstants.ENTRY)) {
 				NodeLink l = findFirstNode(g, NexusConstants.PROCESS);
 				if (l != null && l.isDestinationGroup()) {
+					return g;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Find first sub-entry with given application definition
+	 * @param group
+	 * @param appDef application definition
+	 * @return sub entry or null
+	 */
+	public static GroupNode findFirstSubEntry(GroupNode group, String appDef) {
+		for (GroupNode g : group.getGroupNodes()) {
+			if (isNXClass(g, NexusConstants.SUBENTRY)) {
+				String definition = NexusTreeUtils.getFirstString(group.getAttribute("definition"));
+				if (appDef.equals(definition)) {
 					return g;
 				}
 			}

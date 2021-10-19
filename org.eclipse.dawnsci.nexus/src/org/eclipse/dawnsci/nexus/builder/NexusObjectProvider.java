@@ -68,7 +68,7 @@ public interface NexusObjectProvider<N extends NXobject> extends NexusEntryModif
 	 * @return category for this object
 	 */
 	public NexusBaseClass getCategory();
-
+	
 	/**
 	 * Returns the name of the collection for this {@link NexusObjectProvider}. When adding
 	 * a nexus object to a {@link NexusEntryBuilder}, if this method does not return

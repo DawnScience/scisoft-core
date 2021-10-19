@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.eclipse.dawnsci.nexus.IMultipleNexusDevice;
 import org.eclipse.dawnsci.nexus.INexusDevice;
 import org.eclipse.dawnsci.nexus.NXcollection;
 import org.eclipse.dawnsci.nexus.NexusScanInfo;
@@ -57,7 +56,7 @@ public class NexusScanModel {
 	 * Optionally a device that produces multiple nexus objects with different scan roles.
 	 * This could be a device that controls other devices, such as a malcolm device in GDA.
 	 */
-	private Optional<IMultipleNexusDevice> multipleNexusDevice = Optional.empty();
+	private Optional<INexusDevice<?>> multipleNexusDevice = Optional.empty();
 	
 	private INexusDevice<NXcollection> metadataWriter;
 
@@ -116,11 +115,11 @@ public class NexusScanModel {
 		this.nexusDevices = nexusDevices;
 	}
 
-	public Optional<IMultipleNexusDevice> getMultipleNexusDevice() {
+	public Optional<INexusDevice<?>> getMultipleNexusDevice() {
 		return multipleNexusDevice;
 	}
 
-	public void setMultipleNexusDevice(Optional<IMultipleNexusDevice> multipleNexusDevice) {
+	public void setMultipleNexusDevice(Optional<INexusDevice<?>> multipleNexusDevice) {
 		this.multipleNexusDevice = multipleNexusDevice;
 	}
 	

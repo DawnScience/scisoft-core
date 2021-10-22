@@ -64,7 +64,6 @@ import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.dataset.PositionIterator;
 import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.dataset.StringDataset;
-import org.junit.Assert;
 
 public class NexusAssert {
 	
@@ -85,7 +84,6 @@ public class NexusAssert {
 	private static final String LAZY_DATA_EXCEPTION = "Could not get data from lazy dataset";
 	private static final String LAZY_TIMESTAMP_EXCEPTION = "Could not get timestamp data from lazy dataset";
 	
-	private static final int[] SINGLE_SHAPE = new int[] { 1 };
 	private static final int[] EMPTY_SHAPE = new int[] { };
 	
 	private NexusAssert() {
@@ -385,7 +383,7 @@ public class NexusAssert {
 		final String endTimeString = metadataCollection.getString(NXentry.NX_END_TIME);
 		final Long duration = metadataCollection.getLong(NXentry.NX_DURATION);
 		assertThat(startTimeString, is(equalTo(entry.getStart_time().getString()))); // scalar field
-		assertThat(endTimeString, is(equalTo(entry.getEnd_time().getString(0)))); // 1D dataset of size 1
+		assertThat(endTimeString, is(equalTo(entry.getEnd_time().getString()))); // scalar field
 		assertThat(duration, is(equalTo(entry.getDurationScalar())));
 	}
 	
@@ -413,9 +411,9 @@ public class NexusAssert {
 		// As truncating to milliseconds, could end the same milli as starting, so check that end is at least not before start.
 		assertTrue(!endTimeDateDataset.getDate().before(startTimeDateDataset.getDate()));
 
-		final long scanDuration = Duration.between(startTimeDateDataset.getDate().toInstant(), 
-				endTimeDateDataset.getDate().toInstant()).toMillis();		
-		assertEquals(scanDuration, durationDataset.getLong(0));
+		final long scanDuration = Duration.between(startTimeDateDataset.getDate().toInstant(),
+				endTimeDateDataset.getDate().toInstant()).toMillis();
+		assertEquals(scanDuration, durationDataset.getLong());
 		
 	}
 
@@ -597,10 +595,10 @@ public class NexusAssert {
 		// dataset
 		// TODO: is this now possible?
 		assertEquals(Long.class, actualTimeDataset.getElementClass());
-		assertEquals(1, actualTimeDataset.getRank());
-		assertArrayEquals(SINGLE_SHAPE, actualTimeDataset.getShape());
+		assertEquals(0, actualTimeDataset.getRank());
+		assertArrayEquals(EMPTY_SHAPE, actualTimeDataset.getShape());
 		
-		final long scanDurationMs = actualTimeDataset.getLong(0);
+		final long scanDurationMs = actualTimeDataset.getLong();
 
 		// check the scan dead time dataset
 		final DataNode deadTimeDataNode = diamondScanCollection.getDataNode(FIELD_NAME_SCAN_DEAD_TIME);
@@ -615,9 +613,9 @@ public class NexusAssert {
 		// written as a 1d dataset of rank 1, as we can't write a scalar lazy writeable
 		// dataset
 		assertEquals(Long.class, deadTimeDataset.getElementClass());
-		assertEquals(1, deadTimeDataset.getRank());
-		assertArrayEquals(SINGLE_SHAPE, deadTimeDataset.getShape());
-		final long deadTime = deadTimeDataset.getLong(0);
+		assertEquals(0, deadTimeDataset.getRank());
+		assertArrayEquals(EMPTY_SHAPE, deadTimeDataset.getShape());
+		final long deadTime = deadTimeDataset.getLong();
 
 		// The scan duration should be equal to the estimated time plus the dead time
 		assertEquals(estimatedtime + deadTime, scanDurationMs);
@@ -633,9 +631,9 @@ public class NexusAssert {
 		}
 
 		assertEquals(Float.class, deadTimePercentDataset.getElementClass());
-		assertEquals(1, deadTimePercentDataset.getRank());
-		assertArrayEquals(SINGLE_SHAPE, deadTimePercentDataset.getShape());
-		final float deadTimePercent = deadTimePercentDataset.getFloat(0);
+		assertEquals(0, deadTimePercentDataset.getRank());
+		assertArrayEquals(EMPTY_SHAPE, deadTimePercentDataset.getShape());
+		final float deadTimePercent = deadTimePercentDataset.getFloat();
 
 		assertEquals((float) deadTime / scanDurationMs, deadTimePercent / 100, 0.001);
 	}

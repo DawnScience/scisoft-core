@@ -29,7 +29,6 @@ import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.january.DatasetException;
-import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -281,21 +280,6 @@ public class NexusUtils {
 	 */
 	public static ILazyWriteableDataset createLazyWriteableDataset(String name, Class<?> clazz, int[] shape, int[] maxShape, int[] chunks) {
 		return new LazyWriteableDataset(name, clazz, shape, maxShape, chunks, null);
-	}
-
-	/**
-	 * Create a lazy writeable dataset
-	 * @param name
-	 * @param dtype
-	 * @param shape
-	 * @param maxShape
-	 * @param chunks
-	 * @return lazy writeable dataset
-	 * @deprecated Use {@link #createLazyWriteableDataset(String, Class, int[], int[], int[])}
-	 */
-	@Deprecated
-	public static ILazyWriteableDataset createLazyWriteableDataset(String name, int dtype, int[] shape, int[] maxShape, int[] chunks) {
-		return new LazyWriteableDataset(name, DTypeUtils.getElementClass(dtype), shape, maxShape, chunks, null);
 	}
 
 	/**
@@ -1102,6 +1086,8 @@ public class NexusUtils {
 			AxesMetadata am = data.getFirstMetadata(AxesMetadata.class);
 			if (am != null) {
 				axes = am.getAxes();
+			} else {
+				axes = new ILazyDataset[0];
 			}
 		}
 

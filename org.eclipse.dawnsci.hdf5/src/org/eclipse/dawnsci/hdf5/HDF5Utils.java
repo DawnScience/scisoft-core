@@ -526,23 +526,24 @@ public class HDF5Utils {
 				sid = H5.H5Dget_space(did);
 				rank = H5.H5Sget_simple_extent_ndims(sid);
 
-				final long[] sstart = new long[rank]; // source start
-				final long[] sstride = new long[rank]; // source steps
-				final long[] dsize = new long[rank]; // destination size
-
-				for (int i = 0; i < rank; i++) {
-					sstart[i] = start[i];
-					sstride[i] = step[i];
-					dsize[i] = count[i];
-				}
-
 				if (rank == 0) {
 					msid = H5.H5Screate(HDF5Constants.H5S_SCALAR);
 				} else {
+					final long[] sstart = new long[rank]; // source start
+					final long[] sstride = new long[rank]; // source steps
+					final long[] dsize = new long[rank]; // destination size
+	
+					for (int i = 0; i < rank; i++) {
+						sstart[i] = start[i];
+						sstride[i] = step[i];
+						dsize[i] = count[i];
+					}
+
 					H5.H5Sselect_hyperslab(sid, HDF5Constants.H5S_SELECT_SET, sstart, sstride, dsize, null);
 					msid = H5.H5Screate_simple(rank, dsize, null);
 					H5.H5Sselect_all(msid);
 				}
+
 				Class<? extends Dataset> lClass = clazz == null ? type.clazz : clazz;
 				final int lisize = isize >= 0 ? isize : type.isize;
 				data = DatasetFactory.zeros(lisize, lClass, count);
@@ -832,6 +833,11 @@ public class HDF5Utils {
 		long[] shape = toLongArray(iShape);
 		long[] maxShape = toLongArray(iMaxShape);
 		long[] chunks = toLongArray(iChunks);
+		final boolean isScalar = shape.length == 0;
+		if (isScalar) {
+			chunks = null;
+			compression = 0;
+		}
 		boolean stringDataset = StringDataset.class.isAssignableFrom(clazz);
 		long hdfType = getHDF5type(clazz);
 		try {
@@ -840,7 +846,8 @@ public class HDF5Utils {
 			long hdfPropertiesId = -1;
 			try {
 				hdfDatatypeId = H5.H5Tcopy(hdfType);
-				hdfDataspaceId = H5.H5Screate_simple(shape.length, shape, maxShape);
+				hdfDataspaceId = isScalar ? H5.H5Screate(HDF5Constants.H5S_SCALAR)
+						: H5.H5Screate_simple(shape.length, shape, maxShape);
 				hdfPropertiesId = H5.H5Pcreate(HDF5Constants.H5P_DATASET_CREATE);
 
 				if (stringDataset) {
@@ -941,6 +948,7 @@ public class HDF5Utils {
 		Dataset dataset = DatasetUtils.convertToDataset(data);
 
 		long[] shape = toLongArray(dataset.getShapeRef());
+		final boolean isScalar = shape.length == 0;
 
 		boolean stringDataset = dataset instanceof StringDataset;
 		long hdfType = getHDF5type(dataset.getClass());
@@ -952,7 +960,8 @@ public class HDF5Utils {
 
 			try {
 				hdfDatatypeId = H5.H5Tcopy(hdfType);
-				hdfDataspaceId = shape.length == 0 ? H5.H5Screate(HDF5Constants.H5S_SCALAR) : H5.H5Screate_simple(shape.length, shape, null);
+				hdfDataspaceId = isScalar ? H5.H5Screate(HDF5Constants.H5S_SCALAR)
+						: H5.H5Screate_simple(shape.length, shape, null);
 				hdfPropertiesId = H5.H5Pcreate(HDF5Constants.H5P_DATASET_CREATE);
 
 				if (stringDataset) {
@@ -1294,32 +1303,41 @@ public class HDF5Utils {
 			long hdfDatatypeId = -1;
 			try {
 				int rank = H5.H5Sget_simple_extent_ndims(hdfDataspaceId);
-				long[] dims = new long[rank];
-				long[] mdims = new long[rank];
-				H5.H5Sget_simple_extent_dims(hdfDataspaceId, dims, mdims);
-				long[] start = toLongArray(slice.getStart());
-				long[] stride = toLongArray(slice.getStep());
-				long[] shape = toLongArray(slice.getShape());
-
-				long[] newShape = null;
-				if (slice.isExpanded()) {
-					newShape = toLongArray(slice.getSourceShape());
+				boolean isScalar = rank == 0;
+				if (isScalar) {
+					if (slice != null && slice.getShape().length != 0) {
+						String msg = "SliceND must have zero-rank when target dataset is a scalar";
+						logger.error(msg);
+						throw new IllegalArgumentException(msg);
+					}
 				} else {
-					long[] mShape = toLongArray(slice.getStop());
-					if (expandToGreatestShape(mShape, dims)) {
-						newShape = mShape;
+
+					long[] dims = new long[rank];
+					long[] mdims = new long[rank];
+					H5.H5Sget_simple_extent_dims(hdfDataspaceId, dims, mdims);
+					long[] start = toLongArray(slice.getStart());
+					long[] stride = toLongArray(slice.getStep());
+					long[] shape = toLongArray(slice.getShape());
+	
+					long[] newShape = null;
+					if (slice.isExpanded()) {
+						newShape = toLongArray(slice.getSourceShape());
+					} else {
+						long[] mShape = toLongArray(slice.getStop());
+						if (expandToGreatestShape(mShape, dims)) {
+							newShape = mShape;
+						}
 					}
-				}
-				if (newShape != null) {
-					H5.H5Dset_extent(hdfDatasetId, newShape);
-					try {
-						H5.H5Sclose(hdfDataspaceId);
-					} catch (HDF5Exception ex) {
+					if (newShape != null) {
+						H5.H5Dset_extent(hdfDatasetId, newShape);
+						try {
+							H5.H5Sclose(hdfDataspaceId);
+						} catch (HDF5Exception ex) {
+						}
+						hdfDataspaceId = H5.H5Screate_simple(rank, newShape, mdims);
+						ids[1] = hdfDataspaceId;
 					}
-					hdfDataspaceId = H5.H5Screate_simple(rank, newShape, mdims);
-					ids[1] = hdfDataspaceId;
-				}
-				if (rank != 0) { // not a scalar (or null) dataspace
+
 					H5.H5Sselect_hyperslab(hdfDataspaceId, HDF5Constants.H5S_SELECT_SET, start, stride, shape, null);
 				}
 
@@ -1339,7 +1357,7 @@ public class HDF5Utils {
 					buffer = converted;
 				}
 
-				hdfMemspaceId = H5.H5Screate_simple(rank, HDF5Utils.toLongArray(data.getShape()), null);
+				hdfMemspaceId = isScalar ? H5.H5Screate(HDF5Constants.H5S_SCALAR) : H5.H5Screate_simple(rank, HDF5Utils.toLongArray(data.getShape()), null);
 				if (data instanceof StringDataset) {
 					//use the properties from the existing dataset for a string,
 					//not the memtype of the dataset.

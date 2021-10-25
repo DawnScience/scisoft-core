@@ -1764,6 +1764,14 @@
             description="Locate where min/max/crossing occurs in each row of an image"
             name="Locate in rows of image">
       </operation>
+      <operation
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.PyrometryOperation"
+            description="Perform calibration, Planck, Wien, and 2-colour pyrometry analysis"
+            icon="icons/gausfilt.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.PyrometryOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.PyrometryModel"
+            name="Pyrometry Analysis">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

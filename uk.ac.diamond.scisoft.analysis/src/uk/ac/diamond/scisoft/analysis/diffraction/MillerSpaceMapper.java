@@ -137,6 +137,7 @@ public class MillerSpaceMapper {
 		return isQ ? Q_SPACE : MILLER_SPACE;
 	}
 
+	private static final String APP_DEF_MX = "NXmx";
 	private static final String ENTRY = "processed";
 	private static final String PROCESSED = Tree.ROOT + ENTRY;
 	private static final String PROCESSPATH = TreeUtils.join(PROCESSED, "process");
@@ -1355,6 +1356,17 @@ public class MillerSpaceMapper {
 			throw new ScanFileHolderException("Could not find entry");
 		}
 		GroupNode entry = (GroupNode) link.getDestination();
+
+		String definition = NexusTreeUtils.getFirstString(entry.getAttribute("definition"));
+		if (definition == null || !definition.equals(APP_DEF_MX)) {
+			GroupNode subentry = NexusTreeUtils.findFirstSubEntry(entry, APP_DEF_MX);
+			if (subentry != null) {
+				logger.trace("{} found for {}: {}", NexusConstants.SUBENTRY, APP_DEF_MX, subentry);
+				entry = subentry;
+			} else if (definition != null) {
+				logger.warn("Application definition is {} but require {} and no correct subentries too ...", definition, APP_DEF_MX);
+			}
+		}
 
 		String instrumentName = bean.getInstrumentName();
 		if (instrumentName == null || instrumentName.isEmpty()) {

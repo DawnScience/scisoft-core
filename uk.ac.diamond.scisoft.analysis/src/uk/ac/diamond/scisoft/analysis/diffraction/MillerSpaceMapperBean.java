@@ -49,20 +49,70 @@ public class MillerSpaceMapperBean implements Cloneable {
 		/**
 		 * Volume in Miller space
 		 */
-		Volume_HKL,
+		Volume_HKL(true, false, false),
 		/**
-		 * Volume in q-space (lab frame)
+		 * Volume in q-space (crystal frame)
 		 */
-		Volume_Q,
+		Volume_Q(true, false, true),
+		/**
+		 * Area in Miller-space (H,K)
+		 */
+		Area_HK(false, true, false),
+		/**
+		 * Area in Miller-space (K,L)
+		 */
+		Area_KL(false, true, false),
+		/**
+		 * Area in Miller-space (L,H)
+		 */
+		Area_LH(false, true, false),
+		/**
+		 * Area in q-space (parallel, perpendicular to sample surface)
+		 */
+		Area_QPP(false, true, true),
+		/**
+		 * Area in q-space (X,Y)
+		 */
+		Area_QXY(false, true, true),
+		/**
+		 * Area in q-space (Y,Z)
+		 */
+		Area_QYZ(false, true, true),
+		/**
+		 * Area in q-space (Z,X)
+		 */
+		Area_QZX(false, true, true),
 		/**
 		 * Coordinates in Miller space
 		 */
-		Coords_HKL,
+		Coords_HKL(false, false, false),
 		/**
 		 * Coordinates in q-space (momentum transfer)
 		 */
-		Coords_Q,
+		Coords_Q(false, false, true),
 		;
+
+		private boolean volume;
+		private boolean area;
+		private boolean q;
+
+		private OutputMode(boolean volume, boolean area, boolean q) {
+			this.volume = volume;
+			this.area = area;
+			this.q = q;
+		}
+
+		public boolean isVolume() {
+			return volume;
+		}
+
+		public boolean isArea() {
+			return area;
+		}
+
+		public boolean isQ() {
+			return q;
+		}
 	}
 
 	public MillerSpaceMapperBean() {
@@ -361,14 +411,14 @@ public class MillerSpaceMapperBean implements Cloneable {
 	}
 
 	/**
-	 * @param step sides of voxels (can be null if not in a volume mode)
+	 * @param step sides of voxels (can be null if not in area or volume mode)
 	 */
 	public void setStep(double... step) {
 		this.step = step;
 	}
 
 	/**
-	 * Set rectangular region that defines the area with its bounds that contribute to volume
+	 * Set rectangular region that defines the area with its bounds that contribute to output
 	 * @param sx start x
 	 * @param ex end x (exclusive)
 	 * @param sy start y
@@ -559,30 +609,6 @@ public class MillerSpaceMapperBean implements Cloneable {
 			return false;
 		}
 		return true;
-	}
-
-	public static boolean isVolume(MillerSpaceMapperBean bean) {
-		switch (bean.getOutputMode()) {
-		case Coords_HKL:
-		case Coords_Q:
-			return false;
-		case Volume_HKL:
-		case Volume_Q:
-		default:
-			return true;
-		}
-	}
-
-	public static boolean isQSpace(MillerSpaceMapperBean bean) {
-		switch (bean.getOutputMode()) {
-		case Coords_Q:
-		case Volume_Q:
-			return true;
-		case Coords_HKL:
-		case Volume_HKL:
-		default:
-			return false;
-		}
 	}
 
 	/**

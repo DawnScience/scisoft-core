@@ -117,7 +117,7 @@ public class I16NexusTest {
 		v.setName("volume");
 		w.setName("weight");
 		axes.setName("axes");
-		MillerSpaceMapper.saveVolume(dstPath, bean, "/group0/data0", volPath, v, w, axes);
+		MillerSpaceMapper.saveOutput(dstPath, bean, "/group0/data0", volPath, v, w, axes);
 		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/process/date"));
 		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/process/parameters"));
 		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/process/program"));

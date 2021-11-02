@@ -110,8 +110,7 @@ public class NexusScanInfo {
 	}
 	
 	public Collection<String> getDeviceNames(ScanRole scanRole) {
-		Collection<String> names = deviceNames.get(scanRole);
-		return names == null ? Collections.emptyList() : names;
+		return deviceNames.get(scanRole);
 	}
 	
 	public void setDetectorNames(Set<String> detectorNames) {
@@ -119,11 +118,13 @@ public class NexusScanInfo {
 	}
 	
 	public Collection<String> getDetectorNames() {
-		return getDeviceNames(ScanRole.DETECTOR);
+		final Collection<String> detNames = getDeviceNames(ScanRole.DETECTOR);
+		return detNames == null ? Collections.emptyList() : detNames;
 	}
 
 	public List<String> getScannableNames() {
-		return (List<String>) getDeviceNames(ScanRole.SCANNABLE);
+		final List<String> scannableNames = (List<String>) getDeviceNames(ScanRole.SCANNABLE);
+		return scannableNames == null ? Collections.emptyList() : scannableNames;
 	}
 	
 	public void setScannableNames(List<String> axisNames) {
@@ -131,7 +132,8 @@ public class NexusScanInfo {
 	}
 	
 	public Set<String> getPerPointMonitorNames() {
-		return (Set<String>) getDeviceNames(ScanRole.MONITOR_PER_POINT);
+		final Set<String> perPointMonitorNames = (Set<String>) getDeviceNames(ScanRole.MONITOR_PER_POINT);
+		return perPointMonitorNames == null ? Collections.emptySet() : perPointMonitorNames;
 	}
 	
 	public void setPerPointMonitorNames(Set<String> monitorNames) {
@@ -139,7 +141,8 @@ public class NexusScanInfo {
 	}
 	
 	public Set<String> getPerScanMonitorNames() {
-		return (Set<String>) getDeviceNames(ScanRole.MONITOR_PER_SCAN);
+		final Set<String> perScanMonitorNames = (Set<String>) getDeviceNames(ScanRole.MONITOR_PER_SCAN);
+		return perScanMonitorNames == null ? Collections.emptySet() : perScanMonitorNames;
 	}
 	
 	public void setPerScanMonitorNames(Set<String> metadataScannableNames) {
@@ -177,14 +180,11 @@ public class NexusScanInfo {
 	 * @return role or device within scan, never <code>null</code>
 	 */
 	public ScanRole getScanRole(String name) {
-		for (ScanRole scanRole : deviceNames.keySet()) {
-			Collection<String> names = deviceNames.get(scanRole);
-			if (names != null && names.contains(name)) {
-				return scanRole;
-			}
-		}
-		
-		return ScanRole.NONE;
+		return deviceNames.entrySet().stream()
+			.filter(entry -> entry.getValue() != null && entry.getValue().contains(name))
+			.map(Map.Entry::getKey)
+			.findFirst()
+			.orElse(ScanRole.NONE);
 	}
 	
 	/**

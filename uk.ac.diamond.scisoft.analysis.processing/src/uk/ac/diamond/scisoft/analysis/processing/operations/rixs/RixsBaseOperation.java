@@ -437,6 +437,15 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		}
 	}
 
+	private String getString(GroupNode g, String name) throws NexusException {
+		try {
+			return NexusTreeUtils.getFirstString(g.getDataNode(name));
+		} catch (NexusException e) {
+			log.appendFailure("Could not read value from %s", name, e);
+			throw e;
+		}
+	}
+
 	private void parseOldDLSNeXus(String filePath, GroupNode detector, GroupNode mdg) throws NexusException {
 		countsPerPhoton = -1;
 		xrayEnergy = -1;
@@ -494,7 +503,9 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	// Head DO936N-00Z-#BN-9UY, serial no CCD-19600
 	// CCD from E2V, CCD42-40, 2048x2048 (13.5umx13.5um), serial no 15242-01-06
 	private static final double[] ANDOR_AD_RATE = new double[] {0.05, 1, 3}; // rate in MHz
+	private static final String[] ANDOR_AD_RATE_ENUM = {"0.05 MHz", "1.00 MHz", "3.00 MHz"};
 	private static final int[] ANDOR_PREAMP_GAIN = new int[] {1, 2, 4};
+	private static final String[] ANDOR_PREAMP_GAIN_ENUM = {"1.00", "2.00", "4.00"};
 	private static final double[][] ANDOR_SENSITIVITY = new double[][] {{3.5, 1.9, 1.0}, {3.4, 1.8, 1.0}, {3.1, 1.8, 1.0}}; // in electrons per AD count
 
 	private int calculateCountsPerPhoton(GroupNode mdg) throws NexusException {
@@ -526,11 +537,30 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	private double andorSensitivity(int gain, double speed) throws NexusException {
 		int gi = Arrays.binarySearch(ANDOR_PREAMP_GAIN, gain);
 		if (gi < 0) {
-			throw new OperationException(this, "Gain value not allowed");
+			throw new OperationException(this, "Gain value not allowed: " + gain);
 		}
 		int si = Arrays.binarySearch(ANDOR_AD_RATE, speed);
 		if (si < 0) {
-			throw new OperationException(this, "ADC speed value not allowed");
+			throw new OperationException(this, "ADC speed value not allowed: " + speed);
+		}
+
+		return ANDOR_SENSITIVITY[si][gi] * PAIR_PRODUCTION_ENERGY;
+	}
+
+	/**
+	 * @param gain enumeration string
+	 * @param speed enumeration string
+	 * @return photon energy sensitivity (eV/AD count)
+	 * @throws NexusException
+	 */
+	private double andorSensitivity(String gain, String speed) throws NexusException {
+		int gi = Arrays.binarySearch(ANDOR_PREAMP_GAIN_ENUM, gain);
+		if (gi < 0) {
+			throw new OperationException(this, "Gain value not allowed: " + gain);
+		}
+		int si = Arrays.binarySearch(ANDOR_AD_RATE_ENUM, speed);
+		if (si < 0) {
+			throw new OperationException(this, "ADC speed value not allowed: " + speed);
 		}
 
 		return ANDOR_SENSITIVITY[si][gi] * PAIR_PRODUCTION_ENERGY;
@@ -563,9 +593,9 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			GroupNode settings = detector.getGroupNode(dName + "_settings");
 			dName = dName.toLowerCase();
 			if (dName.contains(DETECTOR_NAME_ANDOR)) {
-				int gain = (int) getDouble(settings, "preamp_gain");
-				double speed = getDouble(settings, "adc_speed");
-				countsPerPhoton = (int) Math.floor(xrayEnergy / andorSensitivity(gain, speed));
+				String gainEnum = getString(settings, "preamp_gain");
+				String speedEnum = getString(settings, "adc_speed");
+				countsPerPhoton = (int) Math.floor(xrayEnergy / andorSensitivity(gainEnum, speedEnum));
 			} else if (dName.contains(DETECTOR_NAME_XCAM)) {
 				countsPerPhoton = (int) (800 * (xrayEnergy / 933.)); // rough estimate from XCAM commissioning
 			} else {

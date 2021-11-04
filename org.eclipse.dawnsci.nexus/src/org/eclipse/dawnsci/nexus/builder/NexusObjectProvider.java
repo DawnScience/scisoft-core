@@ -23,6 +23,7 @@ import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NXpositioner;
 import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.NexusBaseClass;
+import org.eclipse.dawnsci.nexus.NexusScanInfo.ScanRole;
 import org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder;
 
 /**
@@ -78,6 +79,26 @@ public interface NexusObjectProvider<N extends NXobject> extends NexusEntryModif
 	 * @return collection name or <code>null</code>
 	 */
 	public String getCollectionName();
+	
+	/**
+	 * Returns a {@link ScanRole} defining the role of the device for this nexus object provider
+	 * performs in the scan. 
+	 * 
+	 * This affects how the fields within the nexus object returned by
+	 * {@link #getNexusObject()} are added to the {@link NXdata} group, if any. For example and {@link NXdata}
+	 * group will be created for each primary field of each detector, and axis fields
+	 * 
+	 * The nexus writing framework already knows the {@link ScanRole} of the {@link INexusDevice} whose
+	 * {@link INexusDevice#getNexusProviders(org.eclipse.dawnsci.nexus.NexusScanInfo) method returned
+	 * this NexusObjectProvider, as the INexusDevices are grouped by ScanRole in the NexusScanModel.
+	 * However, some INexusDevices may correspond to multiple devices with different roles in the scan -
+	 * a malcolm device is an example of this. Where this is the case, this method can returns a non-null
+	 * value to override the scan ro  
+	 *  
+	 * @return the role of this device in the scan, where <code>null</code> tells the nexus writing framework
+	 *     to use the scan role of the {@link INexusDevice} in the NexusScanModel which produced this provider 
+	 */
+	public ScanRole getScanRole();
 	
 	/**
 	 * Returns the names of the external HDF5 file(s) that this device writes

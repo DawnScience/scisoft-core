@@ -26,6 +26,7 @@ import java.util.Set;
 import org.eclipse.dawnsci.nexus.NXdata;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NexusBaseClass;
+import org.eclipse.dawnsci.nexus.NexusScanInfo.ScanRole;
 import org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder;
 import org.eclipse.dawnsci.nexus.builder.data.impl.PrimaryDataFieldModel;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
@@ -75,6 +76,8 @@ public abstract class AbstractNexusObjectProvider<N extends NXobject> implements
 	private N nexusObject = null;
 
 	private String name;
+	
+	private ScanRole scanRole = null;
 
 	private String primaryDataFieldName = null;
 	
@@ -106,7 +109,7 @@ public abstract class AbstractNexusObjectProvider<N extends NXobject> implements
 	 * @param name name
 	 * @param nexusBaseClass base class type
 	 */
-	public AbstractNexusObjectProvider(String name, NexusBaseClass nexusBaseClass) {
+	protected AbstractNexusObjectProvider(String name, NexusBaseClass nexusBaseClass) {
 		this(name, nexusBaseClass, null);
 	}
 
@@ -180,6 +183,18 @@ public abstract class AbstractNexusObjectProvider<N extends NXobject> implements
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return nexusBaseClass;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.dawnsci.nexus.builder.NexusObjectProvider#getScanRole()
+	 */
+	@Override
+	public ScanRole getScanRole() {
+		return scanRole;
+	}
+
+	public void setScanRole(ScanRole scanRole) {
+		this.scanRole = scanRole;
 	}
 
 	/* (non-Javadoc)
@@ -512,7 +527,5 @@ public abstract class AbstractNexusObjectProvider<N extends NXobject> implements
 		
 		properties.put(propertyName, value);
 	}
-	
-	 
 
 }

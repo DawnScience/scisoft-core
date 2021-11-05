@@ -37,11 +37,11 @@ import org.eclipse.january.dataset.SliceND;
  */
 public class NexusScanInfo {
 	
-	public static enum NexusRole {
+	public enum NexusRole {
 		PER_POINT, PER_SCAN
 	}
 	
-	public static enum ScanRole {
+	public enum ScanRole {
 		DETECTOR(PER_POINT),
 		SCANNABLE(PER_POINT),
 		MONITOR_PER_POINT(PER_POINT),

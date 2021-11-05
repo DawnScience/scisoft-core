@@ -18,6 +18,7 @@
 
 package org.eclipse.dawnsci.nexus.scan.impl;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.SYSTEM_PROPERTY_NAME_VALIDATE_NEXUS;
 
@@ -32,7 +33,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,7 +42,6 @@ import org.eclipse.dawnsci.nexus.NXcollection;
 import org.eclipse.dawnsci.nexus.NXdata;
 import org.eclipse.dawnsci.nexus.NXentry;
 import org.eclipse.dawnsci.nexus.NXobject;
-import org.eclipse.dawnsci.nexus.NexusBaseClass;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusScanInfo;
 import org.eclipse.dawnsci.nexus.NexusScanInfo.ScanRole;
@@ -76,15 +75,6 @@ import org.slf4j.LoggerFactory;
 class NexusScanFileImpl implements NexusScanFile {
 	
 	private static final Logger logger = LoggerFactory.getLogger(NexusScanFileImpl.class);
-
-	private static final Map<NexusBaseClass, ScanRole> DEFAULT_SCAN_ROLES;
-	
-	static {
-		DEFAULT_SCAN_ROLES = new HashMap<>();// not an enum map as most base classes not mapped
-		DEFAULT_SCAN_ROLES.put(NexusBaseClass.NX_DETECTOR, ScanRole.DETECTOR);
-		DEFAULT_SCAN_ROLES.put(NexusBaseClass.NX_MONITOR, ScanRole.MONITOR_PER_POINT);
-		DEFAULT_SCAN_ROLES.put(NexusBaseClass.NX_POSITIONER, ScanRole.SCANNABLE);
-	}
 
 	private final NexusScanModel nexusScanModel;
 	private final String filePath;
@@ -168,7 +158,7 @@ class NexusScanFileImpl implements NexusScanFile {
 
 		try {
 			createEntry(fileBuilder);
-			applyTemplates(fileBuilder.getNexusTree());			
+			applyTemplates(fileBuilder.getNexusTree());
 			
 			// create the file from the builder and open it
 			nexusBuilderFile = fileBuilder.createFile(async, useSwmr);
@@ -219,7 +209,7 @@ class NexusScanFileImpl implements NexusScanFile {
 		final Map<ScanRole, List<NexusObjectProvider<?>>> nexusObjectProviders = new EnumMap<>(ScanRole.class);
 		for (ScanRole deviceType: ScanRole.values()) {
 			logger.trace("extractNexusProviders deviceType={}", deviceType);
-			final List<INexusDevice<?>> nexusDevicesForType = nexusDevices.get(deviceType);
+			final List<INexusDevice<?>> nexusDevicesForType = nexusDevices.getOrDefault(deviceType, emptyList());
 			final List<NexusObjectProvider<?>> nexusObjectProvidersForType =
 					new ArrayList<>(nexusDevicesForType.size());
 			for (INexusDevice<?> nexusDevice : nexusDevicesForType) {
@@ -255,19 +245,17 @@ class NexusScanFileImpl implements NexusScanFile {
 		for (Map.Entry<ScanRole, List<INexusDevice<?>>> nexusDevicesForScanRoleEntry : oldNexusDevices.entrySet()) {
 			final ScanRole scanRole = nexusDevicesForScanRoleEntry.getKey();
 			final List<INexusDevice<?>> oldNexusDevicesForScanRole = nexusDevicesForScanRoleEntry.getValue();
-			if (oldNexusDevicesForScanRole == null) {
-				newNexusDevices.put(scanRole, new ArrayList<>());
-				continue;
-			}
 
 			try {
 				// decorate all nexus devices, expand any multiple nexus devices in the list of devices by scan role
-				final List<INexusDevice<?>> newNexusDevicesForScanRole = new ArrayList<>();
 				for (INexusDevice<?> nexusDevice : oldNexusDevicesForScanRole) {
-					newNexusDevicesForScanRole.addAll(getNexusDevices(nexusDevice, info));
+					for (NexusObjectProvider<?> nexusProvider : nexusDevice.getNexusProviders(info)) {
+						final ScanRole actualScanRole = nexusProvider.getScanRole() != null ? nexusProvider.getScanRole() : scanRole;
+						final INexusDevice<?> newNexusDevice = nexusDeviceService.decorateNexusDevice(
+								new SimpleNexusDevice<>(nexusProvider));
+						newNexusDevices.computeIfAbsent(actualScanRole, role -> new ArrayList<>()).add(newNexusDevice);
+					}
 				}
-
-				newNexusDevices.put(scanRole, newNexusDevicesForScanRole);
 			} catch (Exception e) {
 				if (e instanceof RuntimeException && e.getCause() instanceof NexusException) {
 					throw (NexusException) ((RuntimeException) e).getCause();
@@ -276,39 +264,9 @@ class NexusScanFileImpl implements NexusScanFile {
 			}
 		}
 
-		// if an IMultipleNexusDevice is present in the ScanModel directly (usuually this will be a malcolm device)
-		// then we decide the ScanRole for each nexus device based on the nexus base class of the provider
-		final Optional<INexusDevice<?>> optMultipleNexusDevice = nexusScanModel.getMultipleNexusDevice();
-		if (optMultipleNexusDevice.isPresent()) {
-			final INexusDevice<?> multipleNexusDevice = optMultipleNexusDevice.get();
-			try {
-				for (NexusObjectProvider<?> nexusProvider : multipleNexusDevice.getNexusProviders(info)) {
-					final ScanRole scanRole = DEFAULT_SCAN_ROLES.get(nexusProvider.getNexusBaseClass());
-					if (scanRole == null) {
-						throw new NexusException("Unable to determine scan role for nexus object of type " +
-								nexusProvider.getNexusBaseClass());
-					}
-					// create a new SimpleNexusDevice to wrap the NexusObjectProvider and get the decorated
-					final SimpleNexusDevice<?> nexusDevice = new SimpleNexusDevice<>(nexusProvider);
-					final INexusDevice<?> decoratedNexusDevice = nexusDeviceService.decorateNexusDevice(nexusDevice);
-					newNexusDevices.get(scanRole).add(decoratedNexusDevice);
-				}
-			} catch (NexusException e) {
-				throw new NexusException("Could not get nexus object providers for device: " + multipleNexusDevice.getName(), e);
-			}
-		}
-
 		return newNexusDevices;
 	}
 	
-	@SuppressWarnings("unchecked")
-	private List<INexusDevice<?>> getNexusDevices(INexusDevice<?> nexusDevice, NexusScanInfo info) throws NexusException {
-		return nexusDevice.getNexusProviders(info).stream()
-				.map(SimpleNexusDevice::new)
-				.map(nexusDeviceService::decorateNexusDevice)
-				.collect(toList());
-	}
-
 	/**
 	 * Creates and populates the {@link NXentry} for the NeXus file.
 	 * @param fileBuilder a {@link NexusFileBuilder}

@@ -83,7 +83,7 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 	
 	protected NexusScanInfo scanInfo = null;
 	private final String name;
-	private ZonedDateTime scanStartTime = null;
+	protected ZonedDateTime scanStartTime = null;
 	
 	private boolean hardwareScan = false;
 	private boolean writeGlobalUniqueKeys;

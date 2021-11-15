@@ -48,7 +48,7 @@ public class ValidationReportEntry {
 	}
 	
 	public String getLogMessage() {
-		return MessageFormat.format("{0} {1}: {2}", nodeType, nodeName == null ? "unnamed" : nodeName, message);
+		return MessageFormat.format("{0} ''{1}'': {2}", nodeType, nodeName == null ? "unnamed" : nodeName, message);
 	}
 
 	public String toString() {

@@ -66,13 +66,13 @@ public class ValidationReport {
 	}
 	
 	public String summarize(Level level) {
-		return validationEntries.stream().
-				filter(entry -> entry.getLevel().compareTo(level) >= 0).
-				map(ValidationReportEntry::toString).collect(joining("\n"));
+		return validationEntries.stream()
+				.filter(entry -> entry.getLevel().compareTo(level) >= 0)
+				.map(ValidationReportEntry::toString).collect(joining("\n"));
 	}
 	
 	public String toString() {
-		return summarize(Level.INFO);
+		return validationEntries.isEmpty() ? "OK" : summarize(Level.INFO);
 	}
 	
 	public int getNumberOfEntries() {

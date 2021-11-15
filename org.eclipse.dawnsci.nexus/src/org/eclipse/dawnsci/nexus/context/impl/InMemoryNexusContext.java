@@ -53,7 +53,7 @@ public class InMemoryNexusContext extends AbstractInMemoryNexusContext {
 					existingLinkNode.getSourceURI(), existingLinkNode.getPath());
 			parent.addSymbolicNode(name, newLinkNode);
 		} else {
-			parent.addNode(name, (Node) node);
+			parent.addNode(name, node);
 		}
 	}
 	

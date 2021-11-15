@@ -12,14 +12,16 @@ import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusUtils;
 
 public class NexusValidationServiceImpl implements NexusValidationService {
-	
+
 	private boolean validateDiamond = true;
+	
+	// cache the last validation report. Used for testing purposes
+	private ValidationReport lastValidationReport = null;
 	
 	public void setValidateDiamond(boolean validateDiamond) {
 		this.validateDiamond = validateDiamond;
 	}
 	
-
 	@Override
 	public ValidationReport validateNexusFile(String filePath) throws NexusException {
 		final TreeFile nexusTree = NexusUtils.loadNexusTree(filePath);
@@ -29,7 +31,8 @@ public class NexusValidationServiceImpl implements NexusValidationService {
 	@Override
 	public ValidationReport validateNexusTree(Tree tree) {
 		final NXroot nexusRoot = (NXroot) tree.getGroupNode();
-		return validateNexusTree(nexusRoot);
+		lastValidationReport = validateNexusTree(nexusRoot);
+		return lastValidationReport;
 	}
 
 	@Override
@@ -89,6 +92,10 @@ public class NexusValidationServiceImpl implements NexusValidationService {
 		}
 		
 		return validationReport;
+	}
+	
+	public ValidationReport getLastValidationReport() {
+		return lastValidationReport;
 	}
 
 }

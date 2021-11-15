@@ -92,7 +92,7 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	
 	private Map<String, Integer> localGroupDimensionPlaceholderValues = new HashMap<>();
 	
-	public AbstractNexusValidator(NexusApplicationDefinition appDef) {
+	protected AbstractNexusValidator(NexusApplicationDefinition appDef) {
 		this.applicationDefinition = appDef;
 	}
 	
@@ -363,6 +363,11 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	}
 	
 	public void validateDataNodeLink(String fieldName, DataNode dataNode, String targetPath) {
+		if (dataNode == null) {
+			addValidationEntry(Level.WARNING, NodeType.DATA_NODE, fieldName, "Data node missing. Expected link to: " + targetPath);
+			return;
+		}
+		
 		final DataNode targetNode = getTargetNode(fieldName, targetPath);
 		if (targetNode == null) {
 			addValidationEntry(Level.WARNING, NodeType.DATA_NODE, fieldName, "No data node at the expected target path: " + targetPath);

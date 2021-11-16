@@ -1772,6 +1772,14 @@
             model="uk.ac.diamond.scisoft.analysis.processing.operations.PyrometryModel"
             name="Pyrometry Analysis">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.spectroscopy.rxes"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.RxesRemapOperation"
+            icon="icons/unchanged.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.RxesRemapOperation"
+            model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
+            name="RXES linear interpolation remap">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

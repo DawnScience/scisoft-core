@@ -1,5 +1,6 @@
 package org.eclipse.dawnsci.nexus.scan;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.dawnsci.nexus.builder.NexusBuilderFactory;
 import org.eclipse.dawnsci.nexus.device.INexusDeviceService;
 import org.eclipse.dawnsci.nexus.template.NexusTemplateService;
@@ -20,7 +21,7 @@ public class ServiceHolder {
 	private static NexusValidationService nexusValidationService;
 	
 	private static IDefaultDataGroupCalculator defaultDataGroupCalculator;
-
+	
 	public static NexusBuilderFactory getNexusBuilderFactory() {
 		return nexusBuilderFactory;
 	}
@@ -72,6 +73,7 @@ public class ServiceHolder {
 	}
 	
 	private static <T> T getService(Class<T> serviceClass) {
+		if (!Platform.isRunning()) return null;
 		final Bundle bundle = FrameworkUtil.getBundle(ServiceHolder.class);
 		if (bundle == null) return null; // OSGi framework may not be running, this is the case for JUnit tests
 		final BundleContext context = bundle.getBundleContext();

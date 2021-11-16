@@ -11,10 +11,15 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.nexus;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.dawnsci.nexus.appender.INexusFileAppenderService;
 import org.eclipse.dawnsci.nexus.device.INexusDeviceAdapterFactory;
 import org.eclipse.dawnsci.nexus.device.INexusDeviceService;
 import org.eclipse.dawnsci.nexus.validation.NexusValidationService;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 public class ServiceHolder {
 	
@@ -29,7 +34,9 @@ public class ServiceHolder {
 	private static NexusValidationService nexusValidationService;
 	
 	public static INexusFileFactory getNexusFileFactory() {
-		return nexusFileFactory;
+		// default to using the BundleContext if not set and OSGi is running
+		// TODO: we should remove ServiceHolders and find another solution, see DAQ-2239
+		return nexusFileFactory != null ? nexusFileFactory : getService(INexusFileFactory.class);
 	}
 	
 	public void setNexusFileFactory(INexusFileFactory nexusFileFactory) {
@@ -37,7 +44,7 @@ public class ServiceHolder {
 	}
 	
 	public static INexusDeviceService getNexusDeviceService() {
-		return nexusDeviceService;
+		return nexusDeviceService != null ? nexusDeviceService : getService(INexusDeviceService.class);
 	}
 	
 	public void setNexusDeviceService(INexusDeviceService nexusDeviceService) {
@@ -45,7 +52,7 @@ public class ServiceHolder {
 	}
 
 	public static INexusFileAppenderService getNexusFileAppenderService() {
-		return nexusFileAppenderService;
+		return nexusFileAppenderService != null ? nexusFileAppenderService : getService(INexusFileAppenderService.class);
 	}
 	
 	public void setNexusFileAppenderService(INexusFileAppenderService nexusFileAppenderService) {
@@ -53,7 +60,7 @@ public class ServiceHolder {
 	}
 	
 	public static INexusDeviceAdapterFactory<?> getNexusDeviceAdapterFactory() {
-		return nexusDeviceAdapterFactory;
+		return nexusDeviceAdapterFactory != null ? nexusDeviceAdapterFactory : getService(INexusDeviceAdapterFactory.class);
 	}
 	
 	public void setNexusDeviceAdapterFactory(INexusDeviceAdapterFactory<?> nexusDeviceAdapterFactory) {
@@ -61,11 +68,22 @@ public class ServiceHolder {
 	}
 	
 	public static NexusValidationService getNexusValidationService() {
-		return nexusValidationService;
+		return nexusValidationService != null ? nexusValidationService : getService(NexusValidationService.class);
 	}
 	
 	public void setNexusValidationService(NexusValidationService nexusValidationService) {
 		ServiceHolder.nexusValidationService = nexusValidationService;
+	}
+	
+	private static <T> T getService(Class<T> serviceClass) {
+		if (!Platform.isRunning()) return null;
+			
+		final Bundle bundle = FrameworkUtil.getBundle(ServiceHolder.class);
+		if (bundle == null) return null; // OSGi framework may not be running, this is the case for JUnit tests
+		final BundleContext context = bundle.getBundleContext();
+		final ServiceReference<T> serviceRef = context.getServiceReference(serviceClass);
+		if (serviceRef == null) return null;
+		return context.getService(serviceRef);
 	}
 	
 }

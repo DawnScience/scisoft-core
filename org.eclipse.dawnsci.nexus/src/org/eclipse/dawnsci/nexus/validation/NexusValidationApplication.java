@@ -22,15 +22,25 @@ public class NexusValidationApplication implements IApplication {
 			return null;
 		}
 		
-		final String filePath = configuration[0];
-		final ValidationReport validationReport = ServiceHolder.getNexusValidationService().validateNexusFile(filePath);
-		printValidationReport(validationReport);
+		try {
+			final String filePath = configuration[0];
+			final ValidationReport validationReport = ServiceHolder.getNexusValidationService().validateNexusFile(filePath);
+			printValidationReport(validationReport);
+		} catch (Exception e) {
+			System.out.println("An exception occurred " + e.getMessage());
+			e.printStackTrace();
+		}
 		
 		return null;
 	}
 	
 	private void printValidationReport(ValidationReport validationReport) {
-		validationReport.getValidationEntries().forEach(System.out::println);
+		if (validationReport.isOk()) {
+			System.out.println("Nexus validation successful!");
+		} else {
+			System.out.println("Nexus validation failed!");
+			validationReport.getValidationEntries().forEach(System.out::println);
+		}
 	}
 	
 	@Override

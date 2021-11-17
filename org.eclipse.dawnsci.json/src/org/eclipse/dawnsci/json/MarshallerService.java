@@ -84,7 +84,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectMapper.DefaultTypeResolverBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper.DefaultTyping;
 import com.fasterxml.jackson.databind.cfg.MapperConfig;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
+import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.jsontype.TypeIdResolver;
 import com.fasterxml.jackson.databind.jsontype.TypeResolverBuilder;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -379,11 +381,11 @@ public class MarshallerService implements IMarshallerService {
 		private MarshallerServiceClassRegistry registry;
 
 		public RegisteredTypeResolverBuilder(MarshallerServiceClassRegistry registry) {
-			this(null, registry);
+			this(DefaultTyping.NON_FINAL, registry);
 		}
 
 		public RegisteredTypeResolverBuilder(DefaultTyping typing, MarshallerServiceClassRegistry registry) {
-			super(typing);
+			super(typing, BasicPolymorphicTypeValidator.builder().allowIfSubType(IROI.class).build());
 			this.registry = registry;
 		}
 
@@ -391,9 +393,9 @@ public class MarshallerService implements IMarshallerService {
 		// (We need this override, rather than just providing a custom resolver in StdTypeResolverBuilder#init(), because
 		//  the default implementation does not normally pass the base type to the custom resolver but we need it.)
 		@Override
-		protected TypeIdResolver idResolver(MapperConfig<?> config,
-		JavaType baseType, Collection<NamedType> subtypes,
-		boolean forSer, boolean forDeser) {
+		protected TypeIdResolver idResolver(MapperConfig<?> config, JavaType baseType,
+				PolymorphicTypeValidator subtypeValidator, Collection<NamedType> subtypes, boolean forSer,
+				boolean forDeser) {
 			return new RegisteredClassIdResolver(baseType, config.getTypeFactory(), registry);
 		}
 

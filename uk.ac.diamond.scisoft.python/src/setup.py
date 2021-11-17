@@ -15,7 +15,7 @@ setup(
     version="2.23.0",
     description="DAWN Python Extensions",
     author="Peter Chang",
-    author_email="scientificsoftware@diamond.ac.uk",
+    author_email="dataanalysis@diamond.ac.uk",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",

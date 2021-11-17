@@ -11,6 +11,9 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.nexus;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.dawnsci.nexus.builder.AbstractNexusObjectProvider;
 import org.eclipse.dawnsci.nexus.builder.CustomNexusEntryModification;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
@@ -70,15 +73,40 @@ public interface INexusDevice<N extends NXobject> {
 	 * done with the {@link NXobject#setField(String, Object)} method, or the
 	 * <code>setXXXScalar</code> methods for fields defined in the appropriate 
 	 * NXDL base class definition.
+	 * <p>
+	 * The default implementation of this method throws {@link UnsupportedOperationException}.
+	 * One of either this method or {@link #getNexusProviders(NexusScanInfo)} must be overridden
+	 * to create and return the nexus object(s) for this {@link INexusDevice}.
 	 * 
-	 * @param info
-	 *            Information about the scan which can be useful when creating
-	 *            dataset e.g. <code>info.getRank()</code>
+	 * @param info information about the scan which can be useful when creating
+	 *            datasets e.g. <code>info.getRank()</code>
 	 * @return The {@link NXobject} created using the <code>nodeFactory</code>
 	 *         to represent this device
 	 * @throws NexusException if the nexus object could not be created for any reason
 	 */
-	NexusObjectProvider<N> getNexusProvider(NexusScanInfo info) throws NexusException;
+	public default NexusObjectProvider<N> getNexusProvider(NexusScanInfo info) throws NexusException {
+		throw new UnsupportedOperationException("Not implemented"); // override either this method or getNexusProviders
+	}
+	
+	/**
+	 * Returns the object providers required for writing correct NeXus files.
+	 * Implement this method if your device needs to create multiple nexus objects.
+	 * These can implement {@link NexusObjectProvider}
+	 * <p>
+	 * The default implementation of this method calls {@link #getNexusProvider(NexusScanInfo)} and
+	 * returns a {@link List} whose sole element is the {@link NexusObjectProvider} returned from
+	 * that method. One of either this method or {@link #getNexusProviders(NexusScanInfo)} must be overridden
+	 * to create and return the nexus object(s) for this {@link INexusDevice}.
+	 * 
+	 * @param info information about the scan which can be useful when creating
+	 *            datasets e.g. <code>info.getRank()</code>
+	 * @return The {@link NXobject} created using the <code>nodeFactory</code>
+	 *         to represent this device
+	 * @throws NexusException if the nexus object could not be created for any reason
+	 */
+	public default List<NexusObjectProvider<?>> getNexusProviders(NexusScanInfo info) throws NexusException {
+		return Arrays.asList(getNexusProvider(info)); // override either this method or getNexusProvider
+	}
 	
 	/**
 	 * Returns an object that performs a custom modification to
@@ -100,7 +128,7 @@ public interface INexusDevice<N extends NXobject> {
 	 * @return a {@link CustomNexusEntryModification} that makes a custom modification,
 	 *    or <code>null</code> if this device should not make custom modifications
 	 */
-	default CustomNexusEntryModification getCustomNexusModification() {
+	public default CustomNexusEntryModification getCustomNexusModification() {
 		return null;
 	}
 	
@@ -111,7 +139,7 @@ public interface INexusDevice<N extends NXobject> {
 	 * method in order to decorate a device with the same name when
 	 * {@link INexusDeviceService#getNexusDevice(INexusDevice)} is called, for example a device that adds metadata. 
 	 */
-	default void register() {
+	public default void register() {
 		ServiceHolder.getNexusDeviceService().register(this);
 	}
 	

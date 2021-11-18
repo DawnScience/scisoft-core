@@ -33,6 +33,8 @@
 
    <configurations>
       <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
+      <property name="osgi.locking" value="none" />
+      <property name="osgi.configuration.area.readOnly" value="true" os="linux" />
    </configurations>
 
    <preferencesInfo>

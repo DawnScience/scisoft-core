@@ -781,10 +781,10 @@ public class MillerSpaceMapper {
 			image.setShape(s);
 			miss = imagesSlice.getStep();
 			if (image.max().doubleValue() <= 0) {
-				logger.info("Skipping image at {} {}", Arrays.toString(pos), inFile);
+				logger.info("Skipping image at {} in {}", Arrays.toString(dpos), inFile);
 				image = getNextImage(miss, images, iter, start, stop);
 			} else {
-				logger.info("Mapping image at {} in {}", Arrays.toString(dpos), Arrays.toString(diter.getShape()));
+				logger.info("Mapping image at {}/{} in {}", Arrays.toString(dpos), Arrays.toString(diter.getShape()), inFile);
 				initializeImagePixelMapping(pixelMapping, isQSpace, tree, ishape, dpos, isOldGDA);
 	
 				double tFactor = getTransmissionCorrection(trans, dpos);
@@ -958,10 +958,16 @@ public class MillerSpaceMapper {
 	private Dataset mapImageToVolumeMultiThreaded(boolean loadNext, ILazyDataset images, PositionIterator iter, int[] start, int[] stop, final double tFactor,
 			final Dataset iMask, final Dataset image, final int[] ishape) throws DatasetException {
 		int size = poolSize - 1; // reserve for loading next image
+		final int[] pos = iter.getPos();
 		if (size == 0) {
 			BicubicInterpolator upSampler = scale == 1 ? null : new BicubicInterpolator(true, ishape);
 			int[] regionSlice = new int[] { 0, ishape[1], 0, ishape[0] };
-			mapImageToOutput(0, tFactor, upSampler, pixelMapping, splitter, sMin, sMax, regionSlice, iMask, image);
+			try {
+				mapImageToOutput(0, tFactor, upSampler, pixelMapping, splitter, sMin, sMax, regionSlice, iMask, image);
+				logger.debug("Finished mapping at {}", Arrays.toString(pos));
+			} catch (Exception e) {
+				logger.error("Failed mapping at {}", Arrays.toString(pos), e);
+			}
 
 			return loadNext ? getNextImage(imagesSlice.getStep(), images, iter, start, stop) : null;
 		}
@@ -1004,7 +1010,12 @@ public class MillerSpaceMapper {
 			int[] sMaxLocal = job.getMaxLocal();
 			int[] regionSlice = new int[] { 0, ishape[1], job.getStart(), job.getEnd() };
 
-			mapImageToOutput(job.getNo(), tFactor, job.getUpScaler(), job.getMapping(), job.getSplitter(), sMinLocal, sMaxLocal, regionSlice, iMask, image);
+			try {
+				mapImageToOutput(job.getNo(), tFactor, job.getUpScaler(), job.getMapping(), job.getSplitter(), sMinLocal, sMaxLocal, regionSlice, iMask, image);
+				logger.debug("Job {}: finished mapping at {}", job.getNo(), Arrays.toString(pos));
+			} catch (Exception e) {
+				logger.error("Job {}: failed mapping at {}", job.getNo(), Arrays.toString(pos), e);
+			}
 		};
 
 		try {
@@ -1052,22 +1063,25 @@ public class MillerSpaceMapper {
 		}
 		max[1] = Math.max(max[1], t);
 
-		t = p[2];
-		min[2] = Math.min(min[2], t);
-		if (spreads) {
-			t++;
+		if (p.length > 2) {
+			t = p[2];
+			min[2] = Math.min(min[2], t);
+			if (spreads) {
+				t++;
+			}
+			max[2] = Math.max(max[2], t);
 		}
-		max[2] = Math.max(max[2], t);
 	}
 
 	private static void minMax(final int[] min, final int[] max, final int[] lmin, final int[] lmax) {
 		min[0] = Math.min(min[0], lmin[0]);
-		min[1] = Math.min(min[1], lmin[1]);
-		min[2] = Math.min(min[2], lmin[2]);
-
 		max[0] = Math.max(max[0], lmax[0]);
+		min[1] = Math.min(min[1], lmin[1]);
 		max[1] = Math.max(max[1], lmax[1]);
-		max[2] = Math.max(max[2], lmax[2]);
+		if (min.length > 2) {
+			min[2] = Math.min(min[2], lmin[2]);
+			max[2] = Math.max(max[2], lmax[2]);
+		}
 	}
 
 	/**
@@ -2514,8 +2528,12 @@ public class MillerSpaceMapper {
 				initializeImagePixelMapping(mapping, mapQ, tree, iShape, pos, false);
 
 				double tFactor = getTransmissionCorrection(trans, pos);
-				mapImageToOutput(wNo, tFactor, upSampler, mapping, splitter, minLocal, maxLocal, region, mask, j.getImage());
-				logger.info("Worker {}: finished mapping at {}", wNo, Arrays.toString(pos));
+				try {
+					mapImageToOutput(wNo, tFactor, upSampler, mapping, splitter, minLocal, maxLocal, region, mask, j.getImage());
+					logger.debug("Worker {}: finished mapping at {}", wNo, Arrays.toString(pos));
+				} catch (Exception e) {
+					logger.error("Worker {}: failed mapping at {}", wNo, Arrays.toString(pos), e);
+				}
 				ni++;
 			}
 		}

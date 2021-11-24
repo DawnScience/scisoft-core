@@ -39,23 +39,6 @@ import org.eclipse.january.dataset.IDatasetConnector;
 public interface IRemoteDatasetService {
 	
 	/**
-	 * 
-	 * @param serverName
-	 * @param port
-	 * @return IRemoteData
-	 */
-	IRemoteData createRemoteData(String serverName, int port);
-
-	/**
-     * 
-	 * @param serverName
-	 * @param port
-	 * @return dataset
-	 */
-	public IDatasetConnector createRemoteDataset(String serverName, int port);
-
-	
-	/**
 	 * Create an MJPG dataset at the given stream. The Dataset returned will be updated
 	 * as the stream changes. The Dataset will be an RBG Image and implements IDynamicDataset and IRemoteDataset
 	 * You must cast the IDataset to IRemoteDataset and then call connect() to start the monitor thread.

@@ -1209,7 +1209,7 @@ public class MillerSpaceMapper {
 				wait += 0.25;
 			}
 			if (wait > 0) {
-				logger.info("Paused image loading for {} second until queue size < {}", wait, limit);
+				logger.debug("Paused image loading for {} second until queue size < {}", wait, limit);
 			}
 			ni++;
 		}

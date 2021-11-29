@@ -59,7 +59,7 @@ public class RixsImageReductionBaseModel extends RixsBaseModel {
 	private boolean normalizeByRows = false;
 
 	@OperationModelField(label = "Normalization dataset", description = "Use named dataset to normalize spectra", expertOnly = true, dataset = "currentFilePath")
-	private String normalizationPath = "/entry1/m4c1/m4c1";
+	private String normalizationPath = "/entry/m4c1/m4c1";
 
 	@OperationModelField(label = "Selection of frames to use", description = 
 			"A comma-separated (or semicolon-separated) list of sub-ranges.\n"

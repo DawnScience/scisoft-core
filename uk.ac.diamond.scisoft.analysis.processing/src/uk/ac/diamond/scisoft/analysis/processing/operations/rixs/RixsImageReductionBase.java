@@ -955,7 +955,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			Tree t = LocalServiceManager.getLoaderService().getData(filePath, null).getTree();
 			NodeLink l = t.findNodeLink(dataPath);
 			if (l == null) {
-				log.append("No normalization dataset at %s from file %s", dataPath, filePath);
+				log.appendFailure("No normalization dataset at %s from file %s", dataPath, filePath);
 			} else if (l.isDestinationData()) {
 				Dataset norm = DatasetUtils.sliceAndConvertLazyDataset(((DataNode) l.getDestination()).getDataset());
 				if (norm == null) {

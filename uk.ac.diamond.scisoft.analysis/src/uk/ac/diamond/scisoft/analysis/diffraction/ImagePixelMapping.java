@@ -55,6 +55,7 @@ public interface ImagePixelMapping {
 
 	static abstract class BaseMapping implements ImagePixelMapping {
 		protected QSpace qSpace;
+		protected Matrix3d transform;
 
 		@Override
 		public void setSpaces(QSpace qSpace, MillerSpace mSpace) {
@@ -81,6 +82,12 @@ public interface ImagePixelMapping {
 		public QxyzMapping() {
 		}
 
+		@Override
+		public void setSpaces(QSpace qSpace, MillerSpace mSpace) {
+			this.qSpace = qSpace;
+			this.transform = mSpace.getLabToCrystalTransform();
+		}
+
 		/**
 		 * Returns q vector
 		 * @param q
@@ -88,6 +95,7 @@ public interface ImagePixelMapping {
 		@Override
 		public void map(double x, double y, Vector3d q) {
 			qSpace.qFromPixelPosition(x, y, q);
+			transform.transform(q);
 		}
 
 		@Override
@@ -109,7 +117,6 @@ public interface ImagePixelMapping {
 	public static class HKLMapping extends BaseMapping {
 		protected static final String[] HKL_AXES = { "h-axis", "k-axis", "l-axis" };
 		protected final Vector3d q;
-		protected Matrix3d mTransform;
 
 		public HKLMapping() {
 			q = new Vector3d();
@@ -118,7 +125,7 @@ public interface ImagePixelMapping {
 		@Override
 		public void setSpaces(QSpace qSpace, MillerSpace mSpace) {
 			this.qSpace = qSpace;
-			this.mTransform = mSpace.getMillerTransform();
+			this.transform = mSpace.getMillerTransform();
 		}
 
 		@Override
@@ -133,7 +140,7 @@ public interface ImagePixelMapping {
 		@Override
 		public void map(double x, double y, Vector3d h) {
 			qSpace.qFromPixelPosition(x, y, q);
-			mTransform.transform(q, h);
+			transform.transform(q, h);
 		}
 
 		@Override
@@ -145,7 +152,7 @@ public interface ImagePixelMapping {
 		public HKLMapping clone() {
 			HKLMapping c = new HKLMapping();
 			c.qSpace = qSpace;
-			c.mTransform = mTransform;
+			c.transform = transform;
 			return c;
 		}
 	}
@@ -153,7 +160,7 @@ public interface ImagePixelMapping {
 	/**
 	 * Mapping to QparQper
 	 */
-	public static class Qpp2DMapping extends BaseMapping {
+	public static class Qpp2DMapping extends QxyzMapping {
 		private static final String[] Q_PP_AXES = { "q-par-axis", "q-per-axis" };
 
 		public Qpp2DMapping() {
@@ -165,7 +172,7 @@ public interface ImagePixelMapping {
 		 */
 		@Override
 		public void map(double x, double y, Vector3d q) {
-			qSpace.qFromPixelPosition(x, y, q);
+			super.map(x, y, q);
 			q.x = Math.hypot(q.x, q.y);
 			q.y = q.z; // FIXME missing Jacobian???
 			q.z = 0;
@@ -187,7 +194,7 @@ public interface ImagePixelMapping {
 	/**
 	 * Mapping to Q2D by permuting coordinates
 	 */
-	public static class QPermuted2DMapping extends BaseMapping {
+	public static class QPermuted2DMapping extends QxyzMapping {
 		static final String[] Q_XYZ_AXES = { "x-axis", "y-axis", "z-axis" };
 		private final String[] axesNames;
 		private TwoDPermutation mode;
@@ -219,7 +226,7 @@ public interface ImagePixelMapping {
 		 */
 		@Override
 		public void map(double x, double y, Vector3d q) {
-			qSpace.qFromPixelPosition(x, y, q);
+			super.map(x, y, q);
 
 			double t;
 			switch (mode) {
@@ -290,7 +297,7 @@ public interface ImagePixelMapping {
 		@Override
 		public void map(double x, double y, Vector3d h) {
 			qSpace.qFromPixelPosition(x, y, q);
-			mTransform.transform(q, h);
+			transform.transform(q, h);
 
 			double t;
 			switch (mode) {
@@ -320,7 +327,7 @@ public interface ImagePixelMapping {
 		public HKLPermuted2DMapping clone() {
 			HKLPermuted2DMapping c = new HKLPermuted2DMapping(mode);
 			c.qSpace = qSpace;
-			c.mTransform = mTransform;
+			c.transform = transform;
 			return c;
 		}
 	}

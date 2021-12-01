@@ -436,7 +436,7 @@ public class MillerSpaceMapper {
 			DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, dpos);
 			DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 			QSpace qspace = new QSpace(dp, env);
-			MillerSpace mspace = isQSpace ? null : new MillerSpace(sample.getUnitCell(), env.getOrientation());
+			MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
 			if (vDel != null) {
 				pixelMapping.setSpaces(qspace, mspace);
 				calcOutputBounds(vMin, vMax, qspace, mspace);
@@ -520,7 +520,7 @@ public class MillerSpaceMapper {
 				DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, dpos);
 				DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 				QSpace qspace = new QSpace(dp, env);
-				MillerSpace mspace = isQSpace ? null : new MillerSpace(sample.getUnitCell(), env.getOrientation());
+				MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
 				pixelMapping.setSpaces(qspace, mspace);
 				printCorners(qspace, mspace);
 
@@ -600,7 +600,7 @@ public class MillerSpaceMapper {
 				DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, dpos);
 				DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 				QSpace qspace = new QSpace(dp, env);
-				MillerSpace mspace = mapQ ? null : new MillerSpace(sample.getUnitCell(), env.getOrientation());
+				MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
 				pixelMapping.setSpaces(qspace, mspace);
 
 				for (int i = 0; i < np; i++) {
@@ -658,7 +658,7 @@ public class MillerSpaceMapper {
 				DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, dpos);
 				DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 				QSpace qspace = new QSpace(dp, env);
-				MillerSpace mspace = mapQ ? null : new MillerSpace(sample.getUnitCell(), env.getOrientation());
+				MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
 				pixelMapping.setSpaces(qspace, mspace);
 
 				if (aiter != null) {
@@ -785,7 +785,7 @@ public class MillerSpaceMapper {
 				image = getNextImage(miss, images, iter, start, stop);
 			} else {
 				logger.info("Mapping image at {}/{} in {}", Arrays.toString(dpos), Arrays.toString(diter.getShape()), inFile);
-				initializeImagePixelMapping(pixelMapping, isQSpace, tree, ishape, dpos, isOldGDA);
+				initializeImagePixelMapping(pixelMapping, tree, ishape, dpos, isOldGDA);
 	
 				double tFactor = getTransmissionCorrection(trans, dpos);
 				image = mapImageToVolumeMultiThreaded(ni < imagesNumber - 1, images, iter, start, stop, tFactor, iMask, image, ishape);
@@ -819,7 +819,7 @@ public class MillerSpaceMapper {
 		return tFactor;
 	}
 
-	private void initializeImagePixelMapping(ImagePixelMapping pMapping, boolean mapQ, Tree tree, int[] ishape, int[] dpos, boolean isOldGDA) {
+	private void initializeImagePixelMapping(ImagePixelMapping pMapping, Tree tree, int[] ishape, int[] dpos, boolean isOldGDA) {
 		DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
 		if (scale == 1) {
 			dp.setStartX(dp.getStartX() - begX);
@@ -835,7 +835,7 @@ public class MillerSpaceMapper {
 		DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, dpos);
 		DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 		QSpace qspace = new QSpace(dp, env);
-		MillerSpace mspace = mapQ ? null : new MillerSpace(sample.getUnitCell(), env.getOrientation());
+		MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
 		pMapping.setSpaces(qspace, mspace);
 	}
 
@@ -890,7 +890,7 @@ public class MillerSpaceMapper {
 
 		final int xStart = region[0];
 		final int xStop  = region[1];
-		final QSpace qspace = mapping.getQSpace();
+		final DetectorProperties detector = mapping.getQSpace().getDetectorProperties();
 		for (int y = 0; y < ySize; y++) {
 			int py = y + yStart; // on detector (rather than sliced dataset)
 			for (int x = xStart; x < xStop; x++) {
@@ -909,7 +909,7 @@ public class MillerSpaceMapper {
 					mapping.map(x + 0.5, py + 0.5, v);
 
 					if (convertToOutputCoords(v, dv, pos)) {
-						value *= tFactor/qspace.calculateSolidAngle(x, py);
+						value *= tFactor/detector.calculateSolidAngle(x, py);
 						if (reduceToNonZeroBB) {
 							minMax(splitter.doesSpread(), sMinLocal, sMaxLocal, pos);
 						}
@@ -1155,7 +1155,7 @@ public class MillerSpaceMapper {
 				wSplitter.setDatasets(DatasetFactory.zeros(vShape), DatasetFactory.zeros(vShape));
 			}
 			BicubicInterpolator upSampler = scale == 1 ? null : new BicubicInterpolator(true, ishape);
-			QueueWorker w = new QueueWorker(i, queue, upSampler, pixelMapping.clone(), wSplitter, iMask, trans, tree, isQSpace, ishape, vShape);
+			QueueWorker w = new QueueWorker(i, queue, upSampler, pixelMapping.clone(), wSplitter, iMask, trans, tree, ishape, vShape);
 			workers.add(w);
 			pool.execute(w);
 		}
@@ -2473,14 +2473,13 @@ public class MillerSpaceMapper {
 		final private Dataset mask;
 		final private Dataset trans;
 		final private Tree tree;
-		final private boolean mapQ;
 
 		boolean running = true;
 		private Thread thread;
 		private int ni = 0;
 
 		public QueueWorker(int wNo, BlockingQueue<ImageJobConfig> queue, BicubicInterpolator upSampler, ImagePixelMapping mapping, PixelSplitter splitter,
-				Dataset mask, Dataset trans, Tree tree, boolean mapQ, int[] iShape, int[] oShape) {
+				Dataset mask, Dataset trans, Tree tree, int[] iShape, int[] oShape) {
 			this.wNo = wNo;
 			this.queue = queue;
 			this.upSampler = upSampler;
@@ -2490,7 +2489,6 @@ public class MillerSpaceMapper {
 			this.mask = mask;
 			this.trans = trans;
 			this.tree = tree;
-			this.mapQ = mapQ;
 			this.region = new int[] { 0, iShape[1], 0, iShape[0] };
 
 			this.minLocal = new int[oShape.length];
@@ -2525,7 +2523,7 @@ public class MillerSpaceMapper {
 					break;
 				}
 				logger.info("Worker {}: initializing mapping at {}", wNo, Arrays.toString(pos));
-				initializeImagePixelMapping(mapping, mapQ, tree, iShape, pos, false);
+				initializeImagePixelMapping(mapping, tree, iShape, pos, false);
 
 				double tFactor = getTransmissionCorrection(trans, pos);
 				try {

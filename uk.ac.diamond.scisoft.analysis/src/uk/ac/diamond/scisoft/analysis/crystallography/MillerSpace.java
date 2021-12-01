@@ -17,7 +17,8 @@ import javax.vecmath.Vector3d;
  * Crystallographic reciprocal space as defined by Miller indices
  */
 public class MillerSpace {
-	private Matrix3d ub; // UB
+	private Matrix3d u; // U orientation matrix (of crystal relative to sample mount)
+	private Matrix3d b; // B orthogonalization matrix
 	private Matrix3d rotate; // additional rotation on top of U
 	private Matrix3d toQ;
 	private Matrix3d toMiller;
@@ -25,36 +26,18 @@ public class MillerSpace {
 	private Matrix3d tb;
 
 	/**
-	 * Miller space from a UB matrix
-	 * @param ub
-	 */
-	public MillerSpace(final Matrix3d ub) {
-		this.ub = ub;
-		rotate = new Matrix3d();
-		rotate.setIdentity();
-		toQ = new Matrix3d();
-		toMiller = new Matrix3d();
-		ta = new Matrix3d();
-		tb = new Matrix3d();
-		calcNetTransforms();
-	}
-
-	/**
 	 * Miller space from a reciprocal cell and an orientation matrix
 	 * @param rc
 	 * @param orientation
 	 */
 	public MillerSpace(final ReciprocalCell rc, final Matrix3d orientation) {
-		Matrix3d ortho = rc.orthogonalization();
-		Matrix3d orient;
 		if (orientation == null) {
-			orient = new Matrix3d();
-			orient.setIdentity();
+			u = new Matrix3d();
+			u.setIdentity();
 		} else {
-			orient = orientation;
+			u = new Matrix3d(orientation);
 		}
-		ub = new Matrix3d();
-		ub.mul(orient, ortho);
+		b = rc.orthogonalization();
 		rotate = new Matrix3d();
 		rotate.setIdentity();
 		toQ = new Matrix3d();
@@ -72,6 +55,8 @@ public class MillerSpace {
 	}
 
 	private void calcNetTransforms() {
+		Matrix3d ub = new Matrix3d(u);
+		ub.mul(b);
 		toQ.mul(rotate, ub);
 		toQ.mul(2.*Math.PI);
 		toMiller.invert(toQ);
@@ -189,12 +174,22 @@ public class MillerSpace {
 	}
 
 	/**
-	 * @return matrix to transform to Miller space
+	 * @return matrix to transform from lab to Miller space
 	 */
 	public Matrix3d getMillerTransform( ) {
 		return new Matrix3d(toMiller);
 	}
 
+	/**
+	 * @return matrix to transform from lab to crystal space
+	 */
+	public Matrix3d getLabToCrystalTransform( ) {
+		Matrix3d t = new Matrix3d(rotate);
+		t.mul(u);
+		t.invert();
+		return t;
+	}
+	
 	/**
 	 * Calculate Miller indices from a q vector
 	 * @param q

@@ -68,7 +68,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import uk.ac.diamond.scisoft.analysis.crystallography.MillerSpace;
 import uk.ac.diamond.scisoft.analysis.crystallography.VersionUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.function.BicubicInterpolator;
-import uk.ac.diamond.scisoft.analysis.diffraction.MillerSpaceMapperBean.OutputMode;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CoordinatesIterator;
 import uk.ac.diamond.scisoft.analysis.io.ImageStackLoader;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
@@ -556,15 +555,6 @@ public class MillerSpaceMapper {
 	 * @throws ScanFileHolderException
 	 */
 	public void calculateCoordinates() throws ScanFileHolderException {
-		calculateCoordinates(isQSpace);
-	}
-
-	/**
-	 * Calculate coordinates of given pixel addresses
-	 * @param mapQ
-	 * @throws ScanFileHolderException
-	 */
-	public void calculateCoordinates(boolean mapQ) throws ScanFileHolderException {
 		IntegerDataset pIdx = DatasetFactory.createFromObject(IntegerDataset.class, bean.getPixelIndexes());
 		if (pIdx == null) {
 			throw new IllegalArgumentException("No pixel indexes defined");
@@ -575,7 +565,7 @@ public class MillerSpaceMapper {
 			throw new IllegalArgumentException("Only one input file allowed");
 		}
 		initializeFromBean(inputs[0], false);
-		pixelMapping = ImagePixelMapping.createPixelMapping(mapQ ? OutputMode.Volume_Q : bean.getOutputMode());
+		pixelMapping = ImagePixelMapping.createPixelMapping(bean.getOutputMode());
 
 		Tree tree = getTreeFromNexusFile(inputs[0]);
 		PositionIterator diter = getPositionIterators(tree)[0];
@@ -702,12 +692,12 @@ public class MillerSpaceMapper {
 			}
 		}
 
-		saveCoordinates(mapQ, pInput, coords);
+		saveCoordinates(pInput, coords);
 	}
 
-	private void saveCoordinates(boolean mapQ, Dataset indexes, Dataset coords) throws ScanFileHolderException {
+	private void saveCoordinates(Dataset indexes, Dataset coords) throws ScanFileHolderException {
 		String output = bean.getOutput();
-		String spaceName = getSpaceName(mapQ);
+		String spaceName = getSpaceName(bean.getOutputMode().isQ());
 		String coordsPath = TreeUtils.join(PROCESSED, spaceName);
 
 		indexes.setName("pixel_indexes");

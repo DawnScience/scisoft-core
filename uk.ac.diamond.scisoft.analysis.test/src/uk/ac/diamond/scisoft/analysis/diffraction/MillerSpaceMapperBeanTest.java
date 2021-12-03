@@ -271,10 +271,10 @@ public class MillerSpaceMapperBeanTest {
 		String[] inputPaths = { n };
 
 		// pil100k is 195x487
-		MillerSpaceMapperBean mapperBean = MillerSpaceMapperBean.createBeanWithAutoBox(inputPaths, dstPath, "inverse", 0.5, 2., true, false, 0.005);
+		MillerSpaceMapperBean mapperBean = MillerSpaceMapperBean.createBeanWithAutoBox(inputPaths, dstPath, "inverse", 0.5, 2., true, mapQ, 0.005);
 		mapperBean.setPixelIndexes(indexes);
 		MillerSpaceMapper mapper = new MillerSpaceMapper(mapperBean);
-		mapper.calculateCoordinates(mapQ);
+		mapper.calculateCoordinates();
 
 		Dataset[] a = HDF5Utils.readAttributes(dstPath, "/");
 		Dataset[] b = HDF5Utils.readAttributes(dstPath, "/processed");

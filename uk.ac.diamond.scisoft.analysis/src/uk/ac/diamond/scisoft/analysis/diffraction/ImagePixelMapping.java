@@ -354,11 +354,11 @@ public interface ImagePixelMapping {
 		case Area_QZX:
 			return new QPermuted2DMapping(TwoDPermutation.ZX);
 		case Volume_HKL:
+		case Coords_HKL:
 			return new HKLMapping();
 		case Volume_Q:
-			return new QxyzMapping();
-		case Coords_HKL:
 		case Coords_Q:
+			return new QxyzMapping();
 		default:
 			return null;
 		}

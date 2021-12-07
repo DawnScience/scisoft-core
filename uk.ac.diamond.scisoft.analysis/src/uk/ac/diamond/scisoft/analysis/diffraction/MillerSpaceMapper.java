@@ -1572,7 +1572,6 @@ public class MillerSpaceMapper {
 			throw new ScanFileHolderException("I16 workaround: cannot create image stack loader", e);
 		}
 		loader.setMaxShape(dn.getMaxShape());
-		loader.squeeze();
 		node.setMaxShape(loader.getMaxShape());
 		node.setChunkShape(loader.getChunkShape());
 		node.setDataset(loader.createLazyDataset(I16_IMAGE_DATA));

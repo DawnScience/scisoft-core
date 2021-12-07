@@ -196,6 +196,29 @@ public class NexusUtils {
 	}
 	
 	/**
+	 * Gets the given {@link DataNode} at the given augmented path (a path where the NXclass for
+	 * group nodes are specified. 
+	 * @param nexusObject nexus object
+	 * @param dataNodePath path at which to add the data node, an as augmented pat
+	 * @return the DataNode at the given path, or null if none
+	 * @throws NexusException 
+	 */
+	public static DataNode getDataNode(NXobject nexusObject, String dataNodePath) throws NexusException {
+		final int lastSeparatorIndex = dataNodePath.lastIndexOf(Node.SEPARATOR);
+		final NXobject parentGroup;
+		final String dataNodeName;
+		if (lastSeparatorIndex == -1) { // simple case, path is just a name
+			parentGroup = nexusObject;
+			dataNodeName = dataNodePath;
+		} else {
+			final String parentGroupPath = dataNodePath.substring(0, lastSeparatorIndex);
+			parentGroup = getGroupNode(nexusObject, parentGroupPath, false);
+			dataNodeName = dataNodePath.substring(lastSeparatorIndex + 1);
+		}
+		
+		return parentGroup == null ? null : parentGroup.getDataNode(dataNodeName);
+	}
+	/**
 	 * Get the group node with the given augmented path within the given root node,
 	 * optionally creating it if it does not already exist.
 	 * <p><em>Note:</em>This method operates on an in-memory nexus tree, no changes are saved to disk.

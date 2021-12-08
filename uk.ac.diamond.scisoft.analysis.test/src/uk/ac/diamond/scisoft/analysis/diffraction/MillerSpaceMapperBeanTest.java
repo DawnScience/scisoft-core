@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 
@@ -45,6 +46,7 @@ public class MillerSpaceMapperBeanTest {
 
 	private void testWriteRead(MillerSpaceMapperBean orig, File f) {
 		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 		try {
 			mapper.writeValue(f, orig);
 		} catch (IOException e1) {

@@ -14,6 +14,8 @@ import java.util.Objects;
 
 /**
  * This represents all of the input parameters and options for the mapper
+ * <p>
+ * The (un-deprecated) setters map to possible entries in JSON (with lower cased initial letter).
  */
 public class MillerSpaceMapperBean implements Cloneable {
 	private String[] inputs;
@@ -49,65 +51,99 @@ public class MillerSpaceMapperBean implements Cloneable {
 		/**
 		 * Volume in Miller space
 		 */
-		Volume_HKL(true, false, false),
+		Volume_HKL(3, false),
 		/**
 		 * Volume in q-space (crystal frame)
 		 */
-		Volume_Q(true, false, true),
+		Volume_Q(3, true),
 		/**
 		 * Area in Miller-space (H,K)
 		 */
-		Area_HK(false, true, false),
+		Area_HK(2, false),
 		/**
 		 * Area in Miller-space (K,L)
 		 */
-		Area_KL(false, true, false),
+		Area_KL(2, false),
 		/**
 		 * Area in Miller-space (L,H)
 		 */
-		Area_LH(false, true, false),
+		Area_LH(2, false),
 		/**
 		 * Area in q-space (parallel, perpendicular to sample surface)
 		 */
-		Area_QPP(false, true, true),
+		Area_QPP(2, true),
 		/**
 		 * Area in q-space (X,Y)
 		 */
-		Area_QXY(false, true, true),
+		Area_QXY(2, true),
 		/**
 		 * Area in q-space (Y,Z)
 		 */
-		Area_QYZ(false, true, true),
+		Area_QYZ(2, true),
 		/**
 		 * Area in q-space (Z,X)
 		 */
-		Area_QZX(false, true, true),
+		Area_QZX(2, true),
+		/**
+		 * Line in Miller space (H)
+		 */
+		Line_H(1, false),
+		/**
+		 * Line in Miller space (K)
+		 */
+		Line_K(1, false),
+		/**
+		 * Line in Miller space (L)
+		 */
+		Line_L(1, false),
+		/**
+		 * Line in q-space (2 x theta is scattering angle)
+		 */
+		Line_Theta(1, true),
+		/**
+		 * Line in q-space (X)
+		 */
+		Line_QX(1, true),
+		/**
+		 * Line in q-space (Y)
+		 */
+		Line_QY(1, true),
+		/**
+		 * Line in q-space (Z)
+		 */
+		Line_QZ(1, true),
 		/**
 		 * Coordinates in Miller space
 		 */
-		Coords_HKL(false, false, false),
+		Coords_HKL(0, false),
 		/**
 		 * Coordinates in q-space (momentum transfer)
 		 */
-		Coords_Q(false, false, true),
+		Coords_Q(0, true),
 		;
 
-		private boolean volume;
-		private boolean area;
+		private int rank;
 		private boolean q;
 
-		private OutputMode(boolean volume, boolean area, boolean q) {
-			this.volume = volume;
-			this.area = area;
+		private OutputMode(int rank, boolean q) {
+			this.rank = rank;
 			this.q = q;
 		}
 
+		public int getRank() {
+			return rank;
+		}
+
 		public boolean isVolume() {
-			return volume;
+			return rank == 3;
 		}
 
 		public boolean isArea() {
-			return area;
+			return rank == 2;
+		}
+
+		public boolean isLine() {
+			return rank == 1;
 		}
 
 		public boolean isQ() {

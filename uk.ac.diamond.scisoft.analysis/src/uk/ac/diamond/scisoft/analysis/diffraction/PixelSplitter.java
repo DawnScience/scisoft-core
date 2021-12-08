@@ -123,7 +123,7 @@ public interface PixelSplitter extends Cloneable {
 	 * Split pixel over eight voxels with weight determined by f/distance
 	 */
 	public static class InverseSplitter extends BaseSplitter {
-		private double f;
+		protected double f;
 
 		InverseSplitter() {
 		}
@@ -281,8 +281,6 @@ public interface PixelSplitter extends Cloneable {
 	 * Split pixel over eight voxels with weight determined by exp(-log(2)*(distance/hm))
 	 */
 	public static class ExponentialSplitter extends InverseSplitter {
-		private double f;
-
 		public ExponentialSplitter(double hm) {
 			f = Math.log(2) / hm;
 		}
@@ -306,8 +304,6 @@ public interface PixelSplitter extends Cloneable {
 	 * Split pixel over eight voxels with weight determined by exp(-log(2)*(distance/hwhm)^2)
 	 */
 	public static class GaussianSplitter extends InverseSplitter {
-		private double f;
-
 		public GaussianSplitter(double hwhm) {
 			f = Math.log(2) / (hwhm * hwhm);
 		}
@@ -331,7 +327,6 @@ public interface PixelSplitter extends Cloneable {
 	 * Split pixel over four pixels with weight determined by f/distance
 	 */
 	public static class InverseSplitter2D extends InverseSplitter {
-		double f;
 		double[] weights2D = new double[4];
 
 		InverseSplitter2D() {
@@ -442,8 +437,6 @@ public interface PixelSplitter extends Cloneable {
 	 * Split pixel over four pixels with weight determined by exp(-log(2)*(distance/hm))
 	 */
 	public static class ExponentialSplitter2D extends InverseSplitter2D {
-		private double f;
-
 		public ExponentialSplitter2D(double hm) {
 			f = Math.log(2) / hm;
 		}
@@ -467,8 +460,6 @@ public interface PixelSplitter extends Cloneable {
 	 * Split pixel over four pixels with weight determined by exp(-log(2)*(distance/hwhm)^2)
 	 */
 	public static class GaussianSplitter2D extends InverseSplitter2D {
-		private double f;
-
 		public GaussianSplitter2D(double hwhm) {
 			f = Math.log(2) / (hwhm * hwhm);
 		}
@@ -489,21 +480,176 @@ public interface PixelSplitter extends Cloneable {
 	}
 
 	/**
+	 * Split pixel over two bins (line elements) with weight determined by f/distance
+	 */
+	public static class InverseSplitter1D extends InverseSplitter {
+		double weight0, weight1;
+
+		InverseSplitter1D() {
+		}
+
+		public InverseSplitter1D(double f) {
+			this.f = f;
+		}
+
+		@Override
+		public boolean doesSpread() {
+			return true;
+		}
+
+		/**
+		 * Calculate weights
+		 * @param dx displacement in x from first voxel
+		 * @param dy displacement in y from first voxel
+		 * @param dy displacement in z from first voxel
+		 */
+		void calcWeights1D(double dx, double dy, double dz) {
+			final double dxs = dx * dx;
+			final double dys = dy * dy;
+			final double dzs = dz * dz;
+			final double cx = 1 - dx;
+			final double cy = 1 - dy;
+			final double cz = 1 - dz;
+			final double cxs = cx * cx;
+			final double cys = cy * cy;
+			final double czs = cz * cz;
+
+			weight0 = calcWeight(dxs + dys + dzs) + calcWeight(dxs + dys + czs)
+			+ calcWeight(dxs + cys + dzs) + calcWeight(dxs + cys + czs);
+			weight1 = calcWeight(cxs + dys + dzs) + calcWeight(cxs + dys + czs)
+			+ calcWeight(cxs + cys + dzs) + calcWeight(cxs + cys + czs);
+
+			if (Double.isInfinite(weight0)) {
+				weight0 = 1e3 * weight1; // make voxel an arbitrary factor larger
+			}
+			double factor = 1./(weight0 + weight1);
+			weight0 *= factor;
+			weight1 *= factor;
+		}
+
+		@Override
+		public InverseSplitter1D clone() {
+			InverseSplitter1D c = new InverseSplitter1D(f);
+			c.output = output;
+			c.weight = weight;
+			return c;
+		}
+
+		/**
+		 * Add values to datasets at given index
+		 * @param index
+		 * @param va value
+		 * @param vb value
+		 */
+		void addToDatasets(final int index, double va, double vb) {
+			output.setAbs(index, output.getAbs(index) + va);
+			weight.setAbs(index, weight.getAbs(index) + vb);
+		}
+
+		@Override
+		public void splitValue(Vector3d dh, int[] pos, double value) {
+			calcWeights1D(dh.x, dh.y, dh.z);
+			int[] vShape = output.getShapeRef();
+			final int lMax = vShape[0];
+			final int idx = output.get1DIndex(pos);
+
+			int i = idx;
+			addToDatasets(i, weight0 * value, weight0);
+
+			final int l = pos[0] + 1;
+			if (l >= 0 && l < lMax && weight1 > 0) {
+				addToDatasets(i + 1, weight1 * value, weight1);
+			}
+		}
+	}
+
+	/**
+	 * Split pixel over four pixels with weight determined by exp(-log(2)*(distance/hm))
+	 */
+	public static class ExponentialSplitter1D extends InverseSplitter1D {
+		private double f;
+
+		public ExponentialSplitter1D(double hm) {
+			f = Math.log(2) / hm;
+		}
+
+		@Override
+		public ExponentialSplitter1D clone() {
+			ExponentialSplitter1D c = new ExponentialSplitter1D(1);
+			c.output = output;
+			c.weight = weight;
+			c.f = f;
+			return c;
+		}
+
+		@Override
+		protected double calcWeight(double ds) {
+			return Math.exp(-Math.sqrt(ds)*f);
+		}
+	}
+
+	/**
+	 * Split pixel over four pixels with weight determined by exp(-log(2)*(distance/hwhm)^2)
+	 */
+	public static class GaussianSplitter1D extends InverseSplitter1D {
+		private double f;
+
+		public GaussianSplitter1D(double hwhm) {
+			f = Math.log(2) / (hwhm * hwhm);
+		}
+
+		@Override
+		public GaussianSplitter1D clone() {
+			GaussianSplitter1D c = new GaussianSplitter1D(1);
+			c.output = output;
+			c.weight = weight;
+			c.f = f;
+			return c;
+		}
+
+		@Override
+		protected double calcWeight(double ds) {
+			return Math.exp(-ds*f);
+		}
+	}
+
+	/**
 	 * Create a pixel splitter of given name
-	 * @param is2D 
+	 * @param rank 
 	 * @param splitter name
 	 * @param p parameter
 	 * @return pixel splitter
 	 */
-	static PixelSplitter createSplitter(boolean is2D, String splitter, double p) {
+	static PixelSplitter createSplitter(int rank, String splitter, double p) {
 		if (splitter == null || splitter.isEmpty() || splitter.equals("nearest")) {
 			return new NonSplitter();
 		} else if (splitter.equals("gaussian")) {
-			return is2D ? new GaussianSplitter2D(p) : new GaussianSplitter(p);
+			switch (rank) {
+			case 1:
+				return new GaussianSplitter1D(p);
+			case 2:
+				return new GaussianSplitter2D(p);
+			case 3: default:
+				return new GaussianSplitter(p);
+			}
 		} else if (splitter.equals("negexp")) {
-			return is2D ? new ExponentialSplitter2D(p) : new ExponentialSplitter(p);
+			switch (rank) {
+			case 1:
+				return new ExponentialSplitter1D(p);
+			case 2:
+				return new ExponentialSplitter2D(p);
+			case 3: default:
+				return new ExponentialSplitter(p);
+			}
 		} else if (splitter.equals("inverse")) {
-			return is2D ? new InverseSplitter2D() : new InverseSplitter();
+			switch (rank) {
+			case 1:
+				return new InverseSplitter1D(p);
+			case 2:
+				return new InverseSplitter2D(p);
+			case 3: default:
+				return new InverseSplitter(p);
+			}
 		} 
 	
 		throw new IllegalArgumentException("Splitter is not known");

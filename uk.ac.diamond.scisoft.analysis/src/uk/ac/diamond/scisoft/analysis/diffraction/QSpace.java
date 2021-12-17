@@ -10,6 +10,7 @@
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
 import javax.vecmath.Vector3d;
+import javax.vecmath.Vector4d;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
@@ -29,6 +30,8 @@ public class QSpace {
 	private Vector3d mki; // minus initial wave vector
 	private double qScale;
 	private double residual; // fitting mean of squared residuals
+	private Vector3d reference;
+	private Vector4d stokes;
 
 	public QSpace(DetectorProperties detprops, DiffractionCrystalEnvironment diffexp, double scale) {
 		detProps = detprops;
@@ -50,6 +53,8 @@ public class QSpace {
 	public void setDiffractionCrystalEnvironment(DiffractionCrystalEnvironment diffexp) {
 		kmod = qScale/diffexp.getWavelength();
 		calculateInitalWavevector();
+		reference = diffexp.getReferenceNormal();
+		stokes = diffexp.getStokesVector();
 	}
 
 	/**
@@ -80,6 +85,14 @@ public class QSpace {
 	 */
 	public void qFromPixelPosition(final double x, final double y, Vector3d q) {
 		detProps.pixelPosition(x, y, q);
+		convertToQ(q);
+	}
+
+	/**
+	 * Convert position vector into q
+	 * @param q position vector
+	 */
+	public void convertToQ(Vector3d q) {
 		double l = q.length();
 		if (l > 0) {
 			q.scaleAdd(kmod/l, mki);
@@ -195,5 +208,19 @@ public class QSpace {
 	 */
 	public void setResidual(double residual) {
 		this.residual = residual;
+	}
+
+	/**
+	 * @return normal to reference place for polarization 
+	 */
+	public Vector3d getReferenceNormal() {
+		return reference;
+	}
+
+	/**
+	 * @return Stokes parameters as a vector to describe polarization state of beam
+	 */
+	public Vector4d getStokesVector() {
+		return stokes;
 	}
 }

@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -539,5 +540,70 @@ public class I16NexusTest {
 		assertTrue(VersionUtils.isOldVersion(old, "9.14.0"));
 		assertFalse(VersionUtils.isOldVersion(old, "9.15.0"));
 		assertFalse(VersionUtils.isOldVersion(old, "9.16.0"));
+	}
+
+	@Test
+	public void testPolarizationFactor() {
+		checkPolarizationFactor(0);
+		checkPolarizationFactor(0.8);
+		checkPolarizationFactor(1);
+	}
+
+	void checkPolarizationFactor(double polnQ) {
+		checkPolarizationFactor(polnQ, 0, 0);
+		checkPolarizationFactor(polnQ, 45, 0);
+		checkPolarizationFactor(polnQ, 0, 30);
+		checkPolarizationFactor(polnQ, 45, 30);
+		checkPolarizationFactor(polnQ, 0, 90);
+		checkPolarizationFactor(polnQ, 45, 90);
+		checkPolarizationFactor(polnQ, 0, 150);
+		checkPolarizationFactor(polnQ, 45, 150);
+	}
+
+	void checkPolarizationFactor(double polnQ, double theta, double phi) {
+		theta = Math.toRadians(theta);
+		phi = Math.toRadians(phi);
+		Vector3d posn = new Vector3d(0, 0, 10);
+		Matrix3d mat = new Matrix3d();
+		mat.rotY(theta);
+		mat.transform(posn);
+		mat.rotZ(phi);
+		mat.transform(posn);
+		double pf = MillerSpaceMapper.calculatePolarizationFactor(polnQ, 0, new Vector3d(0,0,1), new Vector3d(0,1,0), posn, Math.cos(theta));
+		assertEquals(gsas2Factor(0.5*(polnQ + 1), theta, phi - Math.PI/2), pf, 1e-12);
+	}
+
+	/**
+	 * Equation 1 from GSAS-II (see Von Dreele & Xu, J. Appl. Cryst. 53, 1559-601 (2020)):
+	 * <pre>
+	 * [ (1 - p) cos(phi)^2 + p sin(phi)^2 ] cos(theta)^2 + (1 - p) sin(phi)^2 + p cos(phi)^2
+	 * </pre>
+	 * where p is fraction of intensity polarized in reference plane. Note theta = 2 Theta
+	 * <p>
+	 * Note this equation seems to be wrong for phi from reference plane as when phi=0,
+	 * <pre>
+	 * (1 - p) cos(theta)^2 + p
+	 * </pre>
+	 * which shows for p=1 the polarization factor has no theta dependence (input polarized
+	 * in reference place); and when phi=pi/2,
+	 * <pre>
+	 * p cos(theta)^2 + 1- p
+	 * </pre>
+	 * which shows for p=0 it has no theta dependence (input polarized normal to reference place).
+	 * No theta dependence would be expected when p=0 and p=1, respectively. The equation is
+	 * corrected by using phi - pi/2
+	 * @param p
+	 * @param theta
+	 * @param phi
+	 * @return
+	 */
+	private double gsas2Factor(double p, double theta, double phi) {
+		double cts = Math.cos(theta);
+		cts *= cts;
+		double cps = Math.cos(phi);
+		cps *= cps;
+		double sps = Math.sin(phi);
+		sps *= sps;
+		return ( (1 - p) * cps + p * sps ) * cts + (1 - p) * sps + p * cps;
 	}
 }

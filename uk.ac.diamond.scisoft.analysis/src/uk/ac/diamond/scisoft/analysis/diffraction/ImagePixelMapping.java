@@ -46,6 +46,16 @@ public interface ImagePixelMapping {
 	public DetectorProperties getDetectorProperties();
 
 	/**
+	 * @return scattering angle
+	 */
+	public double getCosineScatteringAngle();
+
+	/**
+	 * @return position vector of pixel given to map
+	 */
+	public Vector3d getPositionVector();
+
+	/**
 	 * Map given pixel coordinate to output space coordinate
 	 * @param x fast axis
 	 * @param y slow axis
@@ -62,11 +72,17 @@ public interface ImagePixelMapping {
 
 	static abstract class BaseMapping implements ImagePixelMapping {
 		protected QSpace qSpace;
+		protected DetectorProperties detector;
+		protected Vector3d beam;
 		protected Matrix3d transform;
+		protected double cos; // cosine of scattering angle between incident and final
+		protected Vector3d p;
 
 		@Override
 		public void setSpaces(QSpace qSpace, MillerSpace mSpace) {
 			this.qSpace = qSpace;
+			this.detector = qSpace.getDetectorProperties();
+			this.beam = detector.getBeamVector();
 		}
 
 		@Override
@@ -77,6 +93,16 @@ public interface ImagePixelMapping {
 		@Override
 		public DetectorProperties getDetectorProperties() {
 			return qSpace.getDetectorProperties();
+		}
+
+		@Override
+		public double getCosineScatteringAngle() {
+			return cos;
+		}
+
+		@Override
+		public Vector3d getPositionVector() {
+			return p;
 		}
 
 		@Override
@@ -92,11 +118,12 @@ public interface ImagePixelMapping {
 		private static final String[] Q_XYZ_AXES = { "x-axis", "y-axis", "z-axis" };
 
 		public QxyzMapping() {
+			p = new Vector3d();
 		}
 
 		@Override
 		public void setSpaces(QSpace qSpace, MillerSpace mSpace) {
-			this.qSpace = qSpace;
+			super.setSpaces(qSpace, mSpace);
 			this.transform = mSpace.getLabToCrystalTransform();
 		}
 
@@ -106,7 +133,10 @@ public interface ImagePixelMapping {
 		 */
 		@Override
 		public void map(double x, double y, Vector3d q) {
-			qSpace.qFromPixelPosition(x, y, q);
+			detector.pixelPosition(x, y, p);
+			cos = beam.dot(p)/p.length();
+			q.set(p);
+			qSpace.convertToQ(q);
 			transform.transform(q);
 		}
 
@@ -119,6 +149,8 @@ public interface ImagePixelMapping {
 		public QxyzMapping clone() {
 			QxyzMapping c = new QxyzMapping();
 			c.qSpace = qSpace;
+			c.detector = detector;
+			c.beam = beam;
 			c.transform = transform;
 			return c;
 		}
@@ -127,17 +159,16 @@ public interface ImagePixelMapping {
 	/**
 	 * Mapping to HKL
 	 */
-	public static class HKLMapping extends BaseMapping {
+	public static class HKLMapping extends QxyzMapping {
 		protected static final String[] HKL_AXES = { "h-axis", "k-axis", "l-axis" };
-		protected final Vector3d q;
 
 		public HKLMapping() {
-			q = new Vector3d();
+			super();
 		}
 
 		@Override
 		public void setSpaces(QSpace qSpace, MillerSpace mSpace) {
-			this.qSpace = qSpace;
+			super.setSpaces(qSpace, mSpace);
 			this.transform = mSpace.getMillerTransform();
 		}
 
@@ -146,15 +177,14 @@ public interface ImagePixelMapping {
 			return qSpace;
 		}
 
-		/**
-		 * Returns h vector
-		 * @param h
-		 */
-		@Override
-		public void map(double x, double y, Vector3d h) {
-			qSpace.qFromPixelPosition(x, y, q);
-			transform.transform(q, h);
-		}
+//		/**
+//		 * Returns h vector
+//		 * @param h
+//		 */
+//		@Override
+//		public void map(double x, double y, Vector3d h) {
+//			super.map(x, y, h);
+//		}
 
 		@Override
 		public String[] getAxesName() {
@@ -165,6 +195,8 @@ public interface ImagePixelMapping {
 		public HKLMapping clone() {
 			HKLMapping c = new HKLMapping();
 			c.qSpace = qSpace;
+			c.detector = detector;
+			c.beam = beam;
 			c.transform = transform;
 			return c;
 		}
@@ -177,6 +209,7 @@ public interface ImagePixelMapping {
 		private static final String[] Q_PP_AXES = { "q-par-axis", "q-per-axis" };
 
 		public Qpp2DMapping() {
+			super();
 		}
 
 		/**
@@ -200,6 +233,8 @@ public interface ImagePixelMapping {
 		public Qpp2DMapping clone() {
 			Qpp2DMapping c = new Qpp2DMapping();
 			c.qSpace = qSpace;
+			c.detector = detector;
+			c.beam = beam;
 			c.transform = transform;
 			return c;
 		}
@@ -218,6 +253,8 @@ public interface ImagePixelMapping {
 		 * @param mode
 		 */
 		public QPermuted2DMapping(DimChoice mode) {
+			super();
+
 			this.mode = mode;
 			switch (mode) {
 			case X:
@@ -270,6 +307,8 @@ public interface ImagePixelMapping {
 		public QPermuted2DMapping clone() {
 			QPermuted2DMapping c = new QPermuted2DMapping(mode);
 			c.qSpace = qSpace;
+			c.detector = detector;
+			c.beam = beam;
 			c.transform = transform;
 			return c;
 		}
@@ -307,12 +346,14 @@ public interface ImagePixelMapping {
 
 		/**
 		 * Returns q vector
-		 * @param q
+		 * @param p
 		 */
 		@Override
 		public void map(double x, double y, Vector3d h) {
-			qSpace.qFromPixelPosition(x, y, q);
-			transform.transform(q, h);
+			super.map(x, y, h);
+//			qSpace.qFromPixelPosition(x, y, q);
+//			angle = qSpace.scatteringAngle(h);
+//			transform.transform(q, h);
 
 			double t;
 			switch (mode) {
@@ -342,6 +383,8 @@ public interface ImagePixelMapping {
 		public HKLPermuted2DMapping clone() {
 			HKLPermuted2DMapping c = new HKLPermuted2DMapping(mode);
 			c.qSpace = qSpace;
+			c.detector = detector;
+			c.beam = beam;
 			c.transform = transform;
 			return c;
 		}
@@ -354,8 +397,9 @@ public interface ImagePixelMapping {
 		private static final String[] Q_Theta_AXES = { "q-theta-axis", };
 		private DetectorProperties detector;
 		private Vector3d beam;
-		
+
 		public QThetaMapping() {
+			super();
 		}
 
 		@Override
@@ -376,9 +420,10 @@ public interface ImagePixelMapping {
 		 */
 		@Override
 		public void map(double x, double y, Vector3d q) {
-			detector.pixelPosition(x, y, q);
-			double theta = 0.5 * Math.acos(beam.dot(q)/q.length());
-			q.x = theta; // FIXME missing Jacobian???
+			detector.pixelPosition(x, y, p);
+			cos = beam.dot(p) / p.length();
+
+			q.x = 0.5*Math.acos(cos); // FIXME missing Jacobian???
 			q.y = 0;
 			q.z = 0;
 		}
@@ -410,6 +455,8 @@ public interface ImagePixelMapping {
 		 * @param mode
 		 */
 		public Q1DMapping(DimChoice mode) {
+			super();
+
 			this.mode = mode;
 			switch (mode) {
 			case X:
@@ -462,6 +509,8 @@ public interface ImagePixelMapping {
 		public Q1DMapping clone() {
 			Q1DMapping c = new Q1DMapping(mode);
 			c.qSpace = qSpace;
+			c.detector = detector;
+			c.beam = beam;
 			c.transform = transform;
 			return c;
 		}
@@ -499,12 +548,14 @@ public interface ImagePixelMapping {
 
 		/**
 		 * Returns q vector
-		 * @param q
+		 * @param p
 		 */
 		@Override
 		public void map(double x, double y, Vector3d h) {
-			qSpace.qFromPixelPosition(x, y, q);
-			transform.transform(q, h);
+			super.map(x, y, h);
+//			qSpace.qFromPixelPosition(x, y, q);
+//			angle = Math.acos(beam.dot(q)/q.length());
+//			transform.transform(q, h);
 
 			double t;
 			switch (mode) {
@@ -534,6 +585,8 @@ public interface ImagePixelMapping {
 		public HKL1DMapping clone() {
 			HKL1DMapping c = new HKL1DMapping(mode);
 			c.qSpace = qSpace;
+			c.detector = detector;
+			c.beam = beam;
 			c.transform = transform;
 			return c;
 		}

@@ -1500,17 +1500,41 @@ public class NexusTreeUtils {
 			}
 		}
 
+		DataNode depNode = gNode.getDataNode(TRANSFORMATIONS_DEPENDSON);
+		String dependsOn = "direction";
+		if (depNode == null) {
+			try {
+				dependsOn = getFirstString(depNode);
+			} catch (NexusException e) {
+				logger.error("Could not read depends_on so using '{}'", dependsOn, e);
+			}
+			
+		}
 		GroupNode tNode = getGroup(findFirstNode(gNode, NexusConstants.TRANSFORMATIONS));
 		if (tNode == null) {
 			logger.warn("Beam transformation was missing in {}", gNode);
 		} else {
-			DataNode direction = tNode.getDataNode("direction");
+			DataNode direction = tNode.getDataNode(dependsOn);
 			if (direction == null) {
 				logger.warn("Direction was missing in {}", gNode);
 			} else {
 				double[] d = parseDoubleArray(direction.getAttribute("vector"), 3);
 				sample.setBeamDirection(new Vector3d(d));
 			}
+			DataNode reference = tNode.getDataNode("reference_plane");
+			if (reference == null) {
+				logger.warn("Polarization reference was missing in {}", gNode);
+			} else {
+				double[] d = parseDoubleArray(direction.getAttribute("vector"), 3);
+				sample.setReferenceNormal(new Vector3d(d));
+			}
+		}
+		DataNode stokes = gNode.getDataNode("final_polarization_stokes");
+		if (stokes == null) {
+			logger.warn("Polarization state was missing in {}", gNode);
+		} else {
+			double[] d = getDoubleArray(stokes, 4);
+			sample.setStokesVector(new Vector4d(d));
 		}
 	}
 

@@ -18,6 +18,7 @@ import java.util.Set;
 
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
+import javax.vecmath.Vector4d;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironmentEvent.EventType;
 
@@ -44,6 +45,8 @@ public class DiffractionCrystalEnvironment implements Serializable, Cloneable {
 	private final static Vector3d DEFAULT_DIR = new Vector3d(0, 0, 1);
 
 	private Vector3d dirn = new Vector3d(DEFAULT_DIR);
+	private Vector3d referenceNormal = new Vector3d(0, 1, 0); // horizontal
+	private Vector4d stokesVector = new Vector4d(1, 1, 0, 0); // fully polarized horizontally
 
 	/**
 	 * @param wavelength in Angstroms
@@ -353,5 +356,32 @@ public class DiffractionCrystalEnvironment implements Serializable, Cloneable {
 	 */
 	public Vector3d getBeamVector() {
 		return dirn;
+	}
+
+	/**
+	 * @return normal to reference place for polarization 
+	 */
+	public Vector3d getReferenceNormal() {
+		return referenceNormal;
+	}
+
+	public void setReferenceNormal(Vector3d referenceNormal) {
+		referenceNormal.normalize();
+		this.referenceNormal = referenceNormal;
+	}
+
+	/**
+	 * @return Stokes parameters as a vector to describe polarization state of beam
+	 */
+	public Vector4d getStokesVector() {
+		return stokesVector;
+	}
+
+	public void setStokesVector(Vector4d stokesVector) {
+		double i = stokesVector.getX();
+		if (i <= 0 || stokesVector.lengthSquared() > 2*i*i) {
+			throw new IllegalArgumentException("First component must be positive and its square >= the sum of squares of the rest: " + stokesVector);
+		}
+		this.stokesVector = stokesVector;
 	}
 }

@@ -42,6 +42,7 @@ import org.eclipse.dawnsci.nexus.NXcollection;
 import org.eclipse.dawnsci.nexus.NXdata;
 import org.eclipse.dawnsci.nexus.NXentry;
 import org.eclipse.dawnsci.nexus.NXobject;
+import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusScanInfo;
 import org.eclipse.dawnsci.nexus.NexusScanInfo.ScanRole;
@@ -386,7 +387,7 @@ class NexusScanFileImpl implements NexusScanFile {
 
 		// create an NXdata group for each additional primary data field (if any)
 		for (String dataFieldName : primaryDevice.getAdditionalPrimaryDataFieldNames()) {
-			String dataGroupName = primaryDeviceName + "_" + dataFieldName;
+			String dataGroupName = primaryDeviceName + NexusConstants.FIELD_SEPERATOR + dataFieldName;
 			createNXDataGroup(entryBuilder, primaryDevice, primaryDeviceType, monitors,
 					scannables, dataGroupName, dataFieldName);
 		}

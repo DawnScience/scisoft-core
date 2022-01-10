@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import uk.ac.diamond.scisoft.analysis.IOTestUtils;
 
@@ -45,6 +46,7 @@ public class MillerSpaceMapperBeanTest {
 
 	private void testWriteRead(MillerSpaceMapperBean orig, File f) {
 		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 		try {
 			mapper.writeValue(f, orig);
 		} catch (IOException e1) {
@@ -271,10 +273,10 @@ public class MillerSpaceMapperBeanTest {
 		String[] inputPaths = { n };
 
 		// pil100k is 195x487
-		MillerSpaceMapperBean mapperBean = MillerSpaceMapperBean.createBeanWithAutoBox(inputPaths, dstPath, "inverse", 0.5, 2., true, false, 0.005);
+		MillerSpaceMapperBean mapperBean = MillerSpaceMapperBean.createBeanWithAutoBox(inputPaths, dstPath, "inverse", 0.5, 2., true, mapQ, 0.005);
 		mapperBean.setPixelIndexes(indexes);
 		MillerSpaceMapper mapper = new MillerSpaceMapper(mapperBean);
-		mapper.calculateCoordinates(mapQ);
+		mapper.calculateCoordinates();
 
 		Dataset[] a = HDF5Utils.readAttributes(dstPath, "/");
 		Dataset[] b = HDF5Utils.readAttributes(dstPath, "/processed");

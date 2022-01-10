@@ -68,7 +68,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import uk.ac.diamond.scisoft.analysis.crystallography.MillerSpace;
 import uk.ac.diamond.scisoft.analysis.crystallography.VersionUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.function.BicubicInterpolator;
-import uk.ac.diamond.scisoft.analysis.diffraction.MillerSpaceMapperBean.OutputMode;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CoordinatesIterator;
 import uk.ac.diamond.scisoft.analysis.io.ImageStackLoader;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
@@ -124,17 +123,22 @@ public class MillerSpaceMapper {
 
 	public boolean warnExposureZero;
 
-	private static final String AREA_NAME = "area";
-	private static final String VOLUME_NAME = "volume";
-	private static String getOutputName(boolean is2D) {
-		return is2D ? AREA_NAME : VOLUME_NAME;
+	private static String getOutputName(int rank) {
+		switch (rank) {
+		case 1:
+			return "line";
+		case 2:
+			return "area";
+		case 3:
+			return "volume";
+		default:
+			return "data";
+		}
 	}
 
 	private static final String WEIGHT_NAME = "weight";
-	private static final String MILLER_SPACE = "reciprocal_space";
-	private static final String Q_SPACE = "q_space";
 	private static String getSpaceName(boolean isQ) {
-		return isQ ? Q_SPACE : MILLER_SPACE;
+		return isQ ? "q_space" : "reciprocal_space";
 	}
 
 	private static final String APP_DEF_MX = "NXmx";
@@ -339,8 +343,8 @@ public class MillerSpaceMapper {
 			}
 		}
 
-		return bean.getOutputMode().isArea() ? mapImagesToArea(tree, trans, iMask, images, iters, ishape)
-				: mapImagesToVolume(tree, trans, iMask, images, iters, ishape);
+		return bean.getOutputMode().getRank() > 2 ? mapImagesByStrips(tree, trans, iMask, images, iters, ishape)
+				: mapImagesIndividually(tree, trans, iMask, images, iters, ishape);
 	}
 
 	private Dataset getTransmission(Tree tree, int[] dshape) throws ScanFileHolderException {
@@ -436,14 +440,13 @@ public class MillerSpaceMapper {
 			DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, dpos);
 			DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 			QSpace qspace = new QSpace(dp, env);
-			MillerSpace mspace = isQSpace ? null : new MillerSpace(sample.getUnitCell(), env.getOrientation());
-			if (vDel != null) {
-				pixelMapping.setSpaces(qspace, mspace);
-				calcOutputBounds(vMin, vMax, qspace, mspace);
-			}
+			MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
+			pixelMapping.setSpaces(qspace, mspace);
+			calcOutputBounds(vMin, vMax, qspace, mspace);
 		}
 	}
 
+	private static final int PAD = 1 + 1;  // add one as we split across pixels
 	private void roundLimitsAndFindShapes() {
 		if (vDel != null) {
 			for (int i = 0; i < vMin.length; i++) {
@@ -453,7 +456,7 @@ public class MillerSpaceMapper {
 				int u = (int) Math.ceil(vMax[i] / d);
 				vMax[i] = d * u;
 				if (i < vShape.length) {
-					vShape[i] = u - l + 1; // add one as we split across pixels
+					vShape[i] = u - l + PAD;
 				}
 			}
 		}
@@ -520,7 +523,7 @@ public class MillerSpaceMapper {
 				DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, dpos);
 				DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 				QSpace qspace = new QSpace(dp, env);
-				MillerSpace mspace = isQSpace ? null : new MillerSpace(sample.getUnitCell(), env.getOrientation());
+				MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
 				pixelMapping.setSpaces(qspace, mspace);
 				printCorners(qspace, mspace);
 
@@ -556,15 +559,6 @@ public class MillerSpaceMapper {
 	 * @throws ScanFileHolderException
 	 */
 	public void calculateCoordinates() throws ScanFileHolderException {
-		calculateCoordinates(isQSpace);
-	}
-
-	/**
-	 * Calculate coordinates of given pixel addresses
-	 * @param mapQ
-	 * @throws ScanFileHolderException
-	 */
-	public void calculateCoordinates(boolean mapQ) throws ScanFileHolderException {
 		IntegerDataset pIdx = DatasetFactory.createFromObject(IntegerDataset.class, bean.getPixelIndexes());
 		if (pIdx == null) {
 			throw new IllegalArgumentException("No pixel indexes defined");
@@ -575,7 +569,7 @@ public class MillerSpaceMapper {
 			throw new IllegalArgumentException("Only one input file allowed");
 		}
 		initializeFromBean(inputs[0], false);
-		pixelMapping = ImagePixelMapping.createPixelMapping(mapQ ? OutputMode.Volume_Q : bean.getOutputMode());
+		pixelMapping = ImagePixelMapping.createPixelMapping(bean.getOutputMode());
 
 		Tree tree = getTreeFromNexusFile(inputs[0]);
 		PositionIterator diter = getPositionIterators(tree)[0];
@@ -600,7 +594,7 @@ public class MillerSpaceMapper {
 				DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, dpos);
 				DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 				QSpace qspace = new QSpace(dp, env);
-				MillerSpace mspace = mapQ ? null : new MillerSpace(sample.getUnitCell(), env.getOrientation());
+				MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
 				pixelMapping.setSpaces(qspace, mspace);
 
 				for (int i = 0; i < np; i++) {
@@ -658,7 +652,7 @@ public class MillerSpaceMapper {
 				DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, dpos);
 				DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 				QSpace qspace = new QSpace(dp, env);
-				MillerSpace mspace = mapQ ? null : new MillerSpace(sample.getUnitCell(), env.getOrientation());
+				MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
 				pixelMapping.setSpaces(qspace, mspace);
 
 				if (aiter != null) {
@@ -702,12 +696,12 @@ public class MillerSpaceMapper {
 			}
 		}
 
-		saveCoordinates(mapQ, pInput, coords);
+		saveCoordinates(pInput, coords);
 	}
 
-	private void saveCoordinates(boolean mapQ, Dataset indexes, Dataset coords) throws ScanFileHolderException {
+	private void saveCoordinates(Dataset indexes, Dataset coords) throws ScanFileHolderException {
 		String output = bean.getOutput();
-		String spaceName = getSpaceName(mapQ);
+		String spaceName = getSpaceName(bean.getOutputMode().isQ());
 		String coordsPath = TreeUtils.join(PROCESSED, spaceName);
 
 		indexes.setName("pixel_indexes");
@@ -745,7 +739,7 @@ public class MillerSpaceMapper {
 		return im;
 	}
 
-	private int mapImagesToVolume(Tree tree, Dataset trans, Dataset iMask, ILazyDataset images, PositionIterator[] iters,
+	private int mapImagesByStrips(Tree tree, Dataset trans, Dataset iMask, ILazyDataset images, PositionIterator[] iters,
 			int[] ishape) throws DatasetException {
 		warnExposureZero = true;
 		PositionIterator diter = iters[0]; // scan iterator
@@ -785,10 +779,10 @@ public class MillerSpaceMapper {
 				image = getNextImage(miss, images, iter, start, stop);
 			} else {
 				logger.info("Mapping image at {}/{} in {}", Arrays.toString(dpos), Arrays.toString(diter.getShape()), inFile);
-				initializeImagePixelMapping(pixelMapping, isQSpace, tree, ishape, dpos, isOldGDA);
+				initializeImagePixelMapping(pixelMapping, tree, ishape, dpos, isOldGDA);
 	
 				double tFactor = getTransmissionCorrection(trans, dpos);
-				image = mapImageToVolumeMultiThreaded(ni < imagesNumber - 1, images, iter, start, stop, tFactor, iMask, image, ishape);
+				image = mapImageByStripsMultiThreaded(ni < imagesNumber - 1, images, iter, start, stop, tFactor, iMask, image, ishape);
 			}
 
 			ni++;
@@ -819,7 +813,7 @@ public class MillerSpaceMapper {
 		return tFactor;
 	}
 
-	private void initializeImagePixelMapping(ImagePixelMapping pMapping, boolean mapQ, Tree tree, int[] ishape, int[] dpos, boolean isOldGDA) {
+	private void initializeImagePixelMapping(ImagePixelMapping pMapping, Tree tree, int[] ishape, int[] dpos, boolean isOldGDA) {
 		DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
 		if (scale == 1) {
 			dp.setStartX(dp.getStartX() - begX);
@@ -835,7 +829,7 @@ public class MillerSpaceMapper {
 		DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, dpos);
 		DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 		QSpace qspace = new QSpace(dp, env);
-		MillerSpace mspace = mapQ ? null : new MillerSpace(sample.getUnitCell(), env.getOrientation());
+		MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
 		pMapping.setSpaces(qspace, mspace);
 	}
 
@@ -890,7 +884,7 @@ public class MillerSpaceMapper {
 
 		final int xStart = region[0];
 		final int xStop  = region[1];
-		final QSpace qspace = mapping.getQSpace();
+		final DetectorProperties detector = mapping.getDetectorProperties();
 		for (int y = 0; y < ySize; y++) {
 			int py = y + yStart; // on detector (rather than sliced dataset)
 			for (int x = xStart; x < xStop; x++) {
@@ -909,7 +903,7 @@ public class MillerSpaceMapper {
 					mapping.map(x + 0.5, py + 0.5, v);
 
 					if (convertToOutputCoords(v, dv, pos)) {
-						value *= tFactor/qspace.calculateSolidAngle(x, py);
+						value *= tFactor/detector.calculateSolidAngle(x, py);
 						if (reduceToNonZeroBB) {
 							minMax(splitter.doesSpread(), sMinLocal, sMaxLocal, pos);
 						}
@@ -955,7 +949,7 @@ public class MillerSpaceMapper {
 		return false;
 	}
 
-	private Dataset mapImageToVolumeMultiThreaded(boolean loadNext, ILazyDataset images, PositionIterator iter, int[] start, int[] stop, final double tFactor,
+	private Dataset mapImageByStripsMultiThreaded(boolean loadNext, ILazyDataset images, PositionIterator iter, int[] start, int[] stop, final double tFactor,
 			final Dataset iMask, final Dataset image, final int[] ishape) throws DatasetException {
 		int size = poolSize - 1; // reserve for loading next image
 		final int[] pos = iter.getPos();
@@ -1056,31 +1050,35 @@ public class MillerSpaceMapper {
 		}
 		max[0] = Math.max(max[0], t);
 
-		t = p[1];
-		min[1] = Math.min(min[1], t);
-		if (spreads) {
-			t++;
-		}
-		max[1] = Math.max(max[1], t);
-
-		if (p.length > 2) {
-			t = p[2];
-			min[2] = Math.min(min[2], t);
+		if (p.length > 1) {
+			t = p[1];
+			min[1] = Math.min(min[1], t);
 			if (spreads) {
 				t++;
 			}
-			max[2] = Math.max(max[2], t);
+			max[1] = Math.max(max[1], t);
+
+			if (p.length > 2) {
+				t = p[2];
+				min[2] = Math.min(min[2], t);
+				if (spreads) {
+					t++;
+				}
+				max[2] = Math.max(max[2], t);
+			}
 		}
 	}
 
 	private static void minMax(final int[] min, final int[] max, final int[] lmin, final int[] lmax) {
 		min[0] = Math.min(min[0], lmin[0]);
 		max[0] = Math.max(max[0], lmax[0]);
-		min[1] = Math.min(min[1], lmin[1]);
-		max[1] = Math.max(max[1], lmax[1]);
-		if (min.length > 2) {
-			min[2] = Math.min(min[2], lmin[2]);
-			max[2] = Math.max(max[2], lmax[2]);
+		if (min.length > 1) {
+			min[1] = Math.min(min[1], lmin[1]);
+			max[1] = Math.max(max[1], lmax[1]);
+			if (min.length > 2) {
+				min[2] = Math.min(min[2], lmin[2]);
+				max[2] = Math.max(max[2], lmax[2]);
+			}
 		}
 	}
 
@@ -1118,7 +1116,9 @@ public class MillerSpaceMapper {
 		f = dv / vDel[1];
 		p = Math.floor(f);
 		deltaV.y = f - p;
-		pos[1] = (int) p;
+		if (pos.length > 1) {
+			pos[1] = (int) p;
+		}
 
 		dv = v.z - vMin[2];
 		if (dv < 0) {
@@ -1135,10 +1135,10 @@ public class MillerSpaceMapper {
 	}
 
 	/*
-	 * Differs from mapImagesToVolume by loading in main thread that
-	 * adds jobs to a queue for rest of thread pool
+	 * Differs from mapImagesByStrips by loading in main thread that
+	 * adds jobs (for each image) to a queue for rest of thread pool
 	 */
-	private int mapImagesToArea(Tree tree, Dataset trans, Dataset iMask, ILazyDataset images, PositionIterator[] iters,
+	private int mapImagesIndividually(Tree tree, Dataset trans, Dataset iMask, ILazyDataset images, PositionIterator[] iters,
 			int[] ishape) throws DatasetException {
 		int size = Math.max(1, poolSize - 1); // reserve for loading next image
 
@@ -1155,7 +1155,7 @@ public class MillerSpaceMapper {
 				wSplitter.setDatasets(DatasetFactory.zeros(vShape), DatasetFactory.zeros(vShape));
 			}
 			BicubicInterpolator upSampler = scale == 1 ? null : new BicubicInterpolator(true, ishape);
-			QueueWorker w = new QueueWorker(i, queue, upSampler, pixelMapping.clone(), wSplitter, iMask, trans, tree, isQSpace, ishape, vShape);
+			QueueWorker w = new QueueWorker(i, queue, upSampler, pixelMapping.clone(), wSplitter, iMask, trans, tree, ishape, vShape);
 			workers.add(w);
 			pool.execute(w);
 		}
@@ -1209,7 +1209,7 @@ public class MillerSpaceMapper {
 				wait += 0.25;
 			}
 			if (wait > 0) {
-				logger.info("Paused image loading for {} second until queue size < {}", wait, limit);
+				logger.debug("Paused image loading for {} second until queue size < {}", wait, limit);
 			}
 			ni++;
 		}
@@ -1471,8 +1471,8 @@ public class MillerSpaceMapper {
 			logger.warn("Could not find attenuator");
 		}
 
-		boolean is2D = bean.getOutputMode().isArea();
-		this.splitter = PixelSplitter.createSplitter(is2D, bean.getSplitterName(), bean.getSplitterParameter());
+		int outputRank = bean.getOutputMode().getRank();
+		this.splitter = PixelSplitter.createSplitter(outputRank, bean.getSplitterName(), bean.getSplitterParameter());
 		listMillerEntries = bean.isListMillerEntries();
 		pixelMapping = ImagePixelMapping.createPixelMapping(bean.getOutputMode());
 
@@ -1486,13 +1486,12 @@ public class MillerSpaceMapper {
 				vDel = new double[] {d, d, d};
 			} else if (delta.length == 2) {
 				double d = delta[1];
-				vDel = is2D ? new double[] {delta[0], d, Math.min(delta[0], d)} : new double[] {delta[0], d, d};
+				vDel = outputRank > 2 ? new double[] {delta[0], d, d} : new double[] {delta[0], d, Math.min(delta[0], d)};
 			} else {
 				vDel = delta;
 			}
 		}
 
-		int outputRank = is2D ? 2 : 3;
 		sMin = new int[outputRank];
 		sMax = new int[outputRank];
 
@@ -1582,7 +1581,6 @@ public class MillerSpaceMapper {
 			throw new ScanFileHolderException("I16 workaround: cannot create image stack loader", e);
 		}
 		loader.setMaxShape(dn.getMaxShape());
-		loader.squeeze();
 		node.setMaxShape(loader.getMaxShape());
 		node.setChunkShape(loader.getChunkShape());
 		node.setDataset(loader.createLazyDataset(I16_IMAGE_DATA));
@@ -1637,21 +1635,17 @@ public class MillerSpaceMapper {
 
 		createPixelMask(trees[0], allIters[0][0]);
 
-		if (findResultBB) {
-			if (vDel != null) {
-				Arrays.fill(vMin, Double.POSITIVE_INFINITY);
-				Arrays.fill(vMax, Double.NEGATIVE_INFINITY);
-			}
+		if (findResultBB && vDel != null) {
+			Arrays.fill(vMin, Double.POSITIVE_INFINITY);
+			Arrays.fill(vMax, Double.NEGATIVE_INFINITY);
 
 			for (int i = 0; i < n; i++) {
 				findBoundingBoxes(trees[i], allIters[i]);
 			}
 			roundLimitsAndFindShapes();
 
-			if (vDel != null) {
-				logger.warn("Extent of volume was found to be {} to {}", Arrays.toString(vMin), Arrays.toString(vMax));
-				logger.warn("with shape = {}", Arrays.toString(vShape));
-			}
+			logger.warn("Extent of volume was found to be {} to {}", Arrays.toString(vMin), Arrays.toString(vMax));
+			logger.warn("with shape = {}", Arrays.toString(vShape));
 		}
 
 		try {
@@ -1742,7 +1736,7 @@ public class MillerSpaceMapper {
 		}
 
 		String spaceName = getSpaceName(isQSpace);
-		String outputName = getOutputName(vShape.length == 2);
+		String outputName = getOutputName(vShape.length);
 		String outputPath = TreeUtils.join(PROCESSED, spaceName);
 
 		loadTimeTotal = 0;
@@ -1774,8 +1768,8 @@ public class MillerSpaceMapper {
 				createOutputAxes(pixelMapping.getAxesName(), axes, vShape, vMin, null, vDel);
 			}
 			long process = System.currentTimeMillis() - start;
-			logger.info("For {} threads, processing took {}ms ({}ms/frame)", poolSize, process, process/nt);
-			logger.info("               loading {} frames took {}ms ({}ms/frame)", nt, loadTimeTotal, loadTimeTotal/nt);
+			logger.info("For {} threads, processing took {}s ({}ms/frame)", poolSize, process/1000, process/nt);
+			logger.info("               loading {} frames took {}s ({}ms/frame)", nt, loadTimeTotal/1000, loadTimeTotal/nt);
 			start = System.currentTimeMillis();
 
 			boolean isFileNew = !hasDeleted;
@@ -1961,7 +1955,7 @@ public class MillerSpaceMapper {
 	public static void saveOutput(String file, MillerSpaceMapperBean bean, String entryPath, String oPath, Dataset o,
 			Dataset w, Dataset... axes) throws ScanFileHolderException {
 
-		String oName = getOutputName(o.getRank() == 2);
+		String oName = getOutputName(o.getRank());
 		o.setName(oName);
 		w.setName(WEIGHT_NAME);
 		HDF5Utils.writeDataset(file, oPath, o);
@@ -2191,8 +2185,8 @@ public class MillerSpaceMapper {
 		}
 		save += System.currentTimeMillis() - start;
 
-		logger.info("For {} threads, processing took {}ms ({}ms/frame)", poolSize, process, process/nt);
-		logger.info("                loading {} frames took {}ms ({}ms/frame)", nt, loadTimeTotal, loadTimeTotal/nt);
+		logger.info("For {} threads, processing took {}s ({}ms/frame)", poolSize, process/1000, process/nt);
+		logger.info("                loading {} frames took {}s ({}ms/frame)", nt, loadTimeTotal/1000, loadTimeTotal/nt);
 		logger.info("Saving took {}ms", save);
 	}
 
@@ -2473,14 +2467,13 @@ public class MillerSpaceMapper {
 		final private Dataset mask;
 		final private Dataset trans;
 		final private Tree tree;
-		final private boolean mapQ;
 
 		boolean running = true;
 		private Thread thread;
 		private int ni = 0;
 
 		public QueueWorker(int wNo, BlockingQueue<ImageJobConfig> queue, BicubicInterpolator upSampler, ImagePixelMapping mapping, PixelSplitter splitter,
-				Dataset mask, Dataset trans, Tree tree, boolean mapQ, int[] iShape, int[] oShape) {
+				Dataset mask, Dataset trans, Tree tree, int[] iShape, int[] oShape) {
 			this.wNo = wNo;
 			this.queue = queue;
 			this.upSampler = upSampler;
@@ -2490,7 +2483,6 @@ public class MillerSpaceMapper {
 			this.mask = mask;
 			this.trans = trans;
 			this.tree = tree;
-			this.mapQ = mapQ;
 			this.region = new int[] { 0, iShape[1], 0, iShape[0] };
 
 			this.minLocal = new int[oShape.length];
@@ -2525,7 +2517,7 @@ public class MillerSpaceMapper {
 					break;
 				}
 				logger.info("Worker {}: initializing mapping at {}", wNo, Arrays.toString(pos));
-				initializeImagePixelMapping(mapping, mapQ, tree, iShape, pos, false);
+				initializeImagePixelMapping(mapping, tree, iShape, pos, false);
 
 				double tFactor = getTransmissionCorrection(trans, pos);
 				try {

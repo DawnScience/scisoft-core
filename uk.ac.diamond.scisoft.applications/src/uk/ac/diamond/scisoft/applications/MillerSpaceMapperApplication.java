@@ -73,23 +73,10 @@ public class MillerSpaceMapperApplication implements IApplication {
 			MillerSpaceMapperBean bean = mapper.readValue(new File(path), MillerSpaceMapperBean.class);
 
 			MillerSpaceMapper msm = new MillerSpaceMapper(bean);
-			switch (bean.getOutputMode()) {
-			case Coords_Q:
-			case Coords_HKL:
+			if (bean.getOutputMode().getRank() == 0) {
 				msm.calculateCoordinates();
-				break;
-			case Area_HK:
-			case Area_KL:
-			case Area_LH:
-			case Area_QPP:
-			case Area_QXY:
-			case Area_QYZ:
-			case Area_QZX:
-			case Volume_Q:
-			case Volume_HKL:
-			default:
+			} else {
 				msm.mapToOutputFile();
-				break;
 			}
 
 			return IApplication.EXIT_OK;

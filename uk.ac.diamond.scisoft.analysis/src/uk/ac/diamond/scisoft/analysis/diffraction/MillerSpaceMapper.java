@@ -27,6 +27,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.vecmath.Vector3d;
+import javax.vecmath.Vector4d;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
@@ -885,6 +886,13 @@ public class MillerSpaceMapper {
 		final int xStart = region[0];
 		final int xStop  = region[1];
 		final DetectorProperties detector = mapping.getDetectorProperties();
+		final QSpace qSpace = mapping.getQSpace();
+		final Vector4d stokes = qSpace.getStokesVector();
+		final double polnQ = stokes.getY()/stokes.getX(); // normalized difference of linear H/V polarization
+		final double polnU = stokes.getZ()/stokes.getX(); // normalized difference of linear +/-45 degrees polarization
+		final Vector3d beam = detector.getBeamVector();
+		final Vector3d reference = qSpace.getReferenceNormal();
+
 		for (int y = 0; y < ySize; y++) {
 			int py = y + yStart; // on detector (rather than sliced dataset)
 			for (int x = xStart; x < xStop; x++) {
@@ -903,7 +911,10 @@ public class MillerSpaceMapper {
 					mapping.map(x + 0.5, py + 0.5, v);
 
 					if (convertToOutputCoords(v, dv, pos)) {
-						value *= tFactor/detector.calculateSolidAngle(x, py);
+						double correction = detector.calculateSolidAngle(x, py);
+						correction *= calculatePolarizationFactor(polnQ, polnU, beam, reference, mapping.getPositionVector(), mapping.getCosineScatteringAngle());
+						value *= tFactor / correction;
+
 						if (reduceToNonZeroBB) {
 							minMax(splitter.doesSpread(), sMinLocal, sMaxLocal, pos);
 						}
@@ -913,6 +924,43 @@ public class MillerSpaceMapper {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Polarization factor is the dependency on input polarization and pixel position
+	 * <p>
+	 * Formula can be derived from azimuthal rotation from reference plane to scattering plane,
+	 * followed by finding the component of in-scattering plane field normal to the scattering
+	 * direction.
+	 * <p>
+	 * In terms of Stokes parameters,
+	 * <pre>
+	 * I_f = [ (mu^2 + 1) I_i + (mu^2 - 1) (cos(2 phi) Q_i + sin(2 phi) U_i)] / 2
+	 * </pre>
+	 * where mu = cos(theta) and theta is the scattering angle, phi is the azimuthal angle.
+	 * See, e.g., Kahn et al, J. Appl. Cryst. 15, pp330-7 (1982).
+	 * <p>
+	 * @param q Q/I
+	 * @param u U/I
+	 * @param reference normal to reference plane
+	 * @param posn pixel position
+	 * @param cosTheta cosine of scattering angle
+	 * @return factor
+	 */
+	public static final double calculatePolarizationFactor(final double q, double u, final Vector3d beam, final Vector3d reference, final Vector3d posn, double cosTheta) {
+		Vector3d proj = new Vector3d();
+		proj.scaleAdd(-beam.dot(posn), beam, posn); // projection of position on plane perpendicular to beam
+
+		double muSq = cosTheta * cosTheta;
+		double l = proj.lengthSquared();
+		if (l == 0) { // azimuth = 0
+			return 0.5 * ((muSq + 1) + (muSq - 1)*q);
+		}
+		double comp = reference.dot(proj); // normal component of position is sine of azimuth * length
+		double sinPhiSq = comp * comp / l;
+		double cosTwoPhi = 1 - 2 * sinPhiSq;
+		double sinTwoPhi = Math.signum(comp) * Math.sqrt(1 - cosTwoPhi * cosTwoPhi);
+		return 0.5 * ((muSq + 1) + (muSq - 1)*(cosTwoPhi * q + sinTwoPhi * u));
 	}
 
 	private static final int MIN_CHUNK = 128;

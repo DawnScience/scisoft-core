@@ -325,9 +325,9 @@ public class NXreftofValidator extends AbstractNexusValidator implements NexusAp
 		final DataNode data = group.getDataNode("data");
 		validateDataNodeLink("data", data, "/NXentry/NXinstrument/NXdetector/data");
 
-		// validate link 'time_binning' to location '/NXentry/NXinstrument/NXdetector/time_binning
-		final DataNode time_binning = group.getDataNode("time_binning");
-		validateDataNodeLink("time_binning", time_binning, "/NXentry/NXinstrument/NXdetector/time_binning");
+		// validate link 'time_of_flight' to location '/NXentry/NXinstrument/NXdetector/time_of_flight
+		final DataNode time_of_flight = group.getDataNode("time_of_flight");
+		validateDataNodeLink("time_of_flight", time_of_flight, "/NXentry/NXinstrument/NXdetector/time_of_flight");
 
 	}
 }

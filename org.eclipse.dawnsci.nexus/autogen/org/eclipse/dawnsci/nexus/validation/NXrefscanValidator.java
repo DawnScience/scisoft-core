@@ -167,7 +167,8 @@ public class NXrefscanValidator extends AbstractNexusValidator implements NexusA
 					"Free-Electron Laser",
 					"Optical Laser",
 					"Ion Source",
-					"UV Plasma Source");
+					"UV Plasma Source",
+					"Metal Jet X-ray");
 		}
 
 		// validate field 'name' of type NX_CHAR.

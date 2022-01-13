@@ -333,10 +333,6 @@ public class NXtofsingleValidator extends AbstractNexusValidator implements Nexu
 		final DataNode data = group.getDataNode("data");
 		validateDataNodeLink("data", data, "/NXentry/NXinstrument/NXdetector/data");
 
-		// validate link 'detector_number' to location '/NXentry/NXinstrument/NXdetector/detector_number
-		final DataNode detector_number = group.getDataNode("detector_number");
-		validateDataNodeLink("detector_number", detector_number, "/NXentry/NXinstrument/NXdetector/detector_number");
-
 		// validate link 'time_of_flight' to location '/NXentry/NXinstrument/NXdetector/time_of_flight
 		final DataNode time_of_flight = group.getDataNode("time_of_flight");
 		validateDataNodeLink("time_of_flight", time_of_flight, "/NXentry/NXinstrument/NXdetector/time_of_flight");

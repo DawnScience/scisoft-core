@@ -58,14 +58,15 @@ public interface NXentry extends NXsubentry {
 	public static final String NX_PRE_SAMPLE_FLIGHTPATH = "pre_sample_flightpath";
 	/**
 	 * .. index:: plotting
-	 * Declares which :ref:`NXdata` (or :ref:`NXsubentry`) group
-	 * contains the data to be shown by default.
-	 * It is needed to resolve ambiguity when more than one :ref:`NXdata` group exists.
+	 * Declares which :ref:`NXdata` group contains the data
+	 * to be shown by default.
+	 * It is needed to resolve ambiguity when more than
+	 * one :ref:`NXdata` group exists.
 	 * The value is the name of the default :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014 [#]_) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * .. [#] NIAC2014 discussion summary:
-	 * https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * For more information about how NeXus identifies the default
+	 * plottable data, see the
+	 * :ref:`Find Plottable Data, v3 <Find-Plottable-Data-v3>`
+	 * section.
 	 * 
 	 * @return  the value.
 	 */
@@ -73,14 +74,15 @@ public interface NXentry extends NXsubentry {
 	
 	/**
 	 * .. index:: plotting
-	 * Declares which :ref:`NXdata` (or :ref:`NXsubentry`) group
-	 * contains the data to be shown by default.
-	 * It is needed to resolve ambiguity when more than one :ref:`NXdata` group exists.
+	 * Declares which :ref:`NXdata` group contains the data
+	 * to be shown by default.
+	 * It is needed to resolve ambiguity when more than
+	 * one :ref:`NXdata` group exists.
 	 * The value is the name of the default :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014 [#]_) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * .. [#] NIAC2014 discussion summary:
-	 * https://www.nexusformat.org/2014_How_to_find_default_data.html
+	 * For more information about how NeXus identifies the default
+	 * plottable data, see the
+	 * :ref:`Find Plottable Data, v3 <Find-Plottable-Data-v3>`
+	 * section.
 	 * 
 	 * @param defaultValue the defaultValue
 	 */

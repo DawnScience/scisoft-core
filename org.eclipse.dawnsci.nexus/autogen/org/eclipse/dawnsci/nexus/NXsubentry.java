@@ -72,10 +72,10 @@ public interface NXsubentry extends NXobject {
 	 * It is needed to resolve ambiguity when more than
 	 * one :ref:`NXdata` group exists.
 	 * The value is the name of the default :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
+	 * For more information about how NeXus identifies the default
+	 * plottable data, see the
+	 * :ref:`Find Plottable Data, v3 <Find-Plottable-Data-v3>`
+	 * section.
 	 * 
 	 * @return  the value.
 	 */
@@ -88,10 +88,10 @@ public interface NXsubentry extends NXobject {
 	 * It is needed to resolve ambiguity when more than
 	 * one :ref:`NXdata` group exists.
 	 * The value is the name of the default :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
+	 * For more information about how NeXus identifies the default
+	 * plottable data, see the
+	 * :ref:`Find Plottable Data, v3 <Find-Plottable-Data-v3>`
+	 * section.
 	 * 
 	 * @param defaultValue the defaultValue
 	 */

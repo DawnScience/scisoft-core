@@ -158,7 +158,8 @@ public interface NXsource extends NXobject {
 	 * <li><b>Free-Electron Laser</b> </li>
 	 * <li><b>Optical Laser</b> </li>
 	 * <li><b>Ion Source</b> </li>
-	 * <li><b>UV Plasma Source</b> </li></ul></p>
+	 * <li><b>UV Plasma Source</b> </li>
+	 * <li><b>Metal Jet X-ray</b> </li></ul></p>
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -180,7 +181,8 @@ public interface NXsource extends NXobject {
 	 * <li><b>Free-Electron Laser</b> </li>
 	 * <li><b>Optical Laser</b> </li>
 	 * <li><b>Ion Source</b> </li>
-	 * <li><b>UV Plasma Source</b> </li></ul></p>
+	 * <li><b>UV Plasma Source</b> </li>
+	 * <li><b>Metal Jet X-ray</b> </li></ul></p>
 	 * </p>
 	 * 
 	 * @param typeDataset the typeDataset
@@ -202,7 +204,8 @@ public interface NXsource extends NXobject {
 	 * <li><b>Free-Electron Laser</b> </li>
 	 * <li><b>Optical Laser</b> </li>
 	 * <li><b>Ion Source</b> </li>
-	 * <li><b>UV Plasma Source</b> </li></ul></p>
+	 * <li><b>UV Plasma Source</b> </li>
+	 * <li><b>Metal Jet X-ray</b> </li></ul></p>
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -224,7 +227,8 @@ public interface NXsource extends NXobject {
 	 * <li><b>Free-Electron Laser</b> </li>
 	 * <li><b>Optical Laser</b> </li>
 	 * <li><b>Ion Source</b> </li>
-	 * <li><b>UV Plasma Source</b> </li></ul></p>
+	 * <li><b>UV Plasma Source</b> </li>
+	 * <li><b>Metal Jet X-ray</b> </li></ul></p>
 	 * </p>
 	 * 
 	 * @param type the type

@@ -10,24 +10,24 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction;
 
 
+import org.eclipse.dawnsci.analysis.api.processing.OperationData;
+import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+
 //import org.apache.commons.lang.ArrayUtils;
 
 // Imports from org.eclipse
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
-import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.dawnsci.analysis.api.processing.OperationData;
-import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.api.processing.OperationException;
-import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
-import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 import uk.ac.diamond.scisoft.analysis.utils.ErrorPropagationUtils;
-import uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.Pauw1DBackgroundSubtractionModel;
 
 
 //More information and the equation for this background subtraction routine can be found in:
@@ -112,7 +112,7 @@ public class Pauw1DBackgroundSubtractionOperation extends AbstractOperation<Pauw
 		Dataset backgroundFractionFactorData = DatasetFactory.createFromObject(DoubleDataset.class, backgroundFractionFactor);
 		Dataset equationPrefactorData = DatasetFactory.createFromObject(DoubleDataset.class, equationPrefactor);
 
-//		Dataset hermanOrientationDataset = DatasetFactory.zeros(1, datasetSize, Dataset.FLOAT64);
+//		Dataset hermanOrientationDataset = DatasetFactory.zeros(datasetSize);
 //		hermanOrientationDataset.set(hermanOrientationFactor, 0);
 
 		// Solve the first term of the equation inside the brackets

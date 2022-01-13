@@ -44,6 +44,7 @@ import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.InterfaceUtils;
 import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.metadata.IMetadata;
@@ -104,32 +105,14 @@ public class RawBinaryLoader extends AbstractFileLoader {
 
 			int dtype = readHeader(fBuffer);
 
-			while (fBuffer.position() % 4 != 0) // move past any padding
-				fBuffer.get();
-
-			if (isize != 1) {
-				switch (dtype) {
-				case Dataset.INT8:
-					dtype = Dataset.ARRAYINT8;
-					break;
-				case Dataset.INT16:
-					dtype = Dataset.ARRAYINT16;
-					break;
-				case Dataset.INT32:
-					dtype = Dataset.ARRAYINT32;
-					break;
-				case Dataset.INT64:
-					dtype = Dataset.ARRAYINT64;
-					break;
-				case Dataset.FLOAT32:
-					dtype = Dataset.ARRAYFLOAT32;
-					break;
-				case Dataset.FLOAT64:
-					dtype = Dataset.ARRAYFLOAT64;
-					break;
-				}
-			}
 			Class<? extends Dataset> clazz = DTypeUtils.getInterface(dtype);
+			if (isize != 1) {
+				clazz = InterfaceUtils.getCompoundInterface(clazz);
+			}
+
+			while (fBuffer.position() % 4 != 0) { // move past any padding
+				fBuffer.get();
+			}
 
 			ILazyDataset data;
 			if (loadLazily) {
@@ -558,7 +541,7 @@ public class RawBinaryLoader extends AbstractFileLoader {
 			throw new ScanFileHolderException("Dataset type not supported");
 		}
 
-		hash = hash*19 + data.getDType()*17 + data.getElementsPerItem();
+		hash = hash*19 + data.getClass().hashCode()*17 + data.getElementsPerItem();
 		if (stats == null) {
 			try {
 				stats = MetadataFactory.createMetadata(StatisticsMetadata.class, data);

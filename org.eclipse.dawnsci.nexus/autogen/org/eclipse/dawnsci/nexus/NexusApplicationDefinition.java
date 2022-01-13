@@ -23,6 +23,7 @@ public enum NexusApplicationDefinition {
 	NX_ARCHIVE("NXarchive", NXarchiveValidator.class),
 	NX_ARPES("NXarpes", NXarpesValidator.class),
 	NX_CANSAS("NXcanSAS", NXcanSASValidator.class),
+	NX_CLASSIC_SCAN("NXclassic_scan", NXclassic_scanValidator.class),
 	NX_DIAMOND("NXdiamond", NXdiamondValidator.class),
 	NX_DIRECTTOF("NXdirecttof", NXdirecttofValidator.class),
 	NX_FLUO("NXfluo", NXfluoValidator.class),

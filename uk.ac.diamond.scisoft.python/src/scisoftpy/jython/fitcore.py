@@ -81,6 +81,7 @@ class fitfunc(_absfn):
         name   -- function name
         plist  -- list of Parameter objects
         '''
+        self.n_params = len(plist)
         _absfn.__init__(self, plist) #@UndefinedVariable
         self.func = fn
         self.args = args
@@ -88,6 +89,9 @@ class fitfunc(_absfn):
 
     def setNames(self):
         pass
+
+    def getNoOfParameters(self):
+        return self.n_params
 
     @_wrap
     def val(self, coords):

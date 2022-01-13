@@ -17,12 +17,14 @@ import java.io.FileNotFoundException;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.january.asserts.TestUtils;
 import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.dataset.RGBByteDataset;
 import org.eclipse.january.dataset.ShortDataset;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -234,5 +236,24 @@ public class PNGTest {
 			if (!(e.getCause() instanceof FileNotFoundException))
 				throw e;
 		}
+	}
+
+	/**
+	 * This method load a coloured PNG from a fixed location
+	 * 
+	 * @throws Exception if the test fails
+	 */
+	@Test
+	public void testColourSupport() throws Exception {
+		DataHolder dha = new PNGLoader(TestFileFolder + "testrgb.png").loadFile();
+		Dataset c = dha.getDataset(0);
+		assertTrue(c instanceof RGBByteDataset);
+
+		String outFile = testScratchDirectoryName + "savergb.png";
+		JavaImageSaver saver = new JavaImageSaver(outFile, "png", 8, true);
+		saver.saveFile(dha);
+		DataHolder dhb = new PNGLoader(outFile).loadFile();
+		Dataset d = dhb.getDataset(0);
+		TestUtils.assertDatasetEquals(c, d);
 	}
 }

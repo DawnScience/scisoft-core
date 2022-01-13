@@ -83,11 +83,9 @@ public class HistogramND extends HistogramNDBase {
 			if (rank > 2) {
 				throwIAException(logger, "Dataset '{}' rank must be less than 3", d.getName());
 			} else if (rank < 2) {
-				shape = new int[] { d.getSize(), 1 }; // TODO replace once fix is in
-//				d = d.reshape(d.getSize(), 1);
+				d = d.reshape(-1, 1);
 			}
 
-			d = d.flatten().reshape(shape); // FIXME workaround bug in next method
 			cd = DatasetUtils.createCompoundDatasetFromLastAxis(d, true);
 		}
 		if (wShape != null) {

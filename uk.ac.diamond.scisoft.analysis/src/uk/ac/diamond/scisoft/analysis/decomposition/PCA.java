@@ -49,7 +49,7 @@ public class PCA {
 		Dataset out = DatasetFactory.createFromObject(V.getData());
 		out.setShape(new int[]{V.numRows, V.numCols});
 		
-		SliceND s = new SliceND(shape);
+		SliceND s = new SliceND(out.getShapeRef());
 		s.setSlice(0,0,nComponents,1);
 		
 		Dataset comps = out.getSlice(s);

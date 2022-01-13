@@ -196,10 +196,11 @@ class Test(unittest.TestCase):
 #        self.assertEqual(3, dds.itemsize, msg="itemsize incorrect")
         dds = np.zeros((3,5), np.rgb)
         print(type(dds), dds.dtype, dds.shape, dds.itemsize)
-        self.assertEqual(6, dds.itemsize, msg="itemsize incorrect")
+        self.assertEqual(3, dds.itemsize, msg="itemsize incorrect")
         dds = dds.red
         print(type(dds), dds.dtype, dds.shape)
-        self.assertEqual(2, dds.itemsize, msg="itemsize incorrect")
+        self.assertEqual(1, dds.itemsize, msg="itemsize incorrect")
+
         dds = np.zeros((3,4), np.cint32, elements=2)
         print(type(dds), dds.dtype, dds.shape)
         self.assertEqual(8, dds.itemsize, msg="itemsize incorrect")

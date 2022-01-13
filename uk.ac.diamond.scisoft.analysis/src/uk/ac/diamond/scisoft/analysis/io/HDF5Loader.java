@@ -44,6 +44,7 @@ import org.eclipse.dawnsci.hdf5.HDF5Utils.DatasetType;
 import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.ByteDataset;
 import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -851,7 +852,13 @@ public class HDF5Loader extends AbstractFileLoader {
 			}
 		}
 
-		final boolean extendUnsigned = !keepBitWidth && type.unsigned;
+		boolean extendUnsigned = !keepBitWidth && type.unsigned;
+		if (extendUnsigned && type.clazz.equals(ByteDataset.class)) {
+			String intr = NexusTreeUtils.getFirstString(node.getAttribute(NexusConstants.INTERPRETATION));
+			if (intr != null && intr.contains("image")) {
+				extendUnsigned = false; // override in case of image
+			}
+		}
 
 		// cope with external files specified in a non-standard way and which may not be HDF5 either
 		if (StringDataset.class.isAssignableFrom(type.clazz) && useExternalFiles) {
@@ -887,7 +894,8 @@ public class HDF5Loader extends AbstractFileLoader {
 
 		HDF5LazyLoader l = new HDF5LazyLoader(file.getHostname(), file.getFilename(), nodePath, name, trueShape, type.isize, type.clazz, extendUnsigned);
 
-		node.setDataset(new LazyDynamicDataset(name, DTypeUtils.getDType(type.clazz), type.isize, trueShape.clone(), maxShape, l));
+		long[] chunks = node.getChunkShape();
+		node.setDataset(new LazyDynamicDataset(l, name, type.isize, type.clazz, trueShape.clone(), maxShape, chunks == null ? null : HDF5Utils.toIntArray(chunks)));
 		return true;
 	}
 

@@ -9,11 +9,16 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import java.awt.Transparency;
+import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.ComponentSampleModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
+import java.awt.image.DataBufferShort;
 import java.awt.image.DataBufferUShort;
 import java.awt.image.PixelInterleavedSampleModel;
 import java.awt.image.Raster;
@@ -29,6 +34,9 @@ import javax.media.jai.RasterFactory;
 import javax.media.jai.TiledImage;
 
 import org.eclipse.january.dataset.ByteDataset;
+import org.eclipse.january.dataset.CompoundByteDataset;
+import org.eclipse.january.dataset.CompoundDataset;
+import org.eclipse.january.dataset.CompoundShortDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -36,6 +44,7 @@ import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.RGBByteDataset;
 import org.eclipse.january.dataset.RGBDataset;
 import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.metadata.IMetadata;
@@ -51,15 +60,41 @@ public class AWTImageUtils {
 	/**
 	 * Create datasets from a Raster
 	 * @param r raster
-	 * @param data array to output datasets
 	 * @param clazz dataset interface
+	 * @param data array to output datasets
 	 */
-	public static void createDatasets(Raster r, Dataset[] data, Class <? extends Dataset> clazz) {
+	public static void createDatasets(Raster r, Class <? extends Dataset> clazz, Dataset[] data) {
 		final int bands = data.length;
 		final int height = r.getHeight();
 		final int width = r.getWidth();
-		Dataset tmp;
 
+		SampleModel sm = r.getSampleModel();
+		boolean blueFirst = false;
+		if (sm instanceof ComponentSampleModel && ((ComponentSampleModel) sm).getBandOffsets()[0] == 2) {
+			blueFirst = true;
+		}
+
+		if (clazz.equals(RGBByteDataset.class) || clazz.equals(RGBDataset.class)) {
+			DataBuffer db = r.getDataBuffer();
+			if (db instanceof DataBufferByte) {
+				if (blueFirst) {
+					CompoundDataset tmp = DatasetFactory.createFromObject(3, CompoundByteDataset.class, ((DataBufferByte) db).getData(), height, width);
+					data[0] = new RGBByteDataset(tmp.getElementsView(2), tmp.getElementsView(1), tmp.getElementsView(0));
+				} else {
+					data[0] = DatasetFactory.createFromObject(clazz, ((DataBufferByte) db).getData(), height, width);
+				}
+			} else if (db instanceof DataBufferShort) {
+				if (blueFirst) {
+					CompoundDataset tmp = DatasetFactory.createFromObject(3, CompoundShortDataset.class, ((DataBufferShort) db).getData(), height, width);
+					data[0] = new RGBDataset(tmp.getElementsView(2), tmp.getElementsView(1), tmp.getElementsView(0));
+				} else {
+					data[0] = DatasetFactory.createFromObject(clazz, ((DataBufferShort) db).getData(), height, width);
+				}
+			}
+			return;
+		}
+
+		Dataset tmp;
 		for (int i = 0; i < bands; i++) {
 			if (FloatDataset.class.isAssignableFrom(clazz)) {
 				tmp =  DatasetFactory.createFromObject(r.getSamples(0, 0, width, height, i, (float[]) null), height, width);
@@ -78,19 +113,29 @@ public class AWTImageUtils {
 	 * Get datasets from an image
 	 * @param image
 	 * @param keepBitWidth if true, then use signed primitives of same bit width for possibly unsigned data
-	 * @return array of datasets
+	 * @return array of datasets (if image is rgb then a single RGBByteDataset or RGBDataset is returned
 	 */
-	static public Dataset[] makeDatasets(final BufferedImage image, boolean keepBitWidth) {
+	public static Dataset[] makeDatasets(final BufferedImage image, boolean keepBitWidth) {
 		// make raster from buffered image
+		boolean isRGB = image.getColorModel().getColorSpace().getType() == ColorSpace.TYPE_RGB;
 		final Raster ras = image.getData();
 		final SampleModel sm = ras.getSampleModel();
 		int dbType = reduceDataBufferType(sm);
-		Class<? extends Dataset> clazz = getInterfaceFromDataBufferType(dbType, keepBitWidth);
+		Class<? extends Dataset> clazz = getInterfaceFromDataBufferType(dbType, keepBitWidth || isRGB);
+		int bands = ras.getNumBands();
+		if (isRGB && bands == 3) {
+			if (clazz.equals(ByteDataset.class)) {
+				clazz = RGBByteDataset.class;
+				bands = 1;
+			} else if (clazz.equals(ShortDataset.class)) {
+				clazz = RGBDataset.class;
+				bands = 1;
+			}
+		}
 
-		final int bands = ras.getNumBands();
 		Dataset[] data = new Dataset[bands];
 
-		createDatasets(ras, data, clazz);
+		createDatasets(ras, clazz, data);
 
 		if (dbType == DataBuffer.TYPE_USHORT && !keepBitWidth) {
 			for (int i = 0; i < bands; i++) {
@@ -174,7 +219,7 @@ public class AWTImageUtils {
 	 * @param bits number of bits (<=16 for non-RGB datasets)
 	 * @return buffered image
 	 */
-	static public BufferedImage makeBufferedImage(final Dataset data, final int bits) {
+	public static BufferedImage makeBufferedImage(final Dataset data, final int bits) {
 		final int[] shape = data.getShape();
 		if (shape.length > 2) {
 			throw new IllegalArgumentException("Rank of data must be less than or equal to two");
@@ -186,7 +231,17 @@ public class AWTImageUtils {
 		final int size = data.getSize();
 		BufferedImage image = null;
 
-		if (data instanceof RGBDataset) {
+		if (data instanceof RGBByteDataset) {
+			RGBByteDataset rgbds = (RGBByteDataset) data;
+			byte[] rgbdata = rgbds.getData();
+			DataBufferByte dataBuffer = new DataBufferByte(rgbdata, rgbdata.length);
+			WritableRaster raster = Raster.createInterleavedRaster(dataBuffer, width, height, 3*width, 3, new int[] {0, 1, 2}, null);
+			
+//			DirectColorModel colourModel = new DirectColorModel(24, 0xff0000, 0x00ff00, 0x0000ff);
+			ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+			ComponentColorModel colorModel = new ComponentColorModel(cs, new int[] {8, 8, 8}, false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
+			image = new BufferedImage(colorModel, raster, false, null);
+		} else if (data instanceof RGBDataset) {
 			RGBDataset rgbds = (RGBDataset) data;
 
 			image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -200,7 +255,7 @@ public class AWTImageUtils {
 					final int n = iter.index;
 					final int rgb = ((rgbdata[n] & 0xff) << 16) | ((rgbdata[n + 1] & 0xff) << 8) | (rgbdata[n + 2] & 0xff);
 					image.setRGB(pos[1], pos[0], rgb);
-				}			
+				}
 			} else {
 				int shift = 0;
 				while (maxv >= 256) {
@@ -212,7 +267,7 @@ public class AWTImageUtils {
 					final int n = iter.index;
 					final int rgb = (((rgbdata[n] >> shift) & 0xff) << 16) | (((rgbdata[n + 1] >> shift) & 0xff) << 8) | ((rgbdata[n + 2] >> shift) & 0xff);
 					image.setRGB(pos[1], pos[0], rgb);
-				}			
+				}
 			}
 		} else {
 			DataBuffer buffer = null;
@@ -262,7 +317,12 @@ public class AWTImageUtils {
 		SampleModel sampleModel;
 		DataBuffer buffer;
 
-		if (data instanceof RGBDataset) {
+		if (data instanceof RGBByteDataset) {
+			RGBByteDataset rgbds = (RGBByteDataset) data;
+			byte[] rgbdata = rgbds.getData();
+			buffer = new DataBufferByte(rgbdata, rgbdata.length);
+			sampleModel = new PixelInterleavedSampleModel(buffer.getDataType(), width, height, 3, 3*width, new int[] {0, 1, 2});
+		} else if (data instanceof RGBDataset) {
 			RGBDataset rgbds = (RGBDataset) data;
 
 			buffer = new DataBufferInt(size);
@@ -278,7 +338,7 @@ public class AWTImageUtils {
 					final int n = iter.index;
 					final int rgb = ((rgbdata[n] & 0xff) << 16) | ((rgbdata[n + 1] & 0xff) << 8) | (rgbdata[n + 2] & 0xff);
 					sampleModel.setSample(pos[1], pos[0], 0, rgb, buffer);
-				}			
+				}
 			} else {
 				int shift = 0;
 				while (maxv >= 256) {
@@ -290,7 +350,7 @@ public class AWTImageUtils {
 					final int n = iter.index;
 					final int rgb = (((rgbdata[n] >> shift) & 0xff) << 16) | (((rgbdata[n + 1] >> shift) & 0xff) << 8) | ((rgbdata[n + 2] >> shift) & 0xff);
 					sampleModel.setSample(pos[1], pos[0], 0, rgb, buffer);
-				}			
+				}
 			}
 
 		} else {
@@ -312,7 +372,6 @@ public class AWTImageUtils {
 				FloatDataset ftmp = data.cast(FloatDataset.class);
 				sampleModel.setPixels(0, 0, width, height, ftmp.getData(), buffer);
 			}
-
 		}
 
 		WritableRaster wRas = Raster.createWritableRaster(sampleModel, buffer, null);

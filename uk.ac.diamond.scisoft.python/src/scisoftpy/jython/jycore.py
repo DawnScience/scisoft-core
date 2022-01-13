@@ -32,7 +32,7 @@ import org.eclipse.january.dataset.CompoundByteDataset as _cpdbyteds
 import org.eclipse.january.dataset.CompoundShortDataset as _cpdshortds
 import org.eclipse.january.dataset.CompoundIntegerDataset as _cpdintegerds
 import org.eclipse.january.dataset.CompoundLongDataset as _cpdlongds
-import org.eclipse.january.dataset.RGBDataset as _rgbds
+import org.eclipse.january.dataset.RGBByteDataset as _rgbds
 import org.eclipse.january.dataset.FloatDataset as _floatds
 import org.eclipse.january.dataset.DoubleDataset as _doubleds
 import org.eclipse.january.dataset.ComplexFloatDataset as _cpxfloatds
@@ -1352,8 +1352,8 @@ class ndarrayRGB(ndarray):
     def get_red(self, dtype=None):
         dtype = _translatenativetype(dtype)
         if dtype is None:
-            dtype = int16
-        if dtype != int16:
+            dtype = int8
+        if dtype != int8:
             return self._jdataset().createRedDataset(dtype.value)
         return self._jdataset().getRedView()
 
@@ -1361,8 +1361,8 @@ class ndarrayRGB(ndarray):
     def get_green(self, dtype=None):
         dtype = _translatenativetype(dtype)
         if dtype is None:
-            dtype = int16
-        if dtype != int16:
+            dtype = int8
+        if dtype != int8:
             return self._jdataset().createGreenDataset(dtype.value)
         return self._jdataset().getGreenView()
 
@@ -1370,8 +1370,8 @@ class ndarrayRGB(ndarray):
     def get_blue(self, dtype=None):
         dtype = _translatenativetype(dtype)
         if dtype is None:
-            dtype = int16
-        if dtype != int16:
+            dtype = int8
+        if dtype != int8:
             return self._jdataset().createBlueDataset(dtype.value)
         return self._jdataset().getBlueView()
 
@@ -1384,7 +1384,7 @@ class ndarrayRGB(ndarray):
         dtype    -- optional dataset type (default is int16)'''
         dtype = _translatenativetype(dtype)
         if dtype is None:
-            dtype = int16
+            dtype = int8
         if cweights:
             cweights = asIterable(cweights)
             if len(cweights) != 3:
@@ -1722,7 +1722,7 @@ def tile(a, reps):
 def repeat(a, repeats, axis=None):
     if axis is None:
         axis = -1
-    if a.getRank() == 0: # FIXME bug in january 2.2
+    if a.getRank() == 0: # FIXME bug in january 2.3
         a = a.reshape(1)
     return _dsutils.repeat(a, asIterable(repeats), axis)
 

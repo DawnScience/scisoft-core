@@ -795,11 +795,11 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		}
 
 		ILazyWriteableDataset wds = dn.getWriteableDataset();
-		SliceND s = new SliceND(dShape, determineMaxShape(dataset), sliceOut);
+		int[] mShape = wds.getMaxShape();
+		SliceND s = new SliceND(wds.getShape(), mShape, sliceOut);
 		if (append && dShape.length > 1) {
 			// check if new auxiliary data has dimensions greater than existing dataset
 			boolean crop = false;
-			int[] mShape = wds.getMaxShape();
 			SliceND nSlice = new SliceND(dShape);
 			for (int i = 0; i < mShape.length; i++) {
 				int l = mShape[i];
@@ -831,7 +831,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			}
 
 			ILazyWriteableDataset wdse = dn.getWriteableDataset();
-			s = new SliceND(e.getShapeRef(), determineMaxShape(e), sliceOut);
+			s = new SliceND(wdse.getShape(), wdse.getMaxShape(), sliceOut);
 			wdse.setSlice(null, e, s);
 		}
 	}
@@ -870,8 +870,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		}
 
 		ILazyWriteableDataset wds = dn.getWriteableDataset();
-		SliceND nslice = new SliceND(dataset.getShapeRef());
-		wds.setSlice(null, dataset, nslice);
+		wds.setSlice(null, dataset, null);
 
 		ILazyDataset error = dataset.getErrors();
 
@@ -888,7 +887,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			}
 
 			ILazyWriteableDataset wdse = dn.getWriteableDataset();
-			wdse.setSlice(null, e, new SliceND(e.getShapeRef()));
+			wdse.setSlice(null, e, null);
 		}
 	}
 
@@ -898,7 +897,8 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			
 			if (swmring) {
 				DataNode dn = nexusFile.getData(Node.SEPARATOR + ENTRY + Node.SEPARATOR + LIVE + Node.SEPARATOR + FINISHED);
-				dn.getWriteableDataset().setSlice(null, DatasetFactory.ones(IntegerDataset.class, 1), new SliceND(dn.getWriteableDataset().getShape()));
+				ILazyWriteableDataset wds = dn.getWriteableDataset();
+				wds.setSlice(null, DatasetFactory.ones(IntegerDataset.class, 1), null);
 			}
 			
 			nexusFile.flush();
@@ -919,7 +919,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 		}
 	
 		ILazyWriteableDataset wds = dn.getWriteableDataset();
-		SliceND s = new SliceND(dataset.getShapeRef(), determineMaxShape(dataset), oSlice[axisDim]);
+		SliceND s = new SliceND(wds.getShape(), wds.getMaxShape(), oSlice[axisDim]);
 		wds.setSlice(null, dataset, s);
 	}
 
@@ -1048,7 +1048,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 	private void createWriteableLazy(IDataset dataset, GroupNode group) throws Exception {
 
 		Dataset d = DatasetUtils.convertToDataset(dataset);
-		int[] mx = determineMaxShape(d);
+		int[] mx = determineMaxShape(d.getShape());
 
 		ILazyWriteableDataset lwds = new LazyWriteableDataset(d.getName(), d.getElementClass(),
 				d.getShape(), mx, d.getShape(), null);
@@ -1060,12 +1060,16 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			nexusFile.addAttribute(dn, TreeFactory.createAttribute(NexusConstants.UNITS,unit.toString()));
 		}
 	}
-	
-	private int[] determineMaxShape(Dataset d) {
-		int[] maxShape = d.getShape().clone();
-		for (int i = 0; i < maxShape.length; i++) if (maxShape[i] == 1) maxShape[i] = -1;
+
+	private int[] determineMaxShape(int[] maxShape) { // by checking for dimensions of 1(!)
+		for (int i = 0; i < maxShape.length; i++) {
+			if (maxShape[i] == 1) {
+				maxShape[i] = ILazyWriteableDataset.UNLIMITED;
+			}
+		}
 		return maxShape;
 	}
+
 	@Override
 	public void includeLinkTo(String fileName) {
 		originalFilePath = fileName;

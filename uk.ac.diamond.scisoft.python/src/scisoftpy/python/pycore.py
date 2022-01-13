@@ -45,7 +45,7 @@ cfloat32 = lambda e : _np.dtype([('', _np.float32)]*e)
 cfloat64 = lambda e : _np.dtype([('', _np.float64)]*e)
 complex64 = _np.complex64
 complex128 = _np.complex128
-rgb = _np.dtype([('r', int16), ('g', int16), ('b', int16)])
+rgb = _np.dtype([('r', _uint8), ('g', _uint8), ('b', _uint8)])
 
 _pyint = int
 _pyfloat = float
@@ -334,13 +334,13 @@ class ndarrayRGB(ndarray):
 
     def get_red(self, dtype=None):
         if dtype is None:
-            dtype = int16
+            dtype = _uint8
 #        return self['r'].astype(dtype)
-        return self.view(int16)[..., 0].astype(dtype)
+        return self.view(_uint8)[..., 0].astype(dtype)
 
     def get_green(self, dtype=None):
         if dtype is None:
-            dtype = int16
+            dtype = _uint8
 #        return self['g'].astype(dtype)
         return self.view(int16)[..., 1].astype(dtype)
 
@@ -348,7 +348,7 @@ class ndarrayRGB(ndarray):
         if dtype is None:
             dtype = int16
 #        return self['b'].astype(dtype)
-        return self.view(int16)[..., 2].astype(dtype)
+        return self.view(_uint8)[..., 2].astype(dtype)
 
     def get_grey(self, cweights=None, dtype=None):
         '''Get grey image
@@ -357,7 +357,7 @@ class ndarrayRGB(ndarray):
         cweights -- optional set of weight for combining the colour channel
         dtype    -- optional dataset type (default is int16)'''
         if dtype is None:
-            dtype = int16
+            dtype = _uint8
         if cweights is None:
             cweights = [0.299, 0.587, 0.114]
         else:

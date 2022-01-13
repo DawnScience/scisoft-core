@@ -25,12 +25,15 @@ import javax.imageio.stream.ImageInputStream;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.ByteDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.LazyDataset;
+import org.eclipse.january.dataset.RGBByteDataset;
 import org.eclipse.january.dataset.RGBDataset;
+import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.metadata.Metadata;
 import org.slf4j.Logger;
@@ -62,7 +65,7 @@ public class JavaImageLoader extends AbstractFileLoader {
 	}
 
 	/**
-	 * set loader to keep bit width of pixels
+	 * Set loader to keep bit width of pixels. This is ignored and taken as true if image is colour
 	 * @param keepBitWidth
 	 */
 	public void setKeepBitWidth(boolean keepBitWidth) {
@@ -296,17 +299,22 @@ public class JavaImageLoader extends AbstractFileLoader {
 			if (bands == 1) {
 				data = channels[0];
 			} else {
-				if (input.getColorModel().getColorSpace().getType() != ColorSpace.TYPE_RGB) {
-					throw new ScanFileHolderException("File does not contain RGB data");
-				}
-				if (bands < 3) {
-					throw new ScanFileHolderException("Number of colour channels is less than three so cannot load and convert");
-				}
+//				if (input.getColorModel().getColorSpace().getType() != ColorSpace.TYPE_RGB) {
+//					throw new ScanFileHolderException("File does not contain RGB data");
+//				}
+//				if (bands < 3) {
+//					throw new ScanFileHolderException("Number of colour channels is less than three so cannot load and convert");
+//				}
 
-				data = DatasetUtils.createCompoundDataset(RGBDataset.class, channels);
+				data = DatasetUtils.createCompoundDataset(channels);
 
-				if (asGrey)
-					data = ((RGBDataset) data).createGreyDataset(channels[0].getClass());
+			}
+			if (asGrey) {
+				if (data instanceof RGBByteDataset) {
+					data = ((RGBByteDataset) data).createGreyDataset(ByteDataset.class);
+				} else if (data instanceof RGBDataset) {
+					data = ((RGBDataset) data).createGreyDataset(ShortDataset.class);
+				}
 			}
 		} catch (Exception e) {
 			throw new ScanFileHolderException("There was a problem loading the image", e);

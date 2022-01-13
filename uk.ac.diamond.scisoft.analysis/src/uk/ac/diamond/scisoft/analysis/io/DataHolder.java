@@ -162,10 +162,10 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <S extends MetadataType, T extends S> List<S> getMetadata(Class<T> clazz) throws MetadataException {
+	public <T extends MetadataType> List<T> getMetadata(Class<T> clazz) throws MetadataException {
 		if (IMetadata.class.isAssignableFrom(clazz)) {
-			List<S> result = new ArrayList<S>();
-			result.add((S) getMetadata());
+			List<T> result = new ArrayList<>();
+			result.add((T) getMetadata());
 			return result;
 		}
 		throw new MetadataException("getMetadata(clazz) does not currently support anything other than IMetadata");
@@ -173,9 +173,9 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	}
 	
 	@Override
-	public <S extends MetadataType, T extends S> S getFirstMetadata(Class<T> clazz) {
+	public <T extends MetadataType> T getFirstMetadata(Class<T> clazz) {
 		try {
-			List<S> ml = getMetadata(clazz);
+			List<T> ml = getMetadata(clazz);
 			if (ml == null) return null;
 			return ml.isEmpty() ? null : ml.get(0);
 		} catch (Exception e) {

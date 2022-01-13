@@ -202,28 +202,6 @@ public class ImageStackLoader implements ILazyLoader {
 			return DatasetFactory.zeros(clazz, newShape);
 
 		int iRank = iShape.length;
-		if (iRank == 0) { // workaround January bug in SliceND
-			SliceNDIterator it = new SliceNDIterator(slice);
-			Dataset result = onlyOne || size == 1 ? null : DatasetFactory.zeros(clazz, newShape);
-			int[] pos = it.getUsedPos();
-			while (it.hasNext()) {
-				Dataset image;
-				try {
-					image = DatasetUtils.sliceAndConvertLazyDataset(getDatasetFromFile(pos, mon));
-				} catch (Exception e) {
-					throw new IOException(e);
-				}
-				if (result == null) {
-					result = DatasetUtils.convertToDataset(image);
-					result.setShape(newShape);
-					break;
-				}
-				result.set(image.getObject(), pos);
-			}
-
-			return result;
-		}
-
 		int nRank = newShape.length;
 		int[] missing = new int[iRank];
 		int start = nRank - iRank;
@@ -241,9 +219,19 @@ public class ImageStackLoader implements ILazyLoader {
 		int[] iShape = iSlice.getShape();
 		SliceND dSlice = it.getOutputSlice();
 		while (it.hasNext()) {
+			ILazyDataset lazy;
 			IDataset image;
 			try {
-				image = getDatasetFromFile(pos, mon).getSlice(iSlice);
+				lazy = getDatasetFromFile(pos, mon);
+				int[] lShape = lazy.getShape();
+				SliceND nSlice;
+				try {
+					iSlice.checkShapes(lShape, null);
+					nSlice = iSlice;
+				} catch (IllegalArgumentException e) { // in case image shape changes in stack
+					nSlice = new SliceND(lShape, iSlice.getStart(), iSlice.getStop(), iSlice.getStep());
+				}
+				image = lazy.getSlice(nSlice);
 			} catch (Exception e) {
 				throw new IOException(e);
 			}

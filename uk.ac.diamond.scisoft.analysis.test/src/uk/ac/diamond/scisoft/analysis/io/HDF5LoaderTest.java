@@ -582,4 +582,17 @@ public class HDF5LoaderTest {
 		GroupNode g = l.tFile.getGroupNode();
 		assertEquals(1, g.getNumberOfNodelinks());
 	}
+
+	@Test
+	public void testLoadingRGBByte() throws Exception {
+		String n = TestFileFolder + "rgb.nxs";
+		HDF5Loader l = new HDF5Loader(n);
+		DataHolder dh = l.loadFile();
+		System.err.println(Arrays.toString(dh.getNames()));
+		IDataset ds = dh.getLazyDataset("/entry/data/data").getSlice();
+		assertEquals(Byte.class, ds.getElementClass());
+		assertArrayEquals(new int[] {3, 3, 3}, ds.getShape());
+		assertEquals((byte) 250, ds.getObject(0, 0, 0));
+		assertEquals((byte) 125, ds.getObject(1, 1, 1));
+	}
 }

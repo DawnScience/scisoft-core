@@ -17,6 +17,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.AggregateDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.slf4j.Logger;
@@ -48,24 +49,42 @@ public class StitchingImagesOperation extends AbstractOperation<StitchingImagesM
 		if (parent != ssm.getParent()) {
 			parent = ssm.getParent();
 			counter = 0;
+			imageStack.clear();
+			translations.clear();
 		}
 		counter++;
 
 		imageStack.add(dataset);
-		double xTransl = ((StitchingImagesModel)model).getxTransl();
-		double yTransl = ((StitchingImagesModel)model).getyTransl();
+		double xTransl = model.getxTransl();
+		double yTransl = model.getyTransl();
 		translations.add(new double[] { xTransl, yTransl });
 
 		if (counter == ssm.getTotalSlices()) {
-			int rows = ((StitchingImagesModel)model).getRows();
-			int columns = ((StitchingImagesModel)model).getColumns();
-			double fieldOfView = ((StitchingImagesModel)model).getFieldOfView();
-			boolean useFeatureAssociation = ((StitchingImagesModel)model).isFeatureAssociated();
+			int rows = model.getRows();
+			int columns = model.getColumns();
+			double fieldOfView = model.getFieldOfView();
+			boolean useFeatureAssociation = model.isFeatureAssociated();
 			
 			if (imageStitchingService == null)
 				imageStitchingService = OperationServiceLoader.getImageStitchingService();
 			try {
-				stitched = imageStitchingService.stitch(imageStack, rows, columns, fieldOfView, translations, useFeatureAssociation, monitor);
+				AggregateDataset stack = new AggregateDataset(true, imageStack.toArray(new ILazyDataset[imageStack.size()]));
+				double[][][] trans = new double[rows][columns][2];
+				int k = 0;
+				int kmax = translations.size();
+				for (int i = 0; i < rows; i++) {
+					double[][] trow = trans[i];
+					for (int j = 0; j < columns; j++) {
+						double[] entry = trow[j];
+						double[] pair = translations.get(k++);
+						entry[0] = pair[0];
+						entry[1] = pair[1];
+						if (k >= kmax) {
+							break;
+						}
+					}
+				}
+				stitched = imageStitchingService.stitch(stack, rows, columns, fieldOfView, trans, useFeatureAssociation, null, monitor);
 			} catch (Exception e) {
 				logger.error("Error running stitching process:", e);
 			}

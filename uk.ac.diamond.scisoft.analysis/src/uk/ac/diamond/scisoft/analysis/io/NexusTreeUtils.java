@@ -50,12 +50,15 @@ import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.MetadataException;
+import org.eclipse.january.dataset.CompoundDataset;
+import org.eclipse.january.dataset.CompoundDoubleDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.InterfaceUtils;
 import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.Stats;
@@ -450,7 +453,7 @@ public class NexusTreeUtils {
 			for (String s : names) {
 				boolean flg = false;
 				for (AxisChoice c : choices) {
-					if (c.equals(s)) {
+					if (s.equals(c.getName())) {
 						flg = true;
 						break;
 					}
@@ -1508,7 +1511,6 @@ public class NexusTreeUtils {
 			} catch (NexusException e) {
 				logger.error("Could not read depends_on so using '{}'", dependsOn, e);
 			}
-			
 		}
 		GroupNode tNode = getGroup(findFirstNode(gNode, NexusConstants.TRANSFORMATIONS));
 		if (tNode == null) {
@@ -1529,11 +1531,15 @@ public class NexusTreeUtils {
 				sample.setReferenceNormal(new Vector3d(d));
 			}
 		}
-		DataNode stokes = gNode.getDataNode("final_polarization_stokes");
+		DataNode stokes = gNode.getDataNode("incident_polarization_stokes");
+		if (stokes == null) {
+			stokes = gNode.getDataNode("final_polarization_stokes");
+		}
 		if (stokes == null) {
 			logger.warn("Polarization state was missing in {}", gNode);
 		} else {
-			double[] d = getDoubleArray(stokes, 4);
+			CompoundDoubleDataset stokesPoln = getCastAndCacheData(stokes, 4, CompoundDoubleDataset.class);
+			double[] d = stokesPoln.getSize() == 1 ? stokesPoln.getDoubleArray() : stokesPoln.getDoubleArray(pos);
 			sample.setStokesVector(new Vector4d(d));
 		}
 	}
@@ -2433,8 +2439,12 @@ public class NexusTreeUtils {
 		return getCastAndCacheData(dNode, null);
 	}
 
-	@SuppressWarnings("unchecked")
 	private static <D extends Dataset> D getCastAndCacheData(DataNode dNode, Class<D> clazz) {
+		return getCastAndCacheData(dNode, 1, clazz);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <D extends Dataset> D getCastAndCacheData(DataNode dNode, int itemSize, Class<D> clazz) {
 		ILazyDataset ld = dNode.getDataset();
 		Dataset dataset;
 		if (ld == null) {
@@ -2452,7 +2462,26 @@ public class NexusTreeUtils {
 			dNode.setDataset(dataset);
 		}
 		if (clazz != null && !dataset.getClass().equals(clazz)) {
-			dataset = dataset.cast(clazz);
+			if (dataset instanceof CompoundDataset) {
+				dataset = DatasetUtils.createDatasetFromCompoundDataset((CompoundDataset) dataset, true);
+			}
+			boolean asCompound = false;
+			if (InterfaceUtils.isCompound(clazz)) {
+				Class<?> ec = InterfaceUtils.getElementClass(clazz);
+				dataset = dataset.cast(InterfaceUtils.getInterfaceFromClass(1, ec));
+				asCompound = true;
+			} else {
+				dataset = dataset.cast(clazz);
+				asCompound = itemSize > 1;
+			}
+			if (asCompound) {
+				int r = dataset.getRank();
+				if (r > 1 && dataset.getShapeRef()[r] == itemSize) {
+					dataset = DatasetUtils.createCompoundDatasetFromLastAxis(dataset, true);
+				} else {
+					dataset = DatasetUtils.createCompoundDataset(dataset, itemSize);
+				}
+			}
 			dNode.setDataset(dataset);
 		}
 		return (D) dataset;

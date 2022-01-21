@@ -23,7 +23,7 @@ public class MockDynamicLazyDataset extends LazyDynamicDataset {
 
 
 	public MockDynamicLazyDataset(int[][] shapes, Dataset parent) {
-		super("mock", parent.getDType(), parent.getElementsPerItem(), shapes[0], parent.getShape(), null);
+		super(null, "mock", parent.getElementsPerItem(), parent.getClass(), shapes[0], parent.getShape(), null);
 		this.parent = parent;
 		loader = new DynamicLazyLoader();
 		shapeArrays = shapes;

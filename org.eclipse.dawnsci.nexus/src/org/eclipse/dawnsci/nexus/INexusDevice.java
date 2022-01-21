@@ -55,14 +55,14 @@ public interface INexusDevice<N extends NXobject> {
 	 * <p>
 	 * On the detector object you can create {@link LazyDataset}s and keep
 	 * references which you can later use during the scan to write data. e.g.
-	 * <code>imageData = detector.initializeLazyDataset(NXdetector.NX_DATA, info.getRank() + 2, Dataset.FLOAT64);</code>
+	 * <code>imageData = detector.initializeLazyDataset(NXdetector.NX_DATA, info.getRank() + 2, Double.class);</code>
 	 * You should also set chunking on the {@link LazyDataset}s you create e.g. <code>imageData.setChunking(info.createChunk(detectorXSize, detectorYSize));</code>.
 	 * </p>
 	 * In this method you can also write static metadata such as the detector
 	 * exposure e.g.
 	 * <code>detector.setField("exposure_time", model.getExposure());</code>. Or
 	 * static datasets such as the image axis data
-	 * <code>detector.setDataset("image_x_axis", DatasetFactory.createLinearSpace(minX, maxX, xPoints, Dataset.FLOAT64));</code>
+	 * <code>detector.setDataset("image_x_axis", DatasetFactory.createLinearSpace(DoubleDataset.class, minX, maxX, xPoints));</code>
 	 * For fields that are defined in the NXDL base class definition for the
 	 * returned nexus object, a setXXX or setXXXScalar method may be used as
 	 * appropriate, e.g. <code>detector.setLocalName(DatasetFactory.createFromObject("my detector"));</code>

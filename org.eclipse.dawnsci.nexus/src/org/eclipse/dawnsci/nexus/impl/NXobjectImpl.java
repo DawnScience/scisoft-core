@@ -179,10 +179,10 @@ public abstract class NXobjectImpl extends GroupNodeImpl implements NXobject {
 	/* (non-Javadoc)
 	 * @see org.eclipse.dawnsci.nexus.NXobject#initializeLazyDataset(java.lang.String, int, int)
 	 */
-	public ILazyWriteableDataset initializeLazyDataset(String name, int rank, Class<?> dtype) {
+	public ILazyWriteableDataset initializeLazyDataset(String name, int rank, Class<?> eClass) {
 		int[] shape = new int[rank];
 		Arrays.fill(shape, ILazyWriteableDataset.UNLIMITED);
-		return initializeLazyDataset(name, shape, dtype);
+		return initializeLazyDataset(name, shape, eClass);
 	}
 	
 	@Override

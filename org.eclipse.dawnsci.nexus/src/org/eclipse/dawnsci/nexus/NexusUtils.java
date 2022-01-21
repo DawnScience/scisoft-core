@@ -989,7 +989,7 @@ public class NexusUtils {
 		if (d == null) {
 			int[] ms = ns.clone();
 			ms[0] = -1;
-			LazyWriteableDataset w = new LazyWriteableDataset(name, a.getElementClass(), ns, ms, null, null);
+			LazyWriteableDataset w = new LazyWriteableDataset(null, name, a.getClass(), ns, ms, null);
 			return f.createData(g, w);
 		}
 	

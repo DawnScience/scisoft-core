@@ -48,7 +48,7 @@ import org.eclipse.january.dataset.ILazyWriteableDataset;
 				protected NXdetector doCreateNexusObject(NexusNodeFactory nodeFactory) {
 					final NXdetectorImpl detector = nodeFactory.createNXdetector();
 					final int rank = 4;
-					detector.initializeLazyDataset(NXdetectorImpl.NX_DATA, rank, Dataset.FLOAT64);
+					detector.initializeLazyDataset(NXdetectorImpl.NX_DATA, rank, Double.class);
 					return detector;
 				}	
 			};

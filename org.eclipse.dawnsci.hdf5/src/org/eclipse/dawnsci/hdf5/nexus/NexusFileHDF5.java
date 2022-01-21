@@ -12,7 +12,6 @@ package org.eclipse.dawnsci.hdf5.nexus;
 import java.io.File;
 import java.io.Serializable;
 import java.net.URI;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -733,7 +732,7 @@ public class NexusFileHDF5 implements NexusFile {
 		if (writeable) {
 			HDF5LazySaver saver = new HDF5LazySaver(null, fileName, path, name, iShape, itemSize,
 					clazz, extendUnsigned, iMaxShape, iChunks, fill);
-			lazyDataset = new LazyWriteableDataset(name, InterfaceUtils.getElementClass(clazz), itemSize, iShape, iMaxShape, iChunks, saver);
+			lazyDataset = new LazyWriteableDataset(saver, name, itemSize, clazz, iShape, iMaxShape, iChunks);
 			saver.setAlreadyCreated();
 			if (writeAsync) {
 				saver.setAsyncWriteableDataset((LazyWriteableDataset) lazyDataset);

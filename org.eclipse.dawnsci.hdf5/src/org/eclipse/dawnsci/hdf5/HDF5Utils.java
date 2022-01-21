@@ -722,7 +722,7 @@ public class HDF5Utils {
 		HDF5LazySaver saver = new HDF5LazySaver(null, fileName,
 				parentPath + Node.SEPARATOR + name, name, initialShape, 1, clazz, asUnsigned, maxShape, chunking, fill);
 		saver.setCreateOnInitialization(true);
-		LazyWriteableDataset lazy = new LazyWriteableDataset(name, InterfaceUtils.getElementClass(clazz), initialShape, maxShape, chunking, saver);
+		LazyWriteableDataset lazy = new LazyWriteableDataset(saver, name, clazz, initialShape, maxShape, chunking);
 		lazy.setFillValue(fill);
 		return lazy;
 	}

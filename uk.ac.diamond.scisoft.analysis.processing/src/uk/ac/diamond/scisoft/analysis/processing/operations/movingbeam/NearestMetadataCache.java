@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
@@ -25,14 +26,15 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 
-import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionCalibrationReader;
 
 /**
  * This is a cache that uses the retrieves the nearest neighbour metadata for a
  * moving beam scan. It uses the datasets highlighted in the model to cache both
- * the scan axes from the current scan and the calibration scan that has been
- * split into frames.
+ * scan axes from the current scan, the scan axes from the calibration and the unique 
+ * keys associated with the calibration scan. The cache assumes that
+ * recalibrated frames have been named based on their 
+ * unique keys-the path to which is harcoded in {@link AbstractMovingBeamMetadataCache} 
  * <p>
  * When the metadata is retrieved from the cache it does a nearest neighbour
  * comparison to determine where to pull the cached metadata from in the list.
@@ -43,6 +45,12 @@ import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionCalibrationReader;
 public class NearestMetadataCache extends AbstractMovingBeamMetadataCache {
 	private Dataset calibrationX;
 	private Dataset calibrationY;
+	private Dataset calibrationFrameKeys;
+	private File cFolder;
+	private String[] cFrames;
+	private String patternMatch;
+	private String datasetName;
+	 
 
 	/**
 	 * Construct the metadata cache
@@ -58,32 +66,44 @@ public class NearestMetadataCache extends AbstractMovingBeamMetadataCache {
 	public NearestMetadataCache(IDataset slice, NearestDiffractionMetadataImportModel model, String dataFilePath)
 			throws Exception {
 
-		//super();
-
 		axes = slice.getFirstMetadata(AxesMetadata.class);
 		sourceAxesNames = new String[] { model.getPositionZeroDataset(), model.getPositionOneDataset() };
 
 		SliceFromSeriesMetadata ssm = slice.getFirstMetadata(SliceFromSeriesMetadata.class);
 		isLive = ssm.getSourceInfo().isLive();
-
-		IDataHolder cData = LoaderFactory.getData(model.getFilePath(), true, null);
-		IDataHolder scanData = LoaderFactory.getData(dataFilePath, null);
-
+		
+		
+		IDataHolder cData = loadScan(model.getFilePath());
+		IDataHolder scanData = loadScan(dataFilePath);
+		
+		
+		
 		// here the cached datasets should be the scan's axis datasets
 		cachedSourceXPositions = scanData.getLazyDataset(sourceAxesNames[0]);
 		cachedSourceYPositions = scanData.getLazyDataset(sourceAxesNames[1]);
-
-		// get flat views of the calibrated position datasets
+		
+		//TODO the frame keys path might have to accommodate older scanning -but would only affect a handful of users
+		//would just add this to the model  
+		String frameKeys = buildFrameKeysPath(model.getFilePath(), model.getFrameKeyPath(),true);
+		
+		// get flat views of the calibrated position datasets and the frame keys
 		calibrationX = DatasetUtils.sliceAndConvertLazyDataset(cData.getLazyDataset(sourceAxesNames[0])).flatten();
 		calibrationY = DatasetUtils.sliceAndConvertLazyDataset(cData.getLazyDataset(sourceAxesNames[1])).flatten();
-
+		
+		calibrationFrameKeys = DatasetUtils.sliceAndConvertLazyDataset(cData.getLazyDataset(frameKeys)).flatten();
+		if (calibrationFrameKeys == null) {
+			frameKeys = buildFrameKeysPath(model.getFilePath(), model.getFrameKeyPath(),false);
+			calibrationFrameKeys = DatasetUtils.sliceAndConvertLazyDataset(cData.getLazyDataset(frameKeys)).flatten();
+		}
+		
+		
 		if (Objects.isNull(calibrationX) || Objects.isNull(calibrationY)) {
 			throw new CacheConstructionException(
 					"could not retrieve specified calibration position datasets from scan");
 		}
 
-		File cFolder = new File(model.getCalibsFolder());
-		String[] cFrames = cFolder.list(new FilenameFilter() {
+		cFolder = new File(model.getCalibsFolder());
+		cFrames = cFolder.list(new FilenameFilter() {
 
 			@Override
 			public boolean accept(File dir, String name) {
@@ -93,29 +113,78 @@ public class NearestMetadataCache extends AbstractMovingBeamMetadataCache {
 
 		if (cFrames.length == 0)
 			throw new CacheConstructionException("No frames matching expression in selected folder");
-		Arrays.sort(cFrames, 0, cFrames.length);
+		
+		patternMatch = expressionToStringFormatter(model.getRegex());
 
-		String datasetName = (Objects.nonNull(model.getDetectorDataset())) ? model.getDetectorDataset()
+		datasetName = (Objects.nonNull(model.getDetectorDataset())) ? model.getDetectorDataset()
 				: ssm.getDatasetName();
 
-		Arrays.stream(cFrames, 0, cFrames.length).forEachOrdered(s -> {
-			try {
-				String cPath = cFolder.getAbsolutePath() + File.separator + s;
-				metadata.add(NexusDiffractionCalibrationReader.getDiffractionMetadataFromNexus(cPath, ssm.getParent(),
-						datasetName));
-			} catch (DatasetException e) {
-				throw new RuntimeException("Unable to retrieve metadata for: " + s);
+	}
+	
+	/**
+	 * Convert a regex to a format string by substituting a block of digits.  
+	 * @param regex regular expression used to determine the padding 
+	 * @return
+	 */
+	public static String expressionToStringFormatter(String regex) throws RuntimeException {
+		
+		String slashd = "\\d";
+		
+		if (!regex.contains(slashd)) throw new RuntimeException("String does not contain any integer substitutions!");
+		
+		int idx = regex.indexOf(slashd, 2);
+		
+		String mainString =  regex.substring(2, idx);
+		
+		String ext=".nxs";
+		
+		int lastDot = regex.lastIndexOf(".");
+		
+		if (lastDot > 0) {
+			String testExt = regex.substring(regex.lastIndexOf("."));
+			if (!testExt.isEmpty()) {
+				ext = testExt;
 			}
-		});
-		if (Objects.isNull(metadata.get(0)))
-			throw new CacheConstructionException("Error loading metadata");
-
+		}
+		
+		int count = 0;
+		boolean charSame = true;
+		
+		while (charSame) {
+			int start = idx + count*2;
+			
+			if (start+2 >= regex.length()) {
+				break;
+			}
+			
+			if (regex.subSequence(start,start+2).equals(slashd)) {
+				count++;
+			} else {
+				break;
+			}
+		}
+		
+		return String.format("%s%%0%dd%s", mainString,count,ext);
+		
 	}
 
 	@Override
 	public IDiffractionMetadata getDiffractionMetadata(SliceFromSeriesMetadata ssm) throws DatasetException {
-		return metadata.get(getAbsoluteNeighbourPosition(ssm));
+		int frameID = getFrameIDForPosition(ssm);
+		return loadMetadata(frameID, ssm);
 
+	}
+	
+	/**
+	 * get the frame ID corresponding to the flattened 1D index position based on the minimised squared 
+	 * distance between the current scan point and the calibrated points.
+	 *  
+	 * @param ssm
+	 * @return
+	 * @throws DatasetException
+	 */
+	public int getFrameIDForPosition(SliceFromSeriesMetadata ssm) throws DatasetException {
+		return calibrationFrameKeys.getInt(getAbsoluteNeighbourPosition(ssm));
 	}
 
 	@Override
@@ -140,5 +209,20 @@ public class NearestMetadataCache extends AbstractMovingBeamMetadataCache {
 		xdiff.iadd(ydiff);
 		return xdiff.argMin(false); // find minimum on d^2
 	}
+	
+	private IDiffractionMetadata loadMetadata(int frameKey, SliceFromSeriesMetadata ssm) throws DatasetException {
+		 
+		String pMatch = String.format(patternMatch, frameKey);
+		Optional<String> cFile = Arrays.stream(cFrames).filter(s -> s.contains(pMatch)).findFirst();
+		if (cFile.isEmpty()) throw new DatasetException(String.format("Unable to identify frame for key: %d ", frameKey));
+		String cPath = new File(cFolder, cFile.get()).getAbsolutePath();
 
+		try {
+			return NexusDiffractionCalibrationReader.getDiffractionMetadataFromNexus(cPath, ssm.getParent(),
+						datasetName);
+		} catch (DatasetException e) {
+				throw new DatasetException("Error retrieving metadata from: "+ cPath);
+		}
+	}		
+	
 }

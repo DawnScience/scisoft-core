@@ -15,7 +15,9 @@ import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 
+
 import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
+
 
 public class DiffractionMetadataUtils {
 	
@@ -83,4 +85,6 @@ public class DiffractionMetadataUtils {
 		return getOffsetMetadata(originalMeta, sourceOffsets[0], sourceOffsets[1], sourceOffsets[2]);
 		
 	}
+	
+		
 }

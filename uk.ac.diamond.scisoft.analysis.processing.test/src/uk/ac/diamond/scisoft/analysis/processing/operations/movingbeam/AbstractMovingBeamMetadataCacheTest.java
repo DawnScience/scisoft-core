@@ -51,6 +51,7 @@ public abstract class AbstractMovingBeamMetadataCacheTest {
 
 	private Dataset XAxisData = DatasetFactory.createFromObject(new double[] { -1., -0.5, 0, 0.5, 1. });
 	private Dataset YAxisData = DatasetFactory.createFromObject(new double[] { -2, -1.5, -1, -0.5, 0 });
+	private Dataset frameKeys = DatasetFactory.createRange(IntegerDataset.class, shape[0]*shape[1] ).reshape(shape[0],shape[1],1,1);
 	private int flatRefMetaID = 12;
 	private static int[] shape = new int[] { 5, 5, 100, 100 };
 	private double[] refPosition = new double[2];
@@ -270,7 +271,26 @@ public abstract class AbstractMovingBeamMetadataCacheTest {
 		createDataNodes(metaData, images);
 
 		entry.addGroupNode("diffraction", images);
+		
+		
+		
+		DataNode keyNode = TreeFactory.createDataNode(0);
+		String keyPath = AbstractMovingBeamMetadataCache.buildFrameKeysPath(scanFile.getAbsolutePath(),AbstractMovingBeamMetadataCache.frameKeyPath, true);
+		keyPath=keyPath.replace("/entry/", "");
+		keyNode.setDataset(frameKeys);
+		String[] groups = keyPath.split(Node.SEPARATOR);
+		
+		GroupNode dScan = TreeFactory.createGroupNode(1);
+		GroupNode keys = TreeFactory.createGroupNode(2);
+		
+		
+		keys.addDataNode(groups[2], keyNode);
+		dScan.addGroupNode(groups[1], keys);
+		entry.addGroupNode(groups[0],dScan);
+		
 		tree.setGroupNode(entry);
+		
+		
 
 		return tree;
 

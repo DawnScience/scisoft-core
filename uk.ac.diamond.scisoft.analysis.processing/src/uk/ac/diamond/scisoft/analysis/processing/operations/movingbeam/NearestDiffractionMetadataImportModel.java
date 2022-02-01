@@ -34,6 +34,9 @@ public class NearestDiffractionMetadataImportModel extends AbstractOperationMode
 	@OperationModelField(hint ="Enter the dataset path to use as the calibrated reference position (Dimension 1)", dataset="filePath", label =  "Calibrated Position (Dimension 1)",  description = "Path to node with position for the Y (Dimension 1)",fieldPosition=4)
 	private String positionOneDataset = null;
 	
+	@OperationModelField(description= "Enter the path to the unique frame keys of the scan.\n It is assumed that the main section of the unique key path is shared between the calibration and the current scan", hint="Unique keys identify frames for the scan; input the path up to and including the node keys",expertOnly=true, label="Path to unique frame identifier", fieldPosition=5, dataset="filePath")
+	private String frameKeyPath = "/entry/diamond_scan/keys/";
+	
 	@OperationModelField(hint = "Regex pattern match", label = "regex frame matcher", description= "Frame pattern matcher based on regular expression.")
 	private String regex = ".*_frame_\\d\\d\\d.nxs";
 	
@@ -55,6 +58,10 @@ public class NearestDiffractionMetadataImportModel extends AbstractOperationMode
 	
 	public void setPositionZeroDataset(String dataset) {
 		firePropertyChange("positionZeroDataset", this.positionZeroDataset, this.positionZeroDataset = dataset);
+	}
+	
+	public void setFrameKeyPath(String dataset ) {
+		firePropertyChange("frameKeyPath", this.frameKeyPath, this.frameKeyPath=dataset);
 	}
 	
 	public void setPositionOneDataset(String dataset) {
@@ -83,16 +90,16 @@ public class NearestDiffractionMetadataImportModel extends AbstractOperationMode
 		return filePath;
 	}
 	
-//	public boolean isBounded() {
-//		return limit;
-//	}
-	
 	public String getCalibsFolder() {
 		return calibsFolder;
 	}
 	
 	public String getRegex() {
 		return this.regex;
+	}
+	
+	public String getFrameKeyPath() {
+		return frameKeyPath;
 	}
 
 }

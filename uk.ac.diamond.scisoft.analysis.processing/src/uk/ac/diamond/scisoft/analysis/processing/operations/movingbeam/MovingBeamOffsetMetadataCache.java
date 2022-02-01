@@ -29,7 +29,6 @@ import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionMetadataUtils;
-import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionCalibrationReader;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
@@ -46,7 +45,7 @@ public class MovingBeamOffsetMetadataCache extends AbstractMovingBeamMetadataCac
 	
 	public MovingBeamOffsetMetadataCache(IDataset slice, DiffractionMetadataImportModel model, String dataFilePath) throws Exception {
 		
-		//super(); 
+		
 		this.transform.setIdentity();  
 		
 		axes = slice.getFirstMetadata(AxesMetadata.class);
@@ -57,8 +56,8 @@ public class MovingBeamOffsetMetadataCache extends AbstractMovingBeamMetadataCac
 		if (Objects.isNull(ssm)) throw new CacheConstructionException("Dataset must have a SliceFromSeriesMetadata set.");
 		isLive = ssm.getSourceInfo().isLive();
 		
-		IDataHolder cData = LoaderFactory.getData(model.getFilePath(), true, null);
-		IDataHolder scanData = LoaderFactory.getData(dataFilePath, null);
+		IDataHolder cData = loadScan(model.getFilePath());
+		IDataHolder scanData = loadScan(dataFilePath);
 		
 		
 		Dataset xData = DatasetUtils
@@ -72,13 +71,13 @@ public class MovingBeamOffsetMetadataCache extends AbstractMovingBeamMetadataCac
 		
 		
 		if (!model.getOverridePosition()) {
-			double[] transformedPositions = transformKBtoSample(xData, yData);
+			double[] transformedPositions = transformRawMotorValues(xData, yData);
 			calibrationX = transformedPositions[0];
 			calibrationY = transformedPositions[1];
 			calibrationZ = transformedPositions[2];
 			
-			// retain only the target names (as these correspond to the
-			// groups for the motor values used for calibration)
+			// retain only the target names for the calibration motor position groups; these correspond to the
+			// groups for the motor values used for calibration and will be used to identify the source names in other scans!
 			Tree tree = cData.getTree();
 			sourceAxesNames[0] = getNodeLinkTargetPath(model.getPositionZeroDataset(), tree);
 			sourceAxesNames[1] = getNodeLinkTargetPath(model.getPositionOneDataset(), tree);
@@ -156,7 +155,6 @@ public class MovingBeamOffsetMetadataCache extends AbstractMovingBeamMetadataCac
 	public IDiffractionMetadata getDiffractionMetadata(SliceFromSeriesMetadata ssm) throws DatasetException {
 		ReferencePosition2DMetadata posMetadata = getPositionMeta(ssm);
 		double[] pos = Arrays.copyOf(posMetadata.getReferencePosition().getData(), 3);
-		//double[] angles = metadata.get(0).getDetector2DProperties().getNormalAnglesInDegrees();
 		return DiffractionMetadataUtils.getOffsetMetadata(metadata.get(0), pos);
 		
 	}
@@ -167,7 +165,7 @@ public class MovingBeamOffsetMetadataCache extends AbstractMovingBeamMetadataCac
 				ReferencePosition2DMetadata pnew;
 				//TODO add a check if the position metadata has already been set and if it has retrieve it
 				
-				double[] frameSourceOffsetXY = transformKBtoSample(DatasetUtils.cast(DoubleDataset.class,ssm.getMatchingSlice(cachedSourceXPositions)) ,
+				double[] frameSourceOffsetXY = transformRawMotorValues(DatasetUtils.cast(DoubleDataset.class,ssm.getMatchingSlice(cachedSourceXPositions)) ,
 						DatasetUtils.cast(DoubleDataset.class,ssm.getMatchingSlice(cachedSourceYPositions)));
 						
 				frameSourceOffsetXY[0] -=  calibrationX;
@@ -183,18 +181,19 @@ public class MovingBeamOffsetMetadataCache extends AbstractMovingBeamMetadataCac
 	}
 	
 	/**
-	 * Transform the x and y positions into a sample reference coordinate system, assumes that the kbx and kby once 
-	 * squeezed give a single value
-	 * @param kbx
-	 * @param kby
+	 * Transform the x and y positions into a sample reference coordinate system, assumes that the rawX and rawY are actually single value
+	 * datasets.
+	 * 
+	 * @param rawX
+	 * @param rawY
 	 * @return
 	 */
-	private double[] transformKBtoSample(Dataset kbx, Dataset kby) {
-		
-		Point3d kbpVec = new Point3d(kbx.getDouble(),kby.getDouble(),0 ); 	
-		this.transform.transform(kbpVec);
-		return new double[] { kbpVec.getX(), kbpVec.getY(),kbpVec.getZ()};
+	private double[] transformRawMotorValues(Dataset rawX, Dataset rawY) {
+		Point3d rawVec = new Point3d(rawX.getDouble(),rawY.getDouble(),0 ); 	
+		this.transform.transform(rawVec);
+		return new double[] { rawVec.getX(), rawVec.getY(),rawVec.getZ()};
 		
 	}
+	
 
 }

@@ -28,7 +28,8 @@ Require-Bundle: org.eclipse.january;bundle-version="2.3.0",
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Import-Package: org.osgi.framework;version="1.7.0",
- org.slf4j;version="1.7.6"
+ org.slf4j;version="1.7.6",
+ uk.ac.diamond.scisoft.diffraction.powder
 Service-Component: OSGI-INF/*.xml
 Export-Package: uk.ac.diamond.scisoft.analysis.processing,
  uk.ac.diamond.scisoft.analysis.processing.bean,

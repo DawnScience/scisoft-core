@@ -41,6 +41,7 @@ public class NexusScanConstants {
 	public static final String FIELD_NAME_SCAN_RANK = "scan_rank";
 	public static final String FIELD_NAME_SCAN_SHAPE = "scan_shape";
 	public static final String FIELD_NAME_SCAN_COMMAND = "scan_command";
+	public static final String FIELD_NAME_SCAN_FIELDS = "scan_fields";
 	public static final String FIELD_NAME_SCAN_FINISHED = "scan_finished";
 	public static final String FIELD_NAME_SCAN_DURATION = NXentry.NX_DURATION;
 	public static final String FIELD_NAME_SCAN_ESTIMATED_DURATION = "scan_estimated_duration";

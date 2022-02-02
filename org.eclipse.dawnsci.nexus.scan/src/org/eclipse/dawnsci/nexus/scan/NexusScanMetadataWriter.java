@@ -13,6 +13,7 @@ import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_SCAN_
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_SCAN_END_TIME;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_SCAN_ESTIMATED_DURATION;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_SCAN_FINISHED;
+import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_SCAN_FIELDS;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_SCAN_RANK;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_SCAN_SHAPE;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_SCAN_START_TIME;
@@ -158,6 +159,9 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		// write the scan command, if available
 		if (scanInfo.getScanCommand() != null) {
 			scanMetadataCollection.setField(FIELD_NAME_SCAN_COMMAND, scanInfo.getScanCommand());
+		}
+		if (scanInfo.getScanFieldNames() != null && !scanInfo.getScanFieldNames().isEmpty()) {
+			scanMetadataCollection.setField(FIELD_NAME_SCAN_FIELDS, DatasetFactory.createFromObject(scanInfo.getScanFieldNames()));
 		}
 		
 		// write the scan shape
@@ -401,6 +405,9 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		entry.addDataNode(FIELD_NAME_SCAN_SHAPE, scanMetadataCollection.getDataNode(FIELD_NAME_SCAN_SHAPE));
 		if (scanMetadataCollection.containsDataNode(FIELD_NAME_SCAN_COMMAND)) {
 			entry.addDataNode(FIELD_NAME_SCAN_COMMAND, scanMetadataCollection.getDataNode(FIELD_NAME_SCAN_COMMAND)); 
+		}
+		if (scanMetadataCollection.containsDataNode(FIELD_NAME_SCAN_FIELDS)) {
+			entry.addDataNode(FIELD_NAME_SCAN_FIELDS, scanMetadataCollection.getDataNode(FIELD_NAME_SCAN_FIELDS));
 		}
 	}
 

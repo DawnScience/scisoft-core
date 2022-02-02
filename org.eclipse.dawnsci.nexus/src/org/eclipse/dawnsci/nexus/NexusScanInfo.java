@@ -68,6 +68,8 @@ public class NexusScanInfo {
 	
 	private String scanCommand;
 	
+	private List<String> scanFieldNames;
+	
 	private String filePath;
 	
 	private long estimatedScanTime = -1; // in ms, or -1 if not specified
@@ -171,6 +173,14 @@ public class NexusScanInfo {
 
 	public void setScanCommand(String scanCommand) {
 		this.scanCommand = scanCommand;
+	}
+	
+	public List<String> getScanFieldNames() {
+		return scanFieldNames;
+	}
+	
+	public void setScanFieldNames(List<String> scanFieldNames) {
+		this.scanFieldNames = scanFieldNames;
 	}
 
 	/**

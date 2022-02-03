@@ -776,10 +776,10 @@ public class MillerSpaceMapper {
 			image.setShape(s);
 			miss = imagesSlice.getStep();
 			if (image.max().doubleValue() <= 0) {
-				logger.info("Skipping image at {} in {}", Arrays.toString(dpos), inFile);
+				logger.info("Skipping image at {}{}", Arrays.toString(dpos), inFile);
 				image = getNextImage(miss, images, iter, start, stop);
 			} else {
-				logger.info("Mapping image at {}/{} in {}", Arrays.toString(dpos), Arrays.toString(diter.getShape()), inFile);
+				logger.info("Mapping image at {}/{}{}", Arrays.toString(dpos), Arrays.toString(diter.getShape()), inFile);
 				initializeImagePixelMapping(pixelMapping, tree, ishape, dpos, isOldGDA);
 	
 				double tFactor = getTransmissionCorrection(trans, dpos);

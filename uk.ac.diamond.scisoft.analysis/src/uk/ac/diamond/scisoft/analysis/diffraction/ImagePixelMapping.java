@@ -315,6 +315,83 @@ public interface ImagePixelMapping {
 	}
 
 	/**
+	 * Mapping to cylindrical polar, QparPhiQz
+	 */
+	public static class QPolarMapping extends QxyzMapping {
+		private static final String[] Q_POL_AXES = { "q-par-axis", "phi-axis", "qz-axis" };
+
+		public QPolarMapping() {
+			super();
+		}
+
+		/**
+		 * Returns parallel, azimuth, perpendicular components
+		 * @param q
+		 */
+		@Override
+		public void map(double x, double y, Vector3d q) {
+			super.map(x, y, q);
+			q.x = Math.hypot(q.x, q.y);
+			q.y = Math.atan2(q.y, q.x);
+		}
+
+		@Override
+		public String[] getAxesName() {
+			return Q_POL_AXES;
+		}
+
+		@Override
+		public QPolarMapping clone() {
+			QPolarMapping c = new QPolarMapping();
+			c.qSpace = qSpace;
+			c.detector = detector;
+			c.beam = beam;
+			c.transform = transform;
+			return c;
+		}
+	}
+
+	/**
+	 * Mapping to equatorial projection in Q (from south pole)
+	 */
+	public static class QEquatorialStereoMapping extends QxyzMapping {
+		private static final String[] Q_ES_AXES = { "ex-axis", "ey-axis", "q-axis" };
+
+		public QEquatorialStereoMapping() {
+			super();
+		}
+
+		/**
+		 * Returns equatorial x, y and q
+		 * @param q
+		 */
+		@Override
+		public void map(double x, double y, Vector3d q) {
+			super.map(x, y, q);
+			double qm = Math.hypot(q.x, Math.hypot(q.y, q.z));
+			double f = qm/(qm + q.z);
+			q.x *= f;
+			q.y *= f;
+			q.z = qm;
+		}
+
+		@Override
+		public String[] getAxesName() {
+			return Q_ES_AXES;
+		}
+
+		@Override
+		public QEquatorialStereoMapping clone() {
+			QEquatorialStereoMapping c = new QEquatorialStereoMapping();
+			c.qSpace = qSpace;
+			c.detector = detector;
+			c.beam = beam;
+			c.transform = transform;
+			return c;
+		}
+	}
+
+	/**
 	 * Mapping to HKL2D by permuting coordinates
 	 */
 	public static class HKLPermuted2DMapping extends HKLMapping {
@@ -630,6 +707,10 @@ public interface ImagePixelMapping {
 		case Volume_HKL:
 		case Coords_HKL:
 			return new HKLMapping();
+		case Volume_QCP:
+			return new QPolarMapping();
+		case Volume_QES:
+			return new QEquatorialStereoMapping();
 		case Volume_Q:
 		case Coords_Q:
 			return new QxyzMapping();

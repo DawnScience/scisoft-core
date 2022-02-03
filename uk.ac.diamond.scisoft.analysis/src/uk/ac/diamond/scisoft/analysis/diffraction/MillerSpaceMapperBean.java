@@ -57,6 +57,14 @@ public class MillerSpaceMapperBean implements Cloneable {
 		 */
 		Volume_Q(3, true),
 		/**
+		 * Volume in cylindrical polar q-space (crystal frame)
+		 */
+		Volume_QCP(3, true),
+		/**
+		 * Volume in equatorial stereographic q-space (crystal frame)
+		 */
+		Volume_QES(3, true),
+		/**
 		 * Area in Miller-space (H,K)
 		 */
 		Area_HK(2, false),

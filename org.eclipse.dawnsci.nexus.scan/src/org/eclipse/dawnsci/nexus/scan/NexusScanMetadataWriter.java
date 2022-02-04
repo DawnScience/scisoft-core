@@ -4,6 +4,7 @@ import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.util.stream.Collectors.toList;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.ATTRIBUTE_NAME_UNITS;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.ATTRIBUTE_VALUE_MILLISECONDS;
+import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_CURRENT_SCRIPT_NAME;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_POINT_END_TIME;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_POINT_START_TIME;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_SCAN_COMMAND;
@@ -162,6 +163,9 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		}
 		if (scanInfo.getScanFieldNames() != null && !scanInfo.getScanFieldNames().isEmpty()) {
 			scanMetadataCollection.setField(FIELD_NAME_SCAN_FIELDS, DatasetFactory.createFromObject(scanInfo.getScanFieldNames()));
+		}
+		if (scanInfo.getCurrentScriptName() != null) {
+			scanMetadataCollection.setField(FIELD_NAME_CURRENT_SCRIPT_NAME, scanInfo.getCurrentScriptName());
 		}
 		
 		// write the scan shape
@@ -403,11 +407,15 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		entry.addDataNode(NXentry.NX_END_TIME, scanMetadataCollection.getDataNode(FIELD_NAME_SCAN_END_TIME));
 		entry.addDataNode(NXentry.NX_DURATION, scanMetadataCollection.getDataNode(FIELD_NAME_SCAN_DURATION));
 		entry.addDataNode(FIELD_NAME_SCAN_SHAPE, scanMetadataCollection.getDataNode(FIELD_NAME_SCAN_SHAPE));
-		if (scanMetadataCollection.containsDataNode(FIELD_NAME_SCAN_COMMAND)) {
-			entry.addDataNode(FIELD_NAME_SCAN_COMMAND, scanMetadataCollection.getDataNode(FIELD_NAME_SCAN_COMMAND)); 
-		}
-		if (scanMetadataCollection.containsDataNode(FIELD_NAME_SCAN_FIELDS)) {
-			entry.addDataNode(FIELD_NAME_SCAN_FIELDS, scanMetadataCollection.getDataNode(FIELD_NAME_SCAN_FIELDS));
+		
+		linkFieldIfPresent(FIELD_NAME_SCAN_COMMAND, entry); // TODO should we link all these fields?
+		linkFieldIfPresent(FIELD_NAME_SCAN_FIELDS, entry);
+		linkFieldIfPresent(FIELD_NAME_CURRENT_SCRIPT_NAME, entry);
+	}
+	
+	private void linkFieldIfPresent(String fieldName, NXentry entry) {
+		if (scanMetadataCollection.containsDataNode(fieldName)) {
+			entry.addDataNode(fieldName, scanMetadataCollection.getDataNode(fieldName));
 		}
 	}
 

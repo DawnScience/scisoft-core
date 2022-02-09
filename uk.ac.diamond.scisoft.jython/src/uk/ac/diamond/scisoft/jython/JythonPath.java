@@ -68,6 +68,7 @@ public class JythonPath {
 		"uk.ac.diamond.scisoft.analysis",
 		"uk.ac.diamond.scisoft.diffraction.powder",
 		"uk.ac.diamond.scisoft.python",
+		"com.github.tschoonj.xraylib", // required by spectroscopy
 		"uk.ac.diamond.scisoft.spectroscopy",
 		"uk.ac.gda.common",
 		"org.eclipse.dawnsci.hdf5", // Fix to http://jira.diamond.ac.uk/browse/SCI-1467
@@ -98,7 +99,6 @@ public class JythonPath {
 		"org.boofcv.geo",
 		"org.boofcv.ip",
 		"org.boofcv.sfm",
-		"org.ddogleg",
 		"org.dawnsci.persistence", // Required for I11 LDE script
 		"com.fasterxml.jackson.core", // Required for MillerSpaceMapper
 //		"org.eclipse.jdt.annotation", // XXX to test pruning

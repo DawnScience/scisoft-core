@@ -154,7 +154,10 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			log.clear();
 			if (usedFrames == null || usedFrames.getSize() != si.getTotalSlices()) {
 				usedFrames = DatasetFactory.zeros(BooleanDataset.class, si.getTotalSlices());
+			} else {
+				usedFrames.fill(false);
 			}
+
 			countTime = 0;
 			currentCountTime = null;
 			resetProcess(input, si.getTotalSlices());
@@ -183,15 +186,15 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			}
 		}
 
-		if (currentCountTime != null) {
-			countTime += ((Number) currentCountTime.getSlice(si.getInputSliceWithoutDataDimensions()).sum(true)).doubleValue();
-		}
-
 		int s = si.getSliceNumber();
 		boolean skip = skipFrame(si.getTotalSlices(), s);
 		usedFrames.setAbs(si.getSliceNumber(), !skip);
 		if (skip) {
 			return null;
+		}
+
+		if (currentCountTime != null) {
+			countTime += ((Number) currentCountTime.getSlice(si.getInputSliceWithoutDataDimensions()).sum(true)).doubleValue();
 		}
 
 		initializeProcess(input);

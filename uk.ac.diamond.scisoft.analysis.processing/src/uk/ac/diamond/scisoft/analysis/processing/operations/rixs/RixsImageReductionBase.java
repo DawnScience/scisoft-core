@@ -92,7 +92,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	private String centroidFilePath;
 	Map<Double, Dataset> xLookup, yLookup;
 	Dataset xBase, yBase;
-	private Number normValue = null;
+	Dataset normValues = null;
 
 	/**
 	 * Auxiliary subentry. This must match the name field defined in the plugin extension
@@ -222,7 +222,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		}
 		currentDataFile = null;
 
-		normValue = null;
+		normValues = null;
 		String normPath = model.getNormalizationPath();
 		if (normPath != null && !normPath.isEmpty()) {
 			SliceFromSeriesMetadata smd = original.getFirstMetadata(SliceFromSeriesMetadata.class);
@@ -764,7 +764,9 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 
 			List<Double> shift = new ArrayList<>();
 			Dataset cSpectrum = correlateSpectra("", r, reg, shift, ax, sArray);
-			if (normValue != null) {
+			if (normValues != null) {
+				Number normValue = (Number) normValues.getByBoolean(getUsedFrames()).sum();
+				summaryData.add(ProcessingUtils.createNamedDataset(normValue, "normalization"));
 				Dataset nSpectrum = Maths.divide(cSpectrum, normValue);
 				nSpectrum.setName("normalized_correlated_spectrum_" + r);
 				MetadataUtils.setAxes(this, nSpectrum, ax);
@@ -968,7 +970,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 				} else if (norm.min().doubleValue() < 0) {
 					throw new OperationException(this, "Normalization dataset has some values < 0");
 				}
-				normValue = (Number) norm.getByBoolean(getUsedFrames()).sum();
+				normValues = norm;
 			}
 		} catch (Exception e) {
 			log.appendFailure("Could not set normalization dataset %s from file %s: %s", dataPath, filePath, e);

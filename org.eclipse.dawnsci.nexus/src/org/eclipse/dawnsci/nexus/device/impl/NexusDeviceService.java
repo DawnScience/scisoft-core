@@ -2,6 +2,7 @@ package org.eclipse.dawnsci.nexus.device.impl;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.dawnsci.nexus.INexusDevice;
 import org.eclipse.dawnsci.nexus.INexusDeviceDecorator;
@@ -10,6 +11,8 @@ import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.device.INexusDeviceAdapterFactory;
 import org.eclipse.dawnsci.nexus.device.INexusDeviceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of {@link INexusDeviceService}.
@@ -17,28 +20,42 @@ import org.eclipse.dawnsci.nexus.device.INexusDeviceService;
  * @author Matthew Dickie
  */
 public class NexusDeviceService implements INexusDeviceService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(NexusDeviceService.class);
 
 	private Map<String, INexusDeviceDecorator<?>> nexusDecorators = new HashMap<>();
 	
 	private Map<String, INexusDevice<?>> nexusDevices = new HashMap<>();
 	
 	public <N extends NXobject> void register(INexusDevice<N> nexusDevice) {
-		if (nexusDevice.getName() == null) {
-			throw new IllegalArgumentException("the nexus device name is not set");
+		final String deviceName = nexusDevice.getName();
+		Objects.requireNonNull(deviceName, "The nexus device name is not set");
+		
+		final boolean overwritten;
+		if (nexusDevice instanceof INexusDeviceDecorator<?>) {
+			overwritten = nexusDecorators.put(deviceName, (INexusDeviceDecorator<?>) nexusDevice) != null;
+		} else {
+			overwritten = nexusDevices.put(deviceName, nexusDevice) != null;
 		}
 		
-		if (nexusDevice instanceof INexusDeviceDecorator<?>) {
-			nexusDecorators.put(nexusDevice.getName(), (INexusDeviceDecorator<?>) nexusDevice);
+		if (overwritten) {
+			// log a warning if there was already a nexus device or appender with the given name
+			logger.warn("Registered {} with name {}, overwriting previous device", nexusDevice.getClass().getSimpleName(), deviceName);
 		} else {
-			nexusDevices.put(nexusDevice.getName(), nexusDevice);
+			logger.debug("Registered {} with name {}", nexusDevice.getClass().getSimpleName(), deviceName);
 		}
 	}
 	
 	public <N extends NXobject> void unregister(INexusDevice<N> nexusDevice) {
-		if (nexusDevice.getName() == null) {
-			throw new IllegalArgumentException("the nexus device name is not set");
+		final String deviceName = nexusDevice.getName();
+		Objects.requireNonNull(deviceName, "the nexus device name is not set");
+
+		final boolean removed = nexusDevices.remove(deviceName, nexusDevice);
+		if (removed) {
+			logger.debug("Unregistered {} with name {}", nexusDevice.getClass().getSimpleName(), deviceName);
+		} else {
+			logger.warn("The registered nexus device with the name {} is not the given {}", deviceName, nexusDevice.getClass().getSimpleName());
 		}
-		nexusDevices.remove(nexusDevice.getName());
 	}
 	
 	@Override

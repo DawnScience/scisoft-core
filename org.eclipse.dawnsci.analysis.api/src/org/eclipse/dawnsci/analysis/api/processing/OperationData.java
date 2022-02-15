@@ -46,11 +46,13 @@ public class OperationData {
 	}
 
 	public OperationData(OperationData od) {
-		data = od.data;
-		auxData = od.auxData;
-		log = od.log;
-		summaryData = od.summaryData;
-		configuredFields = od.configuredFields;
+		if (od != null) {
+			data = od.data;
+			auxData = od.auxData;
+			log = od.log;
+			summaryData = od.summaryData;
+			configuredFields = od.configuredFields;
+		}
 	}
 
 	public void setData(IDataset data) {

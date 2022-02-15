@@ -846,7 +846,9 @@ public enum NexusBaseClass {
 
 </xsl:text>
 
-	<xsl:apply-templates mode="base-class-enum" select="$nexus-classes"/>
+	<xsl:apply-templates mode="base-class-enum" select="$nexus-classes">
+		<xsl:sort select="@name"/>
+	</xsl:apply-templates>
 
 	<xsl:text>
 	private String name;
@@ -939,6 +941,7 @@ public class NexusNodeFactory {
 	public static NXobject createNXobjectForClass(NexusBaseClass baseClass, long oid) {
 		switch (baseClass) {&#10;</xsl:text>
 	<xsl:for-each select="$nexus-classes">
+		<xsl:sort select="@name"/>
 		<xsl:text>			case </xsl:text><xsl:value-of select="dawnsci:base-class-enum-name(@name)"/><xsl:text>:&#10;</xsl:text>
 		<xsl:text>				return create</xsl:text><xsl:value-of select="@name"/><xsl:text>(oid);&#10;</xsl:text>
 	</xsl:for-each>

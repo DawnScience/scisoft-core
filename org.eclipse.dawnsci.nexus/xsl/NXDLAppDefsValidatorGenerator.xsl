@@ -724,7 +724,9 @@ import org.eclipse.dawnsci.nexus.validation.*;
 public enum NexusApplicationDefinition {
 
 </xsl:text>
-		<xsl:apply-templates mode="appdef-enum" select="$application-definitions"/>
+		<xsl:apply-templates mode="appdef-enum" select="$application-definitions">
+			<xsl:sort select="@name"/>
+		</xsl:apply-templates>
 		<xsl:text>
 	private String name;
 	

@@ -138,7 +138,7 @@ public abstract class FolderSelectionWidget {
 
 		fileButton = new Button(container, SWT.PUSH);
 		//fileButton.setText("Browse...");
-		fileButton.setImage(Activator.getImageDescriptor("icons/folder.png").createImage());
+		fileButton.setImage(Activator.getImageAndAddDisposeListener(fileButton, "icons/folder.png"));
 		fileButton.setToolTipText("Select an external folder");
 		fileButton.addSelectionListener(new SelectionAdapter() {
 			@Override

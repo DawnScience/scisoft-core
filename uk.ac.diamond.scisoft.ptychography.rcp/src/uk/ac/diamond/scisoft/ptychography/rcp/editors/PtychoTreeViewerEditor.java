@@ -30,7 +30,6 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -320,8 +319,7 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 		ToolBar toolBar = new ToolBar(parent, SWT.RIGHT);
 		ToolItem expand = new ToolItem(toolBar, SWT.PUSH);
 		expand.setToolTipText("Expand All");
-		Image icon = Activator.getImageDescriptor("icons/expand_all.png").createImage();
-		expand.setImage(icon);
+		expand.setImage(Activator.getImageAndAddDisposeListener(expand, "icons/expand_all.png"));
 		expand.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
@@ -332,8 +330,7 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 
 		ToolItem collapse = new ToolItem(toolBar, SWT.PUSH);
 		collapse.setToolTipText("Collapse All");
-		icon = Activator.getImageDescriptor("icons/collapse_all.png").createImage();
-		collapse.setImage(icon);
+		collapse.setImage(Activator.getImageAndAddDisposeListener(collapse, "icons/collapse_all.png"));
 		collapse.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
@@ -346,8 +343,7 @@ public class PtychoTreeViewerEditor extends AbstractPtychoEditor {
 
 		ToolItem export = new ToolItem(toolBar, SWT.PUSH);
 		export.setToolTipText("Export table to file");
-		icon = Activator.getImageDescriptor("icons/export_wiz.gif").createImage();
-		export.setImage(icon);
+		export.setImage(Activator.getImageAndAddDisposeListener(export, "icons/export_wiz.gif"));
 		export.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {

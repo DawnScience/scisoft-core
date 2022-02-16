@@ -38,7 +38,7 @@ public abstract class AbstractInMemoryNexusContext implements NexusContext {
 		setRootNode(tree.getGroupNode());
 	}
 	
-	public AbstractInMemoryNexusContext() {
+	protected AbstractInMemoryNexusContext() {
 		// do nothing, tree and root node not set yet. 
 	}
 	

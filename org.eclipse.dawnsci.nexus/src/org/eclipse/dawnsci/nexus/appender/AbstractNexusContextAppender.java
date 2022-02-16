@@ -22,14 +22,15 @@ import org.eclipse.dawnsci.nexus.context.NexusContextFactory;
  */
 public abstract class AbstractNexusContextAppender<N extends NXobject> extends NexusObjectAppender<N> implements INexusFileAppender, INexusContextAppender {
 
-	public AbstractNexusContextAppender() {
+	protected AbstractNexusContextAppender() {
 		// no-arg constructor for spring instantation
 	}
 	
-	public AbstractNexusContextAppender(String name) {
+	protected AbstractNexusContextAppender(String name) {
 		setName(name);
 	}
 	
+	@Override
 	protected final void appendNexusObject(N nexusObject) throws NexusException {
 		// make final to ensure that implementations only override the append method that takes the context 
 		append(nexusObject, NexusContextFactory.createLocalNodeInMemoryContext(nexusObject));
@@ -44,16 +45,6 @@ public abstract class AbstractNexusContextAppender<N extends NXobject> extends N
 		// make final to ensure that implementations only override the append method that takes the context 
 		append(groupNode, NexusContextFactory.createLocalOnDiskContext(nexusFile, groupNode));
 	}
-
-	/**
-	 * Override this method to use the given context to append to the given group node.
-	 * 
-	 * @param groupNode groupNode to append to
-	 * @param context a context, encapsulating whether changes are being made on disk or in memory.
-	 * @see INexusContextAppender#append(GroupNode, NexusContext)
-	 */
-	@Override
-	public abstract void append(GroupNode groupNode, NexusContext context) throws NexusException;
 
 	@Override
 	public void register() {

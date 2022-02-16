@@ -261,7 +261,7 @@ public interface GroupNode extends Node, Iterable<NodeLink> {
 	 * @return iterator over child names in group
 	 */
 	public Iterator<String> getNodeNameIterator();
-
+	
 	/**
 	 * Recursively find datasets of given name
 	 * @param name

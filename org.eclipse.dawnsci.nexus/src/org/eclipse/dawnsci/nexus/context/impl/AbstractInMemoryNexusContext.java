@@ -123,5 +123,10 @@ public abstract class AbstractInMemoryNexusContext implements NexusContext {
 	public void addNode(GroupNode groupNode, String nodeName, Node node) throws NexusException {
 		groupNode.addNode(nodeName, node);
 	}
+
+	@Override
+	public Node getExistingChildNode(GroupNode parent, String childNodeName) throws NexusException {
+		return parent.getNode(childNodeName);
+	}
 	
 }

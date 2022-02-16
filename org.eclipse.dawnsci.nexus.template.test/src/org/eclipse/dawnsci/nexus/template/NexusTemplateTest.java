@@ -28,6 +28,7 @@ import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.nexus.NXbeam;
+import org.eclipse.dawnsci.nexus.NXcollection;
 import org.eclipse.dawnsci.nexus.NXdata;
 import org.eclipse.dawnsci.nexus.NXdetector;
 import org.eclipse.dawnsci.nexus.NXentry;
@@ -35,6 +36,7 @@ import org.eclipse.dawnsci.nexus.NXinstrument;
 import org.eclipse.dawnsci.nexus.NXmonitor;
 import org.eclipse.dawnsci.nexus.NXroot;
 import org.eclipse.dawnsci.nexus.NXsample;
+import org.eclipse.dawnsci.nexus.NXsubentry;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
@@ -67,7 +69,9 @@ public class NexusTemplateTest {
 	private static final String P45_EXAMPLE_NEXUS_FILE_PATH = NEXUS_TESTFILES_DIR + "p45-example.nxs";
 	private static final String TEMPLATE_FILE_PATH = NEXUS_TESTFILES_DIR + "test-template.yaml";
 	
-	private static final String BASIC_TEMPLATE = "scan/:\n  NX_class@: NXentry\n";
+	private static final String NEW_ENTRY_TEMPLATE_PREFIX = "scan/:\n  NX_class@: NXentry\n";
+	private static final String EXISTING_ENTRY_TEMPLATE_PREFIX = "entry/:\n  NX_class@: NXentry\n";
+	
 	private NexusTemplateService templateService;
 	
 	private static String testFilesDirName;
@@ -134,16 +138,19 @@ public class NexusTemplateTest {
 	
 	private Tree applyTemplateStringToFile(String templateString, String nexusFilePath) throws Exception {
 		final NexusTemplate template = templateService.createTemplateFromString(templateString);
-		if (contextType == NexusContextType.IN_MEMORY) {
-			final Tree tree = loadNexusFile(nexusFilePath);
-			template.apply(tree);
-			return tree;
-		} else {
-			final String tempFilePath = testFilesDirName + "test-" + UUID.randomUUID().toString() + ".nxs";
-			Files.copy(Paths.get(nexusFilePath), Paths.get(tempFilePath));
-			template.apply(tempFilePath);
-			TreeFile treeFile = loadNexusFile(tempFilePath);
-			return treeFile;
+		switch (contextType) {
+			case IN_MEMORY:
+				final Tree tree = loadNexusFile(nexusFilePath);
+				template.apply(tree);
+				return tree;
+			case ON_DISK:
+				final String tempFilePath = testFilesDirName + "test-" + UUID.randomUUID().toString() + ".nxs";
+				Files.copy(Paths.get(nexusFilePath), Paths.get(tempFilePath));
+				template.apply(tempFilePath);
+				TreeFile treeFile = loadNexusFile(tempFilePath);
+				return treeFile;
+			default:
+				throw new IllegalArgumentException("Unknown context type: " + contextType);
 		}
 	}
 	
@@ -162,7 +169,7 @@ public class NexusTemplateTest {
 	
 	@Test
 	public void testAddGroupNode() throws Exception {
-		final NXroot root = applyTemplateStringToEmptyTree(BASIC_TEMPLATE);
+		final NXroot root = applyTemplateStringToEmptyTree(NEW_ENTRY_TEMPLATE_PREFIX);
 		NXentry entry = root.getEntry("scan");
 		assertThat(entry, is(notNullValue()));
 	}
@@ -181,10 +188,40 @@ public class NexusTemplateTest {
 	public void testAddGroupNodeWithInvalidNxClass() throws Exception {
 		applyTemplateStringToEmptyTree("scan/:\n  NX_class@: NXnonexist");
 	}
+
+	@Test
+	public void testAddGroupNodeAlreadyExists() throws Exception {
+		applyTemplateStringToTestFile(EXISTING_ENTRY_TEMPLATE_PREFIX);
+	}
+	
+	@Test
+	public void testAddGroupNodeToExistingGroupNode() throws Exception {
+		final NXroot root = applyTemplateStringToTestFile(EXISTING_ENTRY_TEMPLATE_PREFIX
+				+ "  before_scan/:\n    NX_class@: NXcollection\n    foo: bar");
+		final NXentry entry = root.getEntry("entry");
+		assertThat(entry, is(notNullValue()));
+		
+		final NXcollection collection = entry.getCollection("before_scan");
+		assertThat(collection, is(notNullValue()));
+	}
+	
+	@Test(expected=NexusException.class)
+	public void testAddGroupNodeAlreadyExistsDifferentClass() throws Exception {
+		applyTemplateStringToTestFile("entry/:\n  NXclass@: NXpositioner");
+	}
+	
+	@Test(expected=NexusException.class)
+	public void testAddGroupNodeAtLocationOfExistingDataNode() throws Exception {
+		applyTemplateStringToTestFile(EXISTING_ENTRY_TEMPLATE_PREFIX
+				+ "  sample/:\n"
+				+ "    NX_class@: NXsample\n"
+				+ "    description/:\n"
+				+ "      NX_class@: NXnote");
+	}
 	
 	@Test
 	public void testAddAttribute() throws Exception {
-		final NXroot root = applyTemplateStringToEmptyTree(BASIC_TEMPLATE
+		final NXroot root = applyTemplateStringToEmptyTree(NEW_ENTRY_TEMPLATE_PREFIX
 				+ "  myattr@: blah"
 				+ "\n  numattr@: 27.45");
 		NXentry entry = root.getEntry("scan");
@@ -200,9 +237,19 @@ public class NexusTemplateTest {
 		// TODO: construct expected tree? 
 	}
 	
+	@Test(expected=NexusException.class)
+	public void testAddAttributeToExistingGroupNode() throws Exception {
+		applyTemplateStringToTestFile("entry/:\n  default@: data");
+	}
+
+	@Test(expected=NexusException.class)
+	public void testAddExistingAttributeToGroupNode() throws Exception {
+		applyTemplateStringToTestFile("entry/:\n  instrument/:\n    default@: mandelbrot");
+	}
+
 	@Test
 	public void testAddDataNodeInline() throws Exception {
-		final NXroot root = applyTemplateStringToEmptyTree(BASIC_TEMPLATE
+		final NXroot root = applyTemplateStringToEmptyTree(NEW_ENTRY_TEMPLATE_PREFIX
 				+ "  title: my scan\n"
 				+ "  duration: 260\n"
 				+ "  collection_time: 123.2");
@@ -218,7 +265,7 @@ public class NexusTemplateTest {
 
 	@Test
 	public void testAddDataNodeWithAttributes() throws Exception {
-		final NXroot root = applyTemplateStringToEmptyTree(BASIC_TEMPLATE
+		final NXroot root = applyTemplateStringToEmptyTree(NEW_ENTRY_TEMPLATE_PREFIX
 				+ "  program_name:\n"
 				+ "    value: myprogram\n"
 				+ "    configuration@: foo\n"
@@ -234,16 +281,15 @@ public class NexusTemplateTest {
 
 	@Test(expected = NexusException.class)
 	public void testAddDataNodeWithNoValue() throws Exception {
-		applyTemplateStringToEmptyTree(BASIC_TEMPLATE
+		applyTemplateStringToEmptyTree(NEW_ENTRY_TEMPLATE_PREFIX
 				+ "  program_name:\n"
 				+ "    configuration@: myprogram\n"
 				+ "    version@: 3");
-
 	}
 	
 	@Test(expected = NexusException.class)
 	public void testAddDataNodeWithIllegalChildMapping() throws Exception {
-		applyTemplateStringToTestFile(BASIC_TEMPLATE
+		applyTemplateStringToTestFile(NEW_ENTRY_TEMPLATE_PREFIX
 				+ "  beamflux:\n"
 				+ "    value: hello\n"
 				+ "    foo: bar");
@@ -257,9 +303,30 @@ public class NexusTemplateTest {
 	}
 	
 	@Test
+	public void testAddDataNodeToExistingGroup() throws Exception {
+		final NXroot root = applyTemplateStringToTestFile(EXISTING_ENTRY_TEMPLATE_PREFIX + "  foo: bar\n");
+		final NXentry entry = root.getEntry("entry");
+		final DataNode dataNode = entry.getDataNode("foo");
+		assertThat(dataNode, is(notNullValue()));
+		final IDataset dataset = dataNode.getDataset().getSlice();
+		assertThat(dataset.getString(), is(equalTo("bar")));
+	}
+	
+	@Test(expected=NexusException.class)
+	public void testAddDataNodeAlreadyExists() throws Exception {
+		// you cannot add a data node that already exists
+		applyTemplateStringToTestFile(EXISTING_ENTRY_TEMPLATE_PREFIX + "  experiment_identifier: 5\n");
+	}
+	
+	@Test(expected=NexusException.class)
+	public void testAddDataNodeAtLocationOfExistingGroupNode() throws Exception {
+		applyTemplateStringToTestFile(EXISTING_ENTRY_TEMPLATE_PREFIX + "  instrument: p45");
+	}
+	
+	@Test
 	public void testAddLinkToGroupNode() throws Exception {
 		final String linkPath = "/entry/mandelbrot";
-		final NXroot root = applyTemplateStringToTestFile(BASIC_TEMPLATE
+		final NXroot root = applyTemplateStringToTestFile(NEW_ENTRY_TEMPLATE_PREFIX
 				+ "  data/: " + linkPath);
 		NXentry entry = root.getEntry("scan");
 		assertThat(entry, is(notNullValue()));
@@ -272,7 +339,7 @@ public class NexusTemplateTest {
 	@Test
 	public void testAddLinkToGroupNodeWithTrailingSlash() throws Exception {
 		final String linkPath = "/entry/mandelbrot/"; // trailing slash
-		final NXroot root = applyTemplateStringToTestFile(BASIC_TEMPLATE
+		final NXroot root = applyTemplateStringToTestFile(NEW_ENTRY_TEMPLATE_PREFIX
 				+ "  data/: " + linkPath);
 		NXentry entry = root.getEntry("scan");
 		assertThat(entry, is(notNullValue()));
@@ -290,7 +357,7 @@ public class NexusTemplateTest {
 		axisSubstibutions.put("stagey_value", "y");
 		
 		final StringBuilder templateBuilder = new StringBuilder();
-		templateBuilder.append(BASIC_TEMPLATE);
+		templateBuilder.append(NEW_ENTRY_TEMPLATE_PREFIX);
 		templateBuilder.append("  data*:\n");
 		templateBuilder.append("    nodePath: ");
 		templateBuilder.append(linkPath);
@@ -346,7 +413,7 @@ public class NexusTemplateTest {
 	
 	@Test(expected = NexusException.class)
 	public void testAddLinkToGroupNodeWithAddedAttributes() throws Exception {
-		NXroot root = applyTemplateStringToTestFile(BASIC_TEMPLATE
+		NXroot root = applyTemplateStringToTestFile(NEW_ENTRY_TEMPLATE_PREFIX
 				+ "  data:\n"
 				+ "    link: /entry/data\n"
 				+ "    newAttr@: hello");
@@ -369,7 +436,7 @@ public class NexusTemplateTest {
 	
 	@Test(expected = NexusException.class)
 	public void testAddGroupNodeLinkWithIllegalChildMapping() throws Exception {
-		applyTemplateStringToTestFile(BASIC_TEMPLATE
+		applyTemplateStringToTestFile(NEW_ENTRY_TEMPLATE_PREFIX
 				+ "  data:\n"
 				+ "    link: /entry/data\n"
 				+ "    foo: bar");
@@ -378,7 +445,7 @@ public class NexusTemplateTest {
 	@Test
 	public void testAddLinkToDataNode() throws Exception {
 		final String linkPath = "/entry/sample/beam/extent";
-		final NXroot root = applyTemplateStringToTestFile(BASIC_TEMPLATE +
+		final NXroot root = applyTemplateStringToTestFile(NEW_ENTRY_TEMPLATE_PREFIX +
 				"  beamsize: " + linkPath);
 		
 		NXentry entry = root.getEntry("scan");
@@ -391,7 +458,7 @@ public class NexusTemplateTest {
 	
 	@Test(expected = NexusException.class)
 	public void testAddDataNodeLinkWithAddedAttributes() throws Exception {
-		final NXroot root = applyTemplateStringToTestFile(BASIC_TEMPLATE
+		final NXroot root = applyTemplateStringToTestFile(NEW_ENTRY_TEMPLATE_PREFIX
 				+ "  beamflux:\n"
 				+ "    link: /entry/sample/beam/flux\n"
 				+ "    newattr@: hello");
@@ -405,10 +472,22 @@ public class NexusTemplateTest {
 //		beamflux.getAttribute("newattr");
 	}
 	
+	@Test(expected=NexusException.class)
+	public void testAddLinkAtLocationOfExistingDataNode() throws Exception {
+		applyTemplateStringToTestFile(EXISTING_ENTRY_TEMPLATE_PREFIX
+				+ "  start_time: /entry/ample/description");
+	}
+	
+	@Test(expected=NexusException.class)
+	public void testAddLinkAtLocationOfExistingGroupNode() throws Exception {
+		applyTemplateStringToTestFile(EXISTING_ENTRY_TEMPLATE_PREFIX
+				+ "  mandelbrot: /entry/instrument/mandelbrot");
+	}
+	
 	@Test
 	public void testAddLinkToAttribute() throws Exception {
 		final String linkRoot = "/entry/mandelbrot/";
-		final NXroot root = applyTemplateStringToTestFile(BASIC_TEMPLATE +
+		final NXroot root = applyTemplateStringToTestFile(NEW_ENTRY_TEMPLATE_PREFIX +
 				"  data/:\n"
 				+ "    NX_class@: NXdata\n"
 				+ "    signal@: data\n"
@@ -438,7 +517,7 @@ public class NexusTemplateTest {
 		// an field cannot be linked to an attribute,
 		// i.e. there must be an '@' at the end of both the new attribute name and attribute link path
 		final String linkRoot = "/entry/mandelbrot/";
-		applyTemplateStringToTestFile(BASIC_TEMPLATE +
+		applyTemplateStringToTestFile(NEW_ENTRY_TEMPLATE_PREFIX +
 				"  data/:\n"
 				+ "    NX_class@: NXdata\n"
 				+ "    signal@: data\n"
@@ -453,7 +532,7 @@ public class NexusTemplateTest {
 	public void testAddLinkAttributeToField() throws Exception {
 		// Cannot link an attribute to a field 
 		final String linkRoot = "/entry/mandelbrot/";
-		applyTemplateStringToTestFile(BASIC_TEMPLATE +
+		applyTemplateStringToTestFile(NEW_ENTRY_TEMPLATE_PREFIX +
 				"  data/:\n"
 				+ "    NX_class@: NXdata\n"
 				+ "    signal@: data\n"
@@ -466,13 +545,13 @@ public class NexusTemplateTest {
 	
 	@Test(expected = NexusException.class)
 	public void testBrokenLink() throws Exception {
-		applyTemplateStringToTestFile(BASIC_TEMPLATE 
+		applyTemplateStringToTestFile(NEW_ENTRY_TEMPLATE_PREFIX 
 				+ "  beamflux: /entry/sample/nosuchfield");
 	}
 	
 	@Test
 	public void testExternalLink() throws Exception {
-		final String template = BASIC_TEMPLATE
+		final String template = NEW_ENTRY_TEMPLATE_PREFIX
 				+ "  data/:\n"
 				+ "    NX_class@: NXdata\n"
 				+ "    data: /entry/instrument/detector/data";
@@ -534,7 +613,7 @@ public class NexusTemplateTest {
 			assertThat(newExternalLinkNode.getPath(), is(equalTo(externalLinkNode.getPath())));
 		} else if (contextType == ON_DISK) {
 			assertThat(dataNode.isDataNode(), is(true));
-			IDataset dataset = ((DataNode) dataNode).getDataset().getSlice();
+			final IDataset dataset = ((DataNode) dataNode).getDataset().getSlice();
 			assertThat(dataset.getRank(), is(1));
 			assertThat(dataset.getShape(), is(equalTo(new int[] { 10 })));
 			assertThat(dataset.getElementClass(), is(equalTo(Integer.class)));
@@ -543,10 +622,20 @@ public class NexusTemplateTest {
 	}
 	
 	@Test
-	@Ignore
 	public void testAddSubentry() throws Exception {
-		Assert.fail();
-		// TODO
+		final NXroot root = applyTemplateStringToTestFile(EXISTING_ENTRY_TEMPLATE_PREFIX
+						+ "  myscan/:\n    NX_class@: NXsubentry\n"
+						+ "    definition: NXscan\n    scan_command: scan foo 1 2 3 det\n"
+						+ "    start_time: /entry/start_time\n    end_time: /entry/end_time\n");
+		final NXentry entry = root.getEntry("entry");
+		assertThat(entry, is(notNullValue()));
+		
+		assertThat(entry.getAllSubentry().size(), is(1));
+		final NXsubentry subentry = entry.getSubentry("myscan");
+		assertThat(subentry, is(notNullValue()));
+		assertThat(subentry.getDefinitionScalar(), is(equalTo("NXscan")));
+		assertThat(subentry.getDataNode(NXsubentry.NX_START_TIME), is(sameInstance(entry.getDataNode(NXentry.NX_START_TIME))));
+		assertThat(subentry.getDataNode(NXsubentry.NX_END_TIME), is(sameInstance(entry.getDataNode(NXentry.NX_END_TIME))));
 	}
 	
 	@Test

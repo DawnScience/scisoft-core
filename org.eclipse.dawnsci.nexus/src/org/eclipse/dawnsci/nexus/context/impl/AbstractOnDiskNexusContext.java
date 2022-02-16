@@ -68,4 +68,11 @@ public abstract class AbstractOnDiskNexusContext implements NexusContext {
 		nexusFile.addNode(parent, name, node);
 	}
 	
+	@Override
+	public Node getExistingChildNode(GroupNode parent, String childNodeName) throws NexusException {
+		final String parentPath = nexusFile.getPath(parent);
+		final String childPath = parentPath + Node.SEPARATOR + childNodeName;
+		return nexusFile.getNode(childPath);
+	}
+	
 }

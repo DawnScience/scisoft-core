@@ -64,6 +64,16 @@ public interface NexusContext {
 	public GroupNode createGroupNode(GroupNode parent, String name, NexusBaseClass nexusBaseClass) throws NexusException;
 	
 	/**
+	 * Creates and returns the existing {@link GroupNode} of the given parent group with the given name.
+	 * 
+	 * @param parent parent group node
+	 * @param childNodeName child group name
+	 * @return the child node
+	 * @throws NexusException if the an error occurred getting the child node
+	 */
+	public Node getExistingChildNode(GroupNode parent, String childNodeName) throws NexusException;
+	
+	/**
 	 * Creates and returns a new {@link DataNode} with the given value as a child of the given
 	 * parent node. The new data node will contains a dataset holding the given value. This will be a scalar
 	 * dataset if the given value is scalar. 

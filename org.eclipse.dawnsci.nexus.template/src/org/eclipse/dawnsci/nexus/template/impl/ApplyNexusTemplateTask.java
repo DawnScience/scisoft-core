@@ -20,10 +20,10 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.nexus.NXdata;
+import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NexusBaseClass;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.context.NexusContext;
-import org.eclipse.dawnsci.nexus.template.NexusTemplateConstants;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.PositionIterator;
 import org.slf4j.Logger;
@@ -65,7 +65,7 @@ public class ApplyNexusTemplateTask  {
 	public void run() throws NexusException {
 		final GroupNode rootNode = nexusContext.getNexusRoot();
 		if (rootNode == null) {
-			createGroupNode(null, null, template.getMapping());
+			createGroupNode(null, null, template.getMapping(), false);
 		} else {
 			applyMappingToGroupNode(nexusContext.getNexusRoot(), template.getMapping());
 		}
@@ -83,10 +83,12 @@ public class ApplyNexusTemplateTask  {
 			final String nodeName = getNodeName(mappingEntry.getKey()); 
 			final Object nodeValue = mappingEntry.getValue();
 			final NexusNodeType nodeType = getNodeType(mappingEntry.getKey());
+			final boolean skipNode = checkCanAddNodeOrSkip(parentGroup, nodeName, nodeType, nodeValue); // we skip existing groupNodes
+			
 			logger.debug("Processing mapping {} of type {}", nodeName, nodeType);
 			switch (nodeType) {
 				case GROUP:
-					addGroupNode(parentGroup, nodeName, nodeValue);
+					addGroupNode(parentGroup, nodeName, nodeValue, skipNode); // only group nodes can currently be skipped 
 					break;
 				case DATA:
 					addDataNode(parentGroup, nodeName, nodeValue);
@@ -102,6 +104,43 @@ public class ApplyNexusTemplateTask  {
 			}
 		}
 	}
+
+	/**
+	 * Checks whether a node of the given name and type can be added at the given location and throws an exception.
+	 * 
+	 * @return <code>true</code> if the node already exists and it should be skipped, <code>false</code> if it does not exist
+	 *    and should be created
+	 * @throws NexusException if the node already exists and it should not be skipped
+	 */
+	private boolean checkCanAddNodeOrSkip(GroupNode parentGroup, final String nodeName, NexusNodeType nodeType, Object nodeValue) throws NexusException {
+		if (nodeType == NexusNodeType.ATTRIBUTE) {
+			if (parentGroup.containsAttribute(nodeName) && !nodeName.equals(ATTRIBUTE_NAME_NX_CLASS)) {
+				throw new NexusException(MessageFormat.format("Cannot add attribute ''{0}'' to the parent node, as there is an existing attribute with the same name", nodeName));
+			}
+			return true;
+		}
+		
+		if (parentGroup.containsNode(nodeName)) {
+			if (parentGroup.getNode(nodeName).isGroupNode() && nodeType == NexusNodeType.GROUP) {
+				final GroupNode existingChildGroup = (GroupNode) nexusContext.getExistingChildNode(parentGroup, nodeName);
+				final NexusBaseClass existingGroupClass = getNexusClass(nodeName, existingChildGroup);
+				final NexusBaseClass templateGroupClass = getNexusClass(nodeName, nodeValue); 
+				if (existingGroupClass != templateGroupClass) {
+					throw new NexusException(MessageFormat.format("Cannot process group ''{0}'', existing group has NXclass ''{1}'' was ''{2}''",
+							nodeName, existingGroupClass, templateGroupClass));
+				}
+				
+				// if we see a group that already exists, we should skip it and process the children
+				return true;
+			}
+			
+			final String newNodeTypeStr = nodeType == NexusNodeType.DATA ? "DataNode" : "GroupNode";
+			final String existingNodeTypeStr = parentGroup.containsDataNode(nodeName) ? "DataNode" : "GroupNode";
+			throw new NexusException(MessageFormat.format("Cannot add {0} ''{1}'' to the parent node, as there is an existing {2} with the same name",
+					newNodeTypeStr, nodeName, existingNodeTypeStr));
+		}
+		return false;
+	}
 	
 	/**
 	 * Add the group node with the given and nodeValue to the given parent node.
@@ -110,26 +149,37 @@ public class ApplyNexusTemplateTask  {
 	 * @param parentGroup
 	 * @param nodeName
 	 * @param nodeValue
+	 * @param skipNode <code>true</code> to skip this node and process parents
 	 * @throws NexusException
 	 */
-	private void addGroupNode(GroupNode parentGroup, String nodeName, Object nodeValue) throws NexusException {
+	private void addGroupNode(GroupNode parentGroup, String nodeName, Object nodeValue, boolean skipNode) throws NexusException {
 		final Optional<String> linkPath = getLinkPath(nodeValue);
 		if (linkPath.isPresent()) {
 			logger.debug("Adding link {} to group node path {}", nodeName, linkPath);
 			addLinkNode(parentGroup, nodeName, linkPath.get());
 		} else if (nodeValue instanceof Map) {
-			createGroupNode(parentGroup, nodeName, nodeValue);
+			createGroupNode(parentGroup, nodeName, nodeValue, skipNode);
 		} else {
 			throw new NexusException("The value of a group node must be a mapping"); // Impossible due to the way yaml is parsed?
 		}
 	}
 
-	private void createGroupNode(GroupNode parentGroup, String nodeName, Object nodeValue) throws NexusException {
-		final GroupNode childGroup = nexusContext.createGroupNode(parentGroup, nodeName, getNexusClass(nodeName, nodeValue));
+	private void createGroupNode(GroupNode parentGroup, String nodeName, Object nodeValue, boolean skipNode) throws NexusException {
+		final GroupNode childGroup = createOrGetChildNode(parentGroup, nodeName, nodeValue, skipNode);
+		
 		@SuppressWarnings("unchecked")
 		final Map<String, Object> mapping = (Map<String, Object>) nodeValue;
 		// recursively apply the mapping to the child group
 		applyMappingToGroupNode(childGroup, mapping);
+	}
+
+	private GroupNode createOrGetChildNode(GroupNode parentGroup, String nodeName, Object nodeValue, boolean getExisting)
+			throws NexusException {
+		if (getExisting) {
+			return (GroupNode) nexusContext.getExistingChildNode(parentGroup, nodeName);
+		}
+		
+		return nexusContext.createGroupNode(parentGroup, nodeName, getNexusClass(nodeName, nodeValue));
 	}
 	
 	/**
@@ -184,6 +234,19 @@ public class ApplyNexusTemplateTask  {
 		} catch (IllegalArgumentException e) {
 			throw new NexusException("The specified nexus class '" + nexusClassString + "' for group '" + nodeName + "' does not exist.");
 		}
+	}
+	
+	private NexusBaseClass getNexusClass(String groupName, GroupNode groupNode) throws NexusException {
+		if (groupNode instanceof NXobject) {
+			return ((NXobject) groupNode).getNexusBaseClass();
+		}
+		
+		final Attribute nxClassAttr = groupNode.getAttribute(ATTRIBUTE_NAME_NX_CLASS);
+		if (nxClassAttr == null) {
+			throw new NexusException("Existing group node ''" + groupName + "'' does not have an NXclass attribute");
+		}
+		
+		return NexusBaseClass.getBaseClassForName(nxClassAttr.getFirstElement());
 	}
 	
 	/**
@@ -398,7 +461,7 @@ public class ApplyNexusTemplateTask  {
 			nexusContext.copyAttribute(node, name, linkPath.get());
 		} else if (value instanceof Map) {
 			throw new NexusException("The value for an attribute node cannot be a mapping: " + name);
-		} else if (name.equals(NexusTemplateConstants.ATTRIBUTE_NAME_NX_CLASS)) {
+		} else if (name.equals(ATTRIBUTE_NAME_NX_CLASS)) {
 			// ignore NX_class attribute, it has already been dealt with 
 		} else {
 			logger.debug("Creating attribute {} with value {}", name, value);

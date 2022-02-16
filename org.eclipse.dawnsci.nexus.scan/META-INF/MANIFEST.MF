@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.dawnsci.nexus.scan
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Diamond Light Source Ltd.
 Automatic-Module-Name: org.eclipse.dawnsci.nexus.scan
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.dawnsci.nexus,
  org.eclipse.january,
  org.eclipse.dawnsci.analysis.api,

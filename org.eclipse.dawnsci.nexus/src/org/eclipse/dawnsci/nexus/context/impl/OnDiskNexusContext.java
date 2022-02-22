@@ -8,11 +8,15 @@ import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.context.NexusContext;
 import org.eclipse.january.dataset.IDataset;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link NexusContext} to abstract adding nodes to an existing nexus file on disk.
  */
-public class OnDiskNexusContext extends AbstractOnDiskNexusContext implements NexusContext {
+public class OnDiskNexusContext extends AbstractOnDiskNexusContext {
+	
+	private static final Logger logger = LoggerFactory.getLogger(OnDiskNexusContext.class);
 
 	public OnDiskNexusContext(NexusFile nexusFile) {
 		super(nexusFile);
@@ -38,7 +42,12 @@ public class OnDiskNexusContext extends AbstractOnDiskNexusContext implements Ne
 		logDebug("Linking node at path '{}' to parent '{}' with name '{}'", linkPath, parent, name); 
 		final String parentPath = nexusFile.getPath(parent); // parent path already ends with path separator '/'
 		final String destinationPath = parentPath + name;
-		nexusFile.link(linkPath, destinationPath);
+		final Node linkTargetNode = nexusFile.getNode(linkPath);
+		if (linkTargetNode == null) {
+			logger.warn("Cannot add link '{}' to path '{}'. No node found at that path", name, linkPath);
+		} else {
+			nexusFile.link(linkPath, destinationPath);
+		}
 	}
 	
 	@Override

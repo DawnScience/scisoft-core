@@ -391,8 +391,11 @@ public class ApplyNexusTemplateTask  {
 	private void addDataNode(GroupNode parentGroup, String nodeName, Object nodeValue) throws NexusException {
 		final Optional<String> linkPath = getLinkPath(nodeValue);
 		if (linkPath.isPresent()) {
+			if (getNodeType(linkPath.get()) == NexusNodeType.ATTRIBUTE) {
+				throw new NexusException("Cannot add data node link " + nodeName + " as link path " + linkPath.get() + " is to an attribute");
+			}
 			// link the node at the given path to the parent group
-			logger.debug("Adding link {} to data node at path {}", nodeName, linkPath);
+			logger.debug("Adding link {} to data node at path {}", nodeName, linkPath.get());
 			addLinkNode(parentGroup, nodeName, linkPath.get());
 		} else if (nodeValue instanceof Map) {
 			// the value is a map, with a 'value' entry giving the value, and attributes

@@ -518,7 +518,7 @@ public class NexusTemplateTest {
 	
 	@Test(expected = NexusException.class)
 	public void testAddLinkFieldToAttribute() throws Exception {
-		// an field cannot be linked to an attribute,
+		// a field cannot be linked to an attribute,
 		// i.e. there must be an '@' at the end of both the new attribute name and attribute link path
 		final String linkRoot = "/entry/mandelbrot/";
 		applyTemplateStringToTestFile(NEW_ENTRY_TEMPLATE_PREFIX +
@@ -547,10 +547,15 @@ public class NexusTemplateTest {
 				+ "    y: " + linkRoot + "stagey_value_set\n");
 	}
 	
-	@Test(expected = NexusException.class)
+	@Test
 	public void testBrokenLink() throws Exception {
-		applyTemplateStringToTestFile(NEW_ENTRY_TEMPLATE_PREFIX 
+		// the template engine logs a broken link as a warning and continues 
+		final NXroot root = applyTemplateStringToTestFile(NEW_ENTRY_TEMPLATE_PREFIX  
 				+ "  beamflux: /entry/sample/nosuchfield");
+		assertThat(root, is(notNullValue()));
+		final NXentry entry = root.getEntry("scan");
+		assertThat(entry, is(notNullValue()));
+		assertThat(entry.getNumberOfDataNodes(), is(0));
 	}
 	
 	@Test

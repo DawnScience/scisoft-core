@@ -42,6 +42,7 @@ public class LocalInMemoryNexusContext extends AbstractInMemoryNexusContext {
 	@Override
 	public void createNodeLink(GroupNode parent, String name, String linkPath) throws NexusException {
 		// when creating a link without the overall tree, we can't create a hard link, only create a soft link with a SymbolicNode
+		// note, we cannot know whether there is a node at this path
 		logDebug("Linking node '{}' with name '{}' to parent '{}'", linkPath, name, parent);
 		final SymbolicNode symbolicNode = TreeFactory.createSymbolicNode(NexusNodeFactory.getNextOid(), (URI) null, null, linkPath);
 		parent.addSymbolicNode(name, symbolicNode);

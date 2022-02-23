@@ -26,6 +26,16 @@ public class NexusConstants {
 	public static final String UNITS = "units";
 
 	/**
+	 * Dataset attribute name for interpretation
+	 */
+	public static final String INTERPRETATION = "interpretation";
+
+	public static final String INTERPRETATION_IMAGE_RGB = "rgb-image";
+	public static final String INTERPRETATION_IMAGE_RGBA = "rgba-image";
+	public static final String INTERPRETATION_IMAGE_HSL = "hsl-image";
+	public static final String INTERPRETATION_IMAGE_HSLA = "hsla-image";
+
+	/**
 	 * base classes
 	 */
 	public static final String APERTURE = "NXaperture";

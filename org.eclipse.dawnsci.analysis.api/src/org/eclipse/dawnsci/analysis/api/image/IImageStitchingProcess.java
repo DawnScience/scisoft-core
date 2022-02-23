@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.analysis.api.image;
 
-import java.util.List;
-
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
@@ -26,18 +24,6 @@ import org.eclipse.january.dataset.ILazyDataset;
 public interface IImageStitchingProcess {
 
 	/**
-	 * Stitches a list of images with a default matrix size and angle.
-	 * Use {@link #stitch(ILazyDataset, IMonitor)} instead.
-	 * @param input
-	 * @param monitor
-	 *            To monitor progress
-	 * @return output stitched image
-	 * @throws Exception 
-	 */
-	@Deprecated
-	public IDataset stitch(List<IDataset> input, IMonitor monitor) throws Exception;
-
-	/**
 	 * Stitches a lazy list of images with a default matrix size and angle
 	 * 
 	 * @param input
@@ -47,20 +33,6 @@ public interface IImageStitchingProcess {
 	 * @throws Exception 
 	 */
 	public IDataset stitch(ILazyDataset input, IMonitor monitor) throws Exception;
-
-	/**
-	 * Stitches a list of images.
-	 * Use {@link #stitch(ILazyDataset, int, int, IMonitor)} instead.
-	 * @param input
-	 * @param rows
-	 * @param columns
-	 * @param monitor
-	 *            To monitor progress
-	 * @return output stitched image
-	 * @throws Exception 
-	 */
-	@Deprecated
-	public IDataset stitch(List<IDataset> input, int rows, int columns, IMonitor monitor) throws Exception;
 
 	/**
 	 * Stitches a lazy list of images
@@ -74,21 +46,6 @@ public interface IImageStitchingProcess {
 	 * @throws Exception 
 	 */
 	public IDataset stitch(ILazyDataset input, int rows, int columns, IMonitor monitor) throws Exception;
-
-	/**
-	 * Crops a list of images given a ROI then stitches them together
-	 * Use {@link #stitch(ILazyDataset, int, int, double, IMonitor)} instead.
-	 * @param input
-	 * @param rows
-	 * @param columns
-	 * @param fieldOfView
-	 * @param monitor
-	 *            To monitor progress
-	 * @return output stitched image
-	 * @throws Exception 
-	 */
-	@Deprecated
-	public IDataset stitch(List<IDataset> input, int rows, int columns, double fieldOfView, IMonitor monitor) throws Exception;
 
 	/**
 	 * Crops a lazy list of images given a ROI then stitches them together.
@@ -105,77 +62,7 @@ public interface IImageStitchingProcess {
 	public IDataset stitch(ILazyDataset input, int rows, int columns, double fieldOfView, IMonitor monitor) throws Exception;
 
 	/**
-	 * Stiches a list of images previously cropped with the given roi. Use the theoretical image position from the
-	 * metadata to stitch the images.
-	 * Use {@link #stitch(ILazyDataset, int, int, double, double[][][], boolean, int[], IMonitor)} instead.
-	 * @param input
-	 * @param rows
-	 * @param columns
-	 * @param fieldOfView
-	 *            in microns
-	 * @param translations
-	 *            X/Y expected translations in microns (mainly used if no feature association)
-	 * @param hasFeatureAssociation
-	 *            if True then feature association will be used to find the translation coordinates<br>
-	 * @param monitor
-	 *            To monitor progress
-	 * @return output stitched image
-	 * @throws Exception 
-	 */
-	@Deprecated
-	public IDataset stitch(List<IDataset> input, int rows, int columns, double fieldOfView, List<double[]> translations, 
-			boolean hasFeatureAssociation, IMonitor monitor) throws Exception;
-
-	/**
-	 * Stiches a list of images previously cropped with the given roi. Use the theoretical image position from the
-	 * metadata to stitch the images.
-	 * Use {@link #stitch(ILazyDataset, int, int, double, double[][][], boolean, int[], IMonitor)} instead.
-	 * @param input
-	 * @param rows
-	 * @param columns
-	 * @param fieldOfView
-	 *            in microns
-	 * @param translations
-	 *            X/Y expected translations in microns (mainly used if no feature association)
-	 * @param hasFeatureAssociation
-	 *            if True then feature association will be used to find the translation coordinates<br>
-	 * @param originalShape
-	 *            if input data is cropped, original shape of data
-	 * @param monitor
-	 *            To monitor progress
-	 * @return output stitched image
-	 * @throws Exception 
-	 */
-	@Deprecated
-	public IDataset stitch(List<IDataset> input, int rows, int columns, double fieldOfView,
-			List<double[]> translations, boolean hasFeatureAssociation, int[] originalShape, IMonitor monitor) throws Exception;
-
-	/**
-	 * Stiches a list of images loaded lazily previously cropped with the given roi. Use the theoretical image position from the
-	 * metadata to stitch the images.
-	 * 
-	 * @param input
-	 * @param rows
-	 * @param columns
-	 * @param fieldOfView
-	 *            in microns
-	 * @param translations
-	 *            X/Y expected translations in microns (mainly used if no feature association)
-	 * @param hasFeatureAssociation
-	 *            if True then feature association will be used to find the translation coordinates<br>
-	 * @param originalShape
-	 *            if input data is cropped, original shape of data
-	 * @param monitor
-	 *            To monitor progress
-	 * @return output stitched image
-	 * @throws Exception 
-	 */
-	@Deprecated
-	IDataset stitch(ILazyDataset input, int rows, int columns, double fieldOfView, List<double[]> translations,
-			boolean hasFeatureAssociation, int[] originalShape, IMonitor monitor) throws Exception;
-
-	/**
-	 * Stiches a list of images loaded lazily previously cropped with the given roi. Use the theoretical image position from the
+	 * Stitches a list of images loaded lazily previously cropped with the given roi. Use the theoretical image position from the
 	 * metadata to stitch the images. Translations are in an array.
 	 * 
 	 * @param input
@@ -198,7 +85,7 @@ public interface IImageStitchingProcess {
 			boolean hasFeatureAssociation, int[] originalShape, IMonitor monitor) throws Exception;
 
 	/**
-	 * Stiches two images together given x and y translations
+	 * Stitches two images together given x and y translations
 	 * 
 	 * @param imageA
 	 * @param imageB

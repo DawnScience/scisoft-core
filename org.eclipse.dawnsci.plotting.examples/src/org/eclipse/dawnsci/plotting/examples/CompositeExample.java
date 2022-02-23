@@ -20,7 +20,7 @@ import org.eclipse.dawnsci.plotting.api.trace.IImageTrace;
 import org.eclipse.dawnsci.plotting.examples.util.BundleUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
-import org.eclipse.january.dataset.RGBDataset;
+import org.eclipse.january.dataset.RGBByteDataset;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.swt.widgets.Composite;
 
@@ -49,9 +49,10 @@ public class CompositeExample extends PlotExample {
 			Dataset micro = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("/microscope1/image/data"));
 			Dataset microx = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("/microscope1/image/x"));
 			Dataset microy = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("/microscope1/image/y"));
-			RGBDataset microrgb = (RGBDataset) DatasetUtils.createCompoundDataset(RGBDataset.class, micro.getSlice(new Slice(0,1),null,null).squeeze(),
-												 micro.getSlice(new Slice(1,2),null,null).squeeze(),
-												 micro.getSlice(new Slice(2,3),null,null).squeeze());
+			RGBByteDataset microrgb = DatasetUtils.createCompoundDataset(RGBByteDataset.class,
+					micro.getSliceView(new Slice(0, 1), null, null).squeeze(),
+					micro.getSliceView(new Slice(1, 2), null, null).squeeze(),
+					micro.getSliceView(new Slice(2, 3), null, null).squeeze());
 
 			Dataset map = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("/map1/map/data"));
 			Dataset mapx = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("/map1/map/x"));

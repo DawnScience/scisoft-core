@@ -21,7 +21,9 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.RGBByteDataset;
 import org.eclipse.january.dataset.RGBDataset;
+import org.eclipse.january.dataset.SliceND;
 
 /**
  * Down-sample a dataset by a given bin. Also is the implementation of a service
@@ -100,12 +102,19 @@ public class Downsample implements DatasetToDatasetFunction, IDownsampleService 
 
 			final Dataset binned;
 			DownsampleMode m = mode;
-			if (dataset instanceof RGBDataset) {
-				binned = DatasetFactory.zeros(RGBDataset.class, shape);
+			if (dataset instanceof RGBByteDataset || dataset instanceof RGBDataset) {
+				binned = null;
 				// set the mode to point whenever RGB datasets are involved for the moment.
 				m = DownsampleMode.POINT;
-			} else {
+			} else if (m != DownsampleMode.POINT) {
 				binned = DatasetFactory.zeros(dataset.getElementsPerItem(), dataset.getClass(), shape);
+			} else {
+				binned = null;
+			}
+
+			if (m == DownsampleMode.POINT) {
+				result.add(dataset.getSlice(new SliceND(dshape, null, null, bshape)));
+				continue;
 			}
 
 			final IndexIterator biter = binned.getIterator(true);
@@ -117,14 +126,7 @@ public class Downsample implements DatasetToDatasetFunction, IDownsampleService 
 			
 			// TODO In Java8 switch these loops to using ParallelStreams
 			switch (m) {
-			case POINT:
-				while (biter.hasNext()) {
-					for (int i = 0; i < drank; i++) {
-						spos[i] = bshape[i]*bpos[i];
-					}
-
-					binned.setObjectAbs(biter.index, dataset.getObject(spos));
-				}
+			case POINT: // not reached
 				break;
 			case SUM:
 			case MEAN:

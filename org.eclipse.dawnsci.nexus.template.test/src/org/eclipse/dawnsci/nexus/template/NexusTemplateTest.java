@@ -40,6 +40,7 @@ import org.eclipse.dawnsci.nexus.NXsubentry;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
+import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.context.NexusContextType;
 import org.eclipse.dawnsci.nexus.template.impl.NexusTemplateServiceImpl;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
@@ -92,11 +93,14 @@ public class NexusTemplateTest {
 		testFilesDirName = TestUtils.generateDirectorynameFromClassname(NexusTemplateTest.class.getCanonicalName());
 		TestUtils.makeScratchDirectory(testFilesDirName);
 		NexusTestUtils.setUpServices();
+		TemplateServiceHolder tsh = new TemplateServiceHolder();
+		tsh.setNexusTemplateService(new NexusTemplateServiceImpl());
+		tsh.setNexusFileFactory(ServiceHolder.getNexusFileFactory());
 	}
 	
 	@Before
 	public void setUp() {
-		templateService = new NexusTemplateServiceImpl();
+		templateService = TemplateServiceHolder.getNexusTemplateService();
 	}
 	
 	private Tree applyTemplateStringToTree(String templateString, Tree tree) throws Exception {

@@ -16,10 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.january.dataset.CompoundDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.RGBDataset;
 import org.eclipse.swt.graphics.PaletteData;
 
 /**
@@ -328,7 +328,8 @@ public class ImageServiceBean {
 		this.mask = DatasetUtils.convertToDataset(mask);
 	}
 	public boolean isLogColorScale() {
-		return logColorScale;
+		// colour scale doesn't mean anything for any RGB image
+		return logColorScale && !(image instanceof CompoundDataset);
 	}
 
 	public void setLogColorScale(boolean logColorScale) {
@@ -337,8 +338,7 @@ public class ImageServiceBean {
 	}
 
 	private void updateLogOffset() {
-		//colour scale doesn't mean anything for an RGB image
-		if (logColorScale && image != null && !(image instanceof RGBDataset)) { // shift by fraction of range
+		if (isLogColorScale()) { // shift by fraction of range
 			logOffset = image.min(true).doubleValue();
 			double delta = 1e-6 * image.peakToPeak(true).doubleValue();
 			if (!image.hasFloatingPointElements() && delta < 1) {

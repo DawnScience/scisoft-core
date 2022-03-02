@@ -1,0 +1,71 @@
+/*
+ * Copyright (c) 2012 Diamond Light Source Ltd.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
+package uk.ac.diamond.scisoft.ptychography.rcp.preference;
+
+import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.FileFieldEditor;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
+
+import uk.ac.diamond.scisoft.ptychography.rcp.Activator;
+
+public class PtychoPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+
+	public static final String ID = "uk.ac.diamond.scisoft.ptychography.rcp.ptychoPreferencePage";
+
+	public PtychoPreferencePage() {
+		super(GRID);
+	}
+
+	@Override
+	protected void createFieldEditors() {
+		FileFieldEditor scriptToRun = new FileFieldEditor(PtychoPreferenceConstants.RECON_SCRIPT_PATH, "Path to recon script:",
+				getFieldEditorParent());
+		addField(scriptToRun);
+		FileFieldEditor alternateScriptToRun = new FileFieldEditor(PtychoPreferenceConstants.ALTERNATE_SCRIPT_PATH, "Path to alternate script:",
+				getFieldEditorParent());
+		addField(alternateScriptToRun);
+		// Add a file field
+		FileFieldEditor savedFilePath = new FileFieldEditor(PtychoPreferenceConstants.FILE_SAVE_PATH, "Parameter file saved path:",
+				getFieldEditorParent());
+		addField(savedFilePath);
+		
+		FileFieldEditor templateFilePath = new FileFieldEditor(PtychoPreferenceConstants.TEMPLATE_FILE_PATH, "Template parameter file:",
+				getFieldEditorParent());
+		addField(templateFilePath);
+	}
+
+	@Override
+	public void init(IWorkbench workbench) {
+		IPreferenceStore store = Activator.getPtychoPreferenceStore();
+
+		setPreferenceStore(store);
+		setDescription("Preferences for the Ptychography perspective:");
+	}
+
+	/**
+	 * Adjust the layout of the field editors so that
+	 * they are properly aligned.
+	 */
+	@Override
+	protected void adjustGridLayout() {
+		super.adjustGridLayout();
+		((GridLayout) getFieldEditorParent().getLayout()).numColumns = 3;
+	}
+
+	@Override
+	protected void checkState() {
+		super.checkState();
+		setErrorMessage(null);
+		setValid(true);
+	}
+}

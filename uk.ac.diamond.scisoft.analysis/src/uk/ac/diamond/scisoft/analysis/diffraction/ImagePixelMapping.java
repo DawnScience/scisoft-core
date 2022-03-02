@@ -206,7 +206,7 @@ public interface ImagePixelMapping {
 	 * Mapping to QparQper
 	 */
 	public static class Qpp2DMapping extends QxyzMapping {
-		private static final String[] Q_PP_AXES = { "q-par-axis", "q-per-axis" };
+		private static final String[] Q_PP_AXES = { "q-per-axis", "q-par-axis" };
 
 		public Qpp2DMapping() {
 			super();
@@ -219,8 +219,8 @@ public interface ImagePixelMapping {
 		@Override
 		public void map(double x, double y, Vector3d q) {
 			super.map(x, y, q);
-			q.x = Math.hypot(q.x, q.y);
-			q.y = q.z; // FIXME missing Jacobian???
+			q.y = Math.hypot(q.x, q.y);
+			q.x = q.z; // FIXME missing Jacobian???
 			q.z = 0;
 		}
 

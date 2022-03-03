@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
+import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
@@ -209,7 +210,8 @@ public class DatLoader extends AbstractFileLoader {
 			for (final String n : vals.keySet()) {
 				ILazyDataset data;
 				if (loadLazily) {
-					data = createLazyDataset(new DatLoader(fileName), n, null, count);
+					IFileLoader newLoader = getClass().getDeclaredConstructor(String.class).newInstance(fileName);
+					data = createLazyDataset(newLoader, n, null, count);
 				} else {
 					data = DatasetFactory.createFromList(vals.get(n));
 					data.setName(n);

@@ -11,16 +11,34 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.eclipse.january.dataset.IDataset;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
+@RunWith(Parameterized.class)
 public class CSVLoaderTest {
-	
+	@Parameters(name = "{index}: {0}")
+	public static Collection<Object> data() {
+		return Arrays.asList(
+				new Object[] { false, true });
+	}
+
+	@Parameter
+	public boolean lazy;
+
 	@Test
 	public void testEPICScsv() throws Exception {
 	
 		final String testfile1 = "testfiles/scan.csv";
-		final DataHolder dh = new CSVLoader(testfile1).loadFile();
+		CSVLoader loader = new CSVLoader(testfile1);
+		loader.setLoadAllLazily(lazy);
+		final DataHolder dh = loader.loadFile();
 		if (dh.getNames().length!=3) throw new Exception("There should be 3 columns!");
 		
 		String[] names = dh.getNames();
@@ -37,12 +55,14 @@ public class CSVLoaderTest {
 		assertEquals(80, d0.getSize());
 		
 	}
-	
+
 	@Test
 	public void testHeadercsv() throws Exception {
 		
 		final String testfile1 = "testfiles/iris.csv";
-		final DataHolder dh = new CSVLoader(testfile1).loadFile();
+		CSVLoader loader = new CSVLoader(testfile1);
+		loader.setLoadAllLazily(lazy);
+		final DataHolder dh = loader.loadFile();
 		if (dh.getNames().length!=4) throw new Exception("There should be 4 columns!");
 		
 		String[] names = dh.getNames();
@@ -59,12 +79,14 @@ public class CSVLoaderTest {
 		assertEquals(150, d0.getSize());
 		
 	}
-	
+
 	@Test
 	public void testNoHeadercsv() throws Exception {
 	
 		final String testfile1 = "testfiles/test.csv";
-		final DataHolder dh = new CSVLoader(testfile1).loadFile();
+		CSVLoader loader = new CSVLoader(testfile1);
+		loader.setLoadAllLazily(lazy);
+		final DataHolder dh = loader.loadFile();
 		if (dh.getNames().length!=2) throw new Exception("There should be 2 columns!");
 		
 		String[] names = dh.getNames();

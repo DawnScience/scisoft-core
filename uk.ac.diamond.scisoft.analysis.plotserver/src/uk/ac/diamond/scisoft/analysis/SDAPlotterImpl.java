@@ -30,6 +30,7 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.RGBByteDataset;
 import org.eclipse.january.dataset.RGBDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -286,7 +287,8 @@ public class SDAPlotterImpl implements ISDAPlotter {
 	public void imagePlot(String plotName, IDataset xValues, IDataset yValues, IDataset image, String xAxisName, String yAxisName) throws Exception {
 		if (isDataND(image, 3) && image.getShape()[2] == 3) { // hack for RGB ndarrays from python
 			CompoundDataset compound = DatasetUtils.createCompoundDatasetFromLastAxis(DatasetUtils.convertToDataset(image), true);
-			image = RGBDataset.createFromCompoundDataset(compound);
+			image = compound.getElementClass().equals(Byte.class) ? RGBByteDataset.createFromCompoundDataset(compound) :
+				RGBDataset.createFromCompoundDataset(compound);
 		}
 		if (!isDataND(image, 2)) {
 			logger.error("Input dataset has incorrect rank: it has {} dimensions when it should be 2", image.getRank());

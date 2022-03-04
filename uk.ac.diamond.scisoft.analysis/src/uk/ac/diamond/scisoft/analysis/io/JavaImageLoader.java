@@ -9,7 +9,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.SampleModel;
 import java.io.File;
@@ -200,6 +199,8 @@ public class JavaImageLoader extends AbstractFileLoader {
 				final String name = String.format(IMAGE_NAME_FORMAT, i + 1);
 				final int num = i;
 				LazyDataset lazy = createLazyDataset(new LazyLoaderStub() {
+					private static final long serialVersionUID = -6725836260790990070L;
+
 					@Override
 					public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
 						try {
@@ -294,20 +295,11 @@ public class JavaImageLoader extends AbstractFileLoader {
 		Dataset data = null;
 		try {
 			Dataset[] channels = AWTImageUtils.makeDatasets(input, keepBitWidth);
-//			final int bands = input.getData().getNumBands();
 			final int bands = channels.length;
 			if (bands == 1) {
 				data = channels[0];
 			} else {
-//				if (input.getColorModel().getColorSpace().getType() != ColorSpace.TYPE_RGB) {
-//					throw new ScanFileHolderException("File does not contain RGB data");
-//				}
-//				if (bands < 3) {
-//					throw new ScanFileHolderException("Number of colour channels is less than three so cannot load and convert");
-//				}
-
 				data = DatasetUtils.createCompoundDataset(channels);
-
 			}
 			if (asGrey) {
 				if (data instanceof RGBByteDataset) {

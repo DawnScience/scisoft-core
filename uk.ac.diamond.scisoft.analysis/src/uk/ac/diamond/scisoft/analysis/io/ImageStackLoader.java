@@ -197,8 +197,7 @@ public class ImageStackLoader implements ILazyLoader {
 	public Dataset getDataset(IMonitor mon, SliceND slice) throws IOException {
 		int[] newShape = slice.getShape();
 
-		int size = ShapeUtils.calcSize(newShape);
-		if (size == 0)
+		if (ShapeUtils.isZeroSize(newShape))
 			return DatasetFactory.zeros(clazz, newShape);
 
 		int iRank = iShape.length;

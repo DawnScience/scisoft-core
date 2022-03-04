@@ -41,6 +41,7 @@ import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
+import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
@@ -956,6 +957,20 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		try {
 			Tree t = LocalServiceManager.getLoaderService().getData(filePath, null).getTree();
 			NodeLink l = t.findNodeLink(dataPath);
+
+			if (l == null) {
+				NodeLink n = NexusTreeUtils.findFirstNode(t.getGroupNode(), NexusConstants.ENTRY);
+				int i = dataPath.indexOf(Node.SEPARATOR, 1);
+				if (n != null && i > 1) {
+					String path = Tree.ROOT + n.getName() + dataPath.substring(i);
+					l = t.findNodeLink(path);
+					if (l != null) {
+						model.internalSetNormalizationPath(path);
+						log.append("Using normalization dataset at %s instead of %s from file %s", path, dataPath, filePath);
+					}
+				}
+			}
+
 			if (l == null) {
 				log.appendFailure("No normalization dataset at %s from file %s", dataPath, filePath);
 			} else if (l.isDestinationData()) {

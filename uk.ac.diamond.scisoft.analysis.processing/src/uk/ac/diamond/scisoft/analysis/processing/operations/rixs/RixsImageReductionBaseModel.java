@@ -255,6 +255,10 @@ public class RixsImageReductionBaseModel extends RixsBaseModel {
 		firePropertyChange("setNormalizationPath", this.normalizationPath, this.normalizationPath = normalizationPath);
 	}
 
+	void internalSetNormalizationPath(String normalizationPath) {
+		this.normalizationPath = normalizationPath;
+	}
+
 	/**
 	 * @return selection of frames as a multi-range string
 	 */

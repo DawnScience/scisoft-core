@@ -353,7 +353,8 @@ public class MillerSpaceMapper {
 		if (trans != null && trans.getSize() != 1) {
 			int[] tshape = trans.getShapeRef();
 			if (!Arrays.equals(tshape, dshape)) {
-				throw new ScanFileHolderException("Attenuator transmission shape does not match detector or sample scan shape");
+				throw new ScanFileHolderException(String.format("Attenuator transmission shape %s does not match detector or sample scan shape %s",
+					Arrays.toString(tshape), Arrays.toString(dshape)));
 			}
 		}
 	
@@ -363,8 +364,8 @@ public class MillerSpaceMapper {
 			if (time.getSize() != 1) {
 				int[] tshape = time.getShapeRef();
 				if (!Arrays.equals(tshape, dshape)) {
-					throw new ScanFileHolderException(
-							"Exposure time shape does not match detector or sample scan shape");
+					throw new ScanFileHolderException(String.format("Exposure time shape %s does not match detector or sample scan shape %s",
+						Arrays.toString(tshape), Arrays.toString(dshape)));
 				}
 			}
 			trans = trans == null ? time : Maths.multiply(trans, time);
@@ -443,54 +444,45 @@ public class MillerSpaceMapper {
 			QSpace qspace = new QSpace(dp, env);
 			MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
 			pixelMapping.setSpaces(qspace, mspace);
-			calcOutputBounds(vMin, vMax, qspace, mspace);
+			calcOutputBounds(4, vMin, vMax, qspace, mspace);
 		}
 	}
 
 	private static final int PAD = 1 + 1;  // add one as we split across pixels
 	private void roundLimitsAndFindShapes() {
-		if (vDel != null) {
-			for (int i = 0; i < vMin.length; i++) {
-				double d = vDel[i];
-				int l = (int) Math.floor(vMin[i] / d);
-				vMin[i] = d * l;
-				int u = (int) Math.ceil(vMax[i] / d);
-				vMax[i] = d * u;
-				if (i < vShape.length) {
-					vShape[i] = u - l + PAD;
-				}
+		final int pad = PAD;
+		for (int i = 0; i < vMin.length; i++) {
+			double d = vDel[i];
+			int l = (int) Math.floor(vMin[i] / d);
+			vMin[i] = d * l;
+			int u = (int) Math.ceil(vMax[i] / d);
+			vMax[i] = d * u;
+			if (i < vShape.length) {
+				vShape[i] = u - l + pad;
 			}
 		}
 	}
 
-	private void calcOutputBounds(double[] vBeg, double[] vEnd, QSpace qspace, MillerSpace mspace) {
+	private void calcOutputBounds(int n, double[] vBeg, double[] vEnd, QSpace qspace, MillerSpace mspace) {
 		Vector3d q = new Vector3d();
-		int halfX = (begX + endX)/2;
-		int halfY = (begY + endY)/2;
 
-		pixelMapping.map(begX, begY, q);
-		minMax(vBeg, vEnd, q);
+		int dX = (endX - begX) / n;
+		int dY = (endY - begY) / n;
 
-		pixelMapping.map(halfX, begY, q);
-		minMax(vBeg, vEnd, q);
+		for (int x = begX; x < endX; x += dX) {
+			for (int y = begX; y < endX; y += dY) {
+				pixelMapping.map(x, y, q);
+				minMax(vBeg, vEnd, q);
+			}
 
-		pixelMapping.map(endX, begY, q);
-		minMax(vBeg, vEnd, q);
+			pixelMapping.map(x, endY, q);
+			minMax(vBeg, vEnd, q);
+		}
 
-		pixelMapping.map(begX, halfY, q);
-		minMax(vBeg, vEnd, q);
-
-		pixelMapping.map(halfX, halfY, q);
-		minMax(vBeg, vEnd, q);
-
-		pixelMapping.map(endX, halfY, q);
-		minMax(vBeg, vEnd, q);
-
-		pixelMapping.map(begX, endY, q);
-		minMax(vBeg, vEnd, q);
-
-		pixelMapping.map(halfX, endY, q);
-		minMax(vBeg, vEnd, q);
+		for (int y = begX; y < endX; y += dY) {
+			pixelMapping.map(endX, y, q);
+			minMax(vBeg, vEnd, q);
+		}
 
 		pixelMapping.map(endX, endY, q);
 		minMax(vBeg, vEnd, q);
@@ -529,7 +521,7 @@ public class MillerSpaceMapper {
 				printCorners(qspace, mspace);
 
 				if (vDel != null) {
-					calcOutputBounds(vMin, vMax, qspace, mspace);
+					calcOutputBounds(2, vMin, vMax, qspace, mspace);
 				}
 			}
 			n++;
@@ -1212,10 +1204,11 @@ public class MillerSpaceMapper {
 		PositionIterator iter = iters[1]; // data iterator (omits image axes)
 		iter.reset();
 		diter.reset();
-		int[] dpos = diter.getPos();
-		int[] pos = iter.getPos();
-		int[] start = pos.clone();
-		int[] stop = iter.getStop().clone();
+		final int[] dpos = diter.getPos();
+		final int[] dShape = diter.getShape();
+		final int[] pos = iter.getPos();
+		final int[] start = pos.clone();
+		final int[] stop = iter.getStop().clone();
 		int rank  = pos.length;
 		int srank = rank - 2;
 
@@ -1244,7 +1237,7 @@ public class MillerSpaceMapper {
 			if (image.max().doubleValue() <= 0) {
 				logger.info("Skipping image at {} {}", Arrays.toString(pos), inFile);
 			} else {
-				ImageJobConfig j = new ImageJobConfig(image, dpos);
+				ImageJobConfig j = new ImageJobConfig(image, dpos, dShape);
 				queue.add(j);
 			}
 
@@ -2484,10 +2477,12 @@ public class MillerSpaceMapper {
 	class ImageJobConfig {
 		private Dataset image;
 		private int[] pos;
+		private int[] shape;
 
-		public ImageJobConfig(Dataset image, int[] pos) {
+		public ImageJobConfig(Dataset image, int[] pos, int[] shape) {
 			this.image = image;
 			this.pos = pos.clone();
+			this.shape = shape;
 		}
 
 		public ImageJobConfig() {
@@ -2495,6 +2490,10 @@ public class MillerSpaceMapper {
 
 		public int[] getPos() {
 			return pos;
+		}
+
+		public int[] getShape() {
+			return shape;
 		}
 
 		public Dataset getImage() {
@@ -2564,7 +2563,7 @@ public class MillerSpaceMapper {
 					running = false;
 					break;
 				}
-				logger.info("Worker {}: initializing mapping at {}", wNo, Arrays.toString(pos));
+				logger.info("Worker {}: initializing mapping at {}/{}", wNo, Arrays.toString(pos), Arrays.toString(j.getShape()));
 				initializeImagePixelMapping(mapping, tree, iShape, pos, false);
 
 				double tFactor = getTransmissionCorrection(trans, pos);

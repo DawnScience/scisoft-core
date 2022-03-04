@@ -9,7 +9,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import java.awt.image.BufferedImage;
 import java.awt.image.SampleModel;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,15 +23,11 @@ import javax.imageio.stream.ImageInputStream;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.ByteDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.LazyDataset;
-import org.eclipse.january.dataset.RGBByteDataset;
-import org.eclipse.january.dataset.RGBDataset;
-import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.metadata.Metadata;
 import org.slf4j.Logger;
@@ -74,6 +69,14 @@ public class JavaImageLoader extends AbstractFileLoader {
 	/**
 	 * @param FileName
 	 *            which is the name of the file being passed to this class.
+	 */
+	public JavaImageLoader(String FileName) {
+		this(FileName, null);
+	}
+
+	/**
+	 * @param FileName
+	 *            which is the name of the file being passed to this class.
 	 * @param FileType
 	 *            which is the type of image being passed to the class
 	 */
@@ -105,7 +108,16 @@ public class JavaImageLoader extends AbstractFileLoader {
 	 */
 	public JavaImageLoader(String FileName, String FileType, boolean convertToGrey, boolean keepBitWidth) {
 		fileName = FileName;
-		fileType = FileType; // format name
+		if (FileType == null) {
+			int i = fileName.lastIndexOf(".");
+			if (i > 0 && i < fileName.length() - 1) {
+				fileType = fileName.substring(i+1);
+			} else {
+				fileType = "";
+			}
+		} else {
+			fileType = FileType; // format name
+		}
 		asGrey = convertToGrey;
 		this.keepBitWidth = keepBitWidth;
 	}
@@ -167,24 +179,20 @@ public class JavaImageLoader extends AbstractFileLoader {
 	}
 
 	private boolean createDatasets(DataHolder output, ImageReader reader) {
-		int j = 1; // start at 1
-		BufferedImage input = null;
 		for (int i = 0; true; i++) {
 			try {
-				String name = String.format(IMAGE_NAME_FORMAT, j);
-				input = reader.read(i);
-				Dataset data = createDataset(input);
+				String name = String.format(IMAGE_NAME_FORMAT, i+1);
+				Dataset data = AWTImageUtils.readImage(reader, i, asGrey, keepBitWidth);
 				data.setName(name);
 				output.addDataset(name, data);
 			} catch (IOException e) {
 				return false;
 			} catch (IndexOutOfBoundsException e) {
 				break;
-			} catch (ScanFileHolderException e) {
+			} catch (Exception e) {
 				logger.error("Problem with creating dataset from image", e);
 				return false;
 			}
-			j++;
 		}
 		return true;
 	}
@@ -252,7 +260,7 @@ public class JavaImageLoader extends AbstractFileLoader {
 			reader.setInput(iis, false, true);
 			Dataset data;
 			try {
-				data = createDataset(reader.read(num), asGrey, keepBitWidth);
+				data = AWTImageUtils.readImage(reader, num, asGrey, keepBitWidth);
 				data.setName(name);
 
 				if (holder == null) {
@@ -267,8 +275,7 @@ public class JavaImageLoader extends AbstractFileLoader {
 				throw new ScanFileHolderException("Image number is incorrect");
 			} catch (IOException e) {
 				logger.error("Problem reading file", e);
-				
-			} catch (ScanFileHolderException e) {
+			} catch (Exception e) {
 				logger.error("Problem creating dataset", e);
 			}
 		}
@@ -285,33 +292,6 @@ public class JavaImageLoader extends AbstractFileLoader {
 			ILazyDataset lazy = output.getLazyDataset(n);
 			metadata.addDataInfo(n, lazy.getShape());
 		}
-	}
-
-	protected Dataset createDataset(BufferedImage input) throws ScanFileHolderException {
-		return createDataset(input, asGrey, keepBitWidth);
-	}
-
-	protected static Dataset createDataset(BufferedImage input, boolean asGrey, boolean keepBitWidth) throws ScanFileHolderException {
-		Dataset data = null;
-		try {
-			Dataset[] channels = AWTImageUtils.makeDatasets(input, keepBitWidth);
-			final int bands = channels.length;
-			if (bands == 1) {
-				data = channels[0];
-			} else {
-				data = DatasetUtils.createCompoundDataset(channels);
-			}
-			if (asGrey) {
-				if (data instanceof RGBByteDataset) {
-					data = ((RGBByteDataset) data).createGreyDataset(ByteDataset.class);
-				} else if (data instanceof RGBDataset) {
-					data = ((RGBDataset) data).createGreyDataset(ShortDataset.class);
-				}
-			}
-		} catch (Exception e) {
-			throw new ScanFileHolderException("There was a problem loading the image", e);
-		}
-		return data;
 	}
 
 	protected File findCorrectSuffix() throws ScanFileHolderException {

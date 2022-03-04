@@ -79,60 +79,58 @@ public class Grey12bitTIFFReader extends TIFFImageReaderSupport {
 		initializeRasterReader(width, height, bitsPerSample, rasterReader);
 
 		if (!rasterIFD.isTileWidthAvailable()) {
-			iis.seek(rasterIFD.getStripOffsets()); // FIXME: move, it's responsibility of the rreader to seek
+			iis.seek(rasterIFD.getStripOffsets()); // FIXME: move, it's responsibility of the reader to seek
 		}
 
 		final WritableRaster raster = rasterReader.loadRaster(iis, this);
-
 		return raster;
 	}
 
 	@Override
 	protected BufferedImage loadImage(int imageIndex) throws IOException {
-        checkImageIndex(imageIndex);
-        ensureMetadataIsLoaded(imageIndex);
+		checkImageIndex(imageIndex);
+		ensureMetadataIsLoaded(imageIndex);
 
-        final WritableRaster raster = loadRAWRaster();
-        final int width = raster.getWidth();
-        final int height = raster.getHeight();
+		final WritableRaster raster = loadRAWRaster();
+		final int width = raster.getWidth();
+		final int height = raster.getHeight();
 
 		BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_USHORT_GRAY);
 		bufferedImage.setData(raster);
-
-        return bufferedImage;
+		return bufferedImage;
 	}
 
 	@Override
 	protected void initializeRasterReader(int width, int height, int bitsPerSample, RasterReader rasterReader) {
-		IFD rasterIFD = ((TIFFMetadataSupport) metadata).getRasterIFD();
 		rasterReader.setWidth(width);
 		rasterReader.setHeight(height);
 		rasterReader.setBitsPerSample(bitsPerSample);
-//		if (rasterReader instanceof Gray12RasterReader) {
-//			IFD primaryIFD = ((TIFFMetadataSupport) metadata).getPrimaryIFD();
-//			((Gray12RasterReader) rasterReader).setStripsOffset(primaryIFD.getStripOffsets());
-//		}
-
-		if ((rasterIFD != null) && rasterIFD.isCompressionAvailable()) {
-			rasterReader.setCompression(rasterIFD.getCompression().intValue());
+		IFD rasterIFD = ((TIFFMetadataSupport) metadata).getRasterIFD();
+		if (rasterIFD == null) {
+			rasterIFD = ((TIFFMetadataSupport) metadata).getPrimaryIFD();
 		}
 
-		if ((rasterIFD != null) && rasterIFD.isStripByteCountsAvailable()) {
-			rasterReader.setStripByteCount(rasterIFD.getStripByteCounts());
-		}
+		if (rasterIFD != null) {
+			if (rasterIFD.isCompressionAvailable()) {
+				rasterReader.setCompression(rasterIFD.getCompression().intValue());
+			}
 
-		if ((rasterIFD != null) && rasterIFD.isTileWidthAvailable()) {
-			int imageWidth = rasterIFD.getImageWidth();
-			int imageLength = rasterIFD.getImageLength();
-			int tileWidth = rasterIFD.getTileWidth();
-			int tileLength = rasterIFD.getTileLength();
-			rasterReader.setTileWidth(tileWidth);
-			rasterReader.setTileHeight(tileLength);
-			rasterReader.setTilesAcross((imageWidth + tileWidth - 1) / tileWidth);
-			rasterReader.setTilesDown((imageLength + tileLength - 1) / tileLength);
-			rasterReader.setTileOffsets(rasterIFD.getTileOffsets());
-			// int[] tileByteCounts = imageIFD.getTileByteCounts();
+			if (rasterIFD.isStripByteCountsAvailable()) {
+				rasterReader.setStripByteCount(rasterIFD.getStripByteCounts());
+			}
+
+			if (rasterIFD.isTileWidthAvailable()) {
+				int imageWidth = rasterIFD.getImageWidth();
+				int imageLength = rasterIFD.getImageLength();
+				int tileWidth = rasterIFD.getTileWidth();
+				int tileLength = rasterIFD.getTileLength();
+				rasterReader.setTileWidth(tileWidth);
+				rasterReader.setTileHeight(tileLength);
+				rasterReader.setTilesAcross((imageWidth + tileWidth - 1) / tileWidth);
+				rasterReader.setTilesDown((imageLength + tileLength - 1) / tileLength);
+				rasterReader.setTileOffsets(rasterIFD.getTileOffsets());
+				// int[] tileByteCounts = imageIFD.getTileByteCounts();
+			}
 		}
 	}
-
 }

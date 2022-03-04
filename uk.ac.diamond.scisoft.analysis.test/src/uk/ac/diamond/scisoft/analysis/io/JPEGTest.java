@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.january.asserts.TestUtils;
 import org.eclipse.january.dataset.ByteDataset;
 import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.Dataset;
@@ -23,6 +24,7 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.dataset.RGBByteDataset;
 import org.eclipse.january.dataset.ShortDataset;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -226,6 +228,25 @@ public class JPEGTest {
 			if (!(e.getCause() instanceof FileNotFoundException))
 				throw e;
 		}
+	}
 
+	final static String TestFileFolder = "testfiles/images/";
+
+	/**
+	 * This method load a coloured JPEG from a fixed location
+	 * 
+	 * @throws Exception if the test fails
+	 */
+	@Test
+	public void testColourSupport() throws Exception {
+		JPEGLoader loader = new JPEGLoader(TestFileFolder + "testrgb.jpg");
+		DataHolder dha = loader.loadFile();
+		Dataset c = dha.getDataset(0);
+		assertTrue(c instanceof RGBByteDataset);
+
+		loader.setLoadAllLazily(false);
+		DataHolder dhb = loader.loadFile();
+		Dataset d = dhb.getDataset(0);
+		TestUtils.assertDatasetEquals(c, d);
 	}
 }

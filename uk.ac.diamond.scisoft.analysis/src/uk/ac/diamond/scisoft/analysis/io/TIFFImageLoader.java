@@ -9,7 +9,6 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -32,6 +31,7 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.metadata.IMetadata;
 import org.slf4j.Logger;
@@ -110,7 +110,7 @@ public class TIFFImageLoader extends JavaImageLoader {
 				readImages(output, reader); // this raises an exception for 12-bit images when using standard reader
 			} catch (ScanFileHolderException e) {
 				throw e;
-			} catch (Exception e) {
+			} catch (IllegalArgumentException e) {
 				logger.debug("Using alternative 12-bit TIFF reader: {}", fileName);
 				reader = new Grey12bitTIFFReader(new Grey12bitTIFFReaderSpi());
 				reader.setInput(iis);
@@ -159,7 +159,8 @@ public class TIFFImageLoader extends JavaImageLoader {
 			}
 		}
 
-		final ImageTypeSpecifier its = reader.getRawImageType(0); // this raises an exception for 12-bit images when using standard reader
+		boolean is12bitGrey = reader instanceof Grey12bitTIFFReader;
+		final ImageTypeSpecifier its = is12bitGrey ? null : reader.getRawImageType(0); // this raises an exception for 12-bit images when using standard reader
 		if (allSame) {
 			for (int i = 1; i < n; i++) {
 				if (!its.equals(reader.getRawImageType(i))) {
@@ -168,20 +169,28 @@ public class TIFFImageLoader extends JavaImageLoader {
 			}
 		}
 
-		Class<? extends Dataset> clazz = AWTImageUtils.getInterface(its.getSampleModel(), keepBitWidth);
+		Class<? extends Dataset> clazz = is12bitGrey ? ShortDataset.class : AWTImageUtils.getInterface(its.getSampleModel(), keepBitWidth);
 		if (n == 1) {
 			ILazyDataset image;
 			if (loadLazily) {
-				image = createLazyDataset(clazz, height, width);
+				image = createLazyDataset(clazz, is12bitGrey, height, width);
 			} else {
-				image = createDataset(reader.read(0));
+				try {
+					if (is12bitGrey) {
+						image = AWTImageUtils.makeDatasets(reader.read(0), true)[0];
+					} else {
+						image = AWTImageUtils.readImage(reader, 0, asGrey, keepBitWidth);
+					}
+				} catch (Exception e) {
+					throw new ScanFileHolderException("File format in '" + fileName + "' cannot be read", e);
+				}
 			}
 			image.setName(DEF_IMAGE_NAME);
 			if (metadata != null)
 				mergeMetadata(image);
 			output.addDataset(DEF_IMAGE_NAME, image);
 		} else if (allSame) {
-			ILazyDataset ld = createLazyDataset(clazz, n, height, width);
+			ILazyDataset ld = createLazyDataset(clazz, is12bitGrey, n, height, width);
 			ld.setMetadata(metadata);
 			output.addDataset(STACK_NAME, ld);
 		} else {
@@ -216,8 +225,10 @@ public class TIFFImageLoader extends JavaImageLoader {
 		}
 	}
 
-	private ILazyDataset createLazyDataset(Class<? extends Dataset> clazz, final int... trueShape) {
+	private ILazyDataset createLazyDataset(Class<? extends Dataset> clazz, boolean is12bitGrey, final int... trueShape) {
 		LazyLoaderStub l = new LazyLoaderStub() {
+			private static final long serialVersionUID = -7770430899468579819L;
+
 			@Override
 			public IDataset getDataset(IMonitor mon, SliceND slice) throws IOException {
 				int[] lstart = slice.getStart();
@@ -267,10 +278,10 @@ public class TIFFImageLoader extends JavaImageLoader {
 							}
 						}
 
-						d = loadData(clazz, mon, fileName, asGrey, keepBitWidth, shape, tstart, tsize, tstep);
+						d = loadData(clazz, is12bitGrey, mon, fileName, asGrey, keepBitWidth, shape, tstart, tsize, tstep);
 						d.setShape(newShape); // squeeze shape back
 					} else {
-						d = loadData(clazz, mon, fileName, asGrey, keepBitWidth, shape, lstart, newShape, lstep);
+						d = loadData(clazz, is12bitGrey, mon, fileName, asGrey, keepBitWidth, shape, lstart, newShape, lstep);
 					}
 				} catch (ScanFileHolderException e) {
 					throw new IOException("Problem with TIFF loading", e);
@@ -283,7 +294,7 @@ public class TIFFImageLoader extends JavaImageLoader {
 		return createLazyDataset(l, STACK_NAME, clazz, trueShape.clone());
 	}
 
-	private static Dataset loadData(Class<? extends Dataset> clazz, IMonitor mon, String filename, boolean asGrey, boolean keepBitWidth,
+	private static Dataset loadData(Class<? extends Dataset> clazz, boolean is12bitGrey, IMonitor mon, String filename, boolean asGrey, boolean keepBitWidth,
 			int[] oshape, int[] start, int[] count, int[] step) throws ScanFileHolderException {
 		ImageInputStream iis = null;
 		ImageReader reader = null;
@@ -311,18 +322,14 @@ public class TIFFImageLoader extends JavaImageLoader {
 			int[] dataStop  = dSlice.getStop();
 
 			Dataset image;
-			try {
-				reader = new TIFFImageReader(new TIFFImageReaderSpi());
-				reader.setInput(iis);
-
-				image = readImage(filename, reader, asGrey, keepBitWidth, num);
-			} catch (IllegalArgumentException e) { // catch bad number of bits
+			if (is12bitGrey) {
 				logger.debug("Using alternative 12-bit TIFF reader: {}", filename);
 				reader = new Grey12bitTIFFReader(new Grey12bitTIFFReaderSpi());
-				reader.setInput(iis);
-
-				image = readImage(filename, reader, asGrey, keepBitWidth, num);
+			} else {
+				reader = new TIFFImageReader(new TIFFImageReaderSpi());
 			}
+			reader.setInput(iis);
+			image = readImage(filename, reader, asGrey, keepBitWidth, num);
 
 			while (dataStart[0] < count[0]) {
 				if (image == null)
@@ -375,12 +382,18 @@ public class TIFFImageLoader extends JavaImageLoader {
 		if (num >= n) {
 			throw new ScanFileHolderException("Number exceeds images found in '" + filename + "'");
 		}
-		BufferedImage input = reader.read(num);
-		if (input == null) {
+
+		Dataset d;
+		try {
+			if (reader instanceof Grey12bitTIFFReader) {
+				d = AWTImageUtils.makeDatasets(reader.read(0), true)[0];
+			} else {
+				d = AWTImageUtils.readImage(reader, num, asGrey, keepBitWidth);
+			}
+		} catch (Exception e) {
 			throw new ScanFileHolderException("File format in '" + filename + "' cannot be read");
 		}
 
-		Dataset d = createDataset(input, asGrey, keepBitWidth);
 		if (holder == null) {
 			holder = new DataHolder();
 			holder.setLoaderClass(TIFFImageLoader.class);

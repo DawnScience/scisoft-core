@@ -62,6 +62,8 @@
 				<!-- does not work in IDE: module>uk.ac.diamond.scisoft.analysis.powder.indexer.test</module -->
 				<module>uk.ac.diamond.scisoft.analysis.powder.matcher.ccdc</module>
 				<module>uk.ac.diamond.scisoft.surfacescatter</module>
+				<module>uk.ac.diamond.scisoft.ptychography.feature</module>
+				<module>uk.ac.diamond.scisoft.ptychography.rcp</module>
 				<!-- No tests within!!! module>uk.ac.diamond.scisoft.surfacescatter.test</module -->
 			</modules>
 		</profile>
@@ -72,6 +74,8 @@
 				<!-- does not work in IDE: module>uk.ac.diamond.scisoft.analysis.powder.indexer.test</module -->
 				<module>uk.ac.diamond.scisoft.analysis.powder.matcher.ccdc</module>
 				<module>uk.ac.diamond.scisoft.surfacescatter</module>
+				<module>uk.ac.diamond.scisoft.ptychography.feature</module>
+				<module>uk.ac.diamond.scisoft.ptychography.rcp</module>
 				<!-- No tests within!!! module>uk.ac.diamond.scisoft.surfacescatter.test</module -->
 			</modules>
 		</profile>

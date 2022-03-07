@@ -44,7 +44,8 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -105,11 +106,12 @@ public class JsonMarshallerCustomClassesTest {
 	private Person john;
 	private Person james;
 
+	@Rule
+	public MockitoRule rule = MockitoJUnit.rule();
+
 	@Before
 	public void setUp() throws Exception {
 		createTestObjects();
-		MockitoAnnotations.initMocks(this);
-
 		marshaller = new MarshallerService(new TestObjectClassRegistry());
 		marshallerWithNoRegistry = new MarshallerService();
 

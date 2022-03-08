@@ -10,12 +10,14 @@
 package org.eclipse.dawnsci.json.test;
 
 import static org.eclipse.dawnsci.json.test.JsonUtils.assertJsonEquals;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertThrows;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,13 +39,11 @@ import org.eclipse.dawnsci.json.test.testobject.Person;
 import org.eclipse.dawnsci.json.test.testobject.ProjectBean;
 import org.eclipse.dawnsci.json.test.testobject.TestStatusBean;
 import org.eclipse.dawnsci.json.test.testobject.TestTypeNonRegisteredImpl;
-import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
@@ -481,47 +481,34 @@ public class JsonMarshallerCustomClassesTest {
 		assertThat(objectMap.get(polly.getName()), is(equalTo(polly)));
 	}
 
-
-	@Rule public ExpectedException exception = ExpectedException.none();
-
-	@SuppressWarnings("unused")
 	@Test
-	public void testGivenClassIdNotRecognisedWhenUnmarshallingWithNullThenExceptionRaisedWithCorrectMessage() throws Exception {
-		exception.expect(IllegalArgumentException.class);
-	    exception.expectMessage(CoreMatchers.containsString("jsontest.doesnotexist"));
-
-	    Object object;
-	    object = marshaller.unmarshal(JSON_FOR_UNKNOWN_TOP_LEVEL_CLASS_ID, null);
+	public void testGivenClassIdNotRecognisedWhenUnmarshallingWithNullThenExceptionRaisedWithCorrectMessage()
+			throws Exception {
+		IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+				() -> marshaller.unmarshal(JSON_FOR_UNKNOWN_TOP_LEVEL_CLASS_ID, null));
+		assertThat(e.getMessage(), containsString("jsontest.doesnotexist"));
 	}
 
-	@SuppressWarnings("unused")
 	@Test
 	public void testGivenClassIdNotPresentWhenUnmarshallingWithNullThenExceptionRaised() throws Exception {
-		exception.expect(JsonMappingException.class);
-	    exception.expectMessage(CoreMatchers.containsString("type id"));
-
-	    Object object;
-	    object = marshaller.unmarshal(JSON_FOR_NO_TOP_LEVEL_CLASS_ID, null);
+		JsonMappingException e = assertThrows(JsonMappingException.class,
+				() -> marshaller.unmarshal(JSON_FOR_NO_TOP_LEVEL_CLASS_ID, null));
+		assertThat(e.getMessage(), containsString("type id"));
 	}
 
-	@SuppressWarnings("unused")
 	@Test
-	public void testGivenNestedClassIdNotRecognisedWhenUnmarshallingDynamicDefinedObjectThenExceptionRaisedWithCorrectMessage() throws Exception {
-		exception.expect(JsonMappingException.class);
-	    exception.expectMessage(CoreMatchers.containsString("jsontest.nonexistent"));
-
-	    Object object;
-	    object = marshaller.unmarshal(JSON_FOR_UNKNOWN_NESTED_DYNAMIC_DEFINED_CLASS_ID, null);
+	public void testGivenNestedClassIdNotRecognisedWhenUnmarshallingDynamicDefinedObjectThenExceptionRaisedWithCorrectMessage()
+			throws Exception {
+		JsonMappingException e = assertThrows(JsonMappingException.class,
+				() -> marshaller.unmarshal(JSON_FOR_UNKNOWN_NESTED_DYNAMIC_DEFINED_CLASS_ID, null));
+		assertThat(e.getMessage(), containsString("jsontest.nonexistent"));
 	}
 
-	@SuppressWarnings("unused")
 	@Test
 	public void testGivenNestedClassIdNotPresentWhenUnmarshallingDynamicDefinedObjectThenExceptionRaisedWithCorrectMessage() throws Exception {
-		exception.expect(JsonMappingException.class);
-	    exception.expectMessage(CoreMatchers.containsString("type id"));
-
-	    Object object;
-	    object = marshaller.unmarshal(JSON_FOR_NESTED_DYNAMIC_DEFINED_CLASS_WITH_NO_ID, null);
+		JsonMappingException e = assertThrows(JsonMappingException.class,
+				() -> marshaller.unmarshal(JSON_FOR_NESTED_DYNAMIC_DEFINED_CLASS_WITH_NO_ID, null));
+		assertThat(e.getMessage(), containsString("type id"));
 	}
 
 	@Test
@@ -548,11 +535,11 @@ public class JsonMarshallerCustomClassesTest {
 	}
 
 	@Test
-	public void testGivenClassNotRecognisedWhenMarshallingUnknownObjectThenExceptionRaisedWithCorrectMessage() throws Exception {
-		exception.expect(JsonMappingException.class);
-	    exception.expectMessage(CoreMatchers.containsString(Bird.class.toString()));
-
-		json = marshallerWithNoRegistry.marshal(jim);
+	public void testGivenClassNotRecognisedWhenMarshallingUnknownObjectThenExceptionRaisedWithCorrectMessage()
+			throws Exception {
+		JsonMappingException e = assertThrows(JsonMappingException.class,
+				() -> json = marshallerWithNoRegistry.marshal(jim));
+		assertThat(e.getMessage(), containsString(Bird.class.toString()));
 	}
 
 }

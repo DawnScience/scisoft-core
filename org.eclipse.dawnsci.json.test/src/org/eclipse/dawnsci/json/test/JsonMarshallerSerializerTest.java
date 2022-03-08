@@ -10,7 +10,10 @@
 package org.eclipse.dawnsci.json.test;
 
 import static org.eclipse.dawnsci.json.test.JsonUtils.assertJsonEquals;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ObjectInputStream;
@@ -28,12 +31,9 @@ import org.eclipse.dawnsci.json.test.marshaller.TestTypeRegisteredMarshaller;
 import org.eclipse.dawnsci.json.test.testobject.TestTypeBean;
 import org.eclipse.dawnsci.json.test.testobject.TestTypeNonRegisteredImpl;
 import org.eclipse.dawnsci.json.test.testobject.TestTypeRegisteredImpl;
-import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -70,18 +70,13 @@ public class JsonMarshallerSerializerTest {
 		marshaller = null;
 	}
 
-	@Rule public ExpectedException exception = ExpectedException.none();
-
 	@Test
 	public void testGivenNonRegisteredClassAndNoSerializerWithMarshalThenExceptionRaised() throws Exception {
-		exception.expect(JsonMappingException.class);
-	    exception.expectMessage(CoreMatchers.containsString(TestTypeNonRegisteredImpl.class.toString()));
-
 		TestTypeBean bean = new TestTypeBean();
-
 		bean.setTTNonReg(new TestTypeNonRegisteredImpl("Non-Registered, marshaller not available."));
-		json = marshaller.marshal(bean);
 
+		JsonMappingException e = assertThrows(JsonMappingException.class, () -> json = marshaller.marshal(bean));
+		assertThat(e.getMessage(), containsString((TestTypeNonRegisteredImpl.class.toString())));
 	}
 
 	@Test

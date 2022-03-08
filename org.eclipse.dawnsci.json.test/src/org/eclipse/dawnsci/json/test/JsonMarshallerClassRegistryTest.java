@@ -10,6 +10,10 @@
 package org.eclipse.dawnsci.json.test;
 
 import static org.eclipse.dawnsci.json.test.JsonUtils.assertJsonEquals;
+import static org.hamcrest.CoreMatchers.both;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertThrows;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.dawnsci.analysis.api.persistence.IMarshallerService;
@@ -21,12 +25,9 @@ import org.eclipse.dawnsci.json.test.classregistry.TestObjectClassRegistry;
 import org.eclipse.dawnsci.json.test.testobject.TestTypeBean;
 import org.eclipse.dawnsci.json.test.testobject.TestTypeRegisteredAlternativeImpl;
 import org.eclipse.dawnsci.json.test.testobject.TestTypeRegisteredImpl;
-import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public class JsonMarshallerClassRegistryTest {
 
@@ -63,8 +64,6 @@ public class JsonMarshallerClassRegistryTest {
 		marshaller = null;
 	}
 
-	@Rule public ExpectedException exception = ExpectedException.none();
-
 	@Test
 	public void testGivenTwoClassRegistriesWithNoIdOrClassClashThenNoExceptionRaised() throws Exception {
 		marshaller = new MarshallerService(new TestObjectClassRegistry(), new TestObjectAlternativeClassRegistry());
@@ -82,13 +81,10 @@ public class JsonMarshallerClassRegistryTest {
 
 	@Test
 	public void testGivenTwoClassRegistriesWithIdClashThenExceptionRaisedWithCorrectMessage() throws Exception {
-		exception.expect(ClassRegistryDuplicateIdException.class);
-	    exception.expectMessage(CoreMatchers.containsString("clash"));
-	    exception.expectMessage(CoreMatchers.containsString("jsontest.animal"));
-
 		marshaller = new MarshallerService(new TestObjectClassRegistry(), new TestObjectClashingIdClassRegistry());
-
-		marshaller.marshal(null);
+		ClassRegistryDuplicateIdException e = assertThrows(ClassRegistryDuplicateIdException.class,
+				() -> marshaller.marshal(null));
+		assertThat(e.getMessage(), both(containsString("jsontest.animal")).and(containsString("clash")));
 	}
 
 	@Test

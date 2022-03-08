@@ -1,6 +1,9 @@
 package uk.ac.diamond.scisoft.analysis.peakfinding;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -15,9 +18,7 @@ import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders.DummyPeakFinder;
 import uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders.MaximaDifference;
@@ -47,9 +48,6 @@ public class PeakFindingDataFactoryTest {
 	public void createVars() {
 		activePFs = new ArrayList<String>();
 	}
-	
-	@Rule
-	public ExpectedException thrower = ExpectedException.none();
 	
 	@Test
 	public void createPeakFindingData() {
@@ -102,10 +100,10 @@ public class PeakFindingDataFactoryTest {
 	
 	@Test
 	public void badPeakFinderExceptionTest() {
-		thrower.expect(NullPointerException.class);
-		thrower.expectMessage("not registered");
 		activePFs.add("badger");
-		IPeakFindingData pfd = PeakFindingDataFactory.createPeakFindingData(peakFindServ, activePFs, nPeaks, xData, yData);
+		Exception e = assertThrows(NullPointerException.class,
+				() -> PeakFindingDataFactory.createPeakFindingData(peakFindServ, activePFs, nPeaks, xData, yData));
+		assertThat(e.getMessage(), containsString("not registered"));
 	}
 	
 

@@ -1,9 +1,12 @@
 package uk.ac.diamond.scisoft.analysis.peakfinding;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 //import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 
 import java.util.Collection;
 import java.util.Map;
@@ -13,9 +16,7 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.FloatDataset;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders.DummyPeakFinder;
 
@@ -43,9 +44,6 @@ public class PeakFindingServTest {
 	public void createPeakFindData() {
 		peakFindData = new PeakFindingData(peakFindServ);
 	}
-	
-	@Rule
-	public ExpectedException thrower = ExpectedException.none();
 	
 	/*
 	 * A couple of support methods for the 
@@ -79,17 +77,15 @@ public class PeakFindingServTest {
 	 */
 	@Test
 	public void testDataNotSetFindPeaksException() throws Exception {
-		thrower.expect(Exception.class);
-		thrower.expectMessage("No data");
-		peakFindServ.findPeaks(peakFindData);
+		Exception e = assertThrows(Exception.class, () -> peakFindServ.findPeaks(peakFindData));
+		assertThat(e.getMessage(), containsString("No data"));
 	}
+
 	@Test
 	public void testNoActivePeakFindersException() throws Exception {
-		thrower.expect(IllegalArgumentException.class);
-		thrower.expectMessage("No peak finders");
-		
 		setFakeDataOnDTO();
-		peakFindServ.findPeaks(peakFindData);
+		Exception e = assertThrows(IllegalArgumentException.class, () -> peakFindServ.findPeaks(peakFindData));
+		assertThat(e.getMessage(), containsString("No peak finders"));
 	}
 	
 	/*

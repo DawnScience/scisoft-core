@@ -16,9 +16,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Set;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public class FunctionFactoryTest {
 
@@ -27,9 +25,6 @@ public class FunctionFactoryTest {
 	 * FunctionFactoryExtensionService It is nearly identical to the other FunctionFactoryPluginTest. There is an
 	 * additional test for registering a differently named function.
 	 */
-
-	@Rule
-	public ExpectedException thrower = ExpectedException.none();
 
 	@Before
 	public void setup() {
@@ -52,9 +47,8 @@ public class FunctionFactoryTest {
 	/**
 	 * Specific to JUnit test
 	 */
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	public void testFunctionRegistration() {
-		thrower.expect(IllegalArgumentException.class);
 		FunctionFactory.getPeakFunction("Polynomial");
 	}
 

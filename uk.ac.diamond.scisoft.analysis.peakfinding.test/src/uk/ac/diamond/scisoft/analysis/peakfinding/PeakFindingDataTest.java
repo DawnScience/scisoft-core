@@ -9,8 +9,11 @@
 
 package uk.ac.diamond.scisoft.analysis.peakfinding;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -27,9 +30,7 @@ import org.eclipse.january.dataset.FloatDataset;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders.DummyPeakFinder;
 import uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders.PeakFinderParameter;
@@ -58,9 +59,6 @@ public class PeakFindingDataTest {
 	public void disposePeakFindData() {
 		peakFindData = null;
 	}
-	
-	@Rule
-	public ExpectedException thrower = ExpectedException.none();
 	
 	@Test
 	public void testActivateDeactivatePeakFinders() throws Exception {
@@ -168,48 +166,44 @@ public class PeakFindingDataTest {
 	 */
 	@Test
 	public void testUnregisteredPeakFinderException() throws Exception {
-		thrower.expect(NullPointerException.class);
-		thrower.expectMessage("not registered");
-		peakFindData.activatePeakFinder("badger");
+		Exception e = assertThrows(NullPointerException.class, () -> peakFindData.activatePeakFinder("badger"));
+		assertThat(e.getMessage(), containsString("not registered"));
 	}
-	
+
 	@Test
 	public void testActivateException() throws Exception {
-		thrower.expect(IllegalArgumentException.class);
-		thrower.expectMessage("already set active");
 		peakFindData.activatePeakFinder(dummyID);
-		peakFindData.activatePeakFinder(dummyID);
+		Exception e = assertThrows(IllegalArgumentException.class, () -> peakFindData.activatePeakFinder(dummyID));
+		assertThat(e.getMessage(), containsString("already set active"));
 	}
-	
+
 	@Test
 	public void testDeactivateException() throws Exception {
-		thrower.expect(IllegalArgumentException.class);
-		thrower.expectMessage("not set active");
-		peakFindData.deactivatePeakFinder(dummyID);
-		peakFindData.deactivatePeakFinder(dummyID);	
+		Exception e = assertThrows(IllegalArgumentException.class, () -> peakFindData.deactivatePeakFinder(dummyID));
+		assertThat(e.getMessage(), containsString("not set active"));
 	}
-	
+
 	@Test
 	public void testNoPFForParamsException() throws Exception {
-		thrower.expect(NullPointerException.class);
-		thrower.expectMessage("never been activated");
-		peakFindData.getPFParametersByPeakFinder(dummyID+"badger");
+		Exception e = assertThrows(NullPointerException.class,
+				() -> peakFindData.getPFParametersByPeakFinder(dummyID + "badger"));
+		assertThat(e.getMessage(), containsString("never been activated"));
 	}
 	
 	@Test
 	public void testNoParamInPeakFinderException() throws Exception {
-		thrower.expect(NullPointerException.class);
-		thrower.expectMessage("No parameter name ");
 		peakFindData.activatePeakFinder(dummyID);
-		peakFindData.getPFParameterByName(dummyID, "totallyFakeParameter");
+		Exception e = assertThrows(NullPointerException.class,
+				() -> peakFindData.getPFParameterByName(dummyID, "totallyFakeParameter"));
+		assertThat(e.getMessage(), containsString("No parameter name "));
 	}
 	
 	@Test
 	public void testParameterAsDoubleException() throws Exception {
-		thrower.expect(IllegalArgumentException.class);
-		thrower.expectMessage("should be an Integer");
 		peakFindData.activatePeakFinder(dummyID);
-		peakFindData.setPFParameterByName(dummyID, "testParamB", 111.222);
+		Exception e = assertThrows(IllegalArgumentException.class,
+				() -> peakFindData.setPFParameterByName(dummyID, "testParamB", 111.222));
+		assertThat(e.getMessage(), containsString("should be an Integer"));
 	}
 	
 	/*
@@ -218,15 +212,13 @@ public class PeakFindingDataTest {
 	 */
 	@Test
 	public void testGetPeaksBeforeFindPeaksException() throws Exception {
-		thrower.expect(NullPointerException.class);
-		thrower.expectMessage("findPeaks");
-		peakFindData.getPeaks();
+		Exception e = assertThrows(NullPointerException.class, () -> peakFindData.getPeaks());
+		assertThat(e.getMessage(), containsString("findPeaks"));
 	}
-	
+
 	@Test
 	public void testGetPeakByPeakFinderBeforeFindPeaksException() throws Exception {
-		thrower.expect(NullPointerException.class);
-		thrower.expectMessage("findPeaks");
-		peakFindData.getPeaks(dummyID);
+		Exception e = assertThrows(NullPointerException.class, () -> peakFindData.getPeaks(dummyID));
+		assertThat(e.getMessage(), containsString("findPeaks"));
 	}
 }

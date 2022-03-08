@@ -1,15 +1,15 @@
 package uk.ac.diamond.scisoft.analysis.peakfinding.peakfinders;
 
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public class PeakFinderParameterTest {
-	
-	@Rule
-	public ExpectedException thrower = ExpectedException.none();
 	
 	@Test
 	public void testEquality() throws Exception {
@@ -36,9 +36,9 @@ public class PeakFinderParameterTest {
 		assertEquals(14.76, paramB.getValue());
 		
 		//Now we're expecting an exception
-		thrower.expect(Exception.class);
-		thrower.expectMessage("should be an Integer");
-		paramA.setValue(14.76);
+		Exception e = assertThrows(Exception.class, () -> paramA.setValue(14.76));
+		assertThat(e.getMessage(), containsString("should be an Integer"));
+
 	}
 
 }

@@ -11,6 +11,8 @@ import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.context.NexusContext;
 import org.eclipse.january.dataset.IDataset;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link NexusContext} to abstract adding nodes to an in-memory nexus tree. This
@@ -19,6 +21,8 @@ import org.eclipse.january.dataset.IDataset;
  * copying of group nodes and attribute values from elsewhere in the nexus tree.
  */
 public class InMemoryNexusContext extends AbstractInMemoryNexusContext {
+	
+	private static final Logger logger = LoggerFactory.getLogger(InMemoryNexusContext.class);
 	
 	/**
 	 * Creates a new {@link InMemoryNexusContext} for the given nexus tree.
@@ -46,7 +50,7 @@ public class InMemoryNexusContext extends AbstractInMemoryNexusContext {
 		logDebug("Linking node '{}' with name '{}' to parent '{}'", linkPath, name, parent);
 		final Node node = TreeUtils.getNode(tree, linkPath);
 		if (node == null) {
-			throw new NexusException("Invalid link path, no such node: " + linkPath);
+			logger.warn("Cannot create link ''{}'' to node at path ''{}''. No such node exists.", name, linkPath);
 		} else if (node.isSymbolicNode()) {
 			final SymbolicNode existingLinkNode = (SymbolicNode) node;
 			final SymbolicNode newLinkNode = NexusNodeFactory.createSymbolicNode(

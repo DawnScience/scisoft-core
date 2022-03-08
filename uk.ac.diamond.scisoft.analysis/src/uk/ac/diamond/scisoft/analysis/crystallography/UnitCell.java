@@ -37,7 +37,7 @@ public class UnitCell extends LatticeCell {
 	 * 
 	 * @param parameters can be lengths (for cuboid) or both lengths and angles
 	 */
-	public UnitCell(double[] parameters) {
+	public UnitCell(double... parameters) {
 		super();
 
 		if (parameters.length >= 6) {
@@ -119,6 +119,14 @@ public class UnitCell extends LatticeCell {
 	}
 
 	/**
+	 * @param i i-th axis
+	 * @return length of i-th axis of unit cell
+	 */
+	public double getLength(int i) {
+		return lengths[i];
+	}
+
+	/**
 	 * @param angles (in degrees)
 	 */
 	public void setAngles(double[] angles) {
@@ -130,6 +138,14 @@ public class UnitCell extends LatticeCell {
 	 */
 	public double[] getAngles() {
 		return angles;
+	}
+
+	/**
+	 * @param i i-th axis
+	 * @return angle of i-th axis of unit cell
+	 */
+	public double getAngle(int i) {
+		return angles[i];
 	}
 
 	protected void calculateAll() {

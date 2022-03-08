@@ -12,6 +12,8 @@ package uk.ac.diamond.scisoft.analysis.crystallography;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
+import uk.ac.diamond.scisoft.analysis.crystallography.ReciprocalCell.Ortho_Convention;
+
 
 /**
  * Crystallographic reciprocal space as defined by Miller indices
@@ -51,7 +53,7 @@ public class MillerSpace {
 	 * @param orientation
 	 */
 	public MillerSpace(final UnitCell uc, Matrix3d orientation) {
-		this(new ReciprocalCell(uc), orientation);
+		this(new ReciprocalCell(uc, Ortho_Convention.BUSING_LEVY), orientation);
 	}
 
 	private void calcNetTransforms() {

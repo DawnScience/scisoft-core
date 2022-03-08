@@ -76,6 +76,7 @@ import tec.units.indriya.unit.MetricPrefix;
 import tec.units.indriya.unit.Units;
 import uk.ac.diamond.scisoft.analysis.axis.AxisChoice;
 import uk.ac.diamond.scisoft.analysis.crystallography.ReciprocalCell;
+import uk.ac.diamond.scisoft.analysis.crystallography.ReciprocalCell.Ortho_Convention;
 import uk.ac.diamond.scisoft.analysis.crystallography.UnitCell;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionSample;
 import uk.ac.diamond.scisoft.analysis.diffraction.MatrixUtils;
@@ -1778,7 +1779,7 @@ public class NexusTreeUtils {
 			Matrix3d ub = parse3DMatrix(l);
 			// remove orthogonalization to find orientation
 			u = new Matrix3d();
-			u.invert(new ReciprocalCell(unitCell).orthogonalization());
+			u.invert(new ReciprocalCell(unitCell, Ortho_Convention.BUSING_LEVY).orthogonalization());
 			u.mul(ub, u);
 		} else {
 			u = parse3DMatrix(l);

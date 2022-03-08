@@ -19,8 +19,8 @@
 <path>${BUNDLE_POOL_LOC}/plugins/org.apache.commons.logging_1.2.0.v20180409-1502.jar</path>
 <path>${BUNDLE_POOL_LOC}/plugins/org.apache.commons.math3_3.6.1.v20200817-1830.jar</path>
 <path>${BUNDLE_POOL_LOC}/plugins/org.ddogleg_0.6.0.SNAPSHOT.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/org.eclipse.january_2.3.2.v202202081318.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/org.eclipse.january.asserts_2.3.2.v202202081318.jar</path>
+<path>${BUNDLE_POOL_LOC}/plugins/org.eclipse.january_2.3.3.v202202251243.jar</path>
+<path>${BUNDLE_POOL_LOC}/plugins/org.eclipse.january.asserts_2.3.3.v202202251232.jar</path>
 <path>${BUNDLE_POOL_LOC}/plugins/org.uncommons.maths_1.2.3.jar</path>
 <path>${BUNDLE_POOL_LOC}/plugins/si.uom.si-quantity_0.9.0.jar</path>
 <path>${BUNDLE_POOL_LOC}/plugins/si.uom.si-units_0.9.0.jar</path>

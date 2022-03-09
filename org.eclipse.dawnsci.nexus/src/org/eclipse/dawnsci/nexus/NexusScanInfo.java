@@ -72,6 +72,8 @@ public class NexusScanInfo {
 	
 	private String filePath;
 	
+	private String currentScriptName;
+	
 	private long estimatedScanTime = -1; // in ms, or -1 if not specified
 	
 	public NexusScanInfo() {
@@ -181,6 +183,14 @@ public class NexusScanInfo {
 	
 	public void setScanFieldNames(List<String> scanFieldNames) {
 		this.scanFieldNames = scanFieldNames;
+	}
+	
+	public String getCurrentScriptName() {
+		return currentScriptName;
+	}
+
+	public void setCurrentScriptName(String currentScriptName) {
+		this.currentScriptName = currentScriptName;
 	}
 
 	/**

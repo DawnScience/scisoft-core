@@ -76,14 +76,15 @@ Fit usage
 Once a fitting function (or a set of fitting functions) is chosen, the ``fit``
 function can be invoked::
  
-    fr = dnp.fit.fit(func, coords, data, p0, bounds=[], args=None, ptol=1e-4, optimizer='local')
+    fr = dnp.fit.fit(func, coords, data, p0, bounds=[], weight=None, args=None, ptol=1e-4, optimizer='local')
 
 where ``func`` is a function or list of functions, ``coords`` is a coordinate
 dataset (or list of datasets), ``data`` is a dataset that contains the data to
 fit against, ``p0`` is a list of initial parameters, ``bounds`` is a list of
-tuples of lower and upper limits, ``args`` is optional arguments, ``ptol`` is
-fitting tolerance, and optimizer specifies the underlying methods used to make
-the fit.
+tuples of lower and upper limits, ``weight`` is an optional dataset used to
+weight residuals (it multiplies the squared differences between function and
+data), ``args`` is optional arguments for the function, ``ptol`` is fitting
+tolerance, and optimizer specifies the underlying methods used to make the fit.
 
 By default, all parameters are limited to values between -``scisoftpy.floatmax``
 and ``scisoftpy.floatmax``. The ``bounds`` list specify how to set each
@@ -162,10 +163,10 @@ area
     Area (or hyper-volume) under fitted function assuming the coordinates were uniformly spaced
 
 plot()
-    Plot data, fitted function, error and its offset, each component of the fitted composite function
+    Plot data, fitted function, optionally, the difference, and each constituent of the fitted composite function
 
 makefuncdata()
-    Create list of datasets evaluated using the composite function and each of its components
+    Create list of datasets evaluated using the composite function and optionally each of its constituents
 
 makeplotdata()
     Create list of datasets for plotting (used by plot())

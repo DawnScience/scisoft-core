@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.commands">
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="uk.ac.diamond.scisoft.ptychography.rcp.PtychoPerspective"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.perspective"
+            name="Ptychography">
+      </perspective>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <e4view
+            class="uk.ac.diamond.scisoft.ptychography.rcp.editors.PtychoTreeViewerEditor"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.ptychoTreeEditor"
+            name="Tree Ptycho input">
+      </e4view>
+      <e4view
+            class="uk.ac.diamond.scisoft.ptychography.rcp.editors.SimplePtychoEditor"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.basicPtychoInput"
+            name="Basic Ptycho Input">
+      </e4view>
+      <view
+            allowMultiple="false"
+            category="uk.ac.diamond.scisoft.ptychography.rcp.category"
+            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            icon="icons/chart_curve.png"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewProbeComplex"
+            name="Probe Complex"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            category="uk.ac.diamond.scisoft.ptychography.rcp.category"
+            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            icon="icons/chart_curve.png"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewProbePhase"
+            name="Probe Phase"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            category="uk.ac.diamond.scisoft.ptychography.rcp.category"
+            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            icon="icons/chart_curve.png"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewProbeModulus"
+            name="Probe Modulus"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            category="uk.ac.diamond.scisoft.ptychography.rcp.category"
+            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            icon="icons/chart_curve.png"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewObjectModulus"
+            name="Object Modulus"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            category="uk.ac.diamond.scisoft.ptychography.rcp.category"
+            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            icon="icons/chart_curve.png"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewObjectComplex"
+            name="Object Complex"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            category="uk.ac.diamond.scisoft.ptychography.rcp.category"
+            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            icon="icons/chart_curve.png"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewObjectPhase"
+            name="Object Phase"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            category="uk.ac.diamond.scisoft.ptychography.rcp.category"
+            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            icon="icons/chart_curve.png"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewRelativeScanPosOriginal"
+            name="Relative Scan Positions - Original"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            category="uk.ac.diamond.scisoft.ptychography.rcp.category"
+            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            icon="icons/chart_curve.png"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewRelativeScanPosCorrected"
+            name="Relative Scan Positions - Corrected"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            category="uk.ac.diamond.scisoft.ptychography.rcp.category"
+            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            icon="icons/chart_curve.png"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewRMSE"
+            name="RMSE"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            category="uk.ac.diamond.scisoft.ptychography.rcp.category"
+            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            icon="icons/chart_curve.png"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewDeadPixels"
+            name="Dead Pixels"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            category="uk.ac.diamond.scisoft.ptychography.rcp.category"
+            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            icon="icons/chart_curve.png"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewRecordedDiffPattern"
+            name="Recorded Diffraction Pattern"
+            restorable="true">
+      </view>
+      <view
+            allowMultiple="false"
+            category="uk.ac.diamond.scisoft.ptychography.rcp.category"
+            class="uk.ac.diamond.scisoft.analysis.rcp.views.PlotView"
+            icon="icons/chart_curve.png"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.plotViewDiffPatternEstimate"
+            name="Diffraction Pattern Estimate"
+            restorable="true">
+      </view>
+      <category
+            id="uk.ac.diamond.scisoft.ptychography.rcp.category"
+            name="Ptychography">
+      </category>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="uk.ac.diamond.scisoft.analysis.rcp.preferences.root"
+            class="uk.ac.diamond.scisoft.ptychography.rcp.preference.PtychoPreferencePage"
+            id="uk.ac.diamond.scisoft.ptychography.rcp.ptychoPreferencePage"
+            name="Ptychography preferences">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="uk.ac.diamond.scisoft.ptychography.rcp.preference.PtychoPreferenceInitializer">
+      </initializer>
+   </extension>
+   <!-- comment out for now until the ptychography perspective is fully done-->
+   <!--
+   <extension
+         point="org.eclipse.ui.intro.configExtension">
+      <configExtension
+            configId="org.dawnsci.intro.universalConfig"
+            content="intro/introContribution.xml">
+      </configExtension>
+   </extension>
+	-->
+</plugin>

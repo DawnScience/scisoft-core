@@ -578,6 +578,10 @@ class Test(unittest.TestCase):
         self.checkitems([[1,2], [2,3], [3,4]], np.column_stack((a, b)))
         self.checkitems([[1,2, 0, 1, 2], [2,3, 3, 4, 5], [3,4, 6, 7, 8]], np.column_stack((a, b, np.arange(9).reshape(3,3))))
 
+        a = np.array([[]]*6).T
+        b = np.array([1,2,3,4,5,6])
+        self.checkitems([[1,2,3,4,5,6]], np.vstack((a,b)))
+
     def testMeshGrid(self):
         print('Meshgrid testing')
         x = np.arange(0, 6, 1)

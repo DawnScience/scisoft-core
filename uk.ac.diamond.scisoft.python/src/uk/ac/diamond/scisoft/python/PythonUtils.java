@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.python;
 
 import java.lang.reflect.Array;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,11 +20,13 @@ import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.BroadcastUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.InterfaceUtils;
 import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.dataset.ObjectDataset;
+import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
 import org.python.core.Py;
@@ -397,5 +400,38 @@ public class PythonUtils {
 			return LongDataset.class;
 		}
 		return InterfaceUtils.getInterfaceFromClass(1, cls);
+	}
+
+	/**
+	 * Concatenate the set of datasets along given axis
+	 * @param as datasets
+	 * @param axis to concatenate along
+	 * @return concatenated dataset
+	 */
+	public static Dataset concatenate(final IDataset[] as, int axis) {
+		return DatasetUtils.concatenate(convertToFirst(as), axis);
+	}
+
+	private static final Dataset[] convertToFirst(final IDataset[] as) {
+		if (as == null) {
+			return null;
+		}
+
+		int n = as.length;
+		Class<? extends Dataset> ac = InterfaceUtils.getInterface(as[0]);
+		for (int i = 1; i < n; i++) {
+			ac = InterfaceUtils.getBestInterface(ac, InterfaceUtils.getInterface(as[i]));
+		}
+
+		// TODO remove this shape checking once January can concatenate zero-sized datasets
+		List<Dataset> ds = new ArrayList<>();
+		for (int i = 0; i < n; i++) {
+			Dataset ai = DatasetUtils.cast(ac, as[i]);
+			if (!ShapeUtils.isZeroSize(ai.getShapeRef())) {
+				ds.add(ai);
+			}
+		}
+
+		return ds.toArray(new Dataset[ds.size()]);
 	}
 }

@@ -290,6 +290,12 @@ class Test(unittest.TestCase):
         tds = np.array([np.arange(5), np.arange(5)+5])
         self.checkitems(np.arange(10).reshape(2,5), tds)
 
+        tds = np.array([])
+        self.assertEqual((0,), tds)
+
+        tds = np.array([[]]*6)
+        self.assertEqual((6,0), tds.shape)
+
     def testLongArray(self):
         print("test long array")
         if isjava:

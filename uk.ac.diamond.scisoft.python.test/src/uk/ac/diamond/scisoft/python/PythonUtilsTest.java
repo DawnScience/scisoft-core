@@ -275,4 +275,19 @@ public class PythonUtilsTest {
 	private void checkSame(Object o) {
 		assertEquals(InterfaceUtils.getInterface(o), PythonUtils.getInterfaceFromObject(o));
 	}
+
+	@Test
+	public void testConcatenate() {
+		// cope with different types and zero-sized shape
+		Dataset[] ins = {DatasetFactory.ones(IntegerDataset.class, 2, 4), DatasetFactory.ones(1, 4)};
+		Dataset out = PythonUtils.concatenate(ins, 0);
+		assertEquals(DoubleDataset.class, out.getClass());
+		assertArrayEquals(new int[] {3, 4}, out.getShapeRef());
+
+		ins[0] = ins[1];
+		ins[1] = DatasetFactory.ones(IntegerDataset.class, 0, 4);
+		out = PythonUtils.concatenate(ins, 0);
+		assertEquals(DoubleDataset.class, out.getClass());
+		assertArrayEquals(new int[] {1, 4}, out.getShapeRef());
+	}
 }

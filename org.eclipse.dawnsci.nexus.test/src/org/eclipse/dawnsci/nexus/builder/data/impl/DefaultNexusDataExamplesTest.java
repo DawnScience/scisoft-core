@@ -266,16 +266,16 @@ public class DefaultNexusDataExamplesTest {
 		dataBuilder.addAxisDevice(timePositioner, null, 0, 1);
 		
 		assertSignal(nxData, "det1");
-		assertAxes(nxData, "polar_angle.set", "frame_number", ".");
+		assertAxes(nxData, "polar_angle_set", "frame_number", ".");
 		assertShape(nxData, "det1", 50, 5, 1024);
 		assertTarget(nxData, "det1", nxRoot, "/entry/instrument/det1/data");
 		
-		assertIndices(nxData, "polar_angle.set", 0);
-		assertShape(nxData, "polar_angle.set", 50);
-		assertTarget(nxData, "polar_angle.set", nxRoot, "/entry/instrument/polar_angle/set");
-		assertIndices(nxData, "polar_angle.rbv", 0, 1);
-		assertShape(nxData, "polar_angle.rbv", 50, 5);
-		assertTarget(nxData, "polar_angle.rbv", nxRoot, "/entry/instrument/polar_angle/rbv");
+		assertIndices(nxData, "polar_angle_set", 0);
+		assertShape(nxData, "polar_angle_set", 50);
+		assertTarget(nxData, "polar_angle_set", nxRoot, "/entry/instrument/polar_angle/set");
+		assertIndices(nxData, "polar_angle_rbv", 0, 1);
+		assertShape(nxData, "polar_angle_rbv", 50, 5);
+		assertTarget(nxData, "polar_angle_rbv", nxRoot, "/entry/instrument/polar_angle/rbv");
 		
 		assertIndices(nxData, "frame_number", 1);
 		assertShape(nxData, "frame_number", 5);

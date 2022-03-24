@@ -41,7 +41,7 @@ plotting package:
    plots the given ``y`` value dataset or list of datasets against a ``x`` dataset or list of
    datasets (if given). If a single ``x`` dataset is given, then it used for all ``y`` datasets
    and if a list of ``x`` datasets is given then it used in a pairwise fashion with the
-   corresponding ``y`` datasets. Also ``None``s can be used for ``x`` datasets as placeholders
+   corresponding ``y`` datasets. Also ``None``\s can be used for ``x`` datasets as placeholders
    for plotting against index values of the corresponding ``y`` datasets.
    
 
@@ -264,7 +264,7 @@ can be obtained using the plotting package::
     # grab a GUI bean
     gb = dpl.getbean()
 
-By default, this function returns information as a ``bean'' from Plot 1 - use
+By default, this function returns information as a ``bean`` from Plot 1 - use
 the keyword argument ``name`` to obtain information from other named plot
 views. Again, the default view name can be changed with ``dpl.setdefname``.
 The GUI bean is a dictionary object with a set of possible keys listed in the

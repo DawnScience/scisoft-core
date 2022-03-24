@@ -122,24 +122,24 @@ class fitfunc(_absfn):
         except ValueError:
             raise ValueError("Problem with function '" + self.name + "' with params  " + self.parameterValues)
 
-    def residual(self, allvalues, data, weights, *coords):
+    def residual(self, allvalues, data, weight, *coords):
         '''Find residual as sum of squared differences of function and data
         
         Arguments:
         allvalues -- boolean, currently ignored
         data      -- used to subtract from evaluated function
-        weights   -- weighting for each squared difference, can be None
+        weight    -- weighting for each squared difference, can be None
         coords    -- coordinates over which the function is evaluated
         '''
         if len(coords) == 0: # workaround deprecated method
-            coords = (weights,)
-            weights = None
+            coords = (weight,)
+            weight = None
         try:
             l = [p for p in self.parameterValues]
             l.append([_sciwrap(c) for c in coords])
             l.append(self.args)
             d = self.func(*l)
-            return _dnp.residual(d, data, weights)
+            return _dnp.residual(d, data, weight)
         except ValueError:
             raise ValueError("Problem with function '" + self.name + "' with params  " + self.parameterValues)
 
@@ -173,33 +173,35 @@ class cfitfunc(_compfn):
                 vt += v
         return vt
 
-    def residual(self, allvalues, data, weights, coords):
+    def residual(self, allvalues, data, weight, coords):
         '''Find residual as sum of squared differences of function and data
         
         Arguments:
         allvalues -- boolean, currently ignored 
         data      -- used to subtract from evaluated function
-        weights   -- weighting for each squared difference, can be None
+        weight    -- weighting for each squared difference, can be None
         coords    -- coordinates over which the function is evaluated
         '''
         if len(coords) == 0: # workaround deprecated method
-            coords = (weights,)
-            weights = None
-        return _dnp.residual(self.calculateValues(coords), data, weights)
+            coords = (weight,)
+            weight = None
+        return _dnp.residual(self.calculateValues(coords), data, weight)
 
 
 class fitresult(object):
     '''This is used to contain results from a fit
     '''
-    def __init__(self, func, coords, data):
+    def __init__(self, func, coords, data, weight=None):
         '''Arguments:
-        func   -- function after fitting as occurred
-        coords -- coordinate(s)
-        data   -- scalar dataset that was fitted to
+        func    -- function after fitting as occurred
+        coords  -- coordinate(s)
+        data    -- scalar data that was fitted to
+        weight -- array used to weight residuals (it multiplies the squared differences between function and data)
         '''
         self.func = func
         self.coords = coords
         self.data = data
+        self.weight = weight
 
     def _calcdelta(self, coords):
         delta = 1.
@@ -231,26 +233,26 @@ class fitresult(object):
         '''
         return self.func.getNoOfParameters()
 
-    def makeplotdata(self, all=True):
+    def makeplotdata(self, all=True, log10=False):
         '''Make a list of datasets to plot
-        all   -- if True, then make datasets for all functions
+        all   -- if True, then make datasets for all constituent functions and difference
         '''
-        pdata = self.makefuncdata(all=all)
-        pdata.insert(0, self.data)
+        odata = self.makefuncdata(all=all)
+        odata.insert(0, self.data)
+        
+        pdata = [ _dnp.log10(_dnp.abs(p)) for p in odata ] if log10 else odata
+        if log10:
+            lomin = pdata[0].min() # crop to log10(data)
+            pdata = [ _dnp.maximum(p, lomin) for p in pdata ]
+
         if all:
-            offset = self.data.min() - ((self.data.max() - self.data.min()) / 5.0)
-            edata = self.data - pdata[1] + offset
-            edata.name = "Error value"
-            odata = _dnp.zeros_like(edata)
-            odata.fill(offset)
-            odata.name = "Error offset"
-            pdata.insert(2, odata)
-            pdata.insert(2, edata)
+            edata = self.data - odata[1]
+            pdata.append(edata)
         return pdata
 
     def makefuncdata(self, all=True):
         '''Make a list of datasets for composite fitting function and its components
-        all   -- if True, then make datasets for all contributing functions
+        all   -- if True, then make datasets for all constituent functions and difference
         '''
         nf = self.func.noOfFunctions
         coords = _jinput(self.coords)
@@ -266,13 +268,19 @@ class fitresult(object):
 
         return fdata
 
-    def plot(self, title=None, name=None, all=False):
+    def plot(self, title=None, name=None, all=False, log10=False):
         '''Plot fit as 1D
         title -- title of plot
         name  -- name of plot view to use (if None, use default name)
-        all   -- if True, then plot all
+        all   -- if True, then plot all constituent functions and difference
+        log10 -- if True, then take log10 of data and function (
         '''
-        _dnp.plot.line(self.coords[0], self.makeplotdata(all=all), title, name)
+        pd = self.makeplotdata(all=all, log10=log10)
+        if all:
+            ed = pd.pop()
+        _dnp.plot.line(self.coords[0], pd, title, name)
+        if all:
+            _dnp.plot.addline(self.coords[0], {('', 'right'):(ed, 'error')}, name)
 
     def _parameters(self):
         '''Array of all parameter values
@@ -313,12 +321,14 @@ class fitresult(object):
             p = [q for q in f.getParameterValues()]
             np = len(p)
             out += "    function '%s' has %d parameters = %s\n" % (f.name, np, p)
-            
+        out += "Residual: %g\n" % self.residual
         return out
 
 import inspect as _inspect
 
-def fit(func, coords, data, p0, bounds=[], args=None, ptol=1e-4, seed=None, optimizer="apache_nm"):
+ALL_OPTIMIZERS = ('simplex','genetic', 'gradient','apache_nm','apache_md','apache_cg')
+
+def fit(func, coords, data, p0, bounds=[], args=None, weight=None, ptol=1e-4, seed=None, optimizer="apache_nm"):
     '''
     Arguments:
     func      -- function (or list of functions)
@@ -326,13 +336,14 @@ def fit(func, coords, data, p0, bounds=[], args=None, ptol=1e-4, seed=None, opti
     data      -- data to fit
     p0        -- list of initial parameters
     bounds    -- list of parameter bounds, bounds are tuples of lower and upper values (any can be None)
-    args      -- extra arguments
+    args      -- extra arguments (for functions)
+    weight    -- dataset used to weight residuals (it multiplies the squared differences between function and data)
     ptol      -- parameter fit tolerance
     seed      -- seed value for genetic algorithm-based optimiser
     optimizer -- description of the optimizer to use, e.g. ['local','global','simplex','genetic',
                  'gradient','apache_nm','apache_md','apache_cg']
                  local and global are general settings, which point the one of the specific methods
-                 If any global methods are picked, the bounds argument must also be filled in.
+                 (Nelder Mead, Genetic). If any global methods are picked, the bounds argument must also be filled in.
     Returns:
     fitresult object
     '''
@@ -387,30 +398,31 @@ def fit(func, coords, data, p0, bounds=[], args=None, ptol=1e-4, seed=None, opti
 
     jcoords = [ __cvt_jobj(c, copy=False, force=True) for c in coords ]
     jdata = data._jdataset()
+    jweight = None if weight is None else weight._jdataset()
 
     # use the appropriate fitter for the task
     if optimizer == 'local':
-        _fitter.ApacheNelderMeadFit(jcoords, jdata, cfunc)
+        _fitter.ApacheNelderMeadFit(jcoords, jdata, jweight, cfunc)
     elif optimizer == 'global':
         if n_bounds == 0:
             print("Using a global optimizer with no bounds is unlikely to work, please use the bounds argument to narrow the search space")
-        _fitter.geneticFit(ptol, jcoords, jdata, cfunc)
+        _fitter.geneticFit(ptol, jcoords, jdata, jweight, cfunc)
     elif optimizer == 'simplex':
-        _fitter.simplexFit(ptol, jcoords, jdata, cfunc)
+        _fitter.simplexFit(ptol, jcoords, jdata, jweight, cfunc)
     elif optimizer == 'gradient':
-        _fitter.GDFit(ptol, jcoords, jdata, cfunc)
+        _fitter.GDFit(ptol, jcoords, jdata, jweight, cfunc)
     elif optimizer == 'apache_nm':
-        _fitter.ApacheNelderMeadFit(jcoords, jdata, cfunc)
+        _fitter.ApacheNelderMeadFit(jcoords, jdata, jweight, cfunc)
     elif optimizer == 'apache_md':
-        _fitter.ApacheMultiDirectionFit(jcoords, jdata, cfunc)
+        _fitter.ApacheMultiDirectionFit(jcoords, jdata, jweight, cfunc)
     elif optimizer == 'apache_cg':
-        _fitter.ApacheConjugateGradientFit(jcoords, jdata, cfunc)
+        _fitter.ApacheConjugateGradientFit(jcoords, jdata, jweight, cfunc)
     elif optimizer == 'genetic':
         if n_bounds == 0:
             print("Using a global optimizer with no bounds is unlikely to work, please use the bounds argument to narrow the search space")
-        _fitter.geneticFit(ptol, jcoords, jdata, cfunc)
+        _fitter.geneticFit(ptol, jcoords, jdata, jweight, cfunc)
 
-    return fitresult(cfunc, coords, data)
+    return fitresult(cfunc, coords, data, weight)
 
 # genfit = _genfit
 

@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.fitting;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
@@ -34,38 +35,79 @@ public class Fitter {
 	public static Long seed = null; 
 
 	public static void simplexFit(final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
-		simplexFit(simplexQuality, coords, yAxis, function);
+		simplexFit(simplexQuality, coords, yAxis, null, function);
 	}
-	
+
+	public static void simplexFit(final double quality, final Dataset[] coords, final Dataset yAxis, final Dataset weight, final IFunction function) throws Exception {
+		NelderMead opt = new NelderMead(quality);
+		if (weight != null) {
+			opt.setWeight(weight.cast(DoubleDataset.class));
+		}
+		opt.optimize(coords, yAxis, function);
+	}
+
 	public static void simplexFit(final double quality, final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
-		new NelderMead(quality).optimize(coords, yAxis, function);	
+		simplexFit(quality, coords, yAxis, null, function);
 	}
 
 	/**
-	 * Run the Apache Nelder mead fitter
+	 * Run the Apache Nelder Mead fitter
 	 * @param coords
 	 * @param yAxis
+	 * @param weight used to multiply squared differences to calculate residuals
 	 * @param function
 	 * @throws Exception
 	 */
+	public static void ApacheNelderMeadFit(final Dataset[] coords, final Dataset yAxis, final Dataset weight, final IFunction function) throws Exception {
+		ApacheOptimizer opt = new ApacheOptimizer(Optimizer.SIMPLEX_NM);
+		if (weight != null) {
+			opt.setWeight(weight.cast(DoubleDataset.class));
+		}
+		opt.optimize(coords, yAxis, function);
+	}
+
 	public static void ApacheNelderMeadFit(final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
-		new ApacheOptimizer(Optimizer.SIMPLEX_NM).optimize(coords, yAxis, function);
+		ApacheNelderMeadFit(coords, yAxis, null, function);
+	}
+
+	public static void ApacheMultiDirectionFit(final Dataset[] coords, final Dataset yAxis, final Dataset weight, final IFunction function) throws Exception {
+		ApacheOptimizer opt = new ApacheOptimizer(Optimizer.SIMPLEX_MD);
+		if (weight != null) {
+			opt.setWeight(weight.cast(DoubleDataset.class));
+		}
+		opt.optimize(coords, yAxis, function);
 	}
 
 	public static void ApacheMultiDirectionFit(final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
-		new ApacheOptimizer(Optimizer.SIMPLEX_MD).optimize(coords, yAxis, function);
+		ApacheMultiDirectionFit(coords, yAxis, null, function);
+	}
+
+	public static void ApacheConjugateGradientFit(final Dataset[] coords, final Dataset yAxis, final Dataset weight, final IFunction function) throws Exception {
+		ApacheOptimizer opt = new ApacheOptimizer(Optimizer.CONJUGATE_GRADIENT);
+		if (weight != null) {
+			opt.setWeight(weight.cast(DoubleDataset.class));
+		}
+		opt.optimize(coords, yAxis, function);
 	}
 
 	public static void ApacheConjugateGradientFit(final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
-		new ApacheOptimizer(Optimizer.CONJUGATE_GRADIENT).optimize(coords, yAxis, function);
+		ApacheConjugateGradientFit(coords, yAxis, null, function);
 	}
 
 	public static void GDFit(final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
-		GDFit(quality, coords, yAxis, function);
+		GDFit(quality, coords, yAxis, null, function);
+	}
+
+	public static void GDFit(final double quality, final Dataset[] coords, final Dataset yAxis, final Dataset weight, final IFunction function) throws Exception {
+		GradientDescent opt = new GradientDescent(quality);
+		if (weight != null) {
+			opt.setWeight(weight.cast(DoubleDataset.class));
+		}
+		opt.optimize(coords, yAxis, function);
 	}
 
 	public static void GDFit(final double quality, final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
-		new GradientDescent(quality).optimize(coords, yAxis, function);
+		GDFit(quality, coords, yAxis, null, function);
 	}
 
 	/**
@@ -76,7 +118,7 @@ public class Fitter {
 	 * @throws Exception 
 	 */
 	public static void geneticFit(final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
-		geneticFit(quality, coords, yAxis, function);
+		geneticFit(quality, coords, yAxis, null, function);
 	}
 
 	/**
@@ -84,11 +126,20 @@ public class Fitter {
 	 * @param quality
 	 * @param coords
 	 * @param yAxis
+	 * @param weight used to multiply squared differences to calculate residuals
 	 * @param function
 	 * @throws Exception 
 	 */
+	public static void geneticFit(final double quality, final Dataset[] coords, final Dataset yAxis, final Dataset weight, final IFunction function) throws Exception {
+		GeneticAlg opt = new GeneticAlg(quality, seed);
+		if (weight != null) {
+			opt.setWeight(weight.cast(DoubleDataset.class));
+		}
+		opt.optimize(coords, yAxis, function);
+	}
+
 	public static void geneticFit(final double quality, final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
-		new GeneticAlg(quality, seed).optimize(coords, yAxis, function);
+		geneticFit(quality, coords, yAxis, null, function);
 	}
 
 	/**
@@ -98,8 +149,16 @@ public class Fitter {
 	 * @param function
 	 * @throws Exception 
 	 */
+	public static void llsqFit(final Dataset[] coords, final Dataset yAxis, final Dataset weight, final IFunction function) throws Exception {
+		LeastSquares opt = new LeastSquares(0);
+		if (weight != null) {
+			opt.setWeight(weight.cast(DoubleDataset.class));
+		}
+		opt.optimize(coords, yAxis, function);
+	}
+
 	public static void llsqFit(final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
-		new LeastSquares(0).optimize(coords, yAxis, function);
+		llsqFit(coords, yAxis, null, function);
 	}
 
 	/**

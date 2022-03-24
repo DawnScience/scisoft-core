@@ -9,10 +9,16 @@
 
 package uk.ac.diamond.scisoft.analysis.fitting;
 
+import static org.junit.Assert.assertTrue;
+
+import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IndexIterator;
+import org.eclipse.january.dataset.Maths;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -23,13 +29,14 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Offset;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Quadratic;
+import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 
 public class FitterTest {
 	@BeforeClass
 	public static void setSeed() {
 		Fitter.seed = 12475L;
 	}
-	
+
 	@Test
 	public void testGaussianFit() {
 		double pos = 2.0;
@@ -166,5 +173,53 @@ public class FitterTest {
 		} catch (Exception e) {
 			Assert.fail("");
 		}
+	}
+
+	@Test
+	public void testI16Data() throws Exception {
+		IDataHolder dh = LoaderFactory.getData("testfiles/fit_data.dat");
+		Dataset x = DatasetUtils.convertToDataset(dh.getDataset(0));
+		Dataset y = DatasetUtils.convertToDataset(dh.getDataset(1));
+		// assume Poisson noise so rmse = sqrt(y) and therefore w = 1/e^2 = 1/|y|
+		Dataset w = Maths.reciprocal(Maths.abs(y));
+
+		Add ff = new Add();
+		ff.addFunction(new Gaussian());
+		ff.addFunction(new Offset());
+
+		double posn = 37.7;
+		double width = 0.008;
+		double area = 19500;
+		double base = y.min().doubleValue();
+		IParameter[] params = ff.getParameters();
+		params[0].setValue(posn);
+		params[0].setLimits(Math.max(x.min().doubleValue(), posn-2*width), Math.min(x.max().doubleValue(), posn+2*width));
+		params[1].setValue(width);
+		params[1].setLimits(0.2*width, 5*width);
+		params[2].setValue(area);
+		params[2].setLimits(0.2*area, 2*area);
+		params[3].setValue(base);
+		params[3].setLimits(0.2*base, 2*base);
+		System.out.println(ff);
+		double res = ff.residual(true, y, null, x);
+		System.out.printf("Initial residual = %g\n", res);
+		double resw = ff.residual(true, y, w, x);
+		System.out.printf("Initial weighted residual = %g\n", resw);
+		assertTrue(res >= resw); // as y >= 1
+
+		Fitter.geneticFit(1e-6, new Dataset[] {x}, y, ff);
+		res = ff.residual(true, y, null, x);
+		double offset = ff.getParameterValue(3);
+		System.out.println(res + " -> " + ff);
+
+		ff.setParameterValues(posn, width, area, base);
+		Fitter.geneticFit(1e-6, new Dataset[] {x}, y, w, ff);
+		resw = ff.residual(true, y, w, x);
+		System.out.println(resw + " -> " + ff);
+
+		assertTrue(res >= resw); // as y >= 1
+		// offset has increased as lower weight values on peak base allows
+		// fit to cross more of base
+		assertTrue(offset < ff.getParameterValue(3)); 
 	}
 }

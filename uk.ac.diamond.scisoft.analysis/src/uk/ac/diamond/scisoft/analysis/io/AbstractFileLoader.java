@@ -25,6 +25,8 @@ import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.io.ILazyLoader;
 import org.eclipse.january.io.IMetaLoader;
 import org.eclipse.january.metadata.IMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A class which can be extended when implementing IFileLoader
@@ -67,6 +69,8 @@ public abstract class AbstractFileLoader implements IFileLoader, IMetaLoader {
 	protected boolean loadLazily = false;
 
 	protected abstract void clearMetadata();
+
+	private static final Logger logger = LoggerFactory.getLogger(AbstractFileLoader.class);
 
 	public abstract DataHolder loadFile() throws ScanFileHolderException ;
 
@@ -148,6 +152,7 @@ public abstract class AbstractFileLoader implements IFileLoader, IMetaLoader {
 			if (holder != null) {
 				IDataset data = name == null ? holder.getDataset(0) : holder.getDataset(name);
 				if (data != null) {
+					logger.debug("Found cached {} in {}: {}", name, fileName, data);
 					return DatasetUtils.convertToDataset(data).getSliceView(slice);
 				}
 			}

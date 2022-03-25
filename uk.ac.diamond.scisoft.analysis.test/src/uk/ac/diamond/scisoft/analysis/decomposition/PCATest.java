@@ -9,13 +9,13 @@
 
 package uk.ac.diamond.scisoft.analysis.decomposition;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
-import org.junit.Assert;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
@@ -23,20 +23,13 @@ import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 public class PCATest {
 
 	@Test
-	public void test() {
-		IDataHolder dh;
-		try {
-			dh = LoaderFactory.getData("testfiles/iris.csv");
-			
-		} catch (Exception e) {
-			Assert.fail("Could not load test reduced data");
-			return;
-		}
-		
+	public void test() throws Exception {
+		IDataHolder dh = LoaderFactory.getData("testfiles/iris.csv");
+
 		IDataset[] ds = new IDataset[dh.size()];
 		
 		for (int i = 0 ; i < dh.size(); i++) {
-			ds[i] = dh.getDataset(i);
+			ds[i] = dh.getDataset(i).getSliceView();
 			ds[i].setShape(new int[]{1, ds[i].getShape()[0]});
 		}
 		

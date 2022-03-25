@@ -140,8 +140,8 @@ public class CSVLoader extends DatLoader {
 			return line;
 		}
 
-        createHeaders(header, line, name);		
-        
+		createHeaders(header, line, name);
+
 		return line;
 	}
 	

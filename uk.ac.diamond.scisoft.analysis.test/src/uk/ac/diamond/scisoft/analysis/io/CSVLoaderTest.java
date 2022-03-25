@@ -14,15 +14,21 @@ import static org.junit.Assert.assertEquals;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RunWith(Parameterized.class)
 public class CSVLoaderTest {
+	private static final Logger logger = LoggerFactory.getLogger(CSVLoaderTest.class);
+
 	@Parameters(name = "{index}: {0}")
 	public static Collection<Object> data() {
 		return Arrays.asList(
@@ -58,7 +64,6 @@ public class CSVLoaderTest {
 
 	@Test
 	public void testHeadercsv() throws Exception {
-		
 		final String testfile1 = "testfiles/iris.csv";
 		CSVLoader loader = new CSVLoader(testfile1);
 		loader.setLoadAllLazily(lazy);
@@ -70,8 +75,19 @@ public class CSVLoaderTest {
 		for (int i = 0 ; i < names.length; i++) {
 			assertEquals("col"+(i+1), names[i]);
 		}
-				
-		IDataset d0 = dh.getLazyDataset(names[0]).getSlice();
+		
+		ILazyDataset ld0 = dh.getLazyDataset(names[0]);
+		logger.trace("Dataset {}: {}", names[0], Arrays.toString(ld0.getShape()));
+		if (logger.isTraceEnabled()) {
+			IDataHolder lfh = LoaderFactory.fetchData(testfile1, true);
+			if (lfh != null) {
+				IDataset lfd0 = lfh.getDataset(names[0]);
+				if (lfd0 != null) {
+					logger.trace("Found in cache: {}", Arrays.toString(lfd0.getShape()));
+				}
+			}
+		}
+		IDataset d0 = ld0.getSlice();
 		double v0 = d0.getDouble(0);
 		double v1 = d0.getDouble(d0.getSize()-1);
 		assertEquals(5.1, v0,0.0000000000001);

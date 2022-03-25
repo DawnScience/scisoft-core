@@ -176,8 +176,8 @@ public class DatLoader extends AbstractFileLoader {
 					if (!loadLazily) {
 						final String[] values = line.split(getDelimiter());
 						if (columnIndex>-1 && name!=null) {
-						    final String value = values[columnIndex];
-						    vals.get(name).add(Utils.parseDouble(value.trim()));
+							final String value = values[columnIndex];
+							vals.get(name).add(Utils.parseDouble(value.trim()));
 						} else {
 							if (values.length != columns) {
 								throw new ScanFileHolderException("Data and header must be the same size!");

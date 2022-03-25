@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -408,7 +409,7 @@ public class LoaderFactory {
 					logger.error("There was not enough memory to load {}", path);
 					throw new ScanFileHolderException("Out of memory in loader factory", ome);
 				} catch (Throwable ne) {
-					logger.trace("Loader {} caused {}", loader, ne);
+					logger.trace("Loader {} caused", loader, ne);
 					continue;
 				}
 			}
@@ -490,7 +491,7 @@ public class LoaderFactory {
 			logger.error("There was not enough memory to load {}", path);
 			throw new ScanFileHolderException("Out of memory in loader factory", ome);
 		} catch (Throwable ne) {
-			logger.trace("Loader {} caused {}", loader, ne);
+			logger.trace("Loader {} caused", loader, ne);
 			throw new ScanFileHolderException("Loader error", ne);
 		}
 	}
@@ -501,6 +502,14 @@ public class LoaderFactory {
 	 * @param holder
 	 */
 	public static void cacheData(IDataHolder holder) {
+		if (logger.isTraceEnabled()) {
+			logger.trace("Caching {} ({} datasets)", holder.getFilePath(), holder.size());
+			StringBuilder bdr = new StringBuilder();
+			for (Entry<String, int[]> e: holder.getDatasetShapes().entrySet()) {
+				bdr.append(String.format("%n    %s: %s", e.getKey(), Arrays.toString(e.getValue())));
+			}
+			logger.trace(bdr.toString());
+		}
 		dataCache.cacheData(holder);
 	}
 
@@ -512,6 +521,14 @@ public class LoaderFactory {
 	 * @param imageNumber
 	 */
 	public static void cacheData(IDataHolder holder, int imageNumber) {
+		if (logger.isTraceEnabled()) {
+			logger.trace("Caching image {} in {}", imageNumber, holder.getFilePath());
+			StringBuilder bdr = new StringBuilder();
+			for (Entry<String, int[]> e: holder.getDatasetShapes().entrySet()) {
+				bdr.append(String.format("%n    %s: %s", e.getKey(), Arrays.toString(e.getValue())));
+			}
+			logger.trace(bdr.toString());
+		}
 		dataCache.cacheData(holder, imageNumber);
 	}
 
@@ -687,8 +704,7 @@ public class LoaderFactory {
 				dataCache.recordSoftReference(key, new DataHolder(meta));
 				return meta;
 			} catch (Throwable ne) {
-				//logger.trace("Cannot load nexus meta data", ne);
-				logger.trace("Loader {} caused {}", loader, ne);
+				logger.trace("Loader {} caused", loader, ne);
 				continue;
 			}
 		}

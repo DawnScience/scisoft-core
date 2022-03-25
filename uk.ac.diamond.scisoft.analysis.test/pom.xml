@@ -24,6 +24,26 @@
 						<!-- OSGI Service needs to be started first -->
 						<exclude>FunctionFactoryPluginTest</exclude>
 					</excludes>
+					<systemProperties>
+						<logback.configurationFile>${basedir}/src/logback-test.xml</logback.configurationFile>
+						<logback-root-level>TRACE</logback-root-level>
+						<logback.statusListenerClass>ch.qos.logback.core.status.OnConsoleStatusListener</logback.statusListenerClass>
+					</systemProperties>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<configuration>
+					<dependency-resolution>
+						<extraRequirements>
+							<requirement>
+								<type>eclipse-plugin</type>
+								<id>slf4j.api</id>
+								<versionRange>1.7.0</versionRange>
+							</requirement>
+						</extraRequirements>
+					</dependency-resolution>
 				</configuration>
 			</plugin>
 		</plugins>

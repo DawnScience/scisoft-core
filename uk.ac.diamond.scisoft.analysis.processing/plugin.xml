@@ -1780,6 +1780,16 @@
             model="org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel"
             name="RXES linear interpolation remap">
       </operation>
+      <operation
+            category="uk.ac.diamond.scisoft.analysis.processing.movingbeamoperations"
+            class="uk.ac.diamond.scisoft.analysis.processing.operations.movingbeam.SplitAndCalibrateFramesOperation"
+            description="Calibrate all the frames in a scan. The seed for the individual frames will be provided by a configured .json file, which will also point to motor axes that will be used to offset the seed for the starting calibration. "
+            icon="icons/MovingFrameRecalibrate.png"
+            id="uk.ac.diamond.scisoft.analysis.processing.operations.movingbeam.SplitAndCalibrateFramesOperation"
+            model="uk.ac.diamond.scisoft.analysis.processing.operations.movingbeam.SplitAndCalibrateFramesModel"
+            name="Calibrate Individual Frames"
+            visible="true">
+      </operation>
    </extension>
    <extension
          point="org.eclipse.dawnsci.analysis.classloader">

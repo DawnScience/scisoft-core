@@ -9,19 +9,27 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.movingbeam;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import javax.vecmath.Matrix4d;
+
+import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
 import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
+import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
+
+import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
+import uk.ac.diamond.scisoft.analysis.io.NexusHDF5Loader;
 
 /**
  * The cache stores information obtained from the calibration and the scan data as well as the IDiffractionMetadata loaded from the specified 
@@ -39,6 +47,7 @@ public abstract class AbstractMovingBeamMetadataCache {
 	protected Matrix4d transform = new Matrix4d();
 	protected String[] sourceAxesNames;
 	protected AxesMetadata axes;
+	public static String frameKeyPath = "/entry/diamond_scan/keys";
 	
 
 	
@@ -72,6 +81,26 @@ public abstract class AbstractMovingBeamMetadataCache {
 		return attr.getFirstElement();
 	}
 	
+	/**
+	 * construct the format for the path to the keys associated with a scan. If useNewFormat is true, the 
+	 * pathToKeys variable will have "diffraction" appended to it, else, the filePath will be used along with pathToKeys to construct
+	 * the correct keys path.  
+	 * @param filePath
+	 * @param pathToKeys
+	 * @param useNewFormat
+	 * @return
+	 */
+	protected static String buildFrameKeysPath(String filePath, String pathToKeys, boolean useNewFormat) {
+		
+		if (!pathToKeys.endsWith(Node.SEPARATOR)) pathToKeys+=Node.SEPARATOR;
+		if (useNewFormat) return pathToKeys +"diffraction";
+		
+		filePath = filePath.replace(".nxs", "");
+		String name = filePath.substring(filePath.lastIndexOf(File.separatorChar)+1); 
+		
+		return pathToKeys + name +"-diffraction.h5";
+	}
+	
 	
 	/**
 	 * Custom exception class used to wrap errors generated during initialisation of the {@link MovingBeamMetadataCache}
@@ -83,6 +112,33 @@ public abstract class AbstractMovingBeamMetadataCache {
 			super(error);
 		}
 	
+	}
+	
+	/** 
+	 * Lazily read all datasets from a scan and make them available from a DataHolder; 
+	 * @param file - path to the scan
+	 * @return DataHolder with lazy references to all datasets in the file.
+	 * @throws Exception
+	 */
+	public static IDataHolder loadScan(String file) throws Exception {
+		IFileLoader loader = LoaderFactory.getLoader(NexusHDF5Loader.class, file);
+		loader.setLoadMetadata(true);
+		loader.setLoadAllLazily(true);
+
+		return loader.loadFile(); 
+		
+	}
+	
+	/**
+	 * Set a transformation that will be applied to the raw motor positions of the source; the matrix has to be 4D 
+	 * @param transform
+	 */
+	protected void setTransform(Matrix4d transform) {
+		this.transform = transform;
+	}
+	
+	protected Matrix4d getTransform() {
+		return transform;
 	}
 	
 }

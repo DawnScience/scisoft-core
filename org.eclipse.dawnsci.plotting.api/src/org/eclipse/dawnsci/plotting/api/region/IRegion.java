@@ -205,6 +205,7 @@ public interface IRegion {
 		POLYGON("Polygon",         ColorConstants.cyan),
 		PERIMETERBOX("Perimeter box", ColorConstants.gray),
 		GRID("Grid",               ColorConstants.lightGray),
+		CENTERED_GRID("CGrid",     ColorConstants.lightGray),
 		CIRCLE("Circle",           darkYellow),
 		CIRCLEFIT("Circle fit",    darkYellow),
 		SECTOR("Sector",           ColorConstants.red),

@@ -1715,6 +1715,7 @@
             name="General Detector Error - Scaled">
       </operation>
       <operation
+      		category="uk.ac.diamond.scisoft.analysis.processing.movingbeamoperations"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.MovingBeamAzimuthalPixelIntegrationOperation"
             icon="icons/MovingPowderIntegration.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.MovingBeamAzimuthalPixelIntegrationOperation"
@@ -1722,6 +1723,7 @@
             name="Moving Beam Azimuthal Integration">
       </operation>
       <operation
+      		category="uk.ac.diamond.scisoft.analysis.processing.movingbeamoperations"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.MovingBeamRadialPixelIntegrationOperation"
             icon="icons/MovingPowderIntegrationRadial.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.MovingBeamRadialPixelIntegrationOperation"
@@ -1729,6 +1731,7 @@
             name="Moving Beam Radial Integration">
       </operation>
       <operation
+      		category="uk.ac.diamond.scisoft.analysis.processing.movingbeamoperations"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.powder.MovingBeamCakePixelIntgrationOperation"
             icon="icons/MovingPowderCake.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.powder.MovingBeamCakePixelIntgrationOperation"
@@ -1743,18 +1746,20 @@
             category="uk.ac.diamond.scisoft.analysis.processing.movingbeamoperations"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.movingbeam.DiffractionMetadataImportOperation"
             description="Read detector geometry associated with a calibrated position as part of a moving beam analysis pipeline"
+            icon="icons/MovingBeamImport.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.movingbeam.DiffractionMetadataImportOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.movingbeam.DiffractionMetadataImportModel"
-            name="Import Detector Calibration"
+            name="Moving Beam Import Detector Calibration"
             visible="true">
       </operation>
       <operation
             category="uk.ac.diamond.scisoft.analysis.processing.movingbeamoperations"
             class="uk.ac.diamond.scisoft.analysis.processing.operations.movingbeam.NearestDiffractionMetadataImportOperation"
             description="Use a series of reference calibrations to provide the nearest diffraction geometry description for scan points"
+            icon="icons/MovingBeamImport.png"
             id="uk.ac.diamond.scisoft.analysis.processing.operations.movingbeam.NearestDiffractionMetadataImportOperation"
             model="uk.ac.diamond.scisoft.analysis.processing.operations.movingbeam.NearestDiffractionMetadataImportModel"
-            name="Nearest Calibration Import Model"
+            name="Moving Beam Nearest Calibration Import Model"
             visible="true">
       </operation>
       <operation

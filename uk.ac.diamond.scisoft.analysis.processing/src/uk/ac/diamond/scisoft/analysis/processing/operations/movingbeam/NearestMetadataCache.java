@@ -23,6 +23,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 
@@ -34,7 +35,7 @@ import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionCalibrationReader;
  * scan axes from the current scan, the scan axes from the calibration and the unique 
  * keys associated with the calibration scan. The cache assumes that
  * recalibrated frames have been named based on their 
- * unique keys-the path to which is harcoded in {@link AbstractMovingBeamMetadataCache} 
+ * unique keys-the path to which is hardcoded in {@link AbstractMovingBeamMetadataCache} 
  * <p>
  * When the metadata is retrieved from the cache it does a nearest neighbour
  * comparison to determine where to pull the cached metadata from in the list.
@@ -82,20 +83,19 @@ public class NearestMetadataCache extends AbstractMovingBeamMetadataCache {
 		cachedSourceXPositions = scanData.getLazyDataset(sourceAxesNames[0]);
 		cachedSourceYPositions = scanData.getLazyDataset(sourceAxesNames[1]);
 		
-		//TODO the frame keys path might have to accommodate older scanning -but would only affect a handful of users
-		//would just add this to the model  
+		
 		String frameKeys = buildFrameKeysPath(model.getFilePath(), model.getFrameKeyPath(),true);
+		ILazyDataset frameKeysTmp = cData.getLazyDataset(frameKeys);
+		if (frameKeysTmp == null) {
+			frameKeys = buildFrameKeysPath(model.getFilePath(), model.getFrameKeyPath(),false);
+			frameKeysTmp = cData.getLazyDataset(frameKeys);
+			if (frameKeysTmp == null) frameKeys = model.getFrameKeyPath();
+		}
 		
 		// get flat views of the calibrated position datasets and the frame keys
 		calibrationX = DatasetUtils.sliceAndConvertLazyDataset(cData.getLazyDataset(sourceAxesNames[0])).flatten();
 		calibrationY = DatasetUtils.sliceAndConvertLazyDataset(cData.getLazyDataset(sourceAxesNames[1])).flatten();
-		
 		calibrationFrameKeys = DatasetUtils.sliceAndConvertLazyDataset(cData.getLazyDataset(frameKeys)).flatten();
-		if (calibrationFrameKeys == null) {
-			frameKeys = buildFrameKeysPath(model.getFilePath(), model.getFrameKeyPath(),false);
-			calibrationFrameKeys = DatasetUtils.sliceAndConvertLazyDataset(cData.getLazyDataset(frameKeys)).flatten();
-		}
-		
 		
 		if (Objects.isNull(calibrationX) || Objects.isNull(calibrationY)) {
 			throw new CacheConstructionException(

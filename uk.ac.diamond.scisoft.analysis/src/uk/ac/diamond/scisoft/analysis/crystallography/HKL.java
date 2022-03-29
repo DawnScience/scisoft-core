@@ -31,7 +31,7 @@ import org.eclipse.dawnsci.analysis.api.unit.UnitUtils;
  * user of the data to decide what happens with it.
  */
 public class HKL implements Serializable, Cloneable {
-
+	private static final long serialVersionUID = -4585781018606648754L;
 	private int[] hkl;
 	private String ringName;
 

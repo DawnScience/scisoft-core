@@ -551,11 +551,11 @@ public class HDF5Utils {
 
 				try {
 					if (type.isVariableLength) {
-						H5.H5Dread_VLStrings(did, tid, msid, sid, HDF5Constants.H5P_DEFAULT, (Object[]) odata);
+						H5.H5Dread_VLStrings(did, ntid, msid, sid, HDF5Constants.H5P_DEFAULT, (Object[]) odata);
 					} else if (StringDataset.class.isAssignableFrom(type.clazz)) {
-						H5.H5Dread_string(did, tid, msid, sid, HDF5Constants.H5P_DEFAULT, (String[]) odata);
+						H5.H5Dread_string(did, ntid, msid, sid, HDF5Constants.H5P_DEFAULT, (String[]) odata);
 					} else {
-						H5.H5Dread(did, tid, msid, sid, HDF5Constants.H5P_DEFAULT, odata);
+						H5.H5Dread(did, ntid, msid, sid, HDF5Constants.H5P_DEFAULT, odata);
 					}
 					if (extend) {
 						data = DatasetUtils.makeUnsigned(data, true);

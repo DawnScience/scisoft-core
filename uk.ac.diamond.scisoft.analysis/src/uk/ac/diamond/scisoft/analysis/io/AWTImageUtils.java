@@ -34,8 +34,6 @@ import javax.media.jai.RasterFactory;
 import javax.media.jai.TiledImage;
 
 import org.eclipse.january.dataset.ByteDataset;
-import org.eclipse.january.dataset.CompoundByteDataset;
-import org.eclipse.january.dataset.CompoundDataset;
 import org.eclipse.january.dataset.CompoundShortDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -77,15 +75,13 @@ public class AWTImageUtils {
 		if (clazz.equals(RGBByteDataset.class) || clazz.equals(RGBDataset.class)) {
 			DataBuffer db = r.getDataBuffer();
 			if (db instanceof DataBufferByte) {
+				data[0] = DatasetFactory.createFromObject(clazz, ((DataBufferByte) db).getData(), height, width);
 				if (blueFirst) {
-					CompoundDataset tmp = DatasetFactory.createFromObject(3, CompoundByteDataset.class, ((DataBufferByte) db).getData(), height, width);
-					data[0] = new RGBByteDataset(tmp.getElementsView(2), tmp.getElementsView(1), tmp.getElementsView(0));
-				} else {
-					data[0] = DatasetFactory.createFromObject(clazz, ((DataBufferByte) db).getData(), height, width);
+					switchElements((RGBByteDataset) data[0]);
 				}
 			} else if (db instanceof DataBufferShort) {
 				if (blueFirst) {
-					CompoundDataset tmp = DatasetFactory.createFromObject(3, CompoundShortDataset.class, ((DataBufferShort) db).getData(), height, width);
+					CompoundShortDataset tmp = DatasetFactory.createFromObject(3, CompoundShortDataset.class, ((DataBufferShort) db).getData(), height, width);
 					data[0] = new RGBDataset(tmp.getElementsView(2), tmp.getElementsView(1), tmp.getElementsView(0));
 				} else {
 					data[0] = DatasetFactory.createFromObject(clazz, ((DataBufferShort) db).getData(), height, width);
@@ -106,6 +102,17 @@ public class AWTImageUtils {
 				tmp = DatasetFactory.createFromObject(clazz, r.getSamples(0, 0, width, height, i, (int[]) null), height, width);
 			}
 			data[i] = tmp;
+		}
+	}
+
+	// just to avoid RGBByteDataset constructor as it's noisy
+	private static void switchElements(RGBByteDataset bgr) {
+		byte[] bd = bgr.getData();
+		for (int i = 0, imax = bd.length; i < imax; i += 3) {
+			int k = i + 2;
+			byte b = bd[i]; // switch blue and red elements
+			bd[i] = bd[k];
+			bd[k] = b;
 		}
 	}
 

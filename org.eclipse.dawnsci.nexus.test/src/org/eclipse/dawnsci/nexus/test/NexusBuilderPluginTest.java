@@ -11,9 +11,9 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.nexus.test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
 
 import org.eclipse.dawnsci.nexus.NexusTestServiceHolder;
 import org.eclipse.dawnsci.nexus.ServiceHolder;

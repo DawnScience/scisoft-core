@@ -122,7 +122,8 @@ public class MillerSpaceMapper {
 	private Slice imagesSlice;
 	private int imagesNumber;
 
-	public boolean warnExposureZero;
+	private boolean warnExposureZero;
+	private boolean correctPolarization;
 
 	private static String getOutputName(int rank) {
 		switch (rank) {
@@ -904,7 +905,9 @@ public class MillerSpaceMapper {
 
 					if (convertToOutputCoords(v, dv, pos)) {
 						double correction = detector.calculateSolidAngle(x, py);
-						correction *= calculatePolarizationFactor(polnQ, polnU, beam, reference, mapping.getPositionVector(), mapping.getCosineScatteringAngle());
+						if (correctPolarization) {
+							correction *= calculatePolarizationFactor(polnQ, polnU, beam, reference, mapping.getPositionVector(), mapping.getCosineScatteringAngle());
+						}
 						value *= tFactor / correction;
 
 						if (reduceToNonZeroBB) {
@@ -1488,6 +1491,8 @@ public class MillerSpaceMapper {
 		if (imagesSlice.getStart() == null) {
 			imagesSlice.setStart(0);
 		}
+
+		correctPolarization = bean.isCorrectPolarization();
 
 		if (!complete) {
 			return null;

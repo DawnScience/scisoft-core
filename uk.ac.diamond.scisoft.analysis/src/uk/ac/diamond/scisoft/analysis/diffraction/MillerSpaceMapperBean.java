@@ -47,6 +47,8 @@ public class MillerSpaceMapperBean implements Cloneable {
 	private int[][] pixelIndexes; // to used calculate coordinates at given pixels indexes
 	private String images;
 
+	private boolean correctPolarization = true;
+
 	public enum OutputMode {
 		/**
 		 * Volume in Miller space
@@ -525,6 +527,18 @@ public class MillerSpaceMapperBean implements Cloneable {
 		return images;
 	}
 
+	/**
+	 * Set true to correct for polarization factor caused by transformation from laboratory frame to scattering plane
+	 * @param correctPolarization
+	 */
+	public void setCorrectPolarization(boolean correctPolarization) {
+		this.correctPolarization = correctPolarization;
+	}
+
+	public boolean isCorrectPolarization() {
+		return correctPolarization;
+	}
+
 	@Override
 	protected MillerSpaceMapperBean clone() {
 		MillerSpaceMapperBean copy = null;
@@ -733,4 +747,5 @@ public class MillerSpaceMapperBean implements Cloneable {
 		bean.setListMillerEntries(false);
 		return bean;
 	}
+
 }

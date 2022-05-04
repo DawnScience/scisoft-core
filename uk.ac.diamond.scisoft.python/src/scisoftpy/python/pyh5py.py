@@ -135,14 +135,14 @@ class _lazydataset(object):
 
 
 class SDS(_dataset):
-    def __init__(self, dataset, attrs={}, parent=None):
+    def __init__(self, dataset, attrs={}, parent=None, warn=True):
         '''Make a SDS
         
         dataset can be a ndarray or HDF5Dataset when created from a file
         '''
         if not isinstance(dataset, (_lazydataset, ndarray, h5py.Dataset)):
             dataset = asarray(dataset)
-        _dataset.__init__(self, dataset, attrs=attrs, parent=parent)
+        _dataset.__init__(self, dataset, attrs=attrs, parent=parent, warn=warn)
 #        self.__data = dataset
 #        if not isinstance(dataset, ndarray):
 #            self.__shape = tuple(dataset.shape)
@@ -169,6 +169,7 @@ class HDF5Loader(object):
         if fh is None:
             raise io_exception("No tree found")
 
+        self.warn = warn
         # convert tree to own tree
         pool = dict()
         t = self._copynode(pool, fh)
@@ -179,11 +180,11 @@ class HDF5Loader(object):
     def _mkgroup(self, node, attrs, parent):
         if parent is None:
             return _tree(node.filename, attrs)
-        return _group(attrs, parent)
+        return _group(attrs, parent, self.warn)
 
     def _mkdataset(self, node, attrs, link, parent):
         d = _lazydataset(node, isinstance(link, h5py.ExternalLink))
-        return _dataset(d, attrs=attrs, parent=parent)
+        return _dataset(d, attrs=attrs, parent=parent, warn=self.warn)
 
     def _copynode(self, pool, node, link=None, parent=None):
         if node.id in pool:
@@ -213,6 +214,9 @@ class HDF5Loader(object):
             for k in node.keys():
                 n = node.get(k)
                 l = node.get(k, getlink=True)
+                if n is None:
+                    print('Missing node "' + k + '" with link', l)
+                    continue
                 try:
                     nodes.append((k, self._copynode(pool, n, l, g)))
                 except Exception as e:
@@ -239,18 +243,18 @@ class NXLoader(HDF5Loader):
             if not isinstance(cls, str):
                 cls = str(cls, 'utf-8')
             if cls in _nx.NX_CLASSES:
-                g = _nx.NX_CLASSES[cls](attrs, parent)
+                g = _nx.NX_CLASSES[cls](attrs, parent, self.warn)
             else:
                 print("Unknown Nexus class: %s" % cls)
                 g = super(NXLoader, self)._mkgroup(node, attrs, parent)
         elif node.name == '/':
-            g = _nx.NXroot(node.filename, attrs)
+            g = _nx.NXroot(node.filename, attrs, warn=self.warn)
         else:
-            g = _nx.NXobject(attrs, parent)
+            g = _nx.NXobject(attrs, parent, self.warn)
 
         return g
 
     def _mkdataset(self, dataset, attrs, link, parent):
         d = _lazydataset(dataset, isinstance(link, h5py.ExternalLink))
-        return SDS(d, attrs, parent)
+        return SDS(d, attrs, parent, self.warn)
 

@@ -35,8 +35,8 @@ class NXobject(_group):
     '''
     NXobject is the base object of NeXus and is a group
     '''
-    def __init__(self, attrs={}, parent=None):
-        _group.__init__(self, attrs, parent)
+    def __init__(self, attrs={}, parent=None, warn=True):
+        _group.__init__(self, attrs, parent, warn)
         self.nxname = self.__class__.__name__
 
     def init_group(self, nodes):
@@ -50,8 +50,8 @@ class NXroot(_tree):
     
     See the NXobject documentation for more details.
     '''
-    def __init__(self, filename, attrs={}, native=None):
-        _tree.__init__(self, filename, attrs, native)
+    def __init__(self, filename, attrs={}, native=None, warn=True):
+        _tree.__init__(self, filename, attrs, native, warn)
         self.nxname = self.__class__.__name__
 
     def init_group(self, nodes):

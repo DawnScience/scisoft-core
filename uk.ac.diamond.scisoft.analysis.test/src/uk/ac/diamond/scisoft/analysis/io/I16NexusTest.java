@@ -116,7 +116,8 @@ public class I16NexusTest {
 		String volPath = "path/to/vol/data";
 		Dataset axes = DatasetFactory.createRange(5);
 		axes.setName("axes");
-		MillerSpaceMapper.saveOutput(dstPath, bean, "/group0/data0", volPath, v, w, axes);
+		String[] aUnits = {"angstrom^-1"};
+		MillerSpaceMapper.saveOutput(dstPath, bean, "/group0/data0", volPath, v, w, aUnits, axes);
 		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/process/date"));
 		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/process/parameters"));
 		Assert.assertTrue(HDF5Utils.hasDataset(dstPath, "/processed/process/program"));

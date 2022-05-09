@@ -34,6 +34,7 @@ import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironmen
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
+import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
@@ -707,7 +708,7 @@ public class MillerSpaceMapper {
 		writeDefaultAttributes(output, spaceName);
 		HDF5Utils.writeDataset(output, coordsPath, indexes);
 		HDF5Utils.writeDataset(output, coordsPath, coords);
-		saveAxesAndAttributes(output, coordsPath, coords.getName(), null);
+		saveAxesAndAttributes(output, coordsPath, coords.getName(), null, null);
 		writeProcessingParameters(output, bean, coordsPath);
 		linkOriginalData(output, bean.getInputs(), entryPath);
 	}
@@ -1830,7 +1831,7 @@ public class MillerSpaceMapper {
 				writeDefaultAttributes(output, spaceName);
 			}
 
-			saveOutput(output, bean, entryPath, outputPath, map, weight, axes);
+			saveOutput(output, bean, entryPath, outputPath, map, weight, pixelMapping.getAxesUnits(), axes);
 			logger.info("Saving took {}ms", System.currentTimeMillis() - start);
 		} catch (IllegalArgumentException | OutOfMemoryError e) {
 			logger.warn("There is not enough memory (for output shape = {}) to do this all at once!", Arrays.toString(vShape));
@@ -1892,7 +1893,7 @@ public class MillerSpaceMapper {
 
 			mapToVolumeAndSaveInParts(trees, allIters, lazyVolume, lazyWeight, parts);
 
-			saveAxesAndAttributes(output, outputPath, outputName, new String[] {WEIGHT_NAME}, axes);
+			saveAxesAndAttributes(output, outputPath, outputName, new String[] {WEIGHT_NAME}, pixelMapping.getAxesUnits(), axes);
 			writeProcessingParameters(output, bean, entryPath);
 			linkOriginalData(output, bean.getInputs(), entryPath);
 		}
@@ -1984,7 +1985,7 @@ public class MillerSpaceMapper {
 	@Deprecated
 	public static void saveVolume(String file, MillerSpaceMapperBean bean, String entryPath, String volPath, Dataset v,
 			Dataset w, Dataset... axes) throws ScanFileHolderException {
-		saveOutput(file, bean, entryPath, volPath, v, w, axes);
+		saveOutput(file, bean, entryPath, volPath, v, w, null, axes);
 	}
 
 	/**
@@ -1995,18 +1996,19 @@ public class MillerSpaceMapper {
 	 * @param oPath name for NXdata
 	 * @param o output dataset
 	 * @param w weight dataset
-	 * @param axes axes Datasets
+	 * @param axesUnits axes units
+	 * @param axes axes datasets
 	 * @throws ScanFileHolderException
 	 */
 	public static void saveOutput(String file, MillerSpaceMapperBean bean, String entryPath, String oPath, Dataset o,
-			Dataset w, Dataset... axes) throws ScanFileHolderException {
+			Dataset w, String[] axesUnits, Dataset... axes) throws ScanFileHolderException {
 
 		String oName = getOutputName(o.getRank());
 		o.setName(oName);
 		w.setName(WEIGHT_NAME);
 		HDF5Utils.writeDataset(file, oPath, o);
 		HDF5Utils.writeDataset(file, oPath, w);
-		saveAxesAndAttributes(file, oPath, oName, new String[] {WEIGHT_NAME}, axes);
+		saveAxesAndAttributes(file, oPath, oName, new String[] {WEIGHT_NAME}, axesUnits, axes);
 		writeProcessingParameters(file, bean, entryPath);
 		linkOriginalData(file, bean.getInputs(), entryPath);
 	}
@@ -2089,13 +2091,22 @@ public class MillerSpaceMapper {
 		HDF5Utils.writeDataset(file, parentPath, dataset);
 	}
 
-	public static void saveAxesAndAttributes(String file, String dataPath, String dataName, String[] auxSignals, Dataset... axes)
+	public static void saveAxesAndAttributes(String file, String dataPath, String dataName, String[] auxSignals, String[] axesUnits, Dataset... axes)
 			throws ScanFileHolderException {
 		String[] axisNames = new String[axes.length];
 		for (int i = 0; i < axes.length; i++) {
 			Dataset x = axes[i];
-			axisNames[i] = x.getName();
+			String xName = x.getName();
+			axisNames[i] = xName;
 			HDF5Utils.writeDataset(file, dataPath, x);
+			if (axesUnits != null && i < axesUnits.length) {
+				String units = axesUnits[i];
+				if (units != null) {
+					Dataset u = DatasetFactory.createFromObject(units);
+					u.setName(NexusConstants.UNITS);
+					HDF5Utils.writeAttributes(file, dataPath + Node.SEPARATOR + xName, false, u);
+				}
+			}
 		}
 
 		List<Dataset> attrs = new ArrayList<>();

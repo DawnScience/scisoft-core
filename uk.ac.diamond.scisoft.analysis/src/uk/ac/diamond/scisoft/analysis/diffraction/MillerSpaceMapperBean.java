@@ -111,6 +111,10 @@ public class MillerSpaceMapperBean implements Cloneable {
 		 */
 		Line_Theta(1, true),
 		/**
+		 * Line in q-space (2 x theta is scattering angle, also in degrees)
+		 */
+		Line_2Theta(1, true),
+		/**
 		 * Line in q-space (X)
 		 */
 		Line_QX(1, true),

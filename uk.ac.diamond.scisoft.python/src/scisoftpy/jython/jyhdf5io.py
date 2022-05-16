@@ -68,7 +68,7 @@ def _toslice(rank, key):
 
 
 class SDS(_hdataset):
-    def __init__(self, dataset, attrs, parent):
+    def __init__(self, dataset, attrs, parent, warn):
         if isinstance(dataset, _jdnode):
             if dataset.isString() or not dataset.isSupported():
                 dataset = asarray(dataset.getString())
@@ -92,7 +92,7 @@ class SDS(_hdataset):
             maxshape = None
             self.rank = dataset.ndim
 
-        _hdataset.__init__(self, dataset, shape, dtype, maxshape, attrs, parent)
+        _hdataset.__init__(self, dataset, shape, dtype, maxshape, attrs, parent, warn)
 
     @_wrapout
     def __getitem__(self, key):
@@ -117,7 +117,7 @@ class HDF5Loader(object):
 
     def load(self, warn=True):
         tree = self._load_tree()
-
+        self.warn = warn
         if tree is None:
             raise io_exception("No tree found")
 
@@ -144,10 +144,10 @@ class HDF5Loader(object):
         if isinstance(parent, _jtree):
             src = parent.getFilename() if isinstance(parent, _jtreefile) else parent.getSourceURI()
             return _tree(src, attrs, parent)
-        return _group(attrs, parent)
+        return _group(attrs, parent, self.warn)
 
     def _mkdataset(self, dataset, attrs, parent):
-        return SDS(dataset, attrs, parent)
+        return SDS(dataset, attrs, parent, self.warn)
 
     def _copynode(self, pool, link, parent=None):
         node = link.getDestination()

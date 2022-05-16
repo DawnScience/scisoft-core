@@ -20,10 +20,10 @@
 from scisoftpy.dictutils import ListDict as _ldict
 
 class HDF5node(object):
-    def __init__(self, attrs={}, parent=None):
+    def __init__(self, attrs={}, parent=None, warn=True):
         '''
         '''
-        super(HDF5node, self).__setattr__('attrs', _ldict(attrs, lock=True))
+        super(HDF5node, self).__setattr__('attrs', _ldict(attrs, lock=True, warn=warn))
         super(HDF5node, self).__setattr__('__parent', parent)
 
     def _getparent(self):
@@ -33,10 +33,10 @@ class HDF5node(object):
         super(HDF5node, self).__setattr__('__parent', parent)
 
 class HDF5dataset(HDF5node):
-    def __init__(self, dataset, shape=None, dtype=None, maxshape=None, attrs={}, parent=None):
+    def __init__(self, dataset, shape=None, dtype=None, maxshape=None, attrs={}, parent=None, warn=True):
         '''
         '''
-        HDF5node.__init__(self, attrs, parent)
+        HDF5node.__init__(self, attrs, parent, warn)
         self.__data = dataset
 
         if shape is None:
@@ -79,9 +79,9 @@ class HDF5dataset(HDF5node):
         return self.__data
 
 class HDF5group(_ldict, HDF5node):
-    def __init__(self, attrs={}, parent=None):
-        _ldict.__init__(self)
-        HDF5node.__init__(self, attrs, parent)
+    def __init__(self, attrs={}, parent=None, warn=True):
+        _ldict.__init__(self, warn=warn)
+        HDF5node.__init__(self, attrs, parent, warn)
 
     def __getitem__(self, key):
         if isinstance(key, str):
@@ -159,8 +159,8 @@ class HDF5group(_ldict, HDF5node):
         pass
 
 class HDF5tree(HDF5group):
-    def __init__(self, filename, attrs={}, native=None):
-        HDF5group.__init__(self, attrs)
+    def __init__(self, filename, attrs={}, native=None, warn=True):
+        HDF5group.__init__(self, attrs, warn=warn)
         super(HDF5tree, self).__setattr__('__filename', filename)
         self.__native = native
 

@@ -359,8 +359,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 				 * (can check in operation metadata)
 				 */
 				double[] scaleOffset;
-				if (model.isMode2D()) 
-				{
+				if (model.isMode2D()) {
 					if (notValid(darkOffset)) {
 						scaleOffset = findDarkDataScaleAndOffset(crop, smoothedDarkData[r], r, roi);
 					} else {
@@ -385,7 +384,6 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 					Dataset diff = Maths.subtract(profile, darkFit);
 					auxData.add(ProcessingUtils.createNamedDataset(diff, "profile_diff_" + r));
 					displayData.add(darkFit);
-
 				} else {
 					Dataset profile = crop.mean(1, true);
 					cleanUpProfile(profile);
@@ -593,7 +591,10 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		if (in.getRank() == 1) { // don't save 2D images as it duplicates input
 			auxData.add(ProcessingUtils.createNamedDataset(in, "bg_input_cleaned"));
 		}
-		fitFunction("Exception in dark data fit", f, clippedBackground, in);
+		double residuals = fitFunction("Exception in dark data fit", f, clippedBackground, in);
+		residuals /= in.getSize();
+		auxData.add(ProcessingUtils.createNamedDataset(residuals, "dark_fit_mse_" + r));
+
 		System.err.println("Fit: " + f + " cf " + offset);
 		log.append("Dark image fit: %s", f);
 		return f.getParameterValues();

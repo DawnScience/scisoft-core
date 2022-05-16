@@ -29,16 +29,16 @@ class NXLoader(_h5loader):
         if cls is not None:
             cls = cls.getFirstElement()
             if cls in _nx.NX_CLASSES:
-                g = _nx.NX_CLASSES[cls](attrs, parent)
+                g = _nx.NX_CLASSES[cls](attrs, parent, self.warn)
             else:
                 if cls:
                     print("Unknown Nexus class: %s" % cls)
                 g = super(NXLoader, self)._mkgroup(name, link, attrs, parent)
         elif name == '/' or isinstance(parent, _jtree):
             src = parent.getFilename() if isinstance(parent, _jtreefile) else parent.getSourceURI()
-            g = _nx.NXroot(src, attrs, parent)
+            g = _nx.NXroot(src, attrs, parent, self.warn)
         else:
-            g = _nx.NXobject(attrs, parent)
+            g = _nx.NXobject(attrs, parent, self.warn)
 
         return g
 

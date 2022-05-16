@@ -36,6 +36,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import si.uom.NonSI;
+import si.uom.SI;
 import tec.units.indriya.unit.MetricPrefix;
 import uk.ac.diamond.scisoft.analysis.diffraction.MatrixUtils;
 
@@ -282,6 +283,10 @@ public class NexusTreeUtilsTest {
 		Assert.assertEquals(NonSI.ELECTRON_VOLT, NexusTreeUtils.parseUnit("eV"));
 		Assert.assertEquals(MetricPrefix.KILO(NonSI.ELECTRON_VOLT), NexusTreeUtils.parseUnit("keV"));
 		Assert.assertEquals(NonSI.DEGREE_ANGLE, NexusTreeUtils.parseUnit("deg"));
+		Assert.assertEquals(NonSI.DEGREE_ANGLE, NexusTreeUtils.parseUnit("degree"));
+		Assert.assertEquals(NonSI.ANGSTROM.inverse(), NexusTreeUtils.parseUnit("angstrom^-1"));
+		Assert.assertEquals(NonSI.ANGSTROM.inverse(), NexusTreeUtils.parseUnit("/angstrom"));
+		Assert.assertEquals(SI.RADIAN, NexusTreeUtils.parseUnit("rad"));
 	}
 
 	@Test

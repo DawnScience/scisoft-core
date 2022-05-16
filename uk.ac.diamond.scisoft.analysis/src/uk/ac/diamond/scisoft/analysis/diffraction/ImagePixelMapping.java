@@ -70,6 +70,11 @@ public interface ImagePixelMapping {
 	 */
 	public String[] getAxesName();
 
+	/**
+	 * @return units to use for axes (array can have null entries)
+	 */
+	public String[] getAxesUnits();
+
 	static abstract class BaseMapping implements ImagePixelMapping {
 		protected QSpace qSpace;
 		protected DetectorProperties detector;
@@ -92,7 +97,7 @@ public interface ImagePixelMapping {
 
 		@Override
 		public DetectorProperties getDetectorProperties() {
-			return qSpace.getDetectorProperties();
+			return detector;
 		}
 
 		@Override
@@ -111,11 +116,16 @@ public interface ImagePixelMapping {
 		}
 	}
 
+	static final String INVERSE_ANGSTROM = "/angstrom";
+	static final String DEGREE = "deg";
+	static final String RADIAN = "rad";
+
 	/**
 	 * Mapping to QxQyQz
 	 */
 	public static class QxyzMapping extends BaseMapping {
-		private static final String[] Q_XYZ_AXES = { "x-axis", "y-axis", "z-axis" };
+		protected static final String[] Q_XYZ_AXES = { "x-axis", "y-axis", "z-axis" };
+		protected static final String[] Q_XYZ_UNITS = { INVERSE_ANGSTROM, INVERSE_ANGSTROM, INVERSE_ANGSTROM };
 
 		public QxyzMapping() {
 			p = new Vector3d();
@@ -146,6 +156,11 @@ public interface ImagePixelMapping {
 		}
 
 		@Override
+		public String[] getAxesUnits() {
+			return Q_XYZ_UNITS;
+		}
+
+		@Override
 		public QxyzMapping clone() {
 			QxyzMapping c = new QxyzMapping();
 			c.qSpace = qSpace;
@@ -161,6 +176,7 @@ public interface ImagePixelMapping {
 	 */
 	public static class HKLMapping extends QxyzMapping {
 		protected static final String[] HKL_AXES = { "h-axis", "k-axis", "l-axis" };
+		protected static final String[] HKL_UNITS = { null, null, null };
 
 		public HKLMapping() {
 			super();
@@ -207,6 +223,7 @@ public interface ImagePixelMapping {
 	 */
 	public static class Qpp2DMapping extends QxyzMapping {
 		private static final String[] Q_PP_AXES = { "q-per-axis", "q-par-axis" };
+		private static final String[] Q_PP_UNITS = { Q_XYZ_UNITS[0], Q_XYZ_UNITS[1] };
 
 		public Qpp2DMapping() {
 			super();
@@ -230,6 +247,11 @@ public interface ImagePixelMapping {
 		}
 
 		@Override
+		public String[] getAxesUnits() {
+			return Q_PP_UNITS;
+		}
+
+		@Override
 		public Qpp2DMapping clone() {
 			Qpp2DMapping c = new Qpp2DMapping();
 			c.qSpace = qSpace;
@@ -244,7 +266,7 @@ public interface ImagePixelMapping {
 	 * Mapping to Q2D by permuting coordinates
 	 */
 	public static class QPermuted2DMapping extends QxyzMapping {
-		static final String[] Q_XYZ_AXES = { "x-axis", "y-axis", "z-axis" };
+		private static final String[] Q_2D_UNITS = { Q_XYZ_UNITS[0], Q_XYZ_UNITS[1] };
 		private final String[] axesNames;
 		private DimChoice mode;
 
@@ -304,6 +326,11 @@ public interface ImagePixelMapping {
 		}
 
 		@Override
+		public String[] getAxesUnits() {
+			return Q_2D_UNITS;
+		}
+
+		@Override
 		public QPermuted2DMapping clone() {
 			QPermuted2DMapping c = new QPermuted2DMapping(mode);
 			c.qSpace = qSpace;
@@ -319,6 +346,7 @@ public interface ImagePixelMapping {
 	 */
 	public static class QPolarMapping extends QxyzMapping {
 		private static final String[] Q_POL_AXES = { "q-par-axis", "phi-axis", "qz-axis" };
+		private static final String[] Q_POL_UNITS = { Q_XYZ_UNITS[0], RADIAN, Q_XYZ_UNITS[2] };
 
 		public QPolarMapping() {
 			super();
@@ -338,6 +366,11 @@ public interface ImagePixelMapping {
 		@Override
 		public String[] getAxesName() {
 			return Q_POL_AXES;
+		}
+
+		@Override
+		public String[] getAxesUnits() {
+			return Q_POL_UNITS;
 		}
 
 		@Override
@@ -395,6 +428,7 @@ public interface ImagePixelMapping {
 	 * Mapping to HKL2D by permuting coordinates
 	 */
 	public static class HKLPermuted2DMapping extends HKLMapping {
+		private static final String[] HKL_2D_UNITS = { HKL_UNITS[0], HKL_UNITS[1] };
 		private final String[] axesNames;
 		private DimChoice mode;
 
@@ -457,6 +491,11 @@ public interface ImagePixelMapping {
 		}
 
 		@Override
+		public String[] getAxesUnits() {
+			return HKL_2D_UNITS;
+		}
+
+		@Override
 		public HKLPermuted2DMapping clone() {
 			HKLPermuted2DMapping c = new HKLPermuted2DMapping(mode);
 			c.qSpace = qSpace;
@@ -471,24 +510,11 @@ public interface ImagePixelMapping {
 	 * Mapping to Qtheta
 	 */
 	public static class QThetaMapping extends QxyzMapping {
-		private static final String[] Q_Theta_AXES = { "q-theta-axis", };
-		private DetectorProperties detector;
-		private Vector3d beam;
+		private static final String[] Q_Theta_AXES = { "q-theta-axis" };
+		private static final String[] Q_Theta_UNITS = { "radians" };
 
 		public QThetaMapping() {
 			super();
-		}
-
-		@Override
-		public void setSpaces(QSpace qSpace, MillerSpace mSpace) {
-			this.qSpace = qSpace;
-			detector = qSpace.getDetectorProperties();
-			beam = detector.getBeamVector();
-		}
-
-		@Override
-		public DetectorProperties getDetectorProperties() {
-			return detector;
 		}
 
 		/**
@@ -511,8 +537,57 @@ public interface ImagePixelMapping {
 		}
 
 		@Override
+		public String[] getAxesUnits() {
+			return Q_Theta_UNITS;
+		}
+
+		@Override
 		public QThetaMapping clone() {
 			QThetaMapping c = new QThetaMapping();
+			c.detector = detector;
+			c.beam = beam;
+			return c;
+		}
+	}
+
+	/**
+	 * Mapping to Q2theta (in degrees)
+	 */
+	public static class Q2ThetaMapping extends QxyzMapping {
+		private static final String[] Q_2Theta_AXES = { "q-2theta-axis" };
+		private static final String[] Q_2Theta_UNITS = { DEGREE };
+
+		public Q2ThetaMapping() {
+			super();
+		}
+
+		/**
+		 * Returns 2-theta component (in degrees)
+		 * @param q
+		 */
+		@Override
+		public void map(double x, double y, Vector3d q) {
+			detector.pixelPosition(x, y, p);
+			cos = beam.dot(p) / p.length();
+
+			q.x = Math.toDegrees(Math.acos(cos)); // FIXME missing Jacobian???
+			q.y = 0;
+			q.z = 0;
+		}
+
+		@Override
+		public String[] getAxesName() {
+			return Q_2Theta_AXES;
+		}
+
+		@Override
+		public String[] getAxesUnits() {
+			return Q_2Theta_UNITS;
+		}
+
+		@Override
+		public Q2ThetaMapping clone() {
+			Q2ThetaMapping c = new Q2ThetaMapping();
 			c.detector = detector;
 			c.beam = beam;
 			return c;
@@ -523,7 +598,7 @@ public interface ImagePixelMapping {
 	 * Mapping to Q1D by permuting coordinates
 	 */
 	public static class Q1DMapping extends QxyzMapping {
-		static final String[] Q_XYZ_AXES = { "x-axis", "y-axis", "z-axis" };
+		private static final String[] Q_1D_UNITS = { Q_XYZ_UNITS[0] };
 		private final String[] axesNames;
 		private DimChoice mode;
 
@@ -583,6 +658,11 @@ public interface ImagePixelMapping {
 		}
 
 		@Override
+		public String[] getAxesUnits() {
+			return Q_1D_UNITS;
+		}
+
+		@Override
 		public Q1DMapping clone() {
 			Q1DMapping c = new Q1DMapping(mode);
 			c.qSpace = qSpace;
@@ -597,6 +677,7 @@ public interface ImagePixelMapping {
 	 * Mapping to HKL1D by permuting coordinates
 	 */
 	public static class HKL1DMapping extends HKLMapping {
+		private static final String[] HKL_1D_UNITS = { HKL_UNITS[0] };
 		private final String[] axesNames;
 		private DimChoice mode;
 
@@ -659,6 +740,11 @@ public interface ImagePixelMapping {
 		}
 
 		@Override
+		public String[] getAxesUnits() {
+			return HKL_1D_UNITS;
+		}
+
+		@Override
 		public HKL1DMapping clone() {
 			HKL1DMapping c = new HKL1DMapping(mode);
 			c.qSpace = qSpace;
@@ -684,6 +770,8 @@ public interface ImagePixelMapping {
 			return new HKL1DMapping(DimChoice.Z);
 		case Line_Theta:
 			return new QThetaMapping();
+		case Line_2Theta:
+			return new Q2ThetaMapping();
 		case Line_QX:
 			return new Q1DMapping(DimChoice.X);
 		case Line_QY:

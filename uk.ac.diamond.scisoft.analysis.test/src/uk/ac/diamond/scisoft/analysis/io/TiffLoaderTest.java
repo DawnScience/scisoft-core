@@ -9,6 +9,8 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
@@ -20,6 +22,8 @@ import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IntegerDataset;
+import org.eclipse.january.dataset.RGBByteDataset;
+import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.dataset.Slice;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -79,7 +83,15 @@ public class TiffLoaderTest {
 	 */
 	@Test
 	public void testLoadFile12Bit() throws ScanFileHolderException {
-		new TIFFImageLoader(testfile2).loadFile();
+		TIFFImageLoader ldr = new TIFFImageLoader(testfile2);
+		DataHolder dh = ldr.loadFile();
+		Dataset c = dh.getDataset(0);
+		assertTrue(c instanceof ShortDataset);
+
+		ldr.setLoadAllLazily(false);
+		DataHolder dhb = ldr.loadFile();
+		Dataset d = dhb.getDataset(0);
+		TestUtils.assertDatasetEquals(c, d);
 	}
 
 	/**
@@ -179,4 +191,21 @@ public class TiffLoaderTest {
 		TestUtils.assertDatasetEquals(e, a, 1e-14, 1e-14);
 	}
 
+	/**
+	 * This method load a coloured JPEG from a fixed location
+	 * 
+	 * @throws Exception if the test fails
+	 */
+	@Test
+	public void testColourSupport() throws Exception {
+		TIFFImageLoader loader = new TIFFImageLoader("testfiles/images/testrgb.tiff");
+		DataHolder dha = loader.loadFile();
+		Dataset c = dha.getDataset(0);
+		assertTrue(c instanceof RGBByteDataset);
+
+		loader.setLoadAllLazily(false);
+		DataHolder dhb = loader.loadFile();
+		Dataset d = dhb.getDataset(0);
+		TestUtils.assertDatasetEquals(c, d);
+	}
 }

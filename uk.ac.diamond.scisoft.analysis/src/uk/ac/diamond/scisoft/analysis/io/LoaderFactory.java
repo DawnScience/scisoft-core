@@ -165,6 +165,9 @@ public class LoaderFactory {
 		registerLoaderWithException("zip", XMapLoader.class);
 		registerLoaderWithException("edf", PilatusEdfLoader.class);
 		registerLoaderWithException("pgm", PgmLoader.class);
+		registerLoaderWithException("pnm", JavaImageLoader.class);
+		registerLoaderWithException("ppm", JavaImageLoader.class);
+		registerLoaderWithException("pbm", JavaImageLoader.class);
 		registerLoaderWithException("f2d", Fit2DLoader.class);
 		registerLoaderWithException("msk", Fit2DMaskLoader.class);
 		registerLoaderWithException("mib", MerlinLoader.class);

@@ -21,6 +21,7 @@ import org.eclipse.january.asserts.TestUtils;
 import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Maths;
@@ -256,4 +257,24 @@ public class PNGTest {
 		Dataset d = dhb.getDataset(0);
 		TestUtils.assertDatasetEquals(c, d);
 	}
+
+	/**
+	 * This method load a coloured PNG from a fixed location
+	 * 
+	 * @throws Exception if the test fails
+	 */
+	@Test
+	public void testColourLazySupport() throws Exception {
+		PNGLoader loader = new PNGLoader(TestFileFolder + "testrgb.png");
+		loader.setLoadAllLazily(true);
+		DataHolder dha = loader.loadFile();
+		Dataset c = DatasetUtils.sliceAndConvertLazyDataset(dha.getLazyDataset(0));
+		assertTrue(c instanceof RGBByteDataset);
+
+		loader.setLoadAllLazily(false);
+		DataHolder dhb = loader.loadFile();
+		Dataset d = dhb.getDataset(0);
+		TestUtils.assertDatasetEquals(c, d);
+	}
+
 }

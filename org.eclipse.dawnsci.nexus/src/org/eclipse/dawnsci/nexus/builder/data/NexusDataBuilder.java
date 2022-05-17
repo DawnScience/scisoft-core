@@ -25,18 +25,6 @@ import org.eclipse.dawnsci.nexus.impl.NXdataImpl;
  */
 public interface NexusDataBuilder {
 	
-	public static final String NO_DEFAULT_AXIS_PLACEHOLDER = ".";
-
-	public static final String ATTR_NAME_SIGNAL = "signal";
-
-	public static final String ATTR_NAME_AXES = "axes";
-	
-	public static final String ATTR_NAME_TARGET = "target";
-	
-	public static final String ATTR_NAME_LONG_NAME = "long_name";
-
-	public static final String ATTR_SUFFIX_INDICES = "_indices";
-
 	/**
 	 * Returns the wrapped {@link NXdata} object. This can be used if client
 	 * code needs to modify the {@link NXdata} group in a custom way.

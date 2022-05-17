@@ -11,10 +11,10 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.nexus.test.utilities;
 
-import static org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder.ATTR_NAME_AXES;
-import static org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder.ATTR_NAME_SIGNAL;
-import static org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder.ATTR_NAME_TARGET;
-import static org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder.ATTR_SUFFIX_INDICES;
+import static org.eclipse.dawnsci.nexus.NexusConstants.DATA_AXES;
+import static org.eclipse.dawnsci.nexus.NexusConstants.DATA_INDICES_SUFFIX;
+import static org.eclipse.dawnsci.nexus.NexusConstants.DATA_SIGNAL;
+import static org.eclipse.dawnsci.nexus.NexusConstants.TARGET;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -46,6 +46,7 @@ import org.eclipse.dawnsci.nexus.NXdata;
 import org.eclipse.dawnsci.nexus.NXentry;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NXroot;
+import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.BooleanDataset;
 import org.eclipse.january.dataset.ByteDataset;
@@ -128,11 +129,11 @@ public class NexusAssert {
 		// check number of attributes same (i.e. actualGroup has no additional attributes)
 		// The additional attribute "target" is allowed.
 		int expectedNumAttributes = expectedGroup.getNumberOfAttributes();
-		if (expectedGroup.containsAttribute(ATTR_NAME_TARGET)) {
-			if (!actualGroup.containsAttribute(ATTR_NAME_TARGET)) {
+		if (expectedGroup.containsAttribute(TARGET)) {
+			if (!actualGroup.containsAttribute(TARGET)) {
 				expectedNumAttributes--;
 			}
-		} else if (actualGroup.containsAttribute(ATTR_NAME_TARGET)) {
+		} else if (actualGroup.containsAttribute(TARGET)) {
 			expectedNumAttributes++;
 		}
 		assertEquals(path, expectedNumAttributes, actualGroup.getNumberOfAttributes());
@@ -144,7 +145,7 @@ public class NexusAssert {
 			String attrPath = path + Node.ATTRIBUTE + attributeName;
 			Attribute expectedAttr = expectedGroup.getAttribute(attributeName);
 			Attribute actualAttr = actualGroup.getAttribute(attributeName);
-			if (!expectedAttr.getName().equals(ATTR_NAME_TARGET) && !expectedAttr.getName().equals("file_name")) {
+			if (!expectedAttr.getName().equals(TARGET) && !expectedAttr.getName().equals("file_name")) {
 				assertNotNull(attrPath, actualAttr);
 				assertAttributesEquals(attrPath, expectedAttr, actualAttr);
 			}
@@ -164,11 +165,11 @@ public class NexusAssert {
 		// check number of attributes same (i.e. actualDataNode has no additional attributes)
 		// additional attribute "target" is allowed, this is added automatically when saving the file
 		int expectedNumAttributes = expectedDataNode.getNumberOfAttributes();
-		if (expectedDataNode.containsAttribute(ATTR_NAME_TARGET)) {
-			if (!actualDataNode.containsAttribute(ATTR_NAME_TARGET)) {
+		if (expectedDataNode.containsAttribute(TARGET)) {
+			if (!actualDataNode.containsAttribute(TARGET)) {
 				expectedNumAttributes--;
 			}
-		} else if (actualDataNode.containsAttribute(ATTR_NAME_TARGET)) {
+		} else if (actualDataNode.containsAttribute(TARGET)) {
 			expectedNumAttributes++;
 		}
 		assertEquals(expectedNumAttributes, actualDataNode.getNumberOfAttributes());
@@ -180,7 +181,7 @@ public class NexusAssert {
 			String attrPath = path + Node.ATTRIBUTE + attributeName;
 			Attribute expectedAttr = expectedDataNode.getAttribute(attributeName);
 			Attribute actualAttr = actualDataNode.getAttribute(attributeName);
-			if (!expectedAttr.getName().equals(ATTR_NAME_TARGET)) {
+			if (!expectedAttr.getName().equals(TARGET)) {
 				assertNotNull(attrPath, expectedAttr);
 				assertAttributesEquals(attrPath, expectedAttr, actualAttr);
 			}
@@ -286,7 +287,7 @@ public class NexusAssert {
 	}
 	
 	public static void assertSignal(NXdata nxData, String expectedSignalFieldName) {
-		Attribute signalAttr = nxData.getAttribute(ATTR_NAME_SIGNAL);
+		Attribute signalAttr = nxData.getAttribute(DATA_SIGNAL);
 		assertThat(signalAttr, is(notNullValue()));
 		assertThat(signalAttr.getRank(), is(0));
 		assertThat(signalAttr.getFirstElement(), is(equalTo(expectedSignalFieldName)));
@@ -296,7 +297,7 @@ public class NexusAssert {
 	public static void assertAxes(NXdata nxData, String... expectedValues) {
 		if (expectedValues.length == 0)
 			return; // axes not written if no axes to write (a scalar signal field)
-		Attribute axesAttr = nxData.getAttribute(ATTR_NAME_AXES);
+		Attribute axesAttr = nxData.getAttribute(DATA_AXES);
 		assertThat(axesAttr, is(notNullValue()));
 		assertThat(axesAttr.getRank(), is(1));
 		assertThat(axesAttr.getShape()[0], is(expectedValues.length));
@@ -314,7 +315,7 @@ public class NexusAssert {
 	}
 
 	public static void assertIndices(NXdata nxData, String axisName, int... indices) {
-		Attribute indicesAttr = nxData.getAttribute(axisName + ATTR_SUFFIX_INDICES);
+		Attribute indicesAttr = nxData.getAttribute(axisName + DATA_INDICES_SUFFIX);
 		assertThat(indicesAttr, is(notNullValue()));
 		assertThat(indicesAttr.getRank(), is(1));
 		assertThat(indicesAttr.getShape()[0], is(indices.length));
@@ -327,7 +328,7 @@ public class NexusAssert {
 	public static void assertTarget(NXdata nxData, String destName, NXroot nxRoot, String targetPath) {
 		DataNode dataNode = nxData.getDataNode(destName);
 		assertThat(dataNode, is(notNullValue()));
-		Attribute targetAttr = dataNode.getAttribute(ATTR_NAME_TARGET);
+		Attribute targetAttr = dataNode.getAttribute(TARGET);
 		assertThat(targetAttr, is(notNullValue()));
 		assertThat(targetAttr.getSize(), is(1));
 		assertThat(targetAttr.getFirstElement(), is(equalTo(targetPath)));

@@ -12,6 +12,12 @@
 
 package org.eclipse.dawnsci.nexus.builder.data.impl;
 
+import static org.eclipse.dawnsci.nexus.NexusConstants.DATA_AXES;
+import static org.eclipse.dawnsci.nexus.NexusConstants.DATA_AXESEMPTY;
+import static org.eclipse.dawnsci.nexus.NexusConstants.DATA_INDICES_SUFFIX;
+import static org.eclipse.dawnsci.nexus.NexusConstants.DATA_SIGNAL;
+import static org.eclipse.dawnsci.nexus.NexusConstants.TARGET;
+
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.stream.IntStream;
@@ -25,6 +31,7 @@ import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.nexus.NXdata;
 import org.eclipse.dawnsci.nexus.NXentry;
 import org.eclipse.dawnsci.nexus.NXobject;
+import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder;
@@ -208,9 +215,9 @@ public class DefaultNexusDataBuilder extends AbstractNexusDataBuilder implements
 		addFieldNode(destinationFieldName, fieldNode);
 		
 		// create the @target attribute if not already present
-		if (targetPrefix != null && !fieldNode.containsAttribute(ATTR_NAME_TARGET)) {
+		if (targetPrefix != null && !fieldNode.containsAttribute(TARGET)) {
 			fieldNode.addAttribute(TreeFactory.createAttribute(
-					ATTR_NAME_TARGET, targetPrefix + GroupNode.SEPARATOR + sourceFieldName));
+					TARGET, targetPrefix + Node.SEPARATOR + sourceFieldName));
 		}
 		// create the @long_name attribute?
 //		if (!dataNode.containsAttribute(ATTR_NAME_LONG_NAME)) { // TODO check this
@@ -262,7 +269,7 @@ public class DefaultNexusDataBuilder extends AbstractNexusDataBuilder implements
 		signalFieldSourceName = primaryDataDevice.getSignalFieldSourceName();
 		signalFieldDestName = primaryDataDevice.getDestinationFieldName(signalFieldSourceName);
 		
-		final Attribute signalAttribute = TreeFactory.createAttribute(ATTR_NAME_SIGNAL, signalFieldDestName, false);
+		final Attribute signalAttribute = TreeFactory.createAttribute(DATA_SIGNAL, signalFieldDestName, false);
 		nxData.addAttribute(signalAttribute);
 		
 		// create the 'axes' attribute of the NXgroup and set each axis name
@@ -271,9 +278,9 @@ public class DefaultNexusDataBuilder extends AbstractNexusDataBuilder implements
 		signalFieldRank = primaryDataDevice.getFieldRank(signalFieldSourceName);
 		if (signalFieldRank > 0) {
 			dimensionDefaultAxisNames = DatasetFactory.zeros(StringDataset.class, signalFieldRank);
-			dimensionDefaultAxisNames.fill(NO_DEFAULT_AXIS_PLACEHOLDER);
+			dimensionDefaultAxisNames.fill(DATA_AXESEMPTY);
 		
-			final Attribute axesAttribute = TreeFactory.createAttribute(ATTR_NAME_AXES, dimensionDefaultAxisNames, false);
+			final Attribute axesAttribute = TreeFactory.createAttribute(DATA_AXES, dimensionDefaultAxisNames, false);
 			nxData.addAttribute(axesAttribute);
 		}
 	}
@@ -300,7 +307,7 @@ public class DefaultNexusDataBuilder extends AbstractNexusDataBuilder implements
 		}
 		
 		// create the {axisname}_indices attribute of the NXdata group for this axis device
-		final String attrName = destinationFieldName + ATTR_SUFFIX_INDICES;
+		final String attrName = destinationFieldName + DATA_INDICES_SUFFIX;
 		final IntegerDataset indicesDataset = DatasetFactory.zeros(IntegerDataset.class, fieldRank);
 
 		// set the dimension mappings into the dataset, if not set use 0, 1, 2, etc...

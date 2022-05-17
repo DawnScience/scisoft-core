@@ -186,4 +186,11 @@ public class NexusConstants {
 	 */
 	@Deprecated
 	public static final String DATA_PRIMARY = "primary";
+	
+	/**
+	 * Attribute for nodes that are linked to within the same nexus file.
+	 */
+	public static final String TARGET  = "target";
+	
+
 }

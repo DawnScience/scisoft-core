@@ -20,12 +20,12 @@ def check_and_update(project_file, target_file=None, output_file_or_dir=None):
     if target_file is None:
         workspace_path = project_path.parent.parent.parent
         target_file = workspace_path / TP_FILE
-        logging.info(f'Found target file: {target_file}')
+        logging.info('Found target file: %s', target_file)
     else:
         target_file = Path(target_file).resolve()
 
     if not target_file.is_file():
-        raise ValueError(f'{project_path} is not a file')
+        raise ValueError(f'{target_file} is not a file')
 
     project_tree, plugins = get_plugins(project_file)
     if get_and_update_versions(plugins, target_file):
@@ -41,11 +41,11 @@ def check_and_update(project_file, target_file=None, output_file_or_dir=None):
             else:
                 output_file = output_file_or_dir
             if output_file.is_dir():
-                raise ValueError(f'Output file |{output_file}| should not be a directory')
+                raise ValueError('Output file |%s| should not be a directory', output_file)
             elif output_file.exists():
-                logging.warning(f'Overwriting output file {output_file}')
+                logging.warning('Overwriting output file %s', output_file)
             out = str(output_file)
-        project_tree.write(out)
+        project_tree.write(out, encoding='unicode')
     else:
         print('Nothing updated')
 
@@ -55,35 +55,38 @@ def get_plugins(project_file):
     for t in xml.iter('pydev_pathproperty'):
         if t.attrib['name'] == PROP_NAME:
             for px in t.iter('path'):
-                logging.debug(f'Found path {px}')
+                logging.debug('Found path %s', px)
                 pt = px.text
                 i = pt.find('plugins/')
                 if i > 0:
                     i += 8
                     j = pt.find('_', i)
                     k = pt.find('.jar', j)
-                    logging.debug(f'Adding plugin {pt[i:j]} with {pt[j+1:k]}')
-                    plugins[pt[i:j]] = (px, pt[j+1:k]) # set name,version
+                    name, version = pt[i:j], pt[j+1:k]
+                    logging.debug('Adding plugin %s with %s', name, version)
+                    plugins[name] = (px, version)
     return xml, plugins
 
 def get_and_update_versions(plugins, target_file):
     txml = ET.parse(str(target_file))
-    tp = txml.find('target')
-    locs = txml.find('locations')
+    tr = txml.getroot()
+    if tr.tag != 'target':
+        raise ValueError('Schema not recognised: does not have a root tag called target')
+    locs = tr.find('locations')
     updated = False
     for loc in locs.iter('location'):
-        for ux in txml.iter('unit'):
+        for ux in loc.iter('unit'):
             n = ux.attrib['id']
             v = ux.attrib['version']
-            logging.debug(f'Unit has {n} with {v}')
+            logging.debug('Unit has %s with %s', n, v)
             if n in plugins:
-                logging.debug(f'Checking tp plugin {n} with {v}')
+                logging.debug('Checking tp plugin %s with %s', n, v)
                 px, ov = plugins[n]
                 if ov != v:
                     pt = px.text
                     px.text = pt.replace(ov,v)
                     updated = True
-                    logging.info(f'Replaced {ov} with {v}: {px.text}')
+                    logging.info('Replaced %s with %s: %s', ov, v, px.text)
     return updated
 
 def create_parser():

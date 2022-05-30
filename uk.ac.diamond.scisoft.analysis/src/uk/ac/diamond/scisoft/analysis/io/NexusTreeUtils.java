@@ -1504,19 +1504,20 @@ public class NexusTreeUtils {
 			}
 		}
 
-		DataNode depNode = gNode.getDataNode(TRANSFORMATIONS_DEPENDSON);
-		String dependsOn = "direction";
-		if (depNode == null) {
-			try {
-				dependsOn = getFirstString(depNode);
-			} catch (NexusException e) {
-				logger.error("Could not read depends_on so using '{}'", dependsOn, e);
-			}
-		}
 		GroupNode tNode = getGroup(findFirstNode(gNode, NexusConstants.TRANSFORMATIONS));
 		if (tNode == null) {
 			logger.warn("Beam transformation was missing in {}", gNode);
 		} else {
+			DataNode depNode = gNode.getDataNode(TRANSFORMATIONS_DEPENDSON);
+			String dependsOn = "direction";
+			if (depNode != null) {
+				try {
+					dependsOn = getFirstString(depNode);
+				} catch (NexusException e) {
+					logger.error("Could not read depends_on so using '{}'", dependsOn, e);
+				}
+			}
+
 			DataNode direction = tNode.getDataNode(dependsOn);
 			if (direction == null) {
 				logger.warn("Direction was missing in {}", gNode);
@@ -1697,10 +1698,11 @@ public class NexusTreeUtils {
 	 * @param path
 	 * @param tree
 	 * @param useOMatrixAsUB if true, then interpret orientation matrix as UB matrix 
+	 * @param xUp is X up in laboratory frame
 	 * @param pos
 	 * @return diffraction sample
 	 */
-	public static DiffractionSample parseSample(String path, Tree tree, boolean useOMatrixAsUB, int... pos) {
+	public static DiffractionSample parseSample(String path, Tree tree, boolean useOMatrixAsUB, boolean xUp, int... pos) {
 		NodeLink link = tree.findNodeLink(path);
 		if (link == null) {
 			logger.warn("'{}' could not be found", path);
@@ -1719,6 +1721,9 @@ public class NexusTreeUtils {
 		}
 
 		DiffractionCrystalEnvironment env = new DiffractionCrystalEnvironment();
+		if (xUp) { // reference plane normal is vertically up
+			env.setReferenceNormal(new Vector3d(1, 0, 0));
+		}
 
 		// get wavelength and transformations
 		boolean getTransformations = true;

@@ -125,6 +125,7 @@ public class MillerSpaceMapper {
 
 	private boolean warnExposureZero;
 	private boolean correctPolarization;
+	private boolean isI16;
 
 	private static String getOutputName(int rank) {
 		switch (rank) {
@@ -151,7 +152,7 @@ public class MillerSpaceMapper {
 
 	private static final String INDICES_NAME = "hkli_list";
 
-	private static final String VERSION = "1.4";
+	private static final String VERSION = "1.5";
 
 	private static final int CORES;
 	private static int cores;
@@ -399,6 +400,10 @@ public class MillerSpaceMapper {
 	}
 
 	private boolean isOLDI16GDA(Tree t) {
+		if (!isI16) {
+			return false;
+		}
+
 		NodeLink nl = t.findNodeLink(entryPath);
 		GroupNode g = (GroupNode) nl.getDestination();
 		DataNode d = g.getDataNode("program_name");
@@ -441,7 +446,7 @@ public class MillerSpaceMapper {
 		boolean isOldGDA = isOLDI16GDA(tree);
 		while (iter.hasNext() && diter.hasNext()) {
 			DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
-			DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, dpos);
+			DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, isI16, dpos);
 			DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 			QSpace qspace = new QSpace(dp, env);
 			MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
@@ -515,7 +520,7 @@ public class MillerSpaceMapper {
 				if (n == 0) {
 					initializeImageLimits(dp);
 				}
-				DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, dpos);
+				DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, isI16, dpos);
 				DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 				QSpace qspace = new QSpace(dp, env);
 				MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
@@ -586,7 +591,7 @@ public class MillerSpaceMapper {
 			pInput = DatasetFactory.zeros(IntegerDataset.class, np, 3);
 			if (diter.hasNext()) {
 				DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
-				DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, dpos);
+				DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, isI16, dpos);
 				DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 				QSpace qspace = new QSpace(dp, env);
 				MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
@@ -644,7 +649,7 @@ public class MillerSpaceMapper {
 			boolean keepStill = false;
 			while (diter.hasNext()) {
 				DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
-				DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, dpos);
+				DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, false, dpos);
 				DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 				QSpace qspace = new QSpace(dp, env);
 				MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
@@ -821,7 +826,7 @@ public class MillerSpaceMapper {
 			dp.setPx(ishape[1]);
 			dp.setPy(ishape[0]);
 		}
-		DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, dpos);
+		DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, isI16, dpos);
 		DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 		QSpace qspace = new QSpace(dp, env);
 		MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
@@ -1325,7 +1330,7 @@ public class MillerSpaceMapper {
 			for (int i = 0; i < srank; i++) {
 				stop[i] = pos[i] + 1;
 			}
-			DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, dpos);
+			DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, isI16, dpos);
 			DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 			QSpace qspace = new QSpace(dp, env);
 			mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
@@ -1438,6 +1443,13 @@ public class MillerSpaceMapper {
 			throw new ScanFileHolderException("Could not find instrument");
 		}
 		GroupNode instrument = (GroupNode) link.getDestination();
+
+		DataNode nameNode = instrument.getDataNode("name");
+		String beamline = nameNode == null ? null : NexusTreeUtils.getStringArray(nameNode, 1)[0].toLowerCase();
+		isI16 = "i16".equals(beamline);
+		if (isI16) {
+			logger.info("{} is a file from I16", file);
+		}
 
 		String detectorName = bean.getDetectorName();
 		if (detectorName == null || detectorName.isEmpty()) {

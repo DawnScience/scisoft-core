@@ -121,7 +121,6 @@ public class MillerSpaceMapper {
 	private long loadTimeTotal;
 
 	private Slice imagesSlice;
-	private int imagesNumber;
 
 	private boolean warnExposureZero;
 	private boolean correctPolarization;
@@ -739,6 +738,14 @@ public class MillerSpaceMapper {
 		return im;
 	}
 
+	private int getImageNumbers(int[] scanShape) {
+		int end = ShapeUtils.calcSize(scanShape);
+		imagesSlice.setLength(end);
+		int images = imagesSlice.getNumSteps();
+		logger.info("Selecting {} images using slice: {} with end {}", images, imagesSlice, end);
+		return images;
+	}
+
 	private int mapImagesByStrips(Tree tree, Dataset trans, Dataset iMask, ILazyDataset images, PositionIterator[] iters,
 			int[] ishape) throws DatasetException {
 		warnExposureZero = true;
@@ -746,6 +753,8 @@ public class MillerSpaceMapper {
 		PositionIterator iter = iters[1]; // data iterator (omits image axes)
 		iter.reset();
 		diter.reset();
+		int ne = getImageNumbers(diter.getShape());
+
 		int[] dpos = diter.getPos();
 		int[] pos = iter.getPos();
 		int[] start = pos.clone();
@@ -764,7 +773,7 @@ public class MillerSpaceMapper {
 		final String inFile = tree instanceof TreeFile ? " in " + ((TreeFile) tree).getFilename() : "";
 		int miss = imagesSlice.getStart() + 1;
 		Dataset image = getNextImage(miss, images, iter, start, stop);
-		while (image != null && ni < imagesNumber) {
+		while (image != null && ni < ne) {
 			while (diter.hasNext() && --miss > 0) {
 			}
 			if (miss > 0) {
@@ -782,7 +791,7 @@ public class MillerSpaceMapper {
 				initializeImagePixelMapping(pixelMapping, tree, ishape, dpos, isOldGDA);
 	
 				double tFactor = getTransmissionCorrection(trans, dpos);
-				image = mapImageByStripsMultiThreaded(ni < imagesNumber - 1, images, iter, start, stop, tFactor, iMask, image, ishape);
+				image = mapImageByStripsMultiThreaded(ni < ne - 1, images, iter, start, stop, tFactor, iMask, image, ishape);
 			}
 
 			ni++;
@@ -1220,6 +1229,7 @@ public class MillerSpaceMapper {
 		final int[] stop = iter.getStop().clone();
 		int rank  = pos.length;
 		int srank = rank - 2;
+		int ne = getImageNumbers(dShape);
 
 //		boolean isOldGDA = isOLDI16GDA(tree);
 		int ni = 0;
@@ -1232,7 +1242,7 @@ public class MillerSpaceMapper {
 		final String inFile = tree instanceof TreeFile ? " in " + ((TreeFile) tree).getFilename() : "";
 		int limit = 2 * size;
 		int miss = imagesSlice.getStart() + 1;
-		while (ni < imagesNumber) {
+		while (ni < ne) {
 			Dataset image = getNextImage(miss, images, iter, start, stop);
 			while (diter.hasNext() && --miss >0) {
 			}
@@ -1499,7 +1509,6 @@ public class MillerSpaceMapper {
 
 		isQSpace = bean.getOutputMode().isQ();
 
-		imagesNumber = -1;
 		imagesSlice = bean.getImages() == null ? new Slice(): Slice.convertFromString(bean.getImages())[0];
 		if (imagesSlice.getStart() == null) {
 			imagesSlice.setStart(0);
@@ -1968,11 +1977,6 @@ public class MillerSpaceMapper {
 		}
 
 		PositionIterator diter = new PositionIterator(dshape);
-
-		imagesSlice.setLength(ShapeUtils.calcSize(dshape));
-		imagesNumber = imagesSlice.getNumSteps();
-		logger.debug("Selecting {} images using slice: {}", imagesNumber, imagesSlice);
-
 		int[] axes = new int[2];
 		for (int i = 0; i < axes.length; i++) {
 			axes[i] = srank + i;

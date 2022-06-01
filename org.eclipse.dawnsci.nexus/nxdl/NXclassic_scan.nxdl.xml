@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="nxdlformat.xsl" ?>
+<!--
+# NeXus application definition for arbitrary-dimensional scans, specifiying
+# recommended common fields and sub-groups.
+#
+# Copyright (c) 2022 Diamond Light Source Ltd.
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+ -->
+<definition name="NXclassic_scan" extends="NXobject" type="group" category="contributed"
+	xmlns="http://definition.nexusformat.org/nxdl/3.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd">
+	<!-- TODO: FIX SCHEMA DEFINITION LOCATION (or leave blank) -->
+
+	<doc>
+		NeXus application definition for arbitrary-dimensional scans, specifiying
+		recommended common fields and sub-groups.
+	</doc>
+	<group type="NXentry" name="entry">
+		<field name="definition">
+			<doc> Official NeXus NXDL schema to which the file conforms </doc>
+			<enumeration>
+				<item value="NXclassic_scan"/>
+			</enumeration>
+		</field>
+		
+		<attribute name="default" optional="true" type="NX_CHAR"/> <!-- TODO: does this have a required value -->
+		<field name="title" optional="true" type="NX_CHAR"/>
+		<field name="start_time" optional="true" type="NX_DATE_TIME"/>
+		<field name="end_time" optional="true" type="NX_DATE_TIME"/>
+		<group name="before_scan" optional="true" type="NXcollection"/> <!-- TODO: equivalent to 'positioners' in the confluence page: Do we need this -->
+		<field name="scan_command" type="NX_CHAR"/>
+		<field name="scan_fields" type="NX_CHAR"/> <!-- TODO: how do we write this -->
+		<field name="scan_header" optional="true" type="NX_CHAR"/> <!-- TODO: how do we write this -->
+		<field name="called_by" optional="true" type="NX_CHAR"/> <!-- TODO: how do we write this -->
+		<group type="NXdata">
+			<!-- TODO: documentation is more of an example, we want to validate
+				something more generic, but how to specify that in an NXDL file
+				if the fields don't have fixed names, you can't know which to verify against:
+				(th(i,j,k,…)): (optional) NX_NUMBER
+					@decimals = 4  # optional decimals attribute to indicate the number of decimal places required
+				(tth(i,j,k,…)): (optional) NX_NUMBER
+				(SampleTemp(i,j,k,…)): (optional) NX_NUMBER
+					@decimals = 1
+				(DetectorSum(i,j,k,…)): (optional) NX_NUMBER
+			 -->
+			<!--  <field name="AXISNAME" type="NX_NUMBER" nameType="any"/> -->
+			<field name="data" type="NX_NUMBER">
+				<dimensions rank="dataRank">
+					<dim index="1" value="i"/>
+					<dim index="2" value="j"/>
+					<dim index="3" value="k"/>
+				</dimensions>
+			</field>
+		</group>
+	</group>
+</definition>

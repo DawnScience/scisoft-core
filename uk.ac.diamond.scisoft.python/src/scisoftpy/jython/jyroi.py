@@ -15,11 +15,9 @@
 ###
 
 from uk.ac.diamond.scisoft.analysis.roi import ROIProfile as _profile
-from org.eclipse.dawnsci.analysis.api.roi import IROI as _iroi
 import org.eclipse.dawnsci.analysis.dataset.roi as _roi
 from .jycore import _wrap
 
-_jroi = _iroi
 
 # base class for implementing point property
 class _iroi(object):
@@ -76,9 +74,6 @@ class _angleprop(object):
         self._roi.setAngleDegrees(float(ang))
 
     angledegrees = property(getAngleDegrees, setAngleDegrees)
-
-class roibase(_iroi):
-    pass
 
 class point(_iroi):
     def __init__(self, jroi=None, point=None, **kwargs):

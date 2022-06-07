@@ -22,6 +22,7 @@ import org.eclipse.dawnsci.analysis.dataset.roi.ROIList;
  * This class holds the names of the parameters used in GuiBean to communicate with the GUI
  */
 public final class GuiParameters implements Serializable {
+	private static final long serialVersionUID = 9046820395601669002L;
 
 	private String param;
 

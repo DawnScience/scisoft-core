@@ -17,7 +17,7 @@ import java.io.File;
 import uk.ac.diamond.scisoft.analysis.PlotServer;
 
 public class SimplePlotServer extends AbstractPlotServer {
-	private ObservableComponent observableComponent = new ObservableComponent();	
+	private ObservableComponent observableComponent = new ObservableComponent();
 	private String basePath;
 
 	/**

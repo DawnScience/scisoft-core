@@ -723,14 +723,25 @@ def setbean(bean, name=None, warn=True):
     if name is None:
         name = _PVNAME
     if bean is not None:
-        if parameters.roi in bean:
+        cr = bean.get(parameters.roi)
+        if cr:
             # ensure current roi is in list
             nbean = _guibean(bean)
-            cr = bean[parameters.roi]
-            nbean[parameters.roi] = cr.name
-            if not parameters.roilist in nbean or not nbean[parameters.roilist]:
-                nbean[parameters.roilist] = roi._create_list(cr)
-            _set_roi(nbean[parameters.roilist], cr, warn)
+            rl = bean.get(parameters.roilist)
+            if not rl:
+                rl = roi._create_list(cr)
+                nbean[parameters.roilist] = rl
+            n = cr.name
+            if not n: # add unique name if missing
+                nl = [ r.name for r in rl if r.name ]
+                np = cr.__class__.__name__ 
+                for i in range(max(1,len(nl))):
+                    n = '%s-%d' % (np, i)
+                    if not n in nl:
+                        break
+                cr.name = n
+            nbean[parameters.roi] = n
+            _set_roi(rl, cr, warn)
             bean = nbean
 
         _plot_setbean(name, bean)
@@ -815,11 +826,31 @@ def delroi(bean=None, roi=None, send=False, name=None):
     if bean is None:
         send = True
         bean = getbean(name)
-        
-    if parameters.roi in bean:
-        if roi is None or isinstance(bean[parameters.roi], roi):
+
+    r = bean.get(parameters.roi)
+    if r:
+        dr = None
+        if roi:
+            if not issubclass(roi, _iroi):
+                raise ValueError("roi should be a subclass of ROI")
+            if isinstance(r, roi):
+                bean[parameters.roi] = None
+                dr = r
+        else:
             bean[parameters.roi] = None
-            # TODO remove from ROI list?
+            dr = r
+        if dr:
+            dn = dr.name
+            rl = bean.get(parameters.roilist)
+            if rl:
+                if dn:
+                    for i in range(len(rl)):
+                        if dn == rl[i].name:
+                            rl.pop(i)
+                            break
+                else:
+                    rl.remove(dr)
+
     if send:
         setbean(bean, name)
     return bean
@@ -845,7 +876,7 @@ def getrois(bean=None, roi=None, name=None):
     if not parameters.roilist in bean:
         return None
     rs = bean[parameters.roilist]
-    if rs is None or len(rs) == 0:
+    if not rs:
         return None
     try:
         iter(rs)
@@ -856,6 +887,47 @@ def getrois(bean=None, roi=None, name=None):
     else:
         rl = [(r.name, r) for r in rs if isinstance(r, roi)]
     return roi_list(rl)
+
+def _to_roilist(roilist):
+    if not roilist:
+        return None
+
+    if isinstance(roilist, (roi.point_list, roi.line_list, roi.rectangle_list, roi.sector_list, roi.ellipse_list, roi.circle_list)):
+        return roilist
+
+    r = roilist[0]
+    if isinstance(r, roi.point):
+        rtype = roi.point
+        nlist = roi.point_list()
+    elif isinstance(r, roi.line):
+        rtype = roi.line
+        nlist = roi.line_list()
+    elif isinstance(r, roi.rectangle):
+        rtype = roi.rectangle
+        nlist = roi.rectangle_list()
+    elif isinstance(r, roi.sector):
+        rtype = roi.sector
+        nlist = roi.sector_list()
+    elif isinstance(r, roi.ellipse):
+        rtype = roi.ellipse
+        nlist = roi.ellipse_list()
+    elif isinstance(r, roi.circle):
+        rtype = roi.circle
+        nlist = roi.circle_list()
+    else:
+        raise TypeError("Type of first item not supported")
+
+    if isinstance(roilist, roi_list):
+        for k in roilist:
+            r = roilist[k]
+            if isinstance(r, rtype):
+                nlist.append(r)
+    else:
+        for r in roilist:
+            if isinstance(r, rtype):
+                nlist.append(r)
+    return nlist
+
 
 def setrois(bean, roilist=None, send=False, name=None):
     '''Set list/dict of regions of interest in bean
@@ -872,48 +944,17 @@ def setrois(bean, roilist=None, send=False, name=None):
         send = True
         bean = getbean(name)
 
-    if not isinstance(roilist, (roi.point_list, roi.line_list, roi.rectangle_list, roi.sector_list, roi.ellipse_list, roi.circle_list)):
-        r = roilist[0]
-        if isinstance(r, roi.point):
-            rtype = roi.point
-            nlist = roi.point_list()
-        elif isinstance(r, roi.line):
-            rtype = roi.line
-            nlist = roi.line_list()
-        elif isinstance(r, roi.rectangle):
-            rtype = roi.rectangle
-            nlist = roi.rectangle_list()
-        elif isinstance(r, roi.sector):
-            rtype = roi.sector
-            nlist = roi.sector_list()
-        elif isinstance(r, roi.ellipse):
-            rtype = roi.ellipse
-            nlist = roi.ellipse_list()
-        elif isinstance(r, roi.circle):
-            rtype = roi.circle
-            nlist = roi.circle_list()
-        else:
-            raise TypeError("Type of first item not supported")
-
-        if isinstance(roilist, roi_list):
-            for k in roilist:
-                r = roilist[k]
-                if isinstance(r, rtype):
-                    nlist.append(r)
-        else:
-            for r in roilist:
-                if isinstance(r, rtype):
-                    nlist.append(r)
-        roilist = nlist
-
+    roilist = _to_roilist(roilist)
     bean[parameters.roilist] = roilist
-    if parameters.roi in bean: # replace current ROI with one from list
-        cr = bean[parameters.roi]
+    cr = bean.get(parameters.roi)
+    if cr: # replace current ROI with one from list
         cname = cr.name
         for r in roilist:
             if r.name == cname:
                 bean[parameters.roi] = r
                 break
+    elif roilist:
+        bean[parameters.roi] = roilist[0]
 
     if send:
         setbean(bean, name)
@@ -936,7 +977,7 @@ def delrois(bean=None, roi=None, send=False, name=None):
 
     if parameters.roilist in bean:
         rl = bean[parameters.roilist]
-        if roi is None or isinstance(rl, roi) or isinstance(rl[0], roi):
+        if roi is None or rl is None or isinstance(rl, roi) or isinstance(rl[0], roi):
             bean[parameters.roilist] = None
     if send:
         setbean(bean, name)

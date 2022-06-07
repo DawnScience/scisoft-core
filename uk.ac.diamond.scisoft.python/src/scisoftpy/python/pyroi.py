@@ -17,15 +17,11 @@
 import math as _math
 
 class _iroi(object):
-    pass
-
-class roibase(_iroi):
     _NAME = "name"
     _SPT = "spt"
     _PLOT = "plot"
 
     def __init__(self, name='', point=[0.0,0.0], spt=None, plot=False, **kwargs):
-        super(roibase, self).__init__()
         self.name = name
         self.spt = [float(p) for p in spt] if spt is not None else [float(p) for p in point]
         self.plot = plot
@@ -61,11 +57,11 @@ class roibase(_iroi):
         from copy import deepcopy
         return deepcopy(self)
 
-class point(roibase):
+class point(_iroi):
     def __init__(self, **kwargs):
         super(point, self).__init__(**kwargs)
 
-class line(roibase):
+class line(_iroi):
     _LEN = "len"
     _ANG = "ang"
     _CROSS_HAIR = "crossHair"
@@ -102,7 +98,7 @@ class line(roibase):
 
     angledegrees = property(getAngleDegrees, setAngleDegrees)
 
-class rectangle(roibase):
+class rectangle(_iroi):
     _LEN = "len"
     _ANG = "ang"
     _CLIPPING_COMPENSATION = "clippingCompensation"
@@ -139,7 +135,7 @@ class rectangle(roibase):
 
     angledegrees = property(getAngleDegrees, setAngleDegrees)
 
-class sector(roibase):
+class sector(_iroi):
     _ANG = "ang"
     _RAD = "rad"
     _CLIPPING_COMPENSATION = "clippingCompensation"
@@ -213,7 +209,7 @@ class sector(roibase):
 
     anglesdegrees = property(getAnglesDegrees, setAnglesDegrees)
 
-class circle(roibase):
+class circle(_iroi):
     _RAD = "rad"
     
     def __init__(self, radius=1.0, rad=None, **kwargs): #@ReservedAssignment
@@ -228,7 +224,7 @@ class circle(roibase):
 
     radius = property(getRadius, setRadius)
 
-class ellipse(roibase):
+class ellipse(_iroi):
     _SAXIS = "saxis"
     _ANG = "ang"
     

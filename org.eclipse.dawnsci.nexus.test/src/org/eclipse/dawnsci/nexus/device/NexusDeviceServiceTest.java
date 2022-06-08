@@ -7,21 +7,19 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
-import org.eclipse.dawnsci.analysis.tree.TreeFactory;
-import org.eclipse.dawnsci.analysis.tree.impl.NodeLinkImpl;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFileFactoryHDF5;
 import org.eclipse.dawnsci.nexus.INexusDevice;
 import org.eclipse.dawnsci.nexus.NXaperture;
@@ -37,21 +35,21 @@ import org.eclipse.dawnsci.nexus.NexusBaseClass;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.NexusScanInfo;
-import org.eclipse.dawnsci.nexus.NexusUtils;
 import org.eclipse.dawnsci.nexus.ServiceHolder;
+import org.eclipse.dawnsci.nexus.appender.CompoundNexusContextAppender;
+import org.eclipse.dawnsci.nexus.appender.INexusContextAppender;
 import org.eclipse.dawnsci.nexus.appender.NexusNodeCopyAppender;
 import org.eclipse.dawnsci.nexus.appender.SimpleNexusMetadataAppender;
 import org.eclipse.dawnsci.nexus.appender.NexusObjectAppender;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectWrapper;
+import org.eclipse.dawnsci.nexus.context.NexusContext;
 import org.eclipse.dawnsci.nexus.device.impl.NexusDeviceService;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusDeviceFileBuilder;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
-import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.Random;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -342,6 +340,32 @@ public class NexusDeviceServiceTest {
 		// build the nexus tree and compare it to the expected tree
 		final TreeFile actualTree = nexusDeviceBuilder.buildNexusTree(detector);		
 		assertNexusTreesEqual(expectedTree, actualTree);
+	}
+	
+	@Test
+	public void testCompoundNexusContextAppender() throws Exception {
+		/*
+		 * Since the NexusDeviceService only permits one appender per device,
+		 * we can use the CompoundNexusContextAppender to register multiple appenders
+		 * against a single device.
+		 */
+		INexusContextAppender appender1 = mock(INexusContextAppender.class);
+		INexusContextAppender appender2 = mock(INexusContextAppender.class);
+		
+		List<INexusContextAppender> innerAppenders = Arrays.asList(appender1, appender2);
+		
+		// registered as the single appender for a device; contains the inner appenders
+		INexusContextAppender compoundAppender = new CompoundNexusContextAppender(innerAppenders);
+		
+		GroupNode groupNode = mock(GroupNode.class);
+		NexusContext nexusContext = mock(NexusContext.class);
+		
+		// the append call...
+		compoundAppender.append(groupNode, nexusContext);
+		
+		// ...is delegated to the inner appenders
+		verify(appender1).append(groupNode, nexusContext);
+		verify(appender2).append(groupNode, nexusContext);
 	}
 	
 	@Test

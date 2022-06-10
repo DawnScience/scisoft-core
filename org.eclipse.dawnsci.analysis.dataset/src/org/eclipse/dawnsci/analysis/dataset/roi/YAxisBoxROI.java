@@ -28,6 +28,19 @@ public class YAxisBoxROI extends RectangularROI implements Serializable {
 	}
 
 	/**
+	 * Copy constructor
+	 * @param orig
+	 */
+	public YAxisBoxROI(YAxisBoxROI orig) {
+		super(orig);
+	}
+
+	@Override
+	public YAxisBoxROI copy() {
+		return new YAxisBoxROI(this);
+	}
+
+	/**
 	 * Square constructor
 	 * 
 	 * @param width

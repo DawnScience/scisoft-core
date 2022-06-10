@@ -35,6 +35,18 @@ public class RingROI extends ROIBase implements Serializable {
 	}
 
 	/**
+	 * Copy constructor
+	 * @param orig
+	 */
+	public RingROI(RingROI orig) {
+		super(orig);
+		rad = orig.rad.clone();
+		clippingCompensation = orig.clippingCompensation;
+		averageArea = orig.averageArea;
+		dpp = orig.dpp;
+	}
+
+	/**
 	 * Create an annulus centred on origin
 	 * @param sr 
 	 * @param er
@@ -228,11 +240,7 @@ public class RingROI extends ROIBase implements Serializable {
 
 	@Override
 	public RingROI copy() {
-		RingROI c = new RingROI(spt[0], spt[1], rad[0], rad[1], dpp, clippingCompensation);
-		c.setAverageArea(averageArea);
-		c.name = name;
-		c.plot = plot;
-		return c;
+		return new RingROI(this);
 	}
 
 	@Override

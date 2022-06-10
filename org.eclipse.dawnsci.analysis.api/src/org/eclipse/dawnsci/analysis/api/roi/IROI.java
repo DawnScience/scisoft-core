@@ -123,6 +123,16 @@ public interface IROI extends Serializable, INameable {
 	public boolean isPlot();
 
 	/**
+	 * @param fixed set true if ROI is not user-changeable
+	 */
+	public void setFixed(boolean fixed);
+
+	/**
+	 * @return true if ROI is not user-changeable
+	 */
+	public boolean isFixed();
+
+	/**
 	 * @return bounding box as rectangular ROI
 	 */
 	public IRectangularROI getBounds();

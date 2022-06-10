@@ -23,16 +23,24 @@ public class OrientableROIBase extends ROIBase implements IOrientableROI, Serial
 	protected double cang;
 	protected double sang;
 
+	public OrientableROIBase() {
+		super();
+	}
+
+	/**
+	 * Copy constructor
+	 * @param orig
+	 */
+	public OrientableROIBase(OrientableROIBase orig) {
+		super(orig);
+		ang = orig.ang;
+		cang = orig.cang;
+		sang = orig.sang;
+	}
+
 	@Override
 	public OrientableROIBase copy() {
-		OrientableROIBase c = new OrientableROIBase();
-		c.name = name;
-		c.spt = spt.clone();
-		c.plot = plot;
-		c.ang = ang;
-		c.cang = cang;
-		c.sang = sang;
-		return c;
+		return new OrientableROIBase(this);
 	}
 
 	/**

@@ -43,4 +43,9 @@ public abstract class IROIMixIn {
 	@JsonIgnore abstract IRectangularROI getBounds();
 
 	@JsonIgnore abstract boolean isNearOutline(double x, double y, double distance);
+
+	@JsonIgnore abstract void setFixed(boolean fixed);
+
+	@JsonIgnore abstract boolean isFixed();
+
 }

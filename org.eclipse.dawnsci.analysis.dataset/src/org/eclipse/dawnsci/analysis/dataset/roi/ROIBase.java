@@ -25,11 +25,23 @@ public class ROIBase implements IROI, Serializable {
 	protected String name;
 	protected double spt[]; // start or centre coordinates
 	protected boolean plot;
+	protected boolean fixed;
 
 	protected transient RectangularROI bounds;
 
 	public ROIBase() {
 		spt = new double[2];
+	}
+
+	/**
+	 * Copy constructor
+	 * @param orig
+	 */
+	public ROIBase(ROIBase orig) {
+		name = orig.name;
+		spt = orig.spt.clone();
+		plot = orig.plot;
+		fixed = orig.fixed;
 	}
 
 	protected void setDirty() {
@@ -130,11 +142,7 @@ public class ROIBase implements IROI, Serializable {
 
 	@Override
 	public ROIBase copy() {
-		ROIBase c = new ROIBase();
-		c.name = name;
-		c.spt = spt.clone();
-		c.plot = plot;
-		return c;
+		return new ROIBase(this);
 	}
 
 	@Override
@@ -219,7 +227,8 @@ public class ROIBase implements IROI, Serializable {
 
 	@Override
 	public String toString() {
-		return name == null ? "" : String.format("name=%s, ", name);
+		return String.format("%splot=%s, fixed=%s, ", name == null ? "" : String.format("name=%s, ", name),
+				plot, fixed);
 	}
 
 	/**
@@ -312,5 +321,15 @@ public class ROIBase implements IROI, Serializable {
 		}
 
 		return true;
+	}
+
+	@Override
+	public void setFixed(boolean fixed) {
+		this.fixed = fixed;
+	}
+
+	@Override
+	public boolean isFixed() {
+		return fixed;
 	}
 }

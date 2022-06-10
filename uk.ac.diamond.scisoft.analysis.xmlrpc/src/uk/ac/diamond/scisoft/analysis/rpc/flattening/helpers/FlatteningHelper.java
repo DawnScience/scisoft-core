@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.rpc.flattening.helpers;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,4 +46,12 @@ abstract public class FlatteningHelper<T> implements IFlattener<T> {
 		return type.getCanonicalName();
 	}
 
+	public T createInstance() {
+		try {
+			return type.getDeclaredConstructor().newInstance();
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			throw new UnsupportedOperationException("Could not create instance of " + getTypeCanonicalName());
+		}
+	}
 }

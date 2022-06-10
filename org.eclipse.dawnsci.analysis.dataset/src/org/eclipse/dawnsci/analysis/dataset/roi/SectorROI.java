@@ -116,6 +116,17 @@ public class SectorROI extends RingROI implements Serializable {
 		this(30., 120., Math.PI*0.25, Math.PI*2./3.);
 	}
 
+	/**
+	 * Copy constructor
+	 * @param orig
+	 */
+	public SectorROI(SectorROI orig) {
+		super(orig);
+		ang = orig.ang.clone();
+		combineSymmetry = orig.combineSymmetry;
+		symmetry = orig.symmetry;
+	}
+
 	private final static double TWO_PI = 2.0 * Math.PI;
 	private final static double HALF_PI = 0.5 * Math.PI;
 
@@ -329,13 +340,9 @@ public class SectorROI extends RingROI implements Serializable {
 
 	@Override
 	public SectorROI copy() {
-		SectorROI c = new SectorROI(spt[0], spt[1], rad[0], rad[1], ang[0], ang[1], dpp, clippingCompensation, symmetry);
-		c.setCombineSymmetry(combineSymmetry);
-		c.name = name;
-		c.plot = plot;
-		return c;
+		return new SectorROI(this);
 	}
-	
+
 	/**
 	 * @param sym 
 	 * @return true if given symmetry is okay with angles

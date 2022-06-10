@@ -17,9 +17,4 @@ public class PointROIListHelper extends ROIListHelper<PointROIList, PointROI> {
 	public PointROIListHelper() {
 		super(PointROIList.class);
 	}
-
-	@Override
-	public PointROIList newList() {
-		return new PointROIList();
-	}
 }

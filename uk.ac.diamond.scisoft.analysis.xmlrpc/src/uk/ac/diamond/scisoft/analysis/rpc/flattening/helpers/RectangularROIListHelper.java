@@ -17,9 +17,4 @@ public class RectangularROIListHelper extends ROIListHelper<RectangularROIList, 
 	public RectangularROIListHelper() {
 		super(RectangularROIList.class);
 	}
-
-	@Override
-	public RectangularROIList newList() {
-		return new RectangularROIList();
-	}
 }

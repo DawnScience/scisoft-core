@@ -41,7 +41,7 @@ abstract public class ROIListHelper<ListType extends ArrayList<ItemType>, ItemTy
 	@SuppressWarnings("unchecked")
 	@Override
 	public ListType unflatten(Map<?, ?> inMap, IRootFlattener rootFlattener) {
-		ListType outList = newList();
+		ListType outList = createInstance();
 
 		Object[] flattenedContent = (Object[]) inMap.get(CONTENT);
 		for (Object element : flattenedContent) {
@@ -50,6 +50,4 @@ abstract public class ROIListHelper<ListType extends ArrayList<ItemType>, ItemTy
 		}
 		return outList;
 	}
-
-	public abstract ListType newList();
 }

@@ -51,6 +51,16 @@ public class RectangularROI extends OrientableROIBase implements IRectangularROI
 	}
 
 	/**
+	 * Copy constructor
+	 * @param orig
+	 */
+	public RectangularROI(RectangularROI orig) {
+		super(orig);
+		len = orig.len.clone();
+		clippingCompensation = orig.clippingCompensation;
+	}
+
+	/**
 	 * Square constructor
 	 * 
 	 * @param width A Non-Negative value for the width

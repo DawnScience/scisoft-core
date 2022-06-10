@@ -34,6 +34,15 @@ public class ParabolicROI extends OrientableROIBase implements IParametricROI, S
 	}
 
 	/**
+	 * Copy constructor
+	 * @param orig
+	 */
+	public ParabolicROI(ParabolicROI orig) {
+		super(orig);
+		tp = orig.tp;
+	}
+
+	/**
 	 * Create a parabolic ROI
 	 * @param focal length
 	 * @param ptx centre point x value
@@ -65,10 +74,7 @@ public class ParabolicROI extends OrientableROIBase implements IParametricROI, S
 
 	@Override
 	public ParabolicROI copy() {
-		ParabolicROI c = new ParabolicROI(0.5*tp, ang, spt[0], spt[1]);
-		c.name = name;
-		c.plot = plot;
-		return c;
+		return new ParabolicROI(this);
 	}
 
 	/**

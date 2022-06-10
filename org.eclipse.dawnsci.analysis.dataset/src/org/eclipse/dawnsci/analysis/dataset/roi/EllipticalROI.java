@@ -32,6 +32,15 @@ public class EllipticalROI extends OrientableROIBase implements IParametricROI {
 	}
 
 	/**
+	 * Copy constructor
+	 * @param orig
+	 */
+	public EllipticalROI(EllipticalROI orig) {
+		super(orig);
+		saxis = orig.saxis.clone();
+	}
+
+	/**
 	 * Create a circular ROI
 	 * @param croi
 	 */
@@ -74,10 +83,7 @@ public class EllipticalROI extends OrientableROIBase implements IParametricROI {
 
 	@Override
 	public EllipticalROI copy() {
-		EllipticalROI c = new EllipticalROI(saxis[0], saxis[1], ang, spt[0], spt[1]);
-		c.name = name;
-		c.plot = plot;
-		return c;
+		return new EllipticalROI(this);
 	}
 
 	/**

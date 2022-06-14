@@ -76,7 +76,7 @@ public class AlbaLinkFileLoader extends AbstractFileLoader {
 			}
 
 			// Added by M. Malfois 10th June 2022
-			Optional<String> baseResult = Arrays.stream(BASE_DIRS).filter(p -> metadataMap.containsKey(p)).findFirst();
+			Optional<String> baseResult = Arrays.stream(BASE_DIRS).filter(p -> metadataMap.containsKey(p)).map(p -> metadataMap.get(p)).findFirst();
 			if (!baseResult.isPresent()) throw new ScanFileHolderException("No " + BASE_DIR + " in header");
 			String base = baseResult.get();
 
@@ -179,12 +179,13 @@ public class AlbaLinkFileLoader extends AbstractFileLoader {
 	}
 
 	private String validatePath(String filename, String base, String s) {
-		File f = new File(base + s);
+		
+		File f = new File(base, s);
 		if (f.exists()) return base;
 
 		f = new File(filename);
 		String p = f.getParent();
-		f = new File(p + File.separator + s);
+		f = new File(p,s);
 		if (f.exists()) return p + File.separator;
 
 		f = new File(base);

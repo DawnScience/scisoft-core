@@ -9,7 +9,6 @@
 
 package uk.ac.diamond.scisoft.analysis.plotserver;
 
-import gda.configuration.properties.LocalProperties;
 import gda.observable.IObserver;
 import gda.observable.ObservableComponent;
 
@@ -30,7 +29,7 @@ public class SimplePlotServer extends AbstractPlotServer {
 
 	public SimplePlotServer(boolean removeOnGet) {
 		super(removeOnGet);
-		basePath = System.getProperty(LocalProperties.GDA_DATA);
+		basePath = System.getProperty("GDA/gda.data");
 	}
 
 	public void setBasePath(String basePath) {

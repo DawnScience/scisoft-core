@@ -22,9 +22,8 @@ import java.util.HashSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.thoughtworks.xstream.core.util.CompositeClassLoader;
-
 import tec.units.indriya.quantity.Quantities;
+import uk.ac.diamond.scisoft.analysis.utils.CompositeClassLoader;
 
 /**
  * CalibrationFactory when we go to e4 like all xxxFactory classes this will become

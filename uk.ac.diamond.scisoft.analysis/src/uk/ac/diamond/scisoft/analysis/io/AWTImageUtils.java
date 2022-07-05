@@ -68,8 +68,8 @@ public class AWTImageUtils {
 	 * @return array of datasets (if image is rgb then a single RGBByteDataset or RGBDataset is returned
 	 */
 	public static Dataset[] makeDatasets(final BufferedImage image, boolean keepBitWidth) {
-		boolean isRGB = image.getColorModel().getColorSpace().getType() == ColorSpace.TYPE_RGB;
-		return makeDatasets(image.getData(), keepBitWidth, isRGB);
+		boolean isBGR = image.getType() == BufferedImage.TYPE_3BYTE_BGR;
+		return makeDatasets(image.getData(), keepBitWidth, !isBGR);
 	}
 
 	/**
@@ -161,7 +161,7 @@ public class AWTImageUtils {
 	 * Get datasets from an image
 	 * @param image
 	 * @param keepBitWidth if true, then use signed primitives of same bit width for possibly unsigned data
-	 * @param isRGB if true then make a RGB dataset
+	 * @param isRGB if true then bands in RGB order, otherwise in BGR order
 	 * @return array of datasets (if image is rgb then a single RGBByteDataset or RGBDataset is returned
 	 */
 	public static Dataset[] makeDatasets(final Raster ras, boolean keepBitWidth, boolean isRGB) {

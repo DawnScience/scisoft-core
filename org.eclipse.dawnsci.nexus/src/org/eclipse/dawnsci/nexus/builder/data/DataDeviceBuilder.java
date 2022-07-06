@@ -20,6 +20,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
@@ -272,52 +273,43 @@ public class DataDeviceBuilder<N extends NXobject> {
 	}
 	
 	private Integer getDefaultAxisDimension(String axisFieldName) {
-		Integer defaultAxisDimension = null;
-		
 		// first check if the value has been overridden (i.e. explicitly set)
 		if (overriddenDefaultAxisDimensions != null) {
-			defaultAxisDimension = overriddenDefaultAxisDimensions.get(axisFieldName);
+			return overriddenDefaultAxisDimensions.get(axisFieldName);
 		}
 
 		// if this is the default axis field, apply the default axis dimension
-		if (defaultAxisDimension == null && axisFieldName.equals(defaultAxisSourceFieldName)) {
-			defaultAxisDimension = this.defaultAxisDimension;
+		if (axisFieldName.equals(defaultAxisSourceFieldName)) {
+			return defaultAxisDimension;
 		}
 		
 		// for a primary device, see if the nexus object provider knows the default axis dimension
 		// e.g. the axis field belongs to the same device as the signal field for the NXdata
-		if (defaultAxisDimension == null && isPrimary) {
-			defaultAxisDimension = nexusObjectProvider.getDefaultAxisDimension(
-					signalFieldSourceName, axisFieldName);
+		if (isPrimary) {
+			return nexusObjectProvider.getDefaultAxisDimension(signalFieldSourceName, axisFieldName);
 		}
 		
-		return defaultAxisDimension;
+		return null;
 	}
 	
-	private int[] getDimensionMappings(String axisFieldName) throws NexusException {
-		int[] dimensionMappings = null;
-
+	private int[] getDimensionMapping(String axisFieldName, int fieldRank, Integer defaultAxisDimension) {
 		// first check if the value has been overridden (i.e. explicitly set)
 		if (overriddenDimensionMappings != null) {
-			dimensionMappings = overriddenDimensionMappings.get(axisFieldName);
+			return overriddenDimensionMappings.get(axisFieldName);
 		}
 		
 		// if this is a default axis field and has size 1, this must be the dimension mapping
-		final int fieldRank = getFieldRank(axisFieldName);
-		if (dimensionMappings == null && fieldRank == 1) {
-			Integer defaultAxisDimensions = getDefaultAxisDimension(axisFieldName);
-			if (defaultAxisDimensions != null) {
-				dimensionMappings = new int[] { defaultAxisDimensions.intValue() };
-			}
+		if (fieldRank == 1 && defaultAxisDimension != null) {
+			return new int[] { defaultAxisDimension };
 		}
 		
 		// use the default dimension mappings for the device if set and of the same rank
-		if (dimensionMappings == null && defaultDimensionMappings != null &&
-				fieldRank == defaultDimensionMappings.length) {
-			dimensionMappings = defaultDimensionMappings;
+		if (defaultDimensionMappings != null && fieldRank == defaultDimensionMappings.length) {
+			return defaultDimensionMappings;
 		}
 		
-		return dimensionMappings;
+		// default to [0, 1, ... n] where n is the field rank
+		return IntStream.range(0, fieldRank).toArray();
 	}
 	
 	private String getDestinationFieldName(String sourceFieldName) {
@@ -360,13 +352,13 @@ public class DataDeviceBuilder<N extends NXobject> {
 	 */
 	private AxisFieldModel createAxisFieldModel(String axisFieldName) throws NexusException {
 		final Integer defaultAxisDimension = getDefaultAxisDimension(axisFieldName);
-		final int[] dimensionMappings = getDimensionMappings(axisFieldName);
+		final int fieldRank = getFieldRank(axisFieldName);
+		final int[] dimensionMapping = getDimensionMapping(axisFieldName, fieldRank, defaultAxisDimension);
 		final String destinationFieldName = getDestinationFieldName(axisFieldName);
-		final int rank = getFieldRank(axisFieldName);
 		
-		final AxisFieldModel axisFieldModel = new AxisFieldModel(axisFieldName, rank);
+		final AxisFieldModel axisFieldModel = new AxisFieldModel(axisFieldName, fieldRank);
 		axisFieldModel.setDefaultAxisDimension(defaultAxisDimension);
-		axisFieldModel.setDimensionMappings(dimensionMappings);
+		axisFieldModel.setDimensionMapping(dimensionMapping);
 		axisFieldModel.setDestinationFieldName(destinationFieldName);
 		
 		return axisFieldModel;

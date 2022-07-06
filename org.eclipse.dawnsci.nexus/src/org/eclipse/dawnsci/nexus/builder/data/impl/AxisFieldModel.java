@@ -23,7 +23,7 @@ public class AxisFieldModel extends DataFieldModel {
 	
 	private Integer defaultAxisDimension = null;
 	
-	private int[] dimensionMappings = null;
+	private int[] dimensionMapping = null;
 	
 	public AxisFieldModel(String sourceFieldName, int fieldRank) {
 		super(sourceFieldName, fieldRank);
@@ -44,24 +44,24 @@ public class AxisFieldModel extends DataFieldModel {
 	}
 
 	/**
-	 * Sets the dimension mappings for the given field to the given value.
+	 * Sets the dimension mapping for the given field to the given value.
 	 * This is the mapping from the dimensions of this field to the dimensions
 	 * of the default data field of the {@link NXdata} group.
-	 * @param dimensionMappings dimension mappings
+	 * @param dimensionMapping dimension mappings
 	 */
-	public void setDimensionMappings(int... dimensionMappings) {
-		this.dimensionMappings = dimensionMappings;
+	public void setDimensionMapping(int... dimensionMapping) {
+		this.dimensionMapping = dimensionMapping;
 	}
 
-	public int[] getDimensionMappings() {
-		return dimensionMappings;
+	public int[] getDimensionMapping() {
+		return dimensionMapping;
 	}
 
 	@Override
 	protected void appendMemberFields(StringBuilder sb) {
 		super.appendMemberFields(sb);
 		sb.append(", defaultAxisDimension = " + defaultAxisDimension);
-		sb.append(", dimensionMappings = " + Arrays.toString(dimensionMappings));
+		sb.append(", dimensionMapping = " + Arrays.toString(dimensionMapping));
 	}
 	
 }

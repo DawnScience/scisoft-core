@@ -68,8 +68,8 @@ public abstract class DataDeviceImpl<N extends NXobject> implements DataDevice<N
 		return new ArrayList<>(axisFields.keySet());
 	}
 	
-	public int[] getDimensionMappings(String sourceFieldName) {
-		return getAxisDataFieldModel(sourceFieldName).getDimensionMappings();
+	public int[] getDimensionMapping(String sourceFieldName) {
+		return getAxisDataFieldModel(sourceFieldName).getDimensionMapping();
 	}
 	
 	public Integer getDefaultAxisDimension(String sourceFieldName) {

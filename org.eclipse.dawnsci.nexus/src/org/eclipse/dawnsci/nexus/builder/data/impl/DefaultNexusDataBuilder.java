@@ -20,7 +20,6 @@ import static org.eclipse.dawnsci.nexus.NexusConstants.TARGET;
 
 import java.text.MessageFormat;
 import java.util.Iterator;
-import java.util.stream.IntStream;
 
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
@@ -31,7 +30,6 @@ import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.nexus.NXdata;
 import org.eclipse.dawnsci.nexus.NXentry;
 import org.eclipse.dawnsci.nexus.NXobject;
-import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder;
@@ -43,7 +41,6 @@ import org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder;
 import org.eclipse.dawnsci.nexus.builder.data.PrimaryDataDevice;
 import org.eclipse.dawnsci.nexus.builder.impl.DefaultNexusEntryBuilder;
 import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.StringDataset;
 
 /**
@@ -99,10 +96,10 @@ public class DefaultNexusDataBuilder extends AbstractNexusDataBuilder implements
 	 * @see org.eclipse.dawnsci.nexus.builder.NexusDataBuilder#addDataDevice(org.eclipse.dawnsci.nexus.builder.NexusObjectProvider, java.lang.Integer, int[])
 	 */
 	@Override
-	public <N extends NXobject>  void addAxisDevice(NexusObjectProvider<N> dataDevice,
-			Integer defaultAxisDimension, int... dimensionMappings) throws NexusException {
+	public <N extends NXobject> void addAxisDevice(NexusObjectProvider<N> dataDevice,
+			Integer defaultAxisDimension, int... dimensionMapping) throws NexusException {
 		DataDeviceBuilder<N> builder = DataDeviceBuilder.newAxisDataDeviceBuilder(dataDevice, defaultAxisDimension);
-		builder.setDefaultDimensionMappings(dimensionMappings);
+		builder.setDefaultDimensionMappings(dimensionMapping);
 		
 		addAxisDevice((AxisDataDevice<N>) builder.build());
 	}
@@ -149,7 +146,7 @@ public class DefaultNexusDataBuilder extends AbstractNexusDataBuilder implements
 		String entryName = entryBuilder.getEntryName();
 		String subPath = getRelativePath(nxEntry, nexusObject);
 		if (subPath != null) {
-			return GroupNode.SEPARATOR + entryName + GroupNode.SEPARATOR + subPath;
+			return Node.SEPARATOR + entryName + Node.SEPARATOR + subPath;
 		}
 		
 		return null;
@@ -166,7 +163,7 @@ public class DefaultNexusDataBuilder extends AbstractNexusDataBuilder implements
 				}
 				String subPath = getRelativePath(childGroup, groupToFind);
 				if (subPath != null) {
-					return nodeName + GroupNode.SEPARATOR + subPath; 
+					return nodeName + Node.SEPARATOR + subPath; 
 				}
 			}
 		}
@@ -290,53 +287,32 @@ public class DefaultNexusDataBuilder extends AbstractNexusDataBuilder implements
 		// then this has to be the dimension mapping as well
 		final String destinationFieldName = dataDevice.getDestinationFieldName(sourceFieldName);
 		final int fieldRank = dataDevice.getFieldRank(sourceFieldName);
-		final Integer defaultAxisDimension = dataDevice.getDefaultAxisDimension(sourceFieldName);
-		int[] dimensionMappings = dataDevice.getDimensionMappings(sourceFieldName);
-		
-		if (defaultAxisDimension != null && fieldRank == 1) {
-			dimensionMappings = new int[] { defaultAxisDimension };
-		}
-		
-		if (dimensionMappings != null) {
-			if (dimensionMappings.length == 0) {
-				dimensionMappings = null;
-			} else {
-				// validate the dimension mappings if specified
-				validateDimensionMappings(sourceFieldName, dimensionMappings, fieldRank);
-			}
-		}
+		int[] dimensionMapping = dataDevice.getDimensionMapping(sourceFieldName);
+		validateDimensionMapping(sourceFieldName, dimensionMapping, fieldRank);
 		
 		// create the {axisname}_indices attribute of the NXdata group for this axis device
-		final String attrName = destinationFieldName + DATA_INDICES_SUFFIX;
-		final IntegerDataset indicesDataset = DatasetFactory.zeros(IntegerDataset.class, fieldRank);
-
-		// set the dimension mappings into the dataset, if not set use 0, 1, 2, etc...
-		final int[] finalDimensionMappings = dimensionMappings;
-		IntStream.range(0, fieldRank).forEach(i -> indicesDataset.setItem(
-				finalDimensionMappings == null ? i : finalDimensionMappings[i], i));
-		
-		return TreeFactory.createAttribute(attrName, indicesDataset, false);
+		return TreeFactory.createAttribute(destinationFieldName + DATA_INDICES_SUFFIX,
+				DatasetFactory.createFromObject(dimensionMapping)); 
 	}
 
 	/**
-	 * Validate that the given dimension mappings. The size of the array must equal the
+	 * Validate that the given dimension mapping. The size of the array must equal the
 	 * given rank and each value in the array must be between 0 (inclusive) and the
 	 * rank of the signal data field
 	 * @param sourceFieldName source field name
-	 * @param dimensionMappings dimension mappings
+	 * @param dimensionMapping dimension mappings
 	 * @param rank rank of the dataset to add
 	 */
-	private void validateDimensionMappings(String sourceFieldName,
-			int[] dimensionMappings, int rank) {
-		// size of dimensionMappings must equal rank of the dataset to add
-		if (dimensionMappings.length != rank) {
-			throw new IllegalArgumentException("The size of the dimension mappings array must equal the rank of the dataset for the field: " + sourceFieldName);
+	private void validateDimensionMapping(String sourceFieldName, int[] dimensionMapping, int rank) {
+		// size of dimensionMapping must equal rank of the dataset to add
+		if (dimensionMapping.length != rank) {
+			throw new IllegalArgumentException("The size of the dimension mapping array must equal the rank of the dataset for the field: " + sourceFieldName);
 		}
-		// each element of the dimensionMappings array must between 0 and the rank of the default data node of the NXdata group
-		for (int dimensionMapping : dimensionMappings) {
-			if (dimensionMapping < 0 || dimensionMapping >= signalFieldRank) {
+		// each element of the dimensionMapping array must between 0 and the rank of the default data node of the NXdata group
+		for (int mappedDimension : dimensionMapping) {
+			if (mappedDimension < 0 || mappedDimension >= signalFieldRank) {
 				throw new IllegalArgumentException(MessageFormat.format("Invalid dimension mapping for field ''{0}'', {1}, must be between 0 and {2} exclusive, as the rank of the primary data field ''{3}'' has rank {2}. This problem can occur when the rank of the signal data field is smaller than the rank of the scan.",
-						sourceFieldName, dimensionMapping, signalFieldRank, signalFieldSourceName));
+						sourceFieldName, mappedDimension, signalFieldRank, signalFieldSourceName));
 			}
 		}
 	}

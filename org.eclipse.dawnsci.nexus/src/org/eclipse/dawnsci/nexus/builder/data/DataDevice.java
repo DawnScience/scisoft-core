@@ -84,7 +84,7 @@ public interface DataDevice<N extends NXobject> {
 	 * @return dimension mappings between the field with the given name and the 
 	 *    <code>@signal</code> field of the {@link NXdata} group
 	 */
-	public int[] getDimensionMappings(String sourceFieldName);
+	public int[] getDimensionMapping(String sourceFieldName);
 	
 	/**
 	 * Returns the index of the dimension of the <code>@signal</code> field of the {@link NXdata}

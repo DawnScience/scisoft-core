@@ -49,6 +49,7 @@ public class PrimaryDataDeviceImpl<N extends NXobject> extends DataDeviceImpl<N>
 		return super.getDestinationFieldName(sourceFieldName);
 	}
 	
+	@Override
 	protected void appendFields(StringBuilder sb) {
 		sb.append(",  signalField=");
 		sb.append(signalFieldModel);

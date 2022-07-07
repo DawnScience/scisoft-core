@@ -187,7 +187,6 @@ class NexusScanFileImpl implements NexusScanFile {
 			final ValidationReport validationReport =
 					ServiceHolder.getNexusValidationService().validateNexusTree(fileBuilder.getNexusTree());
 			if (validationReport.isError()) { // note we log an error rather than throwing an exception if the nexus file is invalid
-//				throw new NexusException("The nexus file contains one or more invalid entries (or subentries) according to their application definitions. See log for details.");
 				logger.error("The nexus file {} is invalid, see log for details", filePath);
 			}
 		}
@@ -351,31 +350,36 @@ class NexusScanFileImpl implements NexusScanFile {
 
 		// determine the primary device - i.e. the device whose primary dataset to make the @signal field
 		NexusObjectProvider<?> primaryDevice = null;
-		final ScanRole primaryDeviceType;
+		ScanRole primaryDeviceType = null;
 		if (detector != null) {
 			// if there's a detector then it is the primary device
 			primaryDevice = detector;
 			primaryDeviceType = ScanRole.DETECTOR;
 		} else if (!monitors.isEmpty()) {
-			// otherwise the first monitor is the primary device (and therefore is not a data device)
-			primaryDevice = monitors.remove(0);
-			primaryDeviceType = ScanRole.MONITOR_PER_POINT;
-		} else if (!scannables.isEmpty()) {
+			// otherwise the first monitor which has primary data file name or default axis
+			// data field name set is the primary device (and therefore is not a data device)
+			primaryDevice = monitors.stream()
+					.filter(m -> m.getPrimaryDataFieldName() != null || m.getDefaultAxisDataFieldName() != null)
+					.findFirst().orElse(null);
+			if (primaryDevice != null) {
+				monitors.remove(primaryDevice);
+				primaryDeviceType = ScanRole.MONITOR_PER_POINT;
+			}
+		} 
+		if (primaryDevice == null) {
 			// if there are no monitors either (a rare edge case), where we use the first scannable
 			// note that this scannable is also added as data device
 			for (NexusObjectProvider<?> scannable : scannables) {
 				if (scannable.getPrimaryDataFieldName() != null) {
 					primaryDevice = scannable;
+					primaryDeviceType = ScanRole.SCANNABLE;
 					break;
 				}
 			}
-			if (primaryDevice == null) {
-				throw new IllegalArgumentException("No suitable dataset could be found to use as the signal dataset of an NXdata group.");
-			}
-			primaryDeviceType = ScanRole.SCANNABLE;
-		} else {
-			// the scan has no devices at all (sanity check as this should already have been checked for)
-			throw new IllegalStateException("There must be at least one device to create a Nexus file.");
+				
+		}
+		if (primaryDevice == null) {
+			throw new IllegalArgumentException("No suitable dataset could be found to use as the signal dataset of an NXdata group.");
 		}
 
 		// create the NXdata group for the primary data field
@@ -491,15 +495,24 @@ class NexusScanFileImpl implements NexusScanFile {
 	private <N extends NXobject> PrimaryDataDevice<N> createPrimaryDataDevice(NexusObjectProvider<N> nexusObjectProvider,
 			ScanRole primaryDeviceType, String signalDataFieldName) throws NexusException {
 
-		if (primaryDeviceType == ScanRole.SCANNABLE) {
-			// using scannable as primary device as well as a scannable
-			// only use main data field (e.g. value for an NXpositioner)
-			final DataDeviceBuilder<N> dataDeviceBuilder = DataDeviceBuilder.newPrimaryDataDeviceBuilder(nexusObjectProvider);
-			dataDeviceBuilder.setAxisFields();
-			return (PrimaryDataDevice<N>) dataDeviceBuilder.build();
+		final DataDeviceBuilder<N> dataDeviceBuilder = new DataDeviceBuilder<>(nexusObjectProvider, true);
+		switch (primaryDeviceType) {
+			case SCANNABLE: 
+				// using scannable as primary device as well as a scannable
+				// only use main data field (e.g. value for an NXpositioner)
+				dataDeviceBuilder.setAxisFields();
+				break;
+			case MONITOR_PER_POINT:
+				dataDeviceBuilder.setUseDeviceName(true);
+				break;
+			case DETECTOR:
+				dataDeviceBuilder.setSignalField(signalDataFieldName);
+				break;
+			default:
+				throw new IllegalArgumentException("Invalid primary device type: " + primaryDeviceType);
 		}
 
-		return DataDeviceBuilder.newPrimaryDataDevice(nexusObjectProvider, signalDataFieldName);
+		return (PrimaryDataDevice<N>) dataDeviceBuilder.build();
 	}
 
 	/**

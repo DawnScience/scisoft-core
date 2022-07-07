@@ -240,7 +240,6 @@ public class DataDeviceBuilder<N extends NXobject> {
 	}
 
 	private DataDeviceImpl<N> createDataDevice() throws NexusException {
-		final N nexusObject = nexusObjectProvider.getNexusObject();
 		if (isPrimary) {
 			DataFieldModel signalFieldModel = createSignalFieldModel();
 			return new PrimaryDataDeviceImpl<>(nexusObject, signalFieldModel);
@@ -322,11 +321,11 @@ public class DataDeviceBuilder<N extends NXobject> {
 		if (!useDeviceName()) {
 			return sourceFieldName;
 		}
-
+		
 		final String deviceName = nexusObjectProvider.getName();
-		// if there's just one field, use the device name as the destination field name, otherwise prepend the device name to the source field name
 
-		return getNumberOfFieldsToAdd() == 1 ? deviceName : deviceName + '_' + sourceFieldName;
+		// if there's just one field, use the device name as the destination field name, otherwise prepend the device name to the source field name
+		return getNumberOfFieldsToAdd() > 1 ? deviceName + '_' + sourceFieldName : deviceName;
 	}
 	
 	private boolean useDeviceName() {
@@ -409,8 +408,12 @@ public class DataDeviceBuilder<N extends NXobject> {
 	 * @throws NexusException
 	 */
 	public DataDevice<N> build() throws NexusException {
-		final DataDeviceImpl<N> dataDevice = createDataDevice();
+		// get the names of the axis fields to add
+		final Set<String> axisFieldNames = calculateAxisFieldNamesToAdd();
+		numberOfAxisFieldsToAdd = axisFieldNames.size();
 
+		final DataDeviceImpl<N> dataDevice = createDataDevice();
+		
 		// calculate the default axis source field name, if not set
 		if (defaultAxisSourceFieldName == null && defaultAxisDimension != null) {
 			defaultAxisSourceFieldName = nexusObjectProvider.getDefaultAxisDataFieldName();
@@ -419,9 +422,6 @@ public class DataDeviceBuilder<N extends NXobject> {
 			}
 		}
 		
-		// get the names of the axis fields to add
-		final Set<String> axisFieldNames = calculateAxisFieldNamesToAdd();
-		numberOfAxisFieldsToAdd = axisFieldNames.size();
 		for (String axisFieldName : axisFieldNames) {
 			AxisFieldModel axisFieldModel = createAxisFieldModel(axisFieldName); // add each field
 			dataDevice.addAxisField(axisFieldModel);

@@ -41,7 +41,7 @@ public abstract class DataDeviceImpl<N extends NXobject> implements DataDevice<N
 	
 	private final N nexusObject;
 	
-	public DataDeviceImpl(N nexusObject) {
+	protected DataDeviceImpl(N nexusObject) {
 		this.nexusObject = nexusObject;
 		this.axisFields = new LinkedHashMap<>();
 	}

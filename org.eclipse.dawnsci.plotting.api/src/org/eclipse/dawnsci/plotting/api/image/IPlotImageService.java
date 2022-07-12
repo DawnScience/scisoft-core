@@ -24,7 +24,7 @@ import org.eclipse.ui.services.IDisposable;
  * 
  * @author Matthew Gerring
  */
-public interface IPlotImageService extends IFileIconService{
+public interface IPlotImageService extends IFileIconService {
 
 	/**
 	 * Create a square image from a specified file, f of given side size, size in pixels.
@@ -40,13 +40,17 @@ public interface IPlotImageService extends IFileIconService{
 	 * @param size
 	 * @return
 	 */
+	/**
+	 * Create image from buffered image
+	 * @param image
+	 * @return image
+	 */
 	public Image createImage(final BufferedImage image);
 
 	/**
-	 * Create a square image from a specified file, f of given side size, size in pixels.
-	 * @param f
-	 * @param size
-	 * @return
+	 * Create dataset from buffered image
+	 * @param image
+	 * @return dataset
 	 */
 	public IDataset createDataset(final BufferedImage image);
 

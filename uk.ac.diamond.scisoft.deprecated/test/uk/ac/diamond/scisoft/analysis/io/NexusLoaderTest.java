@@ -39,7 +39,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.IOTestUtils;
-import uk.ac.gda.util.OSUtils;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assume.assumeTrue;
@@ -64,9 +63,6 @@ public class NexusLoaderTest {
 
 	@Test
 	public void testLoadDifficultHdf5File() throws Exception {
-		skipTestIf(OSUtils.is32bitJVM(),
-			this.getClass().getCanonicalName() + ".testLoadDifficultHdf5File skipped, since this test fails on a 32-bit JVM - see GDA-3611");
-		
 		final IDataHolder dh = LoaderFactory.getData(IOTestUtils.getGDALargeTestFilesLocation()+"/NexusUITest/ID22-ODA-MapSpectra.h5", null);
 		assert dh!=null;
 		
@@ -76,9 +72,6 @@ public class NexusLoaderTest {
 
 	@Test
 	public void testLoadAnotherDifficultHdf5File() throws Exception {
-		skipTestIf(OSUtils.is32bitJVM(),
-			this.getClass().getCanonicalName() + ".testLoadDifficultHdf5File skipped, since this test fails on a 32-bit JVM - see GDA-3611");
-		
 		final IDataHolder dh = LoaderFactory.getData(IOTestUtils.getGDALargeTestFilesLocation()+"/NexusUITest/DCT_201006-good.h5", null);
 		assert dh!=null;
 		

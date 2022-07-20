@@ -16,16 +16,14 @@ import static org.eclipse.dawnsci.nexus.NexusConstants.DATA_INDICES_SUFFIX;
 import static org.eclipse.dawnsci.nexus.NexusConstants.DATA_SIGNAL;
 import static org.eclipse.dawnsci.nexus.NexusConstants.TARGET;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.lang.reflect.Array;
 import java.time.Duration;
@@ -46,7 +44,6 @@ import org.eclipse.dawnsci.nexus.NXdata;
 import org.eclipse.dawnsci.nexus.NXentry;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NXroot;
-import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.BooleanDataset;
 import org.eclipse.january.dataset.ByteDataset;
@@ -65,6 +62,7 @@ import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.dataset.PositionIterator;
 import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.dataset.StringDataset;
+import org.hamcrest.Matchers;
 
 public class NexusAssert {
 	
@@ -86,6 +84,7 @@ public class NexusAssert {
 	private static final String LAZY_TIMESTAMP_EXCEPTION = "Could not get timestamp data from lazy dataset";
 	
 	private static final int[] EMPTY_SHAPE = new int[] { };
+	private static final int[] SINGLE_SHAPE = new int[] { 1 };
 	
 	private NexusAssert() {
 		// Hide implicit constructor
@@ -97,16 +96,16 @@ public class NexusAssert {
 	
 	public static void assertNodesEquals(String path, final Node expectedNode, final Node actualNode) throws Exception {
 		if (expectedNode.isGroupNode()) {
-			assertTrue(path, actualNode.isGroupNode());
+			assertThat(path, actualNode.isGroupNode(), is(true));
 			assertGroupNodesEqual(path, (GroupNode) expectedNode, (GroupNode) actualNode);
 		} else if (expectedNode.isDataNode()) {
-			assertTrue(path, actualNode.isDataNode());
+			assertThat(path, actualNode.isDataNode(), is(true));
 			assertDataNodesEqual(path, (DataNode) expectedNode, (DataNode) actualNode);
 		} else if (expectedNode.isSymbolicNode()) {
-			assertTrue(path, actualNode.isSymbolicNode());
+			assertThat(path, actualNode.isSymbolicNode(), is(true));
 			assertSymbolicNodesEqual(path, (SymbolicNode) expectedNode, (SymbolicNode) actualNode);
 		} else {
-			fail("Unknown node type"); // sanity check, shouldn't be possible
+			assertThat("Unknown node type", false); // sanity check, shouldn't be possible
 		}
 	}
 
@@ -118,13 +117,13 @@ public class NexusAssert {
 
 		// check the groups have the same NXclass
 		if (expectedGroup instanceof NXobject) {
-			assertTrue(path, actualGroup instanceof NXobject);
-			assertEquals(path, ((NXobject) expectedGroup).getNXclass(), ((NXobject) actualGroup).getNXclass());
+			assertThat(path, actualGroup, Matchers.instanceOf(NXobject.class)); 
+			assertThat(path, ((NXobject) actualGroup).getNXclass(), is(equalTo(((NXobject) expectedGroup).getNXclass())));
 		}
 		
 		// check numbers of data nodes and group nodes are the same
-		assertEquals(path, expectedGroup.getNumberOfDataNodes(), actualGroup.getNumberOfDataNodes());
-		assertEquals(path, expectedGroup.getNumberOfGroupNodes(), actualGroup.getNumberOfGroupNodes());
+		assertThat(path, actualGroup.getNumberOfDataNodes(), is(expectedGroup.getNumberOfDataNodes()));
+		assertThat(path, actualGroup.getNumberOfGroupNodes(), is(expectedGroup.getNumberOfGroupNodes()));
 
 		// check number of attributes same (i.e. actualGroup has no additional attributes)
 		// The additional attribute "target" is allowed.
@@ -136,17 +135,15 @@ public class NexusAssert {
 		} else if (actualGroup.containsAttribute(TARGET)) {
 			expectedNumAttributes++;
 		}
-		assertEquals(path, expectedNumAttributes, actualGroup.getNumberOfAttributes());
+		assertThat(path, actualGroup.getNumberOfAttributes(), is(expectedNumAttributes));
 		
 		// check attribute properties same for each attribute
-		Iterator<String> attributeNameIterator = expectedGroup.getAttributeNameIterator();
-		while (attributeNameIterator.hasNext()) {
-			String attributeName = attributeNameIterator.next();
-			String attrPath = path + Node.ATTRIBUTE + attributeName;
-			Attribute expectedAttr = expectedGroup.getAttribute(attributeName);
-			Attribute actualAttr = actualGroup.getAttribute(attributeName);
+		for (String attributeName : expectedGroup.getAttributeNames()) {
+			final String attrPath = path + Node.ATTRIBUTE + attributeName;
+			final Attribute expectedAttr = expectedGroup.getAttribute(attributeName);
+			final Attribute actualAttr = actualGroup.getAttribute(attributeName);
 			if (!expectedAttr.getName().equals(TARGET) && !expectedAttr.getName().equals("file_name")) {
-				assertNotNull(attrPath, actualAttr);
+				assertThat(attrPath, actualAttr, is(notNullValue()));
 				assertAttributesEquals(attrPath, expectedAttr, actualAttr);
 			}
 		}
@@ -154,8 +151,8 @@ public class NexusAssert {
 		// check child nodes same
 		final Iterator<String> nodeNameIterator = expectedGroup.getNodeNameIterator();
 		while (nodeNameIterator.hasNext()) {
-			String nodeName = nodeNameIterator.next();
-			String nodePath = path + "/" + nodeName;
+			final String nodeName = nodeNameIterator.next();
+			final String nodePath = path + Node.SEPARATOR + nodeName;
 			assertNodesEquals(nodePath, expectedGroup.getNode(nodeName), actualGroup.getNode(nodeName));
 		}
 	}
@@ -172,46 +169,47 @@ public class NexusAssert {
 		} else if (actualDataNode.containsAttribute(TARGET)) {
 			expectedNumAttributes++;
 		}
-		assertEquals(expectedNumAttributes, actualDataNode.getNumberOfAttributes());
+		assertThat(path, actualDataNode.getNumberOfAttributes(), is(expectedNumAttributes));
 		
 		// check attributes properties same for each attribute
-		Iterator<String> attributeNameIterator = expectedDataNode.getAttributeNameIterator();
-		while (attributeNameIterator.hasNext()) {
-			String attributeName = attributeNameIterator.next();
+		for (String attributeName : expectedDataNode.getAttributeNames()) {
 			String attrPath = path + Node.ATTRIBUTE + attributeName;
-			Attribute expectedAttr = expectedDataNode.getAttribute(attributeName);
-			Attribute actualAttr = actualDataNode.getAttribute(attributeName);
+			final Attribute expectedAttr = expectedDataNode.getAttribute(attributeName);
+			final Attribute actualAttr = actualDataNode.getAttribute(attributeName);
 			if (!expectedAttr.getName().equals(TARGET)) {
-				assertNotNull(attrPath, expectedAttr);
+				assertThat(attrPath, expectedAttr, is(notNullValue()));
 				assertAttributesEquals(attrPath, expectedAttr, actualAttr);
 			}
 		}
 
-		assertEquals(path, expectedDataNode.getTypeName(), actualDataNode.getTypeName());
-		assertEquals(path, expectedDataNode.isAugmented(), actualDataNode.isAugmented());
-		assertEquals(path, expectedDataNode.isString(), actualDataNode.isString());
-		assertEquals(path, expectedDataNode.isSupported(), actualDataNode.isSupported());
-		assertEquals(path, expectedDataNode.isUnsigned(), actualDataNode.isUnsigned());
-		assertEquals(path, expectedDataNode.getMaxStringLength(), actualDataNode.getMaxStringLength());
-		// TODO reinstate lines below and check why they break - actualDataNode is null
-//		assertArrayEquals(path, expectedDataNode.getMaxShape(), actualDataNode.getMaxShape());
-//		assertArrayEquals(path, expectedDataNode.getChunkShape(), actualDataNode.getChunkShape());
-		assertEquals(path, expectedDataNode.getString(), actualDataNode.getString());
+		assertThat(path, actualDataNode.getTypeName(), is(equalTo(expectedDataNode.getTypeName())));
+		assertThat(path, actualDataNode.isAugmented(), is(expectedDataNode.isAugmented()));
+		assertThat(path, actualDataNode.isString(), is(expectedDataNode.isString())); 
+		assertThat(path, actualDataNode.isSupported(), is(expectedDataNode.isSupported()));
+		assertThat(path, actualDataNode.isUnsigned(), is(expectedDataNode.isUnsigned())); 
+		assertThat(path, actualDataNode.getMaxStringLength(), is(expectedDataNode.getMaxStringLength()));
+		if (expectedDataNode.getMaxShape() != null) {
+			assertThat(path, actualDataNode.getMaxShape(), is(equalTo(expectedDataNode.getMaxShape())));
+		} 
+		if (expectedDataNode.getChunkShape() != null) { 
+			assertThat(path, actualDataNode.getChunkShape(), is(equalTo(expectedDataNode.getChunkShape())));
+		}
+		assertThat(path, actualDataNode.getString(), is(equalTo(expectedDataNode.getString())));
 		assertDatasetsEqual(path, expectedDataNode.getDataset(), actualDataNode.getDataset());
 	}
 
 	public static void assertAttributesEquals(final String path, final Attribute expectedAttr,
 			final Attribute actualAttr) {
-		assertEquals(path, expectedAttr.getName(), actualAttr.getName());
-		assertEquals(path, expectedAttr.getTypeName(), actualAttr.getTypeName());
-		assertEquals(path, expectedAttr.getFirstElement(), actualAttr.getFirstElement());
-		assertEquals(path, expectedAttr.getSize(), actualAttr.getSize());
+		assertThat(path, actualAttr.getName(), is(equalTo(expectedAttr.getName())));
+		assertThat(path, actualAttr.getTypeName(), is(equalTo(expectedAttr.getTypeName())));
+		assertThat(path, actualAttr.getFirstElement(), is(equalTo(expectedAttr.getFirstElement())));
+		assertThat(path, actualAttr.getSize(), is(expectedAttr.getSize()));
 		if (expectedAttr.getSize() == 1 && expectedAttr.getRank() == 1 && actualAttr.getRank() == 0) {
 			// TODO fix examples now that we can save scalar (or zero-ranked) datasets
 			actualAttr.getValue().setShape(1);
 		}
-		assertEquals(path, expectedAttr.getRank(), actualAttr.getRank());
-		assertArrayEquals(path, expectedAttr.getShape(), actualAttr.getShape());
+		assertThat(path, actualAttr.getRank(), is(expectedAttr.getRank()));
+		assertThat(path, actualAttr.getShape(), is(expectedAttr.getShape()));
 		assertDatasetsEqual(path, expectedAttr.getValue(), actualAttr.getValue());
 	}
 
@@ -221,61 +219,58 @@ public class NexusAssert {
 
 	public static void assertDatasetsEqual(final String path, final ILazyDataset expectedDataset,
 			final ILazyDataset actualDataset) {
-		// Note: dataset names can be different, as long as the containing data node names are the same
-//		assertEquals(path, expectedDataset.getName(), actualDataset.getName());
-//		assertEquals(path, expectedDataset.getClass(), actualDataset.getClass());
-		assertEquals(path, expectedDataset.getElementClass(), actualDataset.getElementClass());
-		assertEquals(path, expectedDataset.getElementsPerItem(), actualDataset.getElementsPerItem());
-		assertEquals(path, expectedDataset.getSize(), actualDataset.getSize());
-		assertEquals(path, expectedDataset.getRank(), actualDataset.getRank());
-		assertArrayEquals(path, expectedDataset.getShape(), actualDataset.getShape());
+		// Note: we permit dataset names and classes to different, as long as the containing data node names are the same
+//		assertThat(path, actualDataset.getName(), is(equalTo(expectedDataset.getName())));
+//		assertThat(path, actualDataset.getClass(), is(equalTo(expectedDataset.getClass())));
+		assertThat(path, actualDataset.getElementClass(), is(equalTo(expectedDataset.getElementClass())));
+		assertThat(path, actualDataset.getElementsPerItem(), is(equalTo(expectedDataset.getElementsPerItem()))); 
+		assertThat(path, actualDataset.getSize(), is(expectedDataset.getSize())); 
+		assertThat(path, actualDataset.getRank(), is(expectedDataset.getRank()));
+		assertThat(path, actualDataset.getShape(), is(equalTo(expectedDataset.getShape()))); 
 		assertDatasetDataEqual(path, expectedDataset, actualDataset);
-
-		// TODO: in future also check metadata
 	}
 
 	private static void assertDatasetDataEqual(final String path,
 			final ILazyDataset expectedDataset, final ILazyDataset actualDataset) {
 		if (expectedDataset instanceof Dataset && actualDataset instanceof Dataset) {
-			assertEquals(path, expectedDataset, actualDataset); // uses Dataset.equals() method
+			assertThat(path, actualDataset, is(equalTo(expectedDataset))); // uses Dataset.equals() method
 		} else {
-			assertEquals(expectedDataset.getSize(), actualDataset.getSize());
-			if (expectedDataset.getSize() == 0) {
-				return;
-			}
+			// compare the properties of the two datasets
+			assertThat(path, actualDataset.getSize(), is(expectedDataset.getSize()));
+			if (expectedDataset.getSize() == 0) return;
 			
 			// getSlice() with no args loads whole dataset if a lazy dataset
-			IDataset expectedSlice;
-			IDataset actualSlice;
+			final IDataset expectedSlice;
+			final IDataset actualSlice;
 			try {
 				expectedSlice = expectedDataset.getSlice();
 				actualSlice = actualDataset.getSlice();
 			} catch (DatasetException e) {
-				throw new AssertionError(LAZY_DATA_EXCEPTION, e.getCause());
+				throw new AssertionError(LAZY_DATA_EXCEPTION + ", path = " + path, e.getCause());
 			}
 
-			Class<? extends Dataset> clazz = InterfaceUtils.getInterface(actualDataset);
-			PositionIterator positionIterator = new PositionIterator(actualDataset.getShape());
+			final Class<? extends Dataset> clazz = InterfaceUtils.getInterface(actualDataset);
+			final PositionIterator positionIterator = new PositionIterator(actualDataset.getShape());
 			while (positionIterator.hasNext()) {
 				int[] position = positionIterator.getPos();
 				if (BooleanDataset.class.isAssignableFrom(clazz)) {
-					assertEquals(path, expectedSlice.getBoolean(position), actualSlice.getBoolean(position));
+					assertThat(path, actualSlice.getBoolean(position), is(equalTo(expectedSlice.getBoolean(position))));
 				} else if (ByteDataset.class.isAssignableFrom(clazz)) {
-					assertEquals(path, expectedSlice.getByte(position), actualSlice.getByte(position));
+					assertThat(path, actualSlice.getByte(position), is(equalTo(expectedSlice.getByte(position))));
 				} else if (ShortDataset.class.isAssignableFrom(clazz)) {
-					assertEquals(path, expectedSlice.getShort(position), actualSlice.getShort(position));
+					assertThat(path, actualSlice.getShort(position), is(equalTo(expectedSlice.getShort(position)))); 
 				} else if (IntegerDataset.class.isAssignableFrom(clazz)) {
-					assertEquals(path, expectedSlice.getInt(position), actualSlice.getInt(position));
+					assertThat(path, actualSlice.getInt(position), is(equalTo(expectedSlice.getInt(position))));
 				} else if (LongDataset.class.isAssignableFrom(clazz)) {
-					assertEquals(path, expectedSlice.getLong(position), actualSlice.getLong(position));
+					assertThat(path, actualSlice.getLong(position), is(equalTo(expectedSlice.getLong(position)))); 
 				} else if (FloatDataset.class.isAssignableFrom(clazz)) {
-					assertEquals(path, expectedSlice.getFloat(position), actualSlice.getFloat(position), 1e-7);
+					assertThat(path, (double) actualSlice.getFloat(position), closeTo(expectedSlice.getFloat(position), 1e-7));
 				} else if (DoubleDataset.class.isAssignableFrom(clazz)) {
-					assertEquals(path, expectedSlice.getDouble(position), actualSlice.getDouble(position), 1e-15);
+					assertThat(path, actualSlice.getDouble(position), closeTo(expectedSlice.getDouble(position), 1e-15));
 				} else if (StringDataset.class.isAssignableFrom(clazz) || DateDataset.class.isAssignableFrom(clazz)) {
-					assertEquals(path, expectedSlice.getString(position), actualSlice.getString(position));
+					assertThat(path, actualSlice.getString(position), is(equalTo(expectedSlice.getString(position))));
 				} else {
-					assertEquals(path, expectedSlice.getObject(position), actualSlice.getObject(position));
+					assertThat(path, actualSlice.getObject(position), is(equalTo(expectedSlice.getObject(position))));
 				}
 			}
 		}
@@ -283,11 +278,11 @@ public class NexusAssert {
 	
 	public static void assertSymbolicNodesEqual(final String path,
 			final SymbolicNode expectedSymbolicNode, final SymbolicNode actualSymbolicNode) {
-		assertEquals(path, expectedSymbolicNode, actualSymbolicNode);
+		assertThat(path, actualSymbolicNode, is(equalTo(expectedSymbolicNode)));
 	}
 	
 	public static void assertSignal(NXdata nxData, String expectedSignalFieldName) {
-		Attribute signalAttr = nxData.getAttribute(DATA_SIGNAL);
+		final Attribute signalAttr = nxData.getAttribute(DATA_SIGNAL);
 		assertThat(signalAttr, is(notNullValue()));
 		assertThat(signalAttr.getRank(), is(0));
 		assertThat(signalAttr.getFirstElement(), is(equalTo(expectedSignalFieldName)));
@@ -297,44 +292,44 @@ public class NexusAssert {
 	public static void assertAxes(NXdata nxData, String... expectedValues) {
 		if (expectedValues.length == 0)
 			return; // axes not written if no axes to write (a scalar signal field)
-		Attribute axesAttr = nxData.getAttribute(DATA_AXES);
+		final Attribute axesAttr = nxData.getAttribute(DATA_AXES);
 		assertThat(axesAttr, is(notNullValue()));
 		assertThat(axesAttr.getRank(), is(1));
 		assertThat(axesAttr.getShape()[0], is(expectedValues.length));
-		IDataset value = axesAttr.getValue();
+		final IDataset value = axesAttr.getValue();
 		for (int i = 0; i < expectedValues.length; i++) {
 			assertThat(value.getString(i), is(equalTo(expectedValues[i])));
 		}
 	}
 
 	public static void assertShape(NXdata nxData, String fieldName, int... expectedShape) {
-		DataNode dataNode = nxData.getDataNode(fieldName);
+		final DataNode dataNode = nxData.getDataNode(fieldName);
 		assertThat(fieldName, is(notNullValue()));
-		int[] actualShape = dataNode.getDataset().getShape();
-		assertArrayEquals(expectedShape, actualShape);
+		final int[] actualShape = dataNode.getDataset().getShape();
+		assertThat(actualShape, is(equalTo(expectedShape)));
 	}
 
 	public static void assertIndices(NXdata nxData, String axisName, int... indices) {
-		Attribute indicesAttr = nxData.getAttribute(axisName + DATA_INDICES_SUFFIX);
+		final Attribute indicesAttr = nxData.getAttribute(axisName + DATA_INDICES_SUFFIX);
 		assertThat(indicesAttr, is(notNullValue()));
 		assertThat(indicesAttr.getRank(), is(1));
 		assertThat(indicesAttr.getShape()[0], is(indices.length));
-		IDataset value = indicesAttr.getValue();
+		final IDataset value = indicesAttr.getValue();
 		for (int i = 0; i < indices.length; i++) {
 			assertThat(value.getInt(i), is(equalTo(indices[i])));
 		}
 	}
 	
 	public static void assertTarget(NXdata nxData, String destName, NXroot nxRoot, String targetPath) {
-		DataNode dataNode = nxData.getDataNode(destName);
+		final DataNode dataNode = nxData.getDataNode(destName);
 		assertThat(dataNode, is(notNullValue()));
-		Attribute targetAttr = dataNode.getAttribute(TARGET);
+		final Attribute targetAttr = dataNode.getAttribute(TARGET);
 		assertThat(targetAttr, is(notNullValue()));
 		assertThat(targetAttr.getSize(), is(1));
 		assertThat(targetAttr.getFirstElement(), is(equalTo(targetPath)));
 		
-		NodeLink nodeLink = nxRoot.findNodeLink(targetPath);
-		assertTrue(nodeLink.isDestinationData());
+		final NodeLink nodeLink = nxRoot.findNodeLink(targetPath);
+		assertThat(nodeLink.isDestinationData(), is(true));
 		assertThat(nodeLink.getDestination(), is(sameInstance(dataNode)));
 	}
 	
@@ -359,17 +354,15 @@ public class NexusAssert {
 		assertScanFinished(entry);
 
 		final NXcollection diamondScanCollection = entry.getCollection(GROUP_NAME_DIAMOND_SCAN);
-		assertNotNull(diamondScanCollection);
+		assertThat(diamondScanCollection, is(notNullValue()));
 		assertTimesMatch(entry, diamondScanCollection);
 
 		assertScanShape(diamondScanCollection, sizes);
 		assertScanTimes(diamondScanCollection);
 
 		final NXcollection keysCollection = (NXcollection) diamondScanCollection.getGroupNode(GROUP_NAME_KEYS);
-		assertNotNull(keysCollection);
+		assertThat(keysCollection, is(notNullValue()));
 
-		// workaround for StaticGenerator with StaticModel of size 1 producing scan of
-		// rank 1 and shape { 1 }
 		assertUniqueKeys(malcolmScan, snake, foldedGrid, expectedUniqueKeysPath, keysCollection, sizes);
 
 		assertNXTimeStamps(diamondScanCollection);
@@ -390,11 +383,13 @@ public class NexusAssert {
 	
 	private static void assertScanTimeStamps(final DataNode startTimeNode, final DataNode endTimeNode,
 			final DataNode durationNode) {
-		assertNotNull(startTimeNode);
-		assertNotNull(endTimeNode);
-		assertNotNull(durationNode);
+		assertThat(startTimeNode, is(notNullValue()));
+		assertThat(endTimeNode, is(notNullValue()));
+		assertThat(durationNode, is(notNullValue()));
 
-		IDataset startTimeDataset, endTimeDataset, durationDataset;
+		final IDataset startTimeDataset;
+		final IDataset endTimeDataset;
+		final IDataset durationDataset;
 		try {
 			startTimeDataset = startTimeNode.getDataset().getSlice();
 			endTimeDataset = endTimeNode.getDataset().getSlice();
@@ -403,19 +398,18 @@ public class NexusAssert {
 			throw new AssertionError(LAZY_TIMESTAMP_EXCEPTION, e);
 		}
 
-		assertEquals(String.class, startTimeDataset.getElementClass());
-		assertEquals(String.class, endTimeDataset.getElementClass());
-		assertEquals(Long.class, durationDataset.getElementClass());
+		assertThat(startTimeDataset.getElementClass(), is(equalTo(String.class)));
+		assertThat(endTimeDataset.getElementClass(), is(equalTo(String.class)));
+		assertThat(durationDataset.getElementClass(), is(equalTo(Long.class)));
 
 		final DateDataset startTimeDateDataset = DatasetUtils.cast(DateDataset.class, startTimeDataset);
 		final DateDataset endTimeDateDataset = DatasetUtils.cast(DateDataset.class, endTimeDataset);
 		// As truncating to milliseconds, could end the same milli as starting, so check that end is at least not before start.
-		assertTrue(!endTimeDateDataset.getDate().before(startTimeDateDataset.getDate()));
-
+		assertThat(endTimeDateDataset.getDate(), is(greaterThanOrEqualTo(startTimeDateDataset.getDate())));
+		
 		final long scanDuration = Duration.between(startTimeDateDataset.getDate().toInstant(),
 				endTimeDateDataset.getDate().toInstant()).toMillis();
-		assertEquals(scanDuration, durationDataset.getLong());
-		
+		assertThat(durationDataset.getLong(), is(scanDuration));
 	}
 
 	private static void assertPointTimeStamps(NXcollection diamondScanCollection, int[] sizes,
@@ -423,10 +417,11 @@ public class NexusAssert {
 		final DataNode pointStartTimesNode = diamondScanCollection.getDataNode(FIELD_NAME_POINT_START_TIME);
 		final DataNode pointEndTimesNode = diamondScanCollection.getDataNode(FIELD_NAME_POINT_END_TIME);
 
-		assertNotNull(pointStartTimesNode);
-		assertNotNull(pointEndTimesNode);
+		assertThat(pointStartTimesNode, is(notNullValue()));
+		assertThat(pointEndTimesNode, is(notNullValue()));
 
-		IDataset pointStartTimesDataset, pointEndTimesDataset;
+		final IDataset pointStartTimesDataset;
+		final IDataset pointEndTimesDataset;
 		try {
 			pointStartTimesDataset = pointStartTimesNode.getDataset().getSlice();
 			pointEndTimesDataset = pointEndTimesNode.getDataset().getSlice();
@@ -434,11 +429,11 @@ public class NexusAssert {
 			throw new AssertionError(LAZY_TIMESTAMP_EXCEPTION, e);
 		}
 
-		assertEquals(String.class, pointStartTimesDataset.getElementClass());
-		assertEquals(String.class, pointEndTimesDataset.getElementClass());
+		assertThat(pointStartTimesDataset.getElementClass(), is(equalTo(String.class)));
+		assertThat(pointEndTimesDataset.getElementClass(), is(equalTo(String.class)));
 
-		assertArrayEquals(sizes, pointStartTimesDataset.getShape());
-		assertArrayEquals(sizes, pointEndTimesDataset.getShape());
+		assertThat(pointStartTimesDataset.getShape(), is(equalTo(sizes)));
+		assertThat(pointEndTimesDataset.getShape(), is(equalTo(sizes)));
 
 		final Dataset startTimes = DatasetUtils.convertToDataset(pointStartTimesDataset);
 		final Dataset endTimes = DatasetUtils.convertToDataset(pointEndTimesDataset);
@@ -451,11 +446,11 @@ public class NexusAssert {
 		if (!snake || sizes.length == 1) {
 			Date prevEnd = null;
 			while (iterator.hasNext()) {
-				Date start = startTimeDateDataset.getDate(iterator.getPos());
-				Date end = endTimeDateDataset.getDate(iterator.getPos());
-				assertTrue(!end.before(start));
+				final Date start = startTimeDateDataset.getDate(iterator.getPos());
+				final Date end = endTimeDateDataset.getDate(iterator.getPos());
+				assertThat(end, is(greaterThanOrEqualTo(start)));
 				if (prevEnd != null) {
-					assertTrue(!start.before(prevEnd));
+					assertThat(start, is(greaterThanOrEqualTo(prevEnd)));
 				}
 				prevEnd = end;
 			}
@@ -465,29 +460,28 @@ public class NexusAssert {
 
 			Date previousEnd = null;
 			for (int index = 0; index < flatStartTimes.length; index++) {
-				Date start = flatStartTimes[index];
-				Date end = flatEndTimes[index];
-				assertTrue(!start.after(end));
+				final Date start = flatStartTimes[index];
+				final Date end = flatEndTimes[index];
+				assertThat(end, is(greaterThanOrEqualTo(start)));
 				if (previousEnd != null) {
-					assertTrue(!previousEnd.after(start));
+					assertThat(start, is(greaterThanOrEqualTo(previousEnd)));
 				}
 				previousEnd = end;
 			}
 		}
-
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	private static <T> T[] flattenSnakeDataset(IDataset dataset, boolean foldedGrid, Class<T> datasetType) {
+		final int[] shape = dataset.getShape();
 		int pointIndex = 1;
-		int[] shape = dataset.getShape();
 		int flatArraySize = 1;
 		for (int axisPoints : shape) {
 			flatArraySize *= axisPoints;
 		}
 		
-		T[] flatDataset = (T[]) Array.newInstance(datasetType, flatArraySize);
-		PositionIterator iter = new PositionIterator(shape);
+		final T[] flatDataset = (T[]) Array.newInstance(datasetType, flatArraySize);
+		final PositionIterator iter = new PositionIterator(shape);
 
 		// the PositionIterator iterates through all points top to bottom, left to right
 		// whereas the snake scan alternates first horizontally, and then and the end of
@@ -545,23 +539,22 @@ public class NexusAssert {
 
 	private static void assertScanShape(NXcollection diamondScanCollection, int... sizes) {
 		final DataNode shapeDataNode = diamondScanCollection.getDataNode(FIELD_NAME_SCAN_SHAPE);
-		assertNotNull(shapeDataNode);
+		assertThat(shapeDataNode, is(notNullValue()));
 		final IDataset shapeDataset;
 		try {
 			shapeDataset = shapeDataNode.getDataset().getSlice();
 		} catch (DatasetException e) {
 			throw new AssertionError(LAZY_DATA_EXCEPTION, e);
 		}
-		assertEquals(Integer.class, shapeDataset.getElementClass());
+		assertThat(shapeDataset.getElementClass(), is(equalTo(Integer.class)));
 		if (sizes.length == 0) {
-			// TODO remove this workaround when january updated
-			assertEquals(0, shapeDataset.getRank());
-			assertArrayEquals(new int[0], shapeDataset.getShape());
+			assertThat(shapeDataset.getRank(), is(0));
+			assertThat(shapeDataset.getShape(), is(equalTo(EMPTY_SHAPE)));
 		} else {
-			assertEquals(1, shapeDataset.getRank());
-			assertArrayEquals(new int[] { sizes.length }, shapeDataset.getShape());
+			assertThat(shapeDataset.getRank(), is(1));
+			assertThat(shapeDataset.getShape(), is(equalTo(new int[] { sizes.length })));
 			for (int i = 0; i < sizes.length; i++) {
-				assertEquals(sizes[i], shapeDataset.getInt(i));
+				assertThat(shapeDataset.getInt(i), is(equalTo(sizes[i])));
 			}
 		}
 	}
@@ -569,7 +562,7 @@ public class NexusAssert {
 	private static void assertScanTimes(NXcollection diamondScanCollection) {
 		// check the estimated scan duration dataset
 		final DataNode estimatedTimeDataNode = diamondScanCollection.getDataNode(FIELD_NAME_SCAN_ESTIMATED_DURATION);
-		assertNotNull(estimatedTimeDataNode);
+		assertThat(estimatedTimeDataNode, is(notNullValue()));
 		final IDataset estimatedTimeDataset;
 		try {
 			estimatedTimeDataset = estimatedTimeDataNode.getDataset().getSlice();
@@ -577,14 +570,14 @@ public class NexusAssert {
 			throw new AssertionError(LAZY_DATA_EXCEPTION, e);
 		}
 
-		assertEquals(Long.class, estimatedTimeDataset.getElementClass());
-		assertEquals(0, estimatedTimeDataset.getRank());
-		assertArrayEquals(EMPTY_SHAPE, estimatedTimeDataset.getShape());
-		final long estimatedtime = estimatedTimeDataset.getLong();
+		assertThat(estimatedTimeDataset.getElementClass(), is(equalTo(Long.class)));
+		assertThat(estimatedTimeDataset.getRank(), is(0));
+		assertThat(estimatedTimeDataset.getShape(), is(EMPTY_SHAPE));
+		final long estimatedTime = estimatedTimeDataset.getLong();
 
 		// check the actual scan duration dataset
 		final DataNode actualTimeDataNode = diamondScanCollection.getDataNode(NXentry.NX_DURATION);
-		assertNotNull(actualTimeDataNode);
+		assertThat(actualTimeDataNode, is(notNullValue()));
 		IDataset actualTimeDataset;
 		try {
 			actualTimeDataset = actualTimeDataNode.getDataset().getSlice();
@@ -592,18 +585,15 @@ public class NexusAssert {
 			throw new AssertionError(LAZY_DATA_EXCEPTION, e);
 		}
 
-		// written as a 1d dataset of rank 1, as we can't write a scalar lazy writeable
-		// dataset
-		// TODO: is this now possible?
-		assertEquals(Long.class, actualTimeDataset.getElementClass());
-		assertEquals(0, actualTimeDataset.getRank());
-		assertArrayEquals(EMPTY_SHAPE, actualTimeDataset.getShape());
+		assertThat(actualTimeDataset.getElementClass(), is(equalTo(Long.class))); 
+		assertThat(actualTimeDataset.getRank(), is(0));
+		assertThat(actualTimeDataset.getShape(), is(equalTo(EMPTY_SHAPE)));
 		
 		final long scanDurationMs = actualTimeDataset.getLong();
 
 		// check the scan dead time dataset
 		final DataNode deadTimeDataNode = diamondScanCollection.getDataNode(FIELD_NAME_SCAN_DEAD_TIME);
-		assertNotNull(deadTimeDataNode);
+		assertThat(deadTimeDataNode, is(notNullValue()));
 		final IDataset deadTimeDataset;
 		try {
 			deadTimeDataset = deadTimeDataNode.getDataset().getSlice();
@@ -613,17 +603,17 @@ public class NexusAssert {
 
 		// written as a 1d dataset of rank 1, as we can't write a scalar lazy writeable
 		// dataset
-		assertEquals(Long.class, deadTimeDataset.getElementClass());
-		assertEquals(0, deadTimeDataset.getRank());
-		assertArrayEquals(EMPTY_SHAPE, deadTimeDataset.getShape());
+		assertThat(deadTimeDataset.getElementClass(), is(equalTo(Long.class)));
+		assertThat(deadTimeDataset.getRank(), is(0));
+		assertThat(deadTimeDataset.getShape(), is(equalTo(EMPTY_SHAPE)));
 		final long deadTime = deadTimeDataset.getLong();
 
 		// The scan duration should be equal to the estimated time plus the dead time
-		assertEquals(estimatedtime + deadTime, scanDurationMs);
+		assertThat(scanDurationMs, is(equalTo(estimatedTime + deadTime)));
 
 		// check the percentage dead time
 		final DataNode deadTimePercentDataNode = diamondScanCollection.getDataNode(FIELD_NAME_SCAN_DEAD_TIME_PERCENT);
-		assertNotNull(deadTimePercentDataNode);
+		assertThat(deadTimePercentDataNode, is(notNullValue()));
 		IDataset deadTimePercentDataset;
 		try {
 			deadTimePercentDataset = deadTimePercentDataNode.getDataset().getSlice();
@@ -631,12 +621,13 @@ public class NexusAssert {
 			throw new AssertionError(LAZY_DATA_EXCEPTION, e);
 		}
 
-		assertEquals(Float.class, deadTimePercentDataset.getElementClass());
-		assertEquals(0, deadTimePercentDataset.getRank());
-		assertArrayEquals(EMPTY_SHAPE, deadTimePercentDataset.getShape());
-		final float deadTimePercent = deadTimePercentDataset.getFloat();
+		assertThat(deadTimePercentDataset.getElementClass(), is(equalTo(Float.class)));
+		assertThat(deadTimePercentDataset.getRank(), is(0));
+		assertThat(deadTimePercentDataset.getShape(), is(equalTo(EMPTY_SHAPE)));
+		final double deadTimePercent = deadTimePercentDataset.getFloat();
 
-		assertEquals((float) deadTime / scanDurationMs, deadTimePercent / 100, 0.001);
+		assertThat(deadTimePercent, is(closeTo(100 * ((double) deadTime / scanDurationMs), 0.001)));
+		
 	}
 
 	private static void assertUniqueKeys(boolean malcolmScan, boolean snake, boolean foldedGrid,
@@ -659,27 +650,27 @@ public class NexusAssert {
 			sizes = new int[] { 1 };
 
 		// check the unique keys field - contains the step number for each scan point
-		DataNode dataNode = keysCollection.getDataNode(FIELD_NAME_UNIQUE_KEYS);
-		assertNotNull(dataNode);
+		final DataNode dataNode = keysCollection.getDataNode(FIELD_NAME_UNIQUE_KEYS);
+		assertThat(dataNode, is(notNullValue()));
 		IDataset dataset;
 		try {
 			dataset = dataNode.getDataset().getSlice();
 		} catch (DatasetException e) {
 			throw new AssertionError(LAZY_DATA_EXCEPTION, e);
 		}
-		assertTrue(dataset instanceof IntegerDataset);
-		assertEquals(sizes.length, dataset.getRank());
+		assertThat(dataset, is(instanceOf(IntegerDataset.class)));
+		assertThat(dataset.getRank(), is(sizes.length));
 		final int[] shape = dataset.getShape();
-		assertArrayEquals(sizes, shape);
+		assertThat(shape, is(equalTo(sizes)));
 
 		// iterate through the points
 		int expectedPos = 1;
-		PositionIterator iter = new PositionIterator(shape);
+		final PositionIterator iter = new PositionIterator(shape);
 		if (!snake || sizes.length == 1) {
 			// not a snake scan, the order of points will be the same as the position
 			// iterator gives them
 			while (iter.hasNext()) { // hasNext also increments the position iterator (ugh!)
-				assertEquals(expectedPos, dataset.getInt(iter.getPos()));
+				assertThat(dataset.getInt(iter.getPos()), is(expectedPos));
 				expectedPos++;
 			}
 		} else {
@@ -696,7 +687,7 @@ public class NexusAssert {
 			int expectedLineEnd = lineSize;
 			int expectedInnerScanEnd = innerScanSize - (oddNumRows ? 0 : lineSize - 1);
 			while (iter.hasNext()) { // hasNext also increments the position iterator (ugh!)
-				assertEquals(expectedPos, dataset.getInt(iter.getPos()));
+				assertThat(dataset.getInt(iter.getPos()), is(expectedPos));
 
 				if (!foldedGrid && !isBottomToTopInnerScan && expectedPos == expectedInnerScanEnd) {
 					// end of top to bottom inner scan, next is bottom to top
@@ -736,9 +727,9 @@ public class NexusAssert {
 	private static void assertUniqueKeysExternalFileLinks(NXcollection keysCollection,
 			List<String> expectedUniquekeyPaths, int[] sizes) {
 		for (String expectedUniquekeyPath : expectedUniquekeyPaths) {
-			DataNode dataNode = keysCollection.getDataNode(expectedUniquekeyPath);
-			assertNotNull(dataNode);
-			assertEquals(sizes.length, dataNode.getRank());
+			final DataNode dataNode = keysCollection.getDataNode(expectedUniquekeyPath);
+			assertThat(dataNode, is(notNullValue()));
+			assertThat(dataNode.getRank(), is(sizes.length));
 		}
 	}
 
@@ -751,43 +742,43 @@ public class NexusAssert {
 	}
 
 	private static void assertScanFinished(NXentry entry, boolean finished) {
-		NXcollection scanPointsCollection = entry.getCollection(GROUP_NAME_DIAMOND_SCAN);
-		assertNotNull(scanPointsCollection);
+		final NXcollection scanPointsCollection = entry.getCollection(GROUP_NAME_DIAMOND_SCAN);
+		assertThat(scanPointsCollection, is(notNullValue()));
 
 		// check the scan finished boolean is set to true
-		DataNode dataNode = scanPointsCollection.getDataNode(FIELD_NAME_SCAN_FINISHED);
-		assertNotNull(dataNode);
-		IDataset dataset;
+		final DataNode dataNode = scanPointsCollection.getDataNode(FIELD_NAME_SCAN_FINISHED);
+		assertThat(dataNode, is(notNullValue()));
+		final IDataset dataset;
 		try {
 			dataset = dataNode.getDataset().getSlice();
 		} catch (DatasetException e) {
 			throw new AssertionError(LAZY_DATA_EXCEPTION, e);
 		}
-		assertTrue(dataset instanceof IntegerDataset); // HDF5 doesn't support boolean datasets
-		assertEquals(1, dataset.getRank());
-		assertArrayEquals(new int[] { 1 }, dataset.getShape());
-		assertEquals(finished, dataset.getBoolean(0));
+		assertThat(dataset, is(instanceOf(IntegerDataset.class))); // HDF5 doesn't support boolean datasets
+		assertThat(dataset.getRank(), is(1));
+		assertThat(dataset.getShape(), is(SINGLE_SHAPE));
+		assertThat(dataset.getBoolean(0), is(finished));
 	}
 	
 	public static void assertUnits(NXobject nexusObject, String fieldName, String expectedUnits) {
 		final DataNode dataNode = nexusObject.getDataNode(fieldName);
-		assertNotNull(dataNode);
+		assertThat(dataNode, is(notNullValue()));
 		assertUnits(dataNode, expectedUnits);
 	}
 	
 	public static void assertUnits(DataNode dataNode, String expectedUnits) {
 		if (expectedUnits == null) {
-			assertNull(dataNode.getAttribute(ATTR_NAME_UNITS));
+			assertThat(dataNode.getAttribute(ATTR_NAME_UNITS), is(nullValue()));
 		} else {
 			final Attribute expectedUnitsAttr = TreeFactory.createAttribute(ATTR_NAME_UNITS, expectedUnits);
 			final Attribute actualUnitsAttr = dataNode.getAttribute(ATTR_NAME_UNITS);
-			assertNotNull("units not specified, expected " + expectedUnits, actualUnitsAttr);
+			assertThat("units not specified, expected "  + expectedUnits, actualUnitsAttr, is(notNullValue()));
 			assertAttributesEquals(null, expectedUnitsAttr, actualUnitsAttr);
 		}
 	}
 	
 	public static void assertNXentryMetadata(NXentry entry) {
-		assertEquals(MOCK_VISIT_ID, entry.getExperiment_identifierScalar());
+		assertThat(entry.getExperiment_identifierScalar(), is(equalTo(MOCK_VISIT_ID)));
 		assertNXTimeStamps(entry);
 	}
 	

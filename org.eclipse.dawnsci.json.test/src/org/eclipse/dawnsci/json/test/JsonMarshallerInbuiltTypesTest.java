@@ -213,6 +213,12 @@ public class JsonMarshallerInbuiltTypesTest {
 	}
 
 	@Test
+	public void testObjectArrayDeserializationWithoutClassRegistries() throws Exception {
+		Object[] actual = marshaller.unmarshal(JSON_FOR_OBJECT_ARRAY_WITHOUT_TYPE, Object[].class);
+		assertArrayEquals(actual, new Object[] { "a", "b", 5 });
+	}
+
+	@Test
 	public void testObjectArrayDeserialization() throws Exception {
 		Object[] actual = marshaller.unmarshal(JSON_FOR_OBJECT_ARRAY, Object[].class);
 		assertArrayEquals(actual, new Object[] { "a", "b", 5 });

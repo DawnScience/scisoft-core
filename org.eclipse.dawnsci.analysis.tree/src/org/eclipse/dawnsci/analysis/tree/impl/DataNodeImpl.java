@@ -13,6 +13,8 @@
 package org.eclipse.dawnsci.analysis.tree.impl;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.stream.IntStream;
 
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.january.DatasetException;
@@ -85,7 +87,7 @@ public class DataNodeImpl extends NodeImpl implements DataNode, Serializable {
 
 	@Override
 	public long[] getMaxShape() {
-		if (dataset != null && dataset instanceof IDynamicDataset) {
+		if (dataset instanceof IDynamicDataset) {
 			return toLongArray(((IDynamicDataset) dataset).getMaxShape());
 		}
 		
@@ -102,7 +104,7 @@ public class DataNodeImpl extends NodeImpl implements DataNode, Serializable {
 		
 		this.maxShape = maxShape;
 		
-		if (dataset != null && dataset instanceof IDynamicDataset) {
+		if (dataset instanceof IDynamicDataset) {
 			((IDynamicDataset) dataset).setMaxShape(toIntArray(maxShape));
 		}
 	}
@@ -114,7 +116,7 @@ public class DataNodeImpl extends NodeImpl implements DataNode, Serializable {
 	
 	@Override
 	public long[] getChunkShape() {
-		if (dataset != null && dataset instanceof ILazyWriteableDataset) {
+		if (dataset instanceof ILazyWriteableDataset) {
 			return toLongArray(((ILazyWriteableDataset) dataset).getChunking());
 		}
 		
@@ -202,28 +204,16 @@ public class DataNodeImpl extends NodeImpl implements DataNode, Serializable {
 	public void setDataset(final ILazyDataset lazyDataset) {
 		dataset = lazyDataset;
 		rank = dataset.getRank();
-		int[] mshape = null;
-		if (maxShape != null) {
-			mshape = new int[rank];
-			for (int i = 0; i < rank; i++) {
-				mshape[i] = (int) maxShape[i];
-			}
-		}
-		int[] cshape = null;
-		if (chunkShape != null) {
-			cshape = new int[rank];
-			for (int i = 0; i < rank; i++) {
-				cshape[i] = (int) chunkShape[i];
-			}
-		}
-		if (mshape != null || cshape != null) {
-			DimensionMetadata dmd = null;
+
+		if (maxShape != null || chunkShape != null) {
+			int[] mshape = maxShape == null ? null : IntStream.range(0, rank).map(i -> (int) maxShape[i]).toArray();
+			int[] cshape = chunkShape == null ? null : IntStream.range(0, rank).map(i -> (int) chunkShape[i]).toArray();
 			try {
-				dmd = MetadataFactory.createMetadata(DimensionMetadata.class, dataset.getShape(), mshape, cshape);
+				DimensionMetadata dmd = MetadataFactory.createMetadata(DimensionMetadata.class, dataset.getShape(), mshape, cshape);
+				dataset.addMetadata(dmd);
 			} catch (MetadataException e) {
 				e.printStackTrace();
 			}
-			dataset.addMetadata(dmd);
 		}
 
 		supported = true;
@@ -262,26 +252,20 @@ public class DataNodeImpl extends NodeImpl implements DataNode, Serializable {
 	}
 	
 	private int[] toIntArray(long[] longArray) {
-		final int[] intArray = new int[longArray.length];
-		for (int i = 0; i < longArray.length; i++) {
-			long longValue = longArray[i];
-			if (longValue > Integer.MAX_VALUE) {
-				throw new IllegalArgumentException("Dimension size is too large for an integer " + longValue);
-			}
-			
-			intArray[i] = (int) longValue;
-		}
+		if (longArray == null) return null; // NOSONAR, null is allowed as this is a conversion function
+
+		Arrays.stream(longArray)
+			.filter(i -> i > Integer.MAX_VALUE)
+			.findFirst()
+			.ifPresent(i -> { throw new IllegalArgumentException("Dimension size is too large for an integer " + i); });
 		
-		return intArray;
+		return Arrays.stream(longArray).mapToInt(i -> (int) i).toArray();
 	}
 	
 	private long[] toLongArray(int[] intArray) {
-		final long[] longArray = new long[intArray.length];
-		for (int i = 0; i < intArray.length; i++) {
-			longArray[i] = intArray[i];
-		}
+		if (intArray == null) return null; // NOSONAR, null is allowed as this is a conversion function
 		
-		return longArray;
+		return Arrays.stream(intArray).mapToLong(i -> i).toArray();
 	}
 
 }

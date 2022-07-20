@@ -25,6 +25,11 @@ import org.eclipse.dawnsci.nexus.NXobject;
  */
 public interface PrimaryDataDevice<N extends NXobject> extends DataDevice<N> {
 	
+	/**
+	 * The name of the field to make the signal field of the {@link NXdata} group, 
+	 * i.e. the value of the 
+	 * @return
+	 */
 	public String getSignalFieldSourceName();
 	
 	/**
@@ -35,8 +40,7 @@ public interface PrimaryDataDevice<N extends NXobject> extends DataDevice<N> {
 	 * @return <code>true</code>, always
 	 */
 	public default boolean isPrimary() {
-		// returns true always, do not 
-		return true;
-	};
+		return true; // returns true always 
+	}
 	
 }

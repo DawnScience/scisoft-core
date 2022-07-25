@@ -29,12 +29,13 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.nexus.INexusDevice;
@@ -74,6 +75,24 @@ import org.slf4j.LoggerFactory;
  */
 class NexusScanFileImpl implements NexusScanFile {
 	
+	private static class PrimaryDeviceWithScanRole {
+		private final NexusObjectProvider<?> device;
+		private final ScanRole scanRole;
+		
+		public PrimaryDeviceWithScanRole(NexusObjectProvider<?> primaryDevice, ScanRole scanRole) {
+			this.device = primaryDevice;
+			this.scanRole = scanRole;
+		}
+		
+		public NexusObjectProvider<?> getDevice() {
+			return device;
+		}
+		
+		public ScanRole getScanRole() {
+			return scanRole;
+		}
+	}
+
 	private static final Logger logger = LoggerFactory.getLogger(NexusScanFileImpl.class);
 
 	private final NexusScanModel nexusScanModel;
@@ -318,7 +337,7 @@ class NexusScanFileImpl implements NexusScanFile {
 	}
 
 	/**
-	 * Create the {@link NXdata} groups for the scan
+	 * Create the {@link NXdata} groups for the scan.
 	 * @param entryBuilder
 	 * @throws NexusException
 	 */
@@ -328,76 +347,57 @@ class NexusScanFileImpl implements NexusScanFile {
 			throw new NexusException("The scan must include at least one device in order to write a NeXus file.");
 		}
 
-		final List<NexusObjectProvider<?>> detectors = nexusObjectProviders.get(ScanRole.DETECTOR);
-		final List<NexusObjectProvider<?>> primaryDetectors = detectors.stream() // exceptionally, some detectors may not have a primary field
-				.filter(det -> det.getPrimaryDataFieldName() != null)
-				.collect(toList());
-		if (primaryDetectors.isEmpty()) {
-			// create a NXdata groups when there is no detector
-			// (uses first monitor, or first scannable if there is no monitor either)
-			createNXDataGroups(entryBuilder, null);
-		} else {
-			// create NXdata groups for each detector
-			for (NexusObjectProvider<?> detector : primaryDetectors) {
-				createNXDataGroups(entryBuilder, detector);
-			}
+		for (PrimaryDeviceWithScanRole primaryDevice : getPrimaryDevices()) {
+			createNXDataGroupsForDevice(entryBuilder, primaryDevice);
 		}
 	}
 
-	private void createNXDataGroups(NexusEntryBuilder entryBuilder, NexusObjectProvider<?> detector) throws NexusException {
-		final List<NexusObjectProvider<?>> scannables = nexusObjectProviders.get(ScanRole.SCANNABLE);
-		final List<NexusObjectProvider<?>> monitors = new LinkedList<>(nexusObjectProviders.get(ScanRole.MONITOR_PER_POINT));
+	private List<PrimaryDeviceWithScanRole> getPrimaryDevices() {
+		final List<NexusObjectProvider<?>> detectors = nexusObjectProviders.get(ScanRole.DETECTOR);
+		final List<PrimaryDeviceWithScanRole> primaryDevices = detectors.stream() // exceptionally, some detectors may not have a primary field
+				.filter(det -> det.getPrimaryDataFieldName() != null)
+				.map(det -> new PrimaryDeviceWithScanRole(det, ScanRole.DETECTOR))
+				.collect(toList());
+		
+		return !primaryDevices.isEmpty() ? primaryDevices : List.of(getDefaultPrimaryDevice());
+	}
+	
+	/**
+	 * Returns the first monitor that can be a primary data device (i.e. has a primary field name set)
+	 * or the first scannable if there are no such monitors
+	 * if there are no scannables either, then an exception is thrown
+	 * @return primary device, with scan role
+	 */
+	private PrimaryDeviceWithScanRole getDefaultPrimaryDevice() {
+		return Stream.of(ScanRole.MONITOR_PER_POINT, ScanRole.SCANNABLE)
+				.map(this::getFirstPrimaryDevice)
+				.filter(Optional::isPresent)
+				.map(Optional::get)
+				.findFirst()
+				.orElseThrow(() -> new IllegalArgumentException("No suitable dataset could be found to use as the signal dataset of an NXdata group."));		
+	}
 
-		// determine the primary device - i.e. the device whose primary dataset to make the @signal field
-		NexusObjectProvider<?> primaryDevice = null;
-		ScanRole primaryDeviceType = null;
-		if (detector != null) {
-			// if there's a detector then it is the primary device
-			primaryDevice = detector;
-			primaryDeviceType = ScanRole.DETECTOR;
-		} else if (!monitors.isEmpty()) {
-			// otherwise the first monitor which has primary data file name or default axis
-			// data field name set is the primary device (and therefore is not a data device)
-			primaryDevice = monitors.stream()
-					.filter(m -> m.getPrimaryDataFieldName() != null || m.getDefaultAxisDataFieldName() != null)
-					.findFirst().orElse(null);
-			if (primaryDevice != null) {
-				monitors.remove(primaryDevice);
-				primaryDeviceType = ScanRole.MONITOR_PER_POINT;
-			}
-		} 
-		if (primaryDevice == null) {
-			// if there are no monitors either (a rare edge case), where we use the first scannable
-			// note that this scannable is also added as data device
-			for (NexusObjectProvider<?> scannable : scannables) {
-				if (scannable.getPrimaryDataFieldName() != null) {
-					primaryDevice = scannable;
-					primaryDeviceType = ScanRole.SCANNABLE;
-					break;
-				}
-			}
-				
-		}
-		if (primaryDevice == null) {
-			throw new IllegalArgumentException("No suitable dataset could be found to use as the signal dataset of an NXdata group.");
-		}
-
+	private void createNXDataGroupsForDevice(NexusEntryBuilder entryBuilder, PrimaryDeviceWithScanRole primaryDevice) throws NexusException {
 		// create the NXdata group for the primary data field
-		final String primaryDeviceName = primaryDevice.getName();
-		final String primaryDataFieldName = primaryDevice.getPrimaryDataFieldName();
-		createNXDataGroup(entryBuilder, primaryDevice, primaryDeviceType, monitors,
-				scannables, primaryDeviceName, primaryDataFieldName);
+		createNXDataGroup(entryBuilder, primaryDevice); 
 
 		// create an NXdata group for each additional primary data field (if any)
-		for (String dataFieldName : primaryDevice.getAdditionalPrimaryDataFieldNames()) {
-			String dataGroupName = primaryDeviceName + "_" + dataFieldName;
-			createNXDataGroup(entryBuilder, primaryDevice, primaryDeviceType, monitors,
-					scannables, dataGroupName, dataFieldName);
+		final NexusObjectProvider<?> device = primaryDevice.getDevice();
+		for (String dataFieldName : device.getAdditionalPrimaryDataFieldNames()) {
+			final String dataGroupName = device.getName() + "_" + dataFieldName;
+			createNXDataGroup(entryBuilder, primaryDevice, dataGroupName, dataFieldName);
 		}
 		
 		setDefaultDataGroupName(entryBuilder);
 	}
 
+	private Optional<PrimaryDeviceWithScanRole> getFirstPrimaryDevice(ScanRole scanRole) {
+		return nexusObjectProviders.get(scanRole).stream()
+				.filter(d -> d.getPrimaryDataFieldName() != null)
+				.map(d -> new PrimaryDeviceWithScanRole(d, scanRole))
+				.findFirst();
+	}
+	
 	private void setDefaultDataGroupName(NexusEntryBuilder entryBuilder) throws NexusException {
 		// get the list of data group names, note as GroupNodeImpl uses a LinkedHashMap for child nodes, insertion order is preserved
 		final List<String> dataGroupNames = new ArrayList<>(entryBuilder.getNXentry().getAllData().keySet());
@@ -407,25 +407,26 @@ class NexusScanFileImpl implements NexusScanFile {
 	}
 
 	/**
-	 * Create the {@link NXdata} groups for the given primary device.
+	 * Creates the {@link NXdata} group for the primary field of the given device, with the same name as the device.
+	 * @param entryBuilder entry builder to add to
+	 * @param primaryDevice the primary device (e.g. a detector or monitor) with its scan role
+	 * @throws NexusException
+	 */
+	private void createNXDataGroup(NexusEntryBuilder entryBuilder, PrimaryDeviceWithScanRole primaryDevice) throws NexusException {
+		createNXDataGroup(entryBuilder, primaryDevice, primaryDevice.getDevice().getName(), primaryDevice.getDevice().getPrimaryDataFieldName());
+	}
+	
+	/**
+	 * Create the {@link NXdata} groups for the given primary device, fo
 	 * @param entryBuilder the entry builder to add to
-	 * @param primaryDevice the primary device (e.g. a detector or monitor)
-	 * @param primaryDeviceType the type of the primary device
-	 * @param monitors the monitors
-	 * @param scannedDevices the devices being scanned
+	 * @param primaryDevice the primary device (e.g. a detector or monitor) with its scan role
 	 * @param dataGroupName the name of the {@link NXdata} group within the parent {@link NXentry}
 	 * @param primaryDataFieldName the name that the primary data field name
 	 *   (i.e. the <code>@signal</code> field) should have within the NXdata group
 	 * @throws NexusException
 	 */
-	private void createNXDataGroup(NexusEntryBuilder entryBuilder,
-			NexusObjectProvider<?> primaryDevice,
-			ScanRole primaryDeviceType,
-			List<NexusObjectProvider<?>> monitors,
-			List<NexusObjectProvider<?>> scannedDevices,
-			String dataGroupName,
-			String primaryDataFieldName)
-			throws NexusException {
+	private void createNXDataGroup(NexusEntryBuilder entryBuilder, PrimaryDeviceWithScanRole primaryDevice,
+			String dataGroupName, String primaryDataFieldName) throws NexusException {
 		if (entryBuilder.getNXentry().containsNode(dataGroupName)) {
 			dataGroupName += "_data"; // append _data if the node already exists
 		}
@@ -434,13 +435,14 @@ class NexusScanFileImpl implements NexusScanFile {
 		final NexusDataBuilder dataBuilder = entryBuilder.newData(dataGroupName);
 
 		// the primary device for the NXdata, e.g. a detector
-		final PrimaryDataDevice<?> primaryDataDevice = createPrimaryDataDevice(
-				primaryDevice, primaryDeviceType, primaryDataFieldName);
+		final PrimaryDataDevice<?> primaryDataDevice = createPrimaryDataDevice(primaryDevice, primaryDataFieldName);
 		dataBuilder.setPrimaryDevice(primaryDataDevice);
 
-		// add the monitors (excludes the first monitor if the scan has no detectors)
-		for (NexusObjectProvider<?> monitor : monitors) {
-			dataBuilder.addAxisDevice(getAxisDataDevice(monitor, null));
+		// add the monitors to the data builder (if the primary device is a monitor, it is excluded)
+		for (NexusObjectProvider<?> monitor : nexusObjectProviders.get(ScanRole.MONITOR_PER_POINT)) {
+			if (primaryDevice.getScanRole() != ScanRole.MONITOR_PER_POINT || primaryDevice.getDevice() != monitor) {
+				dataBuilder.addAxisDevice(getAxisDataDevice(monitor, null));
+			}
 		}
 
 		// Create the map from scannable name to default index of that scannable in the scan
@@ -449,7 +451,7 @@ class NexusScanFileImpl implements NexusScanFile {
 		}
 
 		// add the scannables to the data builder
-		for (NexusObjectProvider<?> scannable : scannedDevices) {
+		for (NexusObjectProvider<?> scannable : nexusObjectProviders.get(ScanRole.SCANNABLE)) {
 			final Integer defaultAxisForDimensionIndex = defaultAxisIndexForScannable.get(scannable.getName());
 			dataBuilder.addAxisDevice(getAxisDataDevice(scannable, defaultAxisForDimensionIndex));
 		}
@@ -481,7 +483,7 @@ class NexusScanFileImpl implements NexusScanFile {
 					// note: we put null instead of removing the entry in case the scannable
 					// because we don't want to add it again if the scannable is encountered again
 					defaultAxisIndexForScannableMap.put(scannableName, null);
-				}else {
+				} else {
 					defaultAxisIndexForScannableMap.put(scannableName, dimensionIndex);
 				}
 			}
@@ -491,12 +493,14 @@ class NexusScanFileImpl implements NexusScanFile {
 
 		return defaultAxisIndexForScannableMap;
 	}
+	
+	private <N extends NXobject> PrimaryDataDevice<N> createPrimaryDataDevice(
+			PrimaryDeviceWithScanRole primaryDevice, String signalDataFieldName) throws NexusException {
 
-	private <N extends NXobject> PrimaryDataDevice<N> createPrimaryDataDevice(NexusObjectProvider<N> nexusObjectProvider,
-			ScanRole primaryDeviceType, String signalDataFieldName) throws NexusException {
-
-		final DataDeviceBuilder<N> dataDeviceBuilder = new DataDeviceBuilder<>(nexusObjectProvider, true);
-		switch (primaryDeviceType) {
+		@SuppressWarnings("unchecked")
+		final NexusObjectProvider<N> dataDevice = (NexusObjectProvider<N>) primaryDevice.device;
+		final DataDeviceBuilder<N> dataDeviceBuilder = new DataDeviceBuilder<>(dataDevice, true);
+		switch (primaryDevice.getScanRole()) {
 			case SCANNABLE: 
 				// using scannable as primary device as well as a scannable
 				// only use main data field (e.g. value for an NXpositioner)
@@ -509,7 +513,7 @@ class NexusScanFileImpl implements NexusScanFile {
 				dataDeviceBuilder.setSignalField(signalDataFieldName);
 				break;
 			default:
-				throw new IllegalArgumentException("Invalid primary device type: " + primaryDeviceType);
+				throw new IllegalArgumentException("Invalid primary device type: " + primaryDevice.scanRole);
 		}
 
 		return (PrimaryDataDevice<N>) dataDeviceBuilder.build();

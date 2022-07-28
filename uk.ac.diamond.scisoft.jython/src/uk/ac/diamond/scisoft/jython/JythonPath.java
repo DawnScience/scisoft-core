@@ -88,7 +88,6 @@ public class JythonPath {
 		"org.apache.xmlrpc.client",
 		"org.apache.xmlrpc.common",
 		"org.apache.xmlrpc.server",
-		"com.thoughtworks.xstream",
 		"javax.measure.unit-api",
 		"si.uom.si-",
 		"tec.uom.lib",
@@ -101,6 +100,7 @@ public class JythonPath {
 		"org.boofcv.sfm",
 		"org.dawnsci.persistence", // Required for I11 LDE script
 		"com.fasterxml.jackson.core", // Required for MillerSpaceMapper
+		"uk.ac.diamond.platform-observables", // Required for gda.observables
 //		"org.eclipse.jdt.annotation", // XXX to test pruning
 	};
 

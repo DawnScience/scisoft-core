@@ -63,6 +63,7 @@ public class CBFLoader extends AbstractFileLoader {
 	private static final Logger logger = LoggerFactory.getLogger(CBFLoader.class);
 	private HashMap<String, String> metadataMap = new HashMap<String, String>();
 	public HashMap<String, Serializable> GDAMetadata = new HashMap<String, Serializable>();
+	private int[] shape;
 
 	static {
 		CBFlib.loadLibrary();
@@ -76,6 +77,14 @@ public class CBFLoader extends AbstractFileLoader {
 	 */
 	public CBFLoader(String FileName) {
 		fileName = FileName;
+	}
+
+	/**
+	 * @param FileName
+	 */
+	CBFLoader(String FileName, int[] shape) {
+		fileName = FileName;
+		this.shape = shape;
 	}
 
 	@Override
@@ -95,24 +104,29 @@ public class CBFLoader extends AbstractFileLoader {
 
 		cbf_handle_struct chs = new cbf_handle_struct(fileName);
 
-		Tree tree = readAllMetadata(chs);
-
+		try {
 		if (loadMetadata) {
-			NodeLink link = tree.getGroupNode().iterator().next(); // first group in root group
-			if (link.isDestinationGroup()) {
-				GroupNode group = (GroupNode) link.getDestination();
-				parseMiniCBFHeader(group);
-				imageOrien = parseCBFHeaderData(group);
+			imageOrien = loadMetadata(chs, true);
+		}
+		if (imageOrien == null) {
+			imageOrien = readImageOrientation(chs);
+			if (imageOrien == null && !loadMetadata) {
+				imageOrien = loadMetadata(chs, false);
+			}
+			if (imageOrien == null) {
+				throw new ScanFileHolderException("Metadata or CBF array data block must specify shape information");
 			}
 		}
-		imageOrien = readImageOrientation(chs, imageOrien);
 
 		if (loadLazily) {
-			data = createLazyDataset(new CBFLoader(fileName), DEF_IMAGE_NAME, imageOrien.getInterface(), imageOrien.getShape());
+			data = createLazyDataset(new CBFLoader(fileName, imageOrien.shape), DEF_IMAGE_NAME, imageOrien.getInterface(), imageOrien.getShape());
 		} else {
 			data = readCBFBinaryData(chs, imageOrien);
 		}
-		chs.delete(); // this also closes the file
+
+		} finally {
+			chs.delete(); // this also closes the file
+		}
 
 		output.addDataset(DEF_IMAGE_NAME, data);
 
@@ -135,14 +149,30 @@ public class CBFLoader extends AbstractFileLoader {
 		return output;
 	}
 
+	private ImageOrientation loadMetadata(cbf_handle_struct chs, boolean parseMini)
+			throws ScanFileHolderException {
+		Tree tree = readAllMetadata(chs);
+
+		NodeLink link = tree.getGroupNode().iterator().next(); // first group in root group
+		if (link.isDestinationGroup()) {
+			GroupNode group = (GroupNode) link.getDestination();
+			if (parseMini) {
+				parseMiniCBFHeader(group);
+			}
+			return parseCBFHeaderData(group);
+		}
+		return null;
+	}
+
 	private static final String PLACE_HOLDER = "."; // can mean inapplicable or inappropriate for a row and also use default
 	private static final String MISSING = "?"; // missing value
 
 	private Tree readAllMetadata(cbf_handle_struct chs) throws ScanFileHolderException {
+		Tree tree = TreeFactory.createTreeFile(fileName.hashCode(), fileName);
 		SWIGTYPE_p_p_char s = cbf.new_charPP();
 		uintP n = new uintP();
 
-		Tree tree = TreeFactory.createTreeFile(fileName.hashCode(), fileName);
+		try {
 		GroupNode gt = tree.getGroupNode();
 
 		CBFError.errorChecker(cbf.cbf_rewind_datablock(chs));
@@ -215,6 +245,10 @@ public class CBFLoader extends AbstractFileLoader {
 			} while (CBFError.errorChecker(cbf.cbf_next_category(chs)));
 		} while (CBFError.errorChecker(cbf.cbf_next_datablock(chs)));
 
+		} finally {
+			n.delete();
+		}
+
 		return tree;
 	}
 
@@ -272,11 +306,29 @@ public class CBFLoader extends AbstractFileLoader {
 			category = block.getGroupNode("diffrn_data_frame");
 		}
 
-		if (category == null)
+		if (category == null) {
 			return null; // no proper CBF metadata!!!
+		}
 
 		String arrayid = category.getAttribute("array_id").getFirstElement();
 		metadataMap.put("diffrn_data_frame.array_id", arrayid);
+
+		int isSigned = -1;
+		int isReal = -1;
+
+		if (category.containsAttribute("details")) {
+			String details = category.getAttribute("details").getFirstElement();
+			String[] pairs = details.split("\n");
+			for (String p : pairs) {
+				if (p.startsWith("TYPE")) { // ADSC detector
+					if (p.contains("unsigned_short")) {
+						isSigned = 0;
+						isReal = 0;
+					}
+					break;
+				}
+			}
+		}
 
 		// get the image dimensions
 		if (block.containsGroupNode("array_structure_list")) {
@@ -348,7 +400,16 @@ _diffrn_radiation_wavelength.wt 1.0
 		}
 		metadataMap.put("numPixels_x", String.valueOf(xLength));
 		metadataMap.put("numPixels_y", String.valueOf(yLength));
-		return new ImageOrientation(xLength, yLength, -1, -1, xIncreasing, yIncreasing, isRowsX);
+
+		if (isReal < 0 && block.containsGroupNode("array_structure")) {
+			category = block.getGroupNode("array_structure");
+			String value = category.getAttribute("encoding_type").getFirstElement();
+			isReal = value.contains("integer") ? 0 : 1;
+			isSigned = isReal == 1 ? 1 : (value.contains("unsigned") ? 0 : 1);
+		}
+
+
+		return new ImageOrientation(xLength, yLength, isReal, isSigned, xIncreasing, yIncreasing, isRowsX);
 	}
 
 	private static Object getObject(GroupNode category, String attribute, int... pos) {
@@ -474,12 +535,9 @@ _diffrn_radiation_wavelength.wt 1.0
 		metadata.setFilePath(fileName);
 	}
 
-	private ImageOrientation readImageOrientation(cbf_handle_struct chs, ImageOrientation imageOrien) throws ScanFileHolderException {
+	private ImageOrientation readImageOrientation(cbf_handle_struct chs) throws ScanFileHolderException {
 		CBFError.errorChecker(cbf.cbf_rewind_datablock(chs));
-		CBFError.errorChecker(cbf.cbf_rewind_category(chs));
 		CBFError.errorChecker(cbf.cbf_find_category(chs, "array_data"));
-		CBFError.errorChecker(cbf.cbf_rewind_row(chs));
-		CBFError.errorChecker(cbf.cbf_rewind_column(chs));
 		CBFError.errorChecker(cbf.cbf_find_column(chs, "data"));
 
 		uintP cifcomp = new uintP();
@@ -489,15 +547,20 @@ _diffrn_radiation_wavelength.wt 1.0
 		sizetP dim1 = new sizetP(), dim2 = new sizetP(), dim3 = new sizetP(), pad = new sizetP();
 		SWIGTYPE_p_p_char byteorder = cbf.new_charPP();
 
+		ImageOrientation imageOrien = null;
+
+		try {
 		CBFError.errorChecker(cbf.cbf_get_arrayparameters_wdims(chs, cifcomp.cast(), bid.cast(), elsize.cast(), els
 				.cast(), elu.cast(), elnum.cast(), minel.cast(), maxel.cast(), isre.cast(), byteorder, dim1.cast(),
 				dim2.cast(), dim3.cast(), pad.cast()));
 
-		if (imageOrien == null) {
-			imageOrien = new ImageOrientation((int) dim1.value(), (int) dim2.value(), isre.value(), els.value());
-		} else {
-			imageOrien.isReal = isre.value();
-			imageOrien.isSigned = els.value();
+		imageOrien = new ImageOrientation((int) dim1.value(), (int) dim2.value(), isre.value(), els.value());
+		if (imageOrien.shape[0] == 0 || imageOrien.shape[1] == 0) { // these values can occur when MIME header omits size values
+			if (shape == null) {
+				return null;
+			} else {
+				imageOrien.shape = shape;
+			}
 		}
 
 		metadataMap.put("numPixels_x", String.valueOf(imageOrien.shape[1]));
@@ -509,20 +572,23 @@ _diffrn_radiation_wavelength.wt 1.0
 			throw new ScanFileHolderException("Mismatch of CBF binary data size: " + numPixels + " cf " + elnum.value());
 		}
 
-		cifcomp.delete();
-		minel.delete();
-		maxel.delete();
-		isre.delete();
-		elsize.delete();
-		elnum.delete();
-		dim1.delete();
-		dim2.delete();
-		dim3.delete();
-		pad.delete();
+		} finally {
+			cifcomp.delete();
+			minel.delete();
+			maxel.delete();
+			isre.delete();
+			elsize.delete();
+			elnum.delete();
+			dim1.delete();
+			dim2.delete();
+			dim3.delete();
+			pad.delete();
+	
+			bid.delete();
+			els.delete();
+			elu.delete();
+		}
 
-		bid.delete();
-		els.delete();
-		elu.delete();
 		return imageOrien;
 	}
 
@@ -588,21 +654,20 @@ _diffrn_radiation_wavelength.wt 1.0
 			cstep = stride1;
 		}
 
+		Dataset data = null;
+		StatisticsMetadata<Number> stats = null;
 		int index = 0; // index in destination
 		int position = 0; // position in buffer
 		int hash = 0;
 		intP bid = new intP();
 		sizetP rsize = new sizetP();
 
+		try {
 		CBFError.errorChecker(cbf.cbf_rewind_datablock(chs));
-		CBFError.errorChecker(cbf.cbf_rewind_category(chs));
 		CBFError.errorChecker(cbf.cbf_find_category(chs, "array_data"));
-		CBFError.errorChecker(cbf.cbf_rewind_row(chs));
-		CBFError.errorChecker(cbf.cbf_rewind_column(chs));
 		CBFError.errorChecker(cbf.cbf_find_column(chs, "data"));
 
-		Dataset data = DatasetFactory.zeros(imageOrien.getInterface(), shape);
-		StatisticsMetadata<Number> stats = null;
+		data = DatasetFactory.zeros(imageOrien.getInterface(), shape);
 		try {
 			stats = MetadataFactory.createMetadata(StatisticsMetadata.class, data);
 		} catch (MetadataException e) {
@@ -700,15 +765,17 @@ _diffrn_radiation_wavelength.wt 1.0
 				idata = null;
 			}
 		}
-
-		rsize.delete();
-		bid.delete();
-
 		if (stats != null) {
 			hash = hash*19 + data.getClass().hashCode()*17 + data.getElementsPerItem();
 			stats.setHash(hash);
 			data.addMetadata(stats);
 		}
+
+		} finally {
+			rsize.delete();
+			bid.delete();
+		}
+
 		return data;
 	}
 

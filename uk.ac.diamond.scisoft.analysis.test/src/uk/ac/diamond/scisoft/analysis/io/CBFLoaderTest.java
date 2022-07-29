@@ -10,8 +10,11 @@
 package uk.ac.diamond.scisoft.analysis.io;
 
 
+import static org.junit.Assert.assertTrue;
+
 import org.apache.commons.lang3.SerializationUtils;
 import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.IMetadata;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -45,6 +48,27 @@ public class CBFLoaderTest {
 	@Test
 	public void testExistingFile() throws Exception {
 		new CBFLoader(testpath + "F6_1_001.cbf").loadFile();
+	}
+
+	@Test
+	public void testSliceFile() throws Exception {
+		loadLazyThenSlice(testpath + "F6_1_001.cbf");
+	}
+
+	@Test
+	public void testSliceMiniFile() throws Exception {
+		loadLazyThenSlice(testpath + "xtal5e_1_0010.cbf");
+	}
+
+	private void loadLazyThenSlice(String filename) throws Exception {
+		CBFLoader l = new CBFLoader(filename);
+		l.setLoadAllLazily(true);
+		l.setLoadMetadata(true);
+		DataHolder h = l.loadFile();
+		ILazyDataset d = h.getLazyDataset(0);
+		int size = d.getSize();
+		assertTrue(size > 0);
+		assertTrue(d.getSlice().getSize() == size);
 	}
 
 	/**

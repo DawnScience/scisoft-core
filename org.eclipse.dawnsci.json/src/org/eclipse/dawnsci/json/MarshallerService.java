@@ -221,9 +221,9 @@ public class MarshallerService implements IMarshallerService {
 		} catch (JsonMappingException | IllegalArgumentException ex) {
 			// Check if this is due to missing type info. This can appear in two ways: the type info field can be
 			// missing from an object, in which case JsonMappingException is thrown; or the first element of an array
-			// might be wrongly interpreted as a class name, in which case we get a ClassNotFoundException
+			// might be wrongly interpreted as a class name
 			if ((ex instanceof JsonMappingException && ex.getMessage().contains(TYPE_INFO_FIELD_NAME))
-					|| ex instanceof IllegalArgumentException && ex.getCause() instanceof ClassNotFoundException) {
+					|| ex instanceof IllegalArgumentException) {
 				// This code is used to decode, for instance, trees consisting of Map<String, Object>'s nested
 				// inside each other, such as in TreeServlet. This behaviour is necessary to avoid inclusion of type
 				// id's for every map, or extensive modifications to the ObjectMapper.

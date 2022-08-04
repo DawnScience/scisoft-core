@@ -8,8 +8,8 @@
 	<packaging>eclipse-test-plugin</packaging>
 
 	<parent>
-		<artifactId>org.eclipse.dawnsci</artifactId>
-		<groupId>org.eclipse</groupId>
+		<artifactId>scisoft-core</artifactId>
+		<groupId>uk.ac.diamond</groupId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 

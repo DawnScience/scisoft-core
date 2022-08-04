@@ -1,0 +1,84 @@
+================================================================================
+					How to regenerate NeXus classes
+================================================================================
+
+The autogen folder is (re)created by running the run-xslt-generators.ant script.
+
+--------------------------------------------------------------------------------
+1) Download external resources
+--------------------------------------------------------------------------------
+
+This requires a copy of the Saxon XSLT 2.0 XSLT processor `.jar` file and a
+clone of the NeXus NXDL definitions project.
+
+Saxon XSLT 2.0 XSLT processor
+-----------------------------
+
+  https://www.saxonica.com > Download > Java
+
+	As of writing, the latest version is Saxon HE 11, but Saxon HE 10 is marked
+	as stable. Saxon HE downloads are currently via sourceforge.
+
+NeXus NXDL definitions project
+------------------------------
+
+  https://www.nexusformat.org > Github Organisation > definitions
+
+	mkdir /scratch/Nexus
+	cd !$
+	git clone https://github.com/nexusformat/definitions.git
+
+--------------------------------------------------------------------------------
+2) Create a Run Configuration and configure it
+--------------------------------------------------------------------------------
+
+Run org.eclipse.dawnsci.nexus/run-xslt-generators.ant with Run As > Ant Build...
+
+  Go to the Properties tab and de-select "Use global..."
+  Add Property...
+    xslt-classpath			/scratch/SaxonHE10-5J/saxon-he-10.5.jar
+    nxdl-definitions-path	/scratch/Nexus/definitions
+  Run
+
+This can be rerun or reconfigured using
+
+  Run > External Tools > org.eclipse.dawnsci.nexus run-xslt-generators.ant
+  Run > External Tools > External Tools Configurations...
+
+--------------------------------------------------------------------------------
+3) Check the autogen classes rebuild the same before updating them
+--------------------------------------------------------------------------------
+
+Running run-xslt-generators.ant might not change any files, if those changes are
+trivial, so to force it to regenerate fully, we have to delete the autogen
+folder before we start.
+
+  Delete org.eclipse.dawnsci.nexus/autogen
+  Refresh the Git Staging view to check they are all shown as deleted
+  Run > External Tools > org.eclipse.dawnsci.nexus run-xslt-generators.ant
+  Refresh the Git Staging view to check they have all been regenerated
+  Check that there are no differences
+
+If there are changes, check you are using the exact same version of Saxon HE as
+the last person to commit the autogen classes, and that you are trying to
+regenerate them using the exact same commit in the definitions.git repository
+(this may require the committer be consulted).
+
+If this doesn't help, more `sort` directives may be needed in the xsl files.
+
+If trivial changes cannot be avoided, it is recommended that all trivial changes
+should be committed in their own commit, so that the subsequent commit contains
+only substantive changes, this makes reviewing the changes *much* easier.
+
+--------------------------------------------------------------------------------
+3) Update the autogen classes
+--------------------------------------------------------------------------------
+
+  Update the definitions.git repository to the tip of origin/main,
+    or a tagged commit, if required
+  Delete org.eclipse.dawnsci.nexus/autogen
+  Run > External Tools > org.eclipse.dawnsci.nexus run-xslt-generators.ant
+  Refresh the Git Staging view to check they have all been regenerated
+  Review the changes and check that there are only non trivial changes
+
+================================================================================

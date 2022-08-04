@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            id="org.dawnsci.plotting.examples.category"
+            name="Examples">
+      </category>
+      <view
+            category="org.dawnsci.plotting.examples.category"
+            class="org.eclipse.dawnsci.plotting.examples.ImageExample"
+            id="org.dawnsci.plotting.examples.imageExample"
+            name="Image Example"
+            restorable="true">
+      </view>
+      <view
+            category="org.dawnsci.plotting.examples.category"
+            class="org.eclipse.dawnsci.plotting.examples.SectorExample"
+            id="org.dawnsci.plotting.examples.sectorExample"
+            name="Sector Example"
+            restorable="true">
+      </view>
+      <view
+            category="org.dawnsci.plotting.examples.category"
+            class="org.eclipse.dawnsci.plotting.examples.XYExample"
+            id="org.dawnsci.plotting.examples.xyExample"
+            name="XY Example"
+            restorable="true">
+      </view>
+      <view
+            category="org.dawnsci.plotting.examples.category"
+            class="org.eclipse.dawnsci.plotting.examples.XYUpdateExample"
+            id="org.dawnsci.plotting.examples.xyUpdateExample"
+            name="XY Update Example"
+            restorable="true">
+      </view>
+      <view
+            category="org.dawnsci.plotting.examples.category"
+            class="org.eclipse.dawnsci.plotting.examples.AxisExample"
+            id="org.dawnsci.plotting.examples.axisExample"
+            name="Axis Example"
+            restorable="true">
+      </view>
+      <view
+            category="org.dawnsci.plotting.examples.category"
+            class="org.eclipse.dawnsci.plotting.examples.SurfaceExample"
+            id="org.dawnsci.plotting.examples.surfaceExample"
+            name="Surface Example"
+            restorable="true">
+      </view>
+      <view
+            category="org.dawnsci.plotting.examples.category"
+            class="org.eclipse.dawnsci.plotting.examples.BarExample"
+            id="org.dawnsci.plotting.examples.barExample"
+            name="Bar Example"
+            restorable="true">
+      </view>
+      <view
+            category="org.dawnsci.plotting.examples.category"
+            class="org.eclipse.dawnsci.plotting.examples.VectorExample"
+            id="org.dawnsci.plotting.examples.vectorExample"
+            name="Vector Example"
+            restorable="true">
+      </view>
+      <view
+            category="org.dawnsci.plotting.examples.category"
+            class="org.eclipse.dawnsci.plotting.examples.CompositeExample"
+            id="org.dawnsci.plotting.examples.compositeExample"
+            name="Composite Example"
+            restorable="true">
+      </view>
+      <view
+            category="org.dawnsci.plotting.examples.category"
+            class="org.eclipse.dawnsci.plotting.examples.VolumeExample"
+            id="org.dawnsci.plotting.examples.volumeExample"
+            name="Volume Example"
+            restorable="true">
+      </view>
+      <view
+            category="org.dawnsci.plotting.examples.category"
+            class="org.eclipse.dawnsci.plotting.examples.Plane3DExample"
+            id="org.dawnsci.plotting.examples.plane3DExample"
+            name="Plane 3D Example"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="org.eclipse.dawnsci.plotting.examples.perspective.ExamplePerspective"
+            id="org.dawnsci.plotting.examples.perspective.ExamplePerspective"
+            name="Examples">
+      </perspective>
+   </extension>
+   
+   <!-- Commented out solutions to exercises.
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="org.eclipse.dawnsci.plotting.examples.exercises.Exercise1"
+            id="org.eclipse.dawnsci.plotting.examples.exercise1"
+            name="Exercise1"
+            restorable="true">
+      </view>
+      <view
+            class="org.eclipse.dawnsci.plotting.examples.exercises.Exercise2"
+            id="org.eclipse.dawnsci.plotting.examples.exercise2"
+            name="Exercise2"
+            restorable="true">
+      </view>
+      <view
+            class="org.eclipse.dawnsci.plotting.examples.exercises.Exercise3"
+            id="org.eclipse.dawnsci.plotting.examples.exercise3"
+            name="Exercise3"
+            restorable="true">
+      </view>
+    </extension>
+   <extension
+         point="org.eclipse.dawnsci.plotting.api.toolPage">
+      <plotting_tool_page
+            class="org.eclipse.dawnsci.plotting.examples.exercises.Exercise4"
+            id="org.eclipse.dawnsci.plotting.examples.exercise4"
+            label="Exercise 4 Tool"
+            visible="true">
+      </plotting_tool_page>
+   </extension>
+   -->
+   
+</plugin>

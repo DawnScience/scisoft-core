@@ -1,0 +1,348 @@
+/*-
+ * Copyright 2015 Diamond Light Source Ltd.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ */
+
+package org.eclipse.dawnsci.analysis.dataset.operations;
+
+import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.dawnsci.analysis.api.metadata.IDiffractionMetadata;
+import org.eclipse.dawnsci.analysis.api.processing.IOperation;
+import org.eclipse.dawnsci.analysis.api.processing.OperationData;
+import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.ErrorMetadata;
+import org.eclipse.january.metadata.MaskMetadata;
+import org.eclipse.january.metadata.MetadataType;
+
+public abstract class AbstractOperationBase<T extends IOperationModel, D extends OperationData> implements IOperation<T, D> {
+
+	protected T model;
+
+	private String            name;
+	private String            description;
+	private Map<String, Serializable> configured = null;
+
+	private boolean storeOutput = false;
+	private boolean passUnmodifiedData = false;
+
+	/**
+	 * Add field that was configured by operation
+	 * @param fieldName
+	 * @param value
+	 */
+	protected void addConfiguredField(String fieldName, Serializable value) {
+		if (configured == null) {
+			configured = new LinkedHashMap<String, Serializable>();
+		}
+
+		configured.put(fieldName, value);
+	}
+
+	/**
+	 * Set configured fields in operation data
+	 * @param od
+	 */
+	protected void setConfiguredFields(OperationData od) {
+		if (configured != null && !configured.isEmpty()) {
+			od.setConfiguredFields(configured);
+		}
+	}
+
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public String getDescription() {
+		if (description == null) return getId();
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
+	@Override
+	public abstract D execute(IDataset slice, IMonitor monitor) throws OperationException;
+	
+	
+	@Override
+	public void init() {
+		//do nothing
+	}
+	
+	@Override
+	public void dispose() {
+		//do nothing
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((model == null) ? 0 : model.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + (passUnmodifiedData ? 1231 : 1237);
+		result = prime * result + (storeOutput ? 1231 : 1237);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AbstractOperationBase<?, ?> other = (AbstractOperationBase<?, ?>) obj;
+		if (description == null) {
+			if (other.description != null)
+				return false;
+		} else if (!description.equals(other.description))
+			return false;
+		if (model == null) {
+			if (other.model != null)
+				return false;
+		} else if (!model.equals(other.model))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (passUnmodifiedData != other.passUnmodifiedData)
+			return false;
+		if (storeOutput != other.storeOutput)
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "AbstractOperation [name=" + name + "]";
+	}
+
+	@Override
+	public T getModel() {
+		return model;
+	}
+
+	@Override
+	public void setModel(T model) {
+		this.model = model;
+	}
+
+	/**
+	 * Convenience method to get first set of axes from the Datasets metadata, can return null
+	 * @param slice
+	 * @return axes
+	 */
+	public static ILazyDataset[] getFirstAxes(IDataset slice) {
+
+		AxesMetadata am = slice.getFirstMetadata(AxesMetadata.class);
+		if (am == null)
+			return null;
+
+		return am.getAxes();
+	}
+
+	/**
+	 * Convenience method to get first mask from the Datasets metadata, can return null
+	 * @param slice
+	 * @return mask
+	 */
+	public static IDataset getFirstMask(IDataset slice) {
+		MaskMetadata mm = slice.getFirstMetadata(MaskMetadata.class);
+		if (mm == null)
+			return null;
+
+		return mm.getMask();
+	}
+
+	/**
+	 * Convenience method to get first diffraction metadata from the Dataset, can return null
+	 * @param slice
+	 * @return dm
+	 */
+	public static IDiffractionMetadata getFirstDiffractionMetadata(IDataset slice) {
+
+		return slice.getFirstMetadata(IDiffractionMetadata.class);
+	}
+
+	/**
+	 * Convenience method to get the data dimensions of the original Dataset, can return null, but really should never happen
+	 * @param slice
+	 * @return datadims
+	 */
+	public static int[] getOriginalDataDimensions(IDataset slice) {
+
+		SliceFromSeriesMetadata ssm = getSliceSeriesMetadata(slice);
+
+		return ssm == null ? null : ssm.getDataDimensions();
+
+	}
+	
+	public static SliceFromSeriesMetadata getSliceSeriesMetadata(IDataset slice) {
+		
+		SliceFromSeriesMetadata sm = slice.getFirstMetadata(SliceFromSeriesMetadata.class);
+		if (sm == null)
+			return null;
+		
+		return sm;
+	}
+	
+	
+	/**
+	 * Get the absolute of the current slice in the view of the parent (starts at 0)
+	 * @param origin
+	 * @return int
+	 */
+//	public static int getCurrentSliceNumber(OriginMetadata origin) {
+//		
+//		int[] dd = origin.getDataDimensions();
+//		dd = dd.clone();
+//		Arrays.sort(dd);
+//		//have to take a view, can't use check slice on AbstractDataset here...
+//		ILazyDataset view = origin.getParent().getSliceView(origin.getInitialSlice());
+//		int[] shape = view.getShape();
+//		Slice[] current = origin.getCurrentSlice();
+//		
+//		int[] ddsh = new int[shape.length-dd.length];
+//		int[] ddpos = new int[shape.length-dd.length];
+//		
+//		for (int i = 0, j = 0; i < shape.length; i++) {
+//			if (Arrays.binarySearch(dd, i) < 0) {
+//				ddsh[i-j] = shape[i];
+//				ddpos[i-j] = current[i].getStart();
+//			} else {
+//				j++;
+//			}
+//		}
+//		
+//		int c = ddpos[ddpos.length-1];
+//		for (int i = ddsh.length-2; i >-1; i--) {
+//			int d = ddpos[i];
+//			for (int j = i+1; j < ddsh.length; j++) {
+//				d *= ddsh[j];
+//			}
+//			c+=d;
+//		}
+//		
+//		return c;
+//	}
+
+	/**
+	 * Convenience method to copy the metadata from one dataset to another.
+	 * Use if a process doesnt change the shape of the data to maintain axes, masks etc
+	 * 
+	 * @param original
+	 * @param out
+	 */
+	public static void copyMetadata(IDataset original, IDataset out) {
+		copyMetadata(original, out, true);
+	}
+	
+	/**
+	 * Convenience method to copy the metadata from one dataset to another.
+	 * Use if a process doesnt change the shape of the data to maintain axes, masks etc
+	 * 
+	 * @param original
+	 * @param out
+	 * @param copyAxesMetadata flag to determine whether the AxesMetadata should be copied too 
+	 */
+	public static void copyMetadata(IDataset original, IDataset out, boolean copyAxesMetadata) {
+		try {
+			List<MetadataType> metadata = original.getMetadata(null);
+
+			for (MetadataType m : metadata) {
+				if (m instanceof ErrorMetadata) continue;
+				if (!copyAxesMetadata && m instanceof AxesMetadata) continue; 
+				out.setMetadata(m);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void setStoreOutput(boolean storeOutput) {
+		this.storeOutput = storeOutput;
+	}
+	
+	@Override
+	public boolean isStoreOutput() {
+		return storeOutput;
+	}
+	
+	@Override
+	public void setPassUnmodifiedData(boolean passUnmodifiedData) {
+		this.passUnmodifiedData = passUnmodifiedData;
+	}
+
+	@Override
+	public boolean isPassUnmodifiedData() {
+		return passUnmodifiedData;
+	}
+
+	@SuppressWarnings({ "unchecked" })
+	public Class<T> getModelClass() {
+		if (model != null) {
+			return (Class<T>) model.getClass();
+		}
+
+		Type type = this.getClass();
+		// Look for first parameterized super class -> this one will contain the model
+		while (!(type instanceof ParameterizedType)) {
+			type = ((Class<?>) type).getGenericSuperclass();
+		}
+
+		type = ((ParameterizedType) type).getActualTypeArguments()[0];
+		if (type instanceof TypeVariable) {
+			return (Class<T>) ((TypeVariable<?>) type).getBounds()[0];
+		}
+
+		return (Class<T>) type;
+	}
+
+	public static class OperationComparator implements Comparator<IOperation<? extends IOperationModel, ? extends OperationData>> {
+
+		@Override
+		public int compare(IOperation<? extends IOperationModel, ? extends OperationData> arg0, IOperation<? extends IOperationModel, ? extends OperationData> arg1) {
+			if (arg0==null) return -1;
+			if (arg1==null) return 0;
+			String a = arg0.getName();
+			String b = arg1.getName();
+			if (a==null) return -1;
+			return a.compareTo(b);
+		}
+
+	}
+
+}

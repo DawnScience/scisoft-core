@@ -1,0 +1,9 @@
+detector_number: 2
+layout: area
+calibration_method/:
+   @NX_class: NXnote # @ is a reserved character in yaml, making this file malformed
+   author: John Smith
+   date: "2020-05-19"
+   type: text/plain
+   sequence_index: !!java.lang.Long 1 
+   data: Calibration note

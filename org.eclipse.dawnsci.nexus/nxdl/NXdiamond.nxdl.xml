@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="nxdlformat.xsl" ?>
+<!--
+# NeXus application definition for Diamond Default Nexus File Structure
+#
+# Copyright (c) 2021 Diamond Light Source Ltd.
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+ -->
+<definition name="NXdiamond" extends="NXobject" type="group" category="contributed"
+	xmlns="http://definition.nexusformat.org/nxdl/3.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://definition.nexusformat.org/nxdl/3.1 ../nxdl.xsd">
+	<!-- TODO: FIX SCHEMA DEFINITION LOCATION (or leave blank) -->
+
+	<doc>
+		An application definition detailing the minimum required elements for the NeXus file written for a
+		scan at Diamond Light Source. 
+	</doc>
+	<group type="NXentry" name="entry">
+		<!-- No definition required for diamond nexus structure. -->
+		<!-- <field name="definition">
+			<doc> Official NeXus NXDL schema to which the file conforms </doc>
+			<enumeration>
+				<item value="NXdiamond"/>
+			</enumeration>
+		</field> -->
+		
+		<field name="start_time" type="NX_DATE_TIME"/>
+		<field name="end_time" type="NX_DATE_TIME"/>
+		<field name="program_name" type="NX_CHAR"/>
+		<group name="instrument" type="NXinstrument">
+			<group name="source" type="NXsource">
+				<!-- Expect the correct values for Diamond.-->
+				<field name="name" type="NX_CHAR">
+					<enumeration>
+						<item value="Diamond Light Source" />
+					</enumeration>
+				</field>
+				<field name="type" type="NX_CHAR">
+					<enumeration>
+						<item value="Synchrotron X-ray Source" />
+					</enumeration>
+				</field>
+				<field name="probe" type="NX_CHAR">
+					<enumeration>
+						<item value="x-ray" />
+					</enumeration>
+				</field>
+			</group>
+			<!-- TODO how to specify that one of insertion device or bending magnet should be present -->
+			<group type="NXinsertion_device">
+				<field name="type"/> <!-- TODO: Check validation of enumeration of 'undulator or wiggler' specified in base class. -->
+				<!-- TODO: do I need to specify type and units again?
+				    or does the validation pick this up from the base class -->
+				<field name="gap" type="NX_FLOAT" units="NX_LENGTH"/>
+				<field name="taper" type="NX_FLOAT" units="NX_ANGLE"/>
+				<field name="harmonic" type="NX_INT" units="NX_UNITLESS"/>
+			</group>
+			<group type="NXmonochromator">
+				<field name="energy" type="NX_FLOAT" units="NX_ENERGY"/>
+			</group>
+		</group>
+		<group type="NXuser">
+			<field name="name"/>
+			<field name="facility_user_id"/>
+		</group>
+		<group type="NXdata"/>
+	</group>
+</definition>

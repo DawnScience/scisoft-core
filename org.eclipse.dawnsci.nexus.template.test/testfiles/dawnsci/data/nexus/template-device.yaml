@@ -1,0 +1,8 @@
+NX_class@: NXcollection
+name: template
+description: device from a template
+attr@: attrValue
+program_name:
+   value: gda
+   version@: "9.13"
+   configuration@: dummy

@@ -304,13 +304,6 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.dawnsci.xdi"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="javax.measure.unit-api"
          download-size="0"
          install-size="0"

@@ -1,4 +1,4 @@
-package org.eclipse.dawnsci.xdi;
+package uk.ac.diamond.scisoft.analysis.io;
 
 import java.io.File;
 import java.io.IOException;

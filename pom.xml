@@ -36,8 +36,6 @@
 		<module>org.eclipse.dawnsci.plotting.api</module>
 		<module>org.eclipse.dawnsci.plotting.examples</module>
 		<module>org.eclipse.dawnsci.slicing.api</module>
-		<module>org.eclipse.dawnsci.xdi.test</module>
-		<module>org.eclipse.dawnsci.xdi</module>
 		<module>uk.ac.diamond.scisoft.analysis</module>
 		<module>uk.ac.diamond.scisoft.analysis.feature</module>
 		<module>uk.ac.diamond.scisoft.analysis.osgi</module>

@@ -1,4 +1,4 @@
-package org.eclipse.dawnsci.xdi;
+package uk.ac.diamond.scisoft.analysis.io;
 
 public class XDI {
 	private XDI() {

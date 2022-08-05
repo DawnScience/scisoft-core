@@ -108,6 +108,12 @@
 				<module>uk.ac.diamond.scisoft.applications.msmapper.product</module>
 			</modules>
 		</profile>
+		<profile>
+			<id>nexus-template</id>
+			<modules>
+				<module>org.eclipse.dawnsci.nexus.template.product</module>
+			</modules>
+		</profile>
 	</profiles>
 
 	<build>

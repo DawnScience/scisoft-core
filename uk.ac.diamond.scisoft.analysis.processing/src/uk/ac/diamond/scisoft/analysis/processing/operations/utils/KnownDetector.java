@@ -72,7 +72,7 @@ public enum KnownDetector {
 		}
 
 		if (known == KnownDetector.XCAM) {
-			// 
+			// Data from older scans had swapped CCDs
 			File f = new File(file);
 			String n = f.getName();
 			if (n.startsWith(I21_PREFIX)) {

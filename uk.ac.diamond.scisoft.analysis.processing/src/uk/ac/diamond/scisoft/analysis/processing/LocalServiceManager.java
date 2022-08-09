@@ -10,14 +10,18 @@
 package uk.ac.diamond.scisoft.analysis.processing;
 
 import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
+import org.eclipse.dawnsci.analysis.api.persistence.IMarshallerService;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
+import org.eclipse.dawnsci.nexus.template.NexusTemplateService;
 
 public class LocalServiceManager {
 	
 	private static ILoaderService lservice;
 	private static IOperationService oservice;
 	private static IPersistenceService pservice;
+	private static IMarshallerService mservice;
+	private static NexusTemplateService tservice;
 
 	public void setLoaderService(ILoaderService s) {
 		lservice = s;
@@ -41,5 +45,21 @@ public class LocalServiceManager {
 
 	public void setPersistenceService(IPersistenceService p) {
 		pservice = p;
+	}
+
+	public static IMarshallerService getMarshallerService() {
+		return mservice;
+	}
+
+	public void setMarshallerService(IMarshallerService m) {
+		mservice = m;
+	}
+
+	public static NexusTemplateService getNexusTemplateService() {
+		return tservice;
+	}
+
+	public void setNexusTemplateService(NexusTemplateService t) {
+		tservice = t;
 	}
 }

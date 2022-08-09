@@ -21,8 +21,8 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.InterpolatorUtils;
 import org.eclipse.january.metadata.AxesMetadata;
 
-import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.metadata.OperationMetadata;
+import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 import uk.ac.diamond.scisoft.analysis.utils.ErrorPropagationUtils;
 
 public class SubtractCalibratedWithProcessing extends FrameMathsOperation<SubtractWithProcessingModel> {
@@ -62,7 +62,7 @@ public class SubtractCalibratedWithProcessing extends FrameMathsOperation<Subtra
 		}
 		
 		try {
-			IDataHolder dh = LocalServiceManager.getLoaderService().getData(filePath, null);
+			IDataHolder dh = ProcessingUtils.getData(this, filePath);
 			if (!dh.contains(datasetName)){
 				return null;
 			}

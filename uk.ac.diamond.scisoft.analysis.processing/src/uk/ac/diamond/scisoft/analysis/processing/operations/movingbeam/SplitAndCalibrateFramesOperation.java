@@ -30,9 +30,8 @@ import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
 
+import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.metadata.OperationMetadata;
 import uk.ac.diamond.scisoft.diffraction.powder.DiffractionImageData;
 import uk.ac.diamond.scisoft.diffraction.powder.MovingBeamCalibrationConfig;
@@ -47,9 +46,8 @@ public class SplitAndCalibrateFramesOperation extends AbstractOperationBase<Spli
 	private volatile MovingBeamCalibrationConfig cachedConfig;
 	public static String ctag = "_calibrations";
 
-	private BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-	IMarshallerService m = bundleContext.getService(bundleContext.getServiceReference(IMarshallerService.class));
-	IPersistenceService ps = bundleContext.getService(bundleContext.getServiceReference(IPersistenceService.class));
+	IMarshallerService m = LocalServiceManager.getMarshallerService(); 
+	IPersistenceService ps = LocalServiceManager.getPersistenceService();
 
 	@Override
 	public String getId() {

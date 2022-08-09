@@ -24,8 +24,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
-import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistentNodeFactory;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
@@ -65,9 +63,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.ac.diamond.scisoft.analysis.io.Utils;
-import uk.ac.diamond.scisoft.analysis.processing.Activator;
 import uk.ac.diamond.scisoft.analysis.processing.IFlushMonitor;
 import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
+import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFile {
 	
@@ -206,9 +204,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 			String relativePath = "Not created!";
 			
 			try {
-				ILoaderService loaderService = LocalServiceManager.getLoaderService();
-				IDataHolder dh = loaderService.getData(originalFilePath, null);
-				Tree tree = dh.getTree();
+				Tree tree = ProcessingUtils.getTree(null, originalFilePath);
 				if (tree == null) return;
 				NodeLink nl = tree.getNodeLink();
 				nl.toString();
@@ -301,7 +297,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 
 	private void applyTemplate() {
 		if (templatePath == null || templatePath.isEmpty()) return;
-		NexusTemplateService templateService = Activator.getService(NexusTemplateService.class);
+		NexusTemplateService templateService = LocalServiceManager.getNexusTemplateService();
 		try {
 			NexusTemplate template = templateService.loadTemplate(templatePath);
 			logger.info("Applying template file {}",templatePath);

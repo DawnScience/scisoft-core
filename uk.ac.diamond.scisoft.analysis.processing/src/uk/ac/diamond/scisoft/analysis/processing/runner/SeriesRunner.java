@@ -106,7 +106,7 @@ public class SeriesRunner implements IOperationRunner {
 								String s = Slice.createString(fullssm.getSliceFromInput());
 								update = name+ " ["+ s + "] " + i.getName();
 							} catch (Exception e) {
-								logger.error("Could not update progress: " + e.getMessage());
+								logger.error("Could not update progres", e);
 							}
 						}
 						context.getMonitor().subTask(update);

@@ -52,14 +52,11 @@ import org.eclipse.january.metadata.MetadataFactory;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
-import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.KnownDetector;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 /**
- * Find and fit the RIXS elastic line image to a straight line so other image
- * <p>
- * Returns line fit parameters and also peak FWHM as auxiliary data
+ * Base class to perform operations on RIXS data
  */
 public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends AbstractOperation<T, OperationData> implements PropertyChangeListener {
 
@@ -375,7 +372,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	 */
 	protected void parseNexusFile(String filePath) {
 		try {
-			Tree t = LocalServiceManager.getLoaderService().getData(filePath, null).getTree();
+			Tree t = ProcessingUtils.getTree(this, filePath);
 
 			if (t == null) {
 				log.appendFailure("Could not load tree from file %s", filePath);
@@ -625,7 +622,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	// TODO work-in-progress on structure of NeXus RIXS application definition
 	protected void parseDesiredNexusFile(String filePath) {
 		try {
-			Tree t = LocalServiceManager.getLoaderService().getData(filePath, null).getTree();
+			Tree t = ProcessingUtils.getTree(this, filePath);
 
 			GroupNode entry = (GroupNode) NexusTreeUtils.requireNode(t.getGroupNode(), NexusConstants.ENTRY);
 

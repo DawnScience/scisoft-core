@@ -55,6 +55,8 @@ import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.dataset.StringDataset;
 import org.eclipse.january.metadata.IMetadata;
 import org.eclipse.january.metadata.Metadata;
+import org.eclipse.january.metadata.MetadataFactory;
+import org.eclipse.january.metadata.OriginMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -636,7 +638,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			int i = path.lastIndexOf(Node.SEPARATOR);
 			final String sname = i >= 0 ? path.substring(i + 1) : path;
 			if (!createLazyDataset(f, d, path, sname, did, tid, keepBitWidth,
-					d.containsAttribute(DATA_FILENAME_ATTR_NAME), loadLazily)) {
+					d.containsAttribute(DATA_FILENAME_ATTR_NAME), loadLazily, !f.getFilename().equals(fileName))) {
 				logger.error("Could not create a lazy dataset from {}", path);
 			}
 			if (pool != null)
@@ -747,13 +749,14 @@ public class HDF5Loader extends AbstractFileLoader {
 	 * @param tid
 	 * @param keepBitWidth
 	 * @param useExternalFiles
-	 * @param loadLazily 
+	 * @param loadLazily
+	 * @param isExternal
 	 * @return true if created
 	 * @throws Exception
 	 */
 	private static boolean createLazyDataset(final TreeFile file, final DataNode node,
 			final String nodePath, final String name, final long did, final long tid,
-			final boolean keepBitWidth, final boolean useExternalFiles, boolean loadLazily) throws Exception {
+			final boolean keepBitWidth, final boolean useExternalFiles, boolean loadLazily, boolean isExternal) throws Exception {
 		long sid = -1, pid = -1;
 		long ntid = -1;
 		int rank;
@@ -895,7 +898,15 @@ public class HDF5Loader extends AbstractFileLoader {
 		HDF5LazyLoader l = new HDF5LazyLoader(file.getHostname(), file.getFilename(), nodePath, name, trueShape, type.isize, type.clazz, extendUnsigned);
 
 		long[] chunks = node.getChunkShape();
-		node.setDataset(new LazyDynamicDataset(l, name, type.isize, type.clazz, trueShape.clone(), maxShape, chunks == null ? null : HDF5Utils.toIntArray(chunks)));
+		LazyDynamicDataset lazy = new LazyDynamicDataset(l, name, type.isize, type.clazz, trueShape.clone(), maxShape, chunks == null ? null : HDF5Utils.toIntArray(chunks));
+		if (isExternal) {
+			try {
+				lazy.addMetadata(MetadataFactory.createMetadata(OriginMetadata.class, null, null, null, file.getFilename(), nodePath));
+			} catch (Exception e) {
+				// do nothing
+			}
+		}
+		node.setDataset(lazy);
 		return true;
 	}
 
@@ -1149,7 +1160,7 @@ public class HDF5Loader extends AbstractFileLoader {
 								// create a new dataset
 								DataNode d = TreeFactory.createDataNode(oid);
 								if (!createLazyDataset(f, d, name + oname, oname, did, tid, keepBitWidth,
-										d.containsAttribute(DATA_FILENAME_ATTR_NAME), loadLazily)) {
+										d.containsAttribute(DATA_FILENAME_ATTR_NAME), loadLazily, false)) {
 									logger.error("Could not create a lazy dataset {} from {}", oname, name);
 									continue;
 								}

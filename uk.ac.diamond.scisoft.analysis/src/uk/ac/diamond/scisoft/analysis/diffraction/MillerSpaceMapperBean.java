@@ -29,6 +29,7 @@ public class MillerSpaceMapperBean implements Cloneable {
 	private String entryPath;
 	private String instrumentName;
 	private String attenuatorName;
+	private String monitorName;
 	private String detectorName;
 	private String dataName;
 	private String sampleName;
@@ -334,6 +335,17 @@ public class MillerSpaceMapperBean implements Cloneable {
 	 */
 	public void setAttenuatorName(String attenuatorName) {
 		this.attenuatorName = attenuatorName;
+	}
+
+	public String getMonitorName() {
+		return monitorName;
+	}
+
+	/**
+	 * @param monitorName name of monitor in instrument (can be null to imply 1st NXmonitor)
+	 */
+	public void setMonitorName(String monitorName) {
+		this.monitorName = monitorName;
 	}
 
 	public String getDetectorName() {

@@ -333,4 +333,34 @@ public class TreeUtils {
 		}
 		return all.toString();
 	}
+
+	/**
+	 * Find node link in tree from path of given type
+	 * @param tree
+	 * @param path
+	 * @param isGroup true if want link to group, otherwise link to dataset
+	 * @return group node link or null if not found or is not a group
+	 */
+	public static NodeLink findNodeLink(Tree tree, String path, boolean isGroup) {
+		if (path == null) {
+			return null;
+		}
+		NodeLink link = tree.findNodeLink(path);
+
+		if (link == null) {
+			logger.warn("'{}' could not be found", path);
+			return null;
+		}
+
+		if (isGroup) {
+			if (!link.isDestinationGroup()) {
+				logger.warn("'{}' was not a group", link.getName());
+				return null;
+			}
+		} else if (!link.isDestinationData()) {
+			logger.warn("'{}' was not a dataset", link.getName());
+			return null;
+		}
+		return link;
+	}
 }

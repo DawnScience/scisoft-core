@@ -87,6 +87,7 @@ public class MillerSpaceMapper {
 	private String dataPath;
 	private String samplePath;
 	private String attenuatorPath;
+	private String monitorPath;
 	private MillerSpaceMapperBean bean;
 
 	private int[] vShape;
@@ -151,7 +152,7 @@ public class MillerSpaceMapper {
 
 	private static final String INDICES_NAME = "hkli_list";
 
-	private static final String VERSION = "1.5";
+	private static final String VERSION = "1.6";
 
 	private static final int CORES;
 	private static int cores;
@@ -372,6 +373,25 @@ public class MillerSpaceMapper {
 			}
 			trans = trans == null ? time : Maths.multiply(trans, time);
 		}
+
+		// factor in any monitor too
+		if (monitorPath != null) {
+			NodeLink monitorLink = TreeUtils.findNodeLink(tree, monitorPath, true);
+			if (monitorLink != null) {
+				GroupNode monitorNode = (GroupNode) monitorLink.getDestination();
+				String monitorName = monitorLink.getName();
+				String[] names;
+				if (NexusTreeUtils.isNXClass(monitorNode, NexusConstants.POSITIONER)) {
+					names = new String[] {"value", monitorName}; // use monitor name as fallback is a DLS special case
+				} else { // works for NXmonitor, NXdetector and NXdata
+					names = new String[] {"data"};
+				}
+				Dataset monitor = NexusTreeUtils.getDataset(monitorName, monitorNode, null, names);
+
+				trans = trans == null ? monitor : Maths.multiply(trans, monitor);
+			}
+		}
+
 		return trans;
 	}
 
@@ -1521,12 +1541,15 @@ public class MillerSpaceMapper {
 		}
 
 		timePath = detectorPath + "count_time";
-		// TODO compensate for other optional stuff (ring current in NXinstrument / NXsource)
 
 		String attenuatorName = bean.getAttenuatorName();
 		if (attenuatorName == null || attenuatorName.isEmpty()) {
 			link = NexusTreeUtils.findFirstNode(instrument, NexusConstants.ATTENUATOR);
-			logger.trace("{} found: {}", NexusConstants.ATTENUATOR, link);
+			if (link == null) {
+				logger.trace("{} not found", NexusConstants.ATTENUATOR);
+			} else {
+				logger.trace("{} found: {}", NexusConstants.ATTENUATOR, link);
+			}
 		} else {
 			link = instrument.getNodeLink(attenuatorName);
 		}
@@ -1537,6 +1560,26 @@ public class MillerSpaceMapper {
 		}
 		if (attenuatorPath == null) {
 			logger.warn("Could not find attenuator");
+		}
+
+		String monitorName = bean.getMonitorName();
+		if (monitorName == null || monitorName.isEmpty()) {
+			link = NexusTreeUtils.findFirstNode(instrument, NexusConstants.MONITOR);
+			if (link == null) {
+				logger.trace("{} not found", NexusConstants.MONITOR);
+			} else {
+				logger.trace("{} found: {}", NexusConstants.MONITOR, link);
+			}
+		} else {
+			link = instrument.getNodeLink(monitorName);
+		}
+		if (link == null || !link.isDestinationGroup()) {
+			monitorPath = null;
+		} else {
+			monitorPath = TreeUtils.getPath(tree, link.getDestination());
+		}
+		if (monitorPath == null) {
+			logger.warn("Could not find monitor");
 		}
 
 		int outputRank = bean.getOutputMode().getRank();

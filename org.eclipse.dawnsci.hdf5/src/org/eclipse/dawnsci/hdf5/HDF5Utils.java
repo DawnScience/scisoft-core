@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1012,9 +1012,6 @@ public class HDF5Utils {
 		}
 	}
 
-	private static final Charset UTF8 = Charset.forName("UTF-8");
-	private static final Charset ASCII = Charset.forName("US-ASCII");
-
 	/**
 	 * Write attributes to a group or dataset in given file. When writing to group,
 	 * this checks if group exists in file and creates group if not
@@ -1088,7 +1085,7 @@ public class HDF5Utils {
 					byte[][] stringbuffers = new byte[strCount][];
 					int i = 0;
 					for (String str : strings) {
-						stringbuffers[i] = str.getBytes(UTF8);
+						stringbuffers[i] = str.getBytes(StandardCharsets.UTF_8);
 						int l = stringbuffers[i].length;
 						if (l > maxLength) maxLength = l;
 						i++;
@@ -1102,7 +1099,7 @@ public class HDF5Utils {
 					}
 					//deliberate choice, mis-labelling to work around h5py/numpy
 					//handling of non ascii strings
-					H5.H5Tset_cset(datatypeID, HDF5Constants.H5T_CSET_ASCII);
+					H5.H5Tset_cset(datatypeID, HDF5Constants.H5T_CSET_UTF8);
 					H5.H5Tset_size(datatypeID, maxLength);
 				}
 				long attrID = -1;
@@ -1378,7 +1375,7 @@ public class HDF5Utils {
 							if (str.length() > typeSize - 1) {
 								logger.warn("String does not fit into space allocated in HDF5 file in {} - string will be truncated", dataPath);
 							}
-							byte[] src = str.getBytes(ASCII);
+							byte[] src = str.getBytes(StandardCharsets.US_ASCII);
 							int length = Math.min(typeSize - 1, src.length);
 							System.arraycopy(src, 0, strBuffer, idx, length);
 							idx += typeSize;
@@ -1944,7 +1941,7 @@ public class HDF5Utils {
 								int strLength = 0;
 								//Java doesn't strip null bytes during string construction
 								for (int k = j; k < j + type.size && buffer[k] != '\0'; k++) strLength++;
-								strings[strIndex++] = new String(buffer, j, strLength, UTF8);
+								strings[strIndex++] = new String(buffer, j, strLength, StandardCharsets.UTF_8);
 							}
 							dataset = DatasetFactory.createFromObject(strings).reshape(iShape);
 						}

@@ -976,15 +976,8 @@ public class NexusTreeUtils {
 	 * @return shape or null if detector or any of its module not found
 	 */
 	public static int[] parseDetectorScanShape(String path, Tree tree) {
-		NodeLink link = tree.findNodeLink(path);
-
+		NodeLink link = TreeUtils.findNodeLink(tree, path, true);
 		if (link == null) {
-			logger.warn("'{}' could not be found", path);
-			return null;
-		}
-
-		if (!link.isDestinationGroup()) {
-			logger.warn("'{}' was not a group", link.getName());
 			return null;
 		}
 
@@ -1016,15 +1009,8 @@ public class NexusTreeUtils {
 	 * @return an array of detector modules
 	 */
 	public static DetectorProperties[] parseDetector(String path, Tree tree, int... pos) {
-		NodeLink link = tree.findNodeLink(path);
-
+		NodeLink link = TreeUtils.findNodeLink(tree, path, true);
 		if (link == null) {
-			logger.warn("'{}' could not be found", path);
-			return null;
-		}
-
-		if (!link.isDestinationGroup()) {
-			logger.warn("'{}' was not a group", link.getName());
 			return null;
 		}
 
@@ -1170,34 +1156,65 @@ public class NexusTreeUtils {
 	 * @return a dataset of attenuator transmission values or null if path is null or not found
 	 */
 	public static Dataset parseAttenuator(String path, Tree tree) {
-		if (path == null) {
-			return null;
-		}
-		NodeLink link = tree.findNodeLink(path);
+		return parseNXGroup(path, tree, NexusConstants.ATTENUATOR, "attenuator_transmission");
+	}
 
+	/**
+	 * Parse a group that is an NXpositioner class from a tree
+	 * @param path to group
+	 * @param tree
+	 * @return a dataset of positioner values or null if path is null or not found
+	 */
+	public static Dataset parsePositioner(String path, Tree tree) {
+		return parseNXGroup(path, tree, NexusConstants.POSITIONER, "value");
+	}
+
+	/**
+	 * Parse a group that is an NeXus class from a tree
+	 * @param path to group
+	 * @param tree
+	 * @param nxClass (can be null)
+	 * @param fields candidate field names
+	 * @return a dataset of monitor values or null if path is null or not found
+	 */
+	public static Dataset parseNXGroup(String path, Tree tree, String nxClass, String... fields) {
+		NodeLink link = TreeUtils.findNodeLink(tree, path, true);
 		if (link == null) {
-			logger.warn("'{}' could not be found", path);
-			return null;
-		}
-
-		if (!link.isDestinationGroup()) {
-			logger.warn("'{}' was not a group", path);
 			return null;
 		}
 
 		GroupNode gNode = (GroupNode) link.getDestination();
-		if (!isNXClass(gNode, NexusConstants.ATTENUATOR)) {
-			logger.warn("'{}' was not an {} class", path, NexusConstants.ATTENUATOR);
+		if (nxClass != null && !isNXClass(gNode, nxClass)) {
+			logger.warn("'{}' was not an {} class", path, nxClass);
 			return null;
 		}
 
-		DataNode trans = gNode.getDataNode("attenuator_transmission");
-		if (trans == null) {
-			logger.warn("'{}' does not contain an attenuator_transmission dataset", path);
+		return getDataset(link.getName(), gNode, null, fields);
+	}
+
+	/**
+	 * Get a dataset from one of candidate field names
+	 * @param gName group name
+	 * @param gNode group node
+	 * @param unit (can be null)
+	 * @param fields candidate field names
+	 * @return a dataset or null if no fields are found
+	 */
+	public static Dataset getDataset(String gName, GroupNode gNode, Unit<?> unit, String... fields) {
+		DataNode value = null;
+		for (String f : fields) {
+			value = gNode.getDataNode(f);
+			if (value != null) {
+				break;
+			}
+			logger.debug("'{}' does not contain a '{}' dataset", gName, f);
+		}
+		if (value == null) {
+			logger.warn("'{}' does not contain any of the candidate field datasets", gName);
 			return null;
 		}
 
-		return getAndCacheData(trans);
+		return unit == null ? getAndCacheData(value) : getConvertedData(value, unit);
 	}
 
 	/**
@@ -1214,24 +1231,16 @@ public class NexusTreeUtils {
 	 * Get a dataset
 	 * @param path
 	 * @param tree
-	 * @param unit
+	 * @param unit (can be null)
 	 * @return dataset
 	 */
 	public static Dataset getDataset(String path, Tree tree, Unit<?> unit) {
-		NodeLink link = tree.findNodeLink(path);
-
+		NodeLink link = TreeUtils.findNodeLink(tree, path, false);
 		if (link == null) {
-			logger.warn("'{}' could not be found", path);
-			return null;
-		}
-
-		if (!link.isDestinationData()) {
-			logger.warn("'{}' was not a group", path);
 			return null;
 		}
 
 		DataNode node = (DataNode) link.getDestination();
-		
 		return unit == null ? getAndCacheData(node) : getConvertedData(node, unit);
 	}
 
@@ -1389,7 +1398,7 @@ public class NexusTreeUtils {
 		}
 
 		GroupNode gNode = (GroupNode) link.getDestination();
-	
+
 		// find orientation first as parseSubGeometry multiplies from the right
 		NodeLink l = gNode.getNodeLink("orientation");
 		if (l != null) {
@@ -1408,9 +1417,9 @@ public class NexusTreeUtils {
 			logger.warn("'{}' was not a group", link.getName());
 			return;
 		}
-	
+
 		GroupNode gNode = (GroupNode) link.getDestination();
-	
+
 		NodeLink l = gNode.getNodeLink(translate ? "distances" : "value");
 		if (l == null || !l.isDestinationData()) {
 			throw new IllegalArgumentException("Geometry subnode is missing dataset");
@@ -1666,14 +1675,8 @@ public class NexusTreeUtils {
 	 * @return shape or null if sample or its transformation ancestors not found
 	 */
 	public static int[] parseSampleScanShape(String path, Tree tree, int[] shape) {
-		NodeLink link = tree.findNodeLink(path);
+		NodeLink link = TreeUtils.findNodeLink(tree, path, true);
 		if (link == null) {
-			logger.warn("'{}' could not be found", path);
-			return null;
-		}
-
-		if (!link.isDestinationGroup()) {
-			logger.warn("'{}' was not a group", link.getName());
 			return null;
 		}
 
@@ -1703,14 +1706,8 @@ public class NexusTreeUtils {
 	 * @return diffraction sample
 	 */
 	public static DiffractionSample parseSample(String path, Tree tree, boolean useOMatrixAsUB, boolean xUp, int... pos) {
-		NodeLink link = tree.findNodeLink(path);
+		NodeLink link = TreeUtils.findNodeLink(tree, path, true);
 		if (link == null) {
-			logger.warn("'{}' could not be found", path);
-			return null;
-		}
-
-		if (!link.isDestinationGroup()) {
-			logger.warn("'{}' was not a group", link.getName());
 			return null;
 		}
 

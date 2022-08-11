@@ -17,9 +17,4 @@ public class SectorROIListHelper extends ROIListHelper<SectorROIList, SectorROI>
 	public SectorROIListHelper() {
 		super(SectorROIList.class);
 	}
-
-	@Override
-	public SectorROIList newList() {
-		return new SectorROIList();
-	}
 }

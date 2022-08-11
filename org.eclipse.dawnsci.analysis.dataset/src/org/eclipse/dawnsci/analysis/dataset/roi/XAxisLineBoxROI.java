@@ -28,6 +28,19 @@ public class XAxisLineBoxROI extends RectangularROI implements Serializable {
 	}
 
 	/**
+	 * Copy constructor
+	 * @param orig
+	 */
+	public XAxisLineBoxROI(XAxisLineBoxROI orig) {
+		super(orig);
+	}
+
+	@Override
+	public XAxisLineBoxROI copy() {
+		return new XAxisLineBoxROI(this);
+	}
+
+	/**
 	 * Square constructor
 	 * 
 	 * @param width

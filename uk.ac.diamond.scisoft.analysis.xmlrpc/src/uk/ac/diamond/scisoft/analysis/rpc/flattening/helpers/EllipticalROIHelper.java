@@ -16,8 +16,8 @@ import org.eclipse.dawnsci.analysis.dataset.roi.EllipticalROI;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IRootFlattener;
 
 public class EllipticalROIHelper extends ROIHelper<EllipticalROI> {
-	public static final String SAXIS = "saxis";
-	public static final String ANG = "ang";
+	private static final String SAXIS = "saxis";
+	private static final String ANG = "ang";
 
 	public EllipticalROIHelper() {
 		super(EllipticalROI.class);
@@ -34,10 +34,7 @@ public class EllipticalROIHelper extends ROIHelper<EllipticalROI> {
 
 	@Override
 	public EllipticalROI unflatten(Map<?, ?> inMap, IRootFlattener rootFlattener) {
-		EllipticalROI roiOut = new EllipticalROI();
-		roiOut.setName((String) rootFlattener.unflatten(inMap.get(ROIHelper.NAME)));
-		roiOut.setPoint((double[]) rootFlattener.unflatten(inMap.get(ROIHelper.SPT)));
-		roiOut.setPlot((Boolean) rootFlattener.unflatten(inMap.get(ROIHelper.PLOT)));
+		EllipticalROI roiOut = super.unflatten(inMap, rootFlattener);
 		roiOut.setSemiAxes((double[]) rootFlattener.unflatten(inMap.get(SAXIS)));
 		roiOut.setAngle((Double) rootFlattener.unflatten(inMap.get(ANG)));
 

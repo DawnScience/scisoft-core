@@ -17,9 +17,4 @@ public class LinearROIListHelper extends ROIListHelper<LinearROIList, LinearROI>
 	public LinearROIListHelper() {
 		super(LinearROIList.class);
 	}
-
-	@Override
-	public LinearROIList newList() {
-		return new LinearROIList();
-	}
 }

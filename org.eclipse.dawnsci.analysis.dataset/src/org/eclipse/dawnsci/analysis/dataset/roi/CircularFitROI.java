@@ -35,8 +35,19 @@ public class CircularFitROI extends CircularROI implements IFitROI, Serializable
 		residual = 0;
 	}
 
+	/**
+	 * Copy constructor
+	 * @param orig
+	 */
+	public CircularFitROI(CircularFitROI orig) {
+		super(orig);
+		proi = orig.proi.copy();
+		fitter = orig.fitter;
+		residual = orig.residual;
+	}
+
 	public CircularFitROI(IPolylineROI points) {
-		super(1, 0, 0);
+		this(1, 0, 0);
 		setPoints(points);
 	}
 
@@ -48,11 +59,7 @@ public class CircularFitROI extends CircularROI implements IFitROI, Serializable
 
 	@Override
 	public CircularFitROI copy() {
-		CircularFitROI c = new CircularFitROI(getRadius(), getPointX(), getPointY());
-		c.name = name;
-		c.proi = proi.copy();
-		c.plot = plot;
-		return c;
+		return new CircularFitROI(this);
 	}
 
 	/**

@@ -37,6 +37,16 @@ public class LinearROI extends OrientableROIBase implements IParametricROI, Seri
 	}
 
 	/**
+	 * Copy constructor
+	 * @param orig
+	 */
+	public LinearROI(LinearROI orig) {
+		super(orig);
+		len = orig.len;
+		crossHair = orig.crossHair;
+	}
+
+	/**
 	 * @param len
 	 */
 	public LinearROI(double len) {
@@ -48,6 +58,7 @@ public class LinearROI extends OrientableROIBase implements IParametricROI, Seri
 	 * @param ang in radians
 	 */
 	public LinearROI(double len, double ang) {
+		super();
 		this.spt = new double[] {0, 0};
 		this.len = len;
 		this.ang = ang;
@@ -242,14 +253,7 @@ public class LinearROI extends OrientableROIBase implements IParametricROI, Seri
 	
 	@Override
 	public LinearROI copy() {
-		LinearROI roi = new LinearROI();
-		roi.setName(name);
-		roi.setPoint(spt.clone());
-		roi.setPlot(plot);
-		roi.setAngle(ang);
-		roi.setLength(len);
-		roi.setCrossHair(crossHair);
-		return roi;
+		return new LinearROI(this);
 	}
 
 	/**

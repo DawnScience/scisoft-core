@@ -37,12 +37,24 @@ public class EllipticalFitROI extends EllipticalROI implements IFitROI, Serializ
 		residual = 0;
 	}
 
+	/**
+	 * Copy constructor
+	 * @param orig
+	 */
+	public EllipticalFitROI(EllipticalFitROI orig) {
+		super(orig);
+		proi = orig.proi.copy();
+		circleOnly = orig.circleOnly;
+		fitter = orig.fitter;
+		residual = orig.residual;
+	}
+
 	public EllipticalFitROI(IPolylineROI points) {
 		this(points, false);
 	}
 
 	public EllipticalFitROI(IPolylineROI points, boolean fitCircle) {
-		super(1, 0, 0);
+		this(1, 1, 0, 0, 0);
 		circleOnly = fitCircle;
 		setPoints(points);
 	}
@@ -55,11 +67,7 @@ public class EllipticalFitROI extends EllipticalROI implements IFitROI, Serializ
 
 	@Override
 	public EllipticalFitROI copy() {
-		EllipticalFitROI c = new EllipticalFitROI(getSemiAxis(0), getSemiAxis(1), getAngle(), getPointX(), getPointY());
-		c.proi = proi.copy();
-		c.name = name;
-		c.plot = plot;
-		return c;
+		return new EllipticalFitROI(this);
 	}
 
 	/**

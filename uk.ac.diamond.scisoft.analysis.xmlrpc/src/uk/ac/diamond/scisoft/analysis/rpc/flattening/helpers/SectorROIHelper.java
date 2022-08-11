@@ -16,12 +16,12 @@ import org.eclipse.dawnsci.analysis.dataset.roi.SectorROI;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IRootFlattener;
 
 public class SectorROIHelper extends ROIHelper<SectorROI> {
-	public static final String ANG = "ang";
-	public static final String RAD = "rad";
-	public static final String CLIPPING_COMPENSATION = "clippingCompensation";
-	public static final String SYMMETRY = "symmetry";
-	public static final String COMBINE_SYMMETRY = "combineSymmetry";
-	public static final String AVERAGE_AREA = "averageArea";
+	private static final String ANG = "ang";
+	private static final String RAD = "rad";
+	private static final String CLIPPING_COMPENSATION = "clippingCompensation";
+	private static final String SYMMETRY = "symmetry";
+	private static final String COMBINE_SYMMETRY = "combineSymmetry";
+	private static final String AVERAGE_AREA = "averageArea";
 
 	public SectorROIHelper() {
 		super(SectorROI.class);
@@ -44,13 +44,9 @@ public class SectorROIHelper extends ROIHelper<SectorROI> {
 
 	@Override
 	public SectorROI unflatten(Map<?, ?> inMap, IRootFlattener rootFlattener) {
-		SectorROI roiOut = new SectorROI();
-		roiOut.setName((String) rootFlattener.unflatten(inMap.get(ROIHelper.NAME)));
-		roiOut.setPoint((double[]) rootFlattener.unflatten(inMap.get(ROIHelper.SPT)));
-		roiOut.setPlot((Boolean) rootFlattener.unflatten(inMap.get(ROIHelper.PLOT)));
+		SectorROI roiOut = super.unflatten(inMap, rootFlattener);
 		roiOut.setAngles((double[]) rootFlattener.unflatten(inMap.get(ANG)));
-		double[] unflatten = (double[]) rootFlattener.unflatten(inMap.get(RAD));
-		roiOut.setRadii(unflatten);
+		roiOut.setRadii((double[]) rootFlattener.unflatten(inMap.get(RAD)));
 		roiOut.setClippingCompensation((Boolean) rootFlattener.unflatten(inMap.get(CLIPPING_COMPENSATION)));
 		roiOut.setSymmetry((Integer) rootFlattener.unflatten(inMap.get(SYMMETRY)));
 		roiOut.setCombineSymmetry((Boolean) rootFlattener.unflatten(inMap.get(COMBINE_SYMMETRY)));

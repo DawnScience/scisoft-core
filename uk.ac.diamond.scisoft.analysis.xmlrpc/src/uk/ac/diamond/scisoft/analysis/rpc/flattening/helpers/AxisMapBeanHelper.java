@@ -25,7 +25,7 @@ public class AxisMapBeanHelper extends MapFlatteningHelper<AxisMapBean> {
 
 	@Override
 	public AxisMapBean unflatten(Map<?, ?> thisMap, IRootFlattener rootFlattener) {
-		AxisMapBean outBean = new AxisMapBean();
+		AxisMapBean outBean = createInstance();
 		Object[] objIds = (Object[]) thisMap.get(AXIS_ID);
 		String[] ids = new String[objIds.length];
 		System.arraycopy(objIds, 0, ids, 0, objIds.length);

@@ -47,13 +47,30 @@ public class PolylineROI extends ROIBase implements IPolylineROI, Serializable {
 		}
 		name = poly.getName();
 		plot = poly.isPlot();
+		fixed = poly.isFixed();
+	}
+
+	/**
+	 * Copy constructor
+	 * @param orig
+	 */
+	public PolylineROI(PolylineROI orig) {
+		super(orig);
+		pts = new ArrayList<IROI>();
+		List<IROI> opts = orig.pts;
+		for (IROI p : opts) {
+			pts.add(p.copy());
+		}
+		if (opts.size() > 0) {
+			spt = pts.get(0).getPointRef();
+		}
 	}
 
 	public PolylineROI(List<PointROI> points) {
 		this();
 		if (points.size() > 0) {
 			pts.addAll(points);
-			super.setPoint(points.get(0).getPointRef());
+			spt = pts.get(0).getPointRef();
 		}
 	}
 
@@ -315,12 +332,7 @@ public class PolylineROI extends ROIBase implements IPolylineROI, Serializable {
 
 	@Override
 	public PolylineROI copy() {
-		PolylineROI c = new PolylineROI(spt.clone());
-		for (int i = 1, imax = pts.size(); i < imax; i++)
-			c.insertPoint(pts.get(i).copy());
-		c.name = name;
-		c.plot = plot;
-		return c;
+		return new PolylineROI(this);
 	}
 
 	/**

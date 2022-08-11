@@ -28,6 +28,14 @@ public class PerimeterBoxROI extends RectangularROI implements Serializable {
 	}
 
 	/**
+	 * Copy constructor
+	 * @param orig
+	 */
+	public PerimeterBoxROI(PerimeterBoxROI orig) {
+		super(orig);
+	}
+
+	/**
 	 * Square constructor
 	 * 
 	 * @param width
@@ -74,9 +82,6 @@ public class PerimeterBoxROI extends RectangularROI implements Serializable {
 	 */
 	@Override
 	public PerimeterBoxROI copy() {
-		PerimeterBoxROI c = new PerimeterBoxROI(spt[0], spt[1], len[0], len[1], getAngle(), isClippingCompensation());
-		c.name = name;
-		c.plot = plot;
-		return c;
+		return new PerimeterBoxROI(this);
 	}
 }

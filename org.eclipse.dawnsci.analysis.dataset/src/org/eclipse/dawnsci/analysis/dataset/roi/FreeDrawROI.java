@@ -27,6 +27,19 @@ public class FreeDrawROI extends PolylineROI implements Serializable {
 		super();
 	}
 
+	/**
+	 * Copy constructor
+	 * @param orig
+	 */
+	public FreeDrawROI(FreeDrawROI orig) {
+		super(orig);
+	}
+
+	@Override
+	public FreeDrawROI copy() {
+		return new FreeDrawROI(this);
+	}
+
 	public FreeDrawROI(double[] start) {
 		super(start);
 	}

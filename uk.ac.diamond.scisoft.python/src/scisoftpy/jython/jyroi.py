@@ -48,6 +48,14 @@ class _iroi(object):
 
     plot = property(isPlot, setPlot)
 
+    def isFixed(self):
+        return self._roi.isFixed()
+
+    def setFixed(self, f):
+        self._roi.setFixed(bool(f))
+
+    fixed = property(isFixed, setFixed)
+
     def __repr__(self):
         return "%s(%s)" % (self.__class__.__name__, self._roi.toString())
 
@@ -76,20 +84,24 @@ class _angleprop(object):
     angledegrees = property(getAngleDegrees, setAngleDegrees)
 
 class point(_iroi):
-    def __init__(self, jroi=None, point=None, **kwargs):
+    def __init__(self, jroi=None, point=None, plot=False, fixed=False, **kwargs):
         if jroi is None:
             jroi = _roi.PointROI(**kwargs)
         self._roi = jroi
         if point is not None:
             self.point = point
+        self.plot = plot
+        self.fixed = fixed
 
 class line(_iroi, _angleprop):
-    def __init__(self, jroi=None, point=None, **kwargs):
+    def __init__(self, jroi=None, point=None, plot=False, fixed=False, **kwargs):
         if jroi is None:
             jroi = _roi.LinearROI(**kwargs)
         self._roi = jroi
         if point is not None:
             self.point = point
+        self.plot = plot
+        self.fixed = fixed
 
     def getLength(self):
         return self._roi.getLength()
@@ -101,12 +113,14 @@ class line(_iroi, _angleprop):
 
 
 class rectangle(_iroi, _angleprop):
-    def __init__(self, jroi=None, point=None, **kwargs):
+    def __init__(self, jroi=None, point=None, plot=False, fixed=False, **kwargs):
         if jroi is None:
             jroi = _roi.RectangularROI(**kwargs)
         self._roi = jroi
         if point is not None:
             self.point = point
+        self.plot = plot
+        self.fixed = fixed
 
     def getLengths(self):
         return self._roi.getLengths()
@@ -117,12 +131,14 @@ class rectangle(_iroi, _angleprop):
     lengths = property(getLengths, setLengths)
 
 class sector(_iroi):
-    def __init__(self, jroi=None, point=None, **kwargs):
+    def __init__(self, jroi=None, point=None, plot=False, fixed=False, **kwargs):
         if jroi is None:
             jroi = _roi.SectorROI(**kwargs)
         self._roi = jroi
         if point is not None:
             self.point = point
+        self.plot = plot
+        self.fixed = fixed
 
     def getRadii(self):
         return self._roi.getRadii()
@@ -149,12 +165,14 @@ class sector(_iroi):
     anglesdegrees = property(getAnglesDegrees, setAnglesDegrees)
 
 class circle(_iroi):
-    def __init__(self, jroi=None, point=None, **kwargs):
+    def __init__(self, jroi=None, point=None, plot=False, fixed=False, **kwargs):
         if jroi is None:
             jroi = _roi.CircularROI(**kwargs)
         self._roi = jroi
         if point is not None:
             self.point = point
+        self.plot = plot
+        self.fixed = fixed
 
     def getRadius(self):
         return self._roi.getRadius()
@@ -165,12 +183,14 @@ class circle(_iroi):
     radius = property(getRadius, setRadius)
 
 class ellipse(_iroi, _angleprop):
-    def __init__(self, jroi=None, point=None, **kwargs):
+    def __init__(self, jroi=None, point=None, plot=False, fixed=False, **kwargs):
         if jroi is None:
             jroi = _roi.EllipticalROI(**kwargs)
         self._roi = jroi
         if point is not None:
             self.point = point
+        self.plot = plot
+        self.fixed = fixed
 
     def getSemiAxes(self):
         return self._roi.getSemiAxes()

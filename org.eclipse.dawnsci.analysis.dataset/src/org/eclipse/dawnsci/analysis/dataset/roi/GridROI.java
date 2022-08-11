@@ -28,6 +28,19 @@ public class GridROI extends RectangularROI implements Serializable {
 		super();
 	}
 
+	/**
+	 * Copy constructor
+	 * @param orig
+	 */
+	public GridROI(GridROI orig) {
+		super(orig);
+		xSpacing = orig.xSpacing;
+		ySpacing = orig.ySpacing;
+		midPointOn = orig.midPointOn;
+		gridLinesOn = orig.gridLinesOn;
+		gridPref = orig.gridPref;
+	}
+
 	@SuppressWarnings("unused")
 	private GridROI(double width, double angle) {
 		super(width, angle);
@@ -84,11 +97,7 @@ public class GridROI extends RectangularROI implements Serializable {
 
 	@Override
 	public GridROI copy() {
-		GridROI c = new GridROI(spt[0], spt[1], len[0], len[1], getAngle(), xSpacing,
-				ySpacing, gridLinesOn, midPointOn, gridPref);
-		c.name = name;
-		c.plot = plot;
-		return c;
+		return new GridROI(this);
 	}
 
 	/**

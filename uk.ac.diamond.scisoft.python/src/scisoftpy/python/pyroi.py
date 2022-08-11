@@ -20,11 +20,13 @@ class _iroi(object):
     _NAME = "name"
     _SPT = "spt"
     _PLOT = "plot"
+    _FIXED = "fixed"
 
-    def __init__(self, name='', point=[0.0,0.0], spt=None, plot=False, **kwargs):
+    def __init__(self, name='', point=[0.0,0.0], spt=None, plot=False, fixed=False, **kwargs):
         self.name = name
         self.spt = [float(p) for p in spt] if spt is not None else [float(p) for p in point]
         self.plot = plot
+        self.fixed = fixed
 
     # rois are not hashable because they are mutable
     __hash__ = None
@@ -52,6 +54,12 @@ class _iroi(object):
 
     def setPlot(self, p):
         self.plot = bool(p)
+
+    def isFixed(self):
+        return self.fixed
+
+    def setFixed(self, f):
+        self.fixed = bool(f)
 
     def copy(self):
         from copy import deepcopy

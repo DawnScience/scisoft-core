@@ -17,9 +17,4 @@ public class CircularROIListHelper extends ROIListHelper<CircularROIList, Circul
 	public CircularROIListHelper() {
 		super(CircularROIList.class);
 	}
-
-	@Override
-	public CircularROIList newList() {
-		return new CircularROIList();
-	}
 }

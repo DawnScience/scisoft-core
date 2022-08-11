@@ -35,6 +35,16 @@ public class HyperbolicROI extends OrientableROIBase implements IParametricROI, 
 	}
 
 	/**
+	 * Copy constructor
+	 * @param orig
+	 */
+	public HyperbolicROI(HyperbolicROI orig) {
+		super(orig);
+		l = orig.l;
+		e = orig.e;
+	}
+
+	/**
 	 * Create a hyperbolic ROI
 	 * @param semi semi-latus rectum (half length of chord parallel to directrix, passing through focus)
 	 * @param eccentricity measure of non-circularity (>1)
@@ -69,10 +79,7 @@ public class HyperbolicROI extends OrientableROIBase implements IParametricROI, 
 
 	@Override
 	public HyperbolicROI copy() {
-		HyperbolicROI c = new HyperbolicROI(l, e, ang, spt[0], spt[1]);
-		c.name = name;
-		c.plot = plot;
-		return c;
+		return new HyperbolicROI(this);
 	}
 
 	/**

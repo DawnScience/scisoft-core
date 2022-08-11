@@ -17,9 +17,4 @@ public class EllipticalROIListHelper extends ROIListHelper<EllipticalROIList, El
 	public EllipticalROIListHelper() {
 		super(EllipticalROIList.class);
 	}
-
-	@Override
-	public EllipticalROIList newList() {
-		return new EllipticalROIList();
-	}
 }

@@ -25,6 +25,14 @@ public class PointROI extends ROIBase implements Serializable {
 		spt = new double[2];
 	}
 
+	/**
+	 * Copy constructor
+	 * @param orig
+	 */
+	public PointROI(PointROI orig) {
+		super(orig);
+	}
+
 	public PointROI(double[] point) {
 		setPoint(point);
 	}
@@ -41,10 +49,7 @@ public class PointROI extends ROIBase implements Serializable {
 
 	@Override
 	public PointROI copy() {
-		PointROI c = new PointROI(spt.clone());
-		c.name = name;
-		c.plot = plot;
-		return c;
+		return new PointROI(this);
 	}
 
 	@Override

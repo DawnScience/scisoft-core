@@ -16,9 +16,9 @@ import org.eclipse.dawnsci.analysis.dataset.roi.LinearROI;
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IRootFlattener;
 
 public class LinearROIHelper extends ROIHelper<LinearROI> {
-	public static final String LEN = "len";
-	public static final String ANG = "ang";
-	public static final String CROSS_HAIR = "crossHair";
+	private static final String LEN = "len";
+	private static final String ANG = "ang";
+	private static final String CROSS_HAIR = "crossHair";
 
 	public LinearROIHelper() {
 		super(LinearROI.class);
@@ -37,16 +37,10 @@ public class LinearROIHelper extends ROIHelper<LinearROI> {
 
 	@Override
 	public LinearROI unflatten(Map<?, ?> inMap, IRootFlattener rootFlattener) {
-		double[] spt = (double[]) rootFlattener.unflatten(inMap.get(ROIHelper.SPT));
-		Boolean isPlot = (Boolean) rootFlattener.unflatten(inMap.get(ROIHelper.PLOT));
-		Double len = (Double) rootFlattener.unflatten(inMap.get(LEN));
-		Double ang = (Double) rootFlattener.unflatten(inMap.get(ANG));
-		Boolean crossHair = (Boolean) rootFlattener.unflatten(inMap.get(CROSS_HAIR));
-		LinearROI roiOut = new LinearROI(len, ang);
-		roiOut.setName((String) rootFlattener.unflatten(inMap.get(ROIHelper.NAME)));
-		roiOut.setPoint(spt);
-		roiOut.setPlot(isPlot);
-		roiOut.setCrossHair(crossHair);
+		LinearROI roiOut = super.unflatten(inMap, rootFlattener);
+		roiOut.setLength((Double) rootFlattener.unflatten(inMap.get(LEN)));
+		roiOut.setAngle((Double) rootFlattener.unflatten(inMap.get(ANG)));
+		roiOut.setCrossHair((Boolean) rootFlattener.unflatten(inMap.get(CROSS_HAIR)));
 		return roiOut;
 	}
 }

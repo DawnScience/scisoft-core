@@ -15,21 +15,34 @@ import org.eclipse.dawnsci.analysis.api.roi.IROI;
 
 import uk.ac.diamond.scisoft.analysis.rpc.flattening.IRootFlattener;
 
-abstract public class ROIHelper<T> extends MapFlatteningHelper<T> {
+abstract public class ROIHelper<T extends IROI> extends MapFlatteningHelper<T> {
 
 	public ROIHelper(Class<T> type) {
 		super(type);
 	}
 
-	public static final String NAME = "name";
-	public static final String SPT = "spt";
-	public static final String PLOT = "plot";
+	private static final String NAME = "name";
+	private static final String SPT = "spt";
+	private static final String PLOT = "plot";
+	private static final String FIXED = "fixed";
 
 	public Map<String, Object> flatten(IROI roi, String typeName, IRootFlattener rootFlattener) {
 		Map<String, Object> outMap = createMap(typeName);
 		outMap.put(NAME, rootFlattener.flatten(roi.getName()));
 		outMap.put(SPT, rootFlattener.flatten(roi.getPointRef()));
 		outMap.put(PLOT, rootFlattener.flatten(roi.isPlot()));
+		outMap.put(FIXED, rootFlattener.flatten(roi.isFixed()));
 		return outMap;
+	}
+
+	@Override
+	public T unflatten(Map<?, ?> inMap, IRootFlattener rootFlattener) {
+		T roiOut = createInstance();
+		roiOut.setName((String) rootFlattener.unflatten(inMap.get(ROIHelper.NAME)));
+		roiOut.setPoint((double[]) rootFlattener.unflatten(inMap.get(ROIHelper.SPT)));
+		roiOut.setPlot((Boolean) rootFlattener.unflatten(inMap.get(ROIHelper.PLOT)));
+		roiOut.setFixed((Boolean) rootFlattener.unflatten(inMap.get(ROIHelper.FIXED)));
+
+		return roiOut;
 	}
 }

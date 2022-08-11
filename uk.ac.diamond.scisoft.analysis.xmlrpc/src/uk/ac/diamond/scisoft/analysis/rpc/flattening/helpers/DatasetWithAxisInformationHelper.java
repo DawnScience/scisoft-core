@@ -28,7 +28,7 @@ public class DatasetWithAxisInformationHelper extends MapFlatteningHelper<Datase
 
 	@Override
 	public DatasetWithAxisInformation unflatten(Map<?, ?> thisMap, IRootFlattener rootFlattener) {
-		DatasetWithAxisInformation out = new DatasetWithAxisInformation();
+		DatasetWithAxisInformation out = createInstance();
 		Dataset data = (Dataset) rootFlattener.unflatten(thisMap.get(DATA));
 		AxisMapBean axisMap = (AxisMapBean) rootFlattener.unflatten(thisMap.get(AXISMAP));
 

@@ -33,6 +33,15 @@ public class CircularROI extends ROIBase implements IParametricROI, Serializable
 	}
 
 	/**
+	 * Copy constructor
+	 * @param orig
+	 */
+	public CircularROI(CircularROI orig) {
+		super(orig);
+		rad = orig.rad;
+	}
+
+	/**
 	 * Create circle of given radius centred on origin
 	 * @param radius
 	 */
@@ -60,10 +69,7 @@ public class CircularROI extends ROIBase implements IParametricROI, Serializable
 
 	@Override
 	public CircularROI copy() {
-		CircularROI c = new CircularROI(rad, spt[0], spt[1]);
-		c.name = name;
-		c.plot = plot;
-		return c;
+		return new CircularROI(this);
 	}
 
 	/**

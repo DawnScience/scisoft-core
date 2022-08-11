@@ -27,6 +27,14 @@ public class PolygonalROI extends PolylineROI implements Serializable {
 		super();
 	}
 
+	/**
+	 * Copy constructor
+	 * @param orig
+	 */
+	public PolygonalROI(PolygonalROI orig) {
+		super(orig);
+	}
+
 	public PolygonalROI(IPolylineROI poly) {
 		PolylineROI c = poly instanceof PolylineROI ? ((PolylineROI) poly).copy() : new PolylineROI(poly);
 		name = c.name;
@@ -49,12 +57,7 @@ public class PolygonalROI extends PolylineROI implements Serializable {
 
 	@Override
 	public PolygonalROI copy() {
-		PolygonalROI c = new PolygonalROI(spt.clone());
-		for (int i = 1, imax = pts.size(); i < imax; i++)
-			c.insertPoint(pts.get(i).copy());
-		c.name = name;
-		c.plot = plot;
-		return c;
+		return new PolygonalROI(this);
 	}
 
 	@Override

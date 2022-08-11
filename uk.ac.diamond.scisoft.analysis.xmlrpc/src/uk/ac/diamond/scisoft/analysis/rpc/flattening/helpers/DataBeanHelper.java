@@ -33,7 +33,7 @@ public class DataBeanHelper extends MapFlatteningHelper<DataBean> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public DataBean unflatten(Map<?, ?> thisMap, IRootFlattener rootFlattener) {
-		DataBean outBean = new DataBean();
+		DataBean outBean = createInstance();
 		Object[] dataGeneric = (Object[]) rootFlattener.unflatten(thisMap.get(DATA));
 		Map<Object, Object> axisDataGeneric = (Map<Object, Object>) rootFlattener.unflatten(thisMap.get(AXISDATA));
 

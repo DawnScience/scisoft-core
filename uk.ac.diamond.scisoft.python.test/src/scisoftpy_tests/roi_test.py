@@ -66,6 +66,14 @@ class Test(unittest.TestCase):
         self.assertEqual(100, r.length)
         self.assertEqual(45, r.angledegrees)
 
+        r = np.roi.line(point=[50, -50], fixed=True, length=100, angle=math.pi*0.25)
+        print(r)
+        self.assertEqual(50, r.point[0])
+        self.assertEqual(-50, r.point[1])
+        self.assertEqual(100, r.length)
+        self.assertEqual(45, r.angledegrees)
+        self.assertTrue(r.fixed)
+
         r = np.roi.rectangle()
         r.point = 50, -50
         r.lengths = 100, 23

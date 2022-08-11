@@ -74,7 +74,7 @@ public class GuiBeanHelper extends MapFlatteningHelper<GuiBean> {
 
 	@Override
 	public GuiBean unflatten(Map<?, ?> thisMap, IRootFlattener rootFlattener) {
-		GuiBean returnBean = new GuiBean();
+		GuiBean returnBean = createInstance();
 		for (Object entryObj : thisMap.entrySet()) {
 			Entry<?, ?> entry = (Entry<?, ?>) entryObj;
 			String keyObj = (String) entry.getKey();

@@ -16,6 +16,7 @@ import org.eclipse.dawnsci.analysis.dataset.roi.EllipticalROI;
  *
  */
 public class ResolutionEllipseROI extends EllipticalROI {
+	private static final long serialVersionUID = 356527860808765390L;
 
 	double resolution = 0;
 	IPolylineROI points;
@@ -26,7 +27,22 @@ public class ResolutionEllipseROI extends EllipticalROI {
 		this.setPoint(eroi.getPoint());
 		resolution = dSpace;
 	}
-	
+
+	/**
+	 * Copy constructor
+	 * @param orig
+	 */
+	public ResolutionEllipseROI(ResolutionEllipseROI orig) {
+		super(orig);
+		points = orig.points == null ? null : orig.points.copy();
+		resolution = orig.resolution;
+	}
+
+	@Override
+	public ResolutionEllipseROI copy() {
+		return new ResolutionEllipseROI(this);
+	}
+
 	/**
 	 * Set d space in angstrom associated with ellipse
 	 * @return resolution

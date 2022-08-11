@@ -133,12 +133,11 @@ def _wrap_gui_bean(ob, nb):
     return nb
 
 def _unwrap_gui_bean(ob, nb):
-    for k in ob:
-        v = ob[k]
+    for k, v in ob.items():
         if k == _jyparams.roilist:
             if isinstance(v, _roi_list):
                 v = v._jroilist()
-        nb[k] = v
+        nb.put(k, v) # need to use Java method to convert None
     return nb
 
 def plot_getbean(name):

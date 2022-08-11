@@ -128,7 +128,7 @@ if os.name != 'java':
             return ds
 
         def _createROIBase(self):
-            base = dnp.roi._roibase()
+            base = dnp.roi._iroi()
             base.spt = [1.0, 2.7]
             base.plot = True
             return base
@@ -320,7 +320,7 @@ if os.name != 'java':
 
         def testROIBase(self):
             self._flattenAndUnflatten(self._createROIBase())
-            roibase = dnp.roi._roibase()
+            roibase = dnp.roi._iroi()
             self._flattenAndUnflatten(roibase)
 
         def testPointROI(self):

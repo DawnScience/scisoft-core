@@ -123,7 +123,7 @@ class _plotmode(object):
 
 plotmode = _plotmode()
 
-class axismapbean(object):   
+class axismapbean(object):
     _AXIS_ID = 'axisID'
     _AXIS_NAMES = 'axisNames'
     
@@ -199,4 +199,4 @@ class databean(object):
 
     def __repr__(self):
         return self.__dict__.__repr__()
-    
+

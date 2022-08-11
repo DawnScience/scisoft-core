@@ -42,7 +42,6 @@ else:
  
 
 _iroi = _roi._iroi
-_roibase = _roi.roibase
 
 point = _roi.point
 line = _roi.line

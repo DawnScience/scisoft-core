@@ -91,7 +91,7 @@ class roiHelper(flatteningHelper):
 
     @staticmethod
     def getROIBaseHelper():
-        return roiHelper(_roi.roibase, "org.eclipse.dawnsci.analysis.dataset.roi.ROIBase")
+        return roiHelper(_roi._iroi, "org.eclipse.dawnsci.analysis.dataset.roi.ROIBase")
         
     @staticmethod
     def getPointHelper():
@@ -600,7 +600,7 @@ class exceptionHelper(flatteningHelper):
             return e
         else:
             return Exception(excheader)
-    
+
 helpers = [noneHelper(), roiListHelper.getLineListHelper(), roiListHelper.getPointListHelper(),
            roiListHelper.getSectorListHelper(), roiListHelper.getRectangleListHelper(),
            roiListHelper.getCircleListHelper(), roiListHelper.getEllipseListHelper(),
@@ -639,8 +639,5 @@ def canunflatten(obj):
         if thisHelper.canunflatten(obj):
             return True
     return False
-        
-
-        
 
 

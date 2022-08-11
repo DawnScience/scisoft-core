@@ -13,7 +13,7 @@ import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
 import org.eclipse.january.dataset.DoubleDataset;
 
 /**
- * Basically an implementation of a simple cubic spline calculator
+ * Basically an implementation of a simple cubic spline calculator with "natural" boundary conditions (2nd derivative is zero at both ends).
  */
 public class CubicSpline extends AFunction {
 	private static final long serialVersionUID = 2016450265145295052L;
@@ -25,10 +25,8 @@ public class CubicSpline extends AFunction {
 
 	private transient double[] x = null, y = null;
 
-	private static final int PARAMS = 4;
-
 	public CubicSpline() {
-		this(PARAMS);
+		this(0);
 	}
 
 	public CubicSpline(int numberOfParameters) {
@@ -68,7 +66,7 @@ public class CubicSpline extends AFunction {
 
 	@Override
 	public int getNoOfParameters() {
-		return PARAMS;
+		return parameters == null ? 0 : parameters.length;
 	}
 
 	@Override
@@ -81,13 +79,13 @@ public class CubicSpline extends AFunction {
 		y = newy;
 
 		int n = 0;
-		if (x == null)
+		if (x == null) {
 			return;
-		if (x.length == y.length) {
-			n = x.length-1;
-		} else {
+		}
+		if (x.length != y.length) {
 			throw new IllegalArgumentException("x and y arrays are not the same length");
 		}
+		n = x.length-1;
 
 		double[] h = new double[n];
 		double[] bb = new double[n];

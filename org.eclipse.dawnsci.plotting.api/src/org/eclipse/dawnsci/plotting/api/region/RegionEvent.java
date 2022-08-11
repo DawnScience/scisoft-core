@@ -29,6 +29,8 @@ public class RegionEvent extends EventObject {
 
 	private Collection<IRegion> regions;
 
+	private boolean disposed;
+
 	public RegionEvent(Object source) {
 		super(source);
 	}
@@ -36,7 +38,13 @@ public class RegionEvent extends EventObject {
 		super(source);
 		this.regions = regions;
 	}
-	
+
+	public RegionEvent(Object source, Collection<IRegion> regions, boolean disposed) {
+		super(source);
+		this.regions = regions;
+		this.disposed = disposed;
+	}
+
 	public IRegion getRegion() {
 		return (IRegion)getSource();
 	}
@@ -45,4 +53,7 @@ public class RegionEvent extends EventObject {
 		return regions;
 	}
 
+	public boolean isDisposed() {
+		return disposed;
+	}
 }

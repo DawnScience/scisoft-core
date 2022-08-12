@@ -1,4 +1,4 @@
-package org.eclipse.dawnsci.xdi.test;
+package uk.ac.diamond.scisoft.analysis.io;
 
 import static org.junit.Assert.*;
 
@@ -7,8 +7,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-import org.eclipse.dawnsci.xdi.XDI;
-import org.eclipse.dawnsci.xdi.XDIException;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;

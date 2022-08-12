@@ -24,6 +24,7 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
+import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
@@ -33,31 +34,61 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.ShapeUtils;
+import org.eclipse.january.metadata.OriginMetadata;
 
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 
 public class ProcessingUtils {
-	
-	public static ILazyDataset getLazyDataset(IOperation<?, ?> op, String filepath, String datasetName) throws OperationException {
-		
-		IDataHolder dh = null;
-		
+	/**
+	 * Get data from given file
+	 * @param op current operation
+	 * @param filepath
+	 * @return data holder
+	 * @throws OperationException file cannot be read
+	 */
+	public static IDataHolder getData(IOperation<?, ?> op, String filepath) throws OperationException {
 		try {
-			dh = LocalServiceManager.getLoaderService().getData(filepath,null);
+			return LocalServiceManager.getLoaderService().getData(filepath, null);
 		} catch (Exception e) {
-			//ignore
+			throw new OperationException(op, "Error opening file: " + filepath, e);
 		}
-		
-		if (dh == null) throw new OperationException(op,"Error opening file: " + filepath);
-		
+	}
+
+	/**
+	 * Get tree from given file
+	 * @param op current operation
+	 * @param filepath
+	 * @return tree
+	 * @throws OperationException file cannot be read
+	 */
+	public static Tree getTree(IOperation<?, ?> op, String filepath) throws OperationException {
+		return getData(op, filepath).getTree();
+	}
+
+	/**
+	 * Get lazy dataset from given file
+	 * @param op current operation
+	 * @param filepath
+	 * @param datasetName
+	 * @return lazy dataset
+	 * @throws OperationException file or dataset cannot be read
+	 */
+	public static ILazyDataset getLazyDataset(IOperation<?, ?> op, String filepath, String datasetName) throws OperationException {
+		IDataHolder dh = getData(op, filepath);
 		ILazyDataset lz = dh.getLazyDataset(datasetName);
-		
-		if (lz == null) throw new OperationException(op,"Error reading dataset: " + datasetName);
-		
+		if (lz == null) throw new OperationException(op, "Error reading dataset: " + datasetName);
 		return lz;
 	}
 
+	/**
+	 * Get dataset from given file
+	 * @param op current operation
+	 * @param filepath
+	 * @param datasetName
+	 * @return dataset
+	 * @throws OperationException file or dataset cannot be read
+	 */
 	public static IDataset getDataset(IOperation<?, ?> op, String filepath, String datasetName) throws OperationException {
 		ILazyDataset lz = getLazyDataset(op, filepath, datasetName);
 		try {
@@ -165,9 +196,8 @@ public class ProcessingUtils {
 		Path pp = fs.getPath(baseFile);
 		Path resolved = pp.getParent().resolve(p);
 		return resolved.normalize().toString();
-		
 	}
-	
+
 	/**
 	 * Resolve the full path to a file from a relative path string
 	 * and the path to a base file from the {@link SliceFromSeriesMetadata} in the dataset.
@@ -260,5 +290,39 @@ public class ProcessingUtils {
 		String ss = String.format(String.format("%%0%dd", digits.length()), scan); // preserve zero-padding
 		String fmt = String.format(format, name.substring(0, m.start(1)), ss, name.substring(m.end(1)));
 		return String.format(fmt, scan);
+	}
+
+	/**
+	 * Get originating file from lazy dataset's metadata
+	 * @param lazy
+	 * @return file or null
+	 */
+	public static String getOriginatingFile(ILazyDataset lazy) {
+		OriginMetadata om = lazy.getFirstMetadata(OriginMetadata.class);
+		if (om != null) {
+			return om.getFilePath();
+		}
+		return null;
+	}
+
+	/**
+	 * Get NXdetector group
+	 * @param operation
+	 * @param filePath
+	 * @return group
+	 * @throw {@link OperationException}
+	 */
+	public static GroupNode getNXdetector(IOperation<?, ?> operation, String filePath) throws OperationException {
+		try {
+			Tree t = ProcessingUtils.getTree(operation, filePath);
+
+			GroupNode root = t.getGroupNode();
+			GroupNode entry = (GroupNode) NexusTreeUtils.requireNode(root, NexusConstants.ENTRY);
+			GroupNode instrument = (GroupNode) NexusTreeUtils.requireNode(entry, NexusConstants.INSTRUMENT);
+			GroupNode detector = (GroupNode) NexusTreeUtils.requireNode(instrument, NexusConstants.DETECTOR);
+			return detector;
+		} catch (Exception e) {
+			throw new OperationException(operation, "Could not parse Nexus file " + filePath + " for an NXdetector group", e);
+		}
 	}
 }

@@ -469,7 +469,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		String xipPath = path.substring(0, l).concat(String.format(XCAM_XIP_FILENAME, i, scan));
 
 		if (!new File(xipPath).exists()) {
-			return parseXIPEvents(log, xipPath, XCAM_XIP_DATA);
+			return parseXIPEvents(this, log, xipPath, XCAM_XIP_DATA);
 		}
 		return null;
 	}
@@ -479,7 +479,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		if (l > 0) {
 			dataPath = dataPath.substring(0, l);
 		}
-		return parseXIPEvents(log, path, dataPath + String.format(XCAM_XIP_PROCESSED_DATA, i));
+		return parseXIPEvents(this, log, path, dataPath + String.format(XCAM_XIP_PROCESSED_DATA, i));
 	}
 
 	/**
@@ -489,9 +489,9 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	 * @param dataPath
 	 * @return sum, centroid xy, eta-corrected xy, eta & iso-linear corrected y
 	 */
-	static List<Dataset> parseXIPEvents(OperationLog log, String filePath, String dataPath) {
+	static List<Dataset> parseXIPEvents(IOperation<?, ?> op, OperationLog log, String filePath, String dataPath) {
 		try {
-			Tree t = LocalServiceManager.getLoaderService().getData(filePath, null).getTree();
+			Tree t = ProcessingUtils.getTree(op, filePath);
 
 			Node n = TreeUtils.getNode(t, dataPath);
 			if (n == null) {
@@ -955,7 +955,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 
 	private void initializeNormDataset(String filePath, String dataPath) {
 		try {
-			Tree t = LocalServiceManager.getLoaderService().getData(filePath, null).getTree();
+			Tree t = ProcessingUtils.getTree(this, filePath);
 			NodeLink l = t.findNodeLink(dataPath);
 
 			if (l == null) {

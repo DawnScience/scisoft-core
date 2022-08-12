@@ -23,6 +23,7 @@ import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
 import org.eclipse.january.IMonitor;
@@ -30,6 +31,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.processing.metadata.OperationMetadata;
@@ -44,6 +46,11 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 	private boolean useSingleFit; // true if using fit from first image only
 	private boolean usePriorOps; // flag to check if prior operations will be used
 	private List<IDataset> iSummaryData = new ArrayList<>();
+
+	/**
+	 * New names for fields that are externally links to detector data in other files
+	 */
+	private static final String ELASTIC_IMAGE = "elastic_image";
 
 	public RixsImageCombinedReduction() {
 		lines[0] = new StraightLine();
@@ -94,8 +101,23 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 
 		// get elastic line scan file path
 		SliceFromSeriesMetadata smd = original.getFirstMetadata(SliceFromSeriesMetadata.class);
+
+		// find elastic image if available
 		String filePath = smd.getSourceInfo().getFilePath();
-		boolean fileChanged = !filePath.equals(currentDataFile); 
+		GroupNode nxDetector = ProcessingUtils.getNXdetector(this, filePath);
+
+		if (nxDetector.containsDataNode(ELASTIC_IMAGE)) {
+			ILazyDataset elasticImage = nxDetector.getDataNode(ELASTIC_IMAGE).getDataset();
+			String eFilePath = ProcessingUtils.getOriginatingFile(elasticImage);
+			if (eFilePath != null) {
+				elasticScanPath = eFilePath;
+				log.append("Found %s which links to %s", ELASTIC_IMAGE, eFilePath);
+				model.internalSetScanOption(SCAN_OPTION.LINKED_SCAN);
+				addConfiguredField("scanOption", model.getScanOption());
+			}
+		}
+
+		boolean fileChanged = !filePath.equals(currentDataFile);
 		if (fileChanged || elasticScanPath == null) {
 			currentDataFile = filePath;
 			useSingleFit = false; // reset to check in new file
@@ -103,7 +125,7 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 
 		if (model.getScanOption() == SCAN_OPTION.SAME_SCAN) {
 			elasticScanPath = currentDataFile;
-		} else {
+		} else if (model.getScanOption() != SCAN_OPTION.LINKED_SCAN) {
 			File file = new File(filePath);
 			File currentDir = file.getParentFile();
 			String currentName = file.getName();

@@ -24,13 +24,12 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationLog;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
-import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.dataset.impl.Signal;
 import org.eclipse.dawnsci.analysis.dataset.roi.ROISliceUtils;
 import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
-import org.eclipse.dawnsci.nexus.NexusConstants;
+import org.eclipse.dawnsci.analysis.dataset.slicer.SourceInformation;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Comparisons;
@@ -55,10 +54,8 @@ import org.eclipse.january.dataset.UnaryOperation;
 import uk.ac.diamond.scisoft.analysis.dataset.function.Histogram;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
-import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
-import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.metadata.FitMetadataImpl;
 import uk.ac.diamond.scisoft.analysis.processing.operations.MetadataUtils;
 import uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractFittedBackgroundModel.BackgroundPixelPDF;
@@ -100,6 +97,11 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 	 * Prefix for edge position in auxiliary data
 	 */
 	public static final String EDGE_POSITION_PREFIX = "edge_position_";
+
+	/**
+	 * New field externally linked to detector data in other file
+	 */
+	private static final String DARK_IMAGE = "dark_image";
 
 	@Override
 	public String getFilenameSuffix() {
@@ -337,6 +339,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		Dataset in = DatasetUtils.convertToDataset(input);
 
 		if (smoothedDarkData != null) {
+			threshold = 0;
 			h = null;
 			// fit dark to current with offset
 			Dataset subtractImage = null;
@@ -665,8 +668,21 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		return smoothed;
 	}
 
-	private void createDarkData(String name) {
-		String file = model.getDarkImageFile();
+	private void createDarkData(GroupNode nxDetector, String name) throws OperationException {
+		String file = null;
+		ILazyDataset dark = null;
+		if (nxDetector.containsDataNode(DARK_IMAGE)) {
+			dark = nxDetector.getDataNode(DARK_IMAGE).getDataset();
+			file = ProcessingUtils.getOriginatingFile(dark);
+			if (file != null) {
+				log.append("Found %s which links to %s", DARK_IMAGE, file);
+				addConfiguredField("darkImageFile", file);
+			}
+		}
+		if (file == null) {
+			file = model.getDarkImageFile();
+		}
+
 		if (file == null) {
 			smoothedDarkData = null;
 			darkImageFile = null;
@@ -678,14 +694,15 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 		if (!file.equals(darkImageFile) || darkData == null) {
 			darkImageFile = file;
-			ILazyDataset dark;
-			try {
-				dark = LocalServiceManager.getLoaderService().getData(file, null).getLazyDataset(name);
-			} catch (Exception e) {
-				throw new OperationException(this, "Could not load dark image file", e);
+			if (dark == null) {
+				try {
+					dark = ProcessingUtils.getLazyDataset(this, file, name);
+				} catch (Exception e) {
+					throw new OperationException(this, "Could not load dark image file", e);
+				}
 			}
-
-			darkImageCountTime = getCountTime(file).getDouble();
+			GroupNode diDetector = ProcessingUtils.getNXdetector(this, darkImageFile);
+			darkImageCountTime = getCountTime(diDetector);
 
 			dark = dark.getSliceView().squeezeEnds();
 			Dataset d;
@@ -910,14 +927,17 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		if (si.isFirstSlice()) {
 			log.clear();
 			updateROICount();
+			SourceInformation src = ssm.getSourceInfo();
 
-			String name = ssm.getDatasetName();
-			detector = KnownDetector.getDetector(ssm.getFilePath(), name, input);
-			createDarkData(name);
+			String name = src.getDatasetName();
+			detector = KnownDetector.getDetector(src.getFilePath(), name, input);
+			GroupNode nxDetector = ProcessingUtils.getNXdetector(this, src.getFilePath());
+
+			createDarkData(nxDetector, name);
 
 			if (smoothedDarkData != null) {
-				String filePath = ssm.getFilePath();
-				double countTime = getCountTime(filePath).getDouble();
+				String filePath = src.getFilePath();
+				double countTime = getCountTime(nxDetector);
 				if (countTime != darkImageCountTime) {
 					throw new OperationException(this, "Count time in " + filePath + ": " + countTime + " != " + darkImageCountTime + " for dark image");
 				}
@@ -1040,27 +1060,15 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		return cs.size() > 0 ? (cs.get(0) - x.getDouble(pos)) * 2 : Double.NaN;
 	}
 
-	/**
-	 * Parse NeXus file to set various fields
-	 * @param llog 
-	 * @param filePath
-	 */
-	protected Dataset getCountTime(String filePath) {
+	protected Dataset getDetectorField(GroupNode nxDetector, String field) {
 		try {
-			Tree t = LocalServiceManager.getLoaderService().getData(filePath, null).getTree();
-
-			GroupNode root = t.getGroupNode();
-			// entry1:NXentry
-			//     before_scan:NXcollection
-			//         andorPreampGain:NXcollection/andorPreampGain [1, 2, 4]
-			//         pgmEnergy:NXcollection/ [energy in eV, always single value, even for an energy scan]
-
-			GroupNode entry = (GroupNode) NexusTreeUtils.requireNode(root, NexusConstants.ENTRY);
-			GroupNode instrument = (GroupNode) NexusTreeUtils.requireNode(entry, NexusConstants.INSTRUMENT);
-			GroupNode detector = (GroupNode) NexusTreeUtils.requireNode(instrument, NexusConstants.DETECTOR);
-			return DatasetUtils.sliceAndConvertLazyDataset(detector.getDataNode("count_time").getDataset());
-		} catch (Exception e) {
-			throw new OperationException(this, "Could not parse Nexus file " + filePath + " for count time", e);
+			return DatasetUtils.sliceAndConvertLazyDataset(nxDetector.getDataNode(field).getDataset());
+		} catch (DatasetException e) {
+			throw new OperationException(this, "Could not read value for " + field, e);
 		}
+	}
+
+	private double getCountTime(GroupNode nxDetector) {
+		return getDetectorField(nxDetector, "count_time").getDouble();
 	}
 }

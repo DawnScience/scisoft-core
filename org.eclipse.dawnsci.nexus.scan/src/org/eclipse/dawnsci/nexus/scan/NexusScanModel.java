@@ -52,12 +52,6 @@ public class NexusScanModel {
 	 */
 	private Map<ScanRole, List<INexusDevice<?>>> nexusDevices;
 
-	/**
-	 * Optionally a device that produces multiple nexus objects with different scan roles.
-	 * This could be a device that controls other devices, such as a malcolm device in GDA.
-	 */
-	private Optional<INexusDevice<?>> multipleNexusDevice = Optional.empty();
-	
 	private INexusDevice<NXcollection> metadataWriter;
 
 	/**
@@ -115,14 +109,6 @@ public class NexusScanModel {
 		this.nexusDevices = nexusDevices;
 	}
 
-	public Optional<INexusDevice<?>> getMultipleNexusDevice() {
-		return multipleNexusDevice;
-	}
-
-	public void setMultipleNexusDevice(Optional<INexusDevice<?>> multipleNexusDevice) {
-		this.multipleNexusDevice = multipleNexusDevice;
-	}
-	
 	public INexusDevice<NXcollection> getMetadataWriter() {
 		return metadataWriter;
 	}

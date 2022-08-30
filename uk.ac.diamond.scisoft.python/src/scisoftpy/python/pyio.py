@@ -483,11 +483,14 @@ else:
 try:
     import pycbf as _cbf  # @UnresolvedImport
     import numpy  # @UnresolvedImport
+    def _str(v):
+        return v.decode() if isinstance(v, bytes) else v
+
     class CBFLoader(PythonLoader):
         def getvalue(self, h):
-            vtype = h.get_typeofvalue()
+            vtype = _str(h.get_typeofvalue())
             if "bnry" not in vtype:
-                return h.get_value()
+                return _str(h.get_value())
             try:
                 (_compression, _binaryid, _elsize, _elsigned, \
                     _elunsigned, _elements, _minelement, _maxelement, \
@@ -501,7 +504,7 @@ try:
                         h.get_doublearrayparameters_wdims()
                     isreal = True
                 except:
-                    return h.get_value()
+                    return _str(h.get_value())
                     
             if dimfast == 0:
                 dimfast = 1
@@ -525,15 +528,12 @@ try:
 #             print "padding", _padding
             if isreal:
                 s = h.get_doublearray_as_string()
-                print(type(s))
                 d = numpy.frombuffer(s, numpy.float64)
             else:
                 s = h.get_integerarray_as_string()
-                print(type(s))
-                d = numpy.frombuffer(s, numpy.uint32)
-#             print d.shape
-#             print d[0:10], d[d.shape[0]/2], d[-1]
-            d.shape = (dimfast, dimmid)
+                d = numpy.frombuffer(s, numpy.int32)
+            if d.size == dimmid * dimfast:
+                d.shape = (dimmid, dimfast)
             return d
 
         def load(self, warn=True):

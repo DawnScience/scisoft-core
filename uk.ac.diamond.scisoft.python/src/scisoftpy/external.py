@@ -188,7 +188,12 @@ def pyenv(exe=None, path=None, ldpath=None):
 
 #    print 'ScisoftPy package is in', pkg
     if _isjava:
-        pyexe, pypath, pyldpath = _cached_pyenv
+        if _cached_pyenv is None:
+            if exe is None:
+                raise ValueError('Python executable must be specified when no python environment cached')
+            pypath = pyldpath = None
+        else:
+            pyexe, pypath, pyldpath = _cached_pyenv
 
         if exe:
             pyexe = exe
@@ -239,7 +244,7 @@ _dls_modules = dict() # cache for modules
 
 _PYTHONPATH = 'PYTHONPATH'
 
-def get_dls_module(module='python/2.7', module_init='/etc/profile.d/modules.sh'):
+def get_dls_module(module='python/3.7', module_init='/etc/profile.d/modules.sh'):
     if module in _dls_modules:
         return _dls_modules[module]
 
@@ -267,7 +272,7 @@ def get_dls_module(module='python/2.7', module_init='/etc/profile.d/modules.sh')
     _dls_modules[module] = exe, path, ldpath
     return exe, path, ldpath
 
-def get_python(py3=False):
+def get_python(py3=True):
     env = dict(_env)
     env.pop(_PYTHONPATH, None)
     pyexe = 'python2' if not py3 else 'python3'
@@ -311,7 +316,19 @@ def parse_for_env(stream, sep=':'):
     return exe, path, ldpath
 
 if _isjava:
-    _cached_pyenv = get_python()
+    try:
+        _cached_pyenv = get_python()
+    except:
+        import traceback
+        print('Problem caching python3 environment')
+        ex_type, ex_value, tb = sys.exc_info()
+        try:
+            _cached_pyenv = get_python(False)
+        except:
+            traceback.print_exception(ex_type, ex_value, tb)
+            print('Problem caching python2 environment: ')
+            traceback.print_exc()
+            _cached_pyenv = None
 
 #PYDEV_SRC='/scratch/eclipse441_64/plugins/org.python.pydev_3.9.2.201502050007/pysrc'
 

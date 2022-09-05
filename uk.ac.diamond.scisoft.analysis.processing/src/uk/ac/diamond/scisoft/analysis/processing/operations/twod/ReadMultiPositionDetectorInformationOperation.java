@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import uk.ac.diamond.scisoft.analysis.io.DiffractionMetadata;
 import uk.ac.diamond.scisoft.analysis.io.NexusDiffractionCalibrationReader;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
-import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 /**
@@ -61,7 +60,7 @@ public class ReadMultiPositionDetectorInformationOperation extends AbstractOpera
 		SliceFromSeriesMetadata ssm = input.getFirstMetadata(SliceFromSeriesMetadata.class);
 		input = input.getSliceView();
 		try {
-			Tree tree = LocalServiceManager.getLoaderService().getData(ssm.getFilePath(),null).getTree();
+			Tree tree = ProcessingUtils.getTree(this, ssm.getFilePath());
 			ssm.getParent().getShape();
 			int[] pos = getPosition(new SliceND(ssm.getParent().getShape(),ssm.getSliceFromInput()), ssm.getParent().getShape(), ssm.getDataDimensions());
 

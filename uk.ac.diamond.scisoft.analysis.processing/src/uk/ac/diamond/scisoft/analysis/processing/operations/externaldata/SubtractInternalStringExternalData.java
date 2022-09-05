@@ -17,7 +17,6 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 
-import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.metadata.OperationMetadata;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 import uk.ac.diamond.scisoft.analysis.utils.ErrorPropagationUtils;
@@ -48,7 +47,7 @@ public class SubtractInternalStringExternalData extends FrameMathsOperation<Inte
 		}
 		
 		try {
-			IDataHolder dh = LocalServiceManager.getLoaderService().getData(filePath, null);
+			IDataHolder dh = ProcessingUtils.getData(this, filePath);
 			if (!dh.contains(datasetName)){
 				return null;
 			}

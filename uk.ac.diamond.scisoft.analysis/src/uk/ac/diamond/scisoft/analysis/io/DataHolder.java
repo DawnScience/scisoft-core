@@ -41,7 +41,8 @@ import org.slf4j.LoggerFactory;
  * This implementation does not permit duplicated names.
  */
 public class DataHolder implements IMetadataProvider, IDataHolder, Serializable {
-	
+	private static final long serialVersionUID = 699494887322875262L;
+
 	private static final Logger logger = LoggerFactory.getLogger(DataHolder.class);
 
 	/**

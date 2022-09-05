@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Processing
 Bundle-SymbolicName: uk.ac.diamond.scisoft.analysis.processing;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: uk.ac.diamond.scisoft.analysis.processing.Activator
 Bundle-Vendor: Diamond Light Source
 Require-Bundle: org.eclipse.january;bundle-version="2.3.0",
  uk.ac.diamond.scisoft.analysis;bundle-version="1.5.0",

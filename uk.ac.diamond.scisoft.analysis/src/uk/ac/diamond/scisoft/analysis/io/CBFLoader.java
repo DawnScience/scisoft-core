@@ -63,7 +63,7 @@ public class CBFLoader extends AbstractFileLoader {
 	private static final Logger logger = LoggerFactory.getLogger(CBFLoader.class);
 	private HashMap<String, String> metadataMap = new HashMap<String, String>();
 	public HashMap<String, Serializable> GDAMetadata = new HashMap<String, Serializable>();
-	private int[] shape;
+	private ImageOrientation orientation;
 
 	static {
 		CBFlib.loadLibrary();
@@ -82,9 +82,9 @@ public class CBFLoader extends AbstractFileLoader {
 	/**
 	 * @param FileName
 	 */
-	CBFLoader(String FileName, int[] shape) {
+	CBFLoader(String FileName, ImageOrientation orientation) {
 		fileName = FileName;
-		this.shape = shape;
+		this.orientation = orientation;
 	}
 
 	@Override
@@ -119,7 +119,7 @@ public class CBFLoader extends AbstractFileLoader {
 		}
 
 		if (loadLazily) {
-			data = createLazyDataset(new CBFLoader(fileName, imageOrien.shape), DEF_IMAGE_NAME, imageOrien.getInterface(), imageOrien.getShape());
+			data = createLazyDataset(new CBFLoader(fileName, imageOrien), DEF_IMAGE_NAME, imageOrien.getInterface(), imageOrien.getShape());
 		} else {
 			data = readCBFBinaryData(chs, imageOrien);
 		}
@@ -348,24 +348,20 @@ public class CBFLoader extends AbstractFileLoader {
 					metadataMap.put("precedence " + ind, String.valueOf(pre));
 					metadataMap.put("direction " + ind, dir);
 					metadataMap.put("axis_set_id " + ind, asi);
-
 				}
 				i++;
 			}
 		}
 
 		// Attempt to find rows that matches above array_id
-		if (isMatch("axis_set_id 1", "ELEMENT_X")) { // FIXME is this always the case?
-			isRowsX = getInteger("precedence 1") == 1;
-
+		isRowsX = getInteger("precedence 1") == 1;
+		if (isRowsX) {
 			xLength = getInteger("SIZE 1");
 			yLength = getInteger("SIZE 2");
-
+	
 			xIncreasing = isMatch("direction 1", "increasing");
 			yIncreasing = isMatch("direction 2", "increasing");
 		} else {
-			isRowsX = getInteger("precedence 2") == 1;
-
 			xLength = getInteger("SIZE 2");
 			yLength = getInteger("SIZE 1");
 
@@ -556,10 +552,10 @@ _diffrn_radiation_wavelength.wt 1.0
 
 		imageOrien = new ImageOrientation((int) dim1.value(), (int) dim2.value(), isre.value(), els.value());
 		if (imageOrien.shape[0] == 0 || imageOrien.shape[1] == 0) { // these values can occur when MIME header omits size values
-			if (shape == null) {
+			if (orientation == null) {
 				return null;
 			} else {
-				imageOrien.shape = shape;
+				imageOrien = orientation;
 			}
 		}
 

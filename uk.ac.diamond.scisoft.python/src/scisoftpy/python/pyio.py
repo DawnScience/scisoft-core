@@ -483,13 +483,13 @@ else:
 try:
     import pycbf as _cbf  # @UnresolvedImport
     import numpy  # @UnresolvedImport
-    def _str(v):
+    def _str(v): # needed until https://github.com/dials/pycbf/pull/2 is merged
         return v.decode() if isinstance(v, bytes) else v
 
     class CBFLoader(PythonLoader):
         def getvalue(self, h):
             vtype = _str(h.get_typeofvalue())
-            if "bnry" not in vtype:
+            if "bnry" != vtype:
                 return _str(h.get_value())
             try:
                 (_compression, _binaryid, _elsize, _elsigned, \
@@ -539,6 +539,7 @@ try:
         def load(self, warn=True):
             data = []
             metadata = []
+            from scisoftpy.dictutils import ListDict
             try:
                 h = _cbf.cbf_handle_struct()
                 h.read_widefile(self.name, _cbf.MSG_DIGEST)
@@ -550,14 +551,16 @@ try:
                     h.rewind_category()
                     for nc in range(h.count_categories()):
                         h.select_category(nc)
-#                         ct_name = h.category_name()
+                        ct_name = _str(h.category_name())
+                        ct_md = []
 #                         print "  Cat: %d, %s" % (nc, ct_name)
                         h.rewind_column()
                         colnames = []
                         for nv in range(h.count_columns()):
                             h.select_column(nv)
-                            cl_name = h.column_name()
+                            cl_name = _str(h.column_name())
                             colnames.append(cl_name)
+                            ct_md.append([])
 #                             print "    Col: %d, %s" % (nv, cl_name)
                         h.rewind_row()
                         for nh in range(h.count_rows()):
@@ -567,13 +570,38 @@ try:
                                 h.select_column(nv)
                                 v = self.getvalue(h)
 #                                 print "    %d %d: " % (nh, nv), v
-                                item = "%s-%d" % (colnames[nv], nh), v
                                 if isinstance(v, numpy.ndarray):
+                                    item = "%s-%d" % (colnames[nv], nh), v
                                     data.append(item)
                                 else:
-                                    metadata.append(item)
+                                    ct_md[nv].append(v)
+                        if ct_md:
+                            ct_md = list(zip(colnames,ct_md))
+                        metadata.append((ct_name, ListDict(ct_md)))
             finally:
                 del(h)
+
+            shape = None
+            for n,v in metadata:
+                if n == 'array_structure_list':
+                    for an,ai in enumerate(v['index']):
+                        if ai == '1':
+                            xn = an
+                            break
+                    fn = 1 - xn if v['precedence'][xn] == '1' else xn
+                    is_f_incr = v['direction'][fn] == 'increasing'
+                    is_s_incr = v['direction'][1 - fn] == 'increasing'
+                    shape = int(v['dimension'][1 - fn]), int(v['dimension'][fn])
+                    break
+
+            if shape is not None:
+                for n,v in data:
+                    if v.ndim == 1:
+                        v.shape = shape
+                    if not is_f_incr or not is_s_incr:
+                        flip = slice(None, None, -1)
+                        data[n] = v[None if is_s_incr else flip, None if is_f_incr else flip]
+            
             return DataHolder(data, metadata, warn)
 except:
     CBFLoader = None

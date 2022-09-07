@@ -1,5 +1,5 @@
 {% set name = "scisoftpy" %}
-{% set version = "2.27.0" %}
+{% set version = "2.29.0" %}
 
 package:
   name: {{ name }}
@@ -15,17 +15,18 @@ build:
 
 requirements:
   host:
-    - pip
     - python
+    - pip
     - setuptools
 
   run:
-    - h5py
-    - numpy
-    - pillow
     - python
+    - h5py # depends on numpy
+    - pillow
     - six
-    - subprocess32  # [unix and py2k]
+    - tifffile
+    - pycbf # [py3k]
+    - subprocess32 # [unix and py2k]
 
 test:
   imports:
@@ -40,5 +41,4 @@ about:
 extra:
   recipe-maintainers:
     - PeterC-DLS
-    - tschoonj
-    
+    - jacobfilik

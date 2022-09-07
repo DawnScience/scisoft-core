@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+h5py = "*" # depends on numpy
+pillow = "*"
+six = "*"
+subprocess32 = {markers = "python_version < '3' and os_name == 'posix'"}
+tifffile = {extras = ['all']}
+pycbf = {extras = ['all'], markers = "python_version >= '3'"}
+
+[dev-packages]
+build = {markers = "python_version >= '3'"}
+pytest = "*"

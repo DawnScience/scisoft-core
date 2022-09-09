@@ -10,6 +10,8 @@
 package uk.ac.diamond.scisoft.python;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -409,18 +411,26 @@ public class PythonUtils {
 	 * @return concatenated dataset
 	 */
 	public static Dataset concatenate(final IDataset[] as, int axis) {
-		return DatasetUtils.concatenate(convertToFirst(as), axis);
+		return DatasetUtils.concatenate(convertToBestInterface(as), axis);
 	}
 
-	private static final Dataset[] convertToFirst(final IDataset[] as) {
+	/**
+	 * Convert to best dataset interface
+	 * @param as datasets
+	 * @return converted datasets
+	 */
+	private static final Dataset[] convertToBestInterface(final IDataset[] as) {
 		if (as == null) {
 			return null;
 		}
 
 		int n = as.length;
-		Class<? extends Dataset> ac = InterfaceUtils.getInterface(as[0]);
-		for (int i = 1; i < n; i++) {
-			ac = InterfaceUtils.getBestInterface(ac, InterfaceUtils.getInterface(as[i]));
+		Class<? extends Dataset> ac = null;
+		for (int i = 0; i < n; i++) {
+			Dataset ai = DatasetUtils.convertToDataset(as[i]);
+			as[i] = ai;
+			Class<? extends Dataset> ci = InterfaceUtils.getInterface(ai);
+			ac = ac == null ? ci : InterfaceUtils.getBestInterface(ac, ci);
 		}
 
 		// TODO remove this shape checking once January can concatenate zero-sized datasets
@@ -431,7 +441,89 @@ public class PythonUtils {
 				ds.add(ai);
 			}
 		}
+		if (ds.isEmpty() && n > 0) {
+			ds.add(DatasetUtils.cast(ac, as[0]));
+		}
 
 		return ds.toArray(new Dataset[ds.size()]);
+	}
+
+	/**
+	 * Dispatches to overloaded method
+	 * @param o object
+	 * @param method name
+	 * @param axes can be null
+	 * @param ignores can be null
+	 * @return result
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 */
+	public static Object callIBArgsMethod(Object o, String method, int[] axes, boolean[] ignores) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		Class<? extends Object> c = o.getClass();
+		if (axes == null || axes.length == 0) {
+			Method m = c.getMethod(method, boolean[].class);
+			return m.invoke(o, ignores);
+		} else if (axes.length == 1) {
+			Method m = c.getMethod(method, int.class, boolean[].class);
+			return m.invoke(o, axes[0], ignores);
+		}
+		Method m = c.getMethod(method, int[].class, boolean[].class);
+		return m.invoke(o, axes, ignores);
+	}
+
+	/**
+	 * Dispatches to overloaded method
+	 * @param o object
+	 * @param method name
+	 * @param axes can be null
+	 * @param pop
+	 * @param ignores can be null
+	 * @return result
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 */
+	public static Object callIBBArgsMethod(Object o, String method, int[] axes, boolean pop, boolean[] ignores) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		Class<? extends Object> c = o.getClass();
+		if (axes == null || axes.length == 0) {
+			Method m = c.getMethod(method, boolean.class, boolean[].class);
+			return m.invoke(o, pop, ignores);
+		} else if (axes.length == 1) {
+			Method m = c.getMethod(method, int.class, boolean.class, boolean[].class);
+			return m.invoke(o, axes[0], pop, ignores);
+		}
+		Method m = c.getMethod(method, int[].class, boolean.class, boolean[].class);
+		return m.invoke(o, axes, pop, ignores);
+	}
+
+	/**
+	 * Dispatches to overloaded method
+	 * @param o object
+	 * @param method name
+	 * @param dataset dataset
+	 * @param axes can be null
+	 * @param ignores can be null
+	 * @return result
+	 * @throws IllegalAccessException
+	 * @throws IllegalArgumentException
+	 * @throws InvocationTargetException
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 */
+	public static Object callDIBArgsStaticMethod(Class<?> c, String method, Dataset dataset, int[] axes, boolean[] ignores) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		if (axes == null || axes.length == 0) {
+			Method m = c.getMethod(method, Dataset.class, boolean[].class);
+			return m.invoke(null, dataset, ignores);
+		} else if (axes.length == 1) {
+			Method m = c.getMethod(method, Dataset.class, int.class, boolean[].class);
+			return m.invoke(null, dataset, axes[0], ignores);
+		}
+		Method m = c.getMethod(method, Dataset.class, int[].class, boolean[].class);
+		return m.invoke(null, dataset, axes, ignores);
 	}
 }

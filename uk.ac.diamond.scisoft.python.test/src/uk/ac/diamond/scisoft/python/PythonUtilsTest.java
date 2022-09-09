@@ -289,5 +289,22 @@ public class PythonUtilsTest {
 		out = PythonUtils.concatenate(ins, 0);
 		assertEquals(DoubleDataset.class, out.getClass());
 		assertArrayEquals(new int[] {1, 4}, out.getShapeRef());
+
+		ins[0] = DatasetFactory.ones(IntegerDataset.class, 0, 4);
+		out = PythonUtils.concatenate(ins, 0);
+		assertEquals(IntegerDataset.class, out.getClass());
+		assertArrayEquals(new int[] {0, 4}, out.getShapeRef());
+
+		ins[0] = DatasetFactory.ones(DoubleDataset.class, 0, 4);
+		out = PythonUtils.concatenate(ins, 0);
+		assertEquals(DoubleDataset.class, out.getClass());
+		assertArrayEquals(new int[] {0, 4}, out.getShapeRef());
+
+		out = ins[0];
+		ins[0] = ins[1];
+		ins[1] = out;
+		out = PythonUtils.concatenate(ins, 0);
+		assertEquals(DoubleDataset.class, out.getClass());
+		assertArrayEquals(new int[] {0, 4}, out.getShapeRef());
 	}
 }

@@ -40,13 +40,14 @@ Implemented NumPy methods (1.10)
  * Linear algebra: eig, eigvals, cholesky, qr, svd, norm, cond, det, solve, inv, pinv, matrix_power
  * Rounding: rint, ceil, floor, trunc, fix
  * Bitwise: bitwise_and, bitwise_or, bitwise_xor, invert, left_shift, right_shift
- * Stats: amax, amin, ptp, mean, std, var, cumprod, cumsum, histogram, histogram2s, histogramdd, bincount
+ * Stats: amax, amin, ptp, mean, std, var, cumprod, cumsum, histogram, histogram2s, histogramdd, bincount, median, quantile, percentile
+ * NaNs: nanmax, nanmin, nanargmax, nanargmin
  * Random: rand, randint, random_integer, randn, exponential, poisson, seed
 
 Non-NumPy
  * Array methods: cast, minpos, maxpos, index (Jython only)
  * Maths: dividez, cbrt
- * Stats: skewness, kurtosis, iqr, quantile
+ * Stats: skewness, kurtosis, iqr
  * Import/export JAMA [#JAMA]_ (Jython only)
  * phase, residual, normalise, centroid, crossings
 

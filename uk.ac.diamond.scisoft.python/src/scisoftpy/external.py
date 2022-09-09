@@ -18,7 +18,11 @@
 '''
 
 from __future__ import print_function
+import inspect
 import os
+import traceback
+
+
 if os.name == 'java':
     _isjava = True
     from .jython.jycore import ndarray, ndgeneric, scalarToPython #@UnusedImport
@@ -130,7 +134,6 @@ def load_args(d):
                 fdict[fa] = _pload(f)
             except:
                 sys.stderr.write('Could not load %s\n' % fa)
-                import traceback
                 traceback.print_exc()
             finally:
                 f.close()
@@ -167,9 +170,8 @@ def wrapper(func):
         try:
             ret = func(*args, **kwargs)
         except Exception:
-            import traceback
             ex_type, ex_value, tb = sys.exc_info()
-            error = ex_type, ex_value, traceback.extract_tb(tb)[1:]
+            error = ex_type, ex_value, traceback.format_list(traceback.extract_tb(tb)[1:])
             ret = None
         else:
             error = None
@@ -319,7 +321,6 @@ if _isjava:
     try:
         _cached_pyenv = get_python()
     except:
-        import traceback
         print('Problem caching python3 environment')
         ex_type, ex_value, tb = sys.exc_info()
         try:
@@ -545,8 +546,7 @@ class ExternalFunction(object):
                             try:
                                 ret, err = load_args(d)
                                 if err:
-                                    import traceback
-                                    sys.stderr.write('\n'.join(traceback.format_list(err[2])) + '\n')
+                                    sys.stderr.writelines(err[2])
                                     raise err[1]
                                 return ret
                             finally:
@@ -602,7 +602,6 @@ def create_function(function, module=None, exe=None, path=None, extra_path=None,
                     p_parts = _path.split(p)
     else: # use caller's directory
         p = None
-        import inspect
         stack = inspect.stack()
         if len(stack) > 1:
             f = stack[1][1] # see if module is in directory of previous frame's file

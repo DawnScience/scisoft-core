@@ -580,7 +580,17 @@ class Test(unittest.TestCase):
 
         a = np.array([[]]*6).T
         b = np.array([1,2,3,4,5,6])
-        self.checkitems([[1,2,3,4,5,6]], np.vstack((a,b)))
+        s = np.vstack((a,b))
+        self.checkitems([[1,2,3,4,5,6]], s)
+        self.assertEqual(a.dtype, np.float64)
+        self.assertEqual(s.dtype, np.float64)
+        s = np.vstack((a,a))
+        self.assertEqual(s.shape, (0,6))
+        self.assertEqual(s.dtype, np.float64)
+        s = np.vstack((a,a.astype(int)))
+        self.assertEqual(s.dtype, np.float64)
+        s = np.vstack((a.astype(int), a))
+        self.assertEqual(s.dtype, np.float64)
 
     def testMeshGrid(self):
         print('Meshgrid testing')

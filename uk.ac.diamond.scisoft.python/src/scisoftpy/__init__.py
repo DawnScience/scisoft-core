@@ -19,7 +19,7 @@ scisoftpy is a NumPy-like wrapper around the Diamond Scisoft Analysis plugin
 ----------------------------------------------------------------------------
 
 Check the documentation at
-  http://www.opengda.org/documentation/manuals/Diamond_SciSoft_Python_Guide/trunk/contents.html
+  https://alfred.diamond.ac.uk/documentation/manuals/Diamond_SciSoft_Python_Guide/trunk/contents.html
 
 Classes available:
     ndarray - dataset

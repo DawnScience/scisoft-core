@@ -214,9 +214,17 @@ amax = _np.amax
 
 amin = _np.amin
 
+nanmax = _np.nanmax
+
+nanmin = _np.nanmin
+
 argmax = _np.argmax
 
 argmin = _np.argmin
+
+nanargmax = _np.nanargmax
+
+nanargmin = _np.nanargmin
 
 meshgrid = _np.meshgrid
 

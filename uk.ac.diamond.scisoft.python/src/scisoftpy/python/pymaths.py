@@ -38,13 +38,12 @@ floatmax = sys.float_info.max # maximum float value #@UndefinedVariable
 prod = _np.prod
 sum = _np.sum #@ReservedAssignment
 
+# TODO add nansum, etc
+
 mean = _np.mean
 std = _np.std
 var = _np.var
 ptp = _np.ptp
-
-amax = _np.amax
-amin = _np.amin
 
 real = _np.real
 imag = _np.imag
@@ -138,9 +137,14 @@ clip = _np.clip
 maximum = _np.maximum
 minimum = _np.minimum
 
-median = _np.median
 cumprod = _np.cumprod
 cumsum = _np.cumsum
+
+median = _np.median
+percentile = _np.percentile
+quantile = _np.quantile
+
+# TODO nancumsum, etc
 
 diff = _np.diff
 

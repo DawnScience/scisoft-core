@@ -291,7 +291,7 @@ class Test(unittest.TestCase):
         self.checkitems(np.arange(10).reshape(2,5), tds)
 
         tds = np.array([])
-        self.assertEqual((0,), tds)
+        self.assertEqual((0,), tds.shape)
 
         tds = np.array([[]]*6)
         self.assertEqual((6,0), tds.shape)

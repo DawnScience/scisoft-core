@@ -44,12 +44,16 @@ import org.eclipse.january.dataset.StringDataset as _stringds
 
 import org.eclipse.january.dataset.DatasetUtils as _dsutils
 import org.eclipse.january.dataset.InterfaceUtils as _ifutils
+import org.eclipse.january.dataset.ShapeUtils as _shutils
 from uk.ac.diamond.scisoft.python.PythonUtils import convertToJava as _cvt2j
 from uk.ac.diamond.scisoft.python.PythonUtils import getSlice as _getslice
 from uk.ac.diamond.scisoft.python.PythonUtils import setSlice as _setslice
 from uk.ac.diamond.scisoft.python.PythonUtils import convertToSlice as _cvt2js
 from uk.ac.diamond.scisoft.python.PythonUtils import getInterfaceFromObject as _getdt
 from uk.ac.diamond.scisoft.python.PythonUtils import createFromObject as _create
+from uk.ac.diamond.scisoft.python.PythonUtils import callIBArgsMethod as _callIB
+from uk.ac.diamond.scisoft.python.PythonUtils import callIBBArgsMethod as _callIBB
+from uk.ac.diamond.scisoft.python.PythonUtils import concatenate as _concatenate
 
 import org.apache.commons.math3.complex.Complex as _jcomplex #@UnresolvedImport
 
@@ -432,7 +436,7 @@ def _keepdims(func):
     @wraps(func)
     def new_f(*args, **kwargs):
         keepdims = kwargs.get('keepdims', False)
-        axis = kwargs.get('axis', None)    
+        axis = kwargs.get('axis', None)
         if keepdims:
             if axis is None:
                 dimensionality = (1,) * len(args[0].shape)
@@ -593,8 +597,6 @@ def __cvt_jobj(obj, dtype=None, copy=True, force=False):
             if dtype is None:
                 dtype = float64
             obj = obj.getArray()
-    elif len(obj) == 0 and dtype is None:
-        dtype = float64
 
     obj = _cvt2j(obj)
     try:
@@ -606,7 +608,7 @@ def __cvt_jobj(obj, dtype=None, copy=True, force=False):
             return obj
 
     if dtype is None:
-        dtype = _getdtypefromobj(obj)
+        dtype = float64 if _shutils.isZeroSize(_shutils.getShapeFromObject(obj)) else _getdtypefromobj(obj)
 
     return _create(dtype.value, obj)
 
@@ -614,7 +616,18 @@ def __cvt_jobj(obj, dtype=None, copy=True, force=False):
 import java.lang.Boolean as _jbool #@UnresolvedImport
 _jtrue = _jbool(1)
 _jfalse = _jbool(0)
+_jatrue = _array((True,), 'z')
+_jafalse = _array((False,), 'z')
 import java.lang.Integer as _jint
+
+def _jintarray(*ij):
+    if len(ij) == 1:
+        i = ij[0]
+        if i is None:
+            return None
+        if isinstance(i, (tuple, list)):
+            ij = ij[0]
+    return _array(ij, 'i')
 
 from . import jymaths as _maths
 from . import jycomparisons as _cmps
@@ -952,66 +965,25 @@ class ndarray(object):
     @_wrapout
     @_keepdims
     def max(self, axis=None, ignore_nans=False, keepdims=False): #@ReservedAssignment
-        if axis is None:
-            if ignore_nans:
-                return self.__dataset.max(_jtrue)
-            return self.__dataset.max(_empty_boolean_array)
-        elif isinstance(axis, int):
-            if ignore_nans:
-                return self.__dataset.max(_jint(axis), _jtrue)
-            return self.__dataset.max(_jint(axis))
-        elif isinstance(axis, tuple):
-            if ignore_nans:
-                return self.__dataset.max(asarray([_jint(x) for x in axis]), _jtrue)
-            return self.__dataset.max(asarray([_jint(x) for x in axis]))
+        return _callIB(self.__dataset, "max", _jintarray(axis), _jatrue if ignore_nans else None)
 
     @_wrapout
     @_keepdims
     def min(self, axis=None, ignore_nans=False, keepdims=False): #@ReservedAssignment
-        if axis is None:
-            if ignore_nans:
-                return self.__dataset.min(_jtrue)
-            return self.__dataset.min(_empty_boolean_array)
-        elif isinstance(axis, int):
-            if ignore_nans:
-                return self.__dataset.min(_jint(axis), _jtrue)
-            return self.__dataset.min(_jint(axis))
-        elif isinstance(axis, tuple):
-            if ignore_nans:
-                return self.__dataset.min(asarray([_jint(x) for x in axis]), _jtrue)
-            return self.__dataset.min(asarray([_jint(x) for x in axis]))
+        return _callIB(self.__dataset, "min", _jintarray(axis), _jatrue if ignore_nans else None)
 
     @_wrapout
     def argmax(self, axis=None, ignore_nans=False):
-        if axis is None:
-            if ignore_nans:
-                return self.__dataset.argMax(_jtrue)
-            return self.__dataset.argMax(_empty_boolean_array)
-        else:
-            if ignore_nans:
-                return self.__dataset.argMax(_jint(axis), _jtrue)
-            return self.__dataset.argMax(_jint(axis))
+        return _callIB(self.__dataset, "argMax", _jintarray(axis), _jatrue if ignore_nans else None)
 
     @_wrapout
     def argmin(self, axis=None, ignore_nans=False):
-        if axis is None:
-            if ignore_nans:
-                return self.__dataset.argMin(_jtrue)
-            return self.__dataset.argMin(_empty_boolean_array)
-        else:
-            if ignore_nans:
-                return self.__dataset.argMin(_jint(axis), _jtrue)
-            return self.__dataset.argMin(_jint(axis))
+        return _callIB(self.__dataset, "argMin", _jintarray(axis), _jatrue if ignore_nans else None)
 
     @_wrapout
     @_keepdims
-    def ptp(self, axis=None, keepdims=False):
-        if axis is None:
-            return self.__dataset.peakToPeak(_empty_boolean_array)
-        elif isinstance(axis, int):
-            return self.__dataset.peakToPeak(_jint(axis))
-        elif isinstance(axis, tuple):
-            return self.__dataset.peakToPeak(asarray([_jint(x) for x in axis]))
+    def ptp(self, axis=None, ignore_nans=False, keepdims=False):
+        return _callIB(self.__dataset, "peakToPeak", _jintarray(axis), _jatrue if ignore_nans else None)
 
     def clip(self, a_min, a_max):
         return _maths.clip(self, a_min, a_max)
@@ -1022,7 +994,7 @@ class ndarray(object):
     # MISSING: round, trace
     @_wrapout
     def sum(self, axis=None, dtype=None, keepdims=False):
-        return _maths.sum(self, axis, dtype, keepdims=keepdims)
+        return _maths.sum(self, axis=axis, dtype=dtype, keepdims=keepdims)
 
     def cumsum(self, axis=None, dtype=None):
         return _maths.cumsum(self, axis, dtype, keepdims=keepdims)
@@ -1030,43 +1002,26 @@ class ndarray(object):
     @_wrapout
     @_keepdims
     def mean(self, axis=None, keepdims=False):
-        if axis is None:
-            return self.__dataset.mean(_empty_boolean_array)
-        elif isinstance(axis, int):
-            return self.__dataset.mean(_jint(axis))
-        elif isinstance(axis, tuple):
-            return self.__dataset.mean(asarray([_jint(x) for x in axis]))
+        return _callIB(self.__dataset, "mean", _jintarray(axis), None)
 
     @_wrapout
     @_keepdims
     def var(self, axis=None, ddof=0, keepdims=False):
         is_pop = _jbool(ddof == 0)
-        if axis is None:
-            return self.__dataset.variance(is_pop)
-        elif isinstance(axis, int):
-            return self.__dataset.variance(_jint(axis), is_pop)
-        elif isinstance(axis, tuple):
-            return self.__dataset.variance(asarray([_jint(x) for x in axis]), is_pop)
+        return _callIBB(self.__dataset, "variance", _jintarray(axis), is_pop, None)
 
     @_wrapout
     @_keepdims
     def std(self, axis=None, ddof=0, keepdims=False):
         is_pop = _jbool(ddof == 0)
-        if axis is None:
-            return self.__dataset.stdDeviation(is_pop)
-        elif isinstance(axis, int):
-            return self.__dataset.stdDeviation(_jint(axis), is_pop)
-        elif isinstance(axis, tuple):
-            return self.__dataset.stdDeviation(asarray([_jint(x) for x in axis]), is_pop)
+        return _callIBB(self.__dataset, "stdDeviation", _jintarray(axis), is_pop, None)
 
     @_wrapout
     def rms(self, axis=None):
-        if axis is None:
-            return self.__dataset.rootMeanSquare()
-        return self.__dataset.rootMeanSquare(_jint(axis))
+        return _callIB(self.__dataset, "rootMeanSquare", _jintarray(axis), None)
 
     def prod(self, axis=None, dtype=None, keepdims=False):
-        return _maths.prod(self, axis, dtype, keepdims=keepdims)
+        return _maths.prod(self, axis=axis, dtype=dtype, keepdims=keepdims)
 
     def cumprod(self, axis=None, dtype=None):
         return _maths.cumprod(self, axis, dtype)
@@ -1665,27 +1620,27 @@ def atleast_3d(*arrays):
 def concatenate(a, axis=0):
     a = [array(arr_like) if (not isinstance(arr_like, ndarray)) else arr_like for arr_like in a]
     a = [_jinput(arr) for arr in a]
-    return _dsutils.concatenate(a, axis)
+    return _concatenate(a, axis)
 
 @_wrapout
 def vstack(tup):
     arr = [atleast_2d(t)._jdataset() for t in tup ]
-    return _dsutils.concatenate(arr, 0)
+    return _concatenate(arr, 0)
 
 @_wrapout
 def hstack(tup):
     arr = _jatleast_1d(toList(tup))
-    return _dsutils.concatenate(arr, 0) if arr[0].getRank() == 1 else _dsutils.concatenate(arr, 1)
+    return _concatenate(arr, 0 if arr[0].getRank() == 1 else 1)
 
 @_wrapout
 def dstack(tup):
     arr = [atleast_3d(t)._jdataset() for t in tup ]
-    return _dsutils.concatenate(arr, 2)
+    return _concatenate(arr, 2)
 
 @_wrapout
 def column_stack(tup):
     arr = [t._jdataset() if t.ndim >= 2 else atleast_2d(t).T._jdataset() for t in tup ]
-    return _dsutils.concatenate(arr, 1)
+    return _concatenate(arr, 1)
 
 @_wrap
 def split(ary, indices_or_sections, axis=0):
@@ -1775,19 +1730,21 @@ def swapaxes(a, axis1, axis2):
 
 @_argsToArrayType('a')
 def amax(a, axis=None, keepdims=False):
-    return a.max(axis, keepdims=keepdims)
+    '''Maximum of input'''
+    return a.max(axis=axis, keepdims=keepdims)
 
 @_argsToArrayType('a')
 def amin(a, axis=None, keepdims=False):
-    return a.min(axis, keepdims=keepdims)
+    '''Minimum of input'''
+    return a.min(axis=axis, keepdims=keepdims)
 
 @_argsToArrayType('a')
 def nanmax(a, axis=None, keepdims=False):
-    return a.max(axis, ignore_nans=True, keepdims=keepdims)
+    return a.max(axis=axis, ignore_nans=True, keepdims=keepdims)
 
 @_argsToArrayType('a')
 def nanmin(a, axis=None, keepdims=False):
-    return a.min(axis, ignore_nans=True, keepdims=keepdims)
+    return a.min(axis=axis, ignore_nans=True, keepdims=keepdims)
 
 @_argsToArrayType('a')
 def argmax(a, axis=None):

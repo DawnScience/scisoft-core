@@ -69,23 +69,6 @@ def iqr(a, axis=None):
     else:
         return _stats.iqr(a, axis)
 
-@_wrap('a')
-def quantile(a, q, axis=None):
-    '''Quantile (or inverse cumulative distribution) function based on input
-
-    a -- data
-    q -- probability value(s)
-    axis -- can be None'''
-    q = _toList(q)
-    if axis is None:
-        if len(q) == 1:
-            return _stats.quantile(a, q)[0]
-        return _stats.quantile(a, q)
-    else:
-        if len(q) == 1:
-            return _stats.quantile(a, axis, q)[0]
-        return _stats.quantile(a, axis, q)
-
 @_wrapin('a', 'b')
 def residual(a, b, weight=None):
     '''Residual (sum of squared difference) of two inputs with optional weighting'''
@@ -119,5 +102,4 @@ def centroid(weights, coords=None):
     '''
     if coords is None:
         return _dsutils.centroid(weights)
-    from .jycore import toList
-    return _dsutils.centroid(weights, toList(coords))
+    return _dsutils.centroid(weights, _toList(coords))

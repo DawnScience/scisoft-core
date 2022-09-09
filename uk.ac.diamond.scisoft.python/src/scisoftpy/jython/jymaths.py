@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ###
+from scisoftpy.jython.jycore import _jintarray
 
 '''
 Maths package
@@ -21,6 +22,8 @@ Maths package
 import org.eclipse.january.dataset.Dataset as _ds
 import org.eclipse.january.dataset.Maths as _maths
 import org.eclipse.january.dataset.Stats as _stats
+from uk.ac.diamond.scisoft.python.PythonUtils import callIBArgsMethod as _callIB
+from uk.ac.diamond.scisoft.python.PythonUtils import callDIBArgsStaticMethod as _callDIBStatic
 
 from math import pi as _ppi
 from math import e as _e
@@ -39,6 +42,7 @@ from .jycore import _wrap, _jint, _argsToArrayType, _keepdims
 from .jycore import asarray as _asarray
 from .jycore import float64 as _f64
 from .jycore import _translatenativetype, _empty_boolean_array
+from .jycore import toList as _toList
 
 # these functions can call (wrapped) instance methods
 @_keepdims
@@ -46,12 +50,7 @@ from .jycore import _translatenativetype, _empty_boolean_array
 def prod(a, axis=None, dtype=None, keepdims=False):
     '''Product of input'''
     if dtype is None:
-        if axis is None:
-            return a.product(_empty_boolean_array)
-        elif isinstance(axis, int):
-            return a.product(_jint(axis))
-        elif isinstance(axis, tuple):
-            return a.product([_jint(x) for x in axis])
+        return _callIB(a, "product", _jintarray(axis), None)
     dtval = _translatenativetype(dtype).value
     if axis is None:
         return _stats.typedProduct(a, dtval)
@@ -65,48 +64,29 @@ def sum(a, axis=None, dtype=None, keepdims=False): #@ReservedAssignment
         dtval = _translatenativetype(dtype).value
         a = a.cast(dtval)
 
-    if axis is None:
-        return a.sum(_empty_boolean_array)
-    elif isinstance(axis, int):
-        return a.sum(_jint(axis))
-    elif isinstance(axis, tuple):
-        return a.sum([_jint(x) for x in axis])
+    return _callIB(a, "sum", _jintarray(axis), None)
 
-@_keepdims
+# TODO add nansum, etc
+
 @_argsToArrayType('a')
 def mean(a, axis=None, keepdims=False):
     '''Arithmetic mean of input'''
-    return a.mean(axis)
+    return a.mean(axis=axis, keepdims=keepdims)
 
-@_keepdims
 @_argsToArrayType('a')
 def std(a, axis=None, ddof=0, keepdims=False):
     '''Standard deviation of input'''
-    return a.std(axis, ddof)
+    return a.std(axis=axis, ddof=ddof, keepdims=keepdims)
 
-@_keepdims
 @_argsToArrayType('a')
 def var(a, axis=None, ddof=0, keepdims=False):
     '''Variance of input'''
-    return a.var(axis, ddof)
+    return a.var(axis=axis, ddof=ddof, keepdims=keepdims)
 
-@_keepdims
 @_argsToArrayType('a')
 def ptp(a, axis=None, keepdims=False):
     '''Peak-to-peak of input'''
-    return a.ptp(axis)
-
-@_keepdims
-@_argsToArrayType('a')
-def amax(a, axis=None, keepdims=False):
-    '''Maximum of input'''
-    return a.max(axis)
-
-@_keepdims
-@_argsToArrayType('a')
-def amin(a, axis=None, keepdims=False):
-    '''Minimum of input'''
-    return a.min(axis)
+    return a.ptp(axis=axis, keepdims=keepdims)
 
 @_argsToArrayType('a')
 def real(a):
@@ -403,15 +383,38 @@ def median(a, axis=None, keepdims=False):
         return _stats.median(a, axis)
 
 @_wrap('a')
+def quantile(a, q, axis=None):
+    '''Quantile (or inverse cumulative distribution) function based on input
+
+    a -- data
+    q -- probability value(s)
+    axis -- can be None'''
+    q = _toList(q)
+    if axis is None:
+        if len(q) == 1:
+            return _stats.quantile(a, q)[0]
+        return _stats.quantile(a, q)
+    else:
+        if len(q) == 1:
+            return _stats.quantile(a, axis, q)[0]
+        return _stats.quantile(a, axis, q)
+
+@_wrap('a')
+def precentile(a, p, axis=None):
+    '''Quantile (or inverse cumulative distribution) function based on input
+    a -- data
+    p -- percentile value(s), must be between 0 and 100 inclusive
+    axis -- can be None'''
+    q = [ i / 100. for i in _toList(p) ]
+    return quantile(a, q, axis)
+
+@_wrap('a')
 def cumprod(a, axis=None, dtype=None):
     '''Cumulative product of input'''
     dtype = _translatenativetype(dtype)
     if dtype is not None:
         a = a.cast(_translatenativetype(dtype).value)
-    if axis is None:
-        return _stats.cumulativeProduct(a)
-    else:
-        return _stats.cumulativeProduct(a, _jint(axis))
+    return _callDIBStatic(_stats, "cumulativeProduct", a, _jintarray(axis), None)
 
 @_wrap('a')
 def cumsum(a, axis=None, dtype=None):
@@ -419,10 +422,9 @@ def cumsum(a, axis=None, dtype=None):
     dtype = _translatenativetype(dtype)
     if dtype is not None:
         a = a.cast(_translatenativetype(dtype).value)
-    if axis is None:
-        return _stats.cumulativeSum(a)
-    else:
-        return _stats.cumulativeSum(a, _jint(axis))
+    return _callDIBStatic(_stats, "cumulativeSum", a, _jintarray(axis), None)
+
+# TODO nancumsum, etc
 
 @_wrap('a')
 def diff(a, order=1, axis=-1):

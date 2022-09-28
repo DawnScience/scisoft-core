@@ -15,12 +15,16 @@ import static org.eclipse.dawnsci.nexus.NexusConstants.DATA_AXES;
 import static org.eclipse.dawnsci.nexus.NexusConstants.DATA_INDICES_SUFFIX;
 import static org.eclipse.dawnsci.nexus.NexusConstants.DATA_SIGNAL;
 import static org.eclipse.dawnsci.nexus.NexusConstants.TARGET;
+import static org.eclipse.january.dataset.Comparisons.allTrue;
+import static org.eclipse.january.dataset.Comparisons.findMonotonicity;
+import static org.eclipse.january.dataset.Comparisons.greaterThanOrEqualTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isOneOf;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
@@ -47,6 +51,7 @@ import org.eclipse.dawnsci.nexus.NXroot;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.BooleanDataset;
 import org.eclipse.january.dataset.ByteDataset;
+import org.eclipse.january.dataset.Comparisons.Monotonicity;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -55,7 +60,6 @@ import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
-import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.InterfaceUtils;
 import org.eclipse.january.dataset.LongDataset;
@@ -420,59 +424,42 @@ public class NexusAssert {
 		assertThat(pointStartTimesNode, is(notNullValue()));
 		assertThat(pointEndTimesNode, is(notNullValue()));
 
-		final IDataset pointStartTimesDataset;
-		final IDataset pointEndTimesDataset;
+		final Dataset pointStartTimesDataset;
+		final Dataset pointEndTimesDataset;
 		try {
-			pointStartTimesDataset = pointStartTimesNode.getDataset().getSlice();
-			pointEndTimesDataset = pointEndTimesNode.getDataset().getSlice();
+			pointStartTimesDataset = DatasetUtils.sliceAndConvertLazyDataset(pointStartTimesNode.getDataset()); 
+			pointEndTimesDataset = DatasetUtils.sliceAndConvertLazyDataset(pointEndTimesNode.getDataset());
 		} catch (DatasetException e) {
 			throw new AssertionError(LAZY_TIMESTAMP_EXCEPTION, e);
 		}
-
-		assertThat(pointStartTimesDataset.getElementClass(), is(equalTo(String.class)));
-		assertThat(pointEndTimesDataset.getElementClass(), is(equalTo(String.class)));
+		
+		assertThat(pointStartTimesDataset.getElementClass(), is(equalTo(Long.class)));
+		assertThat(pointEndTimesDataset.getElementClass(), is(equalTo(Long.class)));
 
 		assertThat(pointStartTimesDataset.getShape(), is(equalTo(sizes)));
 		assertThat(pointEndTimesDataset.getShape(), is(equalTo(sizes)));
 
-		final Dataset startTimes = DatasetUtils.convertToDataset(pointStartTimesDataset);
-		final Dataset endTimes = DatasetUtils.convertToDataset(pointEndTimesDataset);
+		final Dataset pointStartTimeFlatDataset = flattenDataset(pointStartTimesDataset, foldedGrid, snake && sizes.length > 1, Long.class); 
+		final Dataset pointEndTimeFlatDataset = flattenDataset(pointEndTimesDataset, foldedGrid, snake && sizes.length > 1, Long.class);
 		
-		final DateDataset startTimeDateDataset = DatasetUtils.cast(DateDataset.class, startTimes);
-		final DateDataset endTimeDateDataset = DatasetUtils.cast(DateDataset.class, endTimes);
-
-		final IndexIterator iterator = startTimes.getIterator(true);
-
-		if (!snake || sizes.length == 1) {
-			Date prevEnd = null;
-			while (iterator.hasNext()) {
-				final Date start = startTimeDateDataset.getDate(iterator.getPos());
-				final Date end = endTimeDateDataset.getDate(iterator.getPos());
-				assertThat(end, is(greaterThanOrEqualTo(start)));
-				if (prevEnd != null) {
-					assertThat(start, is(greaterThanOrEqualTo(prevEnd)));
-				}
-				prevEnd = end;
-			}
-		} else {
-			final Date[] flatStartTimes = flattenSnakeDataset(startTimeDateDataset, foldedGrid, Date.class);
-			final Date[] flatEndTimes = flattenSnakeDataset(endTimeDateDataset, foldedGrid, Date.class);
-
-			Date previousEnd = null;
-			for (int index = 0; index < flatStartTimes.length; index++) {
-				final Date start = flatStartTimes[index];
-				final Date end = flatEndTimes[index];
-				assertThat(end, is(greaterThanOrEqualTo(start)));
-				if (previousEnd != null) {
-					assertThat(start, is(greaterThanOrEqualTo(previousEnd)));
-				}
-				previousEnd = end;
-			}
-		}
+		// check that each timestamp is the datasets are greater than or equal to the previous one
+		assertThat(findMonotonicity(pointStartTimeFlatDataset), isOneOf(Monotonicity.STRICTLY_INCREASING, Monotonicity.NONDECREASING));
+		assertThat(findMonotonicity(pointEndTimeFlatDataset), isOneOf(Monotonicity.STRICTLY_INCREASING, Monotonicity.NONDECREASING));
+		
+		// check that each end time is greater than or equal to the corresponding start time
+		assertThat(allTrue(greaterThanOrEqualTo(pointEndTimeFlatDataset, pointStartTimeFlatDataset)), is(true));
+		
+		// check that each start time is greater than or equal to the previous end time  
+		final Dataset offsetStartTimeDataset = pointStartTimeFlatDataset.getSliceView(new int[] { 1 }, null, null);
+		final Dataset croppedEndTimeDataset = pointEndTimeFlatDataset.getSliceView(null, new int[] { -1 }, null);
+		assertThat(allTrue(greaterThanOrEqualTo(offsetStartTimeDataset, croppedEndTimeDataset)), is(true));
 	}
-	
-	@SuppressWarnings("unchecked")
-	private static <T> T[] flattenSnakeDataset(IDataset dataset, boolean foldedGrid, Class<T> datasetType) {
+
+	private static <T> Dataset flattenDataset(Dataset dataset, boolean foldedGrid, boolean snake, Class<T> datasetType) {
+		return snake ? flattenSnakeDataset(dataset, foldedGrid, datasetType) : dataset.flatten();
+	}
+
+	private static <T> Dataset flattenSnakeDataset(Dataset dataset, boolean foldedGrid, Class<T> datasetType) { // NOSONAR suppress method complexity warning
 		final int[] shape = dataset.getShape();
 		int pointIndex = 1;
 		int flatArraySize = 1;
@@ -480,7 +467,8 @@ public class NexusAssert {
 			flatArraySize *= axisPoints;
 		}
 		
-		final T[] flatDataset = (T[]) Array.newInstance(datasetType, flatArraySize);
+		@SuppressWarnings("unchecked")
+		final T[] flatDatasetArray = (T[]) Array.newInstance(datasetType, flatArraySize);
 		final PositionIterator iter = new PositionIterator(shape);
 
 		// the PositionIterator iterates through all points top to bottom, left to right
@@ -495,12 +483,10 @@ public class NexusAssert {
 		int expectedLineEnd = lineSize;
 		int expectedInnerScanEnd = innerScanSize - (oddNumRows ? 0 : lineSize - 1);
 		while (iter.hasNext()) { // hasNext also increments the position iterator (ugh!)
-			if (datasetType.equals(Date.class)) {
-				// DateDatasetImpl does not override getObject from StringDataset
-				flatDataset[pointIndex - 1] = (T) ((DateDataset) dataset).getDate(iter.getPos());
-			} else {
-				flatDataset[pointIndex - 1] = (T) dataset.getObject(iter.getPos());
-			}
+			@SuppressWarnings("unchecked")
+			final T value = datasetType.equals(Date.class) ? // DateDatasetImpl does not override getObject from StringDataset
+					(T) ((DateDataset) dataset).getDate(iter.getPos()) : (T) dataset.getObject(iter.getPos());  
+			flatDatasetArray[pointIndex - 1] = value;
 
 			if (!foldedGrid && !isBottomToTopInnerScan && pointIndex == expectedInnerScanEnd) {
 				// end of top to bottom inner scan, next is bottom to top
@@ -534,7 +520,8 @@ public class NexusAssert {
 				pointIndex++;
 			}
 		}
-		return flatDataset;
+		
+		return DatasetFactory.createFromObject(flatDatasetArray);
 	}
 
 	private static void assertScanShape(NXcollection diamondScanCollection, int... sizes) {

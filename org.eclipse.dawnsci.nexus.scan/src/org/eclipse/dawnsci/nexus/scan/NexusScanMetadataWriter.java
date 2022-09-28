@@ -68,6 +68,12 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 	public static final int[] SCALAR_SHAPE = { };
 	public static final int[] SINGLE_SHAPE = { 1 }; // NOSONAR - modifiable array
 	public static final int[] ONE_D_UNLIMITED_SHAPE = { -1 }; // NOSONAR - modifiable array
+
+	/**
+	 * The chunk size for single values needs to be 2, as 1 doesn't work,
+	 * instead defaulting to 4096, which is 32k for double-type datasets.
+	 */
+	public static final int[] SINGLE_CHUNKING = { 2 }; // NOSONAR suppress mutable public object warning
 	
 	// Writing Datasets. Protected fields to allow overwriting by Bluesky Implementation for tests/futureproofing
 	protected ILazyWriteableDataset uniqueKeysDataset;
@@ -194,7 +200,7 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		// Note: we can't set the shape to [1] as DAWN assumes that fixed sized datasets can be cached
 		// instead we set the shape to [-1] (where -1 means unlimited) - DO NOT CHANGE
 		scanFinishedDataset = new LazyWriteableDataset(FIELD_NAME_SCAN_FINISHED, Integer.class,
-				SINGLE_SHAPE, ONE_D_UNLIMITED_SHAPE, SINGLE_SHAPE, null);
+				SINGLE_SHAPE, ONE_D_UNLIMITED_SHAPE, SINGLE_CHUNKING, null);
 		scanFinishedDataset.setFillValue(0);
 		scanMetadataCollection.createDataNode(FIELD_NAME_SCAN_FINISHED, scanFinishedDataset);
 		
@@ -205,8 +211,10 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		scanEndTimeDataset = createScalarWriteableDataset(scanMetadataCollection, FIELD_NAME_SCAN_END_TIME, String.class, null);
 		
 		if (!hardwareScan) {
-			pointStartTimeStamps = scanMetadataCollection.initializeLazyDataset(FIELD_NAME_POINT_START_TIME, scanInfo.getOuterRank(), String.class);
-			pointEndTimeStamps = scanMetadataCollection.initializeLazyDataset(FIELD_NAME_POINT_END_TIME, scanInfo.getOuterRank(), String.class);
+			pointStartTimeStamps = scanMetadataCollection.initializeLazyDataset(FIELD_NAME_POINT_START_TIME, scanInfo.getOuterRank(), Long.class);
+			pointStartTimeStamps.setChunking(scanInfo.getOuterShape());
+			pointEndTimeStamps = scanMetadataCollection.initializeLazyDataset(FIELD_NAME_POINT_END_TIME, scanInfo.getOuterRank(), Long.class);
+			pointEndTimeStamps.setChunking(scanInfo.getOuterShape());
 		}
 		
 		return scanMetadataCollection;
@@ -297,6 +305,7 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 			Class<?> dataClass, String unitsStr) {
 		final ILazyWriteableDataset writeableDataset = new LazyWriteableDataset(fieldName, dataClass,
 				SCALAR_SHAPE, null, null, null);
+		
 		final DataNode dataNode = groupNode.createDataNode(fieldName, writeableDataset);
 		if (unitsStr != null) {
 			setUnits(dataNode, unitsStr);
@@ -340,15 +349,12 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		if (!writeGlobalUniqueKeys) return;
 		
 		try {
+			final Dataset timestamp = DatasetFactory.createFromObject(System.currentTimeMillis()); 
 			final SliceND pointSlice = createPointSlice(writeableDataset, scanSlice);
-			writeableDataset.setSlice(null, createTimestamp(), pointSlice);
+			writeableDataset.setSlice(null, timestamp, pointSlice);
 		} catch (DatasetException e) {
 			logger.error("Could not write timestamp", e);
 		}
-	}
-	
-	private Dataset createTimestamp() {
-		return createDataset(ZonedDateTime.now().truncatedTo(MILLIS));
 	}
 	
 	public Dataset createDataset(Object data) {

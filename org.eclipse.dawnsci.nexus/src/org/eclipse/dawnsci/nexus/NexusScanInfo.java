@@ -89,6 +89,7 @@ public class NexusScanInfo {
 		deviceNames = new EnumMap<>(ScanRole.class);
 		deviceNames.put(ScanRole.SCANNABLE, axisNames);
 		this.rank = 1;
+		this.shape = new int[] { 64 };
 	}
 	
 	public int getRank() {

@@ -98,23 +98,27 @@ public class TIFFImageLoader extends JavaImageLoader {
 
 		// TODO cope with multiple images (tiff)
 		DataHolder output = new DataHolder();
-		ImageReader reader = null;
-		try {
+		try (ImageInputStream iis = new FileImageInputStream(f)) {
 			// test to see if the filename passed will load
 			f = new File(fileName);
-			ImageInputStream iis = new FileImageInputStream(f);
-
+			ImageReader reader1 = null;
+			ImageReader reader2 = null;
 			try {
-				reader = new TIFFImageReader(new TIFFImageReaderSpi());
-				reader.setInput(iis);
-				readImages(output, reader); // this raises an exception for 12-bit images when using standard reader
-			} catch (ScanFileHolderException e) {
-				throw e;
+				reader1 = new TIFFImageReader(new TIFFImageReaderSpi());
+				reader1.setInput(iis);
+				readImages(output, reader1); // this raises an exception for 12-bit images when using standard reader
 			} catch (IllegalArgumentException e) {
 				logger.debug("Using alternative 12-bit TIFF reader: {}", fileName);
-				reader = new Grey12bitTIFFReader(new Grey12bitTIFFReaderSpi());
-				reader.setInput(iis);
-				readImages(output, reader);
+				reader2 = new Grey12bitTIFFReader(new Grey12bitTIFFReaderSpi());
+				reader2.setInput(iis);
+				readImages(output, reader2);
+			} finally {
+				if (reader1 != null) {
+					reader1.dispose();
+				}
+				if (reader2 != null) {
+					reader2.dispose();
+				}
 			}
 		} catch (IOException e) {
 			throw new ScanFileHolderException("IOException loading file '" + fileName + "'", e);
@@ -122,9 +126,6 @@ public class TIFFImageLoader extends JavaImageLoader {
 			throw new ScanFileHolderException("IllegalArgumentException interpreting file '" + fileName + "'", e);
 		} catch (NullPointerException e) {
 			throw new ScanFileHolderException("NullPointerException interpreting file '" + fileName + "'", e);
-		} finally {
-			if (reader != null)
-				reader.dispose();
 		}
 
 		if (!loadData) {

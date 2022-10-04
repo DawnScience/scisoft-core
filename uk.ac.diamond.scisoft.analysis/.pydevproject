@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?eclipse-pydev version="1.0"?><pydev_project>
-<pydev_property name="org.python.pydev.PYTHON_PROJECT_INTERPRETER">Jython2</pydev_property>
-<pydev_property name="org.python.pydev.PYTHON_PROJECT_VERSION">jython 2.7</pydev_property>
-<pydev_pathproperty name="org.python.pydev.PROJECT_SOURCE_PATH">
-<path>/${PROJECT_DIR_NAME}/bin</path>
-<path>/${PROJECT_DIR_NAME}/jars/it.tidalwave.imageio.raw-1.6.1.jar</path>
-<path>/${PROJECT_DIR_NAME}/jars/jai_imageio.jar</path>
-</pydev_pathproperty>
+
+	<pydev_property name="org.python.pydev.PYTHON_PROJECT_INTERPRETER">Jython2</pydev_property>
+
+	<pydev_property name="org.python.pydev.PYTHON_PROJECT_VERSION">jython interpreter</pydev_property>
+
+	<pydev_pathproperty name="org.python.pydev.PROJECT_SOURCE_PATH">
+
+		<path>/${PROJECT_DIR_NAME}/bin</path>
+
+		<path>/${PROJECT_DIR_NAME}/jars/it.tidalwave.imageio.raw-1.6.1.jar</path>
+
+		<path>/${PROJECT_DIR_NAME}/jars/jai_imageio.jar</path>
+
+	</pydev_pathproperty>
+
 </pydev_project>

@@ -1,37 +1,70 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?eclipse-pydev version="1.0"?>
-<pydev_project>
-<pydev_property name="org.python.pydev.PYTHON_PROJECT_INTERPRETER">Jython2</pydev_property>
-<pydev_property name="org.python.pydev.PYTHON_PROJECT_VERSION">jython 2.7</pydev_property>
-<pydev_pathproperty name="org.python.pydev.PROJECT_SOURCE_PATH">
-<path>/${PROJECT_DIR_NAME}/bin</path>
-</pydev_pathproperty>
-<pydev_pathproperty name="org.python.pydev.PROJECT_EXTERNAL_SOURCE_PATH">
-<path>${BUNDLE_POOL_LOC}/plugins/ch.qos.logback.classic_1.2.3.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/ch.qos.logback.core_1.2.3.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/com.googlecode.efficient-java-matrix-library.core_0.26.0.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/com.google.gson_2.8.9.v20220111-1409.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/com.springsource.javax.media.jai.core_1.1.3.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/com.springsource.javax.media.jai.codec_1.1.3.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/javax.measure.unit-api_1.0.0.v20170818-1538.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/javax.vecmath_1.5.2.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/org.apache.commons.collections4_4.4.0.v20200420-1700.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/org.apache.commons.lang3_3.1.0.v201403281430.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/org.apache.commons.logging_1.2.0.v20180409-1502.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/org.apache.commons.math3_3.6.1.v20200817-1830.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/org.ddogleg_0.6.0.SNAPSHOT.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/org.eclipse.january_2.3.3.v202202251243.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/org.eclipse.january.asserts_2.3.3.v202202251232.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/org.uncommons.maths_1.2.3.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/si.uom.si-quantity_0.9.0.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/si.uom.si-units_0.9.0.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/slf4j.api_1.7.25.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/tec.units.indriya_1.0.0.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/tec.uom.lib.uom-lib-common_1.0.3.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/uk.ac.diamond.jama_1.0.3.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/org.apache.ws.commons.util_1.0.2.v20160817-1930.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/org.apache.xmlrpc.client_3.1.3.v20160817-1930.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/org.apache.xmlrpc.common_3.1.3.v20181004-1955.jar</path>
-<path>${BUNDLE_POOL_LOC}/plugins/org.apache.xmlrpc.server_3.1.3.v20181004-1955.jar</path>
-</pydev_pathproperty>
+<?eclipse-pydev version="1.0"?><pydev_project>
+
+	<pydev_property name="org.python.pydev.PYTHON_PROJECT_INTERPRETER">Jython2</pydev_property>
+
+	<pydev_property name="org.python.pydev.PYTHON_PROJECT_VERSION">jython interpreter</pydev_property>
+
+	<pydev_pathproperty name="org.python.pydev.PROJECT_SOURCE_PATH">
+
+		<path>/${PROJECT_DIR_NAME}/bin</path>
+
+	</pydev_pathproperty>
+
+	<pydev_pathproperty name="org.python.pydev.PROJECT_EXTERNAL_SOURCE_PATH">
+
+		<path>${BUNDLE_POOL_LOC}/plugins/ch.qos.logback.classic_1.2.3.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/ch.qos.logback.core_1.2.3.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/com.googlecode.efficient-java-matrix-library.core_0.26.0.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/com.google.gson_2.8.9.v20220111-1409.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/com.springsource.javax.media.jai.core_1.1.3.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/com.springsource.javax.media.jai.codec_1.1.3.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/javax.measure.unit-api_1.0.0.v20170818-1538.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/javax.vecmath_1.5.2.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/org.apache.commons.collections4_4.4.0.v20200420-1700.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/org.apache.commons.lang3_3.1.0.v201403281430.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/org.apache.commons.logging_1.2.0.v20180409-1502.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/org.apache.commons.math3_3.6.1.v20200817-1830.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/org.ddogleg_0.6.0.SNAPSHOT.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/org.eclipse.january_2.3.3.v202202251243.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/org.eclipse.january.asserts_2.3.3.v202202251232.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/org.uncommons.maths_1.2.3.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/si.uom.si-quantity_0.9.0.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/si.uom.si-units_0.9.0.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/slf4j.api_1.7.25.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/tec.units.indriya_1.0.0.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/tec.uom.lib.uom-lib-common_1.0.3.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/uk.ac.diamond.jama_1.0.3.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/org.apache.ws.commons.util_1.0.2.v20160817-1930.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/org.apache.xmlrpc.client_3.1.3.v20160817-1930.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/org.apache.xmlrpc.common_3.1.3.v20181004-1955.jar</path>
+
+		<path>${BUNDLE_POOL_LOC}/plugins/org.apache.xmlrpc.server_3.1.3.v20181004-1955.jar</path>
+
+	</pydev_pathproperty>
+
 </pydev_project>

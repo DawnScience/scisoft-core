@@ -207,8 +207,6 @@ public abstract class AbstractTransferableDataObject implements ITransferableDat
 		result = prime * result
 				+ ((expression == null) ? 0 : expression.hashCode());
 		result = prime * result
-				+ ((filterFile == null) ? 0 : filterFile.hashCode());
-		result = prime * result
 				+ ((mementoKey == null) ? 0 : mementoKey.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result
@@ -233,11 +231,6 @@ public abstract class AbstractTransferableDataObject implements ITransferableDat
 				return false;
 		} else if (!expression.equals(other.expression))
 			return false;
-		if (filterFile == null) {
-			if (other.filterFile != null)
-				return false;
-		} else if (!filterFile.equals(other.filterFile))
-			return false;
 		if (mementoKey == null) {
 			if (other.mementoKey != null)
 				return false;
@@ -256,17 +249,6 @@ public abstract class AbstractTransferableDataObject implements ITransferableDat
 		if (yaxis != other.yaxis)
 			return false;
 		return true;
-	}
-	
-	private String filterFile;
-	
-
-	public String getFilterPath() {
-		return filterFile;
-	}
-
-	public void setFilterPath(String filterFile) {
-		this.filterFile = filterFile;
 	}
 
 	public boolean isTransientData() {

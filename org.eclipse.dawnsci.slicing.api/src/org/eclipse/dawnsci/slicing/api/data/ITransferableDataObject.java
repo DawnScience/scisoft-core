@@ -188,29 +188,12 @@ public interface ITransferableDataObject {
 	 * Called to clean up any references to data which may be large.
 	 */
 	public void dispose();
-	
-	
-	/**
-	 * The data may be filtered using an jython script at this location.
-	 * If so an IFilterDecorator is created on the plotting system and 
-	 * set active for the data plotted by this filter.
-	 * 
-	 * @return path to jython file to use as a plot filter
-	 */
-	public String getFilterPath();
-	
-	/**
-	 * A file which is used to filter this data.
-	 * @param filterFile
-	 */
-	public void setFilterPath(String filterFile);
 
 	/**
 	 * The path to the data file (if any) from which the data came.
 	 * @return file path to data file, may be null.
 	 */
 	public String getFilePath();
-
 	/**
 	 * 
 	 * @return true if the dataset behind this transferable is dynamic

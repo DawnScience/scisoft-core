@@ -1436,6 +1436,7 @@ public class HDF5Utils {
 	 * @throws NullPointerException
 	 * @deprecated Use {@link H5#H5Fopen(String,int,long)} directly
 	 */
+	@Deprecated
 	public static long H5Fopen(String filePath, int flags, long fapl) throws HDF5LibraryException, NullPointerException {
 		return H5.H5Fopen(filePath, flags, fapl);
 	}

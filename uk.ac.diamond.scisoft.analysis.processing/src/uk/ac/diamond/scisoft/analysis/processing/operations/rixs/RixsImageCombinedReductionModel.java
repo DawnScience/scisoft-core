@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.rixs;
 
+import org.eclipse.dawnsci.analysis.api.processing.model.FileType;
 import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
 
 
@@ -19,10 +20,14 @@ public class RixsImageCombinedReductionModel extends RixsImageReductionBaseModel
 		SAME_SCAN,
 		PREVIOUS_SCAN,
 		LINKED_SCAN,
+		OVERRIDE_FILE,
 	}
 
 	@OperationModelField(label = "Elastic line scan", description = "Used to work out which scan file to find an elastic line", hint = "Use next (or same or previous) scan")
 	private SCAN_OPTION scanOption = SCAN_OPTION.NEXT_SCAN;
+
+	@OperationModelField(label = "Elastic line scan file", description = "When elastic line scan set to override, set this to scan file", file = FileType.EXISTING_FILE, enableif = "scanOption == 'OVERRIDE_FILE'")
+	private String elScanFile = null;
 
 	@OperationModelField(label = "Elastic line cutoff enable", description = "Use cutoff to remove pixels with high counts", expertOnly = true)
 	private boolean elUseCutoff = false;
@@ -46,6 +51,17 @@ public class RixsImageCombinedReductionModel extends RixsImageReductionBaseModel
 
 	public void setScanOption(SCAN_OPTION scanOption) {
 		firePropertyChange("setFitFileOption", this.scanOption, this.scanOption = scanOption);
+	}
+
+	/**
+	 * @return path to scan file that contains elastic line
+	 */
+	public String getElScanFile() {
+		return elScanFile;
+	}
+
+	public void setElScanFile(String elScanFile) {
+		firePropertyChange("setElScanFile", this.elScanFile, this.elScanFile = elScanFile);
 	}
 
 	@OperationModelField(label = "Width of strip", description = "Used to find elastic line", hint = "0 for minimizing FWHM of summed spectra, 1 for using column maxima, 2+ for summing and fitting line", min = 0)

@@ -18,6 +18,7 @@ import java.util.Objects;
  * The (un-deprecated) setters map to possible entries in JSON (with lower cased initial letter).
  */
 public class MillerSpaceMapperBean implements Cloneable {
+	
 	private String[] inputs;
 	private String output;
 	private String splitterName;
@@ -248,7 +249,7 @@ public class MillerSpaceMapperBean implements Cloneable {
 	 * @deprecated For deserialization only
 	 */
 	@SuppressWarnings("unused")
-	@Deprecated
+	@Deprecated(since="Dawn 2.23")
 	private void setMillerShape(int[] millerShape) {
 		if (millerShape != null) {
 			if (shape != null) {
@@ -263,7 +264,7 @@ public class MillerSpaceMapperBean implements Cloneable {
 	 * @deprecated For deserialization only
 	 */
 	@SuppressWarnings("unused")
-	@Deprecated
+	@Deprecated(since="Dawn 2.23")
 	private void setMillerStart(double[] millerStart) {
 		if (millerStart != null) {
 			if (start != null) {
@@ -278,7 +279,7 @@ public class MillerSpaceMapperBean implements Cloneable {
 	 * @deprecated For deserialization only
 	 */
 	@SuppressWarnings("unused")
-	@Deprecated
+	@Deprecated(since="Dawn 2.23")
 	private void setMillerStep(double... millerStep) {
 		if (millerStep != null) {
 			if (step != null) {
@@ -385,8 +386,9 @@ public class MillerSpaceMapperBean implements Cloneable {
 	 * @deprecated Does nothing but needed for backward compatibility with old JSON files
 	 */
 	@SuppressWarnings("unused")
-	@Deprecated
+	@Deprecated(since="Dawn 2.21")
 	private void setOtherPaths(String... otherPaths) {
+
 	}
 
 	public boolean isListMillerEntries() {
@@ -405,7 +407,7 @@ public class MillerSpaceMapperBean implements Cloneable {
 	 * @deprecated For deserialization only
 	 */
 	@SuppressWarnings("unused")
-	@Deprecated
+	@Deprecated(since="Dawn 2.23")
 	private void setQShape(int[] qShape) {
 		if (qShape != null) {
 			if (shape != null) {
@@ -420,7 +422,7 @@ public class MillerSpaceMapperBean implements Cloneable {
 	 * @deprecated For deserialization only
 	 */
 	@SuppressWarnings("unused")
-	@Deprecated
+	@Deprecated(since="Dawn 2.23")
 	private void setQStart(double[] qStart) {
 		if (qStart != null) {
 			if (start!= null) {
@@ -435,7 +437,7 @@ public class MillerSpaceMapperBean implements Cloneable {
 	 * @deprecated For deserialization only
 	 */
 	@SuppressWarnings("unused")
-	@Deprecated
+	@Deprecated(since="Dawn 2.23")
 	private void setQStep(double... qStep) {
 		if (qStep != null) {
 			if (step != null) {

@@ -31,7 +31,7 @@ public interface NexusFile extends AutoCloseable {
 	/**
 	 * @deprecated Use {@link NexusConstants#NXCLASS}
 	 */
-	@Deprecated
+	@Deprecated(since="Dawn 2.9")
 	public static final String NXCLASS = NexusConstants.NXCLASS;
 
 	public static final String NXCLASS_SEPARATOR = ":";

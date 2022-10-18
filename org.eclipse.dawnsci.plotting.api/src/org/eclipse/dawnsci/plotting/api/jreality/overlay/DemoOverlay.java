@@ -20,13 +20,19 @@ import org.eclipse.dawnsci.plotting.api.jreality.overlay.objects.PointListObject
 import org.eclipse.dawnsci.plotting.api.jreality.overlay.primitives.PrimitiveType;
 import org.eclipse.dawnsci.plotting.api.jreality.tool.IImagePositionEvent;
 import org.eclipse.swt.SWT;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
 
 /**
  * A demonstration overlay that demonstrates the functionality of a Overlay2DConsumer
  */
 @SuppressWarnings("unused")
+@Deprecated(since="at least 2015")
 public class DemoOverlay implements Overlay2DConsumer {
 
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(DemoOverlay.class);
 	private Overlay2DProvider2 provider;
 	private int sx,sy,ex,ey;
 	private boolean drawing = false;
@@ -42,6 +48,7 @@ public class DemoOverlay implements Overlay2DConsumer {
 	 */
 	public DemoOverlay()
 	{
+		logger.deprecatedClass();
 		provider = null;
 		sx = 0;
 		sy = 0;

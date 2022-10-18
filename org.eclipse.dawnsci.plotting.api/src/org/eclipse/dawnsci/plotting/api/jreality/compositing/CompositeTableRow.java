@@ -24,13 +24,16 @@ import org.eclipse.swt.widgets.Slider;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
 
 
 /**
  *
  */
+@Deprecated(since="at least 2015")
 public class CompositeTableRow implements SelectionListener {
 
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(CompositeTableRow.class);
 	private Spinner spinner;
 	private Slider slider;
 	private Button chkActive;
@@ -45,7 +48,7 @@ public class CompositeTableRow implements SelectionListener {
 						     Table container,
 							 CompositingControl control,
 							 boolean disableOp) {
-		
+		logger.deprecatedClass();
 		this.name = entry.getName();
 		TableItem newItem = new TableItem(container,SWT.DOUBLE_BUFFERED);
 		TableEditor editor0 = new TableEditor(container);

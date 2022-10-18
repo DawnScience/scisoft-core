@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
 
 
 /**
@@ -18,6 +19,12 @@ import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironmen
  */
 
 public class Resolution {
+	
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(Resolution.class);
+	
+	private Resolution() {
+		
+	}
 
 	/**
 	 * @deprecated Use {@link DSpacing#dSpacingsFromPixelCoords(DetectorProperties, DiffractionCrystalEnvironment, int...)}
@@ -26,8 +33,10 @@ public class Resolution {
 	 * @param diffExp
 	 * @return array of inter-peak distances (d spacing) in angstroms
 	 */
-	@Deprecated
+	@Deprecated(since="Dawn 1.4")
 	public static double[] peakDistances(int[] peaks, DetectorProperties detector, DiffractionCrystalEnvironment diffExp) {
+		logger.deprecatedMethod("peakDistances(int[], DetectorProperties, DiffractionCrystalEnvironment)", 
+				null, "uk.ac.diamond.scisoft.analysis.diffraction.DSpacing.dSpacingsFromPixelCoords(DetectorProperties, DiffractionCrystalEnvironment, int...)");
 		return DSpacing.dSpacingsFromPixelCoords(detector, diffExp, peaks);
 	}
 	
@@ -38,8 +47,10 @@ public class Resolution {
 	 * @param diffExp
 	 * @return array of inter-peak distances (d spacing) in angstroms
 	 */
-	@Deprecated
+	@Deprecated(since="Dawn 1.4")
 	public static double[] peakDistances(double[] peaks, DetectorProperties detector, DiffractionCrystalEnvironment diffExp) {
+		logger.deprecatedMethod("peakDistances(double[], DetectorProperties, DiffractionCrystalEnvironment)", 
+				null, "uk.ac.diamond.scisoft.analysis.diffraction.DSpacing.dSpacingsFromPixelCoords(DetectorProperties, DiffractionCrystalEnvironment, double...)");
 		return DSpacing.dSpacingsFromPixelCoords(detector, diffExp, peaks);
 	}
 
@@ -51,8 +62,10 @@ public class Resolution {
 	 * @param d
 	 * @return radius on the resolution ring in PIXELS
 	 */
-	@Deprecated
+	@Deprecated(since="Dawn 1.4")
 	public static double circularResolutionRingRadius(DetectorProperties detector, DiffractionCrystalEnvironment difExp, double d) {
+		logger.deprecatedMethod("circularResolutionRingRadius(DetectorProperties, DiffractionCrystalEnvironment, double)", 
+				null, "uk.ac.diamond.scisoft.analysis.diffraction.DSpacing.radiusFromDSpacing(DetectorProperties, DiffractionCrystalEnvironment, double)");
 		return DSpacing.radiusFromDSpacing(detector, difExp, d);
 	}
 }

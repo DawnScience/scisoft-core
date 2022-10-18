@@ -29,12 +29,13 @@ import org.eclipse.january.io.ILazyAsyncSaver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
 /**
  * Lazy saver for HDF5 files
  */
 public class HDF5LazySaver extends HDF5LazyLoader implements ILazyAsyncSaver, Serializable {
 
-	private static final Logger logger = LoggerFactory.getLogger(HDF5LazySaver.class);
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(HDF5LazySaver.class);
 	private static final long serialVersionUID = -5244067010482825423L;
 
 	boolean isWriteable;
@@ -64,10 +65,12 @@ public class HDF5LazySaver extends HDF5LazyLoader implements ILazyAsyncSaver, Se
 	 * @param fill null, a String or single value array
 	 * @deprecated Use {@link #HDF5LazySaver(String, String, String, String, int[], int, Class, boolean, int[], int[], Object)}
 	 */
-	@Deprecated
+	@Deprecated(since="Dawn 2.16")
 	public HDF5LazySaver(String hostname, String filename, String node, String name, int[] trueShape, int isize,
 			int dtype, boolean extendUnsigned, int[] maxShape, int[] chunks, Object fill) {
 		this(hostname, filename, node, name, trueShape, isize, DTypeUtils.getInterface(dtype), extendUnsigned, maxShape, chunks, fill);
+		logger.deprecatedMethod("HDF5LazySaver(String, String, String, String, int[], int, int, boolean, int[], int[], Object)", 
+				null, "HDF5LazySaver(String, String, String, String, int[], int, Class, boolean, int[], int[], Object)");
 	}
 
 	/**

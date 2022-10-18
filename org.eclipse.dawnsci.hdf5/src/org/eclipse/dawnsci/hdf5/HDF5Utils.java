@@ -52,19 +52,21 @@ import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.dataset.StringDataset;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import hdf.hdf5lib.H5;
 import hdf.hdf5lib.HDF5Constants;
 import hdf.hdf5lib.exceptions.HDF5Exception;
 import hdf.hdf5lib.exceptions.HDF5LibraryException;
 import hdf.hdf5lib.structs.H5O_info_t;
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
 
 public class HDF5Utils {
-	private static final Logger logger = LoggerFactory.getLogger(HDF5Utils.class);
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(HDF5Utils.class);
 
 	private static String host;
+	
+	private HDF5Utils() {
+		
+	}
 
 	/**
 	 * Gracefully gets the local host name (if there is a mis-configuration or any other issue, "localhost" is returned) 
@@ -308,12 +310,14 @@ public class HDF5Utils {
 	 * @throws Exception
 	 * @deprecated Use {@link #loadDataset(String, String, int[], int[], int[], int, Class, boolean)}
 	 */
-	@Deprecated
+	@Deprecated(since="Dawn 2.17")
 	public static Dataset loadDataset(final String fileName, final String node,
 				final int[] start, final int[] count, final int[] step,
 				final int dtype, final int isize, final boolean extend)
 				throws ScanFileHolderException {
-
+		logger.deprecatedMethod(
+				"loadDataset(String, String, int[], int[], int[], int, int, boolean)", 
+				null, "loadDataset(String, String, int[], int[], int[], int, Class, boolean)");
 		return loadDataset(fileName, node, start, count, step, isize, DTypeUtils.getInterface(dtype), extend);
 	}
 
@@ -465,10 +469,12 @@ public class HDF5Utils {
 	 * @throws NexusException
 	 * @deprecated Use {@link #readDataset(HDF5File, String, int[], int[], int[], int, Class, boolean)}
 	 */
-	@Deprecated
+	@Deprecated(since="Dawn 2.17")
 	public static Dataset readDataset(HDF5File f, final String dataPath, final int[] start, final int[] count,
 			final int[] step, final int dtype, final int isize, final boolean extend)
 					throws NexusException {
+		logger.deprecatedMethod("readDataset(HDF5File, String, int[], int[], int[], int, int, boolean)", 
+				null, "readDataset(HDF5File, String, int[], int[], int[], int, Class, boolean)");
 		return readDataset(f, dataPath, start, count, step, isize, DTypeUtils.getInterface(dtype), extend);
 	}
 
@@ -635,8 +641,11 @@ public class HDF5Utils {
 	 * @throws ScanFileHolderException
 	 * @deprecated Use {@link #createDataset(String, String, String, int[], int[], int[], Class, Object, boolean)}
 	 */
-	@Deprecated
+	@Deprecated(since="Dawn 2.17")
 	public static void createDataset(final String fileName, final String parentPath, final String name, final int[] initialShape, final int[] maxShape, final int[] chunking, final int dtype, final Object fill, final boolean asUnsigned) throws ScanFileHolderException {
+		logger.deprecatedMethod(
+				"createDataset(String, String, String, int[], int[], int[], int, Object, boolean)", 
+				null, "createDataset(String, String, String, int[], int[], int[], Class, Object, boolean)");
 		createDataset(fileName, parentPath, name, initialShape, maxShape, chunking, DTypeUtils.getInterface(dtype), fill, asUnsigned, false);
 	}
 
@@ -700,8 +709,10 @@ public class HDF5Utils {
 	 * @return lazy dataset
 	 * @deprecated Use {@link #createLazyDataset(String, String, String, int[], int[], int[], Class, Object, boolean)}
 	 */
-	@Deprecated
+	@Deprecated(since="Dawn 2.17")
 	public static LazyWriteableDataset createLazyDataset(final String fileName, final String parentPath, final String name, final int[] initialShape, final int[] maxShape, final int[] chunking, final int dtype, final Object fill, final boolean asUnsigned) {
+		logger.deprecatedMethod("createLazyDataset(String, String, String, int[], int[], int[], int, Object, boolean)", 
+				null, "createLazyDataset(String, String, String, int[], int[], int[], Class, Object, boolean)");
 		return createLazyDataset(fileName, parentPath, name, initialShape, maxShape, chunking, DTypeUtils.getInterface(dtype), fill, asUnsigned);
 	}
 
@@ -810,10 +821,12 @@ public class HDF5Utils {
 	 * @throws NexusException
 	 * @deprecated Use {@link #createDataset(HDF5File, int, String, Class, int[], int[], int[], Object)}
 	 */
-	@Deprecated
+	@Deprecated(since="Dawn 2.17")
 	public static void createDataset(HDF5File f, int compression, String dataPath, int dtype, int[] iShape, int[] iMaxShape, int[] iChunks,
 			Object fillValue) throws NexusException {
-		
+		logger.deprecatedMethod(
+				"createDataset(HDF5File, int, String, int, int[], int[], int[], Object)", 
+				null, "createDataset(HDF5File, int, String, Class, int[], int[], int[], Object)");
 	}
 
 	/**
@@ -1436,8 +1449,10 @@ public class HDF5Utils {
 	 * @throws NullPointerException
 	 * @deprecated Use {@link H5#H5Fopen(String,int,long)} directly
 	 */
-	@Deprecated
+	@Deprecated(since="Dawn 1.10")
 	public static long H5Fopen(String filePath, int flags, long fapl) throws HDF5LibraryException, NullPointerException {
+		logger.deprecatedMethod("H5Fopen(String, int, long)", 
+				null, "hdf.hdf5lib.H5.H5Fopen(String, int, long)");
 		return H5.H5Fopen(filePath, flags, fapl);
 	}
 

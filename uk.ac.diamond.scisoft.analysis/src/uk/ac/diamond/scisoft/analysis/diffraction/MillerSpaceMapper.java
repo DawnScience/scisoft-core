@@ -67,6 +67,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
 import uk.ac.diamond.scisoft.analysis.crystallography.MillerSpace;
 import uk.ac.diamond.scisoft.analysis.crystallography.VersionUtils;
 import uk.ac.diamond.scisoft.analysis.dataset.function.BicubicInterpolator;
@@ -80,7 +81,7 @@ import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
  * Map datasets in a Nexus file from image coordinates to Miller space
  */
 public class MillerSpaceMapper {
-	private static final Logger logger = LoggerFactory.getLogger(MillerSpaceMapper.class);
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(MillerSpaceMapper.class);
 
 	private String detectorPath;
 	private String timePath; // path to exposure dataset
@@ -1714,8 +1715,9 @@ public class MillerSpaceMapper {
 	 * @throws ScanFileHolderException
 	 * @deprecated Use {{@link #mapToOutputFile()} instead
 	 */
-	@Deprecated
+	@Deprecated(since="Dawn 2.25")
 	public Dataset[] mapToVolumeFile() throws ScanFileHolderException {
+		logger.deprecatedMethod("mapToVolumeFile()", null, "mapToOutputFile()");
 		return mapToOutputFile();
 	}
 
@@ -2041,9 +2043,10 @@ public class MillerSpaceMapper {
 	 * @throws ScanFileHolderException
 	 * @deprecated Use {{@link #saveOutput(String, MillerSpaceMapperBean, String, String, Dataset, Dataset, Dataset...)} instead
 	 */
-	@Deprecated
+	@Deprecated(since="Dawn 2.25")
 	public static void saveVolume(String file, MillerSpaceMapperBean bean, String entryPath, String volPath, Dataset v,
 			Dataset w, Dataset... axes) throws ScanFileHolderException {
+		logger.deprecatedMethod("saveVolume(String, MillerSpaceMapperBean, String, String, Dataset, Dataset, Dataset...)", null, "saveOutput(String, MillerSpaceMapperBean, String, String, Dataset, Dataset, String[], Dataset...)");
 		saveOutput(file, bean, entryPath, volPath, v, w, null, axes);
 	}
 

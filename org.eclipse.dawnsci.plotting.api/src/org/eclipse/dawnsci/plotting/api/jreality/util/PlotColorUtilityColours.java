@@ -23,13 +23,22 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
+
 /**
  * Shows the default colours used by {@link PlotColorUtility}.
  */
+@Deprecated(since="at least 2015")
 public class PlotColorUtilityColours {
+	
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(PlotColorUtilityColours.class);
+	
+	private PlotColorUtilityColours() {
+		
+	}
 
 	public static void main(String[] args) {
-		
+		logger.deprecatedMethod("main(String[])");
 		final Color[] colours = PlotColorUtility.GRAPH_DEFAULT_COLORS;
 		
 		final int width = 300;

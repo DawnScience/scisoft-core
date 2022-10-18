@@ -15,6 +15,7 @@ package org.eclipse.dawnsci.plotting.api.jreality.compositing;
 /**
  * Different image compositing operator
  */
+@Deprecated(since="at least 2015")
 public enum CompositeOp {
 
 	/**

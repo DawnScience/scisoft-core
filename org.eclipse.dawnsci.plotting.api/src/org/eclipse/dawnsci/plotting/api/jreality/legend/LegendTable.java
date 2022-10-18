@@ -35,11 +35,15 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
 /**
  *
  */
+@Deprecated(since="at least 2015")
 public class LegendTable extends LegendComponent implements SelectionListener, KeyListener {
 
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(LegendTable.class);
 	private Table tblLegend;
 	private LinkedList<TableEditor> editors;
 	private LinkedList<Button> buttons;
@@ -62,6 +66,7 @@ public class LegendTable extends LegendComponent implements SelectionListener, K
 	public LegendTable(Composite parent, int style) {
 		
 		super(parent, style);
+		logger.deprecatedClass();
 		this.setLayout(new GridLayout(1, false));
 		editors = new LinkedList<TableEditor>();
 		buttons = new LinkedList<Button>();

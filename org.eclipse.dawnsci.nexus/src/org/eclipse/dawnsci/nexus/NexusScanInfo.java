@@ -261,7 +261,7 @@ public class NexusScanInfo {
 	 * @param datashape shape of data that the device is adding to the nD stack
 	 * @return
 	 */
-	@Deprecated
+	@Deprecated(since="Dawn 2.1")
 	public static SliceND createLocation(ILazyWriteableDataset context, Collection<String> names, Map<String,Integer> indices, int... datashape) {
 		throw new IllegalArgumentException("Please use IScanRankService to determine the correct slice information during a scan!");
 	}

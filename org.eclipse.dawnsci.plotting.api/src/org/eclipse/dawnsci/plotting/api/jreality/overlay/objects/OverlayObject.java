@@ -16,12 +16,15 @@ import java.awt.Color;
 
 import org.eclipse.dawnsci.plotting.api.jreality.overlay.OverlayProvider;
 import org.eclipse.dawnsci.plotting.api.jreality.overlay.VectorOverlayStyles;
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
 
 /**
  *
  */
+@Deprecated(since="at least 2015")
 public class OverlayObject {
 
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(OverlayObject.class);
 	protected int primID = -1;
 	protected OverlayProvider provider;
 	
@@ -33,6 +36,7 @@ public class OverlayObject {
 	{
 		this.provider = provider;
 		this.primID = primID;
+		logger.deprecatedClass();
 	}
 	
 	public void setPrimID(int primID) 

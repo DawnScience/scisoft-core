@@ -404,7 +404,7 @@ public interface IPersistentFile extends AutoCloseable {
 	 * @param origin
 	 * @throws Exception
 	 */
-	@Deprecated
+	@Deprecated(since="Dawn 2.11")
 	public void setOperationDataOrigin(OriginMetadata origin) throws Exception;
 	
 	/**

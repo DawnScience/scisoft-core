@@ -17,12 +17,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.dawnsci.plotting.api.jreality.impl.Plot1DStyles;
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
 
 /**
  * Class encapsulates generating unique colours for plots.
  */
+@Deprecated(since="at least 2015")
 public class PlotColorUtility {
 	
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(PlotColorUtility.class);
 	// NOTE Color choice used to be 9, however 16 is a better choice for scan plots as there
 	// are regularly more than nine plots in a single scan.
 	static Color[] GRAPH_DEFAULT_COLORS = { new Color(0, 0, 0) ,new Color(0, 0, 255),new Color(255, 0, 0),
@@ -43,6 +46,10 @@ public class PlotColorUtility {
 		}
 	}
 	
+	private PlotColorUtility() {
+		
+	}
+	
 		
 	/**
 	 * Get the size of the colour table
@@ -51,6 +58,7 @@ public class PlotColorUtility {
 	
 	public static int getSize()
 	{
+		logger.deprecatedMethod("getSize()");
 		return GRAPH_DEFAULT_COLORS.length;
 	}
 	
@@ -60,6 +68,7 @@ public class PlotColorUtility {
 	 * @return colour entry in the table as AWT colour
 	 */
 	public static final Color getDefaultColour(int nr) {
+		logger.deprecatedMethod("getDefaultColour(int)");
 		return GRAPH_DEFAULT_COLORS[nr%GRAPH_DEFAULT_COLORS.length];
 	}
 	
@@ -69,6 +78,7 @@ public class PlotColorUtility {
 	 * @return Plot1DStyle entry in the table
 	 */
 	public static final Plot1DStyles getDefaultStyle(int nr) {
+		logger.deprecatedMethod("getDefaultStyle(int)");
 		return GRAPH_DEFAULT_STYLES[nr%GRAPH_DEFAULT_STYLES.length];
 	}
 	
@@ -78,6 +88,7 @@ public class PlotColorUtility {
 	 * @return line width entry in the table
 	 */
 	public static final int getDefaultLineWidth(int nr) {
+		logger.deprecatedMethod("getDefaultLineWidth(int)");
 		return GRAPH_DEFAULT_LINEWIDTHS[nr%GRAPH_DEFAULT_LINEWIDTHS.length];
 	}
 	
@@ -89,7 +100,7 @@ public class PlotColorUtility {
 	 * @return colour
 	 */
 	public static final Color getDefaultColour(final int iplot, final String name) {
-		
+		logger.deprecatedMethod("getDefaultColour(int, String)");
 		if (nameCache == null) nameCache = new HashMap<String,Color>(1000);
 		if (nameCache.containsKey(name)) return nameCache.get(name);
 		
@@ -108,6 +119,7 @@ public class PlotColorUtility {
 	 * @param color new colour
 	 */
 	public static final void setDefaultColour(int nr, java.awt.Color color) {
+		logger.deprecatedMethod("setDefaultColour(int, Color)");
 		if (nr < GRAPH_DEFAULT_COLORS.length) {
 			GRAPH_DEFAULT_COLORS[nr] = color;
 		}
@@ -119,6 +131,7 @@ public class PlotColorUtility {
 	 * @param newStyle new style
 	 */
 	public static final void setDefaultStyle(int nr, Plot1DStyles newStyle) {
+		logger.deprecatedMethod("setDefaultStyle(int, Plot1DStyles)");
 		if (nr < GRAPH_DEFAULT_STYLES.length) {
 			GRAPH_DEFAULT_STYLES[nr] = newStyle;
 		}
@@ -130,6 +143,7 @@ public class PlotColorUtility {
 	 * @param newLineWidth new line width
 	 */
 	public static final void setDefaultLineWidth(int nr, int newLineWidth) {
+		logger.deprecatedMethod("setDefaultLineWidth(int, int)");
 		if (nr < GRAPH_DEFAULT_LINEWIDTHS.length) {
 			GRAPH_DEFAULT_LINEWIDTHS[nr] = newLineWidth;
 		}

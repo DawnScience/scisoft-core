@@ -66,7 +66,7 @@ public abstract class AbstractFileLoader implements IFileLoader, IMetaLoader {
 	protected IMetadata metadata;
 	protected boolean loadLazily = false;
 
-	abstract protected void clearMetadata();
+	protected abstract void clearMetadata();
 
 	public abstract DataHolder loadFile() throws ScanFileHolderException ;
 

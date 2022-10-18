@@ -12,17 +12,22 @@
 
 package org.eclipse.dawnsci.plotting.api.jreality.overlay;
 
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
+
 /**
  * Overlay image object
  */
+@Deprecated(since="at least 2015")
 public class OverlayImage {
 
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(OverlayImage.class);
 	private byte[] data;
 	private int width;
 	private int height;
 	private boolean isDirty;
 	
 	public OverlayImage(int width, int height) {
+		logger.deprecatedClass();
 		data = new byte[width*height*4];
 		this.width = width;
 		this.height = height;

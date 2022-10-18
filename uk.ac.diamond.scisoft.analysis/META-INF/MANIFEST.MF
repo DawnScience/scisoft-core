@@ -7,7 +7,7 @@ Bundle-Name: Scisoft Analysis
 Bundle-SymbolicName: uk.ac.diamond.scisoft.analysis;singleton:=true
 Bundle-Version: 1.5.1.qualifier
 Bundle-Vendor: Diamond Light Source
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-9
 Require-Bundle: javax.vecmath;bundle-version="1.5.2",
  org.apache.commons.math3;bundle-version="[3.3.0,4.0.0)",
  org.uncommons.maths;bundle-version="1.2.3",
@@ -54,7 +54,8 @@ Bundle-ClassPath: .,
  jars/it.tidalwave.imageio.raw-1.6.1.jar,
  jars/jai_imageio.jar
 Import-Package: Jama,
- org.slf4j;version="[1.7.2,2.0.0)"
+ org.slf4j;version="[1.7.2,2.0.0)",
+ uk.ac.diamond.daq.util.logging.deprecation
 Eclipse-BuddyPolicy: global
 Important-Note: This plugin SHOULD NOT be lazy activated because we always want this 
  plugin to be loaded to contribute the service.

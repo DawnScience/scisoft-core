@@ -35,6 +35,8 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
+
 public interface IPlottingSystemViewer<T> extends IAxisSystem, IRegionSystem, IAnnotationSystem {
 
 
@@ -88,7 +90,7 @@ public interface IPlottingSystemViewer<T> extends IAxisSystem, IRegionSystem, IA
 	 * @return
 	 * @deprecated line plot specific
 	 */
-    @Deprecated
+	@Deprecated(since="at least 2015")
 	public List<ILineTrace> createLineTraces(String title, IDataset xIn,
 			List<? extends IDataset> ysIn, List<String> dataNames,
 			Map<String, ITrace> traceMap, Map<Object, Color> colorMap,
@@ -99,7 +101,7 @@ public interface IPlottingSystemViewer<T> extends IAxisSystem, IRegionSystem, IA
 	 * @param xfirst
 	 * @Deprecated line plot specific
 	 */
-	@Deprecated
+	@Deprecated(since="at least 2015")
 	public void setXFirst(boolean xfirst);
 
 	/**
@@ -253,7 +255,7 @@ public interface IPlottingSystemViewer<T> extends IAxisSystem, IRegionSystem, IA
 
 	public abstract class Stub<T> implements IPlottingSystemViewer<T> {
 
-
+		private static final DeprecationLogger logger = DeprecationLogger.getLogger(Stub.class);
 		protected IPlottingSystem<T> system;
 		
 		public Stub() {
@@ -480,7 +482,7 @@ public interface IPlottingSystemViewer<T> extends IAxisSystem, IRegionSystem, IA
 				List<? extends IDataset> ysIn, List<String> dataNames,
 				Map<String, ITrace> traceMap, Map<Object, Color> colorMap,
 				IProgressMonitor monitor) {
-			
+			logger.deprecatedMethod("createLineTraces(String, IDataset, List<? extends IDataset>, List<String>, Map<String, ITrace>, Map<Object, Color>, IProgressMonitor)");
 			return null;
 		}
 		
@@ -491,8 +493,7 @@ public interface IPlottingSystemViewer<T> extends IAxisSystem, IRegionSystem, IA
 
 		@Override
 		public void setXFirst(boolean xfirst) {
-			
-			
+			logger.deprecatedMethod("setXFirst(boolean)");
 		}
 
 		@Override

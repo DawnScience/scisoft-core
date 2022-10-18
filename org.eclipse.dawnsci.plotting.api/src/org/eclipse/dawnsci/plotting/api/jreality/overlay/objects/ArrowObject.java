@@ -15,16 +15,21 @@ package org.eclipse.dawnsci.plotting.api.jreality.overlay.objects;
 import org.eclipse.dawnsci.plotting.api.jreality.overlay.Overlay2DProvider;
 import org.eclipse.dawnsci.plotting.api.jreality.overlay.OverlayProvider;
 
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
+
 /**
  *
  */
+@Deprecated(since="at least 2015")
 public class ArrowObject extends OverlayObject {
 
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(ArrowObject.class);
 	private double sx,sy,ex,ey;
 	private double arrowPos = 1.0;
 	
 	public ArrowObject(int primID, OverlayProvider provider) {
 		super(primID, provider);
+		logger.deprecatedClass();
 	}
 
 	public void setLinePoints(double sx,  double sy, double ex, double ey) {

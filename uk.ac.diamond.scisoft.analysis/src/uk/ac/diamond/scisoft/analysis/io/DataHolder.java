@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -28,8 +29,6 @@ import org.eclipse.january.dataset.IMetadataProvider;
 import org.eclipse.january.metadata.IMetadata;
 import org.eclipse.january.metadata.Metadata;
 import org.eclipse.january.metadata.MetadataType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class is to marshal all the data for the purpose of loading from or saving to a file
@@ -43,7 +42,7 @@ import org.slf4j.LoggerFactory;
 public class DataHolder implements IMetadataProvider, IDataHolder, Serializable {
 	private static final long serialVersionUID = 699494887322875262L;
 
-	private static final Logger logger = LoggerFactory.getLogger(DataHolder.class);
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(DataHolder.class);
 
 	/**
 	 * List containing all the name and data pairs (to be) loaded.
@@ -299,9 +298,10 @@ public class DataHolder implements IMetadataProvider, IDataHolder, Serializable 
 	/**
 	 * @return Number of unique dataset names
 	 */
-	@Deprecated
+	@Deprecated(since="Dawn 2.3")
 	@Override
 	public int namesSize() {
+		logger.deprecatedMethod("namesSize()", null, "size()");
 		return size();
 	}
 

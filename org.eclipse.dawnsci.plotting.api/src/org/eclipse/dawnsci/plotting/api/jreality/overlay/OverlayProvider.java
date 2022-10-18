@@ -19,6 +19,7 @@ import org.eclipse.dawnsci.plotting.api.jreality.overlay.primitives.PrimitiveTyp
 /**
  * A generic overlay provider class
  */
+@Deprecated(since="at least 2015")
 public interface OverlayProvider {
 
 	/**

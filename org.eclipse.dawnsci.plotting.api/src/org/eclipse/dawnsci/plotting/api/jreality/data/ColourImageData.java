@@ -12,16 +12,21 @@
 
 package org.eclipse.dawnsci.plotting.api.jreality.data;
 
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
+
 /**
  * A small image data container with the minimum set of functionality
  */
+@Deprecated(since="at least 2015")
 public class ColourImageData {
 	
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(ColourImageData.class);
 	private int imgWidth;
 	private int imgHeight;
 	private int[] dataContainer;
 	
 	public ColourImageData(final int width, final int height) {
+		logger.deprecatedClass();
 		imgWidth = width;
 		imgHeight = height;
 		dataContainer = new int[width * height];

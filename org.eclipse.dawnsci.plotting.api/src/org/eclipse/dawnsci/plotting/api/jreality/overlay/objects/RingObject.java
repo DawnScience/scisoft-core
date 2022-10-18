@@ -14,18 +14,22 @@ package org.eclipse.dawnsci.plotting.api.jreality.overlay.objects;
 
 import org.eclipse.dawnsci.plotting.api.jreality.overlay.Overlay2DProvider;
 import org.eclipse.dawnsci.plotting.api.jreality.overlay.OverlayProvider;
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
 
 /**
  * This is pretty useless but Alun wanted it! Gwyndaf's comment on this was:
  * "What the hell is this?"
  */
+@Deprecated(since="at least 2015")
 public class RingObject extends OverlayObject {
 
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(RingObject.class);
 	private double rx,ry;
 	private double inRadius = 1.0, outRadius = 2.0;
 	
 	public RingObject(int primID, OverlayProvider provider) {
 		super(primID, provider);
+		logger.deprecatedClass();
 	}
 
 	public void setRingPosition(double rx, double ry) {

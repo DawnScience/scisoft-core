@@ -78,14 +78,8 @@ public class LoaderFactory {
 	 */
 	private static final Logger logger = LoggerFactory.getLogger(LoaderFactory.class);
 
-	/**
-	 * DO NOT USE this constructor. It is used by OSGi for reflecting/instantiating the object
-	 * Ideally use ILoaderService available from OSGi but the static methods are still supported
-	 * on LoaderFactory.
-	 */
-	@Deprecated
-	public LoaderFactory() {
-		
+	private LoaderFactory() {
+
 	}
 
 	private static final Map<String, CachedListIterator<Class<? extends IFileLoader>>> LOADERS;

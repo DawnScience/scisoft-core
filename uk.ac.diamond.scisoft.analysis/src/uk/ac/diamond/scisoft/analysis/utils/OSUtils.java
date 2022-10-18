@@ -8,14 +8,22 @@
  */ 
 package uk.ac.diamond.scisoft.analysis.utils;
 
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
+
 /**
  *
  */
 public class OSUtils {
+	
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(OSUtils.class);
+	
+	private OSUtils() {
+		
+	}
 	/**
 	 * @return true if Windows
 	 */
-	static public boolean isWindowsOS() {
+	public static boolean isWindowsOS() {
 		return System.getProperty("os.name").startsWith("Windows");
 	}
 
@@ -38,8 +46,9 @@ public class OSUtils {
 	/**
 	 * @return false
 	 */
-	@Deprecated
+	@Deprecated(since="Dawn 2.21")
 	public static boolean is32bitJVM() {
+		logger.deprecatedMethod("is32bitJVM()");
 		return false; // don't run on 32-bit anymore
 	}
 }

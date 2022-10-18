@@ -16,6 +16,7 @@ package org.eclipse.dawnsci.plotting.api.jreality.impl;
  * Different styles for Plotting 1D graphs
  */
 
+@Deprecated(since="at least 2015")
 public enum Plot1DStyles {
 	/**
 	 * solid line style

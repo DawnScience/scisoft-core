@@ -20,12 +20,16 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
+
 /**
  * A special canvas specifically for the legend entries to visualise the
  * internal state of a Plot1DAppearance
  */
+@Deprecated(since="at least 2015")
 public class TableCanvas extends Canvas implements PaintListener {
 
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(TableCanvas.class);
 	private Plot1DStyles currentStyle;
 	private org.eclipse.swt.graphics.Color currentColour;
 	/**
@@ -36,6 +40,7 @@ public class TableCanvas extends Canvas implements PaintListener {
 	 */
 	public TableCanvas(Composite parent, int style) {
 		super(parent, style);
+		logger.deprecatedClass();
 		super.addPaintListener(this);
 	}
 

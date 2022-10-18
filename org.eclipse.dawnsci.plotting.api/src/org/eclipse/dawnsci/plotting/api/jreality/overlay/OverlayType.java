@@ -15,6 +15,7 @@ package org.eclipse.dawnsci.plotting.api.jreality.overlay;
 /**
  * Define different OverlayType operations
  */
+@Deprecated(since="at least 2015")
 public enum OverlayType {
 	/**
 	 * Image type

@@ -24,17 +24,22 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
+
 /**
  *
  */
+@Deprecated(since="at least 2015")
 public class CompositingControl extends Composite implements SelectionListener {
 
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(CompositingControl.class);
 	private Table tblComposits;
 	private List<CompositeTableRow> rows = new ArrayList<CompositeTableRow>();
 	private List<SelectionListener> listeners = new ArrayList<SelectionListener>();
 	
 	public CompositingControl(Composite parent, int style) {
 		super(parent, style);
+		logger.deprecatedClass();
 		this.setLayout(new FillLayout());
 		tblComposits = new Table(this, SWT.DOUBLE_BUFFERED );
 		tblComposits.setHeaderVisible(true);

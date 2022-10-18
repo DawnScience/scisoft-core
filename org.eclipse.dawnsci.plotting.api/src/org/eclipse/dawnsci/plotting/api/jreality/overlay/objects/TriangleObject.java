@@ -14,18 +14,22 @@ package org.eclipse.dawnsci.plotting.api.jreality.overlay.objects;
 
 import org.eclipse.dawnsci.plotting.api.jreality.overlay.Overlay2DProvider;
 import org.eclipse.dawnsci.plotting.api.jreality.overlay.OverlayProvider;
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
 
 /**
  *
  */
+@Deprecated(since="at least 2015")
 public class TriangleObject extends OverlayObject {
 
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(TriangleObject.class);
 	private double x1,y1;
 	private double x2,y2;
 	private double x3,y3;
 	
 	public TriangleObject(int primID, OverlayProvider provider) {
 		super(primID, provider);
+		logger.deprecatedClass();
 	}
 	
 	public void setTrianglePoints(double x1, double y1, double x2, double y2,

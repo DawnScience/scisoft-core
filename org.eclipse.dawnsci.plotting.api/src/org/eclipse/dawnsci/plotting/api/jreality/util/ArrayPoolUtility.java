@@ -12,14 +12,18 @@
 
 package org.eclipse.dawnsci.plotting.api.jreality.util;
 
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
+
 /**
  * Class for pooling medium sized coordinate and edge arrays to prevent
  * excessive amount of GC and memory fragmentation and also memory stall 
  * request these pools can be used for frequently used access like plots
  */
 
+@Deprecated(since="at least 2015")
 public class ArrayPoolUtility {
 
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(ArrayPoolUtility.class);
 	private static final int INITSIZE = 4096;
 	private static final float EXTENSIONFACTOR = 1.25f;
 	private static double[][] doubleDoubleArray = null;
@@ -28,7 +32,7 @@ public class ArrayPoolUtility {
 	/**
 	 * Constructor 
 	 */
-	public ArrayPoolUtility()
+	private ArrayPoolUtility()
 	{
 		
 	}
@@ -41,6 +45,7 @@ public class ArrayPoolUtility {
 	 */
 	
 	public static double[][] getDoubleArray(int length) {
+		logger.deprecatedMethod("getDoubleArray(int)");
 	   assert length > 0;
 	   if (doubleDoubleArray == null)
 	   {
@@ -60,6 +65,7 @@ public class ArrayPoolUtility {
 	 */
 	
 	public static int[][] getIntArray(int length) {
+		logger.deprecatedMethod("getIntArray(int)");
 		assert length > 0;
 		if (intIntArray == null)
 		{

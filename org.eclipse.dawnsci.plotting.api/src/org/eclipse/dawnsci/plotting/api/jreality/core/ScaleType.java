@@ -15,6 +15,7 @@ package org.eclipse.dawnsci.plotting.api.jreality.core;
 /**
  * Scaling types
  */
+@Deprecated(since="at least 2015")
 public enum ScaleType {
 	/**
 	 * Linear scaling

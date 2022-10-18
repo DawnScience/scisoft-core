@@ -67,7 +67,7 @@ public class NexusConstants {
 	/**
 	 * @deprecated superseded by {@link #TRANSFORMATIONS}
 	 */
-	@Deprecated
+	@Deprecated(since="2014 NIAC meeting") // Use instead NXTransformations
 	public static final String GEOMETRY = "NXgeometry";
 	public static final String GRATING = "NXgrating";
 	public static final String GUIDE = "NXguide";
@@ -82,7 +82,7 @@ public class NexusConstants {
 	public static final String NOTE = "NXnote";
 	public static final String OBJECT = "NXobject";
 	public static final String OFFGEOTMETRY = "NXoff_geometry";
-	@Deprecated
+	@Deprecated(since="2014 NIAC meeting") // Use instead NXTransformations
 	public static final String ORIENTATION = "NXorientation";
 	public static final String PARAMETERS = "NXparameters";
 	public static final String PDB = "NXpdb";
@@ -98,7 +98,7 @@ public class NexusConstants {
 	public static final String SAMPLE = "NXsample";
 	public static final String SENSOR = "NXsensor";
 	public static final String SEPARATOR = "NXseparator";
-	@Deprecated
+	@Deprecated(since="2014 NIAC meeting") // Used by NXGeometry, use instead NXTransformations
 	public static final String SHAPE = "NXshape";
 	public static final String SLIT = "NXslit";
 	public static final String SNSEVENT = "NXsnsevent";
@@ -109,7 +109,7 @@ public class NexusConstants {
 	public static final String SPINROTATOR = "NXspin_rotator";
 	public static final String SUBENTRY = "NXsubentry";
 	public static final String TRANSFORMATIONS = "NXtransformations";
-	@Deprecated
+	@Deprecated(since="2014 NIAC meeting") // Used by NXGeometry, use instead NXTransformations
 	public static final String TRANSLATION = "NXtranslation";
 	public static final String USER = "NXuser";
 	public static final String VELOCITYSELECTOR = "NXvelocity_selector";
@@ -165,7 +165,7 @@ public class NexusConstants {
 	 * @deprecated This never was a standard suffix for the name of error datasets or attributes
 	 * pointing to them
 	 */
-	@Deprecated
+	@Deprecated(since="Dawn 2.22")
 	public static final String DATA_UNCERTAINTY_SUFFIX ="_uncertainty";
 	/**
 	 * Suffix for names of datasets that contain set values (for axes)
@@ -177,20 +177,24 @@ public class NexusConstants {
 	 */
 	public static final String DATA_ERRORS = "errors";
 	/**
-	 * @deprecated legacy attribute name
+	 * @deprecated legacy attribute name, use axes group instead
 	 */
-	@Deprecated
+	@Deprecated(since="2014 NIAC meeting")
 	public static final String DATA_AXIS = "axis";
 	/**
 	 * @deprecated legacy attribute name
 	 */
-	@Deprecated
+	@Deprecated(since="2014 NIAC meeting")
 	public static final String DATA_PRIMARY = "primary";
 	
 	/**
 	 * Attribute for nodes that are linked to within the same nexus file.
 	 */
 	public static final String TARGET  = "target";
+	
+	private NexusConstants() {
+		
+	}
 	
 
 }

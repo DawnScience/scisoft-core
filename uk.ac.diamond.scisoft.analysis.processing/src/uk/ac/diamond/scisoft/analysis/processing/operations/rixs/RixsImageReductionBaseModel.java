@@ -16,7 +16,7 @@ import org.eclipse.dawnsci.analysis.api.processing.model.OperationModelField;
  * Model for reducing RIXS images to spectra
  */
 public class RixsImageReductionBaseModel extends RixsBaseModel {
-
+	
 	@OperationModelField(label = "Energy calibration file", description = "This is also used to locate the directory to find processed fit files (when not manually overriden)", file = FileType.EXISTING_FILE, hint = "Energy dispersion value has precedence")
 	private String calibrationFile;
 
@@ -239,7 +239,7 @@ public class RixsImageReductionBaseModel extends RixsBaseModel {
 	 * @deprecated For deserialization only, needed for backward compatibility
 	 */
 	@SuppressWarnings("unused")
-	@Deprecated
+	@Deprecated(since="Dawn 2.24")
 	private void setNormalizeByRegionSize(boolean normalizeByRegionSize) {
 		setNormalizeByRows(!normalizeByRegionSize); // take complement as previously it did nothing
 	}

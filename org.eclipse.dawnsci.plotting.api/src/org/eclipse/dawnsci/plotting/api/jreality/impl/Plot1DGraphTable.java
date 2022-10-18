@@ -16,15 +16,22 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
+
 /**
  * Plot1DGraphColourTable 
  */
 
+@Deprecated(since="at least 2015")
 public class Plot1DGraphTable {
 
-	
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(Plot1DGraphTable.class);	
 	private List<Plot1DAppearance> legendEntries = 
 		Collections.synchronizedList(new LinkedList<Plot1DAppearance>());
+	
+	public Plot1DGraphTable() {
+		logger.deprecatedClass();
+	}
 	
 	/**
 	 * Get the number of legend entries

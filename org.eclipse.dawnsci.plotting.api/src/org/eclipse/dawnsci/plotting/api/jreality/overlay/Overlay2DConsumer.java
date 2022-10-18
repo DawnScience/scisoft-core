@@ -17,6 +17,7 @@ import org.eclipse.dawnsci.plotting.api.jreality.tool.ImagePositionListener;
 /**
  *
  */
+@Deprecated(since="at least 2015")
 public interface Overlay2DConsumer extends OverlayConsumer,ImagePositionListener {
 	/**
 	 * Make all overlays invisible

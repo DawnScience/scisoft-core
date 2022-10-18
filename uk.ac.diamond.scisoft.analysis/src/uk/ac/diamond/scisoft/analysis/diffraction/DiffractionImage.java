@@ -16,7 +16,7 @@ import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.IFileLoader;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.dataset.IDataset;
-
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
 import uk.ac.diamond.scisoft.analysis.io.ADSCImageLoader;
 import uk.ac.diamond.scisoft.analysis.io.CBFLoader;
 import uk.ac.diamond.scisoft.analysis.io.MARLoader;
@@ -24,15 +24,21 @@ import uk.ac.diamond.scisoft.analysis.io.MARLoader;
 /**
  * Class to hold methods to handle diffraction images and associated metadata
  */
-@Deprecated
+@Deprecated(since="at least 2011")
 public class DiffractionImage {
 
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(DiffractionImage.class);
 	// Probably no need to use class loading here - these classes are part of this plugin!
 	private static Class<?>[] loaders = { ADSCImageLoader.class, 
 		                                  CBFLoader.class,
 		                                  MARLoader.class};
+	
+	private DiffractionImage() {
+		
+	}
 
 	public static IDataset[] loadImages(String filename) {
+		logger.deprecatedMethod("loadImages(String)", null, "uk.ac.diamond.scisoft.analysis.io.ADSCImageLoader, uk.ac.diamond.scisoft.analysis.io.CBFLoader or uk.ac.diamond.scisoft.analysis.io.MARLoader");
 		
 		IDataHolder dh = null;
 

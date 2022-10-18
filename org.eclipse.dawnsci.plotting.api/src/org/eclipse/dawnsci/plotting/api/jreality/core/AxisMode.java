@@ -15,6 +15,7 @@ package org.eclipse.dawnsci.plotting.api.jreality.core;
 /**
  * Defines the different axis mode
  */
+@Deprecated(since="at least 2015")
 public enum AxisMode {
 	/**
 	 * Linear mode so a 1:1 mapping between data point and its x axis

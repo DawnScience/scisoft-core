@@ -16,16 +16,22 @@ import org.eclipse.dawnsci.plotting.api.jreality.overlay.Overlay1DProvider;
 import org.eclipse.dawnsci.plotting.api.jreality.overlay.Overlay2DProvider;
 import org.eclipse.dawnsci.plotting.api.jreality.overlay.OverlayProvider;
 
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
+
 /**
  *
  */
+@Deprecated(since="at least 2015")
 public class BoxObject extends OverlayObject {
 
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(BoxObject.class);
 	private double lux,luy,rlx,rly;
 	
 	public BoxObject(int primID, OverlayProvider provider) 
 	{
 		super(primID, provider);
+		logger.deprecatedClass();
+		
 	}
 
 	public void setBoxPoints(double lux, double luy, double rlx, double rly) 

@@ -14,11 +14,15 @@ package org.eclipse.dawnsci.plotting.api.jreality.tool;
 
 import java.util.EventObject;
 
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
+
 /**
  *
  */
+@Deprecated(since="at least 2015")
 public class DataPositionEvent extends EventObject implements IDataPositionEvent {
 
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(DataPositionEvent.class);
 	/**
 	 * 
 	 */
@@ -36,6 +40,7 @@ public class DataPositionEvent extends EventObject implements IDataPositionEvent
             				 double[] position, 
             				 Mode mode) {
 		super(instigater);
+		logger.deprecatedClass();
 		this.position = position.clone();
 		this.currentMode = mode;
 	}

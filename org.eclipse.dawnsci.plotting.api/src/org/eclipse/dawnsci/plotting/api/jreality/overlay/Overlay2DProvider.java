@@ -17,6 +17,7 @@ import org.eclipse.swt.graphics.Image;
 /**
  * A 2D Overlay provider
  */
+@Deprecated(since="at least 2015")
 public interface Overlay2DProvider extends OverlayProvider {
 
 

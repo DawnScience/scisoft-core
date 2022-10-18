@@ -15,6 +15,7 @@ package org.eclipse.dawnsci.plotting.api.jreality.overlay.primitives;
 /**
  * Different type of primitives
  */
+@Deprecated(since="at least 2015")
 public enum PrimitiveType {
 	/**
 	 * Line primitive 

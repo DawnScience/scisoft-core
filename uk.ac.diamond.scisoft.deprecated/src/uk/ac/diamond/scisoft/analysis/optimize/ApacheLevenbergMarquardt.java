@@ -9,13 +9,20 @@
 
 package uk.ac.diamond.scisoft.analysis.optimize;
 
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
+
 /**
  * Use {@link ApacheOptimizer} with {@link ApacheOptimizer.Optimizer#LEVENBERG_MARQUARDT}
  */
-@Deprecated
+@Deprecated(since="Dawn 1.11")
 public class ApacheLevenbergMarquardt extends ApacheOptimizer {
+
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(ApacheLevenbergMarquardt.class);
 
 	public ApacheLevenbergMarquardt() {
 		super(Optimizer.LEVENBERG_MARQUARDT);
+		logger.deprecatedClass(
+				null, "uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer"
+						+ " with uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer.LEVENBERG_MARQUARDT");
 	}
 }

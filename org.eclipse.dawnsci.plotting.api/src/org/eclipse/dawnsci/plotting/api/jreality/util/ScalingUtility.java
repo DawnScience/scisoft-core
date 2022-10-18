@@ -13,17 +13,25 @@
 package org.eclipse.dawnsci.plotting.api.jreality.util;
 
 import org.eclipse.dawnsci.plotting.api.jreality.core.ScaleType;
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
 
 /**
  * Utility class for different type of value scaling operations
  */
-
+@Deprecated(since="at least 2015")
 public class ScalingUtility {
 
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(ScalingUtility.class);
 	private static boolean smallLogFlag = true;
 	private static final double LOG2 = Math.log10(2.0);
+
+	private ScalingUtility() {
+
+	}
+
 	public static void setSmallLogFlag(boolean flag)
 	{
+		logger.deprecatedMethod("setSmallLogFlag(boolean)");
 		smallLogFlag = flag;
 	}
 	
@@ -35,6 +43,7 @@ public class ScalingUtility {
 	 * @return scaled value
 	 */
 	public static double valueScaler(double in, ScaleType currentScaling) {
+		logger.deprecatedMethod("valueScaler(double, ScaleType)");
 		double out = in;
 		switch (currentScaling) {
 			case LINEAR:
@@ -96,6 +105,7 @@ public class ScalingUtility {
 	 */
 
 	public static double inverseScaler(double in, ScaleType currentScaling) {
+		logger.deprecatedMethod("inverseScaler(double, ScaleType)");
 		double out = in;
 		switch (currentScaling) {
 			case LINEAR:

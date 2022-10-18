@@ -15,6 +15,7 @@ package org.eclipse.dawnsci.plotting.api.jreality.legend;
 /**
  * Listener that listens on different LegendChangeEvents, e.g. deleting entries
  */
+@Deprecated(since="at least 2015")
 public interface LegendChangeEventListener {
 
 	/**

@@ -12,11 +12,15 @@
 
 package org.eclipse.dawnsci.plotting.api.jreality.util;
 
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
+
 /**
  *
  */
+@Deprecated(since="at least 2015")
 public class JOGLGLSLShaderGenerator {
 
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(JOGLGLSLShaderGenerator.class);
     private static final String FRAGLOGPNAME = "Log";
     private static final String FRAGPROGNAME = "FloatProg";
     private static final String FRAGCOLORPASSTHROUGHNAME = "RGBPassThrough";
@@ -98,11 +102,16 @@ public class JOGLGLSLShaderGenerator {
     private static final String NORMALLOGPART = 
         " float nDataValue = min(1.0,(scaling(dataValue) - minValue) / (maxValue-minValue));\n"+
         " vec4 image = texture2D(tableSampler,vec2(nDataValue,nDataValue));\n";
+    
+    private JOGLGLSLShaderGenerator() {
+    	
+    }
 	
 	public static String generateShader(boolean useLog, 
 										boolean isColour,
 										boolean useDiffraction,
 										boolean useGradient) {
+		logger.deprecatedMethod("generateShader(boolean, boolean, boolean, boolean)");
 		if (isColour) {
 			return FRAGCOLORPASSTHROUGH;
 		}
@@ -137,6 +146,7 @@ public class JOGLGLSLShaderGenerator {
 											boolean isColour,
 											boolean userDiffraction,
 											boolean useGradient) {
+		logger.deprecatedMethod("generateShaderName(boolean, boolean, boolean, boolean)");
 		
 		if (isColour)
 			return FRAGCOLORPASSTHROUGHNAME;
@@ -151,6 +161,7 @@ public class JOGLGLSLShaderGenerator {
 	}
 	
 	public static String generateCompositeShader(boolean useLog, int numTextures) {
+		logger.deprecatedMethod("generateCompositeShader(boolean, int)");
 		String returnStr = "";
 		for (int i = 0; i < numTextures; i++)
 			returnStr +=  "uniform sampler2D sampler"+i+";\n";
@@ -227,6 +238,7 @@ public class JOGLGLSLShaderGenerator {
 	}
 	
 	public static String generateCompositeShaderName(boolean useLog, int numTextures) {
+		logger.deprecatedMethod("generateCompositeShaderName(boolean, int)");
 		String returnStr = "compositeShader.#"+numTextures;
 		return returnStr;
 	}

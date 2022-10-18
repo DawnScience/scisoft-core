@@ -15,6 +15,7 @@ package org.eclipse.dawnsci.plotting.api.jreality.overlay.enums;
 /**
  * Label orientation
  */
+@Deprecated(since="at least 2015")
 public enum LabelOrientation {
 
 	/* Vertical orientation */

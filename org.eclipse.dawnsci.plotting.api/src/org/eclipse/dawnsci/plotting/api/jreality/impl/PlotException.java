@@ -12,11 +12,14 @@
 
 package org.eclipse.dawnsci.plotting.api.jreality.impl;
 
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
 /**
  *
  */
+@Deprecated(since="at least 2015")
 public class PlotException extends Exception {
 
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(PlotException.class);
 	/**
 	 * 
 	 */
@@ -24,5 +27,6 @@ public class PlotException extends Exception {
 
 	public PlotException(String failureMessage) {
 		super(failureMessage);
+		logger.deprecatedClass();
 	}
 }

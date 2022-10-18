@@ -14,11 +14,15 @@ package org.eclipse.dawnsci.plotting.api.jreality.legend;
 
 import java.util.EventObject;
 
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
+
 /**
  *
  */
+@Deprecated(since="at least 2015")
 public class LegendChangeEvent extends EventObject {
 
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(LegendChangeEvent.class);
 	/**
 	 * 
 	 */
@@ -27,6 +31,7 @@ public class LegendChangeEvent extends EventObject {
 	
 	public LegendChangeEvent(Object source, int entryNr) {
 		super(source);
+		logger.deprecatedClass();
 		this.legendEntryNr = entryNr;
 	}
 

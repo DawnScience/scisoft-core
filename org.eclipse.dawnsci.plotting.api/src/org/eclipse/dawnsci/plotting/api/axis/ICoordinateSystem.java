@@ -37,7 +37,7 @@ public interface ICoordinateSystem {
 	 * @param value
 	 * @return
 	 */
-	@Deprecated
+	@Deprecated(since="at least 2015")
 	public int[] getValuePosition(double... value);
 	
 	/**
@@ -46,7 +46,7 @@ public interface ICoordinateSystem {
 	 * @param position
 	 * @return
 	 */
-	@Deprecated
+	@Deprecated(since="at least 2015")
 	public double[] getPositionValue(int... position);
 
 	/**

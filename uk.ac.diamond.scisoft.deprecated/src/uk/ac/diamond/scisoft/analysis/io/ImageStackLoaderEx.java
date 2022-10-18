@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.StringDataset;
@@ -30,8 +31,11 @@ import org.eclipse.january.dataset.StringDataset;
  * The type of the dataset is set to equal the type of the first image.
  * @deprecated Use {@link ImageStackLoader} directly instead
  */
-@Deprecated
+@Deprecated(since="Dawn 2.1")
 public class ImageStackLoaderEx extends ImageStackLoader {
+	
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(ImageStackLoaderEx.class);
+	
 	public ImageStackLoaderEx(int[] dimensions, String[] imageFilenames, String directory) throws Exception {
 		this(DatasetFactory.createFromObject(StringDataset.class, imageFilenames, dimensions), null, directory);
 	}
@@ -42,9 +46,11 @@ public class ImageStackLoaderEx extends ImageStackLoader {
 
 	public ImageStackLoaderEx(StringDataset imageFilenames, String directory) throws Exception {
 		super(imageFilenames, directory);
+		logger.deprecatedClass(null, "uk.ac.diamond.scisoft.analysis.io.ImageStackLoader");
 	}
 
 	public ImageStackLoaderEx(StringDataset imageFilenames, IDataHolder dh, String directory) throws Exception {
 		super(imageFilenames, dh, directory);
+		logger.deprecatedClass(null, "uk.ac.diamond.scisoft.analysis.io.ImageStackLoader");
 	}
 }

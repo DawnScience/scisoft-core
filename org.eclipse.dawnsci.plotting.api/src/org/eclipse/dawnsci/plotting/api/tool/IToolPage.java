@@ -60,7 +60,7 @@ public interface IToolPage extends IPageBookViewPage, IAdaptable {
 		 * @Deprecated Workaround: Use two extension point declarations and in getToolPageRole() test toolid
 		 * to return the correct role.
 		 */
-		@Deprecated
+		@Deprecated(since="GDA 8.58")
 		ROLE_1D_AND_2D("org.dawb.common.ui.plot.tool.ROLE_1D_AND_2D", true, true, "icons/plot-tool-any.png", "Plotting tools", "Plotting tools (used both for images and XY plots)"), // Measure, derivative, peak fitting
 		ROLE_3D("org.dawb.common.ui.plot.tool.ROLE_3D", false, false, "icons/plot-tool-any.png", "3D tools", "3D plotting tools"), // SubSurface
 		

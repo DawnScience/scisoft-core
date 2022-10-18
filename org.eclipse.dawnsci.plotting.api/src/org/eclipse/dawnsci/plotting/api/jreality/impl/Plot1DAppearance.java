@@ -21,11 +21,15 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Display;
 
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
+
 /**
  * Plot1DAppearance encapsulates all the different appearance on of a 1D Plot
  */
+@Deprecated(since="at least 2015")
 public class Plot1DAppearance implements Serializable {
 
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(Plot1DAppearance.class);
 	/**
 	 * 
 	 */
@@ -50,6 +54,7 @@ public class Plot1DAppearance implements Serializable {
 							String name,
 							boolean isVisible)
 	{
+		logger.deprecatedClass();
 		this.plotColour = colour;
 		this.plotStyle = style;
 		this.lineWidth = lineWidth;

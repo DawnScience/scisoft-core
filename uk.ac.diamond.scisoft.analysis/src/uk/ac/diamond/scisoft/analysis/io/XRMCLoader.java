@@ -21,6 +21,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
 
 /**
  * Reads the output of XRMC
@@ -144,7 +145,8 @@ public class XRMCLoader extends AbstractFileLoader {
 	 */
 	public static class XRMCInputStream implements DataInput {
 		
-		DataInputStream stream;
+		private static final DeprecationLogger logger = DeprecationLogger.getLogger(XRMCInputStream.class);
+		private final DataInputStream stream;
 		
 		public XRMCInputStream(InputStream in) {
 			stream = new DataInputStream(in);
@@ -251,6 +253,7 @@ public class XRMCLoader extends AbstractFileLoader {
 		@Override
 		@Deprecated
 		public String readLine() throws IOException {
+			logger.deprecatedMethod("readLine()");
 			return stream.readLine();
 		}
 		

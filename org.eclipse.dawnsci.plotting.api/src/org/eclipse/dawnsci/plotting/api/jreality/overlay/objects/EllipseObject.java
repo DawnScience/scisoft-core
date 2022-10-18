@@ -15,11 +15,15 @@ package org.eclipse.dawnsci.plotting.api.jreality.overlay.objects;
 import org.eclipse.dawnsci.plotting.api.jreality.overlay.Overlay2DProvider;
 import org.eclipse.dawnsci.plotting.api.jreality.overlay.OverlayProvider;
 
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
+
 /**
  *
  */
+@Deprecated(since="at least 2015")
 public class EllipseObject extends OverlayObject {
 
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(EllipseObject.class);
 	private double cx, cy;
 	private double a = 1.0;
 	private double b = 1.0;
@@ -27,6 +31,7 @@ public class EllipseObject extends OverlayObject {
 	
 	public EllipseObject(int primID, OverlayProvider provider) {
 		super(primID, provider);
+		logger.deprecatedClass();
 	}
 
 	public void setEllipsePoint(double cx, double cy) {

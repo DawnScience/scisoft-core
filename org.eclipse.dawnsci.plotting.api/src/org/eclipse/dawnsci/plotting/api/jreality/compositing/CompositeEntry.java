@@ -12,12 +12,15 @@
 
 package org.eclipse.dawnsci.plotting.api.jreality.compositing;
 
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
 
 /**
  *
  */
+@Deprecated(since="at least 2015")
 public class CompositeEntry {
 
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(CompositeEntry.class);
 	private String name;
 	private float weight;
 	private CompositeOp operation;
@@ -25,6 +28,7 @@ public class CompositeEntry {
 	
 	public CompositeEntry(String name, float weight, CompositeOp op,
 						  byte channelMask) {
+		logger.deprecatedClass();
 		this.name = name;
 		this.weight = weight;
 		this.operation = op;

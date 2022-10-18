@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.plotting.api.jreality.tool;
 
 import java.util.List;
 
+@Deprecated(since="at least 2015")
 public interface IImagePositionEvent extends IDataPositionEvent{
 
 	/**

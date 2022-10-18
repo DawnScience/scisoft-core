@@ -16,13 +16,16 @@ import java.util.LinkedList;
 
 import org.eclipse.dawnsci.plotting.api.jreality.impl.Plot1DGraphTable;
 import org.eclipse.swt.widgets.Composite;
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
 
 /**
  * Abstract LegendComponent that can be added to the DataSetPlotter as acting
  * legend
  */
+@Deprecated(since="at least 2015")
 public abstract class LegendComponent extends Composite {
 
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(LegendComponent.class);
 	protected LinkedList<LegendChangeEventListener> listeners;
 	
 	/**
@@ -33,6 +36,7 @@ public abstract class LegendComponent extends Composite {
 	public LegendComponent(Composite parent, int style)
 	{
 		super(parent,style);
+		logger.deprecatedClass();
 		listeners = new LinkedList<LegendChangeEventListener>();
 	}
 	

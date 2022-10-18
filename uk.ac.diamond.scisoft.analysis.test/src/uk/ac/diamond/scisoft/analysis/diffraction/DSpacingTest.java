@@ -200,7 +200,6 @@ public class DSpacingTest {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@Test
 	public void testConics() {
 		DetectorProperties det = DetectorProperties.getDefaultDetectorProperties(new int[] {100, 100});
@@ -210,14 +209,14 @@ public class DSpacingTest {
 		IROI[] rois;
 		rois = DSpacing.conicsFromAngles(det, alphas);
 		Assert.assertTrue(rois[0] instanceof EllipticalROI);
-		checkEllipses((EllipticalROI) DSpacing.oldConicFromAngle(det, alphas[0]), (EllipticalROI) rois[0]);
+		checkEllipses((EllipticalROI) oldConicFromAngle(det, alphas[0]), (EllipticalROI) rois[0]);
 		System.err.println(rois[0]);
 
 		double delta = 0.1;
 		det.setNormalAnglesInDegrees(90 - alpha - delta, 0, 0);
 		rois = DSpacing.conicsFromAngles(det, alphas);
 		Assert.assertTrue(rois[0] instanceof EllipticalROI);
-		checkEllipses((EllipticalROI) DSpacing.oldConicFromAngle(det, alphas[0]), (EllipticalROI) rois[0]);
+		checkEllipses((EllipticalROI) oldConicFromAngle(det, alphas[0]), (EllipticalROI) rois[0]);
 		double[] apt = ((EllipticalROI) rois[0]).getPoint(Math.PI);
 		System.err.println(rois[0] + ", point=" + Arrays.toString(apt));
 
@@ -357,5 +356,66 @@ public class DSpacingTest {
 		assertEquals(Math.toRadians(30), DSpacing.braggAngleFromDSpacing(d, d), 1e-15);
 		assertEquals(d, DSpacing.wavelengthFromBraggReflection(Math.toRadians(30), d), 1e-15);
 		assertEquals(d, DSpacing.dSpacingFromBraggReflection(Math.toRadians(30), d), 1e-15);
+	}
+	
+	static IROI oldConicFromAngle(DetectorProperties detector, double alpha) {
+		final Vector3d normal = detector.getNormal();
+
+		Vector3d major = new Vector3d();
+		Vector3d minor = new Vector3d();
+		minor.cross(normal, detector.getBeamVector());
+		double se = minor.length();
+		double ce = Math.sqrt(1. - se*se);
+		if (se == 0) {
+			major.set(-1, 0, 0);
+		} else {
+			minor.normalize();
+			major.cross(minor, normal);
+		}
+
+		Vector3d intersect = null;
+		double r = 0;
+		try {
+			intersect = detector.getBeamCentrePosition();
+			r = intersect.length();
+		} catch (IllegalStateException e) {
+			throw new UnsupportedOperationException("Cannot handle parabolic case yet");
+		}
+
+		double sa = Math.sin(alpha);
+		double ca = Math.cos(alpha);
+
+		if (ca*ce - sa*se < 1e-15) {
+			throw new UnsupportedOperationException("Part of cone does not intersect detector plane");
+		}
+
+		Vector3d row = detector.getPixelRow();
+		Vector3d col = detector.getPixelColumn();
+		double angle = Math.atan2(major.dot(col), major.dot(row));
+		if (se != 0) {
+			double x = r*se*sa*sa/(ca*ca - se*se);
+			major.scale(x/major.length());
+			intersect.add(major);
+		}
+		Vector3d centre = new Vector3d();
+		detector.pixelCoords(intersect, centre);
+
+		r /= detector.getVPxSize();
+		EllipticalROI eroi;
+		if (se != 0) {
+			double denom = ca*ca - se*se;
+			if (denom <= 0) { // if alpha >= 90 - eta
+				return null; // then parabolic or hyperbolic cases
+			}
+			double a = r*ce*sa*ca/denom;
+			double b = r*ce*sa/Math.sqrt(denom);
+			eroi = new EllipticalROI(a, b, angle, centre.x, centre.y);
+		} else {
+			double a = r*sa/ca;
+			eroi = new EllipticalROI(a, centre.x, centre.y);
+			eroi.setAngle(angle);
+		}
+
+		return eroi;
 	}
 }

@@ -19,6 +19,7 @@ import java.util.EventListener;
  * interested parties of the current position of the mouse cursor inside the
  * image.
  */
+@Deprecated(since="at least 2015")
 public interface ImagePositionListener extends EventListener {
 
 	/**

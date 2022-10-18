@@ -16,16 +16,20 @@ import org.eclipse.dawnsci.plotting.api.jreality.overlay.Overlay1DProvider;
 import org.eclipse.dawnsci.plotting.api.jreality.overlay.Overlay2DProvider;
 import org.eclipse.dawnsci.plotting.api.jreality.overlay.OverlayProvider;
 import org.eclipse.dawnsci.plotting.api.jreality.overlay.enums.LabelOrientation;
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
 
 /**
  *
  */
+@Deprecated(since="at least 2015")
 public class TextLabelObject extends OverlayObject {
 
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(TextLabelObject.class);
 	private double cx,cy;
 	
 	public TextLabelObject(int primID, OverlayProvider provider) {
 		super(primID, provider);
+		logger.deprecatedClass();
 	}
 	
 	public void setTextPosition(double cx, double cy) {

@@ -14,16 +14,20 @@ package org.eclipse.dawnsci.plotting.api.jreality.overlay.objects;
 
 import org.eclipse.dawnsci.plotting.api.jreality.overlay.Overlay2DProvider;
 import org.eclipse.dawnsci.plotting.api.jreality.overlay.OverlayProvider;
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
 
 /**
  *
  */
+@Deprecated(since="at least 2015")
 public class CircleObject extends OverlayObject {
 
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(CircleObject.class);
 	private double cx,cy,radius = 1.0;
 	
 	public CircleObject(int primID, OverlayProvider provider) {
 		super(primID, provider);
+		logger.deprecatedClass();
 	}
 
 	public void setCirclePoint(double cx, double cy) 

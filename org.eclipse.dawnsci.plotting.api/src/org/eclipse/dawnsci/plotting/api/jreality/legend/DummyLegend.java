@@ -15,10 +15,15 @@ package org.eclipse.dawnsci.plotting.api.jreality.legend;
 import org.eclipse.dawnsci.plotting.api.jreality.impl.Plot1DGraphTable;
 import org.eclipse.swt.widgets.Composite;
 
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
+
 /**
  *
  */
+@Deprecated(since="at least 2015")
 public class DummyLegend extends LegendComponent {
+	
+	private static final DeprecationLogger logger = DeprecationLogger.getLogger(DummyLegend.class);
 
 	/**
 	 * @param parent
@@ -26,6 +31,7 @@ public class DummyLegend extends LegendComponent {
 	 */
 	public DummyLegend(Composite parent, int style) {
 		super(parent, style);
+		logger.deprecatedClass();
 	}
 
 	@Override

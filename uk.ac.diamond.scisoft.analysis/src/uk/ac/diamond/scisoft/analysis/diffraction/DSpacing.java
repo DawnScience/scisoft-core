@@ -34,9 +34,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.metadata.MaskMetadata;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
 import si.uom.NonSI;
 import uk.ac.diamond.scisoft.analysis.crystallography.CalibrantSpacing;
 import uk.ac.diamond.scisoft.analysis.crystallography.HKL;
@@ -46,7 +44,7 @@ import uk.ac.diamond.scisoft.analysis.crystallography.HKL;
  */
 public class DSpacing {
 
-	private static Logger logger = LoggerFactory.getLogger(DSpacing.class);
+	private static DeprecationLogger logger = DeprecationLogger.getLogger(DSpacing.class);
 
 	/**
 	 * Calculate d-spacings from given positions of Bragg diffraction spots
@@ -244,8 +242,10 @@ public class DSpacing {
 	 * @param alpha semi-angle (in radians)
 	 * @return roi
 	 */
-	@Deprecated
+	@Deprecated(since="Dawn 1.5", forRemoval=true)
 	static IROI oldConicFromAngle(DetectorProperties detector, double alpha) {
+		logger.deprecatedMethod("oldConicFromAngle(DetectorProperties, double)", 
+				"Dawn 2.31", "uk.ac.diamond.scisoft.analysis.diffraction.DSpacingTest.oldConicFromAngle(DetectorProperties, double)");
 		final Vector3d normal = detector.getNormal();
 
 		Vector3d major = new Vector3d();

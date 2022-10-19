@@ -123,9 +123,15 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 			useSingleFit = false; // reset to check in new file
 		}
 
-		if (model.getScanOption() == SCAN_OPTION.SAME_SCAN) {
+		SCAN_OPTION scanOpt = model.getScanOption();
+		if (scanOpt == SCAN_OPTION.SAME_SCAN) {
 			elasticScanPath = currentDataFile;
-		} else if (model.getScanOption() != SCAN_OPTION.LINKED_SCAN) {
+		} else if (scanOpt == SCAN_OPTION.OVERRIDE_FILE) {
+			elasticScanPath = model.getElScanFile();
+			if (elasticScanPath == null) {
+				throw new OperationException(this, "Elastic line scan file must be set when scan is OVERRIDE_FILE");
+			}
+		} else if (scanOpt != SCAN_OPTION.LINKED_SCAN) {
 			File file = new File(filePath);
 			File currentDir = file.getParentFile();
 			String currentName = file.getName();

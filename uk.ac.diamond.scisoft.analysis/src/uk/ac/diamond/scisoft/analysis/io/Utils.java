@@ -470,7 +470,7 @@ public class Utils {
 		byte[] bdata = new byte[4];
 		ByteBuffer byteBuffer = ByteBuffer.wrap(bdata);
 		byteBuffer.order(byteOrder);
-		float fmax = Float.MIN_VALUE;
+		float fmax = -Float.MAX_VALUE;
 		float fmin = Float.MAX_VALUE;
 		double hash = 0.0;
 		int pos = 0; // Byte offset to start of data

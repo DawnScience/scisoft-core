@@ -136,9 +136,9 @@ public class InterpolateXRMCToGammaDelta extends AbstractOperation<InterpolateXR
 	
 		public AngularLimits() {
 			gammaMin = Double.MAX_VALUE;
-			gammaMax = Double.MIN_VALUE;
+			gammaMax = -Double.MAX_VALUE;
 			deltaMin = Double.MAX_VALUE;
-			deltaMax = Double.MIN_VALUE;
+			deltaMax = -Double.MAX_VALUE;
 			gammaStep = 0.0;
 			deltaStep = 0.0;
 		}

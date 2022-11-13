@@ -19,7 +19,6 @@ public class RixsImageCombinedReductionModel extends RixsImageReductionBaseModel
 		NEXT_SCAN,
 		SAME_SCAN,
 		PREVIOUS_SCAN,
-		LINKED_SCAN,
 		OVERRIDE_FILE,
 	}
 
@@ -28,6 +27,9 @@ public class RixsImageCombinedReductionModel extends RixsImageReductionBaseModel
 
 	@OperationModelField(label = "Elastic line scan file", description = "When elastic line scan set to override, set this to scan file", file = FileType.EXISTING_FILE, enableif = "scanOption == 'OVERRIDE_FILE'")
 	private String elScanFile = null;
+
+	@OperationModelField(label = "Ignore linked elastic scans", description = "Used to allow 'Elastic line scan' field to override any linked scan", hint = "Use if linked scan should be ignored", expertOnly = true)
+	private boolean ignoreLinkedScan = false;
 
 	@OperationModelField(label = "Elastic line cutoff enable", description = "Use cutoff to remove pixels with high counts", expertOnly = true)
 	private boolean elUseCutoff = false;
@@ -50,7 +52,7 @@ public class RixsImageCombinedReductionModel extends RixsImageReductionBaseModel
 	}
 
 	public void setScanOption(SCAN_OPTION scanOption) {
-		firePropertyChange("setFitFileOption", this.scanOption, this.scanOption = scanOption);
+		firePropertyChange("setScanOption", this.scanOption, this.scanOption = scanOption);
 	}
 
 	/**
@@ -64,6 +66,17 @@ public class RixsImageCombinedReductionModel extends RixsImageReductionBaseModel
 		firePropertyChange("setElScanFile", this.elScanFile, this.elScanFile = elScanFile);
 	}
 
+	/**
+	 * @return true if linked scans should be ignored
+	 */
+	public boolean isIgnoreLinkedScan() {
+		return ignoreLinkedScan;
+	}
+
+	public void setIgnoreLinkedScan(boolean ignoreLinkedScan) {
+		firePropertyChange("setIgnoreLinkedScan", this.ignoreLinkedScan, this.ignoreLinkedScan = ignoreLinkedScan);
+	}
+
 	@OperationModelField(label = "Width of strip", description = "Used to find elastic line", hint = "0 for minimizing FWHM of summed spectra, 1 for using column maxima, 2+ for summing and fitting line", min = 0)
 	private int delta = 1;
 
@@ -75,7 +88,7 @@ public class RixsImageCombinedReductionModel extends RixsImageReductionBaseModel
 	}
 
 	public void setDelta(int delta) {
-		firePropertyChange("setRatio", this.delta, this.delta = delta);
+		firePropertyChange("setDelta", this.delta, this.delta = delta);
 	}
 
 	/**
@@ -86,7 +99,7 @@ public class RixsImageCombinedReductionModel extends RixsImageReductionBaseModel
 	}
 
 	public void setElUseCutoff(boolean useCutoff) {
-		firePropertyChange("setUseCutoff", this.elUseCutoff, this.elUseCutoff = useCutoff);
+		firePropertyChange("setElUseCutoff", this.elUseCutoff, this.elUseCutoff = useCutoff);
 	}
 
 	/**
@@ -97,7 +110,7 @@ public class RixsImageCombinedReductionModel extends RixsImageReductionBaseModel
 	}
 
 	public void setElCutoff(double cutoff) {
-		firePropertyChange("setCutoff", this.elCutoff, this.elCutoff = cutoff);
+		firePropertyChange("setElCutoff", this.elCutoff, this.elCutoff = cutoff);
 	}
 
 	/**
@@ -108,7 +121,7 @@ public class RixsImageCombinedReductionModel extends RixsImageReductionBaseModel
 	}
 
 	public void setElCutoffSize(int cutoffSize) {
-		firePropertyChange("setCutoff", this.elCutoffSize, this.elCutoffSize = cutoffSize);
+		firePropertyChange("setElCutoffSize", this.elCutoffSize, this.elCutoffSize = cutoffSize);
 	}
 
 }

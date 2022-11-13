@@ -88,6 +88,9 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 
 		usePriorOps = true; // reset
 		iSummaryData.clear();
+		if ("setElScanFile".equals(name)) {
+			elasticScanPath = null;
+		}
 	}
 
 	@Override
@@ -97,8 +100,6 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 
 		updateROICount();
 
-		// TODO integrated scan file case
-
 		// get elastic line scan file path
 		SliceFromSeriesMetadata smd = original.getFirstMetadata(SliceFromSeriesMetadata.class);
 
@@ -106,14 +107,16 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 		String filePath = smd.getSourceInfo().getFilePath();
 		GroupNode nxDetector = ProcessingUtils.getNXdetector(this, filePath);
 
-		if (nxDetector.containsDataNode(ELASTIC_IMAGE)) {
+		SCAN_OPTION scanOpt = model.getScanOption();
+		if (scanOpt != SCAN_OPTION.OVERRIDE_FILE) {
+			elasticScanPath = null;
+		}
+		if (nxDetector.containsDataNode(ELASTIC_IMAGE) && !model.isIgnoreLinkedScan()) {
 			ILazyDataset elasticImage = nxDetector.getDataNode(ELASTIC_IMAGE).getDataset();
 			String eFilePath = ProcessingUtils.getOriginatingFile(elasticImage);
 			if (eFilePath != null) {
 				elasticScanPath = eFilePath;
 				log.append("Found %s which links to %s", ELASTIC_IMAGE, eFilePath);
-				model.internalSetScanOption(SCAN_OPTION.LINKED_SCAN);
-				addConfiguredField("scanOption", model.getScanOption());
 			}
 		}
 
@@ -123,26 +126,28 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 			useSingleFit = false; // reset to check in new file
 		}
 
-		SCAN_OPTION scanOpt = model.getScanOption();
-		if (scanOpt == SCAN_OPTION.SAME_SCAN) {
-			elasticScanPath = currentDataFile;
-		} else if (scanOpt == SCAN_OPTION.OVERRIDE_FILE) {
-			elasticScanPath = model.getElScanFile();
-			if (elasticScanPath == null) {
-				throw new OperationException(this, "Elastic line scan file must be set when scan is OVERRIDE_FILE");
+		if (elasticScanPath == null) {
+			if (scanOpt == SCAN_OPTION.SAME_SCAN) {
+				elasticScanPath = currentDataFile;
+			} else if (scanOpt == SCAN_OPTION.OVERRIDE_FILE) {
+				elasticScanPath = model.getElScanFile();
+				if (elasticScanPath == null) {
+					throw new OperationException(this, "Elastic line scan file must be set when scan is OVERRIDE_FILE");
+				}
+			} else {
+				File file = new File(filePath);
+				File currentDir = file.getParentFile();
+				String currentName = file.getName();
+	
+				String newName = ProcessingUtils.getNextScanString(currentName, getScanDelta(), "%s%s%s");
+				if (newName == null) {
+					throw new OperationException(this, "Current file path does not end with scan number");
+				}
+	
+				elasticScanPath = new File(currentDir, newName).getAbsolutePath();
 			}
-		} else if (scanOpt != SCAN_OPTION.LINKED_SCAN) {
-			File file = new File(filePath);
-			File currentDir = file.getParentFile();
-			String currentName = file.getName();
-
-			String newName = ProcessingUtils.getNextScanString(currentName, getScanDelta(), "%s%s%s");
-			if (newName == null) {
-				throw new OperationException(this, "Current file path does not end with scan number");
-			}
-
-			elasticScanPath = new File(currentDir, newName).getAbsolutePath();
 		}
+		addConfiguredField("elScanFile", elasticScanPath);
 
 		if (!useSingleFit) {
 			OperationData edata = null;

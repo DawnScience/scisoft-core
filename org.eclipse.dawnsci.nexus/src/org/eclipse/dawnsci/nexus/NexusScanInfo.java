@@ -23,9 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.january.dataset.ILazyWriteableDataset;
-import org.eclipse.january.dataset.SliceND;
-
 /**
  * 
  * This class represents information about the scan which the NeXus device is running in.
@@ -60,11 +57,11 @@ public class NexusScanInfo {
 		
 	}
 	
-	private int rank;
-	
 	private final Map<ScanRole, Collection<String>> deviceNames;
 	
-	private int[] shape;
+	private int[] overallShape;
+	
+	private int[] outerShape;
 	
 	private String scanCommand;
 	
@@ -88,16 +85,31 @@ public class NexusScanInfo {
 		super();
 		deviceNames = new EnumMap<>(ScanRole.class);
 		deviceNames.put(ScanRole.SCANNABLE, axisNames);
-		this.rank = 1;
-		this.shape = new int[] { 64 };
+		overallShape = new int[] { 64 };
+		outerShape = overallShape;
 	}
 	
-	public int getRank() {
-		return rank;
+	/**
+	 * Returns the overall rank of the scan, including any dimensions controlled by malcolm.
+	 * Note that for an acquire scan, where {@link #getOverallShape()} has a length of 0,
+	 * this will return 1, as this is the rank of the datasets to be written.
+	 * 
+	 * @return rank of overall scan
+	 */
+	public int getOverallRank() {
+		return Math.max(overallShape.length, 1);
 	}
-	
-	public void setRank(int rank) {
-		this.rank = rank;
+
+	/**
+	 * Returns the outer rank of the scan, not including any dimensions controlled by malcolm.
+	 * Note that for an acquire scan, where {@link #getOverallOuter()} has a length of 0,
+	 * this will return 1, as this is the rank of the datasets to be written.
+	 * For non-malcolm scans this will return the same value as {@link #getOverallRank()}.
+	 *  
+	 * @return rank of outer scan
+	 */
+	public int getOuterRank() {
+		return Math.max(outerShape.length, 1);
 	}
 	
 	public void setEstimatedScanTime(long estimatedScanTime) {
@@ -162,14 +174,37 @@ public class NexusScanInfo {
 		this.filePath = filePath;
 	}
 
-	public int[] getShape() {
-		return shape;
+	/**
+	 * Returns the overall shape of the scan, including any dimensions controlled by malcolm.
+	 * @return overall scan shape
+	 */
+	public int[] getOverallShape() {
+		return overallShape;
 	}
 
-	public void setShape(int[] shape) {
-		this.shape = shape;
+	public void setOverallShape(int... overallShape) {
+		this.overallShape = overallShape;
 	}
 	
+	public void setShape(int... shape) {
+		// set both outer and overall shape to the given shape, useful for non-malcolm scans
+		setOverallShape(shape);
+		setOuterShape(shape);
+	}
+
+	/**
+	 * Returns the shape of the outer scan, not including any dimensions controlled by malcolm.
+	 * For non-malcolm scans this method will return the same value as {@link #getOverallShape()}.
+	 * @return shape of outer scan
+	 */
+	public int[] getOuterShape() {
+		return outerShape;
+	}
+
+	public void setOuterShape(int... outerShape) {
+		this.outerShape = outerShape;
+	}
+
 	public String getScanCommand() {
 		return scanCommand;
 	}
@@ -234,7 +269,8 @@ public class NexusScanInfo {
 	 */
 	public int[] createChunk(boolean append, int... datashape) {
 		// Create chunk array of correct length
-		final int[] chunk = append ? new int[rank+datashape.length] : new int[rank];
+		final int outerRank = getOuterRank();
+		final int[] chunk = append ? new int[outerRank+datashape.length] : new int[outerRank];
 
 		// Initialise the array to all 1
 		// TODO this is slightly redundant but ensures no zeros can ever be allowed through
@@ -248,29 +284,13 @@ public class NexusScanInfo {
 		}
 		return chunk;
 	}
-	
-
-	/**
-	 * Create a location for a slice of data from the list (correctly ordered) of
-	 * scan names and thier relative indices. This information is available from the 
-	 * IPosition which is sent into the device during the scan.
-	 * 
-	 * @param context LazyDataset we are writing to 
-	 * @param names available from the IPosition for instance
-	 * @param indices available from the IPosition for instance
-	 * @param datashape shape of data that the device is adding to the nD stack
-	 * @return
-	 */
-	@Deprecated(since="Dawn 2.1")
-	public static SliceND createLocation(ILazyWriteableDataset context, Collection<String> names, Map<String,Integer> indices, int... datashape) {
-		throw new IllegalArgumentException("Please use IScanRankService to determine the correct slice information during a scan!");
-	}
 
 	@Override
 	public String toString() {
-		return "NexusScanInfo [rank=" + rank + ", deviceNames=" + deviceNames + ", shape=" + Arrays.toString(shape)
-				+ ", scanCommand=" + scanCommand + ", filePath=" + filePath + ", estimatedScanTime=" + estimatedScanTime
-				+ "]";
+		return "NexusScanInfo [deviceNames=" + deviceNames + ", overallShape=" + Arrays.toString(overallShape)
+				+ ", outerShape=" + Arrays.toString(outerShape) + ", scanCommand=" + scanCommand + ", scanFieldNames="
+				+ scanFieldNames + ", filePath=" + filePath + ", currentScriptName=" + currentScriptName
+				+ ", estimatedScanTime=" + estimatedScanTime + "]";
 	}
 
 }

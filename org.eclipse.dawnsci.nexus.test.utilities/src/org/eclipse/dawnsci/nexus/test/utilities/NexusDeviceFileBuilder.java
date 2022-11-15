@@ -47,7 +47,7 @@ public class NexusDeviceFileBuilder {
 	
 	public TreeFile buildNexusTree(String fileName, INexusDevice<?>... nexusDevices) throws NexusException {
 		final NexusScanInfo scanInfo = new NexusScanInfo(Arrays.asList("stagey", "stagex"));
-		scanInfo.setRank(2);
+		scanInfo.setShape(5, 5);
 		// note: we don't save the nexus tree to file as we can check just structure of the nexus tree 
 		final NexusBuilderFactory factory = new DefaultNexusBuilderFactory();
 		final NexusFileBuilder fileBuilder = factory.newNexusFileBuilder(fileName);

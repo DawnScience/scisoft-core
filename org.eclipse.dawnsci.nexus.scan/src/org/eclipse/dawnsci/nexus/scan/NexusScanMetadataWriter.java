@@ -155,7 +155,7 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		scanMetadataCollection = NexusNodeFactory.createNXcollection();
 		
 		// write the scan rank
-		scanMetadataCollection.setField(FIELD_NAME_SCAN_RANK, scanInfo.getRank());
+		scanMetadataCollection.setField(FIELD_NAME_SCAN_RANK, scanInfo.getOverallRank());
 		
 		// write the scan command, if available
 		if (scanInfo.getScanCommand() != null) {
@@ -169,8 +169,8 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		}
 		
 		// write the scan shape
-		logger.info("Estimated scan shape {}", scanInfo.getShape());
-		scanMetadataCollection.setDataset(FIELD_NAME_SCAN_SHAPE, DatasetFactory.createFromObject(scanInfo.getShape()));
+		logger.info("Estimated scan shape {}", scanInfo.getOverallShape());
+		scanMetadataCollection.setDataset(FIELD_NAME_SCAN_SHAPE, DatasetFactory.createFromObject(scanInfo.getOverallShape()));
 		
 		// write the scan start time
 		scanStartTime = ZonedDateTime.now().truncatedTo(MILLIS); // record the current time
@@ -206,8 +206,8 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		scanEndTimeDataset = createScalarWriteableDataset(scanMetadataCollection, FIELD_NAME_SCAN_END_TIME, String.class, null);
 		
 		if (!hardwareScan) {
-			pointStartTimeStamps = scanMetadataCollection.initializeLazyDataset(FIELD_NAME_POINT_START_TIME, scanInfo.getRank(), String.class);
-			pointEndTimeStamps = scanMetadataCollection.initializeLazyDataset(FIELD_NAME_POINT_END_TIME, scanInfo.getRank(), String.class);
+			pointStartTimeStamps = scanMetadataCollection.initializeLazyDataset(FIELD_NAME_POINT_START_TIME, scanInfo.getOuterRank(), String.class);
+			pointEndTimeStamps = scanMetadataCollection.initializeLazyDataset(FIELD_NAME_POINT_END_TIME, scanInfo.getOuterRank(), String.class);
 		}
 		
 		return scanMetadataCollection;
@@ -216,9 +216,9 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 	private NXcollection createUniqueKeysCollection(NexusScanInfo scanInfo) {
 		final NXcollection keysCollection = NexusNodeFactory.createNXcollection();
 		if (writeGlobalUniqueKeys) {
-			uniqueKeysDataset = keysCollection.initializeLazyDataset(FIELD_NAME_UNIQUE_KEYS, scanInfo.getRank(), Integer.class);
+			uniqueKeysDataset = keysCollection.initializeLazyDataset(FIELD_NAME_UNIQUE_KEYS, scanInfo.getOuterRank(), Integer.class);
 			uniqueKeysDataset.setFillValue(0);
-			if (scanInfo.getRank() > 0) {
+			if (scanInfo.getOuterRank() > 0) {
 				final int[] chunk = scanInfo.createChunk(false, 8);
 				uniqueKeysDataset.setChunking(chunk);
 			}
@@ -381,7 +381,7 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		
 		// log a summary of the scan
 		final String filePath = scanInfo.getFilePath();
-		final String shapeStr = Arrays.toString(scanInfo.getShape());
+		final String shapeStr = Arrays.toString(scanInfo.getOverallShape());
 		logger.info("Scan completed: scan file = {}, shape = {}, estimated time = {}ms, actual time = {}, dead time = {} ({}%)",
 				filePath, shapeStr, estimateScanTimeMillis, scanDuration, scanDeadTime, deadTimePercent);
 		logger.info("Scan completed in {}", scanDuration);

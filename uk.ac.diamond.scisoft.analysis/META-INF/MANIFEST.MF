@@ -7,7 +7,7 @@ Bundle-Name: Scisoft Analysis
 Bundle-SymbolicName: uk.ac.diamond.scisoft.analysis;singleton:=true
 Bundle-Version: 1.5.1.qualifier
 Bundle-Vendor: Diamond Light Source
-Bundle-RequiredExecutionEnvironment: JavaSE-9
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: javax.vecmath;bundle-version="1.5.2",
  org.apache.commons.math3;bundle-version="[3.3.0,4.0.0)",
  org.uncommons.maths;bundle-version="1.2.3",

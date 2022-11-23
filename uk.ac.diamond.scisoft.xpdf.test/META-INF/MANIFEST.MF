@@ -4,7 +4,7 @@ Bundle-Name: XPDF Test
 Bundle-SymbolicName: uk.ac.diamond.scisoft.xpdf.test
 Bundle-Version: 1.0.0.qualifier
 Fragment-Host: uk.ac.diamond.scisoft.xpdf;bundle-version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.junit;bundle-version="[4.10.0,5.0.0)"
 Import-Package: org.dawnsci.persistence,
  org.dawnsci.persistence.internal,

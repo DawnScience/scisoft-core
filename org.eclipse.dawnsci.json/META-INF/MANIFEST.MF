@@ -4,7 +4,7 @@ Bundle-Name: Json Marshaller
 Bundle-SymbolicName: org.eclipse.dawnsci.json;singleton:=true
 Bundle-Version: 1.1.0.qualifier
 Bundle-Vendor: Diamond Light Source
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Activator: org.eclipse.dawnsci.json.internal.Activator
 Service-Component: OSGI-INF/*.xml
 Require-Bundle: com.fasterxml.jackson.core.jackson-annotations;bundle-version="2.10.0",

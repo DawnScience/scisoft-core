@@ -16,7 +16,7 @@ Require-Bundle: hdf.hdf5lib;bundle-version="1.10.5",
  net.bytebuddy.byte-buddy-agent,
  org.eclipse.january.asserts;bundle-version="1.0.0",
  org.eclipse.dawnsci.analysis.api;bundle-version="1.2.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .
 Automatic-Module-Name: org.eclipse.dawnsci.hdf5.test

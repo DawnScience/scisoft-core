@@ -4,7 +4,7 @@ Bundle-Name: Powder Indexer
 Bundle-SymbolicName: uk.ac.diamond.scisoft.analysis.powder.indexer;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Diamond Light Source
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: org.eclipse.ui.plugin,
  org.slf4j;version="1.7.18"
 Require-Bundle: org.eclipse.january;bundle-version="1.0.0",

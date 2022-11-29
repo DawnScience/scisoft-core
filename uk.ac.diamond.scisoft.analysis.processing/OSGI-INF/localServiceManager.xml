@@ -5,5 +5,5 @@
    <reference bind="setOperationService" cardinality="1..1" interface="org.eclipse.dawnsci.analysis.api.processing.IOperationService" name="IOperationService" policy="static"/>
    <reference bind="setPersistenceService" cardinality="1..1" interface="org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService" name="IPersistenceService" policy="static"/>
    <reference bind="setMarshallerService" cardinality="1..1" interface="org.eclipse.dawnsci.analysis.api.persistence.IMarshallerService" name="IMarshallerService" policy="static"/>
-   <reference bind="setMarshallerService" cardinality="1..1" interface="org.eclipse.dawnsci.nexus.template.NexusTemplateService" name="NexusTemplateService" policy="static"/>
+   <reference bind="setNexusTemplateService" cardinality="1..1" interface="org.eclipse.dawnsci.nexus.template.NexusTemplateService" name="NexusTemplateService" policy="static"/>
 </scr:component>

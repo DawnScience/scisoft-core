@@ -9,7 +9,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.dawnsci.analysis.api,
  org.eclipse.dawnsci.analysis.tree,
  org.yaml.snakeyaml
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.dawnsci.nexus.template
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.dawnsci.nexus.template,

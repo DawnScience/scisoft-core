@@ -542,7 +542,7 @@ public class Utils {
 				try {
 					return parseDouble(text);
 				} catch (NumberFormatException de) {
-					logger.info("Value {} is not a number", text);
+					logger.debug("Value {} is not a number", text);
 				}
 			} else if (size > 31) {
 				return base.longValue();
@@ -557,7 +557,7 @@ public class Utils {
 			try { // nb no float as precision
 				return parseDouble(text);
 			} catch (NumberFormatException de) {
-				logger.info("Value {} is not a number", text);
+				logger.debug("Value {} is not a number", text);
 			}
 		}
 		return null;

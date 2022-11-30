@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import static org.eclipse.january.asserts.TestUtils.assertDatasetEquals;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -40,6 +41,7 @@ import org.eclipse.dawnsci.analysis.api.tree.SymbolicNode;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
+import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.ComplexDoubleDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -594,5 +596,65 @@ public class HDF5LoaderTest {
 		assertArrayEquals(new int[] {3, 3, 3}, ds.getShape());
 		assertEquals((byte) 250, ds.getObject(0, 0, 0));
 		assertEquals((byte) 125, ds.getObject(1, 1, 1));
+	}
+
+	@Test
+	public void testMultifileLinks() throws ScanFileHolderException, DatasetException {
+		HDF5Loader l = new HDF5Loader(TestFileFolder + "bottom.h5");
+		DataHolder dh = l.loadFile();
+		assertTrue(dh.getTree().getGroupNode().containsSymbolicNode("loop_2step"));
+		Dataset b0 = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("/b0"));
+		assertArrayEquals(new int[] {256}, b0.getShape());
+		assertEquals(0, b0.getInt(0));
+		assertEquals(255, b0.getInt(255));
+		Dataset b2 = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("/b2"));
+		assertArrayEquals(new int[] {256}, b2.getShape());
+		assertEquals(2, b2.getInt(0));
+		assertEquals(257, b2.getInt(255));
+
+		l = new HDF5Loader(TestFileFolder + "middle.h5");
+		dh = l.loadFile();
+		assertTrue(dh.getTree().getGroupNode().containsSymbolicNode("loop"));
+		assertTrue(dh.getTree().getGroupNode().containsSymbolicNode("loop_2step"));
+		Dataset m1 = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("/m1"));
+		assertArrayEquals(new int[] {256}, m1.getShape());
+		assertEquals(5, m1.getInt(0));
+		assertEquals(260, m1.getInt(255));
+		Dataset m3 = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("/m3"));
+		assertArrayEquals(new int[] {256}, m3.getShape());
+		assertEquals(7, m3.getInt(0));
+		assertEquals(262, m3.getInt(255));
+
+		Dataset bl0 = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("/bl0"));
+		assertDatasetEquals(b0, bl0);
+		Dataset bl2 = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("/bl2"));
+		assertDatasetEquals(b2, bl2);
+
+		l = new HDF5Loader(TestFileFolder + "top.h5");
+		dh = l.loadFile();
+		assertTrue(dh.getTree().getGroupNode().containsSymbolicNode("loop"));
+		assertTrue(dh.getTree().getGroupNode().containsSymbolicNode("loop_2step"));
+		Dataset t1 = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("/t1"));
+		assertArrayEquals(new int[] {256}, t1.getShape());
+		assertEquals(9, t1.getInt(0));
+		assertEquals(264, t1.getInt(255));
+		Dataset t3 = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("/t3"));
+		assertArrayEquals(new int[] {256}, t3.getShape());
+		assertEquals(11, t3.getInt(0));
+		assertEquals(266, t3.getInt(255));
+
+		Dataset bll0 = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("/bll0"));
+		assertDatasetEquals(b0, bll0);
+		Dataset bll2 = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("/bll2"));
+		assertDatasetEquals(b2, bll2);
+		bl0 = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("/bl0"));
+		assertDatasetEquals(b0, bl0);
+		bl2 = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("/bl2"));
+		assertDatasetEquals(b2, bl2);
+
+		Dataset ml1 = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("/ml1"));
+		assertDatasetEquals(m1, ml1);
+		Dataset ml3 = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("/ml3"));
+		assertDatasetEquals(m3, ml3);
 	}
 }

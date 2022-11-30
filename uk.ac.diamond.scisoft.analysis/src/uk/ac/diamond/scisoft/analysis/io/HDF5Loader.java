@@ -65,6 +65,7 @@ import hdf.hdf5lib.HDF5Constants;
 import hdf.hdf5lib.HDFNativeData;
 import hdf.hdf5lib.exceptions.HDF5Exception;
 import hdf.hdf5lib.structs.H5G_info_t;
+import hdf.hdf5lib.structs.H5L_info_t;
 import hdf.hdf5lib.structs.H5O_info_t;
 
 /**
@@ -86,6 +87,8 @@ public class HDF5Loader extends AbstractFileLoader {
 	private static final long DEFAULT_OBJECT_ID = -1;
 
 	public static final String DATA_FILENAME_ATTR_NAME = "data_filename";
+
+	private static int EXT_LINK_MAX_DEPTH = 8; // maximum depth to follow external links
 
 	public HDF5Loader() {
 	}
@@ -380,21 +383,31 @@ public class HDF5Loader extends AbstractFileLoader {
 	 * @param queue
 	 * @param name of group (full path and ends in '/')
 	 * @param keepBitWidth
+	 * @param depth
 	 * @return node
 	 * @throws Exception
 	 */
-	private Node createNode(final long fid, final TreeFile f, final HashMap<Long, Node> pool, final Queue<String> queue, final String name, final boolean keepBitWidth) throws Exception {
+	private Node createNode(final long fid, final TreeFile f, final HashMap<Long, Node> pool, final Queue<String> queue, final String name, final boolean keepBitWidth, int depth) throws Exception {
 		try {
-			H5O_info_t info = H5.H5Oget_info_by_name(fid, name, HDF5Constants.H5O_INFO_BASIC, HDF5Constants.H5P_DEFAULT);
-			int t = info.type;
-			if (t == HDF5Constants.H5O_TYPE_GROUP) {
-				return createGroup(fid, f, DEFAULT_OBJECT_ID, pool, queue, name, keepBitWidth);
-			} else if (t == HDF5Constants.H5O_TYPE_DATASET) {
-				return createDataset(fid, f, DEFAULT_OBJECT_ID, pool, name, keepBitWidth);
-			} else if (t == HDF5Constants.H5O_TYPE_NAMED_DATATYPE) {
-				logger.error("Named datatype not supported"); // TODO
-			} else {
-				logger.error("Unknown object type");
+			H5L_info_t linfo = H5.H5Lget_info(fid, name, HDF5Constants.H5P_DEFAULT);
+			int lt = linfo.type;
+			if (lt == HDF5Constants.H5L_TYPE_EXTERNAL) {
+				return retrieveExternalNode(fid, f, null, fid, pool, name, keepBitWidth, depth + 1);
+			} else if (lt == HDF5Constants.H5L_TYPE_SOFT) {
+				return retrieveSymbolicNode(fid, f, null, fid, name);
+			} else if (lt == HDF5Constants.H5L_TYPE_HARD) {
+				H5O_info_t info = H5.H5Oget_info_by_name(fid, name, HDF5Constants.H5O_INFO_BASIC, HDF5Constants.H5P_DEFAULT);
+				int t = info.type;
+
+				if (t == HDF5Constants.H5O_TYPE_GROUP) {
+					return createGroup(fid, f, DEFAULT_OBJECT_ID, pool, queue, name, keepBitWidth);
+				} else if (t == HDF5Constants.H5O_TYPE_DATASET) {
+					return createDataset(fid, f, DEFAULT_OBJECT_ID, pool, name, keepBitWidth);
+				} else if (t == HDF5Constants.H5O_TYPE_NAMED_DATATYPE) {
+					logger.error("Named datatype not supported"); // TODO
+				} else {
+					logger.error("Unknown object type");
+				}
 			}
 		} catch (HDF5Exception ex) {
 			logger.error("Could not find info about object {}", name, ex);
@@ -552,33 +565,9 @@ public class HDF5Loader extends AbstractFileLoader {
 						logger.error("Something wrong with hardlinked object {}", oname);
 					}
 				} else if (ltype == HDF5Constants.H5L_TYPE_SOFT) {
-					// System.err.println("S: " + oname);
-					String[] linkName = new String[1];
-					int t = H5.H5Lget_value(gid, oname, linkName, HDF5Constants.H5P_DEFAULT);
-					if (t < 0) {
-						logger.warn("Could not get value of link  for {} in {}", oname, name);
-					}
-					// System.err.println("  -> " + linkName[0]);
-					SymbolicNode slink = TreeFactory.createSymbolicNode(oid, f, group, linkName[0]);
-					group.addNode(oname, slink);
+					group.addNode(oname, retrieveSymbolicNode(gid, f, group, oid, oname));
 				} else if (ltype == HDF5Constants.H5L_TYPE_EXTERNAL) {
-					// System.err.println("E: " + oname);
-					String[] linkName = new String[2]; // object path and file path
-					int t = H5.H5Lget_value(gid, oname, linkName, HDF5Constants.H5P_DEFAULT);
-					// System.err.println("  -> " + linkName[0] + " in " + linkName[1]);
-					if (t < 0) {
-						logger.error("Could not get value of link for {} in {}", oname, name);
-					}
-
-					String eName = Utils.findExternalFilePath(logger, f.getParentDirectory(), linkName[1]);
-					if (eName != null) {
-						group.addNode(oname, getExternalNode(pool, f.getHostname(), eName, linkName[0], keepBitWidth));
-					} else {
-						eName = linkName[1];
-						SymbolicNode slink = TreeFactory.createSymbolicNode(oid, eName == null ? null : new URI(eName), group, linkName[0]);
-						group.addNode(oname, slink);
-						logger.warn("Could not find external file {} so adding symbolic node", eName);
-					}
+					group.addNode(oname, retrieveExternalNode(gid, f, group, oid, pool, oname, keepBitWidth, 0));
 				}
 			}
 		} finally {
@@ -591,6 +580,41 @@ public class HDF5Loader extends AbstractFileLoader {
 		}
 
 		return group;
+	}
+
+	private Node retrieveExternalNode(final long lid, final TreeFile f, GroupNode group, long oid, final HashMap<Long, Node> pool, final String name, final boolean keepBitWidth, int depth) throws Exception {
+		String[] linkName = new String[2]; // object path and file path
+		int t = H5.H5Lget_value(lid, name, linkName, HDF5Constants.H5P_DEFAULT);
+		if (t < 0) {
+			logger.error("Could not get value of link for {}", name);
+		}
+
+		String eName = Utils.findExternalFilePath(logger, f.getParentDirectory(), linkName[1]);
+		if (eName != null && depth < EXT_LINK_MAX_DEPTH) {
+			return getExternalNode(pool, f.getHostname(), eName, linkName[0], keepBitWidth, depth);
+		}
+		eName = linkName[1];
+		if (depth >= EXT_LINK_MAX_DEPTH) {
+			logger.error("External link retrieval has reached maximum depth of {} with {}", depth, eName);
+		} else {
+			logger.warn("Could not find external file {} so adding symbolic node", eName);
+		}
+
+		String edName = linkName[0];
+		if (!edName.startsWith(Tree.ROOT)) {
+			edName = Tree.ROOT + edName;
+		}
+		return TreeFactory.createSymbolicNode(oid, eName == null ? null : new URI(eName), group, edName);
+	}
+
+	private Node retrieveSymbolicNode(final long lid, final TreeFile f, GroupNode group, long oid, final String name) throws Exception {
+		String[] linkName = new String[1];
+		int t = H5.H5Lget_value(lid, name, linkName, HDF5Constants.H5P_DEFAULT);
+		if (t < 0) {
+			logger.warn("Could not get value of link for {}", name);
+		}
+
+		return TreeFactory.createSymbolicNode(oid, f, group, linkName[0]);
 	}
 
 	/**
@@ -687,7 +711,7 @@ public class HDF5Loader extends AbstractFileLoader {
 	}
 
 	// get external node
-	private Node getExternalNode(final HashMap<Long, Node> pool, final String host, final String path, String node, final boolean keepBitWidth) throws Exception {
+	private Node getExternalNode(final HashMap<Long, Node> pool, final String host, final String path, String node, final boolean keepBitWidth, int depth) throws Exception {
 		Node nn = null;
 
 		if (!node.startsWith(Tree.ROOT)) {
@@ -701,7 +725,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			TreeFile f = TreeFactory.createTreeFile(oid, path);
 			f.setHostname(host);
 
-			nn = createNode(fid, f, pool, null, node, keepBitWidth);
+			nn = createNode(fid, f, pool, null, node, keepBitWidth, depth);
 		} catch (Throwable le) {
 			throw new ScanFileHolderException("Problem loading file: " + path, le);
 		} finally {
@@ -729,7 +753,7 @@ public class HDF5Loader extends AbstractFileLoader {
 				}
 				lpath = f.getAbsolutePath();
 			}
-			nn = getExternalNode(pool, file.getHostname(), lpath, ltarget, keepBitWidth);
+			nn = getExternalNode(pool, file.getHostname(), lpath, ltarget, keepBitWidth, 0);
 			if (nn == null)
 				logger.warn("Could not find external node: {}", ltarget);
 		} else {

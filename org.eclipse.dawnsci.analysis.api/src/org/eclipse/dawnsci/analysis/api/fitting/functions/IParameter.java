@@ -71,7 +71,7 @@ public interface IParameter {
 	public void setLimits(double newLowerLimit, double newUpperLimit);
 
 	/**
-	 * Set the lower limit of the parameter, the default is Double.MIN_VALUE
+	 * Set the lower limit of the parameter, the default is -Double.MAX_VALUE
 	 * 
 	 * @param lowerLimit
 	 *            The new double value which is the lower limit

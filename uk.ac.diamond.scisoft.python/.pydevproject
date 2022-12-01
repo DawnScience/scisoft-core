@@ -65,6 +65,8 @@
 
 		<path>${BUNDLE_POOL_LOC}/plugins/org.apache.xmlrpc.server_3.1.3.v20181004-1955.jar</path>
 
+		<path>${BUNDLE_POOL_LOC}/plugins/uk.ac.diamond.daq.logging-utils_1.0.0.jar</path>
+
 	</pydev_pathproperty>
 
 </pydev_project>

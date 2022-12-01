@@ -100,7 +100,7 @@ public class JythonPath {
 		"org.dawnsci.persistence", // Required for I11 LDE script
 		"com.fasterxml.jackson.core", // Required for MillerSpaceMapper
 		"uk.ac.diamond.platform-observables", // Required for gda.observables
-//		"org.eclipse.jdt.annotation", // XXX to test pruning
+		"uk.ac.diamond.daq.logging-utils", // Required for DeprecationLogger
 	};
 
 	/*

@@ -719,6 +719,7 @@ def setbean(bean, name=None, warn=True):
     Arguments:
     bean -- GUI bean
     name -- name of plot view to use (if None, use default name)
+    warn -- if True, warn of any issues
     '''
     if name is None:
         name = _PVNAME
@@ -789,7 +790,7 @@ def getroi(bean=None, roi=None, name=None):
         return None
     return r
 
-def setroi(bean, roi=None, send=False, name=None):
+def setroi(bean, roi=None, send=False, name=None, warn=True):
     '''Set region of interest in bean
 
     Arguments:
@@ -797,22 +798,22 @@ def setroi(bean, roi=None, send=False, name=None):
     roi  -- ROI to set (if None, then use first arg as roi and retrieve bean from and update to plot view of given name)
     send -- flag to update plot
     name -- name of plot view to use (if None, use default name)
+    warn -- if True, warn of any issues
     '''
     if name is None:
         name = _PVNAME
-    warn = True
     if roi is None:
         roi = bean
         send = True
         bean = getbean(name)
     if isinstance(bean, _guibean):
         bean[parameters.roi] = roi
-        warn = False
+
     if send:
         setbean(bean, name, warn=warn)
     return bean
 
-def delroi(bean=None, roi=None, send=False, name=None):
+def delroi(bean=None, roi=None, send=False, name=None, warn=True):
     '''Delete region of interest from bean
 
     Arguments:
@@ -820,6 +821,7 @@ def delroi(bean=None, roi=None, send=False, name=None):
     roi  -- class of ROI to remove. If None, then remove anyway
     send -- flag to update plot
     name -- name of plot view to use (if None, use default name)
+    warn -- if True, warn of any issues
     '''
     if name is None:
         name = _PVNAME
@@ -852,7 +854,7 @@ def delroi(bean=None, roi=None, send=False, name=None):
                     rl.remove(dr)
 
     if send:
-        setbean(bean, name)
+        setbean(bean, name, warn=warn)
     return bean
 
 from scisoftpy.dictutils import ListDict
@@ -929,16 +931,18 @@ def _to_roilist(roilist):
     return nlist
 
 
-def setrois(bean, roilist=None, send=False, name=None):
+def setrois(bean, roilist=None, send=False, name=None, warn=True):
     '''Set list/dict of regions of interest in bean
     Arguments:
     bean -- GUI bean
     roilist  -- ROI list to set (if None, then use first arg as roilist and retrieve bean from and update to plot view of given name)
     send    -- flag to update plot
     name    -- name of plot view to use (if None, use default name)
+    warn -- if True, warn of any issues
     '''
     if name is None:
         name = _PVNAME
+
     if roilist is None:
         roilist = bean
         send = True
@@ -957,10 +961,10 @@ def setrois(bean, roilist=None, send=False, name=None):
         bean[parameters.roi] = roilist[0]
 
     if send:
-        setbean(bean, name)
+        setbean(bean, name, warn=warn)
     return bean
 
-def delrois(bean=None, roi=None, send=False, name=None):
+def delrois(bean=None, roi=None, send=False, name=None, warn=True):
     '''Delete list/dict of regions of interest from bean
 
     Arguments:
@@ -968,6 +972,7 @@ def delrois(bean=None, roi=None, send=False, name=None):
     roi  -- class of ROI or ROI list to remove. If None, then remove anyway
     send -- flag to update plot
     name -- name of plot view to use (if None, use default name)
+    warn -- if True, warn of any issues
     '''
     if name is None:
         name = _PVNAME
@@ -980,7 +985,7 @@ def delrois(bean=None, roi=None, send=False, name=None):
         if roi is None or rl is None or isinstance(rl, roi) or isinstance(rl[0], roi):
             bean[parameters.roilist] = None
     if send:
-        setbean(bean, name)
+        setbean(bean, name, warn=warn)
     return bean
 
 def getline(bean=None, name=None):

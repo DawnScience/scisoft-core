@@ -21,6 +21,15 @@ from .jycore import _wrap
 
 # base class for implementing point property
 class _iroi(object):
+    def _initstate(self, jroi, point, plot, fixed):
+        self._roi = jroi
+        if point is not None:
+            self.point = point
+        if plot is not None:
+            self.plot = plot
+        if fixed is not None:
+            self.fixed = fixed
+
     def _jroi(self):
         return self._roi
 
@@ -84,24 +93,16 @@ class _angleprop(object):
     angledegrees = property(getAngleDegrees, setAngleDegrees)
 
 class point(_iroi):
-    def __init__(self, jroi=None, point=None, plot=False, fixed=False, **kwargs):
+    def __init__(self, jroi=None, point=None, plot=None, fixed=None, **kwargs):
         if jroi is None:
             jroi = _roi.PointROI(**kwargs)
-        self._roi = jroi
-        if point is not None:
-            self.point = point
-        self.plot = plot
-        self.fixed = fixed
+        self._initstate(jroi, point, plot, fixed)
 
 class line(_iroi, _angleprop):
-    def __init__(self, jroi=None, point=None, plot=False, fixed=False, **kwargs):
+    def __init__(self, jroi=None, point=None, plot=None, fixed=None, **kwargs):
         if jroi is None:
             jroi = _roi.LinearROI(**kwargs)
-        self._roi = jroi
-        if point is not None:
-            self.point = point
-        self.plot = plot
-        self.fixed = fixed
+        self._initstate(jroi, point, plot, fixed)
 
     def getLength(self):
         return self._roi.getLength()
@@ -113,14 +114,10 @@ class line(_iroi, _angleprop):
 
 
 class rectangle(_iroi, _angleprop):
-    def __init__(self, jroi=None, point=None, plot=False, fixed=False, **kwargs):
+    def __init__(self, jroi=None, point=None, plot=None, fixed=None, **kwargs):
         if jroi is None:
             jroi = _roi.RectangularROI(**kwargs)
-        self._roi = jroi
-        if point is not None:
-            self.point = point
-        self.plot = plot
-        self.fixed = fixed
+        self._initstate(jroi, point, plot, fixed)
 
     def getLengths(self):
         return self._roi.getLengths()
@@ -131,14 +128,10 @@ class rectangle(_iroi, _angleprop):
     lengths = property(getLengths, setLengths)
 
 class sector(_iroi):
-    def __init__(self, jroi=None, point=None, plot=False, fixed=False, **kwargs):
+    def __init__(self, jroi=None, point=None, plot=None, fixed=None, **kwargs):
         if jroi is None:
             jroi = _roi.SectorROI(**kwargs)
-        self._roi = jroi
-        if point is not None:
-            self.point = point
-        self.plot = plot
-        self.fixed = fixed
+        self._initstate(jroi, point, plot, fixed)
 
     def getRadii(self):
         return self._roi.getRadii()
@@ -165,14 +158,10 @@ class sector(_iroi):
     anglesdegrees = property(getAnglesDegrees, setAnglesDegrees)
 
 class circle(_iroi):
-    def __init__(self, jroi=None, point=None, plot=False, fixed=False, **kwargs):
+    def __init__(self, jroi=None, point=None, plot=None, fixed=None, **kwargs):
         if jroi is None:
             jroi = _roi.CircularROI(**kwargs)
-        self._roi = jroi
-        if point is not None:
-            self.point = point
-        self.plot = plot
-        self.fixed = fixed
+        self._initstate(jroi, point, plot, fixed)
 
     def getRadius(self):
         return self._roi.getRadius()
@@ -183,14 +172,10 @@ class circle(_iroi):
     radius = property(getRadius, setRadius)
 
 class ellipse(_iroi, _angleprop):
-    def __init__(self, jroi=None, point=None, plot=False, fixed=False, **kwargs):
+    def __init__(self, jroi=None, point=None, plot=None, fixed=None, **kwargs):
         if jroi is None:
             jroi = _roi.EllipticalROI(**kwargs)
-        self._roi = jroi
-        if point is not None:
-            self.point = point
-        self.plot = plot
-        self.fixed = fixed
+        self._initstate(jroi, point, plot, fixed)
 
     def getSemiAxes(self):
         return self._roi.getSemiAxes()

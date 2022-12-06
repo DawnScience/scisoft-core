@@ -35,7 +35,7 @@ public class NexusScanConstants {
 	 */
 	public static final String PROPERTY_NAME_SUPPRESS_GLOBAL_UNIQUE_KEYS = "suppressGlobalUniqueKeys";
 	
-	public static final String GROUP_NAME_DIAMOND_SCAN = "diamond_scan"; // TODO better name?? 
+	public static final String GROUP_NAME_DIAMOND_SCAN = "diamond_scan"; 
 	public static final String GROUP_NAME_UNIQUE_KEYS = "keys";
 	
 	public static final String FIELD_NAME_SCAN_RANK = "scan_rank";

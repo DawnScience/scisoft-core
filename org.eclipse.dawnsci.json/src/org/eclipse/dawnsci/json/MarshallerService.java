@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -111,7 +112,7 @@ public class MarshallerService implements IMarshallerService {
 
 	private static final Logger logger = LoggerFactory.getLogger(MarshallerService.class);
 
-	private List<IClassRegistry> extra_registries;
+	private List<IClassRegistry> extraRegistries;
 	private ObjectMapper registeredClassMapper;
 	private ObjectMapper standardMapper;
 	private ObjectMapper oldMapper;
@@ -134,10 +135,10 @@ public class MarshallerService implements IMarshallerService {
 	/**
 	 * Constructor for testing to allow IClassRegistry('s) to be injected.
 	 *
-	 * @param extra_registries
+	 * @param extraRegistries
 	 */
-	public MarshallerService(IClassRegistry... extra_registries) {
-		this(Arrays.asList(extra_registries), null);
+	public MarshallerService(IClassRegistry... extraRegistries) {
+		this(Arrays.asList(extraRegistries), null);
 	}
 
 	/**
@@ -152,20 +153,18 @@ public class MarshallerService implements IMarshallerService {
 	/**
 	 * Constructor for testing to allow IMarshaller(s) or IClassRegistry('s) to be injected.
 	 *
-	 * @param extra_registries
+	 * @param extraRegistries
 	 * @param marshallers
 	 */
-	public MarshallerService(List<IClassRegistry> extra_registries, List<IMarshaller> marshallers) {
+	public MarshallerService(List<IClassRegistry> extraRegistries, List<IMarshaller> marshallers) {
 		platformIsRunning = Platform.isRunning();
 
 		if (marshallers!=null) this.marshallers = Collections.unmodifiableList(marshallers);
 
-		this.extra_registries = new ArrayList<IClassRegistry>();
-		this.extra_registries.add(new ROIClassRegistry());
-		this.extra_registries.add(new ArrayRegistry());
-		if (extra_registries!=null) this.extra_registries.addAll(extra_registries);
-
-		this.extra_registries = Collections.unmodifiableList(this.extra_registries);
+		// the extra registries are those passed in, if any, plus the two new ones below
+		final List<IClassRegistry> registriesToAdd = List.of(new ROIClassRegistry(), new ArrayRegistry());
+		this.extraRegistries = extraRegistries == null ? registriesToAdd :
+			Stream.concat(registriesToAdd.stream(), extraRegistries.stream()).toList();
 	}
 
 	/**
@@ -287,7 +286,7 @@ public class MarshallerService implements IMarshallerService {
 
 	@Override
 	public boolean isObjMixInSupported(Object roi) {
-		if(roi instanceof PointROI
+		return (roi instanceof PointROI
 				|| roi instanceof LinearROI
 				|| roi instanceof CircularROI
 				|| roi instanceof GridROI
@@ -304,9 +303,7 @@ public class MarshallerService implements IMarshallerService {
 				|| roi instanceof CircularFitROI
 				|| roi instanceof EllipticalFitROI
 				|| roi instanceof ParabolicROI
-				|| roi instanceof HyperbolicROI)
-			return true;
-		return false;
+				|| roi instanceof HyperbolicROI);
 	}
 
 	private void createModuleExtensions(SimpleModule module) throws InstantiationException, IllegalAccessException, CoreException {
@@ -365,7 +362,7 @@ public class MarshallerService implements IMarshallerService {
 	 * @throws CoreException
 	 */
 	private TypeResolverBuilder<?> createRegisteredTypeIdResolver() throws ClassRegistryDuplicateIdException, CoreException {
-		MarshallerServiceClassRegistry registry = new MarshallerServiceClassRegistry(extra_registries);
+		MarshallerServiceClassRegistry registry = new MarshallerServiceClassRegistry(extraRegistries);
 		TypeResolverBuilder<?> typer = new RegisteredTypeResolverBuilder(registry);
 		typer = typer.init(JsonTypeInfo.Id.CUSTOM, null);
 		typer = typer.inclusion(JsonTypeInfo.As.PROPERTY);

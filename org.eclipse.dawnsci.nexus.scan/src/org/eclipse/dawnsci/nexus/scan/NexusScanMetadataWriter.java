@@ -1,7 +1,6 @@
 package org.eclipse.dawnsci.nexus.scan;
 
 import static java.time.temporal.ChronoUnit.MILLIS;
-import static java.util.stream.Collectors.toList;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.ATTRIBUTE_NAME_UNITS;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.ATTRIBUTE_VALUE_MILLISECONDS;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_CURRENT_SCRIPT_NAME;
@@ -13,8 +12,8 @@ import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_SCAN_
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_SCAN_DURATION;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_SCAN_END_TIME;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_SCAN_ESTIMATED_DURATION;
-import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_SCAN_FINISHED;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_SCAN_FIELDS;
+import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_SCAN_FINISHED;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_SCAN_RANK;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_SCAN_SHAPE;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_SCAN_START_TIME;
@@ -66,9 +65,9 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 	
 	private static final String DEFAULT_NAME = NexusScanMetadataWriter.class.getSimpleName();
 	
-	public static final int[] SCALAR_SHAPE = new int[0];
-	public static final int[] SINGLE_SHAPE = new int[] { 1 };
-	public static final int[] ONE_D_UNLIMITED_SHAPE = new int[] { -1 };
+	public static final int[] SCALAR_SHAPE = { };
+	public static final int[] SINGLE_SHAPE = { 1 }; // NOSONAR - modifiable array
+	public static final int[] ONE_D_UNLIMITED_SHAPE = { -1 }; // NOSONAR - modifiable array
 	
 	// Writing Datasets. Protected fields to allow overwriting by Bluesky Implementation for tests/futureproofing
 	protected ILazyWriteableDataset uniqueKeysDataset;
@@ -119,7 +118,7 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		final List<NexusObjectProvider<?>> nexusObjectProviderList = nexusObjectProviderMap.entrySet().stream()
 				.filter(e -> deviceTypes.contains(e.getKey()))
 				.flatMap(e -> e.getValue().stream())
-				.collect(toList());
+				.toList();
 		
 		setNexusObjectProviders(nexusObjectProviderList);
 	}
@@ -353,9 +352,9 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 	}
 	
 	public Dataset createDataset(Object data) {
-		if (data instanceof ZonedDateTime) {
+		if (data instanceof ZonedDateTime zonedDateTime) {
 			// write timestamps is ISO-8601 format
-			return DatasetFactory.createFromObject(MILLISECOND_DATE_FORMAT.format((ZonedDateTime) data));
+			return DatasetFactory.createFromObject(MILLISECOND_DATE_FORMAT.format(zonedDateTime));
 		}
 		return DatasetFactory.createFromObject(data);
 	}

@@ -83,8 +83,8 @@ public class NexusAssert {
 	private static final String LAZY_DATA_EXCEPTION = "Could not get data from lazy dataset";
 	private static final String LAZY_TIMESTAMP_EXCEPTION = "Could not get timestamp data from lazy dataset";
 	
-	private static final int[] EMPTY_SHAPE = new int[] { };
-	private static final int[] SINGLE_SHAPE = new int[] { 1 };
+	public static final int[] EMPTY_SHAPE = new int[] { };
+	public static final int[] SINGLE_SHAPE = new int[] { 1 };
 	
 	private NexusAssert() {
 		// Hide implicit constructor

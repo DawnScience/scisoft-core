@@ -83,19 +83,18 @@ public class LocateInRowsOperation extends AbstractOperation<LocateInRowsModel, 
 		position.fill(Double.NaN);
 		position.setName(type.toString());
 
-		String logText;
+		String logText = "";
 		switch (type) {
 		case CROSSING:
 			if (Double.isNaN(model.getCrossing())) {
 				throw new OperationException(this, "Crossing value must be defined");
 			}
+			/* FALLTHROUGH */
 		case MEAN:
 			logText = model.isUseFirst() ? "first " : "last ";
 			break;
-		case MAXIMUM:
-		case MINIMUM:
+		case MAXIMUM, MINIMUM:
 		default:
-			logText = "";
 			break;
 		}
 		log.append("Locating %s", logText, type.getName());

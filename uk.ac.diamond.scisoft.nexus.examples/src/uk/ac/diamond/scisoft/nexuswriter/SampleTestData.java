@@ -92,6 +92,7 @@ class SampleTestData {
 			sample.setDensity(2.89);
 			sample.setShape("Cylinder");
 			sample.setDimensions(0.0, 0.39);
+			break;
 		}
 		case ("vitrex") : {
 			sample.setName("vitrex");
@@ -102,6 +103,7 @@ class SampleTestData {
 			sample.setShape("cylinder");
 			sample.setDimensions(1.99, 2.00);
 			sample.setPackingFraction(1.0);
+			break;
 		}
 		case ("bcto") : {
 			sample.setName("Barium Calcium Titanate");
@@ -260,6 +262,7 @@ class SampleTestData {
 //			phase.addComment("I love you, ceria!");
 //			phase.addAtom(new XPDFAtom("ox", 8, 1.0, new double[] {0.25,  0.25, 0.25}, "c"));
 //			phase.addAtom(new XPDFAtom("ce", 58, 1.0, new double[] {0.0,  0.0, 0.0}, "a"));
+			break;
 		}
 		case ("vitrex") : {
 			phase.setName("vitrex");

@@ -1006,17 +1006,17 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 	}
 
 	private IFunction prepareBackgroundPDF(Dataset x, Dataset h, BackgroundPixelPDF pdfType) {
-		IFunction pdf = null;
-		switch (pdfType) {
-		default:
-		case Gaussian:
-			log.append("Using Gaussian PDF");
-			pdf = new Gaussian();
-		}
-
-		initializeFunctionParameters(x, h, pdf);
-		log.append("Initial PDF:\n%s", pdf);
-		return pdf;
+		IFunction ifunc = switch (pdfType) {
+			default:
+				/* FALLTHROUGH */
+				// Only value of BackgroundPixelPDF
+			case Gaussian:
+				log.append("Using Gaussian PDF");
+				yield new Gaussian();
+		};
+		initializeFunctionParameters(x, h, ifunc);
+		log.append("Initial PDF:\n%s", ifunc);
+		return ifunc;
 	}
 
 	private static void initializeFunctionParameters(Dataset x, Dataset h, IFunction pdf) {

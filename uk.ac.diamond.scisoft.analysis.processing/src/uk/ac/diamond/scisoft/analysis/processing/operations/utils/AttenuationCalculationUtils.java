@@ -135,7 +135,7 @@ public final class AttenuationCalculationUtils {
 		if (!treeSearchHashmap.isEmpty()) {
 			firstMatchingNode = treeSearchHashmap.values().iterator().next();
 			DiffractionCrystalEnvironment monochromatorDetails = new DiffractionCrystalEnvironment();
-			NexusTreeUtils.parseMonochromator(firstMatchingNode, monochromatorDetails);
+			NexusTreeUtils.parseMonochromator(tree, firstMatchingNode, monochromatorDetails);
 			return monochromatorDetails.getEnergy(); 
 		}
 		
@@ -146,7 +146,7 @@ public final class AttenuationCalculationUtils {
 		if (!treeSearchHashmap.isEmpty()) {
 			firstMatchingNode = treeSearchHashmap.values().iterator().next();
 			DiffractionCrystalEnvironment beamDetails = new DiffractionCrystalEnvironment();
-			NexusTreeUtils.parseBeam(firstMatchingNode, beamDetails);
+			NexusTreeUtils.parseBeam(tree, firstMatchingNode, beamDetails);
 			return beamDetails.getEnergy();
 		}
 		

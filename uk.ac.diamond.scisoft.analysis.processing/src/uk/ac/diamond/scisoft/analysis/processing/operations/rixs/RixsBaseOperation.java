@@ -630,7 +630,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			GroupNode sample = (GroupNode) NexusTreeUtils.requireNode(entry, NexusConstants.SAMPLE);
 			GroupNode beam = (GroupNode) NexusTreeUtils.requireNode(sample, NexusConstants.BEAM);
 			DiffractionCrystalEnvironment dce = new DiffractionCrystalEnvironment();
-			NexusTreeUtils.parseBeam(beam, dce);
+			NexusTreeUtils.parseBeam(t, beam, dce);
 
 			GroupNode instrument = (GroupNode) NexusTreeUtils.requireNode(entry, NexusConstants.INSTRUMENT);
 			GroupNode detector = (GroupNode) NexusTreeUtils.requireNode(instrument, NexusConstants.DETECTOR);

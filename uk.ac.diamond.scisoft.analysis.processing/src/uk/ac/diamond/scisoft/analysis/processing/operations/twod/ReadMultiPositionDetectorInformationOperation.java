@@ -68,7 +68,7 @@ public class ReadMultiPositionDetectorInformationOperation extends AbstractOpera
 
 			NodeLink beam = NexusTreeUtils.findFirstNode(tree.getGroupNode().getGroupNode("entry1").getGroupNode("sample"), NexusConstants.BEAM);
 			DiffractionCrystalEnvironment dce = new DiffractionCrystalEnvironment();
-			NexusTreeUtils.parseBeam(beam, dce,pos);
+			NexusTreeUtils.parseBeam(tree, beam, dce, pos);
 
 
 			if (model.isOffsetSample()) {

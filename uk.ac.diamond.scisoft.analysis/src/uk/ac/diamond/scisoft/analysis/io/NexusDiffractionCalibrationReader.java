@@ -153,7 +153,7 @@ public class NexusDiffractionCalibrationReader {
 		NodeLink nl = findWavelengthNode(tree, NexusConstants.BEAM);
 		if (nl == null) return null;
 		DiffractionCrystalEnvironment dce = new DiffractionCrystalEnvironment();
-		NexusTreeUtils.parseBeam(nl, dce);
+		NexusTreeUtils.parseBeam(tree, nl, dce);
 		
 		return dce.getWavelength() == 0 ? null : dce;
 	}
@@ -162,7 +162,7 @@ public class NexusDiffractionCalibrationReader {
 		NodeLink nl = findWavelengthNode(tree, NexusConstants.MONOCHROMATOR);
 		if (nl == null) return null;
 		DiffractionCrystalEnvironment dce = new DiffractionCrystalEnvironment();
-		NexusTreeUtils.parseMonochromator(nl, dce);
+		NexusTreeUtils.parseMonochromator(tree, nl, dce);
 		
 		return dce.getWavelength() == 0 ? null : dce;
 	}

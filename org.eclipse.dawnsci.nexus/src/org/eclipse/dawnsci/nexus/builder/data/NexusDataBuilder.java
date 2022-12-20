@@ -88,10 +88,12 @@ public interface NexusDataBuilder {
 	 * Additionally the field with the name as returned by
 	 * {@link NexusObjectProvider#getDefaultAxisDataFieldName()}, or by
 	 * {@link NexusObjectProvider#getPrimaryDataFieldName()} if the
-	 * former is <code>null</code> is set as the default axis of the main data
+	 * former is <code>null</code> is set as an axis of the signal
 	 * field of the {@link NXdata} for the dimension with the given index (e.g.
 	 * the value of the <code>@axes</code> attribute at that index is set to the
-	 * name of this field).
+	 * name of this field). If <code>defaultAxis</code> is true then then
+	 * default axis field of this device is added as a default axis of
+	 * the signal field.
 	 * <p>
 	 * The dimension mappings for each field are set to those given. The
 	 * possible exception is that if the field that default axis dimension
@@ -100,17 +102,19 @@ public interface NexusDataBuilder {
 	 * 
 	 * @param dataDevice
 	 *            data device
-	 * @param defaultAxisDimension
-	 *            the index of the axis of the main data field of the wrapped
-	 *            {@link NXdata} for which this device provides a default axis
-	 *            value
+	 * @param axisDimension
+	 *            the index of the axis of the signal data field of the wrapped
+	 *            {@link NXdata} for which this device provides an axis value
+	 * @param defaultAxis <code>true</code> if this device is the default
+	 *            axis for the given dimension of the signal field,
+	 *            <code>false</code> otherwise
 	 * @param dimensionMappings dimension mappings between the data field(s) of the device
 	 *   and the <code>@signal</code> field of the {@link NXdata} group
 	 * @throws NexusException
 	 *             if the device could not be added for any reason
 	 */
 	public <N extends NXobject> void addAxisDevice(NexusObjectProvider<N> dataDevice,
-			Integer defaultAxisDimension, int... dimensionMappings)
+			Integer axisDimension, boolean defaultAxis, int... dimensionMappings)
 			throws NexusException;
 
 	/**

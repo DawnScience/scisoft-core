@@ -54,7 +54,7 @@ public class DataDeviceBuilder<N extends NXobject> {
 			NexusObjectProvider<N> nexusObjectProvider, String signalDataFieldName) throws NexusException {
 		final DataDeviceBuilder<N> builder = new DataDeviceBuilder<>(nexusObjectProvider, true);
 		builder.setSignalField(signalDataFieldName);
-		return (PrimaryDataDevice<N>) builder.build();
+		return builder.build();
 	}
 	
 	public static <N extends NXobject> DataDeviceBuilder<N> newPrimaryDataDeviceBuilder(
@@ -68,35 +68,36 @@ public class DataDeviceBuilder<N extends NXobject> {
 	}
 	
 	public static <N extends NXobject> AxisDataDevice<N> newAxisDataDevice(
-			NexusObjectProvider<N> nexusObjectProvider, Integer defaultAxisDimension) throws NexusException {
-		return (AxisDataDevice<N>) newAxisDataDeviceBuilder(nexusObjectProvider, defaultAxisDimension).build();
+			NexusObjectProvider<N> nexusObjectProvider, Integer axisDimension, boolean defaultAxis) throws NexusException {
+		return (AxisDataDevice<N>) newAxisDataDeviceBuilder(nexusObjectProvider, axisDimension, defaultAxis).build();
 	}
 
 	public static <N extends NXobject> AxisDataDevice<N> newAxisDataDevice(
 			NexusObjectProvider<N> nexusObjectProvider, String defaultAxisSourceFieldName,
-			Integer defaultAxisDimension) throws NexusException {
+			Integer defaultAxisDimension, boolean defaultAxis) throws NexusException {
 		return (AxisDataDevice<N>) newAxisDataDeviceBuilder(nexusObjectProvider,
-				defaultAxisSourceFieldName, defaultAxisDimension).build();
+				defaultAxisSourceFieldName, defaultAxisDimension, defaultAxis).build();
 	}
 	
 	public static <N extends NXobject> DataDeviceBuilder<N> newAxisDataDeviceBuilder(
 			NexusObjectProvider<N> nexusObjectProvider) {
-		return new DataDeviceBuilder<>(nexusObjectProvider, false);
+		return newAxisDataDeviceBuilder(nexusObjectProvider, null, null, false);
 	}
 	
 	public static <N extends NXobject> DataDeviceBuilder<N> newAxisDataDeviceBuilder(
-			NexusObjectProvider<N> nexusObjectProvider, Integer defaultAxisDimension) {
-		final DataDeviceBuilder<N> builder = new DataDeviceBuilder<>(nexusObjectProvider, false);
-		builder.setDefaultAxisDimension(defaultAxisDimension);
-		return builder;
+			NexusObjectProvider<N> nexusObjectProvider, Integer axisDimension, boolean defaultAxis) {
+		return newAxisDataDeviceBuilder(nexusObjectProvider, null, axisDimension, defaultAxis);
 	}
 	
 	public static <N extends NXobject> DataDeviceBuilder<N> newAxisDataDeviceBuilder(
 			NexusObjectProvider<N> nexusObjectProvider, String defaultAxisSourceFieldName,
-			Integer defaultAxisDimension) {
+			Integer defaultAxisDimension, boolean defaultAxis) {
 		final DataDeviceBuilder<N> builder = new DataDeviceBuilder<>(nexusObjectProvider, false);
-		builder.setDefaultAxisSourceFieldName(defaultAxisSourceFieldName);
-		builder.setDefaultAxisDimension(defaultAxisDimension);
+		if (defaultAxisSourceFieldName != null) {
+			builder.setDefaultAxisSourceFieldName(defaultAxisSourceFieldName);
+		}
+		builder.setAxisDimension(defaultAxisDimension);
+		builder.setDefaultAxis(defaultAxis);
 		return builder;
 	}
 	
@@ -112,15 +113,17 @@ public class DataDeviceBuilder<N extends NXobject> {
 	
 	private List<String> addedFields = null;
 	
-	private Integer defaultAxisDimension = null;
+	private Integer axisDimension = null;
+	
+	private boolean defaultAxis = false;
 	
 	private String defaultAxisSourceFieldName = null;
 	
 	private Map<String, String> overriddenDestinationFieldNames = null;
 	
-	private Map<String, Integer> overriddenDefaultAxisDimensions = null;
+	private Map<String, Integer> overriddenFieldAxisDimensions = null;
 	
-	private Map<String, int[]> overriddenDimensionMappings = null;
+	private Map<String, int[]> overriddenFieldDimensionMappings = null;
 	
 	private int[] defaultDimensionMappings = null;
 	
@@ -169,9 +172,9 @@ public class DataDeviceBuilder<N extends NXobject> {
 		addedFields.add(axisFieldName);
 	}
 	
-	public void addAxisField(String axisFieldName, int defaultAxisDimension) {
+	public void addAxisField(String axisFieldName, int fieldAxisDimension, boolean defaultAxis) {
 		addAxisField(axisFieldName);
-		setDefaultAxisDimension(axisFieldName, defaultAxisDimension);
+		setFieldAxisDimension(axisFieldName, fieldAxisDimension, defaultAxis);
 	}
 	
 	public void addAxisField(String axisFieldName, String axisFieldDestinationName) {
@@ -179,12 +182,12 @@ public class DataDeviceBuilder<N extends NXobject> {
 		setDestinationFieldName(axisFieldName, axisFieldDestinationName);
 	}
 	
-	public void setDefaultAxisDimension(String axisFieldName, int defaultAxisDimension) {
-		requireNonNull(axisFieldName, "Cannot set default axis field name to null");
-		if (overriddenDefaultAxisDimensions == null) {
-			overriddenDefaultAxisDimensions = new HashMap<>();
+	public void setFieldAxisDimension(String axisFieldName, int axisDimension, boolean defaultAxis) {
+		requireNonNull(axisFieldName);
+		if (overriddenFieldAxisDimensions == null) {
+			overriddenFieldAxisDimensions = new HashMap<>();
 		}
-		overriddenDefaultAxisDimensions.put(axisFieldName, defaultAxisDimension);
+		overriddenFieldAxisDimensions.put(axisFieldName, axisDimension);
 	}
 	
 	public void addAxisField(String axisFieldName, int[] dimensionMappings) {
@@ -193,12 +196,13 @@ public class DataDeviceBuilder<N extends NXobject> {
 	}
 	
 	public void setDimensionMappings(String axisFieldName, int... dimensionMappings) {
-		requireNonNull(axisFieldName, "Cannot set dimension mappings to null");
-		if (overriddenDimensionMappings == null) {
-			overriddenDimensionMappings = new HashMap<>();
+		requireNonNull(axisFieldName);
+		requireNonNull(dimensionMappings);
+		if (overriddenFieldDimensionMappings == null) {
+			overriddenFieldDimensionMappings = new HashMap<>();
 		}
 		
-		overriddenDimensionMappings.put(axisFieldName, dimensionMappings);
+		overriddenFieldDimensionMappings.put(axisFieldName, dimensionMappings);
 	}
 	
 	public void addAxisFields(String... axisFieldNames) {
@@ -212,13 +216,18 @@ public class DataDeviceBuilder<N extends NXobject> {
 		addAxisFields(axisFieldNames);
 	}
 	
-	public void setDefaultAxisDimension(Integer defaultAxisDimension) {
-		this.defaultAxisDimension = defaultAxisDimension;
+	public void setAxisDimension(Integer axisDimension) {
+		this.axisDimension = axisDimension;
+	}
+	
+	public void setDefaultAxis(boolean defaultAxis) {
+		this.defaultAxis = defaultAxis;
 	}
 	
 	public void setDefaultAxisSourceFieldName(String defaultAxisSourceFieldName) {
-		requireNonNull(defaultAxisSourceFieldName, "Cannot set default axis source field name to null");
-		addAxisField(defaultAxisSourceFieldName);
+		if (defaultAxisSourceFieldName != null) {
+			addAxisField(defaultAxisSourceFieldName);
+		}
 		this.defaultAxisSourceFieldName = defaultAxisSourceFieldName;
 	}
 	
@@ -271,15 +280,10 @@ public class DataDeviceBuilder<N extends NXobject> {
 				nexusObject.getNXclass().getSimpleName(), fieldName));
 	}
 	
-	private Integer getDefaultAxisDimension(String axisFieldName) {
+	private Integer getFieldAxisDimension(String axisFieldName) {
 		// first check if the value has been overridden (i.e. explicitly set)
-		if (overriddenDefaultAxisDimensions != null) {
-			return overriddenDefaultAxisDimensions.get(axisFieldName);
-		}
-
-		// if this is the default axis field, apply the default axis dimension
-		if (axisFieldName.equals(defaultAxisSourceFieldName)) {
-			return defaultAxisDimension;
+		if (overriddenFieldAxisDimensions != null) {
+			return overriddenFieldAxisDimensions.get(axisFieldName);
 		}
 		
 		// for a primary device, see if the nexus object provider knows the default axis dimension
@@ -288,18 +292,19 @@ public class DataDeviceBuilder<N extends NXobject> {
 			return nexusObjectProvider.getDefaultAxisDimension(signalFieldSourceName, axisFieldName);
 		}
 		
-		return null;
+		// return the axis dimension for this device (may be null)
+		return axisDimension;
 	}
 	
-	private int[] getDimensionMapping(String axisFieldName, int fieldRank, Integer defaultAxisDimension) {
+	private int[] getDimensionMapping(String axisFieldName, int fieldRank, Integer axisDimension) {
 		// first check if the value has been overridden (i.e. explicitly set)
-		if (overriddenDimensionMappings != null) {
-			return overriddenDimensionMappings.get(axisFieldName);
+		if (overriddenFieldDimensionMappings != null) {
+			return overriddenFieldDimensionMappings.get(axisFieldName);
 		}
 		
-		// if this is a default axis field and has size 1, this must be the dimension mapping
-		if (fieldRank == 1 && defaultAxisDimension != null) {
-			return new int[] { defaultAxisDimension };
+		// if this is an axis field and has size 1, this must be the dimension mapping
+		if (fieldRank == 1 && axisDimension != null) {
+			return new int[] { axisDimension };
 		}
 		
 		// use the default dimension mappings for the device if set and of the same rank
@@ -309,6 +314,15 @@ public class DataDeviceBuilder<N extends NXobject> {
 		
 		// default to [0, 1, ... n] where n is the field rank
 		return IntStream.range(0, fieldRank).toArray();
+	}
+	
+	private boolean isDefaultAxisField(String axisFieldName) {
+		// an axis field is the default axis field for a dimension of the signal field of the NXdata group
+		// if this device is a default axis, as the axis field name is the default axis field name of this device
+		// alternatively if this is a primary device (i.e. detector) it may provide an additional axis field
+		// for its primary field (i.e. the signal field of an NXdetector group)
+		return (defaultAxis && axisFieldName.equals(defaultAxisSourceFieldName))
+				|| (isPrimary && getFieldAxisDimension(axisFieldName) != null);
 	}
 	
 	private String getDestinationFieldName(String sourceFieldName) {
@@ -350,19 +364,30 @@ public class DataDeviceBuilder<N extends NXobject> {
 	 * @throws NexusException
 	 */
 	private AxisFieldModel createAxisFieldModel(String axisFieldName) throws NexusException {
-		final Integer defaultAxisDimension = getDefaultAxisDimension(axisFieldName);
+		final Integer fieldAxisDimension = getFieldAxisDimension(axisFieldName);
 		final int fieldRank = getFieldRank(axisFieldName);
-		final int[] dimensionMapping = getDimensionMapping(axisFieldName, fieldRank, defaultAxisDimension);
+		final int[] dimensionMapping = getDimensionMapping(axisFieldName, fieldRank, fieldAxisDimension);
 		final String destinationFieldName = getDestinationFieldName(axisFieldName);
+		final boolean defaultAxisField = isDefaultAxisField(axisFieldName);
 		
 		final AxisFieldModel axisFieldModel = new AxisFieldModel(axisFieldName, fieldRank);
-		axisFieldModel.setDefaultAxisDimension(defaultAxisDimension);
+		axisFieldModel.setAxisDimension(fieldAxisDimension);
 		axisFieldModel.setDimensionMapping(dimensionMapping);
 		axisFieldModel.setDestinationFieldName(destinationFieldName);
+		axisFieldModel.setDefaultAxis(defaultAxisField);
 		
 		return axisFieldModel;
 	}
 	
+	private void calculateDefaultAxisSourceName() {
+		if (defaultAxisSourceFieldName == null && axisDimension != null) {
+			defaultAxisSourceFieldName = nexusObjectProvider.getDefaultAxisDataFieldName();
+			if (defaultAxisSourceFieldName == null) {
+				defaultAxisSourceFieldName = nexusObjectProvider.getPrimaryDataFieldName();
+			}
+		}
+	}
+
 	private Set<String> calculateAxisFieldNamesToAdd() {
 		final Set<String> axisFieldNames = new LinkedHashSet<>();
 
@@ -403,11 +428,11 @@ public class DataDeviceBuilder<N extends NXobject> {
 	/**
 	 * Builds and returns the data device. If primary was set to <code>true</code>, a
 	 * {@link PrimaryDataDevice} will be returned, otherwise an {@link AxisDataDevice} will be
-	 * returned 
+	 * returned.
 	 * @return data device
 	 * @throws NexusException
 	 */
-	public DataDevice<N> build() throws NexusException {
+	public <D extends DataDevice<N>> D build() throws NexusException {
 		// get the names of the axis fields to add
 		final Set<String> axisFieldNames = calculateAxisFieldNamesToAdd();
 		numberOfAxisFieldsToAdd = axisFieldNames.size();
@@ -415,19 +440,16 @@ public class DataDeviceBuilder<N extends NXobject> {
 		final DataDeviceImpl<N> dataDevice = createDataDevice();
 		
 		// calculate the default axis source field name, if not set
-		if (defaultAxisSourceFieldName == null && defaultAxisDimension != null) {
-			defaultAxisSourceFieldName = nexusObjectProvider.getDefaultAxisDataFieldName();
-			if (defaultAxisSourceFieldName == null) {
-				defaultAxisSourceFieldName = nexusObjectProvider.getPrimaryDataFieldName();
-			}
-		}
+		calculateDefaultAxisSourceName();
 		
+		// create and add an axis field model for each field
 		for (String axisFieldName : axisFieldNames) {
-			AxisFieldModel axisFieldModel = createAxisFieldModel(axisFieldName); // add each field
-			dataDevice.addAxisField(axisFieldModel);
+			dataDevice.addAxisField(createAxisFieldModel(axisFieldName));
 		}
 		
-		return dataDevice;
+		@SuppressWarnings("unchecked")
+		final D typeDataDevice = (D) dataDevice;
+		return typeDataDevice;
 	}
 	
 }

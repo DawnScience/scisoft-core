@@ -150,7 +150,7 @@ public class DefaultNexusDataExamplesTest {
 		
 		addToEntry(detector, positioner);
 		dataBuilder.setPrimaryDevice(detector);
-		dataBuilder.addAxisDevice(positioner, 0);
+		dataBuilder.addAxisDevice(positioner, 0, true);
 		
 		assertSignal(nxData, "data");
 		assertAxes(nxData, "x");
@@ -172,9 +172,9 @@ public class DefaultNexusDataExamplesTest {
 		
 		addToEntry(mainDetector, pressureDet, temperatureDet, timeDet);
 		dataBuilder.setPrimaryDevice(mainDetector);
-		dataBuilder.addAxisDevice(pressureDet, 1);
-		dataBuilder.addAxisDevice(temperatureDet, null, 1);
-		dataBuilder.addAxisDevice(timeDet, 0);
+		dataBuilder.addAxisDevice(pressureDet, 1, true);
+		dataBuilder.addAxisDevice(temperatureDet, null, false, 1);
+		dataBuilder.addAxisDevice(timeDet, 0, true);
 		
 		assertSignal(nxData, "data");
 		assertAxes(nxData, "time", "pressure");
@@ -206,8 +206,8 @@ public class DefaultNexusDataExamplesTest {
 		
 		addToEntry(mainDetector, pressureDetector, tofDetector);
 		dataBuilder.setPrimaryDevice(mainDetector);
-		dataBuilder.addAxisDevice(pressureDetector, 0);
-		dataBuilder.addAxisDevice(tofDetector, 1);
+		dataBuilder.addAxisDevice(pressureDetector, 0, true);
+		dataBuilder.addAxisDevice(tofDetector, 1, true);
 		
 		assertSignal(nxData, "det");
 		assertAxes(nxData, "pressure", "tof");
@@ -233,9 +233,9 @@ public class DefaultNexusDataExamplesTest {
 
 		addToEntry(mainDetector, tofDetector, xPositioner, yPositioner);
 		dataBuilder.setPrimaryDevice(DataDeviceBuilder.newPrimaryDataDevice(mainDetector));
-		dataBuilder.addAxisDevice(tofDetector, 2);
-		dataBuilder.addAxisDevice(xPositioner, 0, 0, 1);
-		dataBuilder.addAxisDevice(yPositioner, 1, 0, 1);
+		dataBuilder.addAxisDevice(tofDetector, 2, true);
+		dataBuilder.addAxisDevice(xPositioner, 0, true, 0, 1);
+		dataBuilder.addAxisDevice(yPositioner, 1, true, 0, 1);
 		
 		assertSignal(nxData, "det");
 		assertAxes(nxData, "x", "y", "tof");
@@ -261,9 +261,9 @@ public class DefaultNexusDataExamplesTest {
 
 		addToEntry(mainDetector, polarAnglePositioner, frameNumberPositioner, timePositioner);
 		dataBuilder.setPrimaryDevice(DataDeviceBuilder.newPrimaryDataDevice(mainDetector));
-		dataBuilder.addAxisDevice(polarAnglePositioner, 0, 0, 1);
-		dataBuilder.addAxisDevice(frameNumberPositioner, 1);
-		dataBuilder.addAxisDevice(timePositioner, null, 0, 1);
+		dataBuilder.addAxisDevice(polarAnglePositioner, 0, true, 0, 1);
+		dataBuilder.addAxisDevice(frameNumberPositioner, 1, true);
+		dataBuilder.addAxisDevice(timePositioner, null, false, 0, 1);
 		
 		assertSignal(nxData, "det1");
 		assertAxes(nxData, "polar_angle_set", "frame_number", ".");

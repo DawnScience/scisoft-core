@@ -22,25 +22,7 @@ import java.util.Map;
  */
 public class PrimaryDataFieldModel {
 	
-	private static final class AxisFieldDimensionModel {
-		
-		private final Integer defaultAxisDimension;
-		private final int[] dimensionMappings;
-		
-		AxisFieldDimensionModel(Integer defaultAxisDimension, int[] dimensionMappings) {
-			this.defaultAxisDimension = defaultAxisDimension;
-			this.dimensionMappings = dimensionMappings;
-		}
-
-		public Integer getDefaultAxisDimension() {
-			return defaultAxisDimension;
-		}
-
-		public int[] getDimensionMappings() {
-			return dimensionMappings;
-		}
-		
-	}
+	record AxisFieldDimensionModel(Integer defaultAxisDimension, int[] dimensionMappings) { }; // NOSONAR: should really override equals and hashcode for deep equality check, but not strictly necessary here
 	
 	private final Map<String, AxisFieldDimensionModel> axisFieldDimensionModels = new LinkedHashMap<>();
 
@@ -57,7 +39,7 @@ public class PrimaryDataFieldModel {
 	public Integer getDefaultAxisDimension(String dataFieldName) {
 		AxisFieldDimensionModel axisFieldDimensionModel = axisFieldDimensionModels.get(dataFieldName);
 		if (axisFieldDimensionModel != null) {
-			return axisFieldDimensionModel.getDefaultAxisDimension();
+			return axisFieldDimensionModel.defaultAxisDimension();
 		}
 		
 		return null;
@@ -66,10 +48,10 @@ public class PrimaryDataFieldModel {
 	public int[] getDimensionMappings(String dataFieldName) {
 		AxisFieldDimensionModel axisFieldDimensionModel = axisFieldDimensionModels.get(dataFieldName);
 		if (axisFieldDimensionModel != null) {
-			return axisFieldDimensionModel.getDimensionMappings();
+			return axisFieldDimensionModel.dimensionMappings();
 		}
 		
-		return null;
+		return null; // NOSONAR - null means use default dimension mappings for scan
 	}
 	
 }

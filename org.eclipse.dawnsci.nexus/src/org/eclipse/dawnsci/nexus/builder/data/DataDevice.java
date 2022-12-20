@@ -88,12 +88,21 @@ public interface DataDevice<N extends NXobject> {
 	
 	/**
 	 * Returns the index of the dimension of the <code>@signal</code> field of the {@link NXdata}
-	 * group the field of the {@link NXobject} with the given name is a default axis for, or
-	 * <code>null</code> if this field is not a default axis of the <code>@signal</code> field.
+	 * group the field of the {@link NXobject} with the given name is an axis for, or
+	 * <code>null</code> if this field is not an axis of the <code>@signal</code> field.
 	 * @param sourceFieldName field name in the existing {@link NXobject}
-	 * @return dimension of the signal field that this field is a default axis for,
-	 *    or <code>null</code> 
+	 * @return dimension of the signal field that this field is an axis for, or <code>null</code> 
 	 */
-	public Integer getDefaultAxisDimension(String sourceFieldName);
+	public Integer getFieldAxisDimension(String sourceFieldName);
+	
+	/**
+	 * Returns whether this field is the default axis field for the dimension of the
+	 * <code>@signal</code> field for the dimension index returned by
+	 * {@link #getFieldAxisDimension(String)}.
+	 * @param sourceFieldName field name in the existing {@link NXobject}
+	 * @return <code>true</code> if this field is a default axis field,
+	 *    	<code>false</code> otherwise
+	 */
+	public boolean isDefaultAxisField(String sourceFieldName);
 
 }

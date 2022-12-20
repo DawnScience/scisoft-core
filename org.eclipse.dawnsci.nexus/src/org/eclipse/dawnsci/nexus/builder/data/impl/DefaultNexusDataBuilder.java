@@ -97,8 +97,8 @@ public class DefaultNexusDataBuilder extends AbstractNexusDataBuilder implements
 	 */
 	@Override
 	public <N extends NXobject> void addAxisDevice(NexusObjectProvider<N> dataDevice,
-			Integer defaultAxisDimension, int... dimensionMapping) throws NexusException {
-		DataDeviceBuilder<N> builder = DataDeviceBuilder.newAxisDataDeviceBuilder(dataDevice, defaultAxisDimension);
+			Integer defaultAxisDimension, boolean defaultAxis, int... dimensionMapping) throws NexusException {
+		DataDeviceBuilder<N> builder = DataDeviceBuilder.newAxisDataDeviceBuilder(dataDevice, defaultAxisDimension, defaultAxis);
 		builder.setDefaultDimensionMappings(dimensionMapping);
 		
 		addAxisDevice((AxisDataDevice<N>) builder.build());
@@ -226,9 +226,9 @@ public class DefaultNexusDataBuilder extends AbstractNexusDataBuilder implements
 			final Attribute axisIndicesAttribute = createAxisIndicesAttribute(dataDevice, sourceFieldName);
 			nxData.addAttribute(axisIndicesAttribute);
 
-			// add the axis dimension to the default axes - the @axes attribute
-			Integer defaultAxisDimension = dataDevice.getDefaultAxisDimension(sourceFieldName); 
-			if (defaultAxisDimension != null) {
+			// if this field is a default axis field, add it to the @axes attribute
+			if (dataDevice.isDefaultAxisField(sourceFieldName)) {
+				final Integer defaultAxisDimension = dataDevice.getFieldAxisDimension(sourceFieldName); 
 				addDeviceToDefaultAxes(defaultAxisDimension, destinationFieldName);
 			}
 		}
@@ -298,7 +298,7 @@ public class DefaultNexusDataBuilder extends AbstractNexusDataBuilder implements
 	/**
 	 * Validate that the given dimension mapping. The size of the array must equal the
 	 * given rank and each value in the array must be between 0 (inclusive) and the
-	 * rank of the signal data field
+	 * rank of the signal data field.
 	 * @param sourceFieldName source field name
 	 * @param dimensionMapping dimension mappings
 	 * @param rank rank of the dataset to add

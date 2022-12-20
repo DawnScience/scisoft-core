@@ -249,7 +249,7 @@ public class ComplexNexusFileBuilderTest extends AbstractNexusFileBuilderTestBas
 		NexusDataBuilder dataBuilder = entryModel.newData(testDetector.getName());
 		dataBuilder.setPrimaryDevice(testDetector);
 		
-		dataBuilder.addAxisDevice(tomoScanDevicePositioner, 0);
+		dataBuilder.addAxisDevice(tomoScanDevicePositioner, 0, true);
 		dataBuilder.addAxisDevice(actualTimePositioner);
 		dataBuilder.addAxisDevice(beamOkPositioner);
 		dataBuilder.addAxisDevice(ioncIPositioner);

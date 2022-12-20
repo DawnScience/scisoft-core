@@ -264,10 +264,12 @@ public class DefaultNexusDataBuilderTest {
 		
 		TestDetectorWithAxisField detector = new TestDetectorWithAxisField();
 		addToEntry(detector);
-		DataDeviceBuilder<NXdetector> detectorDataDevice =
+		DataDeviceBuilder<NXdetector> detectorDataDeviceBuilder =
 				DataDeviceBuilder.newPrimaryDataDeviceBuilder(detector);
-		detectorDataDevice.setDestinationFieldName(NXdetector.NX_TIME_OF_FLIGHT, "tof");
-		dataBuilder.setPrimaryDevice((PrimaryDataDevice<NXdetector>) detectorDataDevice.build());
+		detectorDataDeviceBuilder.setDestinationFieldName(NXdetector.NX_TIME_OF_FLIGHT, "tof");
+		PrimaryDataDevice<NXdetector> detectorDataDevice =
+				(PrimaryDataDevice<NXdetector>) detectorDataDeviceBuilder.build();
+		dataBuilder.setPrimaryDevice(detectorDataDevice);
 		
 		assertThat(nxData.getNumberOfAttributes(), is(4));
 		assertThat(nxData.getNumberOfGroupNodes(), is(0));
@@ -335,7 +337,7 @@ public class DefaultNexusDataBuilderTest {
 		assertThat(nxData.getNumberOfGroupNodes(), is(0));
 		assertThat(nxData.getNumberOfDataNodes(), is(1));
 		
-		dataBuilder.addAxisDevice(positioner, null, 0);
+		dataBuilder.addAxisDevice(positioner, null, true, 0);
 		
 		assertThat(nxData.getNumberOfAttributes(), is(4));
 		assertThat(nxData.getNumberOfGroupNodes(), is(0));
@@ -358,7 +360,7 @@ public class DefaultNexusDataBuilderTest {
 		assertThat(nxData.getNumberOfGroupNodes(), is(0));
 		assertThat(nxData.getNumberOfDataNodes(), is(1));
 		
-		dataBuilder.addAxisDevice(positioner, 0);
+		dataBuilder.addAxisDevice(positioner, 0, true);
 		
 		assertThat(nxData.getNumberOfAttributes(), is(4));
 		assertThat(nxData.getNumberOfGroupNodes(), is(0));
@@ -411,10 +413,10 @@ public class DefaultNexusDataBuilderTest {
 		assertThat(nxData.getNumberOfGroupNodes(), is(0));
 		assertThat(nxData.getNumberOfDataNodes(), is(1));
 		
-		DataDeviceBuilder<NXpositioner> axisDevice = DataDeviceBuilder.newAxisDataDeviceBuilder(
-				positioner);
+		DataDeviceBuilder<NXpositioner> axisDevice = DataDeviceBuilder.newAxisDataDeviceBuilder(positioner, 0, true);
 		axisDevice.clearAxisFields();
-		axisDevice.addAxisField("source", 0);
+		axisDevice.addAxisField("source");
+		axisDevice.setDefaultAxisSourceFieldName("source");
 		dataBuilder.addAxisDevice((AxisDataDevice<?>) axisDevice.build());
 		
 		assertThat(nxData.getNumberOfAttributes(), is(4));
@@ -465,8 +467,7 @@ public class DefaultNexusDataBuilderTest {
 		assertThat(nxData.getNumberOfGroupNodes(), is(0));
 		assertThat(nxData.getNumberOfDataNodes(), is(1));
 		
-		DataDeviceBuilder<NXpositioner> axisDevice = DataDeviceBuilder.newAxisDataDeviceBuilder(
-				positioner, 1);
+		DataDeviceBuilder<NXpositioner> axisDevice = DataDeviceBuilder.newAxisDataDeviceBuilder(positioner, 1, true);
 		axisDevice.setAxisFields("source");
 		axisDevice.setDefaultAxisSourceFieldName("source");
 		axisDevice.setDestinationFieldName("source", "dest");
@@ -493,7 +494,7 @@ public class DefaultNexusDataBuilderTest {
 		assertThat(nxData.getNumberOfGroupNodes(), is(0));
 		assertThat(nxData.getNumberOfDataNodes(), is(1));
 		
-		dataBuilder.addAxisDevice(positioner, 0);
+		dataBuilder.addAxisDevice(positioner, 0, true);
 
 		assertThat(nxData.getNumberOfAttributes(), is(7));
 		assertThat(nxData.getNumberOfGroupNodes(), is(0));
@@ -518,9 +519,9 @@ public class DefaultNexusDataBuilderTest {
 		assertThat(nxData.getNumberOfGroupNodes(), is(0));
 		assertThat(nxData.getNumberOfDataNodes(), is(1));
 		
-		DataDeviceBuilder<NXpositioner> axisDevice = DataDeviceBuilder.newAxisDataDeviceBuilder(
-				positioner, "field3", 2);
-		dataBuilder.addAxisDevice((AxisDataDevice<?>) axisDevice.build());
+		DataDeviceBuilder<NXpositioner> axisDeviceBuilder = DataDeviceBuilder.newAxisDataDeviceBuilder(positioner, "field3", 2, true);
+		AxisDataDevice<NXpositioner> axisDataDevice = axisDeviceBuilder.build();
+		dataBuilder.addAxisDevice(axisDataDevice);
 		
 		assertThat(nxData.getNumberOfAttributes(), is(7));
 		assertThat(nxData.getNumberOfGroupNodes(), is(0));
@@ -528,8 +529,7 @@ public class DefaultNexusDataBuilderTest {
 		
 		assertAxes(nxData, ".", ".", "field3");
 		for (String sourceFieldName : positioner.getAxisDataFieldNames()) {
-			
-			assertIndices(nxData, sourceFieldName, sourceFieldName.equals("field3") ? 2 : 0);
+			assertIndices(nxData, sourceFieldName, 2);
 			assertThat(nxData.getDataNode(sourceFieldName), is(sameInstance(
 					positioner.getNexusObject().getDataNode(sourceFieldName))));
 		}
@@ -546,7 +546,7 @@ public class DefaultNexusDataBuilderTest {
 		assertThat(nxData.getNumberOfGroupNodes(), is(0));
 		assertThat(nxData.getNumberOfDataNodes(), is(1));
 		
-		dataBuilder.addAxisDevice(positioner, 0);
+		dataBuilder.addAxisDevice(positioner, 0, true);
 		
 		assertThat(nxData.getNumberOfAttributes(), is(4));
 		assertThat(nxData.getNumberOfGroupNodes(), is(0));

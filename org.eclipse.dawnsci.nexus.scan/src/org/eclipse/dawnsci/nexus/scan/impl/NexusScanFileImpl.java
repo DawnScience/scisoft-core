@@ -19,24 +19,21 @@
 package org.eclipse.dawnsci.nexus.scan.impl;
 
 import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toList;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.SYSTEM_PROPERTY_NAME_VALIDATE_NEXUS;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.math3.util.Pair;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.nexus.INexusDevice;
 import org.eclipse.dawnsci.nexus.NXcollection;
@@ -113,12 +110,6 @@ class NexusScanFileImpl implements NexusScanFile {
 	 */
 	private Map<NexusObjectProvider<?>, AxisDataDevice<?>> dataDevices = new HashMap<>();
 
-	/**
-	 * A map from scannable name to the index of the scan for that scannable,
-	 * or <code>null</code> if none
-	 */
-	private Map<String, Integer> defaultAxisIndexForScannable = null;
-
 	private final INexusDeviceService nexusDeviceService = ServiceHolder.getNexusDeviceService();
 
 	NexusScanFileImpl(NexusScanModel nexusScanModel) throws NexusException {
@@ -131,8 +122,8 @@ class NexusScanFileImpl implements NexusScanFile {
 
 		// convert this to a map of nexus object providers for each type
 		nexusObjectProviders = extractNexusProviders();
-		if (nexusScanModel.getMetadataWriter() instanceof NexusScanMetadataWriter) {
-			((NexusScanMetadataWriter) nexusScanModel.getMetadataWriter()).setNexusObjectProviders(nexusObjectProviders);
+		if (nexusScanModel.getMetadataWriter() instanceof NexusScanMetadataWriter metadataWriter) {
+			metadataWriter.setNexusObjectProviders(nexusObjectProviders);
 		}
 	}
 	
@@ -316,7 +307,7 @@ class NexusScanFileImpl implements NexusScanFile {
 				nexusScanModel.getNexusDevices().get(deviceType).stream().
 				map(INexusDevice::getCustomNexusModification).
 				filter(Objects::nonNull).
-				collect(Collectors.toList());
+				toList();
 		for (CustomNexusEntryModification customModification : customModifications) {
 			entryBuilder.modifyEntry(customModification);
 		}
@@ -357,7 +348,7 @@ class NexusScanFileImpl implements NexusScanFile {
 		final List<PrimaryDeviceWithScanRole> primaryDevices = detectors.stream() // exceptionally, some detectors may not have a primary field
 				.filter(det -> det.getPrimaryDataFieldName() != null)
 				.map(det -> new PrimaryDeviceWithScanRole(det, ScanRole.DETECTOR))
-				.collect(toList());
+				.toList();
 		
 		return !primaryDevices.isEmpty() ? primaryDevices : List.of(getDefaultPrimaryDevice());
 	}
@@ -441,53 +432,14 @@ class NexusScanFileImpl implements NexusScanFile {
 		// add the monitors to the data builder (if the primary device is a monitor, it is excluded)
 		for (NexusObjectProvider<?> monitor : nexusObjectProviders.get(ScanRole.MONITOR_PER_POINT)) {
 			if (primaryDevice.getScanRole() != ScanRole.MONITOR_PER_POINT || primaryDevice.getDevice() != monitor) {
-				dataBuilder.addAxisDevice(getAxisDataDevice(monitor, null));
+				dataBuilder.addAxisDevice(getAxisDataDevice(monitor));
 			}
-		}
-
-		// Create the map from scannable name to default index of that scannable in the scan
-		if (defaultAxisIndexForScannable == null) {
-			defaultAxisIndexForScannable = createDefaultAxisMap();
 		}
 
 		// add the scannables to the data builder
-		for (NexusObjectProvider<?> scannable : nexusObjectProviders.get(ScanRole.SCANNABLE)) {
-			final Integer defaultAxisForDimensionIndex = defaultAxisIndexForScannable.get(scannable.getName());
-			dataBuilder.addAxisDevice(getAxisDataDevice(scannable, defaultAxisForDimensionIndex));
+		for (NexusObjectProvider<?> nexusObjectProvider : nexusObjectProviders.get(ScanRole.SCANNABLE)) {
+			dataBuilder.addAxisDevice(getAxisDataDevice(nexusObjectProvider));
 		}
-	}
-
-	/**
-	 * Creates a map from scannable names to the index of the scan
-	 * (and therefore the index of the signal dataset of each NXdata) that this
-	 * scannable is the default axis for.
-	 *
-	 * @return map from scannable name to index that this scannable is the index for
-	 */
-	private Map<String, Integer> createDefaultAxisMap() {
-		final Map<String, Integer> defaultAxisIndexForScannableMap = new HashMap<>();
-
-		// Convert the list into a map from scannable name to index in scan, only including
-		// scannable names which are the dimension name for exactly one index of the scan
-		int dimensionIndex = 0;
-		for (var dimension : nexusScanModel.getDimensionNamesByIndex()) {
-			// need to iterate or the _indices attibute defaults to [0]
-			for (var scannableName : dimension) {
-				if (defaultAxisIndexForScannableMap.containsKey(scannableName)) {
-					// already seen this scannable name for another index,
-					// so this scannable should not be the default axis for any index
-					// note: we put null instead of removing the entry in case the scannable
-					// because we don't want to add it again if the scannable is encountered again
-					defaultAxisIndexForScannableMap.put(scannableName, null);
-				} else {
-					defaultAxisIndexForScannableMap.put(scannableName, dimensionIndex);
-				}
-			}
-
-			dimensionIndex++;
-		}
-
-		return defaultAxisIndexForScannableMap;
 	}
 	
 	private <N extends NXobject> PrimaryDataDevice<N> createPrimaryDataDevice(
@@ -520,18 +472,14 @@ class NexusScanFileImpl implements NexusScanFile {
 	 * creating it if it doesn't exist.
 	 *
 	 * @param nexusObjectProvider nexus object provider
-	 * @param scanIndex the index in the scan for the given {@link NexusObjectProvider},
-	 *    or <code>null</code> if the device is not being scanned (i.e. is a monitor)
-	 * @param isPrimaryDevice <code>true</code> if this is the primary device for
-	 *    the scan, <code>false</code> otherwise
 	 * @return the data device
 	 * @throws NexusException
 	 */
-	private AxisDataDevice<?> getAxisDataDevice(NexusObjectProvider<?> nexusObjectProvider, Integer scanIndex) throws NexusException {
+	private AxisDataDevice<?> getAxisDataDevice(NexusObjectProvider<?> nexusObjectProvider) throws NexusException {
 		AxisDataDevice<?> dataDevice = dataDevices.get(nexusObjectProvider);
 		if (dataDevice == null) {
-			dataDevice = createAxisDataDevice(nexusObjectProvider, scanIndex);
-			// cache the non-primary devices for any other NXdata groups
+			dataDevice = createAxisDataDevice(nexusObjectProvider);
+			// cache the axis data device to be reused with other NXdata groups
 			dataDevices.put(nexusObjectProvider, dataDevice);
 		}
 
@@ -541,14 +489,32 @@ class NexusScanFileImpl implements NexusScanFile {
 	/**
 	 * Creates the {@link DataDevice} for the given {@link NexusObjectProvider},
 	 * @param nexusObjectProvider
-	 * @param scanIndex the index in the scan for the given {@link NexusObjectProvider},
-	 *    or <code>null</code> if the device is not being scanned (i.e. is a monitor)
 	 * @return
 	 * @throws NexusException
 	 */
 	private <N extends NXobject> AxisDataDevice<N> createAxisDataDevice(
-			NexusObjectProvider<N> nexusObjectProvider, Integer scannableIndex) throws NexusException {
-		return DataDeviceBuilder.newAxisDataDevice(nexusObjectProvider, scannableIndex);
+			NexusObjectProvider<N> nexusObjectProvider) throws NexusException {
+		final Pair<Integer, Boolean> scanIndex = getScanIndex(nexusObjectProvider.getName());
+		return DataDeviceBuilder.newAxisDataDevice(nexusObjectProvider, scanIndex.getFirst(), scanIndex.getSecond());
+	}
+	
+	/**
+	 * Finds the index of the given axis name, and whether it is the default axis for that index.
+	 * @param axisName axis to search for
+	 * @return a {@link Pair} where the first element is an {@link Integer} specifying the index of the dimension for
+	 * 		this axis name, or <code>null</code> if none, and the second element is a {@link Boolean} that is
+	 * 		{@link Boolean#TRUE} if this axis name is the name of the default axis for that dimension index, and
+	 * 		{@link Boolean#FALSE} otherwise
+	 */
+	private Pair<Integer, Boolean> getScanIndex(String axisName) {
+		for (int dimIndex = 0; dimIndex < nexusScanModel.getDimensionNamesByIndex().size(); dimIndex++) {
+			final int indexInDim = nexusScanModel.getDimensionNamesByIndex().get(dimIndex).indexOf(axisName);
+			if (indexInDim != -1) {
+				// the axis name is the default for the dimension index if its first in the list of axes for that index 
+				return Pair.create(dimIndex, indexInDim == 0); 
+			}
+		}
+		return Pair.create(null, false); // the axis is not for a dimension, e.g. a monitor
 	}
 
 }

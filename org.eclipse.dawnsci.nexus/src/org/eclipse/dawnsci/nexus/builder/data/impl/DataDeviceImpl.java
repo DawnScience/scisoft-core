@@ -72,8 +72,12 @@ public abstract class DataDeviceImpl<N extends NXobject> implements DataDevice<N
 		return getAxisDataFieldModel(sourceFieldName).getDimensionMapping();
 	}
 	
-	public Integer getDefaultAxisDimension(String sourceFieldName) {
-		return getAxisDataFieldModel(sourceFieldName).getDefaultAxisDimension();
+	public Integer getFieldAxisDimension(String sourceFieldName) {
+		return getAxisDataFieldModel(sourceFieldName).getAxisDimension();
+	}
+	
+	public boolean isDefaultAxisField(String sourceFieldName) {
+		return getAxisDataFieldModel(sourceFieldName).isDefaultAxis();
 	}
 	
 	public String getDestinationFieldName(String sourceFieldName) {

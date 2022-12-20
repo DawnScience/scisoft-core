@@ -21,7 +21,9 @@ import org.eclipse.dawnsci.nexus.NXdata;
  */
 public class AxisFieldModel extends DataFieldModel {
 	
-	private Integer defaultAxisDimension = null;
+	private Integer axisDimension = null;
+	
+	private boolean defaultAxis = false;
 	
 	private int[] dimensionMapping = null;
 	
@@ -30,17 +32,25 @@ public class AxisFieldModel extends DataFieldModel {
 	}
 	
 	/**
-	 * Sets the default axis dimension for this data field to the given value.
-	 * This is the dimension of the default data field of the {@link NXdata} group
-	 * for which this field provides a default axis when plotting the data.
-	 * @param defaultAxisDimension default axis dimension index
+	 * Sets the axis dimension for this data field to the given value.
+	 * This is the dimension of the signal data field of the {@link NXdata} group
+	 * that this field is an axis for, if any.
+	 * @param axisDimension default axis dimension index
 	 */
-	public void setDefaultAxisDimension(Integer defaultAxisDimension) {
-		this.defaultAxisDimension = defaultAxisDimension;
+	public void setAxisDimension(Integer axisDimension) {
+		this.axisDimension = axisDimension;
 	}
 
-	public Integer getDefaultAxisDimension() {
-		return defaultAxisDimension;
+	public Integer getAxisDimension() {
+		return axisDimension;
+	}
+	
+	public void setDefaultAxis(boolean defaultAxis) {
+		this.defaultAxis = defaultAxis; 
+	}
+	
+	public boolean isDefaultAxis() {
+		return defaultAxis;
 	}
 
 	/**
@@ -60,7 +70,7 @@ public class AxisFieldModel extends DataFieldModel {
 	@Override
 	protected void appendMemberFields(StringBuilder sb) {
 		super.appendMemberFields(sb);
-		sb.append(", defaultAxisDimension = " + defaultAxisDimension);
+		sb.append(", axisDimension = " + axisDimension);
 		sb.append(", dimensionMapping = " + Arrays.toString(dimensionMapping));
 	}
 	

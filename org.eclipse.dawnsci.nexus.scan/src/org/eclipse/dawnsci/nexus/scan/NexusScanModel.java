@@ -21,7 +21,6 @@ package org.eclipse.dawnsci.nexus.scan;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import org.eclipse.dawnsci.nexus.INexusDevice;
@@ -66,7 +65,7 @@ public class NexusScanModel {
 
 	/**
 	 * A list of the dimensions names for the scan, each with the same index in the list
-	 * as the index of the scan for . 
+	 * as the index of the scan for. 
 	 */
 	private List<List<String>> dimensionNamesByIndex;
 

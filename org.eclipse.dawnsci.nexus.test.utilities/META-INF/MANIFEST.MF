@@ -14,4 +14,4 @@ Require-Bundle: org.eclipse.dawnsci.nexus,
  org.eclipse.dawnsci.nexus,
  org.eclipse.dawnsci.hdf5,
  org.eclipse.dawnsci.analysis.tree,
- org.eclipse.dawnsci.nexus.template
+ org.eclipse.dawnsci.nexus.template;bundle-version="1.0.0"

@@ -470,13 +470,9 @@ class NexusScanFileImpl implements NexusScanFile {
 		// Convert the list into a map from scannable name to index in scan, only including
 		// scannable names which are the dimension name for exactly one index of the scan
 		int dimensionIndex = 0;
-		final Iterator<Set<String>> dimensionNamesIter = nexusScanModel.getDimensionNamesByIndex().iterator();
-		while (dimensionNamesIter.hasNext()) {
-			Collection<String> dimensionNamesForIndex = dimensionNamesIter.next();
-			//need to iterate or the _indices attibute defaults to [0]
-			Iterator<String> it = dimensionNamesForIndex.iterator();
-			while (it.hasNext()) {
-				String scannableName = it.next();
+		for (var dimension : nexusScanModel.getDimensionNamesByIndex()) {
+			// need to iterate or the _indices attibute defaults to [0]
+			for (var scannableName : dimension) {
 				if (defaultAxisIndexForScannableMap.containsKey(scannableName)) {
 					// already seen this scannable name for another index,
 					// so this scannable should not be the default axis for any index

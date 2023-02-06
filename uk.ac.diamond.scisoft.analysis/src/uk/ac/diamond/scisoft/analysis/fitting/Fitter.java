@@ -94,6 +94,18 @@ public class Fitter {
 		ApacheConjugateGradientFit(coords, yAxis, null, function);
 	}
 
+	public static void ApacheLevenbergMarquardtFit(final Dataset[] coords, final Dataset yAxis, final Dataset weight, final IFunction function) throws Exception {
+		ApacheOptimizer opt = new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT);
+		if (weight != null) {
+			opt.setWeight(weight.cast(DoubleDataset.class));
+		}
+		opt.optimize(coords, yAxis, function);
+	}
+	
+	public static void ApacheLevenbergMarquardtFit(final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
+		ApacheLevenbergMarquardtFit(coords, yAxis, null, function);
+	}
+	
 	public static void GDFit(final Dataset[] coords, final Dataset yAxis, final IFunction function) throws Exception {
 		GDFit(quality, coords, yAxis, null, function);
 	}

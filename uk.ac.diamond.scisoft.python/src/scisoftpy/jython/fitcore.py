@@ -341,7 +341,7 @@ def fit(func, coords, data, p0, bounds=[], args=None, weight=None, ptol=1e-4, se
     ptol      -- parameter fit tolerance
     seed      -- seed value for genetic algorithm-based optimiser
     optimizer -- description of the optimizer to use, e.g. ['local','global','simplex','genetic',
-                 'gradient','apache_nm','apache_md','apache_cg']
+                 'gradient','apache_nm','apache_md','apache_cg','apache_lm']
                  local and global are general settings, which point the one of the specific methods
                  (Nelder Mead, Genetic). If any global methods are picked, the bounds argument must also be filled in.
     Returns:
@@ -417,6 +417,8 @@ def fit(func, coords, data, p0, bounds=[], args=None, weight=None, ptol=1e-4, se
         _fitter.ApacheMultiDirectionFit(jcoords, jdata, jweight, cfunc)
     elif optimizer == 'apache_cg':
         _fitter.ApacheConjugateGradientFit(jcoords, jdata, jweight, cfunc)
+    elif optimizer == 'apache_lm':
+        _fitter.ApacheLevenbergMarquardtFit(jcoords, jdata, jweight, cfunc)
     elif optimizer == 'genetic':
         if n_bounds == 0:
             print("Using a global optimizer with no bounds is unlikely to work, please use the bounds argument to narrow the search space")

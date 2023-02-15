@@ -62,7 +62,6 @@ public class ImageStackLoader implements ILazyLoader {
 		this(imageFilenames, LoaderFactory.getData(imageFilenames.get(0), mon), mon);
 	}
 
-	@SuppressWarnings("unused")
 	public ImageStackLoader(List<String> imageFilenames, IDataHolder dh, IMonitor mon) throws Exception {
 		this((StringDataset) DatasetFactory.createFromList(imageFilenames), dh, null);
 	}
@@ -159,15 +158,15 @@ public class ImageStackLoader implements ILazyLoader {
 		
 		ILazyDataset dataset = null;
 		if (datasetName != null) {
-			try {
-				dataset = data.getLazyDataset(datasetName);
-			} catch (Exception e) {
-				throw new ScanFileHolderException("Could no slice data", e);
-			}
+			dataset = data.getLazyDataset(datasetName);
 		} else {
 			dataset = data.getDataset(0);
 		}
-		
+		if (dataset == null) {
+			String name = datasetName != null ? datasetName : data.getName(0);
+			throw new ScanFileHolderException(String.format("Could find data %s in %s", name, filename));
+		}
+
 		IMetadata meta = data.getMetadata();
 		dataset.setMetadata(meta);
 		return dataset;

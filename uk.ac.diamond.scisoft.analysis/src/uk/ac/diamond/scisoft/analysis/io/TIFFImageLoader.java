@@ -312,6 +312,7 @@ public class TIFFImageLoader extends JavaImageLoader {
 				new int[] {nstart[0] + count[off] * nstep[0], nstart[1] + count[off + 1] * nstep[1]},
 				nstep);
 		SliceND dSlice = new SliceND(count);
+		dSlice.setSlice(0, 0, 1, 1);
 
 		Dataset d = is2D || count[0] == 1 ? null : DatasetFactory.zeros(clazz, count);
 
@@ -330,25 +331,21 @@ public class TIFFImageLoader extends JavaImageLoader {
 				reader = new TIFFImageReader(new TIFFImageReaderSpi());
 			}
 			reader.setInput(iis);
-			image = readImage(filename, reader, asGrey, keepBitWidth, num);
 
 			while (dataStart[0] < count[0]) {
-				if (image == null)
-					image = readImage(filename, reader, asGrey, keepBitWidth, num);
-				image = image.getSliceView(iSlice);
-				if (d == null) {
+				image = readImage(filename, reader, asGrey, keepBitWidth, num).getSliceView(iSlice);
+				if (d == null) { // single image case
 					d = image;
 					d.setShape(count);
 					break;
 				}
 				d.setSlice(image, dSlice);
-				if (monitorIncrement(mon)) {
+				if (!monitorIncrement(mon)) {
 					break;
 				}
 				num += step[0];
 				dataStart[0]++;
 				dataStop[0] = dataStart[0] + 1;
-				image = null;
 			} 
 		} catch (IOException e) {
 			throw new ScanFileHolderException("IOException loading file '" + filename + "'", e);

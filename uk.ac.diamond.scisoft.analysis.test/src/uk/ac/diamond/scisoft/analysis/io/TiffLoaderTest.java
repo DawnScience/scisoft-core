@@ -9,6 +9,7 @@
 
 package uk.ac.diamond.scisoft.analysis.io;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
@@ -18,6 +19,7 @@ import org.eclipse.january.DatasetException;
 import org.eclipse.january.asserts.TestUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.FloatDataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
@@ -105,25 +107,14 @@ public class TiffLoaderTest {
 		new TIFFImageLoader(testfile3).loadFile();
 	}
 
-	@Test
-	public void testTruncatedFile() {
-		try {
-			DataHolder dh = new TIFFImageLoader("testfiles/images/test-trunc.tiff").loadFile();
-			System.err.println(dh.size());
-			Assert.fail("Should have thrown an exception");
-		} catch (ScanFileHolderException e) {
-//			e.printStackTrace();
-		}
+	@Test(expected = ScanFileHolderException.class)
+	public void testTruncatedFile() throws ScanFileHolderException {
+		new TIFFImageLoader("testfiles/images/test-trunc.tiff").loadFile();
 	}
 
-	@Test
-	public void testNullFile() {
-		try {
-			new TIFFImageLoader("testfiles/images/null.dat").loadFile();
-			Assert.fail("Should have thrown an exception");
-		} catch (ScanFileHolderException e) {
-//			e.printStackTrace();
-		}
+	@Test(expected = ScanFileHolderException.class)
+	public void testNullFile() throws ScanFileHolderException {
+		new TIFFImageLoader("testfiles/images/null.dat").loadFile();
 	}
 
 	@Test
@@ -207,5 +198,27 @@ public class TiffLoaderTest {
 		DataHolder dhb = loader.loadFile();
 		Dataset d = dhb.getDataset(0);
 		TestUtils.assertDatasetEquals(c, d);
+	}
+
+	@Test
+	public void testMultipleFrames() throws Exception {
+		TIFFImageLoader loader = new TIFFImageLoader("testfiles/images/test3d.tiff");
+		DataHolder dha = loader.loadFile();
+		ILazyDataset c = dha.getLazyDataset(0);
+		int[] shape = c.getShape();
+		assertArrayEquals(new int[] {3, 5, 4}, shape);
+		Dataset ad = DatasetFactory.createRange(ShortDataset.class, 60).reshape(shape);
+
+		Slice[] slice = {new Slice(1)};
+		Dataset d = DatasetUtils.convertToDataset(c.getSlice(slice));
+		TestUtils.assertDatasetEquals(ad.getSlice(slice), d);
+
+		slice = new Slice[] {null, new Slice(2, 3)};
+		d  = DatasetUtils.convertToDataset(c.getSlice(slice));
+		TestUtils.assertDatasetEquals(ad.getSlice(slice), d);
+		
+		slice = new Slice[] {null, null, new Slice(1, 2)};
+		d  = DatasetUtils.convertToDataset(c.getSlice(slice));
+		TestUtils.assertDatasetEquals(ad.getSlice(slice), d);
 	}
 }

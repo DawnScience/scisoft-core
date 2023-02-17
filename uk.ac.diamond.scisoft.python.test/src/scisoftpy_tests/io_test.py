@@ -78,6 +78,7 @@ class Test(unittest.TestCase):
         self.load("testrgb-df.tiff", shape=TestShape)
         self.load("testrgb-lzw.tiff", shape=TestShape)
         self.load("testrgb-pb.tiff", shape=TestShape)
+        self.load("test3d.tiff", shape=(3,5,4))
         try:
             self.load("test-trunc.tiff")
             self.fail('Should have failed loading truncated file')

@@ -446,7 +446,10 @@ except:
     _tf = None
 
 class TIFFfileLoader(PythonLoader):
-    def load(self, warn=True):
+    def load(self, warn=True, stack=True):
+        '''
+        stack -- if True, stack up images to a single array
+        '''
         if _tf is None:
             raise NotImplementedError
 
@@ -457,22 +460,25 @@ class TIFFfileLoader(PythonLoader):
             metadata = None
 
         t = _tf.TiffFile(self.name)
-        for i, p in enumerate(t.pages):
-            d = p.asarray()
-            if p.photometric == p.photometric.RGB:
-                # convert to an rgb dataset
-                d = _core.asarray(d, dtype=_core.int16).view(_RGB)
 
+        if stack:
+            data.append(("stack", t.asarray()))
+        else:
+            for i, p in enumerate(t.pages):
+                d = p.asarray()
+                data.append(("image-%02d" % (i+1,), d))
+                if self.load_metadata:
+                    for k,v in p.tags.items():
+                        metadata[k] = v.value
+
+        pho = t.pages[0].photometric
+        if pho == pho.RGB:
+            # convert to an rgb dataset
+            for i, d in enumerate(data):
+                di = _core.asarray(d[1], dtype=_core.int16).view(_RGB)
                 if not self.ascolour:
-                    d = d.get_grey()
-
-            data.append(("image-%02d" % (i+1,), d))
-            if self.load_metadata:
-                for k,v in p.tags.items():
-                    metadata[k] = v.value
-
-        if len(data) < 1:
-            pass
+                    di = di.get_grey()
+                data[i] = (d[0], di)
         return DataHolder(data, metadata, warn)
 
 if _tf is None:

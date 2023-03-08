@@ -55,6 +55,11 @@ public class NexusScanInfo {
 			return nexusRole;
 		}
 		
+		@Override
+		public String toString() {
+			return super.toString().toLowerCase();
+		}
+		
 	}
 	
 	private final Map<ScanRole, Collection<String>> deviceNames;

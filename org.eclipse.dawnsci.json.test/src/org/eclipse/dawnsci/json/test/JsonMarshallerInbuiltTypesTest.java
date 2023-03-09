@@ -53,7 +53,7 @@ public class JsonMarshallerInbuiltTypesTest {
 	private static final String JSON_FOR_STRING_ARRAY = "[\"String[]\", [ \"a\", \"b\", \"c\" ]]";
 	private static final String JSON_FOR_OBJECT_ARRAY = "[\"Object[]\", [ \"a\", \"b\", 5 ]]";
 	private static final String JSON_FOR_OBJECT_ARRAY_WITHOUT_TYPE = "[ \"a\", \"b\", 5 ]";
-	private static final String JSON_FOR_STRING_OBJECT_MAP = "{ \"String key\" : \"String value\", \"Int key\" : 5 }";
+	private static final String JSON_FOR_STRING_OBJECT_MAP = "{\"@type\":\"HashMap\", \"String key\" : \"String value\", \"Int key\" : 5 }";
 	private static final String JSON_FOR_WRAPPED_STRING = "{\n  \"@type\" : \"jsontest.objectwrapper\",\n  \"object\" : \"Test string\"\n}";
 	private static final String JSON_FOR_WRAPPED_STRING_WITHOUT_TYPES = "{\n  \"object\" : \"Test string\"\n}";
 
@@ -238,7 +238,7 @@ public class JsonMarshallerInbuiltTypesTest {
 		Map<String, Object> expected = new HashMap<>();
 		expected.put("String key", "String value");
 		expected.put("Int key", 5);
-		Map<?,?> actual = marshaller.unmarshal(JSON_FOR_STRING_OBJECT_MAP, Map.class);
+		Map<?,?> actual = (Map<?, ?>) marshaller.unmarshal(JSON_FOR_STRING_OBJECT_MAP, Object.class);
 		assertEquals(expected, actual);
 	}
 

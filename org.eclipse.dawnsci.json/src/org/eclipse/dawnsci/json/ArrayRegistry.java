@@ -28,6 +28,7 @@ class ArrayRegistry implements IClassRegistry {
 		tmp.put("String[]",    String[].class);
 		tmp.put("Object[]",    Object[].class);
 		tmp.put(ArrayList.class.getSimpleName(), ArrayList.class);
+		tmp.put(HashMap.class.getSimpleName(), HashMap.class);
 
 		idToClassMap = Collections.unmodifiableMap(tmp);
 	}

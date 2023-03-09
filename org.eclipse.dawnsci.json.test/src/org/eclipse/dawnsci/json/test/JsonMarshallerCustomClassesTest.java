@@ -71,7 +71,7 @@ public class JsonMarshallerCustomClassesTest {
 	private static final String JSON_FOR_ANIMAL_LIST = "[ {\n  \"@type\" : \"jsontest.animal.cat\",\n  \"name\" : \"Felix\",\n  \"whiskers\" : \"Luxuriant\"\n}, {\n  \"@type\" : \"jsontest.animal.bird\",\n  \"name\" : \"Polly\",\n  \"feathers\" : \"Green\"\n}, {\n  \"@type\" : \"jsontest.animal.cat\",\n  \"name\" : \"Felix\",\n  \"whiskers\" : \"Luxuriant\"\n} ]";
 	private static final String JSON_FOR_OBJECT_LIST = "[ {\n  \"@type\" : \"jsontest.animal.cat\",\n  \"name\" : \"Felix\",\n  \"whiskers\" : \"Luxuriant\"\n}, {\n  \"@type\" : \"jsontest.animal.bird\",\n  \"name\" : \"Polly\",\n  \"feathers\" : \"Green\"\n}, {\n  \"@type\" : \"jsontest.person\",\n  \"name\" : \"Jim\",\n  \"pet\" : {\n    \"@type\" : \"jsontest.animal.bird\",\n    \"name\" : \"Polly\",\n    \"feathers\" : \"Green\"\n  }\n} ]";
 	private static final String JSON_FOR_OBJECT_SET = "[ {\n  \"@type\" : \"jsontest.animal.cat\",\n  \"name\" : \"Felix\",\n  \"whiskers\" : \"Luxuriant\"\n}, {\n  \"@type\" : \"jsontest.person\",\n  \"name\" : \"Jim\",\n  \"pet\" : {\n    \"@type\" : \"jsontest.animal.bird\",\n    \"name\" : \"Polly\",\n    \"feathers\" : \"Green\"\n  }\n}, {\n  \"@type\" : \"jsontest.person\",\n  \"name\" : \"Jim\",\n  \"pet\" : {\n    \"@type\" : \"jsontest.animal.bird\",\n    \"name\" : \"Polly\",\n    \"feathers\" : \"Green\"\n  }\n} ]";
-	private static final String JSON_FOR_OBJECT_MAP = "{\n  \"Polly\" : {\n    \"@type\" : \"jsontest.animal.bird\",\n    \"name\" : \"Polly\",\n    \"feathers\" : \"Green\"\n  },\n  \"Felix\" : {\n    \"@type\" : \"jsontest.animal.cat\",\n    \"name\" : \"Felix\",\n    \"whiskers\" : \"Luxuriant\"\n  },\n  \"John\" : {\n    \"@type\" : \"jsontest.person\",\n    \"name\" : \"John\",\n    \"pet\" : {\n      \"@type\" : \"jsontest.animal.cat\",\n      \"name\" : \"Felix\",\n      \"whiskers\" : \"Luxuriant\"\n    }\n  },\n  \"Jim\" : {\n    \"@type\" : \"jsontest.person\",\n    \"name\" : \"Jim\",\n    \"pet\" : {\n      \"@type\" : \"jsontest.animal.bird\",\n      \"name\" : \"Polly\",\n      \"feathers\" : \"Green\"\n    }\n  }\n}";
+	private static final String JSON_FOR_OBJECT_MAP = "{\n  \"@type\" : \"HashMap\",\n  \"Polly\" : {\n    \"@type\" : \"jsontest.animal.bird\",\n    \"name\" : \"Polly\",\n    \"feathers\" : \"Green\"\n  },\n  \"Felix\" : {\n    \"@type\" : \"jsontest.animal.cat\",\n    \"name\" : \"Felix\",\n    \"whiskers\" : \"Luxuriant\"\n  },\n  \"John\" : {\n    \"@type\" : \"jsontest.person\",\n    \"name\" : \"John\",\n    \"pet\" : {\n      \"@type\" : \"jsontest.animal.cat\",\n      \"name\" : \"Felix\",\n      \"whiskers\" : \"Luxuriant\"\n    }\n  },\n  \"Jim\" : {\n    \"@type\" : \"jsontest.person\",\n    \"name\" : \"Jim\",\n    \"pet\" : {\n      \"@type\" : \"jsontest.animal.bird\",\n      \"name\" : \"Polly\",\n      \"feathers\" : \"Green\"\n    }\n  }\n}";
 
 	// Used to test marshalling without using the class registry-based id resolver.
 	private static final String JSON_FOR_NESTED_STATIC_ATTRIBUTE_WITHOUT_TYPE_INFO = "{ \"cat\" : { \"name\" : \"Felix\",\n    \"whiskers\" : \"Luxuriant\" } }";
@@ -358,7 +358,7 @@ public class JsonMarshallerCustomClassesTest {
 
 	@Test
 	public void testMapDeserialization() throws Exception {
-		Object object = marshaller.unmarshal(JSON_FOR_OBJECT_MAP, Map.class);
+		Object object = marshaller.unmarshal(JSON_FOR_OBJECT_MAP, Object.class);
 		@SuppressWarnings("unchecked")
 		Map<String, Object> map = (Map<String, Object>) object;
 		assertThat(map.size(), is(equalTo(4)));

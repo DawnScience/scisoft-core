@@ -21,7 +21,8 @@ if h5py.version.version_tuple[0] < 2:
     raise ImportError("Installed h5py is too old - it must be at least version 2")
 elif h5py.version.version_tuple[0] > 2:
     import sys
-    print("Warning string datasets in HDF5 files now return bytes objects (use .decode() to convert to strings)", file=sys.stderr)
+    if hasattr(sys, 'ps1'):
+        print("Warning string datasets in HDF5 files now return bytes objects (use .decode() to convert to strings)", file=sys.stderr)
 
 from ..nexus.hdf5 import HDF5tree as _tree
 from ..nexus.hdf5 import HDF5group as _group

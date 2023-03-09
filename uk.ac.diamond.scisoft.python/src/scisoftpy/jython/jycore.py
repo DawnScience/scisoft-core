@@ -66,6 +66,9 @@ import java.lang.IllegalArgumentException as _jillegalargument_exception #@Unres
 
 from functools import wraps
 
+class AxisError(ValueError):
+    pass
+
 def quieten_logging(netty_only=True):
     '''
     Quieten logging to warnings and above
@@ -1616,10 +1619,46 @@ def atleast_3d(*arrays):
     res = _jatleast_3d(arrays)
     return res if len(res) > 1 else res[0]
 
+def expand_dims(a, axis):
+    '''Expand dimensions by inserting 1s in shape'''
+    if isinstance(axis, int):
+        axis = [axis,]
+    else:
+        axis = list(axis)
+    
+    r = a.ndim + len(axis)
+    for n,i in enumerate(axis):
+        if i < -r or i >= r:
+            raise AxisError('Axis value %d must be in [%d, %d)' % (i, -r, r))
+        if i < 0:
+            axis[n] = i + r
+
+    # i = 0
+    # ashape = a.shape
+    # shape = []
+    # for ax in range(r):
+    #     if ax in axis:
+    #         j = 1
+    #     else:
+    #         j = ashape[i]
+    #         i += 1
+    #     shape.append(j)
+    sit = iter(a.shape)
+    shape = [1 if ax in axis else next(sit) for ax in range(r)]
+    return a.reshape(shape)
+
 @_wrapout
 def concatenate(a, axis=0):
     a = [array(arr_like) if (not isinstance(arr_like, ndarray)) else arr_like for arr_like in a]
     a = [_jinput(arr) for arr in a]
+    return _concatenate(a, axis)
+
+@_wrapout
+def stack(a, axis=0):
+    if not isinstance(axis, int):
+        raise A('axis must be an integer')
+    a = [array(arr_like) if (not isinstance(arr_like, ndarray)) else arr_like for arr_like in a]
+    a = [_jinput(expand_dims(arr, axis)) for arr in a]
     return _concatenate(a, axis)
 
 @_wrapout

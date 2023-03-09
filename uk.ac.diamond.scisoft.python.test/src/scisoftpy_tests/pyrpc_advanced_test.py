@@ -76,7 +76,7 @@ class Test(unittest.TestCase):
         t = threading.Thread(target=self.assertRaises, args=(Exception, rpcclient.doesnotexist, ("Hello",)))
         t.start()
         t.join(2.0)
-        self.assertFalse(t.isAlive())
+        self.assertFalse(t.is_alive())
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

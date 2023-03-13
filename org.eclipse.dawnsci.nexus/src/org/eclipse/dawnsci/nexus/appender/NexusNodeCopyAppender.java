@@ -78,7 +78,7 @@ public class NexusNodeCopyAppender<N extends NXobject> extends AbstractNexusCont
 					try {
 						processDataNode(node, getNodeName(nodePath), context, targetNode);
 					} catch (DatasetException e) {
-						throw new NexusException("Could not appent data node " + nodePath + " of file " + externalFilePath);
+						throw new NexusException("Could not append data node " + nodePath + " of file " + externalFilePath, e);
 					}
 				} else if (node.isGroupNode()) {
 					GroupNode groupNode = (GroupNode) node;

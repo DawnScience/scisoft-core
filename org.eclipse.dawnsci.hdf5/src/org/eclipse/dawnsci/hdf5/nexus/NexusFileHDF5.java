@@ -421,7 +421,7 @@ public class NexusFileHDF5 implements NexusFile {
 				node.addAttribute(createAttribute(dataset));
 			}
 		} catch (HDF5Exception e) {
-			throw new NexusException("Could not retrieve node attributes");
+			throw new NexusException("Could not retrieve node attributes", e);
 		}
 		return;
 	}

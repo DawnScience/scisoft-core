@@ -23,12 +23,13 @@ from distutils.version import LooseVersion
 
 _np_version_cur = LooseVersion(_np.version.version)
 _is_np_version_ge_1_8 = _np_version_cur >= LooseVersion('1.8')
+_is_np_version_ge_1_18 = _np_version_cur >= LooseVersion('1.18')
 
 newaxis = _np.newaxis
 
 ndarray = _np.ndarray
 generic = ndgeneric = _np.generic
-bool = _np.bool #@ReservedAssignment
+bool = _np.bool_ #@ReservedAssignment
 int8 = _np.int8
 _uint8 = _np.uint8 # used for PIL saving
 _uint16 = _np.uint16 # used for PIL saving and fixing a PIL bug
@@ -47,17 +48,16 @@ complex64 = _np.complex64
 complex128 = _np.complex128
 rgb = _np.dtype([('r', _uint8), ('g', _uint8), ('b', _uint8)])
 
-_pyint = int
-_pyfloat = float
-_pycomplex = complex
-int_ = int64
-int = int_ #@ReservedAssignment
-float_ = float64
-float = float_ #@ReservedAssignment
-complex_ = complex128
-complex = complex_ #@ReservedAssignment
+int_ = _np.int_
+int = _np.int_ #@ReservedAssignment
+float_ = _np.float_
+float = _np.float_ #@ReservedAssignment
+complex_ = _np.complex_
+complex = _np.complex_ #@ReservedAssignment
 
 import types as _types
+
+AxisError = _np.AxisError
 
 def asIterable(items):
     '''
@@ -165,6 +165,10 @@ atleast_2d = _np.atleast_2d
 atleast_3d = _np.atleast_3d
 
 concatenate = _np.concatenate
+
+expand_dims = _np.expand_dims
+
+stack = _np.stack # 1.10+
 
 vstack = _np.vstack
 

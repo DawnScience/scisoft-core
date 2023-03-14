@@ -578,6 +578,24 @@ class Test(unittest.TestCase):
         self.checkitems([[1,2], [2,3], [3,4]], np.column_stack((a, b)))
         self.checkitems([[1,2, 0, 1, 2], [2,3, 3, 4, 5], [3,4, 6, 7, 8]], np.column_stack((a, b, np.arange(9).reshape(3,3))))
 
+        self.assertEqual((1,3), np.expand_dims(a, axis=-2).shape)
+        self.assertEqual((3,1), np.expand_dims(a, axis=-1).shape)
+
+        import sys
+        import os
+        if os.name == 'java' or sys.hexversion > 0x03000000:
+            self.assertEqual((3,1,1), np.expand_dims(a, axis=(1,2)).shape)
+            self.assertEqual((3,1,1), np.expand_dims(a, axis=(-1,-2)).shape)
+            self.assertEqual((1,3,1), np.expand_dims(a, axis=(0,2)).shape)
+            self.assertEqual((1,3,1), np.expand_dims(a, axis=(0,-1)).shape)
+            self.assertEqual((1,1,3), np.expand_dims(a, axis=(0,-2)).shape)
+            self.assertEqual((1,1,1,3), np.expand_dims(a, axis=(0,1,2)).shape)
+            self.assertRaises(np.AxisError, np.expand_dims, a, axis=(2,))
+            self.assertRaises(np.AxisError, np.expand_dims, a, axis=(-3,))
+
+        self.checkitems([[1,2,3],[2,3,4]], np.stack((a, b)))
+        self.checkitems([[1,2],[2,3],[3,4]], np.stack((a, b), axis=1))
+
         a = np.array([[]]*6).T
         b = np.array([1,2,3,4,5,6])
         s = np.vstack((a,b))

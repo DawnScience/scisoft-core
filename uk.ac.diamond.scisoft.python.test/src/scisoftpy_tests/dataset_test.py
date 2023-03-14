@@ -62,10 +62,14 @@ class Test(unittest.TestCase):
         self.zc = [[[0, 1.], [2.5, 3]], [[4.2, 5.1], [6.6, 7.9]]]
         
 
-    def checkitems(self, la, ds, convert=toAny):
+    def checkitems(self, la, ds, convert=toAny, delta=0):
         if ds.ndim == 1:
-            for i in range(ds.shape[0]):
-                self.assertEqual(convert(la[i]), ds[i])
+            if delta:
+                for i in range(ds.shape[0]):
+                    self.assertAlmostEqual(convert(la[i]), ds[i], delta=delta)
+            else:
+                for i in range(ds.shape[0]):
+                    self.assertEqual(convert(la[i]), ds[i])
         elif ds.ndim == 2:
             for i in range(ds.shape[0]):
                 for j in range(ds.shape[1]):
@@ -394,7 +398,7 @@ class Test(unittest.TestCase):
 
         import math
         dds = np.logspace(0,2,5)
-        self.checkitems([math.pow(10.,0.5*i) for i in range(5)], dds)
+        self.checkitems([math.pow(10.,0.5*i) for i in range(5)], dds, delta=1e-14)
         dds = np.logspace(0,2,5, dtype=np.int32)
         self.checkitems([1, 3, 10, 31, 100], dds, toInt)
 

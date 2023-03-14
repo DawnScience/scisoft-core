@@ -142,16 +142,21 @@ class Test(unittest.TestCase):
 
     def testSpeed(self):
         efun = dnp.external.create_function("fun", "external_functions", extra_path=Test.epath_list, dls_module=True, keep=False)
-        import time
-        t = time.clock()
+
+        try:
+            from time import clock as _clock
+        except: # post py3.8
+            from time import process_time as _clock
+        t = _clock()
+
         for _i in range(10):
             efun()
-        print(time.clock() - t)
+        print(_clock() - t)
         efun = dnp.external.create_function("fun", "external_functions", extra_path=Test.epath_list, dls_module=True, keep=True)
-        t = time.clock()
+        t = _clock()
         for _i in range(10):
             efun()
-        print(time.clock() - t)
+        print(_clock() - t)
 
     def testHello(self):
         py = dnp.external.PythonSubProcess("python", None)

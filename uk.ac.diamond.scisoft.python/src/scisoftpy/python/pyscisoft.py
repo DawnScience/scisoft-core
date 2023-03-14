@@ -89,7 +89,7 @@ def centroid(weights, coords=None):
     coordinates (list of 1D arrays), if given, and returns it as a list
     '''
     if coords is None:
-        coords = [ _np.arange(d, dtype=_np.float) + 0.5 for d in weights.shape ]
+        coords = [ _np.arange(d, dtype=_np.float_) + 0.5 for d in weights.shape ]
     else:
         from .pycore import toList
         coords = toList(coords)

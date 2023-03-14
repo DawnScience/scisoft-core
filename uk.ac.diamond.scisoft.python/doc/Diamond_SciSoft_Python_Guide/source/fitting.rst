@@ -105,18 +105,27 @@ are much more likely to find the global minima, however they are slower, and
 need to be bounded to work effectively if at all.  The current minimisers 
 available are
   
-+----------+----------------------------------------------------------------------+
-| Name     | Description                                                          |
-+==========+======================================================================+
-| local    | points to the simplex method                                         | 
-+----------+----------------------------------------------------------------------+
-| global   | points to the genetic method                                         |
-+----------+----------------------------------------------------------------------+
-| simplex  | uses the Simplex, or Nelder Mead local optimisation technique        |
-+----------+----------------------------------------------------------------------+
-| genetic  | uses an implementation of a differential evolution genetic algorithm |
-+----------+----------------------------------------------------------------------+
-
++-----------+------------------------------------------------------------------------------+
+| Name      | Description                                                                  |
++===========+==============================================================================+
+| local     | points to the apache_nm method                                               |
++-----------+------------------------------------------------------------------------------+
+| global    | points to the genetic method                                                 |
++-----------+------------------------------------------------------------------------------+
+| simplex   | our implementation of a Nelder-Mead simplex optimizer                        |
++-----------+------------------------------------------------------------------------------+
+| genetic   | our implementation of a differential evolution genetic algorithm             |
++-----------+------------------------------------------------------------------------------+
+| gradient  | our implementation of a gradient descent optimizer with damping              |
++-----------+------------------------------------------------------------------------------+
+| apache_nm | Apache Commons Math's Nelder-Mead simplex optimizer                          |
++-----------+------------------------------------------------------------------------------+
+| apache_md | Apache Commons Math's multi-directional simplex optimizer                    |
++-----------+------------------------------------------------------------------------------+
+| apache_cg | Apache Commons Math's conjugate gradient optimizer with Polak-Ribiere update |
++-----------+------------------------------------------------------------------------------+
+| apache_lm | Apache Commons Math's Levenberg-Marquardt optimizer                          |
++-----------+------------------------------------------------------------------------------+
 
 The following example shows a fitting of a composite function - a negative
 exponential function that is offset by a constant amount:: 

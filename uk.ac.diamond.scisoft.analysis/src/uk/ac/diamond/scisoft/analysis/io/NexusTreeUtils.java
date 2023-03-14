@@ -1477,27 +1477,31 @@ public class NexusTreeUtils {
 		}
 	}
 
-	public static void parseBeam(GroupNode group, DiffractionCrystalEnvironment sample, int... pos) {
-		parseForDCE("incident_wavelength", "incident_energy", group, sample, pos);
+	public static void parseBeam(Tree tree, GroupNode group, DiffractionCrystalEnvironment sample, int... pos) {
+		parseForDCE(tree == null ? null : TreeUtils.getPath(tree, group), tree, "incident_wavelength", "incident_energy", group, sample, pos);
 	}
 
-	public static void parseBeam(NodeLink link, DiffractionCrystalEnvironment sample, int... pos) {
-		parseForDCE("incident_wavelength", "incident_energy", link, sample, pos);
+	public static void parseBeam(Tree tree, NodeLink link, DiffractionCrystalEnvironment sample, int... pos) {
+		parseForDCE(tree == null ? null : TreeUtils.getPath(tree, link.getDestination()), tree, "incident_wavelength", "incident_energy", link, sample, pos);
 	}
 
-	public static void parseMonochromator(NodeLink link, DiffractionCrystalEnvironment sample, int... pos) {
-		parseForDCE("wavelength", "energy", link, sample, pos);
+	public static void parseBeam(String path, Tree tree, NodeLink link, DiffractionCrystalEnvironment sample, int... pos) {
+		parseForDCE(path, tree, "incident_wavelength", "incident_energy", link, sample, pos);
 	}
 
-	public static void parseForDCE(String wavelengthName, String energyName, NodeLink link, DiffractionCrystalEnvironment sample, int... pos) {
+	public static void parseMonochromator(Tree tree, NodeLink link, DiffractionCrystalEnvironment sample, int... pos) {
+		parseForDCE(tree == null ? null : TreeUtils.getPath(tree, link.getDestination()), tree, "wavelength", "energy", link, sample, pos);
+	}
+
+	public static void parseForDCE(String path, Tree tree, String wavelengthName, String energyName, NodeLink link, DiffractionCrystalEnvironment sample, int... pos) {
 		if (!link.isDestinationGroup()) {
 			logger.warn("'{}' was not a group", link.getName());
 			return;
 		}
-		parseForDCE(wavelengthName, energyName, (GroupNode) link.getDestination(), sample, pos);
+		parseForDCE(path, tree, wavelengthName, energyName, (GroupNode) link.getDestination(), sample, pos);
 	}
 
-	public static void parseForDCE(String wavelengthName, String energyName, GroupNode gNode, DiffractionCrystalEnvironment sample, int... pos) {
+	public static void parseForDCE(String path, Tree tree, String wavelengthName, String energyName, GroupNode gNode, DiffractionCrystalEnvironment sample, int... pos) {
 		DataNode wavelength = gNode.getDataNode(wavelengthName);
 		if (wavelength != null) {
 			Dataset w = getConvertedData(wavelength, NonSI.ANGSTROM);
@@ -1513,20 +1517,40 @@ public class NexusTreeUtils {
 			}
 		}
 
-		GroupNode tNode = getGroup(findFirstNode(gNode, NexusConstants.TRANSFORMATIONS));
+		DataNode depNode = gNode.getDataNode(TRANSFORMATIONS_DEPENDSON);
+		String dependsOn = "direction";
+		GroupNode tNode = null;
+		if (depNode == null) {
+			logger.warn("NXbeam is missing a depends_on field so defaulting to NXtransformations/direction");
+		} else if (tree != null && path != null) {
+			try {
+				dependsOn = getFirstString(depNode);
+			} catch (NexusException e) {
+				logger.error("Could not read depends_on so using '{}'", dependsOn, e);
+			}
+			dependsOn = canonicalizeDependsOn(path, tree, dependsOn);
+
+			NodeLink dNodeLink = TreeUtils.findNodeLink(tree, dependsOn, false);
+			Node pDNode = dNodeLink.getSource();
+			if (pDNode instanceof GroupNode) {
+				tNode = (GroupNode) pDNode;
+				if (!isNXClass(tNode, NexusConstants.TRANSFORMATIONS)) {
+					logger.error("Depends_on parent is not an {} group: {}", NexusConstants.TRANSFORMATIONS, tNode);
+				}
+			} else {
+				logger.error("Depends_on parent is not a group: {}", dependsOn);
+			}
+			dependsOn = dependsOn.substring(dependsOn.lastIndexOf(Node.SEPARATOR) + 1);
+		}
+
+		if (tNode == null) { // fallback to 1st transformations group
+			NodeLink tNodeLink = findFirstNode(gNode, NexusConstants.TRANSFORMATIONS);
+			tNode = getGroup(tNodeLink);
+		}
+
 		if (tNode == null) {
 			logger.warn("Beam transformation was missing in {}", gNode);
 		} else {
-			DataNode depNode = gNode.getDataNode(TRANSFORMATIONS_DEPENDSON);
-			String dependsOn = "direction";
-			if (depNode != null) {
-				try {
-					dependsOn = getFirstString(depNode);
-				} catch (NexusException e) {
-					logger.error("Could not read depends_on so using '{}'", dependsOn, e);
-				}
-			}
-
 			DataNode direction = tNode.getDataNode(dependsOn);
 			if (direction == null) {
 				logger.warn("Direction was missing in {}", gNode);
@@ -1538,7 +1562,7 @@ public class NexusTreeUtils {
 			if (reference == null) {
 				logger.warn("Polarization reference was missing in {}", gNode);
 			} else {
-				double[] d = parseDoubleArray(direction.getAttribute("vector"), 3);
+				double[] d = parseDoubleArray(reference.getAttribute("vector"), 3);
 				sample.setReferenceNormal(new Vector3d(d));
 			}
 		}
@@ -1732,7 +1756,7 @@ public class NexusTreeUtils {
 				getTransformations = false;
 			}
 			if (isNXClass(l.getDestination(), NexusConstants.BEAM) && getBeam) {
-				parseBeam(l, env, pos);
+				parseBeam(TreeUtils.join(path, l.getName()), tree, l, env, pos);
 				getBeam = false;
 			}
 		}

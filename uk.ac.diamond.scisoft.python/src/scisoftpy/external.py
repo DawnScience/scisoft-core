@@ -51,7 +51,9 @@ with argument passing and output return, plus exception handling
 from os import path as _path
 
 import sys
-py3 = sys.hexversion >= 0x03000000
+
+_pyhexver = sys.hexversion
+py3 = _pyhexver >= 0x03000000
 if py3:
     from pickle import dump as _psave, load as _pload
     import subprocess as sub
@@ -65,7 +67,37 @@ else:
     else:
         import subprocess as sub
 
+if _pyhexver < 0x03060000:
+    import linecache
+    class FrameSummary(object):
+        def __init__(self, filename, lineno, name, lookup_line=True, locals=None, line=None, end_lineno=None, colno=None, end_colno=None):
+            self.filename = filename
+            self.lineno = lineno
+            self.name = name
+            self._line = line
+            if lookup_line:
+                self.line
+            self.locals = {k: _safe_string(v, 'local', func=repr)
+                for k, v in locals.items()} if locals else None
+            self.end_lineno = end_lineno
+            self.colno = colno
+            self.end_colno = end_colno
+
+        def __iter__(self):
+            return iter([self.filename, self.lineno, self.name, self.line])
+
+        @property
+        def line(self):
+            if self._line is None:
+                if self.lineno is None:
+                    return None
+                self._line = linecache.getline(self.filename, self.lineno)
+            return self._line.strip()
+    import traceback
+    setattr(traceback, FrameSummary.__name__, FrameSummary)
+
 _PICKLE_PROTOCOL=2
+
 def save_args(arg, dir=None): #@ReservedAssignment
     '''Save arguments as files in a temporary directory
     Use pickle for most objects but use NumPy's npy format for arrays
@@ -225,19 +257,20 @@ def pyenv(exe=None, path=None, ldpath=None):
 
     # add current package
     h, _t = _path.split(__file__)
-    if '__pyclasspath__' in h:
-        _h, t = _path.split(h)
-        cp = [ p for p in _env['CLASSPATH'].split(os.pathsep) if not p.endswith('jar') ]
-        for p in cp:
-            f = _path.join(p, t)
-            if _path.exists(f):
-                pkg = p
-                break
+    if 'site-packages' not in h: # only if not installed
+        if '__pyclasspath__' in h:
+            _h, t = _path.split(h)
+            cp = [ p for p in _env['CLASSPATH'].split(os.pathsep) if not p.endswith('jar') ]
+            for p in cp:
+                f = _path.join(p, t)
+                if _path.exists(f):
+                    pkg = p
+                    break
+            else:
+                raise RuntimeError('Cannot find ScisoftPy in PYTHONPATH')
         else:
-            raise RuntimeError('Cannot find ScisoftPy in PYTHONPATH')
-    else:
-        pkg, _t = _path.split(h)
-    pypath.insert(0, pkg)
+            pkg, _t = _path.split(h)
+        pypath.insert(0, pkg)
 
     return pyexe, pypath, pyldpath
 
@@ -260,17 +293,23 @@ def get_dls_module(module='python/3.7', module_init='/etc/profile.d/modules.sh')
     env = dict(_env)
     env.pop(_PYTHONPATH, None)
     import subprocess as sub
-    p = sub.Popen(['bash', '-l'], env=env, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE, universal_newlines=True)
-    p.stdin.write('source {}\n'.format(module_init))
-    p.stdin.write('module load {}\n'.format(module))
-    p.stdin.write('pyexe=$(which python)\n')
-    p.stdin.write('echo "EXEC:$pyexe"\n')
-    p.stdin.write('echo "PATH:$PYTHONPATH"\n')
-    p.stdin.write('echo "LDPATH:$LD_LIBRARY_PATH"\n')
-    p.stdin.close()
-    exe, path, ldpath = parse_for_env(p.stdout)
-    if exe is None:
-        raise RuntimeError('Problem with running external process: ' + p.stderr.read())
+    try:
+        p = sub.Popen(['bash', '-l'], env=env, close_fds=True, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE, universal_newlines=True)
+        p.stdin.write('source {}\n'.format(module_init))
+        p.stdin.write('module load {}\n'.format(module))
+        p.stdin.write('pyexe=$(which python)\n')
+        p.stdin.write('echo "EXEC:$pyexe"\n')
+        p.stdin.write('echo "PATH:$PYTHONPATH"\n')
+        p.stdin.write('echo "LDPATH:$LD_LIBRARY_PATH"\n')
+        p.stdin.close()
+        exe, path, ldpath = parse_for_env(p.stdout)
+        if exe is None:
+            raise RuntimeError('Problem with running external process: ' + p.stderr.read())
+    finally:
+        p.stdout.close()
+        p.stderr.close()
+        p.terminate()
+        p.wait()
     _dls_modules[module] = exe, path, ldpath
     return exe, path, ldpath
 
@@ -278,23 +317,29 @@ def get_python(py3=True):
     env = dict(_env)
     env.pop(_PYTHONPATH, None)
     pyexe = 'python2' if not py3 else 'python3'
-    p = sub.Popen(pyexe, env=env, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE, universal_newlines=True)
-    p.stdin.write('import sys\n')
-    p.stdin.write('print("EXEC|" + sys.executable)\n')
-    p.stdin.write('print("PATH|" + "|".join(sys.path))\n')
-    p.stdin.write('import os\n')
-    p.stdin.write('if sys.platform == "win32":\n')
-    p.stdin.write('    key = "PATH"\n')
-    p.stdin.write('elif sys.platform == "darwin":\n')
-    p.stdin.write('    key = "DYLD_LIBRARY_PATH"\n')
-    p.stdin.write('else:\n')
-    p.stdin.write('    key = "LD_LIBRARY_PATH"\n')
-    p.stdin.write('lp = os.environ[key].split(os.pathsep)\n')
-    p.stdin.write('print("LDPATH|" + "|".join(lp))\n')
-    p.stdin.close()
-    exe, path, ldpath = parse_for_env(p.stdout, sep='|')
-    if exe is None:
-        raise RuntimeError('Problem with running external process: ' + p.stderr.read())
+    try:
+        p = sub.Popen(pyexe, env=env, close_fds=True, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE, universal_newlines=True)
+        p.stdin.write('import sys\n')
+        p.stdin.write('print("EXEC|" + sys.executable)\n')
+        p.stdin.write('print("PATH|" + "|".join(sys.path))\n')
+        p.stdin.write('import os\n')
+        p.stdin.write('if sys.platform == "win32":\n')
+        p.stdin.write('    key = "PATH"\n')
+        p.stdin.write('elif sys.platform == "darwin":\n')
+        p.stdin.write('    key = "DYLD_LIBRARY_PATH"\n')
+        p.stdin.write('else:\n')
+        p.stdin.write('    key = "LD_LIBRARY_PATH"\n')
+        p.stdin.write('lp = os.environ[key].split(os.pathsep)\n')
+        p.stdin.write('print("LDPATH|" + "|".join(lp))\n')
+        p.stdin.close()
+        exe, path, ldpath = parse_for_env(p.stdout, sep='|')
+        if exe is None:
+            raise RuntimeError('Problem with running external process: ' + p.stderr.read())
+    finally:
+        p.stdout.close()
+        p.stderr.close()
+        p.terminate()
+        p.wait()
     return exe, path, ldpath
 
 def parse_for_env(stream, sep=':'):
@@ -380,6 +425,7 @@ while True:
                             self.out.put('\n')
                             self.alive = False
                             break
+                    self.stream.close()
             else:
                 def add():
                     with open('/tmp/%s.log' % self.name, 'w') as log:
@@ -393,6 +439,7 @@ while True:
                                 print('Finished %s' % self.name, file=log)
                                 self.alive = False
                                 break
+                        self.stream.close()
             self.thd = Thread(target=add)
             self.thd.daemon = True
             self.thd.start()
@@ -407,6 +454,7 @@ while True:
 
         def kill(self):
             self.alive = False
+            self.thd.join(2)
 
         def clear(self):
             while self.out.qsize() > 0:
@@ -418,11 +466,11 @@ while True:
         def __init__(self, exe='python', env=None):
             if env is None:
                 env = dict(os.environ)
-                env.pop(_PYTHONPATH)
+                env.pop(_PYTHONPATH, None)
 #             print('PyExe: %s' % exe, file=sys.stderr)
 #             if _PYTHONPATH in env:
 #                 print('PyEnv: %s' % env[_PYTHONPATH], file=sys.stderr)
-            self.proc = sub.Popen([exe, '-c', cmds], bufsize=1, env=env, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE, universal_newlines=True)
+            self.proc = sub.Popen([exe, '-c', cmds], bufsize=1, env=env, close_fds=True, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE, universal_newlines=True)
 #             self.out = StreamHandler(self.proc.stdout, 'out')
 #             self.err = StreamHandler(self.proc.stderr, 'err')
             self.out = StreamHandler(self.proc.stdout)
@@ -471,6 +519,11 @@ while True:
 
         def stop(self):
             self.stdin.close()
+            self.out.kill()
+            self.err.kill()
+            self.proc.terminate()
+            self.proc.wait()
+            self.proc = None
 
 class ExternalFunction(object):
     '''Emulates a function object with an attached python process
@@ -546,7 +599,16 @@ class ExternalFunction(object):
                             try:
                                 ret, err = load_args(d)
                                 if err:
-                                    sys.stderr.writelines(err[2])
+                                    frames = err[2]
+                                    if frames and not isinstance(frames[0], str):
+                                        if _pyhexver >= 0x030b0000:
+                                            for f in frames:
+                                                if not hasattr(f, 'colno'):
+                                                    setattr(f, 'colno', 0)
+                                                    setattr(f, 'end_colno', -1)
+                                                    setattr(f, 'end_lineno', -1)
+                                        frames = traceback.format_list(frames)
+                                    sys.stderr.writelines(frames)
                                     raise err[1]
                                 return ret
                             finally:
@@ -614,6 +676,8 @@ def create_function(function, module=None, exe=None, path=None, extra_path=None,
             exe, path, ldpath = get_dls_module(dls_module)
         else:
             exe, path, ldpath = get_dls_module()
+    elif isinstance(path, str):
+        path = [path]
     exe, path, ldpath = pyenv(exe, path, ldpath)
 
     if p is None:
@@ -625,9 +689,12 @@ def create_function(function, module=None, exe=None, path=None, extra_path=None,
     if extra_path:
         if p is None:
             p = find_module_path(extra_path, module)
-        path = extra_path + path
+        extras = [ e for e in extra_path if e not in path ]
+        if extras:
+            path = extras + path
     if p is None:
         raise ValueError('Cannot find module in path: try specifying it in extra_path')
+
     env = dict(_env)
     env[_PYTHONPATH] = os.pathsep.join(path)
     if ldpath:

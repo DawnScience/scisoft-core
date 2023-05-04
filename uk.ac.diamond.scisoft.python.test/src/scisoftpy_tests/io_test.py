@@ -96,8 +96,8 @@ class Test(unittest.TestCase):
     def testLoadingSRS(self):
         dh = self.load("96356.dat", IOTestFolder+"SRSLoaderTest/")
         print(dh.eta)
-        self.assertEquals(dh.eta.size, 41)
-        self.assertAlmostEquals(dh.eta[3], 32.7779, 4)
+        self.assertEqual(dh.eta.size, 41)
+        self.assertAlmostEqual(dh.eta[3], 32.7779, 4)
 
     def testLoadingNXS(self):
         f = IOTestFolder + "NexusLoaderTest/"
@@ -157,7 +157,7 @@ class Test(unittest.TestCase):
         print(list(t['entry1/counterTimer01'].keys()))
         l = t.getnodes("Energy")
         print('List of energy datasets is:', len(l))
-        assert len(l) is 1, "Number of energy datasets should be 1"
+        assert len(l) == 1, "Number of energy datasets should be 1"
         d = l[0]
         print(type(d))
         assert d.shape == (489,), "Wrong shape"

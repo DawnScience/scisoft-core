@@ -62,76 +62,77 @@ class _lazydataset(object):
         if fh is None:
             raise io_exception("No tree found")
 
-        ds = fh[self.name]
-
-        slices,sliced = _key2slice(key, self.shape)
-        dshape = [ l if s is None else len(list(range(*s.indices(l)))) for s, l in zip(slices, self.shape)] # destination shape
-        nshape = [ l for f,l in zip(sliced, dshape) if f ]
-#        print 'new shape:', nshape
-
-        if self.chunking is None:
-            if len(self.shape) == 0 and key is Ellipsis:
-                return ds[...]
-
-            nslices = [ s if s else slice(None) for s in slices ]
-            v = ds[tuple(nslices)]
-            if isinstance(v, ndarray):
-                return v.reshape(nshape)
-            return v
-
-        split = [ c <= 1 or l > 1 for c, l in zip(self.chunking, dshape) ]
         try:
-            split.index(False)
-        except:
-            nslices = [ s if s else slice(None) for s in slices ]
-            v = ds[tuple(nslices)]
-            return v.reshape(nshape)
-
-        # load slice-by-slice
-        v = zeros(dshape, dtype=self.dtype)
-
-        ssize = 1 # slice size
-        for i in range(self.rank):
-            if split[i]:
-                dshape[i] = 1
-            else:
-                ssize *= dshape[i]
-            
-
-        if ssize == 1:
-            for i in reversed(list(range(self.rank))):
-                l = v.shape[i]
-                if l > 1:
-                    dshape[i] = l
-                    split[i] = False
-                    ssize = l
-                    break
-
-        # iterate over split dimensions
-        dst_ranges = [ list(range(l)) for f, l in zip(split, v.shape) if f ]
-        dst_iter = product(*dst_ranges)
-
-        src_ranges = [ list(range(*s.indices(l))) if s else list(range(l)) for f, l, s in zip(split, self.shape, slices) if f ]
-        src_iter = product(*src_ranges)
-
-        for d,s in zip(dst_iter, src_iter):
-            dst_pos = []
-            src_pos = []
-            p = 0
+            ds = fh[self.name]
+    
+            slices,sliced = _key2slice(key, self.shape)
+            dshape = [ l if s is None else len(list(range(*s.indices(l)))) for s, l in zip(slices, self.shape)] # destination shape
+            nshape = [ l for f,l in zip(sliced, dshape) if f ]
+    #        print 'new shape:', nshape
+    
+            if self.chunking is None:
+                if len(self.shape) == 0 and key is Ellipsis:
+                    return ds[...]
+    
+                nslices = [ s if s else slice(None) for s in slices ]
+                v = ds[tuple(nslices)]
+                if isinstance(v, ndarray):
+                    return v.reshape(nshape)
+                return v
+    
+            split = [ c <= 1 or l > 1 for c, l in zip(self.chunking, dshape) ]
+            try:
+                split.index(False)
+            except:
+                nslices = [ s if s else slice(None) for s in slices ]
+                v = ds[tuple(nslices)]
+                return v.reshape(nshape)
+    
+            # load slice-by-slice
+            v = zeros(dshape, dtype=self.dtype)
+    
+            ssize = 1 # slice size
             for i in range(self.rank):
                 if split[i]:
-                    dst_pos.append(d[p])
-                    src_pos.append(s[p])
-                    p += 1
+                    dshape[i] = 1
                 else:
-                    dst_pos.append(slice(None))
-                    sl = slices[i]
-                    src_pos.append(sl if sl else slice(None))
-
-#            print dst_pos, src_pos
-            v[tuple(dst_pos)] = ds[tuple(src_pos)]
-
-        fh.close()
+                    ssize *= dshape[i]
+                
+    
+            if ssize == 1:
+                for i in reversed(list(range(self.rank))):
+                    l = v.shape[i]
+                    if l > 1:
+                        dshape[i] = l
+                        split[i] = False
+                        ssize = l
+                        break
+    
+            # iterate over split dimensions
+            dst_ranges = [ list(range(l)) for f, l in zip(split, v.shape) if f ]
+            dst_iter = product(*dst_ranges)
+    
+            src_ranges = [ list(range(*s.indices(l))) if s else list(range(l)) for f, l, s in zip(split, self.shape, slices) if f ]
+            src_iter = product(*src_ranges)
+    
+            for d,s in zip(dst_iter, src_iter):
+                dst_pos = []
+                src_pos = []
+                p = 0
+                for i in range(self.rank):
+                    if split[i]:
+                        dst_pos.append(d[p])
+                        src_pos.append(s[p])
+                        p += 1
+                    else:
+                        dst_pos.append(slice(None))
+                        sl = slices[i]
+                        src_pos.append(sl if sl else slice(None))
+    
+    #            print dst_pos, src_pos
+                v[tuple(dst_pos)] = ds[tuple(src_pos)]
+        finally:
+            fh.close()
         return v.reshape(nshape)
 
 
@@ -173,9 +174,11 @@ class HDF5Loader(object):
         self.warn = warn
         # convert tree to own tree
         pool = dict()
-        t = self._copynode(pool, fh)
-        pool.clear()
-        fh.close()
+        try:
+            t = self._copynode(pool, fh)
+            pool.clear()
+        finally:
+            fh.close()
         return t
 
     def _mkgroup(self, node, attrs, parent):

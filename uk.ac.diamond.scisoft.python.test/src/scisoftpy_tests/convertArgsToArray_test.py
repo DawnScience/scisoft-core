@@ -1,7 +1,7 @@
 
 import os
+import unittest
 if os.name == 'java':
-    import unittest
     import scisoftpy as dnp
     import inspect
     from scisoftpy.jython.jycore import _argsToArrayType
@@ -141,5 +141,11 @@ if os.name == 'java':
             c = dnp.concatenate((arr3, arr4))
             self.assertEqual(c.shape, (6, ))
 
-    if __name__ == '__main__':
-        unittest.main(verbosity=2)
+
+else:
+    class Test(unittest.TestCase):
+        def testHello(self):
+            pass
+
+if __name__ == '__main__':
+    unittest.main(verbosity=2)

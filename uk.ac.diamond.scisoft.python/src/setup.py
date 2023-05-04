@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="scisoftpy",
-    version="2.29.0",
+    version="2.29.1",
     description="DAWN Python Extensions",
     author="Peter Chang",
     author_email="dataanalysis@diamond.ac.uk",
@@ -20,12 +20,13 @@ setup(
     packages=find_packages(exclude=["uk*"]),
     install_requires=[
         "h5py", # depends on numpy
-        "pillow",
+        "Pillow",
         "six",
+        "packaging; python_version >= '3.10'",
         "subprocess32; python_version < '3' and os_name == 'posix'"
     ],
     extra_requires={
-        "all": [ "tifffile", "pycbf; python_version >= '3'" ],
+        "all": [ "tifffile[all]", "pycbf[all]; python_version >= '3'" ],
     },
     zip_safe=True,
     url="https://gerrit.diamond.ac.uk/plugins/gitiles/scisoft/scisoft-core",

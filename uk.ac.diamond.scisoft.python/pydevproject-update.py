@@ -41,7 +41,7 @@ def check_and_update(project_file, target_file=None, output_file_or_dir=None):
             else:
                 output_file = output_file_or_dir
             if output_file.is_dir():
-                raise ValueError('Output file |%s| should not be a directory', output_file)
+                raise ValueError(f'Output file |{output_file}| should not be a directory')
             elif output_file.exists():
                 logging.warning('Overwriting output file %s', output_file)
             out = str(output_file)

@@ -1,5 +1,5 @@
 {% set name = "scisoftpy" %}
-{% set version = "2.29.0" %}
+{% set version = "2.29.1" %}
 
 package:
   name: {{ name }}
@@ -21,12 +21,13 @@ requirements:
 
   run:
     - python
-    - h5py # depends on numpy
+    - h5py  # depends on numpy
     - pillow
     - six
     - tifffile
-    - pycbf # [py3k]
-    - subprocess32 # [unix and py2k]
+    - pycbf  # [py3k]
+    - packaging  # [py >= 40]
+    - subprocess32  # [unix and py2k]
 
 test:
   imports:

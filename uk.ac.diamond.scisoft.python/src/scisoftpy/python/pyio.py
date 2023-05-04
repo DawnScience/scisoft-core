@@ -461,24 +461,28 @@ class TIFFfileLoader(PythonLoader):
 
         t = _tf.TiffFile(self.name)
 
-        if stack:
-            data.append(("stack", t.asarray()))
-        else:
-            for i, p in enumerate(t.pages):
-                d = p.asarray()
-                data.append(("image-%02d" % (i+1,), d))
-                if self.load_metadata:
-                    for k,v in p.tags.items():
-                        metadata[k] = v.value
+        try:
+            if stack:
+                data.append(("stack", t.asarray()))
+            else:
+                for i, p in enumerate(t.pages):
+                    d = p.asarray()
+                    data.append(("image-%02d" % (i+1,), d))
+                    if self.load_metadata:
+                        for k,v in p.tags.items():
+                            metadata[k] = v.value
+    
+            pho = t.pages[0].photometric
+            if pho == pho.RGB:
+                # convert to an rgb dataset
+                for i, d in enumerate(data):
+                    di = _core.asarray(d[1], dtype=_core.int16).view(_RGB)
+                    if not self.ascolour:
+                        di = di.get_grey()
+                    data[i] = (d[0], di)
+        finally:
+            t.close()
 
-        pho = t.pages[0].photometric
-        if pho == pho.RGB:
-            # convert to an rgb dataset
-            for i, d in enumerate(data):
-                di = _core.asarray(d[1], dtype=_core.int16).view(_RGB)
-                if not self.ascolour:
-                    di = di.get_grey()
-                data[i] = (d[0], di)
         return DataHolder(data, metadata, warn)
 
 if _tf is None:

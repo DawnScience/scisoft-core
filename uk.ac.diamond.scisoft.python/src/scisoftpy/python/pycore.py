@@ -19,11 +19,15 @@
 
 import numpy as _np #@UnresolvedImport
 
-from distutils.version import LooseVersion
+import sys
+if sys.hexversion < 0x030a0000:
+    from distutils.version import LooseVersion as _Version
+else:
+    from packaging.version import parse as _Version
 
-_np_version_cur = LooseVersion(_np.version.version)
-_is_np_version_ge_1_8 = _np_version_cur >= LooseVersion('1.8')
-_is_np_version_ge_1_18 = _np_version_cur >= LooseVersion('1.18')
+_np_version_cur = _Version(_np.version.version)
+_is_np_version_ge_1_8 = _np_version_cur >= _Version('1.8')
+_is_np_version_ge_1_18 = _np_version_cur >= _Version('1.18')
 
 newaxis = _np.newaxis
 

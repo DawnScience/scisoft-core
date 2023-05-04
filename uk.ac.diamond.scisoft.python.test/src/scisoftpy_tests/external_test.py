@@ -28,9 +28,6 @@ import scisoftpy as dnp
 import shutil
 
 class Test(unittest.TestCase):
-    from os import path
-    epath_list = [path.dirname(__file__)]
-
     def checkArgs(self, arg):
         d = save_args(arg)
         a = load_args(d)
@@ -76,11 +73,17 @@ class Test(unittest.TestCase):
         pprint(pypath)
 #        p = sub.Popen('echo $PYTHONPATH', shell=True, env=_env, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE)
 #        print p.communicate()
-        p = sub.Popen([pyexe,], env=env, bufsize=1, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE, universal_newlines=True)
-        p.stdin.write('print("Hello World")\n')
-        p.stdin.write('print("Hello World2")\n')
-        p.stdin.close()
-        l = p.stdout.read()
+        p = sub.Popen([pyexe,], env=env, bufsize=1, close_fds=True, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE, universal_newlines=True)
+        try:
+            p.stdin.write('print("Hello World")\n')
+            p.stdin.write('print("Hello World2")\n')
+            p.stdin.close()
+            l = p.stdout.read()
+        finally:
+            p.stdout.close()
+            p.stderr.close()
+            p.terminate()
+            p.wait()
         print(l)
 
 
@@ -123,25 +126,25 @@ class Test(unittest.TestCase):
     def testException(self):
 #        from external_functions import funexception
 #        funexception()
-        efunexception = dnp.external.create_function("funexception", "external_functions", extra_path=Test.epath_list, dls_module=True)
+        efunexception = dnp.external.create_function("funexception", "external_functions", dls_module=True)
         self.assertRaises(ValueError, efunexception)
 #        efunexception()
 
     def testPyAna(self):
-        efun = dnp.external.create_function("funpyana", "external_functions", extra_path=Test.epath_list, dls_module="python/anaconda")
+        efun = dnp.external.create_function("funpyana", "external_functions", dls_module="python/anaconda")
         print('2,7', end=' ')
         self.assertEqual(efun(), (2,7))
         print('passed')
 
     def testArrayScalar(self):
-        efun = dnp.external.create_function("funarrayscalar", "external_functions", extra_path=Test.epath_list, dls_module=True)
+        efun = dnp.external.create_function("funarrayscalar", "external_functions", dls_module=True)
         a = 2+3j, 1., 123, True
         print(a, end=' ')
         self.assertEqual(efun(), a)
         print('passed')
 
     def testSpeed(self):
-        efun = dnp.external.create_function("fun", "external_functions", extra_path=Test.epath_list, dls_module=True, keep=False)
+        efun = dnp.external.create_function("fun", "external_functions", dls_module=True, keep=False)
 
         try:
             from time import clock as _clock
@@ -152,7 +155,7 @@ class Test(unittest.TestCase):
         for _i in range(10):
             efun()
         print(_clock() - t)
-        efun = dnp.external.create_function("fun", "external_functions", extra_path=Test.epath_list, dls_module=True, keep=True)
+        efun = dnp.external.create_function("fun", "external_functions", dls_module=True, keep=True)
         t = _clock()
         for _i in range(10):
             efun()
@@ -185,8 +188,16 @@ with open('/tmp/e.log', 'w') as _log:
     sleep(1)
     _i += 1
 '''
-        p = sub.Popen([pyexe, '-c', cmds], env=env, bufsize=1, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE, universal_newlines=True)
-        l = p.stdout.read()
+        p = sub.Popen([pyexe, '-c', cmds], env=env, bufsize=1, close_fds=True, stdin=sub.PIPE, stdout=sub.PIPE, stderr=sub.PIPE, universal_newlines=True)
+        try:
+            l = p.stdout.read()
+        finally:
+            p.stdin.close()
+            p.stdout.close()
+            p.stderr.close()
+            p.terminate()
+            p.wait()
+
         print(l)
 
 if __name__ == '__main__':

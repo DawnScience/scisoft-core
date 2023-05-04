@@ -333,7 +333,7 @@ class Test(unittest.TestCase):
         self.assertEqual(np.float64, np.asfarray([1.,]).dtype, "")
         self.assertEqual(np.float64, np.asfarray([1.,], dtype=np.int).dtype, "")
         self.assertEqual(np.float64, np.asfarray([1,]).dtype, "")
-        self.failUnlessRaises(TypeError, np.asfarray, [1+12j,])
+        self.assertRaises(TypeError, np.asfarray, [1+12j,])
 
     def testRoll(self):
         print('Roll testing')

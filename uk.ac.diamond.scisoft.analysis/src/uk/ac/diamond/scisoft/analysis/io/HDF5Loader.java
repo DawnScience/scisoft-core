@@ -860,9 +860,17 @@ public class HDF5Loader extends AbstractFileLoader {
 				Dataset d = DatasetFactory.zeros(type.isize, type.clazz, trueShape);
 				Object data = d.getBuffer();
 
-				if (type.isVariableLength) {
-					H5.H5Dread_VLStrings(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, (Object[]) data);
+				if (type.clazz.isAssignableFrom(StringDataset.class)) {
+					if (type.isVariableLength) {
+						H5.H5Dread_VLStrings(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, (Object[]) data);
+					} else {
+						H5.H5Dread_string(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, (String[]) data);
+					}
 				} else {
+					if (type.isVariableLength) {
+						logger.error("Non-string variable length datasets are not supported");
+						return false;
+					}
 					H5.H5Dread(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, data);
 				}
 

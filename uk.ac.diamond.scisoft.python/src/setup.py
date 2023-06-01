@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="scisoftpy",
-    version="2.29.1",
+    version="2.30.0",
     description="DAWN Python Extensions",
     author="Peter Chang",
     author_email="dataanalysis@diamond.ac.uk",

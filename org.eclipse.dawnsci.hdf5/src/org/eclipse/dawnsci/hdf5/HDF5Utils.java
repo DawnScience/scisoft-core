@@ -224,7 +224,7 @@ public class HDF5Utils {
 			int[] start = new int[shape.length];
 			int[] step = new int[shape.length];
 			Arrays.fill(step, 1);
-			data = readDataset(fid, node, start, shape, step, -1, -1, false);
+			data = readDataset(fid, node, start, shape, step, -1, null, false);
 		} catch (Throwable le) {
 			logAndThrowSFHException(le, "Problem loading dataset %s in %s", node, fid);
 		}
@@ -556,11 +556,16 @@ public class HDF5Utils {
 				Object odata = data.getBuffer();
 
 				try {
-					if (type.isVariableLength) {
-						H5.H5Dread_VLStrings(did, ntid, msid, sid, HDF5Constants.H5P_DEFAULT, (Object[]) odata);
-					} else if (StringDataset.class.isAssignableFrom(type.clazz)) {
-						H5.H5Dread_string(did, ntid, msid, sid, HDF5Constants.H5P_DEFAULT, (String[]) odata);
+					if (StringDataset.class.isAssignableFrom(type.clazz)) {
+						if (type.isVariableLength) {
+							H5.H5Dread_VLStrings(did, ntid, msid, sid, HDF5Constants.H5P_DEFAULT, (Object[]) odata);
+						} else {
+							H5.H5Dread_string(did, ntid, msid, sid, HDF5Constants.H5P_DEFAULT, (String[]) odata);
+						}
 					} else {
+						if (type.isVariableLength) {
+							logAndThrowNexusException(null, "Non-string variable length attribute are not supported for %s", dataPath);
+						}
 						H5.H5Dread(did, ntid, msid, sid, HDF5Constants.H5P_DEFAULT, odata);
 					}
 					if (extend) {
@@ -1946,7 +1951,7 @@ public class HDF5Utils {
 					if (type.clazz.isAssignableFrom(StringDataset.class)) {
 						if (type.isVariableLength) {
 							String[] buffer = new String[strCount];
-							H5.H5AreadVL(attrId, nativeTypeId, buffer);
+							H5.H5Aread_VLStrings(attrId, nativeTypeId, buffer);
 							dataset = DatasetFactory.createFromObject(buffer).reshape(iShape);
 						} else {
 							byte[] buffer = new byte[(int) (strCount * type.size)];
@@ -1962,6 +1967,9 @@ public class HDF5Utils {
 							dataset = DatasetFactory.createFromObject(strings).reshape(iShape);
 						}
 					} else {
+						if (type.isVariableLength) {
+							logAndThrowNexusException(null, "Non-string variable length attribute are not supported: %s for %s", name, path);
+						}
 						dataset = DatasetFactory.zeros(type.clazz, iShape);
 						Serializable buffer = dataset.getBuffer();
 						H5.H5Aread(attrId, nativeTypeId, buffer);

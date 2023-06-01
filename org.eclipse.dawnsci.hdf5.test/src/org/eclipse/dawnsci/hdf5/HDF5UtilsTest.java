@@ -11,10 +11,12 @@ package org.eclipse.dawnsci.hdf5;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 
+import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
 import org.eclipse.january.asserts.TestUtils;
 import org.eclipse.january.dataset.ByteDataset;
@@ -98,5 +100,12 @@ public class HDF5UtilsTest extends TestBase {
 		d = HDF5Utils.readDataset(f, "/group1/data1", new int[] {0, 0}, new int[] {4, 3}, new int[] {1,1}, 1, FloatDataset.class, true);
 		TestUtils.assertDatasetEquals(DatasetFactory.zeros(FloatDataset.class, shape1).fill(-1.0), d);
 		HDF5FileFactory.releaseFile(dst, true);
+	}
+
+	@Test
+	public void testVLDataset() throws Exception {
+		HDF5File f = HDF5FileFactory.acquireFile("testfiles/vlength.h5", false);
+		assertThrows("Not supported", ScanFileHolderException.class, () -> HDF5Utils.loadDataset(f, "scalar_f"));
+		assertThrows("Not supported", ScanFileHolderException.class, () -> HDF5Utils.loadDataset(f, "array_f"));
 	}
 }

@@ -39,4 +39,26 @@ public class FunctionFittingModel extends AbstractOperationModel {
 		firePropertyChange("optimiser", this.optimiser, this.optimiser = optimiser);
 	}
 	
+	@OperationModelField(description="Choose whether to use the inital or result parameters from the file", label = "Use Initial Parameters")
+	private boolean useInitial = true;
+	
+	public boolean isUseInitial() {
+		return useInitial;
+	}
+	
+	public void setUseInitial(boolean useInitial) {
+		firePropertyChange("useInitial", this.useInitial, this.useInitial = useInitial);
+	}
+	
+	@OperationModelField(description="Choose whether to use the limits specified in the file. Caution: some optimizers may fail to converge when combined with limits", label = "Use Limits")
+	private boolean useLimits = false;
+	
+	public boolean isUseLimits() {
+		return useLimits;
+	}
+	
+	public void setUseLimits(boolean useLimits) {
+		firePropertyChange("useLimits", this.useLimits, this.useLimits = useLimits);
+	}
+	
 }

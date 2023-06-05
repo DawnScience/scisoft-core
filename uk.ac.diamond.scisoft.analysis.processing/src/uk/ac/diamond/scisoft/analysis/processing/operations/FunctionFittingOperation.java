@@ -201,8 +201,11 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 						double[] points = new double[]{p1[0],p2[0]};
 
 						Add resultFunc = new Add();
+						
+						String keyFilter = model.isUseInitial() ? "initial" : "result"; 
+						
 						for (Entry<String,IFunction> f : functions.entrySet()){
-							if (f.getKey().contains("initial")) continue;
+							if (! f.getKey().contains(keyFilter)) continue;
 							resultFunc.addFunction(f.getValue());
 						}
 
@@ -214,7 +217,7 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 						
 						Add original = (Add)resultFunc.copy();
 
-						if (model.getOptimiser() == FIT_ALGORITHMS.APACHELEVENBERGMAQUARDT) clearRanges(original);
+						if (! model.isUseLimits() ) clearRanges(original);
 						
 						FitInformation i = new FitInformation();
 						i.original = original;

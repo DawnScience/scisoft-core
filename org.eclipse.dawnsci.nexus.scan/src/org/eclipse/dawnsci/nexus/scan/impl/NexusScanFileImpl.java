@@ -174,7 +174,7 @@ class NexusScanFileImpl implements NexusScanFile {
 			nexusBuilderFile = fileBuilder.createFile(async, useSwmr);
 			nexusBuilderFile.openToWrite();
 		} catch (NexusException e) {
-			throw new NexusException("Cannot create nexus file", e);
+			throw new NexusException("Cannot create nexus file: " + e.getMessage(), e);
 		}
 	}
 	

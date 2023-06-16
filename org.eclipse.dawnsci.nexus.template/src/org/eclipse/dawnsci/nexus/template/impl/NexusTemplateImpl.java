@@ -42,8 +42,12 @@ public class NexusTemplateImpl implements NexusTemplate {
 	@Override
 	public void apply(Tree tree) throws NexusException {
 		logger.debug("Applying template {} to in-memory nexus tree", templateName);
-		final NexusContext nexusContext = NexusContextFactory.createInMemoryContext(tree);
-		applyTemplate(nexusContext);
+		try {
+			final NexusContext nexusContext = NexusContextFactory.createInMemoryContext(tree);
+			applyTemplate(nexusContext);
+		} catch (NexusException e) {
+			throw new NexusException("Applying template '" + templateName + "' failed:" + e.getMessage(), e);
+		}
 	}
 	
 	@Override

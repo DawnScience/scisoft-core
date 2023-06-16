@@ -44,7 +44,7 @@ public class NexusTemplateServiceImpl implements NexusTemplateService {
 			logger.debug("Creating template from file: {}", templateFilePath);
 			return createTemplate(filePath.getFileName().toString(), loadTemplate(reader));
 		} catch (ScannerException | IOException e) {
-			throw new NexusException("Could not read template file: " + templateFilePath, e);
+			throw new NexusException("Could not read template file '" + templateFilePath + "': " + e.getMessage(), e);
 		}
 	}
 	

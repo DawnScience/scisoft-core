@@ -30,6 +30,7 @@ import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.analysis.tree.impl.GroupNodeImpl;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
+import org.eclipse.dawnsci.nexus.NexusUtils;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -372,7 +373,7 @@ public abstract class NXobjectImpl extends GroupNodeImpl implements NXobject {
 			
 			dataset.setObjectAbs(0, value);
 		} else {
-			Dataset dataset = DatasetFactory.createFromObject(value);
+			Dataset dataset = NexusUtils.createFromObject(value, name);
 			dataset.setName(name);
 			dataNode = createDataNode(name, dataset);
 			cached.put(name, dataset);

@@ -11,6 +11,7 @@ import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NexusBaseClass;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
+import org.eclipse.dawnsci.nexus.NexusUtils;
 import org.eclipse.dawnsci.nexus.context.NexusContext;
 import org.eclipse.dawnsci.nexus.context.NexusContextType;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -106,7 +107,7 @@ public abstract class AbstractInMemoryNexusContext implements NexusContext {
 		logDebug("Creating new data node with name '{}' and value '{}' to parent group '{}'", name, value, parent);
 		final DataNode dataNode = NexusNodeFactory.createDataNode();
 		parent.addDataNode(name, dataNode);
-		dataNode.setDataset(DatasetFactory.createFromObject(value));
+		dataNode.setDataset(NexusUtils.createFromObject(value, name));
 		return dataNode;
 	}
 	

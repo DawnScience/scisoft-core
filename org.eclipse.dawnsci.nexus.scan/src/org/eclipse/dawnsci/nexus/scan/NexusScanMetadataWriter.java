@@ -47,6 +47,7 @@ import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.NexusScanInfo;
 import org.eclipse.dawnsci.nexus.NexusScanInfo.ScanRole;
+import org.eclipse.dawnsci.nexus.NexusUtils;
 import org.eclipse.dawnsci.nexus.builder.CustomNexusEntryModification;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectWrapper;
@@ -179,7 +180,7 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		
 		// write the scan start time
 		scanStartTime = ZonedDateTime.now().truncatedTo(MILLIS); // record the current time
-		scanMetadataCollection.setField(FIELD_NAME_SCAN_START_TIME, createDataset(scanStartTime));
+		scanMetadataCollection.setField(FIELD_NAME_SCAN_START_TIME, createDataset(scanStartTime, FIELD_NAME_SCAN_START_TIME));
 		
 		// write the estimated scan time
 		final long estimatedScanTimeMillis = scanInfo.getEstimatedScanTime();
@@ -357,12 +358,12 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		}
 	}
 	
-	public Dataset createDataset(Object data) {
+	public Dataset createDataset(Object data, String datasetName) {
 		if (data instanceof ZonedDateTime zonedDateTime) {
 			// write timestamps is ISO-8601 format
 			return DatasetFactory.createFromObject(MILLISECOND_DATE_FORMAT.format(zonedDateTime));
 		}
-		return DatasetFactory.createFromObject(data);
+		return NexusUtils.createFromObject(data, datasetName);
 	}
 	
 	public void scanFinished() throws NexusException {
@@ -393,7 +394,7 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 	}
 	
 	protected void writeScalarData(String datasetName, ILazyWriteableDataset dataset, Object data) throws NexusException {
-		final Dataset datasetToWrite = createDataset(data);
+		final Dataset datasetToWrite = createDataset(data, datasetName);
 		try {
 			dataset.setSlice(null, datasetToWrite, new SliceND(SCALAR_SHAPE));
 		} catch (Exception e) {

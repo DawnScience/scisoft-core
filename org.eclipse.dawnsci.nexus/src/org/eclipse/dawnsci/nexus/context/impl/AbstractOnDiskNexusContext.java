@@ -9,6 +9,7 @@ import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.nexus.NexusBaseClass;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
+import org.eclipse.dawnsci.nexus.NexusUtils;
 import org.eclipse.dawnsci.nexus.context.NexusContext;
 import org.eclipse.dawnsci.nexus.context.NexusContextType;
 import org.eclipse.january.dataset.DatasetFactory;
@@ -54,7 +55,7 @@ public abstract class AbstractOnDiskNexusContext implements NexusContext {
 	@Override
 	public DataNode createDataNode(GroupNode parent, String name, Object value) throws NexusException {
 		logDebug("Creating new data node with name '{}' and value '{}' to parent group '{}'", name, value, parent);
-		final IDataset dataset = DatasetFactory.createFromObject(value);
+		final IDataset dataset = NexusUtils.createFromObject(value, name);
 		return nexusFile.createData(parent, name, dataset);
 	}
 	

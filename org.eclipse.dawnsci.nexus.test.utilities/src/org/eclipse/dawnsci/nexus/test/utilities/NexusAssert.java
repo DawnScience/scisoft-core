@@ -48,6 +48,7 @@ import org.eclipse.dawnsci.nexus.NXdata;
 import org.eclipse.dawnsci.nexus.NXentry;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NXroot;
+import org.eclipse.dawnsci.nexus.NexusUtils;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.BooleanDataset;
 import org.eclipse.january.dataset.ByteDataset;
@@ -218,7 +219,7 @@ public class NexusAssert {
 	}
 
 	public static void assertDatasetValue(Object expectedValue, ILazyDataset dataset) {
-		assertDatasetsEqual(null, DatasetFactory.createFromObject(expectedValue), dataset);
+		assertDatasetsEqual(null, NexusUtils.createFromObject(expectedValue, dataset.getName()), dataset);
 	}
 
 	public static void assertDatasetsEqual(final String path, final ILazyDataset expectedDataset,
@@ -521,7 +522,7 @@ public class NexusAssert {
 			}
 		}
 		
-		return DatasetFactory.createFromObject(flatDatasetArray);
+		return NexusUtils.createFromObject(flatDatasetArray, dataset.getName());
 	}
 
 	private static void assertScanShape(NXcollection diamondScanCollection, int... sizes) {

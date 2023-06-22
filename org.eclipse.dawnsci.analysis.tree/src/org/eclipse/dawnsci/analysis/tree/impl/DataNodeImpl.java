@@ -181,7 +181,7 @@ public class DataNodeImpl extends NodeImpl implements DataNode, Serializable {
 
 	@Override
 	public void setString(final String text) {
-		setDataset(DatasetFactory.createFromObject(text));
+		setDataset(DatasetFactory.createFromObject(StringDataset.class, text));
 		this.text = text; // the cached value
 		if (text != null) {
 			maxTextLength = text.getBytes().length;

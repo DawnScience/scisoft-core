@@ -69,7 +69,7 @@ public interface IWritableNexusDevice<N extends NXobject> extends INexusDevice<N
 	 * @throws DatasetException if an error occurs writing to the dataset
 	 */
 	public static void writeDataset(ILazyWriteableDataset toWrite, Object data, SliceND scanSlice) throws DatasetException {
-		final Dataset dataset = data instanceof Dataset ? (Dataset) data : DatasetFactory.createFromObject(data);
+		final Dataset dataset = data instanceof Dataset ? (Dataset) data : NexusUtils.createFromObject(data, toWrite.getName());
 
 		final SliceND sliceND;
 		

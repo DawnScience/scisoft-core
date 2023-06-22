@@ -50,6 +50,25 @@ public class NexusUtils {
 
 	public static final ChunkingStrategy DEFAULT_CHUNK_STRATEGY = ChunkingStrategy.SKEW_LAST;
 
+	
+	/**
+	 * Simple wrapper around DatasetFactory.createFromObject to perform a null check.
+	 * <p>
+	 * This is necessary because by default if null is passed to this method an ObjectDataset
+	 * is returned, which cannot be saved to a HDF5 file. See DAQ-4649 for more details.
+	 * @param object argument passed to DatasetFactory.createFromObject.
+	 * @param datasetName the name of the data set
+	 */
+	public static Dataset createFromObject(Object object, String datasetName) {
+		if (object == null) {
+			throw new IllegalArgumentException("Cannot create %s dataset from null".formatted(datasetName));
+		}
+		
+		final Dataset dataset = DatasetFactory.createFromObject(object);
+		dataset.setName(datasetName);
+		return dataset;
+	}
+	
 	/**
 	 * Possible strategies for estimating chunking
 	 */
@@ -417,8 +436,7 @@ public class NexusUtils {
 		if (value == null || name == null || name.isEmpty())
 			return null;
 
-		Dataset a = DatasetFactory.createFromObject(value);
-		a.setName(name);
+		Dataset a = createFromObject(value, name);
 
 		DataNode d = null;
 		try {
@@ -491,8 +509,7 @@ public class NexusUtils {
 		if (value == null || name == null || name.isEmpty())
 			return;
 
-		Dataset a = DatasetFactory.createFromObject(value);
-		a.setName(name);
+		Dataset a = createFromObject(value, name);
 		Attribute attr = file.createAttribute(a);
 		file.addAttribute(node, attr);
 	}

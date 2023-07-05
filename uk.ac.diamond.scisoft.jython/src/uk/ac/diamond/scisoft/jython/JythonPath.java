@@ -79,6 +79,7 @@ public class JythonPath {
 		"com.springsource.org.apache.commons",
 		"com.springsource.javax.media.jai.core",
 		"com.springsource.javax.media.jai.codec",
+		"JLargeArrays",
 		"JTransforms",
 		"jai_imageio",
 		"it.tidalwave.imageio.raw",

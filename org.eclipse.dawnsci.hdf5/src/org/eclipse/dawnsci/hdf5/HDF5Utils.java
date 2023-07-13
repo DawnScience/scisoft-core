@@ -462,29 +462,6 @@ public class HDF5Utils {
 	 * @param start
 	 * @param count
 	 * @param step
-	 * @param dtype (can be -1 for dataset type from file)
-	 * @param isize (can be -1 for item size from file)
-	 * @param extend
-	 * @return dataset
-	 * @throws NexusException
-	 * @deprecated Use {@link #readDataset(HDF5File, String, int[], int[], int[], int, Class, boolean)}
-	 */
-	@Deprecated(since="Dawn 2.17")
-	public static Dataset readDataset(HDF5File f, final String dataPath, final int[] start, final int[] count,
-			final int[] step, final int dtype, final int isize, final boolean extend)
-					throws NexusException {
-		logger.deprecatedMethod("readDataset(HDF5File, String, int[], int[], int[], int, int, boolean)", 
-				null, "readDataset(HDF5File, String, int[], int[], int[], int, Class, boolean)");
-		return readDataset(f, dataPath, start, count, step, isize, DTypeUtils.getInterface(dtype), extend);
-	}
-
-	/**
-	 * Read dataset from given file ID
-	 * @param f
-	 * @param dataPath
-	 * @param start
-	 * @param count
-	 * @param step
 	 * @param isize can be -1 for item size from file
 	 * @param clazz can be null for dataset interface from file
 	 * @param extend

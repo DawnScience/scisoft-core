@@ -492,7 +492,26 @@ public class HDF5Utils {
 	 * @throws NexusException
 	 */
 	public static Dataset readDataset(HDF5File f, final String dataPath, final int[] start, final int[] count,
-			final int[] step, final int isize, final Class<? extends Dataset> clazz, final boolean extend)
+			final int[] step, final int isize, final Class<? extends Dataset> clazz, final boolean extend) throws NexusException {
+		return readDataset(f, dataPath, start, count, step, isize, clazz, extend, false);
+	}
+
+	/**
+	 * Read dataset from given file ID
+	 * @param f
+	 * @param dataPath
+	 * @param start
+	 * @param count
+	 * @param step
+	 * @param isize can be -1 for item size from file
+	 * @param clazz can be null for dataset interface from file
+	 * @param extend if true, then widen dataset type to accommodate all values as unsigned if necessary
+	 * @param checkUnsigned if true, then check that data is unsigned before extending
+	 * @return dataset
+	 * @throws NexusException
+	 */
+	public static Dataset readDataset(HDF5File f, final String dataPath, final int[] start, final int[] count,
+			final int[] step, final int isize, final Class<? extends Dataset> clazz, final boolean extend, final boolean checkUnsigned)
 					throws NexusException {
 		Dataset data = null;
 
@@ -526,6 +545,8 @@ public class HDF5Utils {
 			long sid = -1;
 			long msid = -1;
 			int rank;
+
+			boolean unsignExtend = checkUnsigned ? type.unsigned && extend : extend;
 
 			// create a new scalar dataset
 			try {
@@ -568,7 +589,7 @@ public class HDF5Utils {
 						}
 						H5.H5Dread(did, ntid, msid, sid, HDF5Constants.H5P_DEFAULT, odata);
 					}
-					if (extend) {
+					if (unsignExtend) {
 						data = DatasetUtils.makeUnsigned(data, true);
 					}
 				} catch (HDF5LibraryException e) {

@@ -355,7 +355,7 @@ public class ImageServiceBean {
 		/**
 		 * NOTE These strings are in preferences and referenced by value in LivePerspective
 		 */
-		MEAN(0, "Mean"), MEDIAN(1, "Median"), OUTLIER_VALUES(2, "Outlier Values");
+		MEAN(0, "Mean"), MEDIAN(1, "Median"), OUTLIER_VALUES(2, "Outlier Values"), FULL_RANGE(3, "Full Range");
 
 		public final String label;
 		public final int    index;
@@ -375,6 +375,7 @@ public class ImageServiceBean {
 			histoTypes.add(MEAN);
 			histoTypes.add(MEDIAN);
 			histoTypes.add(OUTLIER_VALUES);
+			histoTypes.add(FULL_RANGE);
 		}
 		public static HistoType forLabel(String label) {
 			for (HistoType t : histoTypes) {

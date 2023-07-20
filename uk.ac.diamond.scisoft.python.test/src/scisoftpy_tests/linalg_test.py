@@ -41,14 +41,30 @@ class Test(unittest.TestCase):
                         self.assertAlmostEqual(la[i][j][k], ds[i, j, k])
 
     def testDot(self):
-        a = np.arange(1,9).reshape(2, 2, 2)
-        b = np.array([-2, -3, 5, 7]).reshape(2, 2)
-        self.checkitems([35, 63], np.tensordot(a, b))
-        self.checkitems([63, 70], np.tensordot(b, a))
+        a = np.arange(1,13).reshape(2, 3, 2)
+        b = np.array([-2, -3, 5, 7, 9, -11]).reshape(3, 2)
+        self.checkitems([14, 44], np.tensordot(a, b))
+        self.checkitems([-21, -16], np.tensordot(b.T, a))
+        self.checkitems([-21, -16], np.tensordot(b, a, ((0,1), (1,0))))
+        self.checkitems([-21, -16], np.tensordot(b, a, ((1,0), (0,1))))
+        bt = b.T.reshape(1,2,3)
+        self.checkitems([[[ -8,  19, -13], [-18,  43, -17], [-28,  67, -21]],
+                         [[-38,  91, -25], [-48, 115, -29], [-58, 139, -33]]], np.matmul(a, bt))
+        self.checkitems([[[ 58,  70], [-37, -44]], [[130, 142], [-79, -86]]], np.matmul(bt, a))
+        self.checkitems([[[[ -8,  19, -13]], [[-18,  43, -17]], [[-28,  67, -21]]],
+                         [[[-38,  91, -25]], [[-48, 115, -29]], [[-58, 139, -33]]]], np.dot(a, bt))
+        self.checkitems([[[[ 58,  70], [130, 142]], [[-37, -44], [-79, -86]]]], np.dot(bt, a))
+        m1 = np.array([[1.0, 0],[0 , 0.]])
+        m2 = np.array([[0.70712579, -0.70708778], [0.70708777, 0.70712578]])
+        self.checkitems([[0.70712579, -0.70708778], [0.0000000, 0.0000000]], np.dot(m1, m2))
+        self.checkitems([[ 0.70712579+0.j, -0.70708778+0.j], [ 0. +0.j,  0. +0.j]], np.dot(m1, m2 + 0.j))
+        self.checkitems([[ 0.70712579+0.5j, -0.70708778+0.5j], [ 0. +0.j,  0. +0.j]], np.dot(m1, m2 + 0.5j))
+
         a = np.arange(60.).reshape(3,4,5)
         b = np.arange(24.).reshape(4,3,2)
-        self.checkitems([[ 4400.,  4730.], [ 4532.,  4874.],
-       [ 4664.,  5018.], [ 4796.,  5162.], [ 4928.,  5306.]], np.tensordot(a,b, axes=([1,0],[0,1])))
+        self.checkitems([[ 4400.,  4730.], [ 4532.,  4874.], [ 4664.,  5018.], [ 4796.,  5162.], [ 4928.,  5306.]],
+                        np.tensordot(a,b, axes=([1,0],[0,1])))
+
 
     def testPower(self):
         a = np.array([[0, 1], [-1, 0]]) # matrix equiv. of the imaginary unit
@@ -91,6 +107,19 @@ class Test(unittest.TestCase):
     def testDet(self):
         a = np.array([[1, 2], [3, 4]])
         self.assertAlmostEqual(-2.0, np.linalg.det(a))
+        self.assertAlmostEqual(-2.0, np.linalg.det(a+0.j))
+        import os
+        if os.name == 'java':
+            with self.assertRaises(ValueError):
+                np.linalg.det(a+0.5j)
+        else:
+            self.assertAlmostEqual(-2.0, np.linalg.det(a+0.5j))
+
+    def testTrace(self):
+        a = np.array([[1, 2], [3, 4]])
+        self.assertAlmostEqual(5, np.trace(a))
+        self.assertAlmostEqual(5, np.trace(a+0.j))
+        self.assertAlmostEqual(5+1j, np.trace(a+0.5j))
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

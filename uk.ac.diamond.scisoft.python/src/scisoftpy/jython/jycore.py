@@ -20,8 +20,6 @@ Core package contains wrappers for Java dataset classes
 
 import org.eclipse.january.dataset.Dataset as _ds
 import org.eclipse.january.dataset.LazyDataset as _lds
-import org.eclipse.january.dataset.ShapeUtils as _sutils
-import org.eclipse.january.dataset.DatasetFactory as _df
 
 import org.eclipse.january.dataset.BooleanDataset as _booleands
 import org.eclipse.january.dataset.ByteDataset as _byteds
@@ -42,6 +40,8 @@ import org.eclipse.january.dataset.CompoundDoubleDataset as _cpddoubleds
 import org.eclipse.january.dataset.DateDataset as _dateds
 import org.eclipse.january.dataset.StringDataset as _stringds
 
+import org.eclipse.january.dataset.Comparisons as _jcmps
+import org.eclipse.january.dataset.DatasetFactory as _df
 import org.eclipse.january.dataset.DatasetUtils as _dsutils
 import org.eclipse.january.dataset.InterfaceUtils as _ifutils
 import org.eclipse.january.dataset.ShapeUtils as _shutils
@@ -213,7 +213,16 @@ def Sciwrap(a):
         return ndarray(buffer=a)
     return a
 
-def _jinput(arg): # strip for java input
+def _check_complex(arg, allow_complex, return_java):
+    ja = arg._jdataset()
+    if not allow_complex and ja.isComplex():
+        if _jcmps.anyTrue(ja.getImaginaryView()):
+            raise ValueError("Complex value not allowed")
+        jr = ja.getRealView()
+        return jr if return_java else Sciwrap(jr)
+    return ja if return_java else arg
+
+def _jinput(arg, allow_complex=True): # strip for java input
     if isinstance(arg, dict):
         d = dict()
         for k,v in arg.items():
@@ -230,10 +239,14 @@ def _jinput(arg): # strip for java input
             return arg
         return [ _jinput(a) for a in arg if a is not None]
     elif isinstance(arg, ndarray):
-        return arg._jdataset()
+        return _check_complex(arg, allow_complex, True)
     elif isinstance(arg, lazyarray):
         return None # no equivalent at the moment
     elif isinstance(arg, complex):
+        if not allow_complex:
+            if arg.imag != 0:
+                raise ValueError("Complex value not allowed")
+            return arg.real
         return _jcomplex(arg.real, arg.imag)
 
     return arg
@@ -245,11 +258,11 @@ def _joutput(result): # wrap java output
         return [ Sciwrap(r) for r in result if r is not None ]
     return Sciwrap(result)
 
-def _convertjArgs(newargs, newkwargs):
-    nargs = [ _jinput(a) for a in newargs ]
+def _convertjArgs(newargs, newkwargs, allow_complex=True):
+    nargs = [ _jinput(a, allow_complex) for a in newargs ]
     nkwargs = dict()
     for k,v in newkwargs.iteritems():
-        nkwargs[k] = _jinput(v)
+        nkwargs[k] = _jinput(v, allow_complex)
     return nargs, nkwargs
 
 def _checkArgnames(argnames, args_to_convert):
@@ -257,22 +270,33 @@ def _checkArgnames(argnames, args_to_convert):
         if not inputname in argnames:
             raise ValueError('Input name %s is not an argument of the function' % str(inputname))
 
-def _convertArgsToArray(argnames, args_to_convert, args, kwargs):
+def _convertArgsToArray(argnames, args_to_convert, args, kwargs, allow_complex=True):
+    newargs = []
+    for a, n in zip(args, argnames):
+        if n in args_to_convert:
+            if not isinstance(a, ndarray):
+                a = array(a)
+            a = _check_complex(a, allow_complex, False)
+        newargs.append(a)
     newkwargs = {}
-    newargs = [array(a) if (n in args_to_convert and not isinstance(a, ndarray)) else a for a, n in zip(args, argnames)]
     for k, v in kwargs.iteritems():
-        newkwargs[k] = array(v) if (k in args_to_convert and not isinstance(v, ndarray)) else v
+        if k in args_to_convert:
+            if not isinstance(v, ndarray):
+                v = array(v)
+            v = _check_complex(v, allow_complex, False)
+        newkwargs[k] = v
     return newargs, newkwargs
 
-def _wrap(*args_to_convert):
+def _wrap(*args_to_convert, **kwargs):
     '''
     Ensure selected arguments are ndarrays by converting to ndarray if they are array_like
     '''
+    allow_complex=kwargs.get('allow_complex', True)
     if (len(args_to_convert) == 1 and callable(args_to_convert[0])):
         def decorator(f):
             @wraps(f)
             def new_f(*args, **kwargs):
-                nargs, nkwargs = _convertjArgs(args, kwargs)
+                nargs, nkwargs = _convertjArgs(args, kwargs, allow_complex)
                 return _joutput(f(*nargs, **nkwargs))
             return new_f
         return decorator(args_to_convert[0])
@@ -281,7 +305,7 @@ def _wrap(*args_to_convert):
         _checkArgnames(argnames, args_to_convert)
         @wraps(f)
         def new_f(*args, **kwargs):
-            newargs, newkwargs = _convertArgsToArray(argnames, args_to_convert, args, kwargs)
+            newargs, newkwargs = _convertArgsToArray(argnames, args_to_convert, args, kwargs, allow_complex)
             nargs, nkwargs = _convertjArgs(newargs, newkwargs)
             return _joutput(f(*nargs, **nkwargs))
         return new_f
@@ -331,10 +355,11 @@ def _wrapout(*args_to_convert): # wrap output only
         return new_f
     return decorator
 
-def _argsToArrayType(*args_to_convert):
+def _argsToArrayType(*args_to_convert, **kwargs):
     '''
     Ensure selected arguments are ndarrays by converting to ndarray if they are array_like
     '''
+    allow_complex=kwargs.get('allow_complex', False)
     if (len(args_to_convert) == 1 and callable(args_to_convert[0])):
         def decorator(f):
             @wraps(f)
@@ -923,7 +948,7 @@ class ndarray(object):
 
     def squeeze(self, axis=None): # TODO support 1.7 axis argument
         os = self.__dataset.getShapeRef()
-        if os == _sutils.squeezeShape(os, _jfalse):
+        if os == _shutils.squeezeShape(os, _jfalse):
             return self
         return Sciwrap(self.__dataset.squeeze())
 
@@ -1892,7 +1917,7 @@ def unravel_index(indices, dims):
     if isinstance(indices, (tuple, list)):
         indices = ndarray(buffer=indices)._jdataset()
     if not isinstance(indices, _ds):
-        return tuple(_sutils.getNDPositionFromShape(indices, dims))
+        return tuple(_shutils.getNDPositionFromShape(indices, dims))
     return tuple(_dsutils.calcPositionsFromIndexes(indices, dims))
 
 

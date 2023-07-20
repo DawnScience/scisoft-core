@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
@@ -257,47 +256,73 @@ public class DefaultNexusEntryBuilder implements NexusEntryBuilder {
 		if (defaultGroups == null) {
 			throw new IllegalStateException("There are no groups to add this element to. defaultGroups() must be invoked on this method before child groups can be added.");
 		}
-
-		if (nexusObject.getNexusBaseClass() == NexusBaseClass.NX_SAMPLE) {
-			// special case for NXsample, replace the existing skeleton NXsample group
-			nxSample = (NXsample) nexusObject;
-			nxEntry.removeGroupNode("sample");
-			nxEntry.setSample(nxSample);
-			defaultGroups.remove(nxSample); // update the default groups list
-			defaultGroups.add(nexusObject);
+		
+		if (defaultGroups.stream().map(NXobject::getNexusBaseClass).anyMatch(x -> x == nexusObject.getNexusBaseClass())) {
+			// special case for NXEntry, NXSample, NXInstrument: merge incoming with existing node
+			mergeIntoGroup(findGroupForCategory(nexusObject.getNexusBaseClass()), nexusObjectProvider, nexusObject);
+			
 		} else {
 			// normal case
-			final String name = nexusObjectProvider.getName();
-			final NexusBaseClass category = nexusObjectProvider.getCategory();
-
-			// find the parent group
-			NXobject parentGroup = null;
-			if (category != null) {
-				// if a category is specified, the parent group is the first group for this category
-				parentGroup = findGroupForCategory(category);
-			} else {
-				// otherwise the parent group is the first group we can add this type of object to
-				for (final NXobject group : defaultGroups) {
-					if (group.canAddChild(nexusObject)) {
-						parentGroup = group;
-						break;
-					}
-				}
-				if (parentGroup == null) {
-					throw new NexusException("Cannot find a parent group that accepts a " + nexusObject.getNexusBaseClass());
-				}
-			}
-			
-			// if a collection name is specified, get the parent collection - creating it if necessary
-			String collectionName = nexusObjectProvider.getCollectionName();
-			if (collectionName != null) {
-				parentGroup = getCollection(parentGroup, collectionName);
-			}
-
-			parentGroup.addGroupNode(name, nexusObject);
+			addChildToGroup(nexusObjectProvider, nexusObject);
 		}
 	}
 	
+	private <N extends NXobject> void addChildToGroup(NexusObjectProvider<N> nexusObjectProvider, N nexusObject) throws NexusException {
+		final String name = nexusObjectProvider.getName();
+		final NexusBaseClass category = nexusObjectProvider.getCategory();
+
+		// find the parent group
+		NXobject parentGroup = null;
+		if (category != null) {
+			// if a category is specified, the parent group is the first group for this category
+			parentGroup = findGroupForCategory(category);
+		} else {
+			// otherwise the parent group is the first group we can add this type of object to
+			for (final NXobject group : defaultGroups) {
+				if (group.canAddChild(nexusObject)) {
+					parentGroup = group;
+					break;
+				}
+			}
+			if (parentGroup == null) {
+				throw new NexusException("Cannot find a parent group that accepts a " + nexusObject.getNexusBaseClass());
+			}
+		}
+
+		// if a collection name is specified, get the parent collection - creating it if necessary
+		String collectionName = nexusObjectProvider.getCollectionName();
+		if (collectionName != null) {
+			parentGroup = getCollection(parentGroup, collectionName);
+		}
+
+		parentGroup.addGroupNode(name, nexusObject);
+	}
+
+	private <N extends NXobject> void mergeIntoGroup(NXobject group, NexusObjectProvider<N> nexusObjectProvider,N nexusObject) throws NexusException {
+		
+		var sharedEntries = group.getDataNodeNames().stream()
+				.filter(nexusObject.getDataNodeNames()::contains).toList();
+		if (!sharedEntries.isEmpty()) {
+			throw new NexusException("Cannot merge %s into %s as contains existing dataset(s): %s"
+					.formatted(nexusObjectProvider, group, sharedEntries));
+		}
+		sharedEntries = group.getAttributeNames().stream()
+				.filter(nexusObject.getAttributeNames()::contains)
+				.filter(attrName -> !"NX_class".equals(attrName)).toList();
+		if (!sharedEntries.isEmpty()) {
+			throw new NexusException("Cannot merge %s into %s as contains existing attribute(s): %s"
+					.formatted(nexusObjectProvider, group, sharedEntries));
+		}		
+		
+		for (var entry : nexusObject.getAllDatasets().entrySet()) {
+			group.setDataset(entry.getKey(), entry.getValue());
+		}
+		var it = nexusObject.getAttributeIterator();
+		while (it.hasNext()) {
+			group.addAttribute(it.next());
+		}
+	}
+		
 	private NXcollection getCollection(NXobject group, String collectionName) {
 		NXcollection collection = null;
 		

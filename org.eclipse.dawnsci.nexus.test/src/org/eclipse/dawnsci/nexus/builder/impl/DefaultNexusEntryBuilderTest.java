@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.dawnsci.nexus.NXcollection;
 import org.eclipse.dawnsci.nexus.NXdetector;
@@ -48,6 +49,8 @@ import org.eclipse.dawnsci.nexus.builder.NexusObjectWrapper;
 import org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder;
 import org.eclipse.dawnsci.nexus.validation.NexusValidationServiceImpl;
 import org.eclipse.dawnsci.nexus.validation.ValidationReport;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DoubleDataset;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -213,7 +216,11 @@ public class DefaultNexusEntryBuilderTest {
 
 			@Override
 			protected NXsample createNexusObject() {
-				return NexusNodeFactory.createNXsample();
+				var sample = NexusNodeFactory.createNXsample();
+				sample.setNameScalar("foo");
+				sample.setAttribute(null, "foo", "bar");
+				sample.setPressure(DatasetFactory.createRange(DoubleDataset.class, 4));
+				return sample;
 			}
 			
 		};
@@ -225,8 +232,15 @@ public class DefaultNexusEntryBuilderTest {
 		
 		entryBuilder.add(sampleProvider);
 		assertThat(nxEntry.getNumberOfGroupNodes(), is(2));
-		assertThat(nxEntry.getSample(), is(sameInstance(sampleProvider.getNexusObject())));
-		assertThat(nxEntry.getSample(), is(not(sameInstance(oldSample))));
+		assertThat(nxEntry.getSample(), is(not(sameInstance(sampleProvider.getNexusObject()))));
+		assertThat(nxEntry.getSample(), is(sameInstance(oldSample)));
+		var datasets = nxEntry.getSample().getAllDatasets();
+		assertThat(datasets.size(), is(equalTo(2)));
+		assertThat(datasets.get(NXsample.NX_PRESSURE), is(not(nullValue())));
+		assertThat(datasets.get(NXsample.NX_PRESSURE), is(equalTo(DatasetFactory.createFromList(List.of(0.0, 1.0, 2.0, 3.0)))));
+		
+		assertThat(nxEntry.getSample().getName(), is(equalTo("foo")));
+		assertThat(nxEntry.getSample().getAttr(null, "foo"), is(equalTo("bar")));
 	}
 	
 	@Test

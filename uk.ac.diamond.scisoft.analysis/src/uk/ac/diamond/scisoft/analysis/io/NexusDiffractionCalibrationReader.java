@@ -27,6 +27,7 @@ import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
 import org.eclipse.dawnsci.nexus.NexusConstants;
+import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
@@ -54,8 +55,9 @@ public class NexusDiffractionCalibrationReader {
 	 * @param parent
 	 * @param positions
 	 * @return properties
+	 * @throws NexusException 
 	 */
-	public static DetectorProperties[] getDetectors(String path, ILazyDataset parent, int... positions) {
+	public static DetectorProperties[] getDetectors(String path, ILazyDataset parent, int... positions) throws NexusException {
 		Tree tree = null;
 		IDataHolder dh;
 		try {
@@ -114,7 +116,12 @@ public class NexusDiffractionCalibrationReader {
 		
 		String key = dnl.keySet().iterator().next();
 		
-		DetectorProperties[] d = NexusTreeUtils.parseDetector("/" + key, tree, 0);
+		DetectorProperties[] d;
+		try {
+			d = NexusTreeUtils.parseDetector("/" + key, tree, 0);
+		} catch (NexusException e) {
+			throw new DatasetException(e);
+		}
 		
 		if (d == null || d.length == 0) return trySAXS(dnl.get(key), tree, filePath);
 		

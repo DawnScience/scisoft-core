@@ -41,6 +41,7 @@ import org.eclipse.dawnsci.analysis.api.tree.SymbolicNode;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
+import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.ComplexDoubleDataset;
 import org.eclipse.january.dataset.Dataset;
@@ -515,7 +516,7 @@ public class HDF5LoaderTest {
 	}
 
 	@Test
-	public void testLoadingNexusDetector() throws ScanFileHolderException {
+	public void testLoadingNexusDetector() throws ScanFileHolderException, NexusException {
 		String n = TestFileFolder + "../NexusDiffractionTest/336502.nxs";
 		NexusHDF5Loader l = new NexusHDF5Loader();
 		l.setFile(n);

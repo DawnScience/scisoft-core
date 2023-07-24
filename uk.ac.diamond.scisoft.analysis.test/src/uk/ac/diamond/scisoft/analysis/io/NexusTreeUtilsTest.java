@@ -253,7 +253,7 @@ public class NexusTreeUtilsTest {
 	private static final double TOL = 1e-14;
 
 	@Test
-	public void testNXDetectorCreationAndParsing() {
+	public void testNXDetectorCreationAndParsing() throws NexusException {
 		DetectorProperties det = DetectorProperties.getDefaultDetectorProperties(new int[] {200,100});
 		det.setHPxSize(det.getHPxSize() * 2);
 		det.setOrientationEulerZYZ(Math.toRadians(10), Math.toRadians(20), Math.toRadians(25));

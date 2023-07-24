@@ -64,7 +64,7 @@ public class I16NexusTest {
 	}
 
 	@Test
-	public void testLoadingI16Nexus() throws ScanFileHolderException {
+	public void testLoadingI16Nexus() throws ScanFileHolderException, NexusException {
 		String n = testFileFolder +  "538029.nxs";
 		NexusHDF5Loader l = new NexusHDF5Loader();
 		l.setFile(n);

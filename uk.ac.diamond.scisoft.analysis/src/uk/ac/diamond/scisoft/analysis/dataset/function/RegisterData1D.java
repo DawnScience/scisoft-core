@@ -347,23 +347,23 @@ public class RegisterData1D implements DatasetToDatasetFunction {
 
 	/**
 	 * Shift 1D using linear interpolation
-	 * @param im
+	 * @param in
 	 * @param shift
 	 * @return shifted data
 	 */
-	public static DoubleDataset shiftData(Dataset im, double shift) {
-		if (im.getRank() != 1) {
+	public static DoubleDataset shiftData(Dataset in, double shift) {
+		if (in.getRank() != 1) {
 			throw new IllegalArgumentException("Dataset must be 1d");
 		}
-		DoubleDataset newImage = DatasetFactory.zeros(im, DoubleDataset.class);
-		int[] shape = im.getShapeRef();
+		int[] shape = in.getShapeRef();
+		DoubleDataset out = DatasetFactory.zeros(DoubleDataset.class, shape);
 
 		double cx0;
 		for (int x0 = 0; x0 < shape[0]; x0++) {
 			cx0 = x0 + shift;
-			newImage.setAbs(x0, Maths.interpolate(im, cx0));
+			out.setAbs(x0, Maths.interpolate(in, cx0));
 		}
 
-		return newImage;
+		return out;
 	}
 }

@@ -105,7 +105,7 @@ public class AlignToHalfGaussianPeak implements DatasetToNumberFunction {
 	 * @param datasets
 	 * @return x/y pairs of datasets where x and/or y have been shifted to align data
 	 */
-	public static List<Dataset> alignToPositions(boolean resample, boolean forceToPosition, double position, List<Double> iPositions, IDataset... datasets) {
+	public static Dataset[] alignToPositions(boolean resample, boolean forceToPosition, double position, List<Double> iPositions, Dataset... datasets) {
 		List<Double> shifts = calculateShifts(resample, forceToPosition, position, iPositions, datasets);
 
 		return shiftData(shifts, datasets);
@@ -118,29 +118,20 @@ public class AlignToHalfGaussianPeak implements DatasetToNumberFunction {
 	 * @param position
 	 * @param iPositions
 	 * @param datasets
-	 * @return x/y pairs of shifts
+	 * @return x/y pairs of shifts (y shifts are in index space)
 	 */
-	public static List<Double> calculateShifts(boolean resample, boolean forceToPosition, double position, List<Double> iPositions, IDataset... datasets) {
+	public static List<Double> calculateShifts(boolean resample, boolean forceToPosition, double position, List<Double> iPositions, Dataset... datasets) {
 		List<Double> shifts = new ArrayList<>();
-		List<Dataset> result = new ArrayList<>();
-		final int imax = datasets.length;
-		for (int i = 0; i < imax; i += 2) {
-			Dataset x = DatasetUtils.convertToDataset(datasets[i]);
-			result.add(x);
-			Dataset y = DatasetUtils.convertToDataset(datasets[i + 1]);
-			result.add(y);
-		}
-
 		if (resample) {
 			int firstI = 0;
 			if (forceToPosition) {
-				firstI = calcFirstXShift(shifts, result, iPositions);
+				firstI = calcFirstXShift(shifts, datasets, iPositions);
 			} else {
-				firstI = calcXRelativeToFirstX(shifts, result, iPositions, Double.NaN, true);
+				firstI = calcXRelativeToFirstX(shifts, datasets, iPositions, Double.NaN, true);
 			}
-			calcYShifts(shifts, result, iPositions, firstI);
+			calcYShifts(shifts, iPositions, firstI);
 		} else {
-			calcXRelativeToFirstX(shifts, result, iPositions, forceToPosition ? position : Double.NaN, false);
+			calcXRelativeToFirstX(shifts, datasets, iPositions, forceToPosition ? position : Double.NaN, false);
 		}
 
 		System.err.println("Shifts are " + shifts);
@@ -154,13 +145,13 @@ public class AlignToHalfGaussianPeak implements DatasetToNumberFunction {
 	 * @param iPositions
 	 * @return index of first X with valid position
 	 */
-	private static int calcFirstXShift(List<Double> shifts, List<Dataset> data, List<Double> iPositions) {
+	private static int calcFirstXShift(List<Double> shifts, Dataset[] data, List<Double> iPositions) {
 		Dataset firstX = null;
 		int i = 0;
 		int firstI = 0;
 		for (Double p : iPositions) {
 			if (p != null && Double.isFinite(p) && firstX == null) {
-				firstX = data.get(i);
+				firstX = data[i];
 				double xPos = Maths.interpolate(firstX, p);
 				logger.debug("Shifting 1st x {} by {}", i, xPos);
 				shifts.add(-xPos);
@@ -184,12 +175,12 @@ public class AlignToHalfGaussianPeak implements DatasetToNumberFunction {
 	 * @param leaveRest if true, then do not shift any
 	 * @return index of first X with valid position
 	 */
-	private static int calcXRelativeToFirstX(List<Double> shifts, List<Dataset> data, List<Double> iPositions, double firstXPos, boolean leaveRest) {
+	private static int calcXRelativeToFirstX(List<Double> shifts, Dataset[] data, List<Double> iPositions, double firstXPos, boolean leaveRest) {
 		int i = 0;
 		int firstI = 0;
 		for (Double p : iPositions) {
 			if (p != null && Double.isFinite(p)) {
-				Dataset x = data.get(i);
+				Dataset x = data[i];
 				if (Double.isNaN(firstXPos)) {
 					firstXPos = Maths.interpolate(x, p);
 					shifts.add(null); // leave first unshifted
@@ -216,13 +207,12 @@ public class AlignToHalfGaussianPeak implements DatasetToNumberFunction {
 	/**
 	 * Calculate shift to resample Y data
 	 * @param shifts
-	 * @param data
 	 * @param iPositions
 	 * @param firstI
 	 */
-	private static void calcYShifts(List<Double> shifts, List<Dataset> data, List<Double> iPositions, int firstI) {
+	private static void calcYShifts(List<Double> shifts, List<Double> iPositions, int firstI) {
 		double firstIShift = iPositions.get(firstI);
-		for (int i = firstI, imax = data.size(); i < imax; i += 2) {
+		for (int i = firstI, imax = shifts.size(); i < imax; i += 2) {
 			Double p = iPositions.get(i / 2);
 			if (p != null && Double.isFinite(p)) {
 				double delta = p - firstIShift;
@@ -240,40 +230,46 @@ public class AlignToHalfGaussianPeak implements DatasetToNumberFunction {
 	 * @param datasets
 	 * @return x/y pairs of datasets where x and/or y have been shifted to align data
 	 */
-	public static List<Dataset> shiftData(List<Double> shifts, IDataset... datasets) {
-		List<Dataset> result = new ArrayList<>();
-
-			final int imax = datasets.length;
-		double firstXShift = Double.NaN;
+	public static Dataset[] shiftData(List<Double> shifts, Dataset... datasets) {
+		final int imax = datasets.length;
+		Dataset[] result = new Dataset[imax];
+		double[] firstXShift = {Double.NaN};
 		for (int i = 0; i < imax; i += 2) {
-			Dataset x = DatasetUtils.convertToDataset(datasets[i]);
-			Dataset y = DatasetUtils.convertToDataset(datasets[i + 1]);
-			Double sx = shifts.get(i);
-			Double sy = shifts.get(i + 1);
-			if (sx != null) {
-				if (sx != 0) {
-					x = Maths.add(x, sx);
-					if (Double.isNaN(firstXShift)) {
-						firstXShift = sx;
-					}
+			Dataset[] shifted = shiftData(firstXShift, shifts.get(i), shifts.get(i + 1), datasets[i], datasets[i+1]);
+			result[i] = shifted[0];
+			result[i + 1] = shifted[1];
+		}
+		return result;
+	}
+
+	/**
+	 * Shift data by given shifts
+	 * @param shiftX x shift
+	 * @param shiftY y shift
+	 * @param x
+	 * @param y
+	 * @return x/y pair of datasets where x and/or y have been shifted to align data
+	 */
+	public static Dataset[] shiftData(double[] firstXShift, Double shiftX, Double shiftY, Dataset x, Dataset y) {
+		if (shiftX != null) {
+			if (shiftX != 0) {
+				x = Maths.add(x, shiftX);
+				if (Double.isNaN(firstXShift[0])) {
+					firstXShift[0] = shiftX;
 				}
-			} else {
-				if (sy != null) { // resample case
-					if (sy != 0) {
-						// assume x is uniformly spaced (otherwise we need to interpolate by new x values)
-						y = RegisterData1D.shiftData(y, sy);
-						if (Double.isFinite(firstXShift)) {
-							x = Maths.add(x, firstXShift);
-						}
-//						nx = Maths.add(x, sy);
-//						y = Maths.interpolate(nx, y, x, null, null); // need x-shift
+			}
+		} else {
+			if (shiftY != null) { // resample case
+				if (shiftY != 0) {
+					// assume x is uniformly spaced (otherwise we need to interpolate by new x values)
+					y = RegisterData1D.shiftData(y, shiftY);
+					if (Double.isFinite(firstXShift[0])) {
+						x = Maths.add(x, firstXShift[0]);
 					}
 				}
 			}
-			result.add(x);
-			result.add(y);
 		}
-		return result;
+		return new Dataset[] {x, y};
 	}
 
 	private static Slice findCroppingSlice(Monotonicity m, Dataset x, int l, double lx, double hx) {

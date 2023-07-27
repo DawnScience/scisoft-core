@@ -67,7 +67,7 @@ public class AbstractNexusValidatorTest {
 		final ValidationReport report = validator.getValidationReport();
 		assertThat(report.isOk(), is(false));
 		assertThat(report.getValidationEntries(), contains(new ValidationReportEntry(
-				Level.ERROR, NodeType.DATA_NODE, "fieldName", "message")));
+				Level.ERROR, validator.getApplicationDefinitionName(), NodeType.DATA_NODE, "fieldName", "message")));
 	}
 	
 	@Test
@@ -85,7 +85,7 @@ public class AbstractNexusValidatorTest {
 		final ValidationReport report = validator.getValidationReport();
 		assertThat(report.isOk(), is(false));
 		assertThat(report.getValidationEntries(), contains(new ValidationReportEntry(
-				Level.ERROR, NodeType.DATA_NODE, "fieldName", "message")));
+				Level.ERROR, validator.getApplicationDefinitionName(), NodeType.DATA_NODE, "fieldName", "message")));
 	}
 	
 	@Test

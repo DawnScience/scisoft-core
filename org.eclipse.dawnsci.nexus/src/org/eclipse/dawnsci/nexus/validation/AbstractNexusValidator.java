@@ -103,7 +103,12 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	public NexusApplicationDefinition getApplicationDefinition() {
 		return applicationDefinition;
 	}
-	
+
+	@Override
+	public String getApplicationDefinitionName() {
+		return applicationDefinition.toString();
+	}
+
 	public ValidationReport getValidationReport() {
 		return validationReport;
 	}
@@ -121,7 +126,8 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 	 * @param message message
 	 */
 	public void addValidationEntry(Level level, NodeType nodeType, String nodeName, final String message) {
-		validationReport.addValidationEntry(new ValidationReportEntry(level, nodeType, nodeName, message));
+		validationReport.addValidationEntry(new ValidationReportEntry(
+				level, getApplicationDefinitionName(), nodeType, nodeName, message));
 	}
 	
 	public boolean validate(boolean condition, Level level, NodeType nodeType, String nodeName, String message) {

@@ -43,4 +43,5 @@ public interface NexusApplicationValidator {
 	 */
 	public ValidationReport validate(final NXsubentry subentry);
 
+	public String getApplicationDefinitionName();
 }

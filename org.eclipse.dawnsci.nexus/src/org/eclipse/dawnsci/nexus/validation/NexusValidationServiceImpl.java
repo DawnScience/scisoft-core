@@ -10,8 +10,12 @@ import org.eclipse.dawnsci.nexus.NXsubentry;
 import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NexusValidationServiceImpl implements NexusValidationService {
+
+	private static final Logger logger = LoggerFactory.getLogger(NexusValidationServiceImpl.class);
 
 	private boolean validateDiamond = true;
 	
@@ -82,15 +86,20 @@ public class NexusValidationServiceImpl implements NexusValidationService {
 		final ValidationReport validationReport = new ValidationReport();
 		if (validateDiamond) {
 			validationReport.merge(NexusApplicationDefinition.NX_DIAMOND.createNexusValidator().validate(entry));
+			logger.debug("NXdiamond validation completed for entry: {}", entry);
 		}
 		
 		final String definitionStr = entry.getDefinitionScalar();
 		if (definitionStr != null) {
 			final NexusApplicationDefinition appDef = NexusApplicationDefinition.fromName(definitionStr);
 			final NexusApplicationValidator validator = appDef.createNexusValidator();
-			validationReport.merge(validator.validate(entry));
+			try {
+				validationReport.merge(validator.validate(entry));
+				logger.debug("{} validation completed for entry: {}", definitionStr, entry);
+			} catch (Exception e) {
+				logger.error("{} validation failed, skipping validation for rest of entry: {}", definitionStr, entry, e);
+			}
 		}
-		
 		return validationReport;
 	}
 	

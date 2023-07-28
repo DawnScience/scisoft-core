@@ -175,7 +175,7 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		}
 		
 		// write the scan shape
-		logger.info("Estimated scan shape {}", scanInfo.getOverallShape());
+		logger.info("Estimated scan shape {}", Arrays.toString(scanInfo.getOverallShape()));
 		scanMetadataCollection.setDataset(FIELD_NAME_SCAN_SHAPE, DatasetFactory.createFromObject(scanInfo.getOverallShape()));
 		
 		// write the scan start time

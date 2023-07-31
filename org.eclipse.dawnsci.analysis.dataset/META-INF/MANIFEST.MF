@@ -1,5 +1,4 @@
 Manifest-Version: 1.0
-Eclipse-BundleShape: dir
 Bundle-ManifestVersion: 2
 Bundle-Name: Dataset
 Bundle-SymbolicName: org.eclipse.dawnsci.analysis.dataset;singleton:=true
@@ -26,10 +25,10 @@ Export-Package: org.eclipse.dawnsci.analysis.dataset,
  org.eclipse.dawnsci.analysis.dataset.roi.json,
  org.eclipse.dawnsci.analysis.dataset.slicer
 Import-Package: Jama;version="1.0.3",
+ org.jtransforms.dct;version="3.1.0",
+ org.jtransforms.fft;version="3.1.0",
  org.osgi.framework;version="1.7.0",
- org.slf4j;version="[1.7.2,2.0.0)"
-Bundle-ClassPath: .,
- jars/JLargeArrays-1.6.jar,
- jars/JTransforms-3.1.jar
+ org.slf4j;version="[1.7.2,2.0.0)",
+ pl.edu.icm.jlargearrays;version="1.6.0"
 Service-Component: OSGI-INF/*.xml 
 Automatic-Module-Name: org.eclipse.dawnsci.analysis.dataset

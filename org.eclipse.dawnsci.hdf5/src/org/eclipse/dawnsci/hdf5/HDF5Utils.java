@@ -52,15 +52,17 @@ import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.dataset.StringDataset;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import hdf.hdf5lib.H5;
 import hdf.hdf5lib.HDF5Constants;
 import hdf.hdf5lib.exceptions.HDF5Exception;
 import hdf.hdf5lib.exceptions.HDF5LibraryException;
 import hdf.hdf5lib.structs.H5O_info_t;
-import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
 
 public class HDF5Utils {
-	private static final DeprecationLogger logger = DeprecationLogger.getLogger(HDF5Utils.class);
+	private static final Logger logger = LoggerFactory.getLogger(HDF5Utils.class);
 
 	private static String host;
 	
@@ -294,31 +296,6 @@ public class HDF5Utils {
 		}
 		logger.error(msg, e);
 		throw new NexusException(msg, e);
-	}
-
-	/**
-	 * Load dataset from given file
-	 * @param fileName
-	 * @param node
-	 * @param start
-	 * @param count
-	 * @param step
-	 * @param dtype
-	 * @param isize
-	 * @param extend
-	 * @return dataset
-	 * @throws Exception
-	 * @deprecated Use {@link #loadDataset(String, String, int[], int[], int[], int, Class, boolean)}
-	 */
-	@Deprecated(since="Dawn 2.17")
-	public static Dataset loadDataset(final String fileName, final String node,
-				final int[] start, final int[] count, final int[] step,
-				final int dtype, final int isize, final boolean extend)
-				throws ScanFileHolderException {
-		logger.deprecatedMethod(
-				"loadDataset(String, String, int[], int[], int[], int, int, boolean)", 
-				null, "loadDataset(String, String, int[], int[], int[], int, Class, boolean)");
-		return loadDataset(fileName, node, start, count, step, isize, DTypeUtils.getInterface(dtype), extend);
 	}
 
 	/**
@@ -638,28 +615,6 @@ public class HDF5Utils {
 	 * @param initialShape
 	 * @param maxShape
 	 * @param chunking
-	 * @param dtype dataset type
-	 * @param fill
-	 * @param asUnsigned
-	 * @throws ScanFileHolderException
-	 * @deprecated Use {@link #createDataset(String, String, String, int[], int[], int[], Class, Object, boolean)}
-	 */
-	@Deprecated(since="Dawn 2.17")
-	public static void createDataset(final String fileName, final String parentPath, final String name, final int[] initialShape, final int[] maxShape, final int[] chunking, final int dtype, final Object fill, final boolean asUnsigned) throws ScanFileHolderException {
-		logger.deprecatedMethod(
-				"createDataset(String, String, String, int[], int[], int[], int, Object, boolean)", 
-				null, "createDataset(String, String, String, int[], int[], int[], Class, Object, boolean)");
-		createDataset(fileName, parentPath, name, initialShape, maxShape, chunking, DTypeUtils.getInterface(dtype), fill, asUnsigned, false);
-	}
-
-	/**
-	 * Create a dataset in HDF5 file. Create the file if necessary
-	 * @param fileName
-	 * @param parentPath path to group containing dataset
-	 * @param name name of dataset
-	 * @param initialShape
-	 * @param maxShape
-	 * @param chunking
 	 * @param clazz dataset interface
 	 * @param fill
 	 * @param asUnsigned
@@ -696,27 +651,6 @@ public class HDF5Utils {
 		} finally {
 			HDF5FileFactory.releaseFile(fileName, close);
 		}
-	}
-
-	/**
-	 * Create a lazy dataset in HDF5 file
-	 * @param fileName
-	 * @param parentPath
-	 * @param name
-	 * @param initialShape
-	 * @param maxShape
-	 * @param chunking
-	 * @param dtype
-	 * @param fill
-	 * @param asUnsigned
-	 * @return lazy dataset
-	 * @deprecated Use {@link #createLazyDataset(String, String, String, int[], int[], int[], Class, Object, boolean)}
-	 */
-	@Deprecated(since="Dawn 2.17")
-	public static LazyWriteableDataset createLazyDataset(final String fileName, final String parentPath, final String name, final int[] initialShape, final int[] maxShape, final int[] chunking, final int dtype, final Object fill, final boolean asUnsigned) {
-		logger.deprecatedMethod("createLazyDataset(String, String, String, int[], int[], int[], int, Object, boolean)", 
-				null, "createLazyDataset(String, String, String, int[], int[], int[], Class, Object, boolean)");
-		return createLazyDataset(fileName, parentPath, name, initialShape, maxShape, chunking, DTypeUtils.getInterface(dtype), fill, asUnsigned);
 	}
 
 	/**
@@ -810,28 +744,6 @@ public class HDF5Utils {
 
 		return gid;
 	}
-
-	/**
-	 * Create a dataset in given file
-	 * @param f
-	 * @param compression
-	 * @param dataPath
-	 * @param dtype
-	 * @param iShape
-	 * @param iMaxShape
-	 * @param iChunks
-	 * @param fillValue
-	 * @throws NexusException
-	 * @deprecated Use {@link #createDataset(HDF5File, int, String, Class, int[], int[], int[], Object)}
-	 */
-	@Deprecated(since="Dawn 2.17")
-	public static void createDataset(HDF5File f, int compression, String dataPath, int dtype, int[] iShape, int[] iMaxShape, int[] iChunks,
-			Object fillValue) throws NexusException {
-		logger.deprecatedMethod(
-				"createDataset(HDF5File, int, String, int, int[], int[], int[], Object)", 
-				null, "createDataset(HDF5File, int, String, Class, int[], int[], int[], Object)");
-	}
-
 	/**
 	 * Create a dataset in given file
 	 * @param f
@@ -1440,23 +1352,6 @@ public class HDF5Utils {
 		}
 
 		return isExpanded;
-	}
-
-	/**
-	 * Wrapper to fix super block status flag issue
-	 * @param filePath
-	 * @param flags
-	 * @param fapl
-	 * @return file ID
-	 * @throws HDF5LibraryException
-	 * @throws NullPointerException
-	 * @deprecated Use {@link H5#H5Fopen(String,int,long)} directly
-	 */
-	@Deprecated(since="Dawn 1.10")
-	public static long H5Fopen(String filePath, int flags, long fapl) throws HDF5LibraryException, NullPointerException {
-		logger.deprecatedMethod("H5Fopen(String, int, long)", 
-				null, "hdf.hdf5lib.H5.H5Fopen(String, int, long)");
-		return H5.H5Fopen(filePath, flags, fapl);
 	}
 
 	private static final Map<Long, Class<? extends Dataset>> HDF_TYPES_TO_DATASET_TYPES;

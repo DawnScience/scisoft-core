@@ -16,21 +16,18 @@ import java.util.Arrays;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.io.ILazyDynamicLoader;
 import org.eclipse.january.io.ILazyLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import uk.ac.diamond.daq.util.logging.deprecation.DeprecationLogger;
 /**
  * Lazy loader for HDF5 files
  */
 public class HDF5LazyLoader implements ILazyLoader, ILazyDynamicLoader, Serializable {
 	public static final long serialVersionUID = 5057544213374303912L;
-	private static final DeprecationLogger logger = DeprecationLogger.getLogger(HDF5LazyLoader.class);
+	private static final Logger logger = LoggerFactory.getLogger(HDF5LazyLoader.class);
 
 	private boolean isReadable;
 	private boolean isRemote;
@@ -42,25 +39,6 @@ public class HDF5LazyLoader implements ILazyLoader, ILazyDynamicLoader, Serializ
 	private boolean extendUnsigned;
 	protected String name;
 	protected File file;
-
-	/**
-	 * @param hostname
-	 * @param filename
-	 * @param node
-	 * @param name
-	 * @param trueShape
-	 * @param isize
-	 * @param dtype
-	 * @param extendUnsigned
-	 * @deprecated Use {@link #HDF5LazyLoader(String, String, String, String, int[], int, Class, boolean)}
-	 */
-	@Deprecated(since="Dawn 2.16")
-	public HDF5LazyLoader(String hostname, String filename, String node, String name, int[] trueShape, int isize, int dtype,
-			boolean extendUnsigned) {
-		this(hostname, filename, node, name, trueShape, isize, DTypeUtils.getInterface(dtype), extendUnsigned);
-		logger.deprecatedMethod("HDF5LazyLoader(String, String, String, String, int[], int, int, boolean)", 
-				null, "HDF5LazyLoader(String, String, String, String, int[], int, Class, boolean)");
-	}
 
 	/**
 	 * @param hostname

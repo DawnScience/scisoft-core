@@ -26,6 +26,7 @@
 		<module>org.eclipse.dawnsci.nexus.feature</module>
 		<module>org.eclipse.dawnsci.nexus.scan</module>
 		<module>org.eclipse.dawnsci.nexus.template</module>
+		<module>org.eclipse.dawnsci.nexus.template.application</module>
 		<module>org.eclipse.dawnsci.nexus.test.utilities</module>
 		<module>org.eclipse.dawnsci.nexus.validation.application</module>
 		<module>org.eclipse.dawnsci.nexus</module>

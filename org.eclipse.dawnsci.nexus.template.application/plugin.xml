@@ -8,14 +8,14 @@
             cardinality="singleton-global"
             thread="any"
             visible="true">
-         <run class="org.eclipse.dawnsci.nexus.template.NexusTemplateApplication"/>
+         <run class="org.eclipse.dawnsci.nexus.template.application.NexusTemplateApplication"/>
       </application>
    </extension>
    <extension
          id="product"
          point="org.eclipse.core.runtime.products">
       <product
-            application="org.eclipse.dawnsci.nexus.template.application"
+            application="org.eclipse.dawnsci.nexus.template.application.application"
             name="org.eclipse.dawnsci.nexus.template.product">
          <property
                name="appName"

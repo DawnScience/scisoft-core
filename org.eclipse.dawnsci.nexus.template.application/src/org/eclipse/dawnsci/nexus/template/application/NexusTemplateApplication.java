@@ -1,10 +1,12 @@
-package org.eclipse.dawnsci.nexus.template;
+package org.eclipse.dawnsci.nexus.template.application;
 
 import java.io.File;
 import java.util.Map;
 import java.util.Objects;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.dawnsci.nexus.template.NexusTemplateService;
+import org.eclipse.dawnsci.nexus.template.NexusTemplate;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.osgi.framework.Bundle;

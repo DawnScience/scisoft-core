@@ -27,6 +27,7 @@
 		<module>org.eclipse.dawnsci.nexus.scan</module>
 		<module>org.eclipse.dawnsci.nexus.template</module>
 		<module>org.eclipse.dawnsci.nexus.test.utilities</module>
+		<module>org.eclipse.dawnsci.nexus.validation.application</module>
 		<module>org.eclipse.dawnsci.nexus</module>
 		<module>org.eclipse.dawnsci.plotting.api</module>
 		<module>org.eclipse.dawnsci.plotting.examples</module>

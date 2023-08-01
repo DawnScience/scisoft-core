@@ -7,7 +7,7 @@
             cardinality="singleton-global"
             thread="any"
             visible="true">
-           <run class="org.eclipse.dawnsci.nexus.validation.NexusValidationApplication"/>
+           <run class="org.eclipse.dawnsci.nexus.validation.application.NexusValidationApplication"/>
       </application>
    </extension>
    

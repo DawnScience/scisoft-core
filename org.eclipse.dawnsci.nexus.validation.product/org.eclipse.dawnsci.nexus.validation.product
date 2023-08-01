@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="org.eclipse.dawnsci.nexus.validation.product" uid="org.eclipse.dawnsci.nexus.validation.product" id="org.eclipse.dawnsci.nexus.validation" application="org.eclipse.dawnsci.nexus.validation.application" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="org.eclipse.dawnsci.nexus.validation.product" uid="org.eclipse.dawnsci.nexus.validation.product" id="org.eclipse.dawnsci.nexus.validation.application.validation" application="org.eclipse.dawnsci.nexus.validation.application" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true" autoIncludeRequirements="true">
 
    <configIni use="default">
    </configIni>

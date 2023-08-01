@@ -1,7 +1,9 @@
-package org.eclipse.dawnsci.nexus.validation;
+package org.eclipse.dawnsci.nexus.validation.application;
 
 import java.util.Map;
 
+import org.eclipse.dawnsci.nexus.validation.NexusValidationService;
+import org.eclipse.dawnsci.nexus.validation.ValidationReport;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.slf4j.Logger;

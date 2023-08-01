@@ -4,12 +4,6 @@
    <extension-point id="uk.ac.diamond.scisoft.analysis.io.loader" name="Loader Factory Extension" schema="schema/uk.ac.diamond.scisoft.analysis.io.loader.exsd"/>
    <extension-point id="uk.ac.diamond.scisoft.analysis.fitting.function" name="Function" schema="schema/uk.ac.diamond.scisoft.analysis.fitting.function.exsd"/>
    <extension
-         point="org.eclipse.dawnsci.analysis.classloader">
-      <bundle
-            class="uk.ac.diamond.scisoft.analysis.io.NumPyFileLoader">
-      </bundle>
-   </extension>
-   <extension
          point="uk.ac.diamond.scisoft.analysis.fitting.function">
       <function
             class="uk.ac.diamond.scisoft.analysis.fitting.functions.Box"

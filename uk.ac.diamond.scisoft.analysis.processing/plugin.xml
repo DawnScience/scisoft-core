@@ -1797,12 +1797,6 @@
       </operation>
    </extension>
    <extension
-         point="org.eclipse.dawnsci.analysis.classloader">
-      <bundle
-            class="uk.ac.diamond.scisoft.analysis.processing.Activator">
-      </bundle>
-   </extension>
-   <extension
          point="org.eclipse.dawnsci.analysis.api.classregistry">
       <classregistry
             class="uk.ac.diamond.scisoft.analysis.processing.ProcessingClassRegistry"

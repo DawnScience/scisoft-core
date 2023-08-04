@@ -49,6 +49,18 @@ import org.eclipse.january.dataset.StringDataset;
  */
 public class DefaultNexusDataBuilder extends AbstractNexusDataBuilder implements NexusDataBuilder {
 
+	private static final String INVALID_DEFAULT_AXIS_INDEX_MESSAGE_FORMAT =
+			"Invalid default axis dimension index for field ''{0}'' must be between 0 and {1} (inclusive), was {2}.";
+	
+	private static final String INVALID_DIMENSION_MAPPING_SIZE_MESSAGE_FORMAT =
+			"The size of the dimension mapping array must equal the rank of the dataset for the field ''{0}''.";
+	
+	private static final String INVALID_DIMENSION_MAPPING_RANK_MESSAGE_FORMAT = """
+			Invalid dimension mapping for field ''{0}'', {1}, must be between 0 and {3} (inclusive),
+			as the rank of the primary data field ''{2}'' has rank {4}.
+			This problem can occur when the rank of the signal data field is smaller than the rank of the scan.",
+			""";
+	
 	private int signalFieldRank;
 	
 	private Node signalNode = null;
@@ -110,7 +122,7 @@ public class DefaultNexusDataBuilder extends AbstractNexusDataBuilder implements
 	@Override
 	public <N extends NXobject> void addAxisDevice(AxisDataDevice<N> axisDataDevice) throws NexusException {
 		if (!isPrimaryDeviceAdded()) {
-			throw new IllegalStateException("The primary device has not been set.");
+			throw new IllegalStateException("The primary device must be set before axis devices can be added.");
 		}
 		
 		addDevice(axisDataDevice, false);
@@ -181,9 +193,9 @@ public class DefaultNexusDataBuilder extends AbstractNexusDataBuilder implements
 	private void addDeviceToDefaultAxes(int defaultAxisDimension, String destinationFieldName) {
 		// if this is the default axis for a dimension then update the dataset for the 'axes'
 		// attribute of the NXdata group
-		if (defaultAxisDimension < 0 || defaultAxisDimension > dimensionDefaultAxisNames.getSize() - 1) {
-			throw new IllegalArgumentException("Default axis dimension for device must be between 0 and " +
-					dimensionDefaultAxisNames.getSize() + ", was: " + defaultAxisDimension);
+		if (defaultAxisDimension < 0 || defaultAxisDimension >= signalFieldRank) {
+			throw new IllegalArgumentException(MessageFormat.format(INVALID_DEFAULT_AXIS_INDEX_MESSAGE_FORMAT,
+					destinationFieldName, signalFieldRank - 1, defaultAxisDimension));
 		}
 		
 		dimensionDefaultAxisNames.set(destinationFieldName, defaultAxisDimension);
@@ -294,7 +306,7 @@ public class DefaultNexusDataBuilder extends AbstractNexusDataBuilder implements
 		return TreeFactory.createAttribute(destinationFieldName + DATA_INDICES_SUFFIX,
 				DatasetFactory.createFromObject(dimensionMapping)); 
 	}
-
+	
 	/**
 	 * Validate that the given dimension mapping. The size of the array must equal the
 	 * given rank and each value in the array must be between 0 (inclusive) and the
@@ -306,13 +318,13 @@ public class DefaultNexusDataBuilder extends AbstractNexusDataBuilder implements
 	private void validateDimensionMapping(String sourceFieldName, int[] dimensionMapping, int rank) {
 		// size of dimensionMapping must equal rank of the dataset to add
 		if (dimensionMapping.length != rank) {
-			throw new IllegalArgumentException("The size of the dimension mapping array must equal the rank of the dataset for the field: " + sourceFieldName);
+			throw new IllegalArgumentException(MessageFormat.format(INVALID_DIMENSION_MAPPING_SIZE_MESSAGE_FORMAT, sourceFieldName));
 		}
 		// each element of the dimensionMapping array must between 0 and the rank of the default data node of the NXdata group
 		for (int mappedDimension : dimensionMapping) {
 			if (mappedDimension < 0 || mappedDimension >= signalFieldRank) {
-				throw new IllegalArgumentException(MessageFormat.format("Invalid dimension mapping for field ''{0}'', {1}, must be between 0 and {2} exclusive, as the rank of the primary data field ''{3}'' has rank {2}. This problem can occur when the rank of the signal data field is smaller than the rank of the scan.",
-						sourceFieldName, mappedDimension, signalFieldRank, signalFieldSourceName));
+				throw new IllegalArgumentException(MessageFormat.format(INVALID_DIMENSION_MAPPING_RANK_MESSAGE_FORMAT,
+						sourceFieldName, mappedDimension, signalFieldSourceName, signalFieldRank - 1, signalFieldRank));
 			}
 		}
 	}

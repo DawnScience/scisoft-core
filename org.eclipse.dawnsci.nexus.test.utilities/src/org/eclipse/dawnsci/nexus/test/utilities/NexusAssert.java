@@ -360,7 +360,7 @@ public class NexusAssert {
 
 		final NXcollection diamondScanCollection = entry.getCollection(GROUP_NAME_DIAMOND_SCAN);
 		assertThat(diamondScanCollection, is(notNullValue()));
-		assertTimesMatch(entry, diamondScanCollection);
+		assertTimestampLinks(entry, diamondScanCollection);
 
 		assertScanShape(diamondScanCollection, sizes);
 		assertScanTimes(diamondScanCollection);
@@ -376,14 +376,10 @@ public class NexusAssert {
 		}
 	}
 	
-	private static void assertTimesMatch(NXentry entry, NXcollection metadataCollection) {
-		// We shouldn't have 2 different values for Start/End/Duration
-		final String startTimeString = metadataCollection.getString(NXentry.NX_START_TIME);
-		final String endTimeString = metadataCollection.getString(NXentry.NX_END_TIME);
-		final Long duration = metadataCollection.getLong(NXentry.NX_DURATION);
-		assertThat(startTimeString, is(equalTo(entry.getStart_time().getString()))); // scalar field
-		assertThat(endTimeString, is(equalTo(entry.getEnd_time().getString()))); // scalar field
-		assertThat(duration, is(equalTo(entry.getDurationScalar())));
+	private static void assertTimestampLinks(NXentry entry, NXcollection metadataCollection) {
+		assertThat(entry.getDataNode(NXentry.NX_START_TIME), is(sameInstance(metadataCollection.getDataNode(NXentry.NX_START_TIME))));
+		assertThat(entry.getDataNode(NXentry.NX_END_TIME), is(sameInstance(metadataCollection.getDataNode(NXentry.NX_END_TIME))));
+		assertThat(entry.getDataNode(NXentry.NX_DURATION), is(sameInstance(metadataCollection.getDataNode(NXentry.NX_DURATION))));
 	}
 	
 	private static void assertScanTimeStamps(final DataNode startTimeNode, final DataNode endTimeNode,
@@ -615,7 +611,6 @@ public class NexusAssert {
 		final double deadTimePercent = deadTimePercentDataset.getFloat();
 
 		assertThat(deadTimePercent, is(closeTo(100 * ((double) deadTime / scanDurationMs), 0.001)));
-		
 	}
 
 	private static void assertUniqueKeys(boolean malcolmScan, boolean snake, boolean foldedGrid,

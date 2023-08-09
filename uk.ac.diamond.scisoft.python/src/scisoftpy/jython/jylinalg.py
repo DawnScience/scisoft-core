@@ -21,7 +21,6 @@ Linear algebra package
 import org.eclipse.january.dataset.LinearAlgebra as _linalg
 from org.eclipse.january.dataset.LinearAlgebra import NormOrder as _normorder
 
-# from jycore import asIterable as _asiter
 from .jycore import _wrap, _jinput, _argsToArrayType
 
 from java.lang.Double import isInfinite as _isinf #@UnresolvedImport
@@ -29,7 +28,7 @@ from java.lang.Double import isInfinite as _isinf #@UnresolvedImport
 class LinAlgError(Exception):
     pass
 
-@_wrap('a')
+@_wrap('a', allow_complex=False)
 def eig(a):
     '''Eigen decomposition
     '''
@@ -38,7 +37,7 @@ def eig(a):
     except Exception as e:
         raise LinAlgError(e)
 
-@_wrap('a')
+@_wrap('a', allow_complex=False)
 def eigvals(a):
     '''Eigenvalues
     '''
@@ -47,7 +46,7 @@ def eigvals(a):
     except Exception as e:
         raise LinAlgError(e)
 
-@_wrap('a')
+@_wrap('a', allow_complex=False)
 def cholesky(a):
     '''Cholesky decomposition
     '''
@@ -56,7 +55,7 @@ def cholesky(a):
     except Exception as e:
         raise LinAlgError(e)
 
-@_wrap('a')
+@_wrap('a', allow_complex=False)
 def qr(a, mode='full'):
     '''QR decomposition
     '''
@@ -65,7 +64,7 @@ def qr(a, mode='full'):
     except Exception as e:
         raise LinAlgError(e)
 
-@_wrap('a')
+@_wrap('a', allow_complex=False)
 def svd(a, full_matrices=1, compute_uv=1):
     '''Singular value decomposition
     '''
@@ -74,7 +73,7 @@ def svd(a, full_matrices=1, compute_uv=1):
     except Exception as e:
         raise LinAlgError(e)
 
-@_wrap('x')
+@_wrap('x', allow_complex=False)
 def norm(x, order=None):
     '''Matrix or vector norm
     x -- input array
@@ -105,7 +104,7 @@ def norm(x, order=None):
     except Exception as e:
         raise LinAlgError(e)
 
-@_argsToArrayType('a')
+@_argsToArrayType('a', allow_complex=False)
 def cond(a, order=None):
     '''Condition number
     x -- input array
@@ -128,7 +127,7 @@ def cond(a, order=None):
             raise LinAlgError(e)
     return norm(a, order)*norm(pinv(a), order)
 
-@_wrap('a')
+@_wrap('a', allow_complex=False)
 def det(a):
     '''Determinant
     '''
@@ -137,7 +136,7 @@ def det(a):
     except Exception as e:
         raise LinAlgError(e)
 
-@_wrap('a', 'b')
+@_wrap('a', 'b', allow_complex=False)
 def solve(a, b):
     '''Solve equation a x = b
     '''
@@ -146,7 +145,7 @@ def solve(a, b):
     except Exception as e:
         raise LinAlgError(e)
 
-@_wrap('a')
+@_wrap('a', allow_complex=False)
 def inv(a):
     '''Inverse of square array
     '''
@@ -155,7 +154,7 @@ def inv(a):
     except Exception as e:
         raise LinAlgError(e)
 
-@_wrap('a')
+@_wrap('a', allow_complex=False)
 def pinv(a, rcond=1e-15):
     '''Pseudo-inverse of array
     '''
@@ -164,7 +163,7 @@ def pinv(a, rcond=1e-15):
     except Exception as e:
         raise LinAlgError(e)
 
-@_wrap('a')
+@_wrap('a', allow_complex=False)
 def matrix_power(a, n):
     '''Raise matrix to given power
     '''

@@ -20,6 +20,10 @@ Maths package
 '''
 
 import org.eclipse.january.dataset.Dataset as _ds
+import org.eclipse.january.dataset.DatasetFactory as _df
+import org.eclipse.january.dataset.DatasetUtils as _dsutils
+import org.eclipse.january.dataset.Comparisons as _cmps
+import org.eclipse.january.dataset.InterfaceUtils as _ifutils
 import org.eclipse.january.dataset.Maths as _maths
 import org.eclipse.january.dataset.Stats as _stats
 from uk.ac.diamond.scisoft.python.PythonUtils import callIBArgsMethod as _callIB
@@ -374,7 +378,7 @@ def minimum(a, b, out=None):
     return _maths.minimum(a, b, out)
 
 @_keepdims
-@_wrap('a')
+@_wrap('a', allow_complex=False)
 def median(a, axis=None, keepdims=False):
     '''Median of input'''
     if axis is None:
@@ -382,7 +386,7 @@ def median(a, axis=None, keepdims=False):
     else:
         return _stats.median(a, axis)
 
-@_wrap('a')
+@_wrap('a', allow_complex=False)
 def quantile(a, q, axis=None):
     '''Quantile (or inverse cumulative distribution) function based on input
 
@@ -399,7 +403,7 @@ def quantile(a, q, axis=None):
             return _stats.quantile(a, axis, q)[0]
         return _stats.quantile(a, axis, q)
 
-@_wrap('a')
+@_wrap('a', allow_complex=False)
 def precentile(a, p, axis=None):
     '''Quantile (or inverse cumulative distribution) function based on input
     a -- data
@@ -545,25 +549,74 @@ def bincount(a, weights=None, minlength=0):
 
 import org.eclipse.january.dataset.LinearAlgebra as _linalg
 
+def _handle_complex(real_only_fn, *args, **kwargs):
+    return_complex_class = None
+    any_imag = False
+    check_num = kwargs.get('check_num', 2)
+    if check_num > len(args):
+        raise ValueError("Number of arrays supplied is less than number to check")
+
+    if check_num == 1:
+        a = args[0]
+        other_args = args[1:]
+        if a.isComplex():
+            return_complex_class = a.getClass()
+            any_imag = _cmps.anyTrue(a.getImaginaryView())
+
+            ar = a.getRealView()
+            if any_imag:
+               ai = a.getImaginaryView() if a.isComplex() else _df.zeros(a)
+               rr = real_only_fn(*((ar,) + other_args))
+               ri = real_only_fn(*((ai,) + other_args))
+               return _df.createComplexDataset(return_complex_class, rr, ri)
+
+            return _dsutils.copy(return_complex_class, real_only_fn(*((ar,) + other_args)))
+    elif check_num == 2:
+        a, b = args[:2]
+        other_args = args[2:]
+        if a.isComplex():
+            return_complex_class = a.getClass()
+            any_imag = _cmps.anyTrue(a.getImaginaryView())
+            if not any_imag and b.isComplex():
+                return_complex_class = _ifutils.getBestInterface(return_complex_class, b.getClass())
+                any_imag = _cmps.anyTrue(b.getImaginaryView())
+        elif b.isComplex():
+            return_complex_class = b.getClass()
+            any_imag = _cmps.anyTrue(b.getImaginaryView())
+    
+        ar = a.getRealView()
+        br = b.getRealView()
+        if any_imag:
+           ai = a.getImaginaryView() if a.isComplex() else _df.zeros(a)
+           bi = b.getImaginaryView() if b.isComplex() else _df.zeros(b)
+           rr = real_only_fn(*((ar, br) + other_args)).isubtract(real_only_fn(*((ai, bi) + other_args)))
+           ri = real_only_fn(*((ar, bi) + other_args)).iadd(real_only_fn(*((ai, br) + other_args)))
+           return _df.createComplexDataset(return_complex_class, rr, ri)
+    
+        if return_complex_class is not None:
+            return _dsutils.copy(return_complex_class, real_only_fn(*((ar, br) + other_args)))
+
+    return real_only_fn(*args)
+
 @_wrap('a', 'b')
 def dot(a, b):
     '''Dot product of two arrays'''
-    return _linalg.dotProduct(a, b)
+    return _handle_complex(_linalg.dotProduct, a, b)
 
 @_wrap('a', 'b')
 def vdot(a, b):
     '''Dot product of two vectors with first vector conjugated if complex'''
-    return _linalg.dotProduct(conjugate(a.flatten()), b.flatten())
+    return _handle_complex(_linalg.dotProduct, conjugate(a.flatten()), b.flatten())
 
 @_wrap('a', 'b')
 def inner(a, b):
     '''Inner product of two arrays (sum product over last dimensions)'''
-    return _linalg.tensorDotProduct(a, b, -1, -1)
+    return _handle_complex(_linalg.tensorDotProduct, a, b, -1, -1)
 
 @_wrap('a', 'b')
 def outer(a, b):
     '''Outer product of two arrays'''
-    return _linalg.outerProduct(a, b)
+    return _handle_complex(_linalg.outerProduct, a, b)
 
 @_argsToArrayType('a', 'b')
 def matmul(a, b):
@@ -571,13 +624,13 @@ def matmul(a, b):
     '''
     a = _asarray(a)
     b = _asarray(b)
-    prepend = a.rank == 1
+    prepend = a.ndim == 1
     if prepend:
         a.shape = 1,a.shape[0] 
-    append = b.rank == 1
+    append = b.ndim == 1
     if append:
         b.shape = b.shape[0],1 
-    m = _asarray(_linalg.matrixProduct(a._jdataset(), b._jdataset()))
+    m = _asarray(_handle_complex(_linalg.dotProduct, a._jdataset(), b._jdataset()))
     if prepend:
         m.shape = m.shape[1:]
     if append:
@@ -614,16 +667,16 @@ def tensordot(a, b, axes=2):
         else:
             raise ValueError("Given axes has wrong type")
 
-    return _linalg.tensorDotProduct(a, b, ax, bx)
+    return _handle_complex(_linalg.tensorDotProduct, a, b, ax, bx)
 
 @_wrap('a', 'b')
 def kron(a, b):
     '''Kronecker product of two arrays'''
-    return _linalg.kroneckerProduct(a, b)
+    return _handle_complex(_linalg.kroneckerProduct, a, b)
 
 @_wrap('a')
 def trace(a, offset=0, axis1=0, axis2=1, dtype=None):
-    t = _linalg.trace(a, offset)
+    t = _handle_complex(_linalg.trace, a, offset, axis1, axis2, check_num=1)
 
     dtype = _translatenativetype(dtype)
     if dtype is not None:
@@ -644,7 +697,7 @@ def cross(a, b, axisa=-1, axisb=-1, axisc=-1, axis=None):
     if axis is not None:
         axisa = axisb = axisc = axis
 
-    return _linalg.crossProduct(a, b, axisa, axisb, axisc)
+    return _handle_complex(_linalg.crossProduct, a, b, axisa, axisb, axisc)
 
 @_wrap
 def gradient(f, *varargs):

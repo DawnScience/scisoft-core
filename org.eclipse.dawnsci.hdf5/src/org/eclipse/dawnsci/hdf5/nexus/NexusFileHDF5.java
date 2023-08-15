@@ -469,7 +469,7 @@ public class NexusFileHDF5 implements NexusFile {
 					try {
 						objectInfo = H5.H5Oget_info_by_name(fileId, childPath, HDF5Constants.H5O_INFO_BASIC, HDF5Constants.H5P_DEFAULT);
 					} catch (HDF5LibraryException e) {
-						logger.warn("Ignoring error from link for file {}, childPath {}", path, childPath);
+						logger.debug("Ignoring error from link for file {}, childPath {}", path, childPath);
 						continue;
 					}
 					if (objectInfo.type == HDF5Constants.H5O_TYPE_GROUP) {

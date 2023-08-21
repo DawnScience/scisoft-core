@@ -61,8 +61,6 @@ import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.dataset.StringDataset;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -457,16 +455,27 @@ public class MillerSpaceMapper {
 	 * Find bounding boxes in reciprocal space and q-space
 	 * @param tree
 	 * @param iters
+	 * @throws ScanFileHolderException 
 	 */
-	private void findBoundingBoxes(Tree tree, PositionIterator[] iters) {
+	private void findBoundingBoxes(Tree tree, PositionIterator[] iters) throws ScanFileHolderException {
 		PositionIterator diter = iters[0];
 		PositionIterator iter = iters[1];
 		int[] dpos = diter.getPos();
 
 		boolean isOldGDA = isOLDI16GDA(tree);
 		while (iter.hasNext() && diter.hasNext()) {
-			DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
-			DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, isI16, dpos);
+			DetectorProperties dp;
+			try {
+				dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
+			} catch (NexusException e) {
+				throw new ScanFileHolderException("Problem parsing detector", e);
+			}
+			DiffractionSample sample;
+			try {
+				sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, isI16, dpos);
+			} catch (NexusException e) {
+				throw new ScanFileHolderException("Problem parsing sample", e);
+			}
 			DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 			QSpace qspace = new QSpace(dp, env);
 			MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
@@ -536,11 +545,21 @@ public class MillerSpaceMapper {
 		while (iter.hasNext() && diter.hasNext()) {
 			if (!endsOnly || n == 0 || n == end) {
 				logger.debug("Image {}", n);
-				DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
+				DetectorProperties dp;
+				try {
+					dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
+				} catch (NexusException e) {
+					throw new ScanFileHolderException("Problem parsing detector", e);
+				}
 				if (n == 0) {
 					initializeImageLimits(dp);
 				}
-				DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, isI16, dpos);
+				DiffractionSample sample;
+				try {
+					sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, isI16, dpos);
+				} catch (NexusException e) {
+					throw new ScanFileHolderException("Problem parsing sample", e);
+				}
 				DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 				QSpace qspace = new QSpace(dp, env);
 				MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
@@ -610,8 +629,18 @@ public class MillerSpaceMapper {
 			coords = DatasetFactory.zeros(np, 3);
 			pInput = DatasetFactory.zeros(IntegerDataset.class, np, 3);
 			if (diter.hasNext()) {
-				DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
-				DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, isI16, dpos);
+				DetectorProperties dp;
+				try {
+					dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
+				} catch (NexusException e) {
+					throw new ScanFileHolderException("Problem parsing detector", e);
+				}
+				DiffractionSample sample;
+				try {
+					sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, isI16, dpos);
+				} catch (NexusException e) {
+					throw new ScanFileHolderException("Problem parsing sample", e);
+				}
 				DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 				QSpace qspace = new QSpace(dp, env);
 				MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
@@ -668,8 +697,18 @@ public class MillerSpaceMapper {
 			int f = 0;
 			boolean keepStill = false;
 			while (diter.hasNext()) {
-				DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
-				DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, false, dpos);
+				DetectorProperties dp;
+				try {
+					dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
+				} catch (NexusException e) {
+					throw new ScanFileHolderException("Problem parsing detector", e);
+				}
+				DiffractionSample sample;
+				try {
+					sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, isI16, dpos);
+				} catch (NexusException e) {
+					throw new ScanFileHolderException("Problem parsing sample", e);
+				}
 				DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 				QSpace qspace = new QSpace(dp, env);
 				MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
@@ -768,7 +807,7 @@ public class MillerSpaceMapper {
 	}
 
 	private int mapImagesByStrips(Tree tree, Dataset trans, Dataset iMask, ILazyDataset images, PositionIterator[] iters,
-			int[] ishape) throws DatasetException {
+			int[] ishape) throws DatasetException, ScanFileHolderException {
 		warnExposureZero = true;
 		PositionIterator diter = iters[0]; // scan iterator
 		PositionIterator iter = iters[1]; // data iterator (omits image axes)
@@ -843,8 +882,13 @@ public class MillerSpaceMapper {
 		return tFactor;
 	}
 
-	private void initializeImagePixelMapping(ImagePixelMapping pMapping, Tree tree, int[] ishape, int[] dpos, boolean isOldGDA) {
-		DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
+	private void initializeImagePixelMapping(ImagePixelMapping pMapping, Tree tree, int[] ishape, int[] dpos, boolean isOldGDA) throws ScanFileHolderException {
+		DetectorProperties dp;
+		try {
+			dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
+		} catch (NexusException e) {
+			throw new ScanFileHolderException("Problem parsing detector", e);
+		}
 		if (scale == 1) {
 			dp.setStartX(dp.getStartX() - begX);
 			dp.setStartY(dp.getStartY() - begY);
@@ -856,7 +900,12 @@ public class MillerSpaceMapper {
 			dp.setPx(ishape[1]);
 			dp.setPy(ishape[0]);
 		}
-		DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, isI16, dpos);
+		DiffractionSample sample;
+		try {
+			sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, isI16, dpos);
+		} catch (NexusException e) {
+			throw new ScanFileHolderException("Problem parsing sample", e);
+		}
 		DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 		QSpace qspace = new QSpace(dp, env);
 		MillerSpace mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
@@ -1351,7 +1400,12 @@ public class MillerSpaceMapper {
 
 		boolean isOldGDA = isOLDI16GDA(tree);
 		while (iter.hasNext() && diter.hasNext()) {
-			DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
+			DetectorProperties dp;
+			try {
+				dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
+			} catch (NexusException e) {
+				throw new ScanFileHolderException("Problem parsing detector", e);
+			}
 			dp.setHPxSize(dp.getHPxSize() / scale);
 			dp.setVPxSize(dp.getVPxSize() / scale);
 			if (upSampler != null) {
@@ -1361,7 +1415,12 @@ public class MillerSpaceMapper {
 			for (int i = 0; i < srank; i++) {
 				stop[i] = pos[i] + 1;
 			}
-			DiffractionSample sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, isI16, dpos);
+			DiffractionSample sample;
+			try {
+				sample = NexusTreeUtils.parseSample(samplePath, tree, isOldGDA, isI16, dpos);
+			} catch (NexusException e) {
+				throw new ScanFileHolderException("Problem parsing sample", e);
+			}
 			DiffractionCrystalEnvironment env = sample.getDiffractionCrystalEnvironment();
 			QSpace qspace = new QSpace(dp, env);
 			mspace = new MillerSpace(sample.getUnitCell(), env.getOrientation());
@@ -1546,11 +1605,7 @@ public class MillerSpaceMapper {
 		String attenuatorName = bean.getAttenuatorName();
 		if (attenuatorName == null || attenuatorName.isEmpty()) {
 			link = NexusTreeUtils.findFirstNode(instrument, NexusConstants.ATTENUATOR);
-			if (link == null) {
-				logger.trace("{} not found", NexusConstants.ATTENUATOR);
-			} else {
-				logger.trace("{} found: {}", NexusConstants.ATTENUATOR, link);
-			}
+			logger.trace("{}: {} found", NexusConstants.ATTENUATOR, link == null ? "not" : link);
 		} else {
 			link = instrument.getNodeLink(attenuatorName);
 		}
@@ -1566,11 +1621,7 @@ public class MillerSpaceMapper {
 		String monitorName = bean.getMonitorName();
 		if (monitorName == null || monitorName.isEmpty()) {
 			link = NexusTreeUtils.findFirstNode(instrument, NexusConstants.MONITOR);
-			if (link == null) {
-				logger.trace("{} not found", NexusConstants.MONITOR);
-			} else {
-				logger.trace("{} found: {}", NexusConstants.MONITOR, link);
-			}
+			logger.trace("{}: {} found", NexusConstants.MONITOR, link == null ? "not" : link);
 		} else {
 			link = instrument.getNodeLink(monitorName);
 		}
@@ -1678,8 +1729,8 @@ public class MillerSpaceMapper {
 					.sorted()
 					.map(p -> p.toString())
 					.collect(Collectors.toList());
-		} catch (IOException e1) {
-			throw new ScanFileHolderException("I16 workaround: collating image file names", e1);
+		} catch (IOException e) {
+			throw new ScanFileHolderException("I16 workaround: collating image file names", e);
 		}
 
 		StringDataset pd = DatasetFactory.createFromObject(StringDataset.class, names, NexusTreeUtils.getIntArray(dn));
@@ -1778,9 +1829,14 @@ public class MillerSpaceMapper {
 		return datasetA;
 	}
 
-	private void createPixelMask(Tree tree, PositionIterator dIter) {
+	private void createPixelMask(Tree tree, PositionIterator dIter) throws ScanFileHolderException {
 		int[] dpos = new int[dIter.getPos().length]; // use detector from first scan position
-		DetectorProperties dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
+		DetectorProperties dp;
+		try {
+			dp = NexusTreeUtils.parseDetector(detectorPath, tree, dpos)[0];
+		} catch (NexusException e) {
+			throw new ScanFileHolderException("Problem parsing detector", e);
+		}
 		mask = dp.getMask();
 		lower = dp.getLowerThreshold();
 		upper = dp.getUpperThreshold();
@@ -1991,17 +2047,18 @@ public class MillerSpaceMapper {
 	}
 
 	private PositionIterator[] getPositionIterators(Tree tree) throws ScanFileHolderException {
-		int[] dshape = NexusTreeUtils.parseDetectorScanShape(detectorPath, tree);
-		if (dshape == null) {
-			throw new IllegalArgumentException("Could not parse detector scan shape from tree");
+		int[] dshape = null;
+		try {
+			dshape = NexusTreeUtils.parseDetectorScanShape(detectorPath, tree);
+		} catch (NexusException e) {
+			throw new ScanFileHolderException("Could not parse detector scan shape from tree", e);
 		}
-//		logger.trace(Arrays.toString(dshape));
 
-		dshape = NexusTreeUtils.parseSampleScanShape(samplePath, tree, dshape);
-		if (dshape == null) {
-			throw new IllegalArgumentException("Could not parse sample scan shape from tree");
+		try {
+			dshape = NexusTreeUtils.parseSampleScanShape(samplePath, tree, dshape);
+		} catch (NexusException e) {
+			throw new ScanFileHolderException("Could not parse sample scan shape from tree", e);
 		}
-//		logger.trace(Arrays.toString(dshape));
 
 		DataNode node = (DataNode) tree.findNodeLink(dataPath).getDestination();
 		ILazyDataset images = node.getDataset();
@@ -2642,10 +2699,10 @@ public class MillerSpaceMapper {
 					break;
 				}
 				logger.info("Worker {}: initializing mapping at {}/{}", wNo, Arrays.toString(pos), Arrays.toString(j.getShape()));
-				initializeImagePixelMapping(mapping, tree, iShape, pos, false);
-
-				double tFactor = getTransmissionCorrection(trans, pos);
 				try {
+					initializeImagePixelMapping(mapping, tree, iShape, pos, false);
+
+					double tFactor = getTransmissionCorrection(trans, pos);
 					mapImageToOutput(wNo, tFactor, upSampler, mapping, splitter, minLocal, maxLocal, region, mask, j.getImage());
 					logger.debug("Worker {}: finished mapping at {}", wNo, Arrays.toString(pos));
 				} catch (Exception e) {

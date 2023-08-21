@@ -219,10 +219,10 @@ public class NearestMetadataCache extends AbstractMovingBeamMetadataCache {
 
 		try {
 			return NexusDiffractionCalibrationReader.getDiffractionMetadataFromNexus(cPath, ssm.getParent(),
-						datasetName);
+					datasetName);
 		} catch (DatasetException e) {
-				throw new DatasetException("Error retrieving metadata from: "+ cPath);
+			throw new DatasetException("Error retrieving metadata from: " + cPath, e);
 		}
-	}		
+	}
 	
 }

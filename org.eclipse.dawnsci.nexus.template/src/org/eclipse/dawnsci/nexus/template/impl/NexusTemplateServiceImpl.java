@@ -22,6 +22,10 @@ import org.yaml.snakeyaml.scanner.ScannerException;
  */
 public class NexusTemplateServiceImpl implements NexusTemplateService {
 
+	static {
+		System.out.println("Starting nexus template service");
+	}
+
 	private static final Logger logger = LoggerFactory.getLogger(NexusTemplateServiceImpl.class);
 	
 	/**

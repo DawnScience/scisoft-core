@@ -59,7 +59,7 @@ public class MovingBeamCalibrationScanSplitter {
 		try {
 			loadReferenceCalibration();
 		} catch (DatasetException e) {
-			throw new RuntimeException("Error reading reference calibration geometry");
+			throw new RuntimeException("Error reading reference calibration geometry", e);
 		}
 
 		if (model.getOverrideRoll()) {

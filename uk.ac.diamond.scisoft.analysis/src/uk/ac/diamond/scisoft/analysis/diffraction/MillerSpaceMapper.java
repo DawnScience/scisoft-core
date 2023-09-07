@@ -1535,8 +1535,8 @@ public class MillerSpaceMapper {
 		GroupNode instrument = (GroupNode) link.getDestination();
 
 		DataNode nameNode = instrument.getDataNode("name");
-		String beamline = nameNode == null ? null : NexusTreeUtils.getStringArray(nameNode, 1)[0].toLowerCase();
-		isI16 = "i16".equals(beamline);
+		String beamline = nameNode == null ? null : NexusTreeUtils.getSingleString(nameNode);
+		isI16 = "i16".equalsIgnoreCase(beamline);
 		if (isI16) {
 			logger.info("{} is a file from I16", file);
 		}

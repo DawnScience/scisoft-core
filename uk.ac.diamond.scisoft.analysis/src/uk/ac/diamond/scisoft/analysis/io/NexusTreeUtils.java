@@ -307,6 +307,9 @@ public class NexusTreeUtils {
 		// set up slices
 		int[] shape = cData.getShape();
 		int rank = shape.length;
+		if (rank == 0) {
+			return;
+		}
 
 		// scan children for datasets as possible axes (could be referenced by @axes)
 		List<AxisChoice> choices = new ArrayList<AxisChoice>();
@@ -394,13 +397,15 @@ public class NexusTreeUtils {
 								int al = ashape[i];
 								if (il < 0 || il >= rank || al != shape[il]) {
 									intAxis = null;
-									logger.debug("Axis attribute {} does not match shape", a.getName());
+									logger.debug("Axis attribute {} does not match shape {} != {}", a.getName(),
+											Arrays.toString(a.getShape()), Arrays.toString(shape));
 									break;
 								}
 							}
 						} else {
 							intAxis = null;
-							logger.debug("Axis attribute {} does not match rank", a.getName());
+							logger.debug("Axis attribute {} does not match rank {} != {}", a.getName(),
+									a.getRank(), shape.length);
 						}
 					}
 				}
@@ -432,7 +437,9 @@ public class NexusTreeUtils {
 				}
 
 				choice.setIndexMapping(intAxis);
-				choice.setAxisNumber(intAxis[intAxis.length-1]);
+				if (intAxis.length > 0) {
+					choice.setAxisNumber(intAxis[intAxis.length-1]);
+				}
 				choices.add(choice);
 			} catch (Exception e) {
 				logger.debug("Axis attributes in {} are invalid - {}", a.getName(), e.getMessage());
@@ -448,7 +455,9 @@ public class NexusTreeUtils {
 				logger.trace("Found @{} tag in group (not in '{}' dataset)", NexusConstants.DATA_AXES, gNode.findLinkedNodeName(dNode));
 		}
 
-		if (axesAttr != null) { // check axes attribute for list axes
+		if (axesAttr == null && choices.isEmpty()) {
+			return;
+		} else if (axesAttr != null) { // check axes attribute for list axes
 			// check if axes referenced by data's @axes tag exists
 			String[] names = parseStringArray(axesAttr);
 			for (String s : names) {
@@ -476,10 +485,10 @@ public class NexusTreeUtils {
 			logger.error("Problem creating metadata", e);
 			return;
 		}
-		for (int i = 0; i < rank; i++) {
-			int len = shape[i];
-			for (AxisChoice c : choices) {
-				ILazyDataset ad = c.getValues();
+		for (AxisChoice c : choices) {
+			ILazyDataset ad = c.getValues();
+			for (int i = 0; i < rank; i++) {
+				int len = shape[i];
 				if (c.getAxisNumber() == i) {
 					// add if choice has been designated as for this dimension
 					int p = c.getPrimary();
@@ -500,10 +509,11 @@ public class NexusTreeUtils {
 						axisList.add(0, ad);
 					}
 				}
+				if (!axisList.isEmpty()) {
+					amd.setAxis(i, axisList.toArray(new ILazyDataset[0]));
+					axisList.clear();
+				}
 			}
-
-			amd.setAxis(i, axisList.toArray(new ILazyDataset[0]));
-			axisList.clear();
 		}
 		cData.addMetadata(amd);
 	}
@@ -634,7 +644,7 @@ public class NexusTreeUtils {
 	 */
 	public static boolean parseNXdataAndAugment(GroupNode gn) {
 		if (!isNXClass(gn, NexusConstants.DATA)) {
-			logger.warn("'{}' must be an {} class", gn, NexusConstants.DATA);
+			logger.debug("'{}' must be an {} class", gn, NexusConstants.DATA);
 			return false;
 		}
 
@@ -1028,7 +1038,7 @@ public class NexusTreeUtils {
 
 		// initial dependency chain
 		NodeLink nl = gNode.getNodeLink(TRANSFORMATIONS_DEPENDSON);
-		String first = nl == null ? null : getStringArray(nl.getDestination(), 1)[0];
+		String first = nl == null ? null : getSingleString(nl.getDestination());
 		if (first != null) {
 			first = canonicalizeDependsOn(path, tree, first);
 			if (!ftrans.containsKey(first)) {
@@ -1709,7 +1719,7 @@ public class NexusTreeUtils {
 		if (nl == null) {
 			logAndThrow("Sample '%s' must have a %s field", link.getName(), TRANSFORMATIONS_DEPENDSON);
 		}
-		String dep = canonicalizeDependsOn(path, tree, getStringArray(nl.getDestination(), 1)[0]);
+		String dep = canonicalizeDependsOn(path, tree, getSingleString(nl.getDestination()));
 		return parseNodeShape(path, tree, tree.findNodeLink(dep), shape);
 	}
 
@@ -1806,7 +1816,7 @@ public class NexusTreeUtils {
 		Matrix3d m3 = new Matrix3d();
 		NodeLink nl = gNode.getNodeLink(TRANSFORMATIONS_DEPENDSON);
 		if (nl != null && nl.isDestinationData()) {
-			String dep = canonicalizeDependsOn(path, tree, getStringArray(nl.getDestination(), 1)[0]);
+			String dep = canonicalizeDependsOn(path, tree, getSingleString(nl.getDestination()));
 			Matrix4d m = calcForwardTransform(ftrans, dep);
 			m.getRotationScale(m3);
 		} else {
@@ -2238,6 +2248,17 @@ public class NexusTreeUtils {
 	}
 
 	/**
+	 * Get first element of data node as string array. Converts if exists
+	 * @param n
+	 * @return string or null if not a data node
+	 * @throws IllegalArgumentException if node exists and is not of unit length
+	 */
+	public static String getSingleString(Node n) {
+		String[] array = getStringArray(n, 1);
+		return array == null ? null : array[0];
+	}
+
+	/**
 	 * Get first element of data node as String. Converts if exists
 	 * @param n node
 	 * @return string value
@@ -2321,6 +2342,17 @@ public class NexusTreeUtils {
 			throw new IllegalArgumentException("Data node does not have array of required length");
 		}
 		return array;
+	}
+
+	/**
+	 * Get first element of data node as integer array. Converts if exists
+	 * @param n
+	 * @return int
+	 * @throws IllegalArgumentException if node exists and is not of unit length
+	 */
+	public static int getSingleInt(Node n) {
+		int[] array = getIntArray(n, 1);
+		return array[0];
 	}
 
 	/**

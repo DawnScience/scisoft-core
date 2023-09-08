@@ -84,6 +84,7 @@ public class JythonPath {
 		"jai_imageio",
 		"it.tidalwave.imageio.raw",
 		"javax.vecmath",
+		"org.apache.commons.logging",
 		"org.apache.ws.commons.util",
 		"org.apache.xmlrpc.client",
 		"org.apache.xmlrpc.common",

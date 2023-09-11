@@ -832,7 +832,9 @@ public class HDF5Loader extends AbstractFileLoader {
 
 			dims = new long[rank];
 			long[] maxDims = new long[rank];
-			H5.H5Sget_simple_extent_dims(sid, dims, maxDims);
+			if (rank > 0) {
+				H5.H5Sget_simple_extent_dims(sid, dims, maxDims);
+			}
 			node.setMaxShape(maxDims);
 		} catch (HDF5Exception ex) {
 			logger.error("Could not get data space information", ex);

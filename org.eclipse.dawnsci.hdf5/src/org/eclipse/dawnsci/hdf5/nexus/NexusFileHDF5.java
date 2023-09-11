@@ -744,6 +744,8 @@ public class NexusFileHDF5 implements NexusFile {
 			lazyDataset = new LazyDataset(new HDF5LazyLoader(null, fileName, path, name, iShape,
 					itemSize, clazz, extendUnsigned), name, clazz, iShape);
 		}
+		dataNode.setChunkShape(chunks);
+		dataNode.setMaxShape(maxShape);
 		dataNode.setDataset(lazyDataset);
 		if (!testForExternalLink(path)) {
 			nodeMap.put(getLinkTarget(path), dataNode);
@@ -785,7 +787,9 @@ public class NexusFileHDF5 implements NexusFile {
 			}
 			shape = new long[nDims];
 			maxShape = new long[nDims];
-			H5.H5Sget_simple_extent_dims(dataspaceId, shape, maxShape);
+			if (nDims > 0) {
+				H5.H5Sget_simple_extent_dims(dataspaceId, shape, maxShape);
+			}
 		} catch (HDF5Exception e) {
 			throw new NexusException("Error reading dataspace", e);
 		}
@@ -900,6 +904,13 @@ public class NexusFileHDF5 implements NexusFile {
 			idx++;
 			idx %= chunk.length;
 		}
+		// chunk dimensions must not exceed positive dimensions in max shape
+		for (int i = 0; i < chunk.length; i++) {
+			long m = maxshape[i];
+			if (m > 0 && m < chunk[i]) {
+				chunk[i] = m;
+			}
+		}
 		return chunk;
 	}
 
@@ -936,6 +947,16 @@ public class NexusFileHDF5 implements NexusFile {
 		int[] iShape = data.getShape();
 		int[] iMaxShape = data.getMaxShape();
 		int[] iChunks = data.getChunking();
+		if (iChunks != null) {
+			int[] mShape = iMaxShape != null ? iMaxShape : iShape;
+			for (int i = 0; i < mShape.length; i++) {
+				int m = mShape[i];
+				if (m > 0 && m < iChunks[i]) {
+					String msg = String.format("Dataset at %s has chunk shape (%s) that exceeds its max shape (%s)", dataPath, Arrays.toString(iChunks), Arrays.toString(mShape));
+					throw new IllegalArgumentException(msg);
+				}
+			}
+		}
 		Object[] fillValue = NexusUtils.getFillValue(data.getElementClass());
 		Object providedFillValue = data.getFillValue();
 		if (providedFillValue != null) {
@@ -959,6 +980,14 @@ public class NexusFileHDF5 implements NexusFile {
 				final long hdfDatatypeId = hdfDatatype.getResource();
 				final long hdfDataspaceId = hdfDataspace.getResource();
 
+				if (stringDataset) {
+					H5.H5Tset_cset(hdfDatatypeId, HDF5Constants.H5T_CSET_ASCII);
+					H5.H5Tset_size(hdfDatatypeId, writeVlenString ? HDF5Constants.H5T_VARIABLE : DEF_FIXED_STRING_LENGTH);
+				} else if (fillValue != null) {
+					//Strings must not have a fill value set
+					H5.H5Pset_fill_value(hdfPropertiesId, hdfDatatypeId, fillValue);
+				}
+
 				boolean recalcChunks = true;
 				if (chunks != null) {
 					for (long c : chunks) {
@@ -967,19 +996,15 @@ public class NexusFileHDF5 implements NexusFile {
 							break;
 						}
 					}
+					if (chunks.length > 0 && chunks[chunks.length - 1] == 1) {
+						recalcChunks = true;
+					}
 				}
-				if (stringDataset) {
-					H5.H5Tset_cset(hdfDatatypeId, HDF5Constants.H5T_CSET_ASCII);
-					H5.H5Tset_size(hdfDatatypeId, writeVlenString ? HDF5Constants.H5T_VARIABLE : DEF_FIXED_STRING_LENGTH);
-				} else if (fillValue != null) {
-					//Strings must not have a fill value set
-					H5.H5Pset_fill_value(hdfPropertiesId, hdfDatatypeId, fillValue);
-				}
-				//chunks == null check is unnecessary, but compiler warns otherwise
-				if (!Arrays.equals(shape, maxShape) && (recalcChunks || chunks == null || chunks[chunks.length - 1] == 1)) {
-					logger.debug("Inappropriate chunking requested for {}; attempting to estimate suitable chunking.", name);
+				if (recalcChunks && !Arrays.equals(shape, maxShape)) {
+					logger.debug("Inappropriate chunking {} requested for {}: attempting to estimate suitable chunking.", Arrays.toString(chunks), name);
 					chunks = estimateChunking(shape, maxShape, (int) H5.H5Tget_size(hdfDatatypeId));
 					iChunks = HDF5Utils.toIntArray(chunks);
+					logger.debug("New chunking = {}", Arrays.toString(iChunks));
 					data.setChunking(iChunks);
 				}
 				if (chunks != null) {
@@ -1019,6 +1044,8 @@ public class NexusFileHDF5 implements NexusFile {
 
 		DataNode dataNode = TreeFactory.createDataNode(dataPath.hashCode());
 		((GroupNode)parentNode.node).addDataNode(name, dataNode);
+		dataNode.setChunkShape(chunks);
+		dataNode.setMaxShape(maxShape);
 		dataNode.setDataset(data);
 		long fileAddr = getLinkTarget(dataPath);
 		nodeMap.put(fileAddr, dataNode);
@@ -1130,6 +1157,7 @@ public class NexusFileHDF5 implements NexusFile {
 		DataNode dataNode = TreeFactory.createDataNode(dataPath.hashCode());
 		long fileAddr = getLinkTarget(dataPath);
 		nodeMap.put(fileAddr, dataNode);
+		dataNode.setMaxShape(shape);
 		dataNode.setDataset(data);
 		((GroupNode) parentNode.node).addDataNode(name, dataNode);
 		return dataNode;
@@ -1238,12 +1266,17 @@ public class NexusFileHDF5 implements NexusFile {
 			DataNode updatingDataNode = (DataNode) node;
 			if (!parentNode.containsDataNode(name)) {
 				ILazyDataset dataset = updatingDataNode.getDataset();
+				DataNode newDataNode;
 				if ((dataset instanceof IDataset)) {
-					createData(parentNode, name, (IDataset) dataset);
+					newDataNode = createData(parentNode, name, (IDataset) dataset);
 				} else if ((dataset instanceof ILazyWriteableDataset)) {
-					createData(parentNode, name, (ILazyWriteableDataset) dataset);
+					newDataNode = createData(parentNode, name, (ILazyWriteableDataset) dataset);
+					updatingDataNode.setChunkShape(newDataNode.getChunkShape());
 				} else {
 					throw new NexusException("Unrecognised dataset type: " + dataset.getClass());
+				}
+				if (updatingDataNode.getMaxShape() == null) {
+					updatingDataNode.setMaxShape(newDataNode.getMaxShape());
 				}
 			}
 			DataNode existingNode = getData(parentNode, name);

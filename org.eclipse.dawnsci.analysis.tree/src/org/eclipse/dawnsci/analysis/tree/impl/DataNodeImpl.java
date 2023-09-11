@@ -14,7 +14,6 @@ package org.eclipse.dawnsci.analysis.tree.impl;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.stream.IntStream;
 
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.january.DatasetException;
@@ -97,7 +96,7 @@ public class DataNodeImpl extends NodeImpl implements DataNode, Serializable {
 	@Override
 	public void setMaxShape(long... maxShape) {
 		if (dataset == null) {
-			rank = maxShape.length;
+			rank = maxShape == null ? 0 : maxShape.length;
 		} else if (maxShape != null && maxShape.length != dataset.getRank()) {
 			throw new IllegalArgumentException("Maximum shape must match rank of dataset");
 		}
@@ -116,8 +115,8 @@ public class DataNodeImpl extends NodeImpl implements DataNode, Serializable {
 	
 	@Override
 	public long[] getChunkShape() {
-		if (dataset instanceof ILazyWriteableDataset) {
-			return toLongArray(((ILazyWriteableDataset) dataset).getChunking());
+		if (dataset instanceof IDynamicDataset) {
+			return toLongArray(((IDynamicDataset) dataset).getChunking());
 		}
 		
 		return chunkShape;
@@ -130,8 +129,8 @@ public class DataNodeImpl extends NodeImpl implements DataNode, Serializable {
 		}
 		this.chunkShape = chunkShape;
 		
-		if (dataset instanceof ILazyWriteableDataset) {
-			((ILazyWriteableDataset) dataset).setChunking(toIntArray(chunkShape));
+		if (dataset instanceof IDynamicDataset) {
+			((IDynamicDataset) dataset).setChunking(toIntArray(chunkShape));
 		}
 	}
 
@@ -206,8 +205,8 @@ public class DataNodeImpl extends NodeImpl implements DataNode, Serializable {
 		rank = dataset.getRank();
 
 		if (maxShape != null || chunkShape != null) {
-			int[] mshape = maxShape == null ? null : IntStream.range(0, rank).map(i -> (int) maxShape[i]).toArray();
-			int[] cshape = chunkShape == null ? null : IntStream.range(0, rank).map(i -> (int) chunkShape[i]).toArray();
+			int[] mshape = toIntArray(maxShape);
+			int[] cshape = toIntArray(chunkShape);
 			try {
 				DimensionMetadata dmd = MetadataFactory.createMetadata(DimensionMetadata.class, dataset.getShape(), mshape, cshape);
 				dataset.addMetadata(dmd);
@@ -251,18 +250,18 @@ public class DataNodeImpl extends NodeImpl implements DataNode, Serializable {
 		return out.toString();
 	}
 	
-	private int[] toIntArray(long[] longArray) {
+	private static int[] toIntArray(long[] longArray) {
 		if (longArray == null) return null; // NOSONAR, null is allowed as this is a conversion function
 
 		Arrays.stream(longArray)
-			.filter(i -> i > Integer.MAX_VALUE)
+			.filter(i -> i > Integer.MAX_VALUE && i != Long.MAX_VALUE) // some files have wrongly written max shape
 			.findFirst()
 			.ifPresent(i -> { throw new IllegalArgumentException("Dimension size is too large for an integer " + i); });
-		
-		return Arrays.stream(longArray).mapToInt(i -> (int) i).toArray();
+
+		return Arrays.stream(longArray).mapToInt(i -> i == Long.MAX_VALUE ? -1 : (int) i).toArray();
 	}
 	
-	private long[] toLongArray(int[] intArray) {
+	private static long[] toLongArray(int[] intArray) {
 		if (intArray == null) return null; // NOSONAR, null is allowed as this is a conversion function
 		
 		return Arrays.stream(intArray).mapToLong(i -> i).toArray();

@@ -54,7 +54,6 @@ import org.eclipse.january.dataset.BooleanDataset;
 import org.eclipse.january.dataset.ByteDataset;
 import org.eclipse.january.dataset.Comparisons.Monotonicity;
 import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DateDataset;
 import org.eclipse.january.dataset.DoubleDataset;
@@ -127,8 +126,8 @@ public class NexusAssert {
 		}
 		
 		// check numbers of data nodes and group nodes are the same
-		assertThat(path, actualGroup.getNumberOfDataNodes(), is(expectedGroup.getNumberOfDataNodes()));
-		assertThat(path, actualGroup.getNumberOfGroupNodes(), is(expectedGroup.getNumberOfGroupNodes()));
+		assertThat(path + ": fields", actualGroup.getNumberOfDataNodes(), is(expectedGroup.getNumberOfDataNodes()));
+		assertThat(path + ": groups", actualGroup.getNumberOfGroupNodes(), is(expectedGroup.getNumberOfGroupNodes()));
 
 		// check number of attributes same (i.e. actualGroup has no additional attributes)
 		// The additional attribute "target" is allowed.
@@ -140,7 +139,7 @@ public class NexusAssert {
 		} else if (actualGroup.containsAttribute(TARGET)) {
 			expectedNumAttributes++;
 		}
-		assertThat(path, actualGroup.getNumberOfAttributes(), is(expectedNumAttributes));
+		assertThat(path + ": attrs", actualGroup.getNumberOfAttributes(), is(expectedNumAttributes));
 		
 		// check attribute properties same for each attribute
 		for (String attributeName : expectedGroup.getAttributeNames()) {
@@ -187,35 +186,35 @@ public class NexusAssert {
 			}
 		}
 
-		assertThat(path, actualDataNode.getTypeName(), is(equalTo(expectedDataNode.getTypeName())));
-		assertThat(path, actualDataNode.isAugmented(), is(expectedDataNode.isAugmented()));
-		assertThat(path, actualDataNode.isString(), is(expectedDataNode.isString())); 
-		assertThat(path, actualDataNode.isSupported(), is(expectedDataNode.isSupported()));
-		assertThat(path, actualDataNode.isUnsigned(), is(expectedDataNode.isUnsigned())); 
-		assertThat(path, actualDataNode.getMaxStringLength(), is(expectedDataNode.getMaxStringLength()));
+		assertThat(path + ": typeName", actualDataNode.getTypeName(), is(equalTo(expectedDataNode.getTypeName())));
+		assertThat(path + ": isAugmented", actualDataNode.isAugmented(), is(expectedDataNode.isAugmented()));
+		assertThat(path + ": isString", actualDataNode.isString(), is(expectedDataNode.isString())); 
+		assertThat(path + ": isSupported", actualDataNode.isSupported(), is(expectedDataNode.isSupported()));
+		assertThat(path + ": isUnsigned", actualDataNode.isUnsigned(), is(expectedDataNode.isUnsigned())); 
+		assertThat(path + ": maxStringLength", actualDataNode.getMaxStringLength(), is(expectedDataNode.getMaxStringLength()));
 		if (expectedDataNode.getMaxShape() != null) {
-			assertThat(path, actualDataNode.getMaxShape(), is(equalTo(expectedDataNode.getMaxShape())));
+			assertThat(path + ": maxShape", actualDataNode.getMaxShape(), is(equalTo(expectedDataNode.getMaxShape())));
 		} 
 		if (expectedDataNode.getChunkShape() != null) { 
-			assertThat(path, actualDataNode.getChunkShape(), is(equalTo(expectedDataNode.getChunkShape())));
+			assertThat(path + ": chunkShape", actualDataNode.getChunkShape(), is(equalTo(expectedDataNode.getChunkShape())));
 		}
-		assertThat(path, actualDataNode.getString(), is(equalTo(expectedDataNode.getString())));
+		assertThat(path + ": string", actualDataNode.getString(), is(equalTo(expectedDataNode.getString())));
 		assertDatasetsEqual(path, expectedDataNode.getDataset(), actualDataNode.getDataset());
 	}
 
 	public static void assertAttributesEquals(final String path, final Attribute expectedAttr,
 			final Attribute actualAttr) {
-		assertThat(path, actualAttr.getName(), is(equalTo(expectedAttr.getName())));
-		assertThat(path, actualAttr.getTypeName(), is(equalTo(expectedAttr.getTypeName())));
-		assertThat(path, actualAttr.getFirstElement(), is(equalTo(expectedAttr.getFirstElement())));
-		assertThat(path, actualAttr.getSize(), is(expectedAttr.getSize()));
+		assertThat(path + ": name", actualAttr.getName(), is(equalTo(expectedAttr.getName())));
+		assertThat(path + ": typeName", actualAttr.getTypeName(), is(equalTo(expectedAttr.getTypeName())));
+		assertThat(path + ": 1st element", actualAttr.getFirstElement(), is(equalTo(expectedAttr.getFirstElement())));
+		assertThat(path + ": size", actualAttr.getSize(), is(expectedAttr.getSize()));
 		if (expectedAttr.getSize() == 1 && expectedAttr.getRank() == 1 && actualAttr.getRank() == 0) {
 			// TODO fix examples now that we can save scalar (or zero-ranked) datasets
 			actualAttr.getValue().setShape(1);
 		}
-		assertThat(path, actualAttr.getRank(), is(expectedAttr.getRank()));
-		assertThat(path, actualAttr.getShape(), is(expectedAttr.getShape()));
-		assertDatasetsEqual(path, expectedAttr.getValue(), actualAttr.getValue());
+		assertThat(path + ": rank", actualAttr.getRank(), is(expectedAttr.getRank()));
+		assertThat(path + ": shape", actualAttr.getShape(), is(expectedAttr.getShape()));
+		assertDatasetsEqual(path + ": value", expectedAttr.getValue(), actualAttr.getValue());
 	}
 
 	public static void assertDatasetValue(Object expectedValue, ILazyDataset dataset) {
@@ -227,11 +226,11 @@ public class NexusAssert {
 		// Note: we permit dataset names and classes to different, as long as the containing data node names are the same
 //		assertThat(path, actualDataset.getName(), is(equalTo(expectedDataset.getName())));
 //		assertThat(path, actualDataset.getClass(), is(equalTo(expectedDataset.getClass())));
-		assertThat(path, actualDataset.getElementClass(), is(equalTo(expectedDataset.getElementClass())));
-		assertThat(path, actualDataset.getElementsPerItem(), is(equalTo(expectedDataset.getElementsPerItem()))); 
-		assertThat(path, actualDataset.getSize(), is(expectedDataset.getSize())); 
-		assertThat(path, actualDataset.getRank(), is(expectedDataset.getRank()));
-		assertThat(path, actualDataset.getShape(), is(equalTo(expectedDataset.getShape()))); 
+		assertThat(path + ": elementClass", actualDataset.getElementClass(), is(equalTo(expectedDataset.getElementClass())));
+		assertThat(path + ": elements/item", actualDataset.getElementsPerItem(), is(equalTo(expectedDataset.getElementsPerItem()))); 
+		assertThat(path + ": size", actualDataset.getSize(), is(expectedDataset.getSize())); 
+		assertThat(path + ": rank", actualDataset.getRank(), is(expectedDataset.getRank()));
+		assertThat(path + ": shape", actualDataset.getShape(), is(equalTo(expectedDataset.getShape()))); 
 		assertDatasetDataEqual(path, expectedDataset, actualDataset);
 	}
 

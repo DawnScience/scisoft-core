@@ -10,17 +10,23 @@
 package org.eclipse.dawnsci.hdf5.nexus;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
 
 import java.net.URI;
 
+import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.hdf5.HDF5DatasetResource;
 import org.eclipse.dawnsci.hdf5.HDF5DatatypeResource;
 import org.eclipse.dawnsci.hdf5.HDF5FileResource;
 import org.eclipse.dawnsci.hdf5.HDF5Resource;
 import org.eclipse.dawnsci.hdf5.TestBase;
 import org.eclipse.dawnsci.nexus.NexusException;
+import org.eclipse.dawnsci.nexus.NexusFile;
+import org.eclipse.january.asserts.TestUtils;
+import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
 import org.eclipse.january.dataset.LazyWriteableDataset;
@@ -107,6 +113,41 @@ public class NexusFileHDF5Test extends TestBase {
 			} catch (NexusException e) {
 				// pass
 			}
+		}
+	}
+
+	@Test
+	public void testChunkEstimation() throws Exception {
+		checkChunkEstimation(null, null);
+
+		checkChunkEstimation(new int[] {ILazyWriteableDataset.UNLIMITED, 2, 4}, 64, 2, 4);
+
+		assertThrows(IllegalArgumentException.class, () -> checkChunkEstimation(null, 16, 4, 1));
+	}
+
+	private void checkChunkEstimation(int[] maxShape, int... chunk) throws Exception {
+		Dataset ds = DatasetFactory.createRange(8).reshape(4,2,1);
+		if (maxShape == null) {
+			maxShape = new int[] {ILazyWriteableDataset.UNLIMITED,2,1};
+		}
+		try (NexusFile nf = new NexusFileHDF5(FILE_NAME, true)) {
+			nf.createAndOpenToWrite();
+			nf.getGroup("/a/b", true);
+			ILazyWriteableDataset lds = new LazyWriteableDataset("data",
+					Double.class,
+					new int[] {1,1,1},
+					maxShape,
+					chunk, null);
+			nf.createData("/a/b/", lds, false);
+
+			nf.activateSwmrMode();
+			lds.setSlice(null, ds, new int[] {0,0,0}, new int[] {4,2,1}, null);
+		}
+
+		try (NexusFile nf = new NexusFileHDF5(FILE_NAME, true)) {
+			nf.openToRead();
+			DataNode ads = nf.getData("/a/b/data");
+			TestUtils.assertDatasetEquals(ds, DatasetUtils.sliceAndConvertLazyDataset(ads.getDataset()));
 		}
 	}
 }

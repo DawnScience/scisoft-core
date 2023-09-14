@@ -16,6 +16,8 @@ import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
 
+import uk.ac.diamond.osgi.services.ServiceProvider;
+
 public class Expression2DOperation<T extends Expression2DModel> extends Expression1DOperation<T> {
 
 	@Override
@@ -27,7 +29,7 @@ public class Expression2DOperation<T extends Expression2DModel> extends Expressi
 		
 		if (engine == null) {
 			try {
-				IExpressionService service = ExpressionServiceHolder.getExpressionService();
+				IExpressionService service = ServiceProvider.getService(IExpressionService.class);
 				engine = service.getExpressionEngine();
 			} catch (Exception e) {
 				throw new OperationException(this, e.getMessage());

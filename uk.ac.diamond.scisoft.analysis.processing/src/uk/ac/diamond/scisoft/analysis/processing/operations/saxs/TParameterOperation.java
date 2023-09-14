@@ -11,41 +11,35 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.saxs;
 
 
-// Imports from org.eclipse.january
-import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.Maths;
-import org.eclipse.january.dataset.Slice;
-import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.DatasetException;
-import org.eclipse.january.MetadataException;
-import org.eclipse.january.dataset.DatasetUtils;
-import org.eclipse.january.dataset.DoubleDataset;
-import org.eclipse.january.metadata.AxesMetadata;
-import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.metadata.MetadataFactory;
-
-// Imports from org.eclipse.dawnsci
-import org.eclipse.dawnsci.analysis.api.processing.OperationData;
-import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.apache.commons.math3.complex.Complex;
 import org.eclipse.dawnsci.analysis.api.expressions.IExpressionEngine;
 import org.eclipse.dawnsci.analysis.api.expressions.IExpressionService;
+// Imports from org.eclipse.dawnsci
+import org.eclipse.dawnsci.analysis.api.processing.OperationData;
+import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
-
+import org.eclipse.january.DatasetException;
+// Imports from org.eclipse.january
+import org.eclipse.january.IMonitor;
+import org.eclipse.january.MetadataException;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.DoubleDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.dataset.Slice;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
 // Imports from org.slf4j
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.ac.diamond.osgi.services.ServiceProvider;
 // Imports from uk.ac.diamond
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
-import uk.ac.diamond.scisoft.analysis.processing.operations.expressions.ExpressionServiceHolder;
-
-// Imports from other classes within this package
-import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.PorodFittingOperation;
-import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.KratkyFittingOperation;
 
 
 // @author Tim Snow, adapted from original plug-in set by Tim Spain.
@@ -94,7 +88,7 @@ public class TParameterOperation extends AbstractOperation<TParameterModel, Oper
 		// First up, let's check that our expression engine is set up properly
 		if (expressionEngine == null) {
 			try {
-				IExpressionService service = ExpressionServiceHolder.getExpressionService();
+				IExpressionService service = ServiceProvider.getService(IExpressionService.class);
 				expressionEngine = service.getExpressionEngine();
 			} catch (Exception engineError) {
 				// If not, we'll raise an error

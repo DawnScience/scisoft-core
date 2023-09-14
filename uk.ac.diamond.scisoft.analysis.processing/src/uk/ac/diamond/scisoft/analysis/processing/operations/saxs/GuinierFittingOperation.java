@@ -37,10 +37,10 @@ import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
 import org.eclipse.january.metadata.MetadataType;
 
+import uk.ac.diamond.osgi.services.ServiceProvider;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
-import uk.ac.diamond.scisoft.analysis.processing.operations.expressions.ExpressionServiceHolder;
 
 
 // @author Tim Snow
@@ -83,7 +83,7 @@ public class GuinierFittingOperation extends AbstractOperation<GuinierFittingMod
 		// First up, let's check that our expression engine is set up properly
 		if (expressionEngine == null) {
 			try {
-				IExpressionService service = ExpressionServiceHolder.getExpressionService();
+				IExpressionService service = ServiceProvider.getService(IExpressionService.class);
 				expressionEngine = service.getExpressionEngine();
 			} catch (Exception engineError) {
 				// If not, we'll raise an error

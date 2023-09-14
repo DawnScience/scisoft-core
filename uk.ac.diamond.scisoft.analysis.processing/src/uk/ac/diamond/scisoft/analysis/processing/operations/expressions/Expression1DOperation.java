@@ -15,6 +15,8 @@ import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
 
+import uk.ac.diamond.osgi.services.ServiceProvider;
+
 public class Expression1DOperation<T extends Expression1DModel> extends AbstractOperation<T ,OperationData> {
 
 	IExpressionEngine engine;
@@ -25,10 +27,9 @@ public class Expression1DOperation<T extends Expression1DModel> extends Abstract
 	}
 	
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
-		
 		if (engine == null) {
 			try {
-				IExpressionService service = ExpressionServiceHolder.getExpressionService();
+				IExpressionService service = ServiceProvider.getService(IExpressionService.class);
 				engine = service.getExpressionEngine();
 			} catch (Exception e) {
 				throw new OperationException(this, e.getMessage());

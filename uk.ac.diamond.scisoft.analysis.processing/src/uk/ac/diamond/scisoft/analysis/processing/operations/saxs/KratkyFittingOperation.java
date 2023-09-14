@@ -11,39 +11,36 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.saxs;
 
 
-// Imports from org.eclipse.january
-import org.eclipse.january.IMonitor;
-import org.eclipse.january.dataset.Slice;
-import org.eclipse.january.dataset.Dataset;
-import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.DatasetException;
-import org.eclipse.january.dataset.DatasetUtils;
-import org.eclipse.january.metadata.AxesMetadata;
-import org.eclipse.january.dataset.DatasetFactory;
-import org.eclipse.january.metadata.MetadataFactory;
-import org.eclipse.january.metadata.MetadataType;
-
-// Imports from org.eclipse.dawnsci
-import org.eclipse.dawnsci.analysis.api.processing.OperationData;
-import org.eclipse.dawnsci.analysis.api.processing.OperationDataForDisplay;
-import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
-import org.eclipse.dawnsci.analysis.api.processing.PlotAdditionalData;
-import org.eclipse.dawnsci.analysis.api.processing.OperationException;
-import org.eclipse.dawnsci.analysis.api.processing.OperationLog;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.expressions.IExpressionEngine;
 import org.eclipse.dawnsci.analysis.api.expressions.IExpressionService;
+// Imports from org.eclipse.dawnsci
+import org.eclipse.dawnsci.analysis.api.processing.OperationData;
+import org.eclipse.dawnsci.analysis.api.processing.OperationDataForDisplay;
+import org.eclipse.dawnsci.analysis.api.processing.OperationException;
+import org.eclipse.dawnsci.analysis.api.processing.OperationLog;
+import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
+import org.eclipse.dawnsci.analysis.api.processing.PlotAdditionalData;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
+import org.eclipse.january.DatasetException;
+// Imports from org.eclipse.january
+import org.eclipse.january.IMonitor;
 import org.eclipse.january.MetadataException;
+import org.eclipse.january.dataset.Dataset;
+import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Slice;
+import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.MetadataFactory;
+import org.eclipse.january.metadata.MetadataType;
 
+import uk.ac.diamond.osgi.services.ServiceProvider;
 // Imports from uk.ac.diamond
 import uk.ac.diamond.scisoft.analysis.fitting.Fitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Polynomial;
-import uk.ac.diamond.scisoft.analysis.processing.operations.saxs.KratkyFittingModel;
-import uk.ac.diamond.scisoft.analysis.processing.operations.expressions.ExpressionServiceHolder;
 
 
 // @author Tim Snow
@@ -235,7 +232,7 @@ public class KratkyFittingOperation extends AbstractOperation<KratkyFittingModel
 		// First up, let's check that our expression engine is set up properly
 		if (expressionEngine == null) {
 			try {
-				IExpressionService service = ExpressionServiceHolder.getExpressionService();
+				IExpressionService service = ServiceProvider.getService(IExpressionService.class);
 				expressionEngine = service.getExpressionEngine();
 			} catch (Exception engineError) {
 				// If not, we'll raise an error

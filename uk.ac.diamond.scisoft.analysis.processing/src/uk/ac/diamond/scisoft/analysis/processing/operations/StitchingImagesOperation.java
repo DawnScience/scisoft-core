@@ -23,7 +23,7 @@ import org.eclipse.january.dataset.ILazyDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.processing.operations.utils.OperationServiceLoader;
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 public class StitchingImagesOperation extends AbstractOperation<StitchingImagesModel, OperationData> {
 
@@ -66,7 +66,7 @@ public class StitchingImagesOperation extends AbstractOperation<StitchingImagesM
 			boolean useFeatureAssociation = model.isFeatureAssociated();
 			
 			if (imageStitchingService == null)
-				imageStitchingService = OperationServiceLoader.getImageStitchingService();
+				imageStitchingService = ServiceProvider.getService(IImageStitchingProcess.class);
 			try {
 				AggregateDataset stack = new AggregateDataset(true, imageStack.toArray(new ILazyDataset[imageStack.size()]));
 				double[][][] trans = new double[rows][columns][2];

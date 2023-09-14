@@ -18,7 +18,7 @@ import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.IDataset;
 
-import uk.ac.diamond.scisoft.analysis.processing.operations.utils.OperationServiceLoader;
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 public abstract class AbstractSimpleImageOperation <T extends IOperationModel> extends AbstractOperation<T, OperationData> {
 
@@ -27,9 +27,9 @@ public abstract class AbstractSimpleImageOperation <T extends IOperationModel> e
 
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		if (imageFilterService == null)
-			imageFilterService = OperationServiceLoader.getImageFilterService();
+			imageFilterService = ServiceProvider.getService(IImageFilterService.class);
 		if (imageTransformService == null)
-			imageTransformService = OperationServiceLoader.getImageTransformService();
+			imageTransformService = ServiceProvider.getService(IImageTransform.class);
 
 		IDataset out = processImage(input, monitor);
 		copyMetadata(input, out);

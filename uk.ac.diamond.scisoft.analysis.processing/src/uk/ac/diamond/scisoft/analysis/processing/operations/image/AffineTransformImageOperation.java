@@ -1,5 +1,6 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.image;
 
+import org.eclipse.dawnsci.analysis.api.image.IImageFilterService;
 import org.eclipse.dawnsci.analysis.api.image.IImageTransform;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
@@ -17,7 +18,7 @@ import org.eclipse.january.metadata.MetadataFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.processing.operations.utils.OperationServiceLoader;
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 public class AffineTransformImageOperation extends AbstractSimpleImageOperation<AffineTransformImageModel> {
 
@@ -31,9 +32,9 @@ public class AffineTransformImageOperation extends AbstractSimpleImageOperation<
 	@Override
 	protected OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		if (imageFilterService == null)
-			imageFilterService = OperationServiceLoader.getImageFilterService();
+			imageFilterService = ServiceProvider.getService(IImageFilterService.class);
 		if (imageTransformService == null)
-			imageTransformService = OperationServiceLoader.getImageTransformService();
+			imageTransformService = ServiceProvider.getService(IImageTransform.class);
 
 		IDataset out = processImage(input, monitor);
 		int[] outShape = out.getShape();

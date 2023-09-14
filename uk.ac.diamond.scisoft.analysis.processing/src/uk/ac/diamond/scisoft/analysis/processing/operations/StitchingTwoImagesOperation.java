@@ -18,8 +18,8 @@ import org.eclipse.january.dataset.IDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.ac.diamond.osgi.services.ServiceProvider;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
-import uk.ac.diamond.scisoft.analysis.processing.operations.utils.OperationServiceLoader;
 
 public class StitchingTwoImagesOperation extends AbstractOperation<StitchingTwoImagesModel, OperationData> {
 
@@ -46,7 +46,7 @@ public class StitchingTwoImagesOperation extends AbstractOperation<StitchingTwoI
 		IDataset stitched = null;
 		IDataset imageB = null;
 		if (imageStitchingService == null)
-			imageStitchingService = OperationServiceLoader.getImageStitchingService();
+			imageStitchingService = ServiceProvider.getService(IImageStitchingProcess.class);
 		try {
 			imageB = LoaderFactory.getDataSet(filePath, dataName, monitor).squeeze();
 			stitched = imageStitchingService.stitch(dataset, imageB, new double[] {-xTransl, -yTransl});

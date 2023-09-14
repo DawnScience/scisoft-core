@@ -95,20 +95,20 @@ public class I21ScanUtils {
 		}
 
 		private void retrieveScanInfo(GroupNode g) {
-			int rank = NexusTreeUtils.getIntArray(g.getDataNode(SCAN_LEVELS), 1)[0];
+			int rank = NexusTreeUtils.getSingleInt(g.getDataNode(SCAN_LEVELS));
 			shape = new int[rank];
 			posn = new int[rank];
 			names = new String[rank];
-			origin = NexusTreeUtils.getIntArray(g.getDataNode(SCAN_ORIGIN_ID), 1)[0];
+			origin = NexusTreeUtils.getSingleInt(g.getDataNode(SCAN_ORIGIN_ID));
 
-			String type = NexusTreeUtils.getStringArray(g.getDataNode(SCAN_TYPE), 1)[0];
+			String type = NexusTreeUtils.getSingleString(g.getDataNode(SCAN_TYPE));
 			int otherID;
 			if (SCAN_TYPE_SAMPLE.equals(type)) {
 				isSample = true;
-				otherID = NexusTreeUtils.getIntArray(g.getDataNode(ELASTIC_SCAN), 1)[0];
+				otherID = NexusTreeUtils.getSingleInt(g.getDataNode(ELASTIC_SCAN));
 			} else if (SCAN_TYPE_ELASTIC.equals(type)) {
 				isSample = false;
-				otherID = NexusTreeUtils.getIntArray(g.getDataNode(SAMPLE_SCAN), 1)[0];
+				otherID = NexusTreeUtils.getSingleInt(g.getDataNode(SAMPLE_SCAN));
 			} else {
 				throw new IllegalArgumentException("Sample type is not valid");
 			}

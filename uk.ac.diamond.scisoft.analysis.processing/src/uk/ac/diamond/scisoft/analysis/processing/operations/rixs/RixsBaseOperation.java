@@ -455,12 +455,12 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		} catch (Exception e) {
 			if (detector.containsDataNode(DETECTOR_LOCAL_NAME)) {
 				try {
-					String[] names = NexusTreeUtils.getStringArray(detector.getDataNode(DETECTOR_LOCAL_NAME), 1);
-					if (names[0].toLowerCase().contains(DETECTOR_NAME_XCAM)) {
+					String name = NexusTreeUtils.getSingleString(detector.getDataNode(DETECTOR_LOCAL_NAME));
+					if (name != null && name.toLowerCase().contains(DETECTOR_NAME_XCAM)) {
 						double energy = getEnergy(mdg);
 						countsPerPhoton = (int) (800 * (energy / 933.)); // rough estimate from XCAM commissioning
 					} else {
-						log.appendFailure("Unknown detector in Nexus file %s: %s = %s", filePath, DETECTOR_LOCAL_NAME, names[0]);
+						log.appendFailure("Unknown detector in Nexus file %s: %s = %s", filePath, DETECTOR_LOCAL_NAME, name);
 					}
 				} catch (Exception e1) {
 					log.appendFailure("Could not read %s in NXdetector from Nexus file %s: %s", DETECTOR_LOCAL_NAME, filePath, e1);

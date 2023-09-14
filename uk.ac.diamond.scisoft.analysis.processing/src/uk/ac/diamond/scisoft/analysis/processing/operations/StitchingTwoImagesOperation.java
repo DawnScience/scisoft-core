@@ -37,10 +37,10 @@ public class StitchingTwoImagesOperation extends AbstractOperation<StitchingTwoI
 		// parent and whether we have hit the final image
 		SliceFromSeriesMetadata ssm = getSliceSeriesMetadata(dataset);
 
-		String filePath = ((StitchingTwoImagesModel) model).getFilePath();
-		String dataName = ((StitchingTwoImagesModel) model).getDataName();
-		double xTransl = ((StitchingTwoImagesModel) model).getxTransl();
-		double yTransl = ((StitchingTwoImagesModel) model).getyTransl();
+		String filePath = model.getFilePath();
+		String dataName = model.getDataName();
+		double xTransl = model.getxTransl();
+		double yTransl = model.getyTransl();
 
 //		boolean useFeatureAssociation = ((StitchingTwoImagesModel) model).isFeatureAssociated();
 		IDataset stitched = null;

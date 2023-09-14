@@ -21,13 +21,16 @@ import org.eclipse.dawnsci.analysis.api.processing.IOperationContext;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFileFactoryHDF5;
+import org.eclipse.dawnsci.nexus.INexusFileFactory;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import uk.ac.diamond.osgi.services.ServiceProvider;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.LoaderServiceImpl;
 import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
@@ -48,14 +51,14 @@ public class XPDFOldPipelineTest {
 	private static Map<TestingOperations, Integer> opIndices;
 	
 	@BeforeClass
-	public static void before() throws Exception {
+	public static void setUpClass() throws Exception {
 		
 		OperationRunnerImpl.setRunner(ExecutionType.SERIES,   new SeriesRunner());
 		operationService.createOperations(operationService.getClass(), "uk.ac.diamond.scisoft.xpdf.operations");
 		operationService.createOperations(operationService.getClass(), "uk.ac.diamond.scisoft.analysis.processing.operations");
 		new PersistJsonOperationsNode().setOperationService(operationService);
 		new LocalServiceManager().setLoaderService(new LoaderServiceImpl());
-		new org.dawnsci.persistence.ServiceLoader().setNexusFactory(new NexusFileFactoryHDF5());
+		ServiceProvider.setService(INexusFileFactory.class, new NexusFileFactoryHDF5());
 	
 		// Set up the pipeline and its context
 		context = operationService.createContext();
@@ -85,6 +88,11 @@ public class XPDFOldPipelineTest {
 		opIndices.put(TestingOperations.TOPHAT, 12);
 		opIndices.put(TestingOperations.LORCH, 13);
 		
+	}
+	
+	@AfterClass
+	public static void tearDownClass() {
+		ServiceProvider.reset();
 	}
 	
 	

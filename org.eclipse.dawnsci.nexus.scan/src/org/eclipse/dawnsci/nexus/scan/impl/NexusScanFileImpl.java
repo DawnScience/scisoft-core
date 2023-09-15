@@ -44,6 +44,7 @@ import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusScanInfo;
 import org.eclipse.dawnsci.nexus.NexusScanInfo.ScanRole;
 import org.eclipse.dawnsci.nexus.builder.CustomNexusEntryModification;
+import org.eclipse.dawnsci.nexus.builder.NexusBuilderFactory;
 import org.eclipse.dawnsci.nexus.builder.NexusBuilderFile;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusFileBuilder;
@@ -60,12 +61,14 @@ import org.eclipse.dawnsci.nexus.scan.IDefaultDataGroupCalculator;
 import org.eclipse.dawnsci.nexus.scan.NexusScanFile;
 import org.eclipse.dawnsci.nexus.scan.NexusScanMetadataWriter;
 import org.eclipse.dawnsci.nexus.scan.NexusScanModel;
-import org.eclipse.dawnsci.nexus.scan.ServiceHolder;
 import org.eclipse.dawnsci.nexus.template.NexusTemplate;
 import org.eclipse.dawnsci.nexus.template.NexusTemplateService;
+import org.eclipse.dawnsci.nexus.validation.NexusValidationService;
 import org.eclipse.dawnsci.nexus.validation.ValidationReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 /**
  * An instance of this class knows how to build a {@link NexusBuilderFile} for a given {@link NexusScanModel}.
@@ -109,8 +112,6 @@ class NexusScanFileImpl implements NexusScanFile {
 	 * (the one that supplies the signal field.)
 	 */
 	private Map<NexusObjectProvider<?>, AxisDataDevice<?>> dataDevices = new HashMap<>();
-
-	private final INexusDeviceService nexusDeviceService = ServiceHolder.getNexusDeviceService();
 
 	NexusScanFileImpl(NexusScanModel nexusScanModel) throws NexusException {
 		this.nexusScanModel = nexusScanModel;
@@ -164,7 +165,7 @@ class NexusScanFileImpl implements NexusScanFile {
 	public void createNexusFile(boolean async, boolean useSwmr) throws NexusException {
 		// We use the new nexus framework to join everything up into the scan
 		// Create a builder
-		fileBuilder = ServiceHolder.getNexusBuilderFactory().newNexusFileBuilder(nexusScanModel.getFilePath());
+		fileBuilder = ServiceProvider.getService(NexusBuilderFactory.class).newNexusFileBuilder(nexusScanModel.getFilePath());
 
 		try {
 			createEntry(fileBuilder);
@@ -195,7 +196,7 @@ class NexusScanFileImpl implements NexusScanFile {
 	private void validate(NexusFileBuilder fileBuilder) throws NexusException {
 		if (Boolean.getBoolean(SYSTEM_PROPERTY_NAME_VALIDATE_NEXUS) || Boolean.getBoolean("GDA/gda."+SYSTEM_PROPERTY_NAME_VALIDATE_NEXUS)) {
 			final ValidationReport validationReport =
-					ServiceHolder.getNexusValidationService().validateNexusTree(fileBuilder.getNexusTree());
+					ServiceProvider.getService(NexusValidationService.class).validateNexusTree(fileBuilder.getNexusTree());
 			if (validationReport.isError()) { // note we log an error rather than throwing an exception if the nexus file is invalid
 				logger.error("The nexus file {} is invalid, see log for details", filePath);
 			}
@@ -203,7 +204,7 @@ class NexusScanFileImpl implements NexusScanFile {
 	}
 
 	private void applyTemplates(Tree tree) throws NexusException {
-		final NexusTemplateService templateService = ServiceHolder.getTemplateService();
+		final NexusTemplateService templateService = ServiceProvider.getService(NexusTemplateService.class);
 		for (String templateFilePath : nexusScanModel.getTemplateFilePaths()) {
 			final NexusTemplate template = templateService.loadTemplate(templateFilePath);
 			template.apply(tree);
@@ -250,6 +251,7 @@ class NexusScanFileImpl implements NexusScanFile {
 	private Map<ScanRole, List<INexusDevice<?>>> getNexusDevices(NexusScanInfo info) throws NexusException {
 		final Map<ScanRole, List<INexusDevice<?>>> oldNexusDevices = nexusScanModel.getNexusDevices();
 		final Map<ScanRole, List<INexusDevice<?>>> newNexusDevices = new EnumMap<>(ScanRole.class);
+		final INexusDeviceService nexusDeviceService = ServiceProvider.getService(INexusDeviceService.class);
 
 		for (Map.Entry<ScanRole, List<INexusDevice<?>>> nexusDevicesForScanRoleEntry : oldNexusDevices.entrySet()) {
 			final ScanRole scanRole = nexusDevicesForScanRoleEntry.getKey();
@@ -391,9 +393,10 @@ class NexusScanFileImpl implements NexusScanFile {
 	
 	private void setDefaultDataGroupName(NexusEntryBuilder entryBuilder) throws NexusException {
 		// get the list of data group names, note as GroupNodeImpl uses a LinkedHashMap for child nodes, insertion order is preserved
-		final List<String> dataGroupNames = new ArrayList<>(entryBuilder.getNXentry().getAllData().keySet());
-		final IDefaultDataGroupCalculator calculator = ServiceHolder.getDefaultDataGroupConfiguration();
-		final String defaultDataGroupName = calculator.getDefaultDataGroupName(dataGroupNames);
+		final IDefaultDataGroupCalculator defaultGroupCalculator = ServiceProvider.getOptionalService(
+				IDefaultDataGroupCalculator.class).orElse(names -> names.get(0));
+		final String defaultDataGroupName = defaultGroupCalculator.getDefaultDataGroupName(
+				new ArrayList<>(entryBuilder.getNXentry().getAllData().keySet()));
 		entryBuilder.setDefaultDataGroupName(defaultDataGroupName);
 	}
 

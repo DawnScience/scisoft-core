@@ -29,6 +29,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.ac.diamond.osgi.services.ServiceProvider;
+
 /**
  * A dialog for holding a component used to slice the data.
  * 
@@ -78,7 +80,7 @@ public class SliceDialog extends Dialog {
 			            final String   filePath,
 			            final IProgressMonitor monitor) throws Throwable {
 		
-		final ILoaderService service = (ILoaderService)Activator.getService(ILoaderService.class);
+		final ILoaderService service = ServiceProvider.getService(ILoaderService.class);
 		final IDataHolder holder = service.getData(filePath, new ProgressMonitorWrapper(monitor));
 		ILazyDataset lazy  = holder.getLazyDataset(dataSetName);
 		if (lazy==null) lazy = holder.getLazyDataset(0);

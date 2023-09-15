@@ -61,20 +61,5 @@ public class Activator extends AbstractUIPlugin {
 		return plugin;
 	}
 
-	private static HashMap<Class<?>, Object> testServices;
-
-	public static <T> T getService(Class<T> clazz) {
-		if (testServices!=null && testServices.containsKey(clazz)) return clazz.cast(testServices.get(clazz));
-		if (plugin.getBundle().getBundleContext()==null) return null;
-		ServiceReference<T> ref = plugin.getBundle().getBundleContext().getServiceReference(clazz);
-		if (ref==null) return null;
-		return plugin.getBundle().getBundleContext().getService(ref);
-	}
-
-	public static <T> void setTestService(Class<T> clazz, T impl) {
-		if (testServices == null) testServices = new HashMap<Class<?>, Object>(3);
-		testServices.put(clazz, impl);
-	}
-
 
 }

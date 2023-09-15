@@ -440,7 +440,7 @@ public class SliceUtils {
 				
 				final String fullName = group+"/"+axisName;
 				
-				final ILoaderService service = (ILoaderService)Activator.getService(ILoaderService.class);
+				final ILoaderService service = ServiceProvider.getService(ILoaderService.class);
 				axis = service.getDataset(currentSlice.getPath(), fullName, new ProgressMonitorWrapper(monitor));
 				if (axis == null) return null;
 				axis = axis.squeeze();
@@ -455,7 +455,7 @@ public class SliceUtils {
 			final File file = new File(dataPath);
 			final String parent = file.getParent();
 			final String fullName = parent == null ? axisName : parent.replace('\\','/')+"/"+axisName;
-			final ILoaderService service = (ILoaderService)Activator.getService(ILoaderService.class);
+			final ILoaderService service = ServiceProvider.getService(ILoaderService.class);
 			axis = service.getDataset(currentSlice.getPath(), fullName, new ProgressMonitorWrapper(monitor));
 			if (axis == null) return null;
 		}

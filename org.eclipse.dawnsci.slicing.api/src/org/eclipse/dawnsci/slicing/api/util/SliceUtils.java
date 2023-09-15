@@ -24,6 +24,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
 import org.eclipse.dawnsci.analysis.api.io.SliceObject;
+import org.eclipse.dawnsci.nexus.INexusFileFactory;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
 import org.eclipse.dawnsci.plotting.api.ProgressMonitorWrapper;
@@ -31,7 +32,6 @@ import org.eclipse.dawnsci.plotting.api.expressions.IVariableManager;
 import org.eclipse.dawnsci.plotting.api.trace.IImageTrace;
 import org.eclipse.dawnsci.plotting.api.trace.ITrace;
 import org.eclipse.dawnsci.slicing.api.Activator;
-import org.eclipse.dawnsci.slicing.api.ServiceHolder;
 import org.eclipse.dawnsci.slicing.api.system.AxisType;
 import org.eclipse.dawnsci.slicing.api.system.DimsData;
 import org.eclipse.dawnsci.slicing.api.system.DimsDataList;
@@ -49,6 +49,8 @@ import org.eclipse.january.dataset.SliceND;
 import org.eclipse.richbeans.annot.DOEUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 public class SliceUtils {
 
@@ -431,7 +433,7 @@ public class SliceUtils {
 		if (requireUnit) { // Slower
 			NexusFile file = null;
 			try {
-				file = ServiceHolder.getNexusFileFactory().newNexusFile(currentSlice.getPath());
+				file = ServiceProvider.getService(INexusFileFactory.class).newNexusFile(currentSlice.getPath());
 				file.openToRead();
 
 				final String  group = currentSlice.getName();

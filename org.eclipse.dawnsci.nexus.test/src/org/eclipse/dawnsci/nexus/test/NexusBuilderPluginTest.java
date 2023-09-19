@@ -15,16 +15,20 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
-import org.eclipse.dawnsci.nexus.NexusTestServiceHolder;
+import org.eclipse.dawnsci.nexus.INexusFileFactory;
 import org.eclipse.dawnsci.nexus.ServiceHolder;
+import org.eclipse.dawnsci.nexus.builder.NexusBuilderFactory;
 import org.junit.Test;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 public class NexusBuilderPluginTest {
 	
 	@Test
 	public void testNexusBuilderDS() {
-		assertThat(NexusTestServiceHolder.getNexusBuilderFactory(), is(notNullValue()));
 		assertThat(ServiceHolder.getNexusFileFactory(), is(notNullValue()));
+		assertThat(ServiceProvider.getService(NexusBuilderFactory.class), is(notNullValue()));
+		assertThat(ServiceProvider.getService(INexusFileFactory.class), is(notNullValue()));
 	}
 	
 }

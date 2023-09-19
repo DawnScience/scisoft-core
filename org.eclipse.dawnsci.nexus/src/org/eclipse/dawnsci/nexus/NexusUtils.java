@@ -41,6 +41,8 @@ import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.metadata.AxesMetadata;
 
+import uk.ac.diamond.osgi.services.ServiceProvider;
+
 /**
  * Utility methods for dealing with NeXus files.
  */
@@ -521,7 +523,7 @@ public class NexusUtils {
 	 * @throws NexusException if the file could not be loaded for any reason
 	 */
 	public static TreeFile loadNexusTree(String filePath) throws NexusException {
-		try (NexusFile nexusFile = ServiceHolder.getNexusFileFactory().newNexusFile(filePath)) {
+		try (NexusFile nexusFile = ServiceProvider.getService(INexusFileFactory.class).newNexusFile(filePath)) {
 			nexusFile.openToRead();
 			return loadNexusTree(nexusFile);
 		}
@@ -760,7 +762,7 @@ public class NexusUtils {
 			return null;
 		if (dimension < 1)
 			return null;
-		try (NexusFile file = ServiceHolder.getNexusFileFactory().newNexusFile(filePath)) {
+		try (NexusFile file = ServiceProvider.getService(INexusFileFactory.class).newNexusFile(filePath)) {
 			file.openToRead();
 			DataNode signal = file.getData(nexusPath);
 

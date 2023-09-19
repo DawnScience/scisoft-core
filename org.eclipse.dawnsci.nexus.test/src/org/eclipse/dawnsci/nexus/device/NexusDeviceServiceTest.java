@@ -22,6 +22,7 @@ import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.hdf5.nexus.NexusFileFactoryHDF5;
 import org.eclipse.dawnsci.nexus.INexusDevice;
+import org.eclipse.dawnsci.nexus.INexusFileFactory;
 import org.eclipse.dawnsci.nexus.NXaperture;
 import org.eclipse.dawnsci.nexus.NXcollection;
 import org.eclipse.dawnsci.nexus.NXdata;
@@ -35,12 +36,11 @@ import org.eclipse.dawnsci.nexus.NexusBaseClass;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.NexusScanInfo;
-import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.appender.CompoundNexusContextAppender;
 import org.eclipse.dawnsci.nexus.appender.INexusContextAppender;
 import org.eclipse.dawnsci.nexus.appender.NexusNodeCopyAppender;
-import org.eclipse.dawnsci.nexus.appender.SimpleNexusMetadataAppender;
 import org.eclipse.dawnsci.nexus.appender.NexusObjectAppender;
+import org.eclipse.dawnsci.nexus.appender.SimpleNexusMetadataAppender;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectWrapper;
 import org.eclipse.dawnsci.nexus.context.NexusContext;
@@ -50,8 +50,11 @@ import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.Random;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 /**
  * Test for {@link NexusDeviceService} and various implementations of {@link INexusDevice} that
@@ -70,9 +73,8 @@ public class NexusDeviceServiceTest {
 	@Before
 	public void setUp() throws Exception {
 		nexusDeviceService = new NexusDeviceService();
-		ServiceHolder serviceHolder = new ServiceHolder();
-		serviceHolder.setNexusFileFactory(new NexusFileFactoryHDF5());
-		serviceHolder.setNexusDeviceService(nexusDeviceService);
+		ServiceProvider.setService(INexusFileFactory.class, new NexusFileFactoryHDF5());
+		ServiceProvider.setService(INexusDeviceService.class, nexusDeviceService);
 		nexusDeviceBuilder = new NexusDeviceFileBuilder(nexusDeviceService);
 		
 		final NXpositioner positioner = NexusNodeFactory.createNXpositioner();
@@ -83,6 +85,11 @@ public class NexusDeviceServiceTest {
 		
 		testScratchDirectoryName = TestUtils.generateDirectorynameFromClassname(NexusDeviceServiceTest.class.getCanonicalName()) + "/";
 		TestUtils.makeScratchDirectory(testScratchDirectoryName);
+	}
+	
+	@After
+	public void tearDown() throws Exception {
+		ServiceProvider.reset();
 	}
 	
 	private <N extends NXobject> INexusDevice<N> createSimpleNexusDevice(String name, N nexusObject) {
@@ -402,7 +409,7 @@ public class NexusDeviceServiceTest {
 			}
 		};
 		
-		new ServiceHolder().setNexusDeviceAdapterFactory(nexusDeviceAdapterFactory);
+		ServiceProvider.setService(INexusDeviceAdapterFactory.class, nexusDeviceAdapterFactory);
 		
 		for (int i = 1; i < 5; i++) {
 			final String expectedName = "device" + i;

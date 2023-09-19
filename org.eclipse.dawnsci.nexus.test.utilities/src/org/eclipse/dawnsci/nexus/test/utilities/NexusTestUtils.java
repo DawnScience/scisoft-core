@@ -32,12 +32,13 @@ import org.eclipse.dawnsci.nexus.NXroot;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusUtils;
-import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.device.INexusDeviceService;
 import org.eclipse.dawnsci.nexus.device.impl.NexusDeviceService;
 import org.eclipse.dawnsci.nexus.template.NexusTemplateService;
 import org.eclipse.dawnsci.nexus.template.TemplateServiceHolder;
 import org.eclipse.dawnsci.nexus.template.impl.NexusTemplateServiceImpl;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 public class NexusTestUtils {
 
@@ -51,13 +52,13 @@ public class NexusTestUtils {
 		final INexusDeviceService nexusDeviceService = new NexusDeviceService();
 		final NexusTemplateService nexusTemplateService = new NexusTemplateServiceImpl();
 		
-		final ServiceHolder serviceHolder = new ServiceHolder();
-		serviceHolder.setNexusFileFactory(nexusFileFactory);
-		serviceHolder.setNexusDeviceService(nexusDeviceService);
+		ServiceProvider.setService(INexusFileFactory.class, nexusFileFactory);
+		ServiceProvider.setService(INexusDeviceService.class, nexusDeviceService);
 		
 		final TemplateServiceHolder templateServiceHolder = new TemplateServiceHolder();
 		templateServiceHolder.setNexusFileFactory(nexusFileFactory);
 		templateServiceHolder.setNexusTemplateService(nexusTemplateService);
+		
 	}
 	
 	/**

@@ -20,6 +20,8 @@ import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 import org.eclipse.dawnsci.nexus.device.INexusDeviceService;
 import org.eclipse.january.dataset.LazyDataset;
 
+import uk.ac.diamond.osgi.services.ServiceProvider;
+
 /**
  * Any device which can write NeXus should implement this interface.
  * 
@@ -140,7 +142,7 @@ public interface INexusDevice<N extends NXobject> {
 	 * {@link INexusDeviceService#getNexusDevice(INexusDevice)} is called, for example a device that adds metadata. 
 	 */
 	public default void register() {
-		ServiceHolder.getNexusDeviceService().register(this);
+		ServiceProvider.getService(INexusDeviceService.class).register(this);
 	}
 	
 }

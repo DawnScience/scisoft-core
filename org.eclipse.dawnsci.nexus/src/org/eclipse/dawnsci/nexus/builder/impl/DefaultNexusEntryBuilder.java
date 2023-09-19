@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.NodeLink;
@@ -28,7 +29,6 @@ import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.NexusBaseClass;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
-import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.builder.CustomNexusEntryModification;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryModification;
@@ -37,7 +37,10 @@ import org.eclipse.dawnsci.nexus.builder.NexusMetadataProvider.MetadataEntry;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 import org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder;
 import org.eclipse.dawnsci.nexus.builder.data.impl.DefaultNexusDataBuilder;
+import org.eclipse.dawnsci.nexus.validation.NexusValidationService;
 import org.eclipse.dawnsci.nexus.validation.ValidationReport;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 /**
  * Default implementation of {@link NexusEntryBuilder}
@@ -239,7 +242,7 @@ public class DefaultNexusEntryBuilder implements NexusEntryBuilder {
 	 */
 	@Override
 	public ValidationReport validate() throws NexusException {
-		return ServiceHolder.getNexusValidationService().validateEntry(nxEntry);
+		return ServiceProvider.getService(NexusValidationService.class).validateEntry(nxEntry);
 	}
 	
 	/**

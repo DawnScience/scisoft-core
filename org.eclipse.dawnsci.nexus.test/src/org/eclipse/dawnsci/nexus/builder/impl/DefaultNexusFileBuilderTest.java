@@ -20,19 +20,19 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.sameInstance;
 
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
-import org.eclipse.dawnsci.hdf5.nexus.NexusFileFactoryHDF5;
 import org.eclipse.dawnsci.nexus.NXentry;
 import org.eclipse.dawnsci.nexus.NXroot;
 import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;
 import org.eclipse.dawnsci.nexus.NexusException;
-import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusFileBuilder;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
+import org.eclipse.dawnsci.nexus.validation.NexusValidationService;
 import org.eclipse.dawnsci.nexus.validation.NexusValidationServiceImpl;
 import org.eclipse.dawnsci.nexus.validation.ValidationReport;
 import org.hamcrest.Matchers;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -40,6 +40,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 @RunWith(Parameterized.class)
 public class DefaultNexusFileBuilderTest {
@@ -63,12 +65,18 @@ public class DefaultNexusFileBuilderTest {
 	private NexusFileBuilder nexusFileBuilder;
 	
 	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
+	public static void setUpServices() throws Exception {
 		testScratchDirectoryName = TestUtils.generateDirectorynameFromClassname(
 				DefaultNexusFileBuilderTest.class.getSimpleName());
 		TestUtils.makeScratchDirectory(testScratchDirectoryName);
-		new ServiceHolder().setNexusValidationService(new NexusValidationServiceImpl());
+		ServiceProvider.setService(NexusValidationService.class, new NexusValidationServiceImpl());
 	}
+	
+	@AfterClass
+	public static void tearDownServices() throws Exception {
+		ServiceProvider.reset();
+	}
+	
 	
 	@Before
 	public void setUp() {
@@ -80,7 +88,6 @@ public class DefaultNexusFileBuilderTest {
 	
 	@Test
 	public void testCreateAndOpenFile() throws NexusException {
-		new ServiceHolder().setNexusFileFactory(new NexusFileFactoryHDF5());
 		NexusEntryBuilder nexusEntryBuilder = nexusFileBuilder.newEntry();
 		nexusEntryBuilder.getNXentry().setTitleScalar("test");
 		
@@ -97,7 +104,6 @@ public class DefaultNexusFileBuilderTest {
 	
 	@Test
 	public void testCreateAndOpenFileInSubDir() throws NexusException {
-		new ServiceHolder().setNexusFileFactory(new NexusFileFactoryHDF5());
 		NexusFileBuilder nexusSubdirFileBuilder = new DefaultNexusFileBuilder(fileInSubDirPath);
 		NexusEntryBuilder nexusEntryBuilder = nexusSubdirFileBuilder.newEntry();
 

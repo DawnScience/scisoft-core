@@ -23,11 +23,13 @@ import org.eclipse.dawnsci.nexus.NXroot;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
-import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.builder.NexusBuilderFile;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder;
 import org.eclipse.dawnsci.nexus.builder.NexusFileBuilder;
+import org.eclipse.dawnsci.nexus.validation.NexusValidationService;
 import org.eclipse.dawnsci.nexus.validation.ValidationReport;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 /**
  * Default implementation of {@link NexusFileBuilder}.
@@ -108,7 +110,7 @@ public class DefaultNexusFileBuilder implements NexusFileBuilder {
 	 */
 	@Override
 	public ValidationReport validate() throws NexusException {
-		return ServiceHolder.getNexusValidationService().validateNexusTree(treeFile);
+		return ServiceProvider.getService(NexusValidationService.class).validateNexusTree(treeFile);
 	}
 
 	/* (non-Javadoc)
@@ -137,7 +139,7 @@ public class DefaultNexusFileBuilder implements NexusFileBuilder {
 		}
 		
 		// create and open the nexus file
-		final INexusFileFactory nexusFileFactory = ServiceHolder.getNexusFileFactory();
+		final INexusFileFactory nexusFileFactory = ServiceProvider.getService(INexusFileFactory.class);
 		try (NexusFile nexusFile = nexusFileFactory.newNexusFile(filename, useSwmr)) {
 			nexusFile.createAndOpenToWrite();
 			nexusFile.setWritesAsync(async);

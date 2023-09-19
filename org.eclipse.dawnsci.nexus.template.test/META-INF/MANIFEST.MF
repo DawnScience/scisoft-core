@@ -15,4 +15,5 @@ Require-Bundle: org.junit,
  org.eclipse.dawnsci.analysis.api,
  org.eclipse.dawnsci.analysis.tree,
  org.eclipse.dawnsci.nexus.test.utilities,
- org.eclipse.dawnsci.hdf5
+ org.eclipse.dawnsci.hdf5,
+ uk.ac.diamond.osgi;bundle-version="1.2.0"

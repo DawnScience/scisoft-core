@@ -23,7 +23,6 @@ import org.eclipse.dawnsci.hdf5.nexus.NexusFileFactoryHDF5;
 import org.eclipse.dawnsci.nexus.INexusFileFactory;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NexusException;
-import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.builder.NexusBuilderFactory;
 import org.eclipse.dawnsci.nexus.builder.NexusBuilderFile;
 import org.eclipse.dawnsci.nexus.builder.NexusEntryBuilder;
@@ -70,7 +69,6 @@ public abstract class AbstractNexusFileBuilderTestBase {
 		TestUtils.makeScratchDirectory(testScratchDirectoryName);
 		filePath = testScratchDirectoryName + getFilename();
 		comparisonFilePath = TEST_FILE_FOLDER + getFilename();
-		new ServiceHolder().setNexusFileFactory(new NexusFileFactoryHDF5());
 	}
 	
 	protected NexusBuilderFactory getNexusBuilderFactory() {

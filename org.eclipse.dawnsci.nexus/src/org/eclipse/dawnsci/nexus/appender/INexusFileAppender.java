@@ -3,7 +3,8 @@ package org.eclipse.dawnsci.nexus.appender;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
-import org.eclipse.dawnsci.nexus.ServiceHolder;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 /**
  * A nexus file appender that appends to a GroupNode in a nexus file. The appender will use
@@ -39,7 +40,7 @@ public interface INexusFileAppender {
 	public void append(NexusFile nexusFile, GroupNode groupNode) throws NexusException;
 	
 	default void register() {
-		ServiceHolder.getNexusFileAppenderService().register(this);
+		ServiceProvider.getService(INexusFileAppenderService.class).register(this);
 	}
 	
 }

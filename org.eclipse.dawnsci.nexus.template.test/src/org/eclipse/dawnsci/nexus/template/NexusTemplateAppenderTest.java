@@ -24,18 +24,20 @@ import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
-import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.context.NexusContextType;
 import org.eclipse.dawnsci.nexus.template.device.NexusTemplateAppender;
 import org.eclipse.dawnsci.nexus.template.impl.NexusTemplateServiceImpl;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 @RunWith(value = Parameterized.class)
 public class NexusTemplateAppenderTest {
@@ -65,8 +67,13 @@ public class NexusTemplateAppenderTest {
 	@Before
 	public void setUp() {
 		NexusTestUtils.setUpServices();
-		nexusFileFactory = ServiceHolder.getNexusFileFactory();
+		nexusFileFactory = ServiceProvider.getService(INexusFileFactory.class);
 		new TemplateServiceHolder().setNexusTemplateService(new NexusTemplateServiceImpl());
+	}
+	
+	@After
+	public void tearDown() {
+		ServiceProvider.reset();
 	}
 	
 	public NexusTemplateAppenderTest(NexusContextType contextType) {

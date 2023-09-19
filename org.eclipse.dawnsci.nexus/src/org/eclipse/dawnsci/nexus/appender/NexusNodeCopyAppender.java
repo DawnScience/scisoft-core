@@ -12,14 +12,16 @@ import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.SymbolicNode;
 import org.eclipse.dawnsci.analysis.api.tree.TreeUtils;
+import org.eclipse.dawnsci.nexus.INexusFileFactory;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.NexusUtils;
-import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.context.NexusContext;
 import org.eclipse.january.DatasetException;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 /**
  * An appender that copies {@link Node}s from an external NeXus file into the node being appended.
@@ -60,7 +62,7 @@ public class NexusNodeCopyAppender<N extends NXobject> extends AbstractNexusCont
 		if (externalFilePath == null) return;
 		Objects.requireNonNull(nodePaths, "nodePaths not set for appender: " + getName());
 
-		try (NexusFile nexusFile = ServiceHolder.getNexusFileFactory().newNexusFile(externalFilePath)) {
+		try (NexusFile nexusFile = ServiceProvider.getService(INexusFileFactory.class).newNexusFile(externalFilePath)) {
 			nexusFile.openToRead();
 			NexusUtils.loadNexusTree(nexusFile); // recursively loads all GroupNodes in the file
 			

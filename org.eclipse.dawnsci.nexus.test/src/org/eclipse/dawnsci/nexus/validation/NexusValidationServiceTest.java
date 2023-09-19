@@ -25,9 +25,12 @@ import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 public class NexusValidationServiceTest {
 	
@@ -45,6 +48,11 @@ public class NexusValidationServiceTest {
 		testDir = TestUtils.generateDirectorynameFromClassname(NexusValidationServiceTest.class.getCanonicalName());
 		TestUtils.makeScratchDirectory(testDir);
 		NexusTestUtils.setUpServices();
+	}
+	
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+		ServiceProvider.reset();
 	}
 	
 	@Before

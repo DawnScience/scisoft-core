@@ -2,11 +2,12 @@ package org.eclipse.dawnsci.nexus.validation;
 
 import java.util.Map;
 
-import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 public class NexusValidationApplication implements IApplication {
 	
@@ -24,7 +25,7 @@ public class NexusValidationApplication implements IApplication {
 		
 		try {
 			final String filePath = configuration[0];
-			final ValidationReport validationReport = ServiceHolder.getNexusValidationService().validateNexusFile(filePath);
+			final ValidationReport validationReport = ServiceProvider.getService(NexusValidationService.class).validateNexusFile(filePath);
 			printValidationReport(validationReport);
 		} catch (Exception e) {
 			System.out.println("An exception occurred " + e.getMessage());

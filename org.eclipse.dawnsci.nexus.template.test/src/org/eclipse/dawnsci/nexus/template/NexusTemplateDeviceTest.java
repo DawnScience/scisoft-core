@@ -23,7 +23,6 @@ import org.eclipse.dawnsci.nexus.NXroot;
 import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
-import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectWrapper;
 import org.eclipse.dawnsci.nexus.device.INexusDeviceService;
 import org.eclipse.dawnsci.nexus.device.SimpleNexusDevice;
@@ -34,9 +33,11 @@ import org.eclipse.dawnsci.nexus.template.impl.NexusTemplateServiceImpl;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusDeviceFileBuilder;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
-import org.junit.Before;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 public class NexusTemplateDeviceTest {
 	
@@ -47,22 +48,25 @@ public class NexusTemplateDeviceTest {
 
 	private static String testFilesDirName;
 	
-	private INexusDeviceService nexusDeviceService;
+	private static INexusDeviceService nexusDeviceService;
 	
-	private NexusDeviceFileBuilder nexusDeviceBuilder;
+	private static NexusDeviceFileBuilder nexusDeviceBuilder;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		NexusTestUtils.setUpServices();
+		
 		testFilesDirName = TestUtils.generateDirectorynameFromClassname(NexusTemplateDeviceTest.class.getCanonicalName());
 		TestUtils.makeScratchDirectory(testFilesDirName);
-	}
-	
-	@Before
-	public void setUp() {
-		NexusTestUtils.setUpServices();
-		nexusDeviceService = ServiceHolder.getNexusDeviceService();
+		
+		nexusDeviceService = ServiceProvider.getService(INexusDeviceService.class);
 		nexusDeviceBuilder = new NexusDeviceFileBuilder(nexusDeviceService);
 		new TemplateServiceHolder().setNexusTemplateService(new NexusTemplateServiceImpl());
+	}
+	
+	@AfterClass
+	public static void tearDown() {
+		ServiceProvider.reset();
 	}
 	
 	@Test

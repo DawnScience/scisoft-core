@@ -14,10 +14,11 @@ package org.eclipse.dawnsci.nexus.builder.impl;
 import org.eclipse.dawnsci.nexus.INexusFileFactory;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
-import org.eclipse.dawnsci.nexus.ServiceHolder;
 import org.eclipse.dawnsci.nexus.builder.NexusBuilderFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 class DefaultNexusBuilderFile implements NexusBuilderFile {
 
@@ -44,7 +45,7 @@ class DefaultNexusBuilderFile implements NexusBuilderFile {
 		if (nexusFile != null) {
 			throw new IllegalStateException("NexusFile is already open.");
 		}
-		final INexusFileFactory nexusFileFactory = ServiceHolder.getNexusFileFactory();
+		final INexusFileFactory nexusFileFactory = ServiceProvider.getService(INexusFileFactory.class);
 		nexusFile = nexusFileFactory.newNexusFile(filePath, true);
 		nexusFile.openToWrite(false); // file must already exist on disk
 		

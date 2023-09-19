@@ -35,7 +35,6 @@ import org.eclipse.dawnsci.nexus.NexusUtils;
 import org.eclipse.dawnsci.nexus.device.INexusDeviceService;
 import org.eclipse.dawnsci.nexus.device.impl.NexusDeviceService;
 import org.eclipse.dawnsci.nexus.template.NexusTemplateService;
-import org.eclipse.dawnsci.nexus.template.TemplateServiceHolder;
 import org.eclipse.dawnsci.nexus.template.impl.NexusTemplateServiceImpl;
 
 import uk.ac.diamond.osgi.services.ServiceProvider;
@@ -45,20 +44,13 @@ public class NexusTestUtils {
 	private static INexusFileFactory nexusFileFactory = new NexusFileFactoryHDF5();
 	
 	private static INexusFileFactory getNexusFileFactory() {
-		return nexusFileFactory;
+		return ServiceProvider.getService(INexusFileFactory.class);
 	}
 	
 	public static void setUpServices() {
-		final INexusDeviceService nexusDeviceService = new NexusDeviceService();
-		final NexusTemplateService nexusTemplateService = new NexusTemplateServiceImpl();
-		
 		ServiceProvider.setService(INexusFileFactory.class, nexusFileFactory);
-		ServiceProvider.setService(INexusDeviceService.class, nexusDeviceService);
-		
-		final TemplateServiceHolder templateServiceHolder = new TemplateServiceHolder();
-		templateServiceHolder.setNexusFileFactory(nexusFileFactory);
-		templateServiceHolder.setNexusTemplateService(nexusTemplateService);
-		
+		ServiceProvider.setService(INexusDeviceService.class, new NexusDeviceService());
+		ServiceProvider.setService(NexusTemplateService.class, new NexusTemplateServiceImpl());
 	}
 	
 	/**

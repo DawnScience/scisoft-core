@@ -4,14 +4,16 @@ import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
+import org.eclipse.dawnsci.nexus.INexusFileFactory;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.context.NexusContext;
 import org.eclipse.dawnsci.nexus.context.NexusContextFactory;
 import org.eclipse.dawnsci.nexus.template.NexusTemplate;
-import org.eclipse.dawnsci.nexus.template.TemplateServiceHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 /**
  * The implementation of a NexusTemplate. Essentially this just holds the YAML content as a {@link Map}. 
@@ -68,7 +70,7 @@ public class NexusTemplateImpl implements NexusTemplate {
 	@Override
 	public void apply(String nexusFilePath) throws NexusException {
 		logger.debug("Applying template {} to nexus file {}", templateName, nexusFilePath);
-		try (NexusFile nexusFile = TemplateServiceHolder.getNexusFileFactory().newNexusFile(nexusFilePath)) {
+		try (NexusFile nexusFile = ServiceProvider.getService(INexusFileFactory.class).newNexusFile(nexusFilePath)) {
 			nexusFile.openToWrite(false);
 			applyToNexusFile(nexusFile);
 		}

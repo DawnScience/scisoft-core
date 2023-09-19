@@ -96,9 +96,6 @@ public class NexusTemplateTest {
 		testFilesDirName = TestUtils.generateDirectorynameFromClassname(NexusTemplateTest.class.getCanonicalName());
 		TestUtils.makeScratchDirectory(testFilesDirName);
 		NexusTestUtils.setUpServices();
-		TemplateServiceHolder tsh = new TemplateServiceHolder();
-		tsh.setNexusTemplateService(new NexusTemplateServiceImpl());
-		tsh.setNexusFileFactory(ServiceProvider.getService(INexusFileFactory.class));
 	}
 	
 	@AfterClass
@@ -108,7 +105,7 @@ public class NexusTemplateTest {
 	
 	@Before
 	public void setUp() {
-		templateService = TemplateServiceHolder.getNexusTemplateService();
+		templateService = ServiceProvider.getService(NexusTemplateService.class);
 	}
 	
 	private Tree applyTemplateStringToTree(String templateString, Tree tree) throws Exception {

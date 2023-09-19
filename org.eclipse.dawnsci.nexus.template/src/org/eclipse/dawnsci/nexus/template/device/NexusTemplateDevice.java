@@ -10,7 +10,9 @@ import org.eclipse.dawnsci.nexus.NexusScanInfo;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectWrapper;
 import org.eclipse.dawnsci.nexus.template.NexusTemplate;
-import org.eclipse.dawnsci.nexus.template.TemplateServiceHolder;
+import org.eclipse.dawnsci.nexus.template.NexusTemplateService;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 /**
  * An {@link INexusDevice} that creates a nexus object according to a template.
@@ -53,7 +55,7 @@ public class NexusTemplateDevice<N extends NXobject> implements INexusDevice<N> 
 	 */
 	public void setTemplateMap(Map<String, Object> templateMap) {
 		Objects.requireNonNull(name);
-		nexusTemplate = TemplateServiceHolder.getNexusTemplateService().createTemplate(name, templateMap);
+		nexusTemplate = ServiceProvider.getService(NexusTemplateService.class).createTemplate(name, templateMap);
 	}
 	
 	public void setTemplateFilePath(String templateFilePath) {
@@ -76,9 +78,9 @@ public class NexusTemplateDevice<N extends NXobject> implements INexusDevice<N> 
 	private void checkInitialized() throws NexusException {
 		if (nexusTemplate == null) {
 			if (templateFilePath != null) {
-				nexusTemplate = TemplateServiceHolder.getNexusTemplateService().loadTemplate(templateFilePath);
+				nexusTemplate = ServiceProvider.getService(NexusTemplateService.class).loadTemplate(templateFilePath);
 			} else if (templateString != null) {
-				nexusTemplate = TemplateServiceHolder.getNexusTemplateService().createTemplateFromString(templateString);
+				nexusTemplate = ServiceProvider.getService(NexusTemplateService.class).createTemplateFromString(templateString);
 			} else {
 				throw new NexusException("The template device has not been initialized. "
 						+ "Please call one of the set methods before using this object.");

@@ -4,14 +4,14 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
-import org.eclipse.dawnsci.nexus.INexusDevice;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.appender.AbstractNexusContextAppender;
 import org.eclipse.dawnsci.nexus.context.NexusContext;
 import org.eclipse.dawnsci.nexus.template.NexusTemplate;
-import org.eclipse.dawnsci.nexus.template.TemplateServiceHolder;
-import org.eclipse.dawnsci.nexus.template.impl.NexusTemplateImpl;
+import org.eclipse.dawnsci.nexus.template.NexusTemplateService;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 /**
  * An appender that appends to a nexus object according to a template. This can be used
@@ -47,7 +47,7 @@ public class NexusTemplateAppender<N extends NXobject> extends AbstractNexusCont
 	
 	public void setTemplateMap(Map<String, Object> templateMap) {
 		Objects.requireNonNull(getName());
-		nexusTemplate = TemplateServiceHolder.getNexusTemplateService().createTemplate(getName(), templateMap);
+		nexusTemplate = ServiceProvider.getService(NexusTemplateService.class).createTemplate(getName(), templateMap);
 	}
 
 	public void setTemplateFilePath(String templateFilePath) {
@@ -61,9 +61,9 @@ public class NexusTemplateAppender<N extends NXobject> extends AbstractNexusCont
 	private void checkInitialized() throws NexusException {
 		if (nexusTemplate == null) {
 			if (templateFilePath != null) {
-				nexusTemplate = TemplateServiceHolder.getNexusTemplateService().loadTemplate(templateFilePath);
+				nexusTemplate = ServiceProvider.getService(NexusTemplateService.class).loadTemplate(templateFilePath);
 			} else if (templateString != null) {
-				nexusTemplate = TemplateServiceHolder.getNexusTemplateService().createTemplateFromString(templateString);
+				nexusTemplate = ServiceProvider.getService(NexusTemplateService.class).createTemplateFromString(templateString);
 			} else {
 				throw new NexusException("The appender has not been initialized. "
 						+ "One of the set methods should be called before using this class");

@@ -61,7 +61,7 @@ public class NexusTemplateDeviceTest {
 		
 		nexusDeviceService = ServiceProvider.getService(INexusDeviceService.class);
 		nexusDeviceBuilder = new NexusDeviceFileBuilder(nexusDeviceService);
-		new TemplateServiceHolder().setNexusTemplateService(new NexusTemplateServiceImpl());
+		ServiceProvider.getService(NexusTemplateService.class);
 	}
 	
 	@AfterClass

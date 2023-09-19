@@ -26,10 +26,10 @@ import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.context.NexusContextType;
 import org.eclipse.dawnsci.nexus.template.device.NexusTemplateAppender;
-import org.eclipse.dawnsci.nexus.template.impl.NexusTemplateServiceImpl;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -47,8 +47,6 @@ public class NexusTemplateAppenderTest {
 	private static final String MALFORMED_TEMPLATE_APPENDER_FILE_PATH = NEXUS_TESTFILES_DIR + "malformed-template-appender.yaml";
 	private static final String DETECTOR_GROUP_PATH = "/entry/instrument/detector";
 	
-	private static INexusFileFactory nexusFileFactory;
-	
 	private static String testFilesDirName;
 	
 	private final NexusContextType contextType;
@@ -64,11 +62,14 @@ public class NexusTemplateAppenderTest {
 		TestUtils.makeScratchDirectory(testFilesDirName);
 	}
 	
+	@AfterClass
+	public static void tearDownClass() throws Exception {
+		ServiceProvider.reset();
+	}
+	
 	@Before
 	public void setUp() {
 		NexusTestUtils.setUpServices();
-		nexusFileFactory = ServiceProvider.getService(INexusFileFactory.class);
-		new TemplateServiceHolder().setNexusTemplateService(new NexusTemplateServiceImpl());
 	}
 	
 	@After
@@ -82,7 +83,7 @@ public class NexusTemplateAppenderTest {
 
 	private NexusFile createInitialFile(String filePath) throws NexusException {
 		final TreeFile initialTree = buildInitialTree(filePath);
-		final NexusFile nexusFile = nexusFileFactory.newNexusFile(filePath);
+		final NexusFile nexusFile = ServiceProvider.getService(INexusFileFactory.class).newNexusFile(filePath);
 		nexusFile.openToWrite(true);
 		nexusFile.addNode(Tree.ROOT, initialTree.getGroupNode());
 		return nexusFile;

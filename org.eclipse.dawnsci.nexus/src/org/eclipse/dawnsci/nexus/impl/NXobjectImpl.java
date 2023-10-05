@@ -374,7 +374,6 @@ public abstract class NXobjectImpl extends GroupNodeImpl implements NXobject {
 			dataset.setObjectAbs(0, value);
 		} else {
 			Dataset dataset = NexusUtils.createFromObject(value, name);
-			dataset.setName(name);
 			dataNode = createDataNode(name, dataset);
 			cached.put(name, dataset);
 		}

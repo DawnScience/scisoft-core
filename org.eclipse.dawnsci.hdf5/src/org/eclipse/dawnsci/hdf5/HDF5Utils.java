@@ -401,8 +401,9 @@ public class HDF5Utils {
 					int rank = H5.H5Sget_simple_extent_ndims(hdfDataspaceId);
 					long[] dims = new long[rank];
 					long[] mdims = new long[rank];
-					H5.H5Sget_simple_extent_dims(hdfDataspaceId, dims, mdims);
-	
+					if (rank > 0) {
+						H5.H5Sget_simple_extent_dims(hdfDataspaceId, dims, mdims);
+					}
 					int[] shape = new int[rank];
 					int[] mshape = new int[rank];
 					for (int i = 0; i < rank; i++) {
@@ -1239,7 +1240,9 @@ public class HDF5Utils {
 
 					long[] dims = new long[rank];
 					long[] mdims = new long[rank];
-					H5.H5Sget_simple_extent_dims(hdfDataspaceId, dims, mdims);
+					if (rank > 0) {
+						H5.H5Sget_simple_extent_dims(hdfDataspaceId, dims, mdims);
+					}
 					long[] start = toLongArray(slice.getStart());
 					long[] stride = toLongArray(slice.getStep());
 					long[] shape = toLongArray(slice.getShape());
@@ -1835,7 +1838,9 @@ public class HDF5Utils {
 					final int nDims = H5.H5Sget_simple_extent_ndims(spaceId);
 					shape = new long[nDims];
 					maxShape = new long[nDims];
-					H5.H5Sget_simple_extent_dims(spaceId, shape, maxShape);
+					if (nDims > 0) {
+						H5.H5Sget_simple_extent_dims(spaceId, shape, maxShape);
+					}
 					final int[] iShape = toIntArray(shape);
 					int strCount = 1;
 					for (int d : iShape) {

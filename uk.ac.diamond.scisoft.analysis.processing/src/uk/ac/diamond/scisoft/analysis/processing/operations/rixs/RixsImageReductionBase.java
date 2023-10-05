@@ -1162,7 +1162,15 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		List<Dataset> nd = new ArrayList<>();
 		for (Dataset s : d) {
 			if (s != null) {
-				nd.add(s.reshape(1, s.getSize()));
+				int[] oldShape = s.getShapeRef();
+				if (oldShape.length == 0 || oldShape[0] != 1) { 
+					int[] newShape = new int[s.getRank() + 1];
+					System.arraycopy(oldShape, 0, newShape, 1, s.getRank());
+					newShape[0] = 1;
+					nd.add(s.reshape(newShape));
+				} else {
+					nd.add(s);
+				}
 			}
 		}
 

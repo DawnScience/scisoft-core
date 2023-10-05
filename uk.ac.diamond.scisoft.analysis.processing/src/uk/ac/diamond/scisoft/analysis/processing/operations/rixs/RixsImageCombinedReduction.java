@@ -88,7 +88,8 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 
 		usePriorOps = true; // reset
 		iSummaryData.clear();
-		if ("setElScanFile".equals(name)) {
+		SCAN_OPTION scanOpt = model.getScanOption();
+		if (scanOpt != SCAN_OPTION.OVERRIDE_FILE || "setElScanFile".equals(name)) {
 			elasticScanPath = null;
 		}
 	}
@@ -107,10 +108,6 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 		String filePath = smd.getSourceInfo().getFilePath();
 		GroupNode nxDetector = ProcessingUtils.getNXdetector(this, filePath);
 
-		SCAN_OPTION scanOpt = model.getScanOption();
-		if (scanOpt != SCAN_OPTION.OVERRIDE_FILE) {
-			elasticScanPath = null;
-		}
 		if (nxDetector.containsDataNode(ELASTIC_IMAGE) && !model.isIgnoreLinkedScan()) {
 			ILazyDataset elasticImage = nxDetector.getDataNode(ELASTIC_IMAGE).getDataset();
 			String eFilePath = ProcessingUtils.getOriginatingFile(elasticImage);
@@ -127,6 +124,7 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 		}
 
 		if (elasticScanPath == null) {
+			SCAN_OPTION scanOpt = model.getScanOption();
 			if (scanOpt == SCAN_OPTION.SAME_SCAN) {
 				elasticScanPath = currentDataFile;
 			} else if (scanOpt == SCAN_OPTION.OVERRIDE_FILE) {
@@ -274,7 +272,14 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 		for (Entry<String, List<Dataset>> e: namedSummary.entrySet()) {
 			List<Dataset> l = e.getValue();
 			int n = l.size();
-			summaryData.add(n == 1 ? l.get(0) : stack(l.toArray(new Dataset[n])));
+			Dataset s;
+			if (n == 1) {
+				s = l.get(0);
+			} else {
+				s = stack(l.toArray(new Dataset[n]));
+				s.setName(e.getKey());
+			}
+			summaryData.add(s);
 		}
 	}
 }

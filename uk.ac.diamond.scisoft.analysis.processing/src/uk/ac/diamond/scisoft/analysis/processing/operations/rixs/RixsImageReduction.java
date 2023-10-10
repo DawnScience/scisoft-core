@@ -293,6 +293,13 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 		}
 	}
 
+	@Override
+	protected void resetProcess(IDataset original, int total) {
+		super.resetProcess(original, total);
+		summaryStore = null;
+	}
+
+	@Override
 	protected void addSummaryData() {
 		super.addSummaryData();
 

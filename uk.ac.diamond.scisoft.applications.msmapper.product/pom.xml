@@ -5,7 +5,7 @@
 
 	<groupId>uk.ac.diamond</groupId>
 	<artifactId>uk.ac.diamond.scisoft.applications.msmapper.product</artifactId>
-	<version>1.6.0-SNAPSHOT</version>
+	<version>1.7.0-SNAPSHOT</version>
 	<packaging>eclipse-repository</packaging>
 
 	<parent>
@@ -43,13 +43,62 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>${maven.ant.plugin.version}</version>
+				<executions>
+					<execution> <!--  remove copy of JRE, etc in p2 cache from products -->
+						<phase>pre-integration-test</phase>
+						<id>delete-p2-cache</id>
+						<configuration>
+							<target name="delete-p2-cache">
+								<echo message="Deleting P2 cache in ${project.build.directory}"/>
+								<delete includeemptydirs="true">
+									<fileset dir="${project.build.directory}">
+										<include name="**/p2/org.eclipse.equinox.p2.core/cache/**"/>
+									</fileset>
+								</delete>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+					<execution> <!--  remove window system segment from zip file names MSMapper-1.7.0.v20230911-1525-linux.gtk.x86_64.zip-->
+						<phase>post-integration-test</phase>
+						<id>rename-products-archives</id>
+						<configuration>
+							<target name="rename-zips">
+								<property name="zips.directory" value="${project.build.directory}/products"/>
+								<echo message="Renaming zip files in ${zips.directory}"/>
+								<move todir="${zips.directory}">
+									<fileset dir="${zips.directory}" includes="**/MSMapper*.zip" />
+									<mapper type="regexp" from="(MSMapper-[^-]*-[0-9]+-[a-z]\w*)\.([a-z]\w*)(.*\.zip)" to="\1\3" />
+								</move>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-p2-director-plugin</artifactId>
-				 <executions>
+				<!--  split creation of product archive so deletion can occur -->
+				<executions>
 					<execution>
-						<id>create-distributions</id>
+						<phase>package</phase>
+						<id>materialize-products</id>
 						<goals>
 							<goal>materialize-products</goal>
+						</goals>
+					</execution>
+					<execution>
+						<phase>pre-integration-test</phase>
+						<id>archive-products</id>
+						<goals>
 							<goal>archive-products</goal>
 						</goals>
 					</execution>

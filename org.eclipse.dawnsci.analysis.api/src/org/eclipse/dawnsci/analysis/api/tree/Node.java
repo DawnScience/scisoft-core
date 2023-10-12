@@ -32,7 +32,7 @@ public interface Node {
 	/**
 	 * @return ID
 	 */
-	public long getID();
+	public byte[] getID();
 
 	/**
 	 * @return number of attributes on node

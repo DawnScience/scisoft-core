@@ -54,11 +54,19 @@ public class GroupNodeImpl extends NodeImpl implements GroupNode, Serializable {
 	 * Construct a group node with given object ID
 	 * @param oid object ID
 	 */
-	public GroupNodeImpl(final long oid) {
+	public GroupNodeImpl(final byte[] oid) {
 		super(oid);
 		numDataNodes = 0;
 		numGroupNodes = 0;
 		nodes = new LinkedHashMap<String, NodeLink>();
+	}
+
+	/**
+	 * Construct a group node with given object ID
+	 * @param oid object ID
+	 */
+	public GroupNodeImpl(final long oid) {
+		this(toBytes(oid));
 	}
 
 	@Override

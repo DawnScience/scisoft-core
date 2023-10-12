@@ -45,8 +45,16 @@ public class DataNodeImpl extends NodeImpl implements DataNode, Serializable {
 	 * Construct a data node with given object ID
 	 * @param oid object ID
 	 */
-	public DataNodeImpl(long oid) {
+	public DataNodeImpl(byte[] oid) {
 		super(oid);
+	}
+
+	/**
+	 * Construct a data node with given object ID
+	 * @param oid object ID
+	 */
+	public DataNodeImpl(long oid) {
+		this(toBytes(oid));
 	}
 
 	@Override

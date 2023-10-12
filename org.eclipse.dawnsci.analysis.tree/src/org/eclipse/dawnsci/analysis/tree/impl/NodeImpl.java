@@ -27,19 +27,45 @@ public abstract class NodeImpl implements Node, Serializable {
 
 	protected LinkedHashMap<String, Attribute> attributes;
 	protected static final String INDENT = "    ";
-	protected final long id;
+	protected final byte[] id;
+
+	public static byte[] toBytes(long oid) {
+		byte[] out = new byte[4];
+		for (int i = 0; i < 4; i++) {
+			out[i] = (byte) (oid & 0xff);
+			oid >>= 8;
+		}
+		return out;
+	}
+
+	public static long toLong(byte[] data) {
+		long out = 0;
+		for (int i = 3; i >= 0; i--) {
+			out <<= 8;
+			out |= (data[i] & 0xff);
+		}
+		return out;
+	}
+
+	/**
+	 * Construct a node with given object ID
+	 * @param oid object ID
+	 */
+	public NodeImpl(final byte[] oid) {
+		attributes = new LinkedHashMap<String, Attribute>();
+		id = oid;
+	}
 
 	/**
 	 * Construct a node with given object ID
 	 * @param oid object ID
 	 */
 	public NodeImpl(final long oid) {
-		attributes = new LinkedHashMap<String, Attribute>();
-		id = oid;
+		this(toBytes(oid));
 	}
 
 	@Override
-	public long getID() {
+	public byte[] getID() {
 		return id;
 	}
 

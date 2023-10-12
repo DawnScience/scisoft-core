@@ -32,7 +32,7 @@ public class TreeFileImpl extends TreeImpl implements TreeFile, Serializable {
 	 * @param oid object ID
 	 * @param uri
 	 */
-	public TreeFileImpl(final long oid, URI uri) {
+	public TreeFileImpl(final byte[] oid, URI uri) {
 		super(oid, uri);
 
 		File f = new File(source);
@@ -46,8 +46,26 @@ public class TreeFileImpl extends TreeImpl implements TreeFile, Serializable {
 	 * @param oid object ID
 	 * @param fileName
 	 */
-	public TreeFileImpl(final long oid, final String fileName) {
+	public TreeFileImpl(final byte[] oid, final String fileName) {
 		this(oid, new File(fileName).toURI());
+	}
+
+	/**
+	 * Construct a tree file with given object ID and URI 
+	 * @param oid object ID
+	 * @param uri
+	 */
+	public TreeFileImpl(final long oid, URI uri) {
+		this(NodeImpl.toBytes(oid), uri);
+	}
+
+	/**
+	 * Construct a tree file with given object ID and file name 
+	 * @param oid object ID
+	 * @param fileName
+	 */
+	public TreeFileImpl(final long oid, final String fileName) {
+		this(NodeImpl.toBytes(oid), new File(fileName).toURI());
 	}
 
 	@Override

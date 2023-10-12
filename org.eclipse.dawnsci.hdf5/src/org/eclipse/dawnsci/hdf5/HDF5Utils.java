@@ -116,7 +116,7 @@ public class HDF5Utils {
 			return false;
 		}
 		try {
-			return H5.H5Fis_hdf5(fileName);
+			return H5.H5Fis_accessible(fileName, HDF5Constants.H5P_DEFAULT);
 		} catch (HDF5LibraryException e) {
 			logger.error("Problem using HDF5 library when checking if a file is HDF5: {}", fileName, e);
 		}

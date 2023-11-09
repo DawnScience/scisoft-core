@@ -14,6 +14,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,6 +30,7 @@ import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.DatasetException;
+import org.eclipse.january.MetadataException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
@@ -293,14 +295,18 @@ public class ProcessingUtils {
 	}
 
 	/**
-	 * Get originating file from lazy dataset's metadata
+	 * Get first originating file from lazy dataset's metadata
 	 * @param lazy
 	 * @return file or null
 	 */
-	public static String getOriginatingFile(ILazyDataset lazy) {
-		OriginMetadata om = lazy.getFirstMetadata(OriginMetadata.class);
-		if (om != null) {
-			return om.getFilePath();
+	public static String getFirstOriginatingFile(ILazyDataset lazy) {
+		try {
+			List<OriginMetadata> oms = lazy.getMetadata(OriginMetadata.class);
+			if (oms != null && !oms.isEmpty()) {
+				// OM are added depth-first so top most is last
+				return oms.get(oms.size() - 1).getFilePath();
+			}
+		} catch (MetadataException e) {
 		}
 		return null;
 	}

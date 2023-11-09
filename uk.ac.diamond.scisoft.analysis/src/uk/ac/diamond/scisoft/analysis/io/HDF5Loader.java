@@ -726,6 +726,13 @@ public class HDF5Loader extends AbstractFileLoader {
 			f.setHostname(host);
 
 			nn = createNode(fid, f, pool, null, node, keepBitWidth, depth);
+			if (nn instanceof DataNode dn) {
+				ILazyDataset ld = dn.getDataset();
+				OriginMetadata om = ld.getFirstMetadata(OriginMetadata.class);
+				if (om == null || !path.equals(om.getFilePath())) {
+					ld.addMetadata(MetadataFactory.createMetadata(OriginMetadata.class, null, null, null, path, node));
+				}
+			}
 		} catch (Throwable le) {
 			throw new ScanFileHolderException("Problem loading file: " + path, le);
 		} finally {

@@ -673,7 +673,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		ILazyDataset dark = null;
 		if (nxDetector.containsDataNode(DARK_IMAGE)) {
 			dark = nxDetector.getDataNode(DARK_IMAGE).getDataset();
-			file = ProcessingUtils.getOriginatingFile(dark);
+			file = ProcessingUtils.getFirstOriginatingFile(dark);
 			if (file != null) {
 				log.append("Found %s which links to %s", DARK_IMAGE, file);
 				addConfiguredField("darkImageFile", file);
@@ -953,7 +953,7 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		od.setDisplayData(displayData.toArray(new IDataset[displayData.size()]));
 
 		if (h != null) {
-			if (model.getDarkImageFile() == null) {
+			if (darkImageFile == null) {
 				setDisplayData(od, x, h, fit);
 			}
 

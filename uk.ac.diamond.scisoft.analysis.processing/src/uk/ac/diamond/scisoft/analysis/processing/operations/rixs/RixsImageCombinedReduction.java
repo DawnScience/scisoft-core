@@ -110,7 +110,7 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 
 		if (nxDetector.containsDataNode(ELASTIC_IMAGE) && !model.isIgnoreLinkedScan()) {
 			ILazyDataset elasticImage = nxDetector.getDataNode(ELASTIC_IMAGE).getDataset();
-			String eFilePath = ProcessingUtils.getOriginatingFile(elasticImage);
+			String eFilePath = ProcessingUtils.getFirstOriginatingFile(elasticImage);
 			if (eFilePath != null) {
 				elasticScanPath = eFilePath;
 				log.append("Found %s which links to %s", ELASTIC_IMAGE, eFilePath);

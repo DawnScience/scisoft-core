@@ -18,13 +18,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.dawnsci.conversion.ConversionServiceImpl;
-import org.dawnsci.conversion.converters.util.LocalServiceManager;
 import org.dawnsci.conversion.schemes.ProcessConversionScheme;
 import org.eclipse.dawnsci.analysis.api.conversion.IConversionContext;
 import org.eclipse.dawnsci.analysis.api.conversion.IConversionService;
 import org.eclipse.dawnsci.analysis.api.conversion.IProcessingConversionInfo;
 import org.eclipse.dawnsci.analysis.api.conversion.ProcessingOutputType;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
 import org.eclipse.dawnsci.analysis.api.processing.IExecutionVisitor;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
@@ -34,6 +34,7 @@ import org.eclipse.january.dataset.IDataset;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import uk.ac.diamond.osgi.services.ServiceProvider;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.LoaderServiceImpl;
 import uk.ac.diamond.scisoft.analysis.processing.OperationServiceImpl;
@@ -48,18 +49,19 @@ public class ExampleOperationsTest {
 	private static final String DATA_NAME = "data";
 	
 	@BeforeClass
-	public static void before() throws Exception {
-		
+	public static void setUpServices() throws Exception {
 		OperationRunnerImpl.setRunner(ExecutionType.SERIES,   new SeriesRunner());
 		OperationRunnerImpl.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
 		
 		IOperationService service = new OperationServiceImpl();
 		service.createOperations(service.getClass(), "uk.ac.diamond.scisoft.analysis.processing.test.examples");
 
-		new LocalServiceManager().setLoaderService(new LoaderServiceImpl());
-		new LocalServiceManager().setOperationService(service);
-		
 		new uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager().setLoaderService(new LoaderServiceImpl());
+		final IOperationService operationService = new OperationServiceImpl();
+		operationService.createOperations(operationService.getClass(), "uk.ac.diamond.scisoft.analysis.processing.test.examples");
+
+		ServiceProvider.setService(ILoaderService.class, new LoaderServiceImpl());
+		ServiceProvider.setService(IOperationService.class, operationService);
 	}
 	
 	

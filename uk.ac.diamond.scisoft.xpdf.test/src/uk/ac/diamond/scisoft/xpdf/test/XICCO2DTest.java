@@ -6,6 +6,8 @@ import static org.junit.Assert.fail;
 
 import org.dawnsci.persistence.PersistenceServiceCreator;
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
+import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
@@ -17,16 +19,13 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.SliceND;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.osgi.services.ServiceProvider;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.LoaderServiceImpl;
-import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.operations.mask.ImportMaskModel;
 import uk.ac.diamond.scisoft.analysis.processing.operations.mask.ImportMaskOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.twod.DiffractionMetadataImportModel;
@@ -55,24 +54,13 @@ public class XICCO2DTest {
 	public static void setUpServices() {
 		// Set factory for test
 		ServiceProvider.setService(INexusFileFactory.class, new NexusFileFactoryHDF5());
+		ServiceProvider.setService(ILoaderService.class, new LoaderServiceImpl());
+		ServiceProvider.setService(IPersistenceService.class, PersistenceServiceCreator.createPersistenceService());
 	}
 	
 	@AfterClass
 	public static void tearDownServices() {
 		ServiceProvider.reset();
-	}
-
-	@Before
-	public void setUp() throws Exception {
-		// Set up a File Service for ImportMaskMetadata
-		LocalServiceManager lsm = new LocalServiceManager();
-		lsm.setLoaderService(new LoaderServiceImpl());
-		lsm.setPersistenceService(PersistenceServiceCreator.createPersistenceService());
-		
-	}
-
-	@After
-	public void tearDown() throws Exception {
 	}
 
 	@Test

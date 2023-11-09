@@ -59,6 +59,7 @@ import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.metadata.AxesMetadata;
 
+import uk.ac.diamond.osgi.services.ServiceProvider;
 import uk.ac.diamond.scisoft.analysis.MultiRange;
 import uk.ac.diamond.scisoft.analysis.dataset.function.Histogram;
 import uk.ac.diamond.scisoft.analysis.dataset.function.RegisterNoisyData1D;
@@ -66,7 +67,6 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.image.ImageUtils;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
-import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.operations.MetadataUtils;
 import uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractFittedBackgroundOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsBaseModel.ENERGY_DIRECTION;
@@ -239,12 +239,11 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		}
 		try {
 			Tree tree = LoaderFactory.getData(file).getTree();
-			IPersistenceService service = LocalServiceManager.getPersistenceService();
+			IPersistenceService service = ServiceProvider.getService(IPersistenceService.class);
 			IPersistentNodeFactory pf = service.getPersistentNodeFactory();
 			for (IOperation<?,?> o : pf.readOperationsFromTree(tree)) {
 				IOperationModel m = o.getModel();
-				if (m instanceof RixsBaseModel) {
-					RixsBaseModel rbm = (RixsBaseModel) m;
+				if (m instanceof RixsBaseModel rbm) {
 					model.internalSetRoiA(rbm.getRoiA());
 					model.internalSetRoiB(rbm.getRoiB());
 					break;

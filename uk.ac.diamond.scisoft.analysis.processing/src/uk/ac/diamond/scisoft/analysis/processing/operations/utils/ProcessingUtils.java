@@ -19,6 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
@@ -38,8 +39,8 @@ import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.metadata.OriginMetadata;
 
+import uk.ac.diamond.osgi.services.ServiceProvider;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
-import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 
 public class ProcessingUtils {
 	/**
@@ -51,7 +52,7 @@ public class ProcessingUtils {
 	 */
 	public static IDataHolder getData(IOperation<?, ?> op, String filepath) throws OperationException {
 		try {
-			return LocalServiceManager.getLoaderService().getData(filepath, null);
+			return ServiceProvider.getService(ILoaderService.class).getData(filepath, null);
 		} catch (Exception e) {
 			throw new OperationException(op, "Error opening file: " + filepath, e);
 		}

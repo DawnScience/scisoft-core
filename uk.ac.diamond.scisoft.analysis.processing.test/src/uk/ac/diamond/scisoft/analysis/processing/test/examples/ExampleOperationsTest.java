@@ -31,6 +31,7 @@ import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.IOperationService;
 import org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel;
 import org.eclipse.january.dataset.IDataset;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -53,17 +54,16 @@ public class ExampleOperationsTest {
 		OperationRunnerImpl.setRunner(ExecutionType.SERIES,   new SeriesRunner());
 		OperationRunnerImpl.setRunner(ExecutionType.PARALLEL, new SeriesRunner());
 		
-		IOperationService service = new OperationServiceImpl();
-		service.createOperations(service.getClass(), "uk.ac.diamond.scisoft.analysis.processing.test.examples");
-
-		new uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager().setLoaderService(new LoaderServiceImpl());
 		final IOperationService operationService = new OperationServiceImpl();
 		operationService.createOperations(operationService.getClass(), "uk.ac.diamond.scisoft.analysis.processing.test.examples");
-
-		ServiceProvider.setService(ILoaderService.class, new LoaderServiceImpl());
 		ServiceProvider.setService(IOperationService.class, operationService);
+		ServiceProvider.setService(ILoaderService.class, new LoaderServiceImpl());
 	}
 	
+	@AfterClass
+	public static void tearDownServices() throws Exception {
+		ServiceProvider.reset();
+	}
 	
 	@Test
 	public void sumExample() throws Exception{

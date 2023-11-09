@@ -6,6 +6,7 @@ import java.io.File;
 
 import org.dawnsci.persistence.PersistenceServiceCreator;
 import org.dawnsci.persistence.internal.PersistJsonOperationsNode;
+import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.persistence.IPersistentFile;
 import org.eclipse.dawnsci.analysis.api.processing.ExecutionType;
@@ -26,7 +27,6 @@ import org.junit.Test;
 import uk.ac.diamond.osgi.services.ServiceProvider;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.LoaderServiceImpl;
-import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.OperationServiceImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.OperationRunnerImpl;
 import uk.ac.diamond.scisoft.analysis.processing.runner.SeriesRunner;
@@ -42,7 +42,7 @@ public class XPDFChainTest {
 		operationService.createOperations(operationService.getClass(), "uk.ac.diamond.scisoft.xpdf.operations");
 		operationService.createOperations(operationService.getClass(), "uk.ac.diamond.scisoft.analysis.processing.operations");
 		new PersistJsonOperationsNode().setOperationService(operationService);
-		new LocalServiceManager().setLoaderService(new LoaderServiceImpl());
+		ServiceProvider.setService(ILoaderService.class, new LoaderServiceImpl()); 
 		ServiceProvider.setService(INexusFileFactory.class, new NexusFileFactoryHDF5());
 	}
 	

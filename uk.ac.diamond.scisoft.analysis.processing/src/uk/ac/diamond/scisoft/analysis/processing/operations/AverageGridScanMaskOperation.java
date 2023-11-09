@@ -34,8 +34,8 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.RunningAverage;
 
+import uk.ac.diamond.osgi.services.ServiceProvider;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
-import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.operations.mask.ImportMaskModel;
 
 public class AverageGridScanMaskOperation extends AbstractOperation<ImportMaskModel, OperationData> implements IExportOperation{
@@ -121,7 +121,7 @@ public class AverageGridScanMaskOperation extends AbstractOperation<ImportMaskMo
 
 		try {
 			if (HDF5Utils.isHDF5(path)) {
-				IPersistenceService service = LocalServiceManager.getPersistenceService();
+				IPersistenceService service = ServiceProvider.getService(IPersistenceService.class);
 				IPersistentFile pf = service.getPersistentFile(path);
 				IDataset m = pf.getMask(pf.getMaskNames(null).get(0),null);
 				if (Arrays.equals(m.squeeze().getShape(), shape)) {

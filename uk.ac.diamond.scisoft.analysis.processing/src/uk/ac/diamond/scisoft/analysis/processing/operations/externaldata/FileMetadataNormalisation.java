@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.externaldata;
 
 import java.io.Serializable;
 
+import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
@@ -24,7 +25,7 @@ import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.metadata.IMetadata;
 
-import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
+import uk.ac.diamond.osgi.services.ServiceProvider;
 import uk.ac.diamond.scisoft.analysis.utils.ErrorPropagationUtils;
 
 @Atomic
@@ -57,7 +58,7 @@ public class FileMetadataNormalisation extends AbstractOperation<FileMetadataMod
 			else {
 				SliceFromSeriesMetadata oMetadata = input.getFirstMetadata(SliceFromSeriesMetadata.class);
 				String filePath = oMetadata.getFilePath();
-				metadata = LocalServiceManager.getLoaderService().getMetadata(filePath, null);
+				metadata = ServiceProvider.getService(ILoaderService.class).getMetadata(filePath, null);
 				metaValue = metadata.getMetaValue(model.getMetadataName());
 			}
 			Dataset parseDouble = DatasetFactory.createFromObject(Double.parseDouble(metaValue.toString()));

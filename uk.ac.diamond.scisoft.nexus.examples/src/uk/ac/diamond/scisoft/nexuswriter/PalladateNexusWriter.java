@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
+import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
@@ -48,7 +49,6 @@ import org.eclipse.january.dataset.DatasetUtils;
 
 import uk.ac.diamond.osgi.services.ServiceProvider;
 import uk.ac.diamond.scisoft.analysis.io.LoaderServiceImpl;
-import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 class PalladateNexusWriter {
@@ -80,8 +80,7 @@ class PalladateNexusWriter {
 		ServiceProvider.setService(INexusFileFactory.class, new NexusFileFactoryHDF5());
 		
 		// Set the general file loader service
-		LocalServiceManager misterManager = new LocalServiceManager();
-		misterManager.setLoaderService(new LoaderServiceImpl());
+		ServiceProvider.setService(ILoaderService.class, new LoaderServiceImpl());
 		
 		outputDir = System.getProperty("user.home") + "/nexus/";
 		inputDir = "/dls/science/groups/das/ExampleData/i15-1/NeXus/files for writer";
@@ -90,7 +89,6 @@ class PalladateNexusWriter {
 		makeSampleNexus();
 		makeCapillaryNexus();
 		makeI151Nexus();
-		return;
 	}
 	
 	private static void makeSampleNexus() {

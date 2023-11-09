@@ -44,6 +44,7 @@ import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
 
+import uk.ac.diamond.osgi.services.ServiceProvider;
 import uk.ac.diamond.scisoft.analysis.fitting.FittingConstants.FIT_ALGORITHMS;
 import uk.ac.diamond.scisoft.analysis.fitting.Generic1DFitter;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Add;
@@ -51,7 +52,6 @@ import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.GeneticAlg;
 import uk.ac.diamond.scisoft.analysis.optimize.IOptimizer;
-import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 
 @Atomic
 public class FunctionFittingOperation extends AbstractOperation<FunctionFittingModel, OperationData> {
@@ -183,7 +183,7 @@ public class FunctionFittingOperation extends AbstractOperation<FunctionFittingM
 
 					try {
 
-						IPersistenceService service = LocalServiceManager.getPersistenceService();
+						IPersistenceService service = ServiceProvider.getService(IPersistenceService.class);
 						IPersistentFile pf = service.getPersistentFile(model.getFilePath());
 						Map<String, IFunction> functions = pf.getFunctions(null);
 						Map<String, IROI> rois = pf.getROIs(null);

@@ -62,9 +62,9 @@ import org.eclipse.january.metadata.UnitMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.ac.diamond.osgi.services.ServiceProvider;
 import uk.ac.diamond.scisoft.analysis.io.Utils;
 import uk.ac.diamond.scisoft.analysis.processing.IFlushMonitor;
-import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
 public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFile {
@@ -297,7 +297,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 
 	private void applyTemplate() {
 		if (templatePath == null || templatePath.isEmpty()) return;
-		NexusTemplateService templateService = LocalServiceManager.getNexusTemplateService();
+		NexusTemplateService templateService = ServiceProvider.getService(NexusTemplateService.class);
 		try {
 			NexusTemplate template = templateService.loadTemplate(templatePath);
 			logger.info("Applying template file {}",templatePath);

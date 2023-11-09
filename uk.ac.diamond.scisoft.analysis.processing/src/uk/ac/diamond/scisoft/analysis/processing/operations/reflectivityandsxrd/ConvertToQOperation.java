@@ -14,6 +14,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.reflectivityandsxrd
 import java.io.Serializable;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
+import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
@@ -21,19 +22,19 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.EmptyModel;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperationBase;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
-import org.eclipse.january.dataset.DatasetUtils;
-import org.eclipse.january.dataset.IDataset;
-import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
+import org.eclipse.january.dataset.DatasetUtils;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.IMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
+import uk.ac.diamond.osgi.services.ServiceProvider;
 import uk.ac.diamond.scisoft.analysis.utils.ErrorPropagationUtils;
 
 @Atomic
@@ -79,7 +80,7 @@ public class ConvertToQOperation extends AbstractOperationBase<EmptyModel, Opera
 		Serializable metaValue = 12.5;
 		try {
 			String filePath = data.getFirstMetadata(SliceFromSeriesMetadata.class).getFilePath();
-			metadata = LocalServiceManager.getLoaderService().getMetadata(filePath, null);
+			metadata = ServiceProvider.getService(ILoaderService.class).getMetadata(filePath, null);
 			metaValue = metadata.getMetaValue("dcm1energy");
 		} catch (Exception e) {
 			// Really this should never happen, this is a common value for i07 and is in place to 

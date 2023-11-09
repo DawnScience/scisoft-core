@@ -16,7 +16,6 @@ import java.nio.file.Files;
 import java.util.Objects;
 
 import org.eclipse.dawnsci.analysis.api.persistence.IMarshallerService;
-import org.eclipse.dawnsci.analysis.api.persistence.IPersistenceService;
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.IExportOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -31,7 +30,7 @@ import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 
-import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
+import uk.ac.diamond.osgi.services.ServiceProvider;
 import uk.ac.diamond.scisoft.analysis.processing.metadata.OperationMetadata;
 import uk.ac.diamond.scisoft.diffraction.powder.DiffractionImageData;
 import uk.ac.diamond.scisoft.diffraction.powder.MovingBeamCalibrationConfig;
@@ -46,24 +45,18 @@ public class SplitAndCalibrateFramesOperation extends AbstractOperationBase<Spli
 	private volatile MovingBeamCalibrationConfig cachedConfig;
 	public static String ctag = "_calibrations";
 
-	IMarshallerService m = LocalServiceManager.getMarshallerService(); 
-	IPersistenceService ps = LocalServiceManager.getPersistenceService();
-
 	@Override
 	public String getId() {
-		// TODO Auto-generated method stub
 		return "uk.ac.diamond.scisoft.analysis.processing.operations.movingbeam.SplitAndCalibrateFramesOperation";
 	}
 
 	@Override
 	public OperationRank getInputRank() {
-		// TODO Auto-generated method stub
 		return OperationRank.TWO;
 	}
 
 	@Override
 	public OperationRank getOutputRank() {
-		// TODO Auto-generated method stub
 		return OperationRank.TWO;
 	}
 
@@ -84,7 +77,8 @@ public class SplitAndCalibrateFramesOperation extends AbstractOperationBase<Spli
 				if (Objects.isNull(lcache)) {
 						MovingBeamCalibrationScanSplitter newcache;
 						try {
-							cachedConfig = parseJSONConfig(model.getPathToCalibrationDescriptionConfig(), m);
+							IMarshallerService marshallerService = ServiceProvider.getService(IMarshallerService.class);
+							cachedConfig = parseJSONConfig(model.getPathToCalibrationDescriptionConfig(), marshallerService);
 							newcache = new MovingBeamCalibrationScanSplitter(slice, model, cachedConfig);
 							validateOutputFolder(cFolder);
 	

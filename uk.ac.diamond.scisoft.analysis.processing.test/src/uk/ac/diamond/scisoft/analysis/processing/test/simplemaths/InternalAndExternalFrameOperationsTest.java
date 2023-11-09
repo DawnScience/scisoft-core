@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
+import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
@@ -24,11 +25,13 @@ import org.eclipse.dawnsci.analysis.dataset.slicer.SliceViewIterator;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SourceInformation;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import uk.ac.diamond.osgi.services.ServiceProvider;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
 import uk.ac.diamond.scisoft.analysis.io.LoaderServiceImpl;
-import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
 import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.AddExternalFrameOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.DivideExternalFrameOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.ExternalDataSelectedFramesModel;
@@ -43,9 +46,18 @@ import uk.ac.diamond.scisoft.analysis.processing.test.TestHDF5DataUtils;
 
 public class InternalAndExternalFrameOperationsTest {
 
+	@BeforeClass
+	public static void setUpServices() {
+		ServiceProvider.setService(ILoaderService.class, new LoaderServiceImpl());
+	}
+	
+	@AfterClass
+	public static void tearDownServices() {
+		ServiceProvider.reset();
+	}
+
 	@Test
 	public void test() throws Exception {
-		new LocalServiceManager().setLoaderService(new LoaderServiceImpl());
 		final String DATA = "data";
 		final String OTHER = "other_data";
 		final String FULL_DATA = TestHDF5DataUtils.ROOT + Node.SEPARATOR + DATA;

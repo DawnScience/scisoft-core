@@ -21,7 +21,7 @@ import org.eclipse.january.dataset.Random;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 /**
  * Must have OSGI so this is a junit plugin test.
@@ -32,13 +32,13 @@ public class OperationsPluginTest {
 
 	@Test
 	public void testGetService() throws Exception {
-		final IOperationService service = LocalServiceManager.getOperationService();
+		final IOperationService service = ServiceProvider.getService(IOperationService.class);
 		if (service == null) throw new Exception("Cannot get the service!");
 	}
 	
 	@Test
 	public void testServiceHasOperations() throws Exception {
-		final IOperationService service = LocalServiceManager.getOperationService();
+		final IOperationService service = ServiceProvider.getService(IOperationService.class);
 		if (service == null) throw new Exception("Cannot get the service!");
 		
 		final Collection<String> operations = service.getRegisteredOperations();
@@ -47,7 +47,7 @@ public class OperationsPluginTest {
 
 	@Test
 	public void testSimpleSubtract() throws Exception {
-		final IOperationService service = LocalServiceManager.getOperationService();
+		final IOperationService service = ServiceProvider.getService(IOperationService.class);
 		if (service == null) throw new Exception("Cannot get the service!");
 				
 		final IOperation subtract = service.create("uk.ac.diamond.scisoft.analysis.processing.subtractOperation");
@@ -74,7 +74,7 @@ public class OperationsPluginTest {
 	@Ignore
 	@Test
 	public void testSimpleAddAndSubtractUsingFind() throws Exception {
-		final IOperationService service = LocalServiceManager.getOperationService();
+		final IOperationService service = ServiceProvider.getService(IOperationService.class);
 		if (service == null) throw new Exception("Cannot get the service!");
 				
 		final IOperation add      = service.findFirst("add");

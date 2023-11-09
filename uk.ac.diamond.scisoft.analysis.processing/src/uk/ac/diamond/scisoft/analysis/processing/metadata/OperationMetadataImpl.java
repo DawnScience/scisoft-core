@@ -23,7 +23,7 @@ import org.eclipse.january.dataset.SliceND;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.ac.diamond.scisoft.analysis.processing.LocalServiceManager;
+import uk.ac.diamond.osgi.services.ServiceProvider;
 import uk.ac.diamond.scisoft.analysis.processing.operations.externaldata.DataUtils;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 import uk.ac.diamond.scisoft.analysis.processing.visitor.AveragingOutputExecutionVisitor;
@@ -75,7 +75,7 @@ public class OperationMetadataImpl implements OperationMetadata {
 		SourceInformation si = new SourceInformation(filename, datasetName, lz);
 		lz.setMetadata(new SliceFromSeriesMetadata(si));
 		
-		IOperationService opServ = LocalServiceManager.getOperationService();
+		IOperationService opServ = ServiceProvider.getService(IOperationService.class);
 		IOperationContext context = opServ.createContext();
 		context.setData(lz);
 		int[] dataDims = updateDataDimensions(metadata.getDataDimensions(), metadata.getSourceInfo().getParent().getRank(), lz.getRank());
@@ -137,7 +137,7 @@ public class OperationMetadataImpl implements OperationMetadata {
 		IOperation clone = null;
 		
 		try {
-			clone= LocalServiceManager.getOperationService().create(op.getId());
+			clone= ServiceProvider.getService(IOperationService.class).create(op.getId());
 			IOperationModel model = clone.getModel();
 			BeanUtils.copyProperties(model, op.getModel());
 		} catch (Exception e) {

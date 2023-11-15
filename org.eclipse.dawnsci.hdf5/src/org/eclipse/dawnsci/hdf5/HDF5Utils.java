@@ -1472,7 +1472,7 @@ public class HDF5Utils {
 		try {
 			info = H5.H5Oget_info(oid, HDF5Constants.H5O_INFO_NUM_ATTRS);
 		} catch (HDF5LibraryException e) {
-			logAndThrowNexusException(e, "Could not get info from object");
+			logAndThrowNexusException(e, "Could not get info from object: %s", path);
 		}
 
 		int n = (int) info.num_attrs;
@@ -1833,7 +1833,7 @@ public class HDF5Utils {
 					final long nativeTypeId = nativeTypeResource.getResource();
 					DatasetType type = getDatasetType(typeResource.getResource(), nativeTypeId);
 					if (type == null) {
-						logAndThrowNexusException(null, "Unknown data type");
+						logAndThrowNexusException(null, "Unknown data type: %s in %s", name, path);
 					}
 					final int nDims = H5.H5Sget_simple_extent_ndims(spaceId);
 					shape = new long[nDims];

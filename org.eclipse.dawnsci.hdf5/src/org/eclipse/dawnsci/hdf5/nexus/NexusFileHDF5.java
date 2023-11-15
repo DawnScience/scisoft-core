@@ -12,7 +12,7 @@ package org.eclipse.dawnsci.hdf5.nexus;
 import java.io.File;
 import java.io.Serializable;
 import java.net.URI;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
@@ -405,8 +405,6 @@ public class NexusFileHDF5 implements NexusFile {
 		group.addGroupNode(name, g);
 	}
 
-	public static final Charset UTF8 = Charset.forName("UTF-8");
-
 	private void cacheAttributes(String path, Node node) throws NexusException {
 		try {
 			H5O_info_t objInfo = H5.H5Oget_info_by_name(fileId, path, HDF5Constants.H5O_INFO_NUM_ATTRS, HDF5Constants.H5P_DEFAULT);
@@ -421,7 +419,7 @@ public class NexusFileHDF5 implements NexusFile {
 				node.addAttribute(createAttribute(dataset));
 			}
 		} catch (HDF5Exception e) {
-			throw new NexusException("Could not retrieve node attributes", e);
+			throw new NexusException("Could not retrieve node attributes: " + path, e);
 		}
 		return;
 	}
@@ -482,7 +480,7 @@ public class NexusFileHDF5 implements NexusFile {
 				}
 			}
 		} catch (HDF5LibraryException e) {
-			throw new NexusException("Could not process over child links", e);
+			throw new NexusException("Could not process over child links: " + path, e);
 		}
 		return;
 	}
@@ -617,7 +615,7 @@ public class NexusFileHDF5 implements NexusFile {
 					}
 				}
 			} catch (HDF5LibraryException e) {
-				throw new NexusException("Could not query if path is soft link", e);
+				throw new NexusException("Could not query if path is soft link: " + path, e);
 			}
 			if (!group.containsGroupNode(parsedNode.name)) {
 				createGroupNode(path.hashCode(), group, parentPath, parsedNode.name, parsedNode.nxClass);
@@ -791,7 +789,7 @@ public class NexusFileHDF5 implements NexusFile {
 				H5.H5Sget_simple_extent_dims(dataspaceId, shape, maxShape);
 			}
 		} catch (HDF5Exception e) {
-			throw new NexusException("Error reading dataspace", e);
+			throw new NexusException("Error reading dataspace: " + path, e);
 		}
 		return createDataNode(parentNode, path, dataName, shape, type.clazz, type.unsigned, maxShape, chunks);
 	}
@@ -1029,7 +1027,7 @@ public class NexusFileHDF5 implements NexusFile {
 				H5.H5Dclose(datasetId);
 			}
 		} catch (HDF5Exception e) {
-			throw new NexusException("Could not create dataset " + name, e);
+			throw new NexusException("Could not create dataset: " + name + " in " + path, e);
 		}
 
 		HDF5LazySaver saver = new HDF5LazySaver(null, fileName, dataPath,
@@ -1152,7 +1150,7 @@ public class NexusFileHDF5 implements NexusFile {
 				}
 			}
 		} catch (HDF5Exception e) {
-			throw new NexusException("Could not create dataset " + name, e);
+			throw new NexusException("Could not create dataset: " + name + " in " + path, e);
 		}
 		DataNode dataNode = TreeFactory.createDataNode(dataPath.hashCode());
 		long fileAddr = getLinkTarget(dataPath);
@@ -1319,7 +1317,6 @@ public class NexusFileHDF5 implements NexusFile {
 	@Override
 	public void addAttribute(String path, Attribute... attribute) throws NexusException {
 		assertCanWrite();
-		Charset utf8 = Charset.forName("UTF-8");
 		for (Attribute attr : attribute) {
 			String attrName = attr.getName();
 			if (attrName == null || attrName.isEmpty()) {
@@ -1359,7 +1356,7 @@ public class NexusFileHDF5 implements NexusFile {
 						byte[][] stringbuffers = new byte[strCount][];
 						int i = 0;
 						for (String str : strings) {
-							stringbuffers[i] = str.getBytes(utf8);
+							stringbuffers[i] = str.getBytes(StandardCharsets.UTF_8);
 							int l = stringbuffers[i].length;
 							if (l > maxLength) maxLength = l;
 							i++;

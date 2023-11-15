@@ -75,7 +75,7 @@ public enum NexusDataType {
 			try {
 				dataset = lazyDataset.getSlice();
 			} catch (DatasetException e) {
-				throw new NexusException("Could not read dataset", e);
+				throw new NexusException("Could not read dataset: " + lazyDataset.getName(), e);
 			}
 			
 			String dateStr = null;

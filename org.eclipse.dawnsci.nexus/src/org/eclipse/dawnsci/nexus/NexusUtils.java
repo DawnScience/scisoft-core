@@ -449,7 +449,7 @@ public class NexusUtils {
 			try {
 				wd.setSlice(null, a, null);
 			} catch (Exception ex) {
-				throw new NexusException("Could not set slice", ex);
+				throw new NexusException("Could not write to dataset: " + name, ex);
 			}
 		}
 

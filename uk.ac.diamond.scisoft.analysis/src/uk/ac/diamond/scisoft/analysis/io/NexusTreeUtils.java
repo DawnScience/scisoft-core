@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import javax.measure.IncommensurableException;
 import javax.measure.Quantity;
@@ -86,8 +87,13 @@ public class NexusTreeUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(NexusTreeUtils.class);
 
-	private static final String TRANSFORMATIONS_ROOT = ".";
+	private static final String TRANSFORMATIONS_TYPE = "transformation_type";
 	private static final String TRANSFORMATIONS_DEPENDSON = "depends_on";
+	private static final String TRANSFORMATIONS_VECTOR = "vector";
+	private static final String TRANSFORMATIONS_ROOT = ".";
+	private static final String TRANSFORMATIONS_OFFSET = "offset";
+	private static final String TRANSFORMATIONS_OFFSET_UNITS = "offset_units";
+
 
 	private static final String DETECTOR_DISTANCE = "distance";
 	private static final String DETECTOR_XPIXELSIZE = "x_pixel_size";
@@ -1001,6 +1007,9 @@ public class NexusTreeUtils {
 		for (NodeLink l : gNode) {
 			if (isNXClass(l.getDestination(), NexusConstants.DETECTORMODULE)) {
 				shape = parseSubDetectorShape(TreeUtils.join(path, l.getName()), tree, l);
+				if (shape == null) {
+					logAndThrow("Could not parse detector module '{}' shape from `{}`", l.getName(), path);
+				}
 				break; // TODO multiple modules
 			}
 		}
@@ -1083,6 +1092,8 @@ public class NexusTreeUtils {
 
 		// check recorded data_size in detector module is correct (for single module case only)
 		if (detectors.size() == 1) {
+			boolean isFirst = IntStream.of(pos).anyMatch(p -> p != 0);
+
 			DetectorProperties dp = detectors.get(0);
 			DataNode idn = gNode.getDataNode("data");
 			if (idn == null) {
@@ -1093,7 +1104,9 @@ public class NexusTreeUtils {
 				int rank = dataShape.length;
 				// fastest dimension should match detector width (X) and next-fastest should match height (Y)
 				if (dp.getPx() != dataShape[rank - 1] || dp.getPy() != dataShape[rank - 2]) {
-					logger.warn("Detector module's data_size does not match detector data's shape. Correcting former");
+					if (isFirst) {
+						logger.warn("Detector module's data_size does not match detector data's shape. Correcting former");
+					}
 					dp.setPx(dataShape[rank - 1]);
 					dp.setPy(dataShape[rank - 2]);
 				}
@@ -1481,30 +1494,30 @@ public class NexusTreeUtils {
 	}
 
 	public static void parseBeam(Tree tree, GroupNode group, DiffractionCrystalEnvironment sample, int... pos) {
-		parseForDCE(tree == null ? null : TreeUtils.getPath(tree, group), tree, "incident_wavelength", "incident_energy", group, sample, pos);
+		parseForDCE(true, tree == null ? null : TreeUtils.getPath(tree, group), tree, "incident_wavelength", "incident_energy", group, sample, pos);
 	}
 
 	public static void parseBeam(Tree tree, NodeLink link, DiffractionCrystalEnvironment sample, int... pos) {
-		parseForDCE(tree == null ? null : TreeUtils.getPath(tree, link.getDestination()), tree, "incident_wavelength", "incident_energy", link, sample, pos);
+		parseForDCE(true, tree == null ? null : TreeUtils.getPath(tree, link.getDestination()), tree, "incident_wavelength", "incident_energy", link, sample, pos);
 	}
 
-	public static void parseBeam(String path, Tree tree, NodeLink link, DiffractionCrystalEnvironment sample, int... pos) {
-		parseForDCE(path, tree, "incident_wavelength", "incident_energy", link, sample, pos);
+	public static void parseBeam(boolean warn, String path, Tree tree, NodeLink link, DiffractionCrystalEnvironment sample, int... pos) {
+		parseForDCE(warn, path, tree, "incident_wavelength", "incident_energy", link, sample, pos);
 	}
 
 	public static void parseMonochromator(Tree tree, NodeLink link, DiffractionCrystalEnvironment sample, int... pos) {
-		parseForDCE(tree == null ? null : TreeUtils.getPath(tree, link.getDestination()), tree, "wavelength", "energy", link, sample, pos);
+		parseForDCE(true, tree == null ? null : TreeUtils.getPath(tree, link.getDestination()), tree, "wavelength", "energy", link, sample, pos);
 	}
 
-	public static void parseForDCE(String path, Tree tree, String wavelengthName, String energyName, NodeLink link, DiffractionCrystalEnvironment sample, int... pos) {
+	public static void parseForDCE(boolean warn, String path, Tree tree, String wavelengthName, String energyName, NodeLink link, DiffractionCrystalEnvironment sample, int... pos) {
 		if (!link.isDestinationGroup()) {
 			logger.warn("'{}' must be a group", link.getName());
 			return;
 		}
-		parseForDCE(path, tree, wavelengthName, energyName, (GroupNode) link.getDestination(), sample, pos);
+		parseForDCE(warn, path, tree, wavelengthName, energyName, (GroupNode) link.getDestination(), sample, pos);
 	}
 
-	public static void parseForDCE(String path, Tree tree, String wavelengthName, String energyName, GroupNode gNode, DiffractionCrystalEnvironment sample, int... pos) {
+	public static void parseForDCE(boolean warn, String path, Tree tree, String wavelengthName, String energyName, GroupNode gNode, DiffractionCrystalEnvironment sample, int... pos) {
 		DataNode wavelength = gNode.getDataNode(wavelengthName);
 		if (wavelength != null) {
 			Dataset w = getConvertedData(wavelength, NonSI.ANGSTROM);
@@ -1524,7 +1537,9 @@ public class NexusTreeUtils {
 		String dependsOn = "direction";
 		GroupNode tNode = null;
 		if (depNode == null) {
-			logger.warn("NXbeam is missing a depends_on field so defaulting to NXtransformations/direction");
+			if (warn) {
+				logger.warn("NXbeam is missing a depends_on field so defaulting to NXtransformations/direction");
+			}
 		} else if (tree != null && path != null) {
 			try {
 				dependsOn = getFirstString(depNode);
@@ -1552,20 +1567,22 @@ public class NexusTreeUtils {
 		}
 
 		if (tNode == null) {
-			logger.warn("Beam transformation was missing in {}", gNode);
+			if (warn) {
+				logger.warn("Beam transformation was missing in {}", gNode);
+			}
 		} else {
 			DataNode direction = tNode.getDataNode(dependsOn);
 			if (direction == null) {
 				logger.warn("Direction was missing in {}", gNode);
 			} else {
-				double[] d = parseDoubleArray(direction.getAttribute("vector"), 3);
+				double[] d = parseDoubleArray(direction.getAttribute(TRANSFORMATIONS_VECTOR), 3);
 				sample.setBeamDirection(new Vector3d(d));
 			}
 			DataNode reference = tNode.getDataNode("reference_plane");
 			if (reference == null) {
 				logger.warn("Polarization reference was missing in {}", gNode);
 			} else {
-				double[] d = parseDoubleArray(reference.getAttribute("vector"), 3);
+				double[] d = parseDoubleArray(reference.getAttribute(TRANSFORMATIONS_VECTOR), 3);
 				sample.setReferenceNormal(new Vector3d(d));
 			}
 		}
@@ -1574,7 +1591,9 @@ public class NexusTreeUtils {
 			stokes = gNode.getDataNode("final_polarization_stokes");
 		}
 		if (stokes == null) {
-			logger.warn("Polarization state was missing in {}", gNode);
+			if (warn) {
+				logger.warn("Polarization state was missing in {}", gNode);
+			}
 		} else {
 			CompoundDoubleDataset stokesPoln = getCastAndCacheData(stokes, 4, CompoundDoubleDataset.class);
 			double[] d = stokesPoln.getSize() == 1 ? stokesPoln.getDoubleArray() : stokesPoln.getDoubleArray(pos);
@@ -1655,6 +1674,10 @@ public class NexusTreeUtils {
 		if (l == null) {
 			dep = canonicalizeDependsOn(path, tree, dep);
 			l = tree.findNodeLink(dep);
+			if (l == null) {
+				logger.error("A depends_on node is missing: '{}'", dep);
+				return null;
+			}
 			path = dep.substring(0, dep.lastIndexOf(Node.SEPARATOR));
 		}
 		int[] dshape = parseNodeShape(path, tree, l, shape);
@@ -1720,7 +1743,12 @@ public class NexusTreeUtils {
 			logAndThrow("Sample '%s' must have a %s field", link.getName(), TRANSFORMATIONS_DEPENDSON);
 		}
 		String dep = canonicalizeDependsOn(path, tree, getSingleString(nl.getDestination()));
-		return parseNodeShape(path, tree, tree.findNodeLink(dep), shape);
+		shape = parseNodeShape(path, tree, tree.findNodeLink(dep), shape);
+
+		if (shape == null) {
+			logAndThrow("Could not parse sample scan shape from `{}`", dep);
+		}
+		return shape;
 	}
 
 	/**
@@ -1749,6 +1777,8 @@ public class NexusTreeUtils {
 			env.setReferenceNormal(new Vector3d(1, 0, 0));
 		}
 
+		boolean isFirst = IntStream.of(pos).anyMatch(p -> p != 0);
+
 		// get wavelength and transformations
 		boolean getTransformations = true;
 		boolean getBeam = true;
@@ -1759,7 +1789,7 @@ public class NexusTreeUtils {
 				getTransformations = false;
 			}
 			if (isNXClass(l.getDestination(), NexusConstants.BEAM) && getBeam) {
-				parseBeam(TreeUtils.join(path, l.getName()), tree, l, env, pos);
+				parseBeam(isFirst, TreeUtils.join(path, l.getName()), tree, l, env, pos);
 				getBeam = false;
 			}
 		}
@@ -1861,7 +1891,7 @@ public class NexusTreeUtils {
 			return null;
 		}
 
-		String type = getFirstString(dNode.getAttribute("transformation_type"));
+		String type = getFirstString(dNode.getAttribute(TRANSFORMATIONS_TYPE));
 		Matrix4d m4 = new Matrix4d();
 		if (type == null) { // general axis for documentation which we will keep in chain
 			m4.setIdentity();
@@ -1869,7 +1899,7 @@ public class NexusTreeUtils {
 			double value = dataset.getSize() == 1 ? dataset.getElementDoubleAbs(0) : dataset.getDouble(pos);
 			double[] vector = null;
 			try {
-				vector = parseDoubleArray(dNode.getAttribute("vector"), 3);
+				vector = parseDoubleArray(dNode.getAttribute(TRANSFORMATIONS_VECTOR), 3);
 			} catch (IllegalArgumentException e) {
 				logAndThrow("Vector attribute of '%s' has wrong length", name);
 			}
@@ -1896,12 +1926,12 @@ public class NexusTreeUtils {
 
 			double[] offset = null;
 			try {
-				offset = parseDoubleArray(dNode.getAttribute("offset"), 3);
+				offset = parseDoubleArray(dNode.getAttribute(TRANSFORMATIONS_OFFSET), 3);
 			} catch (IllegalArgumentException e) {
 				logAndThrow("Offset attribute of '%s' has wrong length", name);
 			}
 			if (offset != null) {
-				convertIfNecessary(MILLIMETRE, getFirstString(dNode.getAttribute("offset_units")), offset);
+				convertIfNecessary(MILLIMETRE, getFirstString(dNode.getAttribute(TRANSFORMATIONS_OFFSET_UNITS)), offset);
 				for (int i = 0; i < 3; i++) {
 					m4.setElement(i, 3, offset[i] + m4.getElement(i, 3));
 				}
@@ -1944,7 +1974,7 @@ public class NexusTreeUtils {
 		}
 
 		DataNode dNode = (DataNode) link.getDestination();
-		double[] vector = parseDoubleArray(dNode.getAttribute("vector"), 3);
+		double[] vector = parseDoubleArray(dNode.getAttribute(TRANSFORMATIONS_VECTOR), 3);
 		Vector3d v3 = new Vector3d(vector);
 		DoubleDataset dataset = getConvertedData(dNode, MILLIMETRE);
 		if (dataset == null) {
@@ -1952,16 +1982,16 @@ public class NexusTreeUtils {
 			return null;
 		}
 		double[] values = dataset.getData();
-		String type = getFirstString(dNode.getAttribute("transformation_type"));
+		String type = getFirstString(dNode.getAttribute(TRANSFORMATIONS_TYPE));
 		if (!"translation".equals(type)) {
 			throw new IllegalArgumentException("Transformed vector node has wrong type");
 		}
 		v3.normalize();
 
 		Vector3d o3 = new Vector3d();
-		double[] offset = parseDoubleArray(dNode.getAttribute("offset"), 3);
+		double[] offset = parseDoubleArray(dNode.getAttribute(TRANSFORMATIONS_OFFSET), 3);
 		if (offset != null) {
-			convertIfNecessary(MILLIMETRE, getFirstString(dNode.getAttribute("offset_units")), offset);
+			convertIfNecessary(MILLIMETRE, getFirstString(dNode.getAttribute(TRANSFORMATIONS_OFFSET_UNITS)), offset);
 			o3.set(offset);
 		}
 
@@ -1987,19 +2017,31 @@ public class NexusTreeUtils {
 	}
 
 	/**
-	 * Require that a node link in group with prefix as name to be of given Nexus class is found
+	 * Require that a group node in group to be of given Nexus class is found
+	 * @param group
+	 * @param clazz
+	 * @return group node
+	 * @throws NexusException
+	 */
+	public static GroupNode requireGroupNode(GroupNode group, String clazz) throws NexusException {
+		if (requireNode(group, null, clazz) instanceof GroupNode g) {
+			return g;
+		}
+		throw new NexusException("Found node was not a group: " + clazz);
+	}
+
+	/**
+	 * Require that a node in group with prefix as name to be of given Nexus class is found
 	 * @param group
 	 * @param prefix (can be null)
 	 * @param clazz
-	 * @return node link
+	 * @return node
 	 * @throws NexusException
 	 */
 	public static Node requireNode(GroupNode group, String prefix, String clazz) throws NexusException {
 		NodeLink link = findFirstNode(group, prefix, clazz);
 		if (link == null) {
-			String msg = String.format("Could not find NeXus class '%s' in %s", clazz, group);
-			logger.error(msg);
-			throw new NexusException(msg);
+			logAndThrow("Could not find NeXus class '%s' in %s", clazz, group);
 		}
 		return link.getDestination();
 	}
@@ -2137,6 +2179,18 @@ public class NexusTreeUtils {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Find first detector group in first entry's first instrument
+	 * @param tree tree
+	 * @return detector group
+	 * @throws NexusException 
+	 */
+	public static GroupNode findFirstDetector(Tree tree) throws NexusException {
+		GroupNode g = requireGroupNode(tree.getGroupNode(), NexusConstants.ENTRY);
+		g = requireGroupNode(g, NexusConstants.INSTRUMENT);
+		return requireGroupNode(g, NexusConstants.DETECTOR);
 	}
 
 	/**
@@ -2668,10 +2722,10 @@ public class NexusTreeUtils {
 
 	public static DataNode createNXTransform(String name, String units, boolean translation, double[] direction, double[] offset, String offsetUnits, String dependsOn, Object values) {
 		DataNode d = createDataNode(name, values, units);
-		d.addAttribute(TreeFactory.createAttribute("transformation_type", translation ? "translation" : "rotation"));
-		d.addAttribute(TreeFactory.createAttribute("vector", direction));
-		d.addAttribute(TreeFactory.createAttribute("offset", offset));
-		d.addAttribute(TreeFactory.createAttribute("offset_units", offsetUnits));
+		d.addAttribute(TreeFactory.createAttribute(TRANSFORMATIONS_TYPE, translation ? "translation" : "rotation"));
+		d.addAttribute(TreeFactory.createAttribute(TRANSFORMATIONS_VECTOR, direction));
+		d.addAttribute(TreeFactory.createAttribute(TRANSFORMATIONS_OFFSET, offset));
+		d.addAttribute(TreeFactory.createAttribute(TRANSFORMATIONS_OFFSET_UNITS, offsetUnits));
 		if (addRelative(dependsOn)) {
 			dependsOn = CURRENT_DIR_PREFIX.concat(dependsOn);
 		}

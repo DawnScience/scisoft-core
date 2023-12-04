@@ -76,18 +76,23 @@ public interface NXcrystal extends NXobject {
 	public static final String NX_TEMPERATURE = "temperature";
 	public static final String NX_TEMPERATURE_COEFFICIENT = "temperature_coefficient";
 	public static final String NX_ATTRIBUTE_DEFAULT = "default";
+	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
 	 * Position of crystal
 	 * 
+	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the crystal and NXoff_geometry to describe its shape instead
 	 * @return  the value.
 	 */
+	@Deprecated
 	public NXgeometry getGeometry();
 	
 	/**
 	 * Position of crystal
 	 * 
+	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the crystal and NXoff_geometry to describe its shape instead
 	 * @param geometryGroup the geometryGroup
 	 */
+	@Deprecated
 	public void setGeometry(NXgeometry geometryGroup);
 
 	/**
@@ -97,9 +102,11 @@ public interface NXcrystal extends NXobject {
 	 * Position of crystal</li>
 	 * </ul>
 	 * 
+	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the crystal and NXoff_geometry to describe its shape instead
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXgeometry for that node.
 	 */
+	@Deprecated
 	public NXgeometry getGeometry(String name);
 	
 	/**
@@ -109,9 +116,11 @@ public interface NXcrystal extends NXobject {
 	 * Position of crystal</li>
 	 * </ul>
 	 * 
+	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the crystal and NXoff_geometry to describe its shape instead
 	 * @param name the name of the node
 	 * @param geometry the value to set
 	 */
+	@Deprecated
 	public void setGeometry(String name, NXgeometry geometry);
 	
 	/**
@@ -121,8 +130,10 @@ public interface NXcrystal extends NXobject {
 	 * Position of crystal</li>
 	 * </ul>
 	 * 
+	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the crystal and NXoff_geometry to describe its shape instead
 	 * @return  a map from node names to the NXgeometry for that node.
 	 */
+	@Deprecated
 	public Map<String, NXgeometry> getAllGeometry();
 	
 	/**
@@ -132,9 +143,11 @@ public interface NXcrystal extends NXobject {
 	 * Position of crystal</li>
 	 * </ul>
 	 * 
+	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the crystal and NXoff_geometry to describe its shape instead
 	 * @param geometry the child nodes to add 
 	 */
 	
+	@Deprecated
 	public void setAllGeometry(Map<String, NXgeometry> geometry);
 	
 
@@ -1741,6 +1754,7 @@ public interface NXcrystal extends NXobject {
 	/**
 	 * Polar (scattering) angle at which crystal assembly is positioned.
 	 * Note: some instrument geometries call this term 2theta.
+	 * Note: it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
@@ -1754,6 +1768,7 @@ public interface NXcrystal extends NXobject {
 	/**
 	 * Polar (scattering) angle at which crystal assembly is positioned.
 	 * Note: some instrument geometries call this term 2theta.
+	 * Note: it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
@@ -1767,6 +1782,7 @@ public interface NXcrystal extends NXobject {
 	/**
 	 * Polar (scattering) angle at which crystal assembly is positioned.
 	 * Note: some instrument geometries call this term 2theta.
+	 * Note: it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
@@ -1780,6 +1796,7 @@ public interface NXcrystal extends NXobject {
 	/**
 	 * Polar (scattering) angle at which crystal assembly is positioned.
 	 * Note: some instrument geometries call this term 2theta.
+	 * Note: it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
@@ -1791,7 +1808,8 @@ public interface NXcrystal extends NXobject {
 	public DataNode setPolar_angleScalar(Double polar_angleValue);
 
 	/**
-	 * Azimuthal angle at which crystal assembly is positioned
+	 * Azimuthal angle at which crystal assembly is positioned.
+	 * Note: it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
@@ -1803,7 +1821,8 @@ public interface NXcrystal extends NXobject {
 	public IDataset getAzimuthal_angle();
 	
 	/**
-	 * Azimuthal angle at which crystal assembly is positioned
+	 * Azimuthal angle at which crystal assembly is positioned.
+	 * Note: it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
@@ -1815,7 +1834,8 @@ public interface NXcrystal extends NXobject {
 	public DataNode setAzimuthal_angle(IDataset azimuthal_angleDataset);
 
 	/**
-	 * Azimuthal angle at which crystal assembly is positioned
+	 * Azimuthal angle at which crystal assembly is positioned.
+	 * Note: it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
@@ -1827,7 +1847,8 @@ public interface NXcrystal extends NXobject {
 	public Double getAzimuthal_angleScalar();
 
 	/**
-	 * Azimuthal angle at which crystal assembly is positioned
+	 * Azimuthal angle at which crystal assembly is positioned.
+	 * Note: it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
@@ -2019,16 +2040,82 @@ public interface NXcrystal extends NXobject {
 	/**
 	 * A NXshape group describing the shape of the crystal arrangement
 	 * 
+	 * @deprecated Use NXoff_geometry instead to describe the shape of the monochromator
 	 * @return  the value.
 	 */
+	@Deprecated
 	public NXshape getShape();
 	
 	/**
 	 * A NXshape group describing the shape of the crystal arrangement
 	 * 
+	 * @deprecated Use NXoff_geometry instead to describe the shape of the monochromator
 	 * @param shapeGroup the shapeGroup
 	 */
+	@Deprecated
 	public void setShape(NXshape shapeGroup);
+
+	/**
+	 * This group describes the shape of the beam line component
+	 * 
+	 * @return  the value.
+	 */
+	public NXoff_geometry getOff_geometry();
+	
+	/**
+	 * This group describes the shape of the beam line component
+	 * 
+	 * @param off_geometryGroup the off_geometryGroup
+	 */
+	public void setOff_geometry(NXoff_geometry off_geometryGroup);
+
+	/**
+	 * Get a NXoff_geometry node by name:
+	 * <ul>
+	 * <li>
+	 * This group describes the shape of the beam line component</li>
+	 * </ul>
+	 * 
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXoff_geometry for that node.
+	 */
+	public NXoff_geometry getOff_geometry(String name);
+	
+	/**
+	 * Set a NXoff_geometry node by name:
+	 * <ul>
+	 * <li>
+	 * This group describes the shape of the beam line component</li>
+	 * </ul>
+	 * 
+	 * @param name the name of the node
+	 * @param off_geometry the value to set
+	 */
+	public void setOff_geometry(String name, NXoff_geometry off_geometry);
+	
+	/**
+	 * Get all NXoff_geometry nodes:
+	 * <ul>
+	 * <li>
+	 * This group describes the shape of the beam line component</li>
+	 * </ul>
+	 * 
+	 * @return  a map from node names to the NXoff_geometry for that node.
+	 */
+	public Map<String, NXoff_geometry> getAllOff_geometry();
+	
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li>
+	 * This group describes the shape of the beam line component</li>
+	 * </ul>
+	 * 
+	 * @param off_geometry the child nodes to add 
+	 */
+	
+	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry);
+	
 
 	/**
 	 * .. index:: plotting
@@ -2055,5 +2142,135 @@ public interface NXcrystal extends NXobject {
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);
+
+	/**
+	 * NeXus positions components by applying a set of translations and rotations
+	 * to apply to the component starting from 0, 0, 0. The order of these operations
+	 * is critical and forms what NeXus calls a dependency chain. The depends_on
+	 * field defines the path to the top most operation of the dependency chain or the
+	 * string "." if located in the origin. Usually these operations are stored in a
+	 * NXtransformations group. But NeXus allows them to be stored anywhere.
+	 * .. todo::
+	 * Add a definition for the reference point of a crystal.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public IDataset getDepends_on();
+	
+	/**
+	 * NeXus positions components by applying a set of translations and rotations
+	 * to apply to the component starting from 0, 0, 0. The order of these operations
+	 * is critical and forms what NeXus calls a dependency chain. The depends_on
+	 * field defines the path to the top most operation of the dependency chain or the
+	 * string "." if located in the origin. Usually these operations are stored in a
+	 * NXtransformations group. But NeXus allows them to be stored anywhere.
+	 * .. todo::
+	 * Add a definition for the reference point of a crystal.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 * 
+	 * @param depends_onDataset the depends_onDataset
+	 */
+	public DataNode setDepends_on(IDataset depends_onDataset);
+
+	/**
+	 * NeXus positions components by applying a set of translations and rotations
+	 * to apply to the component starting from 0, 0, 0. The order of these operations
+	 * is critical and forms what NeXus calls a dependency chain. The depends_on
+	 * field defines the path to the top most operation of the dependency chain or the
+	 * string "." if located in the origin. Usually these operations are stored in a
+	 * NXtransformations group. But NeXus allows them to be stored anywhere.
+	 * .. todo::
+	 * Add a definition for the reference point of a crystal.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public String getDepends_onScalar();
+
+	/**
+	 * NeXus positions components by applying a set of translations and rotations
+	 * to apply to the component starting from 0, 0, 0. The order of these operations
+	 * is critical and forms what NeXus calls a dependency chain. The depends_on
+	 * field defines the path to the top most operation of the dependency chain or the
+	 * string "." if located in the origin. Usually these operations are stored in a
+	 * NXtransformations group. But NeXus allows them to be stored anywhere.
+	 * .. todo::
+	 * Add a definition for the reference point of a crystal.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 * 
+	 * @param depends_on the depends_on
+	 */
+	public DataNode setDepends_onScalar(String depends_onValue);
+
+	/**
+	 * Transformations used by this component to define its position and orientation.
+	 * 
+	 * @return  the value.
+	 */
+	public NXtransformations getTransformations();
+	
+	/**
+	 * Transformations used by this component to define its position and orientation.
+	 * 
+	 * @param transformationsGroup the transformationsGroup
+	 */
+	public void setTransformations(NXtransformations transformationsGroup);
+
+	/**
+	 * Get a NXtransformations node by name:
+	 * <ul>
+	 * <li>
+	 * Transformations used by this component to define its position and orientation.</li>
+	 * </ul>
+	 * 
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXtransformations for that node.
+	 */
+	public NXtransformations getTransformations(String name);
+	
+	/**
+	 * Set a NXtransformations node by name:
+	 * <ul>
+	 * <li>
+	 * Transformations used by this component to define its position and orientation.</li>
+	 * </ul>
+	 * 
+	 * @param name the name of the node
+	 * @param transformations the value to set
+	 */
+	public void setTransformations(String name, NXtransformations transformations);
+	
+	/**
+	 * Get all NXtransformations nodes:
+	 * <ul>
+	 * <li>
+	 * Transformations used by this component to define its position and orientation.</li>
+	 * </ul>
+	 * 
+	 * @return  a map from node names to the NXtransformations for that node.
+	 */
+	public Map<String, NXtransformations> getAllTransformations();
+	
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li>
+	 * Transformations used by this component to define its position and orientation.</li>
+	 * </ul>
+	 * 
+	 * @param transformations the child nodes to add 
+	 */
+	
+	public void setAllTransformations(Map<String, NXtransformations> transformations);
+	
 
 }

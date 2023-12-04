@@ -235,12 +235,12 @@ public class NXxasValidator extends AbstractNexusValidator implements NexusAppli
 		if (!(validateGroupNotNull("incoming_beam", NXdetector.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
-		// validate field 'data' of type NX_INT.
+		// validate field 'data' of type NX_NUMBER.
 		final ILazyDataset data = group.getLazyDataset("data");
 		validateFieldNotNull("data", data);
 		if (data != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-			validateFieldType("data", data, NX_INT);
+			validateFieldType("data", data, NX_NUMBER);
 			validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
 			validateFieldRank("data", data, 1);
 			validateFieldDimensions("data", data, null, "nP");
@@ -255,12 +255,12 @@ public class NXxasValidator extends AbstractNexusValidator implements NexusAppli
 		if (!(validateGroupNotNull("absorbed_beam", NXdetector.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
-		// validate field 'data' of type NX_INT.
+		// validate field 'data' of type NX_NUMBER.
 		final ILazyDataset data = group.getLazyDataset("data");
 		validateFieldNotNull("data", data);
 		if (data != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-			validateFieldType("data", data, NX_INT);
+			validateFieldType("data", data, NX_NUMBER);
 			validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
 			validateFieldRank("data", data, 1);
 			validateFieldDimensions("data", data, null, "nP");
@@ -312,12 +312,12 @@ public class NXxasValidator extends AbstractNexusValidator implements NexusAppli
 			validateFieldUnits("preset", group.getDataNode("preset"), NX_ANY);
 		}
 
-		// validate field 'data' of type NX_INT.
+		// validate field 'data' of type NX_NUMBER.
 		final ILazyDataset data = group.getLazyDataset("data");
 		validateFieldNotNull("data", data);
 		if (data != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-			validateFieldType("data", data, NX_INT);
+			validateFieldType("data", data, NX_NUMBER);
 			validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
 			validateFieldRank("data", data, 1);
 			validateFieldDimensions("data", data, null, "nP");
@@ -332,13 +332,26 @@ public class NXxasValidator extends AbstractNexusValidator implements NexusAppli
 		if (!(validateGroupNotNull(null, NXdata.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
-		// validate link 'energy' to location '/entry/instrument/monochromator/energy
+		// validate link 'energy' to location '/NXentry/NXinstrument/monochromator:NXmonochromator/energy
 		final DataNode energy = group.getDataNode("energy");
-		validateDataNodeLink("energy", energy, "/entry/instrument/monochromator/energy");
+		validateDataNodeLink("energy", energy, "/NXentry/NXinstrument/monochromator:NXmonochromator/energy");
 
-		// validate link 'absorbed_beam' to location '/entry/instrument/absorbed_beam/data
+		// validate link 'absorbed_beam' to location '/NXentry/NXinstrument/absorbed_beam:NXdetector/data
 		final DataNode absorbed_beam = group.getDataNode("absorbed_beam");
-		validateDataNodeLink("absorbed_beam", absorbed_beam, "/entry/instrument/absorbed_beam/data");
+		validateDataNodeLink("absorbed_beam", absorbed_beam, "/NXentry/NXinstrument/absorbed_beam:NXdetector/data");
 
+		// validate field 'mode' of type NX_CHAR. Note: field not defined in base class.
+		final ILazyDataset mode = group.getLazyDataset("mode");
+		validateFieldNotNull("mode", mode);
+		if (mode != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("mode", mode, NX_CHAR);
+			validateFieldEnumeration("mode", mode,
+					"Total Electron Yield",
+					"Partial Electron Yield",
+					"Auger Electron Yield",
+					"Fluorescence Yield",
+					"Transmission");
+		}
 	}
 }

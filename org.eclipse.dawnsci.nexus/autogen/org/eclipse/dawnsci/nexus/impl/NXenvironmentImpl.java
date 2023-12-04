@@ -32,6 +32,7 @@ public class NXenvironmentImpl extends NXobjectImpl implements NXenvironment {
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
 		NexusBaseClass.NX_GEOMETRY,
+		NexusBaseClass.NX_TRANSFORMATIONS,
 		NexusBaseClass.NX_NOTE,
 		NexusBaseClass.NX_SENSOR);
 
@@ -168,6 +169,57 @@ public class NXenvironmentImpl extends NXobjectImpl implements NXenvironment {
 	@Override
 	public void setPosition(NXgeometry positionGroup) {
 		putChild("position", positionGroup);
+	}
+
+	@Override
+	public IDataset getDepends_on() {
+		return getDataset(NX_DEPENDS_ON);
+	}
+
+	@Override
+	public String getDepends_onScalar() {
+		return getString(NX_DEPENDS_ON);
+	}
+
+	@Override
+	public DataNode setDepends_on(IDataset depends_onDataset) {
+		return setDataset(NX_DEPENDS_ON, depends_onDataset);
+	}
+
+	@Override
+	public DataNode setDepends_onScalar(String depends_onValue) {
+		return setString(NX_DEPENDS_ON, depends_onValue);
+	}
+
+	@Override
+	public NXtransformations getTransformations() {
+		// dataNodeName = NX_TRANSFORMATIONS
+		return getChild("transformations", NXtransformations.class);
+	}
+
+	@Override
+	public void setTransformations(NXtransformations transformationsGroup) {
+		putChild("transformations", transformationsGroup);
+	}
+
+	@Override
+	public NXtransformations getTransformations(String name) {
+		return getChild(name, NXtransformations.class);
+	}
+
+	@Override
+	public void setTransformations(String name, NXtransformations transformations) {
+		putChild(name, transformations);
+	}
+
+	@Override
+	public Map<String, NXtransformations> getAllTransformations() {
+		return getChildren(NXtransformations.class);
+	}
+	
+	@Override
+	public void setAllTransformations(Map<String, NXtransformations> transformations) {
+		setChildren(transformations);
 	}
 
 	@Override

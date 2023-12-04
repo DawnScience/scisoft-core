@@ -117,7 +117,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 			validateFieldType("polar_angle", polar_angle, NX_FLOAT);
 			validateFieldUnits("polar_angle", group.getDataNode("polar_angle"), NX_ANGLE);
 			validateFieldRank("polar_angle", polar_angle, 3);
-			validateFieldDimensions("polar_angle", polar_angle, "NXdetector", "np", "i", "j");
+			validateFieldDimensions("polar_angle", polar_angle, "NXdetector", "nP", "i", "j");
 		}
 
 		// validate field 'azimuthal_angle' of type NX_FLOAT.
@@ -128,7 +128,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 			validateFieldType("azimuthal_angle", azimuthal_angle, NX_FLOAT);
 			validateFieldUnits("azimuthal_angle", group.getDataNode("azimuthal_angle"), NX_ANGLE);
 			validateFieldRank("azimuthal_angle", azimuthal_angle, 3);
-			validateFieldDimensions("azimuthal_angle", azimuthal_angle, "NXdetector", "np", "i", "j");
+			validateFieldDimensions("azimuthal_angle", azimuthal_angle, "NXdetector", "nP", "i", "j");
 		}
 
 		// validate field 'data' of type NX_INT.
@@ -180,7 +180,7 @@ public class NXlauetofValidator extends AbstractNexusValidator implements NexusA
 			validateFieldType("distance", distance, NX_FLOAT);
 			validateFieldUnits("distance", group.getDataNode("distance"), NX_LENGTH);
 			validateFieldRank("distance", distance, 3);
-			validateFieldDimensions("distance", distance, "NXdetector", "np", "i", "j");
+			validateFieldDimensions("distance", distance, "NXdetector", "nP", "i", "j");
 		}
 
 		// validate field 'time_of_flight' of type NX_FLOAT.

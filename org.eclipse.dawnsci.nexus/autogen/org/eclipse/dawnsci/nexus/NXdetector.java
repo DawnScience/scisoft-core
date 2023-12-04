@@ -21,15 +21,19 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * A detector, detector bank, or multidetector.
  * <p><b>Symbols:</b> 
- * These symbols will be used below to coordinate datasets with the same shape.<ul>
- * <li><b>np</b> 
+ * These symbols will be used below to illustrate the coordination of the rank and sizes of datasets and the
+ * preferred ordering of the dimensions. Each of these are optional (so the rank of the datasets
+ * will vary according to the situation) and the general ordering principle is slowest to fastest.
+ * The type of each dimension should follow the order of scan points, detector output (e.g. pixels),
+ * then time-of-flight (i.e. spectroscopy, spectrometry). Note that the output of a detector is not limited
+ * to single values (0D), lists (1D) and images (2), but three or higher dimensional arrays can be produced
+ * by a detector at each trigger.<ul>
+ * <li><b>nP</b> 
  * number of scan points (only present in scanning measurements)</li>
  * <li><b>i</b> 
  * number of detector pixels in the first (slowest) direction</li>
  * <li><b>j</b> 
  * number of detector pixels in the second (faster) direction</li>
- * <li><b>k</b> 
- * number of detector pixels in the third (if necessary, fastest) direction</li>
  * <li><b>tof</b> 
  * number of bins in the time-of-flight histogram</li></ul></p>
  * 
@@ -99,7 +103,10 @@ public interface NXdetector extends NXobject {
 	public static final String NX_FLATFIELD_ERRORS = "flatfield_errors";
 	public static final String NX_PIXEL_MASK_APPLIED = "pixel_mask_applied";
 	public static final String NX_PIXEL_MASK = "pixel_mask";
+	public static final String NX_IMAGE_KEY = "image_key";
 	public static final String NX_COUNTRATE_CORRECTION_APPLIED = "countrate_correction_applied";
+	public static final String NX_COUNTRATE_CORRECTION_LOOKUP_TABLE = "countrate_correction_lookup_table";
+	public static final String NX_VIRTUAL_PIXEL_INTERPOLATION_APPLIED = "virtual_pixel_interpolation_applied";
 	public static final String NX_BIT_DEPTH_READOUT = "bit_depth_readout";
 	public static final String NX_DETECTOR_READOUT_TIME = "detector_readout_time";
 	public static final String NX_TRIGGER_DELAY_TIME = "trigger_delay_time";
@@ -115,6 +122,7 @@ public interface NXdetector extends NXobject {
 	public static final String NX_SENSOR_THICKNESS = "sensor_thickness";
 	public static final String NX_THRESHOLD_ENERGY = "threshold_energy";
 	public static final String NX_ATTRIBUTE_DEFAULT = "default";
+	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
 	 * Total time of flight
 	 * <p>
@@ -332,11 +340,28 @@ public interface NXdetector extends NXobject {
 	public DataNode setDetector_numberScalar(Long detector_numberValue);
 
 	/**
-	 * Data values from the detector.
+	 * Data values from the detector. The rank and dimension ordering should follow a principle of
+	 * slowest to fastest measurement axes and may be explicitly specified in application definitions.
+	 * Mechanical scanning of objects (e.g. sample position/angle, incident beam energy, etc) tends to be
+	 * the slowest part of an experiment and so any such scan axes should be allocated to the first dimensions
+	 * of the array. Note that in some cases it may be useful to represent a 2D set of scan points as a single
+	 * scan-axis in the data array, especially if the scan pattern doesn't fit a rectangular array nicely.
+	 * Repetition of an experiment in a time series tends to be used similar to a slow scan axis
+	 * and so will often be in the first dimension of the data array.
+	 * The next fastest axes are typically the readout of the detector. A point detector will not add any dimensions
+	 * (as it is just a single value per scan point) to the data array, a strip detector will add one dimension, an
+	 * imaging detector will add two dimensions (e.g. X, Y axes) and detectors outputting higher dimensional data
+	 * will add the corresponding number of dimensions. Note that the detector dimensions don't necessarily have to
+	 * be written in order of the actual readout speeds - the slowest to fastest rule principle is only a guide.
+	 * Finally, detectors that operate in a time-of-flight mode, such as a neutron spectrometer or a silicon drift
+	 * detector (used for X-ray fluorescence) tend to have their dimension(s) added to the last dimensions in the data array.
+	 * The type of each dimension should should follow the order of scan points, detector pixels,
+	 * then time-of-flight (i.e. spectroscopy, spectrometry). The rank and dimension sizes (see symbol list)
+	 * shown here are merely illustrative of coordination between related datasets.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j; 4: tof;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j; 4: tof;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -344,11 +369,28 @@ public interface NXdetector extends NXobject {
 	public IDataset getData();
 	
 	/**
-	 * Data values from the detector.
+	 * Data values from the detector. The rank and dimension ordering should follow a principle of
+	 * slowest to fastest measurement axes and may be explicitly specified in application definitions.
+	 * Mechanical scanning of objects (e.g. sample position/angle, incident beam energy, etc) tends to be
+	 * the slowest part of an experiment and so any such scan axes should be allocated to the first dimensions
+	 * of the array. Note that in some cases it may be useful to represent a 2D set of scan points as a single
+	 * scan-axis in the data array, especially if the scan pattern doesn't fit a rectangular array nicely.
+	 * Repetition of an experiment in a time series tends to be used similar to a slow scan axis
+	 * and so will often be in the first dimension of the data array.
+	 * The next fastest axes are typically the readout of the detector. A point detector will not add any dimensions
+	 * (as it is just a single value per scan point) to the data array, a strip detector will add one dimension, an
+	 * imaging detector will add two dimensions (e.g. X, Y axes) and detectors outputting higher dimensional data
+	 * will add the corresponding number of dimensions. Note that the detector dimensions don't necessarily have to
+	 * be written in order of the actual readout speeds - the slowest to fastest rule principle is only a guide.
+	 * Finally, detectors that operate in a time-of-flight mode, such as a neutron spectrometer or a silicon drift
+	 * detector (used for X-ray fluorescence) tend to have their dimension(s) added to the last dimensions in the data array.
+	 * The type of each dimension should should follow the order of scan points, detector pixels,
+	 * then time-of-flight (i.e. spectroscopy, spectrometry). The rank and dimension sizes (see symbol list)
+	 * shown here are merely illustrative of coordination between related datasets.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j; 4: tof;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j; 4: tof;
 	 * </p>
 	 * 
 	 * @param dataDataset the dataDataset
@@ -356,11 +398,28 @@ public interface NXdetector extends NXobject {
 	public DataNode setData(IDataset dataDataset);
 
 	/**
-	 * Data values from the detector.
+	 * Data values from the detector. The rank and dimension ordering should follow a principle of
+	 * slowest to fastest measurement axes and may be explicitly specified in application definitions.
+	 * Mechanical scanning of objects (e.g. sample position/angle, incident beam energy, etc) tends to be
+	 * the slowest part of an experiment and so any such scan axes should be allocated to the first dimensions
+	 * of the array. Note that in some cases it may be useful to represent a 2D set of scan points as a single
+	 * scan-axis in the data array, especially if the scan pattern doesn't fit a rectangular array nicely.
+	 * Repetition of an experiment in a time series tends to be used similar to a slow scan axis
+	 * and so will often be in the first dimension of the data array.
+	 * The next fastest axes are typically the readout of the detector. A point detector will not add any dimensions
+	 * (as it is just a single value per scan point) to the data array, a strip detector will add one dimension, an
+	 * imaging detector will add two dimensions (e.g. X, Y axes) and detectors outputting higher dimensional data
+	 * will add the corresponding number of dimensions. Note that the detector dimensions don't necessarily have to
+	 * be written in order of the actual readout speeds - the slowest to fastest rule principle is only a guide.
+	 * Finally, detectors that operate in a time-of-flight mode, such as a neutron spectrometer or a silicon drift
+	 * detector (used for X-ray fluorescence) tend to have their dimension(s) added to the last dimensions in the data array.
+	 * The type of each dimension should should follow the order of scan points, detector pixels,
+	 * then time-of-flight (i.e. spectroscopy, spectrometry). The rank and dimension sizes (see symbol list)
+	 * shown here are merely illustrative of coordination between related datasets.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j; 4: tof;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j; 4: tof;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -368,11 +427,28 @@ public interface NXdetector extends NXobject {
 	public Number getDataScalar();
 
 	/**
-	 * Data values from the detector.
+	 * Data values from the detector. The rank and dimension ordering should follow a principle of
+	 * slowest to fastest measurement axes and may be explicitly specified in application definitions.
+	 * Mechanical scanning of objects (e.g. sample position/angle, incident beam energy, etc) tends to be
+	 * the slowest part of an experiment and so any such scan axes should be allocated to the first dimensions
+	 * of the array. Note that in some cases it may be useful to represent a 2D set of scan points as a single
+	 * scan-axis in the data array, especially if the scan pattern doesn't fit a rectangular array nicely.
+	 * Repetition of an experiment in a time series tends to be used similar to a slow scan axis
+	 * and so will often be in the first dimension of the data array.
+	 * The next fastest axes are typically the readout of the detector. A point detector will not add any dimensions
+	 * (as it is just a single value per scan point) to the data array, a strip detector will add one dimension, an
+	 * imaging detector will add two dimensions (e.g. X, Y axes) and detectors outputting higher dimensional data
+	 * will add the corresponding number of dimensions. Note that the detector dimensions don't necessarily have to
+	 * be written in order of the actual readout speeds - the slowest to fastest rule principle is only a guide.
+	 * Finally, detectors that operate in a time-of-flight mode, such as a neutron spectrometer or a silicon drift
+	 * detector (used for X-ray fluorescence) tend to have their dimension(s) added to the last dimensions in the data array.
+	 * The type of each dimension should should follow the order of scan points, detector pixels,
+	 * then time-of-flight (i.e. spectroscopy, spectrometry). The rank and dimension sizes (see symbol list)
+	 * shown here are merely illustrative of coordination between related datasets.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j; 4: tof;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j; 4: tof;
 	 * </p>
 	 * 
 	 * @param data the data
@@ -408,13 +484,13 @@ public interface NXdetector extends NXobject {
 	public void setDataAttributeCheck_sum(Long check_sumValue);
 
 	/**
-	 * The best estimate of the uncertainty in the data value. Where
+	 * The best estimate of the uncertainty in the data value (array size should match the data field). Where
 	 * possible, this should be the standard deviation, which has the same units
 	 * as the data. The form data_error is deprecated.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j; 4: tof;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j; 4: tof;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -422,13 +498,13 @@ public interface NXdetector extends NXobject {
 	public IDataset getData_errors();
 	
 	/**
-	 * The best estimate of the uncertainty in the data value. Where
+	 * The best estimate of the uncertainty in the data value (array size should match the data field). Where
 	 * possible, this should be the standard deviation, which has the same units
 	 * as the data. The form data_error is deprecated.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j; 4: tof;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j; 4: tof;
 	 * </p>
 	 * 
 	 * @param data_errorsDataset the data_errorsDataset
@@ -436,13 +512,13 @@ public interface NXdetector extends NXobject {
 	public DataNode setData_errors(IDataset data_errorsDataset);
 
 	/**
-	 * The best estimate of the uncertainty in the data value. Where
+	 * The best estimate of the uncertainty in the data value (array size should match the data field). Where
 	 * possible, this should be the standard deviation, which has the same units
 	 * as the data. The form data_error is deprecated.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j; 4: tof;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j; 4: tof;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -450,13 +526,13 @@ public interface NXdetector extends NXobject {
 	public Number getData_errorsScalar();
 
 	/**
-	 * The best estimate of the uncertainty in the data value. Where
+	 * The best estimate of the uncertainty in the data value (array size should match the data field). Where
 	 * possible, this should be the standard deviation, which has the same units
 	 * as the data. The form data_error is deprecated.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j; 4: tof;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j; 4: tof;
 	 * </p>
 	 * 
 	 * @param data_errors the data_errors
@@ -469,6 +545,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
+	 * <b>Dimensions:</b> 1: i; 2: j;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -481,6 +558,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
+	 * <b>Dimensions:</b> 1: i; 2: j;
 	 * </p>
 	 * 
 	 * @param x_pixel_offsetDataset the x_pixel_offsetDataset
@@ -493,6 +571,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
+	 * <b>Dimensions:</b> 1: i; 2: j;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -505,6 +584,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
+	 * <b>Dimensions:</b> 1: i; 2: j;
 	 * </p>
 	 * 
 	 * @param x_pixel_offset the x_pixel_offset
@@ -579,6 +659,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
+	 * <b>Dimensions:</b> 1: i; 2: j;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -591,6 +672,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
+	 * <b>Dimensions:</b> 1: i; 2: j;
 	 * </p>
 	 * 
 	 * @param y_pixel_offsetDataset the y_pixel_offsetDataset
@@ -603,6 +685,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
+	 * <b>Dimensions:</b> 1: i; 2: j;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -615,6 +698,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
+	 * <b>Dimensions:</b> 1: i; 2: j;
 	 * </p>
 	 * 
 	 * @param y_pixel_offset the y_pixel_offset
@@ -689,6 +773,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
+	 * <b>Dimensions:</b> 1: i; 2: j;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -701,6 +786,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
+	 * <b>Dimensions:</b> 1: i; 2: j;
 	 * </p>
 	 * 
 	 * @param z_pixel_offsetDataset the z_pixel_offsetDataset
@@ -713,6 +799,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
+	 * <b>Dimensions:</b> 1: i; 2: j;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -725,6 +812,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
+	 * <b>Dimensions:</b> 1: i; 2: j;
 	 * </p>
 	 * 
 	 * @param z_pixel_offset the z_pixel_offset
@@ -799,10 +887,11 @@ public interface NXdetector extends NXobject {
 	 * nature of the detector: Most often it is the distance of the
 	 * detector assembly. But there are irregular detectors. In this
 	 * case the distance must be specified for each detector pixel.
+	 * Note, it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -815,10 +904,11 @@ public interface NXdetector extends NXobject {
 	 * nature of the detector: Most often it is the distance of the
 	 * detector assembly. But there are irregular detectors. In this
 	 * case the distance must be specified for each detector pixel.
+	 * Note, it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j;
 	 * </p>
 	 * 
 	 * @param distanceDataset the distanceDataset
@@ -831,10 +921,11 @@ public interface NXdetector extends NXobject {
 	 * nature of the detector: Most often it is the distance of the
 	 * detector assembly. But there are irregular detectors. In this
 	 * case the distance must be specified for each detector pixel.
+	 * Note, it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -847,10 +938,11 @@ public interface NXdetector extends NXobject {
 	 * nature of the detector: Most often it is the distance of the
 	 * detector assembly. But there are irregular detectors. In this
 	 * case the distance must be specified for each detector pixel.
+	 * Note, it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j;
 	 * </p>
 	 * 
 	 * @param distance the distance
@@ -866,10 +958,11 @@ public interface NXdetector extends NXobject {
 	 * But there are irregular detectors.
 	 * In this
 	 * case, the polar_angle must be specified for each detector pixel.
+	 * Note, it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -885,10 +978,11 @@ public interface NXdetector extends NXobject {
 	 * But there are irregular detectors.
 	 * In this
 	 * case, the polar_angle must be specified for each detector pixel.
+	 * Note, it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j;
 	 * </p>
 	 * 
 	 * @param polar_angleDataset the polar_angleDataset
@@ -904,10 +998,11 @@ public interface NXdetector extends NXobject {
 	 * But there are irregular detectors.
 	 * In this
 	 * case, the polar_angle must be specified for each detector pixel.
+	 * Note, it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -923,10 +1018,11 @@ public interface NXdetector extends NXobject {
 	 * But there are irregular detectors.
 	 * In this
 	 * case, the polar_angle must be specified for each detector pixel.
+	 * Note, it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j;
 	 * </p>
 	 * 
 	 * @param polar_angle the polar_angle
@@ -942,10 +1038,11 @@ public interface NXdetector extends NXobject {
 	 * But there are irregular detectors.
 	 * In this
 	 * case, the azimuthal_angle must be specified for each detector pixel.
+	 * Note, it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -961,10 +1058,11 @@ public interface NXdetector extends NXobject {
 	 * But there are irregular detectors.
 	 * In this
 	 * case, the azimuthal_angle must be specified for each detector pixel.
+	 * Note, it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j;
 	 * </p>
 	 * 
 	 * @param azimuthal_angleDataset the azimuthal_angleDataset
@@ -980,10 +1078,11 @@ public interface NXdetector extends NXobject {
 	 * But there are irregular detectors.
 	 * In this
 	 * case, the azimuthal_angle must be specified for each detector pixel.
+	 * Note, it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -999,10 +1098,11 @@ public interface NXdetector extends NXobject {
 	 * But there are irregular detectors.
 	 * In this
 	 * case, the azimuthal_angle must be specified for each detector pixel.
+	 * Note, it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j;
 	 * </p>
 	 * 
 	 * @param azimuthal_angle the azimuthal_angle
@@ -1096,15 +1196,19 @@ public interface NXdetector extends NXobject {
 	/**
 	 * Position and orientation of detector
 	 * 
+	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the detector and NXoff_geometry to describe its shape instead
 	 * @return  the value.
 	 */
+	@Deprecated
 	public NXgeometry getGeometry();
 	
 	/**
 	 * Position and orientation of detector
 	 * 
+	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the detector and NXoff_geometry to describe its shape instead
 	 * @param geometryGroup the geometryGroup
 	 */
+	@Deprecated
 	public void setGeometry(NXgeometry geometryGroup);
 
 	/**
@@ -1114,9 +1218,11 @@ public interface NXdetector extends NXobject {
 	 * Position and orientation of detector</li>
 	 * </ul>
 	 * 
+	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the detector and NXoff_geometry to describe its shape instead
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXgeometry for that node.
 	 */
+	@Deprecated
 	public NXgeometry getGeometry(String name);
 	
 	/**
@@ -1126,9 +1232,11 @@ public interface NXdetector extends NXobject {
 	 * Position and orientation of detector</li>
 	 * </ul>
 	 * 
+	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the detector and NXoff_geometry to describe its shape instead
 	 * @param name the name of the node
 	 * @param geometry the value to set
 	 */
+	@Deprecated
 	public void setGeometry(String name, NXgeometry geometry);
 	
 	/**
@@ -1138,8 +1246,10 @@ public interface NXdetector extends NXobject {
 	 * Position and orientation of detector</li>
 	 * </ul>
 	 * 
+	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the detector and NXoff_geometry to describe its shape instead
 	 * @return  a map from node names to the NXgeometry for that node.
 	 */
+	@Deprecated
 	public Map<String, NXgeometry> getAllGeometry();
 	
 	/**
@@ -1149,9 +1259,11 @@ public interface NXdetector extends NXobject {
 	 * Position and orientation of detector</li>
 	 * </ul>
 	 * 
+	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the detector and NXoff_geometry to describe its shape instead
 	 * @param geometry the child nodes to add 
 	 */
 	
+	@Deprecated
 	public void setAllGeometry(Map<String, NXgeometry> geometry);
 	
 
@@ -1304,7 +1416,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TIME
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -1316,7 +1428,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TIME
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j;
 	 * </p>
 	 * 
 	 * @param dead_timeDataset the dead_timeDataset
@@ -1328,7 +1440,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TIME
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -1340,7 +1452,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TIME
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j;
 	 * </p>
 	 * 
 	 * @param dead_time the dead_time
@@ -1674,7 +1786,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -1692,7 +1804,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j;
 	 * </p>
 	 * 
 	 * @param real_timeDataset the real_timeDataset
@@ -1710,7 +1822,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -1728,7 +1840,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
-	 * <b>Dimensions:</b> 1: np; 2: i; 3: j;
+	 * <b>Dimensions:</b> 1: nP; 2: i; 3: j;
 	 * </p>
 	 * 
 	 * @param real_time the real_time
@@ -1740,7 +1852,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TIME
-	 * <b>Dimensions:</b> 1: np;
+	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -1752,7 +1864,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TIME
-	 * <b>Dimensions:</b> 1: np;
+	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
 	 * 
 	 * @param start_timeDataset the start_timeDataset
@@ -1764,7 +1876,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TIME
-	 * <b>Dimensions:</b> 1: np;
+	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -1776,7 +1888,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TIME
-	 * <b>Dimensions:</b> 1: np;
+	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
 	 * 
 	 * @param start_time the start_time
@@ -1800,7 +1912,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TIME
-	 * <b>Dimensions:</b> 1: np;
+	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -1812,7 +1924,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TIME
-	 * <b>Dimensions:</b> 1: np;
+	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
 	 * 
 	 * @param stop_timeDataset the stop_timeDataset
@@ -1824,7 +1936,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TIME
-	 * <b>Dimensions:</b> 1: np;
+	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -1836,7 +1948,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TIME
-	 * <b>Dimensions:</b> 1: np;
+	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
 	 * 
 	 * @param stop_time the stop_time
@@ -1968,7 +2080,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
-	 * <b>Dimensions:</b> 1: np;
+	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -1980,7 +2092,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
-	 * <b>Dimensions:</b> 1: np;
+	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
 	 * 
 	 * @param count_timeDataset the count_timeDataset
@@ -1992,7 +2104,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
-	 * <b>Dimensions:</b> 1: np;
+	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -2004,7 +2116,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
-	 * <b>Dimensions:</b> 1: np;
+	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
 	 * 
 	 * @param count_time the count_time
@@ -2091,7 +2203,7 @@ public interface NXdetector extends NXobject {
 	 * image.
 	 * <p>
 	 * <b>Type:</b> NX_INT
-	 * <b>Dimensions:</b> 1: nBrightFrames;
+	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -2104,7 +2216,7 @@ public interface NXdetector extends NXobject {
 	 * image.
 	 * <p>
 	 * <b>Type:</b> NX_INT
-	 * <b>Dimensions:</b> 1: nBrightFrames;
+	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
 	 * 
 	 * @param sequence_numberDataset the sequence_numberDataset
@@ -2117,7 +2229,7 @@ public interface NXdetector extends NXobject {
 	 * image.
 	 * <p>
 	 * <b>Type:</b> NX_INT
-	 * <b>Dimensions:</b> 1: nBrightFrames;
+	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -2130,7 +2242,7 @@ public interface NXdetector extends NXobject {
 	 * image.
 	 * <p>
 	 * <b>Type:</b> NX_INT
-	 * <b>Dimensions:</b> 1: nBrightFrames;
+	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
 	 * 
 	 * @param sequence_number the sequence_number
@@ -2250,7 +2362,7 @@ public interface NXdetector extends NXobject {
 	public DataNode setBeam_center_yScalar(Double beam_center_yValue);
 
 	/**
-	 * This is the start number of the first frame of a scan. In PX one
+	 * This is the start number of the first frame of a scan. In protein crystallography measurements one
 	 * often scans a couple of frames on a give sample, then does something else,
 	 * then returns to the same sample and scans some more frames. Each time with
 	 * a new data file. This number helps concatenating such measurements.
@@ -2263,7 +2375,7 @@ public interface NXdetector extends NXobject {
 	public IDataset getFrame_start_number();
 	
 	/**
-	 * This is the start number of the first frame of a scan. In PX one
+	 * This is the start number of the first frame of a scan. In protein crystallography measurements one
 	 * often scans a couple of frames on a give sample, then does something else,
 	 * then returns to the same sample and scans some more frames. Each time with
 	 * a new data file. This number helps concatenating such measurements.
@@ -2276,7 +2388,7 @@ public interface NXdetector extends NXobject {
 	public DataNode setFrame_start_number(IDataset frame_start_numberDataset);
 
 	/**
-	 * This is the start number of the first frame of a scan. In PX one
+	 * This is the start number of the first frame of a scan. In protein crystallography measurements one
 	 * often scans a couple of frames on a give sample, then does something else,
 	 * then returns to the same sample and scans some more frames. Each time with
 	 * a new data file. This number helps concatenating such measurements.
@@ -2289,7 +2401,7 @@ public interface NXdetector extends NXobject {
 	public Long getFrame_start_numberScalar();
 
 	/**
-	 * This is the start number of the first frame of a scan. In PX one
+	 * This is the start number of the first frame of a scan. In protein crystallography measurements one
 	 * often scans a couple of frames on a give sample, then does something else,
 	 * then returns to the same sample and scans some more frames. Each time with
 	 * a new data file. This number helps concatenating such measurements.
@@ -2874,8 +2986,102 @@ public interface NXdetector extends NXobject {
 	public DataNode setPixel_maskScalar(Long pixel_maskValue);
 
 	/**
-	 * True when a count-rate correction has already been applied in the
-	 * electronics, false otherwise.
+	 * This field allow to distinguish different types of exposure to the same detector "data" field.
+	 * Some techniques require frequent (re-)calibration inbetween measuremnts and this way of
+	 * recording the different measurements preserves the chronological order with is important for
+	 * correct processing.
+	 * This is used for example in tomography (`:ref:`NXtomo`) sample projections,
+	 * dark and flat images, a magic number is recorded per frame.
+	 * The key is as follows:
+	 * * projection (sample) = 0
+	 * * flat field = 1
+	 * * dark field = 2
+	 * * invalid = 3
+	 * * background (no sample, but buffer where applicable) = 4
+	 * In cases where the data is of type :ref:`NXlog` this can also be an NXlog.
+	 * <p>
+	 * <b>Type:</b> NX_INT
+	 * <b>Dimensions:</b> 1: np;
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public IDataset getImage_key();
+	
+	/**
+	 * This field allow to distinguish different types of exposure to the same detector "data" field.
+	 * Some techniques require frequent (re-)calibration inbetween measuremnts and this way of
+	 * recording the different measurements preserves the chronological order with is important for
+	 * correct processing.
+	 * This is used for example in tomography (`:ref:`NXtomo`) sample projections,
+	 * dark and flat images, a magic number is recorded per frame.
+	 * The key is as follows:
+	 * * projection (sample) = 0
+	 * * flat field = 1
+	 * * dark field = 2
+	 * * invalid = 3
+	 * * background (no sample, but buffer where applicable) = 4
+	 * In cases where the data is of type :ref:`NXlog` this can also be an NXlog.
+	 * <p>
+	 * <b>Type:</b> NX_INT
+	 * <b>Dimensions:</b> 1: np;
+	 * </p>
+	 * 
+	 * @param image_keyDataset the image_keyDataset
+	 */
+	public DataNode setImage_key(IDataset image_keyDataset);
+
+	/**
+	 * This field allow to distinguish different types of exposure to the same detector "data" field.
+	 * Some techniques require frequent (re-)calibration inbetween measuremnts and this way of
+	 * recording the different measurements preserves the chronological order with is important for
+	 * correct processing.
+	 * This is used for example in tomography (`:ref:`NXtomo`) sample projections,
+	 * dark and flat images, a magic number is recorded per frame.
+	 * The key is as follows:
+	 * * projection (sample) = 0
+	 * * flat field = 1
+	 * * dark field = 2
+	 * * invalid = 3
+	 * * background (no sample, but buffer where applicable) = 4
+	 * In cases where the data is of type :ref:`NXlog` this can also be an NXlog.
+	 * <p>
+	 * <b>Type:</b> NX_INT
+	 * <b>Dimensions:</b> 1: np;
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public Long getImage_keyScalar();
+
+	/**
+	 * This field allow to distinguish different types of exposure to the same detector "data" field.
+	 * Some techniques require frequent (re-)calibration inbetween measuremnts and this way of
+	 * recording the different measurements preserves the chronological order with is important for
+	 * correct processing.
+	 * This is used for example in tomography (`:ref:`NXtomo`) sample projections,
+	 * dark and flat images, a magic number is recorded per frame.
+	 * The key is as follows:
+	 * * projection (sample) = 0
+	 * * flat field = 1
+	 * * dark field = 2
+	 * * invalid = 3
+	 * * background (no sample, but buffer where applicable) = 4
+	 * In cases where the data is of type :ref:`NXlog` this can also be an NXlog.
+	 * <p>
+	 * <b>Type:</b> NX_INT
+	 * <b>Dimensions:</b> 1: np;
+	 * </p>
+	 * 
+	 * @param image_key the image_key
+	 */
+	public DataNode setImage_keyScalar(Long image_keyValue);
+
+	/**
+	 * Counting detectors usually are not able to measure all incoming particles,
+	 * especially at higher count-rates. Count-rate correction is applied to
+	 * account for these errors.
+	 * True when count-rate correction has been applied, false otherwise.
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
@@ -2885,8 +3091,10 @@ public interface NXdetector extends NXobject {
 	public IDataset getCountrate_correction_applied();
 	
 	/**
-	 * True when a count-rate correction has already been applied in the
-	 * electronics, false otherwise.
+	 * Counting detectors usually are not able to measure all incoming particles,
+	 * especially at higher count-rates. Count-rate correction is applied to
+	 * account for these errors.
+	 * True when count-rate correction has been applied, false otherwise.
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
@@ -2896,8 +3104,10 @@ public interface NXdetector extends NXobject {
 	public DataNode setCountrate_correction_applied(IDataset countrate_correction_appliedDataset);
 
 	/**
-	 * True when a count-rate correction has already been applied in the
-	 * electronics, false otherwise.
+	 * Counting detectors usually are not able to measure all incoming particles,
+	 * especially at higher count-rates. Count-rate correction is applied to
+	 * account for these errors.
+	 * True when count-rate correction has been applied, false otherwise.
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
@@ -2907,8 +3117,10 @@ public interface NXdetector extends NXobject {
 	public Boolean getCountrate_correction_appliedScalar();
 
 	/**
-	 * True when a count-rate correction has already been applied in the
-	 * electronics, false otherwise.
+	 * Counting detectors usually are not able to measure all incoming particles,
+	 * especially at higher count-rates. Count-rate correction is applied to
+	 * account for these errors.
+	 * True when count-rate correction has been applied, false otherwise.
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
@@ -2916,6 +3128,122 @@ public interface NXdetector extends NXobject {
 	 * @param countrate_correction_applied the countrate_correction_applied
 	 */
 	public DataNode setCountrate_correction_appliedScalar(Boolean countrate_correction_appliedValue);
+
+	/**
+	 * The countrate_correction_lookup_table defines the LUT used for count-rate
+	 * correction. It maps a measured count :math:`c` to its corrected value
+	 * :math:`countrate\_correction\_lookup\_table[c]`.
+	 * :math:`m` denotes the length of the table.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Dimensions:</b> 1: m;
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public IDataset getCountrate_correction_lookup_table();
+	
+	/**
+	 * The countrate_correction_lookup_table defines the LUT used for count-rate
+	 * correction. It maps a measured count :math:`c` to its corrected value
+	 * :math:`countrate\_correction\_lookup\_table[c]`.
+	 * :math:`m` denotes the length of the table.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Dimensions:</b> 1: m;
+	 * </p>
+	 * 
+	 * @param countrate_correction_lookup_tableDataset the countrate_correction_lookup_tableDataset
+	 */
+	public DataNode setCountrate_correction_lookup_table(IDataset countrate_correction_lookup_tableDataset);
+
+	/**
+	 * The countrate_correction_lookup_table defines the LUT used for count-rate
+	 * correction. It maps a measured count :math:`c` to its corrected value
+	 * :math:`countrate\_correction\_lookup\_table[c]`.
+	 * :math:`m` denotes the length of the table.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Dimensions:</b> 1: m;
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public Number getCountrate_correction_lookup_tableScalar();
+
+	/**
+	 * The countrate_correction_lookup_table defines the LUT used for count-rate
+	 * correction. It maps a measured count :math:`c` to its corrected value
+	 * :math:`countrate\_correction\_lookup\_table[c]`.
+	 * :math:`m` denotes the length of the table.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Dimensions:</b> 1: m;
+	 * </p>
+	 * 
+	 * @param countrate_correction_lookup_table the countrate_correction_lookup_table
+	 */
+	public DataNode setCountrate_correction_lookup_tableScalar(Number countrate_correction_lookup_tableValue);
+
+	/**
+	 * True when virtual pixel interpolation has been applied, false otherwise.
+	 * When virtual pixel interpolation is applied, values of some pixels may
+	 * contain interpolated values. For example, to account for space between
+	 * readout chips on a module, physical pixels on edges and corners between
+	 * chips may have larger sensor areas and counts may be distributed between
+	 * their logical pixels.
+	 * <p>
+	 * <b>Type:</b> NX_BOOLEAN
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public IDataset getVirtual_pixel_interpolation_applied();
+	
+	/**
+	 * True when virtual pixel interpolation has been applied, false otherwise.
+	 * When virtual pixel interpolation is applied, values of some pixels may
+	 * contain interpolated values. For example, to account for space between
+	 * readout chips on a module, physical pixels on edges and corners between
+	 * chips may have larger sensor areas and counts may be distributed between
+	 * their logical pixels.
+	 * <p>
+	 * <b>Type:</b> NX_BOOLEAN
+	 * </p>
+	 * 
+	 * @param virtual_pixel_interpolation_appliedDataset the virtual_pixel_interpolation_appliedDataset
+	 */
+	public DataNode setVirtual_pixel_interpolation_applied(IDataset virtual_pixel_interpolation_appliedDataset);
+
+	/**
+	 * True when virtual pixel interpolation has been applied, false otherwise.
+	 * When virtual pixel interpolation is applied, values of some pixels may
+	 * contain interpolated values. For example, to account for space between
+	 * readout chips on a module, physical pixels on edges and corners between
+	 * chips may have larger sensor areas and counts may be distributed between
+	 * their logical pixels.
+	 * <p>
+	 * <b>Type:</b> NX_BOOLEAN
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public Boolean getVirtual_pixel_interpolation_appliedScalar();
+
+	/**
+	 * True when virtual pixel interpolation has been applied, false otherwise.
+	 * When virtual pixel interpolation is applied, values of some pixels may
+	 * contain interpolated values. For example, to account for space between
+	 * readout chips on a module, physical pixels on edges and corners between
+	 * chips may have larger sensor areas and counts may be distributed between
+	 * their logical pixels.
+	 * <p>
+	 * <b>Type:</b> NX_BOOLEAN
+	 * </p>
+	 * 
+	 * @param virtual_pixel_interpolation_applied the virtual_pixel_interpolation_applied
+	 */
+	public DataNode setVirtual_pixel_interpolation_appliedScalar(Boolean virtual_pixel_interpolation_appliedValue);
 
 	/**
 	 * How many bits the electronics reads per pixel.
@@ -3238,7 +3566,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TIME
-	 * <b>Dimensions:</b> 1: NP;
+	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -3250,7 +3578,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TIME
-	 * <b>Dimensions:</b> 1: NP;
+	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
 	 * 
 	 * @param frame_timeDataset the frame_timeDataset
@@ -3262,7 +3590,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TIME
-	 * <b>Dimensions:</b> 1: NP;
+	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -3274,7 +3602,7 @@ public interface NXdetector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TIME
-	 * <b>Dimensions:</b> 1: NP;
+	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
 	 * 
 	 * @param frame_time the frame_time
@@ -3282,14 +3610,22 @@ public interface NXdetector extends NXobject {
 	public DataNode setFrame_timeScalar(Double frame_timeValue);
 
 	/**
-	 * The gain setting of the detector. This influences background etc.
+	 * The gain setting of the detector. This is a detector-specific value
+	 * meant to document the gain setting of the detector during data
+	 * collection, for detectors with multiple available gain settings.
+	 * Examples of gain settings include:
+	 * * ``standard``
+	 * * ``fast``
+	 * * ``auto``
+	 * * ``high``
+	 * * ``medium``
+	 * * ``low``
+	 * * ``mixed high to medium``
+	 * * ``mixed medium to low``
+	 * Developers are encouraged to use one of these terms, or to submit
+	 * additional terms to add to the list.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>high</b> </li>
-	 * <li><b>standard</b> </li>
-	 * <li><b>fast</b> </li>
-	 * <li><b>auto</b> </li></ul></p>
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -3297,14 +3633,22 @@ public interface NXdetector extends NXobject {
 	public IDataset getGain_setting();
 	
 	/**
-	 * The gain setting of the detector. This influences background etc.
+	 * The gain setting of the detector. This is a detector-specific value
+	 * meant to document the gain setting of the detector during data
+	 * collection, for detectors with multiple available gain settings.
+	 * Examples of gain settings include:
+	 * * ``standard``
+	 * * ``fast``
+	 * * ``auto``
+	 * * ``high``
+	 * * ``medium``
+	 * * ``low``
+	 * * ``mixed high to medium``
+	 * * ``mixed medium to low``
+	 * Developers are encouraged to use one of these terms, or to submit
+	 * additional terms to add to the list.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>high</b> </li>
-	 * <li><b>standard</b> </li>
-	 * <li><b>fast</b> </li>
-	 * <li><b>auto</b> </li></ul></p>
 	 * </p>
 	 * 
 	 * @param gain_settingDataset the gain_settingDataset
@@ -3312,14 +3656,22 @@ public interface NXdetector extends NXobject {
 	public DataNode setGain_setting(IDataset gain_settingDataset);
 
 	/**
-	 * The gain setting of the detector. This influences background etc.
+	 * The gain setting of the detector. This is a detector-specific value
+	 * meant to document the gain setting of the detector during data
+	 * collection, for detectors with multiple available gain settings.
+	 * Examples of gain settings include:
+	 * * ``standard``
+	 * * ``fast``
+	 * * ``auto``
+	 * * ``high``
+	 * * ``medium``
+	 * * ``low``
+	 * * ``mixed high to medium``
+	 * * ``mixed medium to low``
+	 * Developers are encouraged to use one of these terms, or to submit
+	 * additional terms to add to the list.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>high</b> </li>
-	 * <li><b>standard</b> </li>
-	 * <li><b>fast</b> </li>
-	 * <li><b>auto</b> </li></ul></p>
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -3327,14 +3679,22 @@ public interface NXdetector extends NXobject {
 	public String getGain_settingScalar();
 
 	/**
-	 * The gain setting of the detector. This influences background etc.
+	 * The gain setting of the detector. This is a detector-specific value
+	 * meant to document the gain setting of the detector during data
+	 * collection, for detectors with multiple available gain settings.
+	 * Examples of gain settings include:
+	 * * ``standard``
+	 * * ``fast``
+	 * * ``auto``
+	 * * ``high``
+	 * * ``medium``
+	 * * ``low``
+	 * * ``mixed high to medium``
+	 * * ``mixed medium to low``
+	 * Developers are encouraged to use one of these terms, or to submit
+	 * additional terms to add to the list.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>high</b> </li>
-	 * <li><b>standard</b> </li>
-	 * <li><b>fast</b> </li>
-	 * <li><b>auto</b> </li></ul></p>
 	 * </p>
 	 * 
 	 * @param gain_setting the gain_setting
@@ -3348,8 +3708,9 @@ public interface NXdetector extends NXobject {
 	 * For example, given a saturation_value and an underload_value, the valid
 	 * pixels are those less than or equal to the saturation_value and greater
 	 * than or equal to the underload_value.
+	 * The precise type should match the type of the data.
 	 * <p>
-	 * <b>Type:</b> NX_INT
+	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -3363,8 +3724,9 @@ public interface NXdetector extends NXobject {
 	 * For example, given a saturation_value and an underload_value, the valid
 	 * pixels are those less than or equal to the saturation_value and greater
 	 * than or equal to the underload_value.
+	 * The precise type should match the type of the data.
 	 * <p>
-	 * <b>Type:</b> NX_INT
+	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 * 
 	 * @param saturation_valueDataset the saturation_valueDataset
@@ -3378,13 +3740,14 @@ public interface NXdetector extends NXobject {
 	 * For example, given a saturation_value and an underload_value, the valid
 	 * pixels are those less than or equal to the saturation_value and greater
 	 * than or equal to the underload_value.
+	 * The precise type should match the type of the data.
 	 * <p>
-	 * <b>Type:</b> NX_INT
+	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 * 
 	 * @return  the value.
 	 */
-	public Long getSaturation_valueScalar();
+	public Number getSaturation_valueScalar();
 
 	/**
 	 * The value at which the detector goes into saturation.
@@ -3393,13 +3756,14 @@ public interface NXdetector extends NXobject {
 	 * For example, given a saturation_value and an underload_value, the valid
 	 * pixels are those less than or equal to the saturation_value and greater
 	 * than or equal to the underload_value.
+	 * The precise type should match the type of the data.
 	 * <p>
-	 * <b>Type:</b> NX_INT
+	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 * 
 	 * @param saturation_value the saturation_value
 	 */
-	public DataNode setSaturation_valueScalar(Long saturation_valueValue);
+	public DataNode setSaturation_valueScalar(Number saturation_valueValue);
 
 	/**
 	 * The lowest value at which pixels for this detector would be reasonably
@@ -3407,8 +3771,9 @@ public interface NXdetector extends NXobject {
 	 * For example, given a saturation_value and an underload_value, the valid
 	 * pixels are those less than or equal to the saturation_value and greater
 	 * than or equal to the underload_value.
+	 * The precise type should match the type of the data.
 	 * <p>
-	 * <b>Type:</b> NX_INT
+	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 * 
 	 * @return  the value.
@@ -3421,8 +3786,9 @@ public interface NXdetector extends NXobject {
 	 * For example, given a saturation_value and an underload_value, the valid
 	 * pixels are those less than or equal to the saturation_value and greater
 	 * than or equal to the underload_value.
+	 * The precise type should match the type of the data.
 	 * <p>
-	 * <b>Type:</b> NX_INT
+	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 * 
 	 * @param underload_valueDataset the underload_valueDataset
@@ -3435,13 +3801,14 @@ public interface NXdetector extends NXobject {
 	 * For example, given a saturation_value and an underload_value, the valid
 	 * pixels are those less than or equal to the saturation_value and greater
 	 * than or equal to the underload_value.
+	 * The precise type should match the type of the data.
 	 * <p>
-	 * <b>Type:</b> NX_INT
+	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 * 
 	 * @return  the value.
 	 */
-	public Long getUnderload_valueScalar();
+	public Number getUnderload_valueScalar();
 
 	/**
 	 * The lowest value at which pixels for this detector would be reasonably
@@ -3449,13 +3816,14 @@ public interface NXdetector extends NXobject {
 	 * For example, given a saturation_value and an underload_value, the valid
 	 * pixels are those less than or equal to the saturation_value and greater
 	 * than or equal to the underload_value.
+	 * The precise type should match the type of the data.
 	 * <p>
-	 * <b>Type:</b> NX_INT
+	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 * 
 	 * @param underload_value the underload_value
 	 */
-	public DataNode setUnderload_valueScalar(Long underload_valueValue);
+	public DataNode setUnderload_valueScalar(Number underload_valueValue);
 
 	/**
 	 * CCD images are sometimes constructed by summing
@@ -3676,9 +4044,6 @@ public interface NXdetector extends NXobject {
 	/**
 	 * For use in special cases where the data in NXdetector
 	 * is represented in several parts, each with a separate geometry.
-	 * Use one or more instances of the NXdetector_module
-	 * group to declare regions of interest or some other
-	 * subdivision of a detector.
 	 * 
 	 * @return  the value.
 	 */
@@ -3687,9 +4052,6 @@ public interface NXdetector extends NXobject {
 	/**
 	 * For use in special cases where the data in NXdetector
 	 * is represented in several parts, each with a separate geometry.
-	 * Use one or more instances of the NXdetector_module
-	 * group to declare regions of interest or some other
-	 * subdivision of a detector.
 	 * 
 	 * @param detector_moduleGroup the detector_moduleGroup
 	 */
@@ -3700,10 +4062,7 @@ public interface NXdetector extends NXobject {
 	 * <ul>
 	 * <li>
 	 * For use in special cases where the data in NXdetector
-	 * is represented in several parts, each with a separate geometry.
-	 * Use one or more instances of the NXdetector_module
-	 * group to declare regions of interest or some other
-	 * subdivision of a detector.</li>
+	 * is represented in several parts, each with a separate geometry.</li>
 	 * </ul>
 	 * 
 	 * @param name  the name of the node.
@@ -3716,10 +4075,7 @@ public interface NXdetector extends NXobject {
 	 * <ul>
 	 * <li>
 	 * For use in special cases where the data in NXdetector
-	 * is represented in several parts, each with a separate geometry.
-	 * Use one or more instances of the NXdetector_module
-	 * group to declare regions of interest or some other
-	 * subdivision of a detector.</li>
+	 * is represented in several parts, each with a separate geometry.</li>
 	 * </ul>
 	 * 
 	 * @param name the name of the node
@@ -3732,10 +4088,7 @@ public interface NXdetector extends NXobject {
 	 * <ul>
 	 * <li>
 	 * For use in special cases where the data in NXdetector
-	 * is represented in several parts, each with a separate geometry.
-	 * Use one or more instances of the NXdetector_module
-	 * group to declare regions of interest or some other
-	 * subdivision of a detector.</li>
+	 * is represented in several parts, each with a separate geometry.</li>
 	 * </ul>
 	 * 
 	 * @return  a map from node names to the NXdetector_module for that node.
@@ -3747,10 +4100,7 @@ public interface NXdetector extends NXobject {
 	 * <ul>
 	 * <li>
 	 * For use in special cases where the data in NXdetector
-	 * is represented in several parts, each with a separate geometry.
-	 * Use one or more instances of the NXdetector_module
-	 * group to declare regions of interest or some other
-	 * subdivision of a detector.</li>
+	 * is represented in several parts, each with a separate geometry.</li>
 	 * </ul>
 	 * 
 	 * @param detector_module the child nodes to add 
@@ -3786,5 +4136,153 @@ public interface NXdetector extends NXobject {
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);
+
+	/**
+	 * NeXus positions components by applying a set of translations and rotations
+	 * to apply to the component starting from 0, 0, 0. The order of these operations
+	 * is critical and forms what NeXus calls a dependency chain. The depends_on
+	 * field defines the path to the top most operation of the dependency chain or the
+	 * string "." if located in the origin. Usually these operations are stored in a
+	 * NXtransformations group. But NeXus allows them to be stored anywhere.
+	 * The reference point of the detector is the center of the first pixel.
+	 * In complex geometries the NXoff_geometry groups can be used to provide an unambiguous reference.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public IDataset getDepends_on();
+	
+	/**
+	 * NeXus positions components by applying a set of translations and rotations
+	 * to apply to the component starting from 0, 0, 0. The order of these operations
+	 * is critical and forms what NeXus calls a dependency chain. The depends_on
+	 * field defines the path to the top most operation of the dependency chain or the
+	 * string "." if located in the origin. Usually these operations are stored in a
+	 * NXtransformations group. But NeXus allows them to be stored anywhere.
+	 * The reference point of the detector is the center of the first pixel.
+	 * In complex geometries the NXoff_geometry groups can be used to provide an unambiguous reference.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 * 
+	 * @param depends_onDataset the depends_onDataset
+	 */
+	public DataNode setDepends_on(IDataset depends_onDataset);
+
+	/**
+	 * NeXus positions components by applying a set of translations and rotations
+	 * to apply to the component starting from 0, 0, 0. The order of these operations
+	 * is critical and forms what NeXus calls a dependency chain. The depends_on
+	 * field defines the path to the top most operation of the dependency chain or the
+	 * string "." if located in the origin. Usually these operations are stored in a
+	 * NXtransformations group. But NeXus allows them to be stored anywhere.
+	 * The reference point of the detector is the center of the first pixel.
+	 * In complex geometries the NXoff_geometry groups can be used to provide an unambiguous reference.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public String getDepends_onScalar();
+
+	/**
+	 * NeXus positions components by applying a set of translations and rotations
+	 * to apply to the component starting from 0, 0, 0. The order of these operations
+	 * is critical and forms what NeXus calls a dependency chain. The depends_on
+	 * field defines the path to the top most operation of the dependency chain or the
+	 * string "." if located in the origin. Usually these operations are stored in a
+	 * NXtransformations group. But NeXus allows them to be stored anywhere.
+	 * The reference point of the detector is the center of the first pixel.
+	 * In complex geometries the NXoff_geometry groups can be used to provide an unambiguous reference.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 * 
+	 * @param depends_on the depends_on
+	 */
+	public DataNode setDepends_onScalar(String depends_onValue);
+
+	/**
+	 * This is the group recommended for holding the chain of translation
+	 * and rotation operations necessary to position the component within
+	 * the instrument. The dependency chain may however traverse similar groups in
+	 * other component groups.
+	 * 
+	 * @return  the value.
+	 */
+	public NXtransformations getTransformations();
+	
+	/**
+	 * This is the group recommended for holding the chain of translation
+	 * and rotation operations necessary to position the component within
+	 * the instrument. The dependency chain may however traverse similar groups in
+	 * other component groups.
+	 * 
+	 * @param transformationsGroup the transformationsGroup
+	 */
+	public void setTransformations(NXtransformations transformationsGroup);
+
+	/**
+	 * Get a NXtransformations node by name:
+	 * <ul>
+	 * <li>
+	 * This is the group recommended for holding the chain of translation
+	 * and rotation operations necessary to position the component within
+	 * the instrument. The dependency chain may however traverse similar groups in
+	 * other component groups.</li>
+	 * </ul>
+	 * 
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXtransformations for that node.
+	 */
+	public NXtransformations getTransformations(String name);
+	
+	/**
+	 * Set a NXtransformations node by name:
+	 * <ul>
+	 * <li>
+	 * This is the group recommended for holding the chain of translation
+	 * and rotation operations necessary to position the component within
+	 * the instrument. The dependency chain may however traverse similar groups in
+	 * other component groups.</li>
+	 * </ul>
+	 * 
+	 * @param name the name of the node
+	 * @param transformations the value to set
+	 */
+	public void setTransformations(String name, NXtransformations transformations);
+	
+	/**
+	 * Get all NXtransformations nodes:
+	 * <ul>
+	 * <li>
+	 * This is the group recommended for holding the chain of translation
+	 * and rotation operations necessary to position the component within
+	 * the instrument. The dependency chain may however traverse similar groups in
+	 * other component groups.</li>
+	 * </ul>
+	 * 
+	 * @return  a map from node names to the NXtransformations for that node.
+	 */
+	public Map<String, NXtransformations> getAllTransformations();
+	
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li>
+	 * This is the group recommended for holding the chain of translation
+	 * and rotation operations necessary to position the component within
+	 * the instrument. The dependency chain may however traverse similar groups in
+	 * other component groups.</li>
+	 * </ul>
+	 * 
+	 * @param transformations the child nodes to add 
+	 */
+	
+	public void setAllTransformations(Map<String, NXtransformations> transformations);
+	
 
 }

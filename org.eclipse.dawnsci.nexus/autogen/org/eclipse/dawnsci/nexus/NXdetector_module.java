@@ -46,6 +46,7 @@ public interface NXdetector_module extends NXobject {
 	public static final String NX_SLOW_PIXEL_DIRECTION_ATTRIBUTE_OFFSET = "offset";
 	public static final String NX_SLOW_PIXEL_DIRECTION_ATTRIBUTE_OFFSET_UNITS = "offset_units";
 	public static final String NX_SLOW_PIXEL_DIRECTION_ATTRIBUTE_DEPENDS_ON = "depends_on";
+	public static final String NX_DEPENDS_ON = "depends_on";
 	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * A dimension-2 or dimension-3 field which gives the indices
@@ -558,6 +559,46 @@ public interface NXdetector_module extends NXobject {
 	 * @param depends_onValue the depends_onValue
 	 */
 	public void setSlow_pixel_directionAttributeDepends_on(String depends_onValue);
+
+	/**
+	 * Points to the start of the dependency chain for this module.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public IDataset getDepends_on();
+	
+	/**
+	 * Points to the start of the dependency chain for this module.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 * 
+	 * @param depends_onDataset the depends_onDataset
+	 */
+	public DataNode setDepends_on(IDataset depends_onDataset);
+
+	/**
+	 * Points to the start of the dependency chain for this module.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public String getDepends_onScalar();
+
+	/**
+	 * Points to the start of the dependency chain for this module.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 * 
+	 * @param depends_on the depends_on
+	 */
+	public DataNode setDepends_onScalar(String depends_onValue);
 
 	/**
 	 * .. index:: plotting

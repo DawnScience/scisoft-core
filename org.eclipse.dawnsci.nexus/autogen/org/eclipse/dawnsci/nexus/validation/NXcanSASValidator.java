@@ -661,10 +661,9 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		validateAttributeEnumeration("canSAS_class", canSAS_class_attr,
 				"SASsource");
 
-		// validate field 'radiation' of type NX_CHAR. Note: field not defined in base class.
+		// validate optional field 'radiation' of type NX_CHAR. Note: field not defined in base class.
 		final ILazyDataset radiation = group.getLazyDataset("radiation");
-		validateFieldNotNull("radiation", radiation);
-		if (radiation != null) {
+				if (radiation != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("radiation", radiation, NX_CHAR);
 			validateFieldEnumeration("radiation", radiation,

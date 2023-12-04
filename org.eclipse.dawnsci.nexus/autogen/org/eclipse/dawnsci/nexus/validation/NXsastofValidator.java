@@ -285,7 +285,7 @@ public class NXsastofValidator extends AbstractNexusValidator implements NexusAp
 			validateFieldType("distance", distance, NX_FLOAT);
 			validateFieldUnits("distance", group.getDataNode("distance"), NX_LENGTH);
 			validateFieldRank("distance", distance, 3);
-			validateFieldDimensions("distance", distance, "NXdetector", "np", "i", "j");
+			validateFieldDimensions("distance", distance, "NXdetector", "nP", "i", "j");
 		}
 
 		// validate field 'x_pixel_size' of type NX_FLOAT.
@@ -318,7 +318,7 @@ public class NXsastofValidator extends AbstractNexusValidator implements NexusAp
 			validateFieldType("polar_angle", polar_angle, NX_FLOAT);
 			validateFieldUnits("polar_angle", group.getDataNode("polar_angle"), NX_ANGLE);
 			validateFieldRank("polar_angle", polar_angle, 3);
-			validateFieldDimensions("polar_angle", polar_angle, "NXdetector", "np", "i", "j");
+			validateFieldDimensions("polar_angle", polar_angle, "NXdetector", "nP", "i", "j");
 		}
 
 		// validate field 'azimuthal_angle' of type NX_FLOAT.
@@ -329,7 +329,7 @@ public class NXsastofValidator extends AbstractNexusValidator implements NexusAp
 			validateFieldType("azimuthal_angle", azimuthal_angle, NX_FLOAT);
 			validateFieldUnits("azimuthal_angle", group.getDataNode("azimuthal_angle"), NX_ANGLE);
 			validateFieldRank("azimuthal_angle", azimuthal_angle, 3);
-			validateFieldDimensions("azimuthal_angle", azimuthal_angle, "NXdetector", "np", "i", "j");
+			validateFieldDimensions("azimuthal_angle", azimuthal_angle, "NXdetector", "nP", "i", "j");
 		}
 
 		// validate field 'rotation_angle' of type NX_FLOAT. Note: field not defined in base class.

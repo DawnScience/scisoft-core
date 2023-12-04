@@ -22,7 +22,7 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * A beamline aperture.
+ * A beamline aperture. This group is deprecated, use NXslit instead.
  * 
  */
 public class NXapertureImpl extends NXobjectImpl implements NXaperture {
@@ -31,6 +31,7 @@ public class NXapertureImpl extends NXobjectImpl implements NXaperture {
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
+		NexusBaseClass.NX_TRANSFORMATIONS,
 		NexusBaseClass.NX_GEOMETRY,
 		NexusBaseClass.NX_GEOMETRY,
 		NexusBaseClass.NX_NOTE);
@@ -60,43 +61,102 @@ public class NXapertureImpl extends NXobjectImpl implements NXaperture {
 	
 
 	@Override
+	public IDataset getDepends_on() {
+		return getDataset(NX_DEPENDS_ON);
+	}
+
+	@Override
+	public String getDepends_onScalar() {
+		return getString(NX_DEPENDS_ON);
+	}
+
+	@Override
+	public DataNode setDepends_on(IDataset depends_onDataset) {
+		return setDataset(NX_DEPENDS_ON, depends_onDataset);
+	}
+
+	@Override
+	public DataNode setDepends_onScalar(String depends_onValue) {
+		return setString(NX_DEPENDS_ON, depends_onValue);
+	}
+
+	@Override
+	public NXtransformations getTransformations() {
+		// dataNodeName = NX_TRANSFORMATIONS
+		return getChild("transformations", NXtransformations.class);
+	}
+
+	@Override
+	public void setTransformations(NXtransformations transformationsGroup) {
+		putChild("transformations", transformationsGroup);
+	}
+
+	@Override
+	public NXtransformations getTransformations(String name) {
+		return getChild(name, NXtransformations.class);
+	}
+
+	@Override
+	public void setTransformations(String name, NXtransformations transformations) {
+		putChild(name, transformations);
+	}
+
+	@Override
+	public Map<String, NXtransformations> getAllTransformations() {
+		return getChildren(NXtransformations.class);
+	}
+	
+	@Override
+	public void setAllTransformations(Map<String, NXtransformations> transformations) {
+		setChildren(transformations);
+	}
+
+	@Override
+	@Deprecated
 	public NXgeometry getGeometry() {
 		// dataNodeName = NX_GEOMETRY
 		return getChild("geometry", NXgeometry.class);
 	}
 
 	@Override
+	@Deprecated
 	public void setGeometry(NXgeometry geometryGroup) {
 		putChild("geometry", geometryGroup);
 	}
 
 	@Override
+	@Deprecated
 	public NXgeometry getGeometry(String name) {
 		return getChild(name, NXgeometry.class);
 	}
 
 	@Override
+	@Deprecated
 	public void setGeometry(String name, NXgeometry geometry) {
 		putChild(name, geometry);
 	}
 
 	@Override
+	@Deprecated
 	public Map<String, NXgeometry> getAllGeometry() {
 		return getChildren(NXgeometry.class);
 	}
 	
 	@Override
+	@Deprecated
 	public void setAllGeometry(Map<String, NXgeometry> geometry) {
 		setChildren(geometry);
 	}
 
 	@Override
+	@Deprecated
 	public NXgeometry getBlade_geometry() {
 		// dataNodeName = NX_BLADE_GEOMETRY
 		return getChild("blade_geometry", NXgeometry.class);
 	}
 
 	@Override
+	@Deprecated
 	public void setBlade_geometry(NXgeometry blade_geometryGroup) {
 		putChild("blade_geometry", blade_geometryGroup);
 	}

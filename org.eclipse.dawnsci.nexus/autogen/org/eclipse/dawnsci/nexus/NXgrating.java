@@ -38,6 +38,7 @@ public interface NXgrating extends NXobject {
 	public static final String NX_COATING_ROUGHNESS = "coating_roughness";
 	public static final String NX_LAYER_THICKNESS = "layer_thickness";
 	public static final String NX_ATTRIBUTE_DEFAULT = "default";
+	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
 	 * Blaze or trapezoidal angles, with the angle of the upstream facing edge listed first. Blazed gratings can be identified by the low value of the first-listed angle.
 	 * <p>
@@ -601,15 +602,19 @@ public interface NXgrating extends NXobject {
 	/**
 	 * A NXshape group describing the shape of the mirror
 	 * 
+	 * @deprecated Use NXoff_geometry to describe the shape of grating
 	 * @return  the value.
 	 */
+	@Deprecated
 	public NXshape getShape();
 	
 	/**
 	 * A NXshape group describing the shape of the mirror
 	 * 
+	 * @deprecated Use NXoff_geometry to describe the shape of grating
 	 * @param shapeGroup the shapeGroup
 	 */
+	@Deprecated
 	public void setShape(NXshape shapeGroup);
 
 	/**
@@ -627,65 +632,65 @@ public interface NXgrating extends NXobject {
 	public void setFigure_data(NXdata figure_dataGroup);
 
 	/**
-	 * "Engineering" position of the grating
+	 * This group describes the shape of the beam line component
 	 * 
 	 * @return  the value.
 	 */
-	public NXtransformations getTransformations();
+	public NXoff_geometry getOff_geometry();
 	
 	/**
-	 * "Engineering" position of the grating
+	 * This group describes the shape of the beam line component
 	 * 
-	 * @param transformationsGroup the transformationsGroup
+	 * @param off_geometryGroup the off_geometryGroup
 	 */
-	public void setTransformations(NXtransformations transformationsGroup);
+	public void setOff_geometry(NXoff_geometry off_geometryGroup);
 
 	/**
-	 * Get a NXtransformations node by name:
+	 * Get a NXoff_geometry node by name:
 	 * <ul>
 	 * <li>
-	 * "Engineering" position of the grating</li>
+	 * This group describes the shape of the beam line component</li>
 	 * </ul>
 	 * 
 	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXtransformations for that node.
+	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
-	public NXtransformations getTransformations(String name);
+	public NXoff_geometry getOff_geometry(String name);
 	
 	/**
-	 * Set a NXtransformations node by name:
+	 * Set a NXoff_geometry node by name:
 	 * <ul>
 	 * <li>
-	 * "Engineering" position of the grating</li>
+	 * This group describes the shape of the beam line component</li>
 	 * </ul>
 	 * 
 	 * @param name the name of the node
-	 * @param transformations the value to set
+	 * @param off_geometry the value to set
 	 */
-	public void setTransformations(String name, NXtransformations transformations);
+	public void setOff_geometry(String name, NXoff_geometry off_geometry);
 	
 	/**
-	 * Get all NXtransformations nodes:
+	 * Get all NXoff_geometry nodes:
 	 * <ul>
 	 * <li>
-	 * "Engineering" position of the grating</li>
+	 * This group describes the shape of the beam line component</li>
 	 * </ul>
 	 * 
-	 * @return  a map from node names to the NXtransformations for that node.
+	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
-	public Map<String, NXtransformations> getAllTransformations();
+	public Map<String, NXoff_geometry> getAllOff_geometry();
 	
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
-	 * "Engineering" position of the grating</li>
+	 * This group describes the shape of the beam line component</li>
 	 * </ul>
 	 * 
-	 * @param transformations the child nodes to add 
+	 * @param off_geometry the child nodes to add 
 	 */
 	
-	public void setAllTransformations(Map<String, NXtransformations> transformations);
+	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry);
 	
 
 	/**
@@ -713,5 +718,141 @@ public interface NXgrating extends NXobject {
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);
+
+	/**
+	 * NeXus positions components by applying a set of translations and rotations
+	 * to apply to the component starting from 0, 0, 0. The order of these operations
+	 * is critical and forms what NeXus calls a dependency chain. The depends_on
+	 * field defines the path to the top most operation of the dependency chain or the
+	 * string "." if located in the origin. Usually these operations are stored in a
+	 * NXtransformations group. But NeXus allows them to be stored anywhere.
+	 * .. todo::
+	 * Add a definition for the reference point of a bending grating.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public IDataset getDepends_on();
+	
+	/**
+	 * NeXus positions components by applying a set of translations and rotations
+	 * to apply to the component starting from 0, 0, 0. The order of these operations
+	 * is critical and forms what NeXus calls a dependency chain. The depends_on
+	 * field defines the path to the top most operation of the dependency chain or the
+	 * string "." if located in the origin. Usually these operations are stored in a
+	 * NXtransformations group. But NeXus allows them to be stored anywhere.
+	 * .. todo::
+	 * Add a definition for the reference point of a bending grating.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 * 
+	 * @param depends_onDataset the depends_onDataset
+	 */
+	public DataNode setDepends_on(IDataset depends_onDataset);
+
+	/**
+	 * NeXus positions components by applying a set of translations and rotations
+	 * to apply to the component starting from 0, 0, 0. The order of these operations
+	 * is critical and forms what NeXus calls a dependency chain. The depends_on
+	 * field defines the path to the top most operation of the dependency chain or the
+	 * string "." if located in the origin. Usually these operations are stored in a
+	 * NXtransformations group. But NeXus allows them to be stored anywhere.
+	 * .. todo::
+	 * Add a definition for the reference point of a bending grating.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public String getDepends_onScalar();
+
+	/**
+	 * NeXus positions components by applying a set of translations and rotations
+	 * to apply to the component starting from 0, 0, 0. The order of these operations
+	 * is critical and forms what NeXus calls a dependency chain. The depends_on
+	 * field defines the path to the top most operation of the dependency chain or the
+	 * string "." if located in the origin. Usually these operations are stored in a
+	 * NXtransformations group. But NeXus allows them to be stored anywhere.
+	 * .. todo::
+	 * Add a definition for the reference point of a bending grating.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 * 
+	 * @param depends_on the depends_on
+	 */
+	public DataNode setDepends_onScalar(String depends_onValue);
+
+	/**
+	 * "Engineering" position of the grating
+	 * Transformations used by this component to define its position and orientation.
+	 * 
+	 * @return  the value.
+	 */
+	public NXtransformations getTransformations();
+	
+	/**
+	 * "Engineering" position of the grating
+	 * Transformations used by this component to define its position and orientation.
+	 * 
+	 * @param transformationsGroup the transformationsGroup
+	 */
+	public void setTransformations(NXtransformations transformationsGroup);
+
+	/**
+	 * Get a NXtransformations node by name:
+	 * <ul>
+	 * <li>
+	 * "Engineering" position of the grating
+	 * Transformations used by this component to define its position and orientation.</li>
+	 * </ul>
+	 * 
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXtransformations for that node.
+	 */
+	public NXtransformations getTransformations(String name);
+	
+	/**
+	 * Set a NXtransformations node by name:
+	 * <ul>
+	 * <li>
+	 * "Engineering" position of the grating
+	 * Transformations used by this component to define its position and orientation.</li>
+	 * </ul>
+	 * 
+	 * @param name the name of the node
+	 * @param transformations the value to set
+	 */
+	public void setTransformations(String name, NXtransformations transformations);
+	
+	/**
+	 * Get all NXtransformations nodes:
+	 * <ul>
+	 * <li>
+	 * "Engineering" position of the grating
+	 * Transformations used by this component to define its position and orientation.</li>
+	 * </ul>
+	 * 
+	 * @return  a map from node names to the NXtransformations for that node.
+	 */
+	public Map<String, NXtransformations> getAllTransformations();
+	
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li>
+	 * "Engineering" position of the grating
+	 * Transformations used by this component to define its position and orientation.</li>
+	 * </ul>
+	 * 
+	 * @param transformations the child nodes to add 
+	 */
+	
+	public void setAllTransformations(Map<String, NXtransformations> transformations);
+	
 
 }

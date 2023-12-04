@@ -37,7 +37,8 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 		NexusBaseClass.NX_NOTE,
 		NexusBaseClass.NX_NOTE,
 		NexusBaseClass.NX_COLLECTION,
-		NexusBaseClass.NX_DETECTOR_MODULE);
+		NexusBaseClass.NX_DETECTOR_MODULE,
+		NexusBaseClass.NX_TRANSFORMATIONS);
 
 	public NXdetectorImpl() {
 		super();
@@ -510,32 +511,38 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
+	@Deprecated
 	public NXgeometry getGeometry() {
 		// dataNodeName = NX_GEOMETRY
 		return getChild("geometry", NXgeometry.class);
 	}
 
 	@Override
+	@Deprecated
 	public void setGeometry(NXgeometry geometryGroup) {
 		putChild("geometry", geometryGroup);
 	}
 
 	@Override
+	@Deprecated
 	public NXgeometry getGeometry(String name) {
 		return getChild(name, NXgeometry.class);
 	}
 
 	@Override
+	@Deprecated
 	public void setGeometry(String name, NXgeometry geometry) {
 		putChild(name, geometry);
 	}
 
 	@Override
+	@Deprecated
 	public Map<String, NXgeometry> getAllGeometry() {
 		return getChildren(NXgeometry.class);
 	}
 	
 	@Override
+	@Deprecated
 	public void setAllGeometry(Map<String, NXgeometry> geometry) {
 		setChildren(geometry);
 	}
@@ -1235,6 +1242,26 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
+	public IDataset getImage_key() {
+		return getDataset(NX_IMAGE_KEY);
+	}
+
+	@Override
+	public Long getImage_keyScalar() {
+		return getLong(NX_IMAGE_KEY);
+	}
+
+	@Override
+	public DataNode setImage_key(IDataset image_keyDataset) {
+		return setDataset(NX_IMAGE_KEY, image_keyDataset);
+	}
+
+	@Override
+	public DataNode setImage_keyScalar(Long image_keyValue) {
+		return setField(NX_IMAGE_KEY, image_keyValue);
+	}
+
+	@Override
 	public IDataset getCountrate_correction_applied() {
 		return getDataset(NX_COUNTRATE_CORRECTION_APPLIED);
 	}
@@ -1252,6 +1279,46 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	@Override
 	public DataNode setCountrate_correction_appliedScalar(Boolean countrate_correction_appliedValue) {
 		return setField(NX_COUNTRATE_CORRECTION_APPLIED, countrate_correction_appliedValue);
+	}
+
+	@Override
+	public IDataset getCountrate_correction_lookup_table() {
+		return getDataset(NX_COUNTRATE_CORRECTION_LOOKUP_TABLE);
+	}
+
+	@Override
+	public Number getCountrate_correction_lookup_tableScalar() {
+		return getNumber(NX_COUNTRATE_CORRECTION_LOOKUP_TABLE);
+	}
+
+	@Override
+	public DataNode setCountrate_correction_lookup_table(IDataset countrate_correction_lookup_tableDataset) {
+		return setDataset(NX_COUNTRATE_CORRECTION_LOOKUP_TABLE, countrate_correction_lookup_tableDataset);
+	}
+
+	@Override
+	public DataNode setCountrate_correction_lookup_tableScalar(Number countrate_correction_lookup_tableValue) {
+		return setField(NX_COUNTRATE_CORRECTION_LOOKUP_TABLE, countrate_correction_lookup_tableValue);
+	}
+
+	@Override
+	public IDataset getVirtual_pixel_interpolation_applied() {
+		return getDataset(NX_VIRTUAL_PIXEL_INTERPOLATION_APPLIED);
+	}
+
+	@Override
+	public Boolean getVirtual_pixel_interpolation_appliedScalar() {
+		return getBoolean(NX_VIRTUAL_PIXEL_INTERPOLATION_APPLIED);
+	}
+
+	@Override
+	public DataNode setVirtual_pixel_interpolation_applied(IDataset virtual_pixel_interpolation_appliedDataset) {
+		return setDataset(NX_VIRTUAL_PIXEL_INTERPOLATION_APPLIED, virtual_pixel_interpolation_appliedDataset);
+	}
+
+	@Override
+	public DataNode setVirtual_pixel_interpolation_appliedScalar(Boolean virtual_pixel_interpolation_appliedValue) {
+		return setField(NX_VIRTUAL_PIXEL_INTERPOLATION_APPLIED, virtual_pixel_interpolation_appliedValue);
 	}
 
 	@Override
@@ -1420,8 +1487,8 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public Long getSaturation_valueScalar() {
-		return getLong(NX_SATURATION_VALUE);
+	public Number getSaturation_valueScalar() {
+		return getNumber(NX_SATURATION_VALUE);
 	}
 
 	@Override
@@ -1430,7 +1497,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public DataNode setSaturation_valueScalar(Long saturation_valueValue) {
+	public DataNode setSaturation_valueScalar(Number saturation_valueValue) {
 		return setField(NX_SATURATION_VALUE, saturation_valueValue);
 	}
 
@@ -1440,8 +1507,8 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public Long getUnderload_valueScalar() {
-		return getLong(NX_UNDERLOAD_VALUE);
+	public Number getUnderload_valueScalar() {
+		return getNumber(NX_UNDERLOAD_VALUE);
 	}
 
 	@Override
@@ -1450,7 +1517,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public DataNode setUnderload_valueScalar(Long underload_valueValue) {
+	public DataNode setUnderload_valueScalar(Number underload_valueValue) {
 		return setField(NX_UNDERLOAD_VALUE, underload_valueValue);
 	}
 
@@ -1575,6 +1642,57 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	@Override
 	public void setAttributeDefault(String defaultValue) {
 		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
+	}
+
+	@Override
+	public IDataset getDepends_on() {
+		return getDataset(NX_DEPENDS_ON);
+	}
+
+	@Override
+	public String getDepends_onScalar() {
+		return getString(NX_DEPENDS_ON);
+	}
+
+	@Override
+	public DataNode setDepends_on(IDataset depends_onDataset) {
+		return setDataset(NX_DEPENDS_ON, depends_onDataset);
+	}
+
+	@Override
+	public DataNode setDepends_onScalar(String depends_onValue) {
+		return setString(NX_DEPENDS_ON, depends_onValue);
+	}
+
+	@Override
+	public NXtransformations getTransformations() {
+		// dataNodeName = NX_TRANSFORMATIONS
+		return getChild("transformations", NXtransformations.class);
+	}
+
+	@Override
+	public void setTransformations(NXtransformations transformationsGroup) {
+		putChild("transformations", transformationsGroup);
+	}
+
+	@Override
+	public NXtransformations getTransformations(String name) {
+		return getChild(name, NXtransformations.class);
+	}
+
+	@Override
+	public void setTransformations(String name, NXtransformations transformations) {
+		putChild(name, transformations);
+	}
+
+	@Override
+	public Map<String, NXtransformations> getAllTransformations() {
+		return getChildren(NXtransformations.class);
+	}
+	
+	@Override
+	public void setAllTransformations(Map<String, NXtransformations> transformations) {
+		setChildren(transformations);
 	}
 
 }

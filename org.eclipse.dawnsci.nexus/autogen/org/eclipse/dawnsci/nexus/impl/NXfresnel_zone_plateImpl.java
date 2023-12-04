@@ -338,6 +338,36 @@ public class NXfresnel_zone_plateImpl extends NXobjectImpl implements NXfresnel_
 	}
 
 	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
+	}
+
+	@Override
+	public IDataset getDepends_on() {
+		return getDataset(NX_DEPENDS_ON);
+	}
+
+	@Override
+	public String getDepends_onScalar() {
+		return getString(NX_DEPENDS_ON);
+	}
+
+	@Override
+	public DataNode setDepends_on(IDataset depends_onDataset) {
+		return setDataset(NX_DEPENDS_ON, depends_onDataset);
+	}
+
+	@Override
+	public DataNode setDepends_onScalar(String depends_onValue) {
+		return setString(NX_DEPENDS_ON, depends_onValue);
+	}
+
+	@Override
 	public NXtransformations getTransformations() {
 		// dataNodeName = NX_TRANSFORMATIONS
 		return getChild("transformations", NXtransformations.class);
@@ -366,16 +396,6 @@ public class NXfresnel_zone_plateImpl extends NXobjectImpl implements NXfresnel_
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);
-	}
-
-	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
-	}
-
-	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

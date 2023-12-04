@@ -18,97 +18,146 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.january.dataset.IDataset;
 
 /**
- * :ref:`NXdata` describes the plottable data and related dimension scales.
+ * The :ref:`NXdata` class is designed to encapsulate all the information required for a set of data to be plotted.
+ * NXdata groups contain plottable data (sometimes referred to as *signals* or *dependent variables*) and their
+ * associated axis coordinates (sometimes referred to as *axes* or *independent variables*).
+ * The actual names of the :ref:`DATA </NXdata/DATA-field>` and :ref:`AXISNAME </NXdata/AXISNAME-field>` fields
+ * can be chosen :ref:`freely <validItemName>`, as indicated by the upper case (this is a common convention in all NeXus classes).
+ * .. note:: ``NXdata`` provides data and coordinates to be plotted but
+ * does not describe how the data is to be plotted or even the dimensionality of the plot.
+ * https://www.nexusformat.org/NIAC2018Minutes.html#nxdata-plottype--attribute
+ * **Signals:**
  * .. index:: plotting
- * It is mandatory that there is at least one :ref:`NXdata` group
- * in each :ref:`NXentry` group.
- * Note that the ``variable`` and ``data``
- * can be defined with different names.
- * The ``signal`` and ``axes`` attributes of the
- * ``data`` group define which items
- * are plottable data and which are *dimension scales*, respectively.
- * :ref:`NXdata` is used to implement one of the basic motivations in NeXus,
- * to provide a default plot for the data of this :ref:`NXentry`. The actual data
- * might be stored in another group and (hard) linked to the :ref:`NXdata` group.
- * * Each :ref:`NXdata` group will define only one data set
- * containing plottable data, dimension scales, and
- * possibly associated standard deviations.
- * Other data sets may be present in the group.
- * * The plottable data may be of arbitrary rank up to a maximum
- * of ``NX_MAXRANK=32``.
- * * The plottable data will be named as the value of
- * the group ``signal`` attribute, such as::
+ * The :ref:`DATA </NXdata/DATA-field>` fields contain the signal values to be plotted. The name of the field
+ * to be used as the *default plot signal* is provided by the :ref:`signal </NXdata@signal-attribute>` attribute.
+ * The names of the fields to be used as *secondary plot signals* are provided by the
+ * :ref:`auxiliary_signals</NXdata@auxiliary_signals-attribute>` attribute.
+ * An example with three signals, one of which being the default
+ * .. code-block::
  * data:NXdata
- * @signal = "counts"
- * @axes = "mr"
- * @mr_indices = 0
- * counts: float[100] --> the default dependent data
- * mr: float[100] --> the default independent data
- * The field named in the ``signal`` attribute **must** exist, either
- * directly as a dataset or defined through a link.
- * * The group ``axes`` attribute will name the
- * *dimension scale* associated with the plottable data.
- * If available, the standard deviations of the data are to be
- * stored in a data set of the same rank and dimensions, with the name ``errors``.
- * * For each data dimension, there should be a one-dimensional array
- * of the same length.
- * * These one-dimensional arrays are the *dimension scales* of the
- * data, *i.e*. the values of the independent variables at which the data
- * is measured, such as scattering angle or energy transfer.
- * .. index:: link
+ * @signal = "data1"
+ * @auxiliary_signals = ["data2", "data3"]
+ * data1: float[10,20,30] --> the default signal
+ * data2: float[10,20,30]
+ * data3: float[10,20,30]
+ * **Axes:**
  * .. index:: axes (attribute)
- * The preferred method to associate each data dimension with
- * its respective dimension scale is to specify the field name
- * of each dimension scale in the group ``axes`` attribute as a string list.
- * Here is an example for a 2-D data set *data* plotted
- * against *time*, and *pressure*. (An additional *temperature* data set
- * is provided and could be selected as an alternate for the *pressure* axis.)::
- * data_2d:NXdata
- * @signal="data"
- * @axes=["time", "pressure"]
- * @pressure_indices=1
- * @temperature_indices=1
- * @time_indices=0
- * data: float[1000,20]
- * pressure: float[20]
- * temperature: float[20]
- * time: float[1000]
- * .. rubric:: Old methods to identify the plottable data
- * There are two older methods of associating
- * each data dimension to its respective dimension scale.
- * Both are now out of date and
- * should not be used when writing new data files.
- * However, client software should expect to see data files
- * written with any of these methods.
- * * One method uses the ``axes``
- * attribute to specify the names of each *dimension scale*.
- * * The oldest method uses the ``axis`` attribute on each
- * *dimension scale* to identify
- * with an integer the axis whose value is the number of the dimension.
- * .. index: !plot; axis label
- * plot, axis units
- * units
- * dimension scale
- * Each axis of the plot may be labeled with information from the
- * dimension scale for that axis. The optional ``@long_name`` attribute
- * is provided as the axis label default. If ``@long_name`` is not
- * defined, then use the name of the dimension scale. A ``@units`` attribute,
- * if available, may be added to the axis label for further description.
- * See the section :ref:`Design-Units` for more information.
- * .. index: !plot; axis title
- * The optional ``title`` field, if available, provides a suggested
- * title for the plot. If no ``title`` field is found in the :ref:`NXdata`
- * group, look for a ``title`` field in the parent :ref:`NXentry` group,
- * with a fallback to displaying the path to the :ref:`NXdata` group.
- * NeXus is about how to find and annotate the data to be plotted
- * but not to describe how the data is to be plotted.
- * (https://www.nexusformat.org/NIAC2018Minutes.html#nxdata-plottype--attribute)
+ * .. index:: coordinates
+ * The :ref:`AXISNAME </NXdata/AXISNAME-field>` fields contain the axis coordinates associated with the data values.
+ * The names of all :ref:`AXISNAME </NXdata/AXISNAME-field>` fields are listed in the
+ * :ref:`axes </NXdata@axes-attribute>` attribute.
+ * `Rank`
+ * :ref:`AXISNAME </NXdata/AXISNAME-field>` fields are typically one-dimensional arrays, which annotate one of the dimensions.
+ * An example of this would be
+ * .. code-block::
+ * data:NXdata
+ * @signal = "data"
+ * @axes = ["x", "y"] --> the order matters
+ * data: float[10,20]
+ * x: float[10] --> coordinates along the first dimension
+ * y: float[20] --> coordinates along the second dimension
+ * In this example each data point ``data[i,j]`` has axis coordinates ``[x[i], y[j]]``.
+ * However, the fields can also have a rank greater than 1, in which case the rank of each
+ * :ref:`AXISNAME </NXdata/AXISNAME-field>` must be equal to the number of data dimensions it spans.
+ * An example of this would be
+ * .. code-block::
+ * data:NXdata
+ * @signal = "data"
+ * @axes = ["x", "y"] --> the order does NOT matter
+ * @x_indices = [0, 1]
+ * @y_indices = [0, 1]
+ * data: float[10,20]
+ * x: float[10,20] --> coordinates along both dimensions
+ * y: float[10,20] --> coordinates along both dimensions
+ * In this example each data point ``data[i,j]`` has axis coordinates ``[x[i,j], y[i,j]]``.
+ * `Dimensions`
+ * The data dimensions annotated by an :ref:`AXISNAME </NXdata/AXISNAME-field>` field are defined by the
+ * :ref:`AXISNAME_indices </NXdata@AXISNAME_indices-attribute>` attribute. When this attribute is missing,
+ * the position(s) of the :ref:`AXISNAME </NXdata/AXISNAME-field>` string in the
+ * :ref:`axes </NXdata@axes-attribute>` attribute are used.
+ * When all :ref:`AXISNAME </NXdata/AXISNAME-field>` fields are one-dimensional, and none of the data dimensions
+ * have more than one axis, the :ref:`AXISNAME_indices </NXdata@AXISNAME_indices-attribute>` attributes
+ * are often omitted. If one of the data dimensions has no :ref:`AXISNAME </NXdata/AXISNAME-field>` field,
+ * the string “.” can be used in the corresponding index of the axes list.
+ * An example of this would be
+ * .. code-block::
+ * data:NXdata
+ * @signal = "data"
+ * @axes = ["x", ".", "z"] --> the order matters
+ * data: float[10,20,30]
+ * x: float[10] --> coordinates along the first dimension
+ * z: float[30] --> coordinates along the third dimension
+ * When using :ref:`AXISNAME_indices </NXdata@AXISNAME_indices-attribute>` this becomes
+ * .. code-block::
+ * data:NXdata
+ * @signal = "data"
+ * @axes = ["x", "z"] --> the order does NOT matter
+ * data: float[10,20,30]
+ * @x_indices = 0
+ * @z_indices = 2
+ * x: float[10] --> coordinates along the first dimension
+ * z: float[30] --> coordinates along the third dimension
+ * When providing :ref:`AXISNAME_indices </NXdata@AXISNAME_indices-attribute>` attributes it is recommended
+ * to do it for all axes.
+ * `Non-trivial axes`
+ * What follows are two examples where :ref:`AXISNAME_indices </NXdata@AXISNAME_indices-attribute>` attributes
+ * cannot be omitted.
+ * The first is an example where data dimensions have alternative axis coordinates. The NXdata group represents
+ * a stack of images collected at different energies. The ``wavelength`` is an alternative axis of ``energy``
+ * for the last dimension (or vice versa).
+ * .. code-block::
+ * data:NXdata
+ * @signal = "data"
+ * @axes = ["x", "y", "energy", "wavelength"] --> the order does NOT matter
+ * @x_indices = 0
+ * @y_indices = 1
+ * @energy_indices = 2
+ * @wavelength_indices = 2
+ * data: float[10,20,30]
+ * x: float[10] --> coordinates along the first dimension
+ * y: float[20] --> coordinates along the second dimension
+ * energy: float[30] --> coordinates along the third dimension
+ * wavelength: float[30] --> coordinates along the third dimension
+ * The second is an example with coordinates that span more than one dimension. The NXdata group represents data
+ * from 2D mesh scans performed at multiple energies. Each data point ``data[i,j,k]`` has axis coordinates
+ * ``[x[i,j,k], y[i,j,k], energy[k]]``.
+ * .. code-block::
+ * data:NXdata
+ * @signal = "data"
+ * @axes = ["x", "y", "energy"] --> the order does NOT matter
+ * @x_indices = [0, 1, 2]
+ * @y_indices = [0, 1, 2]
+ * @energy_indices = 2
+ * data: float[10,20,30]
+ * x: float[10,20,30] --> coordinates along all dimensions
+ * y: float[10,20,30] --> coordinates along all dimensions
+ * energy: float[30] --> coordinates along the third dimension
+ * **Uncertainties:**
+ * Standard deviations on data values as well as coordinates can be provided by
+ * :ref:`FIELDNAME_errors </NXdata/FIELDNAME_errors-field>` fields where ``FIELDNAME`` is the name of a
+ * :ref:`DATA </NXdata/DATA-field>` field or an :ref:`AXISNAME </NXdata/AXISNAME-field>` field.
+ * An example of uncertainties on the signal, auxiliary signals and axis coordinates
+ * .. code-block::
+ * data:NXdata
+ * @signal = "data1"
+ * @auxiliary_signals = ["data2", "data3"]
+ * @axes = ["x", "z"]
+ * @x_indices = 0
+ * @z_indices = 2
+ * data1: float[10,20,30]
+ * data2: float[10,20,30]
+ * data3: float[10,20,30]
+ * x: float[10]
+ * z: float[30]
+ * data1_errors: float[10,20,30]
+ * data2_errors: float[10,20,30]
+ * data3_errors: float[10,20,30]
+ * x_errors: float[10]
+ * z_errors: float[30]
  * <p><b>Symbols:</b> 
- * These symbols will be used below to coordinate datasets with the same shape.<ul>
+ * These symbols will be used below to coordinate fields with the same shape.<ul>
  * <li><b>dataRank</b> 
- * rank of the ``data`` field</li>
- * <li><b>n</b> 
- * length of the ``variable`` field</li>
+ * rank of the ``DATA`` field(s)</li>
  * <li><b>nx</b> 
  * length of the ``x`` field</li>
  * <li><b>ny</b> 
@@ -119,21 +168,22 @@ import org.eclipse.january.dataset.IDataset;
  */
 public interface NXdata extends NXobject {
 
-	public static final String NX_ATTRIBUTE_AUXILIARY_SIGNALS = "auxiliary_signals";
 	public static final String NX_ATTRIBUTE_SIGNAL = "signal";
-	public static final String NX_ATTRIBUTE_AXES = "axes";
+	public static final String NX_ATTRIBUTE_AUXILIARY_SIGNALS = "auxiliary_signals";
 	public static final String NX_ATTRIBUTE_INDICES = "indices";
-	public static final String NX_VARIABLE = "variable";
-	public static final String NX_VARIABLE_ATTRIBUTE_LONG_NAME = "long_name";
-	public static final String NX_VARIABLE_ATTRIBUTE_DISTRIBUTION = "distribution";
-	public static final String NX_VARIABLE_ATTRIBUTE_FIRST_GOOD = "first_good";
-	public static final String NX_VARIABLE_ATTRIBUTE_LAST_GOOD = "last_good";
-	public static final String NX_VARIABLE_ATTRIBUTE_AXIS = "axis";
-	public static final String NX_ERRORS_SUFFIX = "errors";
+	public static final String NX_ATTRIBUTE_AXES = "axes";
+	public static final String NX_AXISNAME = "axisname";
+	public static final String NX_AXISNAME_ATTRIBUTE_LONG_NAME = "long_name";
+	public static final String NX_AXISNAME_ATTRIBUTE_UNITS = "units";
+	public static final String NX_AXISNAME_ATTRIBUTE_DISTRIBUTION = "distribution";
+	public static final String NX_AXISNAME_ATTRIBUTE_FIRST_GOOD = "first_good";
+	public static final String NX_AXISNAME_ATTRIBUTE_LAST_GOOD = "last_good";
+	public static final String NX_AXISNAME_ATTRIBUTE_AXIS = "axis";
 	public static final String NX_DATA = "data";
 	public static final String NX_DATA_ATTRIBUTE_SIGNAL = "signal";
 	public static final String NX_DATA_ATTRIBUTE_AXES = "axes";
 	public static final String NX_DATA_ATTRIBUTE_LONG_NAME = "long_name";
+	public static final String NX_ERRORS_SUFFIX = "errors";
 	public static final String NX_ERRORS = "errors";
 	public static final String NX_SCALING_FACTOR = "scaling_factor";
 	public static final String NX_OFFSET = "offset";
@@ -142,39 +192,14 @@ public interface NXdata extends NXobject {
 	public static final String NX_Y = "y";
 	public static final String NX_Z = "z";
 	/**
+	 * .. index:: find the default plottable data
 	 * .. index:: plotting
-	 * Array of strings holding the names of additional signals to
-	 * be plotted with the default signal (specified by the
-	 * ``signal`` attribute). Each auxiliary signal needs to be of
-	 * the same shape as the default signal.
-	 * .. NIAC2018:
-	 * https://www.nexusformat.org/NIAC2018Minutes.html
-	 * 
-	 * @return  the value.
-	 */
-	public String getAttributeAuxiliary_signals();
-	
-	/**
-	 * .. index:: plotting
-	 * Array of strings holding the names of additional signals to
-	 * be plotted with the default signal (specified by the
-	 * ``signal`` attribute). Each auxiliary signal needs to be of
-	 * the same shape as the default signal.
-	 * .. NIAC2018:
-	 * https://www.nexusformat.org/NIAC2018Minutes.html
-	 * 
-	 * @param auxiliary_signalsValue the auxiliary_signalsValue
-	 */
-	public void setAttributeAuxiliary_signals(String auxiliary_signalsValue);
-
-	/**
-	 * .. index:: plotting
-	 * Declares which dataset is the default.
-	 * The value is the name of the dataset to be plotted.
-	 * A field of this name *must* exist (either as dataset
-	 * or as a link to a dataset).
+	 * .. index:: signal attribute value
+	 * The value is the :ref:`name <validItemName>` of the signal that contains
+	 * the default plottable data. This field or link *must* exist and be a direct child
+	 * of this NXdata group.
 	 * It is recommended (as of NIAC2014) to use this attribute
-	 * rather than adding a signal attribute to the dataset.
+	 * rather than adding a signal attribute to the field.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
 	 * 
@@ -183,13 +208,14 @@ public interface NXdata extends NXobject {
 	public String getAttributeSignal();
 	
 	/**
+	 * .. index:: find the default plottable data
 	 * .. index:: plotting
-	 * Declares which dataset is the default.
-	 * The value is the name of the dataset to be plotted.
-	 * A field of this name *must* exist (either as dataset
-	 * or as a link to a dataset).
+	 * .. index:: signal attribute value
+	 * The value is the :ref:`name <validItemName>` of the signal that contains
+	 * the default plottable data. This field or link *must* exist and be a direct child
+	 * of this NXdata group.
 	 * It is recommended (as of NIAC2014) to use this attribute
-	 * rather than adding a signal attribute to the dataset.
+	 * rather than adding a signal attribute to the field.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
 	 * 
@@ -199,27 +225,62 @@ public interface NXdata extends NXobject {
 
 	/**
 	 * .. index:: plotting
-	 * String array that defines the independent data fields used in
-	 * the default plot for all of the dimensions of the *signal* field
-	 * (the *signal* field is the field in this group that is named by
-	 * the ``signal`` attribute of this group).
-	 * One entry is provided for every dimension in the *signal* field.
-	 * The field(s) named as values (known as "axes") of this attribute
-	 * *must* exist. An axis slice is specified using a field named
-	 * ``AXISNAME_indices`` as described below (where the text shown here
-	 * as ``AXISNAME`` is to be replaced by the actual field name).
-	 * When no default axis is available for a particular dimension
-	 * of the plottable data, use a "." in that position.
-	 * Such as::
-	 * @axes=["time", ".", "."]
-	 * Since there are three items in the list, the the *signal* field
-	 * must must be a three-dimensional array (rank=3). The first dimension
-	 * is described by the values of a one-dimensional array named ``time``
-	 * while the other two dimensions have no fields to be used as dimension scales.
-	 * See examples provided on the NeXus wiki:
-	 * https://www.nexusformat.org/2014_axes_and_uncertainties.html
-	 * If there are no axes at all (such as with a stack of images),
-	 * the axes attribute can be omitted.
+	 * Array of strings holding the :ref:`names <validItemName>` of additional
+	 * signals to be plotted with the :ref:`default signal </NXdata@signal-attribute>`.
+	 * These fields or links *must* exist and be direct children of this NXdata group.
+	 * Each auxiliary signal needs to be of the same shape as the default signal.
+	 * .. NIAC2018:
+	 * https://www.nexusformat.org/NIAC2018Minutes.html
+	 * 
+	 * @return  the value.
+	 */
+	public String getAttributeAuxiliary_signals();
+	
+	/**
+	 * .. index:: plotting
+	 * Array of strings holding the :ref:`names <validItemName>` of additional
+	 * signals to be plotted with the :ref:`default signal </NXdata@signal-attribute>`.
+	 * These fields or links *must* exist and be direct children of this NXdata group.
+	 * Each auxiliary signal needs to be of the same shape as the default signal.
+	 * .. NIAC2018:
+	 * https://www.nexusformat.org/NIAC2018Minutes.html
+	 * 
+	 * @param auxiliary_signalsValue the auxiliary_signalsValue
+	 */
+	public void setAttributeAuxiliary_signals(String auxiliary_signalsValue);
+
+	/**
+	 * The ``AXISNAME_indices`` attribute is a single integer or an array of integers that defines which :ref:`data </NXdata/DATA-field>`
+	 * dimension(s) are spanned by the corresponding axis. The first dimension index is ``0`` (zero).
+	 * When the ``AXISNAME_indices`` attribute is missing for an :ref:`AXISNAME </NXdata/AXISNAME-field>` field, its value becomes the index
+	 * (or indices) of the :ref:`AXISNAME </NXdata/AXISNAME-field>` name in the :ref:`axes </NXdata@axes-attribute>` attribute.
+	 * .. note:: When ``AXISNAME_indices`` contains multiple integers, it must be saved as an actual array
+	 * of integers and not a comma separated string.
+	 * 
+	 * @param axisname the axisname
+	 * @return  the value.
+	 */
+	public Long getAttributeIndices(String axisname);
+	
+	/**
+	 * The ``AXISNAME_indices`` attribute is a single integer or an array of integers that defines which :ref:`data </NXdata/DATA-field>`
+	 * dimension(s) are spanned by the corresponding axis. The first dimension index is ``0`` (zero).
+	 * When the ``AXISNAME_indices`` attribute is missing for an :ref:`AXISNAME </NXdata/AXISNAME-field>` field, its value becomes the index
+	 * (or indices) of the :ref:`AXISNAME </NXdata/AXISNAME-field>` name in the :ref:`axes </NXdata@axes-attribute>` attribute.
+	 * .. note:: When ``AXISNAME_indices`` contains multiple integers, it must be saved as an actual array
+	 * of integers and not a comma separated string.
+	 * 
+	 * @param axisname the axisname
+	 * @param indicesValue the indicesValue
+	 */
+	public void setAttributeIndices(String axisname, Long indicesValue);
+
+	/**
+	 * .. index:: plotting
+	 * The ``axes`` attribute is a list of strings which are the names of the :ref:`AXISNAME </NXdata/AXISNAME-field>` fields
+	 * that contain the values of the coordinates along the :ref:`data </NXdata/DATA-field>` dimensions.
+	 * .. note:: When ``axes`` contains multiple strings, it must be saved as an actual array
+	 * of strings and not a single comma separated string.
 	 * 
 	 * @return  the value.
 	 */
@@ -227,397 +288,213 @@ public interface NXdata extends NXobject {
 	
 	/**
 	 * .. index:: plotting
-	 * String array that defines the independent data fields used in
-	 * the default plot for all of the dimensions of the *signal* field
-	 * (the *signal* field is the field in this group that is named by
-	 * the ``signal`` attribute of this group).
-	 * One entry is provided for every dimension in the *signal* field.
-	 * The field(s) named as values (known as "axes") of this attribute
-	 * *must* exist. An axis slice is specified using a field named
-	 * ``AXISNAME_indices`` as described below (where the text shown here
-	 * as ``AXISNAME`` is to be replaced by the actual field name).
-	 * When no default axis is available for a particular dimension
-	 * of the plottable data, use a "." in that position.
-	 * Such as::
-	 * @axes=["time", ".", "."]
-	 * Since there are three items in the list, the the *signal* field
-	 * must must be a three-dimensional array (rank=3). The first dimension
-	 * is described by the values of a one-dimensional array named ``time``
-	 * while the other two dimensions have no fields to be used as dimension scales.
-	 * See examples provided on the NeXus wiki:
-	 * https://www.nexusformat.org/2014_axes_and_uncertainties.html
-	 * If there are no axes at all (such as with a stack of images),
-	 * the axes attribute can be omitted.
+	 * The ``axes`` attribute is a list of strings which are the names of the :ref:`AXISNAME </NXdata/AXISNAME-field>` fields
+	 * that contain the values of the coordinates along the :ref:`data </NXdata/DATA-field>` dimensions.
+	 * .. note:: When ``axes`` contains multiple strings, it must be saved as an actual array
+	 * of strings and not a single comma separated string.
 	 * 
 	 * @param axesValue the axesValue
 	 */
 	public void setAttributeAxes(String axesValue);
 
 	/**
-	 * Each ``AXISNAME_indices`` attribute indicates the dependency
-	 * relationship of the ``AXISNAME`` field (where ``AXISNAME``
-	 * is the name of a field that exists in this ``NXdata`` group)
-	 * with one or more dimensions of the plottable data.
-	 * Integer array that defines the indices of the *signal* field
-	 * (that field will be a multidimensional array)
-	 * which need to be used in the *AXISNAME* dataset in
-	 * order to reference the corresponding axis value.
-	 * The first index of an array is ``0`` (zero).
-	 * Here, *AXISNAME* is to be replaced by the name of each
-	 * field described in the ``axes`` attribute.
-	 * An example with 2-D data, :math:`d(t,P)`, will illustrate::
-	 * data_2d:NXdata
-	 * @signal="data"
-	 * @axes=["time", "pressure"]
-	 * @time_indices=0
-	 * @pressure_indices=1
-	 * data: float[1000,20]
-	 * time: float[1000]
-	 * pressure: float[20]
-	 * This attribute is to be provided in all situations.
-	 * However, if the indices attributes are missing
-	 * (such as for data files written before this specification),
-	 * file readers are encouraged to make their best efforts
-	 * to plot the data.
-	 * Thus the implementation of the
-	 * ``AXISNAME_indices`` attribute is based on the model of
-	 * "strict writer, liberal reader".
-	 * .. note:: Attributes potentially containing multiple values
-	 * (axes and _indices) are to be written as string or integer arrays,
-	 * to avoid string parsing in reading applications.
+	 * Coordinate values along one or more :ref:`data </NXdata/DATA-field>` dimensions. The rank must be equal
+	 * to the number of dimensions it spans.
+	 * As the upper case ``AXISNAME`` indicates, the names of the ``AXISNAME`` fields can be chosen :ref:`freely <validItemName>`.
+	 * The :ref:`axes </NXdata@axes-attribute>` attribute can be used to find all datasets in the
+	 * ``NXdata`` that contain coordinate values.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * </p>
 	 * 
 	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public String getAttributeIndices(String axisname);
+	public IDataset getAxisname(String axisname);
 	
 	/**
-	 * Each ``AXISNAME_indices`` attribute indicates the dependency
-	 * relationship of the ``AXISNAME`` field (where ``AXISNAME``
-	 * is the name of a field that exists in this ``NXdata`` group)
-	 * with one or more dimensions of the plottable data.
-	 * Integer array that defines the indices of the *signal* field
-	 * (that field will be a multidimensional array)
-	 * which need to be used in the *AXISNAME* dataset in
-	 * order to reference the corresponding axis value.
-	 * The first index of an array is ``0`` (zero).
-	 * Here, *AXISNAME* is to be replaced by the name of each
-	 * field described in the ``axes`` attribute.
-	 * An example with 2-D data, :math:`d(t,P)`, will illustrate::
-	 * data_2d:NXdata
-	 * @signal="data"
-	 * @axes=["time", "pressure"]
-	 * @time_indices=0
-	 * @pressure_indices=1
-	 * data: float[1000,20]
-	 * time: float[1000]
-	 * pressure: float[20]
-	 * This attribute is to be provided in all situations.
-	 * However, if the indices attributes are missing
-	 * (such as for data files written before this specification),
-	 * file readers are encouraged to make their best efforts
-	 * to plot the data.
-	 * Thus the implementation of the
-	 * ``AXISNAME_indices`` attribute is based on the model of
-	 * "strict writer, liberal reader".
-	 * .. note:: Attributes potentially containing multiple values
-	 * (axes and _indices) are to be written as string or integer arrays,
-	 * to avoid string parsing in reading applications.
+	 * Coordinate values along one or more :ref:`data </NXdata/DATA-field>` dimensions. The rank must be equal
+	 * to the number of dimensions it spans.
+	 * As the upper case ``AXISNAME`` indicates, the names of the ``AXISNAME`` fields can be chosen :ref:`freely <validItemName>`.
+	 * The :ref:`axes </NXdata@axes-attribute>` attribute can be used to find all datasets in the
+	 * ``NXdata`` that contain coordinate values.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * </p>
 	 * 
 	 * @param axisname the axisname
-	 * @param indicesValue the indicesValue
+	 * @param axisnameDataset the axisnameDataset
 	 */
-	public void setAttributeIndices(String axisname, String indicesValue);
+	public DataNode setAxisname(String axisname, IDataset axisnameDataset);
 
 	/**
-	 * Dimension scale defining an axis of the data.
-	 * Client is responsible for defining the dimensions of the data.
-	 * The name of this field may be changed to fit the circumstances.
-	 * Standard NeXus client tools will use the attributes to determine
-	 * how to use this field.
+	 * Coordinate values along one or more :ref:`data </NXdata/DATA-field>` dimensions. The rank must be equal
+	 * to the number of dimensions it spans.
+	 * As the upper case ``AXISNAME`` indicates, the names of the ``AXISNAME`` fields can be chosen :ref:`freely <validItemName>`.
+	 * The :ref:`axes </NXdata@axes-attribute>` attribute can be used to find all datasets in the
+	 * ``NXdata`` that contain coordinate values.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Dimensions:</b> 1: n;
 	 * </p>
 	 * 
-	 * @param variable the variable
+	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public IDataset getVariable(String variable);
-	
-	/**
-	 * Dimension scale defining an axis of the data.
-	 * Client is responsible for defining the dimensions of the data.
-	 * The name of this field may be changed to fit the circumstances.
-	 * Standard NeXus client tools will use the attributes to determine
-	 * how to use this field.
-	 * <p>
-	 * <b>Type:</b> NX_NUMBER
-	 * <b>Dimensions:</b> 1: n;
-	 * </p>
-	 * 
-	 * @param variable the variable
-	 * @param variableDataset the variableDataset
-	 */
-	public DataNode setVariable(String variable, IDataset variableDataset);
+	public Number getAxisnameScalar(String axisname);
 
 	/**
-	 * Dimension scale defining an axis of the data.
-	 * Client is responsible for defining the dimensions of the data.
-	 * The name of this field may be changed to fit the circumstances.
-	 * Standard NeXus client tools will use the attributes to determine
-	 * how to use this field.
+	 * Coordinate values along one or more :ref:`data </NXdata/DATA-field>` dimensions. The rank must be equal
+	 * to the number of dimensions it spans.
+	 * As the upper case ``AXISNAME`` indicates, the names of the ``AXISNAME`` fields can be chosen :ref:`freely <validItemName>`.
+	 * The :ref:`axes </NXdata@axes-attribute>` attribute can be used to find all datasets in the
+	 * ``NXdata`` that contain coordinate values.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Dimensions:</b> 1: n;
 	 * </p>
 	 * 
-	 * @param variable the variable
-	 * @return  the value.
+	 * @param axisname the axisname
+	 * @param axisname the axisname
 	 */
-	public Number getVariableScalar(String variable);
-
-	/**
-	 * Dimension scale defining an axis of the data.
-	 * Client is responsible for defining the dimensions of the data.
-	 * The name of this field may be changed to fit the circumstances.
-	 * Standard NeXus client tools will use the attributes to determine
-	 * how to use this field.
-	 * <p>
-	 * <b>Type:</b> NX_NUMBER
-	 * <b>Dimensions:</b> 1: n;
-	 * </p>
-	 * 
-	 * @param variable the variable
-	 * @param variable the variable
-	 */
-	public DataNode setVariableScalar(String variable, Number variableValue);
+	public DataNode setAxisnameScalar(String axisname, Number axisnameValue);
 
 	
 	/**
-	 * Get all Variable fields:
+	 * Get all Axisname fields:
 	 *
-	 * Dimension scale defining an axis of the data.
-	 * Client is responsible for defining the dimensions of the data.
-	 * The name of this field may be changed to fit the circumstances.
-	 * Standard NeXus client tools will use the attributes to determine
-	 * how to use this field.
+	 * Coordinate values along one or more :ref:`data </NXdata/DATA-field>` dimensions. The rank must be equal
+	 * to the number of dimensions it spans.
+	 * As the upper case ``AXISNAME`` indicates, the names of the ``AXISNAME`` fields can be chosen :ref:`freely <validItemName>`.
+	 * The :ref:`axes </NXdata@axes-attribute>` attribute can be used to find all datasets in the
+	 * ``NXdata`` that contain coordinate values.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Dimensions:</b> 1: n;
 	 * </p>
 	 * <p> <em>Note: this method returns ALL datasets within this group.</em> 
 	 * 
 	 * @return  a map from node names to the ? extends IDataset for that node.
 	 */
-	public Map<String, ? extends IDataset> getAllVariable();
+	public Map<String, ? extends IDataset> getAllAxisname();
 
 	/**
 	 * Axis label
 	 * 
-	 * @param variable the variable
+	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public String getVariableAttributeLong_name(String variable);
+	public String getAxisnameAttributeLong_name(String axisname);
 	
 	/**
 	 * Axis label
 	 * 
-	 * @param variable the variable
+	 * @param axisname the axisname
 	 * @param long_nameValue the long_nameValue
 	 */
-	public void setVariableAttributeLong_name(String variable, String long_nameValue);
+	public void setAxisnameAttributeLong_name(String axisname, String long_nameValue);
+
+	/**
+	 * Unit in which the coordinate values are expressed.
+	 * See the section :ref:`Design-Units` for more information.
+	 * 
+	 * @param axisname the axisname
+	 * @return  the value.
+	 */
+	public String getAxisnameAttributeUnits(String axisname);
+	
+	/**
+	 * Unit in which the coordinate values are expressed.
+	 * See the section :ref:`Design-Units` for more information.
+	 * 
+	 * @param axisname the axisname
+	 * @param unitsValue the unitsValue
+	 */
+	public void setAxisnameAttributeUnits(String axisname, String unitsValue);
 
 	/**
 	 * ``0|false``: single value,
 	 * ``1|true``: multiple values
 	 * 
-	 * @param variable the variable
+	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public Boolean getVariableAttributeDistribution(String variable);
+	public Boolean getAxisnameAttributeDistribution(String axisname);
 	
 	/**
 	 * ``0|false``: single value,
 	 * ``1|true``: multiple values
 	 * 
-	 * @param variable the variable
+	 * @param axisname the axisname
 	 * @param distributionValue the distributionValue
 	 */
-	public void setVariableAttributeDistribution(String variable, Boolean distributionValue);
+	public void setAxisnameAttributeDistribution(String axisname, Boolean distributionValue);
 
 	/**
 	 * Index of first good value
 	 * 
-	 * @param variable the variable
+	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public Long getVariableAttributeFirst_good(String variable);
+	public Long getAxisnameAttributeFirst_good(String axisname);
 	
 	/**
 	 * Index of first good value
 	 * 
-	 * @param variable the variable
+	 * @param axisname the axisname
 	 * @param first_goodValue the first_goodValue
 	 */
-	public void setVariableAttributeFirst_good(String variable, Long first_goodValue);
+	public void setAxisnameAttributeFirst_good(String axisname, Long first_goodValue);
 
 	/**
 	 * Index of last good value
 	 * 
-	 * @param variable the variable
+	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public Long getVariableAttributeLast_good(String variable);
+	public Long getAxisnameAttributeLast_good(String axisname);
 	
 	/**
 	 * Index of last good value
 	 * 
-	 * @param variable the variable
+	 * @param axisname the axisname
 	 * @param last_goodValue the last_goodValue
 	 */
-	public void setVariableAttributeLast_good(String variable, Long last_goodValue);
+	public void setAxisnameAttributeLast_good(String axisname, Long last_goodValue);
 
 	/**
 	 * Index (positive integer) identifying this specific set of numbers.
 	 * N.B. The ``axis`` attribute is the old way of designating a link.
-	 * Do not use the ``axes`` attribute with the ``axis`` attribute.
-	 * The ``axes`` *group* attribute is now preferred.
+	 * Do not use the :ref:`axes </NXdata@axes-attribute>` attribute with the ``axis`` attribute.
+	 * The :ref:`axes </NXdata@axes-attribute>` attribute is now preferred.
 	 * 
 	 * @deprecated Use the group ``axes`` attribute   (NIAC2014)
-	 * @param variable the variable
+	 * @param axisname the axisname
 	 * @return  the value.
 	 */
 	@Deprecated
-	public Long getVariableAttributeAxis(String variable);
+	public Long getAxisnameAttributeAxis(String axisname);
 	
 	/**
 	 * Index (positive integer) identifying this specific set of numbers.
 	 * N.B. The ``axis`` attribute is the old way of designating a link.
-	 * Do not use the ``axes`` attribute with the ``axis`` attribute.
-	 * The ``axes`` *group* attribute is now preferred.
+	 * Do not use the :ref:`axes </NXdata@axes-attribute>` attribute with the ``axis`` attribute.
+	 * The :ref:`axes </NXdata@axes-attribute>` attribute is now preferred.
 	 * 
 	 * @deprecated Use the group ``axes`` attribute   (NIAC2014)
-	 * @param variable the variable
+	 * @param axisname the axisname
 	 * @param axisValue the axisValue
 	 */
 	@Deprecated
-	public void setVariableAttributeAxis(String variable, Long axisValue);
-
-	/**
-	 * "Errors" (actually *uncertainties*) associated with axis ``VARIABLE``.
-	 * Client is responsible for defining the dimensions of the data.
-	 * The name of this field may be changed to fit the circumstances
-	 * but is matched with the *VARIABLE* field with ``_errors`` appended.
-	 * This pattern of using ``VARIABLE_errors`` can be used
-	 * throughout a NeXus data file to associate uncertainties
-	 * with a dataset named ``VARIABLE``. This pattern also
-	 * applies to other relationships such as ``VARIABLE_resolutions``
-	 * to connect additional data with a certain dataset.
-	 * <p>
-	 * <b>Type:</b> NX_NUMBER
-	 * <b>Dimensions:</b> 1: n;
-	 * </p>
-	 * 
-	 * @param variable the variable
-	 * @return  the value.
-	 */
-	public IDataset getErrors(String variable);
-	
-	/**
-	 * "Errors" (actually *uncertainties*) associated with axis ``VARIABLE``.
-	 * Client is responsible for defining the dimensions of the data.
-	 * The name of this field may be changed to fit the circumstances
-	 * but is matched with the *VARIABLE* field with ``_errors`` appended.
-	 * This pattern of using ``VARIABLE_errors`` can be used
-	 * throughout a NeXus data file to associate uncertainties
-	 * with a dataset named ``VARIABLE``. This pattern also
-	 * applies to other relationships such as ``VARIABLE_resolutions``
-	 * to connect additional data with a certain dataset.
-	 * <p>
-	 * <b>Type:</b> NX_NUMBER
-	 * <b>Dimensions:</b> 1: n;
-	 * </p>
-	 * 
-	 * @param variable the variable
-	 * @param errorsDataset the errorsDataset
-	 */
-	public DataNode setErrors(String variable, IDataset errorsDataset);
-
-	/**
-	 * "Errors" (actually *uncertainties*) associated with axis ``VARIABLE``.
-	 * Client is responsible for defining the dimensions of the data.
-	 * The name of this field may be changed to fit the circumstances
-	 * but is matched with the *VARIABLE* field with ``_errors`` appended.
-	 * This pattern of using ``VARIABLE_errors`` can be used
-	 * throughout a NeXus data file to associate uncertainties
-	 * with a dataset named ``VARIABLE``. This pattern also
-	 * applies to other relationships such as ``VARIABLE_resolutions``
-	 * to connect additional data with a certain dataset.
-	 * <p>
-	 * <b>Type:</b> NX_NUMBER
-	 * <b>Dimensions:</b> 1: n;
-	 * </p>
-	 * 
-	 * @param variable the variable
-	 * @return  the value.
-	 */
-	public Number getErrorsScalar(String variable);
-
-	/**
-	 * "Errors" (actually *uncertainties*) associated with axis ``VARIABLE``.
-	 * Client is responsible for defining the dimensions of the data.
-	 * The name of this field may be changed to fit the circumstances
-	 * but is matched with the *VARIABLE* field with ``_errors`` appended.
-	 * This pattern of using ``VARIABLE_errors`` can be used
-	 * throughout a NeXus data file to associate uncertainties
-	 * with a dataset named ``VARIABLE``. This pattern also
-	 * applies to other relationships such as ``VARIABLE_resolutions``
-	 * to connect additional data with a certain dataset.
-	 * <p>
-	 * <b>Type:</b> NX_NUMBER
-	 * <b>Dimensions:</b> 1: n;
-	 * </p>
-	 * 
-	 * @param variable the variable
-	 * @param errors the errors
-	 */
-	public DataNode setErrorsScalar(String variable, Number errorsValue);
-
-	
-	/**
-	 * Get all Errors fields:
-	 *
-	 * "Errors" (actually *uncertainties*) associated with axis ``VARIABLE``.
-	 * Client is responsible for defining the dimensions of the data.
-	 * The name of this field may be changed to fit the circumstances
-	 * but is matched with the *VARIABLE* field with ``_errors`` appended.
-	 * This pattern of using ``VARIABLE_errors`` can be used
-	 * throughout a NeXus data file to associate uncertainties
-	 * with a dataset named ``VARIABLE``. This pattern also
-	 * applies to other relationships such as ``VARIABLE_resolutions``
-	 * to connect additional data with a certain dataset.
-	 * <p>
-	 * <b>Type:</b> NX_NUMBER
-	 * <b>Dimensions:</b> 1: n;
-	 * </p>
-	 * <p> <em>Note: this method returns ALL datasets within this group.</em> 
-	 * 
-	 * @return  a map from node names to the ? extends IDataset for that node.
-	 */
-	public Map<String, ? extends IDataset> getAllErrors();
+	public void setAxisnameAttributeAxis(String axisname, Long axisValue);
 
 	/**
 	 * .. index:: plotting
-	 * This field contains the data values to be used as the
-	 * NeXus *plottable data*.
-	 * Client is responsible for defining the dimensions of the data.
-	 * The name of this field may be changed to fit the circumstances.
-	 * Standard NeXus client tools will use the attributes to determine
-	 * how to use this field.
+	 * Data values to be used as the NeXus *plottable data*. As the upper case ``DATA``
+	 * indicates, the names of the ``DATA`` fields can be chosen :ref:`freely <validItemName>`. The :ref:`signal attribute </NXdata@signal-attribute>`
+	 * and :ref:`auxiliary_signals attribute</NXdata@auxiliary_signals-attribute>` can be used to find all datasets in the ``NXdata``
+	 * that contain data values.
+	 * The maximum rank is ``32`` for compatibility with backend file formats.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Dimensions:</b> 0: n;
+	 * <b>Dimensions:</b>
 	 * </p>
 	 * 
 	 * @param data the data
@@ -627,15 +504,14 @@ public interface NXdata extends NXobject {
 	
 	/**
 	 * .. index:: plotting
-	 * This field contains the data values to be used as the
-	 * NeXus *plottable data*.
-	 * Client is responsible for defining the dimensions of the data.
-	 * The name of this field may be changed to fit the circumstances.
-	 * Standard NeXus client tools will use the attributes to determine
-	 * how to use this field.
+	 * Data values to be used as the NeXus *plottable data*. As the upper case ``DATA``
+	 * indicates, the names of the ``DATA`` fields can be chosen :ref:`freely <validItemName>`. The :ref:`signal attribute </NXdata@signal-attribute>`
+	 * and :ref:`auxiliary_signals attribute</NXdata@auxiliary_signals-attribute>` can be used to find all datasets in the ``NXdata``
+	 * that contain data values.
+	 * The maximum rank is ``32`` for compatibility with backend file formats.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Dimensions:</b> 0: n;
+	 * <b>Dimensions:</b>
 	 * </p>
 	 * 
 	 * @param data the data
@@ -645,15 +521,14 @@ public interface NXdata extends NXobject {
 
 	/**
 	 * .. index:: plotting
-	 * This field contains the data values to be used as the
-	 * NeXus *plottable data*.
-	 * Client is responsible for defining the dimensions of the data.
-	 * The name of this field may be changed to fit the circumstances.
-	 * Standard NeXus client tools will use the attributes to determine
-	 * how to use this field.
+	 * Data values to be used as the NeXus *plottable data*. As the upper case ``DATA``
+	 * indicates, the names of the ``DATA`` fields can be chosen :ref:`freely <validItemName>`. The :ref:`signal attribute </NXdata@signal-attribute>`
+	 * and :ref:`auxiliary_signals attribute</NXdata@auxiliary_signals-attribute>` can be used to find all datasets in the ``NXdata``
+	 * that contain data values.
+	 * The maximum rank is ``32`` for compatibility with backend file formats.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Dimensions:</b> 0: n;
+	 * <b>Dimensions:</b>
 	 * </p>
 	 * 
 	 * @param data the data
@@ -663,15 +538,14 @@ public interface NXdata extends NXobject {
 
 	/**
 	 * .. index:: plotting
-	 * This field contains the data values to be used as the
-	 * NeXus *plottable data*.
-	 * Client is responsible for defining the dimensions of the data.
-	 * The name of this field may be changed to fit the circumstances.
-	 * Standard NeXus client tools will use the attributes to determine
-	 * how to use this field.
+	 * Data values to be used as the NeXus *plottable data*. As the upper case ``DATA``
+	 * indicates, the names of the ``DATA`` fields can be chosen :ref:`freely <validItemName>`. The :ref:`signal attribute </NXdata@signal-attribute>`
+	 * and :ref:`auxiliary_signals attribute</NXdata@auxiliary_signals-attribute>` can be used to find all datasets in the ``NXdata``
+	 * that contain data values.
+	 * The maximum rank is ``32`` for compatibility with backend file formats.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Dimensions:</b> 0: n;
+	 * <b>Dimensions:</b>
 	 * </p>
 	 * 
 	 * @param data the data
@@ -684,15 +558,14 @@ public interface NXdata extends NXobject {
 	 * Get all Data fields:
 	 *
 	 * .. index:: plotting
-	 * This field contains the data values to be used as the
-	 * NeXus *plottable data*.
-	 * Client is responsible for defining the dimensions of the data.
-	 * The name of this field may be changed to fit the circumstances.
-	 * Standard NeXus client tools will use the attributes to determine
-	 * how to use this field.
+	 * Data values to be used as the NeXus *plottable data*. As the upper case ``DATA``
+	 * indicates, the names of the ``DATA`` fields can be chosen :ref:`freely <validItemName>`. The :ref:`signal attribute </NXdata@signal-attribute>`
+	 * and :ref:`auxiliary_signals attribute</NXdata@auxiliary_signals-attribute>` can be used to find all datasets in the ``NXdata``
+	 * that contain data values.
+	 * The maximum rank is ``32`` for compatibility with backend file formats.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Dimensions:</b> 0: n;
+	 * <b>Dimensions:</b>
 	 * </p>
 	 * <p> <em>Note: this method returns ALL datasets within this group.</em> 
 	 * 
@@ -729,12 +602,12 @@ public interface NXdata extends NXobject {
 	public void setDataAttributeSignal(String data, Long signalValue);
 
 	/**
-	 * Defines the names of the dimension scales
+	 * Defines the names of the coordinates
 	 * (independent axes) for this data set
 	 * as a colon-delimited array.
-	 * NOTE: The ``axes`` attribute is the preferred
+	 * NOTE: The :ref:`axes </NXdata@axes-attribute>` attribute is the preferred
 	 * method of designating a link.
-	 * Do not use the ``axes`` attribute with the ``axis`` attribute.
+	 * Do not use the :ref:`axes </NXdata@axes-attribute>` attribute with the ``axis`` attribute.
 	 * 
 	 * @deprecated Use the group ``axes`` attribute   (NIAC2014)
 	 * @param data the data
@@ -744,12 +617,12 @@ public interface NXdata extends NXobject {
 	public String getDataAttributeAxes(String data);
 	
 	/**
-	 * Defines the names of the dimension scales
+	 * Defines the names of the coordinates
 	 * (independent axes) for this data set
 	 * as a colon-delimited array.
-	 * NOTE: The ``axes`` attribute is the preferred
+	 * NOTE: The :ref:`axes </NXdata@axes-attribute>` attribute is the preferred
 	 * method of designating a link.
-	 * Do not use the ``axes`` attribute with the ``axis`` attribute.
+	 * Do not use the :ref:`axes </NXdata@axes-attribute>` attribute with the ``axis`` attribute.
 	 * 
 	 * @deprecated Use the group ``axes`` attribute   (NIAC2014)
 	 * @param data the data
@@ -775,59 +648,145 @@ public interface NXdata extends NXobject {
 	public void setDataAttributeLong_name(String data, String long_nameValue);
 
 	/**
+	 * "Errors" (meaning *uncertainties* or *standard deviations*)
+	 * associated with any field named ``FIELDNAME`` in this ``NXdata``
+	 * group (e.g. an axis, signal or auxiliary signal).
+	 * The dimensions of the ``FIELDNAME_errors`` field must match
+	 * the dimensions of the ``FIELDNAME`` field.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * </p>
+	 * 
+	 * @param fieldname the fieldname
+	 * @return  the value.
+	 */
+	public IDataset getErrors(String fieldname);
+	
+	/**
+	 * "Errors" (meaning *uncertainties* or *standard deviations*)
+	 * associated with any field named ``FIELDNAME`` in this ``NXdata``
+	 * group (e.g. an axis, signal or auxiliary signal).
+	 * The dimensions of the ``FIELDNAME_errors`` field must match
+	 * the dimensions of the ``FIELDNAME`` field.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * </p>
+	 * 
+	 * @param fieldname the fieldname
+	 * @param errorsDataset the errorsDataset
+	 */
+	public DataNode setErrors(String fieldname, IDataset errorsDataset);
+
+	/**
+	 * "Errors" (meaning *uncertainties* or *standard deviations*)
+	 * associated with any field named ``FIELDNAME`` in this ``NXdata``
+	 * group (e.g. an axis, signal or auxiliary signal).
+	 * The dimensions of the ``FIELDNAME_errors`` field must match
+	 * the dimensions of the ``FIELDNAME`` field.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * </p>
+	 * 
+	 * @param fieldname the fieldname
+	 * @return  the value.
+	 */
+	public Number getErrorsScalar(String fieldname);
+
+	/**
+	 * "Errors" (meaning *uncertainties* or *standard deviations*)
+	 * associated with any field named ``FIELDNAME`` in this ``NXdata``
+	 * group (e.g. an axis, signal or auxiliary signal).
+	 * The dimensions of the ``FIELDNAME_errors`` field must match
+	 * the dimensions of the ``FIELDNAME`` field.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * </p>
+	 * 
+	 * @param fieldname the fieldname
+	 * @param errors the errors
+	 */
+	public DataNode setErrorsScalar(String fieldname, Number errorsValue);
+
+	
+	/**
+	 * Get all Errors fields:
+	 *
+	 * "Errors" (meaning *uncertainties* or *standard deviations*)
+	 * associated with any field named ``FIELDNAME`` in this ``NXdata``
+	 * group (e.g. an axis, signal or auxiliary signal).
+	 * The dimensions of the ``FIELDNAME_errors`` field must match
+	 * the dimensions of the ``FIELDNAME`` field.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * </p>
+	 * <p> <em>Note: this method returns ALL datasets within this group.</em> 
+	 * 
+	 * @return  a map from node names to the ? extends IDataset for that node.
+	 */
+	public Map<String, ? extends IDataset> getAllErrors();
+
+	/**
 	 * Standard deviations of data values -
 	 * the data array is identified by the group attribute ``signal``.
-	 * The ``errors`` array must have the same dimensions as ``data``.
+	 * The ``errors`` array must have the same dimensions as ``DATA``.
 	 * Client is responsible for defining the dimensions of the data.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Dimensions:</b> 0: n;
+	 * <b>Dimensions:</b>
 	 * </p>
 	 * 
+	 * @deprecated Use ``DATA_errors`` instead (NIAC2018)
 	 * @return  the value.
 	 */
+	@Deprecated
 	public IDataset getErrors();
 	
 	/**
 	 * Standard deviations of data values -
 	 * the data array is identified by the group attribute ``signal``.
-	 * The ``errors`` array must have the same dimensions as ``data``.
+	 * The ``errors`` array must have the same dimensions as ``DATA``.
 	 * Client is responsible for defining the dimensions of the data.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Dimensions:</b> 0: n;
+	 * <b>Dimensions:</b>
 	 * </p>
 	 * 
+	 * @deprecated Use ``DATA_errors`` instead (NIAC2018)
 	 * @param errorsDataset the errorsDataset
 	 */
+	@Deprecated
 	public DataNode setErrors(IDataset errorsDataset);
 
 	/**
 	 * Standard deviations of data values -
 	 * the data array is identified by the group attribute ``signal``.
-	 * The ``errors`` array must have the same dimensions as ``data``.
+	 * The ``errors`` array must have the same dimensions as ``DATA``.
 	 * Client is responsible for defining the dimensions of the data.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Dimensions:</b> 0: n;
+	 * <b>Dimensions:</b>
 	 * </p>
 	 * 
+	 * @deprecated Use ``DATA_errors`` instead (NIAC2018)
 	 * @return  the value.
 	 */
+	@Deprecated
 	public Number getErrorsScalar();
 
 	/**
 	 * Standard deviations of data values -
 	 * the data array is identified by the group attribute ``signal``.
-	 * The ``errors`` array must have the same dimensions as ``data``.
+	 * The ``errors`` array must have the same dimensions as ``DATA``.
 	 * Client is responsible for defining the dimensions of the data.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Dimensions:</b> 0: n;
+	 * <b>Dimensions:</b>
 	 * </p>
 	 * 
+	 * @deprecated Use ``DATA_errors`` instead (NIAC2018)
 	 * @param errors the errors
 	 */
+	@Deprecated
 	public DataNode setErrorsScalar(Number errorsValue);
 
 	/**
@@ -957,6 +916,8 @@ public interface NXdata extends NXobject {
 	/**
 	 * This is an array holding the values to use for the x-axis of
 	 * data. The units must be appropriate for the measurement.
+	 * This is a special case of a :ref:`AXISNAME field </NXdata/AXISNAME-field>`
+	 * kept for backward compatiblity.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
@@ -970,6 +931,8 @@ public interface NXdata extends NXobject {
 	/**
 	 * This is an array holding the values to use for the x-axis of
 	 * data. The units must be appropriate for the measurement.
+	 * This is a special case of a :ref:`AXISNAME field </NXdata/AXISNAME-field>`
+	 * kept for backward compatiblity.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
@@ -983,6 +946,8 @@ public interface NXdata extends NXobject {
 	/**
 	 * This is an array holding the values to use for the x-axis of
 	 * data. The units must be appropriate for the measurement.
+	 * This is a special case of a :ref:`AXISNAME field </NXdata/AXISNAME-field>`
+	 * kept for backward compatiblity.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
@@ -996,6 +961,8 @@ public interface NXdata extends NXobject {
 	/**
 	 * This is an array holding the values to use for the x-axis of
 	 * data. The units must be appropriate for the measurement.
+	 * This is a special case of a :ref:`AXISNAME field </NXdata/AXISNAME-field>`
+	 * kept for backward compatiblity.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
@@ -1009,6 +976,8 @@ public interface NXdata extends NXobject {
 	/**
 	 * This is an array holding the values to use for the y-axis of
 	 * data. The units must be appropriate for the measurement.
+	 * This is a special case of a :ref:`AXISNAME field </NXdata/AXISNAME-field>`
+	 * kept for backward compatiblity.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
@@ -1022,6 +991,8 @@ public interface NXdata extends NXobject {
 	/**
 	 * This is an array holding the values to use for the y-axis of
 	 * data. The units must be appropriate for the measurement.
+	 * This is a special case of a :ref:`AXISNAME field </NXdata/AXISNAME-field>`
+	 * kept for backward compatiblity.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
@@ -1035,6 +1006,8 @@ public interface NXdata extends NXobject {
 	/**
 	 * This is an array holding the values to use for the y-axis of
 	 * data. The units must be appropriate for the measurement.
+	 * This is a special case of a :ref:`AXISNAME field </NXdata/AXISNAME-field>`
+	 * kept for backward compatiblity.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
@@ -1048,6 +1021,8 @@ public interface NXdata extends NXobject {
 	/**
 	 * This is an array holding the values to use for the y-axis of
 	 * data. The units must be appropriate for the measurement.
+	 * This is a special case of a :ref:`AXISNAME field </NXdata/AXISNAME-field>`
+	 * kept for backward compatiblity.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
@@ -1061,6 +1036,8 @@ public interface NXdata extends NXobject {
 	/**
 	 * This is an array holding the values to use for the z-axis of
 	 * data. The units must be appropriate for the measurement.
+	 * This is a special case of a :ref:`AXISNAME field </NXdata/AXISNAME-field>`
+	 * kept for backward compatiblity.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
@@ -1074,6 +1051,8 @@ public interface NXdata extends NXobject {
 	/**
 	 * This is an array holding the values to use for the z-axis of
 	 * data. The units must be appropriate for the measurement.
+	 * This is a special case of a :ref:`AXISNAME field </NXdata/AXISNAME-field>`
+	 * kept for backward compatiblity.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
@@ -1087,6 +1066,8 @@ public interface NXdata extends NXobject {
 	/**
 	 * This is an array holding the values to use for the z-axis of
 	 * data. The units must be appropriate for the measurement.
+	 * This is a special case of a :ref:`AXISNAME field </NXdata/AXISNAME-field>`
+	 * kept for backward compatiblity.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
@@ -1100,6 +1081,8 @@ public interface NXdata extends NXobject {
 	/**
 	 * This is an array holding the values to use for the z-axis of
 	 * data. The units must be appropriate for the measurement.
+	 * This is a special case of a :ref:`AXISNAME field </NXdata/AXISNAME-field>`
+	 * kept for backward compatiblity.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY

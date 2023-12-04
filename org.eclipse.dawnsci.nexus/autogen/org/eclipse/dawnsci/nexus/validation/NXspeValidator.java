@@ -88,7 +88,6 @@ public class NXspeValidator extends AbstractNexusValidator implements NexusAppli
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("definition", definition, NX_CHAR);
 			validateFieldEnumeration("definition", definition,
-					"NXSPE",
 					"NXspe");
 		// validate attribute 'version' of field 'definition' of type NX_CHAR.
 		final Attribute definition_attr_version = group.getDataNode("definition").getAttribute("version");

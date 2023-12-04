@@ -33,7 +33,10 @@ public class NXbeam_stopImpl extends NXobjectImpl implements NXbeam_stop {
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_GEOMETRY);
+		NexusBaseClass.NX_GEOMETRY,
+		NexusBaseClass.NX_OFF_GEOMETRY,
+		NexusBaseClass.NX_CYLINDRICAL_GEOMETRY,
+		NexusBaseClass.NX_TRANSFORMATIONS);
 
 	public NXbeam_stopImpl() {
 		super();
@@ -60,32 +63,38 @@ public class NXbeam_stopImpl extends NXobjectImpl implements NXbeam_stop {
 	
 
 	@Override
+	@Deprecated
 	public NXgeometry getGeometry() {
 		// dataNodeName = NX_GEOMETRY
 		return getChild("geometry", NXgeometry.class);
 	}
 
 	@Override
+	@Deprecated
 	public void setGeometry(NXgeometry geometryGroup) {
 		putChild("geometry", geometryGroup);
 	}
 
 	@Override
+	@Deprecated
 	public NXgeometry getGeometry(String name) {
 		return getChild(name, NXgeometry.class);
 	}
 
 	@Override
+	@Deprecated
 	public void setGeometry(String name, NXgeometry geometry) {
 		putChild(name, geometry);
 	}
 
 	@Override
+	@Deprecated
 	public Map<String, NXgeometry> getAllGeometry() {
 		return getChildren(NXgeometry.class);
 	}
 	
 	@Override
+	@Deprecated
 	public void setAllGeometry(Map<String, NXgeometry> geometry) {
 		setChildren(geometry);
 	}
@@ -108,6 +117,68 @@ public class NXbeam_stopImpl extends NXobjectImpl implements NXbeam_stop {
 	@Override
 	public DataNode setDescriptionScalar(String descriptionValue) {
 		return setString(NX_DESCRIPTION, descriptionValue);
+	}
+
+	@Override
+	public NXoff_geometry getOff_geometry() {
+		// dataNodeName = NX_OFF_GEOMETRY
+		return getChild("off_geometry", NXoff_geometry.class);
+	}
+
+	@Override
+	public void setOff_geometry(NXoff_geometry off_geometryGroup) {
+		putChild("off_geometry", off_geometryGroup);
+	}
+
+	@Override
+	public NXoff_geometry getOff_geometry(String name) {
+		return getChild(name, NXoff_geometry.class);
+	}
+
+	@Override
+	public void setOff_geometry(String name, NXoff_geometry off_geometry) {
+		putChild(name, off_geometry);
+	}
+
+	@Override
+	public Map<String, NXoff_geometry> getAllOff_geometry() {
+		return getChildren(NXoff_geometry.class);
+	}
+	
+	@Override
+	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry) {
+		setChildren(off_geometry);
+	}
+
+	@Override
+	public NXcylindrical_geometry getCylindrical_geometry() {
+		// dataNodeName = NX_CYLINDRICAL_GEOMETRY
+		return getChild("cylindrical_geometry", NXcylindrical_geometry.class);
+	}
+
+	@Override
+	public void setCylindrical_geometry(NXcylindrical_geometry cylindrical_geometryGroup) {
+		putChild("cylindrical_geometry", cylindrical_geometryGroup);
+	}
+
+	@Override
+	public NXcylindrical_geometry getCylindrical_geometry(String name) {
+		return getChild(name, NXcylindrical_geometry.class);
+	}
+
+	@Override
+	public void setCylindrical_geometry(String name, NXcylindrical_geometry cylindrical_geometry) {
+		putChild(name, cylindrical_geometry);
+	}
+
+	@Override
+	public Map<String, NXcylindrical_geometry> getAllCylindrical_geometry() {
+		return getChildren(NXcylindrical_geometry.class);
+	}
+	
+	@Override
+	public void setAllCylindrical_geometry(Map<String, NXcylindrical_geometry> cylindrical_geometry) {
+		setChildren(cylindrical_geometry);
 	}
 
 	@Override
@@ -218,6 +289,57 @@ public class NXbeam_stopImpl extends NXobjectImpl implements NXbeam_stop {
 	@Override
 	public void setAttributeDefault(String defaultValue) {
 		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
+	}
+
+	@Override
+	public IDataset getDepends_on() {
+		return getDataset(NX_DEPENDS_ON);
+	}
+
+	@Override
+	public String getDepends_onScalar() {
+		return getString(NX_DEPENDS_ON);
+	}
+
+	@Override
+	public DataNode setDepends_on(IDataset depends_onDataset) {
+		return setDataset(NX_DEPENDS_ON, depends_onDataset);
+	}
+
+	@Override
+	public DataNode setDepends_onScalar(String depends_onValue) {
+		return setString(NX_DEPENDS_ON, depends_onValue);
+	}
+
+	@Override
+	public NXtransformations getTransformations() {
+		// dataNodeName = NX_TRANSFORMATIONS
+		return getChild("transformations", NXtransformations.class);
+	}
+
+	@Override
+	public void setTransformations(NXtransformations transformationsGroup) {
+		putChild("transformations", transformationsGroup);
+	}
+
+	@Override
+	public NXtransformations getTransformations(String name) {
+		return getChild(name, NXtransformations.class);
+	}
+
+	@Override
+	public void setTransformations(String name, NXtransformations transformations) {
+		putChild(name, transformations);
+	}
+
+	@Override
+	public Map<String, NXtransformations> getAllTransformations() {
+		return getChildren(NXtransformations.class);
+	}
+	
+	@Override
+	public void setAllTransformations(Map<String, NXtransformations> transformations) {
+		setChildren(transformations);
 	}
 
 }

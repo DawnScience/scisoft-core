@@ -78,32 +78,23 @@ public class NXsasValidator extends AbstractNexusValidator implements NexusAppli
 		// validate that the group is not null
 		if (!(validateGroupNotNull(null, NXentry.class, group))) return;
 
-		// validate attribute 'entry' of type NX_CHAR.
-		final Attribute entry_attr = group.getAttribute("entry");
-		if (!(validateAttributeNotNull("entry", entry_attr))) return;
-		// validate any properties of this attribute specified in the NXDL file: type, enumeration
-		validateAttributeType("entry", entry_attr, NX_CHAR);
-
-		// validate field 'title' of type NX_CHAR.
+		// validate optional field 'title' of type NX_CHAR.
 		final ILazyDataset title = group.getLazyDataset("title");
-		validateFieldNotNull("title", title);
-		if (title != null) {
+				if (title != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("title", title, NX_CHAR);
 		}
 
-		// validate field 'start_time' of type NX_DATE_TIME.
+		// validate optional field 'start_time' of type NX_DATE_TIME.
 		final ILazyDataset start_time = group.getLazyDataset("start_time");
-		validateFieldNotNull("start_time", start_time);
-		if (start_time != null) {
+				if (start_time != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("start_time", start_time, NX_DATE_TIME);
 		}
 
-		// validate field 'end_time' of type NX_DATE_TIME.
+		// validate optional field 'end_time' of type NX_DATE_TIME.
 		final ILazyDataset end_time = group.getLazyDataset("end_time");
-		validateFieldNotNull("end_time", end_time);
-		if (end_time != null) {
+				if (end_time != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("end_time", end_time, NX_DATE_TIME);
 		}
@@ -118,25 +109,41 @@ public class NXsasValidator extends AbstractNexusValidator implements NexusAppli
 					"NXsas");
 		}
 
-		// validate child group 'instrument' of type NXinstrument
-		validateGroup_NXentry_instrument(group.getInstrument());
+		// validate unnamed child group of type NXinstrument (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXinstrument.class, false, true);
+		final Map<String, NXinstrument> allInstrument = group.getAllInstrument();
+		for (final NXinstrument instrument : allInstrument.values()) {
+			validateGroup_NXentry_NXinstrument(instrument);
+		}
 
-		// validate child group 'sample' of type NXsample
-		validateGroup_NXentry_sample(group.getSample());
+		// validate unnamed child group of type NXsample (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXsample.class, false, true);
+		final Map<String, NXsample> allSample = group.getAllSample();
+		for (final NXsample sample : allSample.values()) {
+			validateGroup_NXentry_NXsample(sample);
+		}
 
-		// validate child group 'control' of type NXmonitor
-		validateGroup_NXentry_control(group.getMonitor("control"));
+		// validate unnamed child group of type NXmonitor (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXmonitor.class, false, true);
+		final Map<String, NXmonitor> allMonitor = group.getAllMonitor();
+		for (final NXmonitor monitor : allMonitor.values()) {
+			validateGroup_NXentry_NXmonitor(monitor);
+		}
 
-		// validate child group 'data' of type NXdata
-		validateGroup_NXentry_data(group.getData());
+		// validate unnamed child group of type NXdata (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXdata.class, false, true);
+		final Map<String, NXdata> allData = group.getAllData();
+		for (final NXdata data : allData.values()) {
+			validateGroup_NXentry_NXdata(data);
+		}
 	}
 
 	/**
-	 * Validate group 'instrument' of type NXinstrument.
+	 * Validate unnamed group of type NXinstrument.
 	 */
-	private void validateGroup_NXentry_instrument(final NXinstrument group) {
+	private void validateGroup_NXentry_NXinstrument(final NXinstrument group) {
 		// validate that the group is not null
-		if (!(validateGroupNotNull("instrument", NXinstrument.class, group))) return;
+		if (!(validateGroupNotNull(null, NXinstrument.class, group))) return;
 
 		// validate field 'name' of type NX_CHAR.
 		final ILazyDataset name = group.getLazyDataset("name");
@@ -145,25 +152,41 @@ public class NXsasValidator extends AbstractNexusValidator implements NexusAppli
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("name", name, NX_CHAR);
 		}
-		// validate child group 'source' of type NXsource
-		validateGroup_NXentry_instrument_source(group.getSource());
+		// validate unnamed child group of type NXsource (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXsource.class, false, true);
+		final Map<String, NXsource> allSource = group.getAllSource();
+		for (final NXsource source : allSource.values()) {
+			validateGroup_NXentry_NXinstrument_NXsource(source);
+		}
 
-		// validate child group 'monochromator' of type NXmonochromator
-		validateGroup_NXentry_instrument_monochromator(group.getMonochromator());
+		// validate unnamed child group of type NXmonochromator (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXmonochromator.class, false, true);
+		final Map<String, NXmonochromator> allMonochromator = group.getAllMonochromator();
+		for (final NXmonochromator monochromator : allMonochromator.values()) {
+			validateGroup_NXentry_NXinstrument_NXmonochromator(monochromator);
+		}
 
-		// validate child group 'collimator' of type NXcollimator
-		validateGroup_NXentry_instrument_collimator(group.getCollimator());
+		// validate unnamed child group of type NXcollimator (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXcollimator.class, false, true);
+		final Map<String, NXcollimator> allCollimator = group.getAllCollimator();
+		for (final NXcollimator collimator : allCollimator.values()) {
+			validateGroup_NXentry_NXinstrument_NXcollimator(collimator);
+		}
 
-		// validate child group 'detector' of type NXdetector
-		validateGroup_NXentry_instrument_detector(group.getDetector());
+		// validate unnamed child group of type NXdetector (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXdetector.class, false, true);
+		final Map<String, NXdetector> allDetector = group.getAllDetector();
+		for (final NXdetector detector : allDetector.values()) {
+			validateGroup_NXentry_NXinstrument_NXdetector(detector);
+		}
 	}
 
 	/**
-	 * Validate group 'source' of type NXsource.
+	 * Validate unnamed group of type NXsource.
 	 */
-	private void validateGroup_NXentry_instrument_source(final NXsource group) {
+	private void validateGroup_NXentry_NXinstrument_NXsource(final NXsource group) {
 		// validate that the group is not null
-		if (!(validateGroupNotNull("source", NXsource.class, group))) return;
+		if (!(validateGroupNotNull(null, NXsource.class, group))) return;
 
 		// validate field 'type' of type NX_CHAR.
 		final ILazyDataset type = group.getLazyDataset("type");
@@ -187,10 +210,9 @@ public class NXsasValidator extends AbstractNexusValidator implements NexusAppli
 					"Metal Jet X-ray");
 		}
 
-		// validate field 'name' of type NX_CHAR.
+		// validate optional field 'name' of type NX_CHAR.
 		final ILazyDataset name = group.getLazyDataset("name");
-		validateFieldNotNull("name", name);
-		if (name != null) {
+				if (name != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("name", name, NX_CHAR);
 		}
@@ -208,11 +230,11 @@ public class NXsasValidator extends AbstractNexusValidator implements NexusAppli
 	}
 
 	/**
-	 * Validate group 'monochromator' of type NXmonochromator.
+	 * Validate unnamed group of type NXmonochromator.
 	 */
-	private void validateGroup_NXentry_instrument_monochromator(final NXmonochromator group) {
+	private void validateGroup_NXentry_NXinstrument_NXmonochromator(final NXmonochromator group) {
 		// validate that the group is not null
-		if (!(validateGroupNotNull("monochromator", NXmonochromator.class, group))) return;
+		if (!(validateGroupNotNull(null, NXmonochromator.class, group))) return;
 
 		// validate field 'wavelength' of type NX_FLOAT.
 		final ILazyDataset wavelength = group.getLazyDataset("wavelength");
@@ -223,43 +245,50 @@ public class NXsasValidator extends AbstractNexusValidator implements NexusAppli
 			validateFieldUnits("wavelength", group.getDataNode("wavelength"), NX_WAVELENGTH);
 		}
 
-		// validate field 'wavelength_spread' of type NX_FLOAT. Note: field not defined in base class.
+		// validate optional field 'wavelength_spread' of type NX_FLOAT. Note: field not defined in base class.
 		final ILazyDataset wavelength_spread = group.getLazyDataset("wavelength_spread");
-		validateFieldNotNull("wavelength_spread", wavelength_spread);
-		if (wavelength_spread != null) {
+				if (wavelength_spread != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("wavelength_spread", wavelength_spread, NX_FLOAT);
 		}
 	}
 
 	/**
-	 * Validate group 'collimator' of type NXcollimator.
+	 * Validate optional unnamed group of type NXcollimator.
 	 */
-	private void validateGroup_NXentry_instrument_collimator(final NXcollimator group) {
+	private void validateGroup_NXentry_NXinstrument_NXcollimator(final NXcollimator group) {
 		// validate that the group is not null
-		if (!(validateGroupNotNull("collimator", NXcollimator.class, group))) return;
+		if (!(validateGroupNotNull(null, NXcollimator.class, group))) return;
 
-		// validate child group 'geometry' of type NXgeometry
-		validateGroup_NXentry_instrument_collimator_geometry(group.getGeometry());
+		// validate unnamed child group of type NXgeometry (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXgeometry.class, false, true);
+		final Map<String, NXgeometry> allGeometry = group.getAllGeometry();
+		for (final NXgeometry geometry : allGeometry.values()) {
+			validateGroup_NXentry_NXinstrument_NXcollimator_NXgeometry(geometry);
+		}
 	}
 
 	/**
-	 * Validate group 'geometry' of type NXgeometry.
+	 * Validate unnamed group of type NXgeometry.
 	 */
-	private void validateGroup_NXentry_instrument_collimator_geometry(final NXgeometry group) {
+	private void validateGroup_NXentry_NXinstrument_NXcollimator_NXgeometry(final NXgeometry group) {
 		// validate that the group is not null
-		if (!(validateGroupNotNull("geometry", NXgeometry.class, group))) return;
+		if (!(validateGroupNotNull(null, NXgeometry.class, group))) return;
 
-		// validate child group 'shape' of type NXshape
-		validateGroup_NXentry_instrument_collimator_geometry_shape(group.getShape());
+		// validate unnamed child group of type NXshape (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXshape.class, false, true);
+		final Map<String, NXshape> allShape = group.getAllShape();
+		for (final NXshape shape : allShape.values()) {
+			validateGroup_NXentry_NXinstrument_NXcollimator_NXgeometry_NXshape(shape);
+		}
 	}
 
 	/**
-	 * Validate group 'shape' of type NXshape.
+	 * Validate unnamed group of type NXshape.
 	 */
-	private void validateGroup_NXentry_instrument_collimator_geometry_shape(final NXshape group) {
+	private void validateGroup_NXentry_NXinstrument_NXcollimator_NXgeometry_NXshape(final NXshape group) {
 		// validate that the group is not null
-		if (!(validateGroupNotNull("shape", NXshape.class, group))) return;
+		if (!(validateGroupNotNull(null, NXshape.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'shape' of type NX_CHAR.
@@ -285,11 +314,11 @@ public class NXsasValidator extends AbstractNexusValidator implements NexusAppli
 	}
 
 	/**
-	 * Validate group 'detector' of type NXdetector.
+	 * Validate unnamed group of type NXdetector.
 	 */
-	private void validateGroup_NXentry_instrument_detector(final NXdetector group) {
+	private void validateGroup_NXentry_NXinstrument_NXdetector(final NXdetector group) {
 		// validate that the group is not null
-		if (!(validateGroupNotNull("detector", NXdetector.class, group))) return;
+		if (!(validateGroupNotNull(null, NXdetector.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'data' of type NX_NUMBER.
@@ -311,7 +340,7 @@ public class NXsasValidator extends AbstractNexusValidator implements NexusAppli
 			validateFieldType("distance", distance, NX_FLOAT);
 			validateFieldUnits("distance", group.getDataNode("distance"), NX_LENGTH);
 			validateFieldRank("distance", distance, 3);
-			validateFieldDimensions("distance", distance, "NXdetector", "np", "i", "j");
+			validateFieldDimensions("distance", distance, "NXdetector", "nP", "i", "j");
 		}
 
 		// validate field 'x_pixel_size' of type NX_FLOAT.
@@ -336,59 +365,53 @@ public class NXsasValidator extends AbstractNexusValidator implements NexusAppli
 			validateFieldDimensions("y_pixel_size", y_pixel_size, "NXdetector", "i", "j");
 		}
 
-		// validate field 'polar_angle' of type NX_FLOAT.
+		// validate optional field 'polar_angle' of type NX_FLOAT.
 		final ILazyDataset polar_angle = group.getLazyDataset("polar_angle");
-		validateFieldNotNull("polar_angle", polar_angle);
-		if (polar_angle != null) {
+				if (polar_angle != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("polar_angle", polar_angle, NX_FLOAT);
 			validateFieldUnits("polar_angle", group.getDataNode("polar_angle"), NX_ANGLE);
 			validateFieldRank("polar_angle", polar_angle, 3);
-			validateFieldDimensions("polar_angle", polar_angle, "NXdetector", "np", "i", "j");
+			validateFieldDimensions("polar_angle", polar_angle, "NXdetector", "nP", "i", "j");
 		}
 
-		// validate field 'azimuthal_angle' of type NX_FLOAT.
+		// validate optional field 'azimuthal_angle' of type NX_FLOAT.
 		final ILazyDataset azimuthal_angle = group.getLazyDataset("azimuthal_angle");
-		validateFieldNotNull("azimuthal_angle", azimuthal_angle);
-		if (azimuthal_angle != null) {
+				if (azimuthal_angle != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("azimuthal_angle", azimuthal_angle, NX_FLOAT);
 			validateFieldUnits("azimuthal_angle", group.getDataNode("azimuthal_angle"), NX_ANGLE);
 			validateFieldRank("azimuthal_angle", azimuthal_angle, 3);
-			validateFieldDimensions("azimuthal_angle", azimuthal_angle, "NXdetector", "np", "i", "j");
+			validateFieldDimensions("azimuthal_angle", azimuthal_angle, "NXdetector", "nP", "i", "j");
 		}
 
-		// validate field 'rotation_angle' of type NX_FLOAT. Note: field not defined in base class.
+		// validate optional field 'rotation_angle' of type NX_FLOAT. Note: field not defined in base class.
 		final ILazyDataset rotation_angle = group.getLazyDataset("rotation_angle");
-		validateFieldNotNull("rotation_angle", rotation_angle);
-		if (rotation_angle != null) {
+				if (rotation_angle != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("rotation_angle", rotation_angle, NX_FLOAT);
 			validateFieldUnits("rotation_angle", group.getDataNode("rotation_angle"), NX_ANGLE);
 		}
 
-		// validate field 'aequatorial_angle' of type NX_FLOAT. Note: field not defined in base class.
+		// validate optional field 'aequatorial_angle' of type NX_FLOAT. Note: field not defined in base class.
 		final ILazyDataset aequatorial_angle = group.getLazyDataset("aequatorial_angle");
-		validateFieldNotNull("aequatorial_angle", aequatorial_angle);
-		if (aequatorial_angle != null) {
+				if (aequatorial_angle != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("aequatorial_angle", aequatorial_angle, NX_FLOAT);
 			validateFieldUnits("aequatorial_angle", group.getDataNode("aequatorial_angle"), NX_ANGLE);
 		}
 
-		// validate field 'beam_center_x' of type NX_FLOAT.
+		// validate optional field 'beam_center_x' of type NX_FLOAT.
 		final ILazyDataset beam_center_x = group.getLazyDataset("beam_center_x");
-		validateFieldNotNull("beam_center_x", beam_center_x);
-		if (beam_center_x != null) {
+				if (beam_center_x != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("beam_center_x", beam_center_x, NX_FLOAT);
 			validateFieldUnits("beam_center_x", group.getDataNode("beam_center_x"), NX_LENGTH);
 		}
 
-		// validate field 'beam_center_y' of type NX_FLOAT.
+		// validate optional field 'beam_center_y' of type NX_FLOAT.
 		final ILazyDataset beam_center_y = group.getLazyDataset("beam_center_y");
-		validateFieldNotNull("beam_center_y", beam_center_y);
-		if (beam_center_y != null) {
+				if (beam_center_y != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("beam_center_y", beam_center_y, NX_FLOAT);
 			validateFieldUnits("beam_center_y", group.getDataNode("beam_center_y"), NX_LENGTH);
@@ -396,11 +419,11 @@ public class NXsasValidator extends AbstractNexusValidator implements NexusAppli
 	}
 
 	/**
-	 * Validate group 'sample' of type NXsample.
+	 * Validate optional unnamed group of type NXsample.
 	 */
-	private void validateGroup_NXentry_sample(final NXsample group) {
+	private void validateGroup_NXentry_NXsample(final NXsample group) {
 		// validate that the group is not null
-		if (!(validateGroupNotNull("sample", NXsample.class, group))) return;
+		if (!(validateGroupNotNull(null, NXsample.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'name' of type NX_CHAR.
@@ -411,10 +434,9 @@ public class NXsasValidator extends AbstractNexusValidator implements NexusAppli
 			validateFieldType("name", name, NX_CHAR);
 		}
 
-		// validate field 'aequatorial_angle' of type NX_FLOAT. Note: field not defined in base class.
+		// validate optional field 'aequatorial_angle' of type NX_FLOAT. Note: field not defined in base class.
 		final ILazyDataset aequatorial_angle = group.getLazyDataset("aequatorial_angle");
-		validateFieldNotNull("aequatorial_angle", aequatorial_angle);
-		if (aequatorial_angle != null) {
+				if (aequatorial_angle != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("aequatorial_angle", aequatorial_angle, NX_FLOAT);
 			validateFieldUnits("aequatorial_angle", group.getDataNode("aequatorial_angle"), NX_ANGLE);
@@ -422,11 +444,11 @@ public class NXsasValidator extends AbstractNexusValidator implements NexusAppli
 	}
 
 	/**
-	 * Validate group 'control' of type NXmonitor.
+	 * Validate optional unnamed group of type NXmonitor.
 	 */
-	private void validateGroup_NXentry_control(final NXmonitor group) {
+	private void validateGroup_NXentry_NXmonitor(final NXmonitor group) {
 		// validate that the group is not null
-		if (!(validateGroupNotNull("control", NXmonitor.class, group))) return;
+		if (!(validateGroupNotNull(null, NXmonitor.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
 
 		// validate field 'mode' of type NX_CHAR.
@@ -460,12 +482,21 @@ public class NXsasValidator extends AbstractNexusValidator implements NexusAppli
 	}
 
 	/**
-	 * Validate group 'data' of type NXdata.
+	 * Validate unnamed group of type NXdata.
 	 */
-	private void validateGroup_NXentry_data(final NXdata group) {
+	private void validateGroup_NXentry_NXdata(final NXdata group) {
 		// validate that the group is not null
-		if (!(validateGroupNotNull("data", NXdata.class, group))) return;
+		if (!(validateGroupNotNull(null, NXdata.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
+
+		// validate optional attribute 'signal' of type NX_CHAR.
+		final Attribute signal_attr = group.getAttribute("signal");
+		if (signal_attr != null) {
+			// validate any properties of this attribute specified in the NXDL file: type, enumeration
+			validateAttributeType("signal", signal_attr, NX_CHAR);
+			validateAttributeEnumeration("signal", signal_attr,
+					"data");
+		}
 
 		// validate link 'data' to location '/NXentry/NXinstrument/NXdetector/data
 		final DataNode data = group.getDataNode("data");

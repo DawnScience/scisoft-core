@@ -230,7 +230,7 @@ public class NXarpesValidator extends AbstractNexusValidator implements NexusApp
 			validateFieldType("data", data, NX_NUMBER);
 			validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
 			validateFieldRank("data", data, 4);
-			validateFieldDimensions("data", data, "NXdetector", "np", "i", "j", "tof");
+			validateFieldDimensions("data", data, "NXdetector", "nP", "i", "j", "tof");
 		}
 
 		// validate field 'lens_mode' of type NX_CHAR. Note: field not defined in base class.
@@ -272,30 +272,30 @@ public class NXarpesValidator extends AbstractNexusValidator implements NexusApp
 			validateFieldUnits("entrance_slit_setting", group.getDataNode("entrance_slit_setting"), NX_ANY);
 		}
 
-		// validate field 'entrance_slit_size' of type NX_CHAR. Note: field not defined in base class.
+		// validate field 'entrance_slit_size' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset entrance_slit_size = group.getLazyDataset("entrance_slit_size");
 		validateFieldNotNull("entrance_slit_size", entrance_slit_size);
 		if (entrance_slit_size != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-			validateFieldType("entrance_slit_size", entrance_slit_size, NX_CHAR);
+			validateFieldType("entrance_slit_size", entrance_slit_size, NX_NUMBER);
 			validateFieldUnits("entrance_slit_size", group.getDataNode("entrance_slit_size"), NX_LENGTH);
 		}
 
-		// validate field 'pass_energy' of type NX_CHAR. Note: field not defined in base class.
+		// validate field 'pass_energy' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset pass_energy = group.getLazyDataset("pass_energy");
 		validateFieldNotNull("pass_energy", pass_energy);
 		if (pass_energy != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-			validateFieldType("pass_energy", pass_energy, NX_CHAR);
+			validateFieldType("pass_energy", pass_energy, NX_NUMBER);
 			validateFieldUnits("pass_energy", group.getDataNode("pass_energy"), NX_ENERGY);
 		}
 
-		// validate field 'time_per_channel' of type NX_CHAR. Note: field not defined in base class.
+		// validate field 'time_per_channel' of type NX_NUMBER. Note: field not defined in base class.
 		final ILazyDataset time_per_channel = group.getLazyDataset("time_per_channel");
 		validateFieldNotNull("time_per_channel", time_per_channel);
 		if (time_per_channel != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
-			validateFieldType("time_per_channel", time_per_channel, NX_CHAR);
+			validateFieldType("time_per_channel", time_per_channel, NX_NUMBER);
 			validateFieldUnits("time_per_channel", group.getDataNode("time_per_channel"), NX_TIME);
 		}
 

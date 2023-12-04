@@ -116,7 +116,7 @@ public class NXxrotValidator extends AbstractNexusValidator implements NexusAppl
 			validateFieldType("polar_angle", polar_angle, NX_FLOAT);
 			validateFieldUnits("polar_angle", group.getDataNode("polar_angle"), NX_ANGLE);
 			validateFieldRank("polar_angle", polar_angle, 3);
-			validateFieldDimensions("polar_angle", polar_angle, "NXdetector", "np", "i", "j");
+			validateFieldDimensions("polar_angle", polar_angle, "NXdetector", "nP", "i", "j");
 		}
 
 		// validate field 'beam_center_x' of type NX_FLOAT.

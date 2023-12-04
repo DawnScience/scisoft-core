@@ -539,7 +539,7 @@
 	<xsl:param name="dataNodeName"/>
 		return setString(<xsl:value-of select="$dataNodeName"/>, <xsl:value-of select="$fieldName"/>Value);</xsl:template>
 		
-<xsl:template mode="setScalarMethod" match="nx:field[matches(@type, 'NX_(INT|POSINT|UNIT|FLOAT|NUMBER|BOOLEAN|BINARY)')]">
+<xsl:template mode="setScalarMethod" match="nx:field[matches(@type, 'NX_(INT|POSINT|UINT|FLOAT|NUMBER|BOOLEAN|BINARY)')]">
 	<xsl:param name="fieldName"/>
 	<xsl:param name="dataNodeName"/>
 		return setField(<xsl:value-of select="$dataNodeName"/>, <xsl:value-of select="$fieldName"/>Value);</xsl:template>
@@ -703,7 +703,7 @@
 
 <!-- Scalar field types. This is useful where we want to get/set a field as a scalar that is not (yet) marked with nx:scalar -->
 <xsl:template mode="scalarFieldType" match="nx:field[@type='NX_DATE_TIME' or @type='ISO8601']">Date</xsl:template>
-<xsl:template mode="scalarFieldType" match="nx:field[matches(@type, 'NX_(INT|POSINT|UNIT)')]">Long</xsl:template>
+<xsl:template mode="scalarFieldType" match="nx:field[matches(@type, 'NX_(INT|POSINT|UINT)')]">Long</xsl:template>
 <xsl:template mode="scalarFieldType" match="nx:field[@type='NX_FLOAT']">Double</xsl:template>
 <xsl:template mode="scalarFieldType" match="nx:field[@type='NX_NUMBER']">Number</xsl:template>
 <xsl:template mode="scalarFieldType" match="nx:field[@type='NX_BOOLEAN']">Boolean</xsl:template>

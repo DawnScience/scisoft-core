@@ -22,91 +22,142 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * :ref:`NXdata` describes the plottable data and related dimension scales.
+ * The :ref:`NXdata` class is designed to encapsulate all the information required for a set of data to be plotted.
+ * NXdata groups contain plottable data (sometimes referred to as *signals* or *dependent variables*) and their
+ * associated axis coordinates (sometimes referred to as *axes* or *independent variables*).
+ * The actual names of the :ref:`DATA </NXdata/DATA-field>` and :ref:`AXISNAME </NXdata/AXISNAME-field>` fields
+ * can be chosen :ref:`freely <validItemName>`, as indicated by the upper case (this is a common convention in all NeXus classes).
+ * .. note:: ``NXdata`` provides data and coordinates to be plotted but
+ * does not describe how the data is to be plotted or even the dimensionality of the plot.
+ * https://www.nexusformat.org/NIAC2018Minutes.html#nxdata-plottype--attribute
+ * **Signals:**
  * .. index:: plotting
- * It is mandatory that there is at least one :ref:`NXdata` group
- * in each :ref:`NXentry` group.
- * Note that the ``variable`` and ``data``
- * can be defined with different names.
- * The ``signal`` and ``axes`` attributes of the
- * ``data`` group define which items
- * are plottable data and which are *dimension scales*, respectively.
- * :ref:`NXdata` is used to implement one of the basic motivations in NeXus,
- * to provide a default plot for the data of this :ref:`NXentry`. The actual data
- * might be stored in another group and (hard) linked to the :ref:`NXdata` group.
- * * Each :ref:`NXdata` group will define only one data set
- * containing plottable data, dimension scales, and
- * possibly associated standard deviations.
- * Other data sets may be present in the group.
- * * The plottable data may be of arbitrary rank up to a maximum
- * of ``NX_MAXRANK=32``.
- * * The plottable data will be named as the value of
- * the group ``signal`` attribute, such as::
+ * The :ref:`DATA </NXdata/DATA-field>` fields contain the signal values to be plotted. The name of the field
+ * to be used as the *default plot signal* is provided by the :ref:`signal </NXdata@signal-attribute>` attribute.
+ * The names of the fields to be used as *secondary plot signals* are provided by the
+ * :ref:`auxiliary_signals</NXdata@auxiliary_signals-attribute>` attribute.
+ * An example with three signals, one of which being the default
+ * .. code-block::
  * data:NXdata
- * @signal = "counts"
- * @axes = "mr"
- * @mr_indices = 0
- * counts: float[100] --> the default dependent data
- * mr: float[100] --> the default independent data
- * The field named in the ``signal`` attribute **must** exist, either
- * directly as a dataset or defined through a link.
- * * The group ``axes`` attribute will name the
- * *dimension scale* associated with the plottable data.
- * If available, the standard deviations of the data are to be
- * stored in a data set of the same rank and dimensions, with the name ``errors``.
- * * For each data dimension, there should be a one-dimensional array
- * of the same length.
- * * These one-dimensional arrays are the *dimension scales* of the
- * data, *i.e*. the values of the independent variables at which the data
- * is measured, such as scattering angle or energy transfer.
- * .. index:: link
+ * @signal = "data1"
+ * @auxiliary_signals = ["data2", "data3"]
+ * data1: float[10,20,30] --> the default signal
+ * data2: float[10,20,30]
+ * data3: float[10,20,30]
+ * **Axes:**
  * .. index:: axes (attribute)
- * The preferred method to associate each data dimension with
- * its respective dimension scale is to specify the field name
- * of each dimension scale in the group ``axes`` attribute as a string list.
- * Here is an example for a 2-D data set *data* plotted
- * against *time*, and *pressure*. (An additional *temperature* data set
- * is provided and could be selected as an alternate for the *pressure* axis.)::
- * data_2d:NXdata
- * @signal="data"
- * @axes=["time", "pressure"]
- * @pressure_indices=1
- * @temperature_indices=1
- * @time_indices=0
- * data: float[1000,20]
- * pressure: float[20]
- * temperature: float[20]
- * time: float[1000]
- * .. rubric:: Old methods to identify the plottable data
- * There are two older methods of associating
- * each data dimension to its respective dimension scale.
- * Both are now out of date and
- * should not be used when writing new data files.
- * However, client software should expect to see data files
- * written with any of these methods.
- * * One method uses the ``axes``
- * attribute to specify the names of each *dimension scale*.
- * * The oldest method uses the ``axis`` attribute on each
- * *dimension scale* to identify
- * with an integer the axis whose value is the number of the dimension.
- * .. index: !plot; axis label
- * plot, axis units
- * units
- * dimension scale
- * Each axis of the plot may be labeled with information from the
- * dimension scale for that axis. The optional ``@long_name`` attribute
- * is provided as the axis label default. If ``@long_name`` is not
- * defined, then use the name of the dimension scale. A ``@units`` attribute,
- * if available, may be added to the axis label for further description.
- * See the section :ref:`Design-Units` for more information.
- * .. index: !plot; axis title
- * The optional ``title`` field, if available, provides a suggested
- * title for the plot. If no ``title`` field is found in the :ref:`NXdata`
- * group, look for a ``title`` field in the parent :ref:`NXentry` group,
- * with a fallback to displaying the path to the :ref:`NXdata` group.
- * NeXus is about how to find and annotate the data to be plotted
- * but not to describe how the data is to be plotted.
- * (https://www.nexusformat.org/NIAC2018Minutes.html#nxdata-plottype--attribute)
+ * .. index:: coordinates
+ * The :ref:`AXISNAME </NXdata/AXISNAME-field>` fields contain the axis coordinates associated with the data values.
+ * The names of all :ref:`AXISNAME </NXdata/AXISNAME-field>` fields are listed in the
+ * :ref:`axes </NXdata@axes-attribute>` attribute.
+ * `Rank`
+ * :ref:`AXISNAME </NXdata/AXISNAME-field>` fields are typically one-dimensional arrays, which annotate one of the dimensions.
+ * An example of this would be
+ * .. code-block::
+ * data:NXdata
+ * @signal = "data"
+ * @axes = ["x", "y"] --> the order matters
+ * data: float[10,20]
+ * x: float[10] --> coordinates along the first dimension
+ * y: float[20] --> coordinates along the second dimension
+ * In this example each data point ``data[i,j]`` has axis coordinates ``[x[i], y[j]]``.
+ * However, the fields can also have a rank greater than 1, in which case the rank of each
+ * :ref:`AXISNAME </NXdata/AXISNAME-field>` must be equal to the number of data dimensions it spans.
+ * An example of this would be
+ * .. code-block::
+ * data:NXdata
+ * @signal = "data"
+ * @axes = ["x", "y"] --> the order does NOT matter
+ * @x_indices = [0, 1]
+ * @y_indices = [0, 1]
+ * data: float[10,20]
+ * x: float[10,20] --> coordinates along both dimensions
+ * y: float[10,20] --> coordinates along both dimensions
+ * In this example each data point ``data[i,j]`` has axis coordinates ``[x[i,j], y[i,j]]``.
+ * `Dimensions`
+ * The data dimensions annotated by an :ref:`AXISNAME </NXdata/AXISNAME-field>` field are defined by the
+ * :ref:`AXISNAME_indices </NXdata@AXISNAME_indices-attribute>` attribute. When this attribute is missing,
+ * the position(s) of the :ref:`AXISNAME </NXdata/AXISNAME-field>` string in the
+ * :ref:`axes </NXdata@axes-attribute>` attribute are used.
+ * When all :ref:`AXISNAME </NXdata/AXISNAME-field>` fields are one-dimensional, and none of the data dimensions
+ * have more than one axis, the :ref:`AXISNAME_indices </NXdata@AXISNAME_indices-attribute>` attributes
+ * are often omitted. If one of the data dimensions has no :ref:`AXISNAME </NXdata/AXISNAME-field>` field,
+ * the string “.” can be used in the corresponding index of the axes list.
+ * An example of this would be
+ * .. code-block::
+ * data:NXdata
+ * @signal = "data"
+ * @axes = ["x", ".", "z"] --> the order matters
+ * data: float[10,20,30]
+ * x: float[10] --> coordinates along the first dimension
+ * z: float[30] --> coordinates along the third dimension
+ * When using :ref:`AXISNAME_indices </NXdata@AXISNAME_indices-attribute>` this becomes
+ * .. code-block::
+ * data:NXdata
+ * @signal = "data"
+ * @axes = ["x", "z"] --> the order does NOT matter
+ * data: float[10,20,30]
+ * @x_indices = 0
+ * @z_indices = 2
+ * x: float[10] --> coordinates along the first dimension
+ * z: float[30] --> coordinates along the third dimension
+ * When providing :ref:`AXISNAME_indices </NXdata@AXISNAME_indices-attribute>` attributes it is recommended
+ * to do it for all axes.
+ * `Non-trivial axes`
+ * What follows are two examples where :ref:`AXISNAME_indices </NXdata@AXISNAME_indices-attribute>` attributes
+ * cannot be omitted.
+ * The first is an example where data dimensions have alternative axis coordinates. The NXdata group represents
+ * a stack of images collected at different energies. The ``wavelength`` is an alternative axis of ``energy``
+ * for the last dimension (or vice versa).
+ * .. code-block::
+ * data:NXdata
+ * @signal = "data"
+ * @axes = ["x", "y", "energy", "wavelength"] --> the order does NOT matter
+ * @x_indices = 0
+ * @y_indices = 1
+ * @energy_indices = 2
+ * @wavelength_indices = 2
+ * data: float[10,20,30]
+ * x: float[10] --> coordinates along the first dimension
+ * y: float[20] --> coordinates along the second dimension
+ * energy: float[30] --> coordinates along the third dimension
+ * wavelength: float[30] --> coordinates along the third dimension
+ * The second is an example with coordinates that span more than one dimension. The NXdata group represents data
+ * from 2D mesh scans performed at multiple energies. Each data point ``data[i,j,k]`` has axis coordinates
+ * ``[x[i,j,k], y[i,j,k], energy[k]]``.
+ * .. code-block::
+ * data:NXdata
+ * @signal = "data"
+ * @axes = ["x", "y", "energy"] --> the order does NOT matter
+ * @x_indices = [0, 1, 2]
+ * @y_indices = [0, 1, 2]
+ * @energy_indices = 2
+ * data: float[10,20,30]
+ * x: float[10,20,30] --> coordinates along all dimensions
+ * y: float[10,20,30] --> coordinates along all dimensions
+ * energy: float[30] --> coordinates along the third dimension
+ * **Uncertainties:**
+ * Standard deviations on data values as well as coordinates can be provided by
+ * :ref:`FIELDNAME_errors </NXdata/FIELDNAME_errors-field>` fields where ``FIELDNAME`` is the name of a
+ * :ref:`DATA </NXdata/DATA-field>` field or an :ref:`AXISNAME </NXdata/AXISNAME-field>` field.
+ * An example of uncertainties on the signal, auxiliary signals and axis coordinates
+ * .. code-block::
+ * data:NXdata
+ * @signal = "data1"
+ * @auxiliary_signals = ["data2", "data3"]
+ * @axes = ["x", "z"]
+ * @x_indices = 0
+ * @z_indices = 2
+ * data1: float[10,20,30]
+ * data2: float[10,20,30]
+ * data3: float[10,20,30]
+ * x: float[10]
+ * z: float[30]
+ * data1_errors: float[10,20,30]
+ * data2_errors: float[10,20,30]
+ * data3_errors: float[10,20,30]
+ * x_errors: float[10]
+ * z_errors: float[30]
  * 
  */
 public class NXdataImpl extends NXobjectImpl implements NXdata {
@@ -141,6 +192,16 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	
 
 	@Override
+	public String getAttributeSignal() {
+		return getAttrString(null, NX_ATTRIBUTE_SIGNAL);
+	}
+
+	@Override
+	public void setAttributeSignal(String signalValue) {
+		setAttribute(null, NX_ATTRIBUTE_SIGNAL, signalValue);
+	}
+
+	@Override
 	public String getAttributeAuxiliary_signals() {
 		return getAttrString(null, NX_ATTRIBUTE_AUXILIARY_SIGNALS);
 	}
@@ -151,13 +212,13 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	}
 
 	@Override
-	public String getAttributeSignal() {
-		return getAttrString(null, NX_ATTRIBUTE_SIGNAL);
+	public Long getAttributeIndices(String axisname) {
+		return getAttrLong(null, axisname + NX_ATTRIBUTE_INDICES);
 	}
 
 	@Override
-	public void setAttributeSignal(String signalValue) {
-		setAttribute(null, NX_ATTRIBUTE_SIGNAL, signalValue);
+	public void setAttributeIndices(String axisname, Long indicesValue) {
+		setAttribute(null, axisname + NX_ATTRIBUTE_INDICES, indicesValue);
 	}
 
 	@Override
@@ -171,115 +232,90 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	}
 
 	@Override
-	public String getAttributeIndices(String axisname) {
-		return getAttrString(null, axisname + NX_ATTRIBUTE_INDICES);
+	public IDataset getAxisname(String axisname) {
+		return getDataset(axisname);
 	}
 
 	@Override
-	public void setAttributeIndices(String axisname, String indicesValue) {
-		setAttribute(null, axisname + NX_ATTRIBUTE_INDICES, indicesValue);
+	public Number getAxisnameScalar(String axisname) {
+		return getNumber(axisname);
 	}
 
 	@Override
-	public IDataset getVariable(String variable) {
-		return getDataset(variable);
+	public DataNode setAxisname(String axisname, IDataset axisnameDataset) {
+		return setDataset(axisname, axisnameDataset);
 	}
 
 	@Override
-	public Number getVariableScalar(String variable) {
-		return getNumber(variable);
+	public DataNode setAxisnameScalar(String axisname, Number axisnameValue) {
+		return setField(axisname, axisnameValue);
 	}
 
 	@Override
-	public DataNode setVariable(String variable, IDataset variableDataset) {
-		return setDataset(variable, variableDataset);
-	}
-
-	@Override
-	public DataNode setVariableScalar(String variable, Number variableValue) {
-		return setField(variable, variableValue);
-	}
-
-	@Override
-	public Map<String, IDataset> getAllVariable() {
+	public Map<String, IDataset> getAllAxisname() {
 		return getAllDatasets(); // note: returns all datasets in the group!
 	}
 
 	@Override
-	public String getVariableAttributeLong_name(String variable) {
-		return getAttrString(variable, NX_VARIABLE_ATTRIBUTE_LONG_NAME);
+	public String getAxisnameAttributeLong_name(String axisname) {
+		return getAttrString(axisname, NX_AXISNAME_ATTRIBUTE_LONG_NAME);
 	}
 
 	@Override
-	public void setVariableAttributeLong_name(String variable, String long_nameValue) {
-		setAttribute(variable, NX_VARIABLE_ATTRIBUTE_LONG_NAME, long_nameValue);
+	public void setAxisnameAttributeLong_name(String axisname, String long_nameValue) {
+		setAttribute(axisname, NX_AXISNAME_ATTRIBUTE_LONG_NAME, long_nameValue);
 	}
 
 	@Override
-	public Boolean getVariableAttributeDistribution(String variable) {
-		return getAttrBoolean(variable, NX_VARIABLE_ATTRIBUTE_DISTRIBUTION);
+	public String getAxisnameAttributeUnits(String axisname) {
+		return getAttrString(axisname, NX_AXISNAME_ATTRIBUTE_UNITS);
 	}
 
 	@Override
-	public void setVariableAttributeDistribution(String variable, Boolean distributionValue) {
-		setAttribute(variable, NX_VARIABLE_ATTRIBUTE_DISTRIBUTION, distributionValue);
+	public void setAxisnameAttributeUnits(String axisname, String unitsValue) {
+		setAttribute(axisname, NX_AXISNAME_ATTRIBUTE_UNITS, unitsValue);
 	}
 
 	@Override
-	public Long getVariableAttributeFirst_good(String variable) {
-		return getAttrLong(variable, NX_VARIABLE_ATTRIBUTE_FIRST_GOOD);
+	public Boolean getAxisnameAttributeDistribution(String axisname) {
+		return getAttrBoolean(axisname, NX_AXISNAME_ATTRIBUTE_DISTRIBUTION);
 	}
 
 	@Override
-	public void setVariableAttributeFirst_good(String variable, Long first_goodValue) {
-		setAttribute(variable, NX_VARIABLE_ATTRIBUTE_FIRST_GOOD, first_goodValue);
+	public void setAxisnameAttributeDistribution(String axisname, Boolean distributionValue) {
+		setAttribute(axisname, NX_AXISNAME_ATTRIBUTE_DISTRIBUTION, distributionValue);
 	}
 
 	@Override
-	public Long getVariableAttributeLast_good(String variable) {
-		return getAttrLong(variable, NX_VARIABLE_ATTRIBUTE_LAST_GOOD);
+	public Long getAxisnameAttributeFirst_good(String axisname) {
+		return getAttrLong(axisname, NX_AXISNAME_ATTRIBUTE_FIRST_GOOD);
 	}
 
 	@Override
-	public void setVariableAttributeLast_good(String variable, Long last_goodValue) {
-		setAttribute(variable, NX_VARIABLE_ATTRIBUTE_LAST_GOOD, last_goodValue);
+	public void setAxisnameAttributeFirst_good(String axisname, Long first_goodValue) {
+		setAttribute(axisname, NX_AXISNAME_ATTRIBUTE_FIRST_GOOD, first_goodValue);
+	}
+
+	@Override
+	public Long getAxisnameAttributeLast_good(String axisname) {
+		return getAttrLong(axisname, NX_AXISNAME_ATTRIBUTE_LAST_GOOD);
+	}
+
+	@Override
+	public void setAxisnameAttributeLast_good(String axisname, Long last_goodValue) {
+		setAttribute(axisname, NX_AXISNAME_ATTRIBUTE_LAST_GOOD, last_goodValue);
 	}
 
 	@Override
 	@Deprecated
-	public Long getVariableAttributeAxis(String variable) {
-		return getAttrLong(variable, NX_VARIABLE_ATTRIBUTE_AXIS);
+	public Long getAxisnameAttributeAxis(String axisname) {
+		return getAttrLong(axisname, NX_AXISNAME_ATTRIBUTE_AXIS);
 	}
 
 	@Override
 	@Deprecated
-	public void setVariableAttributeAxis(String variable, Long axisValue) {
-		setAttribute(variable, NX_VARIABLE_ATTRIBUTE_AXIS, axisValue);
-	}
-
-	@Override
-	public IDataset getErrors(String variable) {
-		return getDataset(variable + NX_ERRORS_SUFFIX);
-	}
-
-	@Override
-	public Number getErrorsScalar(String variable) {
-		return getNumber(variable + NX_ERRORS_SUFFIX);
-	}
-
-	@Override
-	public DataNode setErrors(String variable, IDataset errorsDataset) {
-		return setDataset(variable + NX_ERRORS_SUFFIX, errorsDataset);
-	}
-
-	@Override
-	public DataNode setErrorsScalar(String variable, Number errorsValue) {
-		return setField(variable + NX_ERRORS_SUFFIX, errorsValue);
-	}
-
-	@Override
-	public Map<String, IDataset> getAllErrors() {
-		return getAllDatasets(); // note: returns all datasets in the group!
+	public void setAxisnameAttributeAxis(String axisname, Long axisValue) {
+		setAttribute(axisname, NX_AXISNAME_ATTRIBUTE_AXIS, axisValue);
 	}
 
 	@Override
@@ -342,21 +378,50 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	}
 
 	@Override
+	public IDataset getErrors(String fieldname) {
+		return getDataset(fieldname + NX_ERRORS_SUFFIX);
+	}
+
+	@Override
+	public Number getErrorsScalar(String fieldname) {
+		return getNumber(fieldname + NX_ERRORS_SUFFIX);
+	}
+
+	@Override
+	public DataNode setErrors(String fieldname, IDataset errorsDataset) {
+		return setDataset(fieldname + NX_ERRORS_SUFFIX, errorsDataset);
+	}
+
+	@Override
+	public DataNode setErrorsScalar(String fieldname, Number errorsValue) {
+		return setField(fieldname + NX_ERRORS_SUFFIX, errorsValue);
+	}
+
+	@Override
+	public Map<String, IDataset> getAllErrors() {
+		return getAllDatasets(); // note: returns all datasets in the group!
+	}
+
+	@Override
+	@Deprecated
 	public IDataset getErrors() {
 		return getDataset(NX_ERRORS);
 	}
 
 	@Override
+	@Deprecated
 	public Number getErrorsScalar() {
 		return getNumber(NX_ERRORS);
 	}
 
 	@Override
+	@Deprecated
 	public DataNode setErrors(IDataset errorsDataset) {
 		return setDataset(NX_ERRORS, errorsDataset);
 	}
 
 	@Override
+	@Deprecated
 	public DataNode setErrorsScalar(Number errorsValue) {
 		return setField(NX_ERRORS, errorsValue);
 	}

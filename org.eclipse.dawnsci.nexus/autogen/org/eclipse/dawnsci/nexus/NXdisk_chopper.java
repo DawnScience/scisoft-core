@@ -54,6 +54,7 @@ public interface NXdisk_chopper extends NXobject {
 	public static final String NX_DISTANCE = "distance";
 	public static final String NX_WAVELENGTH_RANGE = "wavelength_range";
 	public static final String NX_ATTRIBUTE_DEFAULT = "default";
+	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
 	 * Type of the disk-chopper: only one from the enumerated list (match text exactly)
 	 * <p>
@@ -687,7 +688,8 @@ public interface NXdisk_chopper extends NXobject {
 	public DataNode setRatioScalar(Long ratioValue);
 
 	/**
-	 * Effective distance to the origin
+	 * Effective distance to the origin.
+	 * Note, it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
@@ -698,7 +700,8 @@ public interface NXdisk_chopper extends NXobject {
 	public IDataset getDistance();
 	
 	/**
-	 * Effective distance to the origin
+	 * Effective distance to the origin.
+	 * Note, it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
@@ -709,7 +712,8 @@ public interface NXdisk_chopper extends NXobject {
 	public DataNode setDistance(IDataset distanceDataset);
 
 	/**
-	 * Effective distance to the origin
+	 * Effective distance to the origin.
+	 * Note, it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
@@ -720,7 +724,8 @@ public interface NXdisk_chopper extends NXobject {
 	public Double getDistanceScalar();
 
 	/**
-	 * Effective distance to the origin
+	 * Effective distance to the origin.
+	 * Note, it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
@@ -780,14 +785,18 @@ public interface NXdisk_chopper extends NXobject {
 
 	/**
 	 * 
+	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the chopper and NXoff_geometry to describe its shape instead
 	 * @return  the value.
 	 */
+	@Deprecated
 	public NXgeometry getGeometry();
 	
 	/**
 	 * 
+	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the chopper and NXoff_geometry to describe its shape instead
 	 * @param geometryGroup the geometryGroup
 	 */
+	@Deprecated
 	public void setGeometry(NXgeometry geometryGroup);
 
 	/**
@@ -796,9 +805,11 @@ public interface NXdisk_chopper extends NXobject {
 	 * <li></li>
 	 * </ul>
 	 * 
+	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the chopper and NXoff_geometry to describe its shape instead
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXgeometry for that node.
 	 */
+	@Deprecated
 	public NXgeometry getGeometry(String name);
 	
 	/**
@@ -807,9 +818,11 @@ public interface NXdisk_chopper extends NXobject {
 	 * <li></li>
 	 * </ul>
 	 * 
+	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the chopper and NXoff_geometry to describe its shape instead
 	 * @param name the name of the node
 	 * @param geometry the value to set
 	 */
+	@Deprecated
 	public void setGeometry(String name, NXgeometry geometry);
 	
 	/**
@@ -818,8 +831,10 @@ public interface NXdisk_chopper extends NXobject {
 	 * <li></li>
 	 * </ul>
 	 * 
+	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the chopper and NXoff_geometry to describe its shape instead
 	 * @return  a map from node names to the NXgeometry for that node.
 	 */
+	@Deprecated
 	public Map<String, NXgeometry> getAllGeometry();
 	
 	/**
@@ -828,10 +843,74 @@ public interface NXdisk_chopper extends NXobject {
 	 * <li></li>
 	 * </ul>
 	 * 
+	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the chopper and NXoff_geometry to describe its shape instead
 	 * @param geometry the child nodes to add 
 	 */
 	
+	@Deprecated
 	public void setAllGeometry(Map<String, NXgeometry> geometry);
+	
+
+	/**
+	 * This group describes the shape of the beam line component
+	 * 
+	 * @return  the value.
+	 */
+	public NXoff_geometry getOff_geometry();
+	
+	/**
+	 * This group describes the shape of the beam line component
+	 * 
+	 * @param off_geometryGroup the off_geometryGroup
+	 */
+	public void setOff_geometry(NXoff_geometry off_geometryGroup);
+
+	/**
+	 * Get a NXoff_geometry node by name:
+	 * <ul>
+	 * <li>
+	 * This group describes the shape of the beam line component</li>
+	 * </ul>
+	 * 
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXoff_geometry for that node.
+	 */
+	public NXoff_geometry getOff_geometry(String name);
+	
+	/**
+	 * Set a NXoff_geometry node by name:
+	 * <ul>
+	 * <li>
+	 * This group describes the shape of the beam line component</li>
+	 * </ul>
+	 * 
+	 * @param name the name of the node
+	 * @param off_geometry the value to set
+	 */
+	public void setOff_geometry(String name, NXoff_geometry off_geometry);
+	
+	/**
+	 * Get all NXoff_geometry nodes:
+	 * <ul>
+	 * <li>
+	 * This group describes the shape of the beam line component</li>
+	 * </ul>
+	 * 
+	 * @return  a map from node names to the NXoff_geometry for that node.
+	 */
+	public Map<String, NXoff_geometry> getAllOff_geometry();
+	
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li>
+	 * This group describes the shape of the beam line component</li>
+	 * </ul>
+	 * 
+	 * @param off_geometry the child nodes to add 
+	 */
+	
+	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry);
 	
 
 	/**
@@ -859,5 +938,173 @@ public interface NXdisk_chopper extends NXobject {
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);
+
+	/**
+	 * NeXus positions components by applying a set of translations and rotations
+	 * to apply to the component starting from 0, 0, 0. The order of these operations
+	 * is critical and forms what NeXus calls a dependency chain. The depends_on
+	 * field defines the path to the top most operation of the dependency chain or the
+	 * string "." if located in the origin. Usually these operations are stored in a
+	 * NXtransformations group. But NeXus allows them to be stored anywhere.
+	 * The reference plane of the disk chopper includes the surface of the spinning disk which faces
+	 * the source. The reference point in the x and y axis is the point on this surface which is the
+	 * centre of the axle which the disk is spinning around. The reference plane is orthogonal to
+	 * the z axis and its position is the reference point on that axis.
+	 * Note: This reference point in almost all practical cases is not where the beam passes though.
+	 * .. image:: disk_chopper/disk_chopper.png
+	 * :width: 40%
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public IDataset getDepends_on();
+	
+	/**
+	 * NeXus positions components by applying a set of translations and rotations
+	 * to apply to the component starting from 0, 0, 0. The order of these operations
+	 * is critical and forms what NeXus calls a dependency chain. The depends_on
+	 * field defines the path to the top most operation of the dependency chain or the
+	 * string "." if located in the origin. Usually these operations are stored in a
+	 * NXtransformations group. But NeXus allows them to be stored anywhere.
+	 * The reference plane of the disk chopper includes the surface of the spinning disk which faces
+	 * the source. The reference point in the x and y axis is the point on this surface which is the
+	 * centre of the axle which the disk is spinning around. The reference plane is orthogonal to
+	 * the z axis and its position is the reference point on that axis.
+	 * Note: This reference point in almost all practical cases is not where the beam passes though.
+	 * .. image:: disk_chopper/disk_chopper.png
+	 * :width: 40%
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 * 
+	 * @param depends_onDataset the depends_onDataset
+	 */
+	public DataNode setDepends_on(IDataset depends_onDataset);
+
+	/**
+	 * NeXus positions components by applying a set of translations and rotations
+	 * to apply to the component starting from 0, 0, 0. The order of these operations
+	 * is critical and forms what NeXus calls a dependency chain. The depends_on
+	 * field defines the path to the top most operation of the dependency chain or the
+	 * string "." if located in the origin. Usually these operations are stored in a
+	 * NXtransformations group. But NeXus allows them to be stored anywhere.
+	 * The reference plane of the disk chopper includes the surface of the spinning disk which faces
+	 * the source. The reference point in the x and y axis is the point on this surface which is the
+	 * centre of the axle which the disk is spinning around. The reference plane is orthogonal to
+	 * the z axis and its position is the reference point on that axis.
+	 * Note: This reference point in almost all practical cases is not where the beam passes though.
+	 * .. image:: disk_chopper/disk_chopper.png
+	 * :width: 40%
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public String getDepends_onScalar();
+
+	/**
+	 * NeXus positions components by applying a set of translations and rotations
+	 * to apply to the component starting from 0, 0, 0. The order of these operations
+	 * is critical and forms what NeXus calls a dependency chain. The depends_on
+	 * field defines the path to the top most operation of the dependency chain or the
+	 * string "." if located in the origin. Usually these operations are stored in a
+	 * NXtransformations group. But NeXus allows them to be stored anywhere.
+	 * The reference plane of the disk chopper includes the surface of the spinning disk which faces
+	 * the source. The reference point in the x and y axis is the point on this surface which is the
+	 * centre of the axle which the disk is spinning around. The reference plane is orthogonal to
+	 * the z axis and its position is the reference point on that axis.
+	 * Note: This reference point in almost all practical cases is not where the beam passes though.
+	 * .. image:: disk_chopper/disk_chopper.png
+	 * :width: 40%
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 * 
+	 * @param depends_on the depends_on
+	 */
+	public DataNode setDepends_onScalar(String depends_onValue);
+
+	/**
+	 * This is the group recommended for holding the chain of translation
+	 * and rotation operations necessary to position the component within
+	 * the instrument. The dependency chain may however traverse similar groups in
+	 * other component groups.
+	 * 
+	 * @return  the value.
+	 */
+	public NXtransformations getTransformations();
+	
+	/**
+	 * This is the group recommended for holding the chain of translation
+	 * and rotation operations necessary to position the component within
+	 * the instrument. The dependency chain may however traverse similar groups in
+	 * other component groups.
+	 * 
+	 * @param transformationsGroup the transformationsGroup
+	 */
+	public void setTransformations(NXtransformations transformationsGroup);
+
+	/**
+	 * Get a NXtransformations node by name:
+	 * <ul>
+	 * <li>
+	 * This is the group recommended for holding the chain of translation
+	 * and rotation operations necessary to position the component within
+	 * the instrument. The dependency chain may however traverse similar groups in
+	 * other component groups.</li>
+	 * </ul>
+	 * 
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXtransformations for that node.
+	 */
+	public NXtransformations getTransformations(String name);
+	
+	/**
+	 * Set a NXtransformations node by name:
+	 * <ul>
+	 * <li>
+	 * This is the group recommended for holding the chain of translation
+	 * and rotation operations necessary to position the component within
+	 * the instrument. The dependency chain may however traverse similar groups in
+	 * other component groups.</li>
+	 * </ul>
+	 * 
+	 * @param name the name of the node
+	 * @param transformations the value to set
+	 */
+	public void setTransformations(String name, NXtransformations transformations);
+	
+	/**
+	 * Get all NXtransformations nodes:
+	 * <ul>
+	 * <li>
+	 * This is the group recommended for holding the chain of translation
+	 * and rotation operations necessary to position the component within
+	 * the instrument. The dependency chain may however traverse similar groups in
+	 * other component groups.</li>
+	 * </ul>
+	 * 
+	 * @return  a map from node names to the NXtransformations for that node.
+	 */
+	public Map<String, NXtransformations> getAllTransformations();
+	
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li>
+	 * This is the group recommended for holding the chain of translation
+	 * and rotation operations necessary to position the component within
+	 * the instrument. The dependency chain may however traverse similar groups in
+	 * other component groups.</li>
+	 * </ul>
+	 * 
+	 * @param transformations the child nodes to add 
+	 */
+	
+	public void setAllTransformations(Map<String, NXtransformations> transformations);
+	
 
 }

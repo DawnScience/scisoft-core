@@ -16,8 +16,7 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.january.dataset.IDataset;
 
 /**
- * constructive solid geometry NeXus class, using :ref:`NXquadric`
- * and :ref:`NXoff_geometry`.
+ * Constructive Solid Geometry base class, using :ref:`NXquadric` and :ref:`NXoff_geometry`
  * 
  */
 public interface NXcsg extends NXobject {

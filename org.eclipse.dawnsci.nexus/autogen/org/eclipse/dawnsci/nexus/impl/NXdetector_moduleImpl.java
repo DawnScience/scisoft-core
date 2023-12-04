@@ -310,6 +310,26 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
+	public IDataset getDepends_on() {
+		return getDataset(NX_DEPENDS_ON);
+	}
+
+	@Override
+	public String getDepends_onScalar() {
+		return getString(NX_DEPENDS_ON);
+	}
+
+	@Override
+	public DataNode setDepends_on(IDataset depends_onDataset) {
+		return setDataset(NX_DEPENDS_ON, depends_onDataset);
+	}
+
+	@Override
+	public DataNode setDepends_onScalar(String depends_onValue) {
+		return setString(NX_DEPENDS_ON, depends_onValue);
+	}
+
+	@Override
 	public String getAttributeDefault() {
 		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
 	}

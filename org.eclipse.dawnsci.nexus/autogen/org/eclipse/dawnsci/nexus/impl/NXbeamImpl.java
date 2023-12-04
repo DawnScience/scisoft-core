@@ -23,13 +23,18 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * Properties of the neutron or X-ray beam at a given location.
- * It will be referenced
- * by beamline component groups within the :ref:`NXinstrument` group or by the :ref:`NXsample` group. Note
- * that variables such as the incident energy could be scalar values or arrays. This group is
+ * This group is intended to be referenced
+ * by beamline component groups within the :ref:`NXinstrument` group or by the :ref:`NXsample` group. This group is
  * especially valuable in storing the results of instrument simulations in which it is useful
  * to specify the beam profile, time distribution etc. at each beamline component. Otherwise,
  * its most likely use is in the :ref:`NXsample` group in which it defines the results of the neutron
- * scattering by the sample, e.g., energy transfer, polarizations.
+ * scattering by the sample, e.g., energy transfer, polarizations. Finally, There are cases where the beam is
+ * considered as a beamline component and this group may be defined as a subgroup directly inside
+ * :ref:`NXinstrument`, in which case it is recommended that the position of the beam is specified by an
+ * :ref:`NXtransformations` group, unless the beam is at the origin (which is the sample).
+ * Note that incident_wavelength and related fields can be a scalar values or arrays, depending on the use case.
+ * To support these use cases, the explicit dimensionality of these fields is not specified, but it can be inferred
+ * by the presense of and shape of accompanying fields, such as incident_wavelength_weights for a polychromatic beam.
  * 
  */
 public class NXbeamImpl extends NXobjectImpl implements NXbeam {
@@ -38,7 +43,8 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_DATA);
+		NexusBaseClass.NX_DATA,
+		NexusBaseClass.NX_TRANSFORMATIONS);
 
 	public NXbeamImpl() {
 		super();
@@ -165,6 +171,26 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
+	public IDataset getIncident_wavelength_weights() {
+		return getDataset(NX_INCIDENT_WAVELENGTH_WEIGHTS);
+	}
+
+	@Override
+	public Double getIncident_wavelength_weightsScalar() {
+		return getDouble(NX_INCIDENT_WAVELENGTH_WEIGHTS);
+	}
+
+	@Override
+	public DataNode setIncident_wavelength_weights(IDataset incident_wavelength_weightsDataset) {
+		return setDataset(NX_INCIDENT_WAVELENGTH_WEIGHTS, incident_wavelength_weightsDataset);
+	}
+
+	@Override
+	public DataNode setIncident_wavelength_weightsScalar(Double incident_wavelength_weightsValue) {
+		return setField(NX_INCIDENT_WAVELENGTH_WEIGHTS, incident_wavelength_weightsValue);
+	}
+
+	@Override
 	public IDataset getIncident_wavelength_spread() {
 		return getDataset(NX_INCIDENT_WAVELENGTH_SPREAD);
 	}
@@ -250,8 +276,8 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public Double getIncident_polarizationScalar() {
-		return getDouble(NX_INCIDENT_POLARIZATION);
+	public Number getIncident_polarizationScalar() {
+		return getNumber(NX_INCIDENT_POLARIZATION);
 	}
 
 	@Override
@@ -260,7 +286,7 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public DataNode setIncident_polarizationScalar(Double incident_polarizationValue) {
+	public DataNode setIncident_polarizationScalar(Number incident_polarizationValue) {
 		return setField(NX_INCIDENT_POLARIZATION, incident_polarizationValue);
 	}
 
@@ -270,8 +296,8 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public Double getFinal_polarizationScalar() {
-		return getDouble(NX_FINAL_POLARIZATION);
+	public Number getFinal_polarizationScalar() {
+		return getNumber(NX_FINAL_POLARIZATION);
 	}
 
 	@Override
@@ -280,8 +306,48 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public DataNode setFinal_polarizationScalar(Double final_polarizationValue) {
+	public DataNode setFinal_polarizationScalar(Number final_polarizationValue) {
 		return setField(NX_FINAL_POLARIZATION, final_polarizationValue);
+	}
+
+	@Override
+	public IDataset getIncident_polarization_stokes() {
+		return getDataset(NX_INCIDENT_POLARIZATION_STOKES);
+	}
+
+	@Override
+	public Number getIncident_polarization_stokesScalar() {
+		return getNumber(NX_INCIDENT_POLARIZATION_STOKES);
+	}
+
+	@Override
+	public DataNode setIncident_polarization_stokes(IDataset incident_polarization_stokesDataset) {
+		return setDataset(NX_INCIDENT_POLARIZATION_STOKES, incident_polarization_stokesDataset);
+	}
+
+	@Override
+	public DataNode setIncident_polarization_stokesScalar(Number incident_polarization_stokesValue) {
+		return setField(NX_INCIDENT_POLARIZATION_STOKES, incident_polarization_stokesValue);
+	}
+
+	@Override
+	public IDataset getFinal_polarization_stokes() {
+		return getDataset(NX_FINAL_POLARIZATION_STOKES);
+	}
+
+	@Override
+	public Number getFinal_polarization_stokesScalar() {
+		return getNumber(NX_FINAL_POLARIZATION_STOKES);
+	}
+
+	@Override
+	public DataNode setFinal_polarization_stokes(IDataset final_polarization_stokesDataset) {
+		return setDataset(NX_FINAL_POLARIZATION_STOKES, final_polarization_stokesDataset);
+	}
+
+	@Override
+	public DataNode setFinal_polarization_stokesScalar(Number final_polarization_stokesValue) {
+		return setField(NX_FINAL_POLARIZATION_STOKES, final_polarization_stokesValue);
 	}
 
 	@Override
@@ -383,6 +449,57 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	@Override
 	public void setAttributeDefault(String defaultValue) {
 		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
+	}
+
+	@Override
+	public IDataset getDepends_on() {
+		return getDataset(NX_DEPENDS_ON);
+	}
+
+	@Override
+	public String getDepends_onScalar() {
+		return getString(NX_DEPENDS_ON);
+	}
+
+	@Override
+	public DataNode setDepends_on(IDataset depends_onDataset) {
+		return setDataset(NX_DEPENDS_ON, depends_onDataset);
+	}
+
+	@Override
+	public DataNode setDepends_onScalar(String depends_onValue) {
+		return setString(NX_DEPENDS_ON, depends_onValue);
+	}
+
+	@Override
+	public NXtransformations getTransformations() {
+		// dataNodeName = NX_TRANSFORMATIONS
+		return getChild("transformations", NXtransformations.class);
+	}
+
+	@Override
+	public void setTransformations(NXtransformations transformationsGroup) {
+		putChild("transformations", transformationsGroup);
+	}
+
+	@Override
+	public NXtransformations getTransformations(String name) {
+		return getChild(name, NXtransformations.class);
+	}
+
+	@Override
+	public void setTransformations(String name, NXtransformations transformations) {
+		putChild(name, transformations);
+	}
+
+	@Override
+	public Map<String, NXtransformations> getAllTransformations() {
+		return getChildren(NXtransformations.class);
+	}
+	
+	@Override
+	public void setAllTransformations(Map<String, NXtransformations> transformations) {
+		setChildren(transformations);
 	}
 
 }

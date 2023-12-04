@@ -26,7 +26,8 @@ import org.eclipse.january.dataset.IDataset;
  * A nested sequence of transformations lists the translation and rotation steps
  * needed to describe the position and orientation of any movable or fixed device.
  * There will be one or more transformations (axes) defined by one or more fields
- * for each transformation. The all-caps name ``AXISNAME`` designates the
+ * for each transformation. Transformations can also be described by NXlog groups when
+ * the values change with time. The all-caps name ``AXISNAME`` designates the
  * particular axis generating a transformation (e.g. a rotation axis or a translation
  * axis or a general axis). The attribute ``units="NX_TRANSFORMATION"`` designates the
  * units will be appropriate to the ``transformation_type`` attribute:
@@ -60,8 +61,19 @@ import org.eclipse.january.dataset.IDataset;
  * transformations for a diffractometer (goniometer). Such use is mentioned
  * in the ``NXinstrument`` base class. Use one ``NXtransformations`` group
  * for each diffractometer and name the group appropriate to the device.
- * Collecting the motors of a sample table or xyz-stage in an NXtransformation
+ * Collecting the motors of a sample table or xyz-stage in an NXtransformations
  * group is equally possible.
+ * Following the section on the general dscription of axis in NXtransformations is a section which
+ * documents the fields commonly used within NeXus for positioning purposes and their meaning. Whenever
+ * there is a need for positioning a beam line component please use the existing names. Use as many fields
+ * as needed in order to position the component. Feel free to add more axis if required. In the description
+ * given below, only those atttributes which are defined through the name are spcified. Add the other attributes
+ * of the full set:
+ * * vector
+ * * offset
+ * * transformation_type
+ * * depends_on
+ * as needed.
  * 
  */
 public interface NXtransformations extends NXobject {
@@ -72,6 +84,7 @@ public interface NXtransformations extends NXobject {
 	public static final String NX_AXISNAME_ATTRIBUTE_OFFSET = "offset";
 	public static final String NX_AXISNAME_ATTRIBUTE_OFFSET_UNITS = "offset_units";
 	public static final String NX_AXISNAME_ATTRIBUTE_DEPENDS_ON = "depends_on";
+	public static final String NX_AXISNAME_ATTRIBUTE_EQUIPMENT_COMPONENT = "equipment_component";
 	public static final String NX_END_SUFFIX = "end";
 	public static final String NX_INCREMENT_SET_SUFFIX = "increment_set";
 	public static final String NX_ATTRIBUTE_DEFAULT = "default";
@@ -175,7 +188,8 @@ public interface NXtransformations extends NXobject {
 	 * If this attribute is omitted, this is an axis for which there
 	 * is no motion to be specifies, such as the direction of gravity,
 	 * or the direction to the source, or a basis vector of a
-	 * coordinate frame.
+	 * coordinate frame. In this case the value of the ``AXISNAME`` field
+	 * is not used and can be set to the number ``NaN``.
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>translation</b> </li>
@@ -194,7 +208,8 @@ public interface NXtransformations extends NXobject {
 	 * If this attribute is omitted, this is an axis for which there
 	 * is no motion to be specifies, such as the direction of gravity,
 	 * or the direction to the source, or a basis vector of a
-	 * coordinate frame.
+	 * coordinate frame. In this case the value of the ``AXISNAME`` field
+	 * is not used and can be set to the number ``NaN``.
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>translation</b> </li>
@@ -303,6 +318,30 @@ public interface NXtransformations extends NXobject {
 	 * @param depends_onValue the depends_onValue
 	 */
 	public void setAxisnameAttributeDepends_on(String axisname, String depends_onValue);
+
+	/**
+	 * An arbitrary identifier of a component of the equipment to which
+	 * the transformation belongs, such as 'detector_arm' or 'detector_module'.
+	 * NXtransformations with the same equipment_component label form a logical
+	 * grouping which can be combined together into a single change-of-basis
+	 * operation.
+	 * 
+	 * @param axisname the axisname
+	 * @return  the value.
+	 */
+	public String getAxisnameAttributeEquipment_component(String axisname);
+	
+	/**
+	 * An arbitrary identifier of a component of the equipment to which
+	 * the transformation belongs, such as 'detector_arm' or 'detector_module'.
+	 * NXtransformations with the same equipment_component label form a logical
+	 * grouping which can be combined together into a single change-of-basis
+	 * operation.
+	 * 
+	 * @param axisname the axisname
+	 * @param equipment_componentValue the equipment_componentValue
+	 */
+	public void setAxisnameAttributeEquipment_component(String axisname, String equipment_componentValue);
 
 	/**
 	 * ``AXISNAME_end`` is a placeholder for a name constructed from the actual

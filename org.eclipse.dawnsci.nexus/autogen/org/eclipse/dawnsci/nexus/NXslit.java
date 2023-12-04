@@ -11,6 +11,8 @@
 
 package org.eclipse.dawnsci.nexus;
 
+import java.util.Map;
+
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
@@ -33,6 +35,12 @@ public interface NXslit extends NXobject {
 	 * on "." i.e. the origin of the coordinate system.
 	 * If desired the location of the slit can also be described relative to
 	 * an NXbeam, which will allow a simple description of a non-centred slit.
+	 * The reference plane of the slit is orthogonal to the z axis and includes the
+	 * surface that is the entry surface of the slit. The reference point of the slit
+	 * is the centre of the slit opening in the x and y axis on the reference plane.
+	 * The reference point on the z axis is the reference plane.
+	 * .. image:: slit/slit.png
+	 * :width: 40%
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
@@ -48,6 +56,12 @@ public interface NXslit extends NXobject {
 	 * on "." i.e. the origin of the coordinate system.
 	 * If desired the location of the slit can also be described relative to
 	 * an NXbeam, which will allow a simple description of a non-centred slit.
+	 * The reference plane of the slit is orthogonal to the z axis and includes the
+	 * surface that is the entry surface of the slit. The reference point of the slit
+	 * is the centre of the slit opening in the x and y axis on the reference plane.
+	 * The reference point on the z axis is the reference plane.
+	 * .. image:: slit/slit.png
+	 * :width: 40%
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
@@ -63,6 +77,12 @@ public interface NXslit extends NXobject {
 	 * on "." i.e. the origin of the coordinate system.
 	 * If desired the location of the slit can also be described relative to
 	 * an NXbeam, which will allow a simple description of a non-centred slit.
+	 * The reference plane of the slit is orthogonal to the z axis and includes the
+	 * surface that is the entry surface of the slit. The reference point of the slit
+	 * is the centre of the slit opening in the x and y axis on the reference plane.
+	 * The reference point on the z axis is the reference plane.
+	 * .. image:: slit/slit.png
+	 * :width: 40%
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
@@ -78,6 +98,12 @@ public interface NXslit extends NXobject {
 	 * on "." i.e. the origin of the coordinate system.
 	 * If desired the location of the slit can also be described relative to
 	 * an NXbeam, which will allow a simple description of a non-centred slit.
+	 * The reference plane of the slit is orthogonal to the z axis and includes the
+	 * surface that is the entry surface of the slit. The reference point of the slit
+	 * is the centre of the slit opening in the x and y axis on the reference plane.
+	 * The reference point on the z axis is the reference plane.
+	 * .. image:: slit/slit.png
+	 * :width: 40%
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
@@ -207,5 +233,85 @@ public interface NXslit extends NXobject {
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);
+
+	/**
+	 * This is the group recommended for holding the chain of translation
+	 * and rotation operations necessary to position the component within
+	 * the instrument. The dependency chain may however traverse similar groups in
+	 * other component groups.
+	 * 
+	 * @return  the value.
+	 */
+	public NXtransformations getTransformations();
+	
+	/**
+	 * This is the group recommended for holding the chain of translation
+	 * and rotation operations necessary to position the component within
+	 * the instrument. The dependency chain may however traverse similar groups in
+	 * other component groups.
+	 * 
+	 * @param transformationsGroup the transformationsGroup
+	 */
+	public void setTransformations(NXtransformations transformationsGroup);
+
+	/**
+	 * Get a NXtransformations node by name:
+	 * <ul>
+	 * <li>
+	 * This is the group recommended for holding the chain of translation
+	 * and rotation operations necessary to position the component within
+	 * the instrument. The dependency chain may however traverse similar groups in
+	 * other component groups.</li>
+	 * </ul>
+	 * 
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXtransformations for that node.
+	 */
+	public NXtransformations getTransformations(String name);
+	
+	/**
+	 * Set a NXtransformations node by name:
+	 * <ul>
+	 * <li>
+	 * This is the group recommended for holding the chain of translation
+	 * and rotation operations necessary to position the component within
+	 * the instrument. The dependency chain may however traverse similar groups in
+	 * other component groups.</li>
+	 * </ul>
+	 * 
+	 * @param name the name of the node
+	 * @param transformations the value to set
+	 */
+	public void setTransformations(String name, NXtransformations transformations);
+	
+	/**
+	 * Get all NXtransformations nodes:
+	 * <ul>
+	 * <li>
+	 * This is the group recommended for holding the chain of translation
+	 * and rotation operations necessary to position the component within
+	 * the instrument. The dependency chain may however traverse similar groups in
+	 * other component groups.</li>
+	 * </ul>
+	 * 
+	 * @return  a map from node names to the NXtransformations for that node.
+	 */
+	public Map<String, NXtransformations> getAllTransformations();
+	
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li>
+	 * This is the group recommended for holding the chain of translation
+	 * and rotation operations necessary to position the component within
+	 * the instrument. The dependency chain may however traverse similar groups in
+	 * other component groups.</li>
+	 * </ul>
+	 * 
+	 * @param transformations the child nodes to add 
+	 */
+	
+	public void setAllTransformations(Map<String, NXtransformations> transformations);
+	
 
 }

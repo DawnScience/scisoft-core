@@ -197,7 +197,7 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 			validateFieldDimensions("data", data, null, "nFrames", "xSize", "ySize");
 		}
 
-		// validate field 'image_key' of type NX_INT. Note: field not defined in base class.
+		// validate field 'image_key' of type NX_INT.
 		final ILazyDataset image_key = group.getLazyDataset("image_key");
 		validateFieldNotNull("image_key", image_key);
 		if (image_key != null) {
@@ -234,7 +234,7 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 			validateFieldType("distance", distance, NX_FLOAT);
 			validateFieldUnits("distance", group.getDataNode("distance"), NX_LENGTH);
 			validateFieldRank("distance", distance, 3);
-			validateFieldDimensions("distance", distance, "NXdetector", "np", "i", "j");
+			validateFieldDimensions("distance", distance, "NXdetector", "nP", "i", "j");
 		}
 
 		// validate optional field 'x_rotation_axis_pixel_position' of type NX_FLOAT. Note: field not defined in base class.

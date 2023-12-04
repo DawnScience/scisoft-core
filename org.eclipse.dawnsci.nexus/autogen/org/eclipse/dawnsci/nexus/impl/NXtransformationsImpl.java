@@ -30,7 +30,8 @@ import org.eclipse.dawnsci.nexus.*;
  * A nested sequence of transformations lists the translation and rotation steps
  * needed to describe the position and orientation of any movable or fixed device.
  * There will be one or more transformations (axes) defined by one or more fields
- * for each transformation. The all-caps name ``AXISNAME`` designates the
+ * for each transformation. Transformations can also be described by NXlog groups when
+ * the values change with time. The all-caps name ``AXISNAME`` designates the
  * particular axis generating a transformation (e.g. a rotation axis or a translation
  * axis or a general axis). The attribute ``units="NX_TRANSFORMATION"`` designates the
  * units will be appropriate to the ``transformation_type`` attribute:
@@ -64,8 +65,19 @@ import org.eclipse.dawnsci.nexus.*;
  * transformations for a diffractometer (goniometer). Such use is mentioned
  * in the ``NXinstrument`` base class. Use one ``NXtransformations`` group
  * for each diffractometer and name the group appropriate to the device.
- * Collecting the motors of a sample table or xyz-stage in an NXtransformation
+ * Collecting the motors of a sample table or xyz-stage in an NXtransformations
  * group is equally possible.
+ * Following the section on the general dscription of axis in NXtransformations is a section which
+ * documents the fields commonly used within NeXus for positioning purposes and their meaning. Whenever
+ * there is a need for positioning a beam line component please use the existing names. Use as many fields
+ * as needed in order to position the component. Feel free to add more axis if required. In the description
+ * given below, only those atttributes which are defined through the name are spcified. Add the other attributes
+ * of the full set:
+ * * vector
+ * * offset
+ * * transformation_type
+ * * depends_on
+ * as needed.
  * 
  */
 public class NXtransformationsImpl extends NXobjectImpl implements NXtransformations {
@@ -172,6 +184,16 @@ public class NXtransformationsImpl extends NXobjectImpl implements NXtransformat
 	@Override
 	public void setAxisnameAttributeDepends_on(String axisname, String depends_onValue) {
 		setAttribute(axisname, NX_AXISNAME_ATTRIBUTE_DEPENDS_ON, depends_onValue);
+	}
+
+	@Override
+	public String getAxisnameAttributeEquipment_component(String axisname) {
+		return getAttrString(axisname, NX_AXISNAME_ATTRIBUTE_EQUIPMENT_COMPONENT);
+	}
+
+	@Override
+	public void setAxisnameAttributeEquipment_component(String axisname, String equipment_componentValue) {
+		setAttribute(axisname, NX_AXISNAME_ATTRIBUTE_EQUIPMENT_COMPONENT, equipment_componentValue);
 	}
 
 	@Override

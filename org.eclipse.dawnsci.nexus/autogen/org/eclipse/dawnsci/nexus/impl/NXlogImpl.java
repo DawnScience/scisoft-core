@@ -34,8 +34,8 @@ import org.eclipse.dawnsci.nexus.*;
  * time recorded in ISO8601 format. The time units are
  * specified in the units attribute. An optional scaling attribute
  * can be used to accomodate non standard clocks.
- * This method of storing logged data helps to distinguish
- * instances in which a variable is a dimension scale of the data, in which case it is stored
+ * This method of storing logged data helps to distinguish instances in which a variable contains signal or
+ * axis coordinate values of plottable data, in which case it is stored
  * in an :ref:`NXdata` group, and instances in which it is logged during the
  * run, when it should be stored in an :ref:`NXlog` group.
  * In order to make random access to timestamped data faster there is an optional array pair of

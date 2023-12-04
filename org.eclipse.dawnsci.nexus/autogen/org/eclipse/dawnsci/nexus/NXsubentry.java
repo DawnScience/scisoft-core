@@ -66,12 +66,16 @@ public interface NXsubentry extends NXobject {
 	public static final String NX_REVISION_ATTRIBUTE_COMMENT = "comment";
 	public static final String NX_PRE_SAMPLE_FLIGHTPATH = "pre_sample_flightpath";
 	/**
+	 * .. index:: find the default plottable data
 	 * .. index:: plotting
+	 * .. index:: default attribute value
 	 * Declares which :ref:`NXdata` group contains the data
 	 * to be shown by default.
-	 * It is needed to resolve ambiguity when more than
+	 * It is used to resolve ambiguity when
 	 * one :ref:`NXdata` group exists.
-	 * The value is the name of the default :ref:`NXdata` group.
+	 * The value :ref:`names <validItemName>` the default :ref:`NXentry` group. The
+	 * value must be the name of a child of the current group. The child must be a
+	 * NeXus group or a link to a NeXus group.
 	 * For more information about how NeXus identifies the default
 	 * plottable data, see the
 	 * :ref:`Find Plottable Data, v3 <Find-Plottable-Data-v3>`
@@ -82,12 +86,16 @@ public interface NXsubentry extends NXobject {
 	public String getAttributeDefault();
 	
 	/**
+	 * .. index:: find the default plottable data
 	 * .. index:: plotting
+	 * .. index:: default attribute value
 	 * Declares which :ref:`NXdata` group contains the data
 	 * to be shown by default.
-	 * It is needed to resolve ambiguity when more than
+	 * It is used to resolve ambiguity when
 	 * one :ref:`NXdata` group exists.
-	 * The value is the name of the default :ref:`NXdata` group.
+	 * The value :ref:`names <validItemName>` the default :ref:`NXentry` group. The
+	 * value must be the name of a child of the current group. The child must be a
+	 * NeXus group or a link to a NeXus group.
 	 * For more information about how NeXus identifies the default
 	 * plottable data, see the
 	 * :ref:`Find Plottable Data, v3 <Find-Plottable-Data-v3>`

@@ -289,7 +289,6 @@ public class NXfluoValidator extends AbstractNexusValidator implements NexusAppl
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("data", data, NX_INT);
 			validateFieldUnits("data", group.getDataNode("data"), NX_ANY);
-			validateFieldDimensions("data", data, "NXmonitor", "n");
 		}
 	}
 

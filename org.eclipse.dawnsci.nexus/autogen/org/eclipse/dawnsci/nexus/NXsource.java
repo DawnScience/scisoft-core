@@ -12,6 +12,7 @@
 package org.eclipse.dawnsci.nexus;
 
 import java.util.Date;
+import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
@@ -49,6 +50,7 @@ public interface NXsource extends NXobject {
 	public static final String NX_LAST_FILL = "last_fill";
 	public static final String NX_LAST_FILL_ATTRIBUTE_TIME = "time";
 	public static final String NX_ATTRIBUTE_DEFAULT = "default";
+	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
 	 * Effective distance from sample
 	 * Distance as seen by radiation from sample. This number should be negative
@@ -1240,18 +1242,84 @@ public interface NXsource extends NXobject {
 	public void setLast_fillAttributeTime(Date timeValue);
 
 	/**
-	 * "Engineering" location of source
+	 * "Engineering" location of source.
 	 * 
+	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the source and NXoff_geometry to describe its shape instead
 	 * @return  the value.
 	 */
+	@Deprecated
 	public NXgeometry getGeometry();
 	
 	/**
-	 * "Engineering" location of source
+	 * "Engineering" location of source.
 	 * 
+	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the source and NXoff_geometry to describe its shape instead
 	 * @param geometryGroup the geometryGroup
 	 */
+	@Deprecated
 	public void setGeometry(NXgeometry geometryGroup);
+
+	/**
+	 * This group describes the shape of the beam line component
+	 * 
+	 * @return  the value.
+	 */
+	public NXoff_geometry getOff_geometry();
+	
+	/**
+	 * This group describes the shape of the beam line component
+	 * 
+	 * @param off_geometryGroup the off_geometryGroup
+	 */
+	public void setOff_geometry(NXoff_geometry off_geometryGroup);
+
+	/**
+	 * Get a NXoff_geometry node by name:
+	 * <ul>
+	 * <li>
+	 * This group describes the shape of the beam line component</li>
+	 * </ul>
+	 * 
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXoff_geometry for that node.
+	 */
+	public NXoff_geometry getOff_geometry(String name);
+	
+	/**
+	 * Set a NXoff_geometry node by name:
+	 * <ul>
+	 * <li>
+	 * This group describes the shape of the beam line component</li>
+	 * </ul>
+	 * 
+	 * @param name the name of the node
+	 * @param off_geometry the value to set
+	 */
+	public void setOff_geometry(String name, NXoff_geometry off_geometry);
+	
+	/**
+	 * Get all NXoff_geometry nodes:
+	 * <ul>
+	 * <li>
+	 * This group describes the shape of the beam line component</li>
+	 * </ul>
+	 * 
+	 * @return  a map from node names to the NXoff_geometry for that node.
+	 */
+	public Map<String, NXoff_geometry> getAllOff_geometry();
+	
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li>
+	 * This group describes the shape of the beam line component</li>
+	 * </ul>
+	 * 
+	 * @param off_geometry the child nodes to add 
+	 */
+	
+	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry);
+	
 
 	/**
 	 * The wavelength or energy distribution of the source
@@ -1292,5 +1360,161 @@ public interface NXsource extends NXobject {
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);
+
+	/**
+	 * NeXus positions components by applying a set of translations and rotations
+	 * to apply to the component starting from 0, 0, 0. The order of these operations
+	 * is critical and forms what NeXus calls a dependency chain. The depends_on
+	 * field defines the path to the top most operation of the dependency chain or the
+	 * string "." if located in the origin. Usually these operations are stored in a
+	 * NXtransformations group. But NeXus allows them to be stored anywhere.
+	 * The reference point of the source plane is its center in the x and y axis. The source is considered infinitely thin in the
+	 * z axis.
+	 * .. image:: source/source.png
+	 * :width: 40%
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public IDataset getDepends_on();
+	
+	/**
+	 * NeXus positions components by applying a set of translations and rotations
+	 * to apply to the component starting from 0, 0, 0. The order of these operations
+	 * is critical and forms what NeXus calls a dependency chain. The depends_on
+	 * field defines the path to the top most operation of the dependency chain or the
+	 * string "." if located in the origin. Usually these operations are stored in a
+	 * NXtransformations group. But NeXus allows them to be stored anywhere.
+	 * The reference point of the source plane is its center in the x and y axis. The source is considered infinitely thin in the
+	 * z axis.
+	 * .. image:: source/source.png
+	 * :width: 40%
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 * 
+	 * @param depends_onDataset the depends_onDataset
+	 */
+	public DataNode setDepends_on(IDataset depends_onDataset);
+
+	/**
+	 * NeXus positions components by applying a set of translations and rotations
+	 * to apply to the component starting from 0, 0, 0. The order of these operations
+	 * is critical and forms what NeXus calls a dependency chain. The depends_on
+	 * field defines the path to the top most operation of the dependency chain or the
+	 * string "." if located in the origin. Usually these operations are stored in a
+	 * NXtransformations group. But NeXus allows them to be stored anywhere.
+	 * The reference point of the source plane is its center in the x and y axis. The source is considered infinitely thin in the
+	 * z axis.
+	 * .. image:: source/source.png
+	 * :width: 40%
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 * 
+	 * @return  the value.
+	 */
+	public String getDepends_onScalar();
+
+	/**
+	 * NeXus positions components by applying a set of translations and rotations
+	 * to apply to the component starting from 0, 0, 0. The order of these operations
+	 * is critical and forms what NeXus calls a dependency chain. The depends_on
+	 * field defines the path to the top most operation of the dependency chain or the
+	 * string "." if located in the origin. Usually these operations are stored in a
+	 * NXtransformations group. But NeXus allows them to be stored anywhere.
+	 * The reference point of the source plane is its center in the x and y axis. The source is considered infinitely thin in the
+	 * z axis.
+	 * .. image:: source/source.png
+	 * :width: 40%
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 * 
+	 * @param depends_on the depends_on
+	 */
+	public DataNode setDepends_onScalar(String depends_onValue);
+
+	/**
+	 * This is the group recommended for holding the chain of translation
+	 * and rotation operations necessary to position the component within
+	 * the instrument. The dependency chain may however traverse similar groups in
+	 * other component groups.
+	 * 
+	 * @return  the value.
+	 */
+	public NXtransformations getTransformations();
+	
+	/**
+	 * This is the group recommended for holding the chain of translation
+	 * and rotation operations necessary to position the component within
+	 * the instrument. The dependency chain may however traverse similar groups in
+	 * other component groups.
+	 * 
+	 * @param transformationsGroup the transformationsGroup
+	 */
+	public void setTransformations(NXtransformations transformationsGroup);
+
+	/**
+	 * Get a NXtransformations node by name:
+	 * <ul>
+	 * <li>
+	 * This is the group recommended for holding the chain of translation
+	 * and rotation operations necessary to position the component within
+	 * the instrument. The dependency chain may however traverse similar groups in
+	 * other component groups.</li>
+	 * </ul>
+	 * 
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXtransformations for that node.
+	 */
+	public NXtransformations getTransformations(String name);
+	
+	/**
+	 * Set a NXtransformations node by name:
+	 * <ul>
+	 * <li>
+	 * This is the group recommended for holding the chain of translation
+	 * and rotation operations necessary to position the component within
+	 * the instrument. The dependency chain may however traverse similar groups in
+	 * other component groups.</li>
+	 * </ul>
+	 * 
+	 * @param name the name of the node
+	 * @param transformations the value to set
+	 */
+	public void setTransformations(String name, NXtransformations transformations);
+	
+	/**
+	 * Get all NXtransformations nodes:
+	 * <ul>
+	 * <li>
+	 * This is the group recommended for holding the chain of translation
+	 * and rotation operations necessary to position the component within
+	 * the instrument. The dependency chain may however traverse similar groups in
+	 * other component groups.</li>
+	 * </ul>
+	 * 
+	 * @return  a map from node names to the NXtransformations for that node.
+	 */
+	public Map<String, NXtransformations> getAllTransformations();
+	
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li>
+	 * This is the group recommended for holding the chain of translation
+	 * and rotation operations necessary to position the component within
+	 * the instrument. The dependency chain may however traverse similar groups in
+	 * other component groups.</li>
+	 * </ul>
+	 * 
+	 * @param transformations the child nodes to add 
+	 */
+	
+	public void setAllTransformations(Map<String, NXtransformations> transformations);
+	
 
 }

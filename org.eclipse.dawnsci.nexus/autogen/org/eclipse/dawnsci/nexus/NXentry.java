@@ -57,12 +57,16 @@ public interface NXentry extends NXsubentry {
 	public static final String NX_REVISION_ATTRIBUTE_COMMENT = "comment";
 	public static final String NX_PRE_SAMPLE_FLIGHTPATH = "pre_sample_flightpath";
 	/**
+	 * .. index:: find the default plottable data
 	 * .. index:: plotting
+	 * .. index:: default attribute value
 	 * Declares which :ref:`NXdata` group contains the data
 	 * to be shown by default.
-	 * It is needed to resolve ambiguity when more than
+	 * It is used to resolve ambiguity when
 	 * one :ref:`NXdata` group exists.
-	 * The value is the name of the default :ref:`NXdata` group.
+	 * The value :ref:`names <validItemName>` a child group. If that group
+	 * itself has a ``default`` attribute, continue this chain until an
+	 * :ref:`NXdata` group is reached.
 	 * For more information about how NeXus identifies the default
 	 * plottable data, see the
 	 * :ref:`Find Plottable Data, v3 <Find-Plottable-Data-v3>`
@@ -73,12 +77,16 @@ public interface NXentry extends NXsubentry {
 	public String getAttributeDefault();
 	
 	/**
+	 * .. index:: find the default plottable data
 	 * .. index:: plotting
+	 * .. index:: default attribute value
 	 * Declares which :ref:`NXdata` group contains the data
 	 * to be shown by default.
-	 * It is needed to resolve ambiguity when more than
+	 * It is used to resolve ambiguity when
 	 * one :ref:`NXdata` group exists.
-	 * The value is the name of the default :ref:`NXdata` group.
+	 * The value :ref:`names <validItemName>` a child group. If that group
+	 * itself has a ``default`` attribute, continue this chain until an
+	 * :ref:`NXdata` group is reached.
 	 * For more information about how NeXus identifies the default
 	 * plottable data, see the
 	 * :ref:`Find Plottable Data, v3 <Find-Plottable-Data-v3>`
@@ -556,7 +564,11 @@ public interface NXentry extends NXsubentry {
 
 	/**
 	 * (alternate use: see same field in :ref:`NXsubentry` for preferred)
-	 * Official NeXus NXDL schema to which this entry conforms.
+	 * Official NeXus NXDL schema to which this entry conforms which must be
+	 * the name of the NXDL file (case sensitive without the file extension)
+	 * that the NXDL schema is defined in.
+	 * For example the ``definition`` field for a file that conformed to the
+	 * *NXarpes.nxdl.xml* definition must contain the string **NXarpes**.
 	 * This field is provided so that :ref:`NXentry` can be the overlay position
 	 * in a NeXus data file for an application definition and its
 	 * set of groups, fields, and attributes.
@@ -568,7 +580,11 @@ public interface NXentry extends NXsubentry {
 	
 	/**
 	 * (alternate use: see same field in :ref:`NXsubentry` for preferred)
-	 * Official NeXus NXDL schema to which this entry conforms.
+	 * Official NeXus NXDL schema to which this entry conforms which must be
+	 * the name of the NXDL file (case sensitive without the file extension)
+	 * that the NXDL schema is defined in.
+	 * For example the ``definition`` field for a file that conformed to the
+	 * *NXarpes.nxdl.xml* definition must contain the string **NXarpes**.
 	 * This field is provided so that :ref:`NXentry` can be the overlay position
 	 * in a NeXus data file for an application definition and its
 	 * set of groups, fields, and attributes.
@@ -580,7 +596,11 @@ public interface NXentry extends NXsubentry {
 
 	/**
 	 * (alternate use: see same field in :ref:`NXsubentry` for preferred)
-	 * Official NeXus NXDL schema to which this entry conforms.
+	 * Official NeXus NXDL schema to which this entry conforms which must be
+	 * the name of the NXDL file (case sensitive without the file extension)
+	 * that the NXDL schema is defined in.
+	 * For example the ``definition`` field for a file that conformed to the
+	 * *NXarpes.nxdl.xml* definition must contain the string **NXarpes**.
 	 * This field is provided so that :ref:`NXentry` can be the overlay position
 	 * in a NeXus data file for an application definition and its
 	 * set of groups, fields, and attributes.
@@ -592,7 +612,11 @@ public interface NXentry extends NXsubentry {
 
 	/**
 	 * (alternate use: see same field in :ref:`NXsubentry` for preferred)
-	 * Official NeXus NXDL schema to which this entry conforms.
+	 * Official NeXus NXDL schema to which this entry conforms which must be
+	 * the name of the NXDL file (case sensitive without the file extension)
+	 * that the NXDL schema is defined in.
+	 * For example the ``definition`` field for a file that conformed to the
+	 * *NXarpes.nxdl.xml* definition must contain the string **NXarpes**.
 	 * This field is provided so that :ref:`NXentry` can be the overlay position
 	 * in a NeXus data file for an application definition and its
 	 * set of groups, fields, and attributes.

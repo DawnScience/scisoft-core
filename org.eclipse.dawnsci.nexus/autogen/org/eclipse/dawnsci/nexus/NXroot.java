@@ -273,12 +273,16 @@ public interface NXroot extends NXobject {
 	
 
 	/**
+	 * .. index:: find the default plottable data
 	 * .. index:: plotting
+	 * .. index:: default attribute value
 	 * Declares which :ref:`NXentry` group contains
 	 * the data to be shown by default.
-	 * It is needed to resolve ambiguity when
+	 * It is used to resolve ambiguity when
 	 * more than one :ref:`NXentry` group exists.
-	 * The value is the name of the default :ref:`NXentry` group.
+	 * The value :ref:`names <validItemName>` the default :ref:`NXentry` group. The
+	 * value must be the name of a child of the current group. The child must be a
+	 * NeXus group or a link to a NeXus group.
 	 * It is recommended (as of NIAC2014) to use this attribute
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
@@ -289,12 +293,16 @@ public interface NXroot extends NXobject {
 	public String getAttributeDefault();
 	
 	/**
+	 * .. index:: find the default plottable data
 	 * .. index:: plotting
+	 * .. index:: default attribute value
 	 * Declares which :ref:`NXentry` group contains
 	 * the data to be shown by default.
-	 * It is needed to resolve ambiguity when
+	 * It is used to resolve ambiguity when
 	 * more than one :ref:`NXentry` group exists.
-	 * The value is the name of the default :ref:`NXentry` group.
+	 * The value :ref:`names <validItemName>` the default :ref:`NXentry` group. The
+	 * value must be the name of a child of the current group. The child must be a
+	 * NeXus group or a link to a NeXus group.
 	 * It is recommended (as of NIAC2014) to use this attribute
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html

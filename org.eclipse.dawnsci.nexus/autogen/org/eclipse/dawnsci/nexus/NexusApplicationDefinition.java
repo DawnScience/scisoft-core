@@ -31,6 +31,8 @@ public enum NexusApplicationDefinition {
 	NX_IQPROC("NXiqproc", NXiqprocValidator.class),
 	NX_LAUETOF("NXlauetof", NXlauetofValidator.class),
 	NX_MONOPD("NXmonopd", NXmonopdValidator.class),
+	NX_MPES("NXmpes", NXmpesValidator.class),
+	NX_MPES_PEEM("NXmpes_peem", NXmpes_peemValidator.class),
 	NX_MX("NXmx", NXmxValidator.class),
 	NX_REFSCAN("NXrefscan", NXrefscanValidator.class),
 	NX_REFTOF("NXreftof", NXreftofValidator.class),

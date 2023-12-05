@@ -149,23 +149,24 @@
 </xsl:template>
 
 <!-- Template matches a group to add the invocation of the group's validate method. -->
-<xsl:template match="nx:group[@type!='NXtransformations']" mode="invocation">
+<xsl:template match="nx:group" mode="invocation">
 	<xsl:param name="baseClass"/>
 	<xsl:param name="parentGroupVariableName" select="'group'"/>
 	<xsl:param name="validateGroupMethodNamePrefix"/>
 	
 	<!-- Get the definition for this group in the base class, if it exists. -->
-	<xsl:variable name="baseClassGroupDef" select="$baseClass/nx:group[@type=current()/@type]"/>
+	<xsl:variable name="baseClassGroupDef" select="$baseClass/nx:group[@type=current()/@type and (@name=current()/@name or not(boolean(@name)))]"/>
 	<!-- The group name is the name in the baseclass, if it exists, else the type without the NX prefix.
 	     This name, prefixed by 'get' is the name of the method in the method in the base class to use. -->
 	<xsl:variable name="groupNameInBaseClass" select="if ($baseClassGroupDef/@name) then @name else substring(@type, 3)"/>
+	
 	<!-- True if there can be multiple occurrences of this group. -->
 	<xsl:variable name="multiple" select="not(@name) and not(@maxOccurs='1')"/>
 	<!-- True if this group is optional (false if group is multiple) -->
 	<xsl:variable name="optional" select="not($multiple) and (@minOccurs='0' or @optional='true' or @recommended='true')"/>
 	
 	<xsl:variable name="canSASclass" select="dawnsci:canSASclass(current())"/>
-		
+	
 	<!-- Line comment: validate (optional?) (unnamed?) group (<name>?) of type <type> ((possibly multiple)?) -->
 	<xsl:value-of select="dawnsci:tabs(2)"/>
 	<xsl:text>// validate </xsl:text><xsl:if test="$optional">optional </xsl:if>
@@ -216,14 +217,14 @@
 	</xsl:variable>
 	
 	<xsl:if test="$multiple">
-		<!-- Declare variable for map of all children of type by name, e.g.
-			<String, NXdata> allData = entry.getAllData(); -->
+		<!-- Declare variable for map of all children of type by name, e.g.	<String, NXdata> allData = entry.getAllData(); -->
 		<xsl:variable name="mapVariableName" select="dawnsci:capitalise-first(if ($canSASclass) then $canSASclass else $groupNameInBaseClass)"/>
+		
 		<!-- Line to get the map of all groups of the given type, e.g. final Map<String, NXSample> allSample = group.getAllSample() -->
 		<xsl:value-of select="dawnsci:tabs(2)"/>
-		<xsl:text>final Map&lt;String, </xsl:text><xsl:value-of select="@type"/>
-		<xsl:text>&gt; all</xsl:text><xsl:value-of select="$mapVariableName"/>
-		<xsl:text> = </xsl:text>
+		<xsl:text>final Map</xsl:text>
+		<xsl:value-of select="'&lt;String, ' || @type || '&gt;'"/>
+		<xsl:value-of select="' all' || $mapVariableName || ' = '"/>
 		<xsl:if test="$canSASclass">filterBycanSASClass(</xsl:if>
 		<xsl:value-of select="$parentGroupVariableName"/>
 		<xsl:choose>
@@ -233,8 +234,7 @@
 				<xsl:text>.class)</xsl:text>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:text>.getAll</xsl:text><xsl:value-of select="dawnsci:capitalise-first($groupNameInBaseClass)"/>
-				<xsl:text>()</xsl:text>
+				<xsl:text>.getAll</xsl:text><xsl:value-of select="dawnsci:capitalise-first($groupNameInBaseClass) || '()'"/>
 			</xsl:otherwise>
 		</xsl:choose>
 		<xsl:if test="$canSASclass">
@@ -270,44 +270,34 @@
 	<!-- Invoke the method to validate the group. -->
 	<xsl:value-of select="dawnsci:tabs(if ($multiple or $optional) then 3 else 2)"/>
 	<xsl:value-of select="dawnsci:validateGroupMethodName($validateGroupMethodNamePrefix, current())"/>
-	<xsl:text>(</xsl:text><xsl:value-of select="$group"/><xsl:text>);&#10;</xsl:text>
+	<xsl:value-of select="'(' || $group || ');&#10;'"/>
 
 	<!-- Closing brace for either for loop (multiple) or null test (optional) -->
 	<xsl:if test="$multiple or $optional">
 		<xsl:value-of select="dawnsci:tabs(2)"/><xsl:text>}&#10;</xsl:text>
 	</xsl:if>
 	
+	<xsl:if test="@type='NXtransformations' and $multiple">
+		<!-- Line comment: validate tranformations -->
+		<xsl:value-of select="dawnsci:tabs(2)"/>
+		<xsl:text>// validate NXtransformations groups (special case)&#10;</xsl:text>
+	
+		<!-- Call to validate transformations -->
+		<!-- Note: we assume that this field has a preceding sibling 'depends_on' -->
+		<xsl:value-of select="dawnsci:tabs(2)"/>
+		<xsl:text>validateTransformations(allTransformations, depends_on);&#10;</xsl:text>
+	
+		<!-- Blank line if there are more groups. -->
+		<xsl:if test="following-sibling::nx:group"><xsl:text>&#10;</xsl:text></xsl:if>
+	</xsl:if> 
+	
 	<!-- Blank line if there are more groups. -->
 	<xsl:if test="following-sibling::nx:group"><xsl:text>&#10;</xsl:text></xsl:if>
 
 </xsl:template> <!-- End of template for validate group method invocation --> 
 
-
-<!-- Template to match special case of NXtransformations group to generate invocation of validate method for group-->
-<xsl:template match="nx:group[@type='NXtransformations']" mode="invocation">
-	<xsl:param name="validateGroupMethodNamePrefix"/>
-
-	<!-- Line comment: validate tranformations -->
-	<xsl:value-of select="dawnsci:tabs(2)"/>
-	<xsl:text>// validate NXtransformations groups (special case)&#10;</xsl:text>
-
-	<!-- Line to get all transformations -->
-	<xsl:value-of select="dawnsci:tabs(2)"/>
-	<xsl:text>final Map&lt;String, NXtransformations&gt; allTransformations = group.getChildren(NXtransformations.class);&#10;</xsl:text>
-
-	<!-- Call to validate transformations -->
-	<!-- Note: we assume that this field has a preceding sibling 'depends_on' -->
-	<xsl:value-of select="dawnsci:tabs(2)"/>
-	<xsl:text>validateTransformations(allTransformations, depends_on);&#10;</xsl:text>
-
-	<!-- Blank line if there are more groups. -->
-	<xsl:if test="following-sibling::nx:group"><xsl:text>&#10;</xsl:text></xsl:if>
-
-</xsl:template>
-
-
 <!-- Template matches a group to generate the validate method implementation for that group. -->
-<xsl:template match="nx:group[@type!='NXtransformations']" mode="implementation">
+<xsl:template match="nx:group" mode="implementation">
 	<xsl:param name="validateGroupMethodNamePrefix"/>
 	<xsl:variable name="validateGroupMethodName" select="dawnsci:validateGroupMethodName($validateGroupMethodNamePrefix, current())"/>
 	<xsl:variable name="baseClass" select="$base-classes[@name = current()/@type]"/>
@@ -371,11 +361,6 @@
 		<xsl:with-param name="validateGroupMethodNamePrefix" select="$validateGroupMethodName"/>
 	</xsl:apply-templates>
 </xsl:template> <!-- End of template for validate group method implementation -->
-
-
-<!-- Empty template for NXtransformations group implementation, as this validation is done by
-	calling a method in the abstract superclass, rather than calling a generated method in this class. -->
-<xsl:template match="nx:group[@type='NXtransformations']" mode="implementation" />
 
 <!-- Template matches an attribute to add method call to validate that attribute. -->
 <xsl:template match="nx:attribute">

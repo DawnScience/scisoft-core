@@ -206,9 +206,24 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 			validateFieldUnits("temperature", group.getDataNode("temperature"), NX_TEMPERATURE);
 			validateFieldDimensions("temperature", temperature, "NXsample", "n_Temp");
 		}
+		// validate unnamed child group of type NXtransformations (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXtransformations.class, false, true);
+		final Map<String, NXtransformations> allTransformations = group.getAllTransformations();
+		for (final NXtransformations transformations : allTransformations.values()) {
+			validateGroup_NXentry_NXsample_NXtransformations(transformations);
+		}
 		// validate NXtransformations groups (special case)
-		final Map<String, NXtransformations> allTransformations = group.getChildren(NXtransformations.class);
 		validateTransformations(allTransformations, depends_on);
+	}
+
+	/**
+	 * Validate optional unnamed group of type NXtransformations.
+	 */
+	private void validateGroup_NXentry_NXsample_NXtransformations(final NXtransformations group) {
+		// validate that the group is not null
+		if (!(validateGroupNotNull(null, NXtransformations.class, group))) return;
+		clearLocalGroupDimensionPlaceholderValues();
+
 	}
 
 	/**
@@ -583,9 +598,15 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("type", type, NX_CHAR);
 		}
+		// validate unnamed child group of type NXtransformations (possibly multiple)
+		validateUnnamedGroupOccurrences(group, NXtransformations.class, false, true);
+		final Map<String, NXtransformations> allTransformations = group.getAllTransformations();
+		for (final NXtransformations transformations : allTransformations.values()) {
+			validateGroup_NXentry_NXinstrument_NXdetector_NXtransformations(transformations);
+		}
 		// validate NXtransformations groups (special case)
-		final Map<String, NXtransformations> allTransformations = group.getChildren(NXtransformations.class);
 		validateTransformations(allTransformations, depends_on);
+
 
 		// validate unnamed child group of type NXcollection (possibly multiple)
 		validateUnnamedGroupOccurrences(group, NXcollection.class, false, true);
@@ -600,6 +621,16 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		for (final NXdetector_module detector_module : allDetector_module.values()) {
 			validateGroup_NXentry_NXinstrument_NXdetector_NXdetector_module(detector_module);
 		}
+	}
+
+	/**
+	 * Validate optional unnamed group of type NXtransformations.
+	 */
+	private void validateGroup_NXentry_NXinstrument_NXdetector_NXtransformations(final NXtransformations group) {
+		// validate that the group is not null
+		if (!(validateGroupNotNull(null, NXtransformations.class, group))) return;
+		clearLocalGroupDimensionPlaceholderValues();
+
 	}
 
 	/**

@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.measure.Unit;
+
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
@@ -23,6 +25,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationDataForDisplay;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationLog;
 import org.eclipse.dawnsci.analysis.api.roi.IRectangularROI;
+import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.dataset.impl.Signal;
 import org.eclipse.dawnsci.analysis.dataset.roi.ROISliceUtils;
@@ -30,6 +33,7 @@ import org.eclipse.dawnsci.analysis.dataset.roi.RectangularROI;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceFromSeriesMetadata;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SliceInformation;
 import org.eclipse.dawnsci.analysis.dataset.slicer.SourceInformation;
+import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Comparisons;
@@ -51,9 +55,11 @@ import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.dataset.Stats;
 import org.eclipse.january.dataset.UnaryOperation;
 
+import tec.units.indriya.unit.Units;
 import uk.ac.diamond.scisoft.analysis.dataset.function.Histogram;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
+import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
 import uk.ac.diamond.scisoft.analysis.processing.metadata.FitMetadataImpl;
@@ -694,14 +700,18 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 
 		if (!file.equals(darkImageFile) || darkData == null) {
 			darkImageFile = file;
+			GroupNode diDetector = ProcessingUtils.getNXdetector(this, darkImageFile);
 			if (dark == null) {
 				try {
 					dark = ProcessingUtils.getLazyDataset(this, file, name);
 				} catch (Exception e) {
-					throw new OperationException(this, "Could not load dark image file", e);
+					DataNode d = diDetector.getDataNode("data");
+					if (d == null) {
+						throw new OperationException(this, "Could not load image from dark image file");
+					}
+					dark = d.getDataset();
 				}
 			}
-			GroupNode diDetector = ProcessingUtils.getNXdetector(this, darkImageFile);
 			darkImageCountTime = getCountTime(diDetector);
 
 			dark = dark.getSliceView().squeezeEnds();
@@ -915,6 +925,8 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		return ElasticLineReduction.fitFunction(this, new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT), excMessage, log, f, x, v, null);
 	}
 
+	private static final double COUNT_TIME_TOLERANCE = 1e-3; // absolute tolerance in seconds required for count times to match
+
 	@Override
 	public OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		auxData.clear();
@@ -938,8 +950,8 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 			if (smoothedDarkData != null) {
 				String filePath = src.getFilePath();
 				double countTime = getCountTime(nxDetector);
-				if (countTime != darkImageCountTime) {
-					throw new OperationException(this, "Count time in " + filePath + ": " + countTime + " != " + darkImageCountTime + " for dark image");
+				if (Math.abs(countTime - darkImageCountTime) > COUNT_TIME_TOLERANCE) {
+					throw new OperationException(this, "Count time in " + filePath + ": " + countTime + " != " + darkImageCountTime + " for dark image by " + (countTime - darkImageCountTime) + " cf " + COUNT_TIME_TOLERANCE);
 				}
 			}
 		}
@@ -1060,15 +1072,15 @@ public class SubtractFittedBackgroundOperation extends AbstractImageSubtractionO
 		return cs.size() > 0 ? (cs.get(0) - x.getDouble(pos)) * 2 : Double.NaN;
 	}
 
-	protected Dataset getDetectorField(GroupNode nxDetector, String field) {
-		try {
-			return DatasetUtils.sliceAndConvertLazyDataset(nxDetector.getDataNode(field).getDataset());
-		} catch (DatasetException e) {
-			throw new OperationException(this, "Could not read value for " + field, e);
+	protected Dataset getDetectorField(GroupNode nxDetector, Unit<?> unit, String field) {
+		Dataset d = NexusTreeUtils.getDataset(NexusConstants.DETECTOR, nxDetector, unit, field);
+		if (d == null) {
+			throw new OperationException(this, "Could not read values for " + field);
 		}
+		return d;
 	}
 
 	private double getCountTime(GroupNode nxDetector) {
-		return getDetectorField(nxDetector, "count_time").getDouble();
+		return getDetectorField(nxDetector, Units.SECOND, "count_time").getDouble();
 	}
 }

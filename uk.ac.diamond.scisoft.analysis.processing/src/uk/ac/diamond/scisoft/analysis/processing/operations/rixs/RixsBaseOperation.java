@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.measure.Unit;
+
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationDataForDisplay;
@@ -50,6 +52,8 @@ import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
 
+import si.uom.NonSI;
+import tec.units.indriya.unit.Units;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.KnownDetector;
@@ -76,7 +80,6 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	private double drainCurrent;
 	private BooleanDataset usedFrames = null;
 	private double detectorAngle = Double.NaN;
-	private KnownDetector detector;
 	private IRectangularROI[] rois = new IRectangularROI[2];
 	protected double xrayEnergy;
 
@@ -145,7 +148,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		SliceFromSeriesMetadata smd = input.getFirstMetadata(SliceFromSeriesMetadata.class);
 		SliceInformation si = smd.getSliceInfo();
 		if (si.isFirstSlice()) {
-			detector = KnownDetector.getDetector(smd.getFilePath(), smd.getDatasetName(), input);
+			KnownDetector detector = KnownDetector.getDetector(smd.getFilePath(), smd.getDatasetName(), input);
 
 			summaryData.clear();
 			log.clear();
@@ -395,11 +398,10 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			for (NodeLink l : detectors) {
 				if (l.isDestinationGroup()) {
 					GroupNode g = (GroupNode) l.getDestination();
-					if (g.containsDataNode(NexusConstants.DATA_DATA)) {
-						if (g.getDataNode(NexusConstants.DATA_DATA).getRank() > 1) {
-							detector = g;
-							break;
-						}
+					DataNode data = g.getDataNode(NexusConstants.DATA_DATA);
+					if (data != null && data.getRank() > 1) {
+						detector = g;
+						break;
 					}
 				}
 			}
@@ -428,13 +430,13 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	}
 
 
-	private double getDouble(GroupNode g, String name) throws NexusException {
-		try {
-			return NexusTreeUtils.getFirstDouble(g.getDataNode(name));
-		} catch (NexusException e) {
-			log.appendFailure("Could not read value from %s", name, e);
-			throw e;
+	private double getDouble(String gName, GroupNode g, String name, Unit<?> unit) throws NexusException {
+		Dataset d = NexusTreeUtils.getDataset(gName, g, unit, name);
+		if (d == null) {
+			log.appendFailure("Could not read value from %s in %s: %s", name, gName, g);
+			throw new NexusException("");
 		}
+		return d.getDouble();
 	}
 
 	private String getString(GroupNode g, String name) throws NexusException {
@@ -473,8 +475,8 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 			}
 		}
 
-		drainCurrent = parseBeforeScanItem(mdg, "draincurrent");
-		detectorAngle = parseBeforeScanItem(mdg, "specgamma");
+		drainCurrent = parseBeforeScanItem(mdg, "draincurrent", Units.AMPERE);
+		detectorAngle = parseBeforeScanItem(mdg, "specgamma", NonSI.DEGREE_ANGLE);
 
 		// TODO ring current, other things
 	}
@@ -485,7 +487,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	protected void addSummaryData() {
 		summaryData.add(ProcessingUtils.createNamedDataset(drainCurrent, "drain_current"));
 		summaryData.add(ProcessingUtils.createNamedDataset(countsPerPhoton, "counts_per_photon"));
-		summaryData.add(ProcessingUtils.createNamedDataset(countTime, "total_count_time"));
+		summaryData.add(ProcessingUtils.createNamedDataset(countTime, Units.SECOND, "total_count_time"));
 	}
 
 	private static final double PAIR_PRODUCTION_ENERGY = 3.67; // energy required to generate an electron-hole pair in silicon
@@ -510,8 +512,8 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 
 	private int calculateCountsPerPhoton(GroupNode mdg) throws NexusException {
 		try {
-			int gain = (int) parseBeforeScanItem(mdg, "andorPreampGain");
-			double speed = parseBeforeScanItem(mdg, "andorADCSpeed");
+			int gain = (int) parseBeforeScanItem(mdg, "andorPreampGain", null);
+			double speed = parseBeforeScanItem(mdg, "andorADCSpeed", null);
 
 			return (int) Math.floor(xrayEnergy / andorSensitivity(gain, speed));
 		} catch (Exception e) {
@@ -525,7 +527,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	 * @throws NexusException
 	 */
 	private double getEnergy(GroupNode mdg) throws NexusException {
-		return parseBeforeScanItem(mdg, "pgmEnergy");
+		return parseBeforeScanItem(mdg, "pgmEnergy", NonSI.ELECTRON_VOLT);
 	}
 
 	/**
@@ -566,16 +568,12 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		return ANDOR_SENSITIVITY[si][gi] * PAIR_PRODUCTION_ENERGY;
 	}
 
-	private double parseBeforeScanItem(GroupNode bsg, String name) throws NexusException {
+	private double parseBeforeScanItem(GroupNode bsg, String name, Unit<?> unit) throws NexusException {
 		GroupNode ig = bsg.getGroupNode(name);
 		if (ig == null) {
-			throw new NexusException("Before_scan collection does not contain " + name);
+			throw new NexusException("before_scan collection does not contain " + name);
 		}
-		DataNode id = ig.getDataNode(name);
-		if (id == null) {
-			throw new NexusException("Before_scan collection has group but does not contain data node " + name);
-		}
-		return NexusTreeUtils.getFirstDouble(id);
+		return getDouble("before_scan", ig, name, unit);
 	}
 
 	private void parseNewDLSNexus(String filePath, GroupNode instrument, GroupNode detector) {
@@ -583,7 +581,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 		countsPerPhoton = -1;
 		try {
 			GroupNode mono = NexusTreeUtils.getDefaultNXobject(instrument, null, NexusConstants.MONOCHROMATOR);
-			xrayEnergy = getDouble(mono, "energy");
+			xrayEnergy = getDouble(NexusConstants.MONOCHROMATOR, mono, "energy", NonSI.ELECTRON_VOLT);
 		} catch (Exception e) {
 			log.appendFailure("Could not read X-ray energy from NXmonochromator from Nexus file %s: %s", filePath, e);
 		}
@@ -610,9 +608,9 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 
 		try {
 			GroupNode manipulator = instrument.getGroupNode("manipulator");
-			drainCurrent = getDouble(manipulator, "draincurrent");
+			drainCurrent = getDouble("manipulator", manipulator, "draincurrent", null); // TODO should be Units.AMPERE but written as V
 			GroupNode spectrometer = instrument.getGroupNode("spectrometer");
-			detectorAngle = getDouble(spectrometer, "specgamma");
+			detectorAngle = getDouble("spectrometer", spectrometer, "specgamma", NonSI.DEGREE_ANGLE);
 		} catch (Exception e) {
 			log.appendFailure("Could not read drain current or spectrometer gamma values from Nexus file %s: %s", filePath, e);
 		}
@@ -651,7 +649,7 @@ public abstract class RixsBaseOperation<T extends RixsBaseModel>  extends Abstra
 	 */
 	protected void parseDesiredNXrixs(GroupNode detector, double pEnergy) throws NexusException {
 		String ed = detector.getDataNode("energy_direction").getString();
-		model.setEnergyDirection(ed.toLowerCase().equals("slow") ? RixsBaseModel.ENERGY_DIRECTION.SLOW : RixsBaseModel.ENERGY_DIRECTION.FAST);
+		model.setEnergyDirection(ed.equalsIgnoreCase("slow") ? RixsBaseModel.ENERGY_DIRECTION.SLOW : RixsBaseModel.ENERGY_DIRECTION.FAST);
 
 		// energy required for each photoelectron [eV / e^-]
 		double pe = NexusTreeUtils.getFirstDouble(detector.getDataNode("photoelectrons_energy"));

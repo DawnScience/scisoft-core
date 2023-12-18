@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,13 +57,18 @@ import org.eclipse.january.dataset.IndexIterator;
 import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.dataset.Maths;
+import org.eclipse.january.dataset.Operations;
 import org.eclipse.january.dataset.Slice;
+import org.eclipse.january.dataset.UnaryOperation;
 import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.UnitMetadata;
 
+import si.uom.NonSI;
 import uk.ac.diamond.osgi.services.ServiceProvider;
 import uk.ac.diamond.scisoft.analysis.MultiRange;
 import uk.ac.diamond.scisoft.analysis.dataset.function.Histogram;
 import uk.ac.diamond.scisoft.analysis.dataset.function.RegisterNoisyData1D;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.Quadratic;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.image.ImageUtils;
 import uk.ac.diamond.scisoft.analysis.io.LoaderFactory;
@@ -76,9 +82,9 @@ import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReduct
 import uk.ac.diamond.scisoft.analysis.processing.operations.rixs.RixsImageReductionBaseModel.XIP_OPTION;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 
-abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseModel> extends RixsBaseOperation<T> {
+public abstract class RixsImageReductionBase<T extends RixsImageReductionBaseModel> extends RixsBaseOperation<T> {
 
-	private double[] energyDispersion = new double[2];
+	private double[][] energyFitCoefficients = new double[2][];
 	private Dataset totalSum = null; // dataset of all event sums (so far)
 	private List<Dataset> allSums = new ArrayList<>(); // list of dataset of event sums in each image
 	private List<Dataset> allOffsets = new ArrayList<>(); // list of dataset of event base offsets in each image
@@ -92,7 +98,8 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	private MultiRange selection;
 	private String centroidFilePath;
 	Map<Double, Dataset> xLookup, yLookup;
-	Dataset xBase, yBase;
+	Dataset xBase;
+	Dataset yBase;
 	Dataset normValues = null;
 
 	/**
@@ -101,6 +108,8 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	public static final String PROCESS_NAME = "RIXS image reduction";
 
 	private static final String ENERGY_LOSS = "Energy loss";
+	private static final String SPECTRUM_PREFIX = "spectrum_";
+	private static final String SPECTRA_PREFIX = "spectra_";
 
 	@Override
 	public String getId() {
@@ -122,21 +131,30 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			}
 		}
 
-		Arrays.fill(energyDispersion, Double.NaN);
-		energyDispersion[0] = model.getEnergyDispersion();
-		if (Double.isNaN(energyDispersion[0])) {
+		Arrays.fill(energyFitCoefficients, null);
+		energyFitCoefficients[0] = model.getEnergyDispersion();
+		isIVE = false; // default to coefficients for fit of energy versus intercept
+		if (energyFitCoefficients[0] == null) {
 			String file = model.getCalibrationFile();
 			if (file == null && throwEx) {
 				throw new OperationException(this, "Energy dispersion calibration must be defined");
 			}
-			// energy dispersion in terms of eV/pixel
+			// energy dispersion in terms of pixel/eV
 			if (file != null) {
-				double[] tmp = parseForCalibration(file);
-				System.arraycopy(tmp, 0, energyDispersion, 0, Math.min(2, tmp.length));
+				DoubleDataset tmp = parseForCalibration(log, file).cast(DoubleDataset.class);
+				UnitMetadata um = tmp.getFirstMetadata(UnitMetadata.class);
+				isIVE = !(um != null && um.getUnit().equals(NonSI.ELECTRON_VOLT)); // could also check process for intercept_energy_fit_ cf energy_intercept_fit_
+
+				tmp.squeeze();
+				int rmax = tmp.getShapeRef()[0];
+				for (int r = 0; r < rmax; r++) {
+					DoubleDataset res = tmp.getSlice(new Slice(r, r +1)).cast(DoubleDataset.class);
+					energyFitCoefficients[r] = res.getData(); 
+				}
 			}
 		}
-		if (energyDispersion[1] == 0 || Double.isNaN(energyDispersion[1])) { // assume first entry is fine
-			energyDispersion[1] = energyDispersion[0];
+		if (energyFitCoefficients[1] == null) { // assume first entry is fine
+			energyFitCoefficients[1] = energyFitCoefficients[0];
 		}
 
 		String lookup = model.getCentroidLookupFile();
@@ -161,8 +179,8 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		CSVParser parser = CSVParser.parse(new File(lookupFile), StandardCharsets.US_ASCII, CSVFormat.DEFAULT);
 		boolean isX = false;
 		boolean isY = false;
-		Map<Double, Dataset> xLookup = new HashMap<>();
-		Map<Double, Dataset> yLookup = new HashMap<>();
+		Map<Double, Dataset> lXLookup = new HashMap<>();
+		Map<Double, Dataset> lYLookup = new HashMap<>();
 		int xLength = 0;
 		int yLength = 0;
 		for (CSVRecord r : parser) {
@@ -176,8 +194,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 					isX = false;
 					isY = true;
 				}
-			} else if (n > 0) {
-				if (isX || isY) {
+			} else if (n > 0 && (isX || isY)) {
 					double e = Double.parseDouble(r.get(0));
 					double[] values = new double[n - 1];
 					int j = 0;
@@ -187,23 +204,23 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 					Dataset d = DatasetFactory.createFromObject(values);
 					if (isX) {
 						xLength = d.getSize();
-						xLookup.put(e, d);
+						lXLookup.put(e, d);
 					} else {
 						yLength = d.getSize();
-						yLookup.put(e, d);
+						lYLookup.put(e, d);
 					}
-				}
+				
 			}
 		}
 
 		if (xAsFirstDimension) {
-			this.xLookup = xLookup;
-			this.yLookup = yLookup;
+			xLookup = lXLookup;
+			yLookup = lYLookup;
 			xBase = DatasetFactory.createLinearSpace(DoubleDataset.class, 0, 1, xLength);
 			yBase = DatasetFactory.createLinearSpace(DoubleDataset.class, 0, 1, yLength);
 		} else {
-			this.xLookup = yLookup;
-			this.yLookup = xLookup;
+			xLookup = lYLookup;
+			yLookup = lXLookup;
 			xBase = DatasetFactory.createLinearSpace(DoubleDataset.class, 0, 1, yLength);
 			yBase = DatasetFactory.createLinearSpace(DoubleDataset.class, 0, 1, xLength);
 		}
@@ -266,42 +283,46 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 //	}
 //
 
-	private double[] parseForCalibration(String elasticLineFile) {
+	private final static String PROCESS_RESULT = "result";
+
+	private static Dataset parseForCalibration(OperationLog log, String elasticLineFile) {
 		try {
 			Tree t = LoaderFactory.getData(elasticLineFile).getTree();
 
 			GroupNode root = t.getGroupNode();
 			GroupNode entry = NexusTreeUtils.findFirstEntryWithProcess(root);
 
-			ProcessingUtils.checkForProcess(this, entry, ElasticLineReduction.PROCESS_NAME);
-
-			GroupNode rg = entry.getGroupNode("result");
+			GroupNode rg = entry.getGroupNode(PROCESS_RESULT);
 			if (rg == null) {
 				throw new NexusException("File does not contain a result group");
 			}
 
-			DataNode d = rg.getDataNode("data");
-			if (d == null) {
+			Dataset data = NexusTreeUtils.getDataset(PROCESS_RESULT, rg, null, "data");
+			if (data == null) {
 				throw new NexusException("File does not contain a result dataset");
 			}
 
-			return NexusTreeUtils.getDoubleArray(d);
+			// GroupNode pg = ProcessingUtils.checkForProcess(this, entry, ElasticLineReduction.PROCESS_NAME);
+			// DataNode pnd = pg.getDataNode("data");
+			// String model = NexusTreeUtils.getFirstString(pnd);
+			return data; // model.contains("fitQuadratic") ? data : Maths.reciprocal(data); // Old file has dispersion
 		} catch (Exception e) {
 			log.appendFailure("Could not parse Nexus file %s:%s", elasticLineFile, e);
 		}
 
-		return new double[] {-1, -1};
+		return DatasetFactory.zeros(2, 1).fill(-1);
 	}
 
 	@Override
 	IDataset processImageRegion(int sn, IDataset original, int rn, Dataset in) {
 		Dataset[] result = makeSpectrum(rn, in);
 		Dataset spectrum = result[1];
-		spectrum.setName("spectrum_" + rn);
+		spectrum.setName(SPECTRA_PREFIX + rn);
 
 		spectrum.clearMetadata(AxesMetadata.class);
-		// work out energy scale (needs calibration)
-		Dataset e = makeEnergyScale(result, offset[1], energyDispersion[rn]);
+		Dataset e = createEnergyScale(isIVE, DatasetFactory.createRange(result[1].getSize()), xrayEnergy,
+				getZeroEnergyOffset(rn), result[0].getDouble(), energyFitCoefficients[rn]);
+
 		MetadataUtils.setAxes(this, spectrum, e);
 		auxData.add(spectrum.getView(true));
 		allSpectra[rn].set(sn, spectrum.getView(true));
@@ -400,8 +421,8 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		}
 
 		OperationDataForDisplay odd;
-		if (od instanceof OperationDataForDisplay) {
-			odd = (OperationDataForDisplay) od;
+		if (od instanceof OperationDataForDisplay tod) {
+			odd = tod;
 		} else {
 			odd = new OperationDataForDisplay(od);
 		}
@@ -470,7 +491,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		if (!new File(xipPath).exists()) {
 			return parseXIPEvents(this, log, xipPath, XCAM_XIP_DATA);
 		}
-		return null;
+		return Collections.emptyList();
 	}
 
 	protected List<Dataset> readXIPEventsFromCurrentFile(String path, String dataPath, int i) {
@@ -495,8 +516,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			Node n = TreeUtils.getNode(t, dataPath);
 			if (n == null) {
 				log.appendFailure("Could not parse Nexus file %s to find %s", filePath, dataPath);
-			} else if (n instanceof DataNode) {
-				DataNode d = (DataNode) n;
+			} else if (n instanceof DataNode d) {
 				// xip is [F,N,7]
 				// 0,1: x,y centroids w/o eta correction
 				// 2,3: x,y centroids w/ eta correction
@@ -527,7 +547,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			log.appendFailure("Could not parse Nexus file %s:%s", filePath, e);
 		}
 
-		return null;
+		return Collections.emptyList();
 	}
 
 	protected void processAccumulatedDataOnLastSlice(String filePath, String dataPath, int[] shape, int smax, IntegerDataset bins, Dataset h) {
@@ -651,7 +671,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			for (int s = 0; s < 2; s++) {
 				int nx = s + 1;
 				List<Dataset> xip = xipOpt == XIP_OPTION.USE_EXTERNAL ? readXIPEventsFromExternalFile(filePath, nx) : readXIPEventsFromCurrentFile(filePath, dataPath, nx);
-				if (xip == null) {
+				if (xip.isEmpty()) {
 					continue;
 				}
 
@@ -778,10 +798,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			}
 
 			double el0 = getZeroEnergyOffset(r); // elastic line intercept
-			final Dataset energies = DatasetFactory.createRange(bmax);
-			energies.iadd(-bin*el0); // adjust zero
-			energies.imultiply(-energyDispersion[r]/bin);
-			energies.setName(ENERGY_LOSS);
+			final Dataset energies = createEnergyScale(bmax, bin, xrayEnergy, el0, energyFitCoefficients[r]);
 
 			Dataset t = DatasetFactory.createFromObject(allSingle[r]);
 			t.setName("single_photon_spectra_" + r);
@@ -810,8 +827,8 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			nf.setName("single_events_fraction_" + r);
 			summaryData.add(nf);
 
-			double ts = (Double) ((Number) sEvents.sum()).doubleValue();
-			double tm = (Double) ((Number) mEvents.sum()).doubleValue();
+			double ts = ((Number) sEvents.sum()).doubleValue();
+			double tm = ((Number) mEvents.sum()).doubleValue();
 			double tt = ts + tm;
 			double sf = tt == 0 ? 0 : ts/tt;
 			log.appendSuccess("Events: single/total = %g/%g = %g", ts, tt, sf);
@@ -840,12 +857,11 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 					StraightLine line = getStraightLine(r);
 					IRectangularROI roi = getROI(r);
 					Dataset sums = allSums.get(i);
-					if (sums == null) {
-						continue;
+					if (sums != null) {
+						Dataset posn = allPositions.get(i);
+						shiftAndBinPhotonEvents(false, 0, offset, single, multiple, bin, bmax, false, null, null, null, line, roi, sums,
+								posn, hSingle, hMultiple, null, null, null);
 					}
-					Dataset posn = allPositions.get(i);
-					shiftAndBinPhotonEvents(false, 0, offset, single, multiple, bin, bmax, false, null, null, null, line, roi, sums,
-							posn, hSingle, hMultiple, null, null, null);
 				}
 
 				summarizePhotonSpectra("single_photon_", allSingle, r, energies);
@@ -858,10 +874,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 
 		for (int r = 0; r < roiMax; r++) { // add XIP to summary data
 			double el0 = getZeroEnergyOffset(r); // elastic line intercept
-			final Dataset energies = DatasetFactory.createRange(bmax);
-			energies.iadd(-bin*el0); // adjust zero
-			energies.imultiply(-energyDispersion[r]/bin);
-			energies.setName(ENERGY_LOSS);
+			final Dataset energies = createEnergyScale(bmax, bin, xrayEnergy, el0, energyFitCoefficients[r]);
 
 			int xr = roiMax + 2 * r;
 			int[] spectrum = allSingle[xr][0];
@@ -924,10 +937,7 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			for (int s = 0; s < 2; s++) {
 				RectangularROI ccd = ccds[s];
 				boolean[] regionInCCD = regionInCCDs[s];
-				if (ccd.containsPoint(start)) {
-					regionInCCD[r] = true;
-					continue;
-				} else if (ccd.containsPoint(end)) {
+				if (ccd.containsPoint(start) || ccd.containsPoint(end)) {
 					regionInCCD[r] = true;
 					continue;
 				}
@@ -995,12 +1005,12 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	private void summarizePhotonSpectra(String prefix, int[][][] allPhotonCounts, int r, Dataset energies) {
 		prefix = "correlated_" + prefix;
 		Dataset t = DatasetFactory.createFromObject(allPhotonCounts[r]);
-		t.setName(prefix + "spectra_" + r);
+		t.setName(prefix + SPECTRA_PREFIX + r);
 		MetadataUtils.setAxes(this, t, null, energies);
 		summaryData.add(t);
 
 		t = t.sum(0);
-		t.setName(prefix + "spectrum_" + r);
+		t.setName(prefix + SPECTRUM_PREFIX + r);
 		MetadataUtils.setAxes(this, t, energies);
 		summaryData.add(t);
 	}
@@ -1032,13 +1042,13 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 
 		Dataset sp = stack(msArray);
 		prefix = "correlated_" + prefix;
-		sp.setName(prefix + "spectra_" + r);
+		sp.setName(prefix + SPECTRA_PREFIX + r);
 		MetadataUtils.setAxes(this, sp, null, energies);
 		summaryData.add(sp);
 
 		sp = Maths.clip(sp, 0, Double.POSITIVE_INFINITY);
 		sp = sp.sum(0);
-		sp.setName(prefix + "spectrum_" + r);
+		sp.setName(prefix + SPECTRUM_PREFIX + r);
 		MetadataUtils.setAxes(this, sp, energies);
 		summaryData.add(sp);
 
@@ -1153,6 +1163,9 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 				sp.iadd(s);
 			}
 		}
+		if (sp == null) {
+			return null;
+		}
 		sp.setMetadata(am);
 		return sp;
 	}
@@ -1197,11 +1210,8 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		if (slope == null) {
 			slope = line.getParameterValue(STRAIGHT_LINE_M);
 		}
-		double intercept = model.getEnergyOffsetOption() != ENERGY_OFFSET.MANUAL_OVERRIDE
-				? line.getParameterValue(STRAIGHT_LINE_C)
-				: rn == 0 ? model.getEnergyOffsetA() : model.getEnergyOffsetB();
 
-		Dataset[] results = makeSpectrum(in, offset[0], slope, intercept, model.isClipSpectra(), model.isNormalizeByRows());
+		Dataset[] results = makeSpectrum(in, new double[] {offset[0], offset[1]}, slope, model.isClipSpectra(), model.isNormalizeByRows());
 
 		if (model.getEnergyOffsetOption() == ENERGY_OFFSET.TURNING_POINT) {
 			results[0].isubtract(findTurningPoint(false, results[1]));
@@ -1209,68 +1219,139 @@ abstract public class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		return results;
 	}
 
-	public static Dataset[] makeSpectrum(Dataset in, int rOffset, double slope, double intercept, boolean clip) {
-		return makeSpectrum(in, rOffset, slope, intercept, clip, true);
-	}
-
 	/**
 	 * Make spectrum from image by summing along line<p>
 	 * The image comprises rows of spectrum that are offset by a line of given slope and intercept
 	 * @param in image orientated so that each row represents an individual spectrum
-	 * @param rOffset ROI offset
+	 * @param rOffset ROI offsets x, y
 	 * @param slope line slope
 	 * @param intercept line intercept
 	 * @param clip if true, clip columns where rows contribute from outside image
 	 * @param average if true, average rather than just summing to calculate spectrum
-	 * @return elastic line position and spectrum datasets
+	 * @return start position (in pixels) and spectrum datasets
 	 */
-	public static Dataset[] makeSpectrum(Dataset in, int rOffset, double slope, double intercept, boolean clip, boolean average) {
-		int rows = in.getShapeRef()[0];
-		Dataset elastic = DatasetFactory.createRange(rows);
-		if (rOffset != 0) {
-			elastic.iadd(rOffset);
-		}
-		if (slope != 1) {
-			elastic.imultiply(slope);
-		}
-		if (intercept != 0) {
-			elastic.iadd(intercept);
-		}
+	public static Dataset[] makeSpectrum(Dataset in, double[] rOffset, double slope, boolean clip, boolean average) {
+		Dataset start = DatasetFactory.createFromObject(-rOffset[0] * slope + rOffset[1]);
 	
 		Dataset spectrum = makeSpectrum(in, slope, clip, average);
 		AxesMetadata am = spectrum.getFirstMetadata(AxesMetadata.class);
 		if (am != null) {
 			try { // adjust for shift by clipping
 				Dataset x = DatasetUtils.sliceAndConvertLazyDataset(am.getAxes()[0]);
-				elastic.iadd(-x.getDouble());
+				start.iadd(-x.getDouble());
 			} catch (DatasetException e1) {
 				// do nothing
 			}
 		}
 
-		return new Dataset[] {elastic, spectrum};
+		return new Dataset[] {start, spectrum};
+	}
+
+	private boolean isIVE = true; // if true, fit was intercept versus energy otherwise it was energy versus intercept
+
+	private static class InvertQuadraticOperation implements UnaryOperation {
+		private final double fadb;
+		private final double bd2a;
+		private final double c;
+		private double base = 0;
+		private double u;
+
+		public InvertQuadraticOperation(double[] coeffs) {
+			double a = coeffs[0];
+			double b = coeffs[1];
+			c = coeffs[2];
+			fadb = 4 * a /(b * b);
+			u = Math.signum(b);
+			bd2a = u * b / (2 * a);
+		}
+
+		public void setBase(double base) {
+			this.base = base;
+		}
+
+		@Override
+		public String toString(String a) {
+			return "Invert quadratic";
+		}
+
+		@Override
+		public long longOperate(long a) {
+			return (long) doubleOperate(a);
+		}
+
+		@Override
+		public double doubleOperate(double i) {
+			double e = (Math.sqrt(1 + fadb * (i - c)) - u) * bd2a;
+			return e - base; // relative to base
+		}
+
+		@Override
+		public void complexOperate(double[] out, double ra, double ia) {
+			// do nothing
+		}
+
+		@Override
+		public boolean booleanOperate(long a) {
+			return doubleOperate(a) != 0;
+		}
 	}
 
 	/**
 	 * Make energy scale
 	 * @param result
-	 * @param offset
-	 * @param dispersion
+	 * @param cEnergy current energy (only used when coefficient length is 3)
+	 * @param elasticIntercept
+	 * @param coeffs (for Intercept vs Energy)
 	 * @return energy scale
 	 */
-	public static Dataset makeEnergyScale(Dataset[] result, int offset, double dispersion) {
-		Dataset e = DatasetFactory.createRange(result[1].getSize());
-		e.iadd(offset - result[0].getDouble()); // TODO discretize???
-		e.imultiply(-dispersion);
+	public static Dataset makeEnergyScale(Dataset[] result, double cEnergy, double elasticIntercept, double... coeffs) {
+		return createEnergyScale(true, DatasetFactory.createRange(result[1].getSize()), cEnergy, elasticIntercept, result[0].getDouble(), coeffs);
+	}
+
+	private static Dataset createEnergyScale(boolean isIVE, Dataset i, double cEnergy, double elasticIntercept, double regionStart,
+			double[] coeffs) {
+		Dataset e = null;
+		if (coeffs.length == 3) {
+			InvertQuadraticOperation invQuad = new InvertQuadraticOperation(coeffs);
+			Quadratic quad = new Quadratic(coeffs);
+			if (isIVE) { // intercept fitted against energy
+				double expectedIntercept = quad.val(cEnergy);
+				if (Math.abs(cEnergy) - invQuad.doubleOperate(expectedIntercept) > 1e-3) {
+					System.err.println("Check invert: " + cEnergy + " cf " + cEnergy + ": " + Arrays.toString(coeffs));
+				}
+				double delta = expectedIntercept - elasticIntercept; // shift in elastic line from energy calibration
+				i.iadd(regionStart + delta); // align indexes to calibration frame
+				invQuad.setBase(cEnergy);
+				e = Operations.operate(invQuad, i, null);
+			} else {
+				double expectedIntercept = invQuad.doubleOperate(cEnergy);
+				double delta = expectedIntercept - elasticIntercept; // shift in elastic line from energy calibration
+				i.iadd(regionStart + delta); // align indexes to calibration frame
+
+				e = quad.calculateValues(i).isubtract(cEnergy); // relative to elastic
+			}
+		} else {
+			i.iadd(regionStart - elasticIntercept);
+			e = Maths.multiply(i, isIVE ? 1. / coeffs[0] : coeffs[0]);
+		}
+		e.imultiply(-1);
 		e.setName(ENERGY_LOSS);
 		return e;
+	}
+
+	private Dataset createEnergyScale(int length, int oversampling, double cEnergy, double elasticIntercept, double[] coeffs) {
+		Dataset i = DatasetFactory.createRange(length);
+		if (oversampling != 1) {
+			i.idivide(oversampling);
+		}
+		return createEnergyScale(isIVE, i, cEnergy, elasticIntercept, 0, coeffs);
 	}
 
 	private static int findTurningPoint(boolean fromFirst, Dataset y) {
 		int n = y.getSize();
 		Dataset diff = Maths.derivative(DatasetFactory.createRange(n), y, 3);
 		List<Double> cs = DatasetUtils.crossings(diff, 0);
-		if (cs.size() == 0) {
+		if (cs.isEmpty()) {
 			return 0;
 		}
 		return (int) (fromFirst ? Math.floor(cs.get(0)) : Math.ceil(cs.get(cs.size() - 1)));

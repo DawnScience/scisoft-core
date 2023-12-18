@@ -29,8 +29,8 @@ public class RixsImageReductionBaseModel extends RixsBaseModel {
 	@OperationModelField(label = "Photon event peak: upper threshold", hint = "Multiple of single photon above which to ignore event", min = 0, expertOnly = true)
 	private double highThreshold = 2.0;
 
-	@OperationModelField(label = "Energy dispersion at detector (in eV/pixel)", description = "Overrides the value in calibration file",  hint = "Leave blank or NaN to read from file", min = 0)
-	private double energyDispersion = Double.NaN;
+	@OperationModelField(label = "Energy resolution coefficients (in eV/pix)", description = "Overrides the value(s) in calibration file: can be single or two values for linear, or three values for quadratic", hint = "Leave blank to read from file")
+	private double[] energyDispersion = null;
 
 	@OperationModelField(label = "Supersampling for event centroids", description = "Number of sub-divisions per pixel edge", min = 2, expertOnly = true)
 	private int bins = 2;
@@ -61,16 +61,15 @@ public class RixsImageReductionBaseModel extends RixsBaseModel {
 	@OperationModelField(label = "Normalization dataset", description = "Use named dataset to normalize spectra", expertOnly = true, dataset = "currentFilePath")
 	private String normalizationPath = "/entry/m4c1/m4c1";
 
-	@OperationModelField(label = "Selection of frames to use", description = 
-			"A comma-separated (or semicolon-separated) list of sub-ranges.\n"
-			+ "Each sub-range can be a single integer or two integers (start/end) separated by\n"
-			+ "a colon. Integers can be negative to imply a count from the end of the range.\n"
-			+ "The end integer must be greater than the start integer. The end integer of\n"
-			+ "sub-ranges is inclusive. Also the last sub-range can omit the end integer.\n"
-			+ "Finally, each sub-range can be excluded with an exclamation mark prefix; if\n"
-			+ "any exclamation mark appears in a multi-range string then the default is that\n"
-			+ "the entire range is included and specified sub-ranges with \"!\" are excluded.",
-			hint = "E.g. 1 or 2,-1 or 0,2:4 or !3 or !1:-2", expertOnly = true)
+	@OperationModelField(label = "Selection of frames to use", description = """
+			A comma-separated (or semicolon-separated) list of sub-ranges.
+			Each sub-range can be a single integer or two integers (start/end) separated by
+			a colon. Integers can be negative to imply a count from the end of the range.
+			The end integer must be greater than the start integer. The end integer of
+			sub-ranges is inclusive. Also the last sub-range can omit the end integer.
+			Finally, each sub-range can be excluded with an exclamation mark prefix; if
+			any exclamation mark appears in a multi-range string then the default is that
+			the entire range is included and specified sub-ranges with "!" are excluded.""", hint = "E.g. 1 or 2,-1 or 0,2:4 or !3 or !1:-2", expertOnly = true)
 	private String frameSelection = "";
 
 	public enum ENERGY_OFFSET {
@@ -181,13 +180,13 @@ public class RixsImageReductionBaseModel extends RixsBaseModel {
 	}
 
 	/**
-	 * @return energy dispersion at detector (in eV/pixel). Can be NaN to indicate read from file
+	 * @return energy resolution at detector (in eV/pix). Can be null to indicate read from file
 	 */
-	public double getEnergyDispersion() {
+	public double[] getEnergyDispersion() {
 		return energyDispersion;
 	}
 
-	public void setEnergyDispersion(double energyDispersion) {
+	public void setEnergyDispersion(double[] energyDispersion) {
 		firePropertyChange("setEnergyDispersion", this.energyDispersion, this.energyDispersion = energyDispersion);
 	}
 

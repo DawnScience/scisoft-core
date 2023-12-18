@@ -19,6 +19,9 @@ public class ElasticLineReductionModel extends RixsBaseModel {
 	@OperationModelField(label = "Width of strip", description = "Used to find elastic line", hint = "0 for minimizing FWHM of summed spectra, 1 for using column maxima, 2+ for summing and fitting line", min = 0, enableif = "slopeOverride == null")
 	private int delta = 1;
 
+	@OperationModelField(label = "Quadratic fit", description = "Fit a quadratic expression instead of a linear one for dispersion", hint = "")
+	private boolean fitQuadratic = false;
+
 	@OperationModelField(label = "Maximum slope", description = "Maximum value allowed for elastic line slope", min = 1e-6, max = 1, enableif = "slopeOverride == 0", expertOnly = true)
 	private double maxSlope = 0.2;
 	
@@ -43,6 +46,17 @@ public class ElasticLineReductionModel extends RixsBaseModel {
 
 	public void setDelta(int delta) {
 		firePropertyChange("setRatio", this.delta, this.delta = delta);
+	}
+
+	/**
+	 * @return true to a quadratic expression for dispersion (intercept vs energy)
+	 */
+	public boolean isFitQuadratic() {
+		return fitQuadratic;
+	}
+
+	public void setFitQuadratic(boolean fitQuadratic) {
+		firePropertyChange("setFitQuadratic", this.fitQuadratic, this.fitQuadratic = fitQuadratic);
 	}
 
 	/**

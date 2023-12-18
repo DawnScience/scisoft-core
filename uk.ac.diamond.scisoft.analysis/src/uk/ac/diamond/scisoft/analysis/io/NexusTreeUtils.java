@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.IntStream;
 
@@ -68,6 +69,7 @@ import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.IMetadata;
 import org.eclipse.january.metadata.Metadata;
 import org.eclipse.january.metadata.MetadataFactory;
+import org.eclipse.january.metadata.UnitMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,6 +95,8 @@ public class NexusTreeUtils {
 	private static final String TRANSFORMATIONS_ROOT = ".";
 	private static final String TRANSFORMATIONS_OFFSET = "offset";
 	private static final String TRANSFORMATIONS_OFFSET_UNITS = "offset_units";
+	private static final String TRANSFOMATIONS_ROTATION = "rotation";
+	private static final String TRANSFOMATIONS_TRANSLATION = "translation";
 
 
 	private static final String DETECTOR_DISTANCE = "distance";
@@ -187,7 +191,7 @@ public class NexusTreeUtils {
 	}
 
 	public static void augmentTree(Tree tree) {
-		augmentNodeLink(tree instanceof TreeFile ? ((TreeFile) tree).getFilename() : null, tree.getNodeLink(), true);
+		augmentNodeLink(tree instanceof TreeFile treeFile ? treeFile.getFilename() : null, tree.getNodeLink(), true);
 	}
 
 	/**
@@ -318,7 +322,7 @@ public class NexusTreeUtils {
 		}
 
 		// scan children for datasets as possible axes (could be referenced by @axes)
-		List<AxisChoice> choices = new ArrayList<AxisChoice>();
+		List<AxisChoice> choices = new ArrayList<>();
 		for (NodeLink l : gNode) {
 			if (!l.isDestinationData())
 				continue;
@@ -421,7 +425,7 @@ public class NexusTreeUtils {
 					// lengths to the signal dataset shape (this may be wrong as transposes in
 					// common dimension lengths can occur)
 //					logger.debug("Creating index mapping from axis shape");
-					Map<Integer, Integer> dims = new LinkedHashMap<Integer, Integer>();
+					Map<Integer, Integer> dims = new LinkedHashMap<>();
 					for (int i = 0; i < rank; i++) {
 						dims.put(i, shape[i]);
 					}
@@ -429,8 +433,9 @@ public class NexusTreeUtils {
 					for (int i = 0; i < intAxis.length; i++) {
 						int al = ashape[i];
 						intAxis[i] = -1;
-						for (int k : dims.keySet()) {
-							if (al == dims.get(k)) { // find first signal dimension length that matches
+						for (Entry<Integer, Integer> e : dims.entrySet()) {
+							if (al == e.getValue()) { // find first signal dimension length that matches
+								Integer k = e.getKey();
 								intAxis[i] = k;
 								dims.remove(k);
 								break;
@@ -449,11 +454,10 @@ public class NexusTreeUtils {
 				choices.add(choice);
 			} catch (Exception e) {
 				logger.debug("Axis attributes in {} are invalid - {}", a.getName(), e.getMessage());
-				continue;
 			}
 		}
 
-		List<String> aNames = new ArrayList<String>();
+		List<String> aNames = new ArrayList<>();
 		Attribute axesAttr = dNode.getAttribute(NexusConstants.DATA_AXES);
 		if (axesAttr == null && isSignal) { // cope with @axes being in group
 			axesAttr = gNode.getAttribute(NexusConstants.DATA_AXES);
@@ -483,7 +487,7 @@ public class NexusTreeUtils {
 			}
 		}
 
-		List<ILazyDataset> axisList = new ArrayList<ILazyDataset>();
+		List<ILazyDataset> axisList = new ArrayList<>();
 		AxesMetadata amd;
 		try {
 			amd = MetadataFactory.createMetadata(AxesMetadata.class, rank);
@@ -620,8 +624,9 @@ public class NexusTreeUtils {
 							logger.error("TODO put description of error here", e);
 						}
 					} else if (m.length == 1) {
-						if (lz.getShape()[m[0]-1] == choice.getValues().getSize() ) {
-							axm.addAxis(m[0]-1, choice.getValues());
+						int dm = m[0] - 1;
+						if (lz.getShape()[dm] == choice.getValues().getSize() ) {
+							axm.addAxis(dm, choice.getValues());
 						}
 					}
 				}
@@ -694,7 +699,7 @@ public class NexusTreeUtils {
 			// missing axes???
 		}
 
-		List<ILazyDataset> axes = new ArrayList<ILazyDataset>();
+		List<ILazyDataset> axes = new ArrayList<>();
 		for (String a : namedAxes) {
 			if (NexusConstants.DATA_AXESEMPTY.equals(a)) {
 				continue;
@@ -780,7 +785,7 @@ public class NexusTreeUtils {
 			}
 		}
 		
-		List<ILazyDataset> axisList = new ArrayList<ILazyDataset>();
+		List<ILazyDataset> axisList = new ArrayList<>();
 		AxesMetadata amd;
 		try {
 			amd = MetadataFactory.createMetadata(AxesMetadata.class, rank);
@@ -802,7 +807,7 @@ public class NexusTreeUtils {
 		dNode.setAugmented();
 		return true;
 	}
-	
+
 	/**
 	 * Strict parse new style (2014) NXdata class and augment with metadata
 	 * @param gn
@@ -845,13 +850,13 @@ public class NexusTreeUtils {
 		}
 		
 		Iterator<String> it = gn.getAttributeNameIterator();
-		Set<String> s = new HashSet<String>();
+		Set<String> s = new HashSet<>();
 		while(it.hasNext()) s.add(it.next());
 		parseAllAnnotations(signal, cData, gn, tmp,s);
 		
 		return cData;
 	}
-	
+
 	private static void parseAllAnnotations(String signalName, ILazyDataset lz, GroupNode gn, String[] primaryAxes, Set<String> annotations) {
 		
 		AxesMetadata ax = null;
@@ -880,7 +885,7 @@ public class NexusTreeUtils {
 		lz.setMetadata(ax);
 		
 	}
-	
+
 	private static void updateMetadata(String name, GroupNode gn, Set<String> allAnnotations, AxesMetadata metadata, int primaryDimension) {
 		if (name.endsWith(NexusConstants.DATA_AXESSET_SUFFIX)) {
 			if (allAnnotations.contains(name + NexusConstants.DATA_INDICES_SUFFIX)) {
@@ -903,13 +908,13 @@ public class NexusTreeUtils {
 			}
 		} else {
 			if (name.endsWith(NexusConstants.DATA_INDICES_SUFFIX)) {
-				String not_indices = name.substring(0, name.length() - NexusConstants.DATA_INDICES_SUFFIX.length());
-				if (gn.containsDataNode(not_indices)) {
+				String notIndices = name.substring(0, name.length() - NexusConstants.DATA_INDICES_SUFFIX.length());
+				if (gn.containsDataNode(notIndices)) {
 					int[] indices = parseIntArray(gn.getAttribute(name));
-					ILazyDataset view = gn.getDataNode(not_indices).getDataset().getSliceView();
-					view.setName(not_indices);
-					metadata.addAxis(primaryDimension == -1 ? indices[0] : primaryDimension, view,indices);
-					allAnnotations.remove(not_indices);
+					ILazyDataset view = gn.getDataNode(notIndices).getDataset().getSliceView();
+					view.setName(notIndices);
+					metadata.addAxis(primaryDimension == -1 && indices != null ? indices[0] : primaryDimension, view, indices);
+					allAnnotations.remove(notIndices);
 				}
 			} else {
 				final String nameWithIndices = name + NexusConstants.DATA_INDICES_SUFFIX;
@@ -929,7 +934,7 @@ public class NexusTreeUtils {
 					}
 					ILazyDataset view = dataNode.getDataset().getSliceView();
 					view.setName(name);
-					metadata.addAxis(primaryDimension == -1 ? indices[0] : primaryDimension, view,indices);
+					metadata.addAxis(primaryDimension == -1 && indices != null ? indices[0] : primaryDimension, view, indices);
 				}
 			}
 		}
@@ -940,7 +945,7 @@ public class NexusTreeUtils {
 		
 		if (primaryDimension == -1 && it.hasNext()) updateMetadata(it.next(), gn, allAnnotations, metadata, -1);
 	}
-	
+
 	private static void addAxis(GroupNode gn, String a, int rank, int[] shape, List<ILazyDataset> axes) throws IllegalArgumentException {
 		DataNode aNode = gn.getDataNode(a);
 		ILazyDataset aData = aNode.getDataset();
@@ -1039,7 +1044,7 @@ public class NexusTreeUtils {
 			logAndThrow("'%s' must be an %s class", gNode, NexusConstants.DETECTOR);
 		}
 
-		Map<String, Transform> ftrans = new HashMap<String, Transform>();
+		Map<String, Transform> ftrans = new HashMap<>();
 		NodeLink tl = findFirstNode(gNode, NexusConstants.TRANSFORMATIONS);
 		if (tl != null) {
 			parseTransformations(path, tree, tl, ftrans, pos);
@@ -1059,7 +1064,7 @@ public class NexusTreeUtils {
 		}
 
 		// Find all dependencies
-		Map<String, Transform> mtrans = new HashMap<String, Transform>();
+		Map<String, Transform> mtrans = new HashMap<>();
 		for (Transform t: ftrans.values()) {
 			String dpath = t.depend;
 			while (!dpath.equals(TRANSFORMATIONS_ROOT) && !ftrans.containsKey(dpath) && !mtrans.containsKey(dpath)) {
@@ -1070,10 +1075,8 @@ public class NexusTreeUtils {
 					dpath = nt.depend;
 				} catch (IllegalArgumentException e) {
 					logAndThrow(e, "Could not find dependency: %s", dpath);
-					break;
 				} catch (Exception e) {
 					logAndThrow(e, "Problem parsing transformation: %s", dpath);
-					break;
 				}
 			}
 		}
@@ -1113,8 +1116,10 @@ public class NexusTreeUtils {
 			}
 		}
 
-		Integer l = gNode.containsDataNode(DETECTOR_UNDERLOAD) ? getIntArray(gNode.getDataNode(DETECTOR_UNDERLOAD))[0] : null;
-		Integer u = gNode.containsDataNode(DETECTOR_SATURATION) ? getIntArray(gNode.getDataNode(DETECTOR_SATURATION))[0] : null;
+		int[] array = getIntArray(gNode.getDataNode(DETECTOR_UNDERLOAD));
+		Integer l = array != null ? array[0] : null;
+		array = getIntArray(gNode.getDataNode(DETECTOR_SATURATION));
+		Integer u = array != null ? array[0] : null;
 		Dataset mask = null;
 		if (gNode.containsDataNode(DETECTOR_PIXELMASK)) {
 			try {
@@ -1285,13 +1290,8 @@ public class NexusTreeUtils {
 		int[] shape = null;
 		for (NodeLink l : gNode) {
 			String name = l.getName();
-			switch(name) {
-			case DMOD_FASTPIXELDIRECTION:
-			case DMOD_SLOWPIXELDIRECTION:
+			if (DMOD_FASTPIXELDIRECTION.equals(name) || DMOD_SLOWPIXELDIRECTION.equals(name)) {
 				shape = parseNodeShape(path, tree, l, shape);
-				break;
-			default:
-				break;
 			}
 		}
 		return shape;
@@ -1418,14 +1418,12 @@ public class NexusTreeUtils {
 
 		// find orientation first as parseSubGeometry multiplies from the right
 		NodeLink l = gNode.getNodeLink("orientation");
-		if (l != null) {
-			if (isNXClass(l.getDestination(), NexusConstants.ORIENTATION))
-				parseSubGeometry(m, l, false);
+		if (l != null && isNXClass(l.getDestination(), NexusConstants.ORIENTATION)) {
+			parseSubGeometry(m, l, false);
 		}
-		l = gNode.getNodeLink("translation");
-		if (l != null) {
-			if (isNXClass(l.getDestination(), NexusConstants.TRANSLATION))
-				parseSubGeometry(m, l, true);
+		l = gNode.getNodeLink(TRANSFOMATIONS_TRANSLATION);
+		if (l != null && isNXClass(l.getDestination(), NexusConstants.TRANSLATION)) {
+			parseSubGeometry(m, l, true);
 		}
 	}
 
@@ -1456,7 +1454,8 @@ public class NexusTreeUtils {
 		Matrix4d m2 = new Matrix4d();
 		if (translate) {
 			da = da.clone(); // necessary to stop clobbering cached values
-			convertIfNecessary(MILLIMETRE, getFirstString(dNode.getAttribute(NexusConstants.UNITS)), da);
+			UnitMetadata um = ds.getFirstMetadata(UnitMetadata.class);
+			convertIfNecessary(MILLIMETRE, um == null ? null : um.getUnit(), da);
 			m2.setIdentity();
 			m2.setColumn(3, da[0], da[1], da[2], 1);
 		} else {
@@ -1493,16 +1492,19 @@ public class NexusTreeUtils {
 		}
 	}
 
+	private static final String INCIDENT_WAVELENGTH = "incident_wavelength";
+	private static final String INCIDENT_ENERGY = "incident_energy";
+
 	public static void parseBeam(Tree tree, GroupNode group, DiffractionCrystalEnvironment sample, int... pos) {
-		parseForDCE(true, tree == null ? null : TreeUtils.getPath(tree, group), tree, "incident_wavelength", "incident_energy", group, sample, pos);
+		parseForDCE(true, tree == null ? null : TreeUtils.getPath(tree, group), tree, INCIDENT_WAVELENGTH, INCIDENT_ENERGY, group, sample, pos);
 	}
 
 	public static void parseBeam(Tree tree, NodeLink link, DiffractionCrystalEnvironment sample, int... pos) {
-		parseForDCE(true, tree == null ? null : TreeUtils.getPath(tree, link.getDestination()), tree, "incident_wavelength", "incident_energy", link, sample, pos);
+		parseForDCE(true, tree == null ? null : TreeUtils.getPath(tree, link.getDestination()), tree, INCIDENT_WAVELENGTH, INCIDENT_ENERGY, link, sample, pos);
 	}
 
 	public static void parseBeam(boolean warn, String path, Tree tree, NodeLink link, DiffractionCrystalEnvironment sample, int... pos) {
-		parseForDCE(warn, path, tree, "incident_wavelength", "incident_energy", link, sample, pos);
+		parseForDCE(warn, path, tree, INCIDENT_WAVELENGTH, INCIDENT_ENERGY, link, sample, pos);
 	}
 
 	public static void parseMonochromator(Tree tree, NodeLink link, DiffractionCrystalEnvironment sample, int... pos) {
@@ -1550,8 +1552,8 @@ public class NexusTreeUtils {
 
 			NodeLink dNodeLink = TreeUtils.findNodeLink(tree, dependsOn, false);
 			Node pDNode = dNodeLink.getSource();
-			if (pDNode instanceof GroupNode) {
-				tNode = (GroupNode) pDNode;
+			if (pDNode instanceof GroupNode pgNode) {
+				tNode = pgNode;
 				if (!isNXClass(tNode, NexusConstants.TRANSFORMATIONS)) {
 					logger.error("Depends_on parent is not an {} group: {}", NexusConstants.TRANSFORMATIONS, tNode);
 				}
@@ -1667,8 +1669,8 @@ public class NexusTreeUtils {
 		NodeLink l = null;
 		if (!dep.startsWith(Tree.ROOT)) { // try local group
 			Node n = link.getSource();
-			if (n instanceof GroupNode) {
-				l = ((GroupNode) n).getNodeLink(dep);
+			if (n instanceof GroupNode gn) {
+				l = gn.getNodeLink(dep);
 			}
 		}
 		if (l == null) {
@@ -1685,33 +1687,33 @@ public class NexusTreeUtils {
 		return checkShapes(dshape, nshape);
 	}
 
-	private static int[] checkShapes(int[] nshape, int[] dshape) {
-		if (nshape == null) {
-			return dshape;
-		}
-		int nsize = ShapeUtils.calcSize(nshape);
-		int dsize = ShapeUtils.calcSize(dshape);
-		if (nsize != 1 && dsize != 1) {
-			if (nsize != dsize) {
-				throw new IllegalArgumentException("Non-trivial shapes must have same size");
-			}
-			if (nshape.length != dshape.length) {
-				throw new IllegalArgumentException("Non-trivial shapes must have same rank");
-			}
-			if (!Arrays.equals(nshape, dshape)) {
-				throw new IllegalArgumentException("Non-trivial shapes must match");
-			}
+	private static int[] checkShapes(int[] mshape, int[] nshape) {
+		if (mshape == null) {
 			return nshape;
 		}
+		int msize = ShapeUtils.calcSize(mshape);
+		int nsize = ShapeUtils.calcSize(nshape);
+		if (msize != 1 && nsize != 1) {
+			if (msize != nsize) {
+				throw new IllegalArgumentException("Non-trivial shapes must have same size");
+			}
+			if (mshape.length != nshape.length) {
+				throw new IllegalArgumentException("Non-trivial shapes must have same rank");
+			}
+			if (!Arrays.equals(mshape, nshape)) {
+				throw new IllegalArgumentException("Non-trivial shapes must match");
+			}
+			return mshape;
+		}
 
-		if (nsize == 1) {
-			if (dsize > nsize || dshape.length >= nshape.length) {
-				return dshape;
+		if (msize == 1) {
+			if (nsize > msize || nshape.length >= mshape.length) {
+				return nshape;
 			}
 			throw new IllegalArgumentException("Something is very wrong");
 		}
-		if (nsize > dsize || nshape.length >= dshape.length) {
-			return nshape;
+		if (msize > nsize || mshape.length >= nshape.length) {
+			return mshape;
 		}
 
 		throw new IllegalArgumentException("Something is very wrong");
@@ -1782,7 +1784,7 @@ public class NexusTreeUtils {
 		// get wavelength and transformations
 		boolean getTransformations = true;
 		boolean getBeam = true;
-		Map<String, Transform> ftrans = new HashMap<String, Transform>();
+		Map<String, Transform> ftrans = new HashMap<>();
 		for (NodeLink l : gNode) {
 			if (isNXClass(l.getDestination(), NexusConstants.TRANSFORMATIONS) && getTransformations) {
 				parseTransformations(path, tree, l, ftrans, pos);
@@ -1799,14 +1801,13 @@ public class NexusTreeUtils {
 		}
 
 		// Find all dependencies
-		Map<String, Transform> mtrans = new HashMap<String, Transform>();
+		Map<String, Transform> mtrans = new HashMap<>();
 		for (Transform t: ftrans.values()) {
 			String dpath = t.depend;
 			while (!dpath.equals(TRANSFORMATIONS_ROOT) && !ftrans.containsKey(dpath) && !mtrans.containsKey(dpath)) {
 				NodeLink l = tree.findNodeLink(dpath);
 				if (l == null) {
 					logAndThrow("Could not find dependency: %s", dpath);
-					break;
 				}
 				try {
 					Transform nt = parseTransformation(dpath.substring(0, dpath.lastIndexOf(Node.SEPARATOR)), tree, l, pos);
@@ -1816,7 +1817,6 @@ public class NexusTreeUtils {
 					}
 				} catch (IllegalArgumentException e) {
 					logAndThrow(e, "Could not find dependency: %s", dpath);
-					break;
 				} catch (Exception e) {
 					logger.error("Problem parsing transformation: {}", dpath, e);
 					break;
@@ -1907,16 +1907,17 @@ public class NexusTreeUtils {
 				logAndThrow("Vector attribute of '%s' is missing", name);
 			}
 			Vector3d v3 = new Vector3d(vector);
-			String units = getFirstString(dNode.getAttribute(NexusConstants.UNITS));
+			UnitMetadata um = dataset.getFirstMetadata(UnitMetadata.class);
+			Unit<?> units = um != null ? um.getUnit() : null;
 			switch(type) {
-			case "translation":
+			case TRANSFOMATIONS_TRANSLATION:
 				Matrix3d m3 = new Matrix3d();
 				m3.setIdentity();
 //				v3.normalize(); // XXX I16 written with magnitude too
 				v3.scale(convertIfNecessary(MILLIMETRE, units, value));
 				m4.set(m3, v3, 1);
 				break;
-			case "rotation":
+			case TRANSFOMATIONS_ROTATION:
 				AxisAngle4d aa = new AxisAngle4d(v3, convertIfNecessary(Units.RADIAN, units, value));
 				m4.set(aa);
 				break;
@@ -1983,7 +1984,7 @@ public class NexusTreeUtils {
 		}
 		double[] values = dataset.getData();
 		String type = getFirstString(dNode.getAttribute(TRANSFORMATIONS_TYPE));
-		if (!"translation".equals(type)) {
+		if (!TRANSFOMATIONS_TRANSLATION.equals(type)) {
 			throw new IllegalArgumentException("Transformed vector node has wrong type");
 		}
 		v3.normalize();
@@ -2279,11 +2280,12 @@ public class NexusTreeUtils {
 	 * @return string array or null if not a data node
 	 */
 	public static String[] getStringArray(Node n) {
-		if (n == null || !(n instanceof DataNode))
+		if (!(n instanceof DataNode)) {
 			return null;
+		}
 
 		StringDataset sd = getCastAndCacheData((DataNode) n, StringDataset.class);
-		return sd.getData();
+		return sd != null ? sd.getData() : null;
 	}
 
 	/**
@@ -2319,7 +2321,7 @@ public class NexusTreeUtils {
 	 * @throws NexusException if node is null or not a data node
 	 */
 	public static String getFirstString(Node n) throws NexusException {
-		if (n == null || !(n instanceof DataNode)) {
+		if (!(n instanceof DataNode)) {
 			throw new NexusException("Node is null or not a data node");
 		}
 
@@ -2337,8 +2339,7 @@ public class NexusTreeUtils {
 	 */
 	public static int parseFirstInt(Attribute attr) {
 		if (attr.isString()) {
-			int value = Integer.parseInt(attr.getFirstElement());
-			return value;
+			return Integer.parseInt(attr.getFirstElement());
 		}
 		Dataset attrd = DatasetUtils.convertToDataset(attr.getValue());
 		return attrd.getInt();
@@ -2365,8 +2366,9 @@ public class NexusTreeUtils {
 	 * @return integer array or null if attribute does not exist
 	 */
 	public static int[] parseIntArray(Attribute attr) {
-		if (attr == null)
+		if (attr == null) {
 			return null;
+		}
 
 		int[] array;
 		if (attr.isString()) {
@@ -2415,8 +2417,9 @@ public class NexusTreeUtils {
 	 * @return integer array or null if not a data node or data node is empty
 	 */
 	public static int[] getIntArray(Node n) {
-		if (n == null || !(n instanceof DataNode))
+		if (!(n instanceof DataNode)) {
 			return null;
+		}
 
 		IntegerDataset id = getCastAndCacheData((DataNode) n, IntegerDataset.class);
 		if (id == null) {
@@ -2432,7 +2435,7 @@ public class NexusTreeUtils {
 	 * @throws NexusException if node is null or not a data node
 	 */
 	public static int getFirstInt(Node n) throws NexusException {
-		if (n == null || !(n instanceof DataNode)) {
+		if (!(n instanceof DataNode)) {
 			throw new NexusException("Node is null or not a data node");
 		}
 
@@ -2450,8 +2453,7 @@ public class NexusTreeUtils {
 	 */
 	public static double parseFirstDouble(Attribute attr) {
 		if (attr.isString()) {
-			double value = Double.parseDouble(attr.getFirstElement());
-			return value;
+			return Double.parseDouble(attr.getFirstElement());
 		}
 		Dataset attrd = DatasetUtils.convertToDataset(attr.getValue());
 		return attrd.getDouble();
@@ -2478,8 +2480,9 @@ public class NexusTreeUtils {
 	 * @return double array or null if attribute does not exist
 	 */
 	public static double[] parseDoubleArray(Attribute attr) {
-		if (attr == null)
+		if (attr == null) {
 			return null;
+		}
 
 		double[] array;
 		if (attr.isString()) {
@@ -2517,7 +2520,7 @@ public class NexusTreeUtils {
 	 * @return double array or null if not a data node or data node is empty
 	 */
 	public static double[] getDoubleArray(Node n) {
-		if (n == null || !(n instanceof DataNode)) {
+		if (!(n instanceof DataNode)) {
 			return null;
 		}
 
@@ -2535,7 +2538,7 @@ public class NexusTreeUtils {
 	 * @throws NexusException if node is null or not a data node
 	 */
 	public static double getFirstDouble(Node n) throws NexusException {
-		if (n == null || !(n instanceof DataNode)) {
+		if (!(n instanceof DataNode)) {
 			throw new NexusException("Node is null or not a data node");
 		}
 
@@ -2560,20 +2563,6 @@ public class NexusTreeUtils {
 		return s.split("[:,]");
 	}
 
-	private static double convertIfNecessary(Unit<?> unit, String attr, double value) {
-		Unit<?> u = parseUnit(attr);
-		if (u != null && !u.equals(unit)) {
-			try {
-				return u.getConverterToAny(unit).convert(value);
-			} catch (UnconvertibleException | IncommensurableException e) {
-				String error = MessageFormat.format("Could not convert attribute's ({}) unit to given unit ({})", attr, unit);
-				logger.error(error, e);
-				throw new IllegalArgumentException(error);
-			}
-		}
-		return value;
-	}
-
 	private static Dataset getAndCacheData(DataNode dNode) {
 		return getCastAndCacheData(dNode, null);
 	}
@@ -2589,8 +2578,8 @@ public class NexusTreeUtils {
 		if (ld == null) {
 			return null;
 		}
-		if (ld instanceof Dataset) {
-			dataset = (Dataset) ld;
+		if (ld instanceof Dataset td) {
+			dataset = td;
 		} else {
 			try {
 				dataset = DatasetUtils.sliceAndConvertLazyDataset(ld);
@@ -2601,8 +2590,8 @@ public class NexusTreeUtils {
 			dNode.setDataset(dataset);
 		}
 		if (clazz != null && !dataset.getClass().equals(clazz)) {
-			if (dataset instanceof CompoundDataset) {
-				dataset = DatasetUtils.createDatasetFromCompoundDataset((CompoundDataset) dataset, true);
+			if (dataset instanceof CompoundDataset cd) {
+				dataset = DatasetUtils.createDatasetFromCompoundDataset(cd, true);
 			}
 			boolean asCompound = false;
 			if (InterfaceUtils.isCompound(clazz)) {
@@ -2623,6 +2612,14 @@ public class NexusTreeUtils {
 			}
 			dNode.setDataset(dataset);
 		}
+		Unit<?> unit = parseUnit(getFirstString(dNode.getAttribute(NexusConstants.UNITS)));
+		if (unit != null) {
+			try {
+				dataset.addMetadata(MetadataFactory.createMetadata(UnitMetadata.class, unit));
+			} catch (MetadataException e) {
+				// do nothing
+			}
+		}
 		return (D) dataset;
 	}
 
@@ -2630,30 +2627,55 @@ public class NexusTreeUtils {
 		DoubleDataset values = getCastAndCacheData(data, DoubleDataset.class);
 		if (values != null) {
 			values = values.clone(); // necessary to stop clobbering cached values
-			convertIfNecessary(unit, getFirstString(data.getAttribute(NexusConstants.UNITS)), values.getData());
+			UnitMetadata um = values.getFirstMetadata(UnitMetadata.class);
+			convertIfNecessary(unit, um == null ? null : um.getUnit(), values.getData());
 		}
 		return values;
 	}
 
 	private static void convertIfNecessary(Unit<?> unit, String attr, double[] values) {
-		Unit<?> u = parseUnit(attr);
-		if (u != null && !u.equals(unit)) {
-			UnitConverter c;
-			try {
-				c = u.getConverterToAny(unit);
-			} catch (UnconvertibleException | IncommensurableException e) {
-				String error = MessageFormat.format("Could not convert attribute's ({}) unit to given unit ({})", attr, unit);
-				logger.error(error, e);
-				throw new IllegalArgumentException(error);
-			}
+		convertIfNecessary(unit, parseUnit(attr), values);
+	}
+
+	private static void convertIfNecessary(Unit<?> nUnit, Unit<?> oUnit, double[] values) {
+		UnitConverter c = getConvertIfNecessary(nUnit, oUnit);
+		if (c != null) {
 			for (int i = 0, imax = values.length; i < imax; i++) {
 				values[i] = c.convert(values[i]);
 			}
 		}
 	}
 
+	private static double convertIfNecessary(Unit<?> nUnit, Unit<?> oUnit, double value) {
+		UnitConverter c = getConvertIfNecessary(nUnit, oUnit);
+		if (c != null) {
+			return c.convert(value);
+		}
+		return value;
+	}
+
+	private static UnitConverter getConvertIfNecessary(Unit<?> nUnit, Unit<?> oUnit) {
+		if (oUnit != null && nUnit != null && !nUnit.equals(oUnit)) {
+			try {
+				return oUnit.getConverterToAny(nUnit);
+			} catch (UnconvertibleException | IncommensurableException e) {
+				String error = MessageFormat.format("Could not convert attribute''s ({}) unit to given unit ({})", oUnit, nUnit);
+				logger.error(error, e);
+				throw new IllegalArgumentException(error);
+			}
+		}
+		return null;
+	}
+
 	static Unit<?> parseUnit(String attr) {
-		return attr != null ? SimpleUnitFormat.getInstance().parse(attr) : null;
+		if (attr != null) {
+			try {
+				return SimpleUnitFormat.getInstance().parse(attr);
+			} catch (Exception e) {
+				logger.error("Could not parse unit '{}'", attr, e);
+			}
+		}
+		return null;
 	}
 
 	private static final String RELATIVE_PREFIX = ".";
@@ -2722,7 +2744,7 @@ public class NexusTreeUtils {
 
 	public static DataNode createNXTransform(String name, String units, boolean translation, double[] direction, double[] offset, String offsetUnits, String dependsOn, Object values) {
 		DataNode d = createDataNode(name, values, units);
-		d.addAttribute(TreeFactory.createAttribute(TRANSFORMATIONS_TYPE, translation ? "translation" : "rotation"));
+		d.addAttribute(TreeFactory.createAttribute(TRANSFORMATIONS_TYPE, translation ? TRANSFOMATIONS_TRANSLATION : TRANSFOMATIONS_ROTATION));
 		d.addAttribute(TreeFactory.createAttribute(TRANSFORMATIONS_VECTOR, direction));
 		d.addAttribute(TreeFactory.createAttribute(TRANSFORMATIONS_OFFSET, offset));
 		d.addAttribute(TreeFactory.createAttribute(TRANSFORMATIONS_OFFSET_UNITS, offsetUnits));

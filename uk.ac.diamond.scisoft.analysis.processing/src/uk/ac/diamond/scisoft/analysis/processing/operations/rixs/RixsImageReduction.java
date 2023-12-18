@@ -108,6 +108,10 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 					throw new OperationException(this, "Current file path does not end with scan number (before file extension)");
 				}
 
+				int dot = prefix.lastIndexOf(".");
+				if (dot > 0) {
+					prefix = prefix.substring(0, dot);
+				}
 				OperationMetadata om = original.getFirstMetadata(OperationMetadata.class);
 				currentFitFile = getElasticFitFromFile(currentDir, prefix, om == null ? null : om.getOutputFilename());
 				if (!useSummaryFits) {
@@ -178,10 +182,7 @@ public class RixsImageReduction extends RixsImageReductionBase<RixsImageReductio
 		long latest = 0;
 		File last = null;
 		for (File f : files) {
-			if (last == null) {
-				last = f;
-				latest = f.lastModified();
-			} else if (latest < f.lastModified()) {
+			if (last == null || latest < f.lastModified()) {
 				last = f;
 				latest = f.lastModified();
 			}

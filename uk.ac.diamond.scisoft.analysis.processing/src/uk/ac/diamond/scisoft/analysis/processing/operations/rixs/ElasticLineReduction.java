@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.processing.operations.rixs;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -49,12 +50,14 @@ import org.eclipse.january.dataset.Stats;
 import org.eclipse.january.metadata.AxesMetadata;
 import org.eclipse.january.metadata.MetadataFactory;
 
+import si.uom.NonSI;
 import uk.ac.diamond.scisoft.analysis.dataset.function.Histogram;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Add;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CoordinatesIterator;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Gaussian;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.Offset;
+import uk.ac.diamond.scisoft.analysis.fitting.functions.Quadratic;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
@@ -88,13 +91,12 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	 */
 	public static final String SUFFIX = "elastic_line";
 
-	private static int counter = -1;
-	private List<IDataset> countedData = null; // new ArrayList<IDataset>();
+	private int counter = -1;
+	private List<IDataset> countedData = null;
 
 	private double residual;
 	private Dataset position; // scan position
 	private boolean useSpectrum = true;
-	private Dataset output;
 
 	@SuppressWarnings("unchecked")
 	private List<Double>[] allPosition = new List[] {new ArrayList<>(), new ArrayList<>()};
@@ -118,7 +120,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 	@Override
 	public OperationRank getOutputRank() {
-		return OperationRank.SAME;
+		return OperationRank.TWO;
 	}
 
 	@Override
@@ -187,7 +189,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		try {
 			position = DatasetUtils.convertToDataset(smd.getMatchingSlice(firstAxes[0])).squeeze(true);
 			log.append("Current position: %s", position.toString(true));
-		} catch (Exception e) { // TODO remove NexusUtils
+		} catch (Exception e) {
 			// single point scans are incorrectly dealt with
 			log.append("Could not get position: %s", e);
 			int[] shape = smd.getSliceInfo().getInputSliceWithoutDataDimensions().getSourceShape();
@@ -203,9 +205,11 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		return false;
 	}
 
+	private static final boolean IS_IVE = false; // if true, fit was intercept versus energy otherwise it was energy versus intercept
+
 	@Override
 	public OperationData process(IDataset input, IMonitor monitor) throws OperationException {
-		output = null;
+		Dataset output = null;
 		OperationData od = super.process(input, monitor);
 		IDataset data = od.getData();
 		if (data != null) {
@@ -234,7 +238,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		// needs to give fake results for first slice
 		if (si.isLastSlice()) {
 
-			double[] dispersion = new double[roiMax];
+			double[][] coefficients = new double[roiMax][];
 			for (int r = 0; r < roiMax; r++) {
 //					if (goodPosition[r].size() <= 2) {
 //						log.append("Not enough good lines (%d) found for ROI %d", goodPosition[r].size(), r);
@@ -242,7 +246,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 //					}
 
 				createGoodLists(r);
-				if (goodPosition[r].size() == 0) {
+				if (goodPosition[r].isEmpty()) {
 					log.appendFailure("No lines found for ROI %d", r);
 					continue;
 				}
@@ -299,18 +303,20 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 					posData = DatasetFactory.createFromList(coords[0]);
 					posData.setName(positionName);
-					double[] res = fitIntercepts(r, posData.getView(false), coords[1]);
+					double[] res = fitEnergyIntercept(r, posData.getView(false), coords[1]);
 					if (res == null) {
-						dispersion[r] = Double.NaN;
-						log.appendFailure("No energy change so cannot find dispersion");
+						coefficients[r] = null;
+						log.appendFailure("Insufficient intercepts or no energy change so cannot find coefficients");
 					} else {
-						dispersion[r] = 1./res[1];
-						log.appendSuccess("Dispersion is %g for residual %g", dispersion[r], res[0]);
+						coefficients[r] = Arrays.copyOfRange(res, 1, res.length); // crop first value
+						log.appendSuccess("Fit coefficients is %s for residual %g", Arrays.toString(coefficients[r]), res[0]);
+						summaryData.add(ProcessingUtils.createNamedDataset(res[0], EFIT_RESIDUAL_FORMAT, r));
 					}
 				}
 			}
 
-			output = ProcessingUtils.createNamedDataset(dispersion, "energy_dispersion").reshape(1, roiMax);
+			output = IS_IVE ? ProcessingUtils.createNamedDataset(coefficients, NonSI.ELECTRON_VOLT.pow(-1), "energy_dispersion") :
+				ProcessingUtils.createNamedDataset(coefficients, NonSI.ELECTRON_VOLT, "energy_resolution");
 			copyMetadata(input, output);
 			output.clearMetadata(AxesMetadata.class);
 			output.clearMetadata(SliceFromSeriesMetadata.class);
@@ -324,8 +330,8 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		}
 
 		OperationDataForDisplay odd;
-		if (od instanceof OperationDataForDisplay) {
-			odd = (OperationDataForDisplay) od;
+		if (od instanceof OperationDataForDisplay tod) {
+			odd = tod;
 		} else {
 			odd = new OperationDataForDisplay(od);
 		}
@@ -447,7 +453,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			mask = fitStraightLine(getStraightLine(r), ymax, minPoints, model.getMaxDev(), coords[0], coords[1]);
 			coords[0] = coords[0].getByBoolean(mask);
 			coords[1] = coords[1].getByBoolean(mask);
-			fit = generateFitForDisplay(getStraightLine(r), coords[0], coords[1], fName + "_fit");
+			fit = generateFitForDisplay(getStraightLine(r), coords[0], fName + "_fit");
 			if (display && r == 0) {
 				Plot1DMetadataImpl pm = new Plot1DMetadataImpl(Plot1DMetadata.LineStyle.NONE, 0, PointStyle.CIRCLE, 4);
 				pm.setPlotTitle("Slope fitting");
@@ -469,14 +475,14 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		if (fit != null) {
 			summaryData.add(fit);
 		}
-		if (display && r == 0) {
+		if (display && r == 0 && coords != null) {
 			displayFit(fit, coords[0], coords[1]);
 		}
 
 		return fit != null;
 	}
 
-	private static boolean USE_EVAL = false;
+	private static final boolean USE_EVAL = false;
 
 	private boolean minimizeFWHMForSpectrum(int sn, int rn, int[] shape, Dataset in) {
 		Add peak = new Add();
@@ -677,8 +683,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		public double val(double... values) {
 			double x = getParameterValue(SPECTRAL_SLOPE);
 			Dataset ns = sumImageAlongSlope(image, x, false);
-			double f = findFWHM(null, opt, peak, factor, rx, ns);
-			return f;
+			return findFWHM(null, opt, peak, factor, rx, ns);
 		}
 
 		@Override
@@ -708,15 +713,15 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	 * @param y dataset
 	 * @return FWHM
 	 */
-	public static double findFWHM(List<IDataset> savedData, ApacheOptimizer opt, IFunction peak, double factor, Dataset x, Dataset y) {
-		initializeSpectrumFunctionParameters(null, peak, x, y);
+	public double findFWHM(List<IDataset> savedData, ApacheOptimizer opt, IFunction peak, double factor, Dataset x, Dataset y) {
+		initializeSpectrumFunctionParameters(this, peak, x, y);
 
 		Slice s = getCropSlice(x, peak.getParameterValue(SPECTRA_PEAK_POSN), factor * peak.getParameterValue(SPECTRA_PEAK_WIDTH));
 		x = x.getSliceView(s);
 		y = y.getSliceView(s);
 
 		try {
-			fitFunction(null, opt, "Exception for FWHM fit in optimizer", null, peak, x, y, null);
+			fitFunction(this, opt, "Exception for FWHM fit in optimizer", null, peak, x, y, null);
 		} catch (Exception ex) {
 			return Double.POSITIVE_INFINITY;
 		}
@@ -770,8 +775,9 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 				spectrum.setName(ES_PREFIX + rn);
 				int rows = spectrum.getShapeRef()[0];
 				Dataset elastic = DatasetFactory.createRange(rows);
-				if (offset[1] != 0) {
-					elastic.iadd(offset[1]);
+				double pOffset = - m * offset[0] + offset[1];
+				if (pOffset != 0) {
+					elastic.iadd(pOffset);
 				}
 
 				AxesMetadata am = spectrum.getFirstMetadata(AxesMetadata.class);
@@ -803,48 +809,76 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		}
 	}
 
-	public final static String LINE_GRADIENT_FORMAT  = "line_%d_m";
-	public final static String LINE_INTERCEPT_FORMAT = "line_%d_c";
-	public final static String LINE_RESIDUAL_FORMAT = "line_%d_residual";
+	public static final String LINE_GRADIENT_FORMAT  = "line_%d_m";
+	public static final String LINE_INTERCEPT_FORMAT = "line_%d_c";
+	public static final String LINE_RESIDUAL_FORMAT = "line_%d_residual";
 
-	public final static Pattern LINE_REGEXP = Pattern.compile("line_(\\d+)_([mc])");
+	public static final Pattern LINE_REGEXP = Pattern.compile("line_(\\d+)_([mc])");
+
+	private String ENERGY_INTERCEPT_PREFIX = "energy_intercept_";
+	private String EFIT_RESIDUAL_FORMAT = ENERGY_INTERCEPT_PREFIX + "fit_%d_residual";
 
 	/**
 	 * Fit to intercepts of elastic lines
 	 * @param r
 	 * @param energy 
 	 * @param coords
-	 * @return residual and gradient or null if energy does not change
+	 * @return residual and fit function parameter values
 	 */
-	private double[] fitIntercepts(int r, Dataset energy, List<?> coords) {
-		if (coords.size() <= 2) {
+	private double[] fitEnergyIntercept(int r, Dataset energy, List<?> coords) {
+		boolean useQuadratic = model.isFitQuadratic();
+		if (coords.size() <= (useQuadratic ? 3 : 2)) {
 			return null;
 		}
+
+		ENERGY_INTERCEPT_PREFIX = IS_IVE ? "intercept_energy_" : "energy_intercept_";
+		EFIT_RESIDUAL_FORMAT = ENERGY_INTERCEPT_PREFIX + "fit_%d_residual";
 
 		Dataset intercept = DatasetFactory.createFromList(coords);
-		String name = "intercept_fit_" + r;
-		energy.setName("Energy");
+		String name = ENERGY_INTERCEPT_PREFIX + "fit_" + r;
+		Dataset e = energy.clone();
+		e.setName(ENERGY_INTERCEPT_PREFIX + r);
 		intercept.setName("intercept_" + r);
-		MetadataUtils.setAxes(this, intercept, energy);
+		MetadataUtils.setAxes(this, e, intercept);
 
-		double ePTP = energy.peakToPeak().doubleValue();
+		double ePTP = e.peakToPeak().doubleValue();
 		if (ePTP == 0) {
-			summaryData.add(intercept);
+			summaryData.add(e);
 			return null;
 		}
 
-		double grad = intercept.peakToPeak().doubleValue() / ePTP;
-		double gMax = 2*Math.abs(grad);
-		StraightLine iLine = new StraightLine(-gMax, gMax, -Double.MAX_VALUE, Double.MAX_VALUE);
-		iLine.setParameterValues(grad, 0);
+		double init = Math.abs(intercept.peakToPeak().doubleValue() / ePTP);
+		if (!IS_IVE) {
+			init = 1 / init;
+		}
+		IFunction iFunction;
+		if (useQuadratic) {
+			iFunction = new Quadratic();
+			iFunction.getParameter(1).setValue(init);
+		} else {
+			iFunction = new StraightLine(0, 2 * init, -Double.MAX_VALUE, Double.MAX_VALUE);
+		}
 
-		double res = fitFunction(this, new ApacheOptimizer(Optimizer.SIMPLEX_NM), "Exception for intercept fit to find dispersion", log, iLine, energy, intercept, null);
-		Dataset fit = generateFitForDisplay(iLine, energy, intercept, name);
-		displayFit(fit, energy, intercept);
-		summaryData.add(intercept);
-		summaryData.add(fit);
+		double res;
+		if (IS_IVE) {
+			res = fitFunction(this, new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT), "Exception for energy-intercept fit to find dispersion", log, iFunction, e, intercept, null);
+			Dataset fit = generateFitForDisplay(iFunction, e, name);
+			displayFit(fit, e, intercept);
+			summaryData.add(intercept);
+			summaryData.add(fit);
+		} else {
+			res = fitFunction(this, new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT), "Exception for energy-intercept fit to find dispersion", log, iFunction, intercept, e, null);
+			Dataset fit = generateFitForDisplay(iFunction, intercept, name);
+			displayFit(fit, intercept, e);
+			summaryData.add(e);
+			summaryData.add(fit);
+		}
 
-		return new double[] {res, iLine.getParameterValue(STRAIGHT_LINE_M)};
+		double[] values = new double[iFunction.getNoOfParameters() + 1];
+		values[0] = res;
+		System.arraycopy(iFunction.getParameterValues(), 0, values, 1, values.length - 1);
+
+		return values;
 	}
 
 	private static final int SPECTRA_PEAK_POSN = 0;
@@ -942,7 +976,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			}
 		}
 
-		if (gPosition.size() > 0) {
+		if (!gPosition.isEmpty()) {
 			log.appendSuccess("Fitted spectra of %d frames", gPosition.size());
 			double w = gFWHM.stream().mapToDouble(Double::doubleValue).average().getAsDouble();
 			log.appendSuccess("Average FWHM = %g", w);
@@ -979,27 +1013,33 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			MetadataUtils.setAxes(this, gh, ge);
 			summaryData.add(gh);
 		}
-		if (bPosition.size() > 0) {
+		if (!bPosition.isEmpty()) {
 			log.appendSuccess("Could not fit spectra of %d frames", bPosition.size());
 			Dataset be = DatasetFactory.createFromList(bPosition);
 			be.setName(positionName);
-			bSpectrum.setName("bad_elastic_spectrum_" + r);
-			MetadataUtils.setAxes(this, bSpectrum, be);
-			summaryData.add(bSpectrum);
+			if (bSpectrum != null) {
+				bSpectrum.setName("bad_elastic_spectrum_" + r);
+				MetadataUtils.setAxes(this, bSpectrum, be);
+				summaryData.add(bSpectrum);
+			}
 		}
 
 		return new List<?>[] {gPosition, gPosn};
 	}
 
-	private Dataset generateFitForDisplay(IFunction f, Dataset x, Dataset d, String name) {
+	private Dataset generateFitForDisplay(IFunction f, Dataset x, String name) {
 		Dataset fit = DatasetUtils.convertToDataset(f.calculateValues(x));
 		fit.setName(name);
 		MetadataUtils.setAxes(this, fit, x);
-		return fit.getView(false);
+		return fit;
 	}
 
 	private void displayFit(Dataset fit, Dataset x, Dataset d) {
-		displayData.add(d.getView(false));
+		Dataset data = d.getView(false);
+		if (data.getFirstMetadata(AxesMetadata.class) == null) {
+			MetadataUtils.setAxes(this, data, x);
+		}
+		displayData.add(data);
 
 		if (fit != null) {
 			// set plot title again as more lines will overwrite it

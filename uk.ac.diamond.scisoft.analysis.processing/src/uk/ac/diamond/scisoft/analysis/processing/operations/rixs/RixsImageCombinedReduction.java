@@ -163,10 +163,9 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 						iSummaryData.add(DatasetFactory.createFromObject(s));
 					}
 				}
+				SliceInformation si = smd.getSliceInfo();
+				useSingleFit = extractFitData(si.getTotalSlices(), si.getSliceNumber(), edata.getAuxData());
 			}
-
-			SliceInformation si = smd.getSliceInfo();
-			useSingleFit = extractFitData(si.getTotalSlices(), si.getSliceNumber(), edata.getAuxData());
 		}
 	}
 
@@ -220,8 +219,7 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 		double[] fit = new double[4];
 		Arrays.fill(fit, Double.NaN);
 		for (Serializable s : data) {
-			if (s instanceof Dataset) {
-				Dataset d = (Dataset) s;
+			if (s instanceof Dataset d) {
 				Matcher m = ElasticLineReduction.LINE_REGEXP.matcher(d.getName());
 				if (m.matches()) {
 					isSingle = d.getSize() == 1 || d.getSize() < size;

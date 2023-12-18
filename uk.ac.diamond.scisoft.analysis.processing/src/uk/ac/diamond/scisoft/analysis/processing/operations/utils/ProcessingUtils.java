@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.measure.Unit;
+
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
@@ -37,7 +39,9 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.ShapeUtils;
+import org.eclipse.january.metadata.MetadataFactory;
 import org.eclipse.january.metadata.OriginMetadata;
+import org.eclipse.january.metadata.UnitMetadata;
 
 import uk.ac.diamond.osgi.services.ServiceProvider;
 import uk.ac.diamond.scisoft.analysis.io.NexusTreeUtils;
@@ -104,22 +108,52 @@ public class ProcessingUtils {
 	/**
 	 * Create dataset with name
 	 * @param obj
-	 * @param format
-	 * @param n
+	 * @param name
 	 * @return dataset
 	 */
-	public static Dataset createNamedDataset(Serializable obj, String format, int n) {
-		return createNamedDataset(obj, format == null ? null : String.format(format, n));
+	public static Dataset createNamedDataset(Serializable obj, String name) {
+		return createNamedDataset(obj, null, name);
 	}
 
 	/**
 	 * Create dataset with name
 	 * @param obj
+	 * @param format
+	 * @param n
+	 * @return dataset
+	 */
+	public static Dataset createNamedDataset(Serializable obj, String format, int n) {
+		return createNamedDataset(obj, null, String.format(format, n));
+	}
+
+	/**
+	 * Create dataset with name
+	 * @param obj
+	 * @param unit
+	 * @param format
+	 * @param n
+	 * @return dataset
+	 */
+	public static Dataset createNamedDataset(Serializable obj, Unit<?> unit, String format, int n) {
+		return createNamedDataset(obj, unit, String.format(format, n));
+	}
+
+	/**
+	 * Create dataset with name
+	 * @param obj
+	 * @param unit
 	 * @param name
 	 * @return dataset
 	 */
-	public static Dataset createNamedDataset(Serializable obj, String name) {
+	public static Dataset createNamedDataset(Serializable obj, Unit<?> unit, String name) {
 		Dataset d = DatasetFactory.createFromObject(obj);
+		if (unit != null) {
+			try {
+				d.addMetadata(MetadataFactory.createMetadata(UnitMetadata.class, unit));
+			} catch (MetadataException e) {
+				// do nothing
+			}
+		}
 		if (name != null) {
 			d.setName(name);
 		}
@@ -323,11 +357,7 @@ public class ProcessingUtils {
 		try {
 			Tree t = ProcessingUtils.getTree(operation, filePath);
 
-			GroupNode root = t.getGroupNode();
-			GroupNode entry = (GroupNode) NexusTreeUtils.requireNode(root, NexusConstants.ENTRY);
-			GroupNode instrument = (GroupNode) NexusTreeUtils.requireNode(entry, NexusConstants.INSTRUMENT);
-			GroupNode detector = (GroupNode) NexusTreeUtils.requireNode(instrument, NexusConstants.DETECTOR);
-			return detector;
+			return NexusTreeUtils.findFirstDetector(t);
 		} catch (Exception e) {
 			throw new OperationException(operation, "Could not parse Nexus file " + filePath + " for an NXdetector group", e);
 		}

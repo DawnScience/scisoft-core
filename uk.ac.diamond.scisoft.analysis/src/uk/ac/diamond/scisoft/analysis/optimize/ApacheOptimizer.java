@@ -58,11 +58,13 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.AFunction;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.CoordinatesIterator;
 
 public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresOptimizer {
+	private static final long serialVersionUID = -7771663144857100970L;
+
 	private static Logger logger = LoggerFactory.getLogger(ApacheOptimizer.class);
 
 	public MultivariateFunction createFunction(final boolean useResiduals) {
 		// provide the fitting function which wrappers all the normal fitting functionality
-		MultivariateFunction f = useResiduals ? new MultivariateFunction() {
+		return useResiduals ? new MultivariateFunction() {
 			@Override
 			public double value(double[] parameters) {
 				return calculateResidual(parameters);
@@ -73,12 +75,10 @@ public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresO
 				return calculateFunction(parameters);
 			}
 		};
-
-		return f;
 	}
 
 	public MultivariateVectorFunction createGradientFunction(final boolean useResiduals) {
-		MultivariateVectorFunction f = useResiduals ? new MultivariateVectorFunction() {
+		return useResiduals ? new MultivariateVectorFunction() {
 			@Override
 			public double[] value(double[] parameters) throws IllegalArgumentException {
 				double[] result = new double[n];
@@ -99,8 +99,6 @@ public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresO
 				return result;
 			}
 		};
-
-		return f;
 	}
 
 	public MultivariateJacobianFunction createJacobianFunction() {
@@ -121,7 +119,7 @@ public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresO
 			pvd = null;
 		}
 
-		MultivariateJacobianFunction f = new MultivariateJacobianFunction() {
+		return new MultivariateJacobianFunction() {
 			@SuppressWarnings("null")
 			@Override
 			public Pair<RealVector, RealMatrix> value(RealVector point) {
@@ -162,8 +160,6 @@ public class ApacheOptimizer extends AbstractOptimizer implements ILeastSquaresO
 				return new Pair<RealVector, RealMatrix>(new ArrayRealVector(dv, false), new Array2DRowRealMatrix(dm, false));
 			}
 		};
-
-		return f;
 	}
 
 	private Long seed = null;

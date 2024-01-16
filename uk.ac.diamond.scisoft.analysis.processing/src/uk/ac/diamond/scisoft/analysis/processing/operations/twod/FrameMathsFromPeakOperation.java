@@ -17,19 +17,18 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperation;
-
 import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.eclipse.january.dataset.IDataset;
 
-import uk.ac.diamond.scisoft.analysis.processing.MathematicalOperators;
-import uk.ac.diamond.scisoft.analysis.processing.scalar.ScalarModel;
+import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
 import uk.ac.diamond.scisoft.analysis.processing.scalar.AddScalarOperation;
-import uk.ac.diamond.scisoft.analysis.processing.scalar.SubtractScalarOperation;
 import uk.ac.diamond.scisoft.analysis.processing.scalar.DivideScalarOperation;
 import uk.ac.diamond.scisoft.analysis.processing.scalar.MutliplyScalarOperation;
+import uk.ac.diamond.scisoft.analysis.processing.scalar.ScalarModel;
+import uk.ac.diamond.scisoft.analysis.processing.scalar.SubtractScalarOperation;
 
 
 
@@ -96,7 +95,9 @@ public class FrameMathsFromPeakOperation extends AbstractOperation<FrameMathsFro
 			default:		throw new OperationException(this, "The mathematical operator selected is not supported.");
 
 		}
-		
+
+		Dataset sum = ProcessingUtils.createNamedDataset(intensitySum, "integrated_peak");
+		returnDataset.setAuxData(sum);
 		return returnDataset;
 	}
 }

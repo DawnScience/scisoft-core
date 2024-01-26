@@ -63,7 +63,7 @@ public class AttributeImpl implements Attribute, Serializable {
 
 	@Override
 	public boolean isString() {
-		return value != null && (value instanceof StringDataset);
+		return value instanceof StringDataset;
 	}
 
 	@Override

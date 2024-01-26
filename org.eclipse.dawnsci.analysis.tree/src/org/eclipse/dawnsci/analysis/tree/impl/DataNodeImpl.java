@@ -86,8 +86,8 @@ public class DataNodeImpl extends NodeImpl implements DataNode, Serializable {
 
 	@Override
 	public long[] getMaxShape() {
-		if (dataset instanceof IDynamicDataset) {
-			return toLongArray(((IDynamicDataset) dataset).getMaxShape());
+		if (dataset instanceof IDynamicDataset dynamicDataset) {
+			return toLongArray(dynamicDataset.getMaxShape());
 		}
 		
 		return maxShape;
@@ -103,8 +103,8 @@ public class DataNodeImpl extends NodeImpl implements DataNode, Serializable {
 		
 		this.maxShape = maxShape;
 		
-		if (dataset instanceof IDynamicDataset) {
-			((IDynamicDataset) dataset).setMaxShape(toIntArray(maxShape));
+		if (dataset instanceof IDynamicDataset dynamicDataset) {
+			dynamicDataset.setMaxShape(toIntArray(maxShape));
 		}
 	}
 	
@@ -115,8 +115,8 @@ public class DataNodeImpl extends NodeImpl implements DataNode, Serializable {
 	
 	@Override
 	public long[] getChunkShape() {
-		if (dataset instanceof IDynamicDataset) {
-			return toLongArray(((IDynamicDataset) dataset).getChunking());
+		if (dataset instanceof IDynamicDataset dynamicDataset) {
+			return toLongArray(dynamicDataset.getChunking());
 		}
 		
 		return chunkShape;
@@ -129,8 +129,8 @@ public class DataNodeImpl extends NodeImpl implements DataNode, Serializable {
 		}
 		this.chunkShape = chunkShape;
 		
-		if (dataset instanceof IDynamicDataset) {
-			((IDynamicDataset) dataset).setChunking(toIntArray(chunkShape));
+		if (dataset instanceof IDynamicDataset dynamicDataset) {
+			dynamicDataset.setChunking(toIntArray(chunkShape));
 		}
 	}
 
@@ -152,25 +152,25 @@ public class DataNodeImpl extends NodeImpl implements DataNode, Serializable {
 		if (text != null)
 			return text;
 	
-		StringDataset a;
-		if (dataset instanceof StringDataset) {
-			a = (StringDataset) dataset;
+		StringDataset strDataset;
+		if (dataset instanceof StringDataset stringDat) {
+			strDataset = stringDat;
 		} else {
 			try {
-				a = (StringDataset) dataset.getSlice();
+				strDataset = (StringDataset) dataset.getSlice();
 			} catch (DatasetException e) {
 				return "Could not get data from lazy dataset";
 			}
 		}
 
 		final String result;
-		int size = a.getSize();
+		int size = strDataset.getSize();
 		if (size == 0) {
 			result = "";
 		} else if (size == 1) {
-			result = a.getString();
+			result = strDataset.getString();
 		} else {
-			result = a.toString(true);
+			result = strDataset.toString(true);
 		}
 
 		text = result; // cache the value for any subsequent call

@@ -16,6 +16,8 @@ import static org.eclipse.dawnsci.nexus.NXentry.NX_EXPERIMENT_IDENTIFIER;
 import static org.eclipse.dawnsci.nexus.NXentry.NX_PROGRAM_NAME;
 import static org.eclipse.dawnsci.nexus.NexusBaseClass.NX_SAMPLE;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
@@ -28,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.dawnsci.nexus.NXbeam;
 import org.eclipse.dawnsci.nexus.NXcollection;
 import org.eclipse.dawnsci.nexus.NXdetector;
 import org.eclipse.dawnsci.nexus.NXentry;
@@ -486,9 +489,48 @@ public class DefaultNexusEntryBuilderTest {
 	}
 	
 	@Test
+	public void testMergeDefaultGroup() throws Exception {
+		// Test that an NXsample group created by an NexusObjectProvider is merged in
+		// with the existing one, preserving any metadata
+		entryBuilder.addDefaultGroups();
+
+		final MapBasedMetadataProvider sampleMetadata = new MapBasedMetadataProvider();
+		sampleMetadata.setCategory(NX_SAMPLE);
+		sampleMetadata.addMetadataEntry(NXsample.NX_NAME, "mySample");
+		sampleMetadata.addMetadataEntry(NXsample.NX_CHEMICAL_FORMULA, "Si");
+		sampleMetadata.addMetadataEntry(NXsample.NX_DESCRIPTION, "A description of the sample");
+
+		final NXsample sample = NexusNodeFactory.createNXsample();
+		sample.setDensityScalar(0.83);
+		sample.setAttribute(NXsample.NX_DENSITY, "units", "g / cm**3");
+		final NXbeam beam = NexusNodeFactory.createNXbeam();
+		beam.setDistanceScalar(12.345);
+		beam.setIncident_energyScalar(987.32);
+		sample.setBeam(beam);
+
+		entryBuilder.addMetadata(sampleMetadata);
+		entryBuilder.add(new NexusObjectWrapper<>("sample", sample));
+
+		assertThat(nxEntry.getGroupNodeNames(), containsInAnyOrder("instrument", "sample"));
+		final NXsample newSample = nxEntry.getSample();
+		assertThat(newSample, is(notNullValue()));
+
+		assertThat(newSample.getDataNodeNames(), containsInAnyOrder(NXsample.NX_NAME,
+				NXsample.NX_CHEMICAL_FORMULA, NXsample.NX_DESCRIPTION, NXsample.NX_DENSITY));
+		assertThat(newSample.getNameScalar(), is(equalTo("mySample")));
+		assertThat(newSample.getChemical_formulaScalar(), is(equalTo("Si")));
+		assertThat(newSample.getDescriptionScalar(), is(equalTo("A description of the sample")));
+		assertThat(newSample.getDensityScalar(), is(equalTo(0.83)));
+		assertThat(newSample.getAttrString(NXsample.NX_DENSITY, "units"), is(equalTo("g / cm**3")));
+
+		assertThat(newSample.getGroupNodeNames(), contains("beam"));
+		assertThat(newSample.getBeam(), is(sameInstance(newSample.getBeam())));
+	}
+
+	@Test
 	public void testMergeDefaultGroup_nodeNameClash() throws Exception {
 		entryBuilder.addDefaultGroups();
-		
+
 		final MapBasedMetadataProvider sampleMetadata = new MapBasedMetadataProvider();
 		sampleMetadata.setCategory(NX_SAMPLE);
 		sampleMetadata.addMetadataEntry(NXsample.NX_NAME, "old name");
@@ -501,7 +543,7 @@ public class DefaultNexusEntryBuilderTest {
 		final NexusObjectProvider<NXsample> sampleProvider = new NexusObjectWrapper<>("sample", sample);
 		assertThrows(NexusException.class, () -> entryBuilder.add(sampleProvider));
 	}
-	
+
 	@Test
 	public void testMergeDefaultGroup_attrNameClash() throws Exception {
 		entryBuilder.addDefaultGroups();

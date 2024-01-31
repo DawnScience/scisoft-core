@@ -301,13 +301,13 @@ public class DefaultNexusEntryBuilder implements NexusEntryBuilder {
 
 	private <N extends NXobject> void mergeIntoGroup(NXobject group, NexusObjectProvider<N> nexusObjectProvider,N nexusObject) throws NexusException {
 		checkNodeAndAttributeNames(nexusObjectProvider.getName(), group, nexusObject);
-		
-		for (var entry : nexusObject.getAllDatasets().entrySet()) {
-			group.setDataset(entry.getKey(), entry.getValue());
+
+		for (var attrName : nexusObject.getAttributeNames()) {
+			group.addAttribute(nexusObject.getAttribute(attrName));
 		}
-		var it = nexusObject.getAttributeIterator();
-		while (it.hasNext()) {
-			group.addAttribute(it.next());
+
+		for (var nodeNames : nexusObject.getNames()) {
+			group.addNode(nodeNames, nexusObject.getNode(nodeNames));
 		}
 	}
 	
@@ -319,7 +319,7 @@ public class DefaultNexusEntryBuilder implements NexusEntryBuilder {
 			throw new NexusException("Cannot merge %s into %s as it contains existing node(s): %s"
 					.formatted(name, group, sharedNodeNames));
 		}
-		
+
 		final Set<String> sharedAttrNames = new HashSet<>(group.getAttributeNames());
 		sharedAttrNames.retainAll(nexusObject.getAttributeNames());
 		sharedAttrNames.remove(NexusConstants.NXCLASS);

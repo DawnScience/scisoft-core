@@ -267,9 +267,8 @@ public abstract class NXobjectImpl extends GroupNodeImpl implements NXobject {
 	@Override
 	public <N extends NXobject> void setChildren(Map<String, N> map) {
 		map = new LinkedHashMap<>(map);
-		for (String name : map.keySet()) {
-			N child = map.get(name);
-			addGroupNode(name, child);
+		for (var entry : map.entrySet()) {
+			addGroupNode(entry.getKey(), entry.getValue());
 		}
 	}
 

@@ -9,10 +9,11 @@
 
 package org.eclipse.dawnsci.hdf5.nexus;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.File;
 import java.io.Serializable;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
@@ -42,6 +43,7 @@ import org.eclipse.dawnsci.hdf5.HDF5LazySaver;
 import org.eclipse.dawnsci.hdf5.HDF5ObjectResource;
 import org.eclipse.dawnsci.hdf5.HDF5PropertiesResource;
 import org.eclipse.dawnsci.hdf5.HDF5Resource;
+import org.eclipse.dawnsci.hdf5.HDF5Token;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.eclipse.dawnsci.hdf5.HDF5Utils.DatasetType;
 import org.eclipse.dawnsci.nexus.NXobject;
@@ -85,9 +87,7 @@ public class NexusFileHDF5 implements NexusFile {
 
 	private TreeFile tree;
 
-	private static final long ROOT_NODE_ADDR = -1234;
-
-	private Map<Long, Node> nodeMap; //used to remember node locations in file for detecting hard links
+	private Map<HDF5Token, Node> nodeMap; //used to remember node locations in file for detecting hard links
 
 	private boolean writeable = false;
 
@@ -106,8 +106,8 @@ public class NexusFileHDF5 implements NexusFile {
 	 * @return Nexus file
 	 * @throws NexusException
 	 */
-	public static NexusFile createNexusFile(String path) throws NexusException {
-		NexusFile file = new NexusFileHDF5(path, false);
+	public static NexusFileHDF5 createNexusFile(String path) throws NexusException {
+		NexusFileHDF5 file = new NexusFileHDF5(path, false);
 		file.createAndOpenToWrite();
 		return file;
 	}
@@ -119,8 +119,8 @@ public class NexusFileHDF5 implements NexusFile {
 	 * @return Nexus file
 	 * @throws NexusException
 	 */
-	public static NexusFile createNexusFile(String path, boolean enableSWMR) throws NexusException {
-		NexusFile file = new NexusFileHDF5(path, enableSWMR);
+	public static NexusFileHDF5 createNexusFile(String path, boolean enableSWMR) throws NexusException {
+		NexusFileHDF5 file = new NexusFileHDF5(path, enableSWMR);
 		file.createAndOpenToWrite();
 		return file;
 	}
@@ -131,8 +131,8 @@ public class NexusFileHDF5 implements NexusFile {
 	 * @return Nexus file
 	 * @throws NexusException
 	 */
-	public static NexusFile openNexusFile(String path) throws NexusException {
-		NexusFile file = new NexusFileHDF5(path);
+	public static NexusFileHDF5 openNexusFile(String path) throws NexusException {
+		NexusFileHDF5 file = new NexusFileHDF5(path);
 		file.openToWrite(false);
 		return file;
 	}
@@ -143,8 +143,8 @@ public class NexusFileHDF5 implements NexusFile {
 	 * @return Nexus file
 	 * @throws NexusException
 	 */
-	public static NexusFile openNexusFileReadOnly(String path) throws NexusException {
-		NexusFile file = new NexusFileHDF5(path);
+	public static NexusFileHDF5 openNexusFileReadOnly(String path) throws NexusException {
+		NexusFileHDF5 file = new NexusFileHDF5(path);
 		file.openToRead();
 		return file;
 	}
@@ -155,7 +155,7 @@ public class NexusFileHDF5 implements NexusFile {
 		GROUP(HDF5Constants.H5O_TYPE_GROUP),
 		DATASET(HDF5Constants.H5O_TYPE_DATASET);
 		public final int value;
-		private static Map<Integer, NodeType> map = new HashMap<Integer, NodeType>();
+		private static Map<Integer, NodeType> map = new HashMap<>();
 
 		static {
 			for (NodeType nt : NodeType.values()) {
@@ -199,8 +199,8 @@ public class NexusFileHDF5 implements NexusFile {
 		if (tree == null) {
 			tree = TreeFactory.createTreeFile(fileName.hashCode(), fileName);
 			tree.setGroupNode(NexusNodeFactory.createNXroot(0l));
-			nodeMap = new HashMap<Long, Node>();
-			passedNodeMap = new IdentityHashMap<Node, String>();
+			nodeMap = new HashMap<>();
+			passedNodeMap = new IdentityHashMap<>();
 		} else {
 			throw new IllegalStateException("File (" + fileName + ") is already open");
 		}
@@ -300,7 +300,7 @@ public class NexusFileHDF5 implements NexusFile {
 		if (link != null) {
 			if (link.isDestinationGroup()) {
 				GroupNode g = (GroupNode) link.getDestination();
-				if (!g.isPopulated() && getLinkTarget(plainPath) != NO_LINK) {
+				if (!g.isPopulated() && !NO_LINK.equals(getLinkToken(plainPath))) {
 					//"leaf" group nodes are never populated and paths that traverse napimounts cannot be populated
 					//via the simple path mechanism
 					if (!plainPath.endsWith(Node.SEPARATOR)) {
@@ -313,7 +313,6 @@ public class NexusFileHDF5 implements NexusFile {
 			throw new NexusException("Path specified (" + plainPath + ") is not for a group");
 		}
 		NodeData node = getGroupNode(augmentedPath, createPathIfNecessary);
-		//NodeData node = getNode(augmentedPath, createPathIfNecessary);
 		return (GroupNode) (node.name == null ? null : (node.node));
 	}
 
@@ -341,8 +340,7 @@ public class NexusFileHDF5 implements NexusFile {
 				GroupNode parentNode = getGroup(parentPath, true);
 				return getData(parentNode, name);
 			} else if (type == NodeType.GROUP) {
-				GroupNode groupNode = getGroup(plainPath, true);
-				return groupNode;
+				return getGroup(plainPath, true);
 			}
 		}
 		throw new NexusException("Path specified does not exist");
@@ -363,7 +361,7 @@ public class NexusFileHDF5 implements NexusFile {
 	private void createGroupNode(long oid, GroupNode group, String path, String name, String nxClass)
 			throws NexusException {
 		GroupNode g;
-		long fileAddr = getLinkTarget(TreeUtils.join(path, name));
+		HDF5Token fileAddr = getLinkToken(TreeUtils.join(path, name));
 		if (!nodeMap.containsKey(fileAddr)) {
 			// create the new group, a subclass of NXobject if nxClass is set. Note nxClass is not yet known when loading
 			if (nxClass == null || nxClass.equals("")) {
@@ -394,7 +392,7 @@ public class NexusFileHDF5 implements NexusFile {
 				}
 			}
 
-			if (fileAddr != IS_EXTERNAL_LINK && fileAddr != NO_LINK &&  !testForExternalLink(path)) {
+			if (!IS_EXTERNAL_LINK.equals(fileAddr) && !NO_LINK.equals(fileAddr) && !testForExternalLink(path)) {
 				//if our node is an external link we cannot cache its file location
 				//we cannot handle hard links in external files
 				nodeMap.put(fileAddr, g);
@@ -421,7 +419,6 @@ public class NexusFileHDF5 implements NexusFile {
 		} catch (HDF5Exception e) {
 			throw new NexusException("Could not retrieve node attributes: " + path, e);
 		}
-		return;
 	}
 
 	private void populateGroupNode(String path, GroupNode group) throws NexusException {
@@ -482,7 +479,6 @@ public class NexusFileHDF5 implements NexusFile {
 		} catch (HDF5LibraryException e) {
 			throw new NexusException("Could not process over child links: " + path, e);
 		}
-		return;
 	}
 
 	private static String determineExternalFilePath(String filePathFragment, String currentFile) throws NexusException {
@@ -514,33 +510,40 @@ public class NexusFileHDF5 implements NexusFile {
 			extFile.openToRead();
 			AugmentedPathElement[] parsed = NexusUtils.parseAugmentedPath(internalMountPoint);
 			String nodeName = parsed[parsed.length - 1].name;
-			switch(extFile.getNodeType(externalMountPoint)) {
-			case DATASET:
-				throw new NexusException("Invalid napimount - must not point to dataset");
-			case GROUP:
-				//we have to add the mounted node and process the new tree
-				childNode = extFile.getGroup(externalMountPoint, false);
-				String internalPath = internalMountPoint + pathAfterMount;
-
-				GroupNode newNode = TreeFactory.createGroupNode(internalPath.hashCode());
-				//we want a copy of the node in the other file since we do not want to
-				//adding attributes in the other file's cache
-				//this is a bit of a hack
-				GroupNode originalNode = (GroupNode) childNode;
-				cacheAttributes(internalMountPoint, newNode);
-				Iterator<? extends Attribute> attributes = originalNode.getAttributeIterator();
-				Iterator<String> names = originalNode.getNodeNameIterator();
-				while (attributes.hasNext()) {
-					Attribute attr = attributes.next();
-					newNode.addAttribute(attr);
+			NodeType nType = extFile.getNodeType(externalMountPoint);
+			if (nType == null) {
+				logger.warn("Node type was null");
+			} else {
+				switch (nType) {
+				case DATASET:
+					throw new NexusException("Invalid napimount - must not point to dataset");
+				case GROUP:
+					//we have to add the mounted node and process the new tree
+					childNode = extFile.getGroup(externalMountPoint, false);
+					String internalPath = internalMountPoint + pathAfterMount;
+	
+					GroupNode newNode = TreeFactory.createGroupNode(internalPath.hashCode());
+					//we want a copy of the node in the other file since we do not want to
+					//adding attributes in the other file's cache
+					//this is a bit of a hack
+					GroupNode originalNode = (GroupNode) childNode;
+					cacheAttributes(internalMountPoint, newNode);
+					Iterator<? extends Attribute> attributes = originalNode.getAttributeIterator();
+					Iterator<String> names = originalNode.getNodeNameIterator();
+					while (attributes.hasNext()) {
+						Attribute attr = attributes.next();
+						newNode.addAttribute(attr);
+					}
+					while (names.hasNext()) {
+						String name = names.next();
+						NodeLink link = originalNode.getNodeLink(name);
+						newNode.addNode(name, link.getDestination());
+					}
+					parentGroup.addGroupNode(nodeName, newNode);
+					return extFile.getNode(fullPathInExtFile, false);
+				default:
+					logger.warn("Node type not known");
 				}
-				while (names.hasNext()) {
-					String name = names.next();
-					NodeLink link = originalNode.getNodeLink(name);
-					newNode.addNode(name, link.getDestination());
-				}
-				parentGroup.addGroupNode(nodeName, newNode);
-				return extFile.getNode(fullPathInExtFile, false);
 			}
 		}
 		return null;
@@ -563,11 +566,11 @@ public class NexusFileHDF5 implements NexusFile {
 		StringBuilder pathBuilder = new StringBuilder(Tree.ROOT);
 		String parentPath = pathBuilder.toString();
 		GroupNode group = tree.getGroupNode();
-		if (parsedNodes.length < 1) {
+		if (parsedNodes.length == 0) {
 			return new NodeData(Tree.ROOT, null, group, NodeType.GROUP);
 		}
 		Node node = group;
-		AugmentedPathElement parsedNode = parsedNodes[0];
+		AugmentedPathElement parsedNode = null;
 		NodeType type = null;
 		//traverse to target node
 		for (int i = 0; i < parsedNodes.length; i++) {
@@ -582,7 +585,7 @@ public class NexusFileHDF5 implements NexusFile {
 			type = getNodeType(path);
 			if (type == null || type == NodeType.GROUP) {
 				//make sure the group actually exists
-				long nodeId = openGroup(path, parsedNode.nxClass, createPathIfNecessary);
+				long nodeId = openGroup(type, path, parsedNode.nxClass, createPathIfNecessary);
 				closeNode(nodeId);
 				type = NodeType.GROUP;
 			} else if (type == NodeType.DATASET) {
@@ -604,7 +607,7 @@ public class NexusFileHDF5 implements NexusFile {
 			}
 			//establish group in our cache
 			try {
-				H5L_info_t linkInfo = (H5.H5Lget_info(fileId, path, HDF5Constants.H5P_DEFAULT));
+				H5L_info_t linkInfo = H5.H5Lget_info(fileId, path, HDF5Constants.H5P_DEFAULT);
 				if (linkInfo.type == HDF5Constants.H5L_TYPE_SOFT) {
 					String[] name = new String[2];
 					H5.H5Lget_value(fileId, path, name, HDF5Constants.H5P_DEFAULT);
@@ -673,8 +676,7 @@ public class NexusFileHDF5 implements NexusFile {
 		}
 	}
 
-	private long openGroup(String absolutePath, String nxClass, boolean create) throws NexusException {
-		NodeType type = getNodeType(absolutePath);
+	private long openGroup(NodeType type, String absolutePath, String nxClass, boolean create) throws NexusException {
 		long groupId;
 
 		if (type == null) {
@@ -746,14 +748,14 @@ public class NexusFileHDF5 implements NexusFile {
 		dataNode.setMaxShape(maxShape);
 		dataNode.setDataset(lazyDataset);
 		if (!testForExternalLink(path)) {
-			nodeMap.put(getLinkTarget(path), dataNode);
+			nodeMap.put(getLinkToken(path), dataNode);
 		}
 		return dataNode;
 	}
 
 	private DataNode getDataNodeFromFile(String path, GroupNode parentNode, String dataName) throws NexusException {
 		if (!testForExternalLink(path)) {
-			DataNode node = (DataNode) nodeMap.get(getLinkTarget(path));
+			DataNode node = (DataNode) nodeMap.get(getLinkToken(path));
 			if (node != null) {
 				return node;
 			}
@@ -801,8 +803,8 @@ public class NexusFileHDF5 implements NexusFile {
 		path = NexusUtils.stripAugmentedPath(path);
 		//check if the data node itself is a symlink
 		DataNode dataNode;
-		long fileAddr = getLinkTarget(path);
-		if (fileAddr != IS_EXTERNAL_LINK && fileAddr != NO_LINK) {
+		HDF5Token fileAddr = getLinkToken(path);
+		if (!IS_EXTERNAL_LINK.equals(fileAddr) && !NO_LINK.equals(fileAddr)) {
 			Node node = nodeMap.get(fileAddr);
 			if (node instanceof DataNode) {
 				return (DataNode) node;
@@ -1045,7 +1047,7 @@ public class NexusFileHDF5 implements NexusFile {
 		dataNode.setChunkShape(chunks);
 		dataNode.setMaxShape(maxShape);
 		dataNode.setDataset(data);
-		long fileAddr = getLinkTarget(dataPath);
+		HDF5Token fileAddr = getLinkToken(dataPath);
 		nodeMap.put(fileAddr, dataNode);
 		return dataNode;
 	}
@@ -1153,7 +1155,7 @@ public class NexusFileHDF5 implements NexusFile {
 			throw new NexusException("Could not create dataset: " + name + " in " + path, e);
 		}
 		DataNode dataNode = TreeFactory.createDataNode(dataPath.hashCode());
-		long fileAddr = getLinkTarget(dataPath);
+		HDF5Token fileAddr = getLinkToken(dataPath);
 		nodeMap.put(fileAddr, dataNode);
 		dataNode.setMaxShape(shape);
 		dataNode.setDataset(data);
@@ -1214,7 +1216,7 @@ public class NexusFileHDF5 implements NexusFile {
 			throw new IllegalArgumentException("Cannot remove node " + name + ": it is not in group " + path);
 		}
 		path = TreeUtils.join(path, name);
-		long fileAddr = getLinkTarget(path);
+		HDF5Token fileAddr = getLinkToken(path);
 		nodeMap.remove(fileAddr);
 		try {
 			H5.H5Ldelete(fileId, path, HDF5Constants.H5P_DEFAULT);
@@ -1228,11 +1230,11 @@ public class NexusFileHDF5 implements NexusFile {
 	private void recursivelyUpdateTree(String parentPath, String name, Node node) throws NexusException {
 		String nxClass = node.containsAttribute(NexusConstants.NXCLASS) ? node.getAttribute(NexusConstants.NXCLASS).getFirstElement() : "";
 		String fullPath = TreeUtils.join(parentPath, name == null ? "" : name);
-		fullPath = fullPath.replaceAll("//", "/");
+		fullPath = fullPath.replace("//", "/");
 		NodeData parentNodeData = getNode(parentPath, false);
 		GroupNode parentNode = (GroupNode) parentNodeData.node;
 		if (passedNodeMap.containsKey(node)) {
-			if (fullPath != passedNodeMap.get(node)) {
+			if (!fullPath.equals(passedNodeMap.get(node))) {
 				createHardLink(passedNodeMap.get(node), fullPath);
 			}
 			return;
@@ -1243,7 +1245,7 @@ public class NexusFileHDF5 implements NexusFile {
 				if (nxClass.isEmpty()) {
 					logger.warn("Adding node at {} without an NXclass", fullPath);
 				}
-				long id = openGroup(fullPath, nxClass, true);
+				long id = openGroup(getNodeType(fullPath), fullPath, nxClass, true);
 				closeNode(id);
 			}
 			GroupNode existingNode = (GroupNode) getNode(fullPath, false).node;
@@ -1265,9 +1267,9 @@ public class NexusFileHDF5 implements NexusFile {
 			if (!parentNode.containsDataNode(name)) {
 				ILazyDataset dataset = updatingDataNode.getDataset();
 				DataNode newDataNode;
-				if ((dataset instanceof IDataset)) {
+				if (dataset instanceof IDataset) {
 					newDataNode = createData(parentNode, name, (IDataset) dataset);
-				} else if ((dataset instanceof ILazyWriteableDataset)) {
+				} else if (dataset instanceof ILazyWriteableDataset) {
 					newDataNode = createData(parentNode, name, (ILazyWriteableDataset) dataset);
 					updatingDataNode.setChunkShape(newDataNode.getChunkShape());
 				} else {
@@ -1317,12 +1319,12 @@ public class NexusFileHDF5 implements NexusFile {
 	@Override
 	public void addAttribute(String path, Attribute... attribute) throws NexusException {
 		assertCanWrite();
+		Node node = (attribute != null && attribute.length > 0) ? getNode(path, false).node : null;
 		for (Attribute attr : attribute) {
 			String attrName = attr.getName();
 			if (attrName == null || attrName.isEmpty()) {
 				throw new NullPointerException("Attribute must have a name");
 			}
-			Node node = getNode(path, false).node;
 			try {
 				//if an attribute with the same name already exists, we delete it to be consistent with NAPI
 				if (H5.H5Aexists_by_name(fileId, path, attrName, HDF5Constants.H5P_DEFAULT)) {
@@ -1356,7 +1358,7 @@ public class NexusFileHDF5 implements NexusFile {
 						byte[][] stringbuffers = new byte[strCount][];
 						int i = 0;
 						for (String str : strings) {
-							stringbuffers[i] = str.getBytes(StandardCharsets.UTF_8);
+							stringbuffers[i] = str.getBytes(UTF_8);
 							int l = stringbuffers[i].length;
 							if (l > maxLength) maxLength = l;
 							i++;
@@ -1626,8 +1628,9 @@ public class NexusFileHDF5 implements NexusFile {
 		}
 	}
 
-	private static final long IS_EXTERNAL_LINK = -4370;
-	private static final long NO_LINK = -3422;
+	private static final HDF5Token ROOT_NODE_ADDR = new HDF5Token(new byte[] {-12, 0, 34});
+	private static final HDF5Token IS_EXTERNAL_LINK = new HDF5Token(new byte[] {-43, 0, 70});
+	private static final HDF5Token NO_LINK = new HDF5Token(new byte[] {23, 0, -12});
 
 
 	/**
@@ -1683,11 +1686,17 @@ public class NexusFileHDF5 implements NexusFile {
 		return value;
 	}
 
-	private String[] getExternalLinkTarget(String path) throws NexusException {
+	/**
+	 * Return the external link value referred to by the provided path from the reference object.
+	 * @param path
+	 * @return String[2] {objectPath, fileName}
+	 * @throws NexusException
+	 */
+	public String[] getExternalLinkTarget(String path) throws NexusException {
 		return getExternalLinkTarget(fileId, path);
 	}
 
-	private long getLinkTarget(String path) throws NexusException {
+	private HDF5Token getLinkToken(String path) throws NexusException {
 		try {
 			//The H5 library doesn't consider the "root" node to really be a group but NAPI does,
 			//so we emulate the old behaviour by pretending it has a file address
@@ -1701,9 +1710,9 @@ public class NexusFileHDF5 implements NexusFile {
 			if (linkInfo.type == HDF5Constants.H5L_TYPE_SOFT) {
 				String[] name = new String[2];
 				H5.H5Lget_value(fileId, path, name, HDF5Constants.H5P_DEFAULT);
-				return getLinkTarget(name[0]);
+				return getLinkToken(name[0]);
 			} else if (linkInfo.type == HDF5Constants.H5L_TYPE_HARD) {
-				return linkInfo.address_val_size;
+				return new HDF5Token(linkInfo.token);
 			} else if (linkInfo.type == HDF5Constants.H5L_TYPE_EXTERNAL) {
 				return IS_EXTERNAL_LINK;
 			}

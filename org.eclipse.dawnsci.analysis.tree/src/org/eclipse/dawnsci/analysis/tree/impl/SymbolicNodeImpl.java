@@ -41,9 +41,37 @@ public class SymbolicNodeImpl extends NodeImpl implements SymbolicNode, Serializ
 	 * @param groupWithNode (can be null if path is absolute)
 	 * @param pathToNode (ends in separator if group, otherwise a dataset)
 	 */
-	public SymbolicNodeImpl(final long oid, final Tree tree, final GroupNode groupWithNode, final String pathToNode) {
+	public SymbolicNodeImpl(final byte[] oid, final Tree tree, final GroupNode groupWithNode, final String pathToNode) {
 		this(oid, tree == null ? null : tree.getSourceURI(), groupWithNode, pathToNode);
 		this.tree = tree;
+	}
+
+	/**
+	 * Construct a symbolic link with given object ID, from tree, group and node path
+	 * @param oid object ID
+	 * @param tree
+	 * @param groupWithNode (can be null if path is absolute)
+	 * @param pathToNode (ends in separator if group, otherwise a dataset)
+	 */
+	public SymbolicNodeImpl(final long oid, final Tree tree, final GroupNode groupWithNode, final String pathToNode) {
+		this(toBytes(oid), tree, groupWithNode, pathToNode);
+	}
+
+	/**
+	 * Construct a symbolic link with given object ID, from URI to tree, group and node path
+	 * @param oid object ID
+	 * @param uri
+	 * @param groupWithNode (can be null if path is absolute)
+	 * @param pathToNode (ends in separator if group, otherwise a dataset)
+	 */
+	public SymbolicNodeImpl(final byte[] oid, final URI uri, final GroupNode groupWithNode, final String pathToNode) {
+		super(oid);
+		this.uri = uri;
+		group = groupWithNode;
+		path = TreeUtils.canonicalizePath(pathToNode);
+		if (!path.startsWith(Tree.ROOT) && group == null) {
+			throw new IllegalArgumentException("A group node must be given when creating a symbolic node with a relative path");
+		}
 	}
 
 	/**
@@ -54,13 +82,7 @@ public class SymbolicNodeImpl extends NodeImpl implements SymbolicNode, Serializ
 	 * @param pathToNode (ends in separator if group, otherwise a dataset)
 	 */
 	public SymbolicNodeImpl(final long oid, final URI uri, final GroupNode groupWithNode, final String pathToNode) {
-		super(oid);
-		this.uri = uri;
-		group = groupWithNode;
-		path = TreeUtils.canonicalizePath(pathToNode);
-		if (!path.startsWith(Tree.ROOT) && group == null) {
-			throw new IllegalArgumentException("A group node must be given when creating a symbolic node with a relative path");
-		}
+		this(toBytes(oid), uri, groupWithNode, pathToNode);
 	}
 
 	@Override

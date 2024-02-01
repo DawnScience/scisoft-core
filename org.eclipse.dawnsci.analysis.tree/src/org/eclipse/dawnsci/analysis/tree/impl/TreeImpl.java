@@ -36,11 +36,20 @@ public class TreeImpl implements Tree, Serializable {
 	 * @param oid object ID
 	 * @param uri (can be null)
 	 */
-	public TreeImpl(final long oid, URI uri) {
+	public TreeImpl(final byte[] oid, URI uri) {
 		source = uri;
 		host = uri == null ? null : uri.getHost(); // this can return null for "file:/blah"
 		
 		link = new NodeLinkImpl(ROOT, null, new GroupNodeImpl(oid));
+	}
+
+	/**
+	 * Construct a tree with given object ID and URI 
+	 * @param oid object ID
+	 * @param uri (can be null)
+	 */
+	public TreeImpl(final long oid, URI uri) {
+		this(NodeImpl.toBytes(oid), uri);
 	}
 
 	@Override
@@ -59,7 +68,7 @@ public class TreeImpl implements Tree, Serializable {
 	}
 
 	@Override
-	public long getID() {
+	public byte[] getID() {
 		return getGroupNode().getID();
 	}
 

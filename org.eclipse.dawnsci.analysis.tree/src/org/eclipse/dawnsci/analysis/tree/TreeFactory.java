@@ -76,6 +76,72 @@ public class TreeFactory {
 	 * @param groupWithNode (can be null if path is absolute)
 	 * @param pathToNode (ends in separator if group, otherwise a dataset)
 	 */
+	public static SymbolicNode createSymbolicNode(final byte[] oid, final Tree tree, final GroupNode groupWithNode, final String pathToNode) {
+		return new SymbolicNodeImpl(oid, tree, groupWithNode, pathToNode);
+	}
+
+	/**
+	 * Create a symbolic link with given object ID, from URI to tree, group and node path
+	 * @param oid object ID
+	 * @param uri
+	 * @param groupWithNode (can be null if path is absolute)
+	 * @param pathToNode (ends in separator if group, otherwise a dataset)
+	 */
+	public static SymbolicNode createSymbolicNode(final byte[] oid, final URI uri, final GroupNode groupWithNode, final String pathToNode) {
+		return new SymbolicNodeImpl(oid, uri, groupWithNode, pathToNode);
+	}
+
+	/**
+	 * Create a data node with given object ID
+	 * @param oid object ID
+	 */
+	public static DataNode createDataNode(byte[] oid) {
+		return new DataNodeImpl(oid);
+	}
+
+	/**
+	 * Create a group node with given object ID
+	 * @param oid object ID
+	 */
+	public static GroupNode createGroupNode(byte[] oid) {
+		return new GroupNodeImpl(oid);
+	}
+
+	/**
+	 * Create a tree with given object ID and URI 
+	 * @param oid object ID
+	 * @param uri (can be null)
+	 */
+	public static Tree createTree(final byte[] oid, URI uri) {
+		return new TreeImpl(oid, uri);
+	}
+
+	/**
+	 * Create a tree file with given object ID and URI 
+	 * @param oid object ID
+	 * @param uri
+	 */
+	public static TreeFile createTreeFile(final byte[] oid, URI uri) {
+		return new TreeFileImpl(oid, uri);
+	}
+
+	/**
+	 * Create a tree file with given object ID and file name 
+	 * @param oid object ID
+	 * @param fileName
+	 */
+	public static TreeFile createTreeFile(final byte[] oid, final String fileName) {
+		return new TreeFileImpl(oid, fileName);
+	}
+
+
+	/**
+	 * Create a symbolic link with given object ID, from tree, group and node path
+	 * @param oid object ID
+	 * @param tree
+	 * @param groupWithNode (can be null if path is absolute)
+	 * @param pathToNode (ends in separator if group, otherwise a dataset)
+	 */
 	public static SymbolicNode createSymbolicNode(final long oid, final Tree tree, final GroupNode groupWithNode, final String pathToNode) {
 		return new SymbolicNodeImpl(oid, tree, groupWithNode, pathToNode);
 	}

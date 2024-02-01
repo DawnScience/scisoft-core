@@ -151,8 +151,7 @@ class HDF5Loader(object):
 
     def _copynode(self, pool, link, parent=None):
         node = link.getDestination()
-        nid = node.getID()
-#        print link.getName(), nid
+        nid = node.getID().tostring()
         if nid in pool:
             return pool[nid]
 

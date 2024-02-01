@@ -26,7 +26,7 @@ public interface Tree {
 	/**
 	 * @return ID
 	 */
-	public long getID();
+	public byte[] getID();
 
 	/**
 	 * @return source URI

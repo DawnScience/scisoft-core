@@ -53,6 +53,8 @@ import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.NexusUtils;
 import org.eclipse.dawnsci.nexus.NexusUtils.AugmentedPathElement;
+import org.eclipse.january.dataset.BooleanDataset;
+import org.eclipse.january.dataset.ByteDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -719,12 +721,17 @@ public class NexusFileHDF5 implements NexusFile {
 	}
 
 	private DataNode createDataNode(GroupNode parentNode, String path, String name,
-			long[] shape, final Class<? extends Dataset> clazz, boolean unsigned, long[] maxShape, long[] chunks) throws NexusException {
+			long[] shape, Class<? extends Dataset> clazz, boolean unsigned, long[] maxShape, long[] chunks) throws NexusException {
 		int[] iShape = shape == null ? null : HDF5Utils.toIntArray(shape);
 		int[] iMaxShape = maxShape == null ? null : HDF5Utils.toIntArray(maxShape);
 		int[] iChunks = chunks == null ? null : HDF5Utils.toIntArray(chunks);
 		DataNode dataNode = TreeFactory.createDataNode(path.hashCode());
 		cacheAttributes(path, dataNode);
+		boolean isBoolean = HDF5Utils.isDataNodeBoolean(dataNode);
+		if (isBoolean) {
+			clazz = BooleanDataset.class;
+		}
+
 		parentNode.addDataNode(name, dataNode);
 		dataNode.setUnsigned(unsigned);
 		ILazyDataset lazyDataset = null;
@@ -941,8 +948,13 @@ public class NexusFileHDF5 implements NexusFile {
 			throw new NexusException("Object already exists at specified location: " + dataPath);
 		}
 
-		int itemSize = 1;
-		Class<? extends Dataset> clazz = InterfaceUtils.getInterfaceFromClass(data.getElementsPerItem(), data.getElementClass());
+		int itemSize = data.getElementsPerItem();
+		Class<?> eClass = data.getElementClass();
+		boolean isBooleanDataset = Boolean.class.equals(eClass);
+		if (isBooleanDataset) {
+			eClass = Byte.class;
+		}
+		Class<? extends Dataset> clazz = InterfaceUtils.getInterfaceFromClass(itemSize, data.getElementClass());
 		final boolean isScalar = data.getRank() == 0;
 		int[] iShape = data.getShape();
 		int[] iMaxShape = data.getMaxShape();
@@ -957,7 +969,7 @@ public class NexusFileHDF5 implements NexusFile {
 				}
 			}
 		}
-		Object[] fillValue = NexusUtils.getFillValue(data.getElementClass());
+		Object[] fillValue = NexusUtils.getFillValue(eClass);
 		Object providedFillValue = data.getFillValue();
 		if (providedFillValue != null) {
 			fillValue[0] = providedFillValue;
@@ -969,7 +981,7 @@ public class NexusFileHDF5 implements NexusFile {
 		long[] chunks = HDF5Utils.toLongArray(iChunks);
 		boolean stringDataset = data.getElementClass().equals(String.class);
 		boolean writeVlenString = stringDataset && !file.canSwitchSWMR(); //SWMR does not allow vlen structures
-		long hdfType = getHDF5Type(data);
+		long hdfType = getHDF5Type(eClass);
 		try {
 			try (HDF5Resource hdfDatatype = new HDF5DatatypeResource(H5.H5Tcopy(hdfType));
 					HDF5Resource hdfDataspace = new HDF5DataspaceResource(isScalar ? H5.H5Screate(HDF5Constants.H5S_SCALAR)
@@ -1043,13 +1055,21 @@ public class NexusFileHDF5 implements NexusFile {
 		data.setSaver(saver);
 
 		DataNode dataNode = TreeFactory.createDataNode(dataPath.hashCode());
+
 		((GroupNode)parentNode.node).addDataNode(name, dataNode);
 		dataNode.setChunkShape(chunks);
 		dataNode.setMaxShape(maxShape);
 		dataNode.setDataset(data);
 		HDF5Token fileAddr = getLinkToken(dataPath);
 		nodeMap.put(fileAddr, dataNode);
+		if (isBooleanDataset) {
+			labelAsBoolean(dataPath);
+		}
 		return dataNode;
+	}
+
+	private void labelAsBoolean(String dataNodePath) throws NexusException {
+		addAttribute(dataNodePath, NexusConstants.DLS_DATATYPE_ATTR.BOOLEAN.getAttribute());
 	}
 
 	@Override
@@ -1110,7 +1130,13 @@ public class NexusFileHDF5 implements NexusFile {
 			throw new NexusException("Object already exists at specified location: " + dataPath);
 		}
 
-		boolean stringDataset = data.getElementClass().equals(String.class);//ngd.isChar();
+		final Class<?> dataClass = data.getElementClass();
+		final boolean isStringDataset = dataClass.equals(String.class);
+		final boolean isBooleanDataset = dataClass.equals(Boolean.class);
+		if (isBooleanDataset) {
+			data = DatasetUtils.cast(ByteDataset.class, data);
+		}
+
 		final boolean isScalar = data.getRank() == 0;
 		final long[] shape = isScalar ? new long[0] : HDF5Utils.toLongArray(data.getShape());
 
@@ -1124,7 +1150,7 @@ public class NexusFileHDF5 implements NexusFile {
 
 				final long datatypeId = hdfDatatype.getResource();
 				final long dataspaceId = hdfDataspace.getResource();
-				if (stringDataset) {
+				if (isStringDataset) {
 					H5.H5Tset_cset(datatypeId, HDF5Constants.H5T_CSET_UTF8);
 					H5.H5Tset_size(datatypeId, HDF5Constants.H5T_VARIABLE);
 				}
@@ -1133,20 +1159,11 @@ public class NexusFileHDF5 implements NexusFile {
 								HDF5Constants.H5P_DEFAULT, HDF5Constants.H5P_DEFAULT, HDF5Constants.H5P_DEFAULT));) {
 
 					final long dataId = hdfDataset.getResource();
-					if (stringDataset) {
+					if (isStringDataset) {
 						String[] strings = (String[])DatasetUtils.serializeDataset(data);
 						H5.H5Dwrite_VLStrings(dataId, datatypeId, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, strings);
 					} else {
 						Serializable buffer = DatasetUtils.serializeDataset(data);
-						if (data.getElementClass().equals(Boolean.class)) {
-							boolean[] original = (boolean[]) buffer;
-							int length = original.length;
-							byte[] converted = new byte[length];
-							for (int i = 0; i < length; i++) {
-								converted[i] = (byte) (original[i] ? 1 : 0);
-							}
-							buffer = converted;
-						}
 						H5.H5Dwrite(dataId, datatypeId, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, buffer);
 					}
 				}
@@ -1160,6 +1177,11 @@ public class NexusFileHDF5 implements NexusFile {
 		dataNode.setMaxShape(shape);
 		dataNode.setDataset(data);
 		((GroupNode) parentNode.node).addDataNode(name, dataNode);
+
+		if (isBooleanDataset) {
+			labelAsBoolean(dataPath);
+		}
+
 		return dataNode;
 	}
 
@@ -1743,7 +1765,10 @@ public class NexusFileHDF5 implements NexusFile {
 	}
 
 	private static long getHDF5Type(ILazyDataset data) {
-		Class<?> clazz = data.getElementClass();
+		return getHDF5Type(data.getElementClass());
+	}
+
+	private static long getHDF5Type(Class<?> clazz) {
 		if (clazz.equals(String.class)) {
 			return HDF5Constants.H5T_C_S1;
 		} else if (clazz.equals(Boolean.class)) {

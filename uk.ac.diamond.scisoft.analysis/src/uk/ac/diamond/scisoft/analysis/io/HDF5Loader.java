@@ -45,6 +45,7 @@ import org.eclipse.dawnsci.hdf5.HDF5Utils.DatasetType;
 import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.BooleanDataset;
 import org.eclipse.january.dataset.ByteDataset;
 import org.eclipse.january.dataset.DTypeUtils;
 import org.eclipse.january.dataset.Dataset;
@@ -190,6 +191,7 @@ public class HDF5Loader extends AbstractFileLoader {
 				try {
 					updateSyncNodes(syncLimit); // prevent deadlock
 				} catch (Throwable e) {
+					// do nothing
 				}
 			} finally {
 				try {
@@ -206,6 +208,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			try {
 				wait();
 			} catch (InterruptedException e) {
+				// do nothing
 			}
 		}
 		if (syncException != null)
@@ -236,7 +239,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			return tFile;
 		}
 
-		logger.trace(String.format("Loading in thd %x\n", Thread.currentThread().getId()));
+		logger.trace("Loading in thd {}", Thread.currentThread().getId());
 		File f = new File(fileName);
 		if (!f.exists()) {
 			throw new ScanFileHolderException("File, " + fileName + ", does not exist");
@@ -784,6 +787,8 @@ public class HDF5Loader extends AbstractFileLoader {
 		DatasetType type;
 		final int[] trueShape;
 
+		boolean isBoolean = HDF5Utils.isDataNodeBoolean(node);
+
 		try {
 //			Thread.sleep(200);
 			H5.H5Drefresh(did);
@@ -872,6 +877,9 @@ public class HDF5Loader extends AbstractFileLoader {
 					H5.H5Dread(did, tid, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, data);
 				}
 
+				if (isBoolean) {
+					d = d.cast(type.isize, BooleanDataset.class, false);
+				}
 				if (type.unsigned) {
 					d = DatasetUtils.makeUnsigned(d, true);
 				}
@@ -925,10 +933,11 @@ public class HDF5Loader extends AbstractFileLoader {
 			}
 		}
 
-		HDF5LazyLoader l = new HDF5LazyLoader(file.getHostname(), file.getFilename(), nodePath, name, trueShape, type.isize, type.clazz, extendUnsigned);
+		Class<? extends Dataset> lClazz = isBoolean ? BooleanDataset.class : type.clazz;
+		HDF5LazyLoader l = new HDF5LazyLoader(file.getHostname(), file.getFilename(), nodePath, name, trueShape, type.isize, lClazz, extendUnsigned);
 
 		long[] chunks = node.getChunkShape();
-		LazyDynamicDataset lazy = new LazyDynamicDataset(l, name, type.isize, type.clazz, trueShape.clone(), maxShape, chunks == null ? null : HDF5Utils.toIntArray(chunks));
+		LazyDynamicDataset lazy = new LazyDynamicDataset(l, name, type.isize, lClazz, trueShape.clone(), maxShape, chunks == null ? null : HDF5Utils.toIntArray(chunks));
 		if (isExternal) {
 			try {
 				lazy.addMetadata(MetadataFactory.createMetadata(OriginMetadata.class, null, null, null, file.getFilename(), nodePath));

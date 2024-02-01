@@ -22,12 +22,15 @@ import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.hdf5.HDF5FileFactory;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.eclipse.january.DatasetException;
+import org.eclipse.january.dataset.BooleanDataset;
+import org.eclipse.january.dataset.Comparisons;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.IDynamicDataset;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.dataset.Slice;
@@ -79,6 +82,10 @@ public class HDF5SaverTest {
 	}
 
 	private Dataset checkOutput(String file, String path, String name, int[] shape) throws ScanFileHolderException, DatasetException {
+		return checkOutput(file, path, name, shape, Short.class);
+	}
+
+	private Dataset checkOutput(String file, String path, String name, int[] shape, Class<?> clazz) throws ScanFileHolderException, DatasetException {
 		TreeFile tree = new HDF5Loader(file).loadTree();
 		NodeLink link = tree.findNodeLink(path + name);
 		assertEquals(name, link.getName());
@@ -87,7 +94,7 @@ public class HDF5SaverTest {
 		DataNode d = (DataNode) link.getDestination();
 		ILazyDataset ds = d.getDataset();
 		assertArrayEquals(shape, ds.getShape());
-		assertEquals(Short.class, ds.getElementClass());
+		assertEquals(clazz, ds.getElementClass());
 		return DatasetUtils.sliceAndConvertLazyDataset(ds);
 	}
 
@@ -132,5 +139,40 @@ public class HDF5SaverTest {
 
 		assertEquals(10*34*35/2, ((Number) data.getSlice(new Slice(null, null, 2)).sum()).longValue());
 		assertEquals(value*data.getSize()/2, ((Number) data.getSlice(new Slice(1, null, 2)).sum()).longValue());
+	}
+
+
+	@Test
+	public void testSaveBoolean() throws Exception {
+		String file = TestFileFolder + "boolean.h5";
+		String path = "/e/a/b/";
+		String name = "d";
+		int[] shape = new int[] {2, 34};
+		int[] mshape = new int[] {IDynamicDataset.UNLIMITED, 34};
+		Class<? extends Dataset> clazz = BooleanDataset.class;
+
+		File f = new File(file);
+		if (f.exists())
+			f.delete();
+
+		boolean value = true;
+		HDF5Utils.createDataset(file, path, name, shape, mshape, new int[] {1, 34}, clazz, new boolean[] {value}, false);
+
+		assertEquals(value, checkOutput(file, path, name, shape, Boolean.class).getBoolean(0, 0));
+
+		SliceND slice = new SliceND(shape, mshape, new Slice(1, 3), new Slice(null, null, 2));
+		System.out.println(slice);
+		IDataset data = DatasetFactory.createRange(ShortDataset.class, 1, ShapeUtils.calcSize(slice.getShape()) + 1, 1);
+		System.out.println(data);
+		data.setShape(slice.getShape());
+		data = Comparisons.equalTo(Maths.remainder(data, 7), 0);
+		HDF5Utils.setDatasetSlice(file, path, name, slice, data);
+
+		data = checkOutput(file, path, name, slice.getSourceShape(), Boolean.class);
+		assertEquals(value, data.getBoolean(0, 0));
+		assertEquals(value, data.getBoolean(1, 1));
+		assertEquals(false, data.getBoolean(1, 0));
+		assertEquals(false, data.getBoolean(1, 2));
+		assertEquals(true, data.getBoolean(1, 12));
 	}
 }

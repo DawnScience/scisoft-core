@@ -11,6 +11,9 @@ package org.eclipse.dawnsci.nexus;
 
 import java.time.format.DateTimeFormatter;
 
+import org.eclipse.dawnsci.analysis.api.tree.Attribute;
+import org.eclipse.dawnsci.analysis.tree.TreeFactory;
+
 /**
  * Constants used to deal with NeXus files
  */
@@ -186,15 +189,35 @@ public class NexusConstants {
 	 */
 	@Deprecated(since="2014 NIAC meeting")
 	public static final String DATA_PRIMARY = "primary";
-	
+
 	/**
 	 * Attribute for nodes that are linked to within the same nexus file.
 	 */
 	public static final String TARGET  = "target";
-	
-	private NexusConstants() {
-		
-	}
-	
 
+	/**
+	 * Attribute for field that specifies what type to convert file data to
+	 */
+	public static final String DLS_READ_DATATYPE = "DLS_read_datatype";
+
+	public enum DLS_DATATYPE_ATTR {
+		BOOLEAN("boolean"); // other datatypes (e.g. complex) may be added at a later date
+
+		private Attribute attr;
+
+		private DLS_DATATYPE_ATTR(String name) {
+			attr = TreeFactory.createAttribute(DLS_READ_DATATYPE, name);
+		}
+
+		public String toString() {
+			return attr.getFirstElement();
+		}
+
+		public Attribute getAttribute() {
+			return attr;
+		}
+	}
+
+	private NexusConstants() {
+	}
 }

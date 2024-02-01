@@ -11,6 +11,7 @@ package org.eclipse.dawnsci.hdf5;
 
 import java.io.File;
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
@@ -31,10 +32,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
+import org.eclipse.dawnsci.analysis.api.tree.Attribute;
+import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
+import org.eclipse.dawnsci.nexus.NexusConstants;
+import org.eclipse.dawnsci.nexus.NexusConstants.DLS_DATATYPE_ATTR;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
+import org.eclipse.january.dataset.BooleanDataset;
 import org.eclipse.january.dataset.ByteDataset;
 import org.eclipse.january.dataset.ComplexDoubleDataset;
 import org.eclipse.january.dataset.ComplexFloatDataset;
@@ -65,7 +71,7 @@ public class HDF5Utils {
 	private static final Logger logger = LoggerFactory.getLogger(HDF5Utils.class);
 
 	private static String host;
-	
+
 	private HDF5Utils() {
 		
 	}
@@ -299,6 +305,19 @@ public class HDF5Utils {
 	}
 
 	/**
+	 * Check if dataset in data node is flagged as a boolean
+	 * @param node
+	 * @return
+	 */
+	public static boolean isDataNodeBoolean(DataNode node) {
+		Attribute dlsDatatype = node.getAttribute(NexusConstants.DLS_READ_DATATYPE);
+		if (dlsDatatype != null) {
+			return NexusConstants.DLS_DATATYPE_ATTR.BOOLEAN.toString().equals(dlsDatatype.getFirstElement());
+		}
+		return false;
+	}
+
+	/**
 	 * Load dataset from given file
 	 * @param fileName
 	 * @param node
@@ -526,9 +545,9 @@ public class HDF5Utils {
 					H5.H5Sselect_all(msid);
 				}
 
-				Class<? extends Dataset> lClass = clazz == null ? type.clazz : clazz;
-				final int lisize = isize >= 0 ? isize : type.isize;
-				data = DatasetFactory.zeros(lisize, lClass, count);
+				boolean convert = clazz != null && !(type.clazz.equals(clazz) && isize == type.isize);
+
+				data = DatasetFactory.zeros(type.isize, type.clazz, count);
 				Object odata = data.getBuffer();
 
 				try {
@@ -543,6 +562,9 @@ public class HDF5Utils {
 							logAndThrowNexusException(null, "Non-string variable length attribute are not supported for %s", dataPath);
 						}
 						H5.H5Dread(did, ntid, msid, sid, HDF5Constants.H5P_DEFAULT, odata);
+					}
+					if (convert) {
+						data = data.cast(isize, clazz, false);
 					}
 					if (unsignExtend) {
 						data = DatasetUtils.makeUnsigned(data, true);
@@ -757,7 +779,7 @@ public class HDF5Utils {
 	 * @param fillValue
 	 * @throws NexusException
 	 */
-	public static void createDataset(HDF5File f, int compression, String dataPath, final Class<? extends Dataset> clazz, int[] iShape, int[] iMaxShape, int[] iChunks,
+	public static void createDataset(HDF5File f, int compression, String dataPath, Class<? extends Dataset> clazz, int[] iShape, int[] iMaxShape, int[] iChunks,
 			Object fillValue) throws NexusException {
 		long[] shape = toLongArray(iShape);
 		long[] maxShape = toLongArray(iMaxShape);
@@ -767,7 +789,22 @@ public class HDF5Utils {
 			chunks = null;
 			compression = 0;
 		}
-		boolean stringDataset = StringDataset.class.isAssignableFrom(clazz);
+		boolean isStringDataset = StringDataset.class.isAssignableFrom(clazz);
+		boolean isBooleanDataset = BooleanDataset.class.isAssignableFrom(clazz);
+
+		if (isBooleanDataset) {
+			clazz = ByteDataset.class;
+			if (fillValue != null) {
+				if (!fillValue.getClass().isArray()) {
+					logAndThrowNexusException(null, "Fill value must be an array: %s", fillValue);
+				}
+				if (Array.get(fillValue, 0) instanceof Boolean bfv) {
+					int b = Boolean.TRUE.equals(bfv) ? 1 : 0;
+					fillValue = new byte[] { (byte) b};
+				}
+			}
+		}
+
 		long hdfType = getHDF5type(clazz);
 		try {
 			long hdfDatatypeId = -1;
@@ -779,7 +816,7 @@ public class HDF5Utils {
 						: H5.H5Screate_simple(shape.length, shape, maxShape);
 				hdfPropertiesId = H5.H5Pcreate(HDF5Constants.H5P_DATASET_CREATE);
 
-				if (stringDataset) {
+				if (isStringDataset) {
 					H5.H5Tset_cset(hdfDatatypeId, HDF5Constants.H5T_CSET_UTF8);
 					H5.H5Tset_size(hdfDatatypeId, HDF5Constants.H5T_VARIABLE);
 				} else if (fillValue != null) {
@@ -838,6 +875,24 @@ public class HDF5Utils {
 		} catch (HDF5Exception e) {
 			logAndThrowNexusException(e, "Could not create dataset %s in %s", dataPath, f);
 		}
+
+		if (isBooleanDataset) {
+			addDLSDatatype(f, dataPath, DLS_DATATYPE_ATTR.BOOLEAN);
+		}
+	}
+
+	private static void addDLSDatatype(HDF5File f, String nodePath, DLS_DATATYPE_ATTR attr) throws NexusException {
+		long fileID = f.getID();
+		String attrName = attr.getAttribute().getName();
+
+		try {
+			// if an attribute with the same name already exists, we delete it to be consistent with NAPI
+			if (!H5.H5Aexists_by_name(fileID, nodePath, attrName, HDF5Constants.H5P_DEFAULT)) {
+				createAttribute(f, nodePath, attr.getAttribute().getValue(), attrName);
+			}
+		} catch (HDF5Exception e) {
+			logAndThrowNexusException(e, "Could not check for existing attribute %s for %s in %s", attrName, nodePath, f);
+		}
 	}
 
 	/**
@@ -879,7 +934,14 @@ public class HDF5Utils {
 		long[] shape = toLongArray(dataset.getShapeRef());
 		final boolean isScalar = shape.length == 0;
 
-		boolean stringDataset = dataset instanceof StringDataset;
+		Class<? extends IDataset> clazz = data.getClass();
+		boolean isStringDataset = StringDataset.class.isAssignableFrom(clazz);
+		boolean isBooleanDataset = BooleanDataset.class.isAssignableFrom(clazz);
+		if (isBooleanDataset) {
+			clazz = ByteDataset.class;
+		}
+
+
 		long hdfType = getHDF5type(dataset.getClass());
 
 		try {
@@ -893,7 +955,7 @@ public class HDF5Utils {
 						: H5.H5Screate_simple(shape.length, shape, null);
 				hdfPropertiesId = H5.H5Pcreate(HDF5Constants.H5P_DATASET_CREATE);
 
-				if (stringDataset) {
+				if (isStringDataset) {
 					H5.H5Tset_cset(hdfDatatypeId, HDF5Constants.H5T_CSET_UTF8);
 					H5.H5Tset_size(hdfDatatypeId, HDF5Constants.H5T_VARIABLE);
 				}
@@ -901,7 +963,7 @@ public class HDF5Utils {
 				try {
 					hdfDatasetId = H5.H5Dcreate(f.getID(), dataPath, hdfDatatypeId, hdfDataspaceId,
 						HDF5Constants.H5P_DEFAULT, hdfPropertiesId, HDF5Constants.H5P_DEFAULT);
-					if (stringDataset) {
+					if (isStringDataset) {
 						String[] strings = (String[])DatasetUtils.serializeDataset(data);
 						H5.H5Dwrite_VLStrings(hdfDatasetId, hdfDatatypeId, HDF5Constants.H5S_ALL, HDF5Constants.H5S_ALL, HDF5Constants.H5P_DEFAULT, strings);
 					} else {
@@ -938,6 +1000,10 @@ public class HDF5Utils {
 			}
 		} catch (HDF5Exception e) {
 			logAndThrowNexusException(e, "Could not write dataset %s in %s", dataPath, f);
+		}
+
+		if (isBooleanDataset) {
+			addDLSDatatype(f, dataPath, DLS_DATATYPE_ATTR.BOOLEAN);
 		}
 	}
 
@@ -978,6 +1044,7 @@ public class HDF5Utils {
 	 */
 	public static void writeAttributes(HDF5File f, String path, IDataset... attributes) throws NexusException {
 		for (IDataset attr : attributes) {
+			Dataset attrData = DatasetUtils.convertToDataset(attr);
 			String attrName = attr.getName();
 			if (attrName == null || attrName.isEmpty()) {
 				throw new IllegalArgumentException("Attribute must have a name");
@@ -996,71 +1063,80 @@ public class HDF5Utils {
 			} catch (HDF5Exception e) {
 				logAndThrowNexusException(e, "Could not check for existing attribute %s for %s in %s", attrName, path, f);
 			}
-			Dataset attrData = DatasetUtils.convertToDataset(attr);
-			long baseHdf5Type = getHDF5type(attrData.getClass());
+			createAttribute(f, path, attrData, attrName);
+		}
+	}
 
-			final boolean isScalar = attrData.getRank() == 0;
-			final long[] shape = toLongArray(attrData.getShapeRef());
-			long datatypeID = -1;
-			long dataspaceID = -1;
+	private static void createAttribute(HDF5File f, String path, IDataset attr, String attrName)
+			throws NexusException {
+		Dataset attrData = DatasetUtils.convertToDataset(attr);
+		long baseHdf5Type = getHDF5type(attrData.getClass());
+		long fileID = f.getID();
+
+		final boolean isScalar = attrData.getRank() == 0;
+		final long[] shape = toLongArray(attrData.getShapeRef());
+		long datatypeID = -1;
+		long dataspaceID = -1;
+		try {
+			datatypeID = H5.H5Tcopy(baseHdf5Type);
+			dataspaceID = isScalar ? H5.H5Screate(HDF5Constants.H5S_SCALAR) : H5.H5Screate_simple(shape.length, shape, shape);
+			Serializable buffer = DatasetUtils.serializeDataset(attrData);
+			if (attrData instanceof StringDataset) {
+				String[] strings = (String[]) buffer;
+				int strCount = strings.length;
+				int maxLength = 0;
+				byte[][] stringbuffers = new byte[strCount][];
+				int i = 0;
+				for (String str : strings) {
+					stringbuffers[i] = str.getBytes(StandardCharsets.UTF_8);
+					int l = stringbuffers[i].length;
+					if (l > maxLength) maxLength = l;
+					i++;
+				}
+				maxLength++; //we require null terminators
+				buffer = new byte[maxLength * strCount];
+				int offset = 0;
+				for (byte[] str: stringbuffers) {
+					System.arraycopy(str, 0, buffer, offset, str.length);
+					offset += maxLength;
+				}
+				//deliberate choice, mis-labelling to work around h5py/numpy
+				//handling of non ascii strings
+				H5.H5Tset_cset(datatypeID, HDF5Constants.H5T_CSET_UTF8);
+				H5.H5Tset_size(datatypeID, maxLength);
+			}
+			long attrID = -1;
 			try {
-				datatypeID = H5.H5Tcopy(baseHdf5Type);
-				dataspaceID = isScalar ? H5.H5Screate(HDF5Constants.H5S_SCALAR) : H5.H5Screate_simple(shape.length, shape, shape);
-				Serializable buffer = DatasetUtils.serializeDataset(attrData);
-				if (attrData instanceof StringDataset) {
-					String[] strings = (String[]) buffer;
-					int strCount = strings.length;
-					int maxLength = 0;
-					byte[][] stringbuffers = new byte[strCount][];
-					int i = 0;
-					for (String str : strings) {
-						stringbuffers[i] = str.getBytes(StandardCharsets.UTF_8);
-						int l = stringbuffers[i].length;
-						if (l > maxLength) maxLength = l;
-						i++;
-					}
-					maxLength++; //we require null terminators
-					buffer = new byte[maxLength * strCount];
-					int offset = 0;
-					for (byte[] str: stringbuffers) {
-						System.arraycopy(str, 0, buffer, offset, str.length);
-						offset += maxLength;
-					}
-					//deliberate choice, mis-labelling to work around h5py/numpy
-					//handling of non ascii strings
-					H5.H5Tset_cset(datatypeID, HDF5Constants.H5T_CSET_UTF8);
-					H5.H5Tset_size(datatypeID, maxLength);
-				}
-				long attrID = -1;
-				try {
-					attrID = H5.H5Acreate_by_name(fileID, path, attrName, datatypeID, dataspaceID,
-								HDF5Constants.H5P_DEFAULT, HDF5Constants.H5P_DEFAULT, HDF5Constants.H5P_DEFAULT);
+				attrID = H5.H5Acreate_by_name(fileID, path, attrName, datatypeID, dataspaceID,
+							HDF5Constants.H5P_DEFAULT, HDF5Constants.H5P_DEFAULT, HDF5Constants.H5P_DEFAULT);
 
-					H5.H5Awrite(attrID, datatypeID, buffer);
-				} catch (HDF5Exception e) {
-					logAndThrowNexusException(e, "Could not create or write attribute %s for %s in %s", attrName, path, f);
-				} finally {
-					if (attrID != -1) {
-						try {
-							H5.H5Aclose(attrID);
-						} catch (HDF5Exception e) {
-						}
-					}
-				}
+				H5.H5Awrite(attrID, datatypeID, buffer);
 			} catch (HDF5Exception e) {
-				logAndThrowNexusException(e, "Could not make data type or space for attribute %s for %s in %s", attrName, path, f);
+				logAndThrowNexusException(e, "Could not create or write attribute %s for %s in %s", attrName, path, f);
 			} finally {
-				if (dataspaceID != -1) {
+				if (attrID != -1) {
 					try {
-						H5.H5Sclose(dataspaceID);
+						H5.H5Aclose(attrID);
 					} catch (HDF5Exception e) {
+						// do nothing
 					}
 				}
-				if (datatypeID != -1) {
-					try {
-						H5.H5Tclose(datatypeID);
-					} catch (HDF5Exception e) {
-					}
+			}
+		} catch (HDF5Exception e) {
+			logAndThrowNexusException(e, "Could not make data type or space for attribute %s for %s in %s", attrName, path, f);
+		} finally {
+			if (dataspaceID != -1) {
+				try {
+					H5.H5Sclose(dataspaceID);
+				} catch (HDF5Exception e) {
+					// do nothing
+				}
+			}
+			if (datatypeID != -1) {
+				try {
+					H5.H5Tclose(datatypeID);
+				} catch (HDF5Exception e) {
+					// do nothing
 				}
 			}
 		}
@@ -1227,6 +1303,7 @@ public class HDF5Utils {
 
 			long hdfMemspaceId = -1;
 			long hdfDatatypeId = -1;
+			boolean isBooleanDataset = false;
 			try {
 				int rank = H5.H5Sget_simple_extent_ndims(hdfDataspaceId);
 				boolean isScalar = rank == 0;
@@ -1270,20 +1347,13 @@ public class HDF5Utils {
 				}
 
 				Dataset data = DatasetUtils.convertToDataset(value);
+				isBooleanDataset = BooleanDataset.class.isAssignableFrom(data.getClass());
+				if (isBooleanDataset) {
+					data = DatasetUtils.cast(ByteDataset.class, data);
+				}
+
 				long memtype = getHDF5type(data.getClass());
 				Serializable buffer = DatasetUtils.serializeDataset(data);
-
-				// convert boolean[] data to byte[]
-				// the HDF5 library cannot handle boolean[]
-				if (data.getElementClass().equals(Boolean.class)) {
-					boolean[] original = (boolean[]) buffer;
-					int length = original.length;
-					byte[] converted = new byte[length];
-					for (int i = 0; i < length; i++) {
-						converted[i] = (byte) (original[i] ? 1 : 0);
-					}
-					buffer = converted;
-				}
 
 				hdfMemspaceId = isScalar ? H5.H5Screate(HDF5Constants.H5S_SCALAR) : H5.H5Screate_simple(rank, HDF5Utils.toLongArray(data.getShape()), null);
 				if (data instanceof StringDataset) {
@@ -1333,6 +1403,10 @@ public class HDF5Utils {
 						throw ex;
 					}
 				}
+			}
+
+			if (isBooleanDataset) {
+				addDLSDatatype(f, dataPath, DLS_DATATYPE_ATTR.BOOLEAN);
 			}
 		} catch (HDF5Exception e) {
 			logAndThrowNexusException(e, "Could not write dataset slice (%s) to %s in %s", slice, dataPath, f);

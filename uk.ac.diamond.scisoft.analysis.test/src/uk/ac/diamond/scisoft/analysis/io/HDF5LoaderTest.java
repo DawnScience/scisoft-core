@@ -661,4 +661,24 @@ public class HDF5LoaderTest {
 		Dataset ml3 = DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset("/ml3"));
 		assertDatasetEquals(m3, ml3);
 	}
+
+	@Test
+	public void testLoadingBoolean() throws Exception {
+		String n = TestFileFolder + "boolean.nxs";
+		HDF5Loader l = new HDF5Loader(n);
+		DataHolder dh = l.loadFile();
+		System.err.println(Arrays.toString(dh.getNames()));
+		IDataset ds = dh.getLazyDataset("/a/b").getSlice();
+		assertEquals(Boolean.class, ds.getElementClass());
+		assertArrayEquals(new int[] {4}, ds.getShape());
+		assertTrue(ds.getBoolean(0));
+		assertFalse(ds.getBoolean(1));
+
+		ds = dh.getLazyDataset("/a/l").getSlice();
+		assertEquals(Boolean.class, ds.getElementClass());
+		assertArrayEquals(new int[] {1,4}, ds.getShape());
+		assertTrue(ds.getBoolean(0, 0));
+		assertFalse(ds.getBoolean(0, 1));
+	}
+
 }

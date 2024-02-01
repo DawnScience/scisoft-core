@@ -1063,6 +1063,8 @@ public class NexusUtils {
 		} else if (clazz == String.class) {
 			//TODO: change to "" when HDF supports strings as fill value
 			return null;
+		} else if (clazz == Boolean.class) {
+			return new Boolean[] {false};
 		}
 		return null;
 	}

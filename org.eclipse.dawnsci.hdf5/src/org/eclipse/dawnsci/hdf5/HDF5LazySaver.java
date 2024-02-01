@@ -19,6 +19,8 @@ import org.eclipse.dawnsci.analysis.api.tree.Node;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.IMonitor;
+import org.eclipse.january.dataset.BooleanDataset;
+import org.eclipse.january.dataset.ByteDataset;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
@@ -143,12 +145,14 @@ public class HDF5LazySaver extends HDF5LazyLoader implements ILazyAsyncSaver, Se
 		}
 
 		// higher level API does not cope with differing data types
-		data = DatasetUtils.cast(clazz, data);
 		try {
 			if (!create) { // ensure create on first use
 				HDF5Utils.setDatasetSlice(filePath, parentPath, name, slice, data);
 				create = true;
 			} else {
+				if (BooleanDataset.class.isAssignableFrom(data.getClass())) {
+					data = DatasetUtils.cast(ByteDataset.class, data);
+				}
 				HDF5File fid = HDF5FileFactory.acquireFile(filePath, true);
 				try {
 					HDF5Utils.writeDatasetSlice(fid, dataPath, slice, data);

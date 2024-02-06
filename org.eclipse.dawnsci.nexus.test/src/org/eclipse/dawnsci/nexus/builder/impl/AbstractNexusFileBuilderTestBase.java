@@ -31,12 +31,16 @@ import org.eclipse.dawnsci.nexus.builder.NexusFileBuilder;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 @RunWith(Parameterized.class)
 public abstract class AbstractNexusFileBuilderTestBase {
@@ -59,7 +63,17 @@ public abstract class AbstractNexusFileBuilderTestBase {
 	private boolean pluginTest = false;
 	
 	private NexusBuilderFactory nexusBuilderFactory = null;
-	
+
+	@BeforeClass
+	public static void setupBeforeClass() {
+		NexusTestUtils.setUpServices();
+	}
+
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+		ServiceProvider.reset();
+	}
+
 	@Before
 	public void setUp() throws Exception {
 		nexusBuilderFactory = getNexusBuilderFactory();

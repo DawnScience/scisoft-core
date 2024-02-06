@@ -43,9 +43,12 @@ import org.eclipse.january.dataset.LongDataset;
 import org.eclipse.january.dataset.Random;
 import org.eclipse.january.dataset.SliceND;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 public class NexusFileTest {
 
@@ -68,6 +71,12 @@ public class NexusFileTest {
 		(new File(testScratchDirectoryName + "linked/")).mkdirs();
 		FILE_NAME = testScratchDirectoryName + "test.nxs";
 		FILE2_NAME = testScratchDirectoryName + "ext-test.nxs";
+		NexusTestUtils.setUpServices();
+	}
+
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+		ServiceProvider.reset();
 	}
 
 	@Before

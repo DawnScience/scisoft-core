@@ -18,14 +18,19 @@ import static org.junit.Assert.assertEquals;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.analysis.tree.TreeFactory;
+import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
 import org.eclipse.january.dataset.SliceND;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 public class ScalarLazyWriteableDatasetTest {
 	
@@ -34,7 +39,17 @@ public class ScalarLazyWriteableDatasetTest {
 	protected static String testScratchDirectoryName;
 	
 	private ILazyWriteableDataset lazyScalarDataset;
-	
+
+	@BeforeClass
+	public static void setUpClass(){
+		NexusTestUtils.setUpServices();
+	}
+
+	@AfterClass
+	public static void tearDownClass() {
+		ServiceProvider.reset();
+	}
+
 	@Before
 	public void setUp() throws Exception {
 		testScratchDirectoryName = TestUtils.generateDirectorynameFromClassname(getClass().getCanonicalName());

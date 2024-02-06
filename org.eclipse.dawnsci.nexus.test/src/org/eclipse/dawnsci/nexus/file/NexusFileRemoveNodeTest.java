@@ -16,8 +16,11 @@ import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 public class NexusFileRemoveNodeTest {
 
@@ -36,6 +39,12 @@ public class NexusFileRemoveNodeTest {
 		TestUtils.makeScratchDirectory(testScratchDirectoryName);
 		FILE_NAME = testScratchDirectoryName + "remove_node_test.nxs";
 		FILE_NAME_SWMR = testScratchDirectoryName + "swmr_remove_node_test.nxs";
+		NexusTestUtils.setUpServices();
+	}
+
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+		ServiceProvider.reset();
 	}
 
 	private NexusFile setUpFile(boolean swmr) throws NexusException {

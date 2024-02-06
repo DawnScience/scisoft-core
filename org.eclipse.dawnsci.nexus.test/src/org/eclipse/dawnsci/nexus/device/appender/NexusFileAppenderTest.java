@@ -33,12 +33,15 @@ import org.eclipse.dawnsci.nexus.context.NexusContextFactory;
 import org.eclipse.dawnsci.nexus.context.NexusContextType;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 @RunWith(value = Parameterized.class)
 public class NexusFileAppenderTest {
@@ -67,8 +70,14 @@ public class NexusFileAppenderTest {
 	public static void setUpBeforeClass() throws Exception {
 		testScratchDirectoryName = TestUtils.generateDirectorynameFromClassname(NexusFileAppenderTest.class.getCanonicalName()) + "/";
 		TestUtils.makeScratchDirectory(testScratchDirectoryName);
+		NexusTestUtils.setUpServices();
 	}
-	
+
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+		ServiceProvider.reset();
+	}
+
 	@Before
 	public void setUp() {
 		appenderService = new NexusFileAppenderService();

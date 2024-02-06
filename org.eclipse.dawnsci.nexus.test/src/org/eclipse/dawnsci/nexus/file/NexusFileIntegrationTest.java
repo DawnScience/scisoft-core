@@ -33,8 +33,11 @@ import org.eclipse.january.dataset.LazyWriteableDataset;
 import org.eclipse.january.dataset.ShortDataset;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 public class NexusFileIntegrationTest {
 	static String testScratchDirectoryName;
@@ -43,6 +46,12 @@ public class NexusFileIntegrationTest {
 	public static void setUpBeforeClass() throws Exception {
 		testScratchDirectoryName = TestUtils.generateDirectorynameFromClassname(NexusFileIntegrationTest.class.getCanonicalName());
 		TestUtils.makeScratchDirectory(testScratchDirectoryName);
+		NexusTestUtils.setUpServices();
+	}
+
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+		ServiceProvider.reset();
 	}
 
 	@Test

@@ -25,8 +25,11 @@ import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.FloatDataset;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 public class NexusFileLinkTest {
 	static String testScratchDirectoryName;
@@ -35,6 +38,12 @@ public class NexusFileLinkTest {
 	public static void setUpBeforeClass() throws Exception {
 		testScratchDirectoryName = TestUtils.generateDirectorynameFromClassname(NexusFileLinkTest.class.getCanonicalName());
 		TestUtils.makeScratchDirectory(testScratchDirectoryName);
+		NexusTestUtils.setUpServices();
+	}
+
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+		ServiceProvider.reset();
 	}
 
 	@Test

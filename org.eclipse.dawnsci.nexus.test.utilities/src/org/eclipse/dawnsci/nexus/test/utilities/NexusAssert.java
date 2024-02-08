@@ -707,11 +707,12 @@ public class NexusAssert {
 	}
 
 	private static void assertUniqueKeysExternalFileLinks(NXcollection keysCollection,
-			List<String> expectedUniquekeyPaths, int[] sizes) {
-		for (String expectedUniquekeyPath : expectedUniquekeyPaths) {
-			final DataNode dataNode = keysCollection.getDataNode(expectedUniquekeyPath);
+			List<String> expectedUniqueKeyPaths, int[] sizes) {
+		for (String expectedUniqueKeyPath : expectedUniqueKeyPaths) {
+			final DataNode dataNode = keysCollection.getDataNode(expectedUniqueKeyPath);
 			assertThat(dataNode, is(notNullValue()));
 			assertThat(dataNode.getRank(), is(sizes.length));
+			assertThat(dataNode.getDataset().getElementClass(), is(equalTo(Integer.class)));
 		}
 	}
 

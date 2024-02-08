@@ -11,6 +11,10 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.nexus.builder.data.impl;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.builder.data.PrimaryDataDevice;
 
@@ -19,6 +23,8 @@ public class PrimaryDataDeviceImpl<N extends NXobject> extends DataDeviceImpl<N>
 	private final String signalFieldSourceName;
 	
 	private final DataFieldModel signalFieldModel;
+	
+	private final LinkedHashMap<String, DataFieldModel> auxiliarySignalFields = new LinkedHashMap<>();
 	
 	public PrimaryDataDeviceImpl(N nexusObject, DataFieldModel signalFieldModel) {
 		super(nexusObject);
@@ -40,13 +46,24 @@ public class PrimaryDataDeviceImpl<N extends NXobject> extends DataDeviceImpl<N>
 		return super.getFieldRank(sourceFieldName);
 	}
 	
+	public void addAuxiliarySignalField(DataFieldModel auxiliarySignalField) {
+		auxiliarySignalFields.put(auxiliarySignalField.getSourceFieldName(), auxiliarySignalField);
+	}
+
+	@Override
+	public List<String> getAuxiliarySignalFieldSourceNames() {
+		return new ArrayList<>(auxiliarySignalFields.keySet());
+	}
+
 	@Override
 	public String getDestinationFieldName(String sourceFieldName) {
 		if (sourceFieldName.equals(signalFieldSourceName)) {
 			return signalFieldModel.getDestinationFieldName();
+		} else if (auxiliarySignalFields.containsKey(sourceFieldName)) {
+			return auxiliarySignalFields.get(sourceFieldName).getDestinationFieldName();
+		} else {
+			return super.getDestinationFieldName(sourceFieldName);
 		}
-		
-		return super.getDestinationFieldName(sourceFieldName);
 	}
 	
 	@Override

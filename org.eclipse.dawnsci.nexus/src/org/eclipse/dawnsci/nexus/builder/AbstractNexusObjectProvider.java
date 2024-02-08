@@ -12,6 +12,8 @@
 
 package org.eclipse.dawnsci.nexus.builder;
 
+import static java.util.Collections.emptySet;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -100,6 +102,8 @@ public abstract class AbstractNexusObjectProvider<N extends NXobject> implements
 	private NexusBaseClass category = null;
 	
 	private Boolean useDeviceNameInNXdata = null;
+	
+	private Map<String, List<String>> auxiliaryDataFieldNames;
 	
 	private Map<String, Object> properties = null;
 
@@ -504,6 +508,40 @@ public abstract class AbstractNexusObjectProvider<N extends NXobject> implements
 
 	public ILazyWriteableDataset getWriteableDataset(String fieldName) {
 		return getNexusObject().getLazyWritableDataset(fieldName);
+	}
+	
+	public void addAuxilaryDataGroup(String dataGroupName, List<String> dataFieldNames) {
+		if (dataFieldNames.isEmpty()) {
+			throw new IllegalArgumentException("At least one data field name must be specified");
+		}
+		
+		if (auxiliaryDataFieldNames == null) {
+			auxiliaryDataFieldNames = new HashMap<>();
+		}
+		
+		auxiliaryDataFieldNames.put(dataGroupName, dataFieldNames);
+	}
+	
+	public void setAuxiliaryDataGroups(Map<String, List<String>> auxiliaryDataFieldNames) {
+		this.auxiliaryDataFieldNames = auxiliaryDataFieldNames;
+	}
+	
+	public void addAuxiliaryDataField(String dataGroupName, String dataFieldName) {
+		if (auxiliaryDataFieldNames == null || !auxiliaryDataFieldNames.containsKey(dataGroupName)) {
+			addAuxilaryDataGroup(dataGroupName, new ArrayList<>());
+		}
+		auxiliaryDataFieldNames.get(dataGroupName).add(dataFieldName);
+	}
+	
+	@Override
+	public Set<String> getAuxiliaryDataGroupNames() {
+		return auxiliaryDataFieldNames == null ? emptySet() : auxiliaryDataFieldNames.keySet();
+	}
+	
+	@Override
+	public List<String> getAuxiliaryDataFieldNames(String primaryFieldName) {
+		return auxiliaryDataFieldNames == null ? null :
+			auxiliaryDataFieldNames.get(primaryFieldName);
 	}
 	
 	public Optional<Boolean> isUseDeviceNameInNXdata() {

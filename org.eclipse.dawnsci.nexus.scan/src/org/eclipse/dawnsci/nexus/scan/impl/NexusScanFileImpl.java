@@ -26,6 +26,7 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -370,15 +371,26 @@ class NexusScanFileImpl implements NexusScanFile {
 				.orElseThrow(() -> new IllegalArgumentException("No suitable dataset could be found to use as the signal dataset of an NXdata group."));		
 	}
 
-	private void createNXDataGroupsForDevice(NexusEntryBuilder entryBuilder, PrimaryDeviceWithScanRole primaryDevice) throws NexusException {
+	private void createNXDataGroupsForDevice(NexusEntryBuilder entryBuilder,
+			PrimaryDeviceWithScanRole primaryDevice) throws NexusException {
 		// create the NXdata group for the primary data field
-		createNXDataGroup(entryBuilder, primaryDevice); 
+		createNXDataGroup(entryBuilder, primaryDevice,
+				primaryDevice.getDevice().getPrimaryDataFieldName());
 
 		// create an NXdata group for each additional primary data field (if any)
 		final NexusObjectProvider<?> device = primaryDevice.getDevice();
 		for (String dataFieldName : device.getAdditionalPrimaryDataFieldNames()) {
-			final String dataGroupName = device.getName() + "_" + dataFieldName;
-			createNXDataGroup(entryBuilder, primaryDevice, dataGroupName, dataFieldName);
+			createNXDataGroup(entryBuilder, primaryDevice, dataFieldName);
+		}
+		
+		// create an NXdata group for each auxiliary group specified in the device
+		for (String dataGroupName : device.getAuxiliaryDataGroupNames()) {
+			final String signalFieldName = device.getAuxiliaryDataFieldNames(dataGroupName).get(0);
+			final LinkedHashSet<String> auxiliarySignalFieldNames =
+					new LinkedHashSet<>(device.getAuxiliaryDataFieldNames(dataGroupName));
+			auxiliarySignalFieldNames.remove(signalFieldName);
+			createNXDataGroup(entryBuilder, primaryDevice, dataGroupName, signalFieldName,
+					auxiliarySignalFieldNames); 
 		}
 		
 		setDefaultDataGroupName(entryBuilder);
@@ -399,28 +411,40 @@ class NexusScanFileImpl implements NexusScanFile {
 				new ArrayList<>(entryBuilder.getNXentry().getAllData().keySet()));
 		entryBuilder.setDefaultDataGroupName(defaultDataGroupName);
 	}
-
+	
 	/**
 	 * Creates the {@link NXdata} group for the primary field of the given device, with the same name as the device.
 	 * @param entryBuilder entry builder to add to
 	 * @param primaryDevice the primary device (e.g. a detector or monitor) with its scan role
+	 * @param signalFieldName the name of the data field that should be marked as the 
+	 * 			{@code @signal} field. This is the default plottable field for the NXdata group
 	 * @throws NexusException
 	 */
-	private void createNXDataGroup(NexusEntryBuilder entryBuilder, PrimaryDeviceWithScanRole primaryDevice) throws NexusException {
-		createNXDataGroup(entryBuilder, primaryDevice, primaryDevice.getDevice().getName(), primaryDevice.getDevice().getPrimaryDataFieldName());
+	private void createNXDataGroup(NexusEntryBuilder entryBuilder,
+			PrimaryDeviceWithScanRole primaryDevice, String signalFieldName)
+			throws NexusException {
+		final NexusObjectProvider<?> primaryNexusProvider = primaryDevice.getDevice();
+		final boolean isPrimaryField = signalFieldName.equals(primaryNexusProvider.getPrimaryDataFieldName());
+		final String dataGroupName = isPrimaryField ? primaryNexusProvider.getName() :
+			primaryNexusProvider.getName() + "_" + signalFieldName;
+		createNXDataGroup(entryBuilder, primaryDevice, dataGroupName, signalFieldName, null);
 	}
-	
+
 	/**
 	 * Create the {@link NXdata} groups for the given primary device, fo
 	 * @param entryBuilder the entry builder to add to
 	 * @param primaryDevice the primary device (e.g. a detector or monitor) with its scan role
 	 * @param dataGroupName the name of the {@link NXdata} group within the parent {@link NXentry}
-	 * @param primaryDataFieldName the name that the primary data field name
-	 *   (i.e. the <code>@signal</code> field) should have within the NXdata group
+	 * @param signalFieldName the name of the data field that should be marked as the 
+	 * 			{@code @signal} field. This is the default plottable field for the NXdata group
+	 * @param auxilarySignalFieldNames the names of any fields to be marked as
+	 * 			{@code @auxiliarySignal} fields. These are additional plottable fields 
 	 * @throws NexusException
 	 */
-	private void createNXDataGroup(NexusEntryBuilder entryBuilder, PrimaryDeviceWithScanRole primaryDevice,
-			String dataGroupName, String primaryDataFieldName) throws NexusException {
+	private void createNXDataGroup(NexusEntryBuilder entryBuilder,
+			PrimaryDeviceWithScanRole primaryDevice, String dataGroupName,
+			String signalFieldName, LinkedHashSet<String> auxiliarySignalFieldNames)
+					throws NexusException {
 		if (entryBuilder.getNXentry().containsNode(dataGroupName)) {
 			dataGroupName += "_data"; // append _data if the node already exists
 		}
@@ -429,7 +453,9 @@ class NexusScanFileImpl implements NexusScanFile {
 		final NexusDataBuilder dataBuilder = entryBuilder.newData(dataGroupName);
 
 		// the primary device for the NXdata, e.g. a detector
-		final PrimaryDataDevice<?> primaryDataDevice = createPrimaryDataDevice(primaryDevice, primaryDataFieldName);
+		final PrimaryDataDevice<?> primaryDataDevice = createPrimaryDataDevice(primaryDevice,
+				signalFieldName, auxiliarySignalFieldNames);
+				
 		dataBuilder.setPrimaryDevice(primaryDataDevice);
 
 		// add the monitors to the data builder (if the primary device is a monitor, it is excluded)
@@ -446,7 +472,8 @@ class NexusScanFileImpl implements NexusScanFile {
 	}
 	
 	private <N extends NXobject> PrimaryDataDevice<N> createPrimaryDataDevice(
-			PrimaryDeviceWithScanRole primaryDevice, String signalDataFieldName) throws NexusException {
+			PrimaryDeviceWithScanRole primaryDevice, String signalDataFieldName,
+			LinkedHashSet<String> auxiliarySignalFieldNames) throws NexusException {
 
 		@SuppressWarnings("unchecked")
 		final NexusObjectProvider<N> dataDevice = (NexusObjectProvider<N>) primaryDevice.device;
@@ -466,6 +493,8 @@ class NexusScanFileImpl implements NexusScanFile {
 			default:
 				throw new IllegalArgumentException("Invalid primary device type: " + primaryDevice.scanRole);
 		}
+		
+		dataDeviceBuilder.setAuxiliarySignalFieldNames(auxiliarySignalFieldNames);
 
 		return (PrimaryDataDevice<N>) dataDeviceBuilder.build();
 	}

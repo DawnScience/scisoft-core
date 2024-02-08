@@ -48,6 +48,7 @@ import org.eclipse.dawnsci.nexus.NXdata;
 import org.eclipse.dawnsci.nexus.NXentry;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NXroot;
+import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusUtils;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.BooleanDataset;
@@ -163,6 +164,11 @@ public class NexusAssert {
 
 	public static void assertDataNodesEqual(final String path,
 			final DataNode expectedDataNode, final DataNode actualDataNode) {
+		// trivial case, the expected and actual nodes are the same instance
+		assertThat("expectedDataNode was null:" + path, expectedDataNode, is(notNullValue()));
+		assertThat("actualDataNode was null:" + path, actualDataNode, is(notNullValue()));
+		if (expectedDataNode == actualDataNode) return;
+		
 		// check number of attributes same (i.e. actualDataNode has no additional attributes)
 		// additional attribute "target" is allowed, this is added automatically when saving the file
 		int expectedNumAttributes = expectedDataNode.getNumberOfAttributes();
@@ -292,17 +298,32 @@ public class NexusAssert {
 		assertThat(signalAttr.getFirstElement(), is(equalTo(expectedSignalFieldName)));
 		assertThat(nxData.getNode(expectedSignalFieldName), is(notNullValue()));
 	}
+	
+	public static void assertAuxiliarySignals(NXdata nxData, String... expectedAuxSignals) {
+		final Attribute auxSignalsAttr = nxData.getAttribute(NexusConstants.DATA_AUX_SIGNALS);
+		if (expectedAuxSignals.length == 0) {
+			assertThat(auxSignalsAttr, is(nullValue()));
+		} else {
+			assertThat(auxSignalsAttr, is(notNullValue()));
+			assertThat(auxSignalsAttr.getRank(), is(1));
+			assertThat(auxSignalsAttr.getShape()[0], is(expectedAuxSignals.length));
+			final IDataset value = auxSignalsAttr.getValue();
+			for (int i = 0; i < expectedAuxSignals.length; i++) {
+				assertThat(value.getString(i), is(equalTo(expectedAuxSignals[i])));
+			}
+		}
+	}
 
-	public static void assertAxes(NXdata nxData, String... expectedValues) {
-		if (expectedValues.length == 0)
+	public static void assertAxes(NXdata nxData, String... expectedAxes) {
+		if (expectedAxes.length == 0)
 			return; // axes not written if no axes to write (a scalar signal field)
 		final Attribute axesAttr = nxData.getAttribute(DATA_AXES);
 		assertThat(axesAttr, is(notNullValue()));
 		assertThat(axesAttr.getRank(), is(1));
-		assertThat(axesAttr.getShape()[0], is(expectedValues.length));
+		assertThat(axesAttr.getShape()[0], is(expectedAxes.length));
 		final IDataset value = axesAttr.getValue();
-		for (int i = 0; i < expectedValues.length; i++) {
-			assertThat(value.getString(i), is(equalTo(expectedValues[i])));
+		for (int i = 0; i < expectedAxes.length; i++) {
+			assertThat(value.getString(i), is(equalTo(expectedAxes[i])));
 		}
 	}
 

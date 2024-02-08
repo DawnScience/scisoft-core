@@ -12,6 +12,7 @@
 
 package org.eclipse.dawnsci.nexus.builder.data.impl;
 
+import static org.eclipse.dawnsci.nexus.NexusConstants.DATA_AUX_SIGNALS;
 import static org.eclipse.dawnsci.nexus.NexusConstants.DATA_AXES;
 import static org.eclipse.dawnsci.nexus.NexusConstants.DATA_AXESEMPTY;
 import static org.eclipse.dawnsci.nexus.NexusConstants.DATA_INDICES_SUFFIX;
@@ -20,6 +21,7 @@ import static org.eclipse.dawnsci.nexus.NexusConstants.TARGET;
 
 import java.text.MessageFormat;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
@@ -140,6 +142,12 @@ public class DefaultNexusDataBuilder extends AbstractNexusDataBuilder implements
 		// if this is the primary device, add the signal field
 		if (isPrimary) {
 			addDataField(dataDevice, signalFieldSourceName, targetPrefix);
+			
+			final List<String> auxSignalFieldSourceNames = 
+					((PrimaryDataDevice<?>) dataDevice).getAuxiliarySignalFieldSourceNames();
+			for (String auxSignalFieldSourceName : auxSignalFieldSourceNames) {
+				addDataField(dataDevice, auxSignalFieldSourceName, targetPrefix);
+			}
 		}
 		
 		// add the axis fields for this device
@@ -234,7 +242,12 @@ public class DefaultNexusDataBuilder extends AbstractNexusDataBuilder implements
 //		}
 		
 		// create the @{axisname}_indices attribute
-		if (!destinationFieldName.equals(signalFieldDestName)) {
+		final boolean isSignalField = dataDevice.isPrimary() &&
+				(sourceFieldName.equals(signalFieldSourceName) ||
+				((PrimaryDataDevice<N>) dataDevice).getAuxiliarySignalFieldSourceNames().contains(
+						sourceFieldName));
+		
+		if (!isSignalField) {
 			final Attribute axisIndicesAttribute = createAxisIndicesAttribute(dataDevice, sourceFieldName);
 			nxData.addAttribute(axisIndicesAttribute);
 
@@ -267,9 +280,8 @@ public class DefaultNexusDataBuilder extends AbstractNexusDataBuilder implements
 	 * @param primaryDataDevice
 	 * @param sourceFieldName
 	 * @param destinationFieldName
-	 * @throws NexusException
 	 */
-	private void addSignalAndAxesAttributes(PrimaryDataDevice<?> primaryDataDevice) throws NexusException {
+	private void addSignalAndAxesAttributes(PrimaryDataDevice<?> primaryDataDevice) {
 		if (isPrimaryDeviceAdded()) {
 			throw new IllegalArgumentException("Primary device already added");
 		}
@@ -280,6 +292,16 @@ public class DefaultNexusDataBuilder extends AbstractNexusDataBuilder implements
 		
 		final Attribute signalAttribute = TreeFactory.createAttribute(DATA_SIGNAL, signalFieldDestName, false);
 		nxData.addAttribute(signalAttribute);
+		
+		final List<String> auxSignalFieldSourceNames = primaryDataDevice.getAuxiliarySignalFieldSourceNames();
+		if (auxSignalFieldSourceNames != null && !auxSignalFieldSourceNames.isEmpty()) {
+			final List<String> auxSignalFieldDestNames = auxSignalFieldSourceNames.stream()
+					.map(primaryDataDevice::getDestinationFieldName)
+					.toList();
+			final Attribute auxiliarySignalAttribute = TreeFactory.createAttribute(
+					DATA_AUX_SIGNALS, auxSignalFieldDestNames, false);
+			nxData.addAttribute(auxiliarySignalAttribute);
+		}
 		
 		// create the 'axes' attribute of the NXgroup and set each axis name
 		// to the placeholder value "."

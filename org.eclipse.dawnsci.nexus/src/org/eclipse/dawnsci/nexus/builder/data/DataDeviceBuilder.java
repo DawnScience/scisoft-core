@@ -14,12 +14,9 @@ package org.eclipse.dawnsci.nexus.builder.data;
 import static java.util.Objects.requireNonNull;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.IntStream;
 
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
@@ -111,7 +108,9 @@ public class DataDeviceBuilder<N extends NXobject> {
 	
 	private boolean includeAddedFieldsOnly = false;
 	
-	private List<String> addedFields = null;
+	private LinkedHashSet<String> additionalAxisFields = null;
+	
+	private LinkedHashSet<String> auxiliarySignalFieldNames = null;
 	
 	private Integer axisDimension = null;
 	
@@ -159,17 +158,21 @@ public class DataDeviceBuilder<N extends NXobject> {
 		this.signalFieldSourceName = signalFieldSourceName;
 	}
 	
+	public void setAuxiliarySignalFieldNames(LinkedHashSet<String> auxiliarySignalFieldNames) {
+		this.auxiliarySignalFieldNames = auxiliarySignalFieldNames;
+	}
+	
 	public void clearAxisFields() {
-		addedFields = null;
+		additionalAxisFields = null;
 		includeAddedFieldsOnly = true;
 	}
 	
 	public void addAxisField(String axisFieldName) {
 		requireNonNull(axisFieldName, "Cannot add a null axisFieldName");
-		if (addedFields == null) {
-			addedFields = new ArrayList<>();
+		if (additionalAxisFields == null) {
+			additionalAxisFields = new LinkedHashSet<>();
 		}
-		addedFields.add(axisFieldName);
+		additionalAxisFields.add(axisFieldName);
 	}
 	
 	public void addAxisField(String axisFieldName, int fieldAxisDimension, boolean defaultAxis) {
@@ -351,6 +354,10 @@ public class DataDeviceBuilder<N extends NXobject> {
 	}
 	
 	private DataFieldModel createSignalFieldModel() throws NexusException {
+		return createAuxiliarySignalFieldModel(signalFieldSourceName);
+	}
+	
+	private DataFieldModel createAuxiliarySignalFieldModel(String signalFieldSourceName) throws NexusException {
 		final int fieldRank = getFieldRank(signalFieldSourceName);
 		final String signalDestFieldName = getDestinationFieldName(signalFieldSourceName);
 		
@@ -388,12 +395,12 @@ public class DataDeviceBuilder<N extends NXobject> {
 		}
 	}
 
-	private Set<String> calculateAxisFieldNamesToAdd() {
-		final Set<String> axisFieldNames = new LinkedHashSet<>();
+	private LinkedHashSet<String> calculateAxisFieldNamesToAdd() {
+		final LinkedHashSet<String> axisFieldNames = new LinkedHashSet<>();
 
 		if (!includeAddedFieldsOnly) {
 			// add the default fields according to the nexus object provider
-			
+	
 			if (isPrimary) {
 				// add any axis fields specific to this primary data field (i.e. signal field) 
 				axisFieldNames.addAll(nexusObjectProvider.getAxisDataFieldsForPrimaryDataField(
@@ -413,8 +420,8 @@ public class DataDeviceBuilder<N extends NXobject> {
 		}
 		
 		// add the fields added by calling addAxisField()
-		if (addedFields != null) {
-			axisFieldNames.addAll(addedFields);
+		if (additionalAxisFields != null) {
+			axisFieldNames.addAll(additionalAxisFields);
 		}
 		
 		if (isPrimary) {
@@ -434,10 +441,18 @@ public class DataDeviceBuilder<N extends NXobject> {
 	 */
 	public <D extends DataDevice<N>> D build() throws NexusException {
 		// get the names of the axis fields to add
-		final Set<String> axisFieldNames = calculateAxisFieldNamesToAdd();
+		final LinkedHashSet<String> axisFieldNames = calculateAxisFieldNamesToAdd();
 		numberOfAxisFieldsToAdd = axisFieldNames.size();
 
 		final DataDeviceImpl<N> dataDevice = createDataDevice();
+
+		// add any auxiliary signal fields
+		if (dataDevice.isPrimary() && auxiliarySignalFieldNames != null) {
+			for (String auxiliarySignalFieldName : auxiliarySignalFieldNames) {
+				((PrimaryDataDeviceImpl<?>) dataDevice).addAuxiliarySignalField(
+						createAuxiliarySignalFieldModel(auxiliarySignalFieldName));
+			}
+		}
 		
 		// calculate the default axis source field name, if not set
 		calculateDefaultAxisSourceName();

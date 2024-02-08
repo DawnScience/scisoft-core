@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.nexus.builder.data;
 
+import java.util.List;
+
 import org.eclipse.dawnsci.nexus.NXdata;
 import org.eclipse.dawnsci.nexus.NXobject;
 
@@ -27,10 +29,17 @@ public interface PrimaryDataDevice<N extends NXobject> extends DataDevice<N> {
 	
 	/**
 	 * The name of the field to make the signal field of the {@link NXdata} group, 
-	 * i.e. the value of the 
+	 * i.e. the name of the main plottable dataset.
 	 * @return
 	 */
 	public String getSignalFieldSourceName();
+	
+	/**
+	 * The names of any fields to make auxiliary signal fields of the {@link NXdata} group,
+	 * i.e. additional plottable datasets.
+	 * @return
+	 */
+	public List<String> getAuxiliarySignalFieldSourceNames();
 	
 	/**
 	 * Overrides the {@link DataDevice#isPrimary()} to return <code>true</code> always, as this

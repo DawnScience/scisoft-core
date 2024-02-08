@@ -12,10 +12,13 @@
 
 package org.eclipse.dawnsci.nexus.builder;
 
+import static java.util.Collections.emptySet;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.eclipse.dawnsci.nexus.INexusDevice;
 import org.eclipse.dawnsci.nexus.NXcollection;
 import org.eclipse.dawnsci.nexus.NXdata;
 import org.eclipse.dawnsci.nexus.NXinstrument;
@@ -205,6 +208,29 @@ public interface NexusObjectProvider<N extends NXobject> extends NexusEntryModif
 	 */
 	public int[] getDimensionMappings(String primaryDataFieldName, String axisDataFieldName);
 	
+	/**
+	 * Returns the names of any auxiliary data groups to create. An auxiliary data group is
+	 * one that groups a number of data group with the same rank together. A typical use
+	 * case would be for statistics about the main data field for the device,
+	 * such as min, max, mean, sum, etc.
+	 * @return names of auxiliary data groups
+	 */
+	public default Set<String> getAuxiliaryDataGroupNames() {
+		return emptySet();
+	}
+	
+	/**
+	 * Returns the names of the data fields for the given auxiliary data group as a
+	 * {@link List}. These are the plottable fields for that data group.
+	 * In the typical use case of an auxiliary data group for statistics.
+	 * @param dataGroupName name of the auxiliary data group
+	 * @return list of names of data fields for the auxiliary data group with the given name,
+	 * 		or <code>null</code> if there is no such auxiliary data group
+	 */
+	public default List<String> getAuxiliaryDataFieldNames(String dataGroupName) {
+		return null; // NOSONAR return null instead of empty list
+	}
+		
 	/**
 	 * Returns whether the name of this device name (as returned by {@link #getName()}
 	 * should be used in the names of the links created within {@link NXdata} groups to

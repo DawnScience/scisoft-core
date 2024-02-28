@@ -32,6 +32,7 @@ import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
+import org.eclipse.january.dataset.Slice;
 
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.processing.metadata.OperationMetadata;
@@ -200,7 +201,14 @@ public class RixsImageCombinedReduction extends RixsImageReductionBase<RixsImage
 		// do all fits at once (TODO cannot do this for integrated case, especially with live processing)
 		OperationMetadata om = new OperationMetadataImpl(getClass().getName(), ops.toArray(new IOperation[ops.size()]), null);
 		MyVisitor vis = new MyVisitor();
-		om.process(elasticScanPath, smd.getDatasetName(), smd, null, null, vis);
+		Integer start = null;
+		Integer stop = null;
+		if (currentDataFile.equals(elasticScanPath)) {
+			Slice[] currentSlice = smd.getSliceInfo().getSliceFromInput();
+			start = currentSlice[0].getStart();
+			stop = currentSlice[0].getStop();
+		}
+		om.process(elasticScanPath, smd.getDatasetName(), smd, start, stop, vis);
 		log.append(vis.operationResult.getLog());
 		return vis.operationResult;
 	}

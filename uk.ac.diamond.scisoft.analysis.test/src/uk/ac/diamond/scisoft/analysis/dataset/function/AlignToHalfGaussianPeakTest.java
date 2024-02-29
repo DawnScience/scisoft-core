@@ -12,7 +12,7 @@ package uk.ac.diamond.scisoft.analysis.dataset.function;
 import static org.eclipse.january.asserts.TestUtils.assertDatasetEquals;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertSame;
 
 import java.util.List;
 
@@ -111,54 +111,53 @@ public class AlignToHalfGaussianPeakTest {
 		double pos = 24.33;
 		Gaussian g = new Gaussian(pos, 0.125, 1);
 		IParameter p = g.getParameter(0);
-		Dataset x = DatasetFactory.createRange(20, 30, 0.05);
+		Dataset xa = DatasetFactory.createRange(20, 30, 0.05);
 		Random.seed(1239712356787l);
 
 		double off = 10;
 		double am = 0.02;
-		Dataset ya = g.calculateValues(x).iadd(off).iadd(Random.randn(x.getShapeRef()).imultiply(am));
+		Dataset ya = g.calculateValues(xa).iadd(off).iadd(Random.randn(xa.getShapeRef()).imultiply(am));
 
 		double dx = 0.13;
-		p.setValue(pos + dx);
+		p.setValue(pos + dx); // shift peak
 		g.setDirty(true);
-		Dataset yb = g.calculateValues(x).imultiply(1.2).iadd(off).iadd(Random.randn(x.getShapeRef()).imultiply(am));
+		double sx = 0.73;
+		Dataset xb = Maths.add(xa, sx); // shift evaluation locations
+		Dataset yb = g.calculateValues(xb).imultiply(1.2).iadd(off).iadd(Random.randn(xb.getShapeRef()).imultiply(am));
 
-		Dataset[] in = new Dataset[] {x, ya, x, yb};
+		Dataset[] in = new Dataset[] {xa, ya, xb, yb};
 		Dataset[] results;
-		Dataset nx;
 		double err = 2.5e-3;
 
 		// align to 1st peak and shift x coords
 		results = testAlign(in, 24, 25, false, false);
-		assertTrue(results[0] == in[0]);
-		assertTrue(results[1] == in[1]);
-		assertTrue(results[3] == in[3]);
-		nx = results[2];
-		assertEquals(x.getDouble(0), nx.getDouble(0) + dx, err);
+		assertSame(in[0], results[0]);
+		assertSame(in[1], results[1]);
+		assertSame(in[3], results[3]);
+		assertEquals(xb.getDouble(0), results[2].getDouble(0) + dx, err);
 
 		// align to zero and shift x coords
 		results = testAlign(in, 24, 25, true, false);
-		assertTrue(results[1] == in[1]);
-		assertTrue(results[3] == in[3]);
-		nx = results[0];
-		assertEquals(x.getDouble(0), nx.getDouble(0) + pos, err);
-		nx = results[2];
-		assertEquals(x.getDouble(0), nx.getDouble(0) + pos + dx, err);
+		assertSame(in[1], results[1]);
+		assertSame(in[3], results[3]);
+		assertEquals(xa.getDouble(0), results[0].getDouble(0) + pos, err);
+		assertEquals(xb.getDouble(0), results[2].getDouble(0) + pos + dx, err);
+		assertEquals(results[0].getDouble(0), results[2].getDouble(0) - sx + dx, err);
 
 		// align to 1st peak and resample y values
 		results = testAlign(in, 24, 25, false, true);
-		assertTrue(results[0] == in[0]);
-		assertTrue(results[1] == in[1]);
-		Slice s = new Slice(x.getSize()/2);
+		assertSame(in[0], results[0]);
+		assertSame(in[1], results[1]);
+		Slice s = new Slice(xb.getSize()/2);
 		assertDatasetEquals(results[2].getSliceView(s), in[2].getSliceView(s));
 		assertArrayEquals(in[1].maxPos(true), results[3].maxPos(true));
 
 		// align to zero and resample y values
 		results = testAlign(in, 24, 25, true, true);
-		assertTrue(results[1] == in[1]);
-		nx = results[0];
-		assertEquals(x.getDouble(0), nx.getDouble(0) + pos, err);
-		assertDatasetEquals(nx.getSliceView(s), results[2].getSliceView(s));
+		assertSame(in[1], results[1]);
+		assertEquals(xa.getDouble(0), results[0].getDouble(0) + pos, err);
 		assertArrayEquals(in[1].maxPos(true), results[3].maxPos(true));
+		assertEquals(xb.getDouble(0), results[2].getDouble(0) + pos, err);
+		assertEquals(results[0].getDouble(0), results[2].getDouble(0) - sx, err);
 	}
 }

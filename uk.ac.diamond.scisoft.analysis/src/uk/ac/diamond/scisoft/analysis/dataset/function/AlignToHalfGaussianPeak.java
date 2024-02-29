@@ -251,6 +251,7 @@ public class AlignToHalfGaussianPeak implements DatasetToNumberFunction {
 	 * @return x/y pair of datasets where x and/or y have been shifted to align data
 	 */
 	public static Dataset[] shiftData(double[] firstXShift, Double shiftX, Double shiftY, Dataset x, Dataset y) {
+		String yName = null;
 		if (shiftX != null) {
 			if (shiftX != 0) {
 				x = Maths.add(x, shiftX);
@@ -262,12 +263,16 @@ public class AlignToHalfGaussianPeak implements DatasetToNumberFunction {
 			if (shiftY != null) { // resample case
 				if (shiftY != 0) {
 					// assume x is uniformly spaced (otherwise we need to interpolate by new x values)
+					yName = y.getName();
 					y = RegisterData1D.shiftData(y, shiftY);
 					if (Double.isFinite(firstXShift[0])) {
 						x = Maths.add(x, firstXShift[0]);
 					}
 				}
 			}
+		}
+		if (yName != null) {
+			y.setName(yName);
 		}
 		return new Dataset[] {x, y};
 	}

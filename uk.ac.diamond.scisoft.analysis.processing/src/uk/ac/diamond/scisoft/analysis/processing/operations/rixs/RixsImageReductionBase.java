@@ -783,11 +783,15 @@ public abstract class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			}
 
 			List<Double> shift = new ArrayList<>();
-			Dataset cSpectrum = correlateSpectra("", r, reg, shift, ax, sArray);
+			Dataset[] cSpecs = correlateSpectra("", r, reg, shift, ax, sArray);
 			if (normValues != null) {
-				Number normValue = (Number) normValues.getByBoolean(getUsedFrames()).sum();
-				summaryData.add(ProcessingUtils.createNamedDataset(normValue, "normalization"));
-				Dataset nSpectrum = Maths.divide(cSpectrum, normValue);
+				Dataset usedNormValues = normValues.getByBoolean(getUsedFrames());
+				summaryData.add(ProcessingUtils.createNamedDataset(usedNormValues, "normalization"));
+				Dataset nSpectra = Maths.divide(cSpecs[0], usedNormValues.reshape(-1, 1));
+				nSpectra.setName("normalized_correlated_spectra_" + r);
+				MetadataUtils.setAxes(this, nSpectra, null, ax);
+				summaryData.add(nSpectra);
+				Dataset nSpectrum = Maths.divide(cSpecs[1], usedNormValues.sum());
 				nSpectrum.setName("normalized_correlated_spectrum_" + r);
 				MetadataUtils.setAxes(this, nSpectrum, ax);
 				summaryData.add(nSpectrum);
@@ -1026,7 +1030,7 @@ public abstract class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		correlateSpectra(prefix, r, reg, shift, energies, sArray);
 	}
 
-	private Dataset correlateSpectra(String prefix, int r, RegisterNoisyData1D reg, List<Double> shift, Dataset energies, Dataset[] sArray) {
+	private Dataset[] correlateSpectra(String prefix, int r, RegisterNoisyData1D reg, List<Double> shift, Dataset energies, Dataset[] sArray) {
 
 		List<Dataset> results;
 		try {
@@ -1046,11 +1050,10 @@ public abstract class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		MetadataUtils.setAxes(this, sp, null, energies);
 		summaryData.add(sp);
 
-		sp = Maths.clip(sp, 0, Double.POSITIVE_INFINITY);
-		sp = sp.sum(0);
-		sp.setName(prefix + SPECTRUM_PREFIX + r);
-		MetadataUtils.setAxes(this, sp, energies);
-		summaryData.add(sp);
+		Dataset spSum = Maths.clip(sp, 0, Double.POSITIVE_INFINITY).sum(0);
+		spSum.setName(prefix + SPECTRUM_PREFIX + r);
+		MetadataUtils.setAxes(this, spSum, energies);
+		summaryData.add(spSum);
 
 		shift.clear();
 		for (int i = 0; i < sArray.length; i++) {
@@ -1059,7 +1062,7 @@ public abstract class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		}
 		summaryData.add(ProcessingUtils.createNamedDataset((Serializable) shift, prefix + "shift_" + r));
 
-		return sp;
+		return new Dataset[] {sp, spSum};
 	}
 
 	// bins photons according to their locations

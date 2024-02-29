@@ -22,9 +22,12 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.ILazyWriteableDataset;
 import org.eclipse.january.dataset.SliceND;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 /**
  * A collection of tests that causes the JVM to crash
@@ -43,6 +46,12 @@ public class NexusFileStressTest {
 		testScratchDirectoryName = TestUtils.generateDirectorynameFromClassname(NexusFileStressTest.class.getCanonicalName());
 		TestUtils.makeScratchDirectory(testScratchDirectoryName);
 		filename = testScratchDirectoryName + "file.nxs";
+		NexusTestUtils.setUpServices();
+	}
+
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+		ServiceProvider.reset();
 	}
 
 	@Before

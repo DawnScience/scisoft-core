@@ -14,14 +14,28 @@ import static org.eclipse.dawnsci.nexus.test.utilities.NexusAssert.assertNexusTr
 import org.eclipse.dawnsci.analysis.api.tree.TreeFile;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import uk.ac.diamond.osgi.services.ServiceProvider;
 
 public abstract class AbstractNexusFileTestBase {
 
 	protected static String testScratchDirectoryName;
 
 	protected String filePath;
+
+	@BeforeClass
+	public static void setUpClass(){
+		NexusTestUtils.setUpServices();
+	}
+
+	@AfterClass
+	public static void tearDownClass() {
+		ServiceProvider.reset();
+	}
 
 	@Before
 	public void setUp() throws Exception {

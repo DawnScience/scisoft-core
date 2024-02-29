@@ -29,7 +29,6 @@ import org.eclipse.dawnsci.nexus.device.SimpleNexusDevice;
 import org.eclipse.dawnsci.nexus.device.impl.NexusDeviceService;
 import org.eclipse.dawnsci.nexus.template.device.NexusTemplateAppender;
 import org.eclipse.dawnsci.nexus.template.device.NexusTemplateDevice;
-import org.eclipse.dawnsci.nexus.template.impl.NexusTemplateServiceImpl;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusDeviceFileBuilder;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
 import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;

@@ -70,6 +70,7 @@ public class DefaultNexusFileBuilderTest {
 				DefaultNexusFileBuilderTest.class.getSimpleName());
 		TestUtils.makeScratchDirectory(testScratchDirectoryName);
 		ServiceProvider.setService(NexusValidationService.class, new NexusValidationServiceImpl());
+		NexusTestUtils.setUpServices();
 	}
 	
 	@AfterClass

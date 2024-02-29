@@ -49,12 +49,12 @@ public class NexusValidationServiceTest {
 		TestUtils.makeScratchDirectory(testDir);
 		NexusTestUtils.setUpServices();
 	}
-	
+
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
 		ServiceProvider.reset();
 	}
-	
+
 	@Before
 	public void setUp() {
 		validationService = new NexusValidationServiceImpl();

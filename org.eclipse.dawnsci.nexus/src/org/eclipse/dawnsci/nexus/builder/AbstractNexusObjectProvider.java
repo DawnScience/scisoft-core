@@ -503,7 +503,7 @@ public abstract class AbstractNexusObjectProvider<N extends NXobject> implements
 		if (dataFieldModel != null) {
 			return dataFieldModel.getDimensionMappings(axisDataFieldName);
 		}
-		return null;
+		return null; // NOSONAR
 	}
 
 	public ILazyWriteableDataset getWriteableDataset(String fieldName) {
@@ -528,9 +528,10 @@ public abstract class AbstractNexusObjectProvider<N extends NXobject> implements
 	
 	public void addAuxiliaryDataField(String dataGroupName, String dataFieldName) {
 		if (auxiliaryDataFieldNames == null || !auxiliaryDataFieldNames.containsKey(dataGroupName)) {
-			addAuxilaryDataGroup(dataGroupName, new ArrayList<>());
+			addAuxilaryDataGroup(dataGroupName, new ArrayList<>(List.of(dataFieldName)));
+		} else {
+			auxiliaryDataFieldNames.get(dataGroupName).add(dataFieldName);
 		}
-		auxiliaryDataFieldNames.get(dataGroupName).add(dataFieldName);
 	}
 	
 	@Override

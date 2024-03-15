@@ -22,10 +22,10 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Electron backscatter diffraction (EBSD) Kikuchi pattern.
- * The container can also store data related to a post-processing of these
- * Kikuchi pattern, which is the backbone of orientation microscopy
- * especially in materials science and materials engineering.
+ * Measured set of electron backscatter diffraction data, aka Kikuchi pattern.
+ * Kikuchi pattern are the raw data for computational workflows in the field
+ * of orientation (imaging) microscopy. The technique is especially used in
+ * materials science and materials engineering.
  * Based on a fuse of the `M. A. Jackson et al. <https://doi.org/10.1186/2193-9772-3-4>`_
  * of the DREAM.3D community and the open H5OINA format of Oxford Instruments
  * `P. Pinard et al. <https://doi.org/10.1017/S1431927621006103>`_
@@ -35,18 +35,34 @@ import org.eclipse.dawnsci.nexus.*;
  * * `M. A. Groeber et al. <https://doi.org/10.1186/2193-9772-3-5>`_
  * * `A. J. Schwartz et al. <https://doi.org/10.1007/978-1-4757-3205-4>`_
  * * `P. A. Rottman et al. <https://doi.org/10.1016/j.mattod.2021.05.003>`_
- * With serial-sectioning this involves however always a sequence of
- * measuring, milling. In this regard, each serial section (measuring) and milling
+ * With serial-sectioning this involves however always a sequence of measuring,
+ * milling. In this regard, each serial section (measuring) and milling
  * is an own NXevent_data_em instance and thus there such a three-dimensional
  * characterization should be stored as a set of two-dimensional data,
  * with as many NXevent_data_em instances as sections were measured.
  * These measured serial sectioning images need virtually always post-processing
- * to arrive at the aligned and cleaned image stack respective digital
- * microstructure representation as (a representative) volume element.
- * Several software packages are available for this post-processing.
+ * to arrive at the aligned and cleaned image stack before a respective digital
+ * model of the inspected microstructure can be analyzed. The resulting volume
+ * is often termed a so-called (representative) volume element (RVE).
+ * Several software packages are available for performing this post-processing.
  * For now we do not consider metadata of these post-processing steps
- * as a part of this base class.
- * 
+ * as a part of this base class because the connection between the large variety
+ * of such post-processing steps and the measured electron microscopy data
+ * is usually very small.
+ * If we envision a (knowledge) graph for EBSD it consists of individual
+ * sub-graphs which convey information about the specimen preparation,
+ * the measurement of the specimen in the electron microscope,
+ * the indexing of the collected Kikuchi pattern stack,
+ * eventual post-processing of the indexed orientation image
+ * via similarity grouping algorithms to yield (grains, texture).
+ * Conceptually these post-processing steps are most frequently
+ * serving the idea to reconstruct quantitatively so-called
+ * microstructural features (grains, phases, interfaces). Materials scientists
+ * use these features according to the multi-scale materials modeling paradigm
+ * to infer material properties. They do so by quantifying correlations between
+ * the spatial arrangement of the features, their individual properties,
+ * and (macroscopic) properties of materials.
+
  */
 public class NXimage_set_em_kikuchiImpl extends NXobjectImpl implements NXimage_set_em_kikuchi {
 
@@ -54,12 +70,8 @@ public class NXimage_set_em_kikuchiImpl extends NXobjectImpl implements NXimage_
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_DATA,
 		NexusBaseClass.NX_PROCESS,
-		NexusBaseClass.NX_PROCESS,
-		NexusBaseClass.NX_COLLECTION,
-		NexusBaseClass.NX_PROCESS,
-		NexusBaseClass.NX_COLLECTION);
+		NexusBaseClass.NX_DATA);
 
 	public NXimage_set_em_kikuchiImpl() {
 		super();
@@ -68,150 +80,63 @@ public class NXimage_set_em_kikuchiImpl extends NXobjectImpl implements NXimage_
 	public NXimage_set_em_kikuchiImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXimage_set_em_kikuchi.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_IMAGE_SET_EM_KIKUCHI;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
-	public NXdata getData() {
-		// dataNodeName = NX_DATA
-		return getChild("data", NXdata.class);
+	public NXprocess getProcess() {
+		// dataNodeName = NX_PROCESS
+		return getChild("process", NXprocess.class);
 	}
 
 	@Override
-	public void setData(NXdata dataGroup) {
-		putChild("data", dataGroup);
+	public void setProcess(NXprocess processGroup) {
+		putChild("process", processGroup);
 	}
 
 	@Override
-	public NXdata getData(String name) {
-		return getChild(name, NXdata.class);
+	public NXprocess getProcess(String name) {
+		return getChild(name, NXprocess.class);
 	}
 
 	@Override
-	public void setData(String name, NXdata data) {
-		putChild(name, data);
+	public void setProcess(String name, NXprocess process) {
+		putChild(name, process);
 	}
 
 	@Override
-	public Map<String, NXdata> getAllData() {
-		return getChildren(NXdata.class);
-	}
-	
-	@Override
-	public void setAllData(Map<String, NXdata> data) {
-		setChildren(data);
+	public Map<String, NXprocess> getAllProcess() {
+		return getChildren(NXprocess.class);
 	}
 
 	@Override
-	public IDataset getGrid_type() {
-		return getDataset(NX_GRID_TYPE);
+	public void setAllProcess(Map<String, NXprocess> process) {
+		setChildren(process);
 	}
 
 	@Override
-	public String getGrid_typeScalar() {
-		return getString(NX_GRID_TYPE);
+	public NXdata getStack() {
+		// dataNodeName = NX_STACK
+		return getChild("stack", NXdata.class);
 	}
 
 	@Override
-	public DataNode setGrid_type(IDataset grid_typeDataset) {
-		return setDataset(NX_GRID_TYPE, grid_typeDataset);
-	}
-
-	@Override
-	public DataNode setGrid_typeScalar(String grid_typeValue) {
-		return setString(NX_GRID_TYPE, grid_typeValue);
-	}
-
-	@Override
-	public IDataset getStep_size() {
-		return getDataset(NX_STEP_SIZE);
-	}
-
-	@Override
-	public Number getStep_sizeScalar() {
-		return getNumber(NX_STEP_SIZE);
-	}
-
-	@Override
-	public DataNode setStep_size(IDataset step_sizeDataset) {
-		return setDataset(NX_STEP_SIZE, step_sizeDataset);
-	}
-
-	@Override
-	public DataNode setStep_sizeScalar(Number step_sizeValue) {
-		return setField(NX_STEP_SIZE, step_sizeValue);
-	}
-
-	@Override
-	public NXprocess getCalibration() {
-		// dataNodeName = NX_CALIBRATION
-		return getChild("calibration", NXprocess.class);
-	}
-
-	@Override
-	public void setCalibration(NXprocess calibrationGroup) {
-		putChild("calibration", calibrationGroup);
-	}
-
-	@Override
-	public NXprocess getOim() {
-		// dataNodeName = NX_OIM
-		return getChild("oim", NXprocess.class);
-	}
-
-	@Override
-	public void setOim(NXprocess oimGroup) {
-		putChild("oim", oimGroup);
-	}
-	// Unprocessed group:  background_correction
-	// Unprocessed group:  band_detection
-	// Unprocessed group:  indexing
-
-	@Override
-	public NXcollection getBinning() {
-		// dataNodeName = NX_BINNING
-		return getChild("binning", NXcollection.class);
-	}
-
-	@Override
-	public void setBinning(NXcollection binningGroup) {
-		putChild("binning", binningGroup);
-	}
-
-	@Override
-	public NXprocess getHough_transformation() {
-		// dataNodeName = NX_HOUGH_TRANSFORMATION
-		return getChild("hough_transformation", NXprocess.class);
-	}
-
-	@Override
-	public void setHough_transformation(NXprocess hough_transformationGroup) {
-		putChild("hough_transformation", hough_transformationGroup);
-	}
-
-	@Override
-	public NXcollection getProfiling() {
-		// dataNodeName = NX_PROFILING
-		return getChild("profiling", NXcollection.class);
-	}
-
-	@Override
-	public void setProfiling(NXcollection profilingGroup) {
-		putChild("profiling", profilingGroup);
+	public void setStack(NXdata stackGroup) {
+		putChild("stack", stackGroup);
 	}
 
 }

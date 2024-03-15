@@ -20,7 +20,7 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * An X-ray lens, typically at a synchrotron X-ray beam line.
  * Based on information provided by Gerd Wellenreuther (DESY).
- * 
+ *
  */
 public interface NXxraylens extends NXobject {
 
@@ -48,11 +48,11 @@ public interface NXxraylens extends NXobject {
 	 * <li><b>elliptical</b> </li>
 	 * <li><b>hyperbolical</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getLens_geometry();
-	
+
 	/**
 	 * Geometry of the lens
 	 * <p>
@@ -63,7 +63,7 @@ public interface NXxraylens extends NXobject {
 	 * <li><b>elliptical</b> </li>
 	 * <li><b>hyperbolical</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param lens_geometryDataset the lens_geometryDataset
 	 */
 	public DataNode setLens_geometry(IDataset lens_geometryDataset);
@@ -78,7 +78,7 @@ public interface NXxraylens extends NXobject {
 	 * <li><b>elliptical</b> </li>
 	 * <li><b>hyperbolical</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getLens_geometryScalar();
@@ -93,7 +93,7 @@ public interface NXxraylens extends NXobject {
 	 * <li><b>elliptical</b> </li>
 	 * <li><b>hyperbolical</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param lens_geometry the lens_geometry
 	 */
 	public DataNode setLens_geometryScalar(String lens_geometryValue);
@@ -103,17 +103,17 @@ public interface NXxraylens extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSymmetric();
-	
+
 	/**
 	 * Is the device symmetric?
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
-	 * 
+	 *
 	 * @param symmetricDataset the symmetricDataset
 	 */
 	public DataNode setSymmetric(IDataset symmetricDataset);
@@ -123,7 +123,7 @@ public interface NXxraylens extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Boolean getSymmetricScalar();
@@ -133,7 +133,7 @@ public interface NXxraylens extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
-	 * 
+	 *
 	 * @param symmetric the symmetric
 	 */
 	public DataNode setSymmetricScalar(Boolean symmetricValue);
@@ -143,17 +143,17 @@ public interface NXxraylens extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getCylindrical();
-	
+
 	/**
 	 * Is the device cylindrical?
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
-	 * 
+	 *
 	 * @param cylindricalDataset the cylindricalDataset
 	 */
 	public DataNode setCylindrical(IDataset cylindricalDataset);
@@ -163,7 +163,7 @@ public interface NXxraylens extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Boolean getCylindricalScalar();
@@ -173,21 +173,21 @@ public interface NXxraylens extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
-	 * 
+	 *
 	 * @param cylindrical the cylindrical
 	 */
 	public DataNode setCylindricalScalar(Boolean cylindricalValue);
 
 	/**
 	 * Orientation of the cylinder axis.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXnote getCylinder_orientation();
-	
+
 	/**
 	 * Orientation of the cylinder axis.
-	 * 
+	 *
 	 * @param cylinder_orientationGroup the cylinder_orientationGroup
 	 */
 	public void setCylinder_orientation(NXnote cylinder_orientationGroup);
@@ -200,11 +200,11 @@ public interface NXxraylens extends NXobject {
 	 * <li><b>line</b> </li>
 	 * <li><b>point</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getFocus_type();
-	
+
 	/**
 	 * The type of focus of the lens
 	 * <p>
@@ -213,7 +213,7 @@ public interface NXxraylens extends NXobject {
 	 * <li><b>line</b> </li>
 	 * <li><b>point</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param focus_typeDataset the focus_typeDataset
 	 */
 	public DataNode setFocus_type(IDataset focus_typeDataset);
@@ -226,7 +226,7 @@ public interface NXxraylens extends NXobject {
 	 * <li><b>line</b> </li>
 	 * <li><b>point</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getFocus_typeScalar();
@@ -239,7 +239,7 @@ public interface NXxraylens extends NXobject {
 	 * <li><b>line</b> </li>
 	 * <li><b>point</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param focus_type the focus_type
 	 */
 	public DataNode setFocus_typeScalar(String focus_typeValue);
@@ -250,18 +250,18 @@ public interface NXxraylens extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getLens_thickness();
-	
+
 	/**
 	 * Thickness of the lens
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param lens_thicknessDataset the lens_thicknessDataset
 	 */
 	public DataNode setLens_thickness(IDataset lens_thicknessDataset);
@@ -272,7 +272,7 @@ public interface NXxraylens extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getLens_thicknessScalar();
@@ -283,7 +283,7 @@ public interface NXxraylens extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param lens_thickness the lens_thickness
 	 */
 	public DataNode setLens_thicknessScalar(Double lens_thicknessValue);
@@ -294,18 +294,18 @@ public interface NXxraylens extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getLens_length();
-	
+
 	/**
 	 * Length of the lens
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param lens_lengthDataset the lens_lengthDataset
 	 */
 	public DataNode setLens_length(IDataset lens_lengthDataset);
@@ -316,7 +316,7 @@ public interface NXxraylens extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getLens_lengthScalar();
@@ -327,7 +327,7 @@ public interface NXxraylens extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param lens_length the lens_length
 	 */
 	public DataNode setLens_lengthScalar(Double lens_lengthValue);
@@ -338,18 +338,18 @@ public interface NXxraylens extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getCurvature();
-	
+
 	/**
 	 * Radius of the curvature as measured in the middle of the lens
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param curvatureDataset the curvatureDataset
 	 */
 	public DataNode setCurvature(IDataset curvatureDataset);
@@ -360,7 +360,7 @@ public interface NXxraylens extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getCurvatureScalar();
@@ -371,7 +371,7 @@ public interface NXxraylens extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param curvature the curvature
 	 */
 	public DataNode setCurvatureScalar(Double curvatureValue);
@@ -382,18 +382,18 @@ public interface NXxraylens extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getAperture();
-	
+
 	/**
 	 * Diameter of the lens.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param apertureDataset the apertureDataset
 	 */
 	public DataNode setAperture(IDataset apertureDataset);
@@ -404,7 +404,7 @@ public interface NXxraylens extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getApertureScalar();
@@ -415,7 +415,7 @@ public interface NXxraylens extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param aperture the aperture
 	 */
 	public DataNode setApertureScalar(Double apertureValue);
@@ -425,17 +425,17 @@ public interface NXxraylens extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getNumber_of_lenses();
-	
+
 	/**
 	 * Number of lenses that make up the compound lens.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * </p>
-	 * 
+	 *
 	 * @param number_of_lensesDataset the number_of_lensesDataset
 	 */
 	public DataNode setNumber_of_lenses(IDataset number_of_lensesDataset);
@@ -445,7 +445,7 @@ public interface NXxraylens extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Long getNumber_of_lensesScalar();
@@ -455,7 +455,7 @@ public interface NXxraylens extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * </p>
-	 * 
+	 *
 	 * @param number_of_lenses the number_of_lenses
 	 */
 	public DataNode setNumber_of_lensesScalar(Long number_of_lensesValue);
@@ -465,17 +465,17 @@ public interface NXxraylens extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getLens_material();
-	
+
 	/**
 	 * Material used to make the lens.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param lens_materialDataset the lens_materialDataset
 	 */
 	public DataNode setLens_material(IDataset lens_materialDataset);
@@ -485,7 +485,7 @@ public interface NXxraylens extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getLens_materialScalar();
@@ -495,7 +495,7 @@ public interface NXxraylens extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param lens_material the lens_material
 	 */
 	public DataNode setLens_materialScalar(String lens_materialValue);
@@ -505,17 +505,17 @@ public interface NXxraylens extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getGas();
-	
+
 	/**
 	 * Gas used to fill the lens
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param gasDataset the gasDataset
 	 */
 	public DataNode setGas(IDataset gasDataset);
@@ -525,7 +525,7 @@ public interface NXxraylens extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getGasScalar();
@@ -535,7 +535,7 @@ public interface NXxraylens extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param gas the gas
 	 */
 	public DataNode setGasScalar(String gasValue);
@@ -546,18 +546,18 @@ public interface NXxraylens extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_PRESSURE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getGas_pressure();
-	
+
 	/**
 	 * Gas pressure in the lens
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_PRESSURE
 	 * </p>
-	 * 
+	 *
 	 * @param gas_pressureDataset the gas_pressureDataset
 	 */
 	public DataNode setGas_pressure(IDataset gas_pressureDataset);
@@ -568,7 +568,7 @@ public interface NXxraylens extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_PRESSURE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getGas_pressureScalar();
@@ -579,21 +579,21 @@ public interface NXxraylens extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_PRESSURE
 	 * </p>
-	 * 
+	 *
 	 * @param gas_pressure the gas_pressure
 	 */
 	public DataNode setGas_pressureScalar(Double gas_pressureValue);
 
 	/**
 	 * This group describes the shape of the beam line component
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXoff_geometry getOff_geometry();
-	
+
 	/**
 	 * This group describes the shape of the beam line component
-	 * 
+	 *
 	 * @param off_geometryGroup the off_geometryGroup
 	 */
 	public void setOff_geometry(NXoff_geometry off_geometryGroup);
@@ -604,47 +604,47 @@ public interface NXxraylens extends NXobject {
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
 	public NXoff_geometry getOff_geometry(String name);
-	
+
 	/**
 	 * Set a NXoff_geometry node by name:
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param off_geometry the value to set
 	 */
 	public void setOff_geometry(String name, NXoff_geometry off_geometry);
-	
+
 	/**
 	 * Get all NXoff_geometry nodes:
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
 	public Map<String, NXoff_geometry> getAllOff_geometry();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
-	 * @param off_geometry the child nodes to add 
+	 *
+	 * @param off_geometry the child nodes to add
 	 */
-	
+
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry);
-	
+
 
 	/**
 	 * .. index:: plotting
@@ -654,11 +654,11 @@ public interface NXxraylens extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -667,7 +667,7 @@ public interface NXxraylens extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);
@@ -684,11 +684,11 @@ public interface NXxraylens extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDepends_on();
-	
+
 	/**
 	 * NeXus positions components by applying a set of translations and rotations
 	 * to apply to the component starting from 0, 0, 0. The order of these operations
@@ -701,7 +701,7 @@ public interface NXxraylens extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_onDataset the depends_onDataset
 	 */
 	public DataNode setDepends_on(IDataset depends_onDataset);
@@ -718,7 +718,7 @@ public interface NXxraylens extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDepends_onScalar();
@@ -735,7 +735,7 @@ public interface NXxraylens extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
@@ -745,17 +745,17 @@ public interface NXxraylens extends NXobject {
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
 	 * This is the group recommended for holding the chain of translation
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -769,12 +769,12 @@ public interface NXxraylens extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -784,12 +784,12 @@ public interface NXxraylens extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -799,11 +799,11 @@ public interface NXxraylens extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -813,11 +813,11 @@ public interface NXxraylens extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 }

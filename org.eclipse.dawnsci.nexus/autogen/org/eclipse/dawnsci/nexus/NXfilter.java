@@ -22,7 +22,7 @@ import org.eclipse.january.dataset.IDataset;
  * If uncertain whether to use :ref:`NXfilter` (band-pass filter)
  * or :ref:`NXattenuator` (reduces beam intensity), then use
  * :ref:`NXattenuator`.
- * 
+ *
  */
 public interface NXfilter extends NXobject {
 
@@ -50,16 +50,16 @@ public interface NXfilter extends NXobject {
 	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
 	 * Geometry of the filter
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to filter the beamstop and NXoff_geometry to describe its shape instead
 	 * @return  the value.
 	 */
 	@Deprecated
 	public NXgeometry getGeometry();
-	
+
 	/**
 	 * Geometry of the filter
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to filter the beamstop and NXoff_geometry to describe its shape instead
 	 * @param geometryGroup the geometryGroup
 	 */
@@ -72,55 +72,55 @@ public interface NXfilter extends NXobject {
 	 * <li>
 	 * Geometry of the filter</li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to filter the beamstop and NXoff_geometry to describe its shape instead
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXgeometry for that node.
 	 */
 	@Deprecated
 	public NXgeometry getGeometry(String name);
-	
+
 	/**
 	 * Set a NXgeometry node by name:
 	 * <ul>
 	 * <li>
 	 * Geometry of the filter</li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to filter the beamstop and NXoff_geometry to describe its shape instead
 	 * @param name the name of the node
 	 * @param geometry the value to set
 	 */
 	@Deprecated
 	public void setGeometry(String name, NXgeometry geometry);
-	
+
 	/**
 	 * Get all NXgeometry nodes:
 	 * <ul>
 	 * <li>
 	 * Geometry of the filter</li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to filter the beamstop and NXoff_geometry to describe its shape instead
 	 * @return  a map from node names to the NXgeometry for that node.
 	 */
 	@Deprecated
 	public Map<String, NXgeometry> getAllGeometry();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * Geometry of the filter</li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to filter the beamstop and NXoff_geometry to describe its shape instead
-	 * @param geometry the child nodes to add 
+	 * @param geometry the child nodes to add
 	 */
-	
+
 	@Deprecated
 	public void setAllGeometry(Map<String, NXgeometry> geometry);
-	
+
 
 	/**
 	 * Composition of the filter. Chemical formula can be specified separately.
@@ -129,11 +129,11 @@ public interface NXfilter extends NXobject {
 	 * than a simple list. These are the items in the list at
 	 * the time of the change: Beryllium | Pyrolytic Graphite |
 	 * Graphite | Sapphire | Silicon | Supermirror.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDescription();
-	
+
 	/**
 	 * Composition of the filter. Chemical formula can be specified separately.
 	 * This field was changed (2010-11-17) from an enumeration to
@@ -141,7 +141,7 @@ public interface NXfilter extends NXobject {
 	 * than a simple list. These are the items in the list at
 	 * the time of the change: Beryllium | Pyrolytic Graphite |
 	 * Graphite | Sapphire | Silicon | Supermirror.
-	 * 
+	 *
 	 * @param descriptionDataset the descriptionDataset
 	 */
 	public DataNode setDescription(IDataset descriptionDataset);
@@ -153,7 +153,7 @@ public interface NXfilter extends NXobject {
 	 * than a simple list. These are the items in the list at
 	 * the time of the change: Beryllium | Pyrolytic Graphite |
 	 * Graphite | Sapphire | Silicon | Supermirror.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDescriptionScalar();
@@ -165,7 +165,7 @@ public interface NXfilter extends NXobject {
 	 * than a simple list. These are the items in the list at
 	 * the time of the change: Beryllium | Pyrolytic Graphite |
 	 * Graphite | Sapphire | Silicon | Supermirror.
-	 * 
+	 *
 	 * @param description the description
 	 */
 	public DataNode setDescriptionScalar(String descriptionValue);
@@ -179,11 +179,11 @@ public interface NXfilter extends NXobject {
 	 * <li><b>out</b> 
 	 * out of the beam</li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getStatus();
-	
+
 	/**
 	 * position with respect to in or out of the beam (choice of only "in" or "out")
 	 * <p>
@@ -193,7 +193,7 @@ public interface NXfilter extends NXobject {
 	 * <li><b>out</b> 
 	 * out of the beam</li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param statusDataset the statusDataset
 	 */
 	public DataNode setStatus(IDataset statusDataset);
@@ -207,7 +207,7 @@ public interface NXfilter extends NXobject {
 	 * <li><b>out</b> 
 	 * out of the beam</li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getStatusScalar();
@@ -221,21 +221,21 @@ public interface NXfilter extends NXobject {
 	 * <li><b>out</b> 
 	 * out of the beam</li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param status the status
 	 */
 	public DataNode setStatusScalar(String statusValue);
 
 	/**
 	 * Wavelength transmission profile of filter
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXdata getTransmission();
-	
+
 	/**
 	 * Wavelength transmission profile of filter
-	 * 
+	 *
 	 * @param transmissionGroup the transmissionGroup
 	 */
 	public void setTransmission(NXdata transmissionGroup);
@@ -246,18 +246,18 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TEMPERATURE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getTemperature();
-	
+
 	/**
 	 * average/nominal filter temperature
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TEMPERATURE
 	 * </p>
-	 * 
+	 *
 	 * @param temperatureDataset the temperatureDataset
 	 */
 	public DataNode setTemperature(IDataset temperatureDataset);
@@ -268,7 +268,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TEMPERATURE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getTemperatureScalar();
@@ -279,21 +279,21 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TEMPERATURE
 	 * </p>
-	 * 
+	 *
 	 * @param temperature the temperature
 	 */
 	public DataNode setTemperatureScalar(Double temperatureValue);
 
 	/**
 	 * Linked temperature_log for the filter
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXlog getTemperature_log();
-	
+
 	/**
 	 * Linked temperature_log for the filter
-	 * 
+	 *
 	 * @param temperature_logGroup the temperature_logGroup
 	 */
 	public void setTemperature_log(NXlog temperature_logGroup);
@@ -304,18 +304,18 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getThickness();
-	
+
 	/**
 	 * Thickness of the filter
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param thicknessDataset the thicknessDataset
 	 */
 	public DataNode setThickness(IDataset thicknessDataset);
@@ -326,7 +326,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getThicknessScalar();
@@ -337,7 +337,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param thickness the thickness
 	 */
 	public DataNode setThicknessScalar(Double thicknessValue);
@@ -348,18 +348,18 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_MASS_DENSITY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDensity();
-	
+
 	/**
 	 * mass density of the filter
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_MASS_DENSITY
 	 * </p>
-	 * 
+	 *
 	 * @param densityDataset the densityDataset
 	 */
 	public DataNode setDensity(IDataset densityDataset);
@@ -370,7 +370,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_MASS_DENSITY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getDensityScalar();
@@ -381,7 +381,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_MASS_DENSITY
 	 * </p>
-	 * 
+	 *
 	 * @param density the density
 	 */
 	public DataNode setDensityScalar(Number densityValue);
@@ -402,11 +402,11 @@ public interface NXfilter extends NXobject {
 	 * * C, then H, then the other elements in alphabetical order of their symbol.
 	 * * If carbon is not present, the elements are listed purely in alphabetic order of their symbol.
 	 * * This is the *Hill* system used by Chemical Abstracts.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getChemical_formula();
-	
+
 	/**
 	 * The chemical formula specified using CIF conventions.
 	 * Abbreviated version of CIF standard:
@@ -423,7 +423,7 @@ public interface NXfilter extends NXobject {
 	 * * C, then H, then the other elements in alphabetical order of their symbol.
 	 * * If carbon is not present, the elements are listed purely in alphabetic order of their symbol.
 	 * * This is the *Hill* system used by Chemical Abstracts.
-	 * 
+	 *
 	 * @param chemical_formulaDataset the chemical_formulaDataset
 	 */
 	public DataNode setChemical_formula(IDataset chemical_formulaDataset);
@@ -444,7 +444,7 @@ public interface NXfilter extends NXobject {
 	 * * C, then H, then the other elements in alphabetical order of their symbol.
 	 * * If carbon is not present, the elements are listed purely in alphabetic order of their symbol.
 	 * * This is the *Hill* system used by Chemical Abstracts.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getChemical_formulaScalar();
@@ -465,21 +465,21 @@ public interface NXfilter extends NXobject {
 	 * * C, then H, then the other elements in alphabetical order of their symbol.
 	 * * If carbon is not present, the elements are listed purely in alphabetic order of their symbol.
 	 * * This is the *Hill* system used by Chemical Abstracts.
-	 * 
+	 *
 	 * @param chemical_formula the chemical_formula
 	 */
 	public DataNode setChemical_formulaScalar(String chemical_formulaValue);
 
 	/**
 	 * Sensor(s)used to monitor the filter temperature
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXsensor getSensor_type();
-	
+
 	/**
 	 * Sensor(s)used to monitor the filter temperature
-	 * 
+	 *
 	 * @param sensor_typeGroup the sensor_typeGroup
 	 */
 	public void setSensor_type(NXsensor sensor_typeGroup);
@@ -490,18 +490,18 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getUnit_cell_a();
-	
+
 	/**
 	 * Unit cell lattice parameter: length of side a
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param unit_cell_aDataset the unit_cell_aDataset
 	 */
 	public DataNode setUnit_cell_a(IDataset unit_cell_aDataset);
@@ -512,7 +512,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getUnit_cell_aScalar();
@@ -523,7 +523,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param unit_cell_a the unit_cell_a
 	 */
 	public DataNode setUnit_cell_aScalar(Double unit_cell_aValue);
@@ -534,18 +534,18 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getUnit_cell_b();
-	
+
 	/**
 	 * Unit cell lattice parameter: length of side b
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param unit_cell_bDataset the unit_cell_bDataset
 	 */
 	public DataNode setUnit_cell_b(IDataset unit_cell_bDataset);
@@ -556,7 +556,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getUnit_cell_bScalar();
@@ -567,7 +567,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param unit_cell_b the unit_cell_b
 	 */
 	public DataNode setUnit_cell_bScalar(Double unit_cell_bValue);
@@ -578,18 +578,18 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getUnit_cell_c();
-	
+
 	/**
 	 * Unit cell lattice parameter: length of side c
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param unit_cell_cDataset the unit_cell_cDataset
 	 */
 	public DataNode setUnit_cell_c(IDataset unit_cell_cDataset);
@@ -600,7 +600,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getUnit_cell_cScalar();
@@ -611,7 +611,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param unit_cell_c the unit_cell_c
 	 */
 	public DataNode setUnit_cell_cScalar(Double unit_cell_cValue);
@@ -622,18 +622,18 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getUnit_cell_alpha();
-	
+
 	/**
 	 * Unit cell lattice parameter: angle alpha
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param unit_cell_alphaDataset the unit_cell_alphaDataset
 	 */
 	public DataNode setUnit_cell_alpha(IDataset unit_cell_alphaDataset);
@@ -644,7 +644,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getUnit_cell_alphaScalar();
@@ -655,7 +655,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param unit_cell_alpha the unit_cell_alpha
 	 */
 	public DataNode setUnit_cell_alphaScalar(Double unit_cell_alphaValue);
@@ -666,18 +666,18 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getUnit_cell_beta();
-	
+
 	/**
 	 * Unit cell lattice parameter: angle beta
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param unit_cell_betaDataset the unit_cell_betaDataset
 	 */
 	public DataNode setUnit_cell_beta(IDataset unit_cell_betaDataset);
@@ -688,7 +688,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getUnit_cell_betaScalar();
@@ -699,7 +699,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param unit_cell_beta the unit_cell_beta
 	 */
 	public DataNode setUnit_cell_betaScalar(Double unit_cell_betaValue);
@@ -710,18 +710,18 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getUnit_cell_gamma();
-	
+
 	/**
 	 * Unit cell lattice parameter: angle gamma
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param unit_cell_gammaDataset the unit_cell_gammaDataset
 	 */
 	public DataNode setUnit_cell_gamma(IDataset unit_cell_gammaDataset);
@@ -732,7 +732,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getUnit_cell_gammaScalar();
@@ -743,7 +743,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param unit_cell_gamma the unit_cell_gamma
 	 */
 	public DataNode setUnit_cell_gammaScalar(Double unit_cell_gammaValue);
@@ -755,11 +755,11 @@ public interface NXfilter extends NXobject {
 	 * <b>Units:</b> NX_VOLUME
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getUnit_cell_volume();
-	
+
 	/**
 	 * Unit cell
 	 * <p>
@@ -767,7 +767,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Units:</b> NX_VOLUME
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param unit_cell_volumeDataset the unit_cell_volumeDataset
 	 */
 	public DataNode setUnit_cell_volume(IDataset unit_cell_volumeDataset);
@@ -779,7 +779,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Units:</b> NX_VOLUME
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getUnit_cell_volumeScalar();
@@ -791,7 +791,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Units:</b> NX_VOLUME
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param unit_cell_volume the unit_cell_volume
 	 */
 	public DataNode setUnit_cell_volumeScalar(Double unit_cell_volumeValue);
@@ -803,11 +803,11 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: n_comp; 2: 3; 3: 3;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getOrientation_matrix();
-	
+
 	/**
 	 * Orientation matrix of single crystal filter using Busing-Levy convention:
 	 * W. R. Busing and H. A. Levy (1967). Acta Cryst. 22, 457-464
@@ -815,7 +815,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: n_comp; 2: 3; 3: 3;
 	 * </p>
-	 * 
+	 *
 	 * @param orientation_matrixDataset the orientation_matrixDataset
 	 */
 	public DataNode setOrientation_matrix(IDataset orientation_matrixDataset);
@@ -827,7 +827,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: n_comp; 2: 3; 3: 3;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getOrientation_matrixScalar();
@@ -839,7 +839,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: n_comp; 2: 3; 3: 3;
 	 * </p>
-	 * 
+	 *
 	 * @param orientation_matrix the orientation_matrix
 	 */
 	public DataNode setOrientation_matrixScalar(Double orientation_matrixValue);
@@ -850,18 +850,18 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getM_value();
-	
+
 	/**
 	 * m value of supermirror filter
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
-	 * 
+	 *
 	 * @param m_valueDataset the m_valueDataset
 	 */
 	public DataNode setM_value(IDataset m_valueDataset);
@@ -872,7 +872,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getM_valueScalar();
@@ -883,35 +883,35 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
-	 * 
+	 *
 	 * @param m_value the m_value
 	 */
 	public DataNode setM_valueScalar(Double m_valueValue);
 
 	/**
 	 * substrate material of supermirror filter
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSubstrate_material();
-	
+
 	/**
 	 * substrate material of supermirror filter
-	 * 
+	 *
 	 * @param substrate_materialDataset the substrate_materialDataset
 	 */
 	public DataNode setSubstrate_material(IDataset substrate_materialDataset);
 
 	/**
 	 * substrate material of supermirror filter
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getSubstrate_materialScalar();
 
 	/**
 	 * substrate material of supermirror filter
-	 * 
+	 *
 	 * @param substrate_material the substrate_material
 	 */
 	public DataNode setSubstrate_materialScalar(String substrate_materialValue);
@@ -922,18 +922,18 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSubstrate_thickness();
-	
+
 	/**
 	 * substrate thickness of supermirror filter
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param substrate_thicknessDataset the substrate_thicknessDataset
 	 */
 	public DataNode setSubstrate_thickness(IDataset substrate_thicknessDataset);
@@ -944,7 +944,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getSubstrate_thicknessScalar();
@@ -955,35 +955,35 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param substrate_thickness the substrate_thickness
 	 */
 	public DataNode setSubstrate_thicknessScalar(Double substrate_thicknessValue);
 
 	/**
 	 * coating material of supermirror filter
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getCoating_material();
-	
+
 	/**
 	 * coating material of supermirror filter
-	 * 
+	 *
 	 * @param coating_materialDataset the coating_materialDataset
 	 */
 	public DataNode setCoating_material(IDataset coating_materialDataset);
 
 	/**
 	 * coating material of supermirror filter
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getCoating_materialScalar();
 
 	/**
 	 * coating material of supermirror filter
-	 * 
+	 *
 	 * @param coating_material the coating_material
 	 */
 	public DataNode setCoating_materialScalar(String coating_materialValue);
@@ -994,18 +994,18 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSubstrate_roughness();
-	
+
 	/**
 	 * substrate roughness (RMS) of supermirror filter
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param substrate_roughnessDataset the substrate_roughnessDataset
 	 */
 	public DataNode setSubstrate_roughness(IDataset substrate_roughnessDataset);
@@ -1016,7 +1016,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getSubstrate_roughnessScalar();
@@ -1027,7 +1027,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param substrate_roughness the substrate_roughness
 	 */
 	public DataNode setSubstrate_roughnessScalar(Double substrate_roughnessValue);
@@ -1039,11 +1039,11 @@ public interface NXfilter extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getCoating_roughness();
-	
+
 	/**
 	 * coating roughness (RMS) of supermirror filter
 	 * <p>
@@ -1051,7 +1051,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @param coating_roughnessDataset the coating_roughnessDataset
 	 */
 	public DataNode setCoating_roughness(IDataset coating_roughnessDataset);
@@ -1063,7 +1063,7 @@ public interface NXfilter extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getCoating_roughnessScalar();
@@ -1075,21 +1075,21 @@ public interface NXfilter extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @param coating_roughness the coating_roughness
 	 */
 	public DataNode setCoating_roughnessScalar(Double coating_roughnessValue);
 
 	/**
 	 * This group describes the shape of the beam line component
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXoff_geometry getOff_geometry();
-	
+
 	/**
 	 * This group describes the shape of the beam line component
-	 * 
+	 *
 	 * @param off_geometryGroup the off_geometryGroup
 	 */
 	public void setOff_geometry(NXoff_geometry off_geometryGroup);
@@ -1100,47 +1100,47 @@ public interface NXfilter extends NXobject {
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
 	public NXoff_geometry getOff_geometry(String name);
-	
+
 	/**
 	 * Set a NXoff_geometry node by name:
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param off_geometry the value to set
 	 */
 	public void setOff_geometry(String name, NXoff_geometry off_geometry);
-	
+
 	/**
 	 * Get all NXoff_geometry nodes:
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
 	public Map<String, NXoff_geometry> getAllOff_geometry();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
-	 * @param off_geometry the child nodes to add 
+	 *
+	 * @param off_geometry the child nodes to add
 	 */
-	
+
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry);
-	
+
 
 	/**
 	 * .. index:: plotting
@@ -1150,11 +1150,11 @@ public interface NXfilter extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -1163,7 +1163,7 @@ public interface NXfilter extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);
@@ -1180,11 +1180,11 @@ public interface NXfilter extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDepends_on();
-	
+
 	/**
 	 * NeXus positions components by applying a set of translations and rotations
 	 * to apply to the component starting from 0, 0, 0. The order of these operations
@@ -1197,7 +1197,7 @@ public interface NXfilter extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_onDataset the depends_onDataset
 	 */
 	public DataNode setDepends_on(IDataset depends_onDataset);
@@ -1214,7 +1214,7 @@ public interface NXfilter extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDepends_onScalar();
@@ -1231,7 +1231,7 @@ public interface NXfilter extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
@@ -1241,17 +1241,17 @@ public interface NXfilter extends NXobject {
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
 	 * This is the group recommended for holding the chain of translation
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -1265,12 +1265,12 @@ public interface NXfilter extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -1280,12 +1280,12 @@ public interface NXfilter extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -1295,11 +1295,11 @@ public interface NXfilter extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -1309,11 +1309,11 @@ public interface NXfilter extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 }

@@ -13,6 +13,8 @@ package org.eclipse.dawnsci.nexus.impl;
 
 import java.util.Set;
 import java.util.EnumSet;
+import java.util.Map;
+
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
@@ -24,14 +26,15 @@ import org.eclipse.dawnsci.nexus.*;
  * In electron microscopy, the scan box is instructed by the microscope
  * control software. This component directs the probe to controlled
  * locations according to a scan scheme and plan.
- * 
+
  */
 public class NXscanbox_emImpl extends NXobjectImpl implements NXscanbox_em {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
 
-	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.noneOf(NexusBaseClass.class);
+	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
+		NexusBaseClass.NX_FABRICATION);
 
 	public NXscanbox_emImpl() {
 		super();
@@ -40,22 +43,22 @@ public class NXscanbox_emImpl extends NXobjectImpl implements NXscanbox_em {
 	public NXscanbox_emImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXscanbox_em.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_SCANBOX_EM;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getCalibration_style() {
@@ -215,6 +218,37 @@ public class NXscanbox_emImpl extends NXobjectImpl implements NXscanbox_em {
 	@Override
 	public DataNode setAc_line_syncScalar(Boolean ac_line_syncValue) {
 		return setField(NX_AC_LINE_SYNC, ac_line_syncValue);
+	}
+
+	@Override
+	public NXfabrication getFabrication() {
+		// dataNodeName = NX_FABRICATION
+		return getChild("fabrication", NXfabrication.class);
+	}
+
+	@Override
+	public void setFabrication(NXfabrication fabricationGroup) {
+		putChild("fabrication", fabricationGroup);
+	}
+
+	@Override
+	public NXfabrication getFabrication(String name) {
+		return getChild(name, NXfabrication.class);
+	}
+
+	@Override
+	public void setFabrication(String name, NXfabrication fabrication) {
+		putChild(name, fabrication);
+	}
+
+	@Override
+	public Map<String, NXfabrication> getAllFabrication() {
+		return getChildren(NXfabrication.class);
+	}
+
+	@Override
+	public void setAllFabrication(Map<String, NXfabrication> fabrication) {
+		setChildren(fabrication);
 	}
 
 }

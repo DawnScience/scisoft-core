@@ -23,7 +23,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * Component of an instrument to store or place objects and specimens.
- * 
+
  */
 public class NXchamberImpl extends NXobjectImpl implements NXchamber {
 
@@ -31,7 +31,7 @@ public class NXchamberImpl extends NXobjectImpl implements NXchamber {
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_MANUFACTURER);
+		NexusBaseClass.NX_FABRICATION);
 
 	public NXchamberImpl() {
 		super();
@@ -40,22 +40,22 @@ public class NXchamberImpl extends NXobjectImpl implements NXchamber {
 	public NXchamberImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXchamber.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_CHAMBER;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getName() {
@@ -78,37 +78,6 @@ public class NXchamberImpl extends NXobjectImpl implements NXchamber {
 	}
 
 	@Override
-	public NXmanufacturer getManufacturer() {
-		// dataNodeName = NX_MANUFACTURER
-		return getChild("manufacturer", NXmanufacturer.class);
-	}
-
-	@Override
-	public void setManufacturer(NXmanufacturer manufacturerGroup) {
-		putChild("manufacturer", manufacturerGroup);
-	}
-
-	@Override
-	public NXmanufacturer getManufacturer(String name) {
-		return getChild(name, NXmanufacturer.class);
-	}
-
-	@Override
-	public void setManufacturer(String name, NXmanufacturer manufacturer) {
-		putChild(name, manufacturer);
-	}
-
-	@Override
-	public Map<String, NXmanufacturer> getAllManufacturer() {
-		return getChildren(NXmanufacturer.class);
-	}
-	
-	@Override
-	public void setAllManufacturer(Map<String, NXmanufacturer> manufacturer) {
-		setChildren(manufacturer);
-	}
-
-	@Override
 	public IDataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
@@ -126,6 +95,37 @@ public class NXchamberImpl extends NXobjectImpl implements NXchamber {
 	@Override
 	public DataNode setDescriptionScalar(String descriptionValue) {
 		return setString(NX_DESCRIPTION, descriptionValue);
+	}
+
+	@Override
+	public NXfabrication getFabrication() {
+		// dataNodeName = NX_FABRICATION
+		return getChild("fabrication", NXfabrication.class);
+	}
+
+	@Override
+	public void setFabrication(NXfabrication fabricationGroup) {
+		putChild("fabrication", fabricationGroup);
+	}
+
+	@Override
+	public NXfabrication getFabrication(String name) {
+		return getChild(name, NXfabrication.class);
+	}
+
+	@Override
+	public void setFabrication(String name, NXfabrication fabrication) {
+		putChild(name, fabrication);
+	}
+
+	@Override
+	public Map<String, NXfabrication> getAllFabrication() {
+		return getChildren(NXfabrication.class);
+	}
+
+	@Override
+	public void setAllFabrication(Map<String, NXfabrication> fabrication) {
+		setChildren(fabrication);
 	}
 
 }

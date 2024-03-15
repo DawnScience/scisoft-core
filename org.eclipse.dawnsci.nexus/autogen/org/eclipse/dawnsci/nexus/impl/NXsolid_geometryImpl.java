@@ -21,7 +21,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * the head node for constructively defined geometry
- * 
+
  */
 public class NXsolid_geometryImpl extends NXobjectImpl implements NXsolid_geometry {
 
@@ -40,22 +40,22 @@ public class NXsolid_geometryImpl extends NXobjectImpl implements NXsolid_geomet
 	public NXsolid_geometryImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXsolid_geometry.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_SOLID_GEOMETRY;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public NXquadric getQuadric() {
@@ -82,7 +82,7 @@ public class NXsolid_geometryImpl extends NXobjectImpl implements NXsolid_geomet
 	public Map<String, NXquadric> getAllQuadric() {
 		return getChildren(NXquadric.class);
 	}
-	
+
 	@Override
 	public void setAllQuadric(Map<String, NXquadric> quadric) {
 		setChildren(quadric);
@@ -113,7 +113,7 @@ public class NXsolid_geometryImpl extends NXobjectImpl implements NXsolid_geomet
 	public Map<String, NXoff_geometry> getAllOff_geometry() {
 		return getChildren(NXoff_geometry.class);
 	}
-	
+
 	@Override
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry) {
 		setChildren(off_geometry);
@@ -144,7 +144,7 @@ public class NXsolid_geometryImpl extends NXobjectImpl implements NXsolid_geomet
 	public Map<String, NXcsg> getAllCsg() {
 		return getChildren(NXcsg.class);
 	}
-	
+
 	@Override
 	public void setAllCsg(Map<String, NXcsg> csg) {
 		setChildren(csg);

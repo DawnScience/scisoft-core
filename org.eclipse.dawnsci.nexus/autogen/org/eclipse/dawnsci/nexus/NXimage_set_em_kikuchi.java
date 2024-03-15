@@ -18,10 +18,10 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.january.dataset.IDataset;
 
 /**
- * Electron backscatter diffraction (EBSD) Kikuchi pattern.
- * The container can also store data related to a post-processing of these
- * Kikuchi pattern, which is the backbone of orientation microscopy
- * especially in materials science and materials engineering.
+ * Measured set of electron backscatter diffraction data, aka Kikuchi pattern.
+ * Kikuchi pattern are the raw data for computational workflows in the field
+ * of orientation (imaging) microscopy. The technique is especially used in
+ * materials science and materials engineering.
  * Based on a fuse of the `M. A. Jackson et al. <https://doi.org/10.1186/2193-9772-3-4>`_
  * of the DREAM.3D community and the open H5OINA format of Oxford Instruments
  * `P. Pinard et al. <https://doi.org/10.1017/S1431927621006103>`_
@@ -31,261 +31,148 @@ import org.eclipse.january.dataset.IDataset;
  * * `M. A. Groeber et al. <https://doi.org/10.1186/2193-9772-3-5>`_
  * * `A. J. Schwartz et al. <https://doi.org/10.1007/978-1-4757-3205-4>`_
  * * `P. A. Rottman et al. <https://doi.org/10.1016/j.mattod.2021.05.003>`_
- * With serial-sectioning this involves however always a sequence of
- * measuring, milling. In this regard, each serial section (measuring) and milling
+ * With serial-sectioning this involves however always a sequence of measuring,
+ * milling. In this regard, each serial section (measuring) and milling
  * is an own NXevent_data_em instance and thus there such a three-dimensional
  * characterization should be stored as a set of two-dimensional data,
  * with as many NXevent_data_em instances as sections were measured.
  * These measured serial sectioning images need virtually always post-processing
- * to arrive at the aligned and cleaned image stack respective digital
- * microstructure representation as (a representative) volume element.
- * Several software packages are available for this post-processing.
+ * to arrive at the aligned and cleaned image stack before a respective digital
+ * model of the inspected microstructure can be analyzed. The resulting volume
+ * is often termed a so-called (representative) volume element (RVE).
+ * Several software packages are available for performing this post-processing.
  * For now we do not consider metadata of these post-processing steps
- * as a part of this base class.
- * <p><b>Symbols:</b> <ul>
- * <li><b>n_p</b> 
- * Number of scan points, one pattern per scan point.</li>
- * <li><b>n_y</b> 
- * Number of pixel per Kikuchi pattern in the slow direction</li>
- * <li><b>n_x</b> 
- * Number of pixel per Kikuchi pattern in the fast direction</li></ul></p>
- * 
+ * as a part of this base class because the connection between the large variety
+ * of such post-processing steps and the measured electron microscopy data
+ * is usually very small.
+ * If we envision a (knowledge) graph for EBSD it consists of individual
+ * sub-graphs which convey information about the specimen preparation,
+ * the measurement of the specimen in the electron microscope,
+ * the indexing of the collected Kikuchi pattern stack,
+ * eventual post-processing of the indexed orientation image
+ * via similarity grouping algorithms to yield (grains, texture).
+ * Conceptually these post-processing steps are most frequently
+ * serving the idea to reconstruct quantitatively so-called
+ * microstructural features (grains, phases, interfaces). Materials scientists
+ * use these features according to the multi-scale materials modeling paradigm
+ * to infer material properties. They do so by quantifying correlations between
+ * the spatial arrangement of the features, their individual properties,
+ * and (macroscopic) properties of materials.
+ * <p><b>Symbols:</b><ul>
+ * <li><b>n_sc</b>
+ * Number of scanned points. Scan point may have none, one, or more pattern.</li>
+ * <li><b>n_p</b>
+ * Number of diffraction pattern.</li>
+ * <li><b>n_y</b>
+ * Number of pixel per Kikuchi pattern in the slow direction.</li>
+ * <li><b>n_x</b>
+ * Number of pixel per Kikuchi pattern in the fast direction.</li></ul></p>
+ *
  */
 public interface NXimage_set_em_kikuchi extends NXobject {
 
-	public static final String NX_GRID_TYPE = "grid_type";
-	public static final String NX_STEP_SIZE = "step_size";
 	/**
-	 * Collected Kikuchi pattern as an image stack.
-	 * 
+	 * Details how Kikuchi pattern were processed from the detector readings.
+	 * Scientists interested in EBSD should inspect the respective NXem_ebsd
+	 * application definition which can be used as a partner application definition
+	 * to detail substantially more details to this processing.
+	 *
 	 * @return  the value.
 	 */
-	public NXdata getData();
-	
-	/**
-	 * Collected Kikuchi pattern as an image stack.
-	 * 
-	 * @param dataGroup the dataGroup
-	 */
-	public void setData(NXdata dataGroup);
+	public NXprocess getProcess();
 
 	/**
-	 * Get a NXdata node by name:
+	 * Details how Kikuchi pattern were processed from the detector readings.
+	 * Scientists interested in EBSD should inspect the respective NXem_ebsd
+	 * application definition which can be used as a partner application definition
+	 * to detail substantially more details to this processing.
+	 *
+	 * @param processGroup the processGroup
+	 */
+	public void setProcess(NXprocess processGroup);
+
+	/**
+	 * Get a NXprocess node by name:
 	 * <ul>
 	 * <li>
-	 * Collected Kikuchi pattern as an image stack.</li>
+	 * Details how Kikuchi pattern were processed from the detector readings.
+	 * Scientists interested in EBSD should inspect the respective NXem_ebsd
+	 * application definition which can be used as a partner application definition
+	 * to detail substantially more details to this processing.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXdata for that node.
+	 * @return  a map from node names to the NXprocess for that node.
 	 */
-	public NXdata getData(String name);
-	
+	public NXprocess getProcess(String name);
+
 	/**
-	 * Set a NXdata node by name:
+	 * Set a NXprocess node by name:
 	 * <ul>
 	 * <li>
-	 * Collected Kikuchi pattern as an image stack.</li>
+	 * Details how Kikuchi pattern were processed from the detector readings.
+	 * Scientists interested in EBSD should inspect the respective NXem_ebsd
+	 * application definition which can be used as a partner application definition
+	 * to detail substantially more details to this processing.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
-	 * @param data the value to set
+	 * @param process the value to set
 	 */
-	public void setData(String name, NXdata data);
-	
+	public void setProcess(String name, NXprocess process);
+
 	/**
-	 * Get all NXdata nodes:
+	 * Get all NXprocess nodes:
 	 * <ul>
 	 * <li>
-	 * Collected Kikuchi pattern as an image stack.</li>
+	 * Details how Kikuchi pattern were processed from the detector readings.
+	 * Scientists interested in EBSD should inspect the respective NXem_ebsd
+	 * application definition which can be used as a partner application definition
+	 * to detail substantially more details to this processing.</li>
 	 * </ul>
-	 * 
-	 * @return  a map from node names to the NXdata for that node.
+	 *
+	 * @return  a map from node names to the NXprocess for that node.
 	 */
-	public Map<String, NXdata> getAllData();
-	
+	public Map<String, NXprocess> getAllProcess();
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
-	 * Collected Kikuchi pattern as an image stack.</li>
+	 * Details how Kikuchi pattern were processed from the detector readings.
+	 * Scientists interested in EBSD should inspect the respective NXem_ebsd
+	 * application definition which can be used as a partner application definition
+	 * to detail substantially more details to this processing.</li>
 	 * </ul>
-	 * 
-	 * @param data the child nodes to add 
+	 *
+	 * @param process the child nodes to add
 	 */
-	
-	public void setAllData(Map<String, NXdata> data);
-	
+
+	public void setAllProcess(Map<String, NXprocess> process);
+
 
 	/**
-	 * Which pixel primitive shape is used.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>square</b> </li>
-	 * <li><b>hexagon</b> </li></ul></p>
-	 * </p>
-	 * 
+	 * Collected Kikuchi pattern as an image stack. As raw and closest to the
+	 * first retrievable measured data as possible, i.e. do not use this
+	 * container to store already averaged, filtered or whatever post-processed
+	 * pattern unless these are generated unmodifiably by the instrument
+	 * given the way how the instrument and control software was configured
+	 * for your microscope session.
+	 *
 	 * @return  the value.
 	 */
-	public IDataset getGrid_type();
-	
-	/**
-	 * Which pixel primitive shape is used.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>square</b> </li>
-	 * <li><b>hexagon</b> </li></ul></p>
-	 * </p>
-	 * 
-	 * @param grid_typeDataset the grid_typeDataset
-	 */
-	public DataNode setGrid_type(IDataset grid_typeDataset);
+	public NXdata getStack();
 
 	/**
-	 * Which pixel primitive shape is used.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>square</b> </li>
-	 * <li><b>hexagon</b> </li></ul></p>
-	 * </p>
-	 * 
-	 * @return  the value.
+	 * Collected Kikuchi pattern as an image stack. As raw and closest to the
+	 * first retrievable measured data as possible, i.e. do not use this
+	 * container to store already averaged, filtered or whatever post-processed
+	 * pattern unless these are generated unmodifiably by the instrument
+	 * given the way how the instrument and control software was configured
+	 * for your microscope session.
+	 *
+	 * @param stackGroup the stackGroup
 	 */
-	public String getGrid_typeScalar();
-
-	/**
-	 * Which pixel primitive shape is used.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>square</b> </li>
-	 * <li><b>hexagon</b> </li></ul></p>
-	 * </p>
-	 * 
-	 * @param grid_type the grid_type
-	 */
-	public DataNode setGrid_typeScalar(String grid_typeValue);
-
-	/**
-	 * The prescribed step size. First value is for the slow changing,
-	 * second value is for the fast changing dimension.
-	 * <p>
-	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_LENGTH
-	 * <b>Dimensions:</b> 1: 2;
-	 * </p>
-	 * 
-	 * @return  the value.
-	 */
-	public IDataset getStep_size();
-	
-	/**
-	 * The prescribed step size. First value is for the slow changing,
-	 * second value is for the fast changing dimension.
-	 * <p>
-	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_LENGTH
-	 * <b>Dimensions:</b> 1: 2;
-	 * </p>
-	 * 
-	 * @param step_sizeDataset the step_sizeDataset
-	 */
-	public DataNode setStep_size(IDataset step_sizeDataset);
-
-	/**
-	 * The prescribed step size. First value is for the slow changing,
-	 * second value is for the fast changing dimension.
-	 * <p>
-	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_LENGTH
-	 * <b>Dimensions:</b> 1: 2;
-	 * </p>
-	 * 
-	 * @return  the value.
-	 */
-	public Number getStep_sizeScalar();
-
-	/**
-	 * The prescribed step size. First value is for the slow changing,
-	 * second value is for the fast changing dimension.
-	 * <p>
-	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_LENGTH
-	 * <b>Dimensions:</b> 1: 2;
-	 * </p>
-	 * 
-	 * @param step_size the step_size
-	 */
-	public DataNode setStep_sizeScalar(Number step_sizeValue);
-
-	/**
-	 * 
-	 * @return  the value.
-	 */
-	public NXprocess getCalibration();
-	
-	/**
-	 * 
-	 * @param calibrationGroup the calibrationGroup
-	 */
-	public void setCalibration(NXprocess calibrationGroup);
-
-	/**
-	 * OIM, orientation imaging microscopy.
-	 * Post-processing of the Kikuchi pattern to identify orientations.
-	 * 
-	 * @return  the value.
-	 */
-	public NXprocess getOim();
-	
-	/**
-	 * OIM, orientation imaging microscopy.
-	 * Post-processing of the Kikuchi pattern to identify orientations.
-	 * 
-	 * @param oimGroup the oimGroup
-	 */
-	public void setOim(NXprocess oimGroup);
-	// Unprocessed group: background_correction
-	// Unprocessed group: band_detection
-	// Unprocessed group: indexing
-
-	/**
-	 * 
-	 * @return  the value.
-	 */
-	public NXcollection getBinning();
-	
-	/**
-	 * 
-	 * @param binningGroup the binningGroup
-	 */
-	public void setBinning(NXcollection binningGroup);
-
-	/**
-	 * 
-	 * @return  the value.
-	 */
-	public NXprocess getHough_transformation();
-	
-	/**
-	 * 
-	 * @param hough_transformationGroup the hough_transformationGroup
-	 */
-	public void setHough_transformation(NXprocess hough_transformationGroup);
-
-	/**
-	 * 
-	 * @return  the value.
-	 */
-	public NXcollection getProfiling();
-	
-	/**
-	 * 
-	 * @param profilingGroup the profilingGroup
-	 */
-	public void setProfiling(NXcollection profilingGroup);
+	public void setStack(NXdata stackGroup);
 
 }

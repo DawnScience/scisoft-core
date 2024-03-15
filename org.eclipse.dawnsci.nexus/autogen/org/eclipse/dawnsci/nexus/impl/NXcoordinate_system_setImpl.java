@@ -46,7 +46,7 @@ import org.eclipse.dawnsci.nexus.*;
  * Within each NXtransformations a depends_on section is required. The depends_on
  * field specifies if the coordinate system is the root/reference
  * (which is indicated by writing "." in the depends_on section.)
- * 
+
  */
 public class NXcoordinate_system_setImpl extends NXobjectImpl implements NXcoordinate_system_set {
 
@@ -63,22 +63,22 @@ public class NXcoordinate_system_setImpl extends NXobjectImpl implements NXcoord
 	public NXcoordinate_system_setImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXcoordinate_system_set.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_COORDINATE_SYSTEM_SET;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public NXtransformations getTransformations() {
@@ -105,7 +105,7 @@ public class NXcoordinate_system_setImpl extends NXobjectImpl implements NXcoord
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

@@ -19,7 +19,7 @@ import org.eclipse.january.dataset.IDataset;
 
 /**
  * A neutron moderator
- * 
+ *
  */
 public interface NXmoderator extends NXobject {
 
@@ -34,16 +34,16 @@ public interface NXmoderator extends NXobject {
 	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
 	 * "Engineering" position of moderator
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the moderator and NXoff_geometry to describe its shape instead
 	 * @return  the value.
 	 */
 	@Deprecated
 	public NXgeometry getGeometry();
-	
+
 	/**
 	 * "Engineering" position of moderator
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the moderator and NXoff_geometry to describe its shape instead
 	 * @param geometryGroup the geometryGroup
 	 */
@@ -56,55 +56,55 @@ public interface NXmoderator extends NXobject {
 	 * <li>
 	 * "Engineering" position of moderator</li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the moderator and NXoff_geometry to describe its shape instead
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXgeometry for that node.
 	 */
 	@Deprecated
 	public NXgeometry getGeometry(String name);
-	
+
 	/**
 	 * Set a NXgeometry node by name:
 	 * <ul>
 	 * <li>
 	 * "Engineering" position of moderator</li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the moderator and NXoff_geometry to describe its shape instead
 	 * @param name the name of the node
 	 * @param geometry the value to set
 	 */
 	@Deprecated
 	public void setGeometry(String name, NXgeometry geometry);
-	
+
 	/**
 	 * Get all NXgeometry nodes:
 	 * <ul>
 	 * <li>
 	 * "Engineering" position of moderator</li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the moderator and NXoff_geometry to describe its shape instead
 	 * @return  a map from node names to the NXgeometry for that node.
 	 */
 	@Deprecated
 	public Map<String, NXgeometry> getAllGeometry();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * "Engineering" position of moderator</li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the moderator and NXoff_geometry to describe its shape instead
-	 * @param geometry the child nodes to add 
+	 * @param geometry the child nodes to add
 	 */
-	
+
 	@Deprecated
 	public void setAllGeometry(Map<String, NXgeometry> geometry);
-	
+
 
 	/**
 	 * Effective distance as seen by measuring radiation.
@@ -113,11 +113,11 @@ public interface NXmoderator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDistance();
-	
+
 	/**
 	 * Effective distance as seen by measuring radiation.
 	 * Note, it is recommended to use NXtransformations instead.
@@ -125,7 +125,7 @@ public interface NXmoderator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param distanceDataset the distanceDataset
 	 */
 	public DataNode setDistance(IDataset distanceDataset);
@@ -137,7 +137,7 @@ public interface NXmoderator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getDistanceScalar();
@@ -149,7 +149,7 @@ public interface NXmoderator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param distance the distance
 	 */
 	public DataNode setDistanceScalar(Double distanceValue);
@@ -167,11 +167,11 @@ public interface NXmoderator extends NXobject {
 	 * <li><b>Solid CH4</b> </li>
 	 * <li><b>Solid H2</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getType();
-	
+
 	/**
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
@@ -185,7 +185,7 @@ public interface NXmoderator extends NXobject {
 	 * <li><b>Solid CH4</b> </li>
 	 * <li><b>Solid H2</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param typeDataset the typeDataset
 	 */
 	public DataNode setType(IDataset typeDataset);
@@ -203,7 +203,7 @@ public interface NXmoderator extends NXobject {
 	 * <li><b>Solid CH4</b> </li>
 	 * <li><b>Solid H2</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getTypeScalar();
@@ -221,7 +221,7 @@ public interface NXmoderator extends NXobject {
 	 * <li><b>Solid CH4</b> </li>
 	 * <li><b>Solid H2</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param type the type
 	 */
 	public DataNode setTypeScalar(String typeValue);
@@ -231,17 +231,17 @@ public interface NXmoderator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getPoison_depth();
-	
+
 	/**
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param poison_depthDataset the poison_depthDataset
 	 */
 	public DataNode setPoison_depth(IDataset poison_depthDataset);
@@ -251,7 +251,7 @@ public interface NXmoderator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getPoison_depthScalar();
@@ -261,7 +261,7 @@ public interface NXmoderator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param poison_depth the poison_depth
 	 */
 	public DataNode setPoison_depthScalar(Double poison_depthValue);
@@ -271,17 +271,17 @@ public interface NXmoderator extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getCoupled();
-	
+
 	/**
 	 * whether the moderator is coupled
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
-	 * 
+	 *
 	 * @param coupledDataset the coupledDataset
 	 */
 	public DataNode setCoupled(IDataset coupledDataset);
@@ -291,7 +291,7 @@ public interface NXmoderator extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Boolean getCoupledScalar();
@@ -301,35 +301,35 @@ public interface NXmoderator extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
-	 * 
+	 *
 	 * @param coupled the coupled
 	 */
 	public DataNode setCoupledScalar(Boolean coupledValue);
 
 	/**
 	 * The material used for coupling. Usually Cd.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getCoupling_material();
-	
+
 	/**
 	 * The material used for coupling. Usually Cd.
-	 * 
+	 *
 	 * @param coupling_materialDataset the coupling_materialDataset
 	 */
 	public DataNode setCoupling_material(IDataset coupling_materialDataset);
 
 	/**
 	 * The material used for coupling. Usually Cd.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getCoupling_materialScalar();
 
 	/**
 	 * The material used for coupling. Usually Cd.
-	 * 
+	 *
 	 * @param coupling_material the coupling_material
 	 */
 	public DataNode setCoupling_materialScalar(String coupling_materialValue);
@@ -340,18 +340,18 @@ public interface NXmoderator extends NXobject {
 	 * <li><b>Gd</b> </li>
 	 * <li><b>Cd</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getPoison_material();
-	
+
 	/**
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>Gd</b> </li>
 	 * <li><b>Cd</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param poison_materialDataset the poison_materialDataset
 	 */
 	public DataNode setPoison_material(IDataset poison_materialDataset);
@@ -362,7 +362,7 @@ public interface NXmoderator extends NXobject {
 	 * <li><b>Gd</b> </li>
 	 * <li><b>Cd</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getPoison_materialScalar();
@@ -373,7 +373,7 @@ public interface NXmoderator extends NXobject {
 	 * <li><b>Gd</b> </li>
 	 * <li><b>Cd</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param poison_material the poison_material
 	 */
 	public DataNode setPoison_materialScalar(String poison_materialValue);
@@ -384,18 +384,18 @@ public interface NXmoderator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TEMPERATURE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getTemperature();
-	
+
 	/**
 	 * average/nominal moderator temperature
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TEMPERATURE
 	 * </p>
-	 * 
+	 *
 	 * @param temperatureDataset the temperatureDataset
 	 */
 	public DataNode setTemperature(IDataset temperatureDataset);
@@ -406,7 +406,7 @@ public interface NXmoderator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TEMPERATURE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getTemperatureScalar();
@@ -417,49 +417,49 @@ public interface NXmoderator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TEMPERATURE
 	 * </p>
-	 * 
+	 *
 	 * @param temperature the temperature
 	 */
 	public DataNode setTemperatureScalar(Double temperatureValue);
 
 	/**
 	 * log file of moderator temperature
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXlog getTemperature_log();
-	
+
 	/**
 	 * log file of moderator temperature
-	 * 
+	 *
 	 * @param temperature_logGroup the temperature_logGroup
 	 */
 	public void setTemperature_log(NXlog temperature_logGroup);
 
 	/**
 	 * moderator pulse shape
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXdata getPulse_shape();
-	
+
 	/**
 	 * moderator pulse shape
-	 * 
+	 *
 	 * @param pulse_shapeGroup the pulse_shapeGroup
 	 */
 	public void setPulse_shape(NXdata pulse_shapeGroup);
 
 	/**
 	 * This group describes the shape of the moderator
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXoff_geometry getOff_geometry();
-	
+
 	/**
 	 * This group describes the shape of the moderator
-	 * 
+	 *
 	 * @param off_geometryGroup the off_geometryGroup
 	 */
 	public void setOff_geometry(NXoff_geometry off_geometryGroup);
@@ -470,47 +470,47 @@ public interface NXmoderator extends NXobject {
 	 * <li>
 	 * This group describes the shape of the moderator</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
 	public NXoff_geometry getOff_geometry(String name);
-	
+
 	/**
 	 * Set a NXoff_geometry node by name:
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the moderator</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param off_geometry the value to set
 	 */
 	public void setOff_geometry(String name, NXoff_geometry off_geometry);
-	
+
 	/**
 	 * Get all NXoff_geometry nodes:
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the moderator</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
 	public Map<String, NXoff_geometry> getAllOff_geometry();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the moderator</li>
 	 * </ul>
-	 * 
-	 * @param off_geometry the child nodes to add 
+	 *
+	 * @param off_geometry the child nodes to add
 	 */
-	
+
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry);
-	
+
 
 	/**
 	 * .. index:: plotting
@@ -520,11 +520,11 @@ public interface NXmoderator extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -533,7 +533,7 @@ public interface NXmoderator extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);
@@ -552,11 +552,11 @@ public interface NXmoderator extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDepends_on();
-	
+
 	/**
 	 * NeXus positions components by applying a set of translations and rotations
 	 * to apply to the component starting from 0, 0, 0. The order of these operations
@@ -571,7 +571,7 @@ public interface NXmoderator extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_onDataset the depends_onDataset
 	 */
 	public DataNode setDepends_on(IDataset depends_onDataset);
@@ -590,7 +590,7 @@ public interface NXmoderator extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDepends_onScalar();
@@ -609,7 +609,7 @@ public interface NXmoderator extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
@@ -619,17 +619,17 @@ public interface NXmoderator extends NXobject {
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
 	 * This is the group recommended for holding the chain of translation
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -643,12 +643,12 @@ public interface NXmoderator extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -658,12 +658,12 @@ public interface NXmoderator extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -673,11 +673,11 @@ public interface NXmoderator extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -687,11 +687,11 @@ public interface NXmoderator extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 }

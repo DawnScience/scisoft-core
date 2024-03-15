@@ -21,7 +21,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * definition for a quadrupole magnet.
- * 
+
  */
 public class NXquadrupole_magnetImpl extends NXobjectImpl implements NXquadrupole_magnet {
 
@@ -39,22 +39,22 @@ public class NXquadrupole_magnetImpl extends NXobjectImpl implements NXquadrupol
 	public NXquadrupole_magnetImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXquadrupole_magnet.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_QUADRUPOLE_MAGNET;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getDescription() {

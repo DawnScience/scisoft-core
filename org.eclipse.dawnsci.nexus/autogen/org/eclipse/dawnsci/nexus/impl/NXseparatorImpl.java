@@ -21,7 +21,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * definition for an electrostatic separator.
- * 
+
  */
 public class NXseparatorImpl extends NXobjectImpl implements NXseparator {
 
@@ -41,22 +41,22 @@ public class NXseparatorImpl extends NXobjectImpl implements NXseparator {
 	public NXseparatorImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXseparator.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_SEPARATOR;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getDescription() {

@@ -23,7 +23,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * An insertion device, as used in a synchrotron light source.
- * 
+
  */
 public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_device {
 
@@ -43,22 +43,22 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	public NXinsertion_deviceImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXinsertion_device.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_INSERTION_DEVICE;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getType() {
@@ -341,7 +341,7 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	public Map<String, NXgeometry> getAllGeometry() {
 		return getChildren(NXgeometry.class);
 	}
-	
+
 	@Override
 	@Deprecated
 	public void setAllGeometry(Map<String, NXgeometry> geometry) {
@@ -373,7 +373,7 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	public Map<String, NXoff_geometry> getAllOff_geometry() {
 		return getChildren(NXoff_geometry.class);
 	}
-	
+
 	@Override
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry) {
 		setChildren(off_geometry);
@@ -434,7 +434,7 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

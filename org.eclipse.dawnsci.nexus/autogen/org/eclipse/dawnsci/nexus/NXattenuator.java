@@ -23,7 +23,7 @@ import org.eclipse.january.dataset.IDataset;
  * If uncertain whether to use :ref:`NXfilter` (band-pass filter)
  * or :ref:`NXattenuator` (reduces beam intensity), then choose
  * :ref:`NXattenuator`.
- * 
+ *
  */
 public interface NXattenuator extends NXobject {
 
@@ -43,18 +43,18 @@ public interface NXattenuator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDistance();
-	
+
 	/**
 	 * Distance from sample. Note, it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param distanceDataset the distanceDataset
 	 */
 	public DataNode setDistance(IDataset distanceDataset);
@@ -65,7 +65,7 @@ public interface NXattenuator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getDistanceScalar();
@@ -76,35 +76,35 @@ public interface NXattenuator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param distance the distance
 	 */
 	public DataNode setDistanceScalar(Double distanceValue);
 
 	/**
 	 * Type or composition of attenuator, e.g. polythene
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getType();
-	
+
 	/**
 	 * Type or composition of attenuator, e.g. polythene
-	 * 
+	 *
 	 * @param typeDataset the typeDataset
 	 */
 	public DataNode setType(IDataset typeDataset);
 
 	/**
 	 * Type or composition of attenuator, e.g. polythene
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getTypeScalar();
 
 	/**
 	 * Type or composition of attenuator, e.g. polythene
-	 * 
+	 *
 	 * @param type the type
 	 */
 	public DataNode setTypeScalar(String typeValue);
@@ -115,18 +115,18 @@ public interface NXattenuator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getThickness();
-	
+
 	/**
 	 * Thickness of attenuator along beam direction
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param thicknessDataset the thicknessDataset
 	 */
 	public DataNode setThickness(IDataset thicknessDataset);
@@ -137,7 +137,7 @@ public interface NXattenuator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getThicknessScalar();
@@ -148,7 +148,7 @@ public interface NXattenuator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param thickness the thickness
 	 */
 	public DataNode setThicknessScalar(Double thicknessValue);
@@ -159,18 +159,18 @@ public interface NXattenuator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CROSS_SECTION
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getScattering_cross_section();
-	
+
 	/**
 	 * Scattering cross section (coherent+incoherent)
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CROSS_SECTION
 	 * </p>
-	 * 
+	 *
 	 * @param scattering_cross_sectionDataset the scattering_cross_sectionDataset
 	 */
 	public DataNode setScattering_cross_section(IDataset scattering_cross_sectionDataset);
@@ -181,7 +181,7 @@ public interface NXattenuator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CROSS_SECTION
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getScattering_cross_sectionScalar();
@@ -192,7 +192,7 @@ public interface NXattenuator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CROSS_SECTION
 	 * </p>
-	 * 
+	 *
 	 * @param scattering_cross_section the scattering_cross_section
 	 */
 	public DataNode setScattering_cross_sectionScalar(Double scattering_cross_sectionValue);
@@ -203,18 +203,18 @@ public interface NXattenuator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CROSS_SECTION
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getAbsorption_cross_section();
-	
+
 	/**
 	 * Absorption cross section
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CROSS_SECTION
 	 * </p>
-	 * 
+	 *
 	 * @param absorption_cross_sectionDataset the absorption_cross_sectionDataset
 	 */
 	public DataNode setAbsorption_cross_section(IDataset absorption_cross_sectionDataset);
@@ -225,7 +225,7 @@ public interface NXattenuator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CROSS_SECTION
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getAbsorption_cross_sectionScalar();
@@ -236,7 +236,7 @@ public interface NXattenuator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CROSS_SECTION
 	 * </p>
-	 * 
+	 *
 	 * @param absorption_cross_section the absorption_cross_section
 	 */
 	public DataNode setAbsorption_cross_sectionScalar(Double absorption_cross_sectionValue);
@@ -248,11 +248,11 @@ public interface NXattenuator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getAttenuator_transmission();
-	
+
 	/**
 	 * The nominal amount of the beam that gets through
 	 * (transmitted intensity)/(incident intensity)
@@ -260,7 +260,7 @@ public interface NXattenuator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
-	 * 
+	 *
 	 * @param attenuator_transmissionDataset the attenuator_transmissionDataset
 	 */
 	public DataNode setAttenuator_transmission(IDataset attenuator_transmissionDataset);
@@ -272,7 +272,7 @@ public interface NXattenuator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getAttenuator_transmissionScalar();
@@ -284,7 +284,7 @@ public interface NXattenuator extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
-	 * 
+	 *
 	 * @param attenuator_transmission the attenuator_transmission
 	 */
 	public DataNode setAttenuator_transmissionScalar(Double attenuator_transmissionValue);
@@ -297,11 +297,11 @@ public interface NXattenuator extends NXobject {
 	 * <li><b>out</b> </li>
 	 * <li><b>moving</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getStatus();
-	
+
 	/**
 	 * In or out or moving of the beam
 	 * <p>
@@ -310,7 +310,7 @@ public interface NXattenuator extends NXobject {
 	 * <li><b>out</b> </li>
 	 * <li><b>moving</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param statusDataset the statusDataset
 	 */
 	public DataNode setStatus(IDataset statusDataset);
@@ -323,7 +323,7 @@ public interface NXattenuator extends NXobject {
 	 * <li><b>out</b> </li>
 	 * <li><b>moving</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getStatusScalar();
@@ -336,21 +336,21 @@ public interface NXattenuator extends NXobject {
 	 * <li><b>out</b> </li>
 	 * <li><b>moving</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param status the status
 	 */
 	public DataNode setStatusScalar(String statusValue);
 
 	/**
 	 * time stamp for this observation
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Date getStatusAttributeTime();
-	
+
 	/**
 	 * time stamp for this observation
-	 * 
+	 *
 	 * @param timeValue the timeValue
 	 */
 	public void setStatusAttributeTime(Date timeValue);
@@ -363,11 +363,11 @@ public interface NXattenuator extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -376,7 +376,7 @@ public interface NXattenuator extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);
@@ -396,11 +396,11 @@ public interface NXattenuator extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDepends_on();
-	
+
 	/**
 	 * NeXus positions components by applying a set of translations and rotations
 	 * to apply to the component starting from 0, 0, 0. The order of these operations
@@ -416,7 +416,7 @@ public interface NXattenuator extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_onDataset the depends_onDataset
 	 */
 	public DataNode setDepends_on(IDataset depends_onDataset);
@@ -436,7 +436,7 @@ public interface NXattenuator extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDepends_onScalar();
@@ -456,7 +456,7 @@ public interface NXattenuator extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
@@ -466,17 +466,17 @@ public interface NXattenuator extends NXobject {
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
 	 * This is the group recommended for holding the chain of translation
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -490,12 +490,12 @@ public interface NXattenuator extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -505,12 +505,12 @@ public interface NXattenuator extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -520,11 +520,11 @@ public interface NXattenuator extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -534,23 +534,23 @@ public interface NXattenuator extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 	/**
 	 * Shape of this component. Particulary useful to define the origin for position and orientation in non-standard cases.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXoff_geometry getShape();
-	
+
 	/**
 	 * Shape of this component. Particulary useful to define the origin for position and orientation in non-standard cases.
-	 * 
+	 *
 	 * @param shapeGroup the shapeGroup
 	 */
 	public void setShape(NXoff_geometry shapeGroup);

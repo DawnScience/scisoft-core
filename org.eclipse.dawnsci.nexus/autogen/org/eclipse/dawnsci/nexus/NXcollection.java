@@ -23,7 +23,7 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
  * a warning since it is always an optional group.
  * Anything (groups, fields, or attributes) placed in
  * an :ref:`NXcollection` group will not be validated.
- * 
+ *
  */
 public interface NXcollection extends NXobject {
 

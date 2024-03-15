@@ -24,7 +24,7 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * Subclass of NXelectronanalyser to describe the electron collection column of a
  * photoelectron analyser.
- * 
+
  */
 public class NXcollectioncolumnImpl extends NXobjectImpl implements NXcollectioncolumn {
 
@@ -44,22 +44,22 @@ public class NXcollectioncolumnImpl extends NXobjectImpl implements NXcollection
 	public NXcollectioncolumnImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXcollectioncolumn.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_COLLECTIONCOLUMN;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getScheme() {
@@ -246,7 +246,7 @@ public class NXcollectioncolumnImpl extends NXobjectImpl implements NXcollection
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);
@@ -277,7 +277,7 @@ public class NXcollectioncolumnImpl extends NXobjectImpl implements NXcollection
 	public Map<String, NXaperture> getAllAperture() {
 		return getChildren(NXaperture.class);
 	}
-	
+
 	@Override
 	public void setAllAperture(Map<String, NXaperture> aperture) {
 		setChildren(aperture);
@@ -308,7 +308,7 @@ public class NXcollectioncolumnImpl extends NXobjectImpl implements NXcollection
 	public Map<String, NXdeflector> getAllDeflector() {
 		return getChildren(NXdeflector.class);
 	}
-	
+
 	@Override
 	public void setAllDeflector(Map<String, NXdeflector> deflector) {
 		setChildren(deflector);
@@ -339,7 +339,7 @@ public class NXcollectioncolumnImpl extends NXobjectImpl implements NXcollection
 	public Map<String, NXlens_em> getAllLens_em() {
 		return getChildren(NXlens_em.class);
 	}
-	
+
 	@Override
 	public void setAllLens_em(Map<String, NXlens_em> lens_em) {
 		setChildren(lens_em);

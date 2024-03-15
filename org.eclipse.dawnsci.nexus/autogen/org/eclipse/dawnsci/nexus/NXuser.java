@@ -21,7 +21,7 @@ import org.eclipse.january.dataset.IDataset;
  * than one user with the same affiliation and contact information,
  * but a second :ref:`NXuser` group should be used if they have different
  * affiliations, etc.
- * 
+ *
  */
 public interface NXuser extends NXobject {
 
@@ -37,28 +37,28 @@ public interface NXuser extends NXobject {
 	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * Name of user responsible for this entry
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getName();
-	
+
 	/**
 	 * Name of user responsible for this entry
-	 * 
+	 *
 	 * @param nameDataset the nameDataset
 	 */
 	public DataNode setName(IDataset nameDataset);
 
 	/**
 	 * Name of user responsible for this entry
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getNameScalar();
 
 	/**
 	 * Name of user responsible for this entry
-	 * 
+	 *
 	 * @param name the name
 	 */
 	public DataNode setNameScalar(String nameValue);
@@ -67,16 +67,16 @@ public interface NXuser extends NXobject {
 	 * Role of user responsible for this entry.
 	 * Suggested roles are "local_contact",
 	 * "principal_investigator", and "proposer"
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getRole();
-	
+
 	/**
 	 * Role of user responsible for this entry.
 	 * Suggested roles are "local_contact",
 	 * "principal_investigator", and "proposer"
-	 * 
+	 *
 	 * @param roleDataset the roleDataset
 	 */
 	public DataNode setRole(IDataset roleDataset);
@@ -85,7 +85,7 @@ public interface NXuser extends NXobject {
 	 * Role of user responsible for this entry.
 	 * Suggested roles are "local_contact",
 	 * "principal_investigator", and "proposer"
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getRoleScalar();
@@ -94,147 +94,147 @@ public interface NXuser extends NXobject {
 	 * Role of user responsible for this entry.
 	 * Suggested roles are "local_contact",
 	 * "principal_investigator", and "proposer"
-	 * 
+	 *
 	 * @param role the role
 	 */
 	public DataNode setRoleScalar(String roleValue);
 
 	/**
 	 * Affiliation of user
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getAffiliation();
-	
+
 	/**
 	 * Affiliation of user
-	 * 
+	 *
 	 * @param affiliationDataset the affiliationDataset
 	 */
 	public DataNode setAffiliation(IDataset affiliationDataset);
 
 	/**
 	 * Affiliation of user
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAffiliationScalar();
 
 	/**
 	 * Affiliation of user
-	 * 
+	 *
 	 * @param affiliation the affiliation
 	 */
 	public DataNode setAffiliationScalar(String affiliationValue);
 
 	/**
 	 * Address of user
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getAddress();
-	
+
 	/**
 	 * Address of user
-	 * 
+	 *
 	 * @param addressDataset the addressDataset
 	 */
 	public DataNode setAddress(IDataset addressDataset);
 
 	/**
 	 * Address of user
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAddressScalar();
 
 	/**
 	 * Address of user
-	 * 
+	 *
 	 * @param address the address
 	 */
 	public DataNode setAddressScalar(String addressValue);
 
 	/**
 	 * Telephone number of user
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getTelephone_number();
-	
+
 	/**
 	 * Telephone number of user
-	 * 
+	 *
 	 * @param telephone_numberDataset the telephone_numberDataset
 	 */
 	public DataNode setTelephone_number(IDataset telephone_numberDataset);
 
 	/**
 	 * Telephone number of user
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getTelephone_numberScalar();
 
 	/**
 	 * Telephone number of user
-	 * 
+	 *
 	 * @param telephone_number the telephone_number
 	 */
 	public DataNode setTelephone_numberScalar(String telephone_numberValue);
 
 	/**
 	 * Fax number of user
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getFax_number();
-	
+
 	/**
 	 * Fax number of user
-	 * 
+	 *
 	 * @param fax_numberDataset the fax_numberDataset
 	 */
 	public DataNode setFax_number(IDataset fax_numberDataset);
 
 	/**
 	 * Fax number of user
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getFax_numberScalar();
 
 	/**
 	 * Fax number of user
-	 * 
+	 *
 	 * @param fax_number the fax_number
 	 */
 	public DataNode setFax_numberScalar(String fax_numberValue);
 
 	/**
 	 * Email of user
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getEmail();
-	
+
 	/**
 	 * Email of user
-	 * 
+	 *
 	 * @param emailDataset the emailDataset
 	 */
 	public DataNode setEmail(IDataset emailDataset);
 
 	/**
 	 * Email of user
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getEmailScalar();
 
 	/**
 	 * Email of user
-	 * 
+	 *
 	 * @param email the email
 	 */
 	public DataNode setEmailScalar(String emailValue);
@@ -243,16 +243,16 @@ public interface NXuser extends NXobject {
 	 * facility based unique identifier for this person
 	 * e.g. their identification code on the facility
 	 * address/contact database
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getFacility_user_id();
-	
+
 	/**
 	 * facility based unique identifier for this person
 	 * e.g. their identification code on the facility
 	 * address/contact database
-	 * 
+	 *
 	 * @param facility_user_idDataset the facility_user_idDataset
 	 */
 	public DataNode setFacility_user_id(IDataset facility_user_idDataset);
@@ -261,7 +261,7 @@ public interface NXuser extends NXobject {
 	 * facility based unique identifier for this person
 	 * e.g. their identification code on the facility
 	 * address/contact database
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getFacility_user_idScalar();
@@ -270,7 +270,7 @@ public interface NXuser extends NXobject {
 	 * facility based unique identifier for this person
 	 * e.g. their identification code on the facility
 	 * address/contact database
-	 * 
+	 *
 	 * @param facility_user_id the facility_user_id
 	 */
 	public DataNode setFacility_user_idScalar(String facility_user_idValue);
@@ -278,15 +278,15 @@ public interface NXuser extends NXobject {
 	/**
 	 * an author code, Open Researcher and Contributor ID,
 	 * defined by https://orcid.org and expressed as a URI
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getOrcid();
-	
+
 	/**
 	 * an author code, Open Researcher and Contributor ID,
 	 * defined by https://orcid.org and expressed as a URI
-	 * 
+	 *
 	 * @param orcidDataset the orcidDataset
 	 */
 	public DataNode setOrcid(IDataset orcidDataset);
@@ -294,7 +294,7 @@ public interface NXuser extends NXobject {
 	/**
 	 * an author code, Open Researcher and Contributor ID,
 	 * defined by https://orcid.org and expressed as a URI
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getOrcidScalar();
@@ -302,7 +302,7 @@ public interface NXuser extends NXobject {
 	/**
 	 * an author code, Open Researcher and Contributor ID,
 	 * defined by https://orcid.org and expressed as a URI
-	 * 
+	 *
 	 * @param orcid the orcid
 	 */
 	public DataNode setOrcidScalar(String orcidValue);
@@ -315,11 +315,11 @@ public interface NXuser extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -328,7 +328,7 @@ public interface NXuser extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);

@@ -25,7 +25,7 @@ import org.eclipse.january.dataset.IDataset;
  * wavelength in pulsed neutron instruments. However, it may also include
  * integrals, or scalar monitor counts, which are often used in both in both
  * pulsed and steady-state instrumentation.
- * 
+ *
  */
 public interface NXmonitor extends NXobject {
 
@@ -53,11 +53,11 @@ public interface NXmonitor extends NXobject {
 	 * <li><b>monitor</b> </li>
 	 * <li><b>timer</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getMode();
-	
+
 	/**
 	 * Count to a preset value based on either clock time (timer)
 	 * or received monitor counts (monitor).
@@ -66,7 +66,7 @@ public interface NXmonitor extends NXobject {
 	 * <li><b>monitor</b> </li>
 	 * <li><b>timer</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param modeDataset the modeDataset
 	 */
 	public DataNode setMode(IDataset modeDataset);
@@ -79,7 +79,7 @@ public interface NXmonitor extends NXobject {
 	 * <li><b>monitor</b> </li>
 	 * <li><b>timer</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getModeScalar();
@@ -92,7 +92,7 @@ public interface NXmonitor extends NXobject {
 	 * <li><b>monitor</b> </li>
 	 * <li><b>timer</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param mode the mode
 	 */
 	public DataNode setModeScalar(String modeValue);
@@ -102,17 +102,17 @@ public interface NXmonitor extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_DATE_TIME
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getStart_time();
-	
+
 	/**
 	 * Starting time of measurement
 	 * <p>
 	 * <b>Type:</b> NX_DATE_TIME
 	 * </p>
-	 * 
+	 *
 	 * @param start_timeDataset the start_timeDataset
 	 */
 	public DataNode setStart_time(IDataset start_timeDataset);
@@ -122,7 +122,7 @@ public interface NXmonitor extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_DATE_TIME
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Date getStart_timeScalar();
@@ -132,7 +132,7 @@ public interface NXmonitor extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_DATE_TIME
 	 * </p>
-	 * 
+	 *
 	 * @param start_time the start_time
 	 */
 	public DataNode setStart_timeScalar(Date start_timeValue);
@@ -142,17 +142,17 @@ public interface NXmonitor extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_DATE_TIME
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getEnd_time();
-	
+
 	/**
 	 * Ending time of measurement
 	 * <p>
 	 * <b>Type:</b> NX_DATE_TIME
 	 * </p>
-	 * 
+	 *
 	 * @param end_timeDataset the end_timeDataset
 	 */
 	public DataNode setEnd_time(IDataset end_timeDataset);
@@ -162,7 +162,7 @@ public interface NXmonitor extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_DATE_TIME
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Date getEnd_timeScalar();
@@ -172,7 +172,7 @@ public interface NXmonitor extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_DATE_TIME
 	 * </p>
-	 * 
+	 *
 	 * @param end_time the end_time
 	 */
 	public DataNode setEnd_timeScalar(Date end_timeValue);
@@ -183,18 +183,18 @@ public interface NXmonitor extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getPreset();
-	
+
 	/**
 	 * preset value for time or monitor
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param presetDataset the presetDataset
 	 */
 	public DataNode setPreset(IDataset presetDataset);
@@ -205,7 +205,7 @@ public interface NXmonitor extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getPresetScalar();
@@ -216,7 +216,7 @@ public interface NXmonitor extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param preset the preset
 	 */
 	public DataNode setPresetScalar(Number presetValue);
@@ -227,20 +227,20 @@ public interface NXmonitor extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @deprecated Use transformations/distance instead
 	 * @return  the value.
 	 */
 	@Deprecated
 	public IDataset getDistance();
-	
+
 	/**
 	 * Distance of monitor from sample
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @deprecated Use transformations/distance instead
 	 * @param distanceDataset the distanceDataset
 	 */
@@ -253,7 +253,7 @@ public interface NXmonitor extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @deprecated Use transformations/distance instead
 	 * @return  the value.
 	 */
@@ -266,7 +266,7 @@ public interface NXmonitor extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @deprecated Use transformations/distance instead
 	 * @param distance the distance
 	 */
@@ -280,11 +280,11 @@ public interface NXmonitor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: 2;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getRange();
-	
+
 	/**
 	 * Range (X-axis, Time-of-flight, etc.) over which the integral was calculated
 	 * <p>
@@ -292,7 +292,7 @@ public interface NXmonitor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: 2;
 	 * </p>
-	 * 
+	 *
 	 * @param rangeDataset the rangeDataset
 	 */
 	public DataNode setRange(IDataset rangeDataset);
@@ -304,7 +304,7 @@ public interface NXmonitor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: 2;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getRangeScalar();
@@ -316,7 +316,7 @@ public interface NXmonitor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: 2;
 	 * </p>
-	 * 
+	 *
 	 * @param range the range
 	 */
 	public DataNode setRangeScalar(Double rangeValue);
@@ -327,18 +327,18 @@ public interface NXmonitor extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getNominal();
-	
+
 	/**
 	 * Nominal reading to be used for normalisation purposes.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param nominalDataset the nominalDataset
 	 */
 	public DataNode setNominal(IDataset nominalDataset);
@@ -349,7 +349,7 @@ public interface NXmonitor extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getNominalScalar();
@@ -360,7 +360,7 @@ public interface NXmonitor extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param nominal the nominal
 	 */
 	public DataNode setNominalScalar(Number nominalValue);
@@ -371,18 +371,18 @@ public interface NXmonitor extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getIntegral();
-	
+
 	/**
 	 * Total integral monitor counts
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param integralDataset the integralDataset
 	 */
 	public DataNode setIntegral(IDataset integralDataset);
@@ -393,7 +393,7 @@ public interface NXmonitor extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getIntegralScalar();
@@ -404,21 +404,21 @@ public interface NXmonitor extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param integral the integral
 	 */
 	public DataNode setIntegralScalar(Number integralValue);
 
 	/**
 	 * Time variation of monitor counts
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXlog getIntegral_log();
-	
+
 	/**
 	 * Time variation of monitor counts
-	 * 
+	 *
 	 * @param integral_logGroup the integral_logGroup
 	 */
 	public void setIntegral_log(NXlog integral_logGroup);
@@ -429,18 +429,18 @@ public interface NXmonitor extends NXobject {
 	 * <li><b>Fission Chamber</b> </li>
 	 * <li><b>Scintillator</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getType();
-	
+
 	/**
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>Fission Chamber</b> </li>
 	 * <li><b>Scintillator</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param typeDataset the typeDataset
 	 */
 	public DataNode setType(IDataset typeDataset);
@@ -451,7 +451,7 @@ public interface NXmonitor extends NXobject {
 	 * <li><b>Fission Chamber</b> </li>
 	 * <li><b>Scintillator</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getTypeScalar();
@@ -462,7 +462,7 @@ public interface NXmonitor extends NXobject {
 	 * <li><b>Fission Chamber</b> </li>
 	 * <li><b>Scintillator</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param type the type
 	 */
 	public DataNode setTypeScalar(String typeValue);
@@ -474,11 +474,11 @@ public interface NXmonitor extends NXobject {
 	 * <b>Units:</b> NX_TIME_OF_FLIGHT
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getTime_of_flight();
-	
+
 	/**
 	 * Time-of-flight
 	 * <p>
@@ -486,7 +486,7 @@ public interface NXmonitor extends NXobject {
 	 * <b>Units:</b> NX_TIME_OF_FLIGHT
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
-	 * 
+	 *
 	 * @param time_of_flightDataset the time_of_flightDataset
 	 */
 	public DataNode setTime_of_flight(IDataset time_of_flightDataset);
@@ -498,7 +498,7 @@ public interface NXmonitor extends NXobject {
 	 * <b>Units:</b> NX_TIME_OF_FLIGHT
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getTime_of_flightScalar();
@@ -510,7 +510,7 @@ public interface NXmonitor extends NXobject {
 	 * <b>Units:</b> NX_TIME_OF_FLIGHT
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
-	 * 
+	 *
 	 * @param time_of_flight the time_of_flight
 	 */
 	public DataNode setTime_of_flightScalar(Double time_of_flightValue);
@@ -522,11 +522,11 @@ public interface NXmonitor extends NXobject {
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getEfficiency();
-	
+
 	/**
 	 * Monitor efficiency
 	 * <p>
@@ -534,7 +534,7 @@ public interface NXmonitor extends NXobject {
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
-	 * 
+	 *
 	 * @param efficiencyDataset the efficiencyDataset
 	 */
 	public DataNode setEfficiency(IDataset efficiencyDataset);
@@ -546,7 +546,7 @@ public interface NXmonitor extends NXobject {
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getEfficiencyScalar();
@@ -558,7 +558,7 @@ public interface NXmonitor extends NXobject {
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
-	 * 
+	 *
 	 * @param efficiency the efficiency
 	 */
 	public DataNode setEfficiencyScalar(Number efficiencyValue);
@@ -570,11 +570,11 @@ public interface NXmonitor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getData();
-	
+
 	/**
 	 * Monitor data
 	 * <p>
@@ -582,7 +582,7 @@ public interface NXmonitor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b>
 	 * </p>
-	 * 
+	 *
 	 * @param dataDataset the dataDataset
 	 */
 	public DataNode setData(IDataset dataDataset);
@@ -594,7 +594,7 @@ public interface NXmonitor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getDataScalar();
@@ -606,7 +606,7 @@ public interface NXmonitor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b>
 	 * </p>
-	 * 
+	 *
 	 * @param data the data
 	 */
 	public DataNode setDataScalar(Number dataValue);
@@ -617,18 +617,18 @@ public interface NXmonitor extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSampled_fraction();
-	
+
 	/**
 	 * Proportion of incident beam sampled by the monitor (0<x<1)
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
-	 * 
+	 *
 	 * @param sampled_fractionDataset the sampled_fractionDataset
 	 */
 	public DataNode setSampled_fraction(IDataset sampled_fractionDataset);
@@ -639,7 +639,7 @@ public interface NXmonitor extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getSampled_fractionScalar();
@@ -650,23 +650,23 @@ public interface NXmonitor extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
-	 * 
+	 *
 	 * @param sampled_fraction the sampled_fraction
 	 */
 	public DataNode setSampled_fractionScalar(Double sampled_fractionValue);
 
 	/**
 	 * Geometry of the monitor
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the monitor and NXoff_geometry to describe its shape instead
 	 * @return  the value.
 	 */
 	@Deprecated
 	public NXgeometry getGeometry();
-	
+
 	/**
 	 * Geometry of the monitor
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the monitor and NXoff_geometry to describe its shape instead
 	 * @param geometryGroup the geometryGroup
 	 */
@@ -679,55 +679,55 @@ public interface NXmonitor extends NXobject {
 	 * <li>
 	 * Geometry of the monitor</li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the monitor and NXoff_geometry to describe its shape instead
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXgeometry for that node.
 	 */
 	@Deprecated
 	public NXgeometry getGeometry(String name);
-	
+
 	/**
 	 * Set a NXgeometry node by name:
 	 * <ul>
 	 * <li>
 	 * Geometry of the monitor</li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the monitor and NXoff_geometry to describe its shape instead
 	 * @param name the name of the node
 	 * @param geometry the value to set
 	 */
 	@Deprecated
 	public void setGeometry(String name, NXgeometry geometry);
-	
+
 	/**
 	 * Get all NXgeometry nodes:
 	 * <ul>
 	 * <li>
 	 * Geometry of the monitor</li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the monitor and NXoff_geometry to describe its shape instead
 	 * @return  a map from node names to the NXgeometry for that node.
 	 */
 	@Deprecated
 	public Map<String, NXgeometry> getAllGeometry();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * Geometry of the monitor</li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the monitor and NXoff_geometry to describe its shape instead
-	 * @param geometry the child nodes to add 
+	 * @param geometry the child nodes to add
 	 */
-	
+
 	@Deprecated
 	public void setAllGeometry(Map<String, NXgeometry> geometry);
-	
+
 
 	/**
 	 * Elapsed actual counting time, can be an array of size ``np``
@@ -738,11 +738,11 @@ public interface NXmonitor extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TIME
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getCount_time();
-	
+
 	/**
 	 * Elapsed actual counting time, can be an array of size ``np``
 	 * when scanning. This is not the difference of the calendar time
@@ -752,7 +752,7 @@ public interface NXmonitor extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TIME
 	 * </p>
-	 * 
+	 *
 	 * @param count_timeDataset the count_timeDataset
 	 */
 	public DataNode setCount_time(IDataset count_timeDataset);
@@ -766,7 +766,7 @@ public interface NXmonitor extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TIME
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getCount_timeScalar();
@@ -780,21 +780,21 @@ public interface NXmonitor extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TIME
 	 * </p>
-	 * 
+	 *
 	 * @param count_time the count_time
 	 */
 	public DataNode setCount_timeScalar(Double count_timeValue);
 
 	/**
 	 * This group describes the shape of the beam line component
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXoff_geometry getOff_geometry();
-	
+
 	/**
 	 * This group describes the shape of the beam line component
-	 * 
+	 *
 	 * @param off_geometryGroup the off_geometryGroup
 	 */
 	public void setOff_geometry(NXoff_geometry off_geometryGroup);
@@ -805,47 +805,47 @@ public interface NXmonitor extends NXobject {
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
 	public NXoff_geometry getOff_geometry(String name);
-	
+
 	/**
 	 * Set a NXoff_geometry node by name:
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param off_geometry the value to set
 	 */
 	public void setOff_geometry(String name, NXoff_geometry off_geometry);
-	
+
 	/**
 	 * Get all NXoff_geometry nodes:
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
 	public Map<String, NXoff_geometry> getAllOff_geometry();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
-	 * @param off_geometry the child nodes to add 
+	 *
+	 * @param off_geometry the child nodes to add
 	 */
-	
+
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry);
-	
+
 
 	/**
 	 * .. index:: plotting
@@ -855,11 +855,11 @@ public interface NXmonitor extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -868,7 +868,7 @@ public interface NXmonitor extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);
@@ -889,11 +889,11 @@ public interface NXmonitor extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDepends_on();
-	
+
 	/**
 	 * NeXus positions components by applying a set of translations and rotations
 	 * to apply to the component starting from 0, 0, 0. The order of these operations
@@ -910,7 +910,7 @@ public interface NXmonitor extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_onDataset the depends_onDataset
 	 */
 	public DataNode setDepends_on(IDataset depends_onDataset);
@@ -931,7 +931,7 @@ public interface NXmonitor extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDepends_onScalar();
@@ -952,7 +952,7 @@ public interface NXmonitor extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
@@ -962,17 +962,17 @@ public interface NXmonitor extends NXobject {
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
 	 * This is the group recommended for holding the chain of translation
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -986,12 +986,12 @@ public interface NXmonitor extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -1001,12 +1001,12 @@ public interface NXmonitor extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -1016,11 +1016,11 @@ public interface NXmonitor extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -1030,11 +1030,11 @@ public interface NXmonitor extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 }

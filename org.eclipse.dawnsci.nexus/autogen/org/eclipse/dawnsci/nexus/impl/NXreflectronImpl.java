@@ -23,7 +23,10 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * Device for reducing flight time differences of ions in ToF experiments.
- * 
+ * For atom probe the reflectron can be considered an energy_compensation
+ * device, which can e.g. be realized technically as via a Poschenrieder lens
+ * (see US patent 3863068 or US patents for the reflectron 6740872, or the curved reflectron 8134119 design).
+
  */
 public class NXreflectronImpl extends NXobjectImpl implements NXreflectron {
 
@@ -31,7 +34,7 @@ public class NXreflectronImpl extends NXobjectImpl implements NXreflectron {
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_MANUFACTURER,
+		NexusBaseClass.NX_FABRICATION,
 		NexusBaseClass.NX_TRANSFORMATIONS);
 
 	public NXreflectronImpl() {
@@ -41,22 +44,22 @@ public class NXreflectronImpl extends NXobjectImpl implements NXreflectron {
 	public NXreflectronImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXreflectron.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_REFLECTRON;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getName() {
@@ -79,34 +82,34 @@ public class NXreflectronImpl extends NXobjectImpl implements NXreflectron {
 	}
 
 	@Override
-	public NXmanufacturer getManufacturer() {
-		// dataNodeName = NX_MANUFACTURER
-		return getChild("manufacturer", NXmanufacturer.class);
+	public NXfabrication getFabrication() {
+		// dataNodeName = NX_FABRICATION
+		return getChild("fabrication", NXfabrication.class);
 	}
 
 	@Override
-	public void setManufacturer(NXmanufacturer manufacturerGroup) {
-		putChild("manufacturer", manufacturerGroup);
+	public void setFabrication(NXfabrication fabricationGroup) {
+		putChild("fabrication", fabricationGroup);
 	}
 
 	@Override
-	public NXmanufacturer getManufacturer(String name) {
-		return getChild(name, NXmanufacturer.class);
+	public NXfabrication getFabrication(String name) {
+		return getChild(name, NXfabrication.class);
 	}
 
 	@Override
-	public void setManufacturer(String name, NXmanufacturer manufacturer) {
-		putChild(name, manufacturer);
+	public void setFabrication(String name, NXfabrication fabrication) {
+		putChild(name, fabrication);
 	}
 
 	@Override
-	public Map<String, NXmanufacturer> getAllManufacturer() {
-		return getChildren(NXmanufacturer.class);
+	public Map<String, NXfabrication> getAllFabrication() {
+		return getChildren(NXfabrication.class);
 	}
-	
+
 	@Override
-	public void setAllManufacturer(Map<String, NXmanufacturer> manufacturer) {
-		setChildren(manufacturer);
+	public void setAllFabrication(Map<String, NXfabrication> fabrication) {
+		setChildren(fabrication);
 	}
 
 	@Override
@@ -154,7 +157,7 @@ public class NXreflectronImpl extends NXobjectImpl implements NXreflectron {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

@@ -18,7 +18,7 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 /**
  * Definition of the root NeXus group.
- * 
+ *
  */
 public interface NXroot extends NXobject {
 
@@ -42,11 +42,11 @@ public interface NXroot extends NXobject {
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>NXroot</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeNx_class();
-	
+
 	/**
 	 * The root of any NeXus data file is an ``NXroot`` class
 	 * (no other choice is allowed for a valid NeXus data file).
@@ -55,49 +55,49 @@ public interface NXroot extends NXobject {
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>NXroot</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param nx_classValue the nx_classValue
 	 */
 	public void setAttributeNx_class(String nx_classValue);
 
 	/**
 	 * Date and time file was originally created
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Date getAttributeFile_time();
-	
+
 	/**
 	 * Date and time file was originally created
-	 * 
+	 *
 	 * @param file_timeValue the file_timeValue
 	 */
 	public void setAttributeFile_time(Date file_timeValue);
 
 	/**
 	 * File name of original NeXus file
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeFile_name();
-	
+
 	/**
 	 * File name of original NeXus file
-	 * 
+	 *
 	 * @param file_nameValue the file_nameValue
 	 */
 	public void setAttributeFile_name(String file_nameValue);
 
 	/**
 	 * Date and time of last file change at close
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Date getAttributeFile_update_time();
-	
+
 	/**
 	 * Date and time of last file change at close
-	 * 
+	 *
 	 * @param file_update_timeValue the file_update_timeValue
 	 */
 	public void setAttributeFile_update_time(Date file_update_timeValue);
@@ -107,31 +107,31 @@ public interface NXroot extends NXobject {
 	 * Only used when the NAPI has written the file.
 	 * Note that this is different from the version of the
 	 * base class or application definition version number.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeNexus_version();
-	
+
 	/**
 	 * Version of NeXus API used in writing the file.
 	 * Only used when the NAPI has written the file.
 	 * Note that this is different from the version of the
 	 * base class or application definition version number.
-	 * 
+	 *
 	 * @param nexus_versionValue the nexus_versionValue
 	 */
 	public void setAttributeNexus_version(String nexus_versionValue);
 
 	/**
 	 * Version of HDF (version 4) library used in writing the file
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeHdf_version();
-	
+
 	/**
 	 * Version of HDF (version 4) library used in writing the file
-	 * 
+	 *
 	 * @param hdf_versionValue the hdf_versionValue
 	 */
 	public void setAttributeHdf_version(String hdf_versionValue);
@@ -140,86 +140,86 @@ public interface NXroot extends NXobject {
 	 * Version of HDF5 library used in writing the file.
 	 * Note this attribute is spelled with uppercase "V",
 	 * different than other version attributes.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeHdf5_version();
-	
+
 	/**
 	 * Version of HDF5 library used in writing the file.
 	 * Note this attribute is spelled with uppercase "V",
 	 * different than other version attributes.
-	 * 
+	 *
 	 * @param hdf5_versionValue the hdf5_versionValue
 	 */
 	public void setAttributeHdf5_version(String hdf5_versionValue);
 
 	/**
 	 * Version of XML support library used in writing the XML file
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeXml_version();
-	
+
 	/**
 	 * Version of XML support library used in writing the XML file
-	 * 
+	 *
 	 * @param xml_versionValue the xml_versionValue
 	 */
 	public void setAttributeXml_version(String xml_versionValue);
 
 	/**
 	 * Version of h5py Python package used in writing the file
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeH5py_version();
-	
+
 	/**
 	 * Version of h5py Python package used in writing the file
-	 * 
+	 *
 	 * @param h5py_versionValue the h5py_versionValue
 	 */
 	public void setAttributeH5py_version(String h5py_versionValue);
 
 	/**
 	 * facility or program where file originated
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeCreator();
-	
+
 	/**
 	 * facility or program where file originated
-	 * 
+	 *
 	 * @param creatorValue the creatorValue
 	 */
 	public void setAttributeCreator(String creatorValue);
 
 	/**
 	 * Version of facility or program used in writing the file
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeCreator_version();
-	
+
 	/**
 	 * Version of facility or program used in writing the file
-	 * 
+	 *
 	 * @param creator_versionValue the creator_versionValue
 	 */
 	public void setAttributeCreator_version(String creator_versionValue);
 
 	/**
 	 * entries
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXentry getEntry();
-	
+
 	/**
 	 * entries
-	 * 
+	 *
 	 * @param entryGroup the entryGroup
 	 */
 	public void setEntry(NXentry entryGroup);
@@ -230,47 +230,47 @@ public interface NXroot extends NXobject {
 	 * <li>
 	 * entries</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXentry for that node.
 	 */
 	public NXentry getEntry(String name);
-	
+
 	/**
 	 * Set a NXentry node by name:
 	 * <ul>
 	 * <li>
 	 * entries</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param entry the value to set
 	 */
 	public void setEntry(String name, NXentry entry);
-	
+
 	/**
 	 * Get all NXentry nodes:
 	 * <ul>
 	 * <li>
 	 * entries</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXentry for that node.
 	 */
 	public Map<String, NXentry> getAllEntry();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * entries</li>
 	 * </ul>
-	 * 
-	 * @param entry the child nodes to add 
+	 *
+	 * @param entry the child nodes to add
 	 */
-	
+
 	public void setAllEntry(Map<String, NXentry> entry);
-	
+
 
 	/**
 	 * .. index:: find the default plottable data
@@ -287,11 +287,11 @@ public interface NXroot extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: find the default plottable data
 	 * .. index:: plotting
@@ -307,7 +307,7 @@ public interface NXroot extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);

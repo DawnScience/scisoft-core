@@ -24,7 +24,7 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * legacy class - recommend to use :ref:`NXtransformations` now
  * Description for a general orientation of a component - used by :ref:`NXgeometry`
- * 
+
  */
 public class NXorientationImpl extends NXobjectImpl implements NXorientation {
 
@@ -41,22 +41,22 @@ public class NXorientationImpl extends NXobjectImpl implements NXorientation {
 	public NXorientationImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXorientation.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_ORIENTATION;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public NXgeometry getGeometry() {
@@ -83,7 +83,7 @@ public class NXorientationImpl extends NXobjectImpl implements NXorientation {
 	public Map<String, NXgeometry> getAllGeometry() {
 		return getChildren(NXgeometry.class);
 	}
-	
+
 	@Override
 	public void setAllGeometry(Map<String, NXgeometry> geometry) {
 		setChildren(geometry);

@@ -42,7 +42,7 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
  * Within each NXtransformations a depends_on section is required. The depends_on
  * field specifies if the coordinate system is the root/reference
  * (which is indicated by writing "." in the depends_on section.)
- * 
+ *
  */
 public interface NXcoordinate_system_set extends NXobject {
 
@@ -62,11 +62,11 @@ public interface NXcoordinate_system_set extends NXobject {
 	 * to the coordinate system.
 	 * The NXtransformations for these mappings need to be formatted
 	 * according to the descriptions in NXtransformations.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
 	 * A group of transformations which specify:
 	 * * Three base vectors of the coordinate system.
@@ -83,7 +83,7 @@ public interface NXcoordinate_system_set extends NXobject {
 	 * to the coordinate system.
 	 * The NXtransformations for these mappings need to be formatted
 	 * according to the descriptions in NXtransformations.
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -108,12 +108,12 @@ public interface NXcoordinate_system_set extends NXobject {
 	 * The NXtransformations for these mappings need to be formatted
 	 * according to the descriptions in NXtransformations.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -134,12 +134,12 @@ public interface NXcoordinate_system_set extends NXobject {
 	 * The NXtransformations for these mappings need to be formatted
 	 * according to the descriptions in NXtransformations.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -160,11 +160,11 @@ public interface NXcoordinate_system_set extends NXobject {
 	 * The NXtransformations for these mappings need to be formatted
 	 * according to the descriptions in NXtransformations.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -185,11 +185,11 @@ public interface NXcoordinate_system_set extends NXobject {
 	 * The NXtransformations for these mappings need to be formatted
 	 * according to the descriptions in NXtransformations.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 }

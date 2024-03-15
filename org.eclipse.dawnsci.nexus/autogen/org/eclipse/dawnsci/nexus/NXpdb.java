@@ -120,7 +120,7 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
  * pdbx_seq_one_letter_code:["GIVEQCCTSICSLYQLENYCN","FVNQHLCGSHLVEALYLVCGERGFFYTPKA"]
  * pdbx_seq_one_letter_code_can:["GIVEQCCTSICSLYQLENYCN","FVNQHLCGSHLVEALYLVCGERGFFYTPKA"]
  * type:["polypeptide(L)", "polypeptide(L)"]
- * 
+ *
  */
 public interface NXpdb extends NXobject {
 

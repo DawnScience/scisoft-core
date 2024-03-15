@@ -20,7 +20,7 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * A sensor used to monitor an external condition
  * The condition itself is described in :ref:`NXenvironment`.
- * 
+ *
  */
 public interface NXsensor extends NXobject {
 
@@ -41,128 +41,128 @@ public interface NXsensor extends NXobject {
 	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
 	 * Sensor identification code/model number
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getModel();
-	
+
 	/**
 	 * Sensor identification code/model number
-	 * 
+	 *
 	 * @param modelDataset the modelDataset
 	 */
 	public DataNode setModel(IDataset modelDataset);
 
 	/**
 	 * Sensor identification code/model number
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getModelScalar();
 
 	/**
 	 * Sensor identification code/model number
-	 * 
+	 *
 	 * @param model the model
 	 */
 	public DataNode setModelScalar(String modelValue);
 
 	/**
 	 * Name for the sensor
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getName();
-	
+
 	/**
 	 * Name for the sensor
-	 * 
+	 *
 	 * @param nameDataset the nameDataset
 	 */
 	public DataNode setName(IDataset nameDataset);
 
 	/**
 	 * Name for the sensor
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getNameScalar();
 
 	/**
 	 * Name for the sensor
-	 * 
+	 *
 	 * @param name the name
 	 */
 	public DataNode setNameScalar(String nameValue);
 
 	/**
 	 * Short name of sensor used e.g. on monitor display program
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getShort_name();
-	
+
 	/**
 	 * Short name of sensor used e.g. on monitor display program
-	 * 
+	 *
 	 * @param short_nameDataset the short_nameDataset
 	 */
 	public DataNode setShort_name(IDataset short_nameDataset);
 
 	/**
 	 * Short name of sensor used e.g. on monitor display program
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getShort_nameScalar();
 
 	/**
 	 * Short name of sensor used e.g. on monitor display program
-	 * 
+	 *
 	 * @param short_name the short_name
 	 */
 	public DataNode setShort_nameScalar(String short_nameValue);
 
 	/**
 	 * where sensor is attached to ("sample" | "can")
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getAttached_to();
-	
+
 	/**
 	 * where sensor is attached to ("sample" | "can")
-	 * 
+	 *
 	 * @param attached_toDataset the attached_toDataset
 	 */
 	public DataNode setAttached_to(IDataset attached_toDataset);
 
 	/**
 	 * where sensor is attached to ("sample" | "can")
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttached_toScalar();
 
 	/**
 	 * where sensor is attached to ("sample" | "can")
-	 * 
+	 *
 	 * @param attached_to the attached_to
 	 */
 	public DataNode setAttached_toScalar(String attached_toValue);
 
 	/**
 	 * Defines the axes for logged vector quantities if they are not the global instrument axes.
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the beamstop and NXoff_geometry to describe its shape instead
 	 * @return  the value.
 	 */
 	@Deprecated
 	public NXgeometry getGeometry();
-	
+
 	/**
 	 * Defines the axes for logged vector quantities if they are not the global instrument axes.
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the beamstop and NXoff_geometry to describe its shape instead
 	 * @param geometryGroup the geometryGroup
 	 */
@@ -187,11 +187,11 @@ public interface NXsensor extends NXobject {
 	 * <li><b>shear</b> </li>
 	 * <li><b>surface_pressure</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getMeasurement();
-	
+
 	/**
 	 * name for measured signal
 	 * <p>
@@ -210,7 +210,7 @@ public interface NXsensor extends NXobject {
 	 * <li><b>shear</b> </li>
 	 * <li><b>surface_pressure</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param measurementDataset the measurementDataset
 	 */
 	public DataNode setMeasurement(IDataset measurementDataset);
@@ -233,7 +233,7 @@ public interface NXsensor extends NXobject {
 	 * <li><b>shear</b> </li>
 	 * <li><b>surface_pressure</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getMeasurementScalar();
@@ -256,7 +256,7 @@ public interface NXsensor extends NXobject {
 	 * <li><b>shear</b> </li>
 	 * <li><b>surface_pressure</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param measurement the measurement
 	 */
 	public DataNode setMeasurementScalar(String measurementValue);
@@ -274,11 +274,11 @@ public interface NXsensor extends NXobject {
 	 * Hall
 	 * :Surface pressure:
 	 * wilhelmy plate
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getType();
-	
+
 	/**
 	 * The type of hardware used for the measurement.
 	 * Examples (suggestions but not restrictions):
@@ -292,7 +292,7 @@ public interface NXsensor extends NXobject {
 	 * Hall
 	 * :Surface pressure:
 	 * wilhelmy plate
-	 * 
+	 *
 	 * @param typeDataset the typeDataset
 	 */
 	public DataNode setType(IDataset typeDataset);
@@ -310,7 +310,7 @@ public interface NXsensor extends NXobject {
 	 * Hall
 	 * :Surface pressure:
 	 * wilhelmy plate
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getTypeScalar();
@@ -328,7 +328,7 @@ public interface NXsensor extends NXobject {
 	 * Hall
 	 * :Surface pressure:
 	 * wilhelmy plate
-	 * 
+	 *
 	 * @param type the type
 	 */
 	public DataNode setTypeScalar(String typeValue);
@@ -339,18 +339,18 @@ public interface NXsensor extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getRun_control();
-	
+
 	/**
 	 * Is data collection controlled or synchronised to this quantity:
 	 * 1=no, 0=to "value", 1=to "value_deriv1", etc.
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
-	 * 
+	 *
 	 * @param run_controlDataset the run_controlDataset
 	 */
 	public DataNode setRun_control(IDataset run_controlDataset);
@@ -361,7 +361,7 @@ public interface NXsensor extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Boolean getRun_controlScalar();
@@ -372,7 +372,7 @@ public interface NXsensor extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
-	 * 
+	 *
 	 * @param run_control the run_control
 	 */
 	public DataNode setRun_controlScalar(Boolean run_controlValue);
@@ -383,18 +383,18 @@ public interface NXsensor extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getHigh_trip_value();
-	
+
 	/**
 	 * Upper control bound of sensor reading if using run_control
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param high_trip_valueDataset the high_trip_valueDataset
 	 */
 	public DataNode setHigh_trip_value(IDataset high_trip_valueDataset);
@@ -405,7 +405,7 @@ public interface NXsensor extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getHigh_trip_valueScalar();
@@ -416,7 +416,7 @@ public interface NXsensor extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param high_trip_value the high_trip_value
 	 */
 	public DataNode setHigh_trip_valueScalar(Double high_trip_valueValue);
@@ -427,18 +427,18 @@ public interface NXsensor extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getLow_trip_value();
-	
+
 	/**
 	 * Lower control bound of sensor reading if using run_control
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param low_trip_valueDataset the low_trip_valueDataset
 	 */
 	public DataNode setLow_trip_value(IDataset low_trip_valueDataset);
@@ -449,7 +449,7 @@ public interface NXsensor extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getLow_trip_valueScalar();
@@ -460,7 +460,7 @@ public interface NXsensor extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param low_trip_value the low_trip_value
 	 */
 	public DataNode setLow_trip_valueScalar(Double low_trip_valueValue);
@@ -473,11 +473,11 @@ public interface NXsensor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getValue();
-	
+
 	/**
 	 * nominal setpoint or average value
 	 * - need [n] as may be a vector
@@ -486,7 +486,7 @@ public interface NXsensor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
-	 * 
+	 *
 	 * @param valueDataset the valueDataset
 	 */
 	public DataNode setValue(IDataset valueDataset);
@@ -499,7 +499,7 @@ public interface NXsensor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getValueScalar();
@@ -512,7 +512,7 @@ public interface NXsensor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
-	 * 
+	 *
 	 * @param value the value
 	 */
 	public DataNode setValueScalar(Double valueValue);
@@ -526,11 +526,11 @@ public interface NXsensor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getValue_deriv1();
-	
+
 	/**
 	 * Nominal/average first derivative of value
 	 * e.g. strain rate
@@ -540,7 +540,7 @@ public interface NXsensor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
-	 * 
+	 *
 	 * @param value_deriv1Dataset the value_deriv1Dataset
 	 */
 	public DataNode setValue_deriv1(IDataset value_deriv1Dataset);
@@ -554,7 +554,7 @@ public interface NXsensor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getValue_deriv1Scalar();
@@ -568,7 +568,7 @@ public interface NXsensor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
-	 * 
+	 *
 	 * @param value_deriv1 the value_deriv1
 	 */
 	public DataNode setValue_deriv1Scalar(Double value_deriv1Value);
@@ -581,11 +581,11 @@ public interface NXsensor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getValue_deriv2();
-	
+
 	/**
 	 * Nominal/average second derivative of value
 	 * - same dimensions as "value" (may be a vector)
@@ -594,7 +594,7 @@ public interface NXsensor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
-	 * 
+	 *
 	 * @param value_deriv2Dataset the value_deriv2Dataset
 	 */
 	public DataNode setValue_deriv2(IDataset value_deriv2Dataset);
@@ -607,7 +607,7 @@ public interface NXsensor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getValue_deriv2Scalar();
@@ -620,49 +620,49 @@ public interface NXsensor extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
-	 * 
+	 *
 	 * @param value_deriv2 the value_deriv2
 	 */
 	public DataNode setValue_deriv2Scalar(Double value_deriv2Value);
 
 	/**
 	 * Time history of sensor readings
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXlog getValue_log();
-	
+
 	/**
 	 * Time history of sensor readings
-	 * 
+	 *
 	 * @param value_logGroup the value_logGroup
 	 */
 	public void setValue_log(NXlog value_logGroup);
 
 	/**
 	 * Time history of first derivative of sensor readings
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXlog getValue_deriv1_log();
-	
+
 	/**
 	 * Time history of first derivative of sensor readings
-	 * 
+	 *
 	 * @param value_deriv1_logGroup the value_deriv1_logGroup
 	 */
 	public void setValue_deriv1_log(NXlog value_deriv1_logGroup);
 
 	/**
 	 * Time history of second derivative of sensor readings
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXlog getValue_deriv2_log();
-	
+
 	/**
 	 * Time history of second derivative of sensor readings
-	 * 
+	 *
 	 * @param value_deriv2_logGroup the value_deriv2_logGroup
 	 */
 	public void setValue_deriv2_log(NXlog value_deriv2_logGroup);
@@ -677,11 +677,11 @@ public interface NXsensor extends NXobject {
 	 * <li><b>flow shear gradient</b> </li>
 	 * <li><b>flow vorticity</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getExternal_field_brief();
-	
+
 	/**
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
@@ -692,7 +692,7 @@ public interface NXsensor extends NXobject {
 	 * <li><b>flow shear gradient</b> </li>
 	 * <li><b>flow vorticity</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param external_field_briefDataset the external_field_briefDataset
 	 */
 	public DataNode setExternal_field_brief(IDataset external_field_briefDataset);
@@ -707,7 +707,7 @@ public interface NXsensor extends NXobject {
 	 * <li><b>flow shear gradient</b> </li>
 	 * <li><b>flow vorticity</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getExternal_field_briefScalar();
@@ -722,35 +722,35 @@ public interface NXsensor extends NXobject {
 	 * <li><b>flow shear gradient</b> </li>
 	 * <li><b>flow vorticity</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param external_field_brief the external_field_brief
 	 */
 	public DataNode setExternal_field_briefScalar(String external_field_briefValue);
 
 	/**
 	 * For complex external fields not satisfied by External_field_brief
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXorientation getExternal_field_full();
-	
+
 	/**
 	 * For complex external fields not satisfied by External_field_brief
-	 * 
+	 *
 	 * @param external_field_fullGroup the external_field_fullGroup
 	 */
 	public void setExternal_field_full(NXorientation external_field_fullGroup);
 
 	/**
 	 * This group describes the shape of the sensor when necessary.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXoff_geometry getOff_geometry();
-	
+
 	/**
 	 * This group describes the shape of the sensor when necessary.
-	 * 
+	 *
 	 * @param off_geometryGroup the off_geometryGroup
 	 */
 	public void setOff_geometry(NXoff_geometry off_geometryGroup);
@@ -761,47 +761,47 @@ public interface NXsensor extends NXobject {
 	 * <li>
 	 * This group describes the shape of the sensor when necessary.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
 	public NXoff_geometry getOff_geometry(String name);
-	
+
 	/**
 	 * Set a NXoff_geometry node by name:
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the sensor when necessary.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param off_geometry the value to set
 	 */
 	public void setOff_geometry(String name, NXoff_geometry off_geometry);
-	
+
 	/**
 	 * Get all NXoff_geometry nodes:
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the sensor when necessary.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
 	public Map<String, NXoff_geometry> getAllOff_geometry();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the sensor when necessary.</li>
 	 * </ul>
-	 * 
-	 * @param off_geometry the child nodes to add 
+	 *
+	 * @param off_geometry the child nodes to add
 	 */
-	
+
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry);
-	
+
 
 	/**
 	 * .. index:: plotting
@@ -811,11 +811,11 @@ public interface NXsensor extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -824,7 +824,7 @@ public interface NXsensor extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);
@@ -841,11 +841,11 @@ public interface NXsensor extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDepends_on();
-	
+
 	/**
 	 * NeXus positions components by applying a set of translations and rotations
 	 * to apply to the component starting from 0, 0, 0. The order of these operations
@@ -858,7 +858,7 @@ public interface NXsensor extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_onDataset the depends_onDataset
 	 */
 	public DataNode setDepends_on(IDataset depends_onDataset);
@@ -875,7 +875,7 @@ public interface NXsensor extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDepends_onScalar();
@@ -892,7 +892,7 @@ public interface NXsensor extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
@@ -902,17 +902,17 @@ public interface NXsensor extends NXobject {
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
 	 * This is the group recommended for holding the chain of translation
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -926,12 +926,12 @@ public interface NXsensor extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -941,12 +941,12 @@ public interface NXsensor extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -956,11 +956,11 @@ public interface NXsensor extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -970,11 +970,11 @@ public interface NXsensor extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 }

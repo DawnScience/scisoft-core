@@ -20,7 +20,7 @@ import org.eclipse.january.dataset.IDataset;
 
 /**
  * Document an event of data processing, reconstruction, or analysis for this data.
- * 
+ *
  */
 public interface NXprocess extends NXobject {
 
@@ -34,17 +34,17 @@ public interface NXprocess extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getProgram();
-	
+
 	/**
 	 * Name of the program used
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param programDataset the programDataset
 	 */
 	public DataNode setProgram(IDataset programDataset);
@@ -54,7 +54,7 @@ public interface NXprocess extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getProgramScalar();
@@ -64,7 +64,7 @@ public interface NXprocess extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param program the program
 	 */
 	public DataNode setProgramScalar(String programValue);
@@ -76,11 +76,11 @@ public interface NXprocess extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_POSINT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSequence_index();
-	
+
 	/**
 	 * Sequence index of processing,
 	 * for determining the order of multiple **NXprocess** steps.
@@ -88,7 +88,7 @@ public interface NXprocess extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_POSINT
 	 * </p>
-	 * 
+	 *
 	 * @param sequence_indexDataset the sequence_indexDataset
 	 */
 	public DataNode setSequence_index(IDataset sequence_indexDataset);
@@ -100,7 +100,7 @@ public interface NXprocess extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_POSINT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Long getSequence_indexScalar();
@@ -112,7 +112,7 @@ public interface NXprocess extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_POSINT
 	 * </p>
-	 * 
+	 *
 	 * @param sequence_index the sequence_index
 	 */
 	public DataNode setSequence_indexScalar(Long sequence_indexValue);
@@ -122,17 +122,17 @@ public interface NXprocess extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getVersion();
-	
+
 	/**
 	 * Version of the program used
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param versionDataset the versionDataset
 	 */
 	public DataNode setVersion(IDataset versionDataset);
@@ -142,7 +142,7 @@ public interface NXprocess extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getVersionScalar();
@@ -152,7 +152,7 @@ public interface NXprocess extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param version the version
 	 */
 	public DataNode setVersionScalar(String versionValue);
@@ -162,17 +162,17 @@ public interface NXprocess extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_DATE_TIME
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDate();
-	
+
 	/**
 	 * Date and time of processing.
 	 * <p>
 	 * <b>Type:</b> NX_DATE_TIME
 	 * </p>
-	 * 
+	 *
 	 * @param dateDataset the dateDataset
 	 */
 	public DataNode setDate(IDataset dateDataset);
@@ -182,7 +182,7 @@ public interface NXprocess extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_DATE_TIME
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Date getDateScalar();
@@ -192,7 +192,7 @@ public interface NXprocess extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_DATE_TIME
 	 * </p>
-	 * 
+	 *
 	 * @param date the date
 	 */
 	public DataNode setDateScalar(Date dateValue);
@@ -203,18 +203,18 @@ public interface NXprocess extends NXobject {
 	 * The contents of the note can be anything that the processing code
 	 * can understand, or simple text.
 	 * The name will be numbered to allow for ordering of steps.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXnote getNote();
-	
+
 	/**
 	 * The note will contain information about how the data was processed
 	 * or anything about the data provenance.
 	 * The contents of the note can be anything that the processing code
 	 * can understand, or simple text.
 	 * The name will be numbered to allow for ordering of steps.
-	 * 
+	 *
 	 * @param noteGroup the noteGroup
 	 */
 	public void setNote(NXnote noteGroup);
@@ -229,12 +229,12 @@ public interface NXprocess extends NXobject {
 	 * can understand, or simple text.
 	 * The name will be numbered to allow for ordering of steps.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXnote for that node.
 	 */
 	public NXnote getNote(String name);
-	
+
 	/**
 	 * Set a NXnote node by name:
 	 * <ul>
@@ -245,12 +245,12 @@ public interface NXprocess extends NXobject {
 	 * can understand, or simple text.
 	 * The name will be numbered to allow for ordering of steps.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param note the value to set
 	 */
 	public void setNote(String name, NXnote note);
-	
+
 	/**
 	 * Get all NXnote nodes:
 	 * <ul>
@@ -261,11 +261,11 @@ public interface NXprocess extends NXobject {
 	 * can understand, or simple text.
 	 * The name will be numbered to allow for ordering of steps.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXnote for that node.
 	 */
 	public Map<String, NXnote> getAllNote();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -276,12 +276,12 @@ public interface NXprocess extends NXobject {
 	 * can understand, or simple text.
 	 * The name will be numbered to allow for ordering of steps.</li>
 	 * </ul>
-	 * 
-	 * @param note the child nodes to add 
+	 *
+	 * @param note the child nodes to add
 	 */
-	
+
 	public void setAllNote(Map<String, NXnote> note);
-	
+
 
 	/**
 	 * .. index:: plotting
@@ -291,11 +291,11 @@ public interface NXprocess extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -304,7 +304,7 @@ public interface NXprocess extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);

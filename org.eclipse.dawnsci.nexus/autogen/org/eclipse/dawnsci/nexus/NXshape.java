@@ -20,7 +20,7 @@ import org.eclipse.january.dataset.IDataset;
  * This is the description of the general shape and size of a
  * component, which may be made up of ``numobj`` separate
  * elements - it is used by the :ref:`NXgeometry` class
- * 
+ *
  */
 public interface NXshape extends NXobject {
 
@@ -42,11 +42,11 @@ public interface NXshape extends NXobject {
 	 * <li><b>nxparabolic</b> </li>
 	 * <li><b>nxpolynomial</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getShape();
-	
+
 	/**
 	 * general shape of a component
 	 * <p>
@@ -61,7 +61,7 @@ public interface NXshape extends NXobject {
 	 * <li><b>nxparabolic</b> </li>
 	 * <li><b>nxpolynomial</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param shapeDataset the shapeDataset
 	 */
 	public DataNode setShape(IDataset shapeDataset);
@@ -80,7 +80,7 @@ public interface NXshape extends NXobject {
 	 * <li><b>nxparabolic</b> </li>
 	 * <li><b>nxpolynomial</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getShapeScalar();
@@ -99,7 +99,7 @@ public interface NXshape extends NXobject {
 	 * <li><b>nxparabolic</b> </li>
 	 * <li><b>nxpolynomial</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param shape the shape
 	 */
 	public DataNode setShapeScalar(String shapeValue);
@@ -124,11 +124,11 @@ public interface NXshape extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: numobj; 2: nshapepar;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSize();
-	
+
 	/**
 	 * physical extent of the object along its local axes (after NXorientation)
 	 * with the center of mass at the local origin (after NXtranslation).
@@ -149,7 +149,7 @@ public interface NXshape extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: numobj; 2: nshapepar;
 	 * </p>
-	 * 
+	 *
 	 * @param sizeDataset the sizeDataset
 	 */
 	public DataNode setSize(IDataset sizeDataset);
@@ -174,7 +174,7 @@ public interface NXshape extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: numobj; 2: nshapepar;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getSizeScalar();
@@ -199,7 +199,7 @@ public interface NXshape extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: numobj; 2: nshapepar;
 	 * </p>
-	 * 
+	 *
 	 * @param size the size
 	 */
 	public DataNode setSizeScalar(Double sizeValue);
@@ -210,18 +210,18 @@ public interface NXshape extends NXobject {
 	 * <li><b>concave</b> </li>
 	 * <li><b>convex</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDirection();
-	
+
 	/**
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>concave</b> </li>
 	 * <li><b>convex</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param directionDataset the directionDataset
 	 */
 	public DataNode setDirection(IDataset directionDataset);
@@ -232,7 +232,7 @@ public interface NXshape extends NXobject {
 	 * <li><b>concave</b> </li>
 	 * <li><b>convex</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDirectionScalar();
@@ -243,7 +243,7 @@ public interface NXshape extends NXobject {
 	 * <li><b>concave</b> </li>
 	 * <li><b>convex</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param direction the direction
 	 */
 	public DataNode setDirectionScalar(String directionValue);
@@ -256,11 +256,11 @@ public interface NXshape extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -269,7 +269,7 @@ public interface NXshape extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);

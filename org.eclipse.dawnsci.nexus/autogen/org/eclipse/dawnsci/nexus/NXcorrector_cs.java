@@ -19,16 +19,11 @@ import org.eclipse.january.dataset.IDataset;
 
 /**
  * Corrector for aberrations in an electron microscope.
- * Different vendors use a different naming schemes for aberration coefficients.
- * It is the users responsibility to map to the best matching values.
- * In transmission electron microscopes the spherical aberration corrector is
- * a component that is controlled via instructing the microscope to achieve
- * set point values. The corrector is composed of multiple lenses and other
- * parts with vendor-specific details which are often undisclosed.
- * In the case of Nion Co. microscopes the coefficients of the corrector can be
- * retrieved via NionSwift, which is why currently the Nion convention for the
- * aberration coefficients is used.
- * 
+ * Different technology partners use different naming schemes and models
+ * for quantifying the aberration coefficients.
+ * The corrector in an electron microscope is composed of multiple lenses and
+ * multipole stigmators with vendor-specific details which are often undisclosed.
+ *
  */
 public interface NXcorrector_cs extends NXobject {
 
@@ -40,17 +35,17 @@ public interface NXcorrector_cs extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getApplied();
-	
+
 	/**
 	 * Was the corrector used?
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
-	 * 
+	 *
 	 * @param appliedDataset the appliedDataset
 	 */
 	public DataNode setApplied(IDataset appliedDataset);
@@ -60,7 +55,7 @@ public interface NXcorrector_cs extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Boolean getAppliedScalar();
@@ -70,127 +65,109 @@ public interface NXcorrector_cs extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
-	 * 
+	 *
 	 * @param applied the applied
 	 */
 	public DataNode setAppliedScalar(Boolean appliedValue);
 
 	/**
 	 * Given name/alias.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getName();
-	
+
 	/**
 	 * Given name/alias.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param nameDataset the nameDataset
 	 */
 	public DataNode setName(IDataset nameDataset);
 
 	/**
 	 * Given name/alias.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getNameScalar();
 
 	/**
 	 * Given name/alias.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param name the name
 	 */
 	public DataNode setNameScalar(String nameValue);
 
 	/**
-	 * 
+	 *
 	 * @return  the value.
 	 */
-	public NXmanufacturer getManufacturer();
-	
-	/**
-	 * 
-	 * @param manufacturerGroup the manufacturerGroup
-	 */
-	public void setManufacturer(NXmanufacturer manufacturerGroup);
+	public NXfabrication getFabrication();
 
 	/**
-	 * Get a NXmanufacturer node by name:
+	 *
+	 * @param fabricationGroup the fabricationGroup
+	 */
+	public void setFabrication(NXfabrication fabricationGroup);
+
+	/**
+	 * Get a NXfabrication node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXmanufacturer for that node.
+	 * @return  a map from node names to the NXfabrication for that node.
 	 */
-	public NXmanufacturer getManufacturer(String name);
-	
+	public NXfabrication getFabrication(String name);
+
 	/**
-	 * Set a NXmanufacturer node by name:
+	 * Set a NXfabrication node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
-	 * @param manufacturer the value to set
+	 * @param fabrication the value to set
 	 */
-	public void setManufacturer(String name, NXmanufacturer manufacturer);
-	
+	public void setFabrication(String name, NXfabrication fabrication);
+
 	/**
-	 * Get all NXmanufacturer nodes:
+	 * Get all NXfabrication nodes:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
-	 * @return  a map from node names to the NXmanufacturer for that node.
+	 *
+	 * @return  a map from node names to the NXfabrication for that node.
 	 */
-	public Map<String, NXmanufacturer> getAllManufacturer();
-	
+	public Map<String, NXfabrication> getAllFabrication();
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
-	 * @param manufacturer the child nodes to add 
+	 *
+	 * @param fabrication the child nodes to add
 	 */
-	
-	public void setAllManufacturer(Map<String, NXmanufacturer> manufacturer);
-	
+
+	public void setAllFabrication(Map<String, NXfabrication> fabrication);
+
 
 	/**
 	 * Ideally, a (globally) unique persistent identifier, link,
 	 * or text to a resource which gives further details. If this does not exist
 	 * a free-text field to report further details about the corrector.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDescription();
-	
+
 	/**
 	 * Ideally, a (globally) unique persistent identifier, link,
 	 * or text to a resource which gives further details. If this does not exist
 	 * a free-text field to report further details about the corrector.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param descriptionDataset the descriptionDataset
 	 */
 	public DataNode setDescription(IDataset descriptionDataset);
@@ -199,10 +176,7 @@ public interface NXcorrector_cs extends NXobject {
 	 * Ideally, a (globally) unique persistent identifier, link,
 	 * or text to a resource which gives further details. If this does not exist
 	 * a free-text field to report further details about the corrector.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDescriptionScalar();
@@ -211,78 +185,38 @@ public interface NXcorrector_cs extends NXobject {
 	 * Ideally, a (globally) unique persistent identifier, link,
 	 * or text to a resource which gives further details. If this does not exist
 	 * a free-text field to report further details about the corrector.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param description the description
 	 */
 	public DataNode setDescriptionScalar(String descriptionValue);
 
 	/**
-	 * 
+	 * Specific information about the concrete alignment procedure which is a
+	 * process during which the corrector is configured to enable a calibrated
+	 * usage of the microscope.
+	 *
 	 * @return  the value.
 	 */
-	public NXaberration getAberration();
-	
-	/**
-	 * 
-	 * @param aberrationGroup the aberrationGroup
-	 */
-	public void setAberration(NXaberration aberrationGroup);
+	public NXprocess getZemlin_tableau();
 
 	/**
-	 * Get a NXaberration node by name:
-	 * <ul>
-	 * <li></li>
-	 * </ul>
-	 * 
-	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXaberration for that node.
+	 * Specific information about the concrete alignment procedure which is a
+	 * process during which the corrector is configured to enable a calibrated
+	 * usage of the microscope.
+	 *
+	 * @param zemlin_tableauGroup the zemlin_tableauGroup
 	 */
-	public NXaberration getAberration(String name);
-	
-	/**
-	 * Set a NXaberration node by name:
-	 * <ul>
-	 * <li></li>
-	 * </ul>
-	 * 
-	 * @param name the name of the node
-	 * @param aberration the value to set
-	 */
-	public void setAberration(String name, NXaberration aberration);
-	
-	/**
-	 * Get all NXaberration nodes:
-	 * <ul>
-	 * <li></li>
-	 * </ul>
-	 * 
-	 * @return  a map from node names to the NXaberration for that node.
-	 */
-	public Map<String, NXaberration> getAllAberration();
-	
-	/**
-	 * Set multiple child nodes of a particular type.
-	 * <ul>
-	 * <li></li>
-	 * </ul>
-	 * 
-	 * @param aberration the child nodes to add 
-	 */
-	
-	public void setAllAberration(Map<String, NXaberration> aberration);
-	
+	public void setZemlin_tableau(NXprocess zemlin_tableauGroup);
+	// Unprocessed group:
 
 	/**
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXlens_em getLens_em();
-	
+
 	/**
-	 * 
+	 *
 	 * @param lens_emGroup the lens_emGroup
 	 */
 	public void setLens_em(NXlens_em lens_emGroup);
@@ -292,53 +226,53 @@ public interface NXcorrector_cs extends NXobject {
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXlens_em for that node.
 	 */
 	public NXlens_em getLens_em(String name);
-	
+
 	/**
 	 * Set a NXlens_em node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param lens_em the value to set
 	 */
 	public void setLens_em(String name, NXlens_em lens_em);
-	
+
 	/**
 	 * Get all NXlens_em nodes:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXlens_em for that node.
 	 */
 	public Map<String, NXlens_em> getAllLens_em();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
-	 * @param lens_em the child nodes to add 
+	 *
+	 * @param lens_em the child nodes to add
 	 */
-	
+
 	public void setAllLens_em(Map<String, NXlens_em> lens_em);
-	
+
 
 	/**
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -348,43 +282,43 @@ public interface NXcorrector_cs extends NXobject {
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 }

@@ -21,7 +21,7 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * Subclass of NXelectronanalyser to describe the spin filters in photoemission
  * experiments.
- * 
+ *
  */
 public interface NXspindispersion extends NXobject {
 
@@ -39,17 +39,17 @@ public interface NXspindispersion extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getType();
-	
+
 	/**
 	 * Type of spin detector, VLEED, SPLEED, Mott, etc.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param typeDataset the typeDataset
 	 */
 	public DataNode setType(IDataset typeDataset);
@@ -59,7 +59,7 @@ public interface NXspindispersion extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getTypeScalar();
@@ -69,7 +69,7 @@ public interface NXspindispersion extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param type the type
 	 */
 	public DataNode setTypeScalar(String typeValue);
@@ -80,18 +80,18 @@ public interface NXspindispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getFigure_of_merit();
-	
+
 	/**
 	 * Figure of merit of the spin detector
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
-	 * 
+	 *
 	 * @param figure_of_meritDataset the figure_of_meritDataset
 	 */
 	public DataNode setFigure_of_merit(IDataset figure_of_meritDataset);
@@ -102,7 +102,7 @@ public interface NXspindispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getFigure_of_meritScalar();
@@ -113,7 +113,7 @@ public interface NXspindispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
-	 * 
+	 *
 	 * @param figure_of_merit the figure_of_merit
 	 */
 	public DataNode setFigure_of_meritScalar(Double figure_of_meritValue);
@@ -124,18 +124,18 @@ public interface NXspindispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getShermann_function();
-	
+
 	/**
 	 * Effective Shermann function, calibrated spin selectivity factor
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
-	 * 
+	 *
 	 * @param shermann_functionDataset the shermann_functionDataset
 	 */
 	public DataNode setShermann_function(IDataset shermann_functionDataset);
@@ -146,7 +146,7 @@ public interface NXspindispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getShermann_functionScalar();
@@ -157,7 +157,7 @@ public interface NXspindispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
-	 * 
+	 *
 	 * @param shermann_function the shermann_function
 	 */
 	public DataNode setShermann_functionScalar(Double shermann_functionValue);
@@ -168,18 +168,18 @@ public interface NXspindispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getScattering_energy();
-	
+
 	/**
 	 * Energy of the spin-selective scattering
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
-	 * 
+	 *
 	 * @param scattering_energyDataset the scattering_energyDataset
 	 */
 	public DataNode setScattering_energy(IDataset scattering_energyDataset);
@@ -190,7 +190,7 @@ public interface NXspindispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getScattering_energyScalar();
@@ -201,7 +201,7 @@ public interface NXspindispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
-	 * 
+	 *
 	 * @param scattering_energy the scattering_energy
 	 */
 	public DataNode setScattering_energyScalar(Double scattering_energyValue);
@@ -212,18 +212,18 @@ public interface NXspindispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getScattering_angle();
-	
+
 	/**
 	 * Angle of the spin-selective scattering
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param scattering_angleDataset the scattering_angleDataset
 	 */
 	public DataNode setScattering_angle(IDataset scattering_angleDataset);
@@ -234,7 +234,7 @@ public interface NXspindispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getScattering_angleScalar();
@@ -245,7 +245,7 @@ public interface NXspindispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param scattering_angle the scattering_angle
 	 */
 	public DataNode setScattering_angleScalar(Double scattering_angleValue);
@@ -255,17 +255,17 @@ public interface NXspindispersion extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getTarget();
-	
+
 	/**
 	 * Name of the target
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param targetDataset the targetDataset
 	 */
 	public DataNode setTarget(IDataset targetDataset);
@@ -275,7 +275,7 @@ public interface NXspindispersion extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getTargetScalar();
@@ -285,7 +285,7 @@ public interface NXspindispersion extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param target the target
 	 */
 	public DataNode setTargetScalar(String targetValue);
@@ -295,17 +295,17 @@ public interface NXspindispersion extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getTarget_preparation();
-	
+
 	/**
 	 * Preparation procedure of the spin target
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param target_preparationDataset the target_preparationDataset
 	 */
 	public DataNode setTarget_preparation(IDataset target_preparationDataset);
@@ -315,7 +315,7 @@ public interface NXspindispersion extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getTarget_preparationScalar();
@@ -325,7 +325,7 @@ public interface NXspindispersion extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param target_preparation the target_preparation
 	 */
 	public DataNode setTarget_preparationScalar(String target_preparationValue);
@@ -335,17 +335,17 @@ public interface NXspindispersion extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_DATE_TIME
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getTarget_preparation_date();
-	
+
 	/**
 	 * Date of last preparation of the spin target
 	 * <p>
 	 * <b>Type:</b> NX_DATE_TIME
 	 * </p>
-	 * 
+	 *
 	 * @param target_preparation_dateDataset the target_preparation_dateDataset
 	 */
 	public DataNode setTarget_preparation_date(IDataset target_preparation_dateDataset);
@@ -355,7 +355,7 @@ public interface NXspindispersion extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_DATE_TIME
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Date getTarget_preparation_dateScalar();
@@ -365,7 +365,7 @@ public interface NXspindispersion extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_DATE_TIME
 	 * </p>
-	 * 
+	 *
 	 * @param target_preparation_date the target_preparation_date
 	 */
 	public DataNode setTarget_preparation_dateScalar(Date target_preparation_dateValue);
@@ -376,18 +376,18 @@ public interface NXspindispersion extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDepends_on();
-	
+
 	/**
 	 * Specifies the position of the lens by pointing to the last transformation in the
 	 * transformation chain in the NXtransformations group.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_onDataset the depends_onDataset
 	 */
 	public DataNode setDepends_on(IDataset depends_onDataset);
@@ -398,7 +398,7 @@ public interface NXspindispersion extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDepends_onScalar();
@@ -409,7 +409,7 @@ public interface NXspindispersion extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
@@ -423,11 +423,11 @@ public interface NXspindispersion extends NXobject {
 	 * relative to the experimental setup. Typically, the components of a system should
 	 * all be related relative to each other and only one component should relate to
 	 * the reference coordinate system.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
 	 * Collection of axis-based translations and rotations to describe the location and
 	 * geometry of the deflector as a component in the instrument. Conventions from the
@@ -437,7 +437,7 @@ public interface NXspindispersion extends NXobject {
 	 * relative to the experimental setup. Typically, the components of a system should
 	 * all be related relative to each other and only one component should relate to
 	 * the reference coordinate system.
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -455,12 +455,12 @@ public interface NXspindispersion extends NXobject {
 	 * all be related relative to each other and only one component should relate to
 	 * the reference coordinate system.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -474,12 +474,12 @@ public interface NXspindispersion extends NXobject {
 	 * all be related relative to each other and only one component should relate to
 	 * the reference coordinate system.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -493,11 +493,11 @@ public interface NXspindispersion extends NXobject {
 	 * all be related relative to each other and only one component should relate to
 	 * the reference coordinate system.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -511,23 +511,23 @@ public interface NXspindispersion extends NXobject {
 	 * all be related relative to each other and only one component should relate to
 	 * the reference coordinate system.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 	/**
 	 * Deflectors in the spin dispersive section
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXdeflector getDeflector();
-	
+
 	/**
 	 * Deflectors in the spin dispersive section
-	 * 
+	 *
 	 * @param deflectorGroup the deflectorGroup
 	 */
 	public void setDeflector(NXdeflector deflectorGroup);
@@ -538,58 +538,58 @@ public interface NXspindispersion extends NXobject {
 	 * <li>
 	 * Deflectors in the spin dispersive section</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXdeflector for that node.
 	 */
 	public NXdeflector getDeflector(String name);
-	
+
 	/**
 	 * Set a NXdeflector node by name:
 	 * <ul>
 	 * <li>
 	 * Deflectors in the spin dispersive section</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param deflector the value to set
 	 */
 	public void setDeflector(String name, NXdeflector deflector);
-	
+
 	/**
 	 * Get all NXdeflector nodes:
 	 * <ul>
 	 * <li>
 	 * Deflectors in the spin dispersive section</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXdeflector for that node.
 	 */
 	public Map<String, NXdeflector> getAllDeflector();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * Deflectors in the spin dispersive section</li>
 	 * </ul>
-	 * 
-	 * @param deflector the child nodes to add 
+	 *
+	 * @param deflector the child nodes to add
 	 */
-	
+
 	public void setAllDeflector(Map<String, NXdeflector> deflector);
-	
+
 
 	/**
 	 * Individual lenses in the spin dispersive section
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXlens_em getLens_em();
-	
+
 	/**
 	 * Individual lenses in the spin dispersive section
-	 * 
+	 *
 	 * @param lens_emGroup the lens_emGroup
 	 */
 	public void setLens_em(NXlens_em lens_emGroup);
@@ -600,46 +600,46 @@ public interface NXspindispersion extends NXobject {
 	 * <li>
 	 * Individual lenses in the spin dispersive section</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXlens_em for that node.
 	 */
 	public NXlens_em getLens_em(String name);
-	
+
 	/**
 	 * Set a NXlens_em node by name:
 	 * <ul>
 	 * <li>
 	 * Individual lenses in the spin dispersive section</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param lens_em the value to set
 	 */
 	public void setLens_em(String name, NXlens_em lens_em);
-	
+
 	/**
 	 * Get all NXlens_em nodes:
 	 * <ul>
 	 * <li>
 	 * Individual lenses in the spin dispersive section</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXlens_em for that node.
 	 */
 	public Map<String, NXlens_em> getAllLens_em();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * Individual lenses in the spin dispersive section</li>
 	 * </ul>
-	 * 
-	 * @param lens_em the child nodes to add 
+	 *
+	 * @param lens_em the child nodes to add
 	 */
-	
+
 	public void setAllLens_em(Map<String, NXlens_em> lens_em);
-	
+
 
 }

@@ -21,7 +21,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * legacy class - (used by :ref:`NXgeometry`) - general spatial location of a component.
- * 
+
  */
 public class NXtranslationImpl extends NXobjectImpl implements NXtranslation {
 
@@ -38,22 +38,22 @@ public class NXtranslationImpl extends NXobjectImpl implements NXtranslation {
 	public NXtranslationImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXtranslation.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_TRANSLATION;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public NXgeometry getGeometry() {

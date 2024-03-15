@@ -23,7 +23,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * Parameters for controlling external conditions
- * 
+
  */
 public class NXenvironmentImpl extends NXobjectImpl implements NXenvironment {
 
@@ -43,22 +43,22 @@ public class NXenvironmentImpl extends NXobjectImpl implements NXenvironment {
 	public NXenvironmentImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXenvironment.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_ENVIRONMENT;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getName() {
@@ -216,7 +216,7 @@ public class NXenvironmentImpl extends NXobjectImpl implements NXenvironment {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);
@@ -247,7 +247,7 @@ public class NXenvironmentImpl extends NXobjectImpl implements NXenvironment {
 	public Map<String, NXnote> getAllNote() {
 		return getChildren(NXnote.class);
 	}
-	
+
 	@Override
 	public void setAllNote(Map<String, NXnote> note) {
 		setChildren(note);
@@ -278,7 +278,7 @@ public class NXenvironmentImpl extends NXobjectImpl implements NXenvironment {
 	public Map<String, NXsensor> getAllSensor() {
 		return getChildren(NXsensor.class);
 	}
-	
+
 	@Override
 	public void setAllSensor(Map<String, NXsensor> sensor) {
 		setChildren(sensor);

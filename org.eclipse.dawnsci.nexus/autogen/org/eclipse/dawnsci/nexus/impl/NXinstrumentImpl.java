@@ -29,7 +29,7 @@ import org.eclipse.dawnsci.nexus.*;
  * sample while positive distances represent components that are after the sample.
  * This device allows the unique identification of beamline components in a way
  * that is valid for both reactor and pulsed instrumentation.
- * 
+
  */
 public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 
@@ -72,22 +72,22 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public NXinstrumentImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXinstrument.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_INSTRUMENT;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getName() {
@@ -144,7 +144,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXaperture> getAllAperture() {
 		return getChildren(NXaperture.class);
 	}
-	
+
 	@Override
 	public void setAllAperture(Map<String, NXaperture> aperture) {
 		setChildren(aperture);
@@ -175,7 +175,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXattenuator> getAllAttenuator() {
 		return getChildren(NXattenuator.class);
 	}
-	
+
 	@Override
 	public void setAllAttenuator(Map<String, NXattenuator> attenuator) {
 		setChildren(attenuator);
@@ -206,7 +206,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXbeam> getAllBeam() {
 		return getChildren(NXbeam.class);
 	}
-	
+
 	@Override
 	public void setAllBeam(Map<String, NXbeam> beam) {
 		setChildren(beam);
@@ -237,7 +237,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXbeam_stop> getAllBeam_stop() {
 		return getChildren(NXbeam_stop.class);
 	}
-	
+
 	@Override
 	public void setAllBeam_stop(Map<String, NXbeam_stop> beam_stop) {
 		setChildren(beam_stop);
@@ -268,7 +268,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXbending_magnet> getAllBending_magnet() {
 		return getChildren(NXbending_magnet.class);
 	}
-	
+
 	@Override
 	public void setAllBending_magnet(Map<String, NXbending_magnet> bending_magnet) {
 		setChildren(bending_magnet);
@@ -299,7 +299,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXcollimator> getAllCollimator() {
 		return getChildren(NXcollimator.class);
 	}
-	
+
 	@Override
 	public void setAllCollimator(Map<String, NXcollimator> collimator) {
 		setChildren(collimator);
@@ -330,7 +330,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXcollection> getAllCollection() {
 		return getChildren(NXcollection.class);
 	}
-	
+
 	@Override
 	public void setAllCollection(Map<String, NXcollection> collection) {
 		setChildren(collection);
@@ -361,7 +361,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXcapillary> getAllCapillary() {
 		return getChildren(NXcapillary.class);
 	}
-	
+
 	@Override
 	public void setAllCapillary(Map<String, NXcapillary> capillary) {
 		setChildren(capillary);
@@ -392,7 +392,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXcrystal> getAllCrystal() {
 		return getChildren(NXcrystal.class);
 	}
-	
+
 	@Override
 	public void setAllCrystal(Map<String, NXcrystal> crystal) {
 		setChildren(crystal);
@@ -423,7 +423,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXdetector> getAllDetector() {
 		return getChildren(NXdetector.class);
 	}
-	
+
 	@Override
 	public void setAllDetector(Map<String, NXdetector> detector) {
 		setChildren(detector);
@@ -454,7 +454,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXdetector_group> getAllDetector_group() {
 		return getChildren(NXdetector_group.class);
 	}
-	
+
 	@Override
 	public void setAllDetector_group(Map<String, NXdetector_group> detector_group) {
 		setChildren(detector_group);
@@ -485,7 +485,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXdisk_chopper> getAllDisk_chopper() {
 		return getChildren(NXdisk_chopper.class);
 	}
-	
+
 	@Override
 	public void setAllDisk_chopper(Map<String, NXdisk_chopper> disk_chopper) {
 		setChildren(disk_chopper);
@@ -516,7 +516,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXevent_data> getAllEvent_data() {
 		return getChildren(NXevent_data.class);
 	}
-	
+
 	@Override
 	public void setAllEvent_data(Map<String, NXevent_data> event_data) {
 		setChildren(event_data);
@@ -547,7 +547,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXfermi_chopper> getAllFermi_chopper() {
 		return getChildren(NXfermi_chopper.class);
 	}
-	
+
 	@Override
 	public void setAllFermi_chopper(Map<String, NXfermi_chopper> fermi_chopper) {
 		setChildren(fermi_chopper);
@@ -578,7 +578,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXfilter> getAllFilter() {
 		return getChildren(NXfilter.class);
 	}
-	
+
 	@Override
 	public void setAllFilter(Map<String, NXfilter> filter) {
 		setChildren(filter);
@@ -609,7 +609,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXflipper> getAllFlipper() {
 		return getChildren(NXflipper.class);
 	}
-	
+
 	@Override
 	public void setAllFlipper(Map<String, NXflipper> flipper) {
 		setChildren(flipper);
@@ -640,7 +640,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXguide> getAllGuide() {
 		return getChildren(NXguide.class);
 	}
-	
+
 	@Override
 	public void setAllGuide(Map<String, NXguide> guide) {
 		setChildren(guide);
@@ -671,7 +671,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXinsertion_device> getAllInsertion_device() {
 		return getChildren(NXinsertion_device.class);
 	}
-	
+
 	@Override
 	public void setAllInsertion_device(Map<String, NXinsertion_device> insertion_device) {
 		setChildren(insertion_device);
@@ -702,7 +702,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXmirror> getAllMirror() {
 		return getChildren(NXmirror.class);
 	}
-	
+
 	@Override
 	public void setAllMirror(Map<String, NXmirror> mirror) {
 		setChildren(mirror);
@@ -733,7 +733,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXmoderator> getAllModerator() {
 		return getChildren(NXmoderator.class);
 	}
-	
+
 	@Override
 	public void setAllModerator(Map<String, NXmoderator> moderator) {
 		setChildren(moderator);
@@ -764,7 +764,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXmonochromator> getAllMonochromator() {
 		return getChildren(NXmonochromator.class);
 	}
-	
+
 	@Override
 	public void setAllMonochromator(Map<String, NXmonochromator> monochromator) {
 		setChildren(monochromator);
@@ -795,7 +795,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXpolarizer> getAllPolarizer() {
 		return getChildren(NXpolarizer.class);
 	}
-	
+
 	@Override
 	public void setAllPolarizer(Map<String, NXpolarizer> polarizer) {
 		setChildren(polarizer);
@@ -826,7 +826,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXpositioner> getAllPositioner() {
 		return getChildren(NXpositioner.class);
 	}
-	
+
 	@Override
 	public void setAllPositioner(Map<String, NXpositioner> positioner) {
 		setChildren(positioner);
@@ -857,7 +857,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXsource> getAllSource() {
 		return getChildren(NXsource.class);
 	}
-	
+
 	@Override
 	public void setAllSource(Map<String, NXsource> source) {
 		setChildren(source);
@@ -899,7 +899,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXvelocity_selector> getAllVelocity_selector() {
 		return getChildren(NXvelocity_selector.class);
 	}
-	
+
 	@Override
 	public void setAllVelocity_selector(Map<String, NXvelocity_selector> velocity_selector) {
 		setChildren(velocity_selector);
@@ -930,7 +930,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	public Map<String, NXxraylens> getAllXraylens() {
 		return getChildren(NXxraylens.class);
 	}
-	
+
 	@Override
 	public void setAllXraylens(Map<String, NXxraylens> xraylens) {
 		setChildren(xraylens);

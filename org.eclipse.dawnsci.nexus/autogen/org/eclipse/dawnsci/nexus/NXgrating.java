@@ -19,7 +19,7 @@ import org.eclipse.january.dataset.IDataset;
 
 /**
  * A diffraction grating, as could be used in a soft X-ray monochromator
- * 
+ *
  */
 public interface NXgrating extends NXobject {
 
@@ -46,11 +46,11 @@ public interface NXgrating extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * <b>Dimensions:</b> 1: 2;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getAngles();
-	
+
 	/**
 	 * Blaze or trapezoidal angles, with the angle of the upstream facing edge listed first. Blazed gratings can be identified by the low value of the first-listed angle.
 	 * <p>
@@ -58,7 +58,7 @@ public interface NXgrating extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * <b>Dimensions:</b> 1: 2;
 	 * </p>
-	 * 
+	 *
 	 * @param anglesDataset the anglesDataset
 	 */
 	public DataNode setAngles(IDataset anglesDataset);
@@ -70,7 +70,7 @@ public interface NXgrating extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * <b>Dimensions:</b> 1: 2;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getAnglesScalar();
@@ -82,7 +82,7 @@ public interface NXgrating extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * <b>Dimensions:</b> 1: 2;
 	 * </p>
-	 * 
+	 *
 	 * @param angles the angles
 	 */
 	public DataNode setAnglesScalar(Double anglesValue);
@@ -94,11 +94,11 @@ public interface NXgrating extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getPeriod();
-	
+
 	/**
 	 * List of polynomial coefficients describing the spatial separation of lines/grooves as a function of position along the grating, in increasing powers of position. Gratings which do not have variable line spacing will only have a single coefficient (constant).
 	 * <p>
@@ -106,7 +106,7 @@ public interface NXgrating extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b>
 	 * </p>
-	 * 
+	 *
 	 * @param periodDataset the periodDataset
 	 */
 	public DataNode setPeriod(IDataset periodDataset);
@@ -118,7 +118,7 @@ public interface NXgrating extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getPeriodScalar();
@@ -130,7 +130,7 @@ public interface NXgrating extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b>
 	 * </p>
-	 * 
+	 *
 	 * @param period the period
 	 */
 	public DataNode setPeriodScalar(Double periodValue);
@@ -140,17 +140,17 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDuty_cycle();
-	
+
 	/**
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
-	 * 
+	 *
 	 * @param duty_cycleDataset the duty_cycleDataset
 	 */
 	public DataNode setDuty_cycle(IDataset duty_cycleDataset);
@@ -160,7 +160,7 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getDuty_cycleScalar();
@@ -170,7 +170,7 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
-	 * 
+	 *
 	 * @param duty_cycle the duty_cycle
 	 */
 	public DataNode setDuty_cycleScalar(Double duty_cycleValue);
@@ -180,17 +180,17 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDepth();
-	
+
 	/**
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param depthDataset the depthDataset
 	 */
 	public DataNode setDepth(IDataset depthDataset);
@@ -200,7 +200,7 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getDepthScalar();
@@ -210,7 +210,7 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param depth the depth
 	 */
 	public DataNode setDepthScalar(Double depthValue);
@@ -220,17 +220,17 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDiffraction_order();
-	
+
 	/**
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
-	 * 
+	 *
 	 * @param diffraction_orderDataset the diffraction_orderDataset
 	 */
 	public DataNode setDiffraction_order(IDataset diffraction_orderDataset);
@@ -240,7 +240,7 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Long getDiffraction_orderScalar();
@@ -250,7 +250,7 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
-	 * 
+	 *
 	 * @param diffraction_order the diffraction_order
 	 */
 	public DataNode setDiffraction_orderScalar(Long diffraction_orderValue);
@@ -261,18 +261,18 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDeflection_angle();
-	
+
 	/**
 	 * Angle between the incident beam and the utilised outgoing beam.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param deflection_angleDataset the deflection_angleDataset
 	 */
 	public DataNode setDeflection_angle(IDataset deflection_angleDataset);
@@ -283,7 +283,7 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getDeflection_angleScalar();
@@ -294,7 +294,7 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param deflection_angle the deflection_angle
 	 */
 	public DataNode setDeflection_angleScalar(Double deflection_angleValue);
@@ -306,11 +306,11 @@ public interface NXgrating extends NXobject {
 	 * <li><b>helium</b> </li>
 	 * <li><b>argon</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getInterior_atmosphere();
-	
+
 	/**
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
@@ -318,7 +318,7 @@ public interface NXgrating extends NXobject {
 	 * <li><b>helium</b> </li>
 	 * <li><b>argon</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param interior_atmosphereDataset the interior_atmosphereDataset
 	 */
 	public DataNode setInterior_atmosphere(IDataset interior_atmosphereDataset);
@@ -330,7 +330,7 @@ public interface NXgrating extends NXobject {
 	 * <li><b>helium</b> </li>
 	 * <li><b>argon</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getInterior_atmosphereScalar();
@@ -342,31 +342,31 @@ public interface NXgrating extends NXobject {
 	 * <li><b>helium</b> </li>
 	 * <li><b>argon</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param interior_atmosphere the interior_atmosphere
 	 */
 	public DataNode setInterior_atmosphereScalar(String interior_atmosphereValue);
 
 	/**
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSubstrate_material();
-	
+
 	/**
-	 * 
+	 *
 	 * @param substrate_materialDataset the substrate_materialDataset
 	 */
 	public DataNode setSubstrate_material(IDataset substrate_materialDataset);
 
 	/**
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getSubstrate_materialScalar();
 
 	/**
-	 * 
+	 *
 	 * @param substrate_material the substrate_material
 	 */
 	public DataNode setSubstrate_materialScalar(String substrate_materialValue);
@@ -376,17 +376,17 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_MASS_DENSITY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSubstrate_density();
-	
+
 	/**
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_MASS_DENSITY
 	 * </p>
-	 * 
+	 *
 	 * @param substrate_densityDataset the substrate_densityDataset
 	 */
 	public DataNode setSubstrate_density(IDataset substrate_densityDataset);
@@ -396,7 +396,7 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_MASS_DENSITY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getSubstrate_densityScalar();
@@ -406,7 +406,7 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_MASS_DENSITY
 	 * </p>
-	 * 
+	 *
 	 * @param substrate_density the substrate_density
 	 */
 	public DataNode setSubstrate_densityScalar(Double substrate_densityValue);
@@ -416,17 +416,17 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSubstrate_thickness();
-	
+
 	/**
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param substrate_thicknessDataset the substrate_thicknessDataset
 	 */
 	public DataNode setSubstrate_thickness(IDataset substrate_thicknessDataset);
@@ -436,7 +436,7 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getSubstrate_thicknessScalar();
@@ -446,31 +446,31 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param substrate_thickness the substrate_thickness
 	 */
 	public DataNode setSubstrate_thicknessScalar(Double substrate_thicknessValue);
 
 	/**
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getCoating_material();
-	
+
 	/**
-	 * 
+	 *
 	 * @param coating_materialDataset the coating_materialDataset
 	 */
 	public DataNode setCoating_material(IDataset coating_materialDataset);
 
 	/**
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getCoating_materialScalar();
 
 	/**
-	 * 
+	 *
 	 * @param coating_material the coating_material
 	 */
 	public DataNode setCoating_materialScalar(String coating_materialValue);
@@ -480,17 +480,17 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSubstrate_roughness();
-	
+
 	/**
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param substrate_roughnessDataset the substrate_roughnessDataset
 	 */
 	public DataNode setSubstrate_roughness(IDataset substrate_roughnessDataset);
@@ -500,7 +500,7 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getSubstrate_roughnessScalar();
@@ -510,7 +510,7 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param substrate_roughness the substrate_roughness
 	 */
 	public DataNode setSubstrate_roughnessScalar(Double substrate_roughnessValue);
@@ -520,17 +520,17 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getCoating_roughness();
-	
+
 	/**
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param coating_roughnessDataset the coating_roughnessDataset
 	 */
 	public DataNode setCoating_roughness(IDataset coating_roughnessDataset);
@@ -540,7 +540,7 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getCoating_roughnessScalar();
@@ -550,7 +550,7 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param coating_roughness the coating_roughness
 	 */
 	public DataNode setCoating_roughnessScalar(Double coating_roughnessValue);
@@ -561,18 +561,18 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getLayer_thickness();
-	
+
 	/**
 	 * An array describing the thickness of each layer
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param layer_thicknessDataset the layer_thicknessDataset
 	 */
 	public DataNode setLayer_thickness(IDataset layer_thicknessDataset);
@@ -583,7 +583,7 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getLayer_thicknessScalar();
@@ -594,23 +594,23 @@ public interface NXgrating extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param layer_thickness the layer_thickness
 	 */
 	public DataNode setLayer_thicknessScalar(Double layer_thicknessValue);
 
 	/**
 	 * A NXshape group describing the shape of the mirror
-	 * 
+	 *
 	 * @deprecated Use NXoff_geometry to describe the shape of grating
 	 * @return  the value.
 	 */
 	@Deprecated
 	public NXshape getShape();
-	
+
 	/**
 	 * A NXshape group describing the shape of the mirror
-	 * 
+	 *
 	 * @deprecated Use NXoff_geometry to describe the shape of grating
 	 * @param shapeGroup the shapeGroup
 	 */
@@ -619,28 +619,28 @@ public interface NXgrating extends NXobject {
 
 	/**
 	 * Numerical description of the surface figure of the mirror.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXdata getFigure_data();
-	
+
 	/**
 	 * Numerical description of the surface figure of the mirror.
-	 * 
+	 *
 	 * @param figure_dataGroup the figure_dataGroup
 	 */
 	public void setFigure_data(NXdata figure_dataGroup);
 
 	/**
 	 * This group describes the shape of the beam line component
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXoff_geometry getOff_geometry();
-	
+
 	/**
 	 * This group describes the shape of the beam line component
-	 * 
+	 *
 	 * @param off_geometryGroup the off_geometryGroup
 	 */
 	public void setOff_geometry(NXoff_geometry off_geometryGroup);
@@ -651,47 +651,47 @@ public interface NXgrating extends NXobject {
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
 	public NXoff_geometry getOff_geometry(String name);
-	
+
 	/**
 	 * Set a NXoff_geometry node by name:
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param off_geometry the value to set
 	 */
 	public void setOff_geometry(String name, NXoff_geometry off_geometry);
-	
+
 	/**
 	 * Get all NXoff_geometry nodes:
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
 	public Map<String, NXoff_geometry> getAllOff_geometry();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
-	 * @param off_geometry the child nodes to add 
+	 *
+	 * @param off_geometry the child nodes to add
 	 */
-	
+
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry);
-	
+
 
 	/**
 	 * .. index:: plotting
@@ -701,11 +701,11 @@ public interface NXgrating extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -714,7 +714,7 @@ public interface NXgrating extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);
@@ -731,11 +731,11 @@ public interface NXgrating extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDepends_on();
-	
+
 	/**
 	 * NeXus positions components by applying a set of translations and rotations
 	 * to apply to the component starting from 0, 0, 0. The order of these operations
@@ -748,7 +748,7 @@ public interface NXgrating extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_onDataset the depends_onDataset
 	 */
 	public DataNode setDepends_on(IDataset depends_onDataset);
@@ -765,7 +765,7 @@ public interface NXgrating extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDepends_onScalar();
@@ -782,7 +782,7 @@ public interface NXgrating extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
@@ -790,15 +790,15 @@ public interface NXgrating extends NXobject {
 	/**
 	 * "Engineering" position of the grating
 	 * Transformations used by this component to define its position and orientation.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
 	 * "Engineering" position of the grating
 	 * Transformations used by this component to define its position and orientation.
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -810,12 +810,12 @@ public interface NXgrating extends NXobject {
 	 * "Engineering" position of the grating
 	 * Transformations used by this component to define its position and orientation.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -823,12 +823,12 @@ public interface NXgrating extends NXobject {
 	 * "Engineering" position of the grating
 	 * Transformations used by this component to define its position and orientation.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -836,11 +836,11 @@ public interface NXgrating extends NXobject {
 	 * "Engineering" position of the grating
 	 * Transformations used by this component to define its position and orientation.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -848,11 +848,11 @@ public interface NXgrating extends NXobject {
 	 * "Engineering" position of the grating
 	 * Transformations used by this component to define its position and orientation.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 }

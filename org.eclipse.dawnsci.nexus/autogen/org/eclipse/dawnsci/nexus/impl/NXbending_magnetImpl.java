@@ -23,7 +23,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * A bending magnet
- * 
+
  */
 public class NXbending_magnetImpl extends NXobjectImpl implements NXbending_magnet {
 
@@ -43,22 +43,22 @@ public class NXbending_magnetImpl extends NXobjectImpl implements NXbending_magn
 	public NXbending_magnetImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXbending_magnet.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_BENDING_MAGNET;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getCritical_energy() {
@@ -301,7 +301,7 @@ public class NXbending_magnetImpl extends NXobjectImpl implements NXbending_magn
 	public Map<String, NXgeometry> getAllGeometry() {
 		return getChildren(NXgeometry.class);
 	}
-	
+
 	@Override
 	@Deprecated
 	public void setAllGeometry(Map<String, NXgeometry> geometry) {
@@ -333,7 +333,7 @@ public class NXbending_magnetImpl extends NXobjectImpl implements NXbending_magn
 	public Map<String, NXoff_geometry> getAllOff_geometry() {
 		return getChildren(NXoff_geometry.class);
 	}
-	
+
 	@Override
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry) {
 		setChildren(off_geometry);
@@ -394,7 +394,7 @@ public class NXbending_magnetImpl extends NXobjectImpl implements NXbending_magn
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

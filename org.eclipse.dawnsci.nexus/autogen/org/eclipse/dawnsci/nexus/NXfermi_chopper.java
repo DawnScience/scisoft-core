@@ -19,7 +19,7 @@ import org.eclipse.january.dataset.IDataset;
 
 /**
  * A Fermi chopper, possibly with curved slits.
- * 
+ *
  */
 public interface NXfermi_chopper extends NXobject {
 
@@ -40,28 +40,28 @@ public interface NXfermi_chopper extends NXobject {
 	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
 	 * Fermi chopper type
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getType();
-	
+
 	/**
 	 * Fermi chopper type
-	 * 
+	 *
 	 * @param typeDataset the typeDataset
 	 */
 	public DataNode setType(IDataset typeDataset);
 
 	/**
 	 * Fermi chopper type
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getTypeScalar();
 
 	/**
 	 * Fermi chopper type
-	 * 
+	 *
 	 * @param type the type
 	 */
 	public DataNode setTypeScalar(String typeValue);
@@ -72,18 +72,18 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_FREQUENCY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getRotation_speed();
-	
+
 	/**
 	 * chopper rotation speed
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_FREQUENCY
 	 * </p>
-	 * 
+	 *
 	 * @param rotation_speedDataset the rotation_speedDataset
 	 */
 	public DataNode setRotation_speed(IDataset rotation_speedDataset);
@@ -94,7 +94,7 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_FREQUENCY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getRotation_speedScalar();
@@ -105,7 +105,7 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_FREQUENCY
 	 * </p>
-	 * 
+	 *
 	 * @param rotation_speed the rotation_speed
 	 */
 	public DataNode setRotation_speedScalar(Double rotation_speedValue);
@@ -116,18 +116,18 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getRadius();
-	
+
 	/**
 	 * radius of chopper
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param radiusDataset the radiusDataset
 	 */
 	public DataNode setRadius(IDataset radiusDataset);
@@ -138,7 +138,7 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getRadiusScalar();
@@ -149,7 +149,7 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param radius the radius
 	 */
 	public DataNode setRadiusScalar(Double radiusValue);
@@ -160,18 +160,18 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSlit();
-	
+
 	/**
 	 * width of an individual slit
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param slitDataset the slitDataset
 	 */
 	public DataNode setSlit(IDataset slitDataset);
@@ -182,7 +182,7 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getSlitScalar();
@@ -193,7 +193,7 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param slit the slit
 	 */
 	public DataNode setSlitScalar(Double slitValue);
@@ -204,18 +204,18 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getR_slit();
-	
+
 	/**
 	 * radius of curvature of slits
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param r_slitDataset the r_slitDataset
 	 */
 	public DataNode setR_slit(IDataset r_slitDataset);
@@ -226,7 +226,7 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getR_slitScalar();
@@ -237,7 +237,7 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param r_slit the r_slit
 	 */
 	public DataNode setR_slitScalar(Double r_slitValue);
@@ -248,18 +248,18 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getNumber();
-	
+
 	/**
 	 * number of slits
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
-	 * 
+	 *
 	 * @param numberDataset the numberDataset
 	 */
 	public DataNode setNumber(IDataset numberDataset);
@@ -270,7 +270,7 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Long getNumberScalar();
@@ -281,7 +281,7 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
-	 * 
+	 *
 	 * @param number the number
 	 */
 	public DataNode setNumberScalar(Long numberValue);
@@ -292,18 +292,18 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getHeight();
-	
+
 	/**
 	 * input beam height
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param heightDataset the heightDataset
 	 */
 	public DataNode setHeight(IDataset heightDataset);
@@ -314,7 +314,7 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getHeightScalar();
@@ -325,7 +325,7 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param height the height
 	 */
 	public DataNode setHeightScalar(Double heightValue);
@@ -336,18 +336,18 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getWidth();
-	
+
 	/**
 	 * input beam width
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param widthDataset the widthDataset
 	 */
 	public DataNode setWidth(IDataset widthDataset);
@@ -358,7 +358,7 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getWidthScalar();
@@ -369,7 +369,7 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param width the width
 	 */
 	public DataNode setWidthScalar(Double widthValue);
@@ -380,18 +380,18 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDistance();
-	
+
 	/**
 	 * distance. Note, it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param distanceDataset the distanceDataset
 	 */
 	public DataNode setDistance(IDataset distanceDataset);
@@ -402,7 +402,7 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getDistanceScalar();
@@ -413,7 +413,7 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param distance the distance
 	 */
 	public DataNode setDistanceScalar(Double distanceValue);
@@ -424,18 +424,18 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getWavelength();
-	
+
 	/**
 	 * Wavelength transmitted by chopper
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param wavelengthDataset the wavelengthDataset
 	 */
 	public DataNode setWavelength(IDataset wavelengthDataset);
@@ -446,7 +446,7 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getWavelengthScalar();
@@ -457,7 +457,7 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param wavelength the wavelength
 	 */
 	public DataNode setWavelengthScalar(Double wavelengthValue);
@@ -468,18 +468,18 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getEnergy();
-	
+
 	/**
 	 * energy selected
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
-	 * 
+	 *
 	 * @param energyDataset the energyDataset
 	 */
 	public DataNode setEnergy(IDataset energyDataset);
@@ -490,7 +490,7 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getEnergyScalar();
@@ -501,23 +501,23 @@ public interface NXfermi_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
-	 * 
+	 *
 	 * @param energy the energy
 	 */
 	public DataNode setEnergyScalar(Double energyValue);
 
 	/**
 	 * geometry of the fermi chopper
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the chopper and NXoff_geometry to describe its shape instead
 	 * @return  the value.
 	 */
 	@Deprecated
 	public NXgeometry getGeometry();
-	
+
 	/**
 	 * geometry of the fermi chopper
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the chopper and NXoff_geometry to describe its shape instead
 	 * @param geometryGroup the geometryGroup
 	 */
@@ -530,122 +530,122 @@ public interface NXfermi_chopper extends NXobject {
 	 * <li>
 	 * geometry of the fermi chopper</li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the chopper and NXoff_geometry to describe its shape instead
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXgeometry for that node.
 	 */
 	@Deprecated
 	public NXgeometry getGeometry(String name);
-	
+
 	/**
 	 * Set a NXgeometry node by name:
 	 * <ul>
 	 * <li>
 	 * geometry of the fermi chopper</li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the chopper and NXoff_geometry to describe its shape instead
 	 * @param name the name of the node
 	 * @param geometry the value to set
 	 */
 	@Deprecated
 	public void setGeometry(String name, NXgeometry geometry);
-	
+
 	/**
 	 * Get all NXgeometry nodes:
 	 * <ul>
 	 * <li>
 	 * geometry of the fermi chopper</li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the chopper and NXoff_geometry to describe its shape instead
 	 * @return  a map from node names to the NXgeometry for that node.
 	 */
 	@Deprecated
 	public Map<String, NXgeometry> getAllGeometry();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * geometry of the fermi chopper</li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the chopper and NXoff_geometry to describe its shape instead
-	 * @param geometry the child nodes to add 
+	 * @param geometry the child nodes to add
 	 */
-	
+
 	@Deprecated
 	public void setAllGeometry(Map<String, NXgeometry> geometry);
-	
+
 
 	/**
 	 * absorbing material
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getAbsorbing_material();
-	
+
 	/**
 	 * absorbing material
-	 * 
+	 *
 	 * @param absorbing_materialDataset the absorbing_materialDataset
 	 */
 	public DataNode setAbsorbing_material(IDataset absorbing_materialDataset);
 
 	/**
 	 * absorbing material
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAbsorbing_materialScalar();
 
 	/**
 	 * absorbing material
-	 * 
+	 *
 	 * @param absorbing_material the absorbing_material
 	 */
 	public DataNode setAbsorbing_materialScalar(String absorbing_materialValue);
 
 	/**
 	 * transmitting material
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getTransmitting_material();
-	
+
 	/**
 	 * transmitting material
-	 * 
+	 *
 	 * @param transmitting_materialDataset the transmitting_materialDataset
 	 */
 	public DataNode setTransmitting_material(IDataset transmitting_materialDataset);
 
 	/**
 	 * transmitting material
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getTransmitting_materialScalar();
 
 	/**
 	 * transmitting material
-	 * 
+	 *
 	 * @param transmitting_material the transmitting_material
 	 */
 	public DataNode setTransmitting_materialScalar(String transmitting_materialValue);
 
 	/**
 	 * This group describes the shape of the beam line component
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXoff_geometry getOff_geometry();
-	
+
 	/**
 	 * This group describes the shape of the beam line component
-	 * 
+	 *
 	 * @param off_geometryGroup the off_geometryGroup
 	 */
 	public void setOff_geometry(NXoff_geometry off_geometryGroup);
@@ -656,47 +656,47 @@ public interface NXfermi_chopper extends NXobject {
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
 	public NXoff_geometry getOff_geometry(String name);
-	
+
 	/**
 	 * Set a NXoff_geometry node by name:
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param off_geometry the value to set
 	 */
 	public void setOff_geometry(String name, NXoff_geometry off_geometry);
-	
+
 	/**
 	 * Get all NXoff_geometry nodes:
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
 	public Map<String, NXoff_geometry> getAllOff_geometry();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
-	 * @param off_geometry the child nodes to add 
+	 *
+	 * @param off_geometry the child nodes to add
 	 */
-	
+
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry);
-	
+
 
 	/**
 	 * .. index:: plotting
@@ -706,11 +706,11 @@ public interface NXfermi_chopper extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -719,7 +719,7 @@ public interface NXfermi_chopper extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);
@@ -736,11 +736,11 @@ public interface NXfermi_chopper extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDepends_on();
-	
+
 	/**
 	 * NeXus positions components by applying a set of translations and rotations
 	 * to apply to the component starting from 0, 0, 0. The order of these operations
@@ -753,7 +753,7 @@ public interface NXfermi_chopper extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_onDataset the depends_onDataset
 	 */
 	public DataNode setDepends_on(IDataset depends_onDataset);
@@ -770,7 +770,7 @@ public interface NXfermi_chopper extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDepends_onScalar();
@@ -787,7 +787,7 @@ public interface NXfermi_chopper extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
@@ -797,17 +797,17 @@ public interface NXfermi_chopper extends NXobject {
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
 	 * This is the group recommended for holding the chain of translation
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -821,12 +821,12 @@ public interface NXfermi_chopper extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -836,12 +836,12 @@ public interface NXfermi_chopper extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -851,11 +851,11 @@ public interface NXfermi_chopper extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -865,11 +865,11 @@ public interface NXfermi_chopper extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 }

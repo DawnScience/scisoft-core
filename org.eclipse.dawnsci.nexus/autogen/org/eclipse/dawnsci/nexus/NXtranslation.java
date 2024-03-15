@@ -17,7 +17,7 @@ import org.eclipse.january.dataset.IDataset;
 
 /**
  * legacy class - (used by :ref:`NXgeometry`) - general spatial location of a component.
- * 
+ *
  */
 public interface NXtranslation extends NXobject {
 
@@ -25,14 +25,14 @@ public interface NXtranslation extends NXobject {
 	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * Link to other object if we are relative, else absent
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXgeometry getGeometry();
-	
+
 	/**
 	 * Link to other object if we are relative, else absent
-	 * 
+	 *
 	 * @param geometryGroup the geometryGroup
 	 */
 	public void setGeometry(NXgeometry geometryGroup);
@@ -52,11 +52,11 @@ public interface NXtranslation extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: numobj; 2: 3;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDistances();
-	
+
 	/**
 	 * (x,y,z)
 	 * This field describes the lateral movement of a component.
@@ -72,7 +72,7 @@ public interface NXtranslation extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: numobj; 2: 3;
 	 * </p>
-	 * 
+	 *
 	 * @param distancesDataset the distancesDataset
 	 */
 	public DataNode setDistances(IDataset distancesDataset);
@@ -92,7 +92,7 @@ public interface NXtranslation extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: numobj; 2: 3;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getDistancesScalar();
@@ -112,7 +112,7 @@ public interface NXtranslation extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: numobj; 2: 3;
 	 * </p>
-	 * 
+	 *
 	 * @param distances the distances
 	 */
 	public DataNode setDistancesScalar(Double distancesValue);
@@ -125,11 +125,11 @@ public interface NXtranslation extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -138,7 +138,7 @@ public interface NXtranslation extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);

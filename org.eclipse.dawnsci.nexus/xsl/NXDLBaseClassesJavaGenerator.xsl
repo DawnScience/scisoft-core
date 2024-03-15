@@ -480,6 +480,10 @@
 	<xsl:param name="dataNodeName"/>
 		return getDataNode(<xsl:value-of select="$dataNodeName"/>).getDataset();</xsl:template>
 
+<xsl:template mode="getScalarMethod" match="nx:field[@type='NX_CHAR_OR_NUMBER']">
+	<xsl:param name="dataNodeName"/>
+		return getDataset(<xsl:value-of select="$dataNodeName"/>).getObject();</xsl:template>
+
 <xsl:template mode="getScalarMethod" match="nx:field">
 	<xsl:param name="dataNodeName"/>
 	<xsl:param name="fieldType"/>
@@ -534,7 +538,7 @@
 	<xsl:param name="dataNodeName"/>
 		return setDate(<xsl:value-of select="$dataNodeName"/>, <xsl:value-of select="$fieldName"/>Value);</xsl:template>
 
-<xsl:template mode="setScalarMethod" match="nx:field[@type='NX_CHAR' or not (@type)]">
+<xsl:template mode="setScalarMethod" match="nx:field[@type='NX_CHAR']">
 	<xsl:param name="fieldName"/>
 	<xsl:param name="dataNodeName"/>
 		return setString(<xsl:value-of select="$dataNodeName"/>, <xsl:value-of select="$fieldName"/>Value);</xsl:template>
@@ -543,6 +547,24 @@
 	<xsl:param name="fieldName"/>
 	<xsl:param name="dataNodeName"/>
 		return setField(<xsl:value-of select="$dataNodeName"/>, <xsl:value-of select="$fieldName"/>Value);</xsl:template>
+
+<xsl:template mode="setScalarMethod" match="nx:field[@type='NX_CHAR_OR_NUMBER']">
+	<xsl:param name="fieldName"/>
+	<xsl:param name="dataNodeName"/>
+	<xsl:text>&#10;&#09;&#09;if (</xsl:text><xsl:value-of select="$dataNodeName || 'Value'"/><xsl:text> instanceof Number) {&#10;</xsl:text>
+	<xsl:text>&#09;&#09;&#09;return setField(</xsl:text><xsl:value-of select="$dataNodeName || ', ' || $fieldName"/><xsl:text>Value);&#10;</xsl:text>
+	<xsl:text>&#09;&#09;} else if (</xsl:text><xsl:value-of select="$dataNodeName"/><xsl:text> instanceof String) {&#10;</xsl:text>
+	<xsl:text>&#09;&#09;&#09;return setString(</xsl:text><xsl:value-of select="$dataNodeName || ', (String) ' || $fieldName"/><xsl:text>Value);&#10;</xsl:text>
+	<xsl:text>&#09;&#09;} else {&#10;</xsl:text>
+	<xsl:text>&#09;&#09;&#09;throw new IllegalArgumentException("Value must be String or Number");&#10;</xsl:text>
+	<xsl:text>&#09;&#09;}</xsl:text>
+</xsl:template>
+
+<!-- Use String for other types, or where type is not specified. -->
+<xsl:template mode="setScalarMethod" match="nx:field" priority="-1">
+	<xsl:param name="fieldName"/>
+	<xsl:param name="dataNodeName"/>
+		return setString(<xsl:value-of select="$dataNodeName"/>, <xsl:value-of select="$fieldName"/>Value);</xsl:template>
 
 <!-- Unprocessed -->
 
@@ -696,9 +718,13 @@
 <xsl:template mode="fieldType" match="*[self::nx:attribute|self::nx:field[nx:scalar]][@type='NX_FLOAT']">Double</xsl:template>
 <xsl:template mode="fieldType" match="*[self::nx:attribute|self::nx:field[nx:scalar]][@type='NX_NUMBER']">Number</xsl:template>
 <xsl:template mode="fieldType" match="*[self::nx:attribute|self::nx:field[nx:scalar]][@type='NX_BOOLEAN']">Boolean</xsl:template>
-<xsl:template mode="fieldType" match="*[self::nx:attribute|self::nx:field[nx:scalar]][@type='NX_CHAR' or not(@type)]">String</xsl:template>
+<xsl:template mode="fieldType" match="*[self::nx:attribute|self::nx:field[nx:scalar]][@type='NX_CHAR']">String</xsl:template>
 <xsl:template mode="fieldType" match="nx:field[nx:scalar][@type='NX_BINARY']">Object</xsl:template>
+ <!-- Use String as the default for other types, e.g. NX_COMPLEX, or where type is not specified -->
+<xsl:template mode="fieldType" match="*[self::nx:attribute|self::nx:field[nx:scalar]]" priority="-1">String</xsl:template>
+
 <xsl:template mode="fieldType" match="nx:group"><xsl:value-of select="dawnsci:interface-name(@type)"/></xsl:template>
+
 <xsl:template mode="extendedFieldType" match="nx:field[not(nx:scalar)]">? extends IDataset</xsl:template>
 
 <!-- Scalar field types. This is useful where we want to get/set a field as a scalar that is not (yet) marked with nx:scalar -->
@@ -707,8 +733,11 @@
 <xsl:template mode="scalarFieldType" match="nx:field[@type='NX_FLOAT']">Double</xsl:template>
 <xsl:template mode="scalarFieldType" match="nx:field[@type='NX_NUMBER']">Number</xsl:template>
 <xsl:template mode="scalarFieldType" match="nx:field[@type='NX_BOOLEAN']">Boolean</xsl:template>
-<xsl:template mode="scalarFieldType" match="nx:field[@type='NX_CHAR' or not(@type)]">String</xsl:template>
 <xsl:template mode="scalarFieldType" match="nx:field[@type='NX_BINARY']">Object</xsl:template>
+<xsl:template mode="scalarFieldType" match="nx:field[@type='NX_CHAR' or not(@type)]">String</xsl:template>
+<xsl:template mode="scalarFieldType" match="nx:field[@type='NX_CHAR_OR_NUMBER']">Object</xsl:template>
+<!-- Use String as the default for other types, e.g. NX_COMPLEX, or where type is not specified -->
+<xsl:template mode="scalarFieldType" match="nx:field" priority="-1">String</xsl:template>
 
 <!-- Field names in Java -->
 <!-- Simple case, the field has the same name as the attribute, field or group name in the NXDL -->

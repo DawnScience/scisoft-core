@@ -43,7 +43,7 @@ import org.eclipse.dawnsci.nexus.*;
  * NOTE: The NeXus International Advisory Committee welcomes
  * comments for revision and improvement of
  * this definition of :ref:`NXguide`.
- * 
+
  */
 public class NXguideImpl extends NXobjectImpl implements NXguide {
 
@@ -63,22 +63,22 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	public NXguideImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXguide.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_GUIDE;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	@Deprecated
@@ -110,7 +110,7 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	public Map<String, NXgeometry> getAllGeometry() {
 		return getChildren(NXgeometry.class);
 	}
-	
+
 	@Override
 	@Deprecated
 	public void setAllGeometry(Map<String, NXgeometry> geometry) {
@@ -413,7 +413,7 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	public Map<String, NXoff_geometry> getAllOff_geometry() {
 		return getChildren(NXoff_geometry.class);
 	}
-	
+
 	@Override
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry) {
 		setChildren(off_geometry);
@@ -474,7 +474,7 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

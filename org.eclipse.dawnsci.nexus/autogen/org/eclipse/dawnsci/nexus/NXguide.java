@@ -39,12 +39,12 @@ import org.eclipse.january.dataset.IDataset;
  * NOTE: The NeXus International Advisory Committee welcomes
  * comments for revision and improvement of
  * this definition of :ref:`NXguide`.
- * <p><b>Symbols:</b> <ul>
- * <li><b>nsurf</b> 
+ * <p><b>Symbols:</b><ul>
+ * <li><b>nsurf</b>
  * number of reflecting surfaces</li>
- * <li><b>nwl</b> 
+ * <li><b>nwl</b>
  * number of wavelengths</li></ul></p>
- * 
+ *
  */
 public interface NXguide extends NXobject {
 
@@ -65,16 +65,16 @@ public interface NXguide extends NXobject {
 	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
 	 * TODO: Explain what this NXgeometry group means. What is intended here?
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the guid and NXoff_geometry to describe its shape instead
 	 * @return  the value.
 	 */
 	@Deprecated
 	public NXgeometry getGeometry();
-	
+
 	/**
 	 * TODO: Explain what this NXgeometry group means. What is intended here?
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the guid and NXoff_geometry to describe its shape instead
 	 * @param geometryGroup the geometryGroup
 	 */
@@ -87,80 +87,80 @@ public interface NXguide extends NXobject {
 	 * <li>
 	 * TODO: Explain what this NXgeometry group means. What is intended here?</li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the guid and NXoff_geometry to describe its shape instead
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXgeometry for that node.
 	 */
 	@Deprecated
 	public NXgeometry getGeometry(String name);
-	
+
 	/**
 	 * Set a NXgeometry node by name:
 	 * <ul>
 	 * <li>
 	 * TODO: Explain what this NXgeometry group means. What is intended here?</li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the guid and NXoff_geometry to describe its shape instead
 	 * @param name the name of the node
 	 * @param geometry the value to set
 	 */
 	@Deprecated
 	public void setGeometry(String name, NXgeometry geometry);
-	
+
 	/**
 	 * Get all NXgeometry nodes:
 	 * <ul>
 	 * <li>
 	 * TODO: Explain what this NXgeometry group means. What is intended here?</li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the guid and NXoff_geometry to describe its shape instead
 	 * @return  a map from node names to the NXgeometry for that node.
 	 */
 	@Deprecated
 	public Map<String, NXgeometry> getAllGeometry();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * TODO: Explain what this NXgeometry group means. What is intended here?</li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the guid and NXoff_geometry to describe its shape instead
-	 * @param geometry the child nodes to add 
+	 * @param geometry the child nodes to add
 	 */
-	
+
 	@Deprecated
 	public void setAllGeometry(Map<String, NXgeometry> geometry);
-	
+
 
 	/**
 	 * A description of this particular instance of ``NXguide``.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDescription();
-	
+
 	/**
 	 * A description of this particular instance of ``NXguide``.
-	 * 
+	 *
 	 * @param descriptionDataset the descriptionDataset
 	 */
 	public DataNode setDescription(IDataset descriptionDataset);
 
 	/**
 	 * A description of this particular instance of ``NXguide``.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDescriptionScalar();
 
 	/**
 	 * A description of this particular instance of ``NXguide``.
-	 * 
+	 *
 	 * @param description the description
 	 */
 	public DataNode setDescriptionScalar(String descriptionValue);
@@ -171,18 +171,18 @@ public interface NXguide extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getIncident_angle();
-	
+
 	/**
 	 * TODO: documentation needed
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param incident_angleDataset the incident_angleDataset
 	 */
 	public DataNode setIncident_angle(IDataset incident_angleDataset);
@@ -193,7 +193,7 @@ public interface NXguide extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getIncident_angleScalar();
@@ -204,21 +204,21 @@ public interface NXguide extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param incident_angle the incident_angle
 	 */
 	public DataNode setIncident_angleScalar(Double incident_angleValue);
 
 	/**
 	 * Reflectivity as function of reflecting surface and wavelength
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXdata getReflectivity();
-	
+
 	/**
 	 * Reflectivity as function of reflecting surface and wavelength
-	 * 
+	 *
 	 * @param reflectivityGroup the reflectivityGroup
 	 */
 	public void setReflectivity(NXdata reflectivityGroup);
@@ -229,18 +229,18 @@ public interface NXguide extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getBend_angle_x();
-	
+
 	/**
 	 * TODO: documentation needed
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param bend_angle_xDataset the bend_angle_xDataset
 	 */
 	public DataNode setBend_angle_x(IDataset bend_angle_xDataset);
@@ -251,7 +251,7 @@ public interface NXguide extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getBend_angle_xScalar();
@@ -262,7 +262,7 @@ public interface NXguide extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param bend_angle_x the bend_angle_x
 	 */
 	public DataNode setBend_angle_xScalar(Double bend_angle_xValue);
@@ -273,18 +273,18 @@ public interface NXguide extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getBend_angle_y();
-	
+
 	/**
 	 * TODO: documentation needed
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param bend_angle_yDataset the bend_angle_yDataset
 	 */
 	public DataNode setBend_angle_y(IDataset bend_angle_yDataset);
@@ -295,7 +295,7 @@ public interface NXguide extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getBend_angle_yScalar();
@@ -306,7 +306,7 @@ public interface NXguide extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param bend_angle_y the bend_angle_y
 	 */
 	public DataNode setBend_angle_yScalar(Double bend_angle_yValue);
@@ -318,11 +318,11 @@ public interface NXguide extends NXobject {
 	 * <li><b>helium</b> </li>
 	 * <li><b>argon</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getInterior_atmosphere();
-	
+
 	/**
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
@@ -330,7 +330,7 @@ public interface NXguide extends NXobject {
 	 * <li><b>helium</b> </li>
 	 * <li><b>argon</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param interior_atmosphereDataset the interior_atmosphereDataset
 	 */
 	public DataNode setInterior_atmosphere(IDataset interior_atmosphereDataset);
@@ -342,7 +342,7 @@ public interface NXguide extends NXobject {
 	 * <li><b>helium</b> </li>
 	 * <li><b>argon</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getInterior_atmosphereScalar();
@@ -354,35 +354,35 @@ public interface NXguide extends NXobject {
 	 * <li><b>helium</b> </li>
 	 * <li><b>argon</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param interior_atmosphere the interior_atmosphere
 	 */
 	public DataNode setInterior_atmosphereScalar(String interior_atmosphereValue);
 
 	/**
 	 * external material outside substrate
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getExternal_material();
-	
+
 	/**
 	 * external material outside substrate
-	 * 
+	 *
 	 * @param external_materialDataset the external_materialDataset
 	 */
 	public DataNode setExternal_material(IDataset external_materialDataset);
 
 	/**
 	 * external material outside substrate
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getExternal_materialScalar();
 
 	/**
 	 * external material outside substrate
-	 * 
+	 *
 	 * @param external_material the external_material
 	 */
 	public DataNode setExternal_materialScalar(String external_materialValue);
@@ -394,11 +394,11 @@ public interface NXguide extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getM_value();
-	
+
 	/**
 	 * The ``m`` value for a supermirror, which defines the supermirror
 	 * regime in multiples of the critical angle of Nickel.
@@ -406,7 +406,7 @@ public interface NXguide extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @param m_valueDataset the m_valueDataset
 	 */
 	public DataNode setM_value(IDataset m_valueDataset);
@@ -418,7 +418,7 @@ public interface NXguide extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getM_valueScalar();
@@ -430,7 +430,7 @@ public interface NXguide extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @param m_value the m_value
 	 */
 	public DataNode setM_valueScalar(Double m_valueValue);
@@ -441,18 +441,18 @@ public interface NXguide extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSubstrate_material();
-	
+
 	/**
 	 * TODO: documentation needed
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @param substrate_materialDataset the substrate_materialDataset
 	 */
 	public DataNode setSubstrate_material(IDataset substrate_materialDataset);
@@ -463,7 +463,7 @@ public interface NXguide extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getSubstrate_materialScalar();
@@ -474,7 +474,7 @@ public interface NXguide extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @param substrate_material the substrate_material
 	 */
 	public DataNode setSubstrate_materialScalar(Double substrate_materialValue);
@@ -486,11 +486,11 @@ public interface NXguide extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSubstrate_thickness();
-	
+
 	/**
 	 * TODO: documentation needed
 	 * <p>
@@ -498,7 +498,7 @@ public interface NXguide extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @param substrate_thicknessDataset the substrate_thicknessDataset
 	 */
 	public DataNode setSubstrate_thickness(IDataset substrate_thicknessDataset);
@@ -510,7 +510,7 @@ public interface NXguide extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getSubstrate_thicknessScalar();
@@ -522,7 +522,7 @@ public interface NXguide extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @param substrate_thickness the substrate_thickness
 	 */
 	public DataNode setSubstrate_thicknessScalar(Double substrate_thicknessValue);
@@ -533,18 +533,18 @@ public interface NXguide extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getCoating_material();
-	
+
 	/**
 	 * TODO: documentation needed
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @param coating_materialDataset the coating_materialDataset
 	 */
 	public DataNode setCoating_material(IDataset coating_materialDataset);
@@ -555,7 +555,7 @@ public interface NXguide extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getCoating_materialScalar();
@@ -566,7 +566,7 @@ public interface NXguide extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @param coating_material the coating_material
 	 */
 	public DataNode setCoating_materialScalar(Double coating_materialValue);
@@ -578,11 +578,11 @@ public interface NXguide extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSubstrate_roughness();
-	
+
 	/**
 	 * TODO: documentation needed
 	 * <p>
@@ -590,7 +590,7 @@ public interface NXguide extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @param substrate_roughnessDataset the substrate_roughnessDataset
 	 */
 	public DataNode setSubstrate_roughness(IDataset substrate_roughnessDataset);
@@ -602,7 +602,7 @@ public interface NXguide extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getSubstrate_roughnessScalar();
@@ -614,7 +614,7 @@ public interface NXguide extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @param substrate_roughness the substrate_roughness
 	 */
 	public DataNode setSubstrate_roughnessScalar(Double substrate_roughnessValue);
@@ -626,11 +626,11 @@ public interface NXguide extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getCoating_roughness();
-	
+
 	/**
 	 * TODO: documentation needed
 	 * <p>
@@ -638,7 +638,7 @@ public interface NXguide extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @param coating_roughnessDataset the coating_roughnessDataset
 	 */
 	public DataNode setCoating_roughness(IDataset coating_roughnessDataset);
@@ -650,7 +650,7 @@ public interface NXguide extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getCoating_roughnessScalar();
@@ -662,7 +662,7 @@ public interface NXguide extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: nsurf;
 	 * </p>
-	 * 
+	 *
 	 * @param coating_roughness the coating_roughness
 	 */
 	public DataNode setCoating_roughnessScalar(Double coating_roughnessValue);
@@ -674,11 +674,11 @@ public interface NXguide extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getNumber_sections();
-	
+
 	/**
 	 * number of substrate sections (also called ``nsurf`` as an
 	 * index in the ``NXguide`` specification)
@@ -686,7 +686,7 @@ public interface NXguide extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
-	 * 
+	 *
 	 * @param number_sectionsDataset the number_sectionsDataset
 	 */
 	public DataNode setNumber_sections(IDataset number_sectionsDataset);
@@ -698,7 +698,7 @@ public interface NXguide extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Long getNumber_sectionsScalar();
@@ -710,21 +710,21 @@ public interface NXguide extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
-	 * 
+	 *
 	 * @param number_sections the number_sections
 	 */
 	public DataNode setNumber_sectionsScalar(Long number_sectionsValue);
 
 	/**
 	 * This group describes the shape of the beam line component
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXoff_geometry getOff_geometry();
-	
+
 	/**
 	 * This group describes the shape of the beam line component
-	 * 
+	 *
 	 * @param off_geometryGroup the off_geometryGroup
 	 */
 	public void setOff_geometry(NXoff_geometry off_geometryGroup);
@@ -735,47 +735,47 @@ public interface NXguide extends NXobject {
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
 	public NXoff_geometry getOff_geometry(String name);
-	
+
 	/**
 	 * Set a NXoff_geometry node by name:
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param off_geometry the value to set
 	 */
 	public void setOff_geometry(String name, NXoff_geometry off_geometry);
-	
+
 	/**
 	 * Get all NXoff_geometry nodes:
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
 	public Map<String, NXoff_geometry> getAllOff_geometry();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
-	 * @param off_geometry the child nodes to add 
+	 *
+	 * @param off_geometry the child nodes to add
 	 */
-	
+
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry);
-	
+
 
 	/**
 	 * .. index:: plotting
@@ -785,11 +785,11 @@ public interface NXguide extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -798,7 +798,7 @@ public interface NXguide extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);
@@ -819,11 +819,11 @@ public interface NXguide extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDepends_on();
-	
+
 	/**
 	 * NeXus positions components by applying a set of translations and rotations
 	 * to apply to the component starting from 0, 0, 0. The order of these operations
@@ -840,7 +840,7 @@ public interface NXguide extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_onDataset the depends_onDataset
 	 */
 	public DataNode setDepends_on(IDataset depends_onDataset);
@@ -861,7 +861,7 @@ public interface NXguide extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDepends_onScalar();
@@ -882,7 +882,7 @@ public interface NXguide extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
@@ -892,17 +892,17 @@ public interface NXguide extends NXobject {
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
 	 * This is the group recommended for holding the chain of translation
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -916,12 +916,12 @@ public interface NXguide extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -931,12 +931,12 @@ public interface NXguide extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -946,11 +946,11 @@ public interface NXguide extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -960,11 +960,11 @@ public interface NXguide extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 }

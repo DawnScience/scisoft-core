@@ -26,7 +26,7 @@ import org.eclipse.dawnsci.nexus.*;
  * modules.
  * This is the purpose of this group. It is a child group to NXdetector.
  * Note, the pixel size is given as values in the array fast_pixel_direction and slow_pixel_direction.
- * 
+
  */
 public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_module {
 
@@ -42,22 +42,22 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	public NXdetector_moduleImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXdetector_module.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_DETECTOR_MODULE;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getData_origin() {

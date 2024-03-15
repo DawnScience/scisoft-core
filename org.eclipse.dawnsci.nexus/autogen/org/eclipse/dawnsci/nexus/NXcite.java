@@ -21,7 +21,7 @@ import org.eclipse.january.dataset.IDataset;
  * manuals, instruments, acquisition or analysis software used.
  * The idea would be to include this in the relevant NeXus object:
  * :ref:`NXdetector` for detectors, :ref:`NXinstrument` for instruments, etc.
- * 
+ *
  */
 public interface NXcite extends NXobject {
 
@@ -38,11 +38,11 @@ public interface NXcite extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDescription();
-	
+
 	/**
 	 * This should describe the reason for including this reference.
 	 * For example: The dataset in this group was normalised using the method
@@ -50,7 +50,7 @@ public interface NXcite extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param descriptionDataset the descriptionDataset
 	 */
 	public DataNode setDescription(IDataset descriptionDataset);
@@ -62,7 +62,7 @@ public interface NXcite extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDescriptionScalar();
@@ -74,7 +74,7 @@ public interface NXcite extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param description the description
 	 */
 	public DataNode setDescriptionScalar(String descriptionValue);
@@ -84,17 +84,17 @@ public interface NXcite extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getUrl();
-	
+
 	/**
 	 * URL referencing the document or data.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param urlDataset the urlDataset
 	 */
 	public DataNode setUrl(IDataset urlDataset);
@@ -104,7 +104,7 @@ public interface NXcite extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getUrlScalar();
@@ -114,7 +114,7 @@ public interface NXcite extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param url the url
 	 */
 	public DataNode setUrlScalar(String urlValue);
@@ -124,17 +124,17 @@ public interface NXcite extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDoi();
-	
+
 	/**
 	 * DOI referencing the document or data.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param doiDataset the doiDataset
 	 */
 	public DataNode setDoi(IDataset doiDataset);
@@ -144,7 +144,7 @@ public interface NXcite extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDoiScalar();
@@ -154,7 +154,7 @@ public interface NXcite extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param doi the doi
 	 */
 	public DataNode setDoiScalar(String doiValue);
@@ -164,17 +164,17 @@ public interface NXcite extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getEndnote();
-	
+
 	/**
 	 * Bibliographic reference data in EndNote format.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param endnoteDataset the endnoteDataset
 	 */
 	public DataNode setEndnote(IDataset endnoteDataset);
@@ -184,7 +184,7 @@ public interface NXcite extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getEndnoteScalar();
@@ -194,7 +194,7 @@ public interface NXcite extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param endnote the endnote
 	 */
 	public DataNode setEndnoteScalar(String endnoteValue);
@@ -204,17 +204,17 @@ public interface NXcite extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getBibtex();
-	
+
 	/**
 	 * Bibliographic reference data in BibTeX format.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param bibtexDataset the bibtexDataset
 	 */
 	public DataNode setBibtex(IDataset bibtexDataset);
@@ -224,7 +224,7 @@ public interface NXcite extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getBibtexScalar();
@@ -234,7 +234,7 @@ public interface NXcite extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param bibtex the bibtex
 	 */
 	public DataNode setBibtexScalar(String bibtexValue);
@@ -247,11 +247,11 @@ public interface NXcite extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -260,7 +260,7 @@ public interface NXcite extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);

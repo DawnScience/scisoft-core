@@ -26,7 +26,7 @@ import org.eclipse.dawnsci.nexus.*;
  * If uncertain whether to use :ref:`NXfilter` (band-pass filter)
  * or :ref:`NXattenuator` (reduces beam intensity), then use
  * :ref:`NXattenuator`.
- * 
+
  */
 public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 
@@ -48,22 +48,22 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	public NXfilterImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXfilter.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_FILTER;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	@Deprecated
@@ -95,7 +95,7 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	public Map<String, NXgeometry> getAllGeometry() {
 		return getChildren(NXgeometry.class);
 	}
-	
+
 	@Override
 	@Deprecated
 	public void setAllGeometry(Map<String, NXgeometry> geometry) {
@@ -560,7 +560,7 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	public Map<String, NXoff_geometry> getAllOff_geometry() {
 		return getChildren(NXoff_geometry.class);
 	}
-	
+
 	@Override
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry) {
 		setChildren(off_geometry);
@@ -621,7 +621,7 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

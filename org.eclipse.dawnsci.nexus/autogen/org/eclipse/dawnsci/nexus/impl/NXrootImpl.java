@@ -22,7 +22,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * Definition of the root NeXus group.
- * 
+
  */
 public class NXrootImpl extends NXobjectImpl implements NXroot {
 
@@ -39,22 +39,22 @@ public class NXrootImpl extends NXobjectImpl implements NXroot {
 	public NXrootImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXroot.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_ROOT;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public String getAttributeNx_class() {
@@ -191,7 +191,7 @@ public class NXrootImpl extends NXobjectImpl implements NXroot {
 	public Map<String, NXentry> getAllEntry() {
 		return getChildren(NXentry.class);
 	}
-	
+
 	@Override
 	public void setAllEntry(Map<String, NXentry> entry) {
 		setChildren(entry);

@@ -19,7 +19,7 @@ import org.eclipse.january.dataset.IDataset;
 
 /**
  * A spin flipper.
- * 
+ *
  */
 public interface NXflipper extends NXobject {
 
@@ -39,18 +39,18 @@ public interface NXflipper extends NXobject {
 	 * <li><b>coil</b> </li>
 	 * <li><b>current-sheet</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getType();
-	
+
 	/**
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>coil</b> </li>
 	 * <li><b>current-sheet</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param typeDataset the typeDataset
 	 */
 	public DataNode setType(IDataset typeDataset);
@@ -61,7 +61,7 @@ public interface NXflipper extends NXobject {
 	 * <li><b>coil</b> </li>
 	 * <li><b>current-sheet</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getTypeScalar();
@@ -72,7 +72,7 @@ public interface NXflipper extends NXobject {
 	 * <li><b>coil</b> </li>
 	 * <li><b>current-sheet</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param type the type
 	 */
 	public DataNode setTypeScalar(String typeValue);
@@ -83,18 +83,18 @@ public interface NXflipper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_PER_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getFlip_turns();
-	
+
 	/**
 	 * Linear density of turns (such as number of turns/cm) in flipping field coils
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_PER_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param flip_turnsDataset the flip_turnsDataset
 	 */
 	public DataNode setFlip_turns(IDataset flip_turnsDataset);
@@ -105,7 +105,7 @@ public interface NXflipper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_PER_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getFlip_turnsScalar();
@@ -116,7 +116,7 @@ public interface NXflipper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_PER_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param flip_turns the flip_turns
 	 */
 	public DataNode setFlip_turnsScalar(Double flip_turnsValue);
@@ -127,18 +127,18 @@ public interface NXflipper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_PER_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getComp_turns();
-	
+
 	/**
 	 * Linear density of turns (such as number of turns/cm) in compensating field coils
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_PER_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param comp_turnsDataset the comp_turnsDataset
 	 */
 	public DataNode setComp_turns(IDataset comp_turnsDataset);
@@ -149,7 +149,7 @@ public interface NXflipper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_PER_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getComp_turnsScalar();
@@ -160,7 +160,7 @@ public interface NXflipper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_PER_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param comp_turns the comp_turns
 	 */
 	public DataNode setComp_turnsScalar(Double comp_turnsValue);
@@ -171,18 +171,18 @@ public interface NXflipper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_PER_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getGuide_turns();
-	
+
 	/**
 	 * Linear density of turns (such as number of turns/cm) in guide field coils
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_PER_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param guide_turnsDataset the guide_turnsDataset
 	 */
 	public DataNode setGuide_turns(IDataset guide_turnsDataset);
@@ -193,7 +193,7 @@ public interface NXflipper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_PER_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getGuide_turnsScalar();
@@ -204,7 +204,7 @@ public interface NXflipper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_PER_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param guide_turns the guide_turns
 	 */
 	public DataNode setGuide_turnsScalar(Double guide_turnsValue);
@@ -215,18 +215,18 @@ public interface NXflipper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getFlip_current();
-	
+
 	/**
 	 * Flipping field coil current in "on" state"
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
-	 * 
+	 *
 	 * @param flip_currentDataset the flip_currentDataset
 	 */
 	public DataNode setFlip_current(IDataset flip_currentDataset);
@@ -237,7 +237,7 @@ public interface NXflipper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getFlip_currentScalar();
@@ -248,7 +248,7 @@ public interface NXflipper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
-	 * 
+	 *
 	 * @param flip_current the flip_current
 	 */
 	public DataNode setFlip_currentScalar(Double flip_currentValue);
@@ -259,18 +259,18 @@ public interface NXflipper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getComp_current();
-	
+
 	/**
 	 * Compensating field coil current in "on" state"
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
-	 * 
+	 *
 	 * @param comp_currentDataset the comp_currentDataset
 	 */
 	public DataNode setComp_current(IDataset comp_currentDataset);
@@ -281,7 +281,7 @@ public interface NXflipper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getComp_currentScalar();
@@ -292,7 +292,7 @@ public interface NXflipper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
-	 * 
+	 *
 	 * @param comp_current the comp_current
 	 */
 	public DataNode setComp_currentScalar(Double comp_currentValue);
@@ -303,18 +303,18 @@ public interface NXflipper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getGuide_current();
-	
+
 	/**
 	 * Guide field coil current in "on" state
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
-	 * 
+	 *
 	 * @param guide_currentDataset the guide_currentDataset
 	 */
 	public DataNode setGuide_current(IDataset guide_currentDataset);
@@ -325,7 +325,7 @@ public interface NXflipper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getGuide_currentScalar();
@@ -336,7 +336,7 @@ public interface NXflipper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
-	 * 
+	 *
 	 * @param guide_current the guide_current
 	 */
 	public DataNode setGuide_currentScalar(Double guide_currentValue);
@@ -347,18 +347,18 @@ public interface NXflipper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getThickness();
-	
+
 	/**
 	 * thickness along path of neutron travel
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param thicknessDataset the thicknessDataset
 	 */
 	public DataNode setThickness(IDataset thicknessDataset);
@@ -369,7 +369,7 @@ public interface NXflipper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getThicknessScalar();
@@ -380,7 +380,7 @@ public interface NXflipper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param thickness the thickness
 	 */
 	public DataNode setThicknessScalar(Double thicknessValue);
@@ -393,11 +393,11 @@ public interface NXflipper extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -406,7 +406,7 @@ public interface NXflipper extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);
@@ -423,11 +423,11 @@ public interface NXflipper extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDepends_on();
-	
+
 	/**
 	 * NeXus positions components by applying a set of translations and rotations
 	 * to apply to the component starting from 0, 0, 0. The order of these operations
@@ -440,7 +440,7 @@ public interface NXflipper extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_onDataset the depends_onDataset
 	 */
 	public DataNode setDepends_on(IDataset depends_onDataset);
@@ -457,7 +457,7 @@ public interface NXflipper extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDepends_onScalar();
@@ -474,7 +474,7 @@ public interface NXflipper extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
@@ -484,17 +484,17 @@ public interface NXflipper extends NXobject {
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
 	 * This is the group recommended for holding the chain of translation
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -508,12 +508,12 @@ public interface NXflipper extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -523,12 +523,12 @@ public interface NXflipper extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -538,11 +538,11 @@ public interface NXflipper extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -552,11 +552,11 @@ public interface NXflipper extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 }

@@ -21,7 +21,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * Constructive Solid Geometry base class, using :ref:`NXquadric` and :ref:`NXoff_geometry`
- * 
+
  */
 public class NXcsgImpl extends NXobjectImpl implements NXcsg {
 
@@ -39,22 +39,22 @@ public class NXcsgImpl extends NXobjectImpl implements NXcsg {
 	public NXcsgImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXcsg.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_CSG;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getOperation() {

@@ -20,7 +20,7 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * A simple slit.
  * For more complex geometries, :ref:`NXaperture` should be used.
- * 
+ *
  */
 public interface NXslit extends NXobject {
 
@@ -44,11 +44,11 @@ public interface NXslit extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDepends_on();
-	
+
 	/**
 	 * Points to the path of the last element in the geometry chain that places
 	 * this object in space.
@@ -65,7 +65,7 @@ public interface NXslit extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_onDataset the depends_onDataset
 	 */
 	public DataNode setDepends_on(IDataset depends_onDataset);
@@ -86,7 +86,7 @@ public interface NXslit extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDepends_onScalar();
@@ -107,7 +107,7 @@ public interface NXslit extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
@@ -119,11 +119,11 @@ public interface NXslit extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getX_gap();
-	
+
 	/**
 	 * Size of the gap opening in the first dimension of the local
 	 * coordinate system.
@@ -131,7 +131,7 @@ public interface NXslit extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param x_gapDataset the x_gapDataset
 	 */
 	public DataNode setX_gap(IDataset x_gapDataset);
@@ -143,7 +143,7 @@ public interface NXslit extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getX_gapScalar();
@@ -155,7 +155,7 @@ public interface NXslit extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param x_gap the x_gap
 	 */
 	public DataNode setX_gapScalar(Number x_gapValue);
@@ -167,11 +167,11 @@ public interface NXslit extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getY_gap();
-	
+
 	/**
 	 * Size of the gap opening in the second dimension of the local
 	 * coordinate system.
@@ -179,7 +179,7 @@ public interface NXslit extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param y_gapDataset the y_gapDataset
 	 */
 	public DataNode setY_gap(IDataset y_gapDataset);
@@ -191,7 +191,7 @@ public interface NXslit extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getY_gapScalar();
@@ -203,7 +203,7 @@ public interface NXslit extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param y_gap the y_gap
 	 */
 	public DataNode setY_gapScalar(Number y_gapValue);
@@ -216,11 +216,11 @@ public interface NXslit extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -229,7 +229,7 @@ public interface NXslit extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);
@@ -239,17 +239,17 @@ public interface NXslit extends NXobject {
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
 	 * This is the group recommended for holding the chain of translation
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -263,12 +263,12 @@ public interface NXslit extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -278,12 +278,12 @@ public interface NXslit extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -293,11 +293,11 @@ public interface NXslit extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -307,11 +307,11 @@ public interface NXslit extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 }

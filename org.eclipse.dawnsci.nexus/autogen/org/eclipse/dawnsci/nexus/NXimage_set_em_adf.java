@@ -19,27 +19,34 @@ import org.eclipse.january.dataset.IDataset;
 
 /**
  * Container for reporting a set of annular dark field images.
- * <p><b>Symbols:</b> <ul>
- * <li><b>n_images</b> 
- * Number of images</li>
- * <li><b>n_y</b> 
- * Number of pixel per image in the slow direction</li>
- * <li><b>n_x</b> 
- * Number of pixel per image in the fast direction</li></ul></p>
- * 
+ * Virtually the most important case is that spectra are collected in
+ * a scanning microscope (SEM or STEM) for a collection of points.
+ * The majority of cases use simple d-dimensional regular scan pattern,
+ * such as single point, line profiles, or (rectangular) surface mappings.
+ * The latter pattern is the most frequently used.
+ * For now the base class provides for scans for which the settings,
+ * binning, and energy resolution is the same for each scan point.
+ * <p><b>Symbols:</b><ul>
+ * <li><b>n_images</b>
+ * Number of images in the stack.</li>
+ * <li><b>n_y</b>
+ * Number of pixel per image in the slow direction.</li>
+ * <li><b>n_x</b>
+ * Number of pixel per image in the fast direction.</li></ul></p>
+ *
  */
 public interface NXimage_set_em_adf extends NXobject {
 
 	/**
-	 * Details about how the images were processed from the detector readings.
-	 * 
+	 * Details how (HA)ADF images were processed from the detector readings.
+	 *
 	 * @return  the value.
 	 */
 	public NXprocess getProcess();
-	
+
 	/**
-	 * Details about how the images were processed from the detector readings.
-	 * 
+	 * Details how (HA)ADF images were processed from the detector readings.
+	 *
 	 * @param processGroup the processGroup
 	 */
 	public void setProcess(NXprocess processGroup);
@@ -48,110 +55,62 @@ public interface NXimage_set_em_adf extends NXobject {
 	 * Get a NXprocess node by name:
 	 * <ul>
 	 * <li>
-	 * Details about how the images were processed from the detector readings.</li>
+	 * Details how (HA)ADF images were processed from the detector readings.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXprocess for that node.
 	 */
 	public NXprocess getProcess(String name);
-	
+
 	/**
 	 * Set a NXprocess node by name:
 	 * <ul>
 	 * <li>
-	 * Details about how the images were processed from the detector readings.</li>
+	 * Details how (HA)ADF images were processed from the detector readings.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param process the value to set
 	 */
 	public void setProcess(String name, NXprocess process);
-	
+
 	/**
 	 * Get all NXprocess nodes:
 	 * <ul>
 	 * <li>
-	 * Details about how the images were processed from the detector readings.</li>
+	 * Details how (HA)ADF images were processed from the detector readings.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXprocess for that node.
 	 */
 	public Map<String, NXprocess> getAllProcess();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
-	 * Details about how the images were processed from the detector readings.</li>
+	 * Details how (HA)ADF images were processed from the detector readings.</li>
 	 * </ul>
-	 * 
-	 * @param process the child nodes to add 
+	 *
+	 * @param process the child nodes to add
 	 */
-	
+
 	public void setAllProcess(Map<String, NXprocess> process);
-	
+
 
 	/**
-	 * Annular dark field images.
-	 * 
+	 * Annular dark field image stack.
+	 *
 	 * @return  the value.
 	 */
-	public NXdata getData();
-	
-	/**
-	 * Annular dark field images.
-	 * 
-	 * @param dataGroup the dataGroup
-	 */
-	public void setData(NXdata dataGroup);
+	public NXdata getStack();
 
 	/**
-	 * Get a NXdata node by name:
-	 * <ul>
-	 * <li>
-	 * Annular dark field images.</li>
-	 * </ul>
-	 * 
-	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXdata for that node.
+	 * Annular dark field image stack.
+	 *
+	 * @param stackGroup the stackGroup
 	 */
-	public NXdata getData(String name);
-	
-	/**
-	 * Set a NXdata node by name:
-	 * <ul>
-	 * <li>
-	 * Annular dark field images.</li>
-	 * </ul>
-	 * 
-	 * @param name the name of the node
-	 * @param data the value to set
-	 */
-	public void setData(String name, NXdata data);
-	
-	/**
-	 * Get all NXdata nodes:
-	 * <ul>
-	 * <li>
-	 * Annular dark field images.</li>
-	 * </ul>
-	 * 
-	 * @return  a map from node names to the NXdata for that node.
-	 */
-	public Map<String, NXdata> getAllData();
-	
-	/**
-	 * Set multiple child nodes of a particular type.
-	 * <ul>
-	 * <li>
-	 * Annular dark field images.</li>
-	 * </ul>
-	 * 
-	 * @param data the child nodes to add 
-	 */
-	
-	public void setAllData(Map<String, NXdata> data);
-	
+	public void setStack(NXdata stackGroup);
 
 }

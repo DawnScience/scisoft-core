@@ -30,7 +30,7 @@ import org.eclipse.dawnsci.nexus.*;
  * The expected units are:
  * * wavelength: angstrom
  * * energy: eV
- * 
+
  */
 public class NXmonochromatorImpl extends NXobjectImpl implements NXmonochromator {
 
@@ -53,22 +53,22 @@ public class NXmonochromatorImpl extends NXobjectImpl implements NXmonochromator
 	public NXmonochromatorImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXmonochromator.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_MONOCHROMATOR;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getWavelength() {
@@ -247,7 +247,7 @@ public class NXmonochromatorImpl extends NXobjectImpl implements NXmonochromator
 	public Map<String, NXoff_geometry> getAllOff_geometry() {
 		return getChildren(NXoff_geometry.class);
 	}
-	
+
 	@Override
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry) {
 		setChildren(off_geometry);
@@ -278,7 +278,7 @@ public class NXmonochromatorImpl extends NXobjectImpl implements NXmonochromator
 	public Map<String, NXcrystal> getAllCrystal() {
 		return getChildren(NXcrystal.class);
 	}
-	
+
 	@Override
 	public void setAllCrystal(Map<String, NXcrystal> crystal) {
 		setChildren(crystal);
@@ -309,7 +309,7 @@ public class NXmonochromatorImpl extends NXobjectImpl implements NXmonochromator
 	public Map<String, NXvelocity_selector> getAllVelocity_selector() {
 		return getChildren(NXvelocity_selector.class);
 	}
-	
+
 	@Override
 	public void setAllVelocity_selector(Map<String, NXvelocity_selector> velocity_selector) {
 		setChildren(velocity_selector);
@@ -340,7 +340,7 @@ public class NXmonochromatorImpl extends NXobjectImpl implements NXmonochromator
 	public Map<String, NXgrating> getAllGrating() {
 		return getChildren(NXgrating.class);
 	}
-	
+
 	@Override
 	public void setAllGrating(Map<String, NXgrating> grating) {
 		setChildren(grating);
@@ -401,7 +401,7 @@ public class NXmonochromatorImpl extends NXobjectImpl implements NXmonochromator
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

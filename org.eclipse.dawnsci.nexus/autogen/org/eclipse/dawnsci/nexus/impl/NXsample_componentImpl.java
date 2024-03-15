@@ -21,7 +21,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * One group like this per component can be recorded For a sample consisting of multiple components.
- * 
+
  */
 public class NXsample_componentImpl extends NXobjectImpl implements NXsample_component {
 
@@ -38,22 +38,22 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	public NXsample_componentImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXsample_component.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_SAMPLE_COMPONENT;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getName() {

@@ -83,7 +83,7 @@ import org.eclipse.dawnsci.nexus.*;
  * * `Further stages in transmission electron microscopy <https://doi.org/10.1007/978-1-4757-2519-3>`_ (page 124ff)
  * * `Specimens in atom probe <https://doi.org/10.1007/978-1-4614-8721-0>`_ (page 47ff)
  * * `Exemplar micro-manipulators <https://nano.oxinst.com/products/omniprobe/omniprobe-200>`_
- * 
+
  */
 public class NXstage_labImpl extends NXobjectImpl implements NXstage_lab {
 
@@ -91,7 +91,7 @@ public class NXstage_labImpl extends NXobjectImpl implements NXstage_lab {
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_MANUFACTURER,
+		NexusBaseClass.NX_FABRICATION,
 		NexusBaseClass.NX_TRANSFORMATIONS,
 		NexusBaseClass.NX_POSITIONER);
 
@@ -102,22 +102,22 @@ public class NXstage_labImpl extends NXobjectImpl implements NXstage_lab {
 	public NXstage_labImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXstage_lab.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_STAGE_LAB;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getDesign() {
@@ -160,34 +160,34 @@ public class NXstage_labImpl extends NXobjectImpl implements NXstage_lab {
 	}
 
 	@Override
-	public NXmanufacturer getManufacturer() {
-		// dataNodeName = NX_MANUFACTURER
-		return getChild("manufacturer", NXmanufacturer.class);
+	public NXfabrication getFabrication() {
+		// dataNodeName = NX_FABRICATION
+		return getChild("fabrication", NXfabrication.class);
 	}
 
 	@Override
-	public void setManufacturer(NXmanufacturer manufacturerGroup) {
-		putChild("manufacturer", manufacturerGroup);
+	public void setFabrication(NXfabrication fabricationGroup) {
+		putChild("fabrication", fabricationGroup);
 	}
 
 	@Override
-	public NXmanufacturer getManufacturer(String name) {
-		return getChild(name, NXmanufacturer.class);
+	public NXfabrication getFabrication(String name) {
+		return getChild(name, NXfabrication.class);
 	}
 
 	@Override
-	public void setManufacturer(String name, NXmanufacturer manufacturer) {
-		putChild(name, manufacturer);
+	public void setFabrication(String name, NXfabrication fabrication) {
+		putChild(name, fabrication);
 	}
 
 	@Override
-	public Map<String, NXmanufacturer> getAllManufacturer() {
-		return getChildren(NXmanufacturer.class);
+	public Map<String, NXfabrication> getAllFabrication() {
+		return getChildren(NXfabrication.class);
 	}
-	
+
 	@Override
-	public void setAllManufacturer(Map<String, NXmanufacturer> manufacturer) {
-		setChildren(manufacturer);
+	public void setAllFabrication(Map<String, NXfabrication> fabrication) {
+		setChildren(fabrication);
 	}
 
 	@Override
@@ -335,7 +335,7 @@ public class NXstage_labImpl extends NXobjectImpl implements NXstage_lab {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);
@@ -366,7 +366,7 @@ public class NXstage_labImpl extends NXobjectImpl implements NXstage_lab {
 	public Map<String, NXpositioner> getAllPositioner() {
 		return getChildren(NXpositioner.class);
 	}
-	
+
 	@Override
 	public void setAllPositioner(Map<String, NXpositioner> positioner) {
 		setChildren(positioner);

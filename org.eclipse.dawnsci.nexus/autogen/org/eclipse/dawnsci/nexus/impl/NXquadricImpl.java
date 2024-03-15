@@ -21,7 +21,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * definition of a quadric surface.
- * 
+
  */
 public class NXquadricImpl extends NXobjectImpl implements NXquadric {
 
@@ -37,22 +37,22 @@ public class NXquadricImpl extends NXobjectImpl implements NXquadric {
 	public NXquadricImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXquadric.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_QUADRIC;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getParameters() {

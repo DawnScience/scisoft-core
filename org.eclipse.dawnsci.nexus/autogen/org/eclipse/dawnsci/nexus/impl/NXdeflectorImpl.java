@@ -23,7 +23,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * Deflectors as they are used e.g. in an electron analyser.
- * 
+
  */
 public class NXdeflectorImpl extends NXobjectImpl implements NXdeflector {
 
@@ -40,22 +40,22 @@ public class NXdeflectorImpl extends NXobjectImpl implements NXdeflector {
 	public NXdeflectorImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXdeflector.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_DEFLECTOR;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getType() {
@@ -242,7 +242,7 @@ public class NXdeflectorImpl extends NXobjectImpl implements NXdeflector {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

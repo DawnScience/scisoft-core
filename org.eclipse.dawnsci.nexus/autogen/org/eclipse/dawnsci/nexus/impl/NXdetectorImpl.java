@@ -24,7 +24,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * A detector, detector bank, or multidetector.
- * 
+
  */
 public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 
@@ -33,6 +33,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
 		NexusBaseClass.NX_GEOMETRY,
+		NexusBaseClass.NX_DETECTOR_CHANNEL,
 		NexusBaseClass.NX_DATA,
 		NexusBaseClass.NX_NOTE,
 		NexusBaseClass.NX_NOTE,
@@ -47,22 +48,22 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	public NXdetectorImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXdetector.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_DETECTOR;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getTime_of_flight() {
@@ -540,7 +541,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	public Map<String, NXgeometry> getAllGeometry() {
 		return getChildren(NXgeometry.class);
 	}
-	
+
 	@Override
 	@Deprecated
 	public void setAllGeometry(Map<String, NXgeometry> geometry) {
@@ -778,6 +779,17 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
+	public NXdetector_channel getChannelname_channel() {
+		// dataNodeName = NX_CHANNELNAME_CHANNEL
+		return getChild("channelname_channel", NXdetector_channel.class);
+	}
+
+	@Override
+	public void setChannelname_channel(NXdetector_channel channelname_channelGroup) {
+		putChild("channelname_channel", channelname_channelGroup);
+	}
+
+	@Override
 	public NXdata getEfficiency() {
 		// dataNodeName = NX_EFFICIENCY
 		return getChild("efficiency", NXdata.class);
@@ -975,7 +987,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	public Map<String, NXcollection> getAllCollection() {
 		return getChildren(NXcollection.class);
 	}
-	
+
 	@Override
 	public void setAllCollection(Map<String, NXcollection> collection) {
 		setChildren(collection);
@@ -1626,13 +1638,13 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	public Map<String, NXdetector_module> getAllDetector_module() {
 		return getChildren(NXdetector_module.class);
 	}
-	
+
 	@Override
 	public void setAllDetector_module(Map<String, NXdetector_module> detector_module) {
 		setChildren(detector_module);
 	}
-	// Unprocessed choice:  pixel_shape
-	// Unprocessed choice:  detector_shape
+	// Unprocessed choice: pixel_shape
+	// Unprocessed choice: detector_shape
 
 	@Override
 	public String getAttributeDefault() {
@@ -1689,7 +1701,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

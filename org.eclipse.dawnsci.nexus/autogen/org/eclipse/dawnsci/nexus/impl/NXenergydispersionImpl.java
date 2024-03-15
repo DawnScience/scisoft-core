@@ -24,7 +24,7 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * Subclass of NXelectronanalyser to describe the energy dispersion section of a
  * photoelectron analyser.
- * 
+
  */
 public class NXenergydispersionImpl extends NXobjectImpl implements NXenergydispersion {
 
@@ -43,22 +43,22 @@ public class NXenergydispersionImpl extends NXobjectImpl implements NXenergydisp
 	public NXenergydispersionImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXenergydispersion.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_ENERGYDISPERSION;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getScheme() {
@@ -165,7 +165,7 @@ public class NXenergydispersionImpl extends NXobjectImpl implements NXenergydisp
 	public Map<String, NXaperture> getAllAperture() {
 		return getChildren(NXaperture.class);
 	}
-	
+
 	@Override
 	public void setAllAperture(Map<String, NXaperture> aperture) {
 		setChildren(aperture);
@@ -256,7 +256,7 @@ public class NXenergydispersionImpl extends NXobjectImpl implements NXenergydisp
 	public Map<String, NXdeflector> getAllDeflector() {
 		return getChildren(NXdeflector.class);
 	}
-	
+
 	@Override
 	public void setAllDeflector(Map<String, NXdeflector> deflector) {
 		setChildren(deflector);
@@ -287,7 +287,7 @@ public class NXenergydispersionImpl extends NXobjectImpl implements NXenergydisp
 	public Map<String, NXlens_em> getAllLens_em() {
 		return getChildren(NXlens_em.class);
 	}
-	
+
 	@Override
 	public void setAllLens_em(Map<String, NXlens_em> lens_em) {
 		setChildren(lens_em);

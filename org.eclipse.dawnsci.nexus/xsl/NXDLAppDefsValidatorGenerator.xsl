@@ -158,7 +158,17 @@
 	<xsl:variable name="baseClassGroupDef" select="$baseClass/nx:group[@type=current()/@type and (@name=current()/@name or not(boolean(@name)))]"/>
 	<!-- The group name is the name in the baseclass, if it exists, else the type without the NX prefix.
 	     This name, prefixed by 'get' is the name of the method in the method in the base class to use. -->
-	<xsl:variable name="groupNameInBaseClass" select="if ($baseClassGroupDef/@name) then @name else substring(@type, 3)"/>
+	<!-- <xsl:variable name="groupNameInBaseClass" select="if ($baseClassGroupDef/@name) then @name else substring(@type, 3)"/> -->
+	<xsl:variable name="groupNameInBaseClass">
+		<xsl:choose>
+			<xsl:when test="$baseClassGroupDef/@name">
+				<xsl:value-of select="@name"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="substring(@type, 3)"/>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:variable>
 	
 	<!-- True if there can be multiple occurrences of this group. -->
 	<xsl:variable name="multiple" select="not(@name) and not(@maxOccurs='1')"/>
@@ -175,7 +185,7 @@
 	<xsl:if test="$multiple"> (possibly multiple)</xsl:if>
 	<xsl:if test="$canSASclass"> and canSAS_class <xsl:value-of select="$canSASclass"/></xsl:if>
 	<xsl:text>&#10;</xsl:text>
-	
+
 	<!-- Validate the number of occurrences of an unnamed group. -->
 	<xsl:if test="not(@name)">
 		<xsl:value-of select="dawnsci:tabs(2)"/>
@@ -202,12 +212,12 @@
 			</xsl:when>
 			<xsl:when test="@name = $groupNameInBaseClass">
 				<xsl:value-of select="$parentGroupVariableName"/>
-				<xsl:text>.get</xsl:text><xsl:value-of select="dawnsci:capitalise-first($groupNameInBaseClass)"/>
+				<xsl:text>.get</xsl:text><xsl:value-of select="dawnsci:capitalise-first(lower-case($groupNameInBaseClass))"/>
 				<xsl:text>()</xsl:text>
 			</xsl:when>
 			<xsl:when test="@name">
 				<xsl:value-of select="$parentGroupVariableName"/>
-				<xsl:text>.get</xsl:text><xsl:value-of select="dawnsci:capitalise-first($groupNameInBaseClass)"/>
+				<xsl:text>.get</xsl:text><xsl:value-of select="dawnsci:capitalise-first(lower-case($groupNameInBaseClass))"/>
 				<xsl:text>("</xsl:text><xsl:value-of select="@name"/><xsl:text>")</xsl:text>
 			</xsl:when>
 			<xsl:otherwise>
@@ -800,4 +810,4 @@ public enum NexusApplicationDefinition {
 	<xsl:value-of select="$group/nx:attribute[@name='canSAS_class']/nx:enumeration/nx:item/@value"/>
 </xsl:function>
 
-</xsl:stylesheet> 
+</xsl:stylesheet>

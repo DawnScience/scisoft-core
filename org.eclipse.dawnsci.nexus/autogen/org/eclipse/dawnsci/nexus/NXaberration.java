@@ -16,600 +16,280 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.january.dataset.IDataset;
 
 /**
- * Models for aberrations of electro-magnetic lenses in electron microscopy.
- * The notation follows `O. Krivanek et al. (1999) <https://doi.org/10.1016/S0304-3991(99)00013-3>`_
- * and `O. Krivanek et al. (2003) <https://doi.org/10.1016/S0304-3991(03)00090-1>`_
- * See also `S. J. Pennycock and P. D. Nellist <https://doi.org/10.1007/978-1-4419-7200-2>`_ (page 44ff, and page 118ff)
- * for further details, additional literature, and the unit of the coefficients.
- * Consult Table 7-2 of Ibid. publication on how to convert between
- * conventions of different groups/vendors.
- * 
+ * Quantified aberration coefficient in an aberration_model.
+ *
  */
 public interface NXaberration extends NXobject {
 
-	public static final String NX_C_1_0 = "c_1_0";
-	public static final String NX_C_1_2_A = "c_1_2_a";
-	public static final String NX_C_1_2_B = "c_1_2_b";
-	public static final String NX_C_2_1_A = "c_2_1_a";
-	public static final String NX_C_2_1_B = "c_2_1_b";
-	public static final String NX_C_2_3_A = "c_2_3_a";
-	public static final String NX_C_2_3_B = "c_2_3_b";
-	public static final String NX_C_3_0 = "c_3_0";
-	public static final String NX_C_3_2_A = "c_3_2_a";
-	public static final String NX_C_3_2_B = "c_3_2_b";
-	public static final String NX_C_3_4_A = "c_3_4_a";
-	public static final String NX_C_3_4_B = "c_3_4_b";
-	public static final String NX_C_5_0 = "c_5_0";
+	public static final String NX_MAGNITUDE = "magnitude";
+	public static final String NX_UNCERTAINTY = "uncertainty";
+	public static final String NX_UNCERTAINTY_MODEL = "uncertainty_model";
+	public static final String NX_DELTA_TIME = "delta_time";
+	public static final String NX_ANGLE = "angle";
+	public static final String NX_NAME = "name";
+	public static final String NX_ALIAS = "alias";
 	/**
-	 * Defocus
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
-	public IDataset getC_1_0();
-	
-	/**
-	 * Defocus
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @param c_1_0Dataset the c_1_0Dataset
-	 */
-	public DataNode setC_1_0(IDataset c_1_0Dataset);
+	public IDataset getMagnitude();
 
 	/**
-	 * Defocus
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
+	 * @param magnitudeDataset the magnitudeDataset
+	 */
+	public DataNode setMagnitude(IDataset magnitudeDataset);
+
+	/**
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_LENGTH
+	 * </p>
+	 *
 	 * @return  the value.
 	 */
-	public Double getC_1_0Scalar();
+	public Double getMagnitudeScalar();
 
 	/**
-	 * Defocus
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
-	 * @param c_1_0 the c_1_0
+	 *
+	 * @param magnitude the magnitude
 	 */
-	public DataNode setC_1_0Scalar(Double c_1_0Value);
+	public DataNode setMagnitudeScalar(Double magnitudeValue);
 
 	/**
-	 * Two-fold astigmatism
+	 * Confidence
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
-	public IDataset getC_1_2_a();
-	
-	/**
-	 * Two-fold astigmatism
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @param c_1_2_aDataset the c_1_2_aDataset
-	 */
-	public DataNode setC_1_2_a(IDataset c_1_2_aDataset);
+	public IDataset getUncertainty();
 
 	/**
-	 * Two-fold astigmatism
+	 * Confidence
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
+	 * @param uncertaintyDataset the uncertaintyDataset
+	 */
+	public DataNode setUncertainty(IDataset uncertaintyDataset);
+
+	/**
+	 * Confidence
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_LENGTH
+	 * </p>
+	 *
 	 * @return  the value.
 	 */
-	public Double getC_1_2_aScalar();
+	public Double getUncertaintyScalar();
 
 	/**
-	 * Two-fold astigmatism
+	 * Confidence
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
-	 * @param c_1_2_a the c_1_2_a
+	 *
+	 * @param uncertainty the uncertainty
 	 */
-	public DataNode setC_1_2_aScalar(Double c_1_2_aValue);
+	public DataNode setUncertaintyScalar(Double uncertaintyValue);
 
 	/**
-	 * Two-fold astigmatism
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
+	 * How was the uncertainty quantified e.g. via the 95% confidence interval.
+	 *
 	 * @return  the value.
 	 */
-	public IDataset getC_1_2_b();
-	
-	/**
-	 * Two-fold astigmatism
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @param c_1_2_bDataset the c_1_2_bDataset
-	 */
-	public DataNode setC_1_2_b(IDataset c_1_2_bDataset);
+	public IDataset getUncertainty_model();
 
 	/**
-	 * Two-fold astigmatism
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
+	 * How was the uncertainty quantified e.g. via the 95% confidence interval.
+	 *
+	 * @param uncertainty_modelDataset the uncertainty_modelDataset
+	 */
+	public DataNode setUncertainty_model(IDataset uncertainty_modelDataset);
+
+	/**
+	 * How was the uncertainty quantified e.g. via the 95% confidence interval.
+	 *
 	 * @return  the value.
 	 */
-	public Double getC_1_2_bScalar();
+	public String getUncertainty_modelScalar();
 
 	/**
-	 * Two-fold astigmatism
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @param c_1_2_b the c_1_2_b
+	 * How was the uncertainty quantified e.g. via the 95% confidence interval.
+	 *
+	 * @param uncertainty_model the uncertainty_model
 	 */
-	public DataNode setC_1_2_bScalar(Double c_1_2_bValue);
+	public DataNode setUncertainty_modelScalar(String uncertainty_modelValue);
 
 	/**
-	 * Second-order axial coma
+	 * Time elapsed since the last measurement.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Units:</b> NX_TIME
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
-	public IDataset getC_2_1_a();
-	
-	/**
-	 * Second-order axial coma
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @param c_2_1_aDataset the c_2_1_aDataset
-	 */
-	public DataNode setC_2_1_a(IDataset c_2_1_aDataset);
+	public IDataset getDelta_time();
 
 	/**
-	 * Second-order axial coma
+	 * Time elapsed since the last measurement.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Units:</b> NX_TIME
 	 * </p>
-	 * 
+	 *
+	 * @param delta_timeDataset the delta_timeDataset
+	 */
+	public DataNode setDelta_time(IDataset delta_timeDataset);
+
+	/**
+	 * Time elapsed since the last measurement.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * </p>
+	 *
 	 * @return  the value.
 	 */
-	public Double getC_2_1_aScalar();
+	public Double getDelta_timeScalar();
 
 	/**
-	 * Second-order axial coma
+	 * Time elapsed since the last measurement.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Units:</b> NX_TIME
 	 * </p>
-	 * 
-	 * @param c_2_1_a the c_2_1_a
+	 *
+	 * @param delta_time the delta_time
 	 */
-	public DataNode setC_2_1_aScalar(Double c_2_1_aValue);
+	public DataNode setDelta_timeScalar(Double delta_timeValue);
 
 	/**
-	 * Second-order axial coma
+	 * For the CEOS definitions the C aberrations are radial-symmetric and have no
+	 * angle entry, while the A, B, D, S, or R aberrations are n-fold
+	 * symmetric and have an angle entry.
+	 * For the NION definitions the coordinate system differs to the one
+	 * used in CEOS and instead two aberration coefficients a and b are used.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
-	public IDataset getC_2_1_b();
-	
-	/**
-	 * Second-order axial coma
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @param c_2_1_bDataset the c_2_1_bDataset
-	 */
-	public DataNode setC_2_1_b(IDataset c_2_1_bDataset);
+	public IDataset getAngle();
 
 	/**
-	 * Second-order axial coma
+	 * For the CEOS definitions the C aberrations are radial-symmetric and have no
+	 * angle entry, while the A, B, D, S, or R aberrations are n-fold
+	 * symmetric and have an angle entry.
+	 * For the NION definitions the coordinate system differs to the one
+	 * used in CEOS and instead two aberration coefficients a and b are used.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
+	 * @param angleDataset the angleDataset
+	 */
+	public DataNode setAngle(IDataset angleDataset);
+
+	/**
+	 * For the CEOS definitions the C aberrations are radial-symmetric and have no
+	 * angle entry, while the A, B, D, S, or R aberrations are n-fold
+	 * symmetric and have an angle entry.
+	 * For the NION definitions the coordinate system differs to the one
+	 * used in CEOS and instead two aberration coefficients a and b are used.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ANGLE
+	 * </p>
+	 *
 	 * @return  the value.
 	 */
-	public Double getC_2_1_bScalar();
+	public Double getAngleScalar();
 
 	/**
-	 * Second-order axial coma
+	 * For the CEOS definitions the C aberrations are radial-symmetric and have no
+	 * angle entry, while the A, B, D, S, or R aberrations are n-fold
+	 * symmetric and have an angle entry.
+	 * For the NION definitions the coordinate system differs to the one
+	 * used in CEOS and instead two aberration coefficients a and b are used.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
-	 * @param c_2_1_b the c_2_1_b
+	 *
+	 * @param angle the angle
 	 */
-	public DataNode setC_2_1_bScalar(Double c_2_1_bValue);
+	public DataNode setAngleScalar(Double angleValue);
 
 	/**
-	 * Threefold astigmatism
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
-	public IDataset getC_2_3_a();
-	
-	/**
-	 * Threefold astigmatism
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @param c_2_3_aDataset the c_2_3_aDataset
-	 */
-	public DataNode setC_2_3_a(IDataset c_2_3_aDataset);
+	public IDataset getName();
 
 	/**
-	 * Threefold astigmatism
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
+	 *
+	 * @param nameDataset the nameDataset
+	 */
+	public DataNode setName(IDataset nameDataset);
+
+	/**
+	 *
 	 * @return  the value.
 	 */
-	public Double getC_2_3_aScalar();
+	public String getNameScalar();
 
 	/**
-	 * Threefold astigmatism
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @param c_2_3_a the c_2_3_a
+	 *
+	 * @param name the name
 	 */
-	public DataNode setC_2_3_aScalar(Double c_2_3_aValue);
+	public DataNode setNameScalar(String nameValue);
 
 	/**
-	 * Threefold astigmatism
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
-	public IDataset getC_2_3_b();
-	
-	/**
-	 * Threefold astigmatism
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @param c_2_3_bDataset the c_2_3_bDataset
-	 */
-	public DataNode setC_2_3_b(IDataset c_2_3_bDataset);
+	public IDataset getAlias();
 
 	/**
-	 * Threefold astigmatism
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
+	 *
+	 * @param aliasDataset the aliasDataset
+	 */
+	public DataNode setAlias(IDataset aliasDataset);
+
+	/**
+	 *
 	 * @return  the value.
 	 */
-	public Double getC_2_3_bScalar();
+	public String getAliasScalar();
 
 	/**
-	 * Threefold astigmatism
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @param c_2_3_b the c_2_3_b
+	 *
+	 * @param alias the alias
 	 */
-	public DataNode setC_2_3_bScalar(Double c_2_3_bValue);
-
-	/**
-	 * Spherical aberration
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @return  the value.
-	 */
-	public IDataset getC_3_0();
-	
-	/**
-	 * Spherical aberration
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @param c_3_0Dataset the c_3_0Dataset
-	 */
-	public DataNode setC_3_0(IDataset c_3_0Dataset);
-
-	/**
-	 * Spherical aberration
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @return  the value.
-	 */
-	public Double getC_3_0Scalar();
-
-	/**
-	 * Spherical aberration
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @param c_3_0 the c_3_0
-	 */
-	public DataNode setC_3_0Scalar(Double c_3_0Value);
-
-	/**
-	 * Star aberration
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @return  the value.
-	 */
-	public IDataset getC_3_2_a();
-	
-	/**
-	 * Star aberration
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @param c_3_2_aDataset the c_3_2_aDataset
-	 */
-	public DataNode setC_3_2_a(IDataset c_3_2_aDataset);
-
-	/**
-	 * Star aberration
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @return  the value.
-	 */
-	public Double getC_3_2_aScalar();
-
-	/**
-	 * Star aberration
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @param c_3_2_a the c_3_2_a
-	 */
-	public DataNode setC_3_2_aScalar(Double c_3_2_aValue);
-
-	/**
-	 * Star aberration
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @return  the value.
-	 */
-	public IDataset getC_3_2_b();
-	
-	/**
-	 * Star aberration
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @param c_3_2_bDataset the c_3_2_bDataset
-	 */
-	public DataNode setC_3_2_b(IDataset c_3_2_bDataset);
-
-	/**
-	 * Star aberration
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @return  the value.
-	 */
-	public Double getC_3_2_bScalar();
-
-	/**
-	 * Star aberration
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @param c_3_2_b the c_3_2_b
-	 */
-	public DataNode setC_3_2_bScalar(Double c_3_2_bValue);
-
-	/**
-	 * Fourfold astigmatism
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @return  the value.
-	 */
-	public IDataset getC_3_4_a();
-	
-	/**
-	 * Fourfold astigmatism
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @param c_3_4_aDataset the c_3_4_aDataset
-	 */
-	public DataNode setC_3_4_a(IDataset c_3_4_aDataset);
-
-	/**
-	 * Fourfold astigmatism
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @return  the value.
-	 */
-	public Double getC_3_4_aScalar();
-
-	/**
-	 * Fourfold astigmatism
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @param c_3_4_a the c_3_4_a
-	 */
-	public DataNode setC_3_4_aScalar(Double c_3_4_aValue);
-
-	/**
-	 * Fourfold astigmatism
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @return  the value.
-	 */
-	public IDataset getC_3_4_b();
-	
-	/**
-	 * Fourfold astigmatism
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @param c_3_4_bDataset the c_3_4_bDataset
-	 */
-	public DataNode setC_3_4_b(IDataset c_3_4_bDataset);
-
-	/**
-	 * Fourfold astigmatism
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @return  the value.
-	 */
-	public Double getC_3_4_bScalar();
-
-	/**
-	 * Fourfold astigmatism
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @param c_3_4_b the c_3_4_b
-	 */
-	public DataNode setC_3_4_bScalar(Double c_3_4_bValue);
-
-	/**
-	 * Fifth-order spherical aberration
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @return  the value.
-	 */
-	public IDataset getC_5_0();
-	
-	/**
-	 * Fifth-order spherical aberration
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @param c_5_0Dataset the c_5_0Dataset
-	 */
-	public DataNode setC_5_0(IDataset c_5_0Dataset);
-
-	/**
-	 * Fifth-order spherical aberration
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @return  the value.
-	 */
-	public Double getC_5_0Scalar();
-
-	/**
-	 * Fifth-order spherical aberration
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
-	 * </p>
-	 * 
-	 * @param c_5_0 the c_5_0
-	 */
-	public DataNode setC_5_0Scalar(Double c_5_0Value);
+	public DataNode setAliasScalar(String aliasValue);
 
 }

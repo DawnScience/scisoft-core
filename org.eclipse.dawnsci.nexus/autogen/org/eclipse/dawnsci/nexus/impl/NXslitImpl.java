@@ -24,7 +24,7 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * A simple slit.
  * For more complex geometries, :ref:`NXaperture` should be used.
- * 
+
  */
 public class NXslitImpl extends NXobjectImpl implements NXslit {
 
@@ -41,22 +41,22 @@ public class NXslitImpl extends NXobjectImpl implements NXslit {
 	public NXslitImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXslit.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_SLIT;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getDepends_on() {
@@ -153,7 +153,7 @@ public class NXslitImpl extends NXobjectImpl implements NXslit {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

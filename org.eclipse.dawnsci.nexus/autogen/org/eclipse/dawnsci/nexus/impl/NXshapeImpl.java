@@ -24,7 +24,7 @@ import org.eclipse.dawnsci.nexus.*;
  * This is the description of the general shape and size of a
  * component, which may be made up of ``numobj`` separate
  * elements - it is used by the :ref:`NXgeometry` class
- * 
+
  */
 public class NXshapeImpl extends NXobjectImpl implements NXshape {
 
@@ -40,22 +40,22 @@ public class NXshapeImpl extends NXobjectImpl implements NXshape {
 	public NXshapeImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXshape.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_SHAPE;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getShape() {

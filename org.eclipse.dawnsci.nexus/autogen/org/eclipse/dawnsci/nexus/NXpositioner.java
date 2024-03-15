@@ -19,7 +19,7 @@ import org.eclipse.january.dataset.IDataset;
 
 /**
  * A generic positioner such as a motor or piezo-electric transducer.
- * 
+ *
  */
 public interface NXpositioner extends NXobject {
 
@@ -38,56 +38,56 @@ public interface NXpositioner extends NXobject {
 	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
 	 * symbolic or mnemonic name (one word)
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getName();
-	
+
 	/**
 	 * symbolic or mnemonic name (one word)
-	 * 
+	 *
 	 * @param nameDataset the nameDataset
 	 */
 	public DataNode setName(IDataset nameDataset);
 
 	/**
 	 * symbolic or mnemonic name (one word)
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getNameScalar();
 
 	/**
 	 * symbolic or mnemonic name (one word)
-	 * 
+	 *
 	 * @param name the name
 	 */
 	public DataNode setNameScalar(String nameValue);
 
 	/**
 	 * description of positioner
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDescription();
-	
+
 	/**
 	 * description of positioner
-	 * 
+	 *
 	 * @param descriptionDataset the descriptionDataset
 	 */
 	public DataNode setDescription(IDataset descriptionDataset);
 
 	/**
 	 * description of positioner
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDescriptionScalar();
 
 	/**
 	 * description of positioner
-	 * 
+	 *
 	 * @param description the description
 	 */
 	public DataNode setDescriptionScalar(String descriptionValue);
@@ -99,11 +99,11 @@ public interface NXpositioner extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getValue();
-	
+
 	/**
 	 * best known value of positioner - need [n] as may be scanned
 	 * <p>
@@ -111,7 +111,7 @@ public interface NXpositioner extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
-	 * 
+	 *
 	 * @param valueDataset the valueDataset
 	 */
 	public DataNode setValue(IDataset valueDataset);
@@ -123,7 +123,7 @@ public interface NXpositioner extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getValueScalar();
@@ -135,7 +135,7 @@ public interface NXpositioner extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
-	 * 
+	 *
 	 * @param value the value
 	 */
 	public DataNode setValueScalar(Number valueValue);
@@ -147,11 +147,11 @@ public interface NXpositioner extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getRaw_value();
-	
+
 	/**
 	 * raw value of positioner - need [n] as may be scanned
 	 * <p>
@@ -159,7 +159,7 @@ public interface NXpositioner extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
-	 * 
+	 *
 	 * @param raw_valueDataset the raw_valueDataset
 	 */
 	public DataNode setRaw_value(IDataset raw_valueDataset);
@@ -171,7 +171,7 @@ public interface NXpositioner extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getRaw_valueScalar();
@@ -183,7 +183,7 @@ public interface NXpositioner extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
-	 * 
+	 *
 	 * @param raw_value the raw_value
 	 */
 	public DataNode setRaw_valueScalar(Number raw_valueValue);
@@ -195,11 +195,11 @@ public interface NXpositioner extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getTarget_value();
-	
+
 	/**
 	 * targeted (commanded) value of positioner - need [n] as may be scanned
 	 * <p>
@@ -207,7 +207,7 @@ public interface NXpositioner extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
-	 * 
+	 *
 	 * @param target_valueDataset the target_valueDataset
 	 */
 	public DataNode setTarget_value(IDataset target_valueDataset);
@@ -219,7 +219,7 @@ public interface NXpositioner extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getTarget_valueScalar();
@@ -231,7 +231,7 @@ public interface NXpositioner extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
-	 * 
+	 *
 	 * @param target_value the target_value
 	 */
 	public DataNode setTarget_valueScalar(Number target_valueValue);
@@ -243,11 +243,11 @@ public interface NXpositioner extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getTolerance();
-	
+
 	/**
 	 * maximum allowable difference between target_value and value
 	 * <p>
@@ -255,7 +255,7 @@ public interface NXpositioner extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
-	 * 
+	 *
 	 * @param toleranceDataset the toleranceDataset
 	 */
 	public DataNode setTolerance(IDataset toleranceDataset);
@@ -267,7 +267,7 @@ public interface NXpositioner extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getToleranceScalar();
@@ -279,7 +279,7 @@ public interface NXpositioner extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n;
 	 * </p>
-	 * 
+	 *
 	 * @param tolerance the tolerance
 	 */
 	public DataNode setToleranceScalar(Number toleranceValue);
@@ -290,18 +290,18 @@ public interface NXpositioner extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSoft_limit_min();
-	
+
 	/**
 	 * minimum allowed limit to set value
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param soft_limit_minDataset the soft_limit_minDataset
 	 */
 	public DataNode setSoft_limit_min(IDataset soft_limit_minDataset);
@@ -312,7 +312,7 @@ public interface NXpositioner extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getSoft_limit_minScalar();
@@ -323,7 +323,7 @@ public interface NXpositioner extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param soft_limit_min the soft_limit_min
 	 */
 	public DataNode setSoft_limit_minScalar(Number soft_limit_minValue);
@@ -334,18 +334,18 @@ public interface NXpositioner extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSoft_limit_max();
-	
+
 	/**
 	 * maximum allowed limit to set value
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param soft_limit_maxDataset the soft_limit_maxDataset
 	 */
 	public DataNode setSoft_limit_max(IDataset soft_limit_maxDataset);
@@ -356,7 +356,7 @@ public interface NXpositioner extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getSoft_limit_maxScalar();
@@ -367,7 +367,7 @@ public interface NXpositioner extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param soft_limit_max the soft_limit_max
 	 */
 	public DataNode setSoft_limit_maxScalar(Number soft_limit_maxValue);
@@ -378,18 +378,18 @@ public interface NXpositioner extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getVelocity();
-	
+
 	/**
 	 * velocity of the positioner (distance moved per unit time)
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param velocityDataset the velocityDataset
 	 */
 	public DataNode setVelocity(IDataset velocityDataset);
@@ -400,7 +400,7 @@ public interface NXpositioner extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getVelocityScalar();
@@ -411,7 +411,7 @@ public interface NXpositioner extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param velocity the velocity
 	 */
 	public DataNode setVelocityScalar(Number velocityValue);
@@ -422,18 +422,18 @@ public interface NXpositioner extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getAcceleration_time();
-	
+
 	/**
 	 * time to ramp the velocity up to full speed
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param acceleration_timeDataset the acceleration_timeDataset
 	 */
 	public DataNode setAcceleration_time(IDataset acceleration_timeDataset);
@@ -444,7 +444,7 @@ public interface NXpositioner extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getAcceleration_timeScalar();
@@ -455,35 +455,35 @@ public interface NXpositioner extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param acceleration_time the acceleration_time
 	 */
 	public DataNode setAcceleration_timeScalar(Number acceleration_timeValue);
 
 	/**
 	 * Hardware device record, e.g. EPICS process variable, taco/tango ...
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getController_record();
-	
+
 	/**
 	 * Hardware device record, e.g. EPICS process variable, taco/tango ...
-	 * 
+	 *
 	 * @param controller_recordDataset the controller_recordDataset
 	 */
 	public DataNode setController_record(IDataset controller_recordDataset);
 
 	/**
 	 * Hardware device record, e.g. EPICS process variable, taco/tango ...
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getController_recordScalar();
 
 	/**
 	 * Hardware device record, e.g. EPICS process variable, taco/tango ...
-	 * 
+	 *
 	 * @param controller_record the controller_record
 	 */
 	public DataNode setController_recordScalar(String controller_recordValue);
@@ -496,11 +496,11 @@ public interface NXpositioner extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -509,7 +509,7 @@ public interface NXpositioner extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);
@@ -526,11 +526,11 @@ public interface NXpositioner extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDepends_on();
-	
+
 	/**
 	 * NeXus positions components by applying a set of translations and rotations
 	 * to apply to the component starting from 0, 0, 0. The order of these operations
@@ -543,7 +543,7 @@ public interface NXpositioner extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_onDataset the depends_onDataset
 	 */
 	public DataNode setDepends_on(IDataset depends_onDataset);
@@ -560,7 +560,7 @@ public interface NXpositioner extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDepends_onScalar();
@@ -577,7 +577,7 @@ public interface NXpositioner extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
@@ -587,17 +587,17 @@ public interface NXpositioner extends NXobject {
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
 	 * This is the group recommended for holding the chain of translation
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -611,12 +611,12 @@ public interface NXpositioner extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -626,12 +626,12 @@ public interface NXpositioner extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -641,11 +641,11 @@ public interface NXpositioner extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -655,11 +655,11 @@ public interface NXpositioner extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 }

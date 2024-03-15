@@ -23,7 +23,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * Description of peaks, their functional form or measured support.
- * 
+
  */
 public class NXpeakImpl extends NXobjectImpl implements NXpeak {
 
@@ -40,22 +40,22 @@ public class NXpeakImpl extends NXobjectImpl implements NXpeak {
 	public NXpeakImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXpeak.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_PEAK;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getLabel() {
@@ -162,7 +162,7 @@ public class NXpeakImpl extends NXobjectImpl implements NXpeak {
 	public Map<String, NXcollection> getAllCollection() {
 		return getChildren(NXcollection.class);
 	}
-	
+
 	@Override
 	public void setAllCollection(Map<String, NXcollection> collection) {
 		setChildren(collection);

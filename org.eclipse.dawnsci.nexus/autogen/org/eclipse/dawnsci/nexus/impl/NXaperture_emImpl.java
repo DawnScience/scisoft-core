@@ -22,8 +22,8 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Details of an individual aperture for electron beams.
- * 
+ * Details of an individual aperture for beams in electron microscopy.
+
  */
 public class NXaperture_emImpl extends NXobjectImpl implements NXaperture_em {
 
@@ -31,7 +31,7 @@ public class NXaperture_emImpl extends NXobjectImpl implements NXaperture_em {
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_MANUFACTURER,
+		NexusBaseClass.NX_FABRICATION,
 		NexusBaseClass.NX_TRANSFORMATIONS);
 
 	public NXaperture_emImpl() {
@@ -41,22 +41,22 @@ public class NXaperture_emImpl extends NXobjectImpl implements NXaperture_em {
 	public NXaperture_emImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXaperture_em.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_APERTURE_EM;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getName() {
@@ -76,37 +76,6 @@ public class NXaperture_emImpl extends NXobjectImpl implements NXaperture_em {
 	@Override
 	public DataNode setNameScalar(String nameValue) {
 		return setString(NX_NAME, nameValue);
-	}
-
-	@Override
-	public NXmanufacturer getManufacturer() {
-		// dataNodeName = NX_MANUFACTURER
-		return getChild("manufacturer", NXmanufacturer.class);
-	}
-
-	@Override
-	public void setManufacturer(NXmanufacturer manufacturerGroup) {
-		putChild("manufacturer", manufacturerGroup);
-	}
-
-	@Override
-	public NXmanufacturer getManufacturer(String name) {
-		return getChild(name, NXmanufacturer.class);
-	}
-
-	@Override
-	public void setManufacturer(String name, NXmanufacturer manufacturer) {
-		putChild(name, manufacturer);
-	}
-
-	@Override
-	public Map<String, NXmanufacturer> getAllManufacturer() {
-		return getChildren(NXmanufacturer.class);
-	}
-	
-	@Override
-	public void setAllManufacturer(Map<String, NXmanufacturer> manufacturer) {
-		setChildren(manufacturer);
 	}
 
 	@Override
@@ -150,6 +119,37 @@ public class NXaperture_emImpl extends NXobjectImpl implements NXaperture_em {
 	}
 
 	@Override
+	public NXfabrication getFabrication() {
+		// dataNodeName = NX_FABRICATION
+		return getChild("fabrication", NXfabrication.class);
+	}
+
+	@Override
+	public void setFabrication(NXfabrication fabricationGroup) {
+		putChild("fabrication", fabricationGroup);
+	}
+
+	@Override
+	public NXfabrication getFabrication(String name) {
+		return getChild(name, NXfabrication.class);
+	}
+
+	@Override
+	public void setFabrication(String name, NXfabrication fabrication) {
+		putChild(name, fabrication);
+	}
+
+	@Override
+	public Map<String, NXfabrication> getAllFabrication() {
+		return getChildren(NXfabrication.class);
+	}
+
+	@Override
+	public void setAllFabrication(Map<String, NXfabrication> fabrication) {
+		setChildren(fabrication);
+	}
+
+	@Override
 	public NXtransformations getTransformations() {
 		// dataNodeName = NX_TRANSFORMATIONS
 		return getChild("transformations", NXtransformations.class);
@@ -174,7 +174,7 @@ public class NXaperture_emImpl extends NXobjectImpl implements NXaperture_em {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

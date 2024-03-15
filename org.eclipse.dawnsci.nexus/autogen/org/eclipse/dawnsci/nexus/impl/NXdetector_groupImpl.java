@@ -42,7 +42,7 @@ import org.eclipse.dawnsci.nexus.*;
  * group_names: ["DET", "DTL", "DTR", "DLL", "DLR"]
  * group_index: [1, 2, 3, 4, 5]
  * group_parent: [-1, 1, 1, 1, 1]
- * 
+
  */
 public class NXdetector_groupImpl extends NXobjectImpl implements NXdetector_group {
 
@@ -58,22 +58,22 @@ public class NXdetector_groupImpl extends NXobjectImpl implements NXdetector_gro
 	public NXdetector_groupImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXdetector_group.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_DETECTOR_GROUP;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getGroup_names() {

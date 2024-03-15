@@ -21,7 +21,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * definition for a solenoid magnet.
- * 
+
  */
 public class NXsolenoid_magnetImpl extends NXobjectImpl implements NXsolenoid_magnet {
 
@@ -39,22 +39,22 @@ public class NXsolenoid_magnetImpl extends NXobjectImpl implements NXsolenoid_ma
 	public NXsolenoid_magnetImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXsolenoid_magnet.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_SOLENOID_MAGNET;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getDescription() {

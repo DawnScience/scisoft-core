@@ -40,7 +40,7 @@ import org.eclipse.january.dataset.IDataset;
  * every five minutes. The ``cue_index`` will then contain the
  * index into the time,value pair of arrays for that
  * coarser ``cue_timestamp_zero``.
- * 
+ *
  */
 public interface NXlog extends NXobject {
 
@@ -73,11 +73,11 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getTime();
-	
+
 	/**
 	 * Time of logged entry. The times are relative to the "start" attribute
 	 * and in the units specified in the "units"
@@ -90,7 +90,7 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
-	 * 
+	 *
 	 * @param timeDataset the timeDataset
 	 */
 	public DataNode setTime(IDataset timeDataset);
@@ -107,7 +107,7 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getTimeScalar();
@@ -124,31 +124,31 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
-	 * 
+	 *
 	 * @param time the time
 	 */
 	public DataNode setTimeScalar(Number timeValue);
 
 	/**
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Date getTimeAttributeStart();
-	
+
 	/**
-	 * 
+	 *
 	 * @param startValue the startValue
 	 */
 	public void setTimeAttributeStart(Date startValue);
 
 	/**
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getTimeAttributeScaling_factor();
-	
+
 	/**
-	 * 
+	 *
 	 * @param scaling_factorValue the scaling_factorValue
 	 */
 	public void setTimeAttributeScaling_factor(Number scaling_factorValue);
@@ -163,11 +163,11 @@ public interface NXlog extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getValue();
-	
+
 	/**
 	 * Array of logged value, such as temperature. If this is
 	 * a single value the dimensionality is
@@ -178,7 +178,7 @@ public interface NXlog extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
-	 * 
+	 *
 	 * @param valueDataset the valueDataset
 	 */
 	public DataNode setValue(IDataset valueDataset);
@@ -193,7 +193,7 @@ public interface NXlog extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getValueScalar();
@@ -208,7 +208,7 @@ public interface NXlog extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
-	 * 
+	 *
 	 * @param value the value
 	 */
 	public DataNode setValueScalar(Number valueValue);
@@ -219,18 +219,18 @@ public interface NXlog extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getRaw_value();
-	
+
 	/**
 	 * Array of raw information, such as thermocouple voltage
 	 * <p>
 	 * <b>Units:</b> NX_ANY
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
-	 * 
+	 *
 	 * @param raw_valueDataset the raw_valueDataset
 	 */
 	public DataNode setRaw_value(IDataset raw_valueDataset);
@@ -241,7 +241,7 @@ public interface NXlog extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getRaw_valueScalar();
@@ -252,35 +252,35 @@ public interface NXlog extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
-	 * 
+	 *
 	 * @param raw_value the raw_value
 	 */
 	public DataNode setRaw_valueScalar(Number raw_valueValue);
 
 	/**
 	 * Description of logged value
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDescription();
-	
+
 	/**
 	 * Description of logged value
-	 * 
+	 *
 	 * @param descriptionDataset the descriptionDataset
 	 */
 	public DataNode setDescription(IDataset descriptionDataset);
 
 	/**
 	 * Description of logged value
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDescriptionScalar();
 
 	/**
 	 * Description of logged value
-	 * 
+	 *
 	 * @param description the description
 	 */
 	public DataNode setDescriptionScalar(String descriptionValue);
@@ -290,17 +290,17 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getAverage_value();
-	
+
 	/**
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param average_valueDataset the average_valueDataset
 	 */
 	public DataNode setAverage_value(IDataset average_valueDataset);
@@ -310,7 +310,7 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getAverage_valueScalar();
@@ -320,7 +320,7 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param average_value the average_value
 	 */
 	public DataNode setAverage_valueScalar(Double average_valueValue);
@@ -331,20 +331,20 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @deprecated see: https://github.com/nexusformat/definitions/issues/639
 	 * @return  the value.
 	 */
 	@Deprecated
 	public IDataset getAverage_value_error();
-	
+
 	/**
 	 * estimated uncertainty (often used: standard deviation) of average_value
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @deprecated see: https://github.com/nexusformat/definitions/issues/639
 	 * @param average_value_errorDataset the average_value_errorDataset
 	 */
@@ -357,7 +357,7 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @deprecated see: https://github.com/nexusformat/definitions/issues/639
 	 * @return  the value.
 	 */
@@ -370,7 +370,7 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @deprecated see: https://github.com/nexusformat/definitions/issues/639
 	 * @param average_value_error the average_value_error
 	 */
@@ -383,18 +383,18 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getAverage_value_errors();
-	
+
 	/**
 	 * estimated uncertainty (often used: standard deviation) of average_value
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param average_value_errorsDataset the average_value_errorsDataset
 	 */
 	public DataNode setAverage_value_errors(IDataset average_value_errorsDataset);
@@ -405,7 +405,7 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getAverage_value_errorsScalar();
@@ -416,7 +416,7 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param average_value_errors the average_value_errors
 	 */
 	public DataNode setAverage_value_errorsScalar(Double average_value_errorsValue);
@@ -426,17 +426,17 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getMinimum_value();
-	
+
 	/**
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param minimum_valueDataset the minimum_valueDataset
 	 */
 	public DataNode setMinimum_value(IDataset minimum_valueDataset);
@@ -446,7 +446,7 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getMinimum_valueScalar();
@@ -456,7 +456,7 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param minimum_value the minimum_value
 	 */
 	public DataNode setMinimum_valueScalar(Double minimum_valueValue);
@@ -466,17 +466,17 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getMaximum_value();
-	
+
 	/**
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param maximum_valueDataset the maximum_valueDataset
 	 */
 	public DataNode setMaximum_value(IDataset maximum_valueDataset);
@@ -486,7 +486,7 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getMaximum_valueScalar();
@@ -496,7 +496,7 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param maximum_value the maximum_value
 	 */
 	public DataNode setMaximum_valueScalar(Double maximum_valueValue);
@@ -507,18 +507,18 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDuration();
-	
+
 	/**
 	 * Total time log was taken
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param durationDataset the durationDataset
 	 */
 	public DataNode setDuration(IDataset durationDataset);
@@ -529,7 +529,7 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getDurationScalar();
@@ -540,7 +540,7 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param duration the duration
 	 */
 	public DataNode setDurationScalar(Double durationValue);
@@ -552,11 +552,11 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getCue_timestamp_zero();
-	
+
 	/**
 	 * Timestamps matching the corresponding cue_index into the
 	 * time, value pair.
@@ -564,7 +564,7 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
-	 * 
+	 *
 	 * @param cue_timestamp_zeroDataset the cue_timestamp_zeroDataset
 	 */
 	public DataNode setCue_timestamp_zero(IDataset cue_timestamp_zeroDataset);
@@ -576,7 +576,7 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getCue_timestamp_zeroScalar();
@@ -588,35 +588,35 @@ public interface NXlog extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
-	 * 
+	 *
 	 * @param cue_timestamp_zero the cue_timestamp_zero
 	 */
 	public DataNode setCue_timestamp_zeroScalar(Number cue_timestamp_zeroValue);
 
 	/**
 	 * If missing start is assumed to be the same as for "time".
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Date getCue_timestamp_zeroAttributeStart();
-	
+
 	/**
 	 * If missing start is assumed to be the same as for "time".
-	 * 
+	 *
 	 * @param startValue the startValue
 	 */
 	public void setCue_timestamp_zeroAttributeStart(Date startValue);
 
 	/**
 	 * If missing start is assumed to be the same as for "time".
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getCue_timestamp_zeroAttributeScaling_factor();
-	
+
 	/**
 	 * If missing start is assumed to be the same as for "time".
-	 * 
+	 *
 	 * @param scaling_factorValue the scaling_factorValue
 	 */
 	public void setCue_timestamp_zeroAttributeScaling_factor(Number scaling_factorValue);
@@ -627,18 +627,18 @@ public interface NXlog extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getCue_index();
-	
+
 	/**
 	 * Index into the time, value pair matching the corresponding
 	 * cue_timestamp_zero.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * </p>
-	 * 
+	 *
 	 * @param cue_indexDataset the cue_indexDataset
 	 */
 	public DataNode setCue_index(IDataset cue_indexDataset);
@@ -649,7 +649,7 @@ public interface NXlog extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Long getCue_indexScalar();
@@ -660,7 +660,7 @@ public interface NXlog extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * </p>
-	 * 
+	 *
 	 * @param cue_index the cue_index
 	 */
 	public DataNode setCue_indexScalar(Long cue_indexValue);
@@ -673,11 +673,11 @@ public interface NXlog extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -686,7 +686,7 @@ public interface NXlog extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);

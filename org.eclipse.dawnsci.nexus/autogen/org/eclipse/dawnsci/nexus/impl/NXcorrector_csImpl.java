@@ -23,16 +23,11 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * Corrector for aberrations in an electron microscope.
- * Different vendors use a different naming schemes for aberration coefficients.
- * It is the users responsibility to map to the best matching values.
- * In transmission electron microscopes the spherical aberration corrector is
- * a component that is controlled via instructing the microscope to achieve
- * set point values. The corrector is composed of multiple lenses and other
- * parts with vendor-specific details which are often undisclosed.
- * In the case of Nion Co. microscopes the coefficients of the corrector can be
- * retrieved via NionSwift, which is why currently the Nion convention for the
- * aberration coefficients is used.
- * 
+ * Different technology partners use different naming schemes and models
+ * for quantifying the aberration coefficients.
+ * The corrector in an electron microscope is composed of multiple lenses and
+ * multipole stigmators with vendor-specific details which are often undisclosed.
+
  */
 public class NXcorrector_csImpl extends NXobjectImpl implements NXcorrector_cs {
 
@@ -40,8 +35,8 @@ public class NXcorrector_csImpl extends NXobjectImpl implements NXcorrector_cs {
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_MANUFACTURER,
-		NexusBaseClass.NX_ABERRATION,
+		NexusBaseClass.NX_FABRICATION,
+		NexusBaseClass.NX_PROCESS,
 		NexusBaseClass.NX_LENS_EM,
 		NexusBaseClass.NX_TRANSFORMATIONS);
 
@@ -52,22 +47,22 @@ public class NXcorrector_csImpl extends NXobjectImpl implements NXcorrector_cs {
 	public NXcorrector_csImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXcorrector_cs.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_CORRECTOR_CS;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getApplied() {
@@ -110,34 +105,34 @@ public class NXcorrector_csImpl extends NXobjectImpl implements NXcorrector_cs {
 	}
 
 	@Override
-	public NXmanufacturer getManufacturer() {
-		// dataNodeName = NX_MANUFACTURER
-		return getChild("manufacturer", NXmanufacturer.class);
+	public NXfabrication getFabrication() {
+		// dataNodeName = NX_FABRICATION
+		return getChild("fabrication", NXfabrication.class);
 	}
 
 	@Override
-	public void setManufacturer(NXmanufacturer manufacturerGroup) {
-		putChild("manufacturer", manufacturerGroup);
+	public void setFabrication(NXfabrication fabricationGroup) {
+		putChild("fabrication", fabricationGroup);
 	}
 
 	@Override
-	public NXmanufacturer getManufacturer(String name) {
-		return getChild(name, NXmanufacturer.class);
+	public NXfabrication getFabrication(String name) {
+		return getChild(name, NXfabrication.class);
 	}
 
 	@Override
-	public void setManufacturer(String name, NXmanufacturer manufacturer) {
-		putChild(name, manufacturer);
+	public void setFabrication(String name, NXfabrication fabrication) {
+		putChild(name, fabrication);
 	}
 
 	@Override
-	public Map<String, NXmanufacturer> getAllManufacturer() {
-		return getChildren(NXmanufacturer.class);
+	public Map<String, NXfabrication> getAllFabrication() {
+		return getChildren(NXfabrication.class);
 	}
-	
+
 	@Override
-	public void setAllManufacturer(Map<String, NXmanufacturer> manufacturer) {
-		setChildren(manufacturer);
+	public void setAllFabrication(Map<String, NXfabrication> fabrication) {
+		setChildren(fabrication);
 	}
 
 	@Override
@@ -161,35 +156,16 @@ public class NXcorrector_csImpl extends NXobjectImpl implements NXcorrector_cs {
 	}
 
 	@Override
-	public NXaberration getAberration() {
-		// dataNodeName = NX_ABERRATION
-		return getChild("aberration", NXaberration.class);
+	public NXprocess getZemlin_tableau() {
+		// dataNodeName = NX_ZEMLIN_TABLEAU
+		return getChild("zemlin_tableau", NXprocess.class);
 	}
 
 	@Override
-	public void setAberration(NXaberration aberrationGroup) {
-		putChild("aberration", aberrationGroup);
+	public void setZemlin_tableau(NXprocess zemlin_tableauGroup) {
+		putChild("zemlin_tableau", zemlin_tableauGroup);
 	}
-
-	@Override
-	public NXaberration getAberration(String name) {
-		return getChild(name, NXaberration.class);
-	}
-
-	@Override
-	public void setAberration(String name, NXaberration aberration) {
-		putChild(name, aberration);
-	}
-
-	@Override
-	public Map<String, NXaberration> getAllAberration() {
-		return getChildren(NXaberration.class);
-	}
-	
-	@Override
-	public void setAllAberration(Map<String, NXaberration> aberration) {
-		setChildren(aberration);
-	}
+	// Unprocessed group:
 
 	@Override
 	public NXlens_em getLens_em() {
@@ -216,7 +192,7 @@ public class NXcorrector_csImpl extends NXobjectImpl implements NXcorrector_cs {
 	public Map<String, NXlens_em> getAllLens_em() {
 		return getChildren(NXlens_em.class);
 	}
-	
+
 	@Override
 	public void setAllLens_em(Map<String, NXlens_em> lens_em) {
 		setChildren(lens_em);
@@ -247,7 +223,7 @@ public class NXcorrector_csImpl extends NXobjectImpl implements NXcorrector_cs {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

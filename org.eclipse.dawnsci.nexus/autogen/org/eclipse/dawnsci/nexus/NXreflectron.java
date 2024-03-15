@@ -19,7 +19,10 @@ import org.eclipse.january.dataset.IDataset;
 
 /**
  * Device for reducing flight time differences of ions in ToF experiments.
- * 
+ * For atom probe the reflectron can be considered an energy_compensation
+ * device, which can e.g. be realized technically as via a Poschenrieder lens
+ * (see US patent 3863068 or US patents for the reflectron 6740872, or the curved reflectron 8134119 design).
+ *
  */
 public interface NXreflectron extends NXobject {
 
@@ -27,118 +30,100 @@ public interface NXreflectron extends NXobject {
 	public static final String NX_DESCRIPTION = "description";
 	/**
 	 * Given name/alias.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getName();
-	
+
 	/**
 	 * Given name/alias.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param nameDataset the nameDataset
 	 */
 	public DataNode setName(IDataset nameDataset);
 
 	/**
 	 * Given name/alias.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getNameScalar();
 
 	/**
 	 * Given name/alias.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param name the name
 	 */
 	public DataNode setNameScalar(String nameValue);
 
 	/**
-	 * 
+	 *
 	 * @return  the value.
 	 */
-	public NXmanufacturer getManufacturer();
-	
-	/**
-	 * 
-	 * @param manufacturerGroup the manufacturerGroup
-	 */
-	public void setManufacturer(NXmanufacturer manufacturerGroup);
+	public NXfabrication getFabrication();
 
 	/**
-	 * Get a NXmanufacturer node by name:
+	 *
+	 * @param fabricationGroup the fabricationGroup
+	 */
+	public void setFabrication(NXfabrication fabricationGroup);
+
+	/**
+	 * Get a NXfabrication node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXmanufacturer for that node.
+	 * @return  a map from node names to the NXfabrication for that node.
 	 */
-	public NXmanufacturer getManufacturer(String name);
-	
+	public NXfabrication getFabrication(String name);
+
 	/**
-	 * Set a NXmanufacturer node by name:
+	 * Set a NXfabrication node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
-	 * @param manufacturer the value to set
+	 * @param fabrication the value to set
 	 */
-	public void setManufacturer(String name, NXmanufacturer manufacturer);
-	
+	public void setFabrication(String name, NXfabrication fabrication);
+
 	/**
-	 * Get all NXmanufacturer nodes:
+	 * Get all NXfabrication nodes:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
-	 * @return  a map from node names to the NXmanufacturer for that node.
+	 *
+	 * @return  a map from node names to the NXfabrication for that node.
 	 */
-	public Map<String, NXmanufacturer> getAllManufacturer();
-	
+	public Map<String, NXfabrication> getAllFabrication();
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
-	 * @param manufacturer the child nodes to add 
+	 *
+	 * @param fabrication the child nodes to add
 	 */
-	
-	public void setAllManufacturer(Map<String, NXmanufacturer> manufacturer);
-	
+
+	public void setAllFabrication(Map<String, NXfabrication> fabrication);
+
 
 	/**
 	 * Free-text field to specify further details about the reflectron.
 	 * The field can be used to inform e. g. if the reflectron is flat or curved.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDescription();
-	
+
 	/**
 	 * Free-text field to specify further details about the reflectron.
 	 * The field can be used to inform e. g. if the reflectron is flat or curved.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param descriptionDataset the descriptionDataset
 	 */
 	public DataNode setDescription(IDataset descriptionDataset);
@@ -146,10 +131,7 @@ public interface NXreflectron extends NXobject {
 	/**
 	 * Free-text field to specify further details about the reflectron.
 	 * The field can be used to inform e. g. if the reflectron is flat or curved.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDescriptionScalar();
@@ -157,10 +139,7 @@ public interface NXreflectron extends NXobject {
 	/**
 	 * Free-text field to specify further details about the reflectron.
 	 * The field can be used to inform e. g. if the reflectron is flat or curved.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param description the description
 	 */
 	public DataNode setDescriptionScalar(String descriptionValue);
@@ -174,11 +153,11 @@ public interface NXreflectron extends NXobject {
 	 * The purpose of these more detailed instrument descriptions
 	 * is to support the creation of a digital twin of the instrument
 	 * for computational science.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
 	 * Affine transformation(s) which detail where the reflectron
 	 * is located relative to e.g. the origin of the specimen space
@@ -188,7 +167,7 @@ public interface NXreflectron extends NXobject {
 	 * The purpose of these more detailed instrument descriptions
 	 * is to support the creation of a digital twin of the instrument
 	 * for computational science.
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -206,12 +185,12 @@ public interface NXreflectron extends NXobject {
 	 * is to support the creation of a digital twin of the instrument
 	 * for computational science.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -225,12 +204,12 @@ public interface NXreflectron extends NXobject {
 	 * is to support the creation of a digital twin of the instrument
 	 * for computational science.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -244,11 +223,11 @@ public interface NXreflectron extends NXobject {
 	 * is to support the creation of a digital twin of the instrument
 	 * for computational science.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -262,11 +241,11 @@ public interface NXreflectron extends NXobject {
 	 * is to support the creation of a digital twin of the instrument
 	 * for computational science.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 }

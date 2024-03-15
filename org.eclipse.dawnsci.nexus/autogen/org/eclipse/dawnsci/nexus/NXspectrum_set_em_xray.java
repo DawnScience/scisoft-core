@@ -24,108 +24,141 @@ import org.eclipse.january.dataset.IDataset;
  * The majority of cases use simple d-dimensional regular scan pattern,
  * such as single point, line profiles, or (rectangular) surface mappings.
  * The latter pattern is the most frequently used.
- * For now the base class provides for scans where the settings,
+ * For now the base class provides for scans for which the settings,
  * binning, and energy resolution is the same for each scan point.
- * `IUPAC instead of Siegbahn notation <https://doi.org/10.1002/xrs.1300200308>`_ should be used.
- * <p><b>Symbols:</b> <ul>
- * <li><b>n_p</b> 
- * Number of scan points</li>
- * <li><b>n_y</b> 
- * Number of pixel per Kikuchi pattern in the slow direction</li>
- * <li><b>n_x</b> 
- * Number of pixel per Kikuchi pattern in the fast direction</li>
- * <li><b>n_photon_energy</b> 
+ * `IUPAC instead of Siegbahn notation <https://doi.org/10.1002/xrs.1300200308>`_
+ * should be used.
+ * <p><b>Symbols:</b><ul>
+ * <li><b>n_y</b>
+ * Number of pixel per X-ray mapping in the slow direction</li>
+ * <li><b>n_x</b>
+ * Number of pixel per X-ray mapping in the fast direction</li>
+ * <li><b>n_photon_energy</b>
  * Number of X-ray photon energy (bins)</li>
- * <li><b>n_elements</b> 
+ * <li><b>n_elements</b>
  * Number of identified elements</li>
- * <li><b>n_peaks</b> 
+ * <li><b>n_peaks</b>
  * Number of peaks</li></ul></p>
- * 
+ *
  */
 public interface NXspectrum_set_em_xray extends NXobject {
 
 	/**
-	 * Collected X-ray counts chunked based on rectangular images.
-	 * This representation supports only rectangular scan pattern.
-	 * 
+	 * Details how X-ray spectra were processed from the detector readings.
+	 *
 	 * @return  the value.
 	 */
-	public NXdata getData();
-	
-	/**
-	 * Collected X-ray counts chunked based on rectangular images.
-	 * This representation supports only rectangular scan pattern.
-	 * 
-	 * @param dataGroup the dataGroup
-	 */
-	public void setData(NXdata dataGroup);
+	public NXprocess getProcess();
 
 	/**
-	 * Get a NXdata node by name:
+	 * Details how X-ray spectra were processed from the detector readings.
+	 *
+	 * @param processGroup the processGroup
+	 */
+	public void setProcess(NXprocess processGroup);
+
+	/**
+	 * Get a NXprocess node by name:
 	 * <ul>
 	 * <li>
-	 * Collected X-ray counts chunked based on rectangular images.
-	 * This representation supports only rectangular scan pattern.</li>
+	 * Details how X-ray spectra were processed from the detector readings.</li>
+	 * <li>
+	 * Details about computational steps how peaks were indexed as elements.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXdata for that node.
+	 * @return  a map from node names to the NXprocess for that node.
 	 */
-	public NXdata getData(String name);
-	
+	public NXprocess getProcess(String name);
+
 	/**
-	 * Set a NXdata node by name:
+	 * Set a NXprocess node by name:
 	 * <ul>
 	 * <li>
-	 * Collected X-ray counts chunked based on rectangular images.
-	 * This representation supports only rectangular scan pattern.</li>
+	 * Details how X-ray spectra were processed from the detector readings.</li>
+	 * <li>
+	 * Details about computational steps how peaks were indexed as elements.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
-	 * @param data the value to set
+	 * @param process the value to set
 	 */
-	public void setData(String name, NXdata data);
-	
+	public void setProcess(String name, NXprocess process);
+
 	/**
-	 * Get all NXdata nodes:
+	 * Get all NXprocess nodes:
 	 * <ul>
 	 * <li>
-	 * Collected X-ray counts chunked based on rectangular images.
-	 * This representation supports only rectangular scan pattern.</li>
+	 * Details how X-ray spectra were processed from the detector readings.</li>
+	 * <li>
+	 * Details about computational steps how peaks were indexed as elements.</li>
 	 * </ul>
-	 * 
-	 * @return  a map from node names to the NXdata for that node.
+	 *
+	 * @return  a map from node names to the NXprocess for that node.
 	 */
-	public Map<String, NXdata> getAllData();
-	
+	public Map<String, NXprocess> getAllProcess();
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
-	 * Collected X-ray counts chunked based on rectangular images.
-	 * This representation supports only rectangular scan pattern.</li>
+	 * Details how X-ray spectra were processed from the detector readings.</li>
+	 * <li>
+	 * Details about computational steps how peaks were indexed as elements.</li>
 	 * </ul>
-	 * 
-	 * @param data the child nodes to add 
+	 *
+	 * @param process the child nodes to add
 	 */
-	
-	public void setAllData(Map<String, NXdata> data);
-	
+
+	public void setAllProcess(Map<String, NXprocess> process);
+
+
+	/**
+	 * Collected X-ray spectra for all pixels of a rectangular region-of-interest.
+	 * This representation supports rectangular scan pattern.
+	 *
+	 * @return  the value.
+	 */
+	public NXdata getStack();
+
+	/**
+	 * Collected X-ray spectra for all pixels of a rectangular region-of-interest.
+	 * This representation supports rectangular scan pattern.
+	 *
+	 * @param stackGroup the stackGroup
+	 */
+	public void setStack(NXdata stackGroup);
+
+	/**
+	 * Accumulated X-ray spectrum over all pixels of a rectangular
+	 * region-of-interest. This representation supports rectangular scan pattern.
+	 *
+	 * @return  the value.
+	 */
+	public NXdata getSummary();
+
+	/**
+	 * Accumulated X-ray spectrum over all pixels of a rectangular
+	 * region-of-interest. This representation supports rectangular scan pattern.
+	 *
+	 * @param summaryGroup the summaryGroup
+	 */
+	public void setSummary(NXdata summaryGroup);
 
 	/**
 	 * Details about computational steps how peaks were indexed as elements.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXprocess getIndexing();
-	
+
 	/**
 	 * Details about computational steps how peaks were indexed as elements.
-	 * 
+	 *
 	 * @param indexingGroup the indexingGroup
 	 */
 	public void setIndexing(NXprocess indexingGroup);
-	// Unprocessed group: 
-	// Unprocessed group: composition_map
+	// Unprocessed group:
+	// Unprocessed group:ELEMENTNAME
 
 }

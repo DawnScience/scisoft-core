@@ -20,7 +20,7 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * Subclass of NXelectronanalyser to describe the electron collection column of a
  * photoelectron analyser.
- * 
+ *
  */
 public interface NXcollectioncolumn extends NXobject {
 
@@ -38,18 +38,18 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getScheme();
-	
+
 	/**
 	 * Scheme of the electron collection lens, i.e. standard, deflector, PEEM, momentum
 	 * microscope, etc.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param schemeDataset the schemeDataset
 	 */
 	public DataNode setScheme(IDataset schemeDataset);
@@ -60,7 +60,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getSchemeScalar();
@@ -71,7 +71,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param scheme the scheme
 	 */
 	public DataNode setSchemeScalar(String schemeValue);
@@ -82,18 +82,18 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_VOLTAGE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getExtractor_voltage();
-	
+
 	/**
 	 * Voltage applied to the extractor lens
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_VOLTAGE
 	 * </p>
-	 * 
+	 *
 	 * @param extractor_voltageDataset the extractor_voltageDataset
 	 */
 	public DataNode setExtractor_voltage(IDataset extractor_voltageDataset);
@@ -104,7 +104,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_VOLTAGE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getExtractor_voltageScalar();
@@ -115,7 +115,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_VOLTAGE
 	 * </p>
-	 * 
+	 *
 	 * @param extractor_voltage the extractor_voltage
 	 */
 	public DataNode setExtractor_voltageScalar(Double extractor_voltageValue);
@@ -127,11 +127,11 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getExtractor_current();
-	
+
 	/**
 	 * Current necessary to keep the extractor lens at a set voltage. Variations
 	 * indicate leakage, field emission or arc currents to the extractor lens.
@@ -139,7 +139,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
-	 * 
+	 *
 	 * @param extractor_currentDataset the extractor_currentDataset
 	 */
 	public DataNode setExtractor_current(IDataset extractor_currentDataset);
@@ -151,7 +151,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getExtractor_currentScalar();
@@ -163,7 +163,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
-	 * 
+	 *
 	 * @param extractor_current the extractor_current
 	 */
 	public DataNode setExtractor_currentScalar(Double extractor_currentValue);
@@ -174,18 +174,18 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getWorking_distance();
-	
+
 	/**
 	 * Distance between sample and detector entrance
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param working_distanceDataset the working_distanceDataset
 	 */
 	public DataNode setWorking_distance(IDataset working_distanceDataset);
@@ -196,7 +196,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getWorking_distanceScalar();
@@ -207,7 +207,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param working_distance the working_distance
 	 */
 	public DataNode setWorking_distanceScalar(Double working_distanceValue);
@@ -217,17 +217,17 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getMode();
-	
+
 	/**
 	 * Labelling of the lens setting in use.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param modeDataset the modeDataset
 	 */
 	public DataNode setMode(IDataset modeDataset);
@@ -237,7 +237,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getModeScalar();
@@ -247,7 +247,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param mode the mode
 	 */
 	public DataNode setModeScalar(String modeValue);
@@ -260,11 +260,11 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <li><b>real</b> </li>
 	 * <li><b>reciprocal</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getProjection();
-	
+
 	/**
 	 * The space projected in the angularly dispersive directions, real or reciprocal
 	 * <p>
@@ -273,7 +273,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <li><b>real</b> </li>
 	 * <li><b>reciprocal</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param projectionDataset the projectionDataset
 	 */
 	public DataNode setProjection(IDataset projectionDataset);
@@ -286,7 +286,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <li><b>real</b> </li>
 	 * <li><b>reciprocal</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getProjectionScalar();
@@ -299,7 +299,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <li><b>real</b> </li>
 	 * <li><b>reciprocal</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param projection the projection
 	 */
 	public DataNode setProjectionScalar(String projectionValue);
@@ -310,18 +310,18 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getMagnification();
-	
+
 	/**
 	 * The magnification of the electron lens assembly.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
-	 * 
+	 *
 	 * @param magnificationDataset the magnificationDataset
 	 */
 	public DataNode setMagnification(IDataset magnificationDataset);
@@ -332,7 +332,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getMagnificationScalar();
@@ -343,7 +343,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_DIMENSIONLESS
 	 * </p>
-	 * 
+	 *
 	 * @param magnification the magnification
 	 */
 	public DataNode setMagnificationScalar(Double magnificationValue);
@@ -354,18 +354,18 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDepends_on();
-	
+
 	/**
 	 * Specifies the position of the collectioncolumn by pointing to the last
 	 * transformation in the transformation chain in the NXtransformations group.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_onDataset the depends_onDataset
 	 */
 	public DataNode setDepends_on(IDataset depends_onDataset);
@@ -376,7 +376,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDepends_onScalar();
@@ -387,7 +387,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
@@ -401,11 +401,11 @@ public interface NXcollectioncolumn extends NXobject {
 	 * relative to the experimental setup. Typically, the components of a system should
 	 * all be related relative to each other and only one component should relate to
 	 * the reference coordinate system.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
 	 * Collection of axis-based translations and rotations to describe the location and
 	 * geometry of the deflector as a component in the instrument. Conventions from the
@@ -415,7 +415,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 * relative to the experimental setup. Typically, the components of a system should
 	 * all be related relative to each other and only one component should relate to
 	 * the reference coordinate system.
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -433,12 +433,12 @@ public interface NXcollectioncolumn extends NXobject {
 	 * all be related relative to each other and only one component should relate to
 	 * the reference coordinate system.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -452,12 +452,12 @@ public interface NXcollectioncolumn extends NXobject {
 	 * all be related relative to each other and only one component should relate to
 	 * the reference coordinate system.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -471,11 +471,11 @@ public interface NXcollectioncolumn extends NXobject {
 	 * all be related relative to each other and only one component should relate to
 	 * the reference coordinate system.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -489,25 +489,25 @@ public interface NXcollectioncolumn extends NXobject {
 	 * all be related relative to each other and only one component should relate to
 	 * the reference coordinate system.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 	/**
 	 * The size and position of an aperture inserted in the column, e.g. field aperture
 	 * or contrast aperture
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXaperture getAperture();
-	
+
 	/**
 	 * The size and position of an aperture inserted in the column, e.g. field aperture
 	 * or contrast aperture
-	 * 
+	 *
 	 * @param apertureGroup the apertureGroup
 	 */
 	public void setAperture(NXaperture apertureGroup);
@@ -519,12 +519,12 @@ public interface NXcollectioncolumn extends NXobject {
 	 * The size and position of an aperture inserted in the column, e.g. field aperture
 	 * or contrast aperture</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXaperture for that node.
 	 */
 	public NXaperture getAperture(String name);
-	
+
 	/**
 	 * Set a NXaperture node by name:
 	 * <ul>
@@ -532,12 +532,12 @@ public interface NXcollectioncolumn extends NXobject {
 	 * The size and position of an aperture inserted in the column, e.g. field aperture
 	 * or contrast aperture</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param aperture the value to set
 	 */
 	public void setAperture(String name, NXaperture aperture);
-	
+
 	/**
 	 * Get all NXaperture nodes:
 	 * <ul>
@@ -545,11 +545,11 @@ public interface NXcollectioncolumn extends NXobject {
 	 * The size and position of an aperture inserted in the column, e.g. field aperture
 	 * or contrast aperture</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXaperture for that node.
 	 */
 	public Map<String, NXaperture> getAllAperture();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -557,23 +557,23 @@ public interface NXcollectioncolumn extends NXobject {
 	 * The size and position of an aperture inserted in the column, e.g. field aperture
 	 * or contrast aperture</li>
 	 * </ul>
-	 * 
-	 * @param aperture the child nodes to add 
+	 *
+	 * @param aperture the child nodes to add
 	 */
-	
+
 	public void setAllAperture(Map<String, NXaperture> aperture);
-	
+
 
 	/**
 	 * Deflectors in the collection column section
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXdeflector getDeflector();
-	
+
 	/**
 	 * Deflectors in the collection column section
-	 * 
+	 *
 	 * @param deflectorGroup the deflectorGroup
 	 */
 	public void setDeflector(NXdeflector deflectorGroup);
@@ -584,58 +584,58 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <li>
 	 * Deflectors in the collection column section</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXdeflector for that node.
 	 */
 	public NXdeflector getDeflector(String name);
-	
+
 	/**
 	 * Set a NXdeflector node by name:
 	 * <ul>
 	 * <li>
 	 * Deflectors in the collection column section</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param deflector the value to set
 	 */
 	public void setDeflector(String name, NXdeflector deflector);
-	
+
 	/**
 	 * Get all NXdeflector nodes:
 	 * <ul>
 	 * <li>
 	 * Deflectors in the collection column section</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXdeflector for that node.
 	 */
 	public Map<String, NXdeflector> getAllDeflector();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * Deflectors in the collection column section</li>
 	 * </ul>
-	 * 
-	 * @param deflector the child nodes to add 
+	 *
+	 * @param deflector the child nodes to add
 	 */
-	
+
 	public void setAllDeflector(Map<String, NXdeflector> deflector);
-	
+
 
 	/**
 	 * Individual lenses in the collection column section
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXlens_em getLens_em();
-	
+
 	/**
 	 * Individual lenses in the collection column section
-	 * 
+	 *
 	 * @param lens_emGroup the lens_emGroup
 	 */
 	public void setLens_em(NXlens_em lens_emGroup);
@@ -646,46 +646,46 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <li>
 	 * Individual lenses in the collection column section</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXlens_em for that node.
 	 */
 	public NXlens_em getLens_em(String name);
-	
+
 	/**
 	 * Set a NXlens_em node by name:
 	 * <ul>
 	 * <li>
 	 * Individual lenses in the collection column section</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param lens_em the value to set
 	 */
 	public void setLens_em(String name, NXlens_em lens_em);
-	
+
 	/**
 	 * Get all NXlens_em nodes:
 	 * <ul>
 	 * <li>
 	 * Individual lenses in the collection column section</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXlens_em for that node.
 	 */
 	public Map<String, NXlens_em> getAllLens_em();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * Individual lenses in the collection column section</li>
 	 * </ul>
-	 * 
-	 * @param lens_em the child nodes to add 
+	 *
+	 * @param lens_em the child nodes to add
 	 */
-	
+
 	public void setAllLens_em(Map<String, NXlens_em> lens_em);
-	
+
 
 }

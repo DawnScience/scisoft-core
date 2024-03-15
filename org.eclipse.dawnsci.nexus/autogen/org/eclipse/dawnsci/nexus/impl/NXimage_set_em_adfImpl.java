@@ -23,7 +23,14 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * Container for reporting a set of annular dark field images.
- * 
+ * Virtually the most important case is that spectra are collected in
+ * a scanning microscope (SEM or STEM) for a collection of points.
+ * The majority of cases use simple d-dimensional regular scan pattern,
+ * such as single point, line profiles, or (rectangular) surface mappings.
+ * The latter pattern is the most frequently used.
+ * For now the base class provides for scans for which the settings,
+ * binning, and energy resolution is the same for each scan point.
+
  */
 public class NXimage_set_em_adfImpl extends NXobjectImpl implements NXimage_set_em_adf {
 
@@ -41,22 +48,22 @@ public class NXimage_set_em_adfImpl extends NXobjectImpl implements NXimage_set_
 	public NXimage_set_em_adfImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXimage_set_em_adf.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_IMAGE_SET_EM_ADF;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public NXprocess getProcess() {
@@ -83,41 +90,21 @@ public class NXimage_set_em_adfImpl extends NXobjectImpl implements NXimage_set_
 	public Map<String, NXprocess> getAllProcess() {
 		return getChildren(NXprocess.class);
 	}
-	
+
 	@Override
 	public void setAllProcess(Map<String, NXprocess> process) {
 		setChildren(process);
 	}
 
 	@Override
-	public NXdata getData() {
-		// dataNodeName = NX_DATA
-		return getChild("data", NXdata.class);
+	public NXdata getStack() {
+		// dataNodeName = NX_STACK
+		return getChild("stack", NXdata.class);
 	}
 
 	@Override
-	public void setData(NXdata dataGroup) {
-		putChild("data", dataGroup);
-	}
-
-	@Override
-	public NXdata getData(String name) {
-		return getChild(name, NXdata.class);
-	}
-
-	@Override
-	public void setData(String name, NXdata data) {
-		putChild(name, data);
-	}
-
-	@Override
-	public Map<String, NXdata> getAllData() {
-		return getChildren(NXdata.class);
-	}
-	
-	@Override
-	public void setAllData(Map<String, NXdata> data) {
-		setChildren(data);
+	public void setStack(NXdata stackGroup) {
+		putChild("stack", stackGroup);
 	}
 
 }

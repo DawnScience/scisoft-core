@@ -23,7 +23,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * Subclass of NXinstrument to describe a photoelectron analyser.
- * 
+
  */
 public class NXelectronanalyserImpl extends NXobjectImpl implements NXelectronanalyser {
 
@@ -46,22 +46,22 @@ public class NXelectronanalyserImpl extends NXobjectImpl implements NXelectronan
 	public NXelectronanalyserImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXelectronanalyser.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_ELECTRONANALYSER;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getDescription() {
@@ -278,7 +278,7 @@ public class NXelectronanalyserImpl extends NXobjectImpl implements NXelectronan
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);
@@ -309,7 +309,7 @@ public class NXelectronanalyserImpl extends NXobjectImpl implements NXelectronan
 	public Map<String, NXcollectioncolumn> getAllCollectioncolumn() {
 		return getChildren(NXcollectioncolumn.class);
 	}
-	
+
 	@Override
 	public void setAllCollectioncolumn(Map<String, NXcollectioncolumn> collectioncolumn) {
 		setChildren(collectioncolumn);
@@ -340,7 +340,7 @@ public class NXelectronanalyserImpl extends NXobjectImpl implements NXelectronan
 	public Map<String, NXenergydispersion> getAllEnergydispersion() {
 		return getChildren(NXenergydispersion.class);
 	}
-	
+
 	@Override
 	public void setAllEnergydispersion(Map<String, NXenergydispersion> energydispersion) {
 		setChildren(energydispersion);
@@ -371,7 +371,7 @@ public class NXelectronanalyserImpl extends NXobjectImpl implements NXelectronan
 	public Map<String, NXspindispersion> getAllSpindispersion() {
 		return getChildren(NXspindispersion.class);
 	}
-	
+
 	@Override
 	public void setAllSpindispersion(Map<String, NXspindispersion> spindispersion) {
 		setChildren(spindispersion);
@@ -402,7 +402,7 @@ public class NXelectronanalyserImpl extends NXobjectImpl implements NXelectronan
 	public Map<String, NXdetector> getAllDetector() {
 		return getChildren(NXdetector.class);
 	}
-	
+
 	@Override
 	public void setAllDetector(Map<String, NXdetector> detector) {
 		setChildren(detector);
@@ -433,7 +433,7 @@ public class NXelectronanalyserImpl extends NXobjectImpl implements NXelectronan
 	public Map<String, NXdeflector> getAllDeflector() {
 		return getChildren(NXdeflector.class);
 	}
-	
+
 	@Override
 	public void setAllDeflector(Map<String, NXdeflector> deflector) {
 		setChildren(deflector);
@@ -464,7 +464,7 @@ public class NXelectronanalyserImpl extends NXobjectImpl implements NXelectronan
 	public Map<String, NXlens_em> getAllLens_em() {
 		return getChildren(NXlens_em.class);
 	}
-	
+
 	@Override
 	public void setAllLens_em(Map<String, NXlens_em> lens_em) {
 		setChildren(lens_em);

@@ -17,7 +17,7 @@ import org.eclipse.january.dataset.IDataset;
 
 /**
  * definition of a quadric surface.
- * 
+ *
  */
 public interface NXquadric extends NXobject {
 
@@ -36,11 +36,11 @@ public interface NXquadric extends NXobject {
 	 * <b>Units:</b> NX_PER_LENGTH
 	 * <b>Dimensions:</b> 1: 10;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getParameters();
-	
+
 	/**
 	 * Ten real values of the matrix that defines the quadric surface
 	 * in projective space. Ordered Q11, Q12, Q13, Q22, Q23, Q33, P1,
@@ -53,7 +53,7 @@ public interface NXquadric extends NXobject {
 	 * <b>Units:</b> NX_PER_LENGTH
 	 * <b>Dimensions:</b> 1: 10;
 	 * </p>
-	 * 
+	 *
 	 * @param parametersDataset the parametersDataset
 	 */
 	public DataNode setParameters(IDataset parametersDataset);
@@ -70,7 +70,7 @@ public interface NXquadric extends NXobject {
 	 * <b>Units:</b> NX_PER_LENGTH
 	 * <b>Dimensions:</b> 1: 10;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getParametersScalar();
@@ -87,7 +87,7 @@ public interface NXquadric extends NXobject {
 	 * <b>Units:</b> NX_PER_LENGTH
 	 * <b>Dimensions:</b> 1: 10;
 	 * </p>
-	 * 
+	 *
 	 * @param parameters the parameters
 	 */
 	public DataNode setParametersScalar(Number parametersValue);
@@ -116,11 +116,11 @@ public interface NXquadric extends NXobject {
 	 * <li><b>IMAGINARY</b> </li>
 	 * <li><b>UNKNOWN</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSurface_type();
-	
+
 	/**
 	 * An optional description of the form of the quadric surface:
 	 * <p>
@@ -145,7 +145,7 @@ public interface NXquadric extends NXobject {
 	 * <li><b>IMAGINARY</b> </li>
 	 * <li><b>UNKNOWN</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param surface_typeDataset the surface_typeDataset
 	 */
 	public DataNode setSurface_type(IDataset surface_typeDataset);
@@ -174,7 +174,7 @@ public interface NXquadric extends NXobject {
 	 * <li><b>IMAGINARY</b> </li>
 	 * <li><b>UNKNOWN</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getSurface_typeScalar();
@@ -203,7 +203,7 @@ public interface NXquadric extends NXobject {
 	 * <li><b>IMAGINARY</b> </li>
 	 * <li><b>UNKNOWN</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param surface_type the surface_type
 	 */
 	public DataNode setSurface_typeScalar(String surface_typeValue);
@@ -214,18 +214,18 @@ public interface NXquadric extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDepends_on();
-	
+
 	/**
 	 * Path to an :ref:`NXtransformations` that defining the axis on
 	 * which the orientation of the surface depends.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_onDataset the depends_onDataset
 	 */
 	public DataNode setDepends_on(IDataset depends_onDataset);
@@ -236,7 +236,7 @@ public interface NXquadric extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDepends_onScalar();
@@ -247,7 +247,7 @@ public interface NXquadric extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);

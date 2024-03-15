@@ -27,7 +27,7 @@ import org.eclipse.dawnsci.nexus.*;
  * a warning since it is always an optional group.
  * Anything (groups, fields, or attributes) placed in
  * an :ref:`NXcollection` group will not be validated.
- * 
+
  */
 public class NXcollectionImpl extends NXobjectImpl implements NXcollection {
 
@@ -43,21 +43,21 @@ public class NXcollectionImpl extends NXobjectImpl implements NXcollection {
 	public NXcollectionImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXcollection.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_COLLECTION;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 }

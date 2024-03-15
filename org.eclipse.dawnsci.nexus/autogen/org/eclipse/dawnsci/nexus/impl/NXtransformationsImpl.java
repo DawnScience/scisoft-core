@@ -78,7 +78,7 @@ import org.eclipse.dawnsci.nexus.*;
  * * transformation_type
  * * depends_on
  * as needed.
- * 
+
  */
 public class NXtransformationsImpl extends NXobjectImpl implements NXtransformations {
 
@@ -94,22 +94,22 @@ public class NXtransformationsImpl extends NXobjectImpl implements NXtransformat
 	public NXtransformationsImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXtransformations.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_TRANSFORMATIONS;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getAxisname(String axisname) {

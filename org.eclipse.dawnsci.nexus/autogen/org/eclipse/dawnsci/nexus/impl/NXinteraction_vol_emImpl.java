@@ -44,7 +44,7 @@ import org.eclipse.dawnsci.nexus.*;
  * is available in the literature for example:
  * * `S. Richter et al. <https://doi.org/10.1088/1757-899X/109/1/012014>`_
  * * `J. Bünger et al. <https://doi.org/10.1017/S1431927622000083>`_
- * 
+
  */
 public class NXinteraction_vol_emImpl extends NXobjectImpl implements NXinteraction_vol_em {
 
@@ -62,22 +62,22 @@ public class NXinteraction_vol_emImpl extends NXobjectImpl implements NXinteract
 	public NXinteraction_vol_emImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXinteraction_vol_em.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_INTERACTION_VOL_EM;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public NXdata getData() {
@@ -104,7 +104,7 @@ public class NXinteraction_vol_emImpl extends NXobjectImpl implements NXinteract
 	public Map<String, NXdata> getAllData() {
 		return getChildren(NXdata.class);
 	}
-	
+
 	@Override
 	public void setAllData(Map<String, NXdata> data) {
 		setChildren(data);
@@ -135,7 +135,7 @@ public class NXinteraction_vol_emImpl extends NXobjectImpl implements NXinteract
 	public Map<String, NXprocess> getAllProcess() {
 		return getChildren(NXprocess.class);
 	}
-	
+
 	@Override
 	public void setAllProcess(Map<String, NXprocess> process) {
 		setChildren(process);

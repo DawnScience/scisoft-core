@@ -22,8 +22,9 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * A beamline aperture. This group is deprecated, use NXslit instead.
- * 
+ * A beamline aperture.
+ * Note, the group was incorrectly documented as deprecated, but it is not and it is in common use.
+
  */
 public class NXapertureImpl extends NXobjectImpl implements NXaperture {
 
@@ -32,6 +33,7 @@ public class NXapertureImpl extends NXobjectImpl implements NXaperture {
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
 		NexusBaseClass.NX_TRANSFORMATIONS,
+		NexusBaseClass.NX_OFF_GEOMETRY,
 		NexusBaseClass.NX_GEOMETRY,
 		NexusBaseClass.NX_GEOMETRY,
 		NexusBaseClass.NX_NOTE);
@@ -43,22 +45,22 @@ public class NXapertureImpl extends NXobjectImpl implements NXaperture {
 	public NXapertureImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXaperture.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_APERTURE;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getDepends_on() {
@@ -105,10 +107,41 @@ public class NXapertureImpl extends NXobjectImpl implements NXaperture {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);
+	}
+
+	@Override
+	public NXoff_geometry getOff_geometry() {
+		// dataNodeName = NX_OFF_GEOMETRY
+		return getChild("off_geometry", NXoff_geometry.class);
+	}
+
+	@Override
+	public void setOff_geometry(NXoff_geometry off_geometryGroup) {
+		putChild("off_geometry", off_geometryGroup);
+	}
+
+	@Override
+	public NXoff_geometry getOff_geometry(String name) {
+		return getChild(name, NXoff_geometry.class);
+	}
+
+	@Override
+	public void setOff_geometry(String name, NXoff_geometry off_geometry) {
+		putChild(name, off_geometry);
+	}
+
+	@Override
+	public Map<String, NXoff_geometry> getAllOff_geometry() {
+		return getChildren(NXoff_geometry.class);
+	}
+
+	@Override
+	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry) {
+		setChildren(off_geometry);
 	}
 
 	@Override
@@ -141,7 +174,7 @@ public class NXapertureImpl extends NXobjectImpl implements NXaperture {
 	public Map<String, NXgeometry> getAllGeometry() {
 		return getChildren(NXgeometry.class);
 	}
-	
+
 	@Override
 	@Deprecated
 	public void setAllGeometry(Map<String, NXgeometry> geometry) {
@@ -226,7 +259,7 @@ public class NXapertureImpl extends NXobjectImpl implements NXaperture {
 	public Map<String, NXnote> getAllNote() {
 		return getChildren(NXnote.class);
 	}
-	
+
 	@Override
 	public void setAllNote(Map<String, NXnote> note) {
 		setChildren(note);

@@ -54,7 +54,7 @@ import org.eclipse.dawnsci.nexus.*;
  * container and a link to a dataset containing a measurement of the
  * container with nothing inside, to allow data corrections (at a specific
  * beam energy/measurement time) to be made.
- * 
+
  */
 public class NXcontainerImpl extends NXobjectImpl implements NXcontainer {
 
@@ -73,22 +73,22 @@ public class NXcontainerImpl extends NXobjectImpl implements NXcontainer {
 	public NXcontainerImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXcontainer.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_CONTAINER;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getName() {
@@ -242,6 +242,6 @@ public class NXcontainerImpl extends NXobjectImpl implements NXcontainer {
 	public void setOrientation(NXtransformations orientationGroup) {
 		putChild("orientation", orientationGroup);
 	}
-	// Unprocessed link:  reference_measurement
+	// Unprocessed link: reference_measurement
 
 }

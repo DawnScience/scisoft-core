@@ -35,90 +35,90 @@ import org.eclipse.january.dataset.IDataset;
  * * `E. I. Preiß et al. <https://link.springer.com/content/pdf/10.1557/s43578-020-00045-w.pdf>`_
  * * `J. F. Ziegler et al. <https://www.sciencedirect.com/science/article/pii/S0168583X10001862>`_
  * * `J. Lili <https://www.osti.gov/servlets/purl/924801>`_
- * 
+ *
  */
 public interface NXibeam_column extends NXobject {
 
 	/**
-	 * 
+	 *
 	 * @return  the value.
 	 */
-	public NXmanufacturer getManufacturer();
-	
-	/**
-	 * 
-	 * @param manufacturerGroup the manufacturerGroup
-	 */
-	public void setManufacturer(NXmanufacturer manufacturerGroup);
+	public NXfabrication getFabrication();
 
 	/**
-	 * Get a NXmanufacturer node by name:
+	 *
+	 * @param fabricationGroup the fabricationGroup
+	 */
+	public void setFabrication(NXfabrication fabricationGroup);
+
+	/**
+	 * Get a NXfabrication node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXmanufacturer for that node.
+	 * @return  a map from node names to the NXfabrication for that node.
 	 */
-	public NXmanufacturer getManufacturer(String name);
-	
+	public NXfabrication getFabrication(String name);
+
 	/**
-	 * Set a NXmanufacturer node by name:
+	 * Set a NXfabrication node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
-	 * @param manufacturer the value to set
+	 * @param fabrication the value to set
 	 */
-	public void setManufacturer(String name, NXmanufacturer manufacturer);
-	
+	public void setFabrication(String name, NXfabrication fabrication);
+
 	/**
-	 * Get all NXmanufacturer nodes:
+	 * Get all NXfabrication nodes:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
-	 * @return  a map from node names to the NXmanufacturer for that node.
+	 *
+	 * @return  a map from node names to the NXfabrication for that node.
 	 */
-	public Map<String, NXmanufacturer> getAllManufacturer();
-	
+	public Map<String, NXfabrication> getAllFabrication();
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
-	 * @param manufacturer the child nodes to add 
+	 *
+	 * @param fabrication the child nodes to add
 	 */
-	
-	public void setAllManufacturer(Map<String, NXmanufacturer> manufacturer);
-	
+
+	public void setAllFabrication(Map<String, NXfabrication> fabrication);
+
 
 	/**
 	 * The source which creates the ion beam.
-	 * 
+	 *
 	 * @return  the value.
 	 */
-	public NXsource getIon_gun();
-	
-	/**
-	 * The source which creates the ion beam.
-	 * 
-	 * @param ion_gunGroup the ion_gunGroup
-	 */
-	public void setIon_gun(NXsource ion_gunGroup);
-	// Unprocessed group: probe
-	// Unprocessed group: 
+	public NXsource getIon_source();
 
 	/**
-	 * 
+	 * The source which creates the ion beam.
+	 *
+	 * @param ion_sourceGroup the ion_sourceGroup
+	 */
+	public void setIon_source(NXsource ion_sourceGroup);
+	// Unprocessed group:probe
+	// Unprocessed group:
+
+	/**
+	 *
 	 * @return  the value.
 	 */
 	public NXaperture_em getAperture_em();
-	
+
 	/**
-	 * 
+	 *
 	 * @param aperture_emGroup the aperture_emGroup
 	 */
 	public void setAperture_em(NXaperture_em aperture_emGroup);
@@ -128,53 +128,53 @@ public interface NXibeam_column extends NXobject {
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXaperture_em for that node.
 	 */
 	public NXaperture_em getAperture_em(String name);
-	
+
 	/**
 	 * Set a NXaperture_em node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param aperture_em the value to set
 	 */
 	public void setAperture_em(String name, NXaperture_em aperture_em);
-	
+
 	/**
 	 * Get all NXaperture_em nodes:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXaperture_em for that node.
 	 */
 	public Map<String, NXaperture_em> getAllAperture_em();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
-	 * @param aperture_em the child nodes to add 
+	 *
+	 * @param aperture_em the child nodes to add
 	 */
-	
+
 	public void setAllAperture_em(Map<String, NXaperture_em> aperture_em);
-	
+
 
 	/**
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXlens_em getLens_em();
-	
+
 	/**
-	 * 
+	 *
 	 * @param lens_emGroup the lens_emGroup
 	 */
 	public void setLens_em(NXlens_em lens_emGroup);
@@ -184,53 +184,53 @@ public interface NXibeam_column extends NXobject {
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXlens_em for that node.
 	 */
 	public NXlens_em getLens_em(String name);
-	
+
 	/**
 	 * Set a NXlens_em node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param lens_em the value to set
 	 */
 	public void setLens_em(String name, NXlens_em lens_em);
-	
+
 	/**
 	 * Get all NXlens_em nodes:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXlens_em for that node.
 	 */
 	public Map<String, NXlens_em> getAllLens_em();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
-	 * @param lens_em the child nodes to add 
+	 *
+	 * @param lens_em the child nodes to add
 	 */
-	
+
 	public void setAllLens_em(Map<String, NXlens_em> lens_em);
-	
+
 
 	/**
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXsensor getSensor();
-	
+
 	/**
-	 * 
+	 *
 	 * @param sensorGroup the sensorGroup
 	 */
 	public void setSensor(NXsensor sensorGroup);
@@ -240,61 +240,61 @@ public interface NXibeam_column extends NXobject {
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXsensor for that node.
 	 */
 	public NXsensor getSensor(String name);
-	
+
 	/**
 	 * Set a NXsensor node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param sensor the value to set
 	 */
 	public void setSensor(String name, NXsensor sensor);
-	
+
 	/**
 	 * Get all NXsensor nodes:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXsensor for that node.
 	 */
 	public Map<String, NXsensor> getAllSensor();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
-	 * @param sensor the child nodes to add 
+	 *
+	 * @param sensor the child nodes to add
 	 */
-	
+
 	public void setAllSensor(Map<String, NXsensor> sensor);
-	
+
 
 	/**
 	 * Individual characterization results for the position, shape,
 	 * and characteristics of the ion beam.
 	 * NXtransformations should be used to specify the location or position
 	 * at which details about the ion beam are probed.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXbeam getBeam();
-	
+
 	/**
 	 * Individual characterization results for the position, shape,
 	 * and characteristics of the ion beam.
 	 * NXtransformations should be used to specify the location or position
 	 * at which details about the ion beam are probed.
-	 * 
+	 *
 	 * @param beamGroup the beamGroup
 	 */
 	public void setBeam(NXbeam beamGroup);
@@ -308,12 +308,12 @@ public interface NXibeam_column extends NXobject {
 	 * NXtransformations should be used to specify the location or position
 	 * at which details about the ion beam are probed.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXbeam for that node.
 	 */
 	public NXbeam getBeam(String name);
-	
+
 	/**
 	 * Set a NXbeam node by name:
 	 * <ul>
@@ -323,12 +323,12 @@ public interface NXibeam_column extends NXobject {
 	 * NXtransformations should be used to specify the location or position
 	 * at which details about the ion beam are probed.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param beam the value to set
 	 */
 	public void setBeam(String name, NXbeam beam);
-	
+
 	/**
 	 * Get all NXbeam nodes:
 	 * <ul>
@@ -338,11 +338,11 @@ public interface NXibeam_column extends NXobject {
 	 * NXtransformations should be used to specify the location or position
 	 * at which details about the ion beam are probed.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXbeam for that node.
 	 */
 	public Map<String, NXbeam> getAllBeam();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -352,11 +352,11 @@ public interface NXibeam_column extends NXobject {
 	 * NXtransformations should be used to specify the location or position
 	 * at which details about the ion beam are probed.</li>
 	 * </ul>
-	 * 
-	 * @param beam the child nodes to add 
+	 *
+	 * @param beam the child nodes to add
 	 */
-	
+
 	public void setAllBeam(Map<String, NXbeam> beam);
-	
+
 
 }

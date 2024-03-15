@@ -22,8 +22,8 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Container for components to form a controlled electron beam.
- * 
+ * Container for components to form a controlled beam in electron microscopy.
+
  */
 public class NXebeam_columnImpl extends NXobjectImpl implements NXebeam_column {
 
@@ -31,7 +31,7 @@ public class NXebeam_columnImpl extends NXobjectImpl implements NXebeam_column {
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_MANUFACTURER,
+		NexusBaseClass.NX_FABRICATION,
 		NexusBaseClass.NX_SOURCE,
 		NexusBaseClass.NX_APERTURE_EM,
 		NexusBaseClass.NX_LENS_EM,
@@ -47,66 +47,66 @@ public class NXebeam_columnImpl extends NXobjectImpl implements NXebeam_column {
 	public NXebeam_columnImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXebeam_column.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_EBEAM_COLUMN;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
-	public NXmanufacturer getManufacturer() {
-		// dataNodeName = NX_MANUFACTURER
-		return getChild("manufacturer", NXmanufacturer.class);
-	}
-
-	@Override
-	public void setManufacturer(NXmanufacturer manufacturerGroup) {
-		putChild("manufacturer", manufacturerGroup);
+	public NXfabrication getFabrication() {
+		// dataNodeName = NX_FABRICATION
+		return getChild("fabrication", NXfabrication.class);
 	}
 
 	@Override
-	public NXmanufacturer getManufacturer(String name) {
-		return getChild(name, NXmanufacturer.class);
+	public void setFabrication(NXfabrication fabricationGroup) {
+		putChild("fabrication", fabricationGroup);
 	}
 
 	@Override
-	public void setManufacturer(String name, NXmanufacturer manufacturer) {
-		putChild(name, manufacturer);
+	public NXfabrication getFabrication(String name) {
+		return getChild(name, NXfabrication.class);
 	}
 
 	@Override
-	public Map<String, NXmanufacturer> getAllManufacturer() {
-		return getChildren(NXmanufacturer.class);
-	}
-	
-	@Override
-	public void setAllManufacturer(Map<String, NXmanufacturer> manufacturer) {
-		setChildren(manufacturer);
+	public void setFabrication(String name, NXfabrication fabrication) {
+		putChild(name, fabrication);
 	}
 
 	@Override
-	public NXsource getElectron_gun() {
-		// dataNodeName = NX_ELECTRON_GUN
-		return getChild("electron_gun", NXsource.class);
+	public Map<String, NXfabrication> getAllFabrication() {
+		return getChildren(NXfabrication.class);
 	}
 
 	@Override
-	public void setElectron_gun(NXsource electron_gunGroup) {
-		putChild("electron_gun", electron_gunGroup);
+	public void setAllFabrication(Map<String, NXfabrication> fabrication) {
+		setChildren(fabrication);
 	}
-	// Unprocessed group: 
-	// Unprocessed group: 
+
+	@Override
+	public NXsource getElectron_source() {
+		// dataNodeName = NX_ELECTRON_SOURCE
+		return getChild("electron_source", NXsource.class);
+	}
+
+	@Override
+	public void setElectron_source(NXsource electron_sourceGroup) {
+		putChild("electron_source", electron_sourceGroup);
+	}
+	// Unprocessed group:
+	// Unprocessed group:
 
 	@Override
 	public NXaperture_em getAperture_em() {
@@ -133,7 +133,7 @@ public class NXebeam_columnImpl extends NXobjectImpl implements NXebeam_column {
 	public Map<String, NXaperture_em> getAllAperture_em() {
 		return getChildren(NXaperture_em.class);
 	}
-	
+
 	@Override
 	public void setAllAperture_em(Map<String, NXaperture_em> aperture_em) {
 		setChildren(aperture_em);
@@ -164,7 +164,7 @@ public class NXebeam_columnImpl extends NXobjectImpl implements NXebeam_column {
 	public Map<String, NXlens_em> getAllLens_em() {
 		return getChildren(NXlens_em.class);
 	}
-	
+
 	@Override
 	public void setAllLens_em(Map<String, NXlens_em> lens_em) {
 		setChildren(lens_em);
@@ -195,7 +195,7 @@ public class NXebeam_columnImpl extends NXobjectImpl implements NXebeam_column {
 	public Map<String, NXcorrector_cs> getAllCorrector_cs() {
 		return getChildren(NXcorrector_cs.class);
 	}
-	
+
 	@Override
 	public void setAllCorrector_cs(Map<String, NXcorrector_cs> corrector_cs) {
 		setChildren(corrector_cs);
@@ -226,7 +226,7 @@ public class NXebeam_columnImpl extends NXobjectImpl implements NXebeam_column {
 	public Map<String, NXstage_lab> getAllStage_lab() {
 		return getChildren(NXstage_lab.class);
 	}
-	
+
 	@Override
 	public void setAllStage_lab(Map<String, NXstage_lab> stage_lab) {
 		setChildren(stage_lab);
@@ -257,7 +257,7 @@ public class NXebeam_columnImpl extends NXobjectImpl implements NXebeam_column {
 	public Map<String, NXsensor> getAllSensor() {
 		return getChildren(NXsensor.class);
 	}
-	
+
 	@Override
 	public void setAllSensor(Map<String, NXsensor> sensor) {
 		setChildren(sensor);
@@ -288,7 +288,7 @@ public class NXebeam_columnImpl extends NXobjectImpl implements NXebeam_column {
 	public Map<String, NXbeam> getAllBeam() {
 		return getChildren(NXbeam.class);
 	}
-	
+
 	@Override
 	public void setAllBeam(Map<String, NXbeam> beam) {
 		setChildren(beam);

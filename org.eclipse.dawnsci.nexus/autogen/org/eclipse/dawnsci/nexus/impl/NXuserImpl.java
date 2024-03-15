@@ -25,7 +25,7 @@ import org.eclipse.dawnsci.nexus.*;
  * than one user with the same affiliation and contact information,
  * but a second :ref:`NXuser` group should be used if they have different
  * affiliations, etc.
- * 
+
  */
 public class NXuserImpl extends NXobjectImpl implements NXuser {
 
@@ -41,22 +41,22 @@ public class NXuserImpl extends NXobjectImpl implements NXuser {
 	public NXuserImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXuser.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_USER;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getName() {

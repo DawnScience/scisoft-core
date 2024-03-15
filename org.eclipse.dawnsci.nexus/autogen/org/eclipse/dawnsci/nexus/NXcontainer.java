@@ -50,7 +50,7 @@ import org.eclipse.january.dataset.IDataset;
  * container and a link to a dataset containing a measurement of the
  * container with nothing inside, to allow data corrections (at a specific
  * beam energy/measurement time) to be made.
- * 
+ *
  */
 public interface NXcontainer extends NXobject {
 
@@ -62,28 +62,28 @@ public interface NXcontainer extends NXobject {
 	public static final String NX_RELATIVE_MOLECULAR_MASS = "relative_molecular_mass";
 	/**
 	 * Descriptive name of container.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getName();
-	
+
 	/**
 	 * Descriptive name of container.
-	 * 
+	 *
 	 * @param nameDataset the nameDataset
 	 */
 	public DataNode setName(IDataset nameDataset);
 
 	/**
 	 * Descriptive name of container.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getNameScalar();
 
 	/**
 	 * Descriptive name of container.
-	 * 
+	 *
 	 * @param name the name
 	 */
 	public DataNode setNameScalar(String nameValue);
@@ -91,15 +91,15 @@ public interface NXcontainer extends NXobject {
 	/**
 	 * Verbose description of container and how it fits into the wider
 	 * experimental set up.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDescription();
-	
+
 	/**
 	 * Verbose description of container and how it fits into the wider
 	 * experimental set up.
-	 * 
+	 *
 	 * @param descriptionDataset the descriptionDataset
 	 */
 	public DataNode setDescription(IDataset descriptionDataset);
@@ -107,7 +107,7 @@ public interface NXcontainer extends NXobject {
 	/**
 	 * Verbose description of container and how it fits into the wider
 	 * experimental set up.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDescriptionScalar();
@@ -115,7 +115,7 @@ public interface NXcontainer extends NXobject {
 	/**
 	 * Verbose description of container and how it fits into the wider
 	 * experimental set up.
-	 * 
+	 *
 	 * @param description the description
 	 */
 	public DataNode setDescriptionScalar(String descriptionValue);
@@ -142,11 +142,11 @@ public interface NXcontainer extends NXobject {
 	 * - If carbon is not present, the elements are listed purely in
 	 * alphabetic order of their symbol.
 	 * * This is the *Hill* system used by Chemical Abstracts.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getChemical_formula();
-	
+
 	/**
 	 * Chemical composition of the material the container is made from.
 	 * Specified using CIF conventions. Abbreviated version of CIF
@@ -169,7 +169,7 @@ public interface NXcontainer extends NXobject {
 	 * - If carbon is not present, the elements are listed purely in
 	 * alphabetic order of their symbol.
 	 * * This is the *Hill* system used by Chemical Abstracts.
-	 * 
+	 *
 	 * @param chemical_formulaDataset the chemical_formulaDataset
 	 */
 	public DataNode setChemical_formula(IDataset chemical_formulaDataset);
@@ -196,7 +196,7 @@ public interface NXcontainer extends NXobject {
 	 * - If carbon is not present, the elements are listed purely in
 	 * alphabetic order of their symbol.
 	 * * This is the *Hill* system used by Chemical Abstracts.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getChemical_formulaScalar();
@@ -223,7 +223,7 @@ public interface NXcontainer extends NXobject {
 	 * - If carbon is not present, the elements are listed purely in
 	 * alphabetic order of their symbol.
 	 * * This is the *Hill* system used by Chemical Abstracts.
-	 * 
+	 *
 	 * @param chemical_formula the chemical_formula
 	 */
 	public DataNode setChemical_formulaScalar(String chemical_formulaValue);
@@ -235,11 +235,11 @@ public interface NXcontainer extends NXobject {
 	 * <b>Units:</b> NX_MASS_DENSITY
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDensity();
-	
+
 	/**
 	 * Density of the material the container is made from.
 	 * <p>
@@ -247,7 +247,7 @@ public interface NXcontainer extends NXobject {
 	 * <b>Units:</b> NX_MASS_DENSITY
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param densityDataset the densityDataset
 	 */
 	public DataNode setDensity(IDataset densityDataset);
@@ -259,7 +259,7 @@ public interface NXcontainer extends NXobject {
 	 * <b>Units:</b> NX_MASS_DENSITY
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getDensityScalar();
@@ -271,7 +271,7 @@ public interface NXcontainer extends NXobject {
 	 * <b>Units:</b> NX_MASS_DENSITY
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param density the density
 	 */
 	public DataNode setDensityScalar(Double densityValue);
@@ -284,11 +284,11 @@ public interface NXcontainer extends NXobject {
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getPacking_fraction();
-	
+
 	/**
 	 * Fraction of the volume of the container occupied by the material
 	 * forming the container.
@@ -297,7 +297,7 @@ public interface NXcontainer extends NXobject {
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param packing_fractionDataset the packing_fractionDataset
 	 */
 	public DataNode setPacking_fraction(IDataset packing_fractionDataset);
@@ -310,7 +310,7 @@ public interface NXcontainer extends NXobject {
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getPacking_fractionScalar();
@@ -323,7 +323,7 @@ public interface NXcontainer extends NXobject {
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param packing_fraction the packing_fraction
 	 */
 	public DataNode setPacking_fractionScalar(Double packing_fractionValue);
@@ -335,11 +335,11 @@ public interface NXcontainer extends NXobject {
 	 * <b>Units:</b> NX_MASS
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getRelative_molecular_mass();
-	
+
 	/**
 	 * Relative molecular mass of container.
 	 * <p>
@@ -347,7 +347,7 @@ public interface NXcontainer extends NXobject {
 	 * <b>Units:</b> NX_MASS
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param relative_molecular_massDataset the relative_molecular_massDataset
 	 */
 	public DataNode setRelative_molecular_mass(IDataset relative_molecular_massDataset);
@@ -359,7 +359,7 @@ public interface NXcontainer extends NXobject {
 	 * <b>Units:</b> NX_MASS
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getRelative_molecular_massScalar();
@@ -371,7 +371,7 @@ public interface NXcontainer extends NXobject {
 	 * <b>Units:</b> NX_MASS
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param relative_molecular_mass the relative_molecular_mass
 	 */
 	public DataNode setRelative_molecular_massScalar(Double relative_molecular_massValue);
@@ -380,16 +380,16 @@ public interface NXcontainer extends NXobject {
 	 * Details of beam incident on container, including the position
 	 * relative to the sample (to determine whether the container is
 	 * upstream or downstream of the sample).
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXbeam getBeam();
-	
+
 	/**
 	 * Details of beam incident on container, including the position
 	 * relative to the sample (to determine whether the container is
 	 * upstream or downstream of the sample).
-	 * 
+	 *
 	 * @param beamGroup the beamGroup
 	 */
 	public void setBeam(NXbeam beamGroup);
@@ -398,16 +398,16 @@ public interface NXcontainer extends NXobject {
 	 * Shape of the container. In combination with orientation this
 	 * should allow the beampath through the container to be modelled to
 	 * allow the adsorption to be calculated.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXshape getShape();
-	
+
 	/**
 	 * Shape of the container. In combination with orientation this
 	 * should allow the beampath through the container to be modelled to
 	 * allow the adsorption to be calculated.
-	 * 
+	 *
 	 * @param shapeGroup the shapeGroup
 	 */
 	public void setShape(NXshape shapeGroup);
@@ -417,20 +417,20 @@ public interface NXcontainer extends NXobject {
 	 * during the experiment.In combination with shape this should allow
 	 * the beampath through the container to be modelled to allow the
 	 * adsorption of the container to be calculated.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getOrientation();
-	
+
 	/**
 	 * The angle the container makes to the beam and how it may change
 	 * during the experiment.In combination with shape this should allow
 	 * the beampath through the container to be modelled to allow the
 	 * adsorption of the container to be calculated.
-	 * 
+	 *
 	 * @param orientationGroup the orientationGroup
 	 */
 	public void setOrientation(NXtransformations orientationGroup);
-	// Unprocessed link: reference_measurement
+	// Unprocessed link:reference_measurement
 
 }

@@ -24,7 +24,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * The neutron or x-ray storage ring/facility.
- * 
+
  */
 public class NXsourceImpl extends NXobjectImpl implements NXsource {
 
@@ -47,22 +47,22 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	public NXsourceImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXsource.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_SOURCE;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getDistance() {
@@ -615,7 +615,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	public Map<String, NXoff_geometry> getAllOff_geometry() {
 		return getChildren(NXoff_geometry.class);
 	}
-	
+
 	@Override
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry) {
 		setChildren(off_geometry);
@@ -687,7 +687,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

@@ -24,7 +24,7 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * A capillary lens to focus the X-ray beam.
  * Based on information provided by Gerd Wellenreuther (DESY).
- * 
+
  */
 public class NXcapillaryImpl extends NXobjectImpl implements NXcapillary {
 
@@ -43,22 +43,22 @@ public class NXcapillaryImpl extends NXobjectImpl implements NXcapillary {
 	public NXcapillaryImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXcapillary.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_CAPILLARY;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getType() {
@@ -257,7 +257,7 @@ public class NXcapillaryImpl extends NXobjectImpl implements NXcapillary {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

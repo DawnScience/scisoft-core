@@ -19,7 +19,7 @@ import org.eclipse.january.dataset.IDataset;
 
 /**
  * A neutron velocity selector
- * 
+ *
  */
 public interface NXvelocity_selector extends NXobject {
 
@@ -39,28 +39,28 @@ public interface NXvelocity_selector extends NXobject {
 	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
 	 * velocity selector type
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getType();
-	
+
 	/**
 	 * velocity selector type
-	 * 
+	 *
 	 * @param typeDataset the typeDataset
 	 */
 	public DataNode setType(IDataset typeDataset);
 
 	/**
 	 * velocity selector type
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getTypeScalar();
 
 	/**
 	 * velocity selector type
-	 * 
+	 *
 	 * @param type the type
 	 */
 	public DataNode setTypeScalar(String typeValue);
@@ -71,18 +71,18 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_FREQUENCY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getRotation_speed();
-	
+
 	/**
 	 * velocity selector rotation speed
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_FREQUENCY
 	 * </p>
-	 * 
+	 *
 	 * @param rotation_speedDataset the rotation_speedDataset
 	 */
 	public DataNode setRotation_speed(IDataset rotation_speedDataset);
@@ -93,7 +93,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_FREQUENCY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getRotation_speedScalar();
@@ -104,7 +104,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_FREQUENCY
 	 * </p>
-	 * 
+	 *
 	 * @param rotation_speed the rotation_speed
 	 */
 	public DataNode setRotation_speedScalar(Double rotation_speedValue);
@@ -115,18 +115,18 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getRadius();
-	
+
 	/**
 	 * radius at beam centre
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param radiusDataset the radiusDataset
 	 */
 	public DataNode setRadius(IDataset radiusDataset);
@@ -137,7 +137,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getRadiusScalar();
@@ -148,7 +148,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param radius the radius
 	 */
 	public DataNode setRadiusScalar(Double radiusValue);
@@ -159,18 +159,18 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSpwidth();
-	
+
 	/**
 	 * spoke width at beam centre
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param spwidthDataset the spwidthDataset
 	 */
 	public DataNode setSpwidth(IDataset spwidthDataset);
@@ -181,7 +181,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getSpwidthScalar();
@@ -192,7 +192,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param spwidth the spwidth
 	 */
 	public DataNode setSpwidthScalar(Double spwidthValue);
@@ -203,18 +203,18 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getLength();
-	
+
 	/**
 	 * rotor length
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param lengthDataset the lengthDataset
 	 */
 	public DataNode setLength(IDataset lengthDataset);
@@ -225,7 +225,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getLengthScalar();
@@ -236,7 +236,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param length the length
 	 */
 	public DataNode setLengthScalar(Double lengthValue);
@@ -247,18 +247,18 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getNum();
-	
+
 	/**
 	 * number of spokes/lamella
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
-	 * 
+	 *
 	 * @param numDataset the numDataset
 	 */
 	public DataNode setNum(IDataset numDataset);
@@ -269,7 +269,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Long getNumScalar();
@@ -280,7 +280,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
-	 * 
+	 *
 	 * @param num the num
 	 */
 	public DataNode setNumScalar(Long numValue);
@@ -291,18 +291,18 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getTwist();
-	
+
 	/**
 	 * twist angle along axis
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param twistDataset the twistDataset
 	 */
 	public DataNode setTwist(IDataset twistDataset);
@@ -313,7 +313,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getTwistScalar();
@@ -324,7 +324,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param twist the twist
 	 */
 	public DataNode setTwistScalar(Double twistValue);
@@ -335,18 +335,18 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getTable();
-	
+
 	/**
 	 * offset vertical angle
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param tableDataset the tableDataset
 	 */
 	public DataNode setTable(IDataset tableDataset);
@@ -357,7 +357,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getTableScalar();
@@ -368,7 +368,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param table the table
 	 */
 	public DataNode setTableScalar(Double tableValue);
@@ -379,18 +379,18 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getHeight();
-	
+
 	/**
 	 * input beam height
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param heightDataset the heightDataset
 	 */
 	public DataNode setHeight(IDataset heightDataset);
@@ -401,7 +401,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getHeightScalar();
@@ -412,7 +412,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param height the height
 	 */
 	public DataNode setHeightScalar(Double heightValue);
@@ -423,18 +423,18 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getWidth();
-	
+
 	/**
 	 * input beam width
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param widthDataset the widthDataset
 	 */
 	public DataNode setWidth(IDataset widthDataset);
@@ -445,7 +445,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getWidthScalar();
@@ -456,7 +456,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param width the width
 	 */
 	public DataNode setWidthScalar(Double widthValue);
@@ -467,18 +467,18 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getWavelength();
-	
+
 	/**
 	 * wavelength
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param wavelengthDataset the wavelengthDataset
 	 */
 	public DataNode setWavelength(IDataset wavelengthDataset);
@@ -489,7 +489,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getWavelengthScalar();
@@ -500,7 +500,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param wavelength the wavelength
 	 */
 	public DataNode setWavelengthScalar(Double wavelengthValue);
@@ -511,18 +511,18 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getWavelength_spread();
-	
+
 	/**
 	 * deviation FWHM /Wavelength
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param wavelength_spreadDataset the wavelength_spreadDataset
 	 */
 	public DataNode setWavelength_spread(IDataset wavelength_spreadDataset);
@@ -533,7 +533,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getWavelength_spreadScalar();
@@ -544,21 +544,21 @@ public interface NXvelocity_selector extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param wavelength_spread the wavelength_spread
 	 */
 	public DataNode setWavelength_spreadScalar(Double wavelength_spreadValue);
 
 	/**
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the velocity selector and NXoff_geometry to describe its shape instead
 	 * @return  the value.
 	 */
 	@Deprecated
 	public NXgeometry getGeometry();
-	
+
 	/**
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the velocity selector and NXoff_geometry to describe its shape instead
 	 * @param geometryGroup the geometryGroup
 	 */
@@ -567,14 +567,14 @@ public interface NXvelocity_selector extends NXobject {
 
 	/**
 	 * This group describes the shape of the beam line component
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXoff_geometry getOff_geometry();
-	
+
 	/**
 	 * This group describes the shape of the beam line component
-	 * 
+	 *
 	 * @param off_geometryGroup the off_geometryGroup
 	 */
 	public void setOff_geometry(NXoff_geometry off_geometryGroup);
@@ -585,47 +585,47 @@ public interface NXvelocity_selector extends NXobject {
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
 	public NXoff_geometry getOff_geometry(String name);
-	
+
 	/**
 	 * Set a NXoff_geometry node by name:
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param off_geometry the value to set
 	 */
 	public void setOff_geometry(String name, NXoff_geometry off_geometry);
-	
+
 	/**
 	 * Get all NXoff_geometry nodes:
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
 	public Map<String, NXoff_geometry> getAllOff_geometry();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
-	 * @param off_geometry the child nodes to add 
+	 *
+	 * @param off_geometry the child nodes to add
 	 */
-	
+
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry);
-	
+
 
 	/**
 	 * .. index:: plotting
@@ -635,11 +635,11 @@ public interface NXvelocity_selector extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -648,7 +648,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);
@@ -665,11 +665,11 @@ public interface NXvelocity_selector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDepends_on();
-	
+
 	/**
 	 * NeXus positions components by applying a set of translations and rotations
 	 * to apply to the component starting from 0, 0, 0. The order of these operations
@@ -682,7 +682,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_onDataset the depends_onDataset
 	 */
 	public DataNode setDepends_on(IDataset depends_onDataset);
@@ -699,7 +699,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDepends_onScalar();
@@ -716,7 +716,7 @@ public interface NXvelocity_selector extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
@@ -726,17 +726,17 @@ public interface NXvelocity_selector extends NXobject {
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
 	 * This is the group recommended for holding the chain of translation
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -750,12 +750,12 @@ public interface NXvelocity_selector extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -765,12 +765,12 @@ public interface NXvelocity_selector extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -780,11 +780,11 @@ public interface NXvelocity_selector extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -794,11 +794,11 @@ public interface NXvelocity_selector extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 }

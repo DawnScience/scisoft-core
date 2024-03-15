@@ -28,7 +28,7 @@ import org.eclipse.dawnsci.nexus.*;
  * information that comprise a single measurement.
  * It is mandatory that there is at least one
  * group of this type in the NeXus file.
- * 
+
  */
 public class NXentryImpl extends NXobjectImpl implements NXentry {
 
@@ -56,22 +56,22 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	public NXentryImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXentry.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_ENTRY;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public String getAttributeDefault() {
@@ -108,7 +108,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	public Map<String, NXdata> getAllData() {
 		return getChildren(NXdata.class);
 	}
-	
+
 	@Override
 	public void setAllData(Map<String, NXdata> data) {
 		setChildren(data);
@@ -626,7 +626,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	public Map<String, NXuser> getAllUser() {
 		return getChildren(NXuser.class);
 	}
-	
+
 	@Override
 	public void setAllUser(Map<String, NXuser> user) {
 		setChildren(user);
@@ -657,7 +657,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	public Map<String, NXsample> getAllSample() {
 		return getChildren(NXsample.class);
 	}
-	
+
 	@Override
 	public void setAllSample(Map<String, NXsample> sample) {
 		setChildren(sample);
@@ -688,7 +688,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	public Map<String, NXinstrument> getAllInstrument() {
 		return getChildren(NXinstrument.class);
 	}
-	
+
 	@Override
 	public void setAllInstrument(Map<String, NXinstrument> instrument) {
 		setChildren(instrument);
@@ -719,7 +719,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	public Map<String, NXcollection> getAllCollection() {
 		return getChildren(NXcollection.class);
 	}
-	
+
 	@Override
 	public void setAllCollection(Map<String, NXcollection> collection) {
 		setChildren(collection);
@@ -750,7 +750,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	public Map<String, NXmonitor> getAllMonitor() {
 		return getChildren(NXmonitor.class);
 	}
-	
+
 	@Override
 	public void setAllMonitor(Map<String, NXmonitor> monitor) {
 		setChildren(monitor);
@@ -781,7 +781,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	public Map<String, NXparameters> getAllParameters() {
 		return getChildren(NXparameters.class);
 	}
-	
+
 	@Override
 	public void setAllParameters(Map<String, NXparameters> parameters) {
 		setChildren(parameters);
@@ -812,7 +812,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	public Map<String, NXprocess> getAllProcess() {
 		return getChildren(NXprocess.class);
 	}
-	
+
 	@Override
 	public void setAllProcess(Map<String, NXprocess> process) {
 		setChildren(process);
@@ -843,7 +843,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	public Map<String, NXsubentry> getAllSubentry() {
 		return getChildren(NXsubentry.class);
 	}
-	
+
 	@Override
 	public void setAllSubentry(Map<String, NXsubentry> subentry) {
 		setChildren(subentry);

@@ -28,7 +28,7 @@ import org.eclipse.dawnsci.nexus.*;
  * (its polepiece, pinhole, or another point of reference).
  * The origin should be specified in the NXtransformations.
  * For details of electro-magnetic lenses in the literature see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
- * 
+
  */
 public class NXlens_emImpl extends NXobjectImpl implements NXlens_em {
 
@@ -36,7 +36,7 @@ public class NXlens_emImpl extends NXobjectImpl implements NXlens_em {
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_MANUFACTURER,
+		NexusBaseClass.NX_FABRICATION,
 		NexusBaseClass.NX_TRANSFORMATIONS);
 
 	public NXlens_emImpl() {
@@ -46,22 +46,22 @@ public class NXlens_emImpl extends NXobjectImpl implements NXlens_em {
 	public NXlens_emImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXlens_em.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_LENS_EM;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getType() {
@@ -124,34 +124,34 @@ public class NXlens_emImpl extends NXobjectImpl implements NXlens_em {
 	}
 
 	@Override
-	public NXmanufacturer getManufacturer() {
-		// dataNodeName = NX_MANUFACTURER
-		return getChild("manufacturer", NXmanufacturer.class);
+	public NXfabrication getFabrication() {
+		// dataNodeName = NX_FABRICATION
+		return getChild("fabrication", NXfabrication.class);
 	}
 
 	@Override
-	public void setManufacturer(NXmanufacturer manufacturerGroup) {
-		putChild("manufacturer", manufacturerGroup);
+	public void setFabrication(NXfabrication fabricationGroup) {
+		putChild("fabrication", fabricationGroup);
 	}
 
 	@Override
-	public NXmanufacturer getManufacturer(String name) {
-		return getChild(name, NXmanufacturer.class);
+	public NXfabrication getFabrication(String name) {
+		return getChild(name, NXfabrication.class);
 	}
 
 	@Override
-	public void setManufacturer(String name, NXmanufacturer manufacturer) {
-		putChild(name, manufacturer);
+	public void setFabrication(String name, NXfabrication fabrication) {
+		putChild(name, fabrication);
 	}
 
 	@Override
-	public Map<String, NXmanufacturer> getAllManufacturer() {
-		return getChildren(NXmanufacturer.class);
+	public Map<String, NXfabrication> getAllFabrication() {
+		return getChildren(NXfabrication.class);
 	}
-	
+
 	@Override
-	public void setAllManufacturer(Map<String, NXmanufacturer> manufacturer) {
-		setChildren(manufacturer);
+	public void setAllFabrication(Map<String, NXfabrication> fabrication) {
+		setChildren(fabrication);
 	}
 
 	@Override
@@ -235,6 +235,26 @@ public class NXlens_emImpl extends NXobjectImpl implements NXlens_em {
 	}
 
 	@Override
+	public IDataset getValue() {
+		return getDataset(NX_VALUE);
+	}
+
+	@Override
+	public Number getValueScalar() {
+		return getNumber(NX_VALUE);
+	}
+
+	@Override
+	public DataNode setValue(IDataset valueDataset) {
+		return setDataset(NX_VALUE, valueDataset);
+	}
+
+	@Override
+	public DataNode setValueScalar(Number valueValue) {
+		return setField(NX_VALUE, valueValue);
+	}
+
+	@Override
 	public IDataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
@@ -279,7 +299,7 @@ public class NXlens_emImpl extends NXobjectImpl implements NXlens_em {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

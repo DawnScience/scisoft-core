@@ -43,7 +43,7 @@ import org.eclipse.dawnsci.nexus.*;
  * every five minutes. The cue_index will then contain the
  * index into the event_id,event_time_offset pair of arrays for that
  * courser cue_timestamp_zero.
- * 
+
  */
 public class NXevent_dataImpl extends NXobjectImpl implements NXevent_data {
 
@@ -59,22 +59,22 @@ public class NXevent_dataImpl extends NXobjectImpl implements NXevent_data {
 	public NXevent_dataImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXevent_data.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_EVENT_DATA;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getEvent_time_offset() {

@@ -24,7 +24,7 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * A simple pinhole.
  * For more complex geometries, :ref:`NXaperture` should be used.
- * 
+
  */
 public class NXpinholeImpl extends NXobjectImpl implements NXpinhole {
 
@@ -41,22 +41,22 @@ public class NXpinholeImpl extends NXobjectImpl implements NXpinhole {
 	public NXpinholeImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXpinhole.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_PINHOLE;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getDepends_on() {
@@ -123,7 +123,7 @@ public class NXpinholeImpl extends NXobjectImpl implements NXpinhole {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

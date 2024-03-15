@@ -17,7 +17,7 @@ import org.eclipse.january.dataset.IDataset;
 
 /**
  * definition for a solenoid magnet.
- * 
+ *
  */
 public interface NXsolenoid_magnet extends NXobject {
 
@@ -29,17 +29,17 @@ public interface NXsolenoid_magnet extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDescription();
-	
+
 	/**
 	 * extended description of the magnet.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param descriptionDataset the descriptionDataset
 	 */
 	public DataNode setDescription(IDataset descriptionDataset);
@@ -49,7 +49,7 @@ public interface NXsolenoid_magnet extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDescriptionScalar();
@@ -59,7 +59,7 @@ public interface NXsolenoid_magnet extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param description the description
 	 */
 	public DataNode setDescriptionScalar(String descriptionValue);
@@ -70,18 +70,18 @@ public interface NXsolenoid_magnet extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getBeamline_distance();
-	
+
 	/**
 	 * define position of beamline element relative to production target
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param beamline_distanceDataset the beamline_distanceDataset
 	 */
 	public DataNode setBeamline_distance(IDataset beamline_distanceDataset);
@@ -92,7 +92,7 @@ public interface NXsolenoid_magnet extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getBeamline_distanceScalar();
@@ -103,7 +103,7 @@ public interface NXsolenoid_magnet extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param beamline_distance the beamline_distance
 	 */
 	public DataNode setBeamline_distanceScalar(Double beamline_distanceValue);
@@ -114,18 +114,18 @@ public interface NXsolenoid_magnet extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSet_current();
-	
+
 	/**
 	 * current set on supply.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
-	 * 
+	 *
 	 * @param set_currentDataset the set_currentDataset
 	 */
 	public DataNode setSet_current(IDataset set_currentDataset);
@@ -136,7 +136,7 @@ public interface NXsolenoid_magnet extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getSet_currentScalar();
@@ -147,35 +147,35 @@ public interface NXsolenoid_magnet extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
-	 * 
+	 *
 	 * @param set_current the set_current
 	 */
 	public DataNode setSet_currentScalar(Double set_currentValue);
 
 	/**
 	 * current read from supply.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXlog getRead_current();
-	
+
 	/**
 	 * current read from supply.
-	 * 
+	 *
 	 * @param read_currentGroup the read_currentGroup
 	 */
 	public void setRead_current(NXlog read_currentGroup);
 
 	/**
 	 * voltage read from supply.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXlog getRead_voltage();
-	
+
 	/**
 	 * voltage read from supply.
-	 * 
+	 *
 	 * @param read_voltageGroup the read_voltageGroup
 	 */
 	public void setRead_voltage(NXlog read_voltageGroup);

@@ -44,7 +44,7 @@ import org.eclipse.dawnsci.nexus.*;
  * every five minutes. The ``cue_index`` will then contain the
  * index into the time,value pair of arrays for that
  * coarser ``cue_timestamp_zero``.
- * 
+
  */
 public class NXlogImpl extends NXobjectImpl implements NXlog {
 
@@ -60,22 +60,22 @@ public class NXlogImpl extends NXobjectImpl implements NXlog {
 	public NXlogImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXlog.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_LOG;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getTime() {

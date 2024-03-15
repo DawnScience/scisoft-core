@@ -23,7 +23,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * A spin polarizer.
- * 
+
  */
 public class NXpolarizerImpl extends NXobjectImpl implements NXpolarizer {
 
@@ -40,22 +40,22 @@ public class NXpolarizerImpl extends NXobjectImpl implements NXpolarizer {
 	public NXpolarizerImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXpolarizer.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_POLARIZER;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getType() {
@@ -192,7 +192,7 @@ public class NXpolarizerImpl extends NXobjectImpl implements NXpolarizer {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

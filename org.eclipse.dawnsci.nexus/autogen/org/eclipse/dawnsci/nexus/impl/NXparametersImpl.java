@@ -21,7 +21,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * Container for parameters, usually used in processing or analysis.
- * 
+
  */
 public class NXparametersImpl extends NXobjectImpl implements NXparameters {
 
@@ -37,22 +37,22 @@ public class NXparametersImpl extends NXobjectImpl implements NXparameters {
 	public NXparametersImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXparameters.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_PARAMETERS;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getTerm() {

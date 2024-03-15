@@ -48,25 +48,13 @@
 
 	<!-- Delete the generated Java base classes -->
 	<target name="delete-base-classes">
-		<delete>
-			<fileset dir="${java-output-path}/org/eclipse/dawnsci/nexus">
-				<include name="*.java"/>
-			</fileset>
-			<fileset dir="${java-output-path}/org/eclipse/dawnsci/nexus/impl">
-				<include name="*.java"/>
-			</fileset>
-		</delete>
+		<delete dir="${java-output-path}/org/eclipse/dawnsci/nexus"/>
+		<delete dir="${java-output-path}/org/eclipse/dawnsci/nexus/impl"/>
 	</target>
 	
 	<!-- Delete the generated Java validators for NeXus application definitions -->
 	<target name="delete-appdefs">
-		<delete>
-			<fileset dir="${java-output-path}/org/eclipse/dawnsci/nexus/validation">
-				<include name="NX*.java"/>
-				<exclude name="NXApplicationValidator.java"/>
-				<exclude name="NX*Example.java"/>
-			</fileset>
-		</delete>
+		<delete dir="${java-output-path}/org/eclipse/dawnsci/nexus/validation"/>
 	</target>
 	
 	<!-- Delete both base classes and application definitions -->
@@ -75,7 +63,7 @@
 	</target>
 	
 	<!-- Generate Java classes from the Nexus base class definitions -->
-	<target name="generate-base-classes" depends="check-properties">
+	<target name="generate-base-classes" depends="check-properties, delete-base-classes">
 		 <!-- Note: in and out are not used, nxdlDefinitionsPath and javaSourcePath are used as the source and output dirs instead.
 		 They are given dummy values as the XSLT ant task requires them. -->
 		<xslt
@@ -97,7 +85,7 @@
 	</target>
 	
 	<!-- Generate Java validators from the NeXus application definitions -->
-	<target name="generate-appdefs" depends="check-properties">
+	<target name="generate-appdefs" depends="check-properties, delete-appdefs">
 		 <!-- Note: in and out are not used, nxdlDefinitionsPath and javaSourcePath are used as the source and output dirs instead.
 		 They are given dummy values as the XSLT ant task requires them. -->
 		<xslt

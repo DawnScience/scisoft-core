@@ -52,17 +52,17 @@ import org.eclipse.january.dataset.IDataset;
  * the ``copy`` dataset selects 20 16-channel blocks that start 32 channels apart,
  * the ``maximum`` dataset will show maximum values in each 16-channel block
  * in every spectra.
- * <p><b>Symbols:</b> 
+ * <p><b>Symbols:</b>
  * These symbols will denote how the shape of the parent group's data field,
  * .. math:: (D_0, ..., D_{\mathbf{O}-1}, d_0, ..., d_{\mathbf{R}-1})
  * could be split into a left set of **O** outer dimensions, :math:`\boldsymbol{D}`,
  * and a right set of **R** region dimensions, :math:`\boldsymbol{d}`,
  * where the data field has rank **O** + **R**. Note **O** :math:`>= 0`.<ul>
- * <li><b>O</b> 
+ * <li><b>O</b>
  * Outer rank</li>
- * <li><b>R</b> 
+ * <li><b>R</b>
  * Region rank</li></ul></p>
- * 
+ *
  */
 public interface NXregion extends NXobject {
 
@@ -81,11 +81,11 @@ public interface NXregion extends NXobject {
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>rectangular</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeRegion_type();
-	
+
 	/**
 	 * This is ``rectangular`` to describe the region as a hyper-rectangle in
 	 * the index space of its parent group's data field.
@@ -93,7 +93,7 @@ public interface NXregion extends NXobject {
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>rectangular</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param region_typeValue the region_typeValue
 	 */
 	public void setAttributeRegion_type(String region_typeValue);
@@ -101,15 +101,15 @@ public interface NXregion extends NXobject {
 	/**
 	 * The name of data field in the parent group or the path of a data field relative
 	 * to the parent group (so it could be a field in a subgroup of the parent group)
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getParent();
-	
+
 	/**
 	 * The name of data field in the parent group or the path of a data field relative
 	 * to the parent group (so it could be a field in a subgroup of the parent group)
-	 * 
+	 *
 	 * @param parentDataset the parentDataset
 	 */
 	public DataNode setParent(IDataset parentDataset);
@@ -117,7 +117,7 @@ public interface NXregion extends NXobject {
 	/**
 	 * The name of data field in the parent group or the path of a data field relative
 	 * to the parent group (so it could be a field in a subgroup of the parent group)
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getParentScalar();
@@ -125,7 +125,7 @@ public interface NXregion extends NXobject {
 	/**
 	 * The name of data field in the parent group or the path of a data field relative
 	 * to the parent group (so it could be a field in a subgroup of the parent group)
-	 * 
+	 *
 	 * @param parent the parent
 	 */
 	public DataNode setParentScalar(String parentValue);
@@ -134,16 +134,16 @@ public interface NXregion extends NXobject {
 	 * The name of an optional mask field in the parent group with rank :math:`\boldsymbol{R}` and
 	 * dimensions :math:`\boldsymbol{d}`. For example, this could be ``pixel_mask`` of an
 	 * :ref:`NXdetector`.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getParent_mask();
-	
+
 	/**
 	 * The name of an optional mask field in the parent group with rank :math:`\boldsymbol{R}` and
 	 * dimensions :math:`\boldsymbol{d}`. For example, this could be ``pixel_mask`` of an
 	 * :ref:`NXdetector`.
-	 * 
+	 *
 	 * @param parent_maskDataset the parent_maskDataset
 	 */
 	public DataNode setParent_mask(IDataset parent_maskDataset);
@@ -152,7 +152,7 @@ public interface NXregion extends NXobject {
 	 * The name of an optional mask field in the parent group with rank :math:`\boldsymbol{R}` and
 	 * dimensions :math:`\boldsymbol{d}`. For example, this could be ``pixel_mask`` of an
 	 * :ref:`NXdetector`.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getParent_maskScalar();
@@ -161,7 +161,7 @@ public interface NXregion extends NXobject {
 	 * The name of an optional mask field in the parent group with rank :math:`\boldsymbol{R}` and
 	 * dimensions :math:`\boldsymbol{d}`. For example, this could be ``pixel_mask`` of an
 	 * :ref:`NXdetector`.
-	 * 
+	 *
 	 * @param parent_mask the parent_mask
 	 */
 	public DataNode setParent_maskScalar(String parent_maskValue);
@@ -174,11 +174,11 @@ public interface NXregion extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b> 1: R;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getStart();
-	
+
 	/**
 	 * The starting position for region in detector data field array.
 	 * This is recommended as it also defines the region rank.
@@ -187,7 +187,7 @@ public interface NXregion extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b> 1: R;
 	 * </p>
-	 * 
+	 *
 	 * @param startDataset the startDataset
 	 */
 	public DataNode setStart(IDataset startDataset);
@@ -200,7 +200,7 @@ public interface NXregion extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b> 1: R;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getStartScalar();
@@ -213,7 +213,7 @@ public interface NXregion extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b> 1: R;
 	 * </p>
-	 * 
+	 *
 	 * @param start the start
 	 */
 	public DataNode setStartScalar(Number startValue);
@@ -226,11 +226,11 @@ public interface NXregion extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: R;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getCount();
-	
+
 	/**
 	 * The number of blocks or items in the hyperslab selection.
 	 * If omitted then defined as an array of dimensions that take into account
@@ -239,7 +239,7 @@ public interface NXregion extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: R;
 	 * </p>
-	 * 
+	 *
 	 * @param countDataset the countDataset
 	 */
 	public DataNode setCount(IDataset countDataset);
@@ -252,7 +252,7 @@ public interface NXregion extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: R;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Long getCountScalar();
@@ -265,7 +265,7 @@ public interface NXregion extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: R;
 	 * </p>
-	 * 
+	 *
 	 * @param count the count
 	 */
 	public DataNode setCountScalar(Long countValue);
@@ -277,11 +277,11 @@ public interface NXregion extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: R;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getStride();
-	
+
 	/**
 	 * An optional field to define striding used to downsample data.
 	 * If omitted then defined as an array of ones.
@@ -289,7 +289,7 @@ public interface NXregion extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: R;
 	 * </p>
-	 * 
+	 *
 	 * @param strideDataset the strideDataset
 	 */
 	public DataNode setStride(IDataset strideDataset);
@@ -301,7 +301,7 @@ public interface NXregion extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: R;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Long getStrideScalar();
@@ -313,7 +313,7 @@ public interface NXregion extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: R;
 	 * </p>
-	 * 
+	 *
 	 * @param stride the stride
 	 */
 	public DataNode setStrideScalar(Long strideValue);
@@ -328,11 +328,11 @@ public interface NXregion extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: R;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getBlock();
-	
+
 	/**
 	 * An optional field to define the block size used to copy or downsample data. In the
 	 * :math:`i`-th dimension, if :math:`\mathbf{block}[i] < \mathbf{stride}[i]`
@@ -343,7 +343,7 @@ public interface NXregion extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: R;
 	 * </p>
-	 * 
+	 *
 	 * @param blockDataset the blockDataset
 	 */
 	public DataNode setBlock(IDataset blockDataset);
@@ -358,7 +358,7 @@ public interface NXregion extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: R;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Long getBlockScalar();
@@ -373,7 +373,7 @@ public interface NXregion extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: R;
 	 * </p>
-	 * 
+	 *
 	 * @param block the block
 	 */
 	public DataNode setBlockScalar(Long blockValue);
@@ -389,11 +389,11 @@ public interface NXregion extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b> 1: R;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getScale();
-	
+
 	/**
 	 * An optional field to define a divisor for scaling of reduced data. For example, in a
 	 * downsampled sum, it can reduce the maximum values to fit in the domain of the result
@@ -405,7 +405,7 @@ public interface NXregion extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b> 1: R;
 	 * </p>
-	 * 
+	 *
 	 * @param scaleDataset the scaleDataset
 	 */
 	public DataNode setScale(IDataset scaleDataset);
@@ -421,7 +421,7 @@ public interface NXregion extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b> 1: R;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getScaleScalar();
@@ -437,7 +437,7 @@ public interface NXregion extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b> 1: R;
 	 * </p>
-	 * 
+	 *
 	 * @param scale the scale
 	 */
 	public DataNode setScaleScalar(Number scaleValue);
@@ -455,11 +455,11 @@ public interface NXregion extends NXobject {
 	 * :width: 60%
 	 * A selection with :math:`\mathbf{start}=2, \mathbf{count}=4, \mathbf{stride}=3, \mathbf{block}=2` from
 	 * a dataset with shape [13] will result in the ``reduce`` dataset of shape [4] and a ``copy`` dataset of shape [8].
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXdata getDownsampled();
-	
+
 	/**
 	 * An optional group containing data copied/downsampled from parent group’s data. Its dataset name
 	 * must reflect how the downsampling is done over each block. So it could be a reduction operation
@@ -473,7 +473,7 @@ public interface NXregion extends NXobject {
 	 * :width: 60%
 	 * A selection with :math:`\mathbf{start}=2, \mathbf{count}=4, \mathbf{stride}=3, \mathbf{block}=2` from
 	 * a dataset with shape [13] will result in the ``reduce`` dataset of shape [4] and a ``copy`` dataset of shape [8].
-	 * 
+	 *
 	 * @param downsampledGroup the downsampledGroup
 	 */
 	public void setDownsampled(NXdata downsampledGroup);
@@ -483,17 +483,17 @@ public interface NXregion extends NXobject {
 	 * such as sum, minimum, maximum, mean, mode, median, rms, variance, etc. Where more than one
 	 * statistical dataset is written (specified with ``@signal``) then add ``@auxiliary_signals``
 	 * listing the others. All data fields should have shapes of :math:`\boldsymbol{D}`.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXdata getStatistics();
-	
+
 	/**
 	 * An optional group containing any statistics derived from the region in parent group’s data
 	 * such as sum, minimum, maximum, mean, mode, median, rms, variance, etc. Where more than one
 	 * statistical dataset is written (specified with ``@signal``) then add ``@auxiliary_signals``
 	 * listing the others. All data fields should have shapes of :math:`\boldsymbol{D}`.
-	 * 
+	 *
 	 * @param statisticsGroup the statisticsGroup
 	 */
 	public void setStatistics(NXdata statisticsGroup);

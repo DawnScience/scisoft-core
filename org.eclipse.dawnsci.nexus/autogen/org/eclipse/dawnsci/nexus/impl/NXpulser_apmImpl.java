@@ -22,8 +22,8 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Metadata for laser-, voltage-, or combined pulsing triggering field evaporation.
- * 
+ * Metadata for laser- and/or voltage-pulsing in atom probe microscopy.
+
  */
 public class NXpulser_apmImpl extends NXobjectImpl implements NXpulser_apm {
 
@@ -31,8 +31,8 @@ public class NXpulser_apmImpl extends NXobjectImpl implements NXpulser_apm {
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_SOURCE,
-		NexusBaseClass.NX_BEAM);
+		NexusBaseClass.NX_FABRICATION,
+		NexusBaseClass.NX_SOURCE);
 
 	public NXpulser_apmImpl() {
 		super();
@@ -41,22 +41,53 @@ public class NXpulser_apmImpl extends NXobjectImpl implements NXpulser_apm {
 	public NXpulser_apmImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXpulser_apm.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_PULSER_APM;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
+
+	@Override
+	public NXfabrication getFabrication() {
+		// dataNodeName = NX_FABRICATION
+		return getChild("fabrication", NXfabrication.class);
+	}
+
+	@Override
+	public void setFabrication(NXfabrication fabricationGroup) {
+		putChild("fabrication", fabricationGroup);
+	}
+
+	@Override
+	public NXfabrication getFabrication(String name) {
+		return getChild(name, NXfabrication.class);
+	}
+
+	@Override
+	public void setFabrication(String name, NXfabrication fabrication) {
+		putChild(name, fabrication);
+	}
+
+	@Override
+	public Map<String, NXfabrication> getAllFabrication() {
+		return getChildren(NXfabrication.class);
+	}
+
+	@Override
+	public void setAllFabrication(Map<String, NXfabrication> fabrication) {
+		setChildren(fabrication);
+	}
 
 	@Override
 	public IDataset getPulse_mode() {
@@ -84,8 +115,8 @@ public class NXpulser_apmImpl extends NXobjectImpl implements NXpulser_apm {
 	}
 
 	@Override
-	public Number getPulse_frequencyScalar() {
-		return getNumber(NX_PULSE_FREQUENCY);
+	public Double getPulse_frequencyScalar() {
+		return getDouble(NX_PULSE_FREQUENCY);
 	}
 
 	@Override
@@ -94,7 +125,7 @@ public class NXpulser_apmImpl extends NXobjectImpl implements NXpulser_apm {
 	}
 
 	@Override
-	public DataNode setPulse_frequencyScalar(Number pulse_frequencyValue) {
+	public DataNode setPulse_frequencyScalar(Double pulse_frequencyValue) {
 		return setField(NX_PULSE_FREQUENCY, pulse_frequencyValue);
 	}
 
@@ -104,8 +135,8 @@ public class NXpulser_apmImpl extends NXobjectImpl implements NXpulser_apm {
 	}
 
 	@Override
-	public Number getPulse_fractionScalar() {
-		return getNumber(NX_PULSE_FRACTION);
+	public Double getPulse_fractionScalar() {
+		return getDouble(NX_PULSE_FRACTION);
 	}
 
 	@Override
@@ -114,7 +145,7 @@ public class NXpulser_apmImpl extends NXobjectImpl implements NXpulser_apm {
 	}
 
 	@Override
-	public DataNode setPulse_fractionScalar(Number pulse_fractionValue) {
+	public DataNode setPulse_fractionScalar(Double pulse_fractionValue) {
 		return setField(NX_PULSE_FRACTION, pulse_fractionValue);
 	}
 
@@ -139,6 +170,26 @@ public class NXpulser_apmImpl extends NXobjectImpl implements NXpulser_apm {
 	}
 
 	@Override
+	public IDataset getPulse_number() {
+		return getDataset(NX_PULSE_NUMBER);
+	}
+
+	@Override
+	public Long getPulse_numberScalar() {
+		return getLong(NX_PULSE_NUMBER);
+	}
+
+	@Override
+	public DataNode setPulse_number(IDataset pulse_numberDataset) {
+		return setDataset(NX_PULSE_NUMBER, pulse_numberDataset);
+	}
+
+	@Override
+	public DataNode setPulse_numberScalar(Long pulse_numberValue) {
+		return setField(NX_PULSE_NUMBER, pulse_numberValue);
+	}
+
+	@Override
 	public IDataset getStanding_voltage() {
 		return getDataset(NX_STANDING_VOLTAGE);
 	}
@@ -159,29 +210,37 @@ public class NXpulser_apmImpl extends NXobjectImpl implements NXpulser_apm {
 	}
 
 	@Override
-	public NXsource getLaser_gun() {
-		// dataNodeName = NX_LASER_GUN
-		return getChild("laser_gun", NXsource.class);
+	public NXsource getSource() {
+		// dataNodeName = NX_SOURCE
+		return getChild("source", NXsource.class);
 	}
 
 	@Override
-	public void setLaser_gun(NXsource laser_gunGroup) {
-		putChild("laser_gun", laser_gunGroup);
-	}
-	// Unprocessed group: 
-	// Unprocessed group: 
-
-	@Override
-	public NXbeam getLaser_beam() {
-		// dataNodeName = NX_LASER_BEAM
-		return getChild("laser_beam", NXbeam.class);
+	public void setSource(NXsource sourceGroup) {
+		putChild("source", sourceGroup);
 	}
 
 	@Override
-	public void setLaser_beam(NXbeam laser_beamGroup) {
-		putChild("laser_beam", laser_beamGroup);
+	public NXsource getSource(String name) {
+		return getChild(name, NXsource.class);
 	}
-	// Unprocessed group:  pinhole_position
-	// Unprocessed group:  spot_position
+
+	@Override
+	public void setSource(String name, NXsource source) {
+		putChild(name, source);
+	}
+
+	@Override
+	public Map<String, NXsource> getAllSource() {
+		return getChildren(NXsource.class);
+	}
+
+	@Override
+	public void setAllSource(Map<String, NXsource> source) {
+		setChildren(source);
+	}
+	// Unprocessed group:
+	// Unprocessed group:
+	// Unprocessed group:
 
 }

@@ -25,7 +25,7 @@ import org.eclipse.dawnsci.nexus.*;
  * manuals, instruments, acquisition or analysis software used.
  * The idea would be to include this in the relevant NeXus object:
  * :ref:`NXdetector` for detectors, :ref:`NXinstrument` for instruments, etc.
- * 
+
  */
 public class NXciteImpl extends NXobjectImpl implements NXcite {
 
@@ -41,22 +41,22 @@ public class NXciteImpl extends NXobjectImpl implements NXcite {
 	public NXciteImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXcite.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_CITE;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getDescription() {

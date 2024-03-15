@@ -27,7 +27,7 @@ import org.eclipse.dawnsci.nexus.*;
  * This could include scanned variables that
  * are associated with one of the data dimensions, e.g. the magnetic field, or
  * logged data, e.g. monitored temperature vs elapsed time.
- * 
+
  */
 public class NXsampleImpl extends NXobjectImpl implements NXsample {
 
@@ -56,22 +56,22 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	public NXsampleImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXsample.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_SAMPLE;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getName() {
@@ -581,7 +581,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	public Map<String, NXbeam> getAllBeam() {
 		return getChildren(NXbeam.class);
 	}
-	
+
 	@Override
 	public void setAllBeam(Map<String, NXbeam> beam) {
 		setChildren(beam);
@@ -612,7 +612,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	public Map<String, NXsample_component> getAllSample_componentGroup() {
 		return getChildren(NXsample_component.class);
 	}
-	
+
 	@Override
 	public void setAllSample_componentGroup(Map<String, NXsample_component> sample_componentGroup) {
 		setChildren(sample_componentGroup);
@@ -1044,7 +1044,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	public Map<String, NXpositioner> getAllPositioner() {
 		return getChildren(NXpositioner.class);
 	}
-	
+
 	@Override
 	public void setAllPositioner(Map<String, NXpositioner> positioner) {
 		setChildren(positioner);
@@ -1075,7 +1075,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	public Map<String, NXoff_geometry> getAllOff_geometry() {
 		return getChildren(NXoff_geometry.class);
 	}
-	
+
 	@Override
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry) {
 		setChildren(off_geometry);
@@ -1136,7 +1136,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

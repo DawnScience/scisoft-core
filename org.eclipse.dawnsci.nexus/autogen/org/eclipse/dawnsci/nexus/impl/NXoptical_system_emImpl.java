@@ -21,7 +21,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * A container for qualifying an electron optical system.
- * 
+
  */
 public class NXoptical_system_emImpl extends NXobjectImpl implements NXoptical_system_em {
 
@@ -37,22 +37,22 @@ public class NXoptical_system_emImpl extends NXobjectImpl implements NXoptical_s
 	public NXoptical_system_emImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXoptical_system_em.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_OPTICAL_SYSTEM_EM;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getCamera_length() {
@@ -172,6 +172,46 @@ public class NXoptical_system_emImpl extends NXobjectImpl implements NXoptical_s
 	@Override
 	public DataNode setWorking_distanceScalar(Double working_distanceValue) {
 		return setField(NX_WORKING_DISTANCE, working_distanceValue);
+	}
+
+	@Override
+	public IDataset getBeam_current() {
+		return getDataset(NX_BEAM_CURRENT);
+	}
+
+	@Override
+	public Double getBeam_currentScalar() {
+		return getDouble(NX_BEAM_CURRENT);
+	}
+
+	@Override
+	public DataNode setBeam_current(IDataset beam_currentDataset) {
+		return setDataset(NX_BEAM_CURRENT, beam_currentDataset);
+	}
+
+	@Override
+	public DataNode setBeam_currentScalar(Double beam_currentValue) {
+		return setField(NX_BEAM_CURRENT, beam_currentValue);
+	}
+
+	@Override
+	public IDataset getBeam_current_description() {
+		return getDataset(NX_BEAM_CURRENT_DESCRIPTION);
+	}
+
+	@Override
+	public String getBeam_current_descriptionScalar() {
+		return getString(NX_BEAM_CURRENT_DESCRIPTION);
+	}
+
+	@Override
+	public DataNode setBeam_current_description(IDataset beam_current_descriptionDataset) {
+		return setDataset(NX_BEAM_CURRENT_DESCRIPTION, beam_current_descriptionDataset);
+	}
+
+	@Override
+	public DataNode setBeam_current_descriptionScalar(String beam_current_descriptionValue) {
+		return setString(NX_BEAM_CURRENT_DESCRIPTION, beam_current_descriptionValue);
 	}
 
 }

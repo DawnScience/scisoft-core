@@ -24,7 +24,7 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * An X-ray lens, typically at a synchrotron X-ray beam line.
  * Based on information provided by Gerd Wellenreuther (DESY).
- * 
+
  */
 public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 
@@ -43,22 +43,22 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	public NXxraylensImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXxraylens.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_XRAYLENS;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getLens_geometry() {
@@ -336,7 +336,7 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	public Map<String, NXoff_geometry> getAllOff_geometry() {
 		return getChildren(NXoff_geometry.class);
 	}
-	
+
 	@Override
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry) {
 		setChildren(off_geometry);
@@ -397,7 +397,7 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

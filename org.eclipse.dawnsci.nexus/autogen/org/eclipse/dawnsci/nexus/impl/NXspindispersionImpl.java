@@ -25,7 +25,7 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * Subclass of NXelectronanalyser to describe the spin filters in photoemission
  * experiments.
- * 
+
  */
 public class NXspindispersionImpl extends NXobjectImpl implements NXspindispersion {
 
@@ -44,22 +44,22 @@ public class NXspindispersionImpl extends NXobjectImpl implements NXspindispersi
 	public NXspindispersionImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXspindispersion.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_SPINDISPERSION;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getType() {
@@ -266,7 +266,7 @@ public class NXspindispersionImpl extends NXobjectImpl implements NXspindispersi
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);
@@ -297,7 +297,7 @@ public class NXspindispersionImpl extends NXobjectImpl implements NXspindispersi
 	public Map<String, NXdeflector> getAllDeflector() {
 		return getChildren(NXdeflector.class);
 	}
-	
+
 	@Override
 	public void setAllDeflector(Map<String, NXdeflector> deflector) {
 		setChildren(deflector);
@@ -328,7 +328,7 @@ public class NXspindispersionImpl extends NXobjectImpl implements NXspindispersi
 	public Map<String, NXlens_em> getAllLens_em() {
 		return getChildren(NXlens_em.class);
 	}
-	
+
 	@Override
 	public void setAllLens_em(Map<String, NXlens_em> lens_em) {
 		setChildren(lens_em);

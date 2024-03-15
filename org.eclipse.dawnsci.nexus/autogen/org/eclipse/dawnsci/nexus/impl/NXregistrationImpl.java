@@ -23,7 +23,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * Describes image registration procedures.
- * 
+
  */
 public class NXregistrationImpl extends NXobjectImpl implements NXregistration {
 
@@ -40,22 +40,22 @@ public class NXregistrationImpl extends NXobjectImpl implements NXregistration {
 	public NXregistrationImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXregistration.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_REGISTRATION;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getApplied() {
@@ -142,7 +142,7 @@ public class NXregistrationImpl extends NXobjectImpl implements NXregistration {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

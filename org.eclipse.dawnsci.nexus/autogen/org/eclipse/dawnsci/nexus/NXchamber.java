@@ -19,7 +19,7 @@ import org.eclipse.january.dataset.IDataset;
 
 /**
  * Component of an instrument to store or place objects and specimens.
- * 
+ *
  */
 public interface NXchamber extends NXobject {
 
@@ -27,118 +27,44 @@ public interface NXchamber extends NXobject {
 	public static final String NX_DESCRIPTION = "description";
 	/**
 	 * Given name/alias.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getName();
-	
+
 	/**
 	 * Given name/alias.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param nameDataset the nameDataset
 	 */
 	public DataNode setName(IDataset nameDataset);
 
 	/**
 	 * Given name/alias.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getNameScalar();
 
 	/**
 	 * Given name/alias.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param name the name
 	 */
 	public DataNode setNameScalar(String nameValue);
 
 	/**
-	 * 
-	 * @return  the value.
-	 */
-	public NXmanufacturer getManufacturer();
-	
-	/**
-	 * 
-	 * @param manufacturerGroup the manufacturerGroup
-	 */
-	public void setManufacturer(NXmanufacturer manufacturerGroup);
-
-	/**
-	 * Get a NXmanufacturer node by name:
-	 * <ul>
-	 * <li></li>
-	 * </ul>
-	 * 
-	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXmanufacturer for that node.
-	 */
-	public NXmanufacturer getManufacturer(String name);
-	
-	/**
-	 * Set a NXmanufacturer node by name:
-	 * <ul>
-	 * <li></li>
-	 * </ul>
-	 * 
-	 * @param name the name of the node
-	 * @param manufacturer the value to set
-	 */
-	public void setManufacturer(String name, NXmanufacturer manufacturer);
-	
-	/**
-	 * Get all NXmanufacturer nodes:
-	 * <ul>
-	 * <li></li>
-	 * </ul>
-	 * 
-	 * @return  a map from node names to the NXmanufacturer for that node.
-	 */
-	public Map<String, NXmanufacturer> getAllManufacturer();
-	
-	/**
-	 * Set multiple child nodes of a particular type.
-	 * <ul>
-	 * <li></li>
-	 * </ul>
-	 * 
-	 * @param manufacturer the child nodes to add 
-	 */
-	
-	public void setAllManufacturer(Map<String, NXmanufacturer> manufacturer);
-	
-
-	/**
 	 * Free-text field for describing details about the chamber.
 	 * For example out of which material was the chamber built.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDescription();
-	
+
 	/**
 	 * Free-text field for describing details about the chamber.
 	 * For example out of which material was the chamber built.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param descriptionDataset the descriptionDataset
 	 */
 	public DataNode setDescription(IDataset descriptionDataset);
@@ -146,10 +72,7 @@ public interface NXchamber extends NXobject {
 	/**
 	 * Free-text field for describing details about the chamber.
 	 * For example out of which material was the chamber built.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDescriptionScalar();
@@ -157,12 +80,65 @@ public interface NXchamber extends NXobject {
 	/**
 	 * Free-text field for describing details about the chamber.
 	 * For example out of which material was the chamber built.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param description the description
 	 */
 	public DataNode setDescriptionScalar(String descriptionValue);
+
+	/**
+	 *
+	 * @return  the value.
+	 */
+	public NXfabrication getFabrication();
+
+	/**
+	 *
+	 * @param fabricationGroup the fabricationGroup
+	 */
+	public void setFabrication(NXfabrication fabricationGroup);
+
+	/**
+	 * Get a NXfabrication node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXfabrication for that node.
+	 */
+	public NXfabrication getFabrication(String name);
+
+	/**
+	 * Set a NXfabrication node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param fabrication the value to set
+	 */
+	public void setFabrication(String name, NXfabrication fabrication);
+
+	/**
+	 * Get all NXfabrication nodes:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXfabrication for that node.
+	 */
+	public Map<String, NXfabrication> getAllFabrication();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param fabrication the child nodes to add
+	 */
+
+	public void setAllFabrication(Map<String, NXfabrication> fabrication);
+
 
 }

@@ -158,7 +158,7 @@ import org.eclipse.dawnsci.nexus.*;
  * data3_errors: float[10,20,30]
  * x_errors: float[10]
  * z_errors: float[30]
- * 
+
  */
 public class NXdataImpl extends NXobjectImpl implements NXdata {
 
@@ -174,22 +174,22 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	public NXdataImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXdata.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_DATA;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public String getAttributeSignal() {
@@ -209,6 +209,16 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	@Override
 	public void setAttributeAuxiliary_signals(String auxiliary_signalsValue) {
 		setAttribute(null, NX_ATTRIBUTE_AUXILIARY_SIGNALS, auxiliary_signalsValue);
+	}
+
+	@Override
+	public String getAttributeDefault_slice() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT_SLICE);
+	}
+
+	@Override
+	public void setAttributeDefault_slice(String default_sliceValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT_SLICE, default_sliceValue);
 	}
 
 	@Override
@@ -237,8 +247,8 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	}
 
 	@Override
-	public Number getAxisnameScalar(String axisname) {
-		return getNumber(axisname);
+	public Object getAxisnameScalar(String axisname) {
+		return getDataset(axisname).getObject();
 	}
 
 	@Override
@@ -247,8 +257,14 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	}
 
 	@Override
-	public DataNode setAxisnameScalar(String axisname, Number axisnameValue) {
-		return setField(axisname, axisnameValue);
+	public DataNode setAxisnameScalar(String axisname, Object axisnameValue) {
+		if (axisnameValue instanceof Number) {
+			return setField(axisname, axisnameValue);
+		} else if (axisname instanceof String) {
+			return setString(axisname, (String) axisnameValue);
+		} else {
+			throw new IllegalArgumentException("Value must be String or Number");
+		}
 	}
 
 	@Override

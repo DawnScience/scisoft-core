@@ -21,7 +21,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * Subclass of NXprocess to describe post-processing calibrations.
- * 
+
  */
 public class NXcalibrationImpl extends NXobjectImpl implements NXcalibration {
 
@@ -37,22 +37,22 @@ public class NXcalibrationImpl extends NXobjectImpl implements NXcalibration {
 	public NXcalibrationImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXcalibration.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_CALIBRATION;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getLast_process() {

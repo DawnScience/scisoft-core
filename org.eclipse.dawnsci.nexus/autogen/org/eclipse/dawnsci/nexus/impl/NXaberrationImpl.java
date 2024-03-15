@@ -20,14 +20,8 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Models for aberrations of electro-magnetic lenses in electron microscopy.
- * The notation follows `O. Krivanek et al. (1999) <https://doi.org/10.1016/S0304-3991(99)00013-3>`_
- * and `O. Krivanek et al. (2003) <https://doi.org/10.1016/S0304-3991(03)00090-1>`_
- * See also `S. J. Pennycock and P. D. Nellist <https://doi.org/10.1007/978-1-4419-7200-2>`_ (page 44ff, and page 118ff)
- * for further details, additional literature, and the unit of the coefficients.
- * Consult Table 7-2 of Ibid. publication on how to convert between
- * conventions of different groups/vendors.
- * 
+ * Quantified aberration coefficient in an aberration_model.
+
  */
 public class NXaberrationImpl extends NXobjectImpl implements NXaberration {
 
@@ -43,281 +37,161 @@ public class NXaberrationImpl extends NXobjectImpl implements NXaberration {
 	public NXaberrationImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXaberration.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_ABERRATION;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
-	public IDataset getC_1_0() {
-		return getDataset(NX_C_1_0);
+	public IDataset getMagnitude() {
+		return getDataset(NX_MAGNITUDE);
 	}
 
 	@Override
-	public Double getC_1_0Scalar() {
-		return getDouble(NX_C_1_0);
+	public Double getMagnitudeScalar() {
+		return getDouble(NX_MAGNITUDE);
 	}
 
 	@Override
-	public DataNode setC_1_0(IDataset c_1_0Dataset) {
-		return setDataset(NX_C_1_0, c_1_0Dataset);
+	public DataNode setMagnitude(IDataset magnitudeDataset) {
+		return setDataset(NX_MAGNITUDE, magnitudeDataset);
 	}
 
 	@Override
-	public DataNode setC_1_0Scalar(Double c_1_0Value) {
-		return setField(NX_C_1_0, c_1_0Value);
+	public DataNode setMagnitudeScalar(Double magnitudeValue) {
+		return setField(NX_MAGNITUDE, magnitudeValue);
 	}
 
 	@Override
-	public IDataset getC_1_2_a() {
-		return getDataset(NX_C_1_2_A);
+	public IDataset getUncertainty() {
+		return getDataset(NX_UNCERTAINTY);
 	}
 
 	@Override
-	public Double getC_1_2_aScalar() {
-		return getDouble(NX_C_1_2_A);
+	public Double getUncertaintyScalar() {
+		return getDouble(NX_UNCERTAINTY);
 	}
 
 	@Override
-	public DataNode setC_1_2_a(IDataset c_1_2_aDataset) {
-		return setDataset(NX_C_1_2_A, c_1_2_aDataset);
+	public DataNode setUncertainty(IDataset uncertaintyDataset) {
+		return setDataset(NX_UNCERTAINTY, uncertaintyDataset);
 	}
 
 	@Override
-	public DataNode setC_1_2_aScalar(Double c_1_2_aValue) {
-		return setField(NX_C_1_2_A, c_1_2_aValue);
+	public DataNode setUncertaintyScalar(Double uncertaintyValue) {
+		return setField(NX_UNCERTAINTY, uncertaintyValue);
 	}
 
 	@Override
-	public IDataset getC_1_2_b() {
-		return getDataset(NX_C_1_2_B);
+	public IDataset getUncertainty_model() {
+		return getDataset(NX_UNCERTAINTY_MODEL);
 	}
 
 	@Override
-	public Double getC_1_2_bScalar() {
-		return getDouble(NX_C_1_2_B);
+	public String getUncertainty_modelScalar() {
+		return getString(NX_UNCERTAINTY_MODEL);
 	}
 
 	@Override
-	public DataNode setC_1_2_b(IDataset c_1_2_bDataset) {
-		return setDataset(NX_C_1_2_B, c_1_2_bDataset);
+	public DataNode setUncertainty_model(IDataset uncertainty_modelDataset) {
+		return setDataset(NX_UNCERTAINTY_MODEL, uncertainty_modelDataset);
 	}
 
 	@Override
-	public DataNode setC_1_2_bScalar(Double c_1_2_bValue) {
-		return setField(NX_C_1_2_B, c_1_2_bValue);
+	public DataNode setUncertainty_modelScalar(String uncertainty_modelValue) {
+		return setString(NX_UNCERTAINTY_MODEL, uncertainty_modelValue);
 	}
 
 	@Override
-	public IDataset getC_2_1_a() {
-		return getDataset(NX_C_2_1_A);
+	public IDataset getDelta_time() {
+		return getDataset(NX_DELTA_TIME);
 	}
 
 	@Override
-	public Double getC_2_1_aScalar() {
-		return getDouble(NX_C_2_1_A);
+	public Double getDelta_timeScalar() {
+		return getDouble(NX_DELTA_TIME);
 	}
 
 	@Override
-	public DataNode setC_2_1_a(IDataset c_2_1_aDataset) {
-		return setDataset(NX_C_2_1_A, c_2_1_aDataset);
+	public DataNode setDelta_time(IDataset delta_timeDataset) {
+		return setDataset(NX_DELTA_TIME, delta_timeDataset);
 	}
 
 	@Override
-	public DataNode setC_2_1_aScalar(Double c_2_1_aValue) {
-		return setField(NX_C_2_1_A, c_2_1_aValue);
+	public DataNode setDelta_timeScalar(Double delta_timeValue) {
+		return setField(NX_DELTA_TIME, delta_timeValue);
 	}
 
 	@Override
-	public IDataset getC_2_1_b() {
-		return getDataset(NX_C_2_1_B);
+	public IDataset getAngle() {
+		return getDataset(NX_ANGLE);
 	}
 
 	@Override
-	public Double getC_2_1_bScalar() {
-		return getDouble(NX_C_2_1_B);
+	public Double getAngleScalar() {
+		return getDouble(NX_ANGLE);
 	}
 
 	@Override
-	public DataNode setC_2_1_b(IDataset c_2_1_bDataset) {
-		return setDataset(NX_C_2_1_B, c_2_1_bDataset);
+	public DataNode setAngle(IDataset angleDataset) {
+		return setDataset(NX_ANGLE, angleDataset);
 	}
 
 	@Override
-	public DataNode setC_2_1_bScalar(Double c_2_1_bValue) {
-		return setField(NX_C_2_1_B, c_2_1_bValue);
+	public DataNode setAngleScalar(Double angleValue) {
+		return setField(NX_ANGLE, angleValue);
 	}
 
 	@Override
-	public IDataset getC_2_3_a() {
-		return getDataset(NX_C_2_3_A);
+	public IDataset getName() {
+		return getDataset(NX_NAME);
 	}
 
 	@Override
-	public Double getC_2_3_aScalar() {
-		return getDouble(NX_C_2_3_A);
+	public String getNameScalar() {
+		return getString(NX_NAME);
 	}
 
 	@Override
-	public DataNode setC_2_3_a(IDataset c_2_3_aDataset) {
-		return setDataset(NX_C_2_3_A, c_2_3_aDataset);
+	public DataNode setName(IDataset nameDataset) {
+		return setDataset(NX_NAME, nameDataset);
 	}
 
 	@Override
-	public DataNode setC_2_3_aScalar(Double c_2_3_aValue) {
-		return setField(NX_C_2_3_A, c_2_3_aValue);
+	public DataNode setNameScalar(String nameValue) {
+		return setString(NX_NAME, nameValue);
 	}
 
 	@Override
-	public IDataset getC_2_3_b() {
-		return getDataset(NX_C_2_3_B);
+	public IDataset getAlias() {
+		return getDataset(NX_ALIAS);
 	}
 
 	@Override
-	public Double getC_2_3_bScalar() {
-		return getDouble(NX_C_2_3_B);
+	public String getAliasScalar() {
+		return getString(NX_ALIAS);
 	}
 
 	@Override
-	public DataNode setC_2_3_b(IDataset c_2_3_bDataset) {
-		return setDataset(NX_C_2_3_B, c_2_3_bDataset);
+	public DataNode setAlias(IDataset aliasDataset) {
+		return setDataset(NX_ALIAS, aliasDataset);
 	}
 
 	@Override
-	public DataNode setC_2_3_bScalar(Double c_2_3_bValue) {
-		return setField(NX_C_2_3_B, c_2_3_bValue);
-	}
-
-	@Override
-	public IDataset getC_3_0() {
-		return getDataset(NX_C_3_0);
-	}
-
-	@Override
-	public Double getC_3_0Scalar() {
-		return getDouble(NX_C_3_0);
-	}
-
-	@Override
-	public DataNode setC_3_0(IDataset c_3_0Dataset) {
-		return setDataset(NX_C_3_0, c_3_0Dataset);
-	}
-
-	@Override
-	public DataNode setC_3_0Scalar(Double c_3_0Value) {
-		return setField(NX_C_3_0, c_3_0Value);
-	}
-
-	@Override
-	public IDataset getC_3_2_a() {
-		return getDataset(NX_C_3_2_A);
-	}
-
-	@Override
-	public Double getC_3_2_aScalar() {
-		return getDouble(NX_C_3_2_A);
-	}
-
-	@Override
-	public DataNode setC_3_2_a(IDataset c_3_2_aDataset) {
-		return setDataset(NX_C_3_2_A, c_3_2_aDataset);
-	}
-
-	@Override
-	public DataNode setC_3_2_aScalar(Double c_3_2_aValue) {
-		return setField(NX_C_3_2_A, c_3_2_aValue);
-	}
-
-	@Override
-	public IDataset getC_3_2_b() {
-		return getDataset(NX_C_3_2_B);
-	}
-
-	@Override
-	public Double getC_3_2_bScalar() {
-		return getDouble(NX_C_3_2_B);
-	}
-
-	@Override
-	public DataNode setC_3_2_b(IDataset c_3_2_bDataset) {
-		return setDataset(NX_C_3_2_B, c_3_2_bDataset);
-	}
-
-	@Override
-	public DataNode setC_3_2_bScalar(Double c_3_2_bValue) {
-		return setField(NX_C_3_2_B, c_3_2_bValue);
-	}
-
-	@Override
-	public IDataset getC_3_4_a() {
-		return getDataset(NX_C_3_4_A);
-	}
-
-	@Override
-	public Double getC_3_4_aScalar() {
-		return getDouble(NX_C_3_4_A);
-	}
-
-	@Override
-	public DataNode setC_3_4_a(IDataset c_3_4_aDataset) {
-		return setDataset(NX_C_3_4_A, c_3_4_aDataset);
-	}
-
-	@Override
-	public DataNode setC_3_4_aScalar(Double c_3_4_aValue) {
-		return setField(NX_C_3_4_A, c_3_4_aValue);
-	}
-
-	@Override
-	public IDataset getC_3_4_b() {
-		return getDataset(NX_C_3_4_B);
-	}
-
-	@Override
-	public Double getC_3_4_bScalar() {
-		return getDouble(NX_C_3_4_B);
-	}
-
-	@Override
-	public DataNode setC_3_4_b(IDataset c_3_4_bDataset) {
-		return setDataset(NX_C_3_4_B, c_3_4_bDataset);
-	}
-
-	@Override
-	public DataNode setC_3_4_bScalar(Double c_3_4_bValue) {
-		return setField(NX_C_3_4_B, c_3_4_bValue);
-	}
-
-	@Override
-	public IDataset getC_5_0() {
-		return getDataset(NX_C_5_0);
-	}
-
-	@Override
-	public Double getC_5_0Scalar() {
-		return getDouble(NX_C_5_0);
-	}
-
-	@Override
-	public DataNode setC_5_0(IDataset c_5_0Dataset) {
-		return setDataset(NX_C_5_0, c_5_0Dataset);
-	}
-
-	@Override
-	public DataNode setC_5_0Scalar(Double c_5_0Value) {
-		return setField(NX_C_5_0, c_5_0Value);
+	public DataNode setAliasScalar(String aliasValue) {
+		return setString(NX_ALIAS, aliasValue);
 	}
 
 }

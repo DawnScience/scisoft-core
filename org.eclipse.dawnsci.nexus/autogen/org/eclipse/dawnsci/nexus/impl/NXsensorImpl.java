@@ -24,7 +24,7 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * A sensor used to monitor an external condition
  * The condition itself is described in :ref:`NXenvironment`.
- * 
+
  */
 public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 
@@ -47,22 +47,22 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	public NXsensorImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXsensor.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_SENSOR;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getModel() {
@@ -406,7 +406,7 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	public Map<String, NXoff_geometry> getAllOff_geometry() {
 		return getChildren(NXoff_geometry.class);
 	}
-	
+
 	@Override
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry) {
 		setChildren(off_geometry);
@@ -467,7 +467,7 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

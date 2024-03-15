@@ -33,6 +33,7 @@ import org.eclipse.dawnsci.nexus.NXdetector_group;
 import org.eclipse.dawnsci.nexus.NXdetector;
 import org.eclipse.dawnsci.nexus.NXcollection;
 import org.eclipse.dawnsci.nexus.NXdetector_module;
+import org.eclipse.dawnsci.nexus.NXdetector_channel;
 import org.eclipse.dawnsci.nexus.NXbeam;
 import org.eclipse.dawnsci.nexus.NXsource;
 
@@ -598,6 +599,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("type", type, NX_CHAR);
 		}
+
 		// validate unnamed child group of type NXtransformations (possibly multiple)
 		validateUnnamedGroupOccurrences(group, NXtransformations.class, false, true);
 		final Map<String, NXtransformations> allTransformations = group.getAllTransformations();
@@ -621,6 +623,9 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		for (final NXdetector_module detector_module : allDetector_module.values()) {
 			validateGroup_NXentry_NXinstrument_NXdetector_NXdetector_module(detector_module);
 		}
+
+		// validate child group 'CHANNELNAME_channel' of type NXdetector_channel
+		validateGroup_NXentry_NXinstrument_NXdetector_CHANNELNAME_channel(group.getChannelname_channel());
 	}
 
 	/**
@@ -775,6 +780,16 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		validateAttributeType("depends_on", slow_pixel_direction_attr_depends_on, NX_CHAR);
 
 		}
+	}
+
+	/**
+	 * Validate group 'CHANNELNAME_channel' of type NXdetector_channel.
+	 */
+	private void validateGroup_NXentry_NXinstrument_NXdetector_CHANNELNAME_channel(final NXdetector_channel group) {
+		// validate that the group is not null
+		if (!(validateGroupNotNull("CHANNELNAME_channel", NXdetector_channel.class, group))) return;
+		clearLocalGroupDimensionPlaceholderValues();
+
 	}
 
 	/**

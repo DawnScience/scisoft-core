@@ -23,7 +23,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * A generic positioner such as a motor or piezo-electric transducer.
- * 
+
  */
 public class NXpositionerImpl extends NXobjectImpl implements NXpositioner {
 
@@ -40,22 +40,22 @@ public class NXpositionerImpl extends NXobjectImpl implements NXpositioner {
 	public NXpositionerImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXpositioner.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_POSITIONER;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getName() {
@@ -332,7 +332,7 @@ public class NXpositionerImpl extends NXobjectImpl implements NXpositioner {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

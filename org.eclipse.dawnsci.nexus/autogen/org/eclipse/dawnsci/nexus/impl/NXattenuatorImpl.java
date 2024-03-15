@@ -27,7 +27,7 @@ import org.eclipse.dawnsci.nexus.*;
  * If uncertain whether to use :ref:`NXfilter` (band-pass filter)
  * or :ref:`NXattenuator` (reduces beam intensity), then choose
  * :ref:`NXattenuator`.
- * 
+
  */
 public class NXattenuatorImpl extends NXobjectImpl implements NXattenuator {
 
@@ -45,22 +45,22 @@ public class NXattenuatorImpl extends NXobjectImpl implements NXattenuator {
 	public NXattenuatorImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXattenuator.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_ATTENUATOR;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getDistance() {
@@ -267,7 +267,7 @@ public class NXattenuatorImpl extends NXobjectImpl implements NXattenuator {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

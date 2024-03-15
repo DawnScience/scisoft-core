@@ -23,7 +23,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * A diffraction grating, as could be used in a soft X-ray monochromator
- * 
+
  */
 public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 
@@ -43,22 +43,22 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	public NXgratingImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXgrating.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_GRATING;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getAngles() {
@@ -389,7 +389,7 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	public Map<String, NXoff_geometry> getAllOff_geometry() {
 		return getChildren(NXoff_geometry.class);
 	}
-	
+
 	@Override
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry) {
 		setChildren(off_geometry);
@@ -450,7 +450,7 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

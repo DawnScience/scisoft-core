@@ -35,7 +35,7 @@ import org.eclipse.dawnsci.nexus.*;
  * Note that incident_wavelength and related fields can be a scalar values or arrays, depending on the use case.
  * To support these use cases, the explicit dimensionality of these fields is not specified, but it can be inferred
  * by the presense of and shape of accompanying fields, such as incident_wavelength_weights for a polychromatic beam.
- * 
+
  */
 public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 
@@ -53,22 +53,22 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	public NXbeamImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXbeam.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_BEAM;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getDistance() {
@@ -435,7 +435,7 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	public Map<String, NXdata> getAllData() {
 		return getChildren(NXdata.class);
 	}
-	
+
 	@Override
 	public void setAllData(Map<String, NXdata> data) {
 		setChildren(data);
@@ -496,7 +496,7 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

@@ -24,7 +24,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * Document an event of data processing, reconstruction, or analysis for this data.
- * 
+
  */
 public class NXprocessImpl extends NXobjectImpl implements NXprocess {
 
@@ -41,22 +41,22 @@ public class NXprocessImpl extends NXobjectImpl implements NXprocess {
 	public NXprocessImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXprocess.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_PROCESS;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getProgram() {
@@ -163,7 +163,7 @@ public class NXprocessImpl extends NXobjectImpl implements NXprocess {
 	public Map<String, NXnote> getAllNote() {
 		return getChildren(NXnote.class);
 	}
-	
+
 	@Override
 	public void setAllNote(Map<String, NXnote> note) {
 		setChildren(note);

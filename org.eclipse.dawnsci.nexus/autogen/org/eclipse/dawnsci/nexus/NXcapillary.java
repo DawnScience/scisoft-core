@@ -20,7 +20,7 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * A capillary lens to focus the X-ray beam.
  * Based on information provided by Gerd Wellenreuther (DESY).
- * 
+ *
  */
 public interface NXcapillary extends NXobject {
 
@@ -41,11 +41,11 @@ public interface NXcapillary extends NXobject {
 	 * <li><b>polycapillary</b> </li>
 	 * <li><b>conical_capillary</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getType();
-	
+
 	/**
 	 * Type of the capillary
 	 * <p>
@@ -55,7 +55,7 @@ public interface NXcapillary extends NXobject {
 	 * <li><b>polycapillary</b> </li>
 	 * <li><b>conical_capillary</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param typeDataset the typeDataset
 	 */
 	public DataNode setType(IDataset typeDataset);
@@ -69,7 +69,7 @@ public interface NXcapillary extends NXobject {
 	 * <li><b>polycapillary</b> </li>
 	 * <li><b>conical_capillary</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getTypeScalar();
@@ -83,7 +83,7 @@ public interface NXcapillary extends NXobject {
 	 * <li><b>polycapillary</b> </li>
 	 * <li><b>conical_capillary</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param type the type
 	 */
 	public DataNode setTypeScalar(String typeValue);
@@ -94,18 +94,18 @@ public interface NXcapillary extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getManufacturer();
-	
+
 	/**
 	 * The manufacturer of the capillary. This is actually important as
 	 * it may have an impact on performance.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param manufacturerDataset the manufacturerDataset
 	 */
 	public DataNode setManufacturer(IDataset manufacturerDataset);
@@ -116,7 +116,7 @@ public interface NXcapillary extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getManufacturerScalar();
@@ -127,7 +127,7 @@ public interface NXcapillary extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param manufacturer the manufacturer
 	 */
 	public DataNode setManufacturerScalar(String manufacturerValue);
@@ -137,17 +137,17 @@ public interface NXcapillary extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getMaximum_incident_angle();
-	
+
 	/**
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param maximum_incident_angleDataset the maximum_incident_angleDataset
 	 */
 	public DataNode setMaximum_incident_angle(IDataset maximum_incident_angleDataset);
@@ -157,7 +157,7 @@ public interface NXcapillary extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getMaximum_incident_angleScalar();
@@ -167,7 +167,7 @@ public interface NXcapillary extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param maximum_incident_angle the maximum_incident_angle
 	 */
 	public DataNode setMaximum_incident_angleScalar(Double maximum_incident_angleValue);
@@ -177,17 +177,17 @@ public interface NXcapillary extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getAccepting_aperture();
-	
+
 	/**
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param accepting_apertureDataset the accepting_apertureDataset
 	 */
 	public DataNode setAccepting_aperture(IDataset accepting_apertureDataset);
@@ -197,7 +197,7 @@ public interface NXcapillary extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getAccepting_apertureScalar();
@@ -207,35 +207,35 @@ public interface NXcapillary extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param accepting_aperture the accepting_aperture
 	 */
 	public DataNode setAccepting_apertureScalar(Double accepting_apertureValue);
 
 	/**
 	 * The gain of the capillary as a function of energy
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXdata getGain();
-	
+
 	/**
 	 * The gain of the capillary as a function of energy
-	 * 
+	 *
 	 * @param gainGroup the gainGroup
 	 */
 	public void setGain(NXdata gainGroup);
 
 	/**
 	 * The transmission of the capillary as a function of energy
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXdata getTransmission();
-	
+
 	/**
 	 * The transmission of the capillary as a function of energy
-	 * 
+	 *
 	 * @param transmissionGroup the transmissionGroup
 	 */
 	public void setTransmission(NXdata transmissionGroup);
@@ -245,17 +245,17 @@ public interface NXcapillary extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getWorking_distance();
-	
+
 	/**
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param working_distanceDataset the working_distanceDataset
 	 */
 	public DataNode setWorking_distance(IDataset working_distanceDataset);
@@ -265,7 +265,7 @@ public interface NXcapillary extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getWorking_distanceScalar();
@@ -275,7 +275,7 @@ public interface NXcapillary extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param working_distance the working_distance
 	 */
 	public DataNode setWorking_distanceScalar(Double working_distanceValue);
@@ -285,17 +285,17 @@ public interface NXcapillary extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getFocal_size();
-	
+
 	/**
 	 * The focal size in FWHM
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * </p>
-	 * 
+	 *
 	 * @param focal_sizeDataset the focal_sizeDataset
 	 */
 	public DataNode setFocal_size(IDataset focal_sizeDataset);
@@ -305,7 +305,7 @@ public interface NXcapillary extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getFocal_sizeScalar();
@@ -315,7 +315,7 @@ public interface NXcapillary extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * </p>
-	 * 
+	 *
 	 * @param focal_size the focal_size
 	 */
 	public DataNode setFocal_sizeScalar(Double focal_sizeValue);
@@ -328,11 +328,11 @@ public interface NXcapillary extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -341,7 +341,7 @@ public interface NXcapillary extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);
@@ -358,11 +358,11 @@ public interface NXcapillary extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDepends_on();
-	
+
 	/**
 	 * NeXus positions components by applying a set of translations and rotations
 	 * to apply to the component starting from 0, 0, 0. The order of these operations
@@ -375,7 +375,7 @@ public interface NXcapillary extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_onDataset the depends_onDataset
 	 */
 	public DataNode setDepends_on(IDataset depends_onDataset);
@@ -392,7 +392,7 @@ public interface NXcapillary extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDepends_onScalar();
@@ -409,7 +409,7 @@ public interface NXcapillary extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
@@ -419,17 +419,17 @@ public interface NXcapillary extends NXobject {
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
 	 * This is the group recommended for holding the chain of translation
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -443,12 +443,12 @@ public interface NXcapillary extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -458,12 +458,12 @@ public interface NXcapillary extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -473,11 +473,11 @@ public interface NXcapillary extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -487,11 +487,11 @@ public interface NXcapillary extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 }

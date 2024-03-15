@@ -18,8 +18,8 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.january.dataset.IDataset;
 
 /**
- * Details of an individual aperture for electron beams.
- * 
+ * Details of an individual aperture for beams in electron microscopy.
+ *
  */
 public interface NXaperture_em extends NXobject {
 
@@ -28,101 +28,33 @@ public interface NXaperture_em extends NXobject {
 	public static final String NX_DESCRIPTION = "description";
 	/**
 	 * Given name/alias of the aperture.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getName();
-	
+
 	/**
 	 * Given name/alias of the aperture.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param nameDataset the nameDataset
 	 */
 	public DataNode setName(IDataset nameDataset);
 
 	/**
 	 * Given name/alias of the aperture.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getNameScalar();
 
 	/**
 	 * Given name/alias of the aperture.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param name the name
 	 */
 	public DataNode setNameScalar(String nameValue);
 
 	/**
-	 * 
-	 * @return  the value.
-	 */
-	public NXmanufacturer getManufacturer();
-	
-	/**
-	 * 
-	 * @param manufacturerGroup the manufacturerGroup
-	 */
-	public void setManufacturer(NXmanufacturer manufacturerGroup);
-
-	/**
-	 * Get a NXmanufacturer node by name:
-	 * <ul>
-	 * <li></li>
-	 * </ul>
-	 * 
-	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXmanufacturer for that node.
-	 */
-	public NXmanufacturer getManufacturer(String name);
-	
-	/**
-	 * Set a NXmanufacturer node by name:
-	 * <ul>
-	 * <li></li>
-	 * </ul>
-	 * 
-	 * @param name the name of the node
-	 * @param manufacturer the value to set
-	 */
-	public void setManufacturer(String name, NXmanufacturer manufacturer);
-	
-	/**
-	 * Get all NXmanufacturer nodes:
-	 * <ul>
-	 * <li></li>
-	 * </ul>
-	 * 
-	 * @return  a map from node names to the NXmanufacturer for that node.
-	 */
-	public Map<String, NXmanufacturer> getAllManufacturer();
-	
-	/**
-	 * Set multiple child nodes of a particular type.
-	 * <ul>
-	 * <li></li>
-	 * </ul>
-	 * 
-	 * @param manufacturer the child nodes to add 
-	 */
-	
-	public void setAllManufacturer(Map<String, NXmanufacturer> manufacturer);
-	
-
-	/**
 	 * Relevant value from the control software.
 	 * This is not always just the diameter of (not even in the case)
 	 * of a circular aperture. Usually it is a mode setting value which
@@ -134,11 +66,11 @@ public interface NXaperture_em extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getValue();
-	
+
 	/**
 	 * Relevant value from the control software.
 	 * This is not always just the diameter of (not even in the case)
@@ -151,7 +83,7 @@ public interface NXaperture_em extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param valueDataset the valueDataset
 	 */
 	public DataNode setValue(IDataset valueDataset);
@@ -168,7 +100,7 @@ public interface NXaperture_em extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getValueScalar();
@@ -185,7 +117,7 @@ public interface NXaperture_em extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param value the value
 	 */
 	public DataNode setValueScalar(Number valueValue);
@@ -193,21 +125,15 @@ public interface NXaperture_em extends NXobject {
 	/**
 	 * Ideally, a (globally) unique persistent identifier, link, or text to a
 	 * resource which gives further details. Alternatively a free-text field.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDescription();
-	
+
 	/**
 	 * Ideally, a (globally) unique persistent identifier, link, or text to a
 	 * resource which gives further details. Alternatively a free-text field.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param descriptionDataset the descriptionDataset
 	 */
 	public DataNode setDescription(IDataset descriptionDataset);
@@ -215,10 +141,7 @@ public interface NXaperture_em extends NXobject {
 	/**
 	 * Ideally, a (globally) unique persistent identifier, link, or text to a
 	 * resource which gives further details. Alternatively a free-text field.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDescriptionScalar();
@@ -226,26 +149,79 @@ public interface NXaperture_em extends NXobject {
 	/**
 	 * Ideally, a (globally) unique persistent identifier, link, or text to a
 	 * resource which gives further details. Alternatively a free-text field.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param description the description
 	 */
 	public DataNode setDescriptionScalar(String descriptionValue);
 
 	/**
-	 * Affine transformation which detail the arrangement in the
-	 * microscope relative to the optical axis and beam path.
-	 * 
+	 *
 	 * @return  the value.
 	 */
-	public NXtransformations getTransformations();
-	
+	public NXfabrication getFabrication();
+
+	/**
+	 *
+	 * @param fabricationGroup the fabricationGroup
+	 */
+	public void setFabrication(NXfabrication fabricationGroup);
+
+	/**
+	 * Get a NXfabrication node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXfabrication for that node.
+	 */
+	public NXfabrication getFabrication(String name);
+
+	/**
+	 * Set a NXfabrication node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param fabrication the value to set
+	 */
+	public void setFabrication(String name, NXfabrication fabrication);
+
+	/**
+	 * Get all NXfabrication nodes:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXfabrication for that node.
+	 */
+	public Map<String, NXfabrication> getAllFabrication();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param fabrication the child nodes to add
+	 */
+
+	public void setAllFabrication(Map<String, NXfabrication> fabrication);
+
+
 	/**
 	 * Affine transformation which detail the arrangement in the
 	 * microscope relative to the optical axis and beam path.
-	 * 
+	 *
+	 * @return  the value.
+	 */
+	public NXtransformations getTransformations();
+
+	/**
+	 * Affine transformation which detail the arrangement in the
+	 * microscope relative to the optical axis and beam path.
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -257,12 +233,12 @@ public interface NXaperture_em extends NXobject {
 	 * Affine transformation which detail the arrangement in the
 	 * microscope relative to the optical axis and beam path.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -270,12 +246,12 @@ public interface NXaperture_em extends NXobject {
 	 * Affine transformation which detail the arrangement in the
 	 * microscope relative to the optical axis and beam path.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -283,11 +259,11 @@ public interface NXaperture_em extends NXobject {
 	 * Affine transformation which detail the arrangement in the
 	 * microscope relative to the optical axis and beam path.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -295,11 +271,11 @@ public interface NXaperture_em extends NXobject {
 	 * Affine transformation which detail the arrangement in the
 	 * microscope relative to the optical axis and beam path.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 }

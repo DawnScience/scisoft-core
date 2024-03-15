@@ -21,7 +21,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * definition for a magnetic kicker.
- * 
+
  */
 public class NXmagnetic_kickerImpl extends NXobjectImpl implements NXmagnetic_kicker {
 
@@ -39,22 +39,22 @@ public class NXmagnetic_kickerImpl extends NXobjectImpl implements NXmagnetic_ki
 	public NXmagnetic_kickerImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXmagnetic_kicker.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_MAGNETIC_KICKER;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getDescription() {

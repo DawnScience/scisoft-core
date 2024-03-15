@@ -20,7 +20,7 @@ import org.eclipse.january.dataset.IDataset;
 /**
  * Subclass of NXelectronanalyser to describe the energy dispersion section of a
  * photoelectron analyser.
- * 
+ *
  */
 public interface NXenergydispersion extends NXobject {
 
@@ -37,18 +37,18 @@ public interface NXenergydispersion extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getScheme();
-	
+
 	/**
 	 * Energy dispersion scheme employed, for example: tof, hemispherical, cylindrical,
 	 * mirror, retarding grid, etc.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param schemeDataset the schemeDataset
 	 */
 	public DataNode setScheme(IDataset schemeDataset);
@@ -59,7 +59,7 @@ public interface NXenergydispersion extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getSchemeScalar();
@@ -70,7 +70,7 @@ public interface NXenergydispersion extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param scheme the scheme
 	 */
 	public DataNode setSchemeScalar(String schemeValue);
@@ -82,11 +82,11 @@ public interface NXenergydispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getPass_energy();
-	
+
 	/**
 	 * Energy of the electrons on the mean path of the analyser. Pass energy for
 	 * hemispherics, drift energy for tofs.
@@ -94,7 +94,7 @@ public interface NXenergydispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
-	 * 
+	 *
 	 * @param pass_energyDataset the pass_energyDataset
 	 */
 	public DataNode setPass_energy(IDataset pass_energyDataset);
@@ -106,7 +106,7 @@ public interface NXenergydispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getPass_energyScalar();
@@ -118,7 +118,7 @@ public interface NXenergydispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
-	 * 
+	 *
 	 * @param pass_energy the pass_energy
 	 */
 	public DataNode setPass_energyScalar(Double pass_energyValue);
@@ -129,18 +129,18 @@ public interface NXenergydispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getCenter_energy();
-	
+
 	/**
 	 * Center of the energy window
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
-	 * 
+	 *
 	 * @param center_energyDataset the center_energyDataset
 	 */
 	public DataNode setCenter_energy(IDataset center_energyDataset);
@@ -151,7 +151,7 @@ public interface NXenergydispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getCenter_energyScalar();
@@ -162,7 +162,7 @@ public interface NXenergydispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
-	 * 
+	 *
 	 * @param center_energy the center_energy
 	 */
 	public DataNode setCenter_energyScalar(Double center_energyValue);
@@ -177,11 +177,11 @@ public interface NXenergydispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getEnergy_interval();
-	
+
 	/**
 	 * The interval of transmitted energies. It can be two different things depending
 	 * on whether the scan is fixed or swept. With a fixed scan it is a 2 vector
@@ -192,7 +192,7 @@ public interface NXenergydispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
-	 * 
+	 *
 	 * @param energy_intervalDataset the energy_intervalDataset
 	 */
 	public DataNode setEnergy_interval(IDataset energy_intervalDataset);
@@ -207,7 +207,7 @@ public interface NXenergydispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getEnergy_intervalScalar();
@@ -222,7 +222,7 @@ public interface NXenergydispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
 	 * </p>
-	 * 
+	 *
 	 * @param energy_interval the energy_interval
 	 */
 	public DataNode setEnergy_intervalScalar(Double energy_intervalValue);
@@ -230,15 +230,15 @@ public interface NXenergydispersion extends NXobject {
 	/**
 	 * Size, position and shape of a slit in dispersive analyzer, e.g. entrance and
 	 * exit slits.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXaperture getAperture();
-	
+
 	/**
 	 * Size, position and shape of a slit in dispersive analyzer, e.g. entrance and
 	 * exit slits.
-	 * 
+	 *
 	 * @param apertureGroup the apertureGroup
 	 */
 	public void setAperture(NXaperture apertureGroup);
@@ -250,12 +250,12 @@ public interface NXenergydispersion extends NXobject {
 	 * Size, position and shape of a slit in dispersive analyzer, e.g. entrance and
 	 * exit slits.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXaperture for that node.
 	 */
 	public NXaperture getAperture(String name);
-	
+
 	/**
 	 * Set a NXaperture node by name:
 	 * <ul>
@@ -263,12 +263,12 @@ public interface NXenergydispersion extends NXobject {
 	 * Size, position and shape of a slit in dispersive analyzer, e.g. entrance and
 	 * exit slits.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param aperture the value to set
 	 */
 	public void setAperture(String name, NXaperture aperture);
-	
+
 	/**
 	 * Get all NXaperture nodes:
 	 * <ul>
@@ -276,11 +276,11 @@ public interface NXenergydispersion extends NXobject {
 	 * Size, position and shape of a slit in dispersive analyzer, e.g. entrance and
 	 * exit slits.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXaperture for that node.
 	 */
 	public Map<String, NXaperture> getAllAperture();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -288,12 +288,12 @@ public interface NXenergydispersion extends NXobject {
 	 * Size, position and shape of a slit in dispersive analyzer, e.g. entrance and
 	 * exit slits.</li>
 	 * </ul>
-	 * 
-	 * @param aperture the child nodes to add 
+	 *
+	 * @param aperture the child nodes to add
 	 */
-	
+
 	public void setAllAperture(Map<String, NXaperture> aperture);
-	
+
 
 	/**
 	 * Diameter of the dispersive orbit
@@ -301,18 +301,18 @@ public interface NXenergydispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDiameter();
-	
+
 	/**
 	 * Diameter of the dispersive orbit
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param diameterDataset the diameterDataset
 	 */
 	public DataNode setDiameter(IDataset diameterDataset);
@@ -323,7 +323,7 @@ public interface NXenergydispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getDiameterScalar();
@@ -334,7 +334,7 @@ public interface NXenergydispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param diameter the diameter
 	 */
 	public DataNode setDiameterScalar(Double diameterValue);
@@ -347,11 +347,11 @@ public interface NXenergydispersion extends NXobject {
 	 * <li><b>fixed</b> </li>
 	 * <li><b>sweep</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getEnergy_scan_mode();
-	
+
 	/**
 	 * Way of scanning the energy axis (fixed or sweep).
 	 * <p>
@@ -360,7 +360,7 @@ public interface NXenergydispersion extends NXobject {
 	 * <li><b>fixed</b> </li>
 	 * <li><b>sweep</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param energy_scan_modeDataset the energy_scan_modeDataset
 	 */
 	public DataNode setEnergy_scan_mode(IDataset energy_scan_modeDataset);
@@ -373,7 +373,7 @@ public interface NXenergydispersion extends NXobject {
 	 * <li><b>fixed</b> </li>
 	 * <li><b>sweep</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getEnergy_scan_modeScalar();
@@ -386,7 +386,7 @@ public interface NXenergydispersion extends NXobject {
 	 * <li><b>fixed</b> </li>
 	 * <li><b>sweep</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param energy_scan_mode the energy_scan_mode
 	 */
 	public DataNode setEnergy_scan_modeScalar(String energy_scan_modeValue);
@@ -397,18 +397,18 @@ public interface NXenergydispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getTof_distance();
-	
+
 	/**
 	 * Length of the tof drift electrode
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param tof_distanceDataset the tof_distanceDataset
 	 */
 	public DataNode setTof_distance(IDataset tof_distanceDataset);
@@ -419,7 +419,7 @@ public interface NXenergydispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getTof_distanceScalar();
@@ -430,21 +430,21 @@ public interface NXenergydispersion extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param tof_distance the tof_distance
 	 */
 	public DataNode setTof_distanceScalar(Double tof_distanceValue);
 
 	/**
 	 * Deflectors in the energy dispersive section
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXdeflector getDeflector();
-	
+
 	/**
 	 * Deflectors in the energy dispersive section
-	 * 
+	 *
 	 * @param deflectorGroup the deflectorGroup
 	 */
 	public void setDeflector(NXdeflector deflectorGroup);
@@ -455,58 +455,58 @@ public interface NXenergydispersion extends NXobject {
 	 * <li>
 	 * Deflectors in the energy dispersive section</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXdeflector for that node.
 	 */
 	public NXdeflector getDeflector(String name);
-	
+
 	/**
 	 * Set a NXdeflector node by name:
 	 * <ul>
 	 * <li>
 	 * Deflectors in the energy dispersive section</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param deflector the value to set
 	 */
 	public void setDeflector(String name, NXdeflector deflector);
-	
+
 	/**
 	 * Get all NXdeflector nodes:
 	 * <ul>
 	 * <li>
 	 * Deflectors in the energy dispersive section</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXdeflector for that node.
 	 */
 	public Map<String, NXdeflector> getAllDeflector();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * Deflectors in the energy dispersive section</li>
 	 * </ul>
-	 * 
-	 * @param deflector the child nodes to add 
+	 *
+	 * @param deflector the child nodes to add
 	 */
-	
+
 	public void setAllDeflector(Map<String, NXdeflector> deflector);
-	
+
 
 	/**
 	 * Individual lenses in the energy dispersive section
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXlens_em getLens_em();
-	
+
 	/**
 	 * Individual lenses in the energy dispersive section
-	 * 
+	 *
 	 * @param lens_emGroup the lens_emGroup
 	 */
 	public void setLens_em(NXlens_em lens_emGroup);
@@ -517,46 +517,46 @@ public interface NXenergydispersion extends NXobject {
 	 * <li>
 	 * Individual lenses in the energy dispersive section</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXlens_em for that node.
 	 */
 	public NXlens_em getLens_em(String name);
-	
+
 	/**
 	 * Set a NXlens_em node by name:
 	 * <ul>
 	 * <li>
 	 * Individual lenses in the energy dispersive section</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param lens_em the value to set
 	 */
 	public void setLens_em(String name, NXlens_em lens_em);
-	
+
 	/**
 	 * Get all NXlens_em nodes:
 	 * <ul>
 	 * <li>
 	 * Individual lenses in the energy dispersive section</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXlens_em for that node.
 	 */
 	public Map<String, NXlens_em> getAllLens_em();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * Individual lenses in the energy dispersive section</li>
 	 * </ul>
-	 * 
-	 * @param lens_em the child nodes to add 
+	 *
+	 * @param lens_em the child nodes to add
 	 */
-	
+
 	public void setAllLens_em(Map<String, NXlens_em> lens_em);
-	
+
 
 }

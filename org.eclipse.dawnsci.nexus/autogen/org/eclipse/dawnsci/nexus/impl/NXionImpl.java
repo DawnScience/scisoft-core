@@ -21,7 +21,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * Set of atoms of a molecular ion or fragment in e.g. ToF mass spectrometry.
- * 
+
  */
 public class NXionImpl extends NXobjectImpl implements NXion {
 
@@ -37,22 +37,62 @@ public class NXionImpl extends NXobjectImpl implements NXion {
 	public NXionImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXion.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_ION;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
+
+	@Override
+	public IDataset getIdentifier() {
+		return getDataset(NX_IDENTIFIER);
+	}
+
+	@Override
+	public String getIdentifierScalar() {
+		return getString(NX_IDENTIFIER);
+	}
+
+	@Override
+	public DataNode setIdentifier(IDataset identifierDataset) {
+		return setDataset(NX_IDENTIFIER, identifierDataset);
+	}
+
+	@Override
+	public DataNode setIdentifierScalar(String identifierValue) {
+		return setString(NX_IDENTIFIER, identifierValue);
+	}
+
+	@Override
+	public IDataset getIdentifier_type() {
+		return getDataset(NX_IDENTIFIER_TYPE);
+	}
+
+	@Override
+	public String getIdentifier_typeScalar() {
+		return getString(NX_IDENTIFIER_TYPE);
+	}
+
+	@Override
+	public DataNode setIdentifier_type(IDataset identifier_typeDataset) {
+		return setDataset(NX_IDENTIFIER_TYPE, identifier_typeDataset);
+	}
+
+	@Override
+	public DataNode setIdentifier_typeScalar(String identifier_typeValue) {
+		return setString(NX_IDENTIFIER_TYPE, identifier_typeValue);
+	}
 
 	@Override
 	public IDataset getIon_type() {
@@ -92,6 +132,86 @@ public class NXionImpl extends NXobjectImpl implements NXion {
 	@Override
 	public DataNode setIsotope_vectorScalar(Long isotope_vectorValue) {
 		return setField(NX_ISOTOPE_VECTOR, isotope_vectorValue);
+	}
+
+	@Override
+	public IDataset getNuclid_list() {
+		return getDataset(NX_NUCLID_LIST);
+	}
+
+	@Override
+	public Long getNuclid_listScalar() {
+		return getLong(NX_NUCLID_LIST);
+	}
+
+	@Override
+	public DataNode setNuclid_list(IDataset nuclid_listDataset) {
+		return setDataset(NX_NUCLID_LIST, nuclid_listDataset);
+	}
+
+	@Override
+	public DataNode setNuclid_listScalar(Long nuclid_listValue) {
+		return setField(NX_NUCLID_LIST, nuclid_listValue);
+	}
+
+	@Override
+	public IDataset getColor() {
+		return getDataset(NX_COLOR);
+	}
+
+	@Override
+	public String getColorScalar() {
+		return getString(NX_COLOR);
+	}
+
+	@Override
+	public DataNode setColor(IDataset colorDataset) {
+		return setDataset(NX_COLOR, colorDataset);
+	}
+
+	@Override
+	public DataNode setColorScalar(String colorValue) {
+		return setString(NX_COLOR, colorValue);
+	}
+
+	@Override
+	public IDataset getVolume() {
+		return getDataset(NX_VOLUME);
+	}
+
+	@Override
+	public Double getVolumeScalar() {
+		return getDouble(NX_VOLUME);
+	}
+
+	@Override
+	public DataNode setVolume(IDataset volumeDataset) {
+		return setDataset(NX_VOLUME, volumeDataset);
+	}
+
+	@Override
+	public DataNode setVolumeScalar(Double volumeValue) {
+		return setField(NX_VOLUME, volumeValue);
+	}
+
+	@Override
+	public IDataset getCharge() {
+		return getDataset(NX_CHARGE);
+	}
+
+	@Override
+	public Double getChargeScalar() {
+		return getDouble(NX_CHARGE);
+	}
+
+	@Override
+	public DataNode setCharge(IDataset chargeDataset) {
+		return setDataset(NX_CHARGE, chargeDataset);
+	}
+
+	@Override
+	public DataNode setChargeScalar(Double chargeValue) {
+		return setField(NX_CHARGE, chargeValue);
 	}
 
 	@Override

@@ -21,7 +21,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * definition for a spin rotator.
- * 
+
  */
 public class NXspin_rotatorImpl extends NXobjectImpl implements NXspin_rotator {
 
@@ -41,22 +41,22 @@ public class NXspin_rotatorImpl extends NXobjectImpl implements NXspin_rotator {
 	public NXspin_rotatorImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXspin_rotator.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_SPIN_ROTATOR;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getDescription() {

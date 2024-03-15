@@ -24,7 +24,7 @@ import org.eclipse.january.dataset.IDataset;
  * (its polepiece, pinhole, or another point of reference).
  * The origin should be specified in the NXtransformations.
  * For details of electro-magnetic lenses in the literature see e.g. `L. Reimer <https://doi.org/10.1007/978-3-540-38967-5>`_
- * 
+ *
  */
 public interface NXlens_em extends NXobject {
 
@@ -35,11 +35,11 @@ public interface NXlens_em extends NXobject {
 	public static final String NX_DESCRIPTION = "description";
 	public static final String NX_VOLTAGE = "voltage";
 	public static final String NX_CURRENT = "current";
+	public static final String NX_VALUE = "value";
 	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
 	 * Qualitative type of lens with respect to the number of pole pieces.
 	 * <p>
-	 * <b>Type:</b> NX_CHAR
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>single</b> </li>
 	 * <li><b>double</b> </li>
@@ -47,15 +47,14 @@ public interface NXlens_em extends NXobject {
 	 * <li><b>hexapole</b> </li>
 	 * <li><b>octupole</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getType();
-	
+
 	/**
 	 * Qualitative type of lens with respect to the number of pole pieces.
 	 * <p>
-	 * <b>Type:</b> NX_CHAR
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>single</b> </li>
 	 * <li><b>double</b> </li>
@@ -63,7 +62,7 @@ public interface NXlens_em extends NXobject {
 	 * <li><b>hexapole</b> </li>
 	 * <li><b>octupole</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param typeDataset the typeDataset
 	 */
 	public DataNode setType(IDataset typeDataset);
@@ -71,7 +70,6 @@ public interface NXlens_em extends NXobject {
 	/**
 	 * Qualitative type of lens with respect to the number of pole pieces.
 	 * <p>
-	 * <b>Type:</b> NX_CHAR
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>single</b> </li>
 	 * <li><b>double</b> </li>
@@ -79,7 +77,7 @@ public interface NXlens_em extends NXobject {
 	 * <li><b>hexapole</b> </li>
 	 * <li><b>octupole</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getTypeScalar();
@@ -87,7 +85,6 @@ public interface NXlens_em extends NXobject {
 	/**
 	 * Qualitative type of lens with respect to the number of pole pieces.
 	 * <p>
-	 * <b>Type:</b> NX_CHAR
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>single</b> </li>
 	 * <li><b>double</b> </li>
@@ -95,7 +92,7 @@ public interface NXlens_em extends NXobject {
 	 * <li><b>hexapole</b> </li>
 	 * <li><b>octupole</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param type the type
 	 */
 	public DataNode setTypeScalar(String typeValue);
@@ -103,21 +100,15 @@ public interface NXlens_em extends NXobject {
 	/**
 	 * Given name, alias, colloquial, or short name for the lens.
 	 * For manufacturer names and identifiers use respective manufacturer fields.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getName();
-	
+
 	/**
 	 * Given name, alias, colloquial, or short name for the lens.
 	 * For manufacturer names and identifiers use respective manufacturer fields.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param nameDataset the nameDataset
 	 */
 	public DataNode setName(IDataset nameDataset);
@@ -125,10 +116,7 @@ public interface NXlens_em extends NXobject {
 	/**
 	 * Given name, alias, colloquial, or short name for the lens.
 	 * For manufacturer names and identifiers use respective manufacturer fields.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getNameScalar();
@@ -136,128 +124,107 @@ public interface NXlens_em extends NXobject {
 	/**
 	 * Given name, alias, colloquial, or short name for the lens.
 	 * For manufacturer names and identifiers use respective manufacturer fields.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param name the name
 	 */
 	public DataNode setNameScalar(String nameValue);
 
 	/**
 	 * Name of the manufacturer who built/constructed the lens.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getManufacturer_name();
-	
+
 	/**
 	 * Name of the manufacturer who built/constructed the lens.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param manufacturer_nameDataset the manufacturer_nameDataset
 	 */
 	public DataNode setManufacturer_name(IDataset manufacturer_nameDataset);
 
 	/**
 	 * Name of the manufacturer who built/constructed the lens.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getManufacturer_nameScalar();
 
 	/**
 	 * Name of the manufacturer who built/constructed the lens.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param manufacturer_name the manufacturer_name
 	 */
 	public DataNode setManufacturer_nameScalar(String manufacturer_nameValue);
 
 	/**
-	 * 
+	 *
 	 * @return  the value.
 	 */
-	public NXmanufacturer getManufacturer();
-	
-	/**
-	 * 
-	 * @param manufacturerGroup the manufacturerGroup
-	 */
-	public void setManufacturer(NXmanufacturer manufacturerGroup);
+	public NXfabrication getFabrication();
 
 	/**
-	 * Get a NXmanufacturer node by name:
+	 *
+	 * @param fabricationGroup the fabricationGroup
+	 */
+	public void setFabrication(NXfabrication fabricationGroup);
+
+	/**
+	 * Get a NXfabrication node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXmanufacturer for that node.
+	 * @return  a map from node names to the NXfabrication for that node.
 	 */
-	public NXmanufacturer getManufacturer(String name);
-	
+	public NXfabrication getFabrication(String name);
+
 	/**
-	 * Set a NXmanufacturer node by name:
+	 * Set a NXfabrication node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
-	 * @param manufacturer the value to set
+	 * @param fabrication the value to set
 	 */
-	public void setManufacturer(String name, NXmanufacturer manufacturer);
-	
+	public void setFabrication(String name, NXfabrication fabrication);
+
 	/**
-	 * Get all NXmanufacturer nodes:
+	 * Get all NXfabrication nodes:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
-	 * @return  a map from node names to the NXmanufacturer for that node.
+	 *
+	 * @return  a map from node names to the NXfabrication for that node.
 	 */
-	public Map<String, NXmanufacturer> getAllManufacturer();
-	
+	public Map<String, NXfabrication> getAllFabrication();
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
-	 * @param manufacturer the child nodes to add 
+	 *
+	 * @param fabrication the child nodes to add
 	 */
-	
-	public void setAllManufacturer(Map<String, NXmanufacturer> manufacturer);
-	
+
+	public void setAllFabrication(Map<String, NXfabrication> fabrication);
+
 
 	/**
 	 * Hardware name, hash identifier, or serial number that was given by the
 	 * manufacturer to identify the lens.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getModel();
-	
+
 	/**
 	 * Hardware name, hash identifier, or serial number that was given by the
 	 * manufacturer to identify the lens.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param modelDataset the modelDataset
 	 */
 	public DataNode setModel(IDataset modelDataset);
@@ -265,10 +232,7 @@ public interface NXlens_em extends NXobject {
 	/**
 	 * Hardware name, hash identifier, or serial number that was given by the
 	 * manufacturer to identify the lens.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getModelScalar();
@@ -276,10 +240,7 @@ public interface NXlens_em extends NXobject {
 	/**
 	 * Hardware name, hash identifier, or serial number that was given by the
 	 * manufacturer to identify the lens.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param model the model
 	 */
 	public DataNode setModelScalar(String modelValue);
@@ -287,21 +248,15 @@ public interface NXlens_em extends NXobject {
 	/**
 	 * Ideally an identifier, persistent link, or free text which gives further details
 	 * about the lens.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDescription();
-	
+
 	/**
 	 * Ideally an identifier, persistent link, or free text which gives further details
 	 * about the lens.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param descriptionDataset the descriptionDataset
 	 */
 	public DataNode setDescription(IDataset descriptionDataset);
@@ -309,10 +264,7 @@ public interface NXlens_em extends NXobject {
 	/**
 	 * Ideally an identifier, persistent link, or free text which gives further details
 	 * about the lens.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDescriptionScalar();
@@ -320,10 +272,7 @@ public interface NXlens_em extends NXobject {
 	/**
 	 * Ideally an identifier, persistent link, or free text which gives further details
 	 * about the lens.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param description the description
 	 */
 	public DataNode setDescriptionScalar(String descriptionValue);
@@ -335,11 +284,11 @@ public interface NXlens_em extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_VOLTAGE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getVoltage();
-	
+
 	/**
 	 * Excitation voltage of the lens. For dipoles it is a single number. For higher
 	 * orders, it is an array.
@@ -347,7 +296,7 @@ public interface NXlens_em extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_VOLTAGE
 	 * </p>
-	 * 
+	 *
 	 * @param voltageDataset the voltageDataset
 	 */
 	public DataNode setVoltage(IDataset voltageDataset);
@@ -359,7 +308,7 @@ public interface NXlens_em extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_VOLTAGE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getVoltageScalar();
@@ -371,7 +320,7 @@ public interface NXlens_em extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_VOLTAGE
 	 * </p>
-	 * 
+	 *
 	 * @param voltage the voltage
 	 */
 	public DataNode setVoltageScalar(Number voltageValue);
@@ -383,11 +332,11 @@ public interface NXlens_em extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getCurrent();
-	
+
 	/**
 	 * Excitation current of the lens. For dipoles it is a single number. For higher
 	 * orders, it is an array.
@@ -395,7 +344,7 @@ public interface NXlens_em extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
-	 * 
+	 *
 	 * @param currentDataset the currentDataset
 	 */
 	public DataNode setCurrent(IDataset currentDataset);
@@ -407,7 +356,7 @@ public interface NXlens_em extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getCurrentScalar();
@@ -419,29 +368,91 @@ public interface NXlens_em extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_CURRENT
 	 * </p>
-	 * 
+	 *
 	 * @param current the current
 	 */
 	public DataNode setCurrentScalar(Number currentValue);
 
 	/**
-	 * Specifies the position of the lens by pointing to the last transformation in the
-	 * transformation chain in the NXtransformations group.
+	 * This field should be used when the exact voltage or current of the lens is not directly controllable
+	 * as the control software of the microscope does not enable users/or is was not configured to enable
+	 * the user to retrieve these values. In this case this field should be used to specify the value as
+	 * read from the control software. Although consumers of the application definition should not expect
+	 * this value to represent the exact physical voltage or excitation, it is still useful to know though
+	 * as it allows other users to reuse this lens setting, which, provided a properly working instrument
+	 * and software should bring the lenses into a similar state.
 	 * <p>
-	 * <b>Type:</b> NX_CHAR
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
-	
+	public IDataset getValue();
+
+	/**
+	 * This field should be used when the exact voltage or current of the lens is not directly controllable
+	 * as the control software of the microscope does not enable users/or is was not configured to enable
+	 * the user to retrieve these values. In this case this field should be used to specify the value as
+	 * read from the control software. Although consumers of the application definition should not expect
+	 * this value to represent the exact physical voltage or excitation, it is still useful to know though
+	 * as it allows other users to reuse this lens setting, which, provided a properly working instrument
+	 * and software should bring the lenses into a similar state.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ANY
+	 * </p>
+	 *
+	 * @param valueDataset the valueDataset
+	 */
+	public DataNode setValue(IDataset valueDataset);
+
+	/**
+	 * This field should be used when the exact voltage or current of the lens is not directly controllable
+	 * as the control software of the microscope does not enable users/or is was not configured to enable
+	 * the user to retrieve these values. In this case this field should be used to specify the value as
+	 * read from the control software. Although consumers of the application definition should not expect
+	 * this value to represent the exact physical voltage or excitation, it is still useful to know though
+	 * as it allows other users to reuse this lens setting, which, provided a properly working instrument
+	 * and software should bring the lenses into a similar state.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ANY
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Number getValueScalar();
+
+	/**
+	 * This field should be used when the exact voltage or current of the lens is not directly controllable
+	 * as the control software of the microscope does not enable users/or is was not configured to enable
+	 * the user to retrieve these values. In this case this field should be used to specify the value as
+	 * read from the control software. Although consumers of the application definition should not expect
+	 * this value to represent the exact physical voltage or excitation, it is still useful to know though
+	 * as it allows other users to reuse this lens setting, which, provided a properly working instrument
+	 * and software should bring the lenses into a similar state.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ANY
+	 * </p>
+	 *
+	 * @param value the value
+	 */
+	public DataNode setValueScalar(Number valueValue);
+
 	/**
 	 * Specifies the position of the lens by pointing to the last transformation in the
 	 * transformation chain in the NXtransformations group.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
+	 * @return  the value.
+	 */
+	public IDataset getDepends_on();
+
+	/**
+	 * Specifies the position of the lens by pointing to the last transformation in the
+	 * transformation chain in the NXtransformations group.
+	 *
 	 * @param depends_onDataset the depends_onDataset
 	 */
 	public DataNode setDepends_on(IDataset depends_onDataset);
@@ -449,10 +460,7 @@ public interface NXlens_em extends NXobject {
 	/**
 	 * Specifies the position of the lens by pointing to the last transformation in the
 	 * transformation chain in the NXtransformations group.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDepends_onScalar();
@@ -460,10 +468,7 @@ public interface NXlens_em extends NXobject {
 	/**
 	 * Specifies the position of the lens by pointing to the last transformation in the
 	 * transformation chain in the NXtransformations group.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
@@ -474,18 +479,18 @@ public interface NXlens_em extends NXobject {
 	 * Typically, the components of a system should all be related relative to
 	 * each other and only one component should relate to the reference
 	 * coordinate system.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
 	 * Collection of axis-based translations and rotations to describe the
 	 * location and geometry of the lens as a component in the instrument.
 	 * Typically, the components of a system should all be related relative to
 	 * each other and only one component should relate to the reference
 	 * coordinate system.
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -500,12 +505,12 @@ public interface NXlens_em extends NXobject {
 	 * each other and only one component should relate to the reference
 	 * coordinate system.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -516,12 +521,12 @@ public interface NXlens_em extends NXobject {
 	 * each other and only one component should relate to the reference
 	 * coordinate system.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -532,11 +537,11 @@ public interface NXlens_em extends NXobject {
 	 * each other and only one component should relate to the reference
 	 * coordinate system.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -547,11 +552,11 @@ public interface NXlens_em extends NXobject {
 	 * each other and only one component should relate to the reference
 	 * coordinate system.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 }

@@ -26,7 +26,7 @@ import org.eclipse.dawnsci.nexus.*;
  * Any additional freeform information not covered by the other base classes.
  * This class can be used to store additional information in a
  * NeXus file e.g. pictures, movies, audio, additional text logs
- * 
+
  */
 public class NXnoteImpl extends NXobjectImpl implements NXnote {
 
@@ -42,22 +42,22 @@ public class NXnoteImpl extends NXobjectImpl implements NXnote {
 	public NXnoteImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXnote.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_NOTE;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getAuthor() {

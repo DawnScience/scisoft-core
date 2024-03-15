@@ -23,21 +23,21 @@ import org.eclipse.january.dataset.IDataset;
  * This could include scanned variables that
  * are associated with one of the data dimensions, e.g. the magnetic field, or
  * logged data, e.g. monitored temperature vs elapsed time.
- * <p><b>Symbols:</b> 
+ * <p><b>Symbols:</b>
  * symbolic array lengths to be coordinated between various fields<ul>
- * <li><b>n_comp</b> 
+ * <li><b>n_comp</b>
  * number of compositions</li>
- * <li><b>n_Temp</b> 
+ * <li><b>n_Temp</b>
  * number of temperatures</li>
- * <li><b>n_eField</b> 
+ * <li><b>n_eField</b>
  * number of values in applied electric field</li>
- * <li><b>n_mField</b> 
+ * <li><b>n_mField</b>
  * number of values in applied magnetic field</li>
- * <li><b>n_pField</b> 
+ * <li><b>n_pField</b>
  * number of values in applied pressure field</li>
- * <li><b>n_sField</b> 
+ * <li><b>n_sField</b>
  * number of values in applied stress field</li></ul></p>
- * 
+ *
  */
 public interface NXsample extends NXobject {
 
@@ -86,28 +86,28 @@ public interface NXsample extends NXobject {
 	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
 	 * Descriptive name of sample
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getName();
-	
+
 	/**
 	 * Descriptive name of sample
-	 * 
+	 *
 	 * @param nameDataset the nameDataset
 	 */
 	public DataNode setName(IDataset nameDataset);
 
 	/**
 	 * Descriptive name of sample
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getNameScalar();
 
 	/**
 	 * Descriptive name of sample
-	 * 
+	 *
 	 * @param name the name
 	 */
 	public DataNode setNameScalar(String nameValue);
@@ -128,11 +128,11 @@ public interface NXsample extends NXobject {
 	 * - C, then H, then the other elements in alphabetical order of their symbol.
 	 * - If carbon is not present, the elements are listed purely in alphabetic order of their symbol.
 	 * * This is the *Hill* system used by Chemical Abstracts.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getChemical_formula();
-	
+
 	/**
 	 * The chemical formula specified using CIF conventions.
 	 * Abbreviated version of CIF standard:
@@ -149,7 +149,7 @@ public interface NXsample extends NXobject {
 	 * - C, then H, then the other elements in alphabetical order of their symbol.
 	 * - If carbon is not present, the elements are listed purely in alphabetic order of their symbol.
 	 * * This is the *Hill* system used by Chemical Abstracts.
-	 * 
+	 *
 	 * @param chemical_formulaDataset the chemical_formulaDataset
 	 */
 	public DataNode setChemical_formula(IDataset chemical_formulaDataset);
@@ -170,7 +170,7 @@ public interface NXsample extends NXobject {
 	 * - C, then H, then the other elements in alphabetical order of their symbol.
 	 * - If carbon is not present, the elements are listed purely in alphabetic order of their symbol.
 	 * * This is the *Hill* system used by Chemical Abstracts.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getChemical_formulaScalar();
@@ -191,7 +191,7 @@ public interface NXsample extends NXobject {
 	 * - C, then H, then the other elements in alphabetical order of their symbol.
 	 * - If carbon is not present, the elements are listed purely in alphabetic order of their symbol.
 	 * * This is the *Hill* system used by Chemical Abstracts.
-	 * 
+	 *
 	 * @param chemical_formula the chemical_formula
 	 */
 	public DataNode setChemical_formulaScalar(String chemical_formulaValue);
@@ -203,11 +203,11 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_TEMPERATURE
 	 * <b>Dimensions:</b> 1: n_Temp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getTemperature();
-	
+
 	/**
 	 * Sample temperature. This could be a scanned variable
 	 * <p>
@@ -215,7 +215,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_TEMPERATURE
 	 * <b>Dimensions:</b> 1: n_Temp;
 	 * </p>
-	 * 
+	 *
 	 * @param temperatureDataset the temperatureDataset
 	 */
 	public DataNode setTemperature(IDataset temperatureDataset);
@@ -227,7 +227,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_TEMPERATURE
 	 * <b>Dimensions:</b> 1: n_Temp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getTemperatureScalar();
@@ -239,7 +239,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_TEMPERATURE
 	 * <b>Dimensions:</b> 1: n_Temp;
 	 * </p>
-	 * 
+	 *
 	 * @param temperature the temperature
 	 */
 	public DataNode setTemperatureScalar(Double temperatureValue);
@@ -251,11 +251,11 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_VOLTAGE
 	 * <b>Dimensions:</b> 1: n_eField;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getElectric_field();
-	
+
 	/**
 	 * Applied electric field
 	 * <p>
@@ -263,7 +263,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_VOLTAGE
 	 * <b>Dimensions:</b> 1: n_eField;
 	 * </p>
-	 * 
+	 *
 	 * @param electric_fieldDataset the electric_fieldDataset
 	 */
 	public DataNode setElectric_field(IDataset electric_fieldDataset);
@@ -275,7 +275,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_VOLTAGE
 	 * <b>Dimensions:</b> 1: n_eField;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getElectric_fieldScalar();
@@ -287,7 +287,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_VOLTAGE
 	 * <b>Dimensions:</b> 1: n_eField;
 	 * </p>
-	 * 
+	 *
 	 * @param electric_field the electric_field
 	 */
 	public DataNode setElectric_fieldScalar(Double electric_fieldValue);
@@ -299,11 +299,11 @@ public interface NXsample extends NXobject {
 	 * <li><b>y</b> </li>
 	 * <li><b>z</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getElectric_fieldAttributeDirection();
-	
+
 	/**
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
@@ -311,7 +311,7 @@ public interface NXsample extends NXobject {
 	 * <li><b>y</b> </li>
 	 * <li><b>z</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param directionValue the directionValue
 	 */
 	public void setElectric_fieldAttributeDirection(String directionValue);
@@ -323,11 +323,11 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n_mField;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getMagnetic_field();
-	
+
 	/**
 	 * Applied magnetic field
 	 * <p>
@@ -335,7 +335,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n_mField;
 	 * </p>
-	 * 
+	 *
 	 * @param magnetic_fieldDataset the magnetic_fieldDataset
 	 */
 	public DataNode setMagnetic_field(IDataset magnetic_fieldDataset);
@@ -347,7 +347,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n_mField;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getMagnetic_fieldScalar();
@@ -359,7 +359,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n_mField;
 	 * </p>
-	 * 
+	 *
 	 * @param magnetic_field the magnetic_field
 	 */
 	public DataNode setMagnetic_fieldScalar(Double magnetic_fieldValue);
@@ -371,11 +371,11 @@ public interface NXsample extends NXobject {
 	 * <li><b>y</b> </li>
 	 * <li><b>z</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getMagnetic_fieldAttributeDirection();
-	
+
 	/**
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
@@ -383,7 +383,7 @@ public interface NXsample extends NXobject {
 	 * <li><b>y</b> </li>
 	 * <li><b>z</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param directionValue the directionValue
 	 */
 	public void setMagnetic_fieldAttributeDirection(String directionValue);
@@ -395,11 +395,11 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n_sField;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getStress_field();
-	
+
 	/**
 	 * Applied external stress field
 	 * <p>
@@ -407,7 +407,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n_sField;
 	 * </p>
-	 * 
+	 *
 	 * @param stress_fieldDataset the stress_fieldDataset
 	 */
 	public DataNode setStress_field(IDataset stress_fieldDataset);
@@ -419,7 +419,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n_sField;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getStress_fieldScalar();
@@ -431,7 +431,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n_sField;
 	 * </p>
-	 * 
+	 *
 	 * @param stress_field the stress_field
 	 */
 	public DataNode setStress_fieldScalar(Double stress_fieldValue);
@@ -443,11 +443,11 @@ public interface NXsample extends NXobject {
 	 * <li><b>y</b> </li>
 	 * <li><b>z</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getStress_fieldAttributeDirection();
-	
+
 	/**
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
@@ -455,7 +455,7 @@ public interface NXsample extends NXobject {
 	 * <li><b>y</b> </li>
 	 * <li><b>z</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param directionValue the directionValue
 	 */
 	public void setStress_fieldAttributeDirection(String directionValue);
@@ -467,11 +467,11 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_PRESSURE
 	 * <b>Dimensions:</b> 1: n_pField;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getPressure();
-	
+
 	/**
 	 * Applied pressure
 	 * <p>
@@ -479,7 +479,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_PRESSURE
 	 * <b>Dimensions:</b> 1: n_pField;
 	 * </p>
-	 * 
+	 *
 	 * @param pressureDataset the pressureDataset
 	 */
 	public DataNode setPressure(IDataset pressureDataset);
@@ -491,7 +491,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_PRESSURE
 	 * <b>Dimensions:</b> 1: n_pField;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getPressureScalar();
@@ -503,7 +503,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_PRESSURE
 	 * <b>Dimensions:</b> 1: n_pField;
 	 * </p>
-	 * 
+	 *
 	 * @param pressure the pressure
 	 */
 	public DataNode setPressureScalar(Double pressureValue);
@@ -514,18 +514,18 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getChanger_position();
-	
+
 	/**
 	 * Sample changer position
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
-	 * 
+	 *
 	 * @param changer_positionDataset the changer_positionDataset
 	 */
 	public DataNode setChanger_position(IDataset changer_positionDataset);
@@ -536,7 +536,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Long getChanger_positionScalar();
@@ -547,7 +547,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
-	 * 
+	 *
 	 * @param changer_position the changer_position
 	 */
 	public DataNode setChanger_positionScalar(Long changer_positionValue);
@@ -559,11 +559,11 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: 3;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getUnit_cell_abc();
-	
+
 	/**
 	 * Crystallography unit cell parameters a, b, and c
 	 * <p>
@@ -571,7 +571,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: 3;
 	 * </p>
-	 * 
+	 *
 	 * @param unit_cell_abcDataset the unit_cell_abcDataset
 	 */
 	public DataNode setUnit_cell_abc(IDataset unit_cell_abcDataset);
@@ -583,7 +583,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: 3;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getUnit_cell_abcScalar();
@@ -595,7 +595,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: 3;
 	 * </p>
-	 * 
+	 *
 	 * @param unit_cell_abc the unit_cell_abc
 	 */
 	public DataNode setUnit_cell_abcScalar(Double unit_cell_abcValue);
@@ -607,11 +607,11 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * <b>Dimensions:</b> 1: 3;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getUnit_cell_alphabetagamma();
-	
+
 	/**
 	 * Crystallography unit cell parameters alpha, beta, and gamma
 	 * <p>
@@ -619,7 +619,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * <b>Dimensions:</b> 1: 3;
 	 * </p>
-	 * 
+	 *
 	 * @param unit_cell_alphabetagammaDataset the unit_cell_alphabetagammaDataset
 	 */
 	public DataNode setUnit_cell_alphabetagamma(IDataset unit_cell_alphabetagammaDataset);
@@ -631,7 +631,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * <b>Dimensions:</b> 1: 3;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getUnit_cell_alphabetagammaScalar();
@@ -643,7 +643,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * <b>Dimensions:</b> 1: 3;
 	 * </p>
-	 * 
+	 *
 	 * @param unit_cell_alphabetagamma the unit_cell_alphabetagamma
 	 */
 	public DataNode setUnit_cell_alphabetagammaScalar(Double unit_cell_alphabetagammaValue);
@@ -655,11 +655,11 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: n_comp; 2: 6;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getUnit_cell();
-	
+
 	/**
 	 * Unit cell parameters (lengths and angles)
 	 * <p>
@@ -667,7 +667,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: n_comp; 2: 6;
 	 * </p>
-	 * 
+	 *
 	 * @param unit_cellDataset the unit_cellDataset
 	 */
 	public DataNode setUnit_cell(IDataset unit_cellDataset);
@@ -679,7 +679,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: n_comp; 2: 6;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getUnit_cellScalar();
@@ -691,7 +691,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: n_comp; 2: 6;
 	 * </p>
-	 * 
+	 *
 	 * @param unit_cell the unit_cell
 	 */
 	public DataNode setUnit_cellScalar(Double unit_cellValue);
@@ -703,11 +703,11 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_VOLUME
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getUnit_cell_volume();
-	
+
 	/**
 	 * Volume of the unit cell
 	 * <p>
@@ -715,7 +715,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_VOLUME
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param unit_cell_volumeDataset the unit_cell_volumeDataset
 	 */
 	public DataNode setUnit_cell_volume(IDataset unit_cell_volumeDataset);
@@ -727,7 +727,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_VOLUME
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getUnit_cell_volumeScalar();
@@ -739,7 +739,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_VOLUME
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param unit_cell_volume the unit_cell_volume
 	 */
 	public DataNode setUnit_cell_volumeScalar(Double unit_cell_volumeValue);
@@ -752,11 +752,11 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * <b>Dimensions:</b> 1: 3;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSample_orientation();
-	
+
 	/**
 	 * This will follow the Busing-Levy convention:
 	 * W. R. Busing and H. A. Levy (1967). Acta Cryst. 22, 457-464
@@ -765,7 +765,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * <b>Dimensions:</b> 1: 3;
 	 * </p>
-	 * 
+	 *
 	 * @param sample_orientationDataset the sample_orientationDataset
 	 */
 	public DataNode setSample_orientation(IDataset sample_orientationDataset);
@@ -778,7 +778,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * <b>Dimensions:</b> 1: 3;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getSample_orientationScalar();
@@ -791,7 +791,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * <b>Dimensions:</b> 1: 3;
 	 * </p>
-	 * 
+	 *
 	 * @param sample_orientation the sample_orientation
 	 */
 	public DataNode setSample_orientationScalar(Double sample_orientationValue);
@@ -803,11 +803,11 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: n_comp; 2: 3; 3: 3;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getOrientation_matrix();
-	
+
 	/**
 	 * Orientation matrix of single crystal sample using Busing-Levy convention:
 	 * W. R. Busing and H. A. Levy (1967). Acta Cryst. 22, 457-464
@@ -815,7 +815,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: n_comp; 2: 3; 3: 3;
 	 * </p>
-	 * 
+	 *
 	 * @param orientation_matrixDataset the orientation_matrixDataset
 	 */
 	public DataNode setOrientation_matrix(IDataset orientation_matrixDataset);
@@ -827,7 +827,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: n_comp; 2: 3; 3: 3;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getOrientation_matrixScalar();
@@ -839,7 +839,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: n_comp; 2: 3; 3: 3;
 	 * </p>
-	 * 
+	 *
 	 * @param orientation_matrix the orientation_matrix
 	 */
 	public DataNode setOrientation_matrixScalar(Double orientation_matrixValue);
@@ -854,11 +854,11 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: n_comp; 2: 3; 3: 3;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getUb_matrix();
-	
+
 	/**
 	 * UB matrix of single crystal sample using Busing-Levy convention:
 	 * W. R. Busing and H. A. Levy (1967). Acta Cryst. 22, 457-464. This is
@@ -869,7 +869,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: n_comp; 2: 3; 3: 3;
 	 * </p>
-	 * 
+	 *
 	 * @param ub_matrixDataset the ub_matrixDataset
 	 */
 	public DataNode setUb_matrix(IDataset ub_matrixDataset);
@@ -884,7 +884,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: n_comp; 2: 3; 3: 3;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getUb_matrixScalar();
@@ -899,7 +899,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: n_comp; 2: 3; 3: 3;
 	 * </p>
-	 * 
+	 *
 	 * @param ub_matrix the ub_matrix
 	 */
 	public DataNode setUb_matrixScalar(Double ub_matrixValue);
@@ -911,11 +911,11 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_MASS
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getMass();
-	
+
 	/**
 	 * Mass of sample
 	 * <p>
@@ -923,7 +923,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_MASS
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param massDataset the massDataset
 	 */
 	public DataNode setMass(IDataset massDataset);
@@ -935,7 +935,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_MASS
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getMassScalar();
@@ -947,7 +947,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_MASS
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param mass the mass
 	 */
 	public DataNode setMassScalar(Double massValue);
@@ -959,11 +959,11 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_MASS_DENSITY
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDensity();
-	
+
 	/**
 	 * Density of sample
 	 * <p>
@@ -971,7 +971,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_MASS_DENSITY
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param densityDataset the densityDataset
 	 */
 	public DataNode setDensity(IDataset densityDataset);
@@ -983,7 +983,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_MASS_DENSITY
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getDensityScalar();
@@ -995,7 +995,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_MASS_DENSITY
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param density the density
 	 */
 	public DataNode setDensityScalar(Double densityValue);
@@ -1007,11 +1007,11 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_MASS
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getRelative_molecular_mass();
-	
+
 	/**
 	 * Relative Molecular Mass of sample
 	 * <p>
@@ -1019,7 +1019,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_MASS
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param relative_molecular_massDataset the relative_molecular_massDataset
 	 */
 	public DataNode setRelative_molecular_mass(IDataset relative_molecular_massDataset);
@@ -1031,7 +1031,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_MASS
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getRelative_molecular_massScalar();
@@ -1043,7 +1043,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_MASS
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param relative_molecular_mass the relative_molecular_mass
 	 */
 	public DataNode setRelative_molecular_massScalar(Double relative_molecular_massValue);
@@ -1062,11 +1062,11 @@ public interface NXsample extends NXobject {
 	 * <li><b>none</b> </li>
 	 * <li><b>sample environment</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getType();
-	
+
 	/**
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
@@ -1081,7 +1081,7 @@ public interface NXsample extends NXobject {
 	 * <li><b>none</b> </li>
 	 * <li><b>sample environment</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param typeDataset the typeDataset
 	 */
 	public DataNode setType(IDataset typeDataset);
@@ -1100,7 +1100,7 @@ public interface NXsample extends NXobject {
 	 * <li><b>none</b> </li>
 	 * <li><b>sample environment</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getTypeScalar();
@@ -1119,7 +1119,7 @@ public interface NXsample extends NXobject {
 	 * <li><b>none</b> </li>
 	 * <li><b>sample environment</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param type the type
 	 */
 	public DataNode setTypeScalar(String typeValue);
@@ -1138,11 +1138,11 @@ public interface NXsample extends NXobject {
 	 * <li><b>sealed can</b> </li>
 	 * <li><b>other</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSituation();
-	
+
 	/**
 	 * The atmosphere will be one of the components, which is where
 	 * its details will be stored; the relevant components will be
@@ -1157,7 +1157,7 @@ public interface NXsample extends NXobject {
 	 * <li><b>sealed can</b> </li>
 	 * <li><b>other</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param situationDataset the situationDataset
 	 */
 	public DataNode setSituation(IDataset situationDataset);
@@ -1176,7 +1176,7 @@ public interface NXsample extends NXobject {
 	 * <li><b>sealed can</b> </li>
 	 * <li><b>other</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getSituationScalar();
@@ -1195,35 +1195,35 @@ public interface NXsample extends NXobject {
 	 * <li><b>sealed can</b> </li>
 	 * <li><b>other</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param situation the situation
 	 */
 	public DataNode setSituationScalar(String situationValue);
 
 	/**
 	 * Description of the sample
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDescription();
-	
+
 	/**
 	 * Description of the sample
-	 * 
+	 *
 	 * @param descriptionDataset the descriptionDataset
 	 */
 	public DataNode setDescription(IDataset descriptionDataset);
 
 	/**
 	 * Description of the sample
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDescriptionScalar();
 
 	/**
 	 * Description of the sample
-	 * 
+	 *
 	 * @param description the description
 	 */
 	public DataNode setDescriptionScalar(String descriptionValue);
@@ -1233,17 +1233,17 @@ public interface NXsample extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_DATE_TIME
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getPreparation_date();
-	
+
 	/**
 	 * Date of preparation of the sample
 	 * <p>
 	 * <b>Type:</b> NX_DATE_TIME
 	 * </p>
-	 * 
+	 *
 	 * @param preparation_dateDataset the preparation_dateDataset
 	 */
 	public DataNode setPreparation_date(IDataset preparation_dateDataset);
@@ -1253,7 +1253,7 @@ public interface NXsample extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_DATE_TIME
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Date getPreparation_dateScalar();
@@ -1263,23 +1263,23 @@ public interface NXsample extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_DATE_TIME
 	 * </p>
-	 * 
+	 *
 	 * @param preparation_date the preparation_date
 	 */
 	public DataNode setPreparation_dateScalar(Date preparation_dateValue);
 
 	/**
 	 * The position and orientation of the center of mass of the sample
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the sample and NXoff_geometry to describe its shape instead
 	 * @return  the value.
 	 */
 	@Deprecated
 	public NXgeometry getGeometry();
-	
+
 	/**
 	 * The position and orientation of the center of mass of the sample
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the sample and NXoff_geometry to describe its shape instead
 	 * @param geometryGroup the geometryGroup
 	 */
@@ -1288,14 +1288,14 @@ public interface NXsample extends NXobject {
 
 	/**
 	 * Details of beam incident on sample - used to calculate sample/beam interaction point
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXbeam getBeam();
-	
+
 	/**
 	 * Details of beam incident on sample - used to calculate sample/beam interaction point
-	 * 
+	 *
 	 * @param beamGroup the beamGroup
 	 */
 	public void setBeam(NXbeam beamGroup);
@@ -1306,60 +1306,60 @@ public interface NXsample extends NXobject {
 	 * <li>
 	 * Details of beam incident on sample - used to calculate sample/beam interaction point</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXbeam for that node.
 	 */
 	public NXbeam getBeam(String name);
-	
+
 	/**
 	 * Set a NXbeam node by name:
 	 * <ul>
 	 * <li>
 	 * Details of beam incident on sample - used to calculate sample/beam interaction point</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param beam the value to set
 	 */
 	public void setBeam(String name, NXbeam beam);
-	
+
 	/**
 	 * Get all NXbeam nodes:
 	 * <ul>
 	 * <li>
 	 * Details of beam incident on sample - used to calculate sample/beam interaction point</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXbeam for that node.
 	 */
 	public Map<String, NXbeam> getAllBeam();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * Details of beam incident on sample - used to calculate sample/beam interaction point</li>
 	 * </ul>
-	 * 
-	 * @param beam the child nodes to add 
+	 *
+	 * @param beam the child nodes to add
 	 */
-	
+
 	public void setAllBeam(Map<String, NXbeam> beam);
-	
+
 
 	/**
 	 * One group per sample component
 	 * This is the perferred way of recording per component information over the n_comp arrays
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXsample_component getSample_componentGroup();
-	
+
 	/**
 	 * One group per sample component
 	 * This is the perferred way of recording per component information over the n_comp arrays
-	 * 
+	 *
 	 * @param sample_componentGroupGroup the sample_componentGroupGroup
 	 */
 	public void setSample_componentGroup(NXsample_component sample_componentGroupGroup);
@@ -1371,12 +1371,12 @@ public interface NXsample extends NXobject {
 	 * One group per sample component
 	 * This is the perferred way of recording per component information over the n_comp arrays</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXsample_component for that node.
 	 */
 	public NXsample_component getSample_componentGroup(String name);
-	
+
 	/**
 	 * Set a NXsample_component node by name:
 	 * <ul>
@@ -1384,12 +1384,12 @@ public interface NXsample extends NXobject {
 	 * One group per sample component
 	 * This is the perferred way of recording per component information over the n_comp arrays</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param sample_componentGroup the value to set
 	 */
 	public void setSample_componentGroup(String name, NXsample_component sample_componentGroup);
-	
+
 	/**
 	 * Get all NXsample_component nodes:
 	 * <ul>
@@ -1397,11 +1397,11 @@ public interface NXsample extends NXobject {
 	 * One group per sample component
 	 * This is the perferred way of recording per component information over the n_comp arrays</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXsample_component for that node.
 	 */
 	public Map<String, NXsample_component> getAllSample_componentGroup();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -1409,29 +1409,29 @@ public interface NXsample extends NXobject {
 	 * One group per sample component
 	 * This is the perferred way of recording per component information over the n_comp arrays</li>
 	 * </ul>
-	 * 
-	 * @param sample_componentGroup the child nodes to add 
+	 *
+	 * @param sample_componentGroup the child nodes to add
 	 */
-	
+
 	public void setAllSample_componentGroup(Map<String, NXsample_component> sample_componentGroup);
-	
+
 
 	/**
 	 * Details of the component of the sample and/or can
 	 * <p>
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getComponent();
-	
+
 	/**
 	 * Details of the component of the sample and/or can
 	 * <p>
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param componentDataset the componentDataset
 	 */
 	public DataNode setComponent(IDataset componentDataset);
@@ -1441,7 +1441,7 @@ public interface NXsample extends NXobject {
 	 * <p>
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getComponentScalar();
@@ -1451,7 +1451,7 @@ public interface NXsample extends NXobject {
 	 * <p>
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param component the component
 	 */
 	public DataNode setComponentScalar(String componentValue);
@@ -1466,11 +1466,11 @@ public interface NXsample extends NXobject {
 	 * <li><b>atmosphere</b> </li>
 	 * <li><b>kit</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSample_component();
-	
+
 	/**
 	 * Type of component
 	 * <p>
@@ -1481,7 +1481,7 @@ public interface NXsample extends NXobject {
 	 * <li><b>atmosphere</b> </li>
 	 * <li><b>kit</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param sample_componentDataset the sample_componentDataset
 	 */
 	public DataNode setSample_component(IDataset sample_componentDataset);
@@ -1496,7 +1496,7 @@ public interface NXsample extends NXobject {
 	 * <li><b>atmosphere</b> </li>
 	 * <li><b>kit</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getSample_componentScalar();
@@ -1511,7 +1511,7 @@ public interface NXsample extends NXobject {
 	 * <li><b>atmosphere</b> </li>
 	 * <li><b>kit</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param sample_component the sample_component
 	 */
 	public DataNode setSample_componentScalar(String sample_componentValue);
@@ -1523,11 +1523,11 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_MASS_DENSITY
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getConcentration();
-	
+
 	/**
 	 * Concentration of each component
 	 * <p>
@@ -1535,7 +1535,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_MASS_DENSITY
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param concentrationDataset the concentrationDataset
 	 */
 	public DataNode setConcentration(IDataset concentrationDataset);
@@ -1547,7 +1547,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_MASS_DENSITY
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getConcentrationScalar();
@@ -1559,7 +1559,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_MASS_DENSITY
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param concentration the concentration
 	 */
 	public DataNode setConcentrationScalar(Double concentrationValue);
@@ -1570,18 +1570,18 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getVolume_fraction();
-	
+
 	/**
 	 * Volume fraction of each component
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param volume_fractionDataset the volume_fractionDataset
 	 */
 	public DataNode setVolume_fraction(IDataset volume_fractionDataset);
@@ -1592,7 +1592,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getVolume_fractionScalar();
@@ -1603,7 +1603,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param volume_fraction the volume_fraction
 	 */
 	public DataNode setVolume_fractionScalar(Double volume_fractionValue);
@@ -1615,11 +1615,11 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_SCATTERING_LENGTH_DENSITY
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getScattering_length_density();
-	
+
 	/**
 	 * Scattering length density of each component
 	 * <p>
@@ -1627,7 +1627,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_SCATTERING_LENGTH_DENSITY
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param scattering_length_densityDataset the scattering_length_densityDataset
 	 */
 	public DataNode setScattering_length_density(IDataset scattering_length_densityDataset);
@@ -1639,7 +1639,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_SCATTERING_LENGTH_DENSITY
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getScattering_length_densityScalar();
@@ -1651,7 +1651,7 @@ public interface NXsample extends NXobject {
 	 * <b>Units:</b> NX_SCATTERING_LENGTH_DENSITY
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param scattering_length_density the scattering_length_density
 	 */
 	public DataNode setScattering_length_densityScalar(Double scattering_length_densityValue);
@@ -1668,11 +1668,11 @@ public interface NXsample extends NXobject {
 	 * <li><b>hexagonal</b> </li>
 	 * <li><b>cubic</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getUnit_cell_class();
-	
+
 	/**
 	 * In case it is all we know and we want to record/document it
 	 * <p>
@@ -1685,7 +1685,7 @@ public interface NXsample extends NXobject {
 	 * <li><b>hexagonal</b> </li>
 	 * <li><b>cubic</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param unit_cell_classDataset the unit_cell_classDataset
 	 */
 	public DataNode setUnit_cell_class(IDataset unit_cell_classDataset);
@@ -1702,7 +1702,7 @@ public interface NXsample extends NXobject {
 	 * <li><b>hexagonal</b> </li>
 	 * <li><b>cubic</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getUnit_cell_classScalar();
@@ -1719,7 +1719,7 @@ public interface NXsample extends NXobject {
 	 * <li><b>hexagonal</b> </li>
 	 * <li><b>cubic</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param unit_cell_class the unit_cell_class
 	 */
 	public DataNode setUnit_cell_classScalar(String unit_cell_classValue);
@@ -1729,17 +1729,17 @@ public interface NXsample extends NXobject {
 	 * <p>
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSpace_group();
-	
+
 	/**
 	 * Crystallographic space group
 	 * <p>
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param space_groupDataset the space_groupDataset
 	 */
 	public DataNode setSpace_group(IDataset space_groupDataset);
@@ -1749,7 +1749,7 @@ public interface NXsample extends NXobject {
 	 * <p>
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getSpace_groupScalar();
@@ -1759,7 +1759,7 @@ public interface NXsample extends NXobject {
 	 * <p>
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param space_group the space_group
 	 */
 	public DataNode setSpace_groupScalar(String space_groupValue);
@@ -1769,17 +1769,17 @@ public interface NXsample extends NXobject {
 	 * <p>
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getPoint_group();
-	
+
 	/**
 	 * Crystallographic point group, deprecated if space_group present
 	 * <p>
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param point_groupDataset the point_groupDataset
 	 */
 	public DataNode setPoint_group(IDataset point_groupDataset);
@@ -1789,7 +1789,7 @@ public interface NXsample extends NXobject {
 	 * <p>
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getPoint_groupScalar();
@@ -1799,7 +1799,7 @@ public interface NXsample extends NXobject {
 	 * <p>
 	 * <b>Dimensions:</b> 1: n_comp;
 	 * </p>
-	 * 
+	 *
 	 * @param point_group the point_group
 	 */
 	public DataNode setPoint_groupScalar(String point_groupValue);
@@ -1811,11 +1811,11 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getPath_length();
-	
+
 	/**
 	 * Path length through sample/can for simple case when
 	 * it does not vary with scattering direction
@@ -1823,7 +1823,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param path_lengthDataset the path_lengthDataset
 	 */
 	public DataNode setPath_length(IDataset path_lengthDataset);
@@ -1835,7 +1835,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getPath_lengthScalar();
@@ -1847,7 +1847,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param path_length the path_length
 	 */
 	public DataNode setPath_lengthScalar(Double path_lengthValue);
@@ -1859,11 +1859,11 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getPath_length_window();
-	
+
 	/**
 	 * Thickness of a beam entry/exit window on the can (mm)
 	 * - assumed same for entry and exit
@@ -1871,7 +1871,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param path_length_windowDataset the path_length_windowDataset
 	 */
 	public DataNode setPath_length_window(IDataset path_length_windowDataset);
@@ -1883,7 +1883,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getPath_length_windowScalar();
@@ -1895,7 +1895,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param path_length_window the path_length_window
 	 */
 	public DataNode setPath_length_windowScalar(Double path_length_windowValue);
@@ -1906,18 +1906,18 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getThickness();
-	
+
 	/**
 	 * sample thickness
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param thicknessDataset the thicknessDataset
 	 */
 	public DataNode setThickness(IDataset thicknessDataset);
@@ -1928,7 +1928,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getThicknessScalar();
@@ -1939,37 +1939,37 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param thickness the thickness
 	 */
 	public DataNode setThicknessScalar(Double thicknessValue);
 
 	/**
 	 * As a function of Wavelength
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXdata getTransmission();
-	
+
 	/**
 	 * As a function of Wavelength
-	 * 
+	 *
 	 * @param transmissionGroup the transmissionGroup
 	 */
 	public void setTransmission(NXdata transmissionGroup);
 
 	/**
 	 * temperature_log.value is a link to e.g. temperature_env.sensor1.value_log.value
-	 * 
+	 *
 	 * @deprecated use ``temperature``, see: https://github.com/nexusformat/definitions/issues/816
 	 * @return  the value.
 	 */
 	@Deprecated
 	public NXlog getTemperature_log();
-	
+
 	/**
 	 * temperature_log.value is a link to e.g. temperature_env.sensor1.value_log.value
-	 * 
+	 *
 	 * @deprecated use ``temperature``, see: https://github.com/nexusformat/definitions/issues/816
 	 * @param temperature_logGroup the temperature_logGroup
 	 */
@@ -1978,44 +1978,44 @@ public interface NXsample extends NXobject {
 
 	/**
 	 * Additional sample temperature environment information
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXenvironment getTemperature_env();
-	
+
 	/**
 	 * Additional sample temperature environment information
-	 * 
+	 *
 	 * @param temperature_envGroup the temperature_envGroup
 	 */
 	public void setTemperature_env(NXenvironment temperature_envGroup);
 
 	/**
 	 * magnetic_field.value is a link to e.g. magnetic_field_env.sensor1.value
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXlog getMagnetic_fieldLog();
-	
+
 	/**
 	 * magnetic_field.value is a link to e.g. magnetic_field_env.sensor1.value
-	 * 
+	 *
 	 * @param magnetic_fieldLogGroup the magnetic_fieldLogGroup
 	 */
 	public void setMagnetic_fieldLog(NXlog magnetic_fieldLogGroup);
 
 	/**
 	 * magnetic_field_log.value is a link to e.g. magnetic_field_env.sensor1.value_log.value
-	 * 
+	 *
 	 * @deprecated use ``magnetic_field``, see: https://github.com/nexusformat/definitions/issues/816
 	 * @return  the value.
 	 */
 	@Deprecated
 	public NXlog getMagnetic_field_log();
-	
+
 	/**
 	 * magnetic_field_log.value is a link to e.g. magnetic_field_env.sensor1.value_log.value
-	 * 
+	 *
 	 * @deprecated use ``magnetic_field``, see: https://github.com/nexusformat/definitions/issues/816
 	 * @param magnetic_field_logGroup the magnetic_field_logGroup
 	 */
@@ -2024,14 +2024,14 @@ public interface NXsample extends NXobject {
 
 	/**
 	 * Additional sample magnetic environment information
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXenvironment getMagnetic_field_env();
-	
+
 	/**
 	 * Additional sample magnetic environment information
-	 * 
+	 *
 	 * @param magnetic_field_envGroup the magnetic_field_envGroup
 	 */
 	public void setMagnetic_field_env(NXenvironment magnetic_field_envGroup);
@@ -2042,18 +2042,18 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getExternal_dac();
-	
+
 	/**
 	 * value sent to user's sample setup
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param external_dacDataset the external_dacDataset
 	 */
 	public DataNode setExternal_dac(IDataset external_dacDataset);
@@ -2064,7 +2064,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getExternal_dacScalar();
@@ -2075,49 +2075,49 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANY
 	 * </p>
-	 * 
+	 *
 	 * @param external_dac the external_dac
 	 */
 	public DataNode setExternal_dacScalar(Double external_dacValue);
 
 	/**
 	 * logged value (or logic state) read from user's setup
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXlog getExternal_adc();
-	
+
 	/**
 	 * logged value (or logic state) read from user's setup
-	 * 
+	 *
 	 * @param external_adcGroup the external_adcGroup
 	 */
 	public void setExternal_adc(NXlog external_adcGroup);
 
 	/**
 	 * 20 character fixed length sample description for legends
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getShort_title();
-	
+
 	/**
 	 * 20 character fixed length sample description for legends
-	 * 
+	 *
 	 * @param short_titleDataset the short_titleDataset
 	 */
 	public DataNode setShort_title(IDataset short_titleDataset);
 
 	/**
 	 * 20 character fixed length sample description for legends
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getShort_titleScalar();
 
 	/**
 	 * 20 character fixed length sample description for legends
-	 * 
+	 *
 	 * @param short_title the short_title
 	 */
 	public DataNode setShort_titleScalar(String short_titleValue);
@@ -2131,11 +2131,11 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getRotation_angle();
-	
+
 	/**
 	 * Optional rotation angle for the case when the powder diagram has
 	 * been obtained through an omega-2theta scan like from a traditional
@@ -2145,7 +2145,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param rotation_angleDataset the rotation_angleDataset
 	 */
 	public DataNode setRotation_angle(IDataset rotation_angleDataset);
@@ -2159,7 +2159,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getRotation_angleScalar();
@@ -2173,7 +2173,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param rotation_angle the rotation_angle
 	 */
 	public DataNode setRotation_angleScalar(Double rotation_angleValue);
@@ -2185,11 +2185,11 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getX_translation();
-	
+
 	/**
 	 * Translation of the sample along the X-direction of the laboratory coordinate system
 	 * Note, it is recommended to use NXtransformations instead.
@@ -2197,7 +2197,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param x_translationDataset the x_translationDataset
 	 */
 	public DataNode setX_translation(IDataset x_translationDataset);
@@ -2209,7 +2209,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getX_translationScalar();
@@ -2221,7 +2221,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param x_translation the x_translation
 	 */
 	public DataNode setX_translationScalar(Double x_translationValue);
@@ -2233,11 +2233,11 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDistance();
-	
+
 	/**
 	 * Translation of the sample along the Z-direction of the laboratory coordinate system.
 	 * Note, it is recommended to use NXtransformations instead.
@@ -2245,7 +2245,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param distanceDataset the distanceDataset
 	 */
 	public DataNode setDistance(IDataset distanceDataset);
@@ -2257,7 +2257,7 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getDistanceScalar();
@@ -2269,21 +2269,21 @@ public interface NXsample extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param distance the distance
 	 */
 	public DataNode setDistanceScalar(Double distanceValue);
 
 	/**
 	 * Any positioner (motor, PZT, ...) used to locate the sample
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXpositioner getPositioner();
-	
+
 	/**
 	 * Any positioner (motor, PZT, ...) used to locate the sample
-	 * 
+	 *
 	 * @param positionerGroup the positionerGroup
 	 */
 	public void setPositioner(NXpositioner positionerGroup);
@@ -2294,58 +2294,58 @@ public interface NXsample extends NXobject {
 	 * <li>
 	 * Any positioner (motor, PZT, ...) used to locate the sample</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXpositioner for that node.
 	 */
 	public NXpositioner getPositioner(String name);
-	
+
 	/**
 	 * Set a NXpositioner node by name:
 	 * <ul>
 	 * <li>
 	 * Any positioner (motor, PZT, ...) used to locate the sample</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param positioner the value to set
 	 */
 	public void setPositioner(String name, NXpositioner positioner);
-	
+
 	/**
 	 * Get all NXpositioner nodes:
 	 * <ul>
 	 * <li>
 	 * Any positioner (motor, PZT, ...) used to locate the sample</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXpositioner for that node.
 	 */
 	public Map<String, NXpositioner> getAllPositioner();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * Any positioner (motor, PZT, ...) used to locate the sample</li>
 	 * </ul>
-	 * 
-	 * @param positioner the child nodes to add 
+	 *
+	 * @param positioner the child nodes to add
 	 */
-	
+
 	public void setAllPositioner(Map<String, NXpositioner> positioner);
-	
+
 
 	/**
 	 * This group describes the shape of the sample
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXoff_geometry getOff_geometry();
-	
+
 	/**
 	 * This group describes the shape of the sample
-	 * 
+	 *
 	 * @param off_geometryGroup the off_geometryGroup
 	 */
 	public void setOff_geometry(NXoff_geometry off_geometryGroup);
@@ -2356,47 +2356,47 @@ public interface NXsample extends NXobject {
 	 * <li>
 	 * This group describes the shape of the sample</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
 	public NXoff_geometry getOff_geometry(String name);
-	
+
 	/**
 	 * Set a NXoff_geometry node by name:
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the sample</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param off_geometry the value to set
 	 */
 	public void setOff_geometry(String name, NXoff_geometry off_geometry);
-	
+
 	/**
 	 * Get all NXoff_geometry nodes:
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the sample</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
 	public Map<String, NXoff_geometry> getAllOff_geometry();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the sample</li>
 	 * </ul>
-	 * 
-	 * @param off_geometry the child nodes to add 
+	 *
+	 * @param off_geometry the child nodes to add
 	 */
-	
+
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry);
-	
+
 
 	/**
 	 * .. index:: plotting
@@ -2406,11 +2406,11 @@ public interface NXsample extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -2419,7 +2419,7 @@ public interface NXsample extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);
@@ -2434,11 +2434,11 @@ public interface NXsample extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDepends_on();
-	
+
 	/**
 	 * NeXus positions components by applying a set of translations and rotations
 	 * to apply to the component starting from 0, 0, 0. The order of these operations
@@ -2449,7 +2449,7 @@ public interface NXsample extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_onDataset the depends_onDataset
 	 */
 	public DataNode setDepends_on(IDataset depends_onDataset);
@@ -2464,7 +2464,7 @@ public interface NXsample extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDepends_onScalar();
@@ -2479,7 +2479,7 @@ public interface NXsample extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
@@ -2489,17 +2489,17 @@ public interface NXsample extends NXobject {
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
 	 * This is the group recommended for holding the chain of translation
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -2513,12 +2513,12 @@ public interface NXsample extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -2528,12 +2528,12 @@ public interface NXsample extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -2543,11 +2543,11 @@ public interface NXsample extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -2557,11 +2557,11 @@ public interface NXsample extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 }

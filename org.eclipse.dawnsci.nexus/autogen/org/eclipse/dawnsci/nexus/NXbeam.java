@@ -31,15 +31,15 @@ import org.eclipse.january.dataset.IDataset;
  * Note that incident_wavelength and related fields can be a scalar values or arrays, depending on the use case.
  * To support these use cases, the explicit dimensionality of these fields is not specified, but it can be inferred
  * by the presense of and shape of accompanying fields, such as incident_wavelength_weights for a polychromatic beam.
- * <p><b>Symbols:</b> 
+ * <p><b>Symbols:</b>
  * These symbols coordinate datasets with the same shape.<ul>
- * <li><b>nP</b> 
+ * <li><b>nP</b>
  * Number of scan points.</li>
- * <li><b>m</b> 
+ * <li><b>m</b>
  * Number of channels in the incident beam spectrum, if known</li>
- * <li><b>c</b> 
+ * <li><b>c</b>
  * Number of moments representing beam divergence (x, y, xy, etc.)</li></ul></p>
- * 
+ *
  */
 public interface NXbeam extends NXobject {
 
@@ -68,18 +68,18 @@ public interface NXbeam extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDistance();
-	
+
 	/**
 	 * Distance from sample. Note, it is recommended to use NXtransformations instead.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param distanceDataset the distanceDataset
 	 */
 	public DataNode setDistance(IDataset distanceDataset);
@@ -90,7 +90,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getDistanceScalar();
@@ -101,7 +101,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param distance the distance
 	 */
 	public DataNode setDistanceScalar(Double distanceValue);
@@ -113,11 +113,11 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ENERGY
 	 * <b>Dimensions:</b> 1: m;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getIncident_energy();
-	
+
 	/**
 	 * Energy carried by each particle of the beam on entering the beamline component
 	 * <p>
@@ -125,7 +125,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ENERGY
 	 * <b>Dimensions:</b> 1: m;
 	 * </p>
-	 * 
+	 *
 	 * @param incident_energyDataset the incident_energyDataset
 	 */
 	public DataNode setIncident_energy(IDataset incident_energyDataset);
@@ -137,7 +137,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ENERGY
 	 * <b>Dimensions:</b> 1: m;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getIncident_energyScalar();
@@ -149,7 +149,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ENERGY
 	 * <b>Dimensions:</b> 1: m;
 	 * </p>
-	 * 
+	 *
 	 * @param incident_energy the incident_energy
 	 */
 	public DataNode setIncident_energyScalar(Double incident_energyValue);
@@ -161,11 +161,11 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ENERGY
 	 * <b>Dimensions:</b> 1: m;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getFinal_energy();
-	
+
 	/**
 	 * Energy carried by each particle of the beam on leaving the beamline component
 	 * <p>
@@ -173,7 +173,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ENERGY
 	 * <b>Dimensions:</b> 1: m;
 	 * </p>
-	 * 
+	 *
 	 * @param final_energyDataset the final_energyDataset
 	 */
 	public DataNode setFinal_energy(IDataset final_energyDataset);
@@ -185,7 +185,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ENERGY
 	 * <b>Dimensions:</b> 1: m;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getFinal_energyScalar();
@@ -197,7 +197,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ENERGY
 	 * <b>Dimensions:</b> 1: m;
 	 * </p>
-	 * 
+	 *
 	 * @param final_energy the final_energy
 	 */
 	public DataNode setFinal_energyScalar(Double final_energyValue);
@@ -209,11 +209,11 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ENERGY
 	 * <b>Dimensions:</b> 1: m;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getEnergy_transfer();
-	
+
 	/**
 	 * Change in particle energy caused by the beamline component
 	 * <p>
@@ -221,7 +221,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ENERGY
 	 * <b>Dimensions:</b> 1: m;
 	 * </p>
-	 * 
+	 *
 	 * @param energy_transferDataset the energy_transferDataset
 	 */
 	public DataNode setEnergy_transfer(IDataset energy_transferDataset);
@@ -233,7 +233,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ENERGY
 	 * <b>Dimensions:</b> 1: m;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getEnergy_transferScalar();
@@ -245,7 +245,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ENERGY
 	 * <b>Dimensions:</b> 1: m;
 	 * </p>
-	 * 
+	 *
 	 * @param energy_transfer the energy_transfer
 	 */
 	public DataNode setEnergy_transferScalar(Double energy_transferValue);
@@ -281,11 +281,11 @@ public interface NXbeam extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getIncident_wavelength();
-	
+
 	/**
 	 * In the case of a monochromatic beam this is the scalar
 	 * wavelength.
@@ -317,7 +317,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param incident_wavelengthDataset the incident_wavelengthDataset
 	 */
 	public DataNode setIncident_wavelength(IDataset incident_wavelengthDataset);
@@ -353,7 +353,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getIncident_wavelengthScalar();
@@ -389,7 +389,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param incident_wavelength the incident_wavelength
 	 */
 	public DataNode setIncident_wavelengthScalar(Double incident_wavelengthValue);
@@ -405,11 +405,11 @@ public interface NXbeam extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getIncident_wavelength_weights();
-	
+
 	/**
 	 * In the case of a polychromatic beam this is an array of
 	 * length **m** of the relative weights of the corresponding
@@ -421,7 +421,7 @@ public interface NXbeam extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * </p>
-	 * 
+	 *
 	 * @param incident_wavelength_weightsDataset the incident_wavelength_weightsDataset
 	 */
 	public DataNode setIncident_wavelength_weights(IDataset incident_wavelength_weightsDataset);
@@ -437,7 +437,7 @@ public interface NXbeam extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getIncident_wavelength_weightsScalar();
@@ -453,7 +453,7 @@ public interface NXbeam extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * </p>
-	 * 
+	 *
 	 * @param incident_wavelength_weights the incident_wavelength_weights
 	 */
 	public DataNode setIncident_wavelength_weightsScalar(Double incident_wavelength_weightsValue);
@@ -470,11 +470,11 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getIncident_wavelength_spread();
-	
+
 	/**
 	 * The wavelength spread FWHM for the corresponding
 	 * wavelength(s) in incident_wavelength.
@@ -487,7 +487,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
-	 * 
+	 *
 	 * @param incident_wavelength_spreadDataset the incident_wavelength_spreadDataset
 	 */
 	public DataNode setIncident_wavelength_spread(IDataset incident_wavelength_spreadDataset);
@@ -504,7 +504,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getIncident_wavelength_spreadScalar();
@@ -521,7 +521,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
-	 * 
+	 *
 	 * @param incident_wavelength_spread the incident_wavelength_spread
 	 */
 	public DataNode setIncident_wavelength_spreadScalar(Double incident_wavelength_spreadValue);
@@ -539,11 +539,11 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * <b>Dimensions:</b> 1: nP; 2: c;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getIncident_beam_divergence();
-	
+
 	/**
 	 * Beam crossfire in degrees parallel to the laboratory X axis
 	 * The dimension **c** is a series of moments of that represent
@@ -557,7 +557,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * <b>Dimensions:</b> 1: nP; 2: c;
 	 * </p>
-	 * 
+	 *
 	 * @param incident_beam_divergenceDataset the incident_beam_divergenceDataset
 	 */
 	public DataNode setIncident_beam_divergence(IDataset incident_beam_divergenceDataset);
@@ -575,7 +575,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * <b>Dimensions:</b> 1: nP; 2: c;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getIncident_beam_divergenceScalar();
@@ -593,7 +593,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * <b>Dimensions:</b> 1: nP; 2: c;
 	 * </p>
-	 * 
+	 *
 	 * @param incident_beam_divergence the incident_beam_divergence
 	 */
 	public DataNode setIncident_beam_divergenceScalar(Double incident_beam_divergenceValue);
@@ -606,11 +606,11 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: nP; 2: 2;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getExtent();
-	
+
 	/**
 	 * Size of the beam entering this component. Note this represents
 	 * a rectangular beam aperture, and values represent FWHM
@@ -619,7 +619,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: nP; 2: 2;
 	 * </p>
-	 * 
+	 *
 	 * @param extentDataset the extentDataset
 	 */
 	public DataNode setExtent(IDataset extentDataset);
@@ -632,7 +632,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: nP; 2: 2;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getExtentScalar();
@@ -645,7 +645,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: nP; 2: 2;
 	 * </p>
-	 * 
+	 *
 	 * @param extent the extent
 	 */
 	public DataNode setExtentScalar(Double extentValue);
@@ -657,11 +657,11 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * <b>Dimensions:</b> 1: m;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getFinal_wavelength();
-	
+
 	/**
 	 * Wavelength on leaving beamline component
 	 * <p>
@@ -669,7 +669,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * <b>Dimensions:</b> 1: m;
 	 * </p>
-	 * 
+	 *
 	 * @param final_wavelengthDataset the final_wavelengthDataset
 	 */
 	public DataNode setFinal_wavelength(IDataset final_wavelengthDataset);
@@ -681,7 +681,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * <b>Dimensions:</b> 1: m;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getFinal_wavelengthScalar();
@@ -693,7 +693,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * <b>Dimensions:</b> 1: m;
 	 * </p>
-	 * 
+	 *
 	 * @param final_wavelength the final_wavelength
 	 */
 	public DataNode setFinal_wavelengthScalar(Double final_wavelengthValue);
@@ -705,11 +705,11 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: nP; 2: 2;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getIncident_polarization();
-	
+
 	/**
 	 * Polarization vector on entering beamline component
 	 * <p>
@@ -717,7 +717,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: nP; 2: 2;
 	 * </p>
-	 * 
+	 *
 	 * @param incident_polarizationDataset the incident_polarizationDataset
 	 */
 	public DataNode setIncident_polarization(IDataset incident_polarizationDataset);
@@ -729,7 +729,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: nP; 2: 2;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getIncident_polarizationScalar();
@@ -741,7 +741,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: nP; 2: 2;
 	 * </p>
-	 * 
+	 *
 	 * @param incident_polarization the incident_polarization
 	 */
 	public DataNode setIncident_polarizationScalar(Number incident_polarizationValue);
@@ -753,11 +753,11 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: nP; 2: 2;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getFinal_polarization();
-	
+
 	/**
 	 * Polarization vector on leaving beamline component
 	 * <p>
@@ -765,7 +765,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: nP; 2: 2;
 	 * </p>
-	 * 
+	 *
 	 * @param final_polarizationDataset the final_polarizationDataset
 	 */
 	public DataNode setFinal_polarization(IDataset final_polarizationDataset);
@@ -777,7 +777,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: nP; 2: 2;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getFinal_polarizationScalar();
@@ -789,7 +789,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: nP; 2: 2;
 	 * </p>
-	 * 
+	 *
 	 * @param final_polarization the final_polarization
 	 */
 	public DataNode setFinal_polarizationScalar(Number final_polarizationValue);
@@ -816,11 +816,11 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: nP; 2: 4;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getIncident_polarization_stokes();
-	
+
 	/**
 	 * Polarization vector on entering beamline component using Stokes notation
 	 * The Stokes parameters are four components labelled I,Q,U,V or S_0,S_1,S_2,S_3.
@@ -843,7 +843,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: nP; 2: 4;
 	 * </p>
-	 * 
+	 *
 	 * @param incident_polarization_stokesDataset the incident_polarization_stokesDataset
 	 */
 	public DataNode setIncident_polarization_stokes(IDataset incident_polarization_stokesDataset);
@@ -870,7 +870,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: nP; 2: 4;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getIncident_polarization_stokesScalar();
@@ -897,7 +897,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: nP; 2: 4;
 	 * </p>
-	 * 
+	 *
 	 * @param incident_polarization_stokes the incident_polarization_stokes
 	 */
 	public DataNode setIncident_polarization_stokesScalar(Number incident_polarization_stokesValue);
@@ -910,11 +910,11 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: nP; 2: 4;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getFinal_polarization_stokes();
-	
+
 	/**
 	 * Polarization vector on leaving beamline component using Stokes notation
 	 * (see incident_polarization_stokes).
@@ -923,7 +923,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: nP; 2: 4;
 	 * </p>
-	 * 
+	 *
 	 * @param final_polarization_stokesDataset the final_polarization_stokesDataset
 	 */
 	public DataNode setFinal_polarization_stokes(IDataset final_polarization_stokesDataset);
@@ -936,7 +936,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: nP; 2: 4;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getFinal_polarization_stokesScalar();
@@ -949,7 +949,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: nP; 2: 4;
 	 * </p>
-	 * 
+	 *
 	 * @param final_polarization_stokes the final_polarization_stokes
 	 */
 	public DataNode setFinal_polarization_stokesScalar(Number final_polarization_stokesValue);
@@ -961,11 +961,11 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * <b>Dimensions:</b> 1: m;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getFinal_wavelength_spread();
-	
+
 	/**
 	 * Wavelength spread FWHM of beam leaving this component
 	 * <p>
@@ -973,7 +973,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * <b>Dimensions:</b> 1: m;
 	 * </p>
-	 * 
+	 *
 	 * @param final_wavelength_spreadDataset the final_wavelength_spreadDataset
 	 */
 	public DataNode setFinal_wavelength_spread(IDataset final_wavelength_spreadDataset);
@@ -985,7 +985,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * <b>Dimensions:</b> 1: m;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getFinal_wavelength_spreadScalar();
@@ -997,7 +997,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * <b>Dimensions:</b> 1: m;
 	 * </p>
-	 * 
+	 *
 	 * @param final_wavelength_spread the final_wavelength_spread
 	 */
 	public DataNode setFinal_wavelength_spreadScalar(Double final_wavelength_spreadValue);
@@ -1009,11 +1009,11 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * <b>Dimensions:</b> 1: nP; 2: 2;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getFinal_beam_divergence();
-	
+
 	/**
 	 * Divergence FWHM of beam leaving this component
 	 * <p>
@@ -1021,7 +1021,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * <b>Dimensions:</b> 1: nP; 2: 2;
 	 * </p>
-	 * 
+	 *
 	 * @param final_beam_divergenceDataset the final_beam_divergenceDataset
 	 */
 	public DataNode setFinal_beam_divergence(IDataset final_beam_divergenceDataset);
@@ -1033,7 +1033,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * <b>Dimensions:</b> 1: nP; 2: 2;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getFinal_beam_divergenceScalar();
@@ -1045,7 +1045,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * <b>Dimensions:</b> 1: nP; 2: 2;
 	 * </p>
-	 * 
+	 *
 	 * @param final_beam_divergence the final_beam_divergence
 	 */
 	public DataNode setFinal_beam_divergenceScalar(Double final_beam_divergenceValue);
@@ -1057,11 +1057,11 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_FLUX
 	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getFlux();
-	
+
 	/**
 	 * flux incident on beam plane area
 	 * <p>
@@ -1069,7 +1069,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_FLUX
 	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
-	 * 
+	 *
 	 * @param fluxDataset the fluxDataset
 	 */
 	public DataNode setFlux(IDataset fluxDataset);
@@ -1081,7 +1081,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_FLUX
 	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getFluxScalar();
@@ -1093,7 +1093,7 @@ public interface NXbeam extends NXobject {
 	 * <b>Units:</b> NX_FLUX
 	 * <b>Dimensions:</b> 1: nP;
 	 * </p>
-	 * 
+	 *
 	 * @param flux the flux
 	 */
 	public DataNode setFluxScalar(Double fluxValue);
@@ -1102,16 +1102,16 @@ public interface NXbeam extends NXobject {
 	 * Distribution of beam with respect to relevant variable e.g. wavelength. This is mainly
 	 * useful for simulations which need to store plottable information at each beamline
 	 * component.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXdata getData();
-	
+
 	/**
 	 * Distribution of beam with respect to relevant variable e.g. wavelength. This is mainly
 	 * useful for simulations which need to store plottable information at each beamline
 	 * component.
-	 * 
+	 *
 	 * @param dataGroup the dataGroup
 	 */
 	public void setData(NXdata dataGroup);
@@ -1124,12 +1124,12 @@ public interface NXbeam extends NXobject {
 	 * useful for simulations which need to store plottable information at each beamline
 	 * component.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXdata for that node.
 	 */
 	public NXdata getData(String name);
-	
+
 	/**
 	 * Set a NXdata node by name:
 	 * <ul>
@@ -1138,12 +1138,12 @@ public interface NXbeam extends NXobject {
 	 * useful for simulations which need to store plottable information at each beamline
 	 * component.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param data the value to set
 	 */
 	public void setData(String name, NXdata data);
-	
+
 	/**
 	 * Get all NXdata nodes:
 	 * <ul>
@@ -1152,11 +1152,11 @@ public interface NXbeam extends NXobject {
 	 * useful for simulations which need to store plottable information at each beamline
 	 * component.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXdata for that node.
 	 */
 	public Map<String, NXdata> getAllData();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -1165,12 +1165,12 @@ public interface NXbeam extends NXobject {
 	 * useful for simulations which need to store plottable information at each beamline
 	 * component.</li>
 	 * </ul>
-	 * 
-	 * @param data the child nodes to add 
+	 *
+	 * @param data the child nodes to add
 	 */
-	
+
 	public void setAllData(Map<String, NXdata> data);
-	
+
 
 	/**
 	 * .. index:: plotting
@@ -1180,11 +1180,11 @@ public interface NXbeam extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -1193,7 +1193,7 @@ public interface NXbeam extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);
@@ -1208,11 +1208,11 @@ public interface NXbeam extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDepends_on();
-	
+
 	/**
 	 * The NeXus coordinate system defines the Z axis to be along the nominal beam
 	 * direction. This is the same as the McStas coordinate system (see :ref:`Design-CoordinateSystem`).
@@ -1223,7 +1223,7 @@ public interface NXbeam extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_onDataset the depends_onDataset
 	 */
 	public DataNode setDepends_on(IDataset depends_onDataset);
@@ -1238,7 +1238,7 @@ public interface NXbeam extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDepends_onScalar();
@@ -1253,7 +1253,7 @@ public interface NXbeam extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
@@ -1261,15 +1261,15 @@ public interface NXbeam extends NXobject {
 	/**
 	 * Direction (and location) for the beam. The location of the beam can be given by
 	 * any point which it passes through as its offset attribute.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
 	 * Direction (and location) for the beam. The location of the beam can be given by
 	 * any point which it passes through as its offset attribute.
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -1281,12 +1281,12 @@ public interface NXbeam extends NXobject {
 	 * Direction (and location) for the beam. The location of the beam can be given by
 	 * any point which it passes through as its offset attribute.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -1294,12 +1294,12 @@ public interface NXbeam extends NXobject {
 	 * Direction (and location) for the beam. The location of the beam can be given by
 	 * any point which it passes through as its offset attribute.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -1307,11 +1307,11 @@ public interface NXbeam extends NXobject {
 	 * Direction (and location) for the beam. The location of the beam can be given by
 	 * any point which it passes through as its offset attribute.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -1319,11 +1319,11 @@ public interface NXbeam extends NXobject {
 	 * Direction (and location) for the beam. The location of the beam can be given by
 	 * any point which it passes through as its offset attribute.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 }

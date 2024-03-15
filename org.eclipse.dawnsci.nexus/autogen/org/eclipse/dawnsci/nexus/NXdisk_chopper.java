@@ -29,11 +29,11 @@ import org.eclipse.january.dataset.IDataset;
  * We refer to this below as the "top-dead-center signal".
  * Angles and positive rotation speeds are measured in an anticlockwise
  * direction when facing away from the source.
- * <p><b>Symbols:</b> 
+ * <p><b>Symbols:</b>
  * This symbol will be used below to coordinate datasets with the same shape.<ul>
- * <li><b>n</b> 
+ * <li><b>n</b>
  * Number of slits in the disk</li></ul></p>
- * 
+ *
  */
 public interface NXdisk_chopper extends NXobject {
 
@@ -63,11 +63,11 @@ public interface NXdisk_chopper extends NXobject {
 	 * <li><b>contra_rotating_pair</b> </li>
 	 * <li><b>synchro_pair</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getType();
-	
+
 	/**
 	 * Type of the disk-chopper: only one from the enumerated list (match text exactly)
 	 * <p>
@@ -76,7 +76,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <li><b>contra_rotating_pair</b> </li>
 	 * <li><b>synchro_pair</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param typeDataset the typeDataset
 	 */
 	public DataNode setType(IDataset typeDataset);
@@ -89,7 +89,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <li><b>contra_rotating_pair</b> </li>
 	 * <li><b>synchro_pair</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getTypeScalar();
@@ -102,7 +102,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <li><b>contra_rotating_pair</b> </li>
 	 * <li><b>synchro_pair</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param type the type
 	 */
 	public DataNode setTypeScalar(String typeValue);
@@ -114,11 +114,11 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_FREQUENCY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getRotation_speed();
-	
+
 	/**
 	 * Chopper rotation speed. Positive for anticlockwise rotation when
 	 * facing away from the source, negative otherwise.
@@ -126,7 +126,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_FREQUENCY
 	 * </p>
-	 * 
+	 *
 	 * @param rotation_speedDataset the rotation_speedDataset
 	 */
 	public DataNode setRotation_speed(IDataset rotation_speedDataset);
@@ -138,7 +138,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_FREQUENCY
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getRotation_speedScalar();
@@ -150,7 +150,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_FREQUENCY
 	 * </p>
-	 * 
+	 *
 	 * @param rotation_speed the rotation_speed
 	 */
 	public DataNode setRotation_speedScalar(Double rotation_speedValue);
@@ -160,17 +160,17 @@ public interface NXdisk_chopper extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSlits();
-	
+
 	/**
 	 * Number of slits
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * </p>
-	 * 
+	 *
 	 * @param slitsDataset the slitsDataset
 	 */
 	public DataNode setSlits(IDataset slitsDataset);
@@ -180,7 +180,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Long getSlitsScalar();
@@ -190,7 +190,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * </p>
-	 * 
+	 *
 	 * @param slits the slits
 	 */
 	public DataNode setSlitsScalar(Long slitsValue);
@@ -201,18 +201,18 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSlit_angle();
-	
+
 	/**
 	 * Angular opening
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param slit_angleDataset the slit_angleDataset
 	 */
 	public DataNode setSlit_angle(IDataset slit_angleDataset);
@@ -223,7 +223,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getSlit_angleScalar();
@@ -234,7 +234,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param slit_angle the slit_angle
 	 */
 	public DataNode setSlit_angleScalar(Double slit_angleValue);
@@ -245,18 +245,18 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getPair_separation();
-	
+
 	/**
 	 * Disk spacing in direction of beam
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param pair_separationDataset the pair_separationDataset
 	 */
 	public DataNode setPair_separation(IDataset pair_separationDataset);
@@ -267,7 +267,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getPair_separationScalar();
@@ -278,7 +278,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param pair_separation the pair_separation
 	 */
 	public DataNode setPair_separationScalar(Double pair_separationValue);
@@ -294,11 +294,11 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * <b>Dimensions:</b> 1: 2n;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSlit_edges();
-	
+
 	/**
 	 * Angle of each edge of every slit from the position of the
 	 * top-dead-center timestamp sensor, anticlockwise when facing
@@ -310,7 +310,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * <b>Dimensions:</b> 1: 2n;
 	 * </p>
-	 * 
+	 *
 	 * @param slit_edgesDataset the slit_edgesDataset
 	 */
 	public DataNode setSlit_edges(IDataset slit_edgesDataset);
@@ -326,7 +326,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * <b>Dimensions:</b> 1: 2n;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getSlit_edgesScalar();
@@ -342,7 +342,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Units:</b> NX_ANGLE
 	 * <b>Dimensions:</b> 1: 2n;
 	 * </p>
-	 * 
+	 *
 	 * @param slit_edges the slit_edges
 	 */
 	public DataNode setSlit_edgesScalar(Double slit_edgesValue);
@@ -356,11 +356,11 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getTop_dead_center();
-	
+
 	/**
 	 * Timestamps of the top-dead-center signal. The times are relative
 	 * to the "start" attribute and in the units specified in the "units"
@@ -370,7 +370,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
-	 * 
+	 *
 	 * @param top_dead_centerDataset the top_dead_centerDataset
 	 */
 	public DataNode setTop_dead_center(IDataset top_dead_centerDataset);
@@ -384,7 +384,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getTop_dead_centerScalar();
@@ -398,19 +398,19 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
-	 * 
+	 *
 	 * @param top_dead_center the top_dead_center
 	 */
 	public DataNode setTop_dead_centerScalar(Number top_dead_centerValue);
 
 	/**
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Date getTop_dead_centerAttributeStart();
-	
+
 	/**
-	 * 
+	 *
 	 * @param startValue the startValue
 	 */
 	public void setTop_dead_centerAttributeStart(Date startValue);
@@ -423,11 +423,11 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getBeam_position();
-	
+
 	/**
 	 * Angular separation of the center of the beam and the
 	 * top-dead-center timestamp sensor, anticlockwise when facing
@@ -436,7 +436,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param beam_positionDataset the beam_positionDataset
 	 */
 	public DataNode setBeam_position(IDataset beam_positionDataset);
@@ -449,7 +449,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getBeam_positionScalar();
@@ -462,7 +462,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param beam_position the beam_position
 	 */
 	public DataNode setBeam_positionScalar(Double beam_positionValue);
@@ -473,18 +473,18 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getRadius();
-	
+
 	/**
 	 * Radius of the disk
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param radiusDataset the radiusDataset
 	 */
 	public DataNode setRadius(IDataset radiusDataset);
@@ -495,7 +495,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getRadiusScalar();
@@ -506,7 +506,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param radius the radius
 	 */
 	public DataNode setRadiusScalar(Double radiusValue);
@@ -517,18 +517,18 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSlit_height();
-	
+
 	/**
 	 * Total slit height
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param slit_heightDataset the slit_heightDataset
 	 */
 	public DataNode setSlit_height(IDataset slit_heightDataset);
@@ -539,7 +539,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getSlit_heightScalar();
@@ -550,7 +550,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param slit_height the slit_height
 	 */
 	public DataNode setSlit_heightScalar(Double slit_heightValue);
@@ -561,18 +561,18 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getPhase();
-	
+
 	/**
 	 * Chopper phase angle
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param phaseDataset the phaseDataset
 	 */
 	public DataNode setPhase(IDataset phaseDataset);
@@ -583,7 +583,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getPhaseScalar();
@@ -594,7 +594,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param phase the phase
 	 */
 	public DataNode setPhaseScalar(Double phaseValue);
@@ -605,18 +605,18 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDelay();
-	
+
 	/**
 	 * Time difference between timing system t0 and chopper driving clock signal
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
-	 * 
+	 *
 	 * @param delayDataset the delayDataset
 	 */
 	public DataNode setDelay(IDataset delayDataset);
@@ -627,7 +627,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Number getDelayScalar();
@@ -638,7 +638,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
-	 * 
+	 *
 	 * @param delay the delay
 	 */
 	public DataNode setDelayScalar(Number delayValue);
@@ -649,18 +649,18 @@ public interface NXdisk_chopper extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getRatio();
-	
+
 	/**
 	 * Pulse reduction factor of this chopper in relation to other
 	 * choppers/fastest pulse in the instrument
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * </p>
-	 * 
+	 *
 	 * @param ratioDataset the ratioDataset
 	 */
 	public DataNode setRatio(IDataset ratioDataset);
@@ -671,7 +671,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Long getRatioScalar();
@@ -682,7 +682,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * </p>
-	 * 
+	 *
 	 * @param ratio the ratio
 	 */
 	public DataNode setRatioScalar(Long ratioValue);
@@ -694,11 +694,11 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDistance();
-	
+
 	/**
 	 * Effective distance to the origin.
 	 * Note, it is recommended to use NXtransformations instead.
@@ -706,7 +706,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param distanceDataset the distanceDataset
 	 */
 	public DataNode setDistance(IDataset distanceDataset);
@@ -718,7 +718,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getDistanceScalar();
@@ -730,7 +730,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param distance the distance
 	 */
 	public DataNode setDistanceScalar(Double distanceValue);
@@ -742,11 +742,11 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * <b>Dimensions:</b> 1: 2;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getWavelength_range();
-	
+
 	/**
 	 * Low and high values of wavelength range transmitted
 	 * <p>
@@ -754,7 +754,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * <b>Dimensions:</b> 1: 2;
 	 * </p>
-	 * 
+	 *
 	 * @param wavelength_rangeDataset the wavelength_rangeDataset
 	 */
 	public DataNode setWavelength_range(IDataset wavelength_rangeDataset);
@@ -766,7 +766,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * <b>Dimensions:</b> 1: 2;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getWavelength_rangeScalar();
@@ -778,21 +778,21 @@ public interface NXdisk_chopper extends NXobject {
 	 * <b>Units:</b> NX_WAVELENGTH
 	 * <b>Dimensions:</b> 1: 2;
 	 * </p>
-	 * 
+	 *
 	 * @param wavelength_range the wavelength_range
 	 */
 	public DataNode setWavelength_rangeScalar(Double wavelength_rangeValue);
 
 	/**
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the chopper and NXoff_geometry to describe its shape instead
 	 * @return  the value.
 	 */
 	@Deprecated
 	public NXgeometry getGeometry();
-	
+
 	/**
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the chopper and NXoff_geometry to describe its shape instead
 	 * @param geometryGroup the geometryGroup
 	 */
@@ -804,63 +804,63 @@ public interface NXdisk_chopper extends NXobject {
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the chopper and NXoff_geometry to describe its shape instead
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXgeometry for that node.
 	 */
 	@Deprecated
 	public NXgeometry getGeometry(String name);
-	
+
 	/**
 	 * Set a NXgeometry node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the chopper and NXoff_geometry to describe its shape instead
 	 * @param name the name of the node
 	 * @param geometry the value to set
 	 */
 	@Deprecated
 	public void setGeometry(String name, NXgeometry geometry);
-	
+
 	/**
 	 * Get all NXgeometry nodes:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the chopper and NXoff_geometry to describe its shape instead
 	 * @return  a map from node names to the NXgeometry for that node.
 	 */
 	@Deprecated
 	public Map<String, NXgeometry> getAllGeometry();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the chopper and NXoff_geometry to describe its shape instead
-	 * @param geometry the child nodes to add 
+	 * @param geometry the child nodes to add
 	 */
-	
+
 	@Deprecated
 	public void setAllGeometry(Map<String, NXgeometry> geometry);
-	
+
 
 	/**
 	 * This group describes the shape of the beam line component
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXoff_geometry getOff_geometry();
-	
+
 	/**
 	 * This group describes the shape of the beam line component
-	 * 
+	 *
 	 * @param off_geometryGroup the off_geometryGroup
 	 */
 	public void setOff_geometry(NXoff_geometry off_geometryGroup);
@@ -871,47 +871,47 @@ public interface NXdisk_chopper extends NXobject {
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
 	public NXoff_geometry getOff_geometry(String name);
-	
+
 	/**
 	 * Set a NXoff_geometry node by name:
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param off_geometry the value to set
 	 */
 	public void setOff_geometry(String name, NXoff_geometry off_geometry);
-	
+
 	/**
 	 * Get all NXoff_geometry nodes:
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
 	public Map<String, NXoff_geometry> getAllOff_geometry();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
-	 * @param off_geometry the child nodes to add 
+	 *
+	 * @param off_geometry the child nodes to add
 	 */
-	
+
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry);
-	
+
 
 	/**
 	 * .. index:: plotting
@@ -921,11 +921,11 @@ public interface NXdisk_chopper extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -934,7 +934,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);
@@ -956,11 +956,11 @@ public interface NXdisk_chopper extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDepends_on();
-	
+
 	/**
 	 * NeXus positions components by applying a set of translations and rotations
 	 * to apply to the component starting from 0, 0, 0. The order of these operations
@@ -978,7 +978,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_onDataset the depends_onDataset
 	 */
 	public DataNode setDepends_on(IDataset depends_onDataset);
@@ -1000,7 +1000,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDepends_onScalar();
@@ -1022,7 +1022,7 @@ public interface NXdisk_chopper extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
@@ -1032,17 +1032,17 @@ public interface NXdisk_chopper extends NXobject {
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
 	 * This is the group recommended for holding the chain of translation
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -1056,12 +1056,12 @@ public interface NXdisk_chopper extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -1071,12 +1071,12 @@ public interface NXdisk_chopper extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -1086,11 +1086,11 @@ public interface NXdisk_chopper extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -1100,11 +1100,11 @@ public interface NXdisk_chopper extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 }

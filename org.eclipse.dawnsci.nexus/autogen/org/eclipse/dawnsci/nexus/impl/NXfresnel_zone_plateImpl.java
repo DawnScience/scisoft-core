@@ -23,7 +23,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * A fresnel zone plate
- * 
+
  */
 public class NXfresnel_zone_plateImpl extends NXobjectImpl implements NXfresnel_zone_plate {
 
@@ -40,22 +40,22 @@ public class NXfresnel_zone_plateImpl extends NXobjectImpl implements NXfresnel_
 	public NXfresnel_zone_plateImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXfresnel_zone_plate.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_FRESNEL_ZONE_PLATE;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getFocus_parameters() {
@@ -392,7 +392,7 @@ public class NXfresnel_zone_plateImpl extends NXobjectImpl implements NXfresnel_
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

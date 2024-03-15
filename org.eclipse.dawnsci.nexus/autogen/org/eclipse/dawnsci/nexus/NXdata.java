@@ -154,22 +154,23 @@ import org.eclipse.january.dataset.IDataset;
  * data3_errors: float[10,20,30]
  * x_errors: float[10]
  * z_errors: float[30]
- * <p><b>Symbols:</b> 
+ * <p><b>Symbols:</b>
  * These symbols will be used below to coordinate fields with the same shape.<ul>
- * <li><b>dataRank</b> 
+ * <li><b>dataRank</b>
  * rank of the ``DATA`` field(s)</li>
- * <li><b>nx</b> 
+ * <li><b>nx</b>
  * length of the ``x`` field</li>
- * <li><b>ny</b> 
+ * <li><b>ny</b>
  * length of the ``y`` field</li>
- * <li><b>nz</b> 
+ * <li><b>nz</b>
  * length of the ``z`` field</li></ul></p>
- * 
+ *
  */
 public interface NXdata extends NXobject {
 
 	public static final String NX_ATTRIBUTE_SIGNAL = "signal";
 	public static final String NX_ATTRIBUTE_AUXILIARY_SIGNALS = "auxiliary_signals";
+	public static final String NX_ATTRIBUTE_DEFAULT_SLICE = "default_slice";
 	public static final String NX_ATTRIBUTE_INDICES = "indices";
 	public static final String NX_ATTRIBUTE_AXES = "axes";
 	public static final String NX_AXISNAME = "axisname";
@@ -202,11 +203,11 @@ public interface NXdata extends NXobject {
 	 * rather than adding a signal attribute to the field.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeSignal();
-	
+
 	/**
 	 * .. index:: find the default plottable data
 	 * .. index:: plotting
@@ -218,7 +219,7 @@ public interface NXdata extends NXobject {
 	 * rather than adding a signal attribute to the field.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param signalValue the signalValue
 	 */
 	public void setAttributeSignal(String signalValue);
@@ -231,11 +232,11 @@ public interface NXdata extends NXobject {
 	 * Each auxiliary signal needs to be of the same shape as the default signal.
 	 * .. NIAC2018:
 	 * https://www.nexusformat.org/NIAC2018Minutes.html
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeAuxiliary_signals();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Array of strings holding the :ref:`names <validItemName>` of additional
@@ -244,10 +245,88 @@ public interface NXdata extends NXobject {
 	 * Each auxiliary signal needs to be of the same shape as the default signal.
 	 * .. NIAC2018:
 	 * https://www.nexusformat.org/NIAC2018Minutes.html
-	 * 
+	 *
 	 * @param auxiliary_signalsValue the auxiliary_signalsValue
 	 */
 	public void setAttributeAuxiliary_signals(String auxiliary_signalsValue);
+
+	/**
+	 * Which slice of data to show in a plot by default. This is useful especially for
+	 * datasets with more than 2 dimensions.
+	 * Should be an array of length equal to the number of dimensions
+	 * in the data, with the following possible values:
+	 * * ".": All the data in this dimension should be included
+	 * * Integer: Only this slice should be used.
+	 * * String: Only this slice should be used. Use if ``AXISNAME`` is a string
+	 * array.
+	 * Example::
+	 * data:NXdata
+	 * @signal = "data"
+	 * @axes = ["image_id", "channel", ".", "."]
+	 * @image_id_indices = 0
+	 * @channel_indices = 1
+	 * @default_slice = [".", "difference", ".", "."]
+	 * image_id = [1, ..., nP]
+	 * channel = ["threshold_1", "threshold_2", "difference"]
+	 * data = uint[nP, nC, i, j]
+	 * Here, a data array with four dimensions, including the number of images
+	 * (nP) and number of channels (nC), specifies more dimensions than can be
+	 * visualized with a 2D image viewer for a given image. Therefore the
+	 * default_slice attribute specifies that the "difference" channel should be
+	 * shown by default.
+	 * Alternate version using an integer would look like this (note 2 is a string)::
+	 * data:NXdata
+	 * @signal = "data"
+	 * @axes = ["image_id", "channel", ".", "."]
+	 * @image_id_indices = 0
+	 * @channel_indices = 1
+	 * @default_slice = [".", "2", ".", "."]
+	 * image_id = [1, ..., nP]
+	 * channel = ["threshold_1", "threshold_2", "difference"]
+	 * data = uint[nP, nC, i, j]
+	 *
+	 * @return  the value.
+	 */
+	public String getAttributeDefault_slice();
+
+	/**
+	 * Which slice of data to show in a plot by default. This is useful especially for
+	 * datasets with more than 2 dimensions.
+	 * Should be an array of length equal to the number of dimensions
+	 * in the data, with the following possible values:
+	 * * ".": All the data in this dimension should be included
+	 * * Integer: Only this slice should be used.
+	 * * String: Only this slice should be used. Use if ``AXISNAME`` is a string
+	 * array.
+	 * Example::
+	 * data:NXdata
+	 * @signal = "data"
+	 * @axes = ["image_id", "channel", ".", "."]
+	 * @image_id_indices = 0
+	 * @channel_indices = 1
+	 * @default_slice = [".", "difference", ".", "."]
+	 * image_id = [1, ..., nP]
+	 * channel = ["threshold_1", "threshold_2", "difference"]
+	 * data = uint[nP, nC, i, j]
+	 * Here, a data array with four dimensions, including the number of images
+	 * (nP) and number of channels (nC), specifies more dimensions than can be
+	 * visualized with a 2D image viewer for a given image. Therefore the
+	 * default_slice attribute specifies that the "difference" channel should be
+	 * shown by default.
+	 * Alternate version using an integer would look like this (note 2 is a string)::
+	 * data:NXdata
+	 * @signal = "data"
+	 * @axes = ["image_id", "channel", ".", "."]
+	 * @image_id_indices = 0
+	 * @channel_indices = 1
+	 * @default_slice = [".", "2", ".", "."]
+	 * image_id = [1, ..., nP]
+	 * channel = ["threshold_1", "threshold_2", "difference"]
+	 * data = uint[nP, nC, i, j]
+	 *
+	 * @param default_sliceValue the default_sliceValue
+	 */
+	public void setAttributeDefault_slice(String default_sliceValue);
 
 	/**
 	 * The ``AXISNAME_indices`` attribute is a single integer or an array of integers that defines which :ref:`data </NXdata/DATA-field>`
@@ -256,12 +335,12 @@ public interface NXdata extends NXobject {
 	 * (or indices) of the :ref:`AXISNAME </NXdata/AXISNAME-field>` name in the :ref:`axes </NXdata@axes-attribute>` attribute.
 	 * .. note:: When ``AXISNAME_indices`` contains multiple integers, it must be saved as an actual array
 	 * of integers and not a comma separated string.
-	 * 
+	 *
 	 * @param axisname the axisname
 	 * @return  the value.
 	 */
 	public Long getAttributeIndices(String axisname);
-	
+
 	/**
 	 * The ``AXISNAME_indices`` attribute is a single integer or an array of integers that defines which :ref:`data </NXdata/DATA-field>`
 	 * dimension(s) are spanned by the corresponding axis. The first dimension index is ``0`` (zero).
@@ -269,7 +348,7 @@ public interface NXdata extends NXobject {
 	 * (or indices) of the :ref:`AXISNAME </NXdata/AXISNAME-field>` name in the :ref:`axes </NXdata@axes-attribute>` attribute.
 	 * .. note:: When ``AXISNAME_indices`` contains multiple integers, it must be saved as an actual array
 	 * of integers and not a comma separated string.
-	 * 
+	 *
 	 * @param axisname the axisname
 	 * @param indicesValue the indicesValue
 	 */
@@ -281,18 +360,18 @@ public interface NXdata extends NXobject {
 	 * that contain the values of the coordinates along the :ref:`data </NXdata/DATA-field>` dimensions.
 	 * .. note:: When ``axes`` contains multiple strings, it must be saved as an actual array
 	 * of strings and not a single comma separated string.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeAxes();
-	
+
 	/**
 	 * .. index:: plotting
 	 * The ``axes`` attribute is a list of strings which are the names of the :ref:`AXISNAME </NXdata/AXISNAME-field>` fields
 	 * that contain the values of the coordinates along the :ref:`data </NXdata/DATA-field>` dimensions.
 	 * .. note:: When ``axes`` contains multiple strings, it must be saved as an actual array
 	 * of strings and not a single comma separated string.
-	 * 
+	 *
 	 * @param axesValue the axesValue
 	 */
 	public void setAttributeAxes(String axesValue);
@@ -303,25 +382,29 @@ public interface NXdata extends NXobject {
 	 * As the upper case ``AXISNAME`` indicates, the names of the ``AXISNAME`` fields can be chosen :ref:`freely <validItemName>`.
 	 * The :ref:`axes </NXdata@axes-attribute>` attribute can be used to find all datasets in the
 	 * ``NXdata`` that contain coordinate values.
+	 * Most AXISNAME fields will be sequences of numbers but if an axis is better represented using names, such as channel names,
+	 * an array of NX_CHAR can be provided.
 	 * <p>
-	 * <b>Type:</b> NX_NUMBER
+	 * <b>Type:</b> NX_CHAR_OR_NUMBER
 	 * </p>
-	 * 
+	 *
 	 * @param axisname the axisname
 	 * @return  the value.
 	 */
 	public IDataset getAxisname(String axisname);
-	
+
 	/**
 	 * Coordinate values along one or more :ref:`data </NXdata/DATA-field>` dimensions. The rank must be equal
 	 * to the number of dimensions it spans.
 	 * As the upper case ``AXISNAME`` indicates, the names of the ``AXISNAME`` fields can be chosen :ref:`freely <validItemName>`.
 	 * The :ref:`axes </NXdata@axes-attribute>` attribute can be used to find all datasets in the
 	 * ``NXdata`` that contain coordinate values.
+	 * Most AXISNAME fields will be sequences of numbers but if an axis is better represented using names, such as channel names,
+	 * an array of NX_CHAR can be provided.
 	 * <p>
-	 * <b>Type:</b> NX_NUMBER
+	 * <b>Type:</b> NX_CHAR_OR_NUMBER
 	 * </p>
-	 * 
+	 *
 	 * @param axisname the axisname
 	 * @param axisnameDataset the axisnameDataset
 	 */
@@ -333,14 +416,16 @@ public interface NXdata extends NXobject {
 	 * As the upper case ``AXISNAME`` indicates, the names of the ``AXISNAME`` fields can be chosen :ref:`freely <validItemName>`.
 	 * The :ref:`axes </NXdata@axes-attribute>` attribute can be used to find all datasets in the
 	 * ``NXdata`` that contain coordinate values.
+	 * Most AXISNAME fields will be sequences of numbers but if an axis is better represented using names, such as channel names,
+	 * an array of NX_CHAR can be provided.
 	 * <p>
-	 * <b>Type:</b> NX_NUMBER
+	 * <b>Type:</b> NX_CHAR_OR_NUMBER
 	 * </p>
-	 * 
+	 *
 	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public Number getAxisnameScalar(String axisname);
+	public Object getAxisnameScalar(String axisname);
 
 	/**
 	 * Coordinate values along one or more :ref:`data </NXdata/DATA-field>` dimensions. The rank must be equal
@@ -348,16 +433,18 @@ public interface NXdata extends NXobject {
 	 * As the upper case ``AXISNAME`` indicates, the names of the ``AXISNAME`` fields can be chosen :ref:`freely <validItemName>`.
 	 * The :ref:`axes </NXdata@axes-attribute>` attribute can be used to find all datasets in the
 	 * ``NXdata`` that contain coordinate values.
+	 * Most AXISNAME fields will be sequences of numbers but if an axis is better represented using names, such as channel names,
+	 * an array of NX_CHAR can be provided.
 	 * <p>
-	 * <b>Type:</b> NX_NUMBER
+	 * <b>Type:</b> NX_CHAR_OR_NUMBER
 	 * </p>
-	 * 
+	 *
 	 * @param axisname the axisname
 	 * @param axisname the axisname
 	 */
-	public DataNode setAxisnameScalar(String axisname, Number axisnameValue);
+	public DataNode setAxisnameScalar(String axisname, Object axisnameValue);
 
-	
+
 	/**
 	 * Get all Axisname fields:
 	 *
@@ -366,26 +453,28 @@ public interface NXdata extends NXobject {
 	 * As the upper case ``AXISNAME`` indicates, the names of the ``AXISNAME`` fields can be chosen :ref:`freely <validItemName>`.
 	 * The :ref:`axes </NXdata@axes-attribute>` attribute can be used to find all datasets in the
 	 * ``NXdata`` that contain coordinate values.
+	 * Most AXISNAME fields will be sequences of numbers but if an axis is better represented using names, such as channel names,
+	 * an array of NX_CHAR can be provided.
 	 * <p>
-	 * <b>Type:</b> NX_NUMBER
+	 * <b>Type:</b> NX_CHAR_OR_NUMBER
 	 * </p>
 	 * <p> <em>Note: this method returns ALL datasets within this group.</em> 
-	 * 
+	 *
 	 * @return  a map from node names to the ? extends IDataset for that node.
 	 */
 	public Map<String, ? extends IDataset> getAllAxisname();
 
 	/**
 	 * Axis label
-	 * 
+	 *
 	 * @param axisname the axisname
 	 * @return  the value.
 	 */
 	public String getAxisnameAttributeLong_name(String axisname);
-	
+
 	/**
 	 * Axis label
-	 * 
+	 *
 	 * @param axisname the axisname
 	 * @param long_nameValue the long_nameValue
 	 */
@@ -394,16 +483,16 @@ public interface NXdata extends NXobject {
 	/**
 	 * Unit in which the coordinate values are expressed.
 	 * See the section :ref:`Design-Units` for more information.
-	 * 
+	 *
 	 * @param axisname the axisname
 	 * @return  the value.
 	 */
 	public String getAxisnameAttributeUnits(String axisname);
-	
+
 	/**
 	 * Unit in which the coordinate values are expressed.
 	 * See the section :ref:`Design-Units` for more information.
-	 * 
+	 *
 	 * @param axisname the axisname
 	 * @param unitsValue the unitsValue
 	 */
@@ -412,16 +501,16 @@ public interface NXdata extends NXobject {
 	/**
 	 * ``0|false``: single value,
 	 * ``1|true``: multiple values
-	 * 
+	 *
 	 * @param axisname the axisname
 	 * @return  the value.
 	 */
 	public Boolean getAxisnameAttributeDistribution(String axisname);
-	
+
 	/**
 	 * ``0|false``: single value,
 	 * ``1|true``: multiple values
-	 * 
+	 *
 	 * @param axisname the axisname
 	 * @param distributionValue the distributionValue
 	 */
@@ -429,15 +518,15 @@ public interface NXdata extends NXobject {
 
 	/**
 	 * Index of first good value
-	 * 
+	 *
 	 * @param axisname the axisname
 	 * @return  the value.
 	 */
 	public Long getAxisnameAttributeFirst_good(String axisname);
-	
+
 	/**
 	 * Index of first good value
-	 * 
+	 *
 	 * @param axisname the axisname
 	 * @param first_goodValue the first_goodValue
 	 */
@@ -445,15 +534,15 @@ public interface NXdata extends NXobject {
 
 	/**
 	 * Index of last good value
-	 * 
+	 *
 	 * @param axisname the axisname
 	 * @return  the value.
 	 */
 	public Long getAxisnameAttributeLast_good(String axisname);
-	
+
 	/**
 	 * Index of last good value
-	 * 
+	 *
 	 * @param axisname the axisname
 	 * @param last_goodValue the last_goodValue
 	 */
@@ -464,20 +553,20 @@ public interface NXdata extends NXobject {
 	 * N.B. The ``axis`` attribute is the old way of designating a link.
 	 * Do not use the :ref:`axes </NXdata@axes-attribute>` attribute with the ``axis`` attribute.
 	 * The :ref:`axes </NXdata@axes-attribute>` attribute is now preferred.
-	 * 
+	 *
 	 * @deprecated Use the group ``axes`` attribute   (NIAC2014)
 	 * @param axisname the axisname
 	 * @return  the value.
 	 */
 	@Deprecated
 	public Long getAxisnameAttributeAxis(String axisname);
-	
+
 	/**
 	 * Index (positive integer) identifying this specific set of numbers.
 	 * N.B. The ``axis`` attribute is the old way of designating a link.
 	 * Do not use the :ref:`axes </NXdata@axes-attribute>` attribute with the ``axis`` attribute.
 	 * The :ref:`axes </NXdata@axes-attribute>` attribute is now preferred.
-	 * 
+	 *
 	 * @deprecated Use the group ``axes`` attribute   (NIAC2014)
 	 * @param axisname the axisname
 	 * @param axisValue the axisValue
@@ -496,12 +585,12 @@ public interface NXdata extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b>
 	 * </p>
-	 * 
+	 *
 	 * @param data the data
 	 * @return  the value.
 	 */
 	public IDataset getData(String data);
-	
+
 	/**
 	 * .. index:: plotting
 	 * Data values to be used as the NeXus *plottable data*. As the upper case ``DATA``
@@ -513,7 +602,7 @@ public interface NXdata extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b>
 	 * </p>
-	 * 
+	 *
 	 * @param data the data
 	 * @param dataDataset the dataDataset
 	 */
@@ -530,7 +619,7 @@ public interface NXdata extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b>
 	 * </p>
-	 * 
+	 *
 	 * @param data the data
 	 * @return  the value.
 	 */
@@ -547,13 +636,13 @@ public interface NXdata extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b>
 	 * </p>
-	 * 
+	 *
 	 * @param data the data
 	 * @param data the data
 	 */
 	public DataNode setDataScalar(String data, Number dataValue);
 
-	
+
 	/**
 	 * Get all Data fields:
 	 *
@@ -568,7 +657,7 @@ public interface NXdata extends NXobject {
 	 * <b>Dimensions:</b>
 	 * </p>
 	 * <p> <em>Note: this method returns ALL datasets within this group.</em> 
-	 * 
+	 *
 	 * @return  a map from node names to the ? extends IDataset for that node.
 	 */
 	public Map<String, ? extends IDataset> getAllData();
@@ -579,21 +668,21 @@ public interface NXdata extends NXobject {
 	 * Only one field in a :ref:`NXdata` group may have the
 	 * ``signal=1`` attribute.
 	 * Do not use the ``signal`` attribute with the ``axis`` attribute.
-	 * 
+	 *
 	 * @deprecated Use the group ``signal`` attribute   (NIAC2014)
 	 * @param data the data
 	 * @return  the value.
 	 */
 	@Deprecated
 	public Long getDataAttributeSignal(String data);
-	
+
 	/**
 	 * .. index:: plotting
 	 * Plottable (independent) axis, indicate index number.
 	 * Only one field in a :ref:`NXdata` group may have the
 	 * ``signal=1`` attribute.
 	 * Do not use the ``signal`` attribute with the ``axis`` attribute.
-	 * 
+	 *
 	 * @deprecated Use the group ``signal`` attribute   (NIAC2014)
 	 * @param data the data
 	 * @param signalValue the signalValue
@@ -608,14 +697,14 @@ public interface NXdata extends NXobject {
 	 * NOTE: The :ref:`axes </NXdata@axes-attribute>` attribute is the preferred
 	 * method of designating a link.
 	 * Do not use the :ref:`axes </NXdata@axes-attribute>` attribute with the ``axis`` attribute.
-	 * 
+	 *
 	 * @deprecated Use the group ``axes`` attribute   (NIAC2014)
 	 * @param data the data
 	 * @return  the value.
 	 */
 	@Deprecated
 	public String getDataAttributeAxes(String data);
-	
+
 	/**
 	 * Defines the names of the coordinates
 	 * (independent axes) for this data set
@@ -623,7 +712,7 @@ public interface NXdata extends NXobject {
 	 * NOTE: The :ref:`axes </NXdata@axes-attribute>` attribute is the preferred
 	 * method of designating a link.
 	 * Do not use the :ref:`axes </NXdata@axes-attribute>` attribute with the ``axis`` attribute.
-	 * 
+	 *
 	 * @deprecated Use the group ``axes`` attribute   (NIAC2014)
 	 * @param data the data
 	 * @param axesValue the axesValue
@@ -633,15 +722,15 @@ public interface NXdata extends NXobject {
 
 	/**
 	 * data label
-	 * 
+	 *
 	 * @param data the data
 	 * @return  the value.
 	 */
 	public String getDataAttributeLong_name(String data);
-	
+
 	/**
 	 * data label
-	 * 
+	 *
 	 * @param data the data
 	 * @param long_nameValue the long_nameValue
 	 */
@@ -656,12 +745,12 @@ public interface NXdata extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
-	 * 
+	 *
 	 * @param fieldname the fieldname
 	 * @return  the value.
 	 */
 	public IDataset getErrors(String fieldname);
-	
+
 	/**
 	 * "Errors" (meaning *uncertainties* or *standard deviations*)
 	 * associated with any field named ``FIELDNAME`` in this ``NXdata``
@@ -671,7 +760,7 @@ public interface NXdata extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
-	 * 
+	 *
 	 * @param fieldname the fieldname
 	 * @param errorsDataset the errorsDataset
 	 */
@@ -686,7 +775,7 @@ public interface NXdata extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
-	 * 
+	 *
 	 * @param fieldname the fieldname
 	 * @return  the value.
 	 */
@@ -701,13 +790,13 @@ public interface NXdata extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
-	 * 
+	 *
 	 * @param fieldname the fieldname
 	 * @param errors the errors
 	 */
 	public DataNode setErrorsScalar(String fieldname, Number errorsValue);
 
-	
+
 	/**
 	 * Get all Errors fields:
 	 *
@@ -720,7 +809,7 @@ public interface NXdata extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 * <p> <em>Note: this method returns ALL datasets within this group.</em> 
-	 * 
+	 *
 	 * @return  a map from node names to the ? extends IDataset for that node.
 	 */
 	public Map<String, ? extends IDataset> getAllErrors();
@@ -734,13 +823,13 @@ public interface NXdata extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b>
 	 * </p>
-	 * 
+	 *
 	 * @deprecated Use ``DATA_errors`` instead (NIAC2018)
 	 * @return  the value.
 	 */
 	@Deprecated
 	public IDataset getErrors();
-	
+
 	/**
 	 * Standard deviations of data values -
 	 * the data array is identified by the group attribute ``signal``.
@@ -750,7 +839,7 @@ public interface NXdata extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b>
 	 * </p>
-	 * 
+	 *
 	 * @deprecated Use ``DATA_errors`` instead (NIAC2018)
 	 * @param errorsDataset the errorsDataset
 	 */
@@ -766,7 +855,7 @@ public interface NXdata extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b>
 	 * </p>
-	 * 
+	 *
 	 * @deprecated Use ``DATA_errors`` instead (NIAC2018)
 	 * @return  the value.
 	 */
@@ -782,7 +871,7 @@ public interface NXdata extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b>
 	 * </p>
-	 * 
+	 *
 	 * @deprecated Use ``DATA_errors`` instead (NIAC2018)
 	 * @param errors the errors
 	 */
@@ -798,11 +887,11 @@ public interface NXdata extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getScaling_factor();
-	
+
 	/**
 	 * The elements in data are usually float values really. For
 	 * efficiency reasons these are usually stored as integers
@@ -812,7 +901,7 @@ public interface NXdata extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * </p>
-	 * 
+	 *
 	 * @param scaling_factorDataset the scaling_factorDataset
 	 */
 	public DataNode setScaling_factor(IDataset scaling_factorDataset);
@@ -826,7 +915,7 @@ public interface NXdata extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getScaling_factorScalar();
@@ -840,7 +929,7 @@ public interface NXdata extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * </p>
-	 * 
+	 *
 	 * @param scaling_factor the scaling_factor
 	 */
 	public DataNode setScaling_factorScalar(Double scaling_factorValue);
@@ -850,17 +939,17 @@ public interface NXdata extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getOffset();
-	
+
 	/**
 	 * An optional offset to apply to the values in data.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * </p>
-	 * 
+	 *
 	 * @param offsetDataset the offsetDataset
 	 */
 	public DataNode setOffset(IDataset offsetDataset);
@@ -870,7 +959,7 @@ public interface NXdata extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getOffsetScalar();
@@ -880,35 +969,35 @@ public interface NXdata extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * </p>
-	 * 
+	 *
 	 * @param offset the offset
 	 */
 	public DataNode setOffsetScalar(Double offsetValue);
 
 	/**
 	 * Title for the plot.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getTitle();
-	
+
 	/**
 	 * Title for the plot.
-	 * 
+	 *
 	 * @param titleDataset the titleDataset
 	 */
 	public DataNode setTitle(IDataset titleDataset);
 
 	/**
 	 * Title for the plot.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getTitleScalar();
 
 	/**
 	 * Title for the plot.
-	 * 
+	 *
 	 * @param title the title
 	 */
 	public DataNode setTitleScalar(String titleValue);
@@ -923,11 +1012,11 @@ public interface NXdata extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: nx;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getX();
-	
+
 	/**
 	 * This is an array holding the values to use for the x-axis of
 	 * data. The units must be appropriate for the measurement.
@@ -938,7 +1027,7 @@ public interface NXdata extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: nx;
 	 * </p>
-	 * 
+	 *
 	 * @param xDataset the xDataset
 	 */
 	public DataNode setX(IDataset xDataset);
@@ -953,7 +1042,7 @@ public interface NXdata extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: nx;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getXScalar();
@@ -968,7 +1057,7 @@ public interface NXdata extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: nx;
 	 * </p>
-	 * 
+	 *
 	 * @param x the x
 	 */
 	public DataNode setXScalar(Double xValue);
@@ -983,11 +1072,11 @@ public interface NXdata extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: ny;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getY();
-	
+
 	/**
 	 * This is an array holding the values to use for the y-axis of
 	 * data. The units must be appropriate for the measurement.
@@ -998,7 +1087,7 @@ public interface NXdata extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: ny;
 	 * </p>
-	 * 
+	 *
 	 * @param yDataset the yDataset
 	 */
 	public DataNode setY(IDataset yDataset);
@@ -1013,7 +1102,7 @@ public interface NXdata extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: ny;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getYScalar();
@@ -1028,7 +1117,7 @@ public interface NXdata extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: ny;
 	 * </p>
-	 * 
+	 *
 	 * @param y the y
 	 */
 	public DataNode setYScalar(Double yValue);
@@ -1043,11 +1132,11 @@ public interface NXdata extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: nz;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getZ();
-	
+
 	/**
 	 * This is an array holding the values to use for the z-axis of
 	 * data. The units must be appropriate for the measurement.
@@ -1058,7 +1147,7 @@ public interface NXdata extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: nz;
 	 * </p>
-	 * 
+	 *
 	 * @param zDataset the zDataset
 	 */
 	public DataNode setZ(IDataset zDataset);
@@ -1073,7 +1162,7 @@ public interface NXdata extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: nz;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getZScalar();
@@ -1088,7 +1177,7 @@ public interface NXdata extends NXobject {
 	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: nz;
 	 * </p>
-	 * 
+	 *
 	 * @param z the z
 	 */
 	public DataNode setZScalar(Double zValue);

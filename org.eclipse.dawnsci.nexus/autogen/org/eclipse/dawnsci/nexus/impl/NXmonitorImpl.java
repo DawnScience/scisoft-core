@@ -29,7 +29,7 @@ import org.eclipse.dawnsci.nexus.*;
  * wavelength in pulsed neutron instruments. However, it may also include
  * integrals, or scalar monitor counts, which are often used in both in both
  * pulsed and steady-state instrumentation.
- * 
+
  */
 public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 
@@ -49,22 +49,22 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	public NXmonitorImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXmonitor.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_MONITOR;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getMode() {
@@ -371,7 +371,7 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	public Map<String, NXgeometry> getAllGeometry() {
 		return getChildren(NXgeometry.class);
 	}
-	
+
 	@Override
 	@Deprecated
 	public void setAllGeometry(Map<String, NXgeometry> geometry) {
@@ -423,7 +423,7 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	public Map<String, NXoff_geometry> getAllOff_geometry() {
 		return getChildren(NXoff_geometry.class);
 	}
-	
+
 	@Override
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry) {
 		setChildren(off_geometry);
@@ -484,7 +484,7 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

@@ -24,7 +24,7 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * Extension of NXpositioner to include fields to describe the use of manipulators
  * in photoemission experiments.
- * 
+
  */
 public class NXmanipulatorImpl extends NXobjectImpl implements NXmanipulator {
 
@@ -42,22 +42,22 @@ public class NXmanipulatorImpl extends NXobjectImpl implements NXmanipulator {
 	public NXmanipulatorImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXmanipulator.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_MANIPULATOR;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getName() {
@@ -264,7 +264,7 @@ public class NXmanipulatorImpl extends NXobjectImpl implements NXmanipulator {
 	public Map<String, NXpositioner> getAllPositioner() {
 		return getChildren(NXpositioner.class);
 	}
-	
+
 	@Override
 	public void setAllPositioner(Map<String, NXpositioner> positioner) {
 		setChildren(positioner);
@@ -315,7 +315,7 @@ public class NXmanipulatorImpl extends NXobjectImpl implements NXmanipulator {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

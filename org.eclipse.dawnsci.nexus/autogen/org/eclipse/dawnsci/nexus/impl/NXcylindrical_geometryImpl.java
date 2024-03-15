@@ -29,7 +29,7 @@ import org.eclipse.dawnsci.nexus.*;
  * It can be used to describe the shape of any beamline component, including detectors.
  * In the case of detectors it can be used to define the shape of a single pixel, or,
  * if the pixel shapes are non-uniform, to describe the shape of the whole detector.
- * 
+
  */
 public class NXcylindrical_geometryImpl extends NXobjectImpl implements NXcylindrical_geometry {
 
@@ -45,22 +45,22 @@ public class NXcylindrical_geometryImpl extends NXobjectImpl implements NXcylind
 	public NXcylindrical_geometryImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXcylindrical_geometry.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_CYLINDRICAL_GEOMETRY;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getVertices() {

@@ -21,7 +21,7 @@ import org.eclipse.january.dataset.IDataset;
  * A device that blocks the beam completely, usually to protect a detector.
  * Beamstops and their positions are important for SANS
  * and SAXS experiments.
- * 
+ *
  */
 public interface NXbeam_stop extends NXobject {
 
@@ -35,16 +35,16 @@ public interface NXbeam_stop extends NXobject {
 	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
 	 * engineering shape, orientation and position of the beam stop.
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the beamstop and NXoff_geometry to describe its shape instead
 	 * @return  the value.
 	 */
 	@Deprecated
 	public NXgeometry getGeometry();
-	
+
 	/**
 	 * engineering shape, orientation and position of the beam stop.
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the beamstop and NXoff_geometry to describe its shape instead
 	 * @param geometryGroup the geometryGroup
 	 */
@@ -57,55 +57,55 @@ public interface NXbeam_stop extends NXobject {
 	 * <li>
 	 * engineering shape, orientation and position of the beam stop.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the beamstop and NXoff_geometry to describe its shape instead
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXgeometry for that node.
 	 */
 	@Deprecated
 	public NXgeometry getGeometry(String name);
-	
+
 	/**
 	 * Set a NXgeometry node by name:
 	 * <ul>
 	 * <li>
 	 * engineering shape, orientation and position of the beam stop.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the beamstop and NXoff_geometry to describe its shape instead
 	 * @param name the name of the node
 	 * @param geometry the value to set
 	 */
 	@Deprecated
 	public void setGeometry(String name, NXgeometry geometry);
-	
+
 	/**
 	 * Get all NXgeometry nodes:
 	 * <ul>
 	 * <li>
 	 * engineering shape, orientation and position of the beam stop.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the beamstop and NXoff_geometry to describe its shape instead
 	 * @return  a map from node names to the NXgeometry for that node.
 	 */
 	@Deprecated
 	public Map<String, NXgeometry> getAllGeometry();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * engineering shape, orientation and position of the beam stop.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the beamstop and NXoff_geometry to describe its shape instead
-	 * @param geometry the child nodes to add 
+	 * @param geometry the child nodes to add
 	 */
-	
+
 	@Deprecated
 	public void setAllGeometry(Map<String, NXgeometry> geometry);
-	
+
 
 	/**
 	 * description of beamstop
@@ -114,11 +114,11 @@ public interface NXbeam_stop extends NXobject {
 	 * <li><b>circular</b> </li>
 	 * <li><b>rectangular</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDescription();
-	
+
 	/**
 	 * description of beamstop
 	 * <p>
@@ -126,7 +126,7 @@ public interface NXbeam_stop extends NXobject {
 	 * <li><b>circular</b> </li>
 	 * <li><b>rectangular</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param descriptionDataset the descriptionDataset
 	 */
 	public DataNode setDescription(IDataset descriptionDataset);
@@ -138,7 +138,7 @@ public interface NXbeam_stop extends NXobject {
 	 * <li><b>circular</b> </li>
 	 * <li><b>rectangular</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDescriptionScalar();
@@ -150,21 +150,21 @@ public interface NXbeam_stop extends NXobject {
 	 * <li><b>circular</b> </li>
 	 * <li><b>rectangular</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param description the description
 	 */
 	public DataNode setDescriptionScalar(String descriptionValue);
 
 	/**
 	 * This group describes the shape of the beam line component
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXoff_geometry getOff_geometry();
-	
+
 	/**
 	 * This group describes the shape of the beam line component
-	 * 
+	 *
 	 * @param off_geometryGroup the off_geometryGroup
 	 */
 	public void setOff_geometry(NXoff_geometry off_geometryGroup);
@@ -175,60 +175,60 @@ public interface NXbeam_stop extends NXobject {
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
 	public NXoff_geometry getOff_geometry(String name);
-	
+
 	/**
 	 * Set a NXoff_geometry node by name:
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param off_geometry the value to set
 	 */
 	public void setOff_geometry(String name, NXoff_geometry off_geometry);
-	
+
 	/**
 	 * Get all NXoff_geometry nodes:
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXoff_geometry for that node.
 	 */
 	public Map<String, NXoff_geometry> getAllOff_geometry();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
 	 * This group describes the shape of the beam line component</li>
 	 * </ul>
-	 * 
-	 * @param off_geometry the child nodes to add 
+	 *
+	 * @param off_geometry the child nodes to add
 	 */
-	
+
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry);
-	
+
 
 	/**
 	 * This group is an alternative to NXoff_geometry for describing the shape
 	 * of the beam stop.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXcylindrical_geometry getCylindrical_geometry();
-	
+
 	/**
 	 * This group is an alternative to NXoff_geometry for describing the shape
 	 * of the beam stop.
-	 * 
+	 *
 	 * @param cylindrical_geometryGroup the cylindrical_geometryGroup
 	 */
 	public void setCylindrical_geometry(NXcylindrical_geometry cylindrical_geometryGroup);
@@ -240,12 +240,12 @@ public interface NXbeam_stop extends NXobject {
 	 * This group is an alternative to NXoff_geometry for describing the shape
 	 * of the beam stop.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXcylindrical_geometry for that node.
 	 */
 	public NXcylindrical_geometry getCylindrical_geometry(String name);
-	
+
 	/**
 	 * Set a NXcylindrical_geometry node by name:
 	 * <ul>
@@ -253,12 +253,12 @@ public interface NXbeam_stop extends NXobject {
 	 * This group is an alternative to NXoff_geometry for describing the shape
 	 * of the beam stop.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param cylindrical_geometry the value to set
 	 */
 	public void setCylindrical_geometry(String name, NXcylindrical_geometry cylindrical_geometry);
-	
+
 	/**
 	 * Get all NXcylindrical_geometry nodes:
 	 * <ul>
@@ -266,11 +266,11 @@ public interface NXbeam_stop extends NXobject {
 	 * This group is an alternative to NXoff_geometry for describing the shape
 	 * of the beam stop.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXcylindrical_geometry for that node.
 	 */
 	public Map<String, NXcylindrical_geometry> getAllCylindrical_geometry();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -278,12 +278,12 @@ public interface NXbeam_stop extends NXobject {
 	 * This group is an alternative to NXoff_geometry for describing the shape
 	 * of the beam stop.</li>
 	 * </ul>
-	 * 
-	 * @param cylindrical_geometry the child nodes to add 
+	 *
+	 * @param cylindrical_geometry the child nodes to add
 	 */
-	
+
 	public void setAllCylindrical_geometry(Map<String, NXcylindrical_geometry> cylindrical_geometry);
-	
+
 
 	/**
 	 * Size of beamstop. If this is not sufficient to describe the beam stop use
@@ -292,11 +292,11 @@ public interface NXbeam_stop extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getSize();
-	
+
 	/**
 	 * Size of beamstop. If this is not sufficient to describe the beam stop use
 	 * NXoff_geometry instead.
@@ -304,7 +304,7 @@ public interface NXbeam_stop extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param sizeDataset the sizeDataset
 	 */
 	public DataNode setSize(IDataset sizeDataset);
@@ -316,7 +316,7 @@ public interface NXbeam_stop extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getSizeScalar();
@@ -328,7 +328,7 @@ public interface NXbeam_stop extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param size the size
 	 */
 	public DataNode setSizeScalar(Double sizeValue);
@@ -340,11 +340,11 @@ public interface NXbeam_stop extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getX();
-	
+
 	/**
 	 * x position of the beamstop in relation to the detector.
 	 * Note, it is recommended to use NXtransformations instead.
@@ -352,7 +352,7 @@ public interface NXbeam_stop extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param xDataset the xDataset
 	 */
 	public DataNode setX(IDataset xDataset);
@@ -364,7 +364,7 @@ public interface NXbeam_stop extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getXScalar();
@@ -376,7 +376,7 @@ public interface NXbeam_stop extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param x the x
 	 */
 	public DataNode setXScalar(Double xValue);
@@ -388,11 +388,11 @@ public interface NXbeam_stop extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getY();
-	
+
 	/**
 	 * y position of the beamstop in relation to the detector.
 	 * Note, it is recommended to use NXtransformations instead.
@@ -400,7 +400,7 @@ public interface NXbeam_stop extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param yDataset the yDataset
 	 */
 	public DataNode setY(IDataset yDataset);
@@ -412,7 +412,7 @@ public interface NXbeam_stop extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getYScalar();
@@ -424,7 +424,7 @@ public interface NXbeam_stop extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param y the y
 	 */
 	public DataNode setYScalar(Double yValue);
@@ -436,11 +436,11 @@ public interface NXbeam_stop extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDistance_to_detector();
-	
+
 	/**
 	 * distance of the beamstop to the detector.
 	 * Note, it is recommended to use NXtransformations instead.
@@ -448,7 +448,7 @@ public interface NXbeam_stop extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param distance_to_detectorDataset the distance_to_detectorDataset
 	 */
 	public DataNode setDistance_to_detector(IDataset distance_to_detectorDataset);
@@ -460,7 +460,7 @@ public interface NXbeam_stop extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getDistance_to_detectorScalar();
@@ -472,7 +472,7 @@ public interface NXbeam_stop extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
 	 * </p>
-	 * 
+	 *
 	 * @param distance_to_detector the distance_to_detector
 	 */
 	public DataNode setDistance_to_detectorScalar(Double distance_to_detectorValue);
@@ -483,18 +483,18 @@ public interface NXbeam_stop extends NXobject {
 	 * <li><b>in</b> </li>
 	 * <li><b>out</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getStatus();
-	
+
 	/**
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>in</b> </li>
 	 * <li><b>out</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param statusDataset the statusDataset
 	 */
 	public DataNode setStatus(IDataset statusDataset);
@@ -505,7 +505,7 @@ public interface NXbeam_stop extends NXobject {
 	 * <li><b>in</b> </li>
 	 * <li><b>out</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getStatusScalar();
@@ -516,7 +516,7 @@ public interface NXbeam_stop extends NXobject {
 	 * <li><b>in</b> </li>
 	 * <li><b>out</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param status the status
 	 */
 	public DataNode setStatusScalar(String statusValue);
@@ -529,11 +529,11 @@ public interface NXbeam_stop extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -542,7 +542,7 @@ public interface NXbeam_stop extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);
@@ -561,11 +561,11 @@ public interface NXbeam_stop extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDepends_on();
-	
+
 	/**
 	 * NeXus positions components by applying a set of translations and rotations
 	 * to apply to the component starting from 0, 0, 0. The order of these operations
@@ -580,7 +580,7 @@ public interface NXbeam_stop extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_onDataset the depends_onDataset
 	 */
 	public DataNode setDepends_on(IDataset depends_onDataset);
@@ -599,7 +599,7 @@ public interface NXbeam_stop extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDepends_onScalar();
@@ -618,7 +618,7 @@ public interface NXbeam_stop extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
@@ -628,17 +628,17 @@ public interface NXbeam_stop extends NXobject {
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
 	 * This is the group recommended for holding the chain of translation
 	 * and rotation operations necessary to position the component within
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -652,12 +652,12 @@ public interface NXbeam_stop extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -667,12 +667,12 @@ public interface NXbeam_stop extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -682,11 +682,11 @@ public interface NXbeam_stop extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -696,11 +696,11 @@ public interface NXbeam_stop extends NXobject {
 	 * the instrument. The dependency chain may however traverse similar groups in
 	 * other component groups.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 }

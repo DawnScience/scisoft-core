@@ -17,7 +17,7 @@ import org.eclipse.january.dataset.IDataset;
 
 /**
  * Constructive Solid Geometry base class, using :ref:`NXquadric` and :ref:`NXoff_geometry`
- * 
+ *
  */
 public interface NXcsg extends NXobject {
 
@@ -36,11 +36,11 @@ public interface NXcsg extends NXobject {
 	 * <li><b>IS_QUADRIC</b> </li>
 	 * <li><b>IS_MESH</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getOperation();
-	
+
 	/**
 	 * One of the standard construction solid geometry set operations,
 	 * or if the CSG is a pointer to the geometry provided by an
@@ -54,7 +54,7 @@ public interface NXcsg extends NXobject {
 	 * <li><b>IS_QUADRIC</b> </li>
 	 * <li><b>IS_MESH</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param operationDataset the operationDataset
 	 */
 	public DataNode setOperation(IDataset operationDataset);
@@ -72,7 +72,7 @@ public interface NXcsg extends NXobject {
 	 * <li><b>IS_QUADRIC</b> </li>
 	 * <li><b>IS_MESH</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getOperationScalar();
@@ -90,7 +90,7 @@ public interface NXcsg extends NXobject {
 	 * <li><b>IS_QUADRIC</b> </li>
 	 * <li><b>IS_MESH</b> </li></ul></p>
 	 * </p>
-	 * 
+	 *
 	 * @param operation the operation
 	 */
 	public DataNode setOperationScalar(String operationValue);
@@ -99,16 +99,16 @@ public interface NXcsg extends NXobject {
 	 * The first operand of constructive solid geometry
 	 * operation. Compulsory if 'operation' is UNION, INTERSECTION,
 	 * DIFFERENCE or COMPLEMENT.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXcsg getA();
-	
+
 	/**
 	 * The first operand of constructive solid geometry
 	 * operation. Compulsory if 'operation' is UNION, INTERSECTION,
 	 * DIFFERENCE or COMPLEMENT.
-	 * 
+	 *
 	 * @param aGroup the aGroup
 	 */
 	public void setA(NXcsg aGroup);
@@ -117,16 +117,16 @@ public interface NXcsg extends NXobject {
 	 * The second operand of constructive solid geometry
 	 * operation. Compulsory if 'operation' is UNION, INTERSECTION or
 	 * DIFFERENCE.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXcsg getB();
-	
+
 	/**
 	 * The second operand of constructive solid geometry
 	 * operation. Compulsory if 'operation' is UNION, INTERSECTION or
 	 * DIFFERENCE.
-	 * 
+	 *
 	 * @param bGroup the bGroup
 	 */
 	public void setB(NXcsg bGroup);
@@ -140,11 +140,11 @@ public interface NXcsg extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getGeometry();
-	
+
 	/**
 	 * Path to a field that is either an :ref:`NXquadric` (if
 	 * 'operation' = IS_QUADRIC) or an :ref:`NXoff_geometry` (if
@@ -154,7 +154,7 @@ public interface NXcsg extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param geometryDataset the geometryDataset
 	 */
 	public DataNode setGeometry(IDataset geometryDataset);
@@ -168,7 +168,7 @@ public interface NXcsg extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getGeometryScalar();
@@ -182,7 +182,7 @@ public interface NXcsg extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param geometry the geometry
 	 */
 	public DataNode setGeometryScalar(String geometryValue);

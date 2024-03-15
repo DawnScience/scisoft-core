@@ -28,10 +28,11 @@ import org.eclipse.dawnsci.nexus.*;
  * The majority of cases use simple d-dimensional regular scan pattern,
  * such as single point, line profiles, or (rectangular) surface mappings.
  * The latter pattern is the most frequently used.
- * For now the base class provides for scans where the settings,
+ * For now the base class provides for scans for which the settings,
  * binning, and energy resolution is the same for each scan point.
- * `IUPAC instead of Siegbahn notation <https://doi.org/10.1002/xrs.1300200308>`_ should be used.
- * 
+ * `IUPAC instead of Siegbahn notation <https://doi.org/10.1002/xrs.1300200308>`_
+ * should be used.
+
  */
 public class NXspectrum_set_em_xrayImpl extends NXobjectImpl implements NXspectrum_set_em_xray {
 
@@ -39,6 +40,8 @@ public class NXspectrum_set_em_xrayImpl extends NXobjectImpl implements NXspectr
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
+		NexusBaseClass.NX_PROCESS,
+		NexusBaseClass.NX_DATA,
 		NexusBaseClass.NX_DATA,
 		NexusBaseClass.NX_PROCESS);
 
@@ -49,52 +52,74 @@ public class NXspectrum_set_em_xrayImpl extends NXobjectImpl implements NXspectr
 	public NXspectrum_set_em_xrayImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXspectrum_set_em_xray.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_SPECTRUM_SET_EM_XRAY;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
-	public NXdata getData() {
-		// dataNodeName = NX_DATA
-		return getChild("data", NXdata.class);
+	public NXprocess getProcess() {
+		// dataNodeName = NX_PROCESS
+		return getChild("process", NXprocess.class);
 	}
 
 	@Override
-	public void setData(NXdata dataGroup) {
-		putChild("data", dataGroup);
+	public void setProcess(NXprocess processGroup) {
+		putChild("process", processGroup);
 	}
 
 	@Override
-	public NXdata getData(String name) {
-		return getChild(name, NXdata.class);
+	public NXprocess getProcess(String name) {
+		return getChild(name, NXprocess.class);
 	}
 
 	@Override
-	public void setData(String name, NXdata data) {
-		putChild(name, data);
+	public void setProcess(String name, NXprocess process) {
+		putChild(name, process);
 	}
 
 	@Override
-	public Map<String, NXdata> getAllData() {
-		return getChildren(NXdata.class);
+	public Map<String, NXprocess> getAllProcess() {
+		return getChildren(NXprocess.class);
 	}
-	
+
 	@Override
-	public void setAllData(Map<String, NXdata> data) {
-		setChildren(data);
+	public void setAllProcess(Map<String, NXprocess> process) {
+		setChildren(process);
+	}
+
+	@Override
+	public NXdata getStack() {
+		// dataNodeName = NX_STACK
+		return getChild("stack", NXdata.class);
+	}
+
+	@Override
+	public void setStack(NXdata stackGroup) {
+		putChild("stack", stackGroup);
+	}
+
+	@Override
+	public NXdata getSummary() {
+		// dataNodeName = NX_SUMMARY
+		return getChild("summary", NXdata.class);
+	}
+
+	@Override
+	public void setSummary(NXdata summaryGroup) {
+		putChild("summary", summaryGroup);
 	}
 
 	@Override
@@ -107,7 +132,7 @@ public class NXspectrum_set_em_xrayImpl extends NXobjectImpl implements NXspectr
 	public void setIndexing(NXprocess indexingGroup) {
 		putChild("indexing", indexingGroup);
 	}
-	// Unprocessed group: 
-	// Unprocessed group:  composition_map
+	// Unprocessed group:
+	// Unprocessed group: ELEMENTNAME
 
 }

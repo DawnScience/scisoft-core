@@ -23,7 +23,7 @@ import org.eclipse.dawnsci.nexus.*;
  * Container to hold NXevent_data_em instances of an electron microscope session.
  * An event is a time interval during which the microscope was configured,
  * considered stable, and used for characterization.
- * 
+
  */
 public class NXevent_data_em_setImpl extends NXobjectImpl implements NXevent_data_em_set {
 
@@ -40,22 +40,22 @@ public class NXevent_data_em_setImpl extends NXobjectImpl implements NXevent_dat
 	public NXevent_data_em_setImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXevent_data_em_set.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_EVENT_DATA_EM_SET;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public NXevent_data_em getEvent_data_em() {
@@ -82,7 +82,7 @@ public class NXevent_data_em_setImpl extends NXobjectImpl implements NXevent_dat
 	public Map<String, NXevent_data_em> getAllEvent_data_em() {
 		return getChildren(NXevent_data_em.class);
 	}
-	
+
 	@Override
 	public void setAllEvent_data_em(Map<String, NXevent_data_em> event_data_em) {
 		setChildren(event_data_em);

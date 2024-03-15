@@ -56,7 +56,7 @@ import org.eclipse.dawnsci.nexus.*;
  * the ``copy`` dataset selects 20 16-channel blocks that start 32 channels apart,
  * the ``maximum`` dataset will show maximum values in each 16-channel block
  * in every spectra.
- * 
+
  */
 public class NXregionImpl extends NXobjectImpl implements NXregion {
 
@@ -74,22 +74,22 @@ public class NXregionImpl extends NXobjectImpl implements NXregion {
 	public NXregionImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXregion.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_REGION;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public String getAttributeRegion_type() {

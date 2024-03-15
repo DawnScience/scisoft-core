@@ -79,7 +79,7 @@ import org.eclipse.january.dataset.IDataset;
  * * `Further stages in transmission electron microscopy <https://doi.org/10.1007/978-1-4757-2519-3>`_ (page 124ff)
  * * `Specimens in atom probe <https://doi.org/10.1007/978-1-4614-8721-0>`_ (page 47ff)
  * * `Exemplar micro-manipulators <https://nano.oxinst.com/products/omniprobe/omniprobe-200>`_
- * 
+ *
  */
 public interface NXstage_lab extends NXobject {
 
@@ -98,14 +98,11 @@ public interface NXstage_lab extends NXobject {
 	 * bulk_specimen, double_tilt, tilt_rotate,
 	 * heating_chip, atmosphere_chip,
 	 * electrical_biasing_chip, liquid_cell_chip
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDesign();
-	
+
 	/**
 	 * Principal design of the stage.
 	 * Exemplar terms could be side_entry, top_entry,
@@ -113,10 +110,7 @@ public interface NXstage_lab extends NXobject {
 	 * bulk_specimen, double_tilt, tilt_rotate,
 	 * heating_chip, atmosphere_chip,
 	 * electrical_biasing_chip, liquid_cell_chip
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param designDataset the designDataset
 	 */
 	public DataNode setDesign(IDataset designDataset);
@@ -128,10 +122,7 @@ public interface NXstage_lab extends NXobject {
 	 * bulk_specimen, double_tilt, tilt_rotate,
 	 * heating_chip, atmosphere_chip,
 	 * electrical_biasing_chip, liquid_cell_chip
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDesignScalar();
@@ -143,128 +134,107 @@ public interface NXstage_lab extends NXobject {
 	 * bulk_specimen, double_tilt, tilt_rotate,
 	 * heating_chip, atmosphere_chip,
 	 * electrical_biasing_chip, liquid_cell_chip
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param design the design
 	 */
 	public DataNode setDesignScalar(String designValue);
 
 	/**
 	 * Given name/alias for the components making the stage.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getName();
-	
+
 	/**
 	 * Given name/alias for the components making the stage.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param nameDataset the nameDataset
 	 */
 	public DataNode setName(IDataset nameDataset);
 
 	/**
 	 * Given name/alias for the components making the stage.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getNameScalar();
 
 	/**
 	 * Given name/alias for the components making the stage.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param name the name
 	 */
 	public DataNode setNameScalar(String nameValue);
 
 	/**
-	 * 
+	 *
 	 * @return  the value.
 	 */
-	public NXmanufacturer getManufacturer();
-	
-	/**
-	 * 
-	 * @param manufacturerGroup the manufacturerGroup
-	 */
-	public void setManufacturer(NXmanufacturer manufacturerGroup);
+	public NXfabrication getFabrication();
 
 	/**
-	 * Get a NXmanufacturer node by name:
+	 *
+	 * @param fabricationGroup the fabricationGroup
+	 */
+	public void setFabrication(NXfabrication fabricationGroup);
+
+	/**
+	 * Get a NXfabrication node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXmanufacturer for that node.
+	 * @return  a map from node names to the NXfabrication for that node.
 	 */
-	public NXmanufacturer getManufacturer(String name);
-	
+	public NXfabrication getFabrication(String name);
+
 	/**
-	 * Set a NXmanufacturer node by name:
+	 * Set a NXfabrication node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
-	 * @param manufacturer the value to set
+	 * @param fabrication the value to set
 	 */
-	public void setManufacturer(String name, NXmanufacturer manufacturer);
-	
+	public void setFabrication(String name, NXfabrication fabrication);
+
 	/**
-	 * Get all NXmanufacturer nodes:
+	 * Get all NXfabrication nodes:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
-	 * @return  a map from node names to the NXmanufacturer for that node.
+	 *
+	 * @return  a map from node names to the NXfabrication for that node.
 	 */
-	public Map<String, NXmanufacturer> getAllManufacturer();
-	
+	public Map<String, NXfabrication> getAllFabrication();
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
-	 * @param manufacturer the child nodes to add 
+	 *
+	 * @param fabrication the child nodes to add
 	 */
-	
-	public void setAllManufacturer(Map<String, NXmanufacturer> manufacturer);
-	
+
+	public void setAllFabrication(Map<String, NXfabrication> fabrication);
+
 
 	/**
 	 * Ideally, a (globally) unique persistent identifier, link,
 	 * or text to a resource which gives further details.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getDescription();
-	
+
 	/**
 	 * Ideally, a (globally) unique persistent identifier, link,
 	 * or text to a resource which gives further details.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param descriptionDataset the descriptionDataset
 	 */
 	public DataNode setDescription(IDataset descriptionDataset);
@@ -272,10 +242,7 @@ public interface NXstage_lab extends NXobject {
 	/**
 	 * Ideally, a (globally) unique persistent identifier, link,
 	 * or text to a resource which gives further details.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getDescriptionScalar();
@@ -283,10 +250,7 @@ public interface NXstage_lab extends NXobject {
 	/**
 	 * Ideally, a (globally) unique persistent identifier, link,
 	 * or text to a resource which gives further details.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 * 
+	 *
 	 * @param description the description
 	 */
 	public DataNode setDescriptionScalar(String descriptionValue);
@@ -297,18 +261,18 @@ public interface NXstage_lab extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getTilt_1();
-	
+
 	/**
 	 * Should be defined by the application definition.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param tilt_1Dataset the tilt_1Dataset
 	 */
 	public DataNode setTilt_1(IDataset tilt_1Dataset);
@@ -319,7 +283,7 @@ public interface NXstage_lab extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getTilt_1Scalar();
@@ -330,7 +294,7 @@ public interface NXstage_lab extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param tilt_1 the tilt_1
 	 */
 	public DataNode setTilt_1Scalar(Double tilt_1Value);
@@ -341,18 +305,18 @@ public interface NXstage_lab extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getTilt_2();
-	
+
 	/**
 	 * Should be defined by the application definition.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param tilt_2Dataset the tilt_2Dataset
 	 */
 	public DataNode setTilt_2(IDataset tilt_2Dataset);
@@ -363,7 +327,7 @@ public interface NXstage_lab extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getTilt_2Scalar();
@@ -374,7 +338,7 @@ public interface NXstage_lab extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param tilt_2 the tilt_2
 	 */
 	public DataNode setTilt_2Scalar(Double tilt_2Value);
@@ -385,18 +349,18 @@ public interface NXstage_lab extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getRotation();
-	
+
 	/**
 	 * Should be defined by the application definition.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param rotationDataset the rotationDataset
 	 */
 	public DataNode setRotation(IDataset rotationDataset);
@@ -407,7 +371,7 @@ public interface NXstage_lab extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getRotationScalar();
@@ -418,7 +382,7 @@ public interface NXstage_lab extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
-	 * 
+	 *
 	 * @param rotation the rotation
 	 */
 	public DataNode setRotationScalar(Double rotationValue);
@@ -430,11 +394,11 @@ public interface NXstage_lab extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: 3;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getPosition();
-	
+
 	/**
 	 * Should be defined by the application definition.
 	 * <p>
@@ -442,7 +406,7 @@ public interface NXstage_lab extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: 3;
 	 * </p>
-	 * 
+	 *
 	 * @param positionDataset the positionDataset
 	 */
 	public DataNode setPosition(IDataset positionDataset);
@@ -454,7 +418,7 @@ public interface NXstage_lab extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: 3;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getPositionScalar();
@@ -466,7 +430,7 @@ public interface NXstage_lab extends NXobject {
 	 * <b>Units:</b> NX_LENGTH
 	 * <b>Dimensions:</b> 1: 3;
 	 * </p>
-	 * 
+	 *
 	 * @param position the position
 	 */
 	public DataNode setPositionScalar(Double positionValue);
@@ -477,18 +441,18 @@ public interface NXstage_lab extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_VOLTAGE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getBias_voltage();
-	
+
 	/**
 	 * Voltage applied to the stage to decelerate electrons.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_VOLTAGE
 	 * </p>
-	 * 
+	 *
 	 * @param bias_voltageDataset the bias_voltageDataset
 	 */
 	public DataNode setBias_voltage(IDataset bias_voltageDataset);
@@ -499,7 +463,7 @@ public interface NXstage_lab extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_VOLTAGE
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Double getBias_voltageScalar();
@@ -510,7 +474,7 @@ public interface NXstage_lab extends NXobject {
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_VOLTAGE
 	 * </p>
-	 * 
+	 *
 	 * @param bias_voltage the bias_voltage
 	 */
 	public DataNode setBias_voltageScalar(Double bias_voltageValue);
@@ -519,16 +483,16 @@ public interface NXstage_lab extends NXobject {
 	 * The rotation, tilt and position of stage components can be specified
 	 * either via NXtransformations or via the tilt_1, tilt_2, rotation,
 	 * and position fields.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXtransformations getTransformations();
-	
+
 	/**
 	 * The rotation, tilt and position of stage components can be specified
 	 * either via NXtransformations or via the tilt_1, tilt_2, rotation,
 	 * and position fields.
-	 * 
+	 *
 	 * @param transformationsGroup the transformationsGroup
 	 */
 	public void setTransformations(NXtransformations transformationsGroup);
@@ -541,12 +505,12 @@ public interface NXstage_lab extends NXobject {
 	 * either via NXtransformations or via the tilt_1, tilt_2, rotation,
 	 * and position fields.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public NXtransformations getTransformations(String name);
-	
+
 	/**
 	 * Set a NXtransformations node by name:
 	 * <ul>
@@ -555,12 +519,12 @@ public interface NXstage_lab extends NXobject {
 	 * either via NXtransformations or via the tilt_1, tilt_2, rotation,
 	 * and position fields.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param transformations the value to set
 	 */
 	public void setTransformations(String name, NXtransformations transformations);
-	
+
 	/**
 	 * Get all NXtransformations nodes:
 	 * <ul>
@@ -569,11 +533,11 @@ public interface NXstage_lab extends NXobject {
 	 * either via NXtransformations or via the tilt_1, tilt_2, rotation,
 	 * and position fields.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXtransformations for that node.
 	 */
 	public Map<String, NXtransformations> getAllTransformations();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
@@ -582,21 +546,21 @@ public interface NXstage_lab extends NXobject {
 	 * either via NXtransformations or via the tilt_1, tilt_2, rotation,
 	 * and position fields.</li>
 	 * </ul>
-	 * 
-	 * @param transformations the child nodes to add 
+	 *
+	 * @param transformations the child nodes to add
 	 */
-	
+
 	public void setAllTransformations(Map<String, NXtransformations> transformations);
-	
+
 
 	/**
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXpositioner getPositioner();
-	
+
 	/**
-	 * 
+	 *
 	 * @param positionerGroup the positionerGroup
 	 */
 	public void setPositioner(NXpositioner positionerGroup);
@@ -606,43 +570,43 @@ public interface NXstage_lab extends NXobject {
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXpositioner for that node.
 	 */
 	public NXpositioner getPositioner(String name);
-	
+
 	/**
 	 * Set a NXpositioner node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param positioner the value to set
 	 */
 	public void setPositioner(String name, NXpositioner positioner);
-	
+
 	/**
 	 * Get all NXpositioner nodes:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXpositioner for that node.
 	 */
 	public Map<String, NXpositioner> getAllPositioner();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
-	 * @param positioner the child nodes to add 
+	 *
+	 * @param positioner the child nodes to add
 	 */
-	
+
 	public void setAllPositioner(Map<String, NXpositioner> positioner);
-	
+
 
 }

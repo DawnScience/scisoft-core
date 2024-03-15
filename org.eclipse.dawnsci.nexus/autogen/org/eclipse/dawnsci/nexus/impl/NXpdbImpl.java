@@ -124,7 +124,7 @@ import org.eclipse.dawnsci.nexus.*;
  * pdbx_seq_one_letter_code:["GIVEQCCTSICSLYQLENYCN","FVNQHLCGSHLVEALYLVCGERGFFYTPKA"]
  * pdbx_seq_one_letter_code_can:["GIVEQCCTSICSLYQLENYCN","FVNQHLCGSHLVEALYLVCGERGFFYTPKA"]
  * type:["polypeptide(L)", "polypeptide(L)"]
- * 
+
  */
 public class NXpdbImpl extends NXobjectImpl implements NXpdb {
 
@@ -140,21 +140,21 @@ public class NXpdbImpl extends NXobjectImpl implements NXpdb {
 	public NXpdbImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXpdb.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_PDB;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 }

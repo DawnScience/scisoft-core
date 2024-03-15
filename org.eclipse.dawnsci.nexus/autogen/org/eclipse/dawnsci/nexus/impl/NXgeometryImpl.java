@@ -30,7 +30,7 @@ import org.eclipse.dawnsci.nexus.*;
  * to aid in the use of the definition in simulation codes such as McStas.
  * Also, in HDF, linked items must share the same name.
  * However, it might not be possible or practical in all situations.
- * 
+
  * @deprecated as decided at 2014 NIAC meeting, convert to use :ref:`NXtransformations`
  */
 @Deprecated
@@ -51,22 +51,22 @@ public class NXgeometryImpl extends NXobjectImpl implements NXgeometry {
 	public NXgeometryImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXgeometry.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_GEOMETRY;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public NXshape getShape() {
@@ -93,7 +93,7 @@ public class NXgeometryImpl extends NXobjectImpl implements NXgeometry {
 	public Map<String, NXshape> getAllShape() {
 		return getChildren(NXshape.class);
 	}
-	
+
 	@Override
 	public void setAllShape(Map<String, NXshape> shape) {
 		setChildren(shape);
@@ -124,7 +124,7 @@ public class NXgeometryImpl extends NXobjectImpl implements NXgeometry {
 	public Map<String, NXtranslation> getAllTranslation() {
 		return getChildren(NXtranslation.class);
 	}
-	
+
 	@Override
 	public void setAllTranslation(Map<String, NXtranslation> translation) {
 		setChildren(translation);
@@ -155,7 +155,7 @@ public class NXgeometryImpl extends NXobjectImpl implements NXgeometry {
 	public Map<String, NXorientation> getAllOrientation() {
 		return getChildren(NXorientation.class);
 	}
-	
+
 	@Override
 	public void setAllOrientation(Map<String, NXorientation> orientation) {
 		setChildren(orientation);

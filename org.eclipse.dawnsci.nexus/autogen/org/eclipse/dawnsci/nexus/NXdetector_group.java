@@ -38,7 +38,7 @@ import org.eclipse.january.dataset.IDataset;
  * group_names: ["DET", "DTL", "DTR", "DLL", "DLR"]
  * group_index: [1, 2, 3, 4, 5]
  * group_parent: [-1, 1, 1, 1, 1]
- * 
+ *
  */
 public interface NXdetector_group extends NXobject {
 
@@ -56,11 +56,11 @@ public interface NXdetector_group extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getGroup_names();
-	
+
 	/**
 	 * An array of the names of the detectors given in NXdetector
 	 * groups or the names of hierarchical groupings of detectors
@@ -70,7 +70,7 @@ public interface NXdetector_group extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param group_namesDataset the group_namesDataset
 	 */
 	public DataNode setGroup_names(IDataset group_namesDataset);
@@ -84,7 +84,7 @@ public interface NXdetector_group extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getGroup_namesScalar();
@@ -98,7 +98,7 @@ public interface NXdetector_group extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param group_names the group_names
 	 */
 	public DataNode setGroup_namesScalar(String group_namesValue);
@@ -113,11 +113,11 @@ public interface NXdetector_group extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: i;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getGroup_index();
-	
+
 	/**
 	 * An array of unique identifiers for detectors or groupings
 	 * of detectors.
@@ -128,7 +128,7 @@ public interface NXdetector_group extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: i;
 	 * </p>
-	 * 
+	 *
 	 * @param group_indexDataset the group_indexDataset
 	 */
 	public DataNode setGroup_index(IDataset group_indexDataset);
@@ -143,7 +143,7 @@ public interface NXdetector_group extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: i;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Long getGroup_indexScalar();
@@ -158,7 +158,7 @@ public interface NXdetector_group extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: i;
 	 * </p>
-	 * 
+	 *
 	 * @param group_index the group_index
 	 */
 	public DataNode setGroup_indexScalar(Long group_indexValue);
@@ -171,11 +171,11 @@ public interface NXdetector_group extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getGroup_parent();
-	
+
 	/**
 	 * An array of the hierarchical levels of the parents of detectors
 	 * or groupings of detectors.
@@ -184,7 +184,7 @@ public interface NXdetector_group extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
-	 * 
+	 *
 	 * @param group_parentDataset the group_parentDataset
 	 */
 	public DataNode setGroup_parent(IDataset group_parentDataset);
@@ -197,7 +197,7 @@ public interface NXdetector_group extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Long getGroup_parentScalar();
@@ -210,7 +210,7 @@ public interface NXdetector_group extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
-	 * 
+	 *
 	 * @param group_parent the group_parent
 	 */
 	public DataNode setGroup_parentScalar(Long group_parentValue);
@@ -221,18 +221,18 @@ public interface NXdetector_group extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getGroup_type();
-	
+
 	/**
 	 * Code number for group type, e.g. bank=1, tube=2 etc.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
-	 * 
+	 *
 	 * @param group_typeDataset the group_typeDataset
 	 */
 	public DataNode setGroup_type(IDataset group_typeDataset);
@@ -243,7 +243,7 @@ public interface NXdetector_group extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public Long getGroup_typeScalar();
@@ -254,7 +254,7 @@ public interface NXdetector_group extends NXobject {
 	 * <b>Type:</b> NX_INT
 	 * <b>Dimensions:</b> 1: ;
 	 * </p>
-	 * 
+	 *
 	 * @param group_type the group_type
 	 */
 	public DataNode setGroup_typeScalar(Long group_typeValue);
@@ -267,11 +267,11 @@ public interface NXdetector_group extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -280,7 +280,7 @@ public interface NXdetector_group extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);

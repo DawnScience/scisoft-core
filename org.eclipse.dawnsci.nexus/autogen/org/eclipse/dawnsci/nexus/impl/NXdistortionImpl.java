@@ -21,7 +21,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * Subclass of NXprocess to describe post-processing distortion correction.
- * 
+
  */
 public class NXdistortionImpl extends NXobjectImpl implements NXdistortion {
 
@@ -37,22 +37,22 @@ public class NXdistortionImpl extends NXobjectImpl implements NXdistortion {
 	public NXdistortionImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXdistortion.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_DISTORTION;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getLast_process() {

@@ -17,7 +17,7 @@ import org.eclipse.january.dataset.IDataset;
 
 /**
  * Container for parameters, usually used in processing or analysis.
- * 
+ *
  */
 public interface NXparameters extends NXobject {
 
@@ -29,17 +29,17 @@ public interface NXparameters extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public IDataset getTerm();
-	
+
 	/**
 	 * A parameter (also known as a term) that is used in or results from processing.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param termDataset the termDataset
 	 */
 	public DataNode setTerm(IDataset termDataset);
@@ -49,7 +49,7 @@ public interface NXparameters extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getTermScalar();
@@ -59,19 +59,19 @@ public interface NXparameters extends NXobject {
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
-	 * 
+	 *
 	 * @param term the term
 	 */
 	public DataNode setTermScalar(String termValue);
 
 	/**
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getTermAttributeUnits();
-	
+
 	/**
-	 * 
+	 *
 	 * @param unitsValue the unitsValue
 	 */
 	public void setTermAttributeUnits(String unitsValue);
@@ -84,11 +84,11 @@ public interface NXparameters extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public String getAttributeDefault();
-	
+
 	/**
 	 * .. index:: plotting
 	 * Declares which child group contains a path leading
@@ -97,7 +97,7 @@ public interface NXparameters extends NXobject {
 	 * to help define the path to the default dataset to be plotted.
 	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
 	 * for a summary of the discussion.
-	 * 
+	 *
 	 * @param defaultValue the defaultValue
 	 */
 	public void setAttributeDefault(String defaultValue);

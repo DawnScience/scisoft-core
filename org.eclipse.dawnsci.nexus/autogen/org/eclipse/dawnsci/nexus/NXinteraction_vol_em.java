@@ -40,18 +40,18 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
  * is available in the literature for example:
  * * `S. Richter et al. <https://doi.org/10.1088/1757-899X/109/1/012014>`_
  * * `J. Bünger et al. <https://doi.org/10.1017/S1431927622000083>`_
- * 
+ *
  */
 public interface NXinteraction_vol_em extends NXobject {
 
 	/**
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXdata getData();
-	
+
 	/**
-	 * 
+	 *
 	 * @param dataGroup the dataGroup
 	 */
 	public void setData(NXdata dataGroup);
@@ -61,53 +61,53 @@ public interface NXinteraction_vol_em extends NXobject {
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXdata for that node.
 	 */
 	public NXdata getData(String name);
-	
+
 	/**
 	 * Set a NXdata node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param data the value to set
 	 */
 	public void setData(String name, NXdata data);
-	
+
 	/**
 	 * Get all NXdata nodes:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXdata for that node.
 	 */
 	public Map<String, NXdata> getAllData();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
-	 * @param data the child nodes to add 
+	 *
+	 * @param data the child nodes to add
 	 */
-	
+
 	public void setAllData(Map<String, NXdata> data);
-	
+
 
 	/**
-	 * 
+	 *
 	 * @return  the value.
 	 */
 	public NXprocess getProcess();
-	
+
 	/**
-	 * 
+	 *
 	 * @param processGroup the processGroup
 	 */
 	public void setProcess(NXprocess processGroup);
@@ -117,43 +117,43 @@ public interface NXinteraction_vol_em extends NXobject {
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name  the name of the node.
 	 * @return  a map from node names to the NXprocess for that node.
 	 */
 	public NXprocess getProcess(String name);
-	
+
 	/**
 	 * Set a NXprocess node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param name the name of the node
 	 * @param process the value to set
 	 */
 	public void setProcess(String name, NXprocess process);
-	
+
 	/**
 	 * Get all NXprocess nodes:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
+	 *
 	 * @return  a map from node names to the NXprocess for that node.
 	 */
 	public Map<String, NXprocess> getAllProcess();
-	
+
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li></li>
 	 * </ul>
-	 * 
-	 * @param process the child nodes to add 
+	 *
+	 * @param process the child nodes to add
 	 */
-	
+
 	public void setAllProcess(Map<String, NXprocess> process);
-	
+
 
 }

@@ -21,7 +21,7 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * Reflection data from diffraction experiments
- * 
+
  */
 public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 
@@ -37,22 +37,22 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	public NXreflectionsImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXreflections.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_REFLECTIONS;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getExperiments() {

@@ -33,7 +33,7 @@ import org.eclipse.dawnsci.nexus.*;
  * We refer to this below as the "top-dead-center signal".
  * Angles and positive rotation speeds are measured in an anticlockwise
  * direction when facing away from the source.
- * 
+
  */
 public class NXdisk_chopperImpl extends NXobjectImpl implements NXdisk_chopper {
 
@@ -52,22 +52,22 @@ public class NXdisk_chopperImpl extends NXobjectImpl implements NXdisk_chopper {
 	public NXdisk_chopperImpl(final long oid) {
 		super(oid);
 	}
-	
+
 	@Override
 	public Class<? extends NXobject> getNXclass() {
 		return NXdisk_chopper.class;
 	}
-	
+
 	@Override
 	public NexusBaseClass getNexusBaseClass() {
 		return NexusBaseClass.NX_DISK_CHOPPER;
 	}
-	
+
 	@Override
 	public Set<NexusBaseClass> getPermittedChildGroupClasses() {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
-	
+
 
 	@Override
 	public IDataset getType() {
@@ -409,7 +409,7 @@ public class NXdisk_chopperImpl extends NXobjectImpl implements NXdisk_chopper {
 	public Map<String, NXgeometry> getAllGeometry() {
 		return getChildren(NXgeometry.class);
 	}
-	
+
 	@Override
 	@Deprecated
 	public void setAllGeometry(Map<String, NXgeometry> geometry) {
@@ -441,7 +441,7 @@ public class NXdisk_chopperImpl extends NXobjectImpl implements NXdisk_chopper {
 	public Map<String, NXoff_geometry> getAllOff_geometry() {
 		return getChildren(NXoff_geometry.class);
 	}
-	
+
 	@Override
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry) {
 		setChildren(off_geometry);
@@ -502,7 +502,7 @@ public class NXdisk_chopperImpl extends NXobjectImpl implements NXdisk_chopper {
 	public Map<String, NXtransformations> getAllTransformations() {
 		return getChildren(NXtransformations.class);
 	}
-	
+
 	@Override
 	public void setAllTransformations(Map<String, NXtransformations> transformations) {
 		setChildren(transformations);

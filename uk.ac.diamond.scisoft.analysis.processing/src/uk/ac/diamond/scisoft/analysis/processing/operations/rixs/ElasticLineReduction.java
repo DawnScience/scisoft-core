@@ -91,7 +91,6 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 	 */
 	public static final String SUFFIX = "elastic_line";
 
-	private int counter = -1;
 	private List<IDataset> countedData = null;
 
 	private double residual;
@@ -163,7 +162,6 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			intercept.setUpperLimit(shape[0]);
 		}
 
-		counter = -1;
 		if (countedData != null) {
 			countedData.clear();
 		}
@@ -555,7 +553,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		}
 
 		if (countedData != null) {
-			String prefix = String.format("%04d_", ++counter);
+			String prefix = String.format("%04d_", countedData.size());
 			Dataset tf = fwhm.getView(false);
 			tf.setName(prefix + "tilted_fwhm");
 			countedData.add(tf);
@@ -727,7 +725,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		}
 
 		if (savedData != null) {
-			String prefix = String.format("%03d_", ++counter);
+			String prefix = String.format("%03d_", savedData.size());
 			y.setName(prefix + "tilted_data");
 			savedData.add(y);
 			IDataset ny = peak.calculateValues(x);
@@ -746,15 +744,15 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 			width = -width;
 		}
 		double xl = x.getDouble(p) - width;
-		int b = p;
+		int b = Math.max(p, 1);
 		while (--b > 0) {
 			if (x.getDouble(b) < xl) {
 				break;
 			}
 		}
 		xl = x.getDouble(p) + width;
-		int e = p;
 		int size = x.getSize() - 1;
+		int e = Math.min(p, size - 1);
 		while (++e < size) {
 			if (x.getDouble(e) > xl) {
 				break;

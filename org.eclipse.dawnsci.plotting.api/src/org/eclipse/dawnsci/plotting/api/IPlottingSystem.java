@@ -569,4 +569,8 @@ public interface IPlottingSystem<T> extends IAdaptable, ITraceSystem, IRegionSys
 	 * @param memento
 	 */
 	public void savePreferences(IMemento memento);
+
+	default IPlottingSystemViewer<T> getActiveViewer() {
+		return null;
+	};
 }

@@ -1984,7 +1984,7 @@ public class NexusTreeUtils {
 		}
 		double[] values = dataset.getData();
 		String type = getFirstString(dNode.getAttribute(TRANSFORMATIONS_TYPE));
-		if (!TRANSFOMATIONS_TRANSLATION.equals(type)) {
+		if (type != null && !TRANSFOMATIONS_TRANSLATION.equals(type)) {
 			throw new IllegalArgumentException("Transformed vector node has wrong type");
 		}
 		v3.normalize();

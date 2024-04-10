@@ -32,6 +32,14 @@ public class DiffGaussian extends AFunction {
 		getParameter(2).setLowerLimit(0);
 	}
 
+	public DiffGaussian(double... params) {
+		super(params);
+	}
+
+	public DiffGaussian(IParameter... params) {
+		super(params);
+	}
+
 	@Override
 	public int getNoOfParameters() {
 		return PARAM_NAMES.length;

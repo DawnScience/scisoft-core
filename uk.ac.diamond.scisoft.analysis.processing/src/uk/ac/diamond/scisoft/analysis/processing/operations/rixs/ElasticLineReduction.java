@@ -853,19 +853,27 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		if (useQuadratic) {
 			iFunction = new Quadratic();
 			iFunction.getParameter(1).setValue(init);
+			if (!IS_IVE) {
+				iFunction.getParameter(2).setValue(e.getDouble() - intercept.getDouble() * init);
+			}
 		} else {
 			iFunction = new StraightLine(0, 2 * init, -Double.MAX_VALUE, Double.MAX_VALUE);
+			if (IS_IVE) {
+				iFunction.setParameterValues(init, intercept.getDouble() - e.getDouble() * init);
+			} else {
+				iFunction.setParameterValues(init, e.getDouble() - intercept.getDouble() * init);
+			}
 		}
 
 		double res;
 		if (IS_IVE) {
-			res = fitFunction(this, new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT), "Exception for energy-intercept fit to find dispersion", log, iFunction, e, intercept, null);
+			res = fitFunction(this, new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT), "Exception for intercept-energy fit to find dispersion", log, iFunction, e, intercept, null);
 			Dataset fit = generateFitForDisplay(iFunction, e, name);
 			displayFit(fit, e, intercept);
 			summaryData.add(intercept);
 			summaryData.add(fit);
 		} else {
-			res = fitFunction(this, new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT), "Exception for energy-intercept fit to find dispersion", log, iFunction, intercept, e, null);
+			res = fitFunction(this, new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT), "Exception for energy-intercept fit to find resolution", log, iFunction, intercept, e, null);
 			Dataset fit = generateFitForDisplay(iFunction, intercept, name);
 			displayFit(fit, intercept, e);
 			summaryData.add(e);

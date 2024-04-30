@@ -3,7 +3,7 @@ Eclipse-BundleShape: dir
 Bundle-ManifestVersion: 2
 Bundle-Name: Dataset
 Bundle-SymbolicName: org.eclipse.dawnsci.analysis.dataset;singleton:=true
-Bundle-Version: 1.1.1.qualifier
+Bundle-Version: 1.1.2.qualifier
 Bundle-Activator: org.eclipse.dawnsci.analysis.dataset.Activator
 Bundle-Vendor: Diamond Light Source
 Require-Bundle: org.apache.commons.math3;bundle-version="[3.2.0,4.0.0)",

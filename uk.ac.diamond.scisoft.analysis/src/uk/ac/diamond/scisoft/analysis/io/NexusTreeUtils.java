@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.measure.IncommensurableException;
@@ -63,6 +64,7 @@ import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.InterfaceUtils;
 import org.eclipse.january.dataset.ShapeUtils;
 import org.eclipse.january.dataset.Slice;
+import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.dataset.Stats;
 import org.eclipse.january.dataset.StringDataset;
 import org.eclipse.january.metadata.AxesMetadata;
@@ -191,34 +193,34 @@ public class NexusTreeUtils {
 	}
 
 	public static void augmentTree(Tree tree) {
-		augmentNodeLink(tree instanceof TreeFile treeFile ? treeFile.getFilename() : null, tree.getNodeLink(), true);
+		augmentNodeLink(tree instanceof TreeFile treeFile ? treeFile.getFilename() : null, Tree.ROOT, tree.getNodeLink(), true);
 	}
 
 	/**
 	 * Augment a node with metadata that is pointed by link
 	 * @param filePath
+	 * @param groupPath
 	 * @param link
 	 * @param isAxisFortranOrder in most cases, this should be set to true
 	 */
-	public static void augmentNodeLink(String filePath, NodeLink link, final boolean isAxisFortranOrder) {
+	public static void augmentNodeLink(String filePath, String groupPath, NodeLink link, final boolean isAxisFortranOrder) {
 		if (link.isDestinationSymbolic()) {
 			SymbolicNode sn = (SymbolicNode) link.getDestination();
-			NodeLink nl = sn.getNodeLink();
-			if (nl == null) {
+			link = sn.getNodeLink();
+			if (link == null) {
 				logger.warn("Symbolic link {} from {} could not be resolved", link, filePath);
-			} else {
-				augmentNodeLink(filePath, nl, isAxisFortranOrder);
+				return;
 			}
-			return;
+			groupPath = groupPath + link.getName();
 		}
 
 		if (link.isDestinationGroup()) {
 			GroupNode gn = (GroupNode) link.getDestination();
-			if (parseNXdataAndAugment(gn)) {
+			if (parseNXdataAndAugment(groupPath, gn)) {
 				return;
 			}
 			for (NodeLink l : gn) {
-				augmentNodeLink(filePath, l, isAxisFortranOrder);
+				augmentNodeLink(filePath, groupPath + l.getName(), l, isAxisFortranOrder);
 			}
 			return;
 		}
@@ -424,7 +426,6 @@ public class NexusTreeUtils {
 					// remedy bogus or missing @axis by simply pairing matching dimension
 					// lengths to the signal dataset shape (this may be wrong as transposes in
 					// common dimension lengths can occur)
-//					logger.debug("Creating index mapping from axis shape");
 					Map<Integer, Integer> dims = new LinkedHashMap<>();
 					for (int i = 0; i < rank; i++) {
 						dims.put(i, shape[i]);
@@ -506,16 +507,13 @@ public class NexusTreeUtils {
 						axisList.add(p, ad);
 					else
 						axisList.add(ad);
-//					aSel.addChoice(c, c.getPrimary());
 				} else if (c.isDimensionUsed(i)) {
 					// add if axis index mapping refers to this dimension
-//					aSel.addChoice(c, 0);
 					axisList.add(ad);
 				} else if (aNames.contains(c.getName())) {
 					// assume order of axes names FIXME
 					// add if name is in list of axis names
 					if (aNames.indexOf(c.getName()) == i && ArrayUtils.contains(ad.getShape(), len)) {
-//						aSel.addChoice(c, 1);
 						axisList.add(0, ad);
 					}
 				}
@@ -650,10 +648,11 @@ public class NexusTreeUtils {
 
 	/**
 	 * Parse new style (2014) NXdata class and augment with metadata
+	 * @param groupPath
 	 * @param gn
 	 * @return true if it conforms to standard
 	 */
-	public static boolean parseNXdataAndAugment(GroupNode gn) {
+	public static boolean parseNXdataAndAugment(String groupPath, GroupNode gn) {
 		if (!isNXClass(gn, NexusConstants.DATA)) {
 			logger.debug("'{}' must be an {} class", gn, NexusConstants.DATA);
 			return false;
@@ -680,11 +679,6 @@ public class NexusTreeUtils {
 			cData.setName(string);
 		}
 
-		// TODO add errors
-//		ILazyDataset eData = cData.getError();
-//		String cName;
-//		String eName;
-
 		// set up slices
 		int[] shape = cData.getShape();
 		int rank = shape.length;
@@ -710,7 +704,7 @@ public class NexusTreeUtils {
 				return false;
 			}
 			try {
-				addAxis(gn, a, rank, shape, axes);
+				addAxis(gn, a, rank, axes);
 			} catch (IllegalArgumentException e) {
 				logger.warn("Ignoring axis '{}' for '{}': {}", a, signal, e.getMessage());
 			}
@@ -728,7 +722,7 @@ public class NexusTreeUtils {
 				if (!namedAxes.contains(a)) {
 					if (gn.containsDataNode(a)) {
 						try {
-							addAxis(gn, a, rank, shape, axes);
+							addAxis(gn, a, rank, axes);
 						} catch (IllegalArgumentException e) {
 							logger.warn("Ignoring axis '{}' for '{}': {}", a, signal, e.getMessage());
 						}
@@ -794,11 +788,58 @@ public class NexusTreeUtils {
 		}
 		for (int i = 0; i < rank; i++) {
 			int len = shape[i];
+			int gt = 0;
+			int min = Integer.MAX_VALUE;
 			for (ILazyDataset a : axes) {
-				int[] ashape = a.getShape();
-				if (len == ashape[i]) {
+				int[] aShape = a.getShape();
+				int aLen = aShape[i];
+				if (aLen == len) {
 					axisList.add(a);
+				} else if (aLen != 1) {
+					if (aLen > len) {
+						gt++;
+					} else {
+						min = Math.min(min, aLen);
+					}
 				}
+			}
+			if (gt > 0) {
+				if (min < len) {
+					logger.warn("NXdata {} has mismatching axes in {}-th dimension", groupPath, i);
+				} else {
+					logger.warn("NXdata {} has longer axes in {}-th dimension", groupPath, i);
+					for (int j = 0, jmax = axes.size(); j < jmax; j++) {
+						ILazyDataset a = axes.get(j);
+						int[] aShape = a.getShape();
+						int aLen = aShape[i];
+						if (aLen != 1 && aLen != len) {
+							SliceND slice = new SliceND(aShape);
+							slice.setSlice(i, 0, len, 1);
+							a = a.getSliceView(slice);
+							axes.set(i, a);
+							// TODO decide whether to put back in data node
+						}
+					}
+				}
+			} else if (min < len) {
+				logger.warn("NXdata {} has shorter axes in {}-th dimension", groupPath, i);
+				SliceND slice = new SliceND(shape);
+				slice.setSlice(i, 0, min, 1);
+				cData = cData.getSliceView(slice);
+				dNode.setDataset(cData);
+				for (ILazyDataset a : axes) {
+					int[] aShape = a.getShape();
+					int aLen = aShape[i];
+					if (aLen != 1 && aLen != len) {
+						if (aLen > min) {
+							axisList.add(a.getSliceView(slice));
+						} else {
+							axisList.add(a);
+						}
+					}
+				}
+				
+				logger.warn("NXdata {} cropped shape from {} to {}", groupPath, Arrays.toString(shape), Arrays.toString(slice.getShape()));
 			}
 			amd.setAxis(i, axisList.toArray(new ILazyDataset[0]));
 			axisList.clear();
@@ -946,33 +987,47 @@ public class NexusTreeUtils {
 		if (primaryDimension == -1 && it.hasNext()) updateMetadata(it.next(), gn, allAnnotations, metadata, -1);
 	}
 
-	private static void addAxis(GroupNode gn, String a, int rank, int[] shape, List<ILazyDataset> axes) throws IllegalArgumentException {
+	private static void addAxis(GroupNode gn, String a, int rank, List<ILazyDataset> axes) throws IllegalArgumentException {
 		DataNode aNode = gn.getDataNode(a);
 		ILazyDataset aData = aNode.getDataset();
 		if (aData == null) {
 			throw new IllegalArgumentException("Axis '" + a + "' dataset is empty");
 		}
 
-		int arank = aData.getRank();
+		int aRank = aData.getRank();
 		int[] indices = parseIntArray(gn.getAttribute(a + NexusConstants.DATA_INDICES_SUFFIX));
 		if (indices == null) {
 			throw new IllegalArgumentException("No indices attribute for axis '" + a + "' in " + gn);
-		} else if (indices.length != arank) {
+		} else if (indices.length != aRank) {
 			throw new IllegalArgumentException("Indices array of axis '" + a + "' must have same length equal to its rank");
 		}
+		boolean[] used = new boolean[rank];
 		for (int i : indices) {
 			if (i < 0 || i >= rank) {
 				throw new IllegalArgumentException("Index value (" + i + ") for axis '" + a + "' is out of bounds");
 			}
+			if (used[i]) {
+				throw new IllegalArgumentException("Index value (" + i + ") for axis '" + a + "' is not unique");
+			}
+			used[i] = true;
 		}
-		if (arank != rank) { // broadcast axis dataset
-			int[] nshape = new int[rank];
-			Arrays.fill(nshape, 1);
-			for (int i : indices) {
-				nshape[i] = shape[i];
+		if (indices.length > 1) {
+			List<Integer> map = IntStream.range(0, aRank).mapToObj(Integer::valueOf).collect(Collectors.toList());
+			map.sort((o1, o2) -> Integer.compare(indices[o1], indices[o2]));
+			int[] aMap = map.stream().mapToInt(i -> i).toArray();
+			aData = aData.getTransposedView(aMap);
+			Arrays.sort(indices);
+		}
+		int[] aShape = aData.getShape();
+		if (aRank != rank) { // broadcast axis dataset
+			int[] nShape = new int[rank];
+			Arrays.fill(nShape, 1);
+			int j = 0;
+			for (int i: indices) {
+				nShape[i] = aShape[j++];
 			}
 			aData = aData.clone();
-			aData.setShape(nshape);
+			aData.setShape(nShape);
 		}
 		axes.add(aData);
 	}

@@ -205,6 +205,8 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 	private static final boolean IS_IVE = false; // if true, fit was intercept versus energy otherwise it was energy versus intercept
 
+	private static final double[] NO_FIT = {Double.NaN, Double.NaN};
+
 	@Override
 	public OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		Dataset output = null;
@@ -242,7 +244,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 //						log.append("Not enough good lines (%d) found for ROI %d", goodPosition[r].size(), r);
 //						continue;
 //					}
-
+				coefficients[r] = NO_FIT;
 				createGoodLists(r);
 				if (goodPosition[r].isEmpty()) {
 					log.appendFailure("No lines found for ROI %d", r);
@@ -303,7 +305,6 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 					posData.setName(positionName);
 					double[] res = fitEnergyIntercept(r, posData.getView(false), coords[1]);
 					if (res == null) {
-						coefficients[r] = null;
 						log.appendFailure("Insufficient intercepts or no energy change so cannot find coefficients");
 					} else {
 						coefficients[r] = Arrays.copyOfRange(res, 1, res.length); // crop first value

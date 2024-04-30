@@ -29,9 +29,9 @@ public class NexusHDF5Loader extends HDF5Loader {
 	}
 
 	@Override
-	public void augmentLink(NodeLink link) {
+	public void augmentLink(String groupPath, NodeLink link) {
 		try {
-			NexusTreeUtils.augmentNodeLink(fileName, link, true);
+			NexusTreeUtils.augmentNodeLink(fileName, groupPath, link, true);
 		} catch (Exception e) {
 			logger.debug("Problem augmenting node: {}", link, e);
 		}

@@ -257,18 +257,15 @@ public class MetadataPlotUtils {
 	}
 	
 	public static IDataset[] getAxesFromMetadata(IDataset data) {
-		return getAxesFromMetadata(data,true);
+		return getAxesFromMetadata(data, true);
 	}
 	
 	public static IDataset[] getAxesFromMetadata(ILazyDataset data, boolean squeeze) {
 		if (squeeze) data = data.getSliceView().squeezeEnds();
-		return getAxesFromMetadata((ILazyDataset)data);
+		return getAxesFromMetadata((ILazyDataset) data);
 	}
 	
-	
 	public static IDataset[] getAxesFromMetadata(ILazyDataset data) {
-		data = data.getSliceView();
-		
 		List<AxesMetadata> amd = null;
 		try {
 			amd = data.getMetadata(AxesMetadata.class);

@@ -24,6 +24,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.dawnsci.analysis.api.io.ILoaderService;
 import org.eclipse.dawnsci.analysis.api.io.SliceObject;
+import org.eclipse.dawnsci.analysis.dataset.SlicingUtils;
 import org.eclipse.dawnsci.nexus.INexusFileFactory;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
@@ -31,7 +32,6 @@ import org.eclipse.dawnsci.plotting.api.ProgressMonitorWrapper;
 import org.eclipse.dawnsci.plotting.api.expressions.IVariableManager;
 import org.eclipse.dawnsci.plotting.api.trace.IImageTrace;
 import org.eclipse.dawnsci.plotting.api.trace.ITrace;
-import org.eclipse.dawnsci.slicing.api.Activator;
 import org.eclipse.dawnsci.slicing.api.system.AxisType;
 import org.eclipse.dawnsci.slicing.api.system.DimsData;
 import org.eclipse.dawnsci.slicing.api.system.DimsDataList;
@@ -524,7 +524,7 @@ public class SliceUtils {
 
 			// This works in case where the ld is changing shape because it is dynamic
 			SliceND sliceND = SliceND.createSlice(ld, currentSlice.getSliceStart(), currentSlice.getSliceStop(), currentSlice.getSliceStep());
-			slice = ld.getSlice(new ProgressMonitorWrapper(monitor), sliceND);
+			slice = SlicingUtils.sliceWithAxesMetadata(new ProgressMonitorWrapper(monitor), ld, sliceND);
 		}
 
 		slice.setName("Slice of "+currentSlice.getName()+" "+currentSlice.getShapeMessage());

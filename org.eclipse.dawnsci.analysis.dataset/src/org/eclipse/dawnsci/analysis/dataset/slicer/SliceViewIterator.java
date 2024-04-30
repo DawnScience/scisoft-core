@@ -56,15 +56,13 @@ public class SliceViewIterator implements ISliceViewIterator{
 		total = calculateTotal(sampling, axes);
 		
 		next = iterator.hasNext();
-		
 
-			SliceFromSeriesMetadata ss = lazyDataset.getFirstMetadata(SliceFromSeriesMetadata.class);
-			if (ss != null) {
-				if (ss.getSourceInfo() != null) source = ss.getSourceInfo();
-			}
-			
+		SliceFromSeriesMetadata ss = lazyDataset.getFirstMetadata(SliceFromSeriesMetadata.class);
+		if (ss != null && ss.getSourceInfo() != null) {
+			source = ss.getSourceInfo();
+		}
 	}
-	
+
 	/**
 	 * Check to see if there is another view
 	 * 

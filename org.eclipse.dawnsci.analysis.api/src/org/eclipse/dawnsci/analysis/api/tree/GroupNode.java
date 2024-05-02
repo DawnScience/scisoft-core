@@ -278,6 +278,14 @@ public interface GroupNode extends Node, Iterable<NodeLink> {
 	public NodeLink findNodeLink(String pathname);
 
 	/**
+	 * Recursively find node at given path
+	 * @param pathname which can include attribute (prefixed with {@link Node#ATTRIBUTE})
+	 * @return node or null if not found
+	 * @throws IllegalArgumentException if only an attribute name is given
+	 */
+	public Node findNode(String nodePath);
+
+	/**
 	 * @return iterator over links to children in group
 	 */
 	@Override

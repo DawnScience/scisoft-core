@@ -570,6 +570,12 @@ public class GroupNodeImpl extends NodeImpl implements GroupNode, Serializable {
 		return null;
 	}
 
+	@Override
+	public Node findNode(String pathName) {
+		NodeLink link = findNodeLink(pathName);
+		return link == null ? null : link.getDestination();
+	}
+
 	static NodeLink checkAttribute(NodeLink nl, String attr) {
 		if (attr == null || nl == null) {
 			return nl;

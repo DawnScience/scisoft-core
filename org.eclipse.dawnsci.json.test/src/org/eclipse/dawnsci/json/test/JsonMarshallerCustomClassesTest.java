@@ -22,6 +22,7 @@ import static org.junit.Assert.assertThrows;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,6 +49,7 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Unit tests for the Jackson JSON marshaller which check the behaviour in a simulated OSGi environment where classes
@@ -366,6 +368,20 @@ public class JsonMarshallerCustomClassesTest {
 		assertThat(map.get(john.getName()), is(equalTo(john)));
 		assertThat(map.get(felix.getName()), is(equalTo(felix)));
 		assertThat(map.get(polly.getName()), is(equalTo(polly)));
+	}
+
+	/**
+	 * Can our service deal with simple objects
+	 * serialised through different service?
+	 */
+	@Test
+	public void canDeserialiseExternallySerialisedMaps() throws Exception {
+		var pets = Map.of(jim.getName(), jim.getPet().getName(), john.getName(), john.getPet().getName());
+		ObjectMapper om = new ObjectMapper();
+		String json = om.writerWithDefaultPrettyPrinter().writeValueAsString(pets);
+		var deserialised = marshaller.unmarshal(json, Map.class);
+		assertThat(pets, is(equalTo(deserialised)));
+		assertThat(LinkedHashMap.class, is(equalTo(deserialised.getClass())));
 	}
 
 	@Test

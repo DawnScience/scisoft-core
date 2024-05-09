@@ -29,6 +29,7 @@
 
    <features>
       <feature id="uk.ac.diamond.scisoft.applications.feature"/>
+      <feature id="org.eclipse.justj.openjdk.hotspot.jre.minimal.stripped" installMode="root"/>
    </features>
 
    <configurations>

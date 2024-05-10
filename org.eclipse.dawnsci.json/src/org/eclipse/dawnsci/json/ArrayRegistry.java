@@ -15,6 +15,7 @@ package org.eclipse.dawnsci.json;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.persistence.IClassRegistry;
@@ -29,6 +30,7 @@ class ArrayRegistry implements IClassRegistry {
 		tmp.put("Object[]",    Object[].class);
 		tmp.put(ArrayList.class.getSimpleName(), ArrayList.class);
 		tmp.put(HashMap.class.getSimpleName(), HashMap.class);
+		tmp.put(LinkedHashMap.class.getSimpleName(), LinkedHashMap.class);
 
 		idToClassMap = Collections.unmodifiableMap(tmp);
 	}

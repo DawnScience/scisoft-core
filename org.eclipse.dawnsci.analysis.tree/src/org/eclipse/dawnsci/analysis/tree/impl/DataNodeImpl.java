@@ -217,7 +217,7 @@ public class DataNodeImpl extends NodeImpl implements DataNode, Serializable {
 			int[] cshape = toIntArray(chunkShape);
 			try {
 				DimensionMetadata dmd = MetadataFactory.createMetadata(DimensionMetadata.class, dataset.getShape(), mshape, cshape);
-				dataset.addMetadata(dmd);
+				dataset.setMetadata(dmd);
 			} catch (MetadataException e) {
 				e.printStackTrace();
 			}

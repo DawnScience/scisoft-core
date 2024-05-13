@@ -164,9 +164,9 @@ public class NexusTreeUtilsTest {
 		axis.setName("polar_angle_rbv");
 		axes.add(new AxisDataset(-1, axis, 0, 1));
 
-		axis = DatasetFactory.createRange(ShortDataset.class, shape[0]*shape[1]).reshape(shape[0], shape[1]);
+		axis = DatasetFactory.createRange(ShortDataset.class, shape[0]*shape[1]).reshape(shape[1], shape[0]);
 		axis.setName("time");
-		axes.add(new AxisDataset(-1, axis, 0, 1));
+		axes.add(new AxisDataset(-1, axis, 1, 0));
 
 		GroupNode group = createNXdata(signal, axes);
 		checkMetadata(group, signal);
@@ -202,7 +202,7 @@ public class NexusTreeUtilsTest {
 	}
 
 	private static void checkMetadata(GroupNode group, Dataset signal) {
-		Assert.assertTrue(NexusTreeUtils.parseNXdataAndAugment(group));
+		Assert.assertTrue(NexusTreeUtils.parseNXdataAndAugment("", group));
 
 		List<AxesMetadata> amds;
 		try {

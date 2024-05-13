@@ -13,6 +13,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,7 +30,6 @@ import java.util.Queue;
 
 import org.eclipse.dawnsci.analysis.api.io.IDataHolder;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
-import org.eclipse.dawnsci.analysis.api.io.SliceObject;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
@@ -186,11 +188,11 @@ public class HDF5Loader extends AbstractFileLoader {
 				}
 
 				tFile = createTreeBF(mon, fid, keepBitWidth);
-			} catch (Throwable le) {
+			} catch (Exception le) {
 				syncException = new ScanFileHolderException("Problem loading file: " + fileName, le);
 				try {
 					updateSyncNodes(syncLimit); // prevent deadlock
-				} catch (Throwable e) {
+				} catch (Exception e) {
 					// do nothing
 				}
 			} finally {
@@ -248,8 +250,8 @@ public class HDF5Loader extends AbstractFileLoader {
 		try {
 			fileName = f.getCanonicalPath();
 		} catch (IOException e) {
-			logger.error("Could not get canonical path", e);
-			throw new ScanFileHolderException("Could not get canonical path", e);
+			logger.error("Could not get canonical path for {}", fileName, e);
+			throw new ScanFileHolderException("Could not get canonical path for " + fileName, e);
 		}
 		if (async) {
 			loaderThread = new LoadFileThread(mon);
@@ -257,6 +259,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			try {
 				Thread.sleep(100l);
 			} catch (InterruptedException e) {
+				// do nothing
 			}
 			waitForSyncLimit();
 		} else {
@@ -268,7 +271,7 @@ public class HDF5Loader extends AbstractFileLoader {
 				}
 
 				tFile = createTree(fid, keepBitWidth);
-			} catch (Throwable le) {
+			} catch (Exception le) {
 				throw new ScanFileHolderException("Problem loading file: " + fileName, le);
 			} finally {
 				HDF5FileFactory.releaseFile(fileName);
@@ -375,7 +378,7 @@ public class HDF5Loader extends AbstractFileLoader {
 		return f;
 	}
 
-	private static int LIMIT = 10240;
+	private static final int LIMIT = 10240;
 
 	/**
 	 * Create a node (and all its children, recursively) from given location ID
@@ -393,7 +396,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			int lt = linfo.type;
 			HDF5Token token = new HDF5Token(linfo.token);
 			if (lt == HDF5Constants.H5L_TYPE_EXTERNAL) {
-				return retrieveExternalNode(fid, f, null, token, name, keepBitWidth, depth + 1);
+				return retrieveExternalNode(fid, f, null, token, null, name, keepBitWidth, depth + 1);
 			} else if (lt == HDF5Constants.H5L_TYPE_SOFT) {
 				return retrieveSymbolicNode(fid, f, null, token, name);
 			} else if (lt == HDF5Constants.H5L_TYPE_HARD) {
@@ -465,7 +468,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			if (copyAttributes(name, group, gid)) {
 				final String link = group.getAttribute(NAPIMOUNT).getFirstElement();
 				try {
-					return copyNAPIMountNode(f, link, keepBitWidth);
+					return copyNAPIMountNode(f, pool, link, keepBitWidth);
 				} catch (Exception e) {
 					logger.error("Could not copy NAPI mount", e);
 				}
@@ -516,7 +519,6 @@ public class HDF5Loader extends AbstractFileLoader {
 							continue;
 						}
 
-						// System.err.println("G: " + oname);
 						String newname = name + Node.SEPARATOR + oname + Node.SEPARATOR;
 						newname = newname.replaceAll("([" + Node.SEPARATOR + "])\\1+",
 								Node.SEPARATOR);
@@ -530,7 +532,7 @@ public class HDF5Loader extends AbstractFileLoader {
 								group.addNode(oname, g);
 
 								if (NexusTreeUtils.isNXClass(g, NexusConstants.DATA)) {
-									augmentLink(group.getNodeLink(oname));
+									augmentLink(newname, group.getNodeLink(oname));
 								}
 							}
 						}
@@ -544,7 +546,6 @@ public class HDF5Loader extends AbstractFileLoader {
 							continue;
 						}
 
-						// System.err.println("D: " + oname);
 						String newname = name + Node.SEPARATOR + oname;
 						newname = newname.replaceAll("([" + Node.SEPARATOR + "])\\1+",
 								Node.SEPARATOR);
@@ -560,7 +561,7 @@ public class HDF5Loader extends AbstractFileLoader {
 				} else if (ltype == HDF5Constants.H5L_TYPE_SOFT) {
 					group.addNode(oname, retrieveSymbolicNode(gid, f, group, token, oname));
 				} else if (ltype == HDF5Constants.H5L_TYPE_EXTERNAL) {
-					group.addNode(oname, retrieveExternalNode(gid, f, group, token, oname, keepBitWidth, 0));
+					group.addNode(oname, retrieveExternalNode(gid, f, group, token, pool, oname, keepBitWidth, 0));
 				}
 			}
 		} finally {
@@ -575,16 +576,37 @@ public class HDF5Loader extends AbstractFileLoader {
 		return group;
 	}
 
-	private Node retrieveExternalNode(final long lid, final TreeFile f, GroupNode group, HDF5Token token, final String name, final boolean keepBitWidth, int depth) throws Exception {
+	private HDF5Token createExternalNodeToken(String filePath, String nodePath) {
+		MessageDigest hasher;
+		try {
+			hasher = MessageDigest.getInstance("SHA-256");
+		} catch (NoSuchAlgorithmException e) {
+			logger.error("Could not get digester algorithm for SHA-256", e);
+			return null;
+		}
+		byte[] hash = hasher.digest(String.join(":", filePath, nodePath).getBytes(StandardCharsets.UTF_8));
+		return new HDF5Token(Arrays.copyOf(hash, 16));
+	}
+
+	private Node retrieveExternalNode(final long lid, final TreeFile f, GroupNode group, HDF5Token token, Map<HDF5Token, Node> pool, final String name, final boolean keepBitWidth, int depth) throws Exception {
 		String[] linkName = new String[2]; // object path and file path
 		int t = H5.H5Lget_value(lid, name, linkName, HDF5Constants.H5P_DEFAULT);
 		if (t < 0) {
 			logger.error("Could not get value of link for {}", name);
 		}
 
+		HDF5Token nToken = createExternalNodeToken(linkName[1], linkName[0]);
+		if (nToken != null && pool != null && pool.containsKey(nToken)) {
+			return pool.get(nToken);
+		}
+
 		String eName = Utils.findExternalFilePath(logger, f.getParentDirectory(), linkName[1]);
 		if (eName != null && depth < EXT_LINK_MAX_DEPTH) {
-			return getExternalNode(f.getHostname(), eName, linkName[0], keepBitWidth, depth);
+			Node eNode = getExternalNode(f.getHostname(), eName, linkName[0], keepBitWidth, depth);
+			if (pool != null) {
+				pool.put(nToken, eNode);
+			}
+			return eNode;
 		}
 		eName = linkName[1];
 		if (depth >= EXT_LINK_MAX_DEPTH) {
@@ -640,8 +662,6 @@ public class HDF5Loader extends AbstractFileLoader {
 
 		long did = -1, tid = -1;
 		try {
-//			Thread.sleep(200);
-
 			did = H5.H5Dopen(lid, path, HDF5Constants.H5P_DEFAULT);
 			tid = H5.H5Dget_type(did);
 
@@ -649,7 +669,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			DataNode d = TreeFactory.createDataNode(token.getData());
 			if (copyAttributes(path, d, did)) {
 				final String link = d.getAttribute(NAPIMOUNT).getFirstElement();
-				return copyNAPIMountNode(f, link, keepBitWidth);
+				return copyNAPIMountNode(f, pool, link, keepBitWidth);
 			}
 			int i = path.lastIndexOf(Node.SEPARATOR);
 			final String sname = i >= 0 ? path.substring(i + 1) : path;
@@ -702,7 +722,6 @@ public class HDF5Loader extends AbstractFileLoader {
 		return hasNAPIMount;
 	}
 
-	// get external node
 	private Node getExternalNode(final String host, final String path, String node, final boolean keepBitWidth, int depth) throws Exception {
 		Node nn = null;
 
@@ -725,7 +744,7 @@ public class HDF5Loader extends AbstractFileLoader {
 					ld.addMetadata(MetadataFactory.createMetadata(OriginMetadata.class, null, null, null, path, node));
 				}
 			}
-		} catch (Throwable le) {
+		} catch (Exception le) {
 			throw new ScanFileHolderException("Problem loading file: " + path, le);
 		} finally {
 			HDF5FileFactory.releaseFile(path);
@@ -735,7 +754,7 @@ public class HDF5Loader extends AbstractFileLoader {
 	}
 
 	// retrieve external file link
-	private Node copyNAPIMountNode(final TreeFile file, final String link, final boolean keepBitWidth) throws Exception {
+	private Node copyNAPIMountNode(final TreeFile file, Map<HDF5Token, Node> pool, final String link, final boolean keepBitWidth) throws Exception {
 		final URI ulink = new URI(link);
 		Node nn = null;
 		if (ulink.getScheme().equals(NAPISCHEME)) {
@@ -752,11 +771,16 @@ public class HDF5Loader extends AbstractFileLoader {
 				}
 				lpath = f.getAbsolutePath();
 			}
+			HDF5Token nToken = createExternalNodeToken(lpath, ltarget);
+			if (nToken != null && pool != null && pool.containsKey(nToken)) {
+				return pool.get(nToken);
+			}
+
 			nn = getExternalNode(file.getHostname(), lpath, ltarget, keepBitWidth, 0);
 			if (nn == null)
 				logger.warn("Could not find external node: {}", ltarget);
 		} else {
-			System.err.println("Wrong scheme: " + ulink.getScheme());
+			logger.error("Wrong scheme: {}", ulink.getScheme());
 		}
 
 		return nn;
@@ -790,7 +814,6 @@ public class HDF5Loader extends AbstractFileLoader {
 		boolean isBoolean = HDF5Utils.isDataNodeBoolean(node);
 
 		try {
-//			Thread.sleep(200);
 			H5.H5Drefresh(did);
 			sid = H5.H5Dget_space(did);
 			rank = H5.H5Sget_simple_extent_ndims(sid);
@@ -1060,24 +1083,21 @@ public class HDF5Loader extends AbstractFileLoader {
 			}
 		}
 
-		while (node instanceof SymbolicNode) {
-			SymbolicNode s = (SymbolicNode) node;
+		while (node instanceof SymbolicNode s) {
 			link = s.getNodeLink();
 			node = link == null ? null : link.getDestination();
 		}
-		if (node instanceof DataNode) {
-			ILazyDataset dataset = ((DataNode) node).getDataset();
+		if (node instanceof DataNode d) {
+			ILazyDataset dataset = d.getDataset();
 			if (dataset == null)
 				return;
 
 			if (lMap != null)
 				lMap.put(cpath, dataset);
-			if (aMap != null && dataset instanceof Dataset && dataset.getSize() <= 1) { // zero-rank dataset
-				Dataset a = (Dataset) dataset;
+			if (aMap != null && (dataset instanceof Dataset a) && a.getSize() <= 1) { // zero-rank dataset
 				aMap.put(cpath, a.getRank() == 0 ? a.getString() : a.getString(0));
 			}
-		} else if (node instanceof GroupNode) {
-			GroupNode g = (GroupNode) node;
+		} else if (node instanceof GroupNode g) {
 			Collection<String> names = g.getNames();
 			for (String n: names) {
 				addToMaps(ppath.isEmpty() ? cpath : cpath  + Node.SEPARATOR, g.getNodeLink(n), lMap, aMap);
@@ -1086,11 +1106,12 @@ public class HDF5Loader extends AbstractFileLoader {
 	}
 
 	/**
-	 * Augment a dataset with metadata that is pointed by link
+	 * Augment a dataset with metadata within group that is pointed by link
+	 * @param groupPath
 	 * @param link
 	 */
-	@SuppressWarnings("unused")
-	public void augmentLink(NodeLink link) {
+	public void augmentLink(String groupPath, NodeLink link) {
+		// do nothing
 	}
 
 	/**
@@ -1107,8 +1128,8 @@ public class HDF5Loader extends AbstractFileLoader {
 		try {
 			fileName = new File(fileName).getCanonicalPath();
 		} catch (IOException e) {
-			logger.error("Could not get canonical path", e);
-			throw new ScanFileHolderException("Could not get canonical path", e);
+			logger.error("Could not get canonical path for {}", fileName, e);
+			throw new ScanFileHolderException("Could not get canonical path for " + fileName, e);
 		}
 
 		try {
@@ -1123,7 +1144,7 @@ public class HDF5Loader extends AbstractFileLoader {
 
 			visitGroup(fid, f, Tree.ROOT, Arrays.asList(names), 0, depth, list);
 
-		} catch (Throwable le) {
+		} catch (Exception le) {
 			throw new ScanFileHolderException("Problem loading file: " + fileName, le);
 		} finally {
 			HDF5FileFactory.releaseFile(fileName);
@@ -1175,11 +1196,9 @@ public class HDF5Loader extends AbstractFileLoader {
 
 				if (ltype == HDF5Constants.H5L_TYPE_HARD) {
 					if (otype == HDF5Constants.H5O_TYPE_GROUP && cDepth < rDepth) {
-						// System.err.println("G: " + oname);
 						visitGroup(fid, f, name + oname + Node.SEPARATOR, names,
 								cDepth + 1, rDepth, list);
 					} else if (otype == HDF5Constants.H5O_TYPE_DATASET && cDepth == rDepth) {
-						// System.err.println("D: " + oname);
 						if (names.contains(oname)) {
 							
 							long did = -1, tid = -1;
@@ -1233,59 +1252,5 @@ public class HDF5Loader extends AbstractFileLoader {
 				}
 			}
 		}
-	}
-	
-	protected Dataset slice(SliceObject object, @SuppressWarnings("unused") IMonitor mon) throws Exception {
-		final int[] start = object.getSliceStart();
-		final int[] stop = object.getSliceStop();
-		final int[] step = object.getSliceStep();
-		int[] lstart, lstop, lstep;
-		int rank;
-		if (start != null)
-			rank = start.length;
-		else if (stop != null)
-			rank = stop.length;
-		else if (step != null)
-			rank = step.length;
-		else
-			throw new IllegalArgumentException("Slice object does not have any info about rank");
-
-		if (step == null) {
-			lstep = new int[rank];
-			for (int i = 0; i < rank; i++) {
-				lstep[i] = 1;
-			}
-		} else {
-			lstep = step;
-		}
-
-		if (start == null) {
-			lstart = new int[rank];
-		} else {
-			lstart = start;
-		}
-
-		if (stop == null) {
-			lstop = object.getSlicedShape();
-			if (lstop == null)
-				lstop = object.getFullShape();
-		} else {
-			lstop = stop;
-		}
-
-		if (lstop == null)
-			throw new IllegalArgumentException("Slice object does not have any info about stop or shape");
-
-		int[] newShape = new int[rank];
-
-		for (int i = 0; i < rank; i++) {
-			if (lstep[i] > 0) {
-				newShape[i] = (lstop[i] - lstart[i] - 1) / lstep[i] + 1;
-			} else {
-				newShape[i] = (lstop[i] - lstart[i] + 1) / lstep[i] + 1;
-			}
-		}
-
-		return HDF5Utils.loadDataset(object.getPath(), object.getName(), lstart, newShape, lstep, 1, null, true);
 	}
 }

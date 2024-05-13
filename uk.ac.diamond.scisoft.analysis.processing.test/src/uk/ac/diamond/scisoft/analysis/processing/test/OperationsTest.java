@@ -214,7 +214,6 @@ public class OperationsTest {
 
 	}
 
-
 	@Test
 	public void testParallelLongerThanDefault() throws Exception {
 						
@@ -222,14 +221,14 @@ public class OperationsTest {
 		final IOperation subtract = service.findFirst("subtractOperation");
 		
 		final IOperationContext context = service.createContext();
-		context.setData(Random.rand(0.0, 10.0, 1024, 1024));
+		context.setData(Random.rand(0.0, 10.0, 2, 1024, 1024));
 //		context.setSlicing("all"); // 
 		context.setDataDimensions(new int[]{1,2});
 		
 		subtract.setModel(new ValueModel(100));
 		add.setModel(new ValueModel(101));
 			
-		context.setExecutionType(ExecutionType.GRAPH);
+		context.setExecutionType(ExecutionType.PARALLEL);
 		context.setParallelTimeout(5000);
 	    context.setPoolSize(Runtime.getRuntime().availableProcessors());
 		context.setVisitor(new IExecutionVisitor.Stub() {

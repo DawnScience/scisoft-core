@@ -38,6 +38,7 @@ import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.dawnsci.analysis.api.processing.model.IOperationModel;
+import org.eclipse.dawnsci.analysis.dataset.SlicingUtils;
 import org.eclipse.dawnsci.analysis.dataset.operations.AbstractOperationBase;
 import org.eclipse.dawnsci.analysis.dataset.slicer.DynamicSliceViewIterator;
 import org.eclipse.dawnsci.analysis.dataset.slicer.ISliceViewIterator;
@@ -150,7 +151,7 @@ public class OperationServiceImpl implements IOperationService {
 	        	logger.debug("Iterator has slices read");
 	        }
 	        
-	        IDataset firstSlice = it.next().getSlice();
+	        IDataset firstSlice = SlicingUtils.sliceWithAxesMetadata(it.next());
 	        validate(firstSlice, context.getSeries());
 	        
 	        

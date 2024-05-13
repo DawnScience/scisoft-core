@@ -24,6 +24,7 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.dawnsci.analysis.dataset.SlicingUtils;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.ILazyDataset;
@@ -38,7 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Slicer {
 	
-	private final static Logger logger = LoggerFactory.getLogger(Slicer.class);
+	private static final Logger logger = LoggerFactory.getLogger(Slicer.class);
 	
 	public static void visit(ISliceViewIterator iterator, SliceVisitor visitor) throws Exception {
 		
@@ -47,7 +48,7 @@ public class Slicer {
 		
 		while (iterator.hasNext()) {
 			long t = System.currentTimeMillis();
-			IDataset data = iterator.next().getSlice();
+			IDataset data = SlicingUtils.sliceWithAxesMetadata(iterator.next());
 			time += System.currentTimeMillis()-t;
 			count++;
 			visitor.visit(data);
@@ -55,8 +56,7 @@ public class Slicer {
 			if (visitor.isCancelled()) break;
 		}
 		
-		logger.info("Average load time: " + time/(double)count + " ms");
-		
+		logger.info("Average load time: {} ms",  count > 0 ? time/(double) count : 0);
 	}
 
 	public static void visitParallel(ISliceViewIterator iterator, final SliceVisitor visitor, int nProcessors) throws Exception {
@@ -68,47 +68,38 @@ public class Slicer {
 		nProcessors = nProcessors - 1;
 
 		BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<Runnable>(nProcessors);
-	    RejectedExecutionHandler rejectedExecutionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
-	    final ExecutorService pool =  new ThreadPoolExecutor(nProcessors, nProcessors, 
-	        0L, TimeUnit.MILLISECONDS, blockingQueue, rejectedExecutionHandler);
-	    
-		final SliceVisitor parallel = new SliceVisitor() {
-
-			@Override
-			public void visit(final IDataset slice) throws Exception {
-				
-				pool.execute(new Runnable() {
-					
-					@Override
-					public void run() {
-						try {
-							
-						    visitor.visit(slice);
-						    
-						    
-						} catch (Throwable ne) {
-							ne.printStackTrace();
-							// TODO Fix me - should runtime exception really be thrown back to Fork/Join?
-							//throw new RuntimeException(ne.getMessage(), ne);
+		RejectedExecutionHandler rejectedExecutionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
+		ExecutorService pool = new ThreadPoolExecutor(nProcessors, nProcessors, 0L, TimeUnit.MILLISECONDS,
+			blockingQueue, rejectedExecutionHandler);
+		try {
+			final SliceVisitor parallel = new SliceVisitor() {
+				@Override
+				public void visit(final IDataset slice) throws Exception {
+					pool.execute(() ->
+						{
+							try {
+								visitor.visit(slice);
+							} catch (Exception e) {
+								logger.error(e.getMessage(), e);
+							}
 						}
-					}
-				});
-			}
+					);
+				}
+	
+				@Override
+				public boolean isCancelled() {
+					return visitor.isCancelled();
+				}
+			};
 
-			@Override
-			public boolean isCancelled() {
-				return visitor.isCancelled();
+			Slicer.visit(iterator, parallel);
+		} finally {
+			pool.shutdown();
+			
+			while (!pool.awaitTermination(200, TimeUnit.MILLISECONDS)){
+				if (visitor.isCancelled()) break;
 			}
-		};
-		
-		Slicer.visit(iterator, parallel);
-		
-		pool.shutdown();
-		
-		while (!pool.awaitTermination(200, TimeUnit.MILLISECONDS)){
-			if (visitor.isCancelled()) break;
 		}
-
 	}
 	
 	public static IDataset getFirstSlice(ILazyDataset lz, Map<Integer, String> sliceDimensions) {

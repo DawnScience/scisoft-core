@@ -205,6 +205,8 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 
 	private static final boolean IS_IVE = false; // if true, fit was intercept versus energy otherwise it was energy versus intercept
 
+	private static final double[] NO_FIT = {Double.NaN, Double.NaN};
+
 	@Override
 	public OperationData process(IDataset input, IMonitor monitor) throws OperationException {
 		Dataset output = null;
@@ -242,7 +244,7 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 //						log.append("Not enough good lines (%d) found for ROI %d", goodPosition[r].size(), r);
 //						continue;
 //					}
-
+				coefficients[r] = NO_FIT;
 				createGoodLists(r);
 				if (goodPosition[r].isEmpty()) {
 					log.appendFailure("No lines found for ROI %d", r);
@@ -303,7 +305,6 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 					posData.setName(positionName);
 					double[] res = fitEnergyIntercept(r, posData.getView(false), coords[1]);
 					if (res == null) {
-						coefficients[r] = null;
 						log.appendFailure("Insufficient intercepts or no energy change so cannot find coefficients");
 					} else {
 						coefficients[r] = Arrays.copyOfRange(res, 1, res.length); // crop first value
@@ -853,19 +854,27 @@ public class ElasticLineReduction extends RixsBaseOperation<ElasticLineReduction
 		if (useQuadratic) {
 			iFunction = new Quadratic();
 			iFunction.getParameter(1).setValue(init);
+			if (!IS_IVE) {
+				iFunction.getParameter(2).setValue(e.getDouble() - intercept.getDouble() * init);
+			}
 		} else {
 			iFunction = new StraightLine(0, 2 * init, -Double.MAX_VALUE, Double.MAX_VALUE);
+			if (IS_IVE) {
+				iFunction.setParameterValues(init, intercept.getDouble() - e.getDouble() * init);
+			} else {
+				iFunction.setParameterValues(init, e.getDouble() - intercept.getDouble() * init);
+			}
 		}
 
 		double res;
 		if (IS_IVE) {
-			res = fitFunction(this, new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT), "Exception for energy-intercept fit to find dispersion", log, iFunction, e, intercept, null);
+			res = fitFunction(this, new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT), "Exception for intercept-energy fit to find dispersion", log, iFunction, e, intercept, null);
 			Dataset fit = generateFitForDisplay(iFunction, e, name);
 			displayFit(fit, e, intercept);
 			summaryData.add(intercept);
 			summaryData.add(fit);
 		} else {
-			res = fitFunction(this, new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT), "Exception for energy-intercept fit to find dispersion", log, iFunction, intercept, e, null);
+			res = fitFunction(this, new ApacheOptimizer(Optimizer.LEVENBERG_MARQUARDT), "Exception for energy-intercept fit to find resolution", log, iFunction, intercept, e, null);
 			Dataset fit = generateFitForDisplay(iFunction, intercept, name);
 			displayFit(fit, intercept, e);
 			summaryData.add(e);

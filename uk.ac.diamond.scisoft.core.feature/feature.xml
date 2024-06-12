@@ -76,28 +76,28 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="org.apache.xmlrpc.client"
+         id="wrapped.org.apache.xmlrpc.xmlrpc-client"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.apache.xmlrpc.common"
+         id="wrapped.org.apache.xmlrpc.xmlrpc-common"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.apache.xmlrpc.server"
+         id="wrapped.org.apache.xmlrpc.xmlrpc-server"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.apache.ws.commons.util"
+         id="wrapped.org.apache.ws.commons.util.ws-commons-util"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -263,7 +263,7 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="org.apache.commons.httpclient"
+         id="wrapped.commons-httpclient.commons-httpclient"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -5,7 +5,7 @@ Bundle-SymbolicName: uk.ac.diamond.scisoft.analysis.processing.test
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Diamond Light Source
 Fragment-Host: uk.ac.diamond.scisoft.analysis.processing
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.commons.logging,
  org.eclipse.ui.services,

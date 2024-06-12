@@ -10,7 +10,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.dawnsci.analysis.tree,
  org.yaml.snakeyaml,
  uk.ac.diamond.osgi;bundle-version="1.2.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Automatic-Module-Name: org.eclipse.dawnsci.nexus.template
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.dawnsci.nexus.template,

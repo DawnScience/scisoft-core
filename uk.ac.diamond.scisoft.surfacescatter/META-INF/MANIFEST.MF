@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Surfacescatter
 Bundle-SymbolicName: uk.ac.diamond.scisoft.surfacescatter;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: org.eclipse.january;bundle-version="2.0.0",
  org.eclipse.dawnsci.analysis.api;bundle-version="1.1.0",
  org.eclipse.dawnsci.analysis.dataset,

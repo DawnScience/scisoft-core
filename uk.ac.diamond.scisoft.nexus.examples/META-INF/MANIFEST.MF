@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Scisoft Nexus Example code
 Bundle-SymbolicName: uk.ac.diamond.scisoft.nexus.examples
 Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Bundle-Vendor: Diamond Light Source
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.apache.commons.math3,

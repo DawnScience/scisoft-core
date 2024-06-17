@@ -20,6 +20,8 @@ import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.Maths;
 import org.eclipse.january.dataset.Slice;
 
+import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;
+
 public abstract class AbstractCropOperation<T extends IOperationModel> extends AbstractOperation<T, OperationData> {
 	/**
 	 * Take the user's selected range and determine if axis or raw values should be used.
@@ -35,7 +37,7 @@ public abstract class AbstractCropOperation<T extends IOperationModel> extends A
 		int cropRank = getOutputRank().getRank();
 		
 		//Get the user crop limits from the model
-		Double[][] userVals = getUserVals(input);
+		double[][] userVals = getUserVals(input);
 		
 		//Return: array of arrays [[min/max][dimension]]
 		int[][] indices = new int[2][cropRank];
@@ -46,13 +48,18 @@ public abstract class AbstractCropOperation<T extends IOperationModel> extends A
 		//As the axes are picked up in reverse order (i.e. z,y,x) have to get crop values using (cropRank-1)-dim
 		for (int dim = 0; dim < cropRank; dim++) {
 			//If no axes come back, use the raw user values
+			double[] endVals = userVals[(cropRank-1)-dim];
 			if ((axes == null) || (axes[0] == null))  {
-				indices[0][dim] = userVals[(cropRank-1)-dim][0] == null ? 0 : (int)userVals[(cropRank-1)-dim][0].doubleValue();
-				indices[1][dim] = userVals[(cropRank-1)-dim][1] == null ? dataShape[dim] : (int)userVals[(cropRank-1)-dim][1].doubleValue();
+				double v = endVals[0];
+				indices[0][dim] = Double.isNaN(v) ? 0 : (int)v;
+				v = endVals[1];
+				indices[1][dim] = Double.isNaN(v) ? dataShape[dim] : (int)v;
 			}else {
 			//We do have axes, so get the indices of the user values
-				indices[0][dim] = userVals[(cropRank-1)-dim][0] == null ? 0 : getAxisIndex(axes[dim], userVals[(cropRank-1)-dim][0]);
-				indices[1][dim] = userVals[(cropRank-1)-dim][1] == null ? dataShape[dim] : getAxisIndex(axes[dim], userVals[(cropRank-1)-dim][1]);
+				double v = endVals[0];
+				indices[0][dim] = Double.isNaN(v) ? 0 : getAxisIndex(axes[dim], v);
+				v = endVals[1];
+				indices[1][dim] = Double.isNaN(v) ? dataShape[dim] : getAxisIndex(axes[dim], v);
 			}
 			
 			if (indices[0][dim] == indices[1][dim]) {
@@ -60,14 +67,19 @@ public abstract class AbstractCropOperation<T extends IOperationModel> extends A
 			}
 			
 			//Correct for reversed axes/inputs
-			if (indices[0][dim] > indices[1][dim]) {
-				int tmp = indices[0][dim];
+			int tmp = indices[0][dim];
+			if (tmp > indices[1][dim]) {
 				indices[0][dim] = indices[1][dim];
 				indices[1][dim] = tmp;
 			}
 		}
-		
-		return new OperationData(input.getSlice(indices[0], indices[1], null));
+		OperationData data = new OperationData(input.getSlice(indices[0], indices[1], null));
+		int[] middle = new int[cropRank];
+		for (int i = 0; i < cropRank; i++) {
+			middle[i] = (indices[0][i] + indices[1][i]) / 2;
+		}
+		data.setAuxData(ProcessingUtils.createNamedDataset(middle, "crop_centre"));
+		return data;
 	}
 	
 	protected int getAxisIndex(ILazyDataset theAxis, Double value) {
@@ -82,6 +94,6 @@ public abstract class AbstractCropOperation<T extends IOperationModel> extends A
 	 * Returns user defined crop values from the model.
 	 * @return userVals
 	 */
-	protected abstract Double[][] getUserVals(IDataset input);
+	protected abstract double[][] getUserVals(IDataset input);
 	
 }

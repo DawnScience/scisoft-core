@@ -12,6 +12,9 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.twod;
 
+import java.io.Serializable;
+import java.util.Arrays;
+
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationException;
@@ -59,7 +62,8 @@ public class FrameMathsFromPeakOperation extends AbstractOperation<FrameMathsFro
 		
 		CropAroundPeak2DOperation cropAroundPeak2DOperation = new CropAroundPeak2DOperation();
 		cropAroundPeak2DOperation.setModel(cropAroundPeak2DModel);
-		IDataset outputDataset = cropAroundPeak2DOperation.execute(inputDataset, monitor).getData();
+		OperationData cropData = cropAroundPeak2DOperation.execute(inputDataset, monitor);
+		IDataset outputDataset = cropData.getData();
 
 		/// Find the sum of this value
 		Dataset datasetToSum = DatasetUtils.cast(DoubleDataset.class, outputDataset);
@@ -68,36 +72,38 @@ public class FrameMathsFromPeakOperation extends AbstractOperation<FrameMathsFro
 		// Manipulate the frame accordingly
 		ScalarModel scalarModel = new ScalarModel();
 		scalarModel.setValue(intensitySum);
-		OperationData returnDataset = null;
+		OperationData returnData = null;
 
 		switch (model.getMathematicalOperator()) {
 		
 			case ADD:		AddScalarOperation addScalarOperation = new AddScalarOperation();
 							addScalarOperation.setModel(scalarModel);
-							returnDataset = addScalarOperation.execute(inputDataset, monitor);
+							returnData = addScalarOperation.execute(inputDataset, monitor);
 							break;
 						
 			case SUBTRACT:	SubtractScalarOperation subtractScalarOperation = new SubtractScalarOperation();
 							subtractScalarOperation.setModel(scalarModel);
-							returnDataset = subtractScalarOperation.execute(inputDataset, monitor);
+							returnData = subtractScalarOperation.execute(inputDataset, monitor);
 							break;
 						
 			case DIVIDE:	DivideScalarOperation divideScalarOperation = new DivideScalarOperation();
 							divideScalarOperation.setModel(scalarModel);
-							returnDataset = divideScalarOperation.execute(inputDataset, monitor);
+							returnData = divideScalarOperation.execute(inputDataset, monitor);
 							break;
 						
 			case MULTIPLY:	MutliplyScalarOperation multiplyScalarOperation = new MutliplyScalarOperation();
 							multiplyScalarOperation.setModel(scalarModel);
-							returnDataset = multiplyScalarOperation.execute(inputDataset, monitor);
+							returnData = multiplyScalarOperation.execute(inputDataset, monitor);
 							break;
 						
 			default:		throw new OperationException(this, "The mathematical operator selected is not supported.");
 
 		}
 
-		Dataset sum = ProcessingUtils.createNamedDataset(intensitySum, "integrated_peak");
-		returnDataset.setAuxData(sum);
-		return returnDataset;
+		Serializable[] cropAuxData = cropData.getAuxData();
+		Serializable[] auxData = Arrays.copyOf(cropAuxData, cropAuxData.length + 1);
+		auxData[cropAuxData.length] = ProcessingUtils.createNamedDataset(intensitySum, "integrated_peak");
+		returnData.setAuxData(auxData);
+		return returnData;
 	}
 }

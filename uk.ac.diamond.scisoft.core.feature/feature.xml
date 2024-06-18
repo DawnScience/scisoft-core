@@ -367,7 +367,7 @@ limitations under the License.
          unpack="false"/>
 
    <plugin
-         id="org.slf4j.jcl"
+         id="jcl.over.slf4j"
          download-size="0"
          install-size="0"
          version="0.0.0"

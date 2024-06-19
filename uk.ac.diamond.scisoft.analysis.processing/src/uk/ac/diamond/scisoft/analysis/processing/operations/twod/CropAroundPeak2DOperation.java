@@ -11,6 +11,8 @@
 
 package uk.ac.diamond.scisoft.analysis.processing.operations.twod;
 
+import java.util.Arrays;
+
 import org.eclipse.dawnsci.analysis.api.processing.Atomic;
 import org.eclipse.dawnsci.analysis.api.processing.OperationRank;
 import org.eclipse.january.dataset.IDataset;
@@ -36,18 +38,22 @@ public class CropAroundPeak2DOperation extends AbstractCropOperation<CropAroundP
 	}
 
 	@Override
-	protected Double[][] getUserVals(IDataset input) {
+	protected double[][] getUserVals(IDataset input) {
 		int[] peakEstimate = input.maxPos(true);
 	
 		double xTightness = (model.getXBoxLength() - 2.) / 2.;
 		double yTightness = (model.getYBoxLength() - 2.) / 2.;
-		Double[][] userVals = new Double[getOutputRank().getRank()][2];
+		int r = getOutputRank().getRank();
+		double[][] userVals = new double[r][2];
 	
 		userVals[0][0] = peakEstimate[1] - xTightness;
 		userVals[0][1] = peakEstimate[1] + xTightness + 2;
 	
 		userVals[1][0] = peakEstimate[0] - yTightness;
 		userVals[1][1] = peakEstimate[0] + yTightness + 2;
+		for (int i = 2; i < r; i++) {
+			Arrays.fill(userVals[i], Double.NaN);
+		}
 			
 		return userVals;
 	}

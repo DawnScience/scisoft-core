@@ -1304,11 +1304,11 @@ public abstract class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	 * @param result
 	 * @param cEnergy current energy (only used when coefficient length is 3)
 	 * @param elasticIntercept
-	 * @param coeffs (for Intercept vs Energy)
+	 * @param coeffs for Energy vs Intercept fit (single value taken as linear energy resolution)
 	 * @return energy scale
 	 */
 	public static Dataset makeEnergyScale(Dataset[] result, double cEnergy, double elasticIntercept, double... coeffs) {
-		return createEnergyScale(true, DatasetFactory.createRange(result[1].getSize()), cEnergy, elasticIntercept, result[0].getDouble(), coeffs);
+		return createEnergyScale(false, DatasetFactory.createRange(result[1].getSize()), cEnergy, elasticIntercept, result[0].getDouble(), coeffs);
 	}
 
 	private static Dataset createEnergyScale(boolean isIVE, Dataset i, double cEnergy, double elasticIntercept, double regionStart,

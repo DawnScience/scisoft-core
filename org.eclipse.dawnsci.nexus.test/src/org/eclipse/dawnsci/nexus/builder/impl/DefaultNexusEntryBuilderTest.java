@@ -23,6 +23,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 import java.util.List;
@@ -284,6 +285,7 @@ public class DefaultNexusEntryBuilderTest {
 		assertThat(nxEntry.getNumberOfDataNodes(), is(0));
 		
 		MapBasedMetadataProvider metadata = new MapBasedMetadataProvider();
+		metadata.setCategory(NexusBaseClass.NX_ENTRY);
 		metadata.addMetadataEntry(NX_ENTRY_IDENTIFIER, "12345");
 		metadata.addMetadataEntry(NX_EXPERIMENT_IDENTIFIER, "myexperiment");
 		metadata.addMetadataEntry(NX_PROGRAM_NAME, "GDA 8.36.0");
@@ -481,6 +483,36 @@ public class DefaultNexusEntryBuilderTest {
 		final ValidationReport validationReport = entryBuilder.validate();
 		assertThat(validationReport, is(notNullValue()));
 		assertThat(validationReport.isOk(), is(false));
+	}
+	
+	@Test
+	public void testMergeDefaultGroup_nodeNameClash() throws Exception {
+		entryBuilder.addDefaultGroups();
+		
+		final MapBasedMetadataProvider sampleMetadata = new MapBasedMetadataProvider();
+		sampleMetadata.setCategory(NX_SAMPLE);
+		sampleMetadata.addMetadataEntry(NXsample.NX_NAME, "old name");
+
+		final NXsample sample = NexusNodeFactory.createNXsample();
+		sample.setDensityScalar(0.83);
+		sample.setNameScalar("new name");
+
+		entryBuilder.addMetadata(sampleMetadata);
+		final NexusObjectProvider<NXsample> sampleProvider = new NexusObjectWrapper<>("sample", sample);
+		assertThrows(NexusException.class, () -> entryBuilder.add(sampleProvider));
+	}
+	
+	@Test
+	public void testMergeDefaultGroup_attrNameClash() throws Exception {
+		entryBuilder.addDefaultGroups();
+
+		nxEntry.setAttributeDefault("oldDefault");
+
+		final NXentry entry = NexusNodeFactory.createNXentry();
+		entry.setAttributeDefault("newDefault");
+
+		final NexusObjectProvider<NXentry> entryProvider = new NexusObjectWrapper<>("entry", entry);
+		assertThrows(NexusException.class, () -> entryBuilder.add(entryProvider));
 	}
 
 }

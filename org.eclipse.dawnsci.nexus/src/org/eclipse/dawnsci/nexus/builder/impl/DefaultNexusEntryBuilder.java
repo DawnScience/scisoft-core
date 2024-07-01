@@ -14,8 +14,10 @@ package org.eclipse.dawnsci.nexus.builder.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
@@ -27,6 +29,7 @@ import org.eclipse.dawnsci.nexus.NXinstrument;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.NexusBaseClass;
+import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.builder.CustomNexusEntryModification;
@@ -144,17 +147,12 @@ public class DefaultNexusEntryBuilder implements NexusEntryBuilder {
 	@Override
 	public void addMetadata(NexusMetadataProvider metadataProvider) throws NexusException {
 		final NexusBaseClass category = metadataProvider.getCategory();
-		NXobject group;
-		if (category == null) {
-			group = nxEntry;
-		} else {
-			group = findGroupForCategory(category);
-		}
-
+		final NXobject group = category == null ? nxEntry : findGroupForCategory(category);
+		
 		final Iterator<MetadataEntry> metadataEntryIterator = metadataProvider.getMetadataEntries();
 		while (metadataEntryIterator.hasNext()) {
 			final MetadataEntry entry = metadataEntryIterator.next();
-			((NXobject) group).setField(entry.getName(), entry.getValue());
+			group.setField(entry.getName(), entry.getValue());
 		}
 	}
 
@@ -165,10 +163,10 @@ public class DefaultNexusEntryBuilder implements NexusEntryBuilder {
 	public void modifyEntry(NexusEntryModification modification) throws NexusException {
 		if (modification instanceof NexusObjectProvider) {
 			add((NexusObjectProvider<?>) modification);
-		} else if (modification instanceof NexusMetadataProvider) {
-			addMetadata((NexusMetadataProvider) modification);
-		} else if (modification instanceof CustomNexusEntryModification) {
-			modifyEntry((CustomNexusEntryModification) modification);
+		} else if (modification instanceof NexusMetadataProvider metadata) {
+			addMetadata(metadata);
+		} else if (modification instanceof CustomNexusEntryModification customModification) {
+			modifyEntry(customModification);
 		} else {
 			throw new IllegalArgumentException("Unknown modification type: " + modification.getClass());
 		}
@@ -302,20 +300,7 @@ public class DefaultNexusEntryBuilder implements NexusEntryBuilder {
 	}
 
 	private <N extends NXobject> void mergeIntoGroup(NXobject group, NexusObjectProvider<N> nexusObjectProvider,N nexusObject) throws NexusException {
-		
-		var sharedEntries = group.getDataNodeNames().stream()
-				.filter(nexusObject.getDataNodeNames()::contains).toList();
-		if (!sharedEntries.isEmpty()) {
-			throw new NexusException("Cannot merge %s into %s as contains existing dataset(s): %s"
-					.formatted(nexusObjectProvider, group, sharedEntries));
-		}
-		sharedEntries = group.getAttributeNames().stream()
-				.filter(nexusObject.getAttributeNames()::contains)
-				.filter(attrName -> !"NX_class".equals(attrName)).toList();
-		if (!sharedEntries.isEmpty()) {
-			throw new NexusException("Cannot merge %s into %s as contains existing attribute(s): %s"
-					.formatted(nexusObjectProvider, group, sharedEntries));
-		}		
+		checkNodeAndAttributeNames(nexusObjectProvider.getName(), group, nexusObject);
 		
 		for (var entry : nexusObject.getAllDatasets().entrySet()) {
 			group.setDataset(entry.getKey(), entry.getValue());
@@ -325,22 +310,37 @@ public class DefaultNexusEntryBuilder implements NexusEntryBuilder {
 			group.addAttribute(it.next());
 		}
 	}
+	
+	private <N extends NXobject> void checkNodeAndAttributeNames(String name, NXobject group,
+			N nexusObject) throws NexusException {
+		final Set<String> sharedNodeNames = new HashSet<>(group.getNames());
+		sharedNodeNames.retainAll(nexusObject.getNames());
+		if (!sharedNodeNames.isEmpty()) {
+			throw new NexusException("Cannot merge %s into %s as it contains existing node(s): %s"
+					.formatted(name, group, sharedNodeNames));
+		}
+		
+		final Set<String> sharedAttrNames = new HashSet<>(group.getAttributeNames());
+		sharedAttrNames.retainAll(nexusObject.getAttributeNames());
+		sharedAttrNames.remove(NexusConstants.NXCLASS);
+		if (!sharedAttrNames.isEmpty()) {
+			throw new NexusException("Cannot merge %s into %s as it contains existing attribute(s): %s"
+					.formatted(name, group, sharedAttrNames));
+		}
+	}
 		
 	private NXcollection getCollection(NXobject group, String collectionName) {
-		NXcollection collection = null;
-		
-		GroupNode collectionGroup = group.getGroupNode(collectionName);
+		final GroupNode collectionGroup = group.getGroupNode(collectionName);
 		if (collectionGroup == null) {
-			collection = NexusNodeFactory.createNXcollection();
+			final NXcollection collection = NexusNodeFactory.createNXcollection();
 			group.addGroupNode(collectionName, collection);
-		} else if (collectionGroup instanceof NXcollection) {
-			collection = (NXcollection) collectionGroup;
+			return collection;
+		} else if (collectionGroup instanceof NXcollection collection) {
+			return collection;
 		} else {
 			throw new IllegalArgumentException("Cannot add collection " + collectionName +
 					". A child group with that name already exists");
 		}
-
-		return collection;
 	}
 
 	private NXobject findGroupForCategory(NexusBaseClass category) throws NexusException {

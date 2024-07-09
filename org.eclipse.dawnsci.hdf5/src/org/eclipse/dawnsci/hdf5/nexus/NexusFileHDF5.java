@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
@@ -969,7 +970,7 @@ public class NexusFileHDF5 implements NexusFile {
 		}
 		Object[] fillValue = NexusUtils.getFillValue(eClass);
 		Object providedFillValue = data.getFillValue();
-		if (providedFillValue != null) {
+		if (providedFillValue != null && !providedFillValue.getClass().isArray()) {
 			fillValue[0] = providedFillValue;
 		}
 		data.setFillValue(fillValue);
@@ -1197,7 +1198,7 @@ public class NexusFileHDF5 implements NexusFile {
 	@Override
 	public void addNode(GroupNode group, String name, Node node) throws NexusException {
 		String parentPath = getPath(group);
-		recursivelyUpdateTree(parentPath, name, node);
+		addNode(parentPath, name, node);
 	}
 
 	@Override
@@ -1206,12 +1207,12 @@ public class NexusFileHDF5 implements NexusFile {
 			throw new IllegalArgumentException("Path name must be specified.");
 		}
 		if ("/".equals(path)) {
-			recursivelyUpdateTree("/", null, node);
+			addNode("/", null, node);
 		} else {
 			String[] components = path.split(Node.SEPARATOR);
 			String name = components[components.length - 1];
 			String parentPath = path.substring(0, path.lastIndexOf(name));
-			recursivelyUpdateTree(parentPath, name, node);
+			addNode(parentPath, name, node);
 		}
 	}
 
@@ -1247,7 +1248,18 @@ public class NexusFileHDF5 implements NexusFile {
 		}
 	}
 
-	private void recursivelyUpdateTree(String parentPath, String name, Node node) throws NexusException {
+	private void addNode(String parentPath, String name, Node node) throws NexusException {
+		final Map<String, String> linksToCreate = new LinkedHashMap<>();
+		recursivelyUpdateTree(parentPath, name, node, linksToCreate);
+
+		// add links for internal SymbolicNodes after all other nodes have been added, so that
+		// we're not dependent on the encounter order
+		for (Map.Entry<String, String> entry : linksToCreate.entrySet()) {
+			createHardLink(entry.getValue(), entry.getKey());
+		}
+	}
+
+	private void recursivelyUpdateTree(String parentPath, String name, Node node, Map<String, String> linksToCreate) throws NexusException {
 		String nxClass = node.containsAttribute(NexusConstants.NXCLASS) ? node.getAttribute(NexusConstants.NXCLASS).getFirstElement() : "";
 		String fullPath = TreeUtils.join(parentPath, name == null ? "" : name);
 		fullPath = fullPath.replace("//", "/");
@@ -1279,7 +1291,7 @@ public class NexusFileHDF5 implements NexusFile {
 			}
 			for (String childName : groupNode.getNames()) {
 				Node childNode = groupNode.getNodeLink(childName).getDestination();
-				recursivelyUpdateTree(fullPath, childName, childNode);
+				recursivelyUpdateTree(fullPath, childName, childNode, linksToCreate);
 			}
 		} else if (node instanceof DataNode dataNode) {
 			if (!parentNode.containsDataNode(name)) {
@@ -1309,14 +1321,12 @@ public class NexusFileHDF5 implements NexusFile {
 			}
 		} else if (node instanceof SymbolicNode linkNode) {
 			if (linkNode.getSourceURI() == null) {
-				// if no source uri is specified, create a hard link to the datanode at that path within this nexus file
-				DataNode linkedNode = getData(linkNode.getPath());
-				addNode(parentNode, name, linkedNode);  
+				// if no source uri is specified, add to map of hard links to create
+				// note: we delay this as the node at the linkPath may not yet exist 
+				linksToCreate.put(fullPath, linkNode.getPath());
 			} else if (linkNode.getSourceURI().getPath() == null || linkNode.getSourceURI().getPath().equals("")) {
 				throw new NexusException("Symbolic link node URI does not specify a target file");
-			}
-			
-			if (!parentNode.containsDataNode(name) && !parentNode.containsGroupNode(name)) {
+			} else if (!parentNode.containsDataNode(name) && !parentNode.containsGroupNode(name)) {
 				createExternalLink(linkNode.getSourceURI().getPath(), parentPath, name, linkNode.getPath());
 			}
 		} else {

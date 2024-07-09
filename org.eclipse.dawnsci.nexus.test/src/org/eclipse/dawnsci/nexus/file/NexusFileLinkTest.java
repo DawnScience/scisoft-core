@@ -16,8 +16,16 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.net.URI;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
 
+import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
+import org.eclipse.dawnsci.analysis.api.tree.SymbolicNode;
+import org.eclipse.dawnsci.analysis.tree.TreeFactory;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
 import org.eclipse.dawnsci.nexus.test.utilities.NexusTestUtils;
@@ -25,6 +33,10 @@ import org.eclipse.dawnsci.nexus.test.utilities.TestUtils;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.FloatDataset;
+import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.ILazyWriteableDataset;
+import org.eclipse.january.dataset.LazyWriteableDataset;
+import org.eclipse.january.dataset.SliceND;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -159,6 +171,89 @@ public class NexusFileLinkTest {
 		assertEquals(a, nf.getData(g, "value").getDataset().getSlice());
 		assertEquals(a, nf.getData("/e/f/g/value").getDataset().getSlice());
 		nf.close();
+	}
+
+	@Test
+	public void testInternalLinks() throws Exception {
+		String filePath = testScratchDirectoryName + "testInternalLinks.nxs";
+		int dataSize = 5;
+		Dataset dataset = DatasetFactory.createRange(dataSize);
+
+		long oid = 1;
+		try (NexusFile nf = NexusTestUtils.createNexusFile(filePath)) {
+			GroupNode root = TreeFactory.createGroupNode(oid++);
+			GroupNode g = TreeFactory.createGroupNode(oid++);
+			root.addGroupNode("g", g);
+
+			/*
+			 *  - 'l' is a SymbolicNode pointing to 'a' that occurs before 'a' in insertion order
+			 *  - 'a' is the original DataNode with a dataset directly containing the data
+			 *  - 'b' is the same DataNode instance as 'a' (a 'hard-link')
+			 *  - 'c' is another SymbolicLink to 'a' that occurs after 'a' in insertion order
+			 *  
+			 *  - 's' is a SymbolicNode pointing to 'x' that occurs before 'x' in insertion order
+			 *  - 'x' is a DataNode containing an ILazyWriteableDataset that is written to after the datasets are created on disk
+			 *  - 'y' is the same DataNode instance as 'x' (a 'hard-link')
+			 *  - 'z' is another SymbolicLink to 'x' that occurs after 'x' in insertion order
+			 *  
+			 *   Nodes are processed in insertion order as GroupNodeImpl uses a LinkedHashMap.
+			 */
+
+			SymbolicNode l = TreeFactory.createSymbolicNode(oid++, (URI) null, null, "/g/a");
+			g.addSymbolicNode("l", l);
+
+			DataNode a = TreeFactory.createDataNode(oid++);
+			a.setDataset(dataset);
+			g.addDataNode("a", a); 
+
+			g.addDataNode("b", a); // same DataNode as 'a'
+
+			SymbolicNode c = TreeFactory.createSymbolicNode(oid++, (URI) null, null, "/g/a");
+			g.addSymbolicNode("c", c);
+
+			SymbolicNode s = TreeFactory.createSymbolicNode(oid++, (URI) null, null, "/g/x");
+			g.addSymbolicNode("s", s);
+
+			int[] shape = { 0 };
+			int[] maxShape = { ILazyWriteableDataset.UNLIMITED };
+			ILazyWriteableDataset lazy = new LazyWriteableDataset("x", Double.class, shape, maxShape, null, null);
+
+			DataNode x = TreeFactory.createDataNode(oid++);
+			x.setDataset(lazy);
+			g.addDataNode("x", x);
+
+			g.addDataNode("y", x); // same DataNode as 'x'
+
+			SymbolicNode z = TreeFactory.createSymbolicNode(oid++, (URI) null, null, "/g/x");
+			g.addSymbolicNode("z", z);
+
+			nf.addNode("/", root); // save the tree in one go
+			nf.flush();
+
+			// write to the lazy writeable dataset
+			for (int i = 0; i < dataSize; i++) {
+				int[] startStop = new int[] { i };
+				IDataset dataToWrite = DatasetFactory.createFromObject(dataset.getDouble(i));
+				SliceND slice = SliceND.createSlice(lazy, startStop, startStop);
+				lazy.setSlice(null, dataToWrite, slice);
+			}
+
+			nf.flush();
+		}
+
+		try (NexusFile nf = NexusTestUtils.openNexusFileReadOnly(filePath)) {
+			GroupNode g = nf.getGroup("/g", false);
+			assertNotNull(g);
+
+			Set<String> dataNodeNames = new LinkedHashSet<>(List.of("l", "a", "b", "c", "s", "x", "y", "z"));
+			assertEquals(dataNodeNames, g.getDataNodeNames());
+
+			for (String dataNodeName : dataNodeNames) {
+				DataNode dataNode = nf.getData("/g/" + dataNodeName);
+				assertNotNull(dataNode);
+				assertEquals(dataset, dataNode.getDataset().getSlice());
+			}
+		}
 	}
 
 	// need to create a new external file as NAPI does not seem to cope well if an external file

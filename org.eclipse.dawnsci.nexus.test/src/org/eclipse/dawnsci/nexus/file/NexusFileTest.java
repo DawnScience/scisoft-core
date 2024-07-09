@@ -1302,5 +1302,62 @@ public class NexusFileTest {
 		DataNode fieldLink = nf.getData("/group2/link");
 		assertEquals(fieldValue, fieldLink.getDataset().getSlice().getString());
 	}
-	
+
+	@Test
+	public void testAddInternalSymbolicNodeLinkAndDataset() throws Exception {
+		final String fieldValue = "fieldValue";
+		
+		final GroupNode group = NexusNodeFactory.createGroupNode(); // new group only exists in memory at this point
+		final SymbolicNode link = NexusNodeFactory.createSymbolicNode(null, "/group/field");
+		group.addNode("link", link);
+		
+		final DataNode fieldNode = NexusNodeFactory.createDataNode();
+		fieldNode.setDataset(DatasetFactory.createFromObject(fieldValue));
+		group.addDataNode("field", fieldNode);
+
+		nf.addNode("/group", group);
+		nf.close();
+		
+		nf.openToRead();
+		DataNode field = nf.getData("/group/field");
+		assertEquals(fieldValue, field.getDataset().getSlice().getString());
+		DataNode fieldLink = nf.getData("/group/link");
+		assertEquals(fieldValue, fieldLink.getDataset().getSlice().getString());
+	}
+
+	@Test
+	public void testAddInternalSymbolicNodeLinkToWriteableDataset() throws Exception {
+		final int[] fieldData = { 1, 2, 3, 4, 5 };
+		
+		GroupNode group1 = nf.getGroup("/group1", true); // group g created on disk
+		
+		ILazyWriteableDataset lazy = new LazyWriteableDataset("field", Integer.class, new int[1],
+				new int[] { ILazyWriteableDataset.UNLIMITED }, null, null);
+		nf.createData(group1, "field", lazy);
+		
+		final GroupNode group2 = NexusNodeFactory.createGroupNode(); // new group only exists in memory at this point
+		final SymbolicNode link = NexusNodeFactory.createSymbolicNode(null, "/group1/field");
+		group2.addNode("link", link);
+		
+		nf.addNode("/group2", group2);
+		nf.flush();
+		
+		for (int i = 0; i < fieldData.length; i++) {
+			int[] startStop = new int[] { i };
+			IDataset dataToWrite = DatasetFactory.createFromObject(fieldData[i]);
+			SliceND slice = SliceND.createSlice(lazy, startStop, startStop);
+			lazy.setSlice(null, dataToWrite, slice);
+		}
+		
+		nf.close();
+		
+		nf.openToRead();
+		Dataset expectedData = DatasetFactory.createFromObject(fieldData);
+		
+		DataNode field = nf.getData("/group1/field");
+		assertEquals(expectedData, field.getDataset().getSlice());
+		DataNode fieldLink = nf.getData("/group2/link");
+		assertEquals(expectedData, fieldLink.getDataset().getSlice());		
+	}
+
 }

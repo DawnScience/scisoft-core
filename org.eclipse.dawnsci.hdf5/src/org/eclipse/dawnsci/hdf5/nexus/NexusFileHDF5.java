@@ -809,12 +809,11 @@ public class NexusFileHDF5 implements NexusFile {
 
 		path = NexusUtils.stripAugmentedPath(path);
 		//check if the data node itself is a symlink
-		DataNode dataNode;
 		HDF5Token fileAddr = getLinkToken(path);
 		if (!IS_EXTERNAL_LINK.equals(fileAddr) && !NO_LINK.equals(fileAddr)) {
 			Node node = nodeMap.get(fileAddr);
-			if (node instanceof DataNode) {
-				return (DataNode) node;
+			if (node instanceof DataNode dataNode) {
+				return dataNode;
 			} else if (node != null) {
 				throw new IllegalArgumentException("Path specified (" + path + ") is not for a dataset");
 			}
@@ -838,15 +837,14 @@ public class NexusFileHDF5 implements NexusFile {
 		NodeType nodeType = getNodeType(path);
 		if (nodeType == null || nodeType != NodeType.DATASET) {
 			//inablity to find nodetype could indicate the path traverses a napimount
-			Node potentialDataNode = getNode(path, false).node;
-			if (potentialDataNode instanceof DataNode) {
-				return (DataNode) potentialDataNode;
+			Node node = getNode(path, false).node;
+			if (node instanceof DataNode dataNode) {
+				return dataNode;
 			}
 			throw new NexusException("Path (" + path + ") points to non-dataset object");
 		}
 
-		dataNode = getDataNodeFromFile(path, (GroupNode)parentNodeData.node, dataName);
-		return dataNode;
+		return getDataNodeFromFile(path, (GroupNode)parentNodeData.node, dataName);
 	}
 
 	@Override
@@ -1261,8 +1259,7 @@ public class NexusFileHDF5 implements NexusFile {
 			}
 			return;
 		}
-		if (node instanceof GroupNode) {
-			GroupNode updatingGroupNode = (GroupNode) node;
+		if (node instanceof GroupNode groupNode) {
 			if (!parentNode.containsGroupNode(name)) {
 				if (nxClass.isEmpty()) {
 					logger.warn("Adding node at {} without an NXclass", fullPath);
@@ -1280,25 +1277,24 @@ public class NexusFileHDF5 implements NexusFile {
 					addAttribute(existingNode, createAttribute(value));
 				}
 			}
-			for (String childName : updatingGroupNode.getNames()) {
-				Node childNode = updatingGroupNode.getNodeLink(childName).getDestination();
+			for (String childName : groupNode.getNames()) {
+				Node childNode = groupNode.getNodeLink(childName).getDestination();
 				recursivelyUpdateTree(fullPath, childName, childNode);
 			}
-		} else if (node instanceof DataNode) {
-			DataNode updatingDataNode = (DataNode) node;
+		} else if (node instanceof DataNode dataNode) {
 			if (!parentNode.containsDataNode(name)) {
-				ILazyDataset dataset = updatingDataNode.getDataset();
+				ILazyDataset dataset = dataNode.getDataset();
 				DataNode newDataNode;
-				if (dataset instanceof IDataset) {
-					newDataNode = createData(parentNode, name, (IDataset) dataset);
-				} else if (dataset instanceof ILazyWriteableDataset) {
-					newDataNode = createData(parentNode, name, (ILazyWriteableDataset) dataset);
-					updatingDataNode.setChunkShape(newDataNode.getChunkShape());
+				if (dataset instanceof IDataset idataset) {
+					newDataNode = createData(parentNode, name, idataset);
+				} else if (dataset instanceof ILazyWriteableDataset lazyWriteableDataset) {
+					newDataNode = createData(parentNode, name, lazyWriteableDataset);
+					dataNode.setChunkShape(newDataNode.getChunkShape());
 				} else {
 					throw new NexusException("Unrecognised dataset type: " + dataset.getClass());
 				}
-				if (updatingDataNode.getMaxShape() == null) {
-					updatingDataNode.setMaxShape(newDataNode.getMaxShape());
+				if (dataNode.getMaxShape() == null) {
+					dataNode.setMaxShape(newDataNode.getMaxShape());
 				}
 			}
 			DataNode existingNode = getData(parentNode, name);
@@ -1311,8 +1307,7 @@ public class NexusFileHDF5 implements NexusFile {
 					addAttribute(existingNode, createAttribute(value));
 				}
 			}
-		} else if (node instanceof SymbolicNode) {
-			SymbolicNode linkNode = (SymbolicNode) node;
+		} else if (node instanceof SymbolicNode linkNode) {
 			if (linkNode.getSourceURI() == null) {
 				// if no source uri is specified, create a hard link to the datanode at that path within this nexus file
 				DataNode linkedNode = getData(linkNode.getPath());

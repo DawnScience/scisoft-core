@@ -22,14 +22,15 @@ import java.util.Map;
  */
 public class PrimaryDataFieldModel {
 	
-	record AxisFieldDimensionModel(Integer defaultAxisDimension, int[] dimensionMappings) { }; // NOSONAR: should really override equals and hashcode for deep equality check, but not strictly necessary here
+	private record AxisFieldDimensionModel(Integer defaultAxisDimension, int[] dimensionMappings) { }; // NOSONAR: should really override equals and hashcode for deep equality check, but not strictly necessary here
 	
 	private final Map<String, AxisFieldDimensionModel> axisFieldDimensionModels = new LinkedHashMap<>();
 
 	public void addAxisField(String axisFieldName, Integer defaultAxisDimension,
-			int[] dimensionMappings) {
-		axisFieldDimensionModels.put(axisFieldName,
-				new AxisFieldDimensionModel(defaultAxisDimension, dimensionMappings));
+			int... dimensionMappings) {
+		final AxisFieldDimensionModel axisFieldDimensionModel = new AxisFieldDimensionModel(defaultAxisDimension,
+				dimensionMappings == null || dimensionMappings.length == 0 ? null : dimensionMappings);
+		axisFieldDimensionModels.put(axisFieldName, axisFieldDimensionModel);
 	}
 	
 	public List<String> getAxisFieldNames() {

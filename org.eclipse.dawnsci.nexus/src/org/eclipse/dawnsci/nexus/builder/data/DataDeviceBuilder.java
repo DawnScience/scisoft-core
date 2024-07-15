@@ -298,27 +298,35 @@ public class DataDeviceBuilder<N extends NXobject> {
 		// return the axis dimension for this device (may be null)
 		return axisDimension;
 	}
-	
+
 	private int[] getDimensionMapping(String axisFieldName, int fieldRank, Integer axisDimension) {
 		// first check if the value has been overridden (i.e. explicitly set)
 		if (overriddenFieldDimensionMappings != null) {
 			return overriddenFieldDimensionMappings.get(axisFieldName);
 		}
-		
+
+		if (isPrimary) {
+			int[] dimensionMappings = nexusObjectProvider.getDimensionMappings(signalFieldSourceName, axisFieldName);
+			if (dimensionMappings != null) {
+				return dimensionMappings;
+			}
+		}
+
+		// dimension mappings not explicitly set, so we calculate a default
 		// if this is an axis field and has size 1, this must be the dimension mapping
 		if (fieldRank == 1 && axisDimension != null) {
 			return new int[] { axisDimension };
 		}
-		
+
 		// use the default dimension mappings for the device if set and of the same rank
 		if (defaultDimensionMappings != null && fieldRank == defaultDimensionMappings.length) {
 			return defaultDimensionMappings;
 		}
-		
+
 		// default to [0, 1, ... n] where n is the field rank
 		return IntStream.range(0, fieldRank).toArray();
 	}
-	
+
 	private boolean isDefaultAxisField(String axisFieldName) {
 		// an axis field is the default axis field for a dimension of the signal field of the NXdata group
 		// if this device is a default axis, as the axis field name is the default axis field name of this device

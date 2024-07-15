@@ -11,11 +11,17 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.nexus.builder.data.impl;
 
+import static org.eclipse.dawnsci.nexus.NexusConstants.DATA_AXES;
+import static org.eclipse.dawnsci.nexus.NexusConstants.DATA_SIGNAL;
+import static org.eclipse.dawnsci.nexus.NexusConstants.NXCLASS;
 import static org.eclipse.dawnsci.nexus.test.utilities.NexusAssert.assertAxes;
 import static org.eclipse.dawnsci.nexus.test.utilities.NexusAssert.assertIndices;
 import static org.eclipse.dawnsci.nexus.test.utilities.NexusAssert.assertNodesEquals;
 import static org.eclipse.dawnsci.nexus.test.utilities.NexusAssert.assertSignal;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.sameInstance;
@@ -35,6 +41,7 @@ import org.eclipse.dawnsci.nexus.builder.data.NexusDataBuilder;
 import org.eclipse.dawnsci.nexus.builder.data.PrimaryDataDevice;
 import org.eclipse.dawnsci.nexus.builder.impl.DefaultNexusEntryBuilder;
 import org.eclipse.dawnsci.nexus.builder.impl.DefaultNexusFileBuilder;
+import org.eclipse.january.dataset.DatasetFactory;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -75,6 +82,52 @@ public class DefaultNexusDataBuilderTest {
 		
 	}
 	
+	public static class TestDetectorWithAxisFieldsForPrimaryField extends AbstractNexusObjectProvider<NXdetector> {
+		
+		public TestDetectorWithAxisFieldsForPrimaryField() {
+			super("detector", NexusBaseClass.NX_DETECTOR);
+			setPrimaryDataFieldName(NXdetector.NX_DATA);
+			addAxisDataFieldForPrimaryDataField("image_x", NXdetector.NX_DATA, 2);
+			addAxisDataFieldForPrimaryDataField("image_y", NXdetector.NX_DATA, 1);
+		}
+		
+		@Override
+		protected NXdetector createNexusObject() {
+			NXdetector detector = NexusNodeFactory.createNXdetector();
+			detector.initializeLazyDataset(NXdetector.NX_DATA, 3, Double.class);
+			detector.setField("image_x", DatasetFactory.createRange(8.0));
+			detector.setField("image_y", DatasetFactory.createRange(8.0));
+			
+			return detector;
+		}
+		
+	}
+
+	public static class TestDetectorWithAxisFieldsWithCustomDimensionMapping extends AbstractNexusObjectProvider<NXdetector> {
+
+		public TestDetectorWithAxisFieldsWithCustomDimensionMapping() {
+			super("detector", NexusBaseClass.NX_DETECTOR);
+			setPrimaryDataFieldName(NXdetector.NX_DATA);
+			addAxisDataFieldForPrimaryDataField("angles", NXdetector.NX_DATA, 1); // uses default mapping of [0, 1]
+			addAxisDataFieldForPrimaryDataField("energies", NXdetector.NX_DATA, 2, 0, 2);
+			addAxisDataFieldForPrimaryDataField("spectrum", NXdetector.NX_DATA, null, 0, 2);
+			addAxisDataFieldForPrimaryDataField("external_io", NXdetector.NX_DATA, null, 0, 2);
+		}
+
+		@Override
+		protected NXdetector createNexusObject() {
+			NXdetector detector = NexusNodeFactory.createNXdetector();
+			detector.initializeLazyDataset(NXdetector.NX_DATA, 3, Double.class);
+			detector.initializeLazyDataset("angles", 2, Double.class);
+			detector.initializeLazyDataset("energies", 2, Double.class);
+			detector.initializeLazyDataset("spectrum", 2, Double.class);
+			detector.initializeLazyDataset("external_io", 2, Double.class);
+
+			return detector;
+		}
+
+	}
+
 	public static class TestDetectorWithMultiplePrimaryDataFields extends AbstractNexusObjectProvider<NXdetector> {
 		
 		public TestDetectorWithMultiplePrimaryDataFields() {
@@ -305,7 +358,55 @@ public class DefaultNexusDataBuilderTest {
 		assertThat(nxData.getDataNode("foo"), is(sameInstance(
 				detector.getNexusObject().getDataNode(NXdetector.NX_DATA))));
 	}
-	
+
+	@Test
+	public void testSetPrimaryDataDevice_axisFields() throws NexusException {
+		assertThat(nxData.getAttributeNames(), contains(NXCLASS));
+		assertThat(nxData.getGroupNodeNames(), is(empty()));
+		assertThat(nxData.getDataNodeNames(), is(empty()));
+
+		TestDetectorWithAxisFieldsForPrimaryField detector = new TestDetectorWithAxisFieldsForPrimaryField();
+		addToEntry(detector);
+		PrimaryDataDevice<NXdetector> dataDevice = DataDeviceBuilder.newPrimaryDataDevice(detector);
+		dataBuilder.setPrimaryDevice(dataDevice);
+
+		assertThat(nxData.getAttributeNames(), containsInAnyOrder(NXCLASS, DATA_SIGNAL,
+				DATA_AXES, "image_x_indices", "image_y_indices"));
+		assertThat(nxData.getGroupNodeNames(), is(empty()));
+		assertThat(nxData.getDataNodeNames(), containsInAnyOrder(NXdetector.NX_DATA, "image_x", "image_y"));
+
+		assertSignal(nxData, NXdetector.NX_DATA);
+		assertAxes(nxData, ".", "image_y", "image_x");
+		assertIndices(nxData, "image_x", 2);
+		assertIndices(nxData, "image_y", 1);
+	}
+
+	@Test
+	public void testSetPrimaryDataField_axisFieldsWithCustomDimensionMappings() throws NexusException {
+		assertThat(nxData.getAttributeNames(), contains(NXCLASS));
+		assertThat(nxData.getGroupNodeNames(), is(empty()));
+		assertThat(nxData.getDataNodeNames(), is(empty()));
+
+		TestDetectorWithAxisFieldsWithCustomDimensionMapping detector =
+				new TestDetectorWithAxisFieldsWithCustomDimensionMapping();
+		addToEntry(detector);
+		PrimaryDataDevice<NXdetector> dataDevice = DataDeviceBuilder.newPrimaryDataDevice(detector);
+		dataBuilder.setPrimaryDevice(dataDevice);
+
+		assertThat(nxData.getAttributeNames(), containsInAnyOrder(NXCLASS, DATA_SIGNAL,
+				DATA_AXES, "angles_indices", "energies_indices", "spectrum_indices", "external_io_indices"));
+		assertThat(nxData.getGroupNodeNames(), is(empty()));
+		assertThat(nxData.getDataNodeNames(), containsInAnyOrder(NXdetector.NX_DATA,
+				"angles", "energies", "spectrum", "external_io"));
+
+		assertSignal(nxData, NXdetector.NX_DATA);
+		assertAxes(nxData, ".", "angles", "energies");
+		assertIndices(nxData, "angles", 0, 1);
+		assertIndices(nxData, "energies", 0, 2);
+		assertIndices(nxData, "spectrum", 0, 2);
+		assertIndices(nxData, "external_io", 0, 2);
+	}
+
 	@Test
 	public void testSetPrimaryDataDevice_externalLink() throws Exception {
 		assertThat(nxData.getNumberOfAttributes(), is(1));

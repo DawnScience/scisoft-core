@@ -55,24 +55,7 @@ import tec.units.indriya.format.SimpleUnitFormat;
  */
 public abstract class AbstractNexusValidator implements NexusApplicationValidator {
 	
-	private static final class NexusPathSegment {
-		private final String name;
-		private final NexusBaseClass nexusBaseClass;
-		
-		NexusPathSegment(String name, NexusBaseClass nexusBaseClass) {
-			this.name = name;
-			this.nexusBaseClass = nexusBaseClass;
-		}
-		
-		public String getName() {
-			return name;
-		}
-		
-		public NexusBaseClass getNexusBaseClass() {
-			return nexusBaseClass;
-		}
-		
-	}
+	private static final record NexusPathSegment(String name, NexusBaseClass nexusBaseClass) { }
 	
 	static {
 		// ensure units classes are loaded and initialized, required for SimpleUnitFormat to parse their units strings
@@ -399,32 +382,32 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 		
 		// The first segment is the entry we're validatings
 		final NexusPathSegment firstSegment = parsedTargetPath[0];
-		final NexusBaseClass firstSegmentClass = firstSegment.getNexusBaseClass();
+		final NexusBaseClass firstSegmentClass = firstSegment.nexusBaseClass();
 		if (!(firstSegmentClass == NexusBaseClass.NX_ENTRY || firstSegmentClass == NexusBaseClass.NX_SUBENTRY
-				|| "entry".equals(firstSegment.getName()))) {
+				|| "entry".equals(firstSegment.name()))) {
 			throw new IllegalArgumentException("First segment of target expected to be 'entry' or 'NXentry': " + targetPath);
 		}
 		
 		// iterate through all nodes 
 		NXobject currentGroup = entry;
 		for (NexusPathSegment segment : Arrays.copyOfRange(parsedTargetPath, 1, parsedTargetPath.length - 1)) {
-			if (segment.getName() != null) {
+			if (segment.name() != null) {
 				// segment specifies a group name, get group and check nexus class if specified
-				final NXobject groupNode = (NXobject) currentGroup.getGroupNode(segment.getName());
+				final NXobject groupNode = (NXobject) currentGroup.getGroupNode(segment.name());
 				if (groupNode == null) {
 					addValidationEntry(Level.WARNING, NodeType.DATA_NODE, fieldName, 
-							MessageFormat.format("No group found with name ''{0}'' with target path ''{1}''.", segment.getName(), targetPath));
+							MessageFormat.format("No group found with name ''{0}'' with target path ''{1}''.", segment.name(), targetPath));
 					return null;
-				} else if (segment.getNexusBaseClass() != null && segment.getNexusBaseClass() != groupNode.getNexusBaseClass()) {
+				} else if (segment.nexusBaseClass() != null && segment.nexusBaseClass() != groupNode.getNexusBaseClass()) {
 					addValidationEntry(Level.WARNING, NodeType.DATA_NODE, fieldName,
 							MessageFormat.format("Group ''{0}'' in target path ''{1}'' has unexpected nexus class ''{2}''.",
-							segment.getName(), targetPath, segment.getNexusBaseClass().getJavaClass().getSimpleName()));
+							segment.name(), targetPath, segment.nexusBaseClass().getJavaClass().getSimpleName()));
 					return null;
 				}
 			}
 			
 			// if name is not specified, nexus class must be. There should be exactly one child group of this nexus class within the parent group
-			final Class<? extends NXobject> nexusClass = segment.getNexusBaseClass().getJavaClass();
+			final Class<? extends NXobject> nexusClass = segment.nexusBaseClass().getJavaClass();
 			final Map<String, ? extends NXobject> childGroups = currentGroup.getChildren(nexusClass);
 			if (childGroups.isEmpty()) {
 				addValidationEntry(Level.WARNING, NodeType.DATA_NODE, fieldName,
@@ -439,10 +422,10 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 		}
 		
 		final NexusPathSegment lastSegment = parsedTargetPath[parsedTargetPath.length - 1];
-		final DataNode dataNode = currentGroup.getDataNode(lastSegment.getName());
+		final DataNode dataNode = currentGroup.getDataNode(lastSegment.name());
 		if (dataNode == null) {
 			addValidationEntry(Level.WARNING, NodeType.DATA_NODE, fieldName,
-					MessageFormat.format("No DataNode found with name ''{0}'' for with target path ''{1}''", lastSegment.getName(), targetPath));
+					MessageFormat.format("No DataNode found with name ''{0}'' for with target path ''{1}''", lastSegment.name(), targetPath));
 			return null;
 		}
 		

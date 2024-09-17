@@ -2,10 +2,14 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+
+import javax.vecmath.Matrix3d;
+import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
@@ -311,5 +315,31 @@ public class MillerSpaceMapperBeanTest {
 
 		assertEquals("NXdata", c[0].getString());
 		return HDF5Utils.getDatasetShape(dstPath, path + "/coordinates");
+	}
+
+	@Test
+	public void testVolumeOrientation() {
+		MillerSpaceMapperBean b = new MillerSpaceMapperBean();
+		Matrix3d o = MillerSpaceMapperBean.getVolumeOrientation(b);
+		assertNull(o);
+
+		b.setThirdAxis(new double[] {0, 0, 1});
+		b.setAziPlaneNormal(new double[] {0, 1, 0});
+		o = MillerSpaceMapperBean.getVolumeOrientation(b);
+		Matrix3d e = new Matrix3d();
+		e.setIdentity();
+		assertTrue(MatrixUtils.isClose(e, o, 1e-14, 1e-12));
+
+		// check we can map to volume
+		b.setThirdAxis(new double[] {3, 1, 0});
+		b.setAziPlaneNormal(new double[] {0, 0, 1});
+		o = MillerSpaceMapperBean.getVolumeOrientation(b);
+		o.invert();
+
+		Vector3d v = new Vector3d(3, 1, 0);
+		o.transform(v);
+		v.normalize();
+		Vector3d t = new Vector3d(0, 0, 1);
+		assertTrue(MatrixUtils.isClose(t, v, 1e-14, 1e-12));
 	}
 }

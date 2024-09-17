@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Miller Space Mapper" uid="uk.ac.diamond.scisoft.applications.msmapper.product" id="uk.ac.diamond.scisoft.applications.MSMapper" application="uk.ac.diamond.scisoft.applications.msmapper" version="1.7.0.qualifier" type="features" includeLaunchers="true" autoIncludeRequirements="true">
+<product name="Miller Space Mapper" uid="uk.ac.diamond.scisoft.applications.msmapper.product" id="uk.ac.diamond.scisoft.applications.MSMapper" application="uk.ac.diamond.scisoft.applications.msmapper" version="1.8.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -15,11 +15,13 @@
 
    <windowImages/>
 
+
    <launcher name="msmapper">
       <win useIco="false">
          <bmp/>
       </win>
    </launcher>
+
 
    <vm>
    </vm>

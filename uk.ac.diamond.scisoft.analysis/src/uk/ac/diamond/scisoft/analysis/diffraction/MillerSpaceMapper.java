@@ -26,6 +26,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector4d;
 
@@ -609,6 +610,11 @@ public class MillerSpaceMapper {
 		}
 		initializeFromBean(inputs[0], false);
 		pixelMapping = ImagePixelMapping.createPixelMapping(bean.getOutputMode());
+		Matrix3d vOri = MillerSpaceMapperBean.getVolumeOrientation(bean);
+		if (vOri != null) {
+			logger.info("Setting volume orientation: %s", vOri);
+			pixelMapping.setVolumeOrientation(vOri);
+		}
 
 		Tree tree = getTreeFromNexusFile(inputs[0]);
 		PositionIterator diter = getPositionIterators(tree)[0];
@@ -649,6 +655,12 @@ public class MillerSpaceMapper {
 				for (int i = 0; i < np; i++) {
 					int r = pIdx.get(i, 0);
 					int c = pIdx.get(i, 1);
+					if (r < 0) {
+						r += dp.getPy();
+					}
+					if (c < 0) {
+						c += dp.getPx();
+					}
 					pInput.set(r, i, 1);
 					pInput.set(c, i, 2);
 					pixelMapping.map(c, r, q);
@@ -717,9 +729,18 @@ public class MillerSpaceMapper {
 				if (aiter != null) {
 					while (aiter.hasNext()) {
 						int i = allFrames.getAbs(aiter.index);
+						if (i < 0) {
+							i += nf;
+						}
 
 						int r = pIdx.get(i, 1);
 						int c = pIdx.get(i, 2);
+						if (r < 0) {
+							r += dp.getPy();
+						}
+						if (c < 0) {
+							c += dp.getPx();
+						}
 						pInput.set(f, k, 0);
 						pInput.set(r, k, 1);
 						pInput.set(c, k, 2);
@@ -1638,6 +1659,11 @@ public class MillerSpaceMapper {
 		this.splitter = PixelSplitter.createSplitter(outputRank, bean.getSplitterName(), bean.getSplitterParameter());
 		listMillerEntries = bean.isListMillerEntries();
 		pixelMapping = ImagePixelMapping.createPixelMapping(bean.getOutputMode());
+		Matrix3d vOri = MillerSpaceMapperBean.getVolumeOrientation(bean);
+		if (vOri != null) {
+			logger.info("Setting volume orientation: %s", vOri);
+			pixelMapping.setVolumeOrientation(vOri);
+		}
 
 		double[] delta = bean.getStep();
 		if (delta != null) {

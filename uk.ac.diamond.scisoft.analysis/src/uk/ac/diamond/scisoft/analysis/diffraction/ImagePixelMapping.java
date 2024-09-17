@@ -75,13 +75,19 @@ public interface ImagePixelMapping {
 	 */
 	public String[] getAxesUnits();
 
-	static abstract class BaseMapping implements ImagePixelMapping {
+	/**
+	 * @param volOrientation orientation matrix from volume to lab
+	 */
+	public void setVolumeOrientation(Matrix3d volOrientation);
+
+	abstract static class BaseMapping implements ImagePixelMapping {
 		protected QSpace qSpace;
 		protected DetectorProperties detector;
 		protected Vector3d beam;
 		protected Matrix3d transform;
 		protected double cos; // cosine of scattering angle between incident and final
 		protected Vector3d p;
+		protected Matrix3d volTransform;
 
 		@Override
 		public void setSpaces(QSpace qSpace, MillerSpace mSpace) {
@@ -108,6 +114,12 @@ public interface ImagePixelMapping {
 		@Override
 		public Vector3d getPositionVector() {
 			return p;
+		}
+
+		@Override
+		public void setVolumeOrientation(Matrix3d volOrientation) {
+			volTransform = new Matrix3d(volOrientation);
+			volTransform.invert();
 		}
 
 		@Override
@@ -148,6 +160,9 @@ public interface ImagePixelMapping {
 			q.set(p);
 			qSpace.convertToQ(q);
 			transform.transform(q);
+			if (volTransform != null) {
+				volTransform.transform(q);
+			}
 		}
 
 		@Override
@@ -167,6 +182,7 @@ public interface ImagePixelMapping {
 			c.detector = detector;
 			c.beam = beam;
 			c.transform = transform;
+			c.volTransform = volTransform;
 			return c;
 		}
 	}
@@ -193,15 +209,6 @@ public interface ImagePixelMapping {
 			return qSpace;
 		}
 
-//		/**
-//		 * Returns h vector
-//		 * @param h
-//		 */
-//		@Override
-//		public void map(double x, double y, Vector3d h) {
-//			super.map(x, y, h);
-//		}
-
 		@Override
 		public String[] getAxesName() {
 			return HKL_AXES;
@@ -214,6 +221,7 @@ public interface ImagePixelMapping {
 			c.detector = detector;
 			c.beam = beam;
 			c.transform = transform;
+			c.volTransform = volTransform;
 			return c;
 		}
 	}
@@ -258,6 +266,7 @@ public interface ImagePixelMapping {
 			c.detector = detector;
 			c.beam = beam;
 			c.transform = transform;
+			c.volTransform = volTransform;
 			return c;
 		}
 	}
@@ -337,6 +346,7 @@ public interface ImagePixelMapping {
 			c.detector = detector;
 			c.beam = beam;
 			c.transform = transform;
+			c.volTransform = volTransform;
 			return c;
 		}
 	}
@@ -380,6 +390,7 @@ public interface ImagePixelMapping {
 			c.detector = detector;
 			c.beam = beam;
 			c.transform = transform;
+			c.volTransform = volTransform;
 			return c;
 		}
 	}
@@ -420,6 +431,7 @@ public interface ImagePixelMapping {
 			c.detector = detector;
 			c.beam = beam;
 			c.transform = transform;
+			c.volTransform = volTransform;
 			return c;
 		}
 	}
@@ -462,9 +474,6 @@ public interface ImagePixelMapping {
 		@Override
 		public void map(double x, double y, Vector3d h) {
 			super.map(x, y, h);
-//			qSpace.qFromPixelPosition(x, y, q);
-//			angle = qSpace.scatteringAngle(h);
-//			transform.transform(q, h);
 
 			double t;
 			switch (mode) {
@@ -502,6 +511,7 @@ public interface ImagePixelMapping {
 			c.detector = detector;
 			c.beam = beam;
 			c.transform = transform;
+			c.volTransform = volTransform;
 			return c;
 		}
 	}
@@ -669,6 +679,7 @@ public interface ImagePixelMapping {
 			c.detector = detector;
 			c.beam = beam;
 			c.transform = transform;
+			c.volTransform = volTransform;
 			return c;
 		}
 	}
@@ -711,9 +722,6 @@ public interface ImagePixelMapping {
 		@Override
 		public void map(double x, double y, Vector3d h) {
 			super.map(x, y, h);
-//			qSpace.qFromPixelPosition(x, y, q);
-//			angle = Math.acos(beam.dot(q)/q.length());
-//			transform.transform(q, h);
 
 			double t;
 			switch (mode) {
@@ -751,6 +759,7 @@ public interface ImagePixelMapping {
 			c.detector = detector;
 			c.beam = beam;
 			c.transform = transform;
+			c.volTransform = volTransform;
 			return c;
 		}
 	}

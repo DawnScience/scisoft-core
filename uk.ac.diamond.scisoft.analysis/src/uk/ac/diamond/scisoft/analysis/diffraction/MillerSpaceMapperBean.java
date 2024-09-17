@@ -12,6 +12,9 @@ package uk.ac.diamond.scisoft.analysis.diffraction;
 import java.util.Arrays;
 import java.util.Objects;
 
+import javax.vecmath.Matrix3d;
+import javax.vecmath.Vector3d;
+
 /**
  * This represents all of the input parameters and options for the mapper
  * <p>
@@ -50,6 +53,8 @@ public class MillerSpaceMapperBean implements Cloneable {
 	private String images;
 
 	private boolean correctPolarization = true;
+	private double[] thirdAxis;
+	private double[] aziPlaneNormal;
 
 	public enum OutputMode {
 		/**
@@ -557,6 +562,64 @@ public class MillerSpaceMapperBean implements Cloneable {
 		return correctPolarization;
 	}
 
+	/**
+	 * Set third axis direction for volume orientation
+	 * @param thirdAxis
+	 */
+	public void setThirdAxis(double[] thirdAxis) {
+		this.thirdAxis = thirdAxis;
+	}
+
+	public double[] getThirdAxis() {
+		return thirdAxis;
+	}
+
+	/**
+	 * Set normal to azimuthal plane of reference for volume orientation
+	 * @param aziPlane
+	 */
+	public void setAziPlaneNormal(double[] aziPlane) {
+		this.aziPlaneNormal = aziPlane;
+	}
+
+	public double[] getAziPlaneNormal() {
+		return aziPlaneNormal;
+	}
+
+	/**
+	 * @return orientation of volume (transforms from volume to lab) or null
+	 */
+	public static Matrix3d getVolumeOrientation(MillerSpaceMapperBean b) {
+		double[] vThirdAxis = b.getThirdAxis();
+		double[] vAziPlaneNormal = b.getAziPlaneNormal();
+
+		if (vThirdAxis == null || vAziPlaneNormal == null) {
+			return null;
+		}
+		Vector3d z = new Vector3d(vThirdAxis);
+		double ls = z.lengthSquared();
+		if (ls == 0) {
+			throw new IllegalArgumentException("Third axis must not have zero length");
+		}
+
+		z.scale(1. / Math.sqrt(ls));
+		Vector3d y = new Vector3d(vAziPlaneNormal);
+		y.scaleAdd(-y.dot(z), z, y); // remove component of y parallel to z
+		ls = y.lengthSquared();
+		if (ls == 0) {
+			throw new IllegalArgumentException("Azimuthal plane normal must not be parallel to third axis");
+		}
+
+		y.scale(1. / Math.sqrt(ls)); // now y is perpendicular to z
+		Vector3d x = new Vector3d();
+		x.cross(y, z);
+		Matrix3d o = new Matrix3d();
+		o.setColumn(0, x);
+		o.setColumn(1, y);
+		o.setColumn(2, z);
+		return o;
+	}
+
 	@Override
 	protected MillerSpaceMapperBean clone() {
 		MillerSpaceMapperBean copy = null;
@@ -572,6 +635,22 @@ public class MillerSpaceMapperBean implements Cloneable {
 						.map(int[]::clone).toArray(int[][]::new);
 			}
 			copy.images = images;
+			copy.attenuatorName = attenuatorName;
+			copy.aziPlaneNormal = aziPlaneNormal == null ? null : aziPlaneNormal.clone();
+			copy.correctPolarization = correctPolarization;
+			copy.dataName = dataName;
+			copy.detectorName = detectorName;
+			copy.entryPath = entryPath;
+			copy.listMillerEntries = listMillerEntries;
+			copy.maskFilePath = maskFilePath;
+			copy.monitorName = monitorName;
+			copy.outputMode = outputMode;
+			copy.reduceToNonZero = reduceToNonZero;
+			copy.sampleName = sampleName;
+			copy.scaleFactor = scaleFactor;
+			copy.splitterName = splitterName;
+			copy.splitterParameter = splitterParameter;
+			copy.thirdAxis = thirdAxis == null ? null : thirdAxis.clone();
 		} catch (CloneNotSupportedException e) {
 		}
 		return copy;
@@ -581,110 +660,44 @@ public class MillerSpaceMapperBean implements Cloneable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + Objects.hashCode(attenuatorName);
-		result = prime * result + Objects.hashCode(dataName);
-		result = prime * result + Objects.hashCode(detectorName);
-		result = prime * result + Objects.hashCode(entryPath);
+		result = prime * result + Arrays.hashCode(aziPlaneNormal);
 		result = prime * result + Arrays.hashCode(inputs);
-		result = prime * result + Objects.hashCode(instrumentName);
-		result = prime * result + (listMillerEntries ? 1231 : 1237);
-		result = prime * result + Objects.hashCode(output);
+		result = prime * result + Arrays.deepHashCode(pixelIndexes);
+		result = prime * result + Arrays.hashCode(region);
 		result = prime * result + Arrays.hashCode(shape);
 		result = prime * result + Arrays.hashCode(start);
 		result = prime * result + Arrays.hashCode(step);
-		result = prime * result + (reduceToNonZero ? 1231 : 1237);
-		result = prime * result + Objects.hashCode(sampleName);
-		long temp;
-		temp = Double.doubleToLongBits(scaleFactor);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + Objects.hashCode(splitterName);
-		temp = Double.doubleToLongBits(splitterParameter);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
-		result = prime * result + Arrays.hashCode(region);
-		result = prime * result + Objects.hashCode(maskFilePath);
-		result = prime * result + Objects.hashCode(outputMode);
-		result = prime * result + Objects.hashCode(pixelIndexes);
-		result = prime * result + Objects.hashCode(images);
+		result = prime * result + Arrays.hashCode(thirdAxis);
+		result = prime * result + Objects.hash(attenuatorName, correctPolarization, dataName, detectorName, entryPath,
+				images, instrumentName, listMillerEntries, maskFilePath, monitorName, output, outputMode,
+				reduceToNonZero, sampleName, scaleFactor, splitterName, splitterParameter);
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (obj == null) {
+		if (obj == null)
 			return false;
-		}
-		if (!(obj instanceof MillerSpaceMapperBean)) {
+		if (getClass() != obj.getClass())
 			return false;
-		}
-
 		MillerSpaceMapperBean other = (MillerSpaceMapperBean) obj;
-		if (!Objects.equals(attenuatorName, other.attenuatorName)) {
-			return false;
-		}
-		if (!Objects.equals(dataName, other.dataName)) {
-			return false;
-		}
-		if (!Objects.equals(detectorName, other.detectorName)) {
-			return false;
-		}
-		if (!Objects.equals(entryPath, other.entryPath)) {
-			return false;
-		}
-		if (!Arrays.equals(inputs, other.inputs)) {
-			return false;
-		}
-		if (!Objects.equals(instrumentName, other.instrumentName)) {
-			return false;
-		}
-		if (listMillerEntries != other.listMillerEntries) {
-			return false;
-		}
-		if (!Objects.equals(output, other.output)) {
-			return false;
-		}
-		if (!Arrays.equals(shape, other.shape)) {
-			return false;
-		}
-		if (!Arrays.equals(start, other.start)) {
-			return false;
-		}
-		if (!Arrays.equals(step, other.step)) {
-			return false;
-		}
-		if (reduceToNonZero != other.reduceToNonZero) {
-			return false;
-		}
-		if (!Objects.equals(sampleName, other.sampleName)) {
-			return false;
-		}
-		if (Double.doubleToLongBits(scaleFactor) != Double.doubleToLongBits(other.scaleFactor)) {
-			return false;
-		}
-		if (!Objects.equals(splitterName, other.splitterName)) {
-			return false;
-		}
-		if (Double.doubleToLongBits(splitterParameter) != Double.doubleToLongBits(other.splitterParameter)) {
-			return false;
-		}
-		if (!Arrays.equals(region, other.region)) {
-			return false;
-		}
-		if (!Objects.equals(maskFilePath, other.maskFilePath)) {
-			return false;
-		}
-		if (!outputMode.equals(other.outputMode)) {
-			return false;
-		}
-		if (!Arrays.deepEquals(pixelIndexes, other.pixelIndexes)) {
-			return false;
-		}
-		if (!Objects.equals(images, other.images)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(attenuatorName, other.attenuatorName)
+				&& Arrays.equals(aziPlaneNormal, other.aziPlaneNormal)
+				&& correctPolarization == other.correctPolarization && Objects.equals(dataName, other.dataName)
+				&& Objects.equals(detectorName, other.detectorName) && Objects.equals(entryPath, other.entryPath)
+				&& Objects.equals(images, other.images) && Arrays.equals(inputs, other.inputs)
+				&& Objects.equals(instrumentName, other.instrumentName) && listMillerEntries == other.listMillerEntries
+				&& Objects.equals(maskFilePath, other.maskFilePath) && Objects.equals(monitorName, other.monitorName)
+				&& Objects.equals(output, other.output) && outputMode == other.outputMode
+				&& Arrays.deepEquals(pixelIndexes, other.pixelIndexes) && reduceToNonZero == other.reduceToNonZero
+				&& Arrays.equals(region, other.region) && Objects.equals(sampleName, other.sampleName)
+				&& Double.doubleToLongBits(scaleFactor) == Double.doubleToLongBits(other.scaleFactor)
+				&& Arrays.equals(shape, other.shape) && Objects.equals(splitterName, other.splitterName)
+				&& Double.doubleToLongBits(splitterParameter) == Double.doubleToLongBits(other.splitterParameter)
+				&& Arrays.equals(start, other.start) && Arrays.equals(step, other.step)
+				&& Arrays.equals(thirdAxis, other.thirdAxis);
 	}
 
 	/**

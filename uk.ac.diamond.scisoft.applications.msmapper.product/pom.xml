@@ -21,17 +21,29 @@
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>${maven.ant.plugin.version}</version>
 				<executions>
-					<execution> <!--  remove copy of JRE, etc in p2 cache from products -->
+					<execution>
 						<phase>pre-integration-test</phase>
-						<id>delete-p2-cache</id>
+						<id>cleanup-product</id>
 						<configuration>
-							<target name="delete-p2-cache">
+							<target name="cleanup-product">
+								<!--  remove files in p2 cache from products -->
 								<echo message="Deleting P2 cache in ${project.build.directory}"/>
 								<delete includeemptydirs="true">
 									<fileset dir="${project.build.directory}">
 										<include name="**/p2/org.eclipse.equinox.p2.core/cache/**"/>
 									</fileset>
 								</delete>
+								<!--  move console executable to replace GUI version -->
+								<echo message="Removing/replacing Win32 GUI executable"/>
+								<fileset dir="${project.build.directory}/products/" id="cexefileset">
+									<include name="**/win32/*/msmapperc.exe"/>
+								</fileset>
+								<pathconvert property="win32console.exe" refid="cexefileset"/>
+								<pathconvert property="win32ui.exe">
+									<path path="${win32console.exe}" />
+									<mapper type="glob" from="*c.exe" to="*.exe"/>
+								</pathconvert>
+								<move file="${win32console.exe}" tofile="${win32ui.exe}"/>
 							</target>
 						</configuration>
 						<goals>

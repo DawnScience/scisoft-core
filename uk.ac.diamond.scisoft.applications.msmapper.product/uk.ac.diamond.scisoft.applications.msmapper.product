@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Miller Space Mapper" uid="uk.ac.diamond.scisoft.applications.msmapper.product" id="uk.ac.diamond.scisoft.applications.MSMapper" application="uk.ac.diamond.scisoft.applications.msmapper" version="1.7.0.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="Miller Space Mapper" uid="uk.ac.diamond.scisoft.applications.msmapper.product" id="uk.ac.diamond.scisoft.applications.MSMapper" application="uk.ac.diamond.scisoft.applications.msmapper" version="1.7.0.qualifier" type="features" includeLaunchers="true" autoIncludeRequirements="true">
 
    <configIni use="default">
    </configIni>
@@ -24,6 +24,7 @@
    <vm>
    </vm>
 
+
    <plugins>
    </plugins>
 
@@ -34,7 +35,6 @@
 
    <configurations>
       <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="0" />
-      <property name="osgi.configuration.area.readOnly" value="true" os="linux" />
       <property name="osgi.locking" value="none" />
    </configurations>
 

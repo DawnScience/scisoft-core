@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -126,11 +127,33 @@ public class NexusScanInfo {
 	}
 	
 	private void setDeviceNames(ScanRole scanRole, Collection<String> names) {
+		checkDeviceNamesForDuplicateScanRoles(scanRole, names);
 		// private so that we can ensure the correct type of collection for the role
 		// e.g. List for Scannables
 		deviceNames.put(scanRole, names);
 	}
-	
+
+	/**
+	 * Ensure that scannable names do not duplicate scannables in other roles.
+	 * @param scanRole of the new names to be added
+	 * @param newDeviceNames to be checked
+	 * @exception IllegalArgumentException is thrown if found device names in multiple scan roles.
+	 */
+	private void checkDeviceNamesForDuplicateScanRoles(ScanRole scanRole, Collection<String> newDeviceNames) {
+		//Loop through all devices with their scan role to compare them against the scanRole being added with the newDeviceNames
+		for (var entry : deviceNames.entrySet() ) {
+			final ScanRole roleForDeviceNames = entry.getKey();
+			final Collection<String> deviceNamesAtScanRole = entry.getValue();
+			if (!scanRole.equals(roleForDeviceNames) && !Collections.disjoint(newDeviceNames, deviceNamesAtScanRole)) {
+				final Set<String> common = new HashSet<>(deviceNamesAtScanRole);
+				common.retainAll(newDeviceNames);
+				throw new IllegalArgumentException(
+					"Cannot set \"" + scanRole + "\" because it already has device names " + common.toString() + " in \"" + roleForDeviceNames + "\"! Only 1 scan role is permitted per device."
+				);
+			}
+		}
+	}
+
 	public Collection<String> getDeviceNames(ScanRole scanRole) {
 		return deviceNames.get(scanRole);
 	}
@@ -170,7 +193,7 @@ public class NexusScanInfo {
 	public void setPerScanMonitorNames(Set<String> metadataScannableNames) {
 		setDeviceNames(ScanRole.MONITOR_PER_SCAN, metadataScannableNames);
 	}
-	
+
 	public String getFilePath() {
 		return filePath;
 	}

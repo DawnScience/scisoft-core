@@ -22,6 +22,7 @@ import static java.util.Collections.emptyList;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.SYSTEM_PROPERTY_NAME_VALIDATE_NEXUS;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -349,26 +350,27 @@ class NexusScanFileImpl implements NexusScanFile {
 	private List<PrimaryDeviceWithScanRole> getPrimaryDevices() {
 		final List<NexusObjectProvider<?>> detectors = nexusObjectProviders.get(ScanRole.DETECTOR);
 		final List<PrimaryDeviceWithScanRole> primaryDevices = detectors.stream() // exceptionally, some detectors may not have a primary field
-				.filter(det -> det.getPrimaryDataFieldName() != null)
-				.map(det -> new PrimaryDeviceWithScanRole(det, ScanRole.DETECTOR))
-				.toList();
-		
-		return !primaryDevices.isEmpty() ? primaryDevices : List.of(getDefaultPrimaryDevice());
+			.filter(det -> det.getPrimaryDataFieldName() != null)
+			.map(det -> new PrimaryDeviceWithScanRole(det, ScanRole.DETECTOR))
+			.toList();
+
+		final Optional<PrimaryDeviceWithScanRole> defaultPrimaryDevice = getDefaultPrimaryDevice();
+		final List<PrimaryDeviceWithScanRole> primaryDevice = defaultPrimaryDevice.isPresent() ?  List.of(defaultPrimaryDevice.get()) : Collections.emptyList();
+
+		return !primaryDevices.isEmpty() ? primaryDevices : primaryDevice;
 	}
 	
 	/**
 	 * Returns the first monitor that can be a primary data device (i.e. has a primary field name set)
 	 * or the first scannable if there are no such monitors
-	 * if there are no scannables either, then an exception is thrown
 	 * @return primary device, with scan role
 	 */
-	private PrimaryDeviceWithScanRole getDefaultPrimaryDevice() {
+	private Optional<PrimaryDeviceWithScanRole> getDefaultPrimaryDevice() {
 		return Stream.of(ScanRole.MONITOR_PER_POINT, ScanRole.SCANNABLE)
 				.map(this::getFirstPrimaryDevice)
 				.filter(Optional::isPresent)
 				.map(Optional::get)
-				.findFirst()
-				.orElseThrow(() -> new IllegalArgumentException("No suitable dataset could be found to use as the signal dataset of an NXdata group."));		
+				.findFirst();
 	}
 
 	private void createNXDataGroupsForDevice(NexusEntryBuilder entryBuilder,

@@ -22,6 +22,7 @@ import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
+import org.eclipse.dawnsci.analysis.api.diffraction.MatrixUtils;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.Tree;
@@ -48,7 +49,6 @@ import uk.ac.diamond.scisoft.analysis.crystallography.ReciprocalCell;
 import uk.ac.diamond.scisoft.analysis.crystallography.UnitCell;
 import uk.ac.diamond.scisoft.analysis.crystallography.VersionUtils;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionSample;
-import uk.ac.diamond.scisoft.analysis.diffraction.MatrixUtils;
 import uk.ac.diamond.scisoft.analysis.diffraction.MillerSpaceMapper;
 import uk.ac.diamond.scisoft.analysis.diffraction.MillerSpaceMapperBean;
 import uk.ac.diamond.scisoft.analysis.diffraction.QSpace;

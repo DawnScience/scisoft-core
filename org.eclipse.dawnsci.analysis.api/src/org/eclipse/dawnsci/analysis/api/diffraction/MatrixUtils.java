@@ -7,13 +7,15 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package uk.ac.diamond.scisoft.analysis.diffraction;
+package org.eclipse.dawnsci.analysis.api.diffraction;
 
 import javax.vecmath.AxisAngle4d;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
 public class MatrixUtils {
+	private MatrixUtils() {
+	}
 
 	/**
 	 * Compute tangent to direction vector that lies along meridian (from pole)
@@ -65,7 +67,6 @@ public class MatrixUtils {
 		double n0s = normal.getX();
 		double n1s = normal.getY();
 		double n0n1 = n0s * n1s;
-		n0s *= n0s;
 		n1s *= n1s;
 		double ang = Math.toRadians(angle);
 		double ca = Math.cos(ang);
@@ -86,9 +87,7 @@ public class MatrixUtils {
 			throw new IllegalArgumentException("No solution!");
 		}
 	
-		Vector3d dirn = new Vector3d(x, sa, -(x * normal.getX() + sa * normal.getY()) / n2);
-		
-		return dirn;
+		return new Vector3d(x, sa, -(x * normal.getX() + sa * normal.getY()) / n2);
 	}
 
 	/**
@@ -208,7 +207,7 @@ public class MatrixUtils {
 	 * @param abs absolute tolerance
 	 * @return true if close
 	 */
-	public static boolean isClose(double e, double a, final double rel, final double abs) {
+	public static boolean isClose(double e, double a, final double rel, final double abs) throws AssertionError {
 		double tt = rel * Math.max(Math.abs(e), Math.abs(a)) + abs;
 		if (Math.abs(e - a) > tt) {
 			throw new AssertionError(e + " != " + a);
@@ -224,7 +223,7 @@ public class MatrixUtils {
 	 * @param abs absolute tolerance
 	 * @return true if close
 	 */
-	public static boolean isClose(Vector3d e, Vector3d a, final double rel, final double abs) {
+	public static boolean isClose(Vector3d e, Vector3d a, final double rel, final double abs) throws AssertionError {
 		double tt = rel * Math.max(e.length(), a.length()) + abs;
 		if (!e.epsilonEquals(a, tt)) {
 			throw new AssertionError(e + " != " + a);
@@ -240,7 +239,7 @@ public class MatrixUtils {
 	 * @param abs absolute tolerance
 	 * @return true if close
 	 */
-	public static boolean isClose(Matrix3d e, Matrix3d a, final double rel, final double abs) {
+	public static boolean isClose(Matrix3d e, Matrix3d a, final double rel, final double abs) throws AssertionError {
 		double tt = rel * e.getScale() + abs;
 		if (!e.epsilonEquals(a, tt)) {
 			throw new AssertionError(e + " != " + a);
@@ -261,9 +260,9 @@ public class MatrixUtils {
 		return r;
 	}
 
-	final private static double FIFTY_DEGREES = Math.toRadians(50);
-	final private static double COS_50 = Math.cos(FIFTY_DEGREES);
-	final private static double SIN_50 = Math.sin(FIFTY_DEGREES);
+	private static final double FIFTY_DEGREES = Math.toRadians(50);
+	private static final double COS_50 = Math.cos(FIFTY_DEGREES);
+	private static final double SIN_50 = Math.sin(FIFTY_DEGREES);
 
 	/**
 	 * Create matrix to rotate from sample on end of phi arm to CBF laboratory frame for a kappa goniometer.
@@ -292,78 +291,135 @@ public class MatrixUtils {
 	 * @return rotation matrix
 	 */
 	public static Matrix3d createI16EulerRotation(double phi, double chi, double eta, double mu) {
-		Matrix3d rotn = createRotationMatrix(new Vector3d(1, 0, 0), mu);
-		rotn.mul(createRotationMatrix(new Vector3d(0, 1, 0), eta));
-		rotn.mul(createRotationMatrix(new Vector3d(0, 0, 1), chi));
-		rotn.mul(createRotationMatrix(new Vector3d(0, 1, 0), phi));
+		// Rx(mu) * Ry(eta) * Rz(chi) * Ry(phi)
+		Matrix3d rotn = new Matrix3d();
+		Matrix3d t = new Matrix3d();
+		rotn.rotX(Math.toRadians(mu));
+
+		t.rotY(Math.toRadians(eta));
+		rotn.mul(t);
+
+		t.rotZ(Math.toRadians(chi));
+		rotn.mul(t);
+
+		t.rotY(Math.toRadians(phi));
+		rotn.mul(t);
 		return rotn;
 	}
 
 	/**
-	 * Create matrix which describes a passive transformation from the laboratory
-	 * frame to the detector frame
+	 * Create matrix to orient from local frame to laboratory frame.
+	 * Lab coordinate frame is +ve y upwards, +ve z forwards and the three
+	 * rotations are applied in order of the arguments
 	 * All angles in degrees
 	 * @param alpha (+ve z)
 	 * @param beta (+ve y)
 	 * @param gamma (+ve z)
-	 * @return rotation matrix
+	 * @return active orientation matrix
 	 */
 	public static Matrix3d createOrientationFromEulerZYZ(double alpha, double beta, double gamma) {
-		Matrix3d rotn = createRotationFromEulerZYZ(gamma, beta, alpha);
-		rotn.transpose();
-		return rotn;
+		return createOrientationFromEulerZYZRadians(Math.toRadians(alpha), Math.toRadians(beta), Math.toRadians(gamma));
+	}
+
+	static Matrix3d createOrientationFromEulerZYZRadians(double alpha, double beta, double gamma) {
+		Matrix3d tz = new Matrix3d();
+		Matrix3d t = new Matrix3d();
+
+		// the active (extrinsic) transformation becomes Rz(gamma) Ry(beta) Rz(alpha)
+		tz.rotZ(gamma);
+
+		t.rotY(beta);
+		tz.mul(t);
+
+		t.rotZ(alpha);
+		tz.mul(t);
+
+		santise(tz);
+		return tz;
 	}
 
 	/**
-	 * Create matrix to rotate from local frame to laboratory frame.
-	 * All angles in degrees
-	 * @param alpha (+ve z)
-	 * @param beta (+ve y)
-	 * @param gamma (+ve z)
-	 * @return rotation matrix
-	 */
-	public static Matrix3d createRotationFromEulerZYZ(double alpha, double beta, double gamma) {
-		Matrix3d rotn = createRotationMatrix(new Vector3d(0, 0, 1), gamma);
-		rotn.mul(createRotationMatrix(new Vector3d(0, 1, 0), beta));
-		rotn.mul(createRotationMatrix(new Vector3d(0, 0, 1), alpha));
-		return rotn;
-	}
-
-	/**
-	 * Calculate Euler ZYZ angles from given rotation matrix
-	 * @param rotn active transformation from local to laboratory frame
+	 * Calculate Euler ZYZ angles from given orientation matrix
+	 * @param orient active transformation from local to laboratory frame
 	 * @return angles in degrees
 	 */
-	public static double[] calculateFromRotationEulerZYZ(Matrix3d rotn) {
-		if (Math.abs(rotn.m22) == 1) { // special cases
-			double beta = rotn.m22 > 0 ? 0 : 180;
-			double sign = Math.signum(rotn.m22);
-			double alpha = Math.atan2(-sign*rotn.m01, sign*rotn.m00);
-			return new double[] {Math.toDegrees(alpha), beta, 0};
+	public static double[] calculateEulerZYZ(Matrix3d orient) {
+		double alpha;
+		double gamma;
+		double cb = orient.getM22();
+
+		if (Math.abs(cb) < 1) {
+			alpha = Math.atan2(orient.getM21(), -orient.getM20());
+			gamma = Math.atan2(orient.getM12(), orient.getM02());
+		} else { // gimbal lock case
+			alpha = Math.atan2(orient.getM10(), orient.getM11());
+			gamma = 0;
 		}
 
-		double beta = Math.acos(rotn.m22);
-		double alpha = Math.atan2(rotn.m21, -rotn.m20);
-		double gamma = Math.atan2(rotn.m12, rotn.m02);
-
-		return new double[] {Math.toDegrees(alpha), Math.toDegrees(beta), Math.toDegrees(gamma)};
+		return new double[] {Math.toDegrees(alpha), Math.toDegrees(Math.acos(cb)), Math.toDegrees(gamma)};
 	}
 
 	/**
-	 * Calculate Euler ZYZ angles from given rotation matrix
-	 * @param rotn passive rotation from laboratory to detector fram
-	 * @return angles in degrees
+	 * Calculate yaw, pitch and roll angles from given orientation
+	 * @param orient
+	 * @return array of angles (in radians)
 	 */
-	public static double[] calculateFromOrientationEulerZYZ(Matrix3d rotn) {
-		Matrix3d inv = new Matrix3d();
-		inv.transpose(rotn);
-		double[] angles = calculateFromRotationEulerZYZ(inv);
+	public static double[] calculateYawPitchRoll(Matrix3d orient) {
+		double roll;
+		double yaw;
+		double sp = orient.getM12();
 
-		// switch
-		double t = angles[2];
-		angles[2] = angles[0];
-		angles[0] = t;
+		if (Math.abs(sp) < 1) {
+			yaw  = Math.atan2(-orient.getM02(), orient.getM22());
+			roll = Math.atan2(-orient.getM10(), orient.getM11());
+		} else {
+			// gimbal lock case
+			yaw  = Math.atan2(sp*orient.getM01(), orient.getM00());
+			roll = 0;
+		}
+	
+		return new double[] {yaw, Math.asin(sp), roll};
+	}
 
-		return angles;
+	/**
+	 * Calculate transformation for orienting an object with given angles (in radians)
+	 * 
+	 * @see MatrixUtils#createOrientationFromYawPitchRoll(double, double, double)
+	 * 
+	 * @param angles
+	 * @return active transformation
+	 */
+	public static Matrix3d createOrientationFromYawPitchRoll(double... angles) {
+		int n = angles == null ? 0 : angles.length;
+		double yaw = n == 0 ? 0 : angles[0];
+		double pitch = n < 2 ? 0 : angles[1];
+		double roll = n < 3 ? 0 : angles[2];
+
+		return createOrientationFromYawPitchRoll(yaw, pitch, roll);
+	}
+
+	/**
+	 * Calculate transformation for orienting an object with given angles (in radians)
+	 * 
+	 * Lab coordinate frame is +ve y upwards, +ve z forwards and the three
+	 * rotations are applied in reverse order of the arguments
+	 * 
+	 * @param yaw rotate about vertical axis ((-pi, pi] with positive is to the right, east or clockwise looking down)
+	 * @param pitch rotate about horizontal axis ([-pi/2, pi/2] with positive is upwards)
+	 * @param roll rotate about +ve z ((-pi, pi] with positive is clockwise looking forward)
+	 * @return active transformation
+	 */
+	public static Matrix3d createOrientationFromYawPitchRoll(final double yaw, final double pitch, final double roll) {
+		Matrix3d ty = new Matrix3d();
+		Matrix3d t = new Matrix3d();
+
+		// the active (extrinsic) transformation becomes Ry(-yaw) Rx(-pitch) Rz(-roll)
+		ty.rotY(-yaw);
+		t.rotX(-pitch);
+		ty.mul(t);
+		t.rotZ(-roll);
+		ty.mul(t);
+		santise(ty);
+		return ty;
 	}
 }

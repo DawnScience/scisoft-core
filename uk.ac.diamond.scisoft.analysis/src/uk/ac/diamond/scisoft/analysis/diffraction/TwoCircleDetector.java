@@ -14,6 +14,7 @@ import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
+import org.eclipse.dawnsci.analysis.api.diffraction.MatrixUtils;
 
 /**
  * A two-circle detector - the detector is mounted on one arm (delta) can rotated about a point on a second

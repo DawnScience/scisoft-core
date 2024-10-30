@@ -31,6 +31,7 @@ import javax.vecmath.Vector4d;
 
 import org.apache.commons.math3.complex.Complex;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
+import org.eclipse.dawnsci.analysis.api.diffraction.MatrixUtils;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
@@ -56,7 +57,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.IOTestUtils;
-import uk.ac.diamond.scisoft.analysis.diffraction.MatrixUtils;
 
 public class HDF5LoaderTest {
 	final static String TestFileFolder = "testfiles/gda/analysis/io/NexusLoaderTest/";

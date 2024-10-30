@@ -11,6 +11,7 @@ import java.io.IOException;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
+import org.eclipse.dawnsci.analysis.api.diffraction.MatrixUtils;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.dawnsci.hdf5.HDF5Utils;
 import org.eclipse.dawnsci.nexus.NexusException;

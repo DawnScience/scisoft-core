@@ -118,10 +118,16 @@ public class NexusScanInfo {
 		return Math.max(outerShape.length, 1);
 	}
 	
+	/**
+	 * @param estimatedScanTime in milliseconds
+	 */
 	public void setEstimatedScanTime(long estimatedScanTime) {
 		this.estimatedScanTime = estimatedScanTime;
 	}
 	
+	/**
+	 * @return estimatedScanTime in milliseconds
+	 */
 	public long getEstimatedScanTime() {
 		return estimatedScanTime;
 	}

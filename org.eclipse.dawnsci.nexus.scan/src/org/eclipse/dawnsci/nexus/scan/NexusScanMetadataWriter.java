@@ -4,6 +4,7 @@ import static java.time.temporal.ChronoUnit.MILLIS;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.ATTRIBUTE_NAME_UNITS;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.ATTRIBUTE_VALUE_MILLISECONDS;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_CURRENT_SCRIPT_NAME;
+import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_ENTRY_IDENTIFIER;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_POINT_END_TIME;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_POINT_START_TIME;
 import static org.eclipse.dawnsci.nexus.scan.NexusScanConstants.FIELD_NAME_SCAN_COMMAND;
@@ -173,6 +174,8 @@ public class NexusScanMetadataWriter implements INexusDevice<NXcollection> {
 		if (scanInfo.getCurrentScriptName() != null) {
 			scanMetadataCollection.setField(FIELD_NAME_CURRENT_SCRIPT_NAME, scanInfo.getCurrentScriptName());
 		}
+		// write scan number as entry_identifier
+		scanMetadataCollection.setField(FIELD_NAME_ENTRY_IDENTIFIER, scanInfo.getCurrentScanIdentifier());
 
 		// write the scan shape
 		logger.info("Estimated scan shape {}", Arrays.toString(scanInfo.getOverallShape()));

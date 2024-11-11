@@ -7,20 +7,20 @@ import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.builder.NexusObjectProvider;
 
 public class NexusScanConstants {
-	
+
 	/**
 	 * If this system property is set to <code>true</code>, nexus files wil be validated at the
 	 * start of the scan.
 	 */
 	public static final String SYSTEM_PROPERTY_NAME_VALIDATE_NEXUS = "validateNexusFile";
-	
+
 	/**
 	 * Property name for the path within an external (linked) nexus file to the unique keys dataset.
 	 * This property belongs to the NexusObjectProvider,
 	 * @see {@link NexusObjectProvider#getPropertyValue(String)}
 	 */
 	public static final String PROPERTY_NAME_UNIQUE_KEYS_PATH = "uniqueKeys";
-	
+
 	/**
 	 * Property name for suppressing writing the global unique keys dataset. This dataset will be written
 	 * unless this property is set to {@link Boolean#TYPE} for any device in a scan.
@@ -34,10 +34,10 @@ public class NexusScanConstants {
 	 * @see {@link NexusObjectProvider#getPropertyValue(String)}
 	 */
 	public static final String PROPERTY_NAME_SUPPRESS_GLOBAL_UNIQUE_KEYS = "suppressGlobalUniqueKeys";
-	
-	public static final String GROUP_NAME_DIAMOND_SCAN = "diamond_scan"; 
+
+	public static final String GROUP_NAME_DIAMOND_SCAN = "diamond_scan";
 	public static final String GROUP_NAME_UNIQUE_KEYS = "keys";
-	
+
 	public static final String FIELD_NAME_SCAN_RANK = "scan_rank";
 	public static final String FIELD_NAME_SCAN_SHAPE = "scan_shape";
 	public static final String FIELD_NAME_SCAN_COMMAND = "scan_command";
@@ -53,15 +53,16 @@ public class NexusScanConstants {
 	public static final String FIELD_NAME_SCAN_END_TIME = NXentry.NX_END_TIME;
 	public static final String FIELD_NAME_POINT_START_TIME = "point_start_times";
 	public static final String FIELD_NAME_POINT_END_TIME = "point_end_times";
-	
+	public static final String FIELD_NAME_ENTRY_IDENTIFIER = "entry_identifier";
+
 	public static final String ATTRIBUTE_NAME_UNITS = "units";
 	public static final String ATTRIBUTE_VALUE_MILLISECONDS = "ms";
-	
+
 	// The date format used for writing timestamps
 	public static final DateTimeFormatter MILLISECOND_DATE_FORMAT = NexusConstants.MILLISECOND_DATE_FORMAT;
-	
+
 	private NexusScanConstants() {
 		// private constructor to prevent instantiation
 	}
-	
+
 }

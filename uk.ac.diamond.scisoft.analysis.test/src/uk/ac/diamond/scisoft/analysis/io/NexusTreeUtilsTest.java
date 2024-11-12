@@ -11,6 +11,7 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
@@ -191,7 +192,7 @@ public class NexusTreeUtilsTest {
 			String n = axis.axis.getName();
 			group.addDataNode(n, dNode);
 	
-			if (axis.dim >= 0) {
+			if (axis.dim >= 0 && NexusConstants.DATA_AXESEMPTY.equals(axisArray[axis.dim])) {
 				axisArray[axis.dim] = n;
 			}
 			group.addAttribute(TreeFactory.createAttribute(n + NexusConstants.DATA_INDICES_SUFFIX, axis.indices));
@@ -202,22 +203,23 @@ public class NexusTreeUtilsTest {
 	}
 
 	private static void checkMetadata(GroupNode group, Dataset signal) {
-		Assert.assertTrue(NexusTreeUtils.parseNXdataAndAugment("", group));
+		assertTrue(NexusTreeUtils.parseNXdataAndAugment("", group));
 
-		List<AxesMetadata> amds;
-		try {
-			amds = signal.getMetadata(AxesMetadata.class);
-			Assert.assertTrue(amds != null);
-			AxesMetadata amd = amds.get(0);
-			int[] shape = signal.getShapeRef();
-			int rank = shape.length;
-			for (int i = 0; i < rank; i++) {
-				ILazyDataset[] ds = amd.getAxis(i);
+		ILazyDataset s = group.getDataNode(signal.getName()).getDataset();
+		AxesMetadata amd = s.getFirstMetadata(AxesMetadata.class);
+
+		assertNotNull(amd);
+		int[] shape = s.getShape();
+		int rank = shape.length;
+		for (int i = 0; i < rank; i++) {
+			ILazyDataset[] ds = amd.getAxis(i);
+			if (ds == null) {
+				System.err.printf("Axis datasets missing for dimension %d / %d%n", i, rank);
+			} else {
 				for (ILazyDataset l : ds) {
-					Assert.assertTrue(ShapeUtils.areShapesBroadcastCompatible(l.getShape(), shape));
+					assertTrue(ShapeUtils.areShapesBroadcastCompatible(l.getShape(), shape));
 				}
 			}
-		} catch (Exception e) {
 		}
 	}
 
@@ -330,5 +332,60 @@ public class NexusTreeUtilsTest {
 		}
 
 		System.out.println(n);
+	}
+
+	@Test
+	public void testCroppingAxes() {
+		int[] shape = new int[] {1, 1};
+		Dataset signal = DatasetFactory.ones(ShortDataset.class, shape);
+		signal.setName("det1");
+
+		List<AxisDataset> axes = new ArrayList<>();
+		Dataset axis;
+
+		axis = DatasetFactory.createRange(ShortDataset.class, 32);
+		axis.setName("dummy");
+		axes.add(new AxisDataset(0, axis, 0));
+
+
+		GroupNode group = createNXdata(signal, axes);
+		checkMetadata(group, signal);
+	}
+
+	@Test
+	public void testCroppingData() {
+		int[] shape = new int[] {101, 1, 100};
+		Dataset signal = DatasetFactory.ones(ShortDataset.class, shape);
+		signal.setName("image");
+
+		List<AxisDataset> axes = new ArrayList<>();
+		Dataset axis;
+
+		axis = DatasetFactory.createRange(ShortDataset.class, 32);
+		axis.setName("dummy");
+		axes.add(new AxisDataset(0, axis, 0));
+
+		axis = DatasetFactory.createRange(ShortDataset.class, 1);
+		axis.setName("angles");
+		axes.add(new AxisDataset(1, axis, 1));
+
+		axis = DatasetFactory.createRange(ShortDataset.class, 100);
+		axis.setName("binding_energy");
+		axes.add(new AxisDataset(2, axis, 2));
+
+		axis = DatasetFactory.ones(ShortDataset.class, 101, 1);
+		axis.setName("excitation_energy");
+		axes.add(new AxisDataset(-1, axis, 0, 1));
+
+		axis = DatasetFactory.ones(ShortDataset.class, 101, 100);
+		axis.setName("spectrum");
+		axes.add(new AxisDataset(-1, axis, 0, 2));
+
+		axis = DatasetFactory.ones(ShortDataset.class, 101, 1);
+		axis.setName("total_intensity");
+		axes.add(new AxisDataset(-1, axis, 0, 1));
+
+		GroupNode group = createNXdata(signal, axes);
+		checkMetadata(group, signal);
 	}
 }

@@ -244,7 +244,7 @@ public abstract class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		String normPath = model.getNormalizationPath();
 		if (normPath != null && !normPath.isEmpty()) {
 			SliceFromSeriesMetadata smd = original.getFirstMetadata(SliceFromSeriesMetadata.class);
-			initializeNormDataset(smd.getFilePath(), normPath);
+			initializeNormDataset(smd.getFilePath(), normPath, smd.getSliceInfo());
 		}
 	}
 
@@ -966,7 +966,7 @@ public abstract class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 		return regionInCCDs;
 	}
 
-	private void initializeNormDataset(String filePath, String dataPath) {
+	private void initializeNormDataset(String filePath, String dataPath, SliceInformation si) {
 		try {
 			Tree t = ProcessingUtils.getTree(this, filePath);
 			NodeLink l = t.findNodeLink(dataPath);
@@ -998,11 +998,37 @@ public abstract class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 				} else if (norm.min().doubleValue() < 0) {
 					throw new OperationException(this, "Normalization dataset has some values < 0");
 				}
-				normValues = norm;
+				normValues = subsampleData(norm, si);
 			}
 		} catch (Exception e) {
 			log.appendFailure("Could not set normalization dataset %s from file %s: %s", dataPath, filePath, e);
 		}
+	}
+
+	/**
+	 * Subsample data in matching dimensions according to slice information
+	 * @param data
+	 * @param si
+	 * @return sliced data
+	 */
+	private Dataset subsampleData(Dataset data, SliceInformation si) {
+		int r = data.getRank();
+		int[] oShape = si.getOriginalShape();
+		int[] nShape = data.getShapeRef();
+		int[] dDims = si.getDataDimensions();
+		Slice[] sampling = si.getSubSampling();
+		Slice[] slicing = new Slice[r];
+		int j = 0;
+		for (int i = 0; i < r && j < r; i++) {
+			final int f = i;
+			if (!Arrays.stream(dDims).anyMatch(d -> d == f)) {
+				Slice s = sampling[f];
+				if (nShape[j] == oShape[f]) {
+					slicing[j++] = s;
+				}
+			}
+		}
+		return data.getSlice(slicing);
 	}
 
 	// make summary data for spectra and sum up for spectrum

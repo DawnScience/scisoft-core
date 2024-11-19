@@ -74,6 +74,13 @@ public class SliceInformation {
 		return sampling.convertToSlice();
 	}
 
+	/**
+	 * @return shape of original dataset
+	 */
+	public int[] getOriginalShape() {
+		return sampling.getSourceShape();
+	}
+
 	@Override
 	public SliceInformation clone() {
 		return new SliceInformation(currentSlice.clone(), output.clone(), sampling.clone(),

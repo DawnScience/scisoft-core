@@ -578,7 +578,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 							}
 						} else {
 							synchronized (nexusFile) {
-								appendSingleValueAxis(axDataset,groupName, oSlice,oShape, nexusFile,i);
+								appendSingleValueAxis(axDataset, groupName, oSlice, oShape, i);
 
 								if (first) {
 									nexusFile.getData(groupName + Node.SEPARATOR + axDataset.getName()).addAttribute(TreeFactory.createAttribute(NexusConstants.DATA_AXIS, String.valueOf(i+1)));
@@ -588,7 +588,7 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 								if (error != null) {
 									Dataset e = DatasetUtils.sliceAndConvertLazyDataset(error);
 									e.setName(axDataset.getName() + NexusConstants.DATA_ERRORS_SUFFIX);
-									appendSingleValueAxis(e,groupName, oSlice,oShape, nexusFile,i);
+									appendSingleValueAxis(e,groupName, oSlice,oShape, i);
 								}
 							}
 						}
@@ -903,14 +903,15 @@ public class NexusFileExecutionVisitor implements IExecutionVisitor, ISavesToFil
 
 	}
 
-	private void appendSingleValueAxis(Dataset dataset, String group, Slice[] oSlice, int[] oShape, NexusFile file, int axisDim) throws Exception{
+	private void appendSingleValueAxis(Dataset dataset, String group, Slice[] oSlice, int[] oShape, int axisDim) throws Exception{
 		dataset = dataset.reshape(1);
 		DataNode dn = null;
+		String dataPath = group + Node.SEPARATOR + dataset.getName();
 		try {
-			dn = file.getData(group+Node.SEPARATOR+dataset.getName());
+			dn = nexusFile.getData(dataPath);
 		} catch (Exception e) {
-			createWriteableLazy(dataset, file.getGroup(group, true));
-			dn = file.getData(group + Node.SEPARATOR + dataset.getName());
+			createWriteableLazy(dataset, nexusFile.getGroup(group, true));
+			dn = nexusFile.getData(dataPath);
 			nexusFile.addAttribute(group, TreeFactory.createAttribute(dataset.getName() + NexusConstants.DATA_INDICES_SUFFIX, DatasetFactory.createFromObject(axisDim)));
 		}
 	

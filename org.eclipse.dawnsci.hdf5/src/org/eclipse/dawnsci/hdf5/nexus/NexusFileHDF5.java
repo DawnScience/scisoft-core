@@ -378,7 +378,7 @@ public class NexusFileHDF5 implements NexusFile {
 				}
 			}
 			if (nxClass != null && !nxClass.isEmpty()) {
-				g.addAttribute(TreeFactory.createAttribute(NexusConstants.NXCLASS, nxClass, false));
+				g.addAttribute(TreeFactory.createAttribute(NexusConstants.NXCLASS, nxClass));
 			}
 			cacheAttributes(TreeUtils.join(path, name), g);
 			// if the new attributes now includes an nxClass attribute, create
@@ -693,7 +693,9 @@ public class NexusFileHDF5 implements NexusFile {
 				} catch (HDF5LibraryException e) {
 					throw new NexusException("Cannot create group: " + absolutePath, e);
 				}
-				addAttribute(absolutePath, TreeFactory.createAttribute(NexusConstants.NXCLASS, nxClass, false));
+				if (nxClass != null && !nxClass.isBlank()) {
+					addAttribute(absolutePath, TreeFactory.createAttribute(NexusConstants.NXCLASS, nxClass));
+				}
 			} else {
 				throw new NexusException("Group '" + absolutePath + "' does not exist and cannot be created");
 			}
@@ -701,6 +703,9 @@ public class NexusFileHDF5 implements NexusFile {
 			throw new NexusException("Specified path (" + absolutePath + ") is not a group");
 		} else {
 			groupId = openNode(absolutePath);
+			if (create && writeable && nxClass != null && !nxClass.isBlank()) {
+				addAttribute(absolutePath, TreeFactory.createAttribute(NexusConstants.NXCLASS, nxClass));
+			}
 		}
 		return groupId;
 	}

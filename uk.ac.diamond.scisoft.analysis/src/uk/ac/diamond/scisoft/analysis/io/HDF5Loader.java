@@ -241,7 +241,7 @@ public class HDF5Loader extends AbstractFileLoader {
 			return tFile;
 		}
 
-		logger.trace("Loading in thd {}", Thread.currentThread().getId());
+		logger.trace("Loading in thd {}", Thread.currentThread().threadId());
 		File f = new File(fileName);
 		if (!f.exists()) {
 			throw new ScanFileHolderException("File, " + fileName + ", does not exist");
@@ -365,7 +365,11 @@ public class HDF5Loader extends AbstractFileLoader {
 				int i = nn.lastIndexOf(Node.SEPARATOR, nn.length() - 2);
 				NodeLink ol = f.findNodeLink(nn.substring(0, i));
 				GroupNode og = (GroupNode) ol.getDestination();
-				og.addNode(nn.substring(i + 1, nn.length() - 1), n);
+				String gName = nn.substring(i + 1, nn.length() - 1);
+				og.addNode(gName, n);
+				if (n instanceof GroupNode && NexusTreeUtils.isNXClass(n, NexusConstants.DATA)) {
+					augmentLink(nn, og.getNodeLink(gName));
+				}
 			}
 			if (!monitorIncrement(mon)) {
 				updateSyncNodes(syncLimit); // notify if finished

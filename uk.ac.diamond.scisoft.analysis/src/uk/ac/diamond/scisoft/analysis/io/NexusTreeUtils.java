@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -690,7 +691,7 @@ public class NexusTreeUtils {
 		}
 		Collections.addAll(namedAxes, tmp);
 		if (namedAxes.size() < rank) {
-			// missing axes???
+			logger.warn("Number of axes given in @axes is less than the signal rank ({} < {})", namedAxes.size(), rank);
 		}
 
 		List<ILazyDataset> axes = new ArrayList<>();
@@ -720,6 +721,7 @@ public class NexusTreeUtils {
 			if (i > 0) {
 				String a = aName.substring(0, i);
 				if (!namedAxes.contains(a)) {
+					namedAxes.add(a);
 					if (gn.containsDataNode(a)) {
 						try {
 							addAxis(gn, a, rank, axes);
@@ -778,23 +780,30 @@ public class NexusTreeUtils {
 				signalNode.getDataset().setErrors(uncertaintyNode.getDataset());
 			}
 		}
-		
-		List<ILazyDataset> axisList = new ArrayList<>();
+
 		AxesMetadata amd;
 		try {
 			amd = MetadataFactory.createMetadata(AxesMetadata.class, rank);
 		} catch (MetadataException e) {
 			return false;
 		}
+		boolean anySliced = false;
+
+		@SuppressWarnings("unchecked")
+		List<Integer>[] perAxisIndex = new List[rank];
+		int nAxes = axes.size();
 		for (int i = 0; i < rank; i++) {
+			List<Integer> axisIndex = new ArrayList<>();
+			perAxisIndex[i] = axisIndex;
 			int len = shape[i];
 			int gt = 0;
 			int min = Integer.MAX_VALUE;
-			for (ILazyDataset a : axes) {
+			for (int j = 0; j < nAxes; j++) {
+				ILazyDataset a = axes.get(j);
 				int[] aShape = a.getShape();
 				int aLen = aShape[i];
 				if (aLen == len) {
-					axisList.add(a);
+					axisIndex.add(j);
 				} else if (aLen != 1) {
 					if (aLen > len) {
 						gt++;
@@ -808,7 +817,7 @@ public class NexusTreeUtils {
 					logger.warn("NXdata {} has mismatching axes in {}-th dimension", groupPath, i);
 				} else {
 					logger.warn("NXdata {} has longer axes in {}-th dimension", groupPath, i);
-					for (int j = 0, jmax = axes.size(); j < jmax; j++) {
+					for (int j = 0; j < nAxes; j++) {
 						ILazyDataset a = axes.get(j);
 						int[] aShape = a.getShape();
 						int aLen = aShape[i];
@@ -816,8 +825,8 @@ public class NexusTreeUtils {
 							SliceND slice = new SliceND(aShape);
 							slice.setSlice(i, 0, len, 1);
 							a = a.getSliceView(slice);
-							axes.set(i, a);
-							// TODO decide whether to put back in data node
+							axes.set(j, a);
+							anySliced = true;
 						}
 					}
 				}
@@ -826,25 +835,53 @@ public class NexusTreeUtils {
 				SliceND slice = new SliceND(shape);
 				slice.setSlice(i, 0, min, 1);
 				cData = cData.getSliceView(slice);
-				dNode.setDataset(cData);
-				for (ILazyDataset a : axes) {
+				String units = getFirstString(dNode.getAttribute(NexusConstants.UNITS));
+				gn.addDataNode(signal, createDataNode(signal, cData, units));
+				anySliced = true;
+				axisIndex.clear(); // reset
+				for (int j = 0; j < nAxes; j++) {
+					ILazyDataset a = axes.get(j);
 					int[] aShape = a.getShape();
 					int aLen = aShape[i];
-					if (aLen != 1 && aLen != len) {
+					if (aLen != 1) {
 						if (aLen > min) {
-							axisList.add(a.getSliceView(slice));
-						} else {
-							axisList.add(a);
+							slice = new SliceND(aShape);
+							slice.setSlice(i, 0, min, 1);
+							axes.set(j, a.getSliceView(slice));
 						}
+						axisIndex.add(j);
 					}
 				}
 				
 				logger.warn("NXdata {} cropped shape from {} to {}", groupPath, Arrays.toString(shape), Arrays.toString(slice.getShape()));
 			}
-			amd.setAxis(i, axisList.toArray(new ILazyDataset[0]));
-			axisList.clear();
+		}
+
+		for (int i = 0; i < rank; i++) {
+			List<Integer> axisIndex = perAxisIndex[i];
+			int n = axisIndex.size();
+			if (n > 0) {
+				ILazyDataset[] axisList = new ILazyDataset[n];
+				for (int j = 0; j < n; j++) {
+					axisList[j] = axes.get(axisIndex.get(j));
+				}
+				amd.setAxis(i, axisList);
+			}
 		}
 		cData.addMetadata(amd);
+		if (anySliced) {
+			for (String n : namedAxes) {
+				Optional<ILazyDataset> axis = axes.stream().filter(a -> n.equals(a.getName())).findFirst();
+				if (axis.isPresent()) {
+					DataNode a = gn.getDataNode(n);
+					ILazyDataset d = axis.get();
+					if (!ShapeUtils.areShapesCompatible(a.getDataset().getShape(), d.getShape())) {
+						String units = getFirstString(a.getAttribute(NexusConstants.UNITS));
+						gn.addDataNode(n, createDataNode(n, d, units));
+					}
+				}
+			}
+		}
 		dNode.setAugmented();
 		return true;
 	}
@@ -2848,9 +2885,13 @@ public class NexusTreeUtils {
 		if (units != null && !units.isEmpty()) {
 			d.addAttribute(TreeFactory.createAttribute(NexusConstants.UNITS, units));
 		}
-		Dataset vd = DatasetFactory.createFromObject(value);
-		vd.setName(name);
-		d.setDataset(vd);
+		if (value instanceof ILazyDataset) {
+			d.setDataset((ILazyDataset) value);
+		} else {
+			Dataset vd = DatasetFactory.createFromObject(value);
+			vd.setName(name);
+			d.setDataset(vd);
+		}
 		return d;
 	}
 }

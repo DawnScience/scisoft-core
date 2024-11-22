@@ -234,7 +234,7 @@ public class CBFLoader extends AbstractFileLoader {
 										dc = IntegerDataset.class;
 									}
 									Dataset ds = DatasetFactory.zeros(dc, r);
-									column = TreeFactory.createAttribute(colName, ds, false);
+									column = TreeFactory.createAttribute(colName, ds);
 									category.addAttribute(column);
 								}
 								column.getValue().set(num == null ? v : num, row);

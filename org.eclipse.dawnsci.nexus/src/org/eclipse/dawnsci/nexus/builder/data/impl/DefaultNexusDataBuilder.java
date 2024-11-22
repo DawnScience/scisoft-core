@@ -290,7 +290,7 @@ public class DefaultNexusDataBuilder extends AbstractNexusDataBuilder implements
 		signalFieldSourceName = primaryDataDevice.getSignalFieldSourceName();
 		signalFieldDestName = primaryDataDevice.getDestinationFieldName(signalFieldSourceName);
 		
-		final Attribute signalAttribute = TreeFactory.createAttribute(DATA_SIGNAL, signalFieldDestName, false);
+		final Attribute signalAttribute = TreeFactory.createAttribute(DATA_SIGNAL, signalFieldDestName);
 		nxData.addAttribute(signalAttribute);
 		
 		final List<String> auxSignalFieldSourceNames = primaryDataDevice.getAuxiliarySignalFieldSourceNames();
@@ -299,7 +299,7 @@ public class DefaultNexusDataBuilder extends AbstractNexusDataBuilder implements
 					.map(primaryDataDevice::getDestinationFieldName)
 					.toList();
 			final Attribute auxiliarySignalAttribute = TreeFactory.createAttribute(
-					DATA_AUX_SIGNALS, auxSignalFieldDestNames, false);
+					DATA_AUX_SIGNALS, auxSignalFieldDestNames);
 			nxData.addAttribute(auxiliarySignalAttribute);
 		}
 		
@@ -311,7 +311,7 @@ public class DefaultNexusDataBuilder extends AbstractNexusDataBuilder implements
 			dimensionDefaultAxisNames = DatasetFactory.zeros(StringDataset.class, signalFieldRank);
 			dimensionDefaultAxisNames.fill(DATA_AXESEMPTY);
 		
-			final Attribute axesAttribute = TreeFactory.createAttribute(DATA_AXES, dimensionDefaultAxisNames, false);
+			final Attribute axesAttribute = TreeFactory.createAttribute(DATA_AXES, dimensionDefaultAxisNames);
 			nxData.addAttribute(axesAttribute);
 		}
 	}

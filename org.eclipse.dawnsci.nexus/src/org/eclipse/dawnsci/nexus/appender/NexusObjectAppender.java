@@ -1,5 +1,6 @@
 package org.eclipse.dawnsci.nexus.appender;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -46,6 +47,21 @@ public class NexusObjectAppender<N extends NXobject> extends AbstractNexusDecora
 	@Override
 	public final NexusObjectProvider<N> getNexusProvider(NexusScanInfo info) throws NexusException {
 		final NexusObjectProvider<N> nexusObjectProvider = super.getNexusProvider(info);
+		appendDataToWrappedNexusObject(nexusObjectProvider, info);
+		return nexusObjectProvider;
+	}
+
+	@Override
+	public final List<NexusObjectProvider<?>> getNexusProviders(NexusScanInfo info) throws NexusException {
+		final List<NexusObjectProvider<?>> nexusObjectProviders = super.getNexusProviders(info);
+		for (NexusObjectProvider<?> nexusObjectProvider : nexusObjectProviders) {
+			appendDataToWrappedNexusObject(nexusObjectProvider, info);
+		}
+		return nexusObjectProviders;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void appendDataToWrappedNexusObject(NexusObjectProvider<?> nexusObjectProvider, NexusScanInfo info) throws NexusException {
 		// NOTE: we can only copy a subclass of AbstractNexusObjectProvider. If we need to support other possible
 		// implementations, we may need to wrap the NexusObjectProvider instead of copying it, at least in that case
 		// This is because the decorator may need to continue to configure the nexus provider, and NexusObjectProvider
@@ -53,9 +69,7 @@ public class NexusObjectAppender<N extends NXobject> extends AbstractNexusDecora
 		if (!(nexusObjectProvider instanceof AbstractNexusObjectProvider<?>)) {
 			throw new IllegalArgumentException(); 
 		}
-		final N nexusObject = nexusObjectProvider.getNexusObject();
-		appendNexusObject(nexusObject, (AbstractNexusObjectProvider<N>) nexusObjectProvider, info);
-		return nexusObjectProvider;
+		appendNexusObject((N) nexusObjectProvider.getNexusObject(), (AbstractNexusObjectProvider<N>) nexusObjectProvider, info);
 	}
 
 	/**
@@ -94,5 +108,5 @@ public class NexusObjectAppender<N extends NXobject> extends AbstractNexusDecora
 		// subclasses should override this default implementation as necessary.
 		appender.ifPresent(dec -> dec.accept(nexusObject));
 	}
-	
+
 }

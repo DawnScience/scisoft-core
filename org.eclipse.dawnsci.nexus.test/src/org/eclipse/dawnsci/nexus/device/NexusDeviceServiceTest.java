@@ -36,6 +36,7 @@ import org.eclipse.dawnsci.nexus.NexusBaseClass;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.NexusScanInfo;
+import org.eclipse.dawnsci.nexus.NexusScanInfo.ScanRole;
 import org.eclipse.dawnsci.nexus.appender.CompoundNexusContextAppender;
 import org.eclipse.dawnsci.nexus.appender.INexusContextAppender;
 import org.eclipse.dawnsci.nexus.appender.NexusNodeCopyAppender;
@@ -383,13 +384,13 @@ public class NexusDeviceServiceTest {
 		final INexusDeviceAdapterFactory<Integer> nexusDeviceAdapterFactory = new INexusDeviceAdapterFactory<Integer>() {
 
 			@Override
-			public boolean canAdapt(Object object) {
+			public boolean canAdapt(Object object, ScanRole role) {
 				return object instanceof Integer && ((Integer) object).intValue() < 5;
 			}
 
 			@SuppressWarnings("unchecked")
 			@Override
-			public INexusDevice<NXpositioner> createNexusDevice(Integer value) throws NexusException {
+			public INexusDevice<NXpositioner> createNexusDevice(Integer value, ScanRole role) throws NexusException {
 				return new INexusDevice<NXpositioner>() {
 					
 					final String name = "device" + value;
@@ -410,10 +411,11 @@ public class NexusDeviceServiceTest {
 		};
 		
 		ServiceProvider.setService(INexusDeviceAdapterFactory.class, nexusDeviceAdapterFactory);
+		final ScanRole scanRole = ScanRole.SCANNABLE;
 		
 		for (int i = 1; i < 5; i++) {
 			final String expectedName = "device" + i;
-			final INexusDevice<NXpositioner> nexusDevice = nexusDeviceService.getNexusDevice(i);
+			final INexusDevice<NXpositioner> nexusDevice = nexusDeviceService.getNexusDevice(i, scanRole);
 			
 			assertThat(nexusDevice, is(notNullValue()));
 			assertThat(nexusDevice.getName(), is(equalTo(expectedName)));
@@ -426,10 +428,10 @@ public class NexusDeviceServiceTest {
 		}
 		
 		// check that the nexus device adapter factory is only called with valid values
-		assertThat(nexusDeviceService.getNexusDevice(6), is(nullValue()));
-		assertThat(nexusDeviceService.getNexusDevice(100), is(nullValue()));
-		assertThat(nexusDeviceService.getNexusDevice(2.0), is(nullValue()));
-		assertThat(nexusDeviceService.getNexusDevice(new Object()), is(nullValue()));
+		assertThat(nexusDeviceService.getNexusDevice(6, scanRole), is(nullValue()));
+		assertThat(nexusDeviceService.getNexusDevice(100, scanRole), is(nullValue()));
+		assertThat(nexusDeviceService.getNexusDevice(2.0, scanRole), is(nullValue()));
+		assertThat(nexusDeviceService.getNexusDevice(new Object(), scanRole), is(nullValue()));
 	}
 	
 }

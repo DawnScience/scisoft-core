@@ -163,4 +163,8 @@ public class BasePlottingConstants {
 	 */
 	public static final String USE_PALETTE_FUNCTIONS = "org.dawnsci.plotting.use.paletteFunctions";
 
+	/**
+	 * If true, interpolate cursor position within pixel
+	 */
+	public static final String INTERPOLATE_PIXEL_POSN = "org.dawnsci.plotting.system.interpolatePixelPosn";
 }

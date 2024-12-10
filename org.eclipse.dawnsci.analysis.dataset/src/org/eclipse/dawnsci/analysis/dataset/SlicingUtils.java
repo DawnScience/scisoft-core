@@ -1,6 +1,7 @@
 package org.eclipse.dawnsci.analysis.dataset;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Map;
 
 import org.eclipse.january.DatasetException;
@@ -8,13 +9,19 @@ import org.eclipse.january.IMonitor;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetUtils;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.IDynamicDataset;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.january.dataset.LazyDataset;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.metadata.AxesMetadata;
+import org.eclipse.january.metadata.IMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SlicingUtils {
+	private static final Logger logger = LoggerFactory.getLogger(SlicingUtils.class);
+
 	private SlicingUtils() {
 	}
 
@@ -38,6 +45,8 @@ public class SlicingUtils {
 	public static Dataset sliceWithAxesMetadata(ILazyDataset ld, SliceND s) throws DatasetException {
 		return sliceWithAxesMetadata(null, ld, s);
 	}
+
+	public static final String ORIGINAL_MAX_SHAPE = "original_max_shape";
 
 	/**
 	 * Workaround a bug with slicing a sliced view of a lazy dataset that has axes metadata added after first slicing
@@ -70,7 +79,22 @@ public class SlicingUtils {
 							aSlice.setSlice(k, slices[k]);
 						}
 					}
+					// workaround maxShape bug in lazy dynamic dataset
+					IMetadata md = a.getFirstMetadata(IMetadata.class);
+					if (md != null && a instanceof IDynamicDataset dynamic) {
+						a = a.getSliceView();
+						dynamic = (IDynamicDataset) a;
+						int[] omShape = md.getDataShapes().get(ORIGINAL_MAX_SHAPE);
+						try {
+							Field mField = dynamic.getClass().getDeclaredField("maxShape");
+							mField.setAccessible(true);
+							mField.set(dynamic, omShape);
+						} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+							logger.error("Could not set maxShape", e);
+						}
+					}
 					axes[j] = a.getSliceView(aSlice);
+					logger.debug("Sliced {} with {} to {}", a, aSlice, Arrays.toString(axes[j].getShape()));
 				}
 				newAM.setAxis(i, axes);
 			}

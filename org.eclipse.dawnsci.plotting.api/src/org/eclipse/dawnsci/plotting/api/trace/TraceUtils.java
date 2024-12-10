@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Maths;
 
 /**
  * Class containing utility methods for regions to avoid duplication 
@@ -25,7 +26,8 @@ import org.eclipse.january.dataset.IDataset;
  *
  */
 public class TraceUtils {
-	
+	private TraceUtils() {
+	}
 	
 
 	/**
@@ -109,31 +111,65 @@ public class TraceUtils {
 		return axis.getDouble() != 0 && (length == 0 || axis.getDouble(length) != length);
 	}
 
-	public static final void transform(Dataset label, int index, double[] pointA, double[] pointB) {
+	public static final void transform(boolean interpolate, Dataset label, int index, double[] point, double[] newPoint) {
 		if (label != null) {
-			internalTransform(label, index, pointA);
-			internalTransform(label, index, pointB);
+			internalTransform(interpolate, label, index, point, newPoint);
 		}
 	}
 
-	public static final void transform(Dataset label, int index, double[]... points) {
+	public static final void transform(boolean interpolate, Dataset label, int index, double[] pointA, double[] pointB, double[] newPointA, double[] newPointB) {
 		if (label != null) {
-			for (double[] ds : points) {
-				internalTransform(label, index, ds);
+			internalTransform(interpolate, label, index, pointA, newPointA);
+			internalTransform(interpolate, label, index, pointB, newPointB);
+		}
+	}
+
+	public static final void transform(boolean interpolate, Dataset label, int index, double[]... points) {
+		if (label != null) {
+			int pairs = points.length;
+			if (pairs % 2 == 1) {
+				throw new IllegalArgumentException("Need an even number of points arrays");
+			}
+			pairs /= 2;
+			for (int p = 0; p < pairs; p++) {
+				internalTransform(interpolate, label, index, points[p], points[p+pairs]);
 			}
 		}
 	}
 
-	private static final void internalTransform(Dataset label, int index, double[] point) {
-		double lIndex = point[index];
-		double floor  = Math.floor(lIndex);
-		double frac   = lIndex - floor;
-		int    iFloor = (int) floor;
-		double lo     = iFloor >= label.getSize() ? 0 : label.getDouble(iFloor++);
-		if (iFloor >= label.getSize()) {
-			point[index] = Double.NaN;
+	private static final void internalTransform(boolean interpolate, Dataset label, int index, double[] oldPoint, double[] newPoint) {
+		if (label.getRank() == 1) {
+			newPoint[index] = getDouble(interpolate, label, oldPoint[index]);
 		} else {
-			point[index] = frac == 0 ? lo : (1 - frac) * lo + frac * label.getDouble(iFloor);
+			newPoint[index] = getDoubleND(interpolate, label, oldPoint[1], oldPoint[0]);
 		}
+	}
+
+	private static double getDouble(boolean interpolate, Dataset label, double pt) {
+		if (interpolate) {
+			double floor  = Math.floor(pt);
+			double frac   = pt - floor;
+			int    iFloor = (int) floor;
+			int length = label.getSize();
+			double lo     = iFloor >= length ? 0 : label.getDouble(iFloor++);
+			if (iFloor >= length) {
+				return Double.NaN;
+			}
+			return frac == 0 ? lo : (1 - frac) * lo + frac * label.getDouble(iFloor);
+		}
+
+		return label.getDouble(Math.clamp((int) Math.floor(pt), 0, label.getSize() - 1));
+	}
+
+	private static double getDoubleND(boolean interpolate, Dataset label, double... pt) {
+		if (interpolate) {
+			return Maths.interpolate(label, pt[1], pt[0]);
+		}
+		int[] shape = label.getShapeRef();
+		int[] point = new int[shape.length];
+		for (int i = 0; i < Math.min(pt.length, shape.length); i++) {
+			point[i] = Math.clamp((int) Math.floor(pt[i]), 0, shape[i] - 1);
+		}
+		return label.getDouble(point);
 	}
 }

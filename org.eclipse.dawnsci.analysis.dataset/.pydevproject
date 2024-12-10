@@ -9,9 +9,9 @@
 
 		<path>/${PROJECT_DIR_NAME}/bin</path>
 
-		<path>/${PROJECT_DIR_NAME}/jars/JLargeArrays-1.6.jar</path>
+		<path>${MVN_LOCAL_REPO}/pl/edu/icm/JLargeArrays/1.6/JLargeArrays-1.6.jar</path>
 
-		<path>/${PROJECT_DIR_NAME}/jars/JTransforms-3.1.jar</path>
+		<path>${MVN_LOCAL_REPO}/com/github/wendykierp/JTransforms/3.1/JTransforms-3.1.jar</path>
 
 	</pydev_pathproperty>
 

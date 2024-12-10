@@ -336,10 +336,11 @@ def get_python(py3=True):
         if exe is None:
             raise RuntimeError('Problem with running external process: ' + p.stderr.read())
     finally:
-        p.stdout.close()
-        p.stderr.close()
-        p.terminate()
-        p.wait()
+        if p:
+            p.stdout.close()
+            p.stderr.close()
+            p.terminate()
+            p.wait()
     return exe, path, ldpath
 
 def parse_for_env(stream, sep=':'):

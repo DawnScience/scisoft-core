@@ -39,6 +39,7 @@ public class HDF5File {
 	private AtomicInteger count; // number of accessors
 	private boolean writeable; // if true then can write
 	private boolean canSWMR;
+	private boolean isSWMR;
 
 	private ThreadPoolExecutor service;
 
@@ -296,5 +297,20 @@ public class HDF5File {
 	 */
 	public synchronized boolean containsDataset(final String dataPath) {
 		return datasetIDs.containsKey(dataPath);
+	}
+
+	/**
+	 * Set SWMR
+	 * @param swmrOn
+	 */
+	public void setSWMR(boolean swmrOn) {
+		isSWMR = swmrOn;
+	}
+
+	/**
+	 * @return true, if file is in SWMR mode
+	 */
+	public boolean isSWMR() {
+		return isSWMR;
 	}
 }

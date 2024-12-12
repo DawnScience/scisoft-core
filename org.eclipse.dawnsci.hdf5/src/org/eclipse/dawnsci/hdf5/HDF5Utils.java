@@ -1386,6 +1386,9 @@ public class HDF5Utils {
 				} else {
 					H5.H5Dwrite(hdfDatasetId, memtype, hdfMemspaceId, hdfDataspaceId, HDF5Constants.H5P_DEFAULT, buffer);
 				}
+				if (f.isSWMR()) {
+					H5.H5Dflush(hdfDatasetId);
+				}
 			} finally {
 				if (hdfDatatypeId != -1) {
 					try {

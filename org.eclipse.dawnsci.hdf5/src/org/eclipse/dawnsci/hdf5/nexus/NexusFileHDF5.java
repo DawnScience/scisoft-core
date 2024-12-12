@@ -1602,6 +1602,7 @@ public class NexusFileHDF5 implements NexusFile {
 			throw new NexusException("Could not switch to SWMR mode", e);
 		}
 		swmrOn = true;
+		file.setSWMR(swmrOn);
 	}
 	
 	@Override

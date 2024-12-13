@@ -773,6 +773,21 @@ public class FFT {
 	}
 
 	/**
+	 * Pad out dataset to new shape with the provided padValue.
+	 * 
+	 * @param input
+	 * @param newShape
+	 * @param padValue
+	 * @return padded dataset
+	 */
+	public static Dataset extendWithPad(Dataset input, int[] newShape, Object padValue) {
+		Dataset output = DatasetFactory.zeros(input.getElementsPerItem(), input.getClass(), newShape);
+		output.fill(padValue);
+		output.setSlice(input, null, input.getShapeRef(), null);
+		return output;
+	}
+
+	/**
 	 * Shift frequency components
 	 * <p>
 	 * A forward shift moves the zero-frequency from the origin position

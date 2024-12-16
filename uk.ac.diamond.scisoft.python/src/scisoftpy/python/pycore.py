@@ -16,6 +16,7 @@
 
 '''
 '''
+from __future__ import print_function
 
 import numpy as _np #@UnresolvedImport
 
@@ -23,7 +24,11 @@ import sys
 if sys.hexversion < 0x030a0000:
     from distutils.version import LooseVersion as _Version
 else:
-    from packaging.version import parse as _Version
+    try:
+        from packaging.version import parse as _Version
+    except:
+        print("The 'packaging' package is required for Python 3.10+", file=sys.stderr)
+        raise
 
 _np_version_cur = _Version(_np.version.version)
 _is_np_version_ge_1_8 = _np_version_cur >= _Version('1.8')
@@ -54,10 +59,10 @@ rgb = _np.dtype([('r', _uint8), ('g', _uint8), ('b', _uint8)])
 
 int_ = _np.int_
 int = _np.int_ #@ReservedAssignment
-float_ = _np.float_
-float = _np.float_ #@ReservedAssignment
-complex_ = _np.complex_
-complex = _np.complex_ #@ReservedAssignment
+float_ = _np.float64
+float = _np.float64 #@ReservedAssignment
+complex_ = _np.complex128
+complex = _np.complex128 #@ReservedAssignment
 
 import types as _types
 

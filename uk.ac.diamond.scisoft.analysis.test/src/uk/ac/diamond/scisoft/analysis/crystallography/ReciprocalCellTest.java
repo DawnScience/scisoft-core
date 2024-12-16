@@ -15,10 +15,10 @@ import static org.junit.Assert.assertTrue;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
+import org.eclipse.dawnsci.analysis.api.diffraction.MatrixUtils;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.crystallography.ReciprocalCell.Ortho_Convention;
-import uk.ac.diamond.scisoft.analysis.diffraction.MatrixUtils;
 
 public class ReciprocalCellTest {
 

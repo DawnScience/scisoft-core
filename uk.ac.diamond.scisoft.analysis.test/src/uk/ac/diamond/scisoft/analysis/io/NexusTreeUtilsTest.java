@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
+import org.eclipse.dawnsci.analysis.api.diffraction.MatrixUtils;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
 import org.eclipse.dawnsci.analysis.api.tree.Node;
@@ -39,7 +40,6 @@ import org.junit.Test;
 import si.uom.NonSI;
 import si.uom.SI;
 import tec.units.indriya.unit.MetricPrefix;
-import uk.ac.diamond.scisoft.analysis.diffraction.MatrixUtils;
 
 public class NexusTreeUtilsTest {
 

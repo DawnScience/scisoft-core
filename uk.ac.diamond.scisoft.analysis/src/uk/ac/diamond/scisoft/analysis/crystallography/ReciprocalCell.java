@@ -12,7 +12,7 @@ package uk.ac.diamond.scisoft.analysis.crystallography;
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
-import uk.ac.diamond.scisoft.analysis.diffraction.MatrixUtils;
+import org.eclipse.dawnsci.analysis.api.diffraction.MatrixUtils;
 
 
 /**

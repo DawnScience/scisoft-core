@@ -58,7 +58,7 @@ public class DetectorProperties implements Serializable, Cloneable {
 	private double hPxSize;          // horizontal pixel size (in mm)
 	private double vPxSize;          // vertical pixel size (in mm)
 	private Matrix3d orientation;    // passive transformation from reference frame to detector frame
-	private transient Matrix3d invOrientation; // its inverse
+	private transient Matrix3d invOrientation; // its inverse, aka active transformation of detector to its final position
 	private boolean fire = true;
 
 	private transient Set<IDetectorPropertyListener> detectorPropListeners;
@@ -381,7 +381,7 @@ public class DetectorProperties implements Serializable, Cloneable {
 		if (closestPoint == null) {
 			closestPoint = new Vector3d();
 		}
-		closestPoint.scale(normal.dot(origin), normal);
+		closestPoint.scale(-distance, normal);
 	}
 
 	/**
@@ -648,15 +648,7 @@ public class DetectorProperties implements Serializable, Cloneable {
 	 * @param gamma third angle about local z
 	 */
 	public void setOrientationEulerZYZ(final double alpha, final double beta, final double gamma) {
-		if (invOrientation == null)
-			invOrientation = new Matrix3d();
-		Matrix3d ta = new Matrix3d();
-		Matrix3d tb = new Matrix3d();
-		ta.rotZ(gamma);
-		tb.rotY(beta);
-		tb.mul(ta);
-		invOrientation.rotZ(alpha);
-		invOrientation.mul(tb);
+		invOrientation = MatrixUtils.createOrientationFromEulerZYZRadians(alpha, beta, gamma);
 		calcNormal(false);
 	}
 
@@ -681,71 +673,13 @@ public class DetectorProperties implements Serializable, Cloneable {
 	}
 
 	/**
-	 * Generate passive inverse transformation matrix from Euler angles given in degrees
+	 * Generate an active transformation matrix from Euler angles given in degrees
 	 * @param yaw
 	 * @param pitch
 	 * @param roll
-	 * @return transformation matrix
 	 */
-	public static Matrix3d inverseMatrixFromEulerAngles(final double yaw, final double pitch, final double roll) {
-		return inverseMatrixFromEulerAngles(yaw, pitch, roll, null);
-	}
-
-	/**
-	 * Generate passive inverse transformation matrix from Euler angles given in degrees
-	 * @param yaw
-	 * @param pitch
-	 * @param roll
-	 * @param transform (can be null)
-	 * @return transformation matrix
-	 */
-	protected static Matrix3d inverseMatrixFromEulerAngles(final double yaw, final double pitch, final double roll, Matrix3d transform) {
-		if (transform == null)
-			transform = new Matrix3d();
-		Matrix3d ta = new Matrix3d();
-		Matrix3d tb = new Matrix3d();
-
-		/*
-		 * Vecmath rotation matrices are active transformation - i.e. they rotate a vector to a new vector as opposed
-		 * to passive transformations which give the new representation of the same vector.
-		 * 
-		 * The transformation required is a -ve yaw rotation about y, +ve pitch rotation about x',
-		 * then -ve roll rotation about z''.
-		 * As an extrinsic composition, this becomes Rz(-roll) Rx(pitch) Ry(-yaw)
-		 * 
-		 */
-		ta.rotZ(Math.toRadians(-roll));
-		tb.rotX(Math.toRadians(pitch));
-		transform.rotY(Math.toRadians(-yaw));
-		tb.mul(ta);
-		transform.mul(tb);
-		santise(transform);
-		return transform;
-	}
-
-	/**
-	 * Reset entries that are less than or equal to 1 unit of least precision of
-	 * the matrix's scale
-	 * @param m
-	 */
-	private static void santise(Matrix3d m) {
-		double scale = m.getScale();
-		double min = Math.ulp(scale);
-		for (int i = 0; i < 3; i++) {
-			double t;
-			t = Math.abs(m.getElement(i, 0));
-			if (t > 0 && t <= min) {
-				m.setElement(i, 0, 0);
-			}
-			t = Math.abs(m.getElement(i, 1));
-			if (t > 0 && t <= min) {
-				m.setElement(i, 1, 0);
-			}
-			t = Math.abs(m.getElement(i, 2));
-			if (t > 0 && t <= min) {
-				m.setElement(i, 2, 0);
-			}
-		}
+	public static Matrix3d activeMatrixFromEulerAngles(final double yaw, final double pitch, final double roll) {
+		return MatrixUtils.createOrientationFromYawPitchRoll(Math.toRadians(yaw), -Math.toRadians(pitch), Math.toRadians(roll));
 	}
 
 	/**
@@ -785,7 +719,7 @@ public class DetectorProperties implements Serializable, Cloneable {
 		} catch (IllegalStateException e) {
 		}
 
-		invOrientation = inverseMatrixFromEulerAngles(yaw, pitch, roll, invOrientation);
+		invOrientation = activeMatrixFromEulerAngles(yaw, pitch, roll);
 		calcNormal(false);
 
 		if (normal.dot(beamVector) != 0) {
@@ -814,31 +748,17 @@ public class DetectorProperties implements Serializable, Cloneable {
 	 * @return yaw, pitch and roll as defined in {@link #setNormalAnglesInDegrees(double, double, double)}
 	 */
 	public double[] getNormalAnglesInDegrees() {
-		if (invOrientation == null)
-			return new double[3];
+		double[] radians = MatrixUtils.calculateYawPitchRoll(invOrientation);
 
-		double sp = invOrientation.getM12();
-		double cp = Math.sqrt(1 - sp * sp);
-		double yaw;
-		double roll;
-		if (cp == 0) {
-			// gimbal lock case
-			yaw  = Math.atan2(-invOrientation.getM20(), invOrientation.getM00());
-			roll = 0;
-		} else {
-			yaw  = Math.atan2(invOrientation.getM02(), invOrientation.getM22());
-			roll = Math.atan2(invOrientation.getM10(), invOrientation.getM11());
+		double yaw = Math.toDegrees(radians[0]);
+		if (yaw <= -180) {
+			yaw += 360;
 		}
-		if (yaw != 0 && yaw != Math.PI)
-			yaw = -yaw;
-		if (roll != 0 && roll != Math.PI)
-			roll = -roll;
-
-		double pitch = Math.asin(sp);
-		if (pitch != 0)
-			pitch = -pitch;
-
-		return new double[] {Math.toDegrees(yaw), Math.toDegrees(pitch), Math.toDegrees(roll)};
+		double roll = Math.toDegrees(radians[2]);
+		if (roll <= -180) {
+			roll += 360;
+		}
+		return new double[] {yaw, -Math.toDegrees(radians[1]), roll};
 	}
 
 	/**
@@ -942,7 +862,7 @@ public class DetectorProperties implements Serializable, Cloneable {
 	 * 
 	 * @param p
 	 *            position vector
-	 * @return integer array of pixel coordinates
+	 * @return double array of pixel coordinates
 	 */
 	public double[] pixelPreciseCoords(final Vector3d p) {
 		double[] coords = new double[2];
@@ -1110,9 +1030,9 @@ public class DetectorProperties implements Serializable, Cloneable {
 
 	/**
 	 * Set beam centre (where beam intersects detector)
-	 * @param coords in image
+	 * @param pixel coords in image
 	 */
-	public void setBeamCentreCoords(double[] coords) {
+	public void setBeamCentreCoords(double... coords) {
 		try {
 			Vector3d oc = getBeamCentrePosition(); // old beam centre
 			oc.sub(pixelPosition(coords[0], coords[1]));

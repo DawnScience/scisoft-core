@@ -40,6 +40,7 @@ import javax.vecmath.Vector4d;
 import org.apache.commons.lang3.ArrayUtils;
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
+import org.eclipse.dawnsci.analysis.api.diffraction.MatrixUtils;
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
@@ -85,7 +86,6 @@ import uk.ac.diamond.scisoft.analysis.crystallography.ReciprocalCell;
 import uk.ac.diamond.scisoft.analysis.crystallography.ReciprocalCell.Ortho_Convention;
 import uk.ac.diamond.scisoft.analysis.crystallography.UnitCell;
 import uk.ac.diamond.scisoft.analysis.diffraction.DiffractionSample;
-import uk.ac.diamond.scisoft.analysis.diffraction.MatrixUtils;
 
 @SuppressWarnings("deprecation")
 public class NexusTreeUtils {
@@ -2813,15 +2813,20 @@ public class NexusTreeUtils {
 
 		sg = createNXGroup(NexusConstants.TRANSFORMATIONS);
 		g.addGroupNode("transformations", sg);
-		double[] angles = MatrixUtils.calculateFromOrientationEulerZYZ(dp.getOrientation());
+
+		Matrix3d inv = new Matrix3d();
+		inv.transpose(dp.getOrientation());
+		double[] angles = MatrixUtils.calculateEulerZYZ(inv);
 		// Euler ZYZ angles
-		addNXTransform(sg, "euler_a", "deg", false, new double[] {0,0,1}, zeros, "mm", "origin_offset", angles[0]);
+		addNXTransform(sg, "euler_a", "deg", false, new double[] {0,0,1}, zeros, "mm", "origin_offset", angles[2]);
 		addNXTransform(sg, "euler_b", "deg", false, new double[] {0,1,0}, zeros, "mm", "euler_a", angles[1]);
-		addNXTransform(sg, "euler_c", "deg", false, new double[] {0,0,1}, zeros, "mm", "euler_b", angles[2]);
-		Vector3d v = dp.getOrigin();
+		addNXTransform(sg, "euler_c", "deg", false, new double[] {0,0,1}, zeros, "mm", "euler_b", angles[0]);
+		Vector3d v = new Vector3d(dp.getOrigin());
+		double d = v.length();
+		v.normalize();
 		double[] dv = new double[3];
 		v.get(dv);
-		addNXTransform(sg, "origin_offset", "mm", true, dv, zeros, "mm", TRANSFORMATIONS_ROOT, 1);
+		addNXTransform(sg, "origin_offset", "mm", true, dv, zeros, "mm", TRANSFORMATIONS_ROOT, d);
 
 		return g;
 	}

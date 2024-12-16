@@ -9,17 +9,17 @@
 
 package uk.ac.diamond.scisoft.analysis.diffraction;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Random;
 
 import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
+import org.eclipse.dawnsci.analysis.api.diffraction.MatrixUtils;
 import org.junit.Before;
 import org.junit.Test;
-
-import uk.ac.diamond.scisoft.analysis.diffraction.TwoCircleFitter;
 
 public class TwoCircleFitterTest {
 	private int n;

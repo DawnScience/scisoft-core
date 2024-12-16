@@ -18,6 +18,7 @@ import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
+import org.eclipse.dawnsci.analysis.api.diffraction.MatrixUtils;
 import org.junit.Test;
 
 public class TwoCircleDetectorTest {

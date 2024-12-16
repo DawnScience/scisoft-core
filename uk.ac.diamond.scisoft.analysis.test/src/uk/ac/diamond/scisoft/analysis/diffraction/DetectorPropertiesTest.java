@@ -14,17 +14,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
+
 import javax.vecmath.Matrix3d;
 import javax.vecmath.Vector3d;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
 import org.eclipse.dawnsci.analysis.api.diffraction.DiffractionCrystalEnvironment;
+import org.eclipse.dawnsci.analysis.api.diffraction.MatrixUtils;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DoubleDataset;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import uk.ac.diamond.scisoft.analysis.IOTestUtils;
+import uk.ac.diamond.scisoft.analysis.diffraction.powder.PONIDiffractionMetadataDescriptor;
 import uk.ac.diamond.scisoft.analysis.io.DataHolder;
 import uk.ac.diamond.scisoft.analysis.io.PNGSaver;
 
@@ -309,9 +313,11 @@ public class DetectorPropertiesTest {
 		det.setOrientationEulerZYZ(Math.toRadians(10), Math.toRadians(20), Math.toRadians(25));
 		Matrix3d m = det.getOrientation();
 		Matrix3d me = MatrixUtils.createOrientationFromEulerZYZ(10, 20, 25);
+		me.transpose();
 		MatrixUtils.isClose(me, m, 1e-14, 1e-14);
 
-		double[] angles = MatrixUtils.calculateFromOrientationEulerZYZ(m);
+		m.transpose();
+		double[] angles = MatrixUtils.calculateEulerZYZ(m);
 		assertArrayEquals(new double[] {10, 20, 25}, angles, 1e-4);
 	}
 
@@ -406,8 +412,6 @@ public class DetectorPropertiesTest {
 		Vector3d nb = getNormal(0, 30, 0);
 		Vector3d nc = getNormal(30, 30, 0);
 
-		getNormal(0, 0, 30);
-
 		n = getNormal(30, 0, 30);
 		assertTrue("Normals rolled", n.epsilonEquals(na, 1e-7));
 		n = getNormal(0, 30, 30);
@@ -418,6 +422,7 @@ public class DetectorPropertiesTest {
 		// check normal to row angle
 		det.setNormalAnglesInDegrees(0, 0, 0);
 		assertEquals("Normal to row", 90, Math.toDegrees(row.angle(det.getNormal())), 1e-7);
+		roll = 0;
 		det.setNormalAnglesInDegrees(30, 0, roll);
 		nb = det.getNormal();
 		assertEquals("Normals rolled", 0, Math.toDegrees(na.angle(nb)), 1e-7);
@@ -527,7 +532,7 @@ public class DetectorPropertiesTest {
 		Matrix3d ta;
 		Vector3d va;
 
-		ta = DetectorProperties.inverseMatrixFromEulerAngles(angles[0], angles[1], angles[2]);
+		ta = DetectorProperties.activeMatrixFromEulerAngles(angles[0], angles[1], angles[2]);
 		va = new Vector3d(0, 0, -1);
 		ta.transform(va);
 //		System.err.println(Arrays.toString(angles) + ": " + va);
@@ -552,44 +557,45 @@ public class DetectorPropertiesTest {
 
 		final Vector3d beam = det.getBeamVector();
 		Vector3d major = findMajor(beam, det.getNormal());
-		double angle = 0;
+		double degrees = 0;
 
 		assertEquals("Maj x", -1, major.x, 1e-7);
 		assertEquals("Maj y", 0, major.y, 1e-7);
 		assertEquals("Maj z", 0, major.z, 1e-7);
 
-		angle = 30;
-		det.setNormalAnglesInDegrees(angle, 0, 0);
+		degrees = 30;
+		double radians = Math.toRadians(degrees);
+		det.setNormalAnglesInDegrees(degrees, 0, 0);
 		major = findMajor(beam, det.getNormal());
-		assertEquals("Maj x", Math.cos(Math.toRadians(angle)), major.x, 1e-7);
+		assertEquals("Maj x", Math.cos(radians), major.x, 1e-7);
 		assertEquals("Maj y", 0, major.y, 1e-7);
-		assertEquals("Maj z", Math.sin(Math.toRadians(angle)), major.z, 1e-7);
+		assertEquals("Maj z", Math.sin(radians), major.z, 1e-7);
 
-		det.setNormalAnglesInDegrees(0, angle, 0);
+		det.setNormalAnglesInDegrees(0, degrees, 0);
 		major = findMajor(beam, det.getNormal());
 		assertEquals("Maj x", 0, major.x, 1e-7);
-		assertEquals("Maj y", Math.cos(Math.toRadians(angle)), major.y, 1e-7);
-		assertEquals("Maj z", Math.sin(Math.toRadians(angle)), major.z, 1e-7);
+		assertEquals("Maj y", Math.cos(radians), major.y, 1e-7);
+		assertEquals("Maj z", Math.sin(radians), major.z, 1e-7);
 
-		det.setNormalAnglesInDegrees(0, 0, angle);
+		det.setNormalAnglesInDegrees(0, 0, degrees);
 		major = findMajor(beam, det.getNormal());
 		assertEquals("Maj x", -1, major.x, 1e-7);
 		assertEquals("Maj y", 0, major.y, 1e-7);
 		assertEquals("Maj z", 0, major.z, 1e-7);
 
-		det.setNormalAnglesInDegrees(-angle, 0, 0);
+		det.setNormalAnglesInDegrees(-degrees, 0, 0);
 		major = findMajor(beam, det.getNormal());
-		assertEquals("Maj x", -Math.cos(Math.toRadians(angle)), major.x, 1e-7);
+		assertEquals("Maj x", -Math.cos(radians), major.x, 1e-7);
 		assertEquals("Maj y", 0, major.y, 1e-7);
-		assertEquals("Maj z", Math.sin(Math.toRadians(angle)), major.z, 1e-7);
+		assertEquals("Maj z", Math.sin(radians), major.z, 1e-7);
 
-		det.setNormalAnglesInDegrees(0, -angle, 0);
+		det.setNormalAnglesInDegrees(0, -degrees, 0);
 		major = findMajor(beam, det.getNormal());
 		assertEquals("Maj x", 0, major.x, 1e-7);
-		assertEquals("Maj y", -Math.cos(Math.toRadians(angle)), major.y, 1e-7);
-		assertEquals("Maj z", Math.sin(Math.toRadians(angle)), major.z, 1e-7);
+		assertEquals("Maj y", -Math.cos(radians), major.y, 1e-7);
+		assertEquals("Maj z", Math.sin(radians), major.z, 1e-7);
 
-		det.setNormalAnglesInDegrees(0, 0, -angle);
+		det.setNormalAnglesInDegrees(0, 0, -degrees);
 		major = findMajor(beam, det.getNormal());
 		assertEquals("Maj x", -1, major.x, 1e-7);
 		assertEquals("Maj y", 0, major.y, 1e-7);
@@ -743,38 +749,49 @@ public class DetectorPropertiesTest {
 
 	@Test
 	public void testPyFAIConventions() {
-		// from pyFAI import detectors, azimuthalIntegrator
-		// da = detectors.Detector(1,1)
-		// ai = azimuthalIntegrator.AzimuthalIntegrator(dist=1, detector=da, wavelength=2.5e-3)
-		// import math
-		// ai.rot1 = math.radians(25.)
-		// ai.rot2 = math.radians(34.) 
-		// ai.rot3 = math.radians(15.)
-		// ai.rotation_matrix()
-		// # Out: 
-		// # array([[ 0.8007888 , -0.00629717, -0.59891372],
-		// #        [ 0.21457071,  0.93659154,  0.27704817],
-		// #        [ 0.5591929 , -0.35036642,  0.75136321]])
-
+//		 import numpy as np
+//		 import math
+//		 from pyFAI import detectors, azimuthalIntegrator
+//		 da = detectors.Detector(1e-4,1e-4)
+//		 ai = azimuthalIntegrator.AzimuthalIntegrator(dist=1, poni1=0.23, poni2=-0.4, rot1=math.radians(25.), rot2=math.radians(34.), rot3=math.radians(15.), detector=da, wavelength=2.5e-9)
+//		 ai.rotation_matrix()
+		/*
+		   array([[ 0.8007888 , -0.00629717, -0.59891372],
+		          [ 0.21457071,  0.93659154,  0.27704817],
+		          [ 0.5591929 , -0.35036642,  0.75136321]])
+		   Detector Detector	 PixelSize= 100µm, 100µm	 BottomRight (3)
+		   Wavelength= 2.500000e-09 m
+		   SampleDetDist= 1.000000e+00 m	PONI= 2.300000e-01, -4.000000e-01 m	rot1=0.436332  rot2=0.593412  rot3=0.261799 rad
+		   DirectBeamDist= 1330.914 mm	Center: x=-8663.077, y=9742.378 pix	Tilt= 41.291° tiltPlanRotation= 122.070° 𝛌= 25.000Å
+		 */
 		Matrix3d mPyFAI = new Matrix3d(new double[] {0.8007888, -0.00629717, -0.59891372,
 				0.21457071, 0.93659154, 0.27704817,
 				0.5591929, -0.35036642,  0.75136321});
-		Matrix3d toPyFAI = new Matrix3d(new double[] {0,1,0, 1,0,0, 0,0,1,});
-		Matrix3d m = DetectorProperties.inverseMatrixFromEulerAngles(25, -34, -15);
+		Matrix3d toPyFAI = new Matrix3d(new double[] {0,1,0, -1,0,0, 0,0,1,});
+		Matrix3d ori = PONIDiffractionMetadataDescriptor.createOrientationFromEulerPONI(Math.toRadians(25), Math.toRadians(34), Math.toRadians(15));
 
+		Matrix3d m = new Matrix3d(ori);
 		m.mul(toPyFAI, m);
 		m.mulTransposeRight(m, toPyFAI);
-		m.transpose();
 		System.out.println(m);
 		assertTrue(mPyFAI.epsilonEquals(m, 1e-8));
 
 		DetectorProperties d = DetectorProperties.getDefaultDetectorProperties(100,100);
-		d.setNormalAnglesInDegrees(25, -34, -15);
+		m.transpose(ori);
+		d.setOrientation(m);
+//		 ai.calc_pos_zyx(d1=np.array(0),d2=np.array(0))
+//		 (array([0.48261271]), array([-0.78557428]), array([0.60239108]))
+		d.setOrigin(new Vector3d(-0.78557428, 0.60239108, 0.48261271));
 
-		m = new Matrix3d(d.getOrientation());
-		m.mulTransposeLeft(toPyFAI, m);
-		m.mul(m, toPyFAI);
+		m.transpose(d.getOrientation());
+		m.mul(toPyFAI, m);
+		m.mulTransposeRight(m, toPyFAI);
 		System.out.println(m);
 		assertTrue(mPyFAI.epsilonEquals(m, 1e-8));
+
+		System.out.println("Beam centre: " + Arrays.toString(d.getBeamCentreCoords()));
+		System.out.println("PONI:        " + d.getClosestPoint());
+		System.out.println("Distance:    " + d.getDetectorDistance());
+		
 	}
 }

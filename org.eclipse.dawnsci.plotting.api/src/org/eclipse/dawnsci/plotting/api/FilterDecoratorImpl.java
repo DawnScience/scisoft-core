@@ -51,17 +51,16 @@ class FilterDecoratorImpl implements IFilterDecorator {
     
 	FilterDecoratorImpl(final IPlottingSystem<?> system) {
 		this.system  = system;
-		this.filters = new ArrayList<IPlottingFilter>(3);
+		this.filters = new ArrayList<>();
 		
 		listener = new ITraceListener.Stub() {
 			@Override
 			public void traceWillPlot(TraceWillPlotEvent evt) {
-				
 				IDataset       xo  = evt.getXData();
 				IDataset       yo  = evt.getYData();
 				IDataset       imo = evt.getImage();
 				List<IDataset> axo = evt.getAxes();
-				
+
 				if (!filterActive)       return;
 				if (!processingAllowed)  return;
 				if (system.isDisposed()) return;
@@ -136,13 +135,10 @@ class FilterDecoratorImpl implements IFilterDecorator {
 			processingAllowed = true;
 		}
 	}
-	
 
 	@Override
 	public void apply() {
 		final Collection<ITrace> traces = system.getTraces();
-		
-//		final Collection<ITrace> existing = getExistingFilteredTraces();
 		for (ITrace trace : traces) {
 			if (trace instanceof ILineTrace) {
 				ILineTrace lt = (ILineTrace)trace;
@@ -153,18 +149,7 @@ class FilterDecoratorImpl implements IFilterDecorator {
 				it.setData(it.getData(), it.getAxes(), false);
 			}
 		}
-		
 		system.repaint();
-		
-	}
-
-
-
-	@SuppressWarnings("unused")
-	private Collection<ITrace> getExistingFilteredTraces() {
-		if (filters.isEmpty()) return null;
-        final IPlottingFilter filter = filters.get(0);
-		return filter.getFilteredTraces();
 	}
 
 	@Override
@@ -174,5 +159,4 @@ class FilterDecoratorImpl implements IFilterDecorator {
 		clear();
 		system.removeTraceListener(listener);
 	}
-	
 }

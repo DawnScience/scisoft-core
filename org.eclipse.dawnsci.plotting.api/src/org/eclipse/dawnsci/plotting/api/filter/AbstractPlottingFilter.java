@@ -24,6 +24,8 @@ import org.eclipse.dawnsci.plotting.api.trace.ITrace;
 import org.eclipse.dawnsci.plotting.api.trace.TraceWillPlotEvent;
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.swt.widgets.Display;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Please extend this class to define undoable filters.
@@ -32,28 +34,28 @@ import org.eclipse.swt.widgets.Display;
  *
  */
 public abstract class AbstractPlottingFilter implements IPlottingFilter {
-	
-	protected List<OriginalData>  cache;
+
+	private static final Logger logger = LoggerFactory.getLogger(AbstractPlottingFilter.class);
+
+	protected Map<String, OriginalData> cache;
 	private boolean             active=true;
 	private Map<String, Object> configuration;
 	private   List<IFilterListener> listeners;
 
 	public AbstractPlottingFilter() {
-		this.cache = new ArrayList<OriginalData>(7);
+		this.cache = new HashMap<>();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void filter(IPlottingSystem<?> system, TraceWillPlotEvent evt) throws Exception {
 		final ITrace trace = (ITrace)evt.getSource();
-		if (trace.getRank()!=getRank()) {
-			if (getRank()>0) return;
-		}
-		cache.add(new OriginalData(evt));
+		if (trace.getRank()!=getRank() && getRank()>0) return;
+		cacheOriginalData(evt);
 		
 		if (getRank()==1) {
 			IDataset[] filtered = filter(evt.getXData(), evt.getYData());
-			evt.setLineData(filtered[0]!=null?filtered[0]:evt.getXData(), filtered[1]);
+			evt.setLineData(filtered[0] != null ? filtered[0] : evt.getXData(), filtered[1]);
 		} else {
 			Object[] filtered = filter(evt.getImage(), evt.getAxes());
 			evt.setImageData((IDataset)filtered[0], (List<IDataset>)filtered[1]);
@@ -61,14 +63,23 @@ public abstract class AbstractPlottingFilter implements IPlottingFilter {
 		fireFilterApplied(new FilterEvent(this));
 	}
 	
+	protected void cacheOriginalData(TraceWillPlotEvent evt) {
+		final String name = evt.getTrace().getName();
+		if (cache.containsKey(name)) {
+			logger.trace("Already got cache for \"{}\"", name);
+		} else {
+			cache.put(name, new OriginalData(evt));
+		}
+	}
+
 	/**
 	 * Please implement for filtering 1D data
 	 * @param x
 	 * @param y
 	 * @return the new values (0=x, 1=y, x may be null)
 	 */
-	protected IDataset[] filter(IDataset x,    IDataset y) throws Exception {
-		return null;
+	protected IDataset[] filter(IDataset x, IDataset y) throws Exception {
+		return new IDataset[0];
 	}
 	
 	/**
@@ -78,11 +89,11 @@ public abstract class AbstractPlottingFilter implements IPlottingFilter {
 	 * @return Object[]{0=newData, 1=List<IDataset> axes, may be null}
 	 */
 	protected Object[] filter(IDataset data, List<IDataset> axes) throws Exception {
-		return null;
+		return new Object[0];
 	}
 	
 	public void addFilterListener(IFilterListener l) {
-		if (listeners==null) listeners = new ArrayList<IFilterListener>(3);
+		if (listeners==null) listeners = new ArrayList<>();
 		listeners.add(l);
 	}
 	
@@ -93,20 +104,15 @@ public abstract class AbstractPlottingFilter implements IPlottingFilter {
 	
 	protected void fireFilterApplied(final FilterEvent evt) {
 		if (listeners==null) return;
-		
-		final Runnable runner = new Runnable() {
-			@Override
-			public void run() {
-				for (IFilterListener fl : listeners.toArray(new IFilterListener[listeners.size()])) {
-					fl.filterApplied(evt);
-				}
+		final Runnable runner = () -> {
+			for (IFilterListener fl : listeners.toArray(new IFilterListener[listeners.size()])) {
+				fl.filterApplied(evt);
 			}
 		};
 		runInUI(runner);
-		
 	}
 	private void runInUI(Runnable runner) {
-		if (Display.getDefault().getThread()==Thread.currentThread()) {
+		if (Display.getDefault().getThread() == Thread.currentThread()) {
 			runner.run();
 		} else {
 			Display.getDefault().syncExec(runner);
@@ -114,13 +120,10 @@ public abstract class AbstractPlottingFilter implements IPlottingFilter {
 	}
 
 	protected void fireFilterReset(final FilterEvent evt) {
-		if (listeners==null) return;
-		final Runnable runner = new Runnable() {
-			@Override
-			public void run() {
-				for (IFilterListener fl : listeners.toArray(new IFilterListener[listeners.size()])) {
-					fl.filterReset(evt);
-				}
+		if (listeners == null) return;
+		final Runnable runner = () -> {
+			for (IFilterListener fl : listeners.toArray(new IFilterListener[listeners.size()])) {
+				fl.filterReset(evt);
 			}
 		};
 		runInUI(runner);
@@ -128,34 +131,20 @@ public abstract class AbstractPlottingFilter implements IPlottingFilter {
 
 	@Override
 	public final void reset() {
-		
-		final Collection<OriginalData> tmpCache = new ArrayList<OriginalData>(cache);
+		cache.forEach((k,v) -> v.reset());
 		cache.clear();
-		for (OriginalData data : tmpCache) {
-			data.reset();
-		}
 		fireFilterReset(new FilterEvent(this));
-	}
-
-	public List<ITrace> getFilteredTraces() {
-		if (cache==null || cache.isEmpty()) return null;
-		final List<ITrace> filtered = new ArrayList<ITrace>(cache.size());
-		for (OriginalData data : cache) {
-			filtered.add(data.getTrace());
-		}
-		return filtered;
 	}
 	
 	protected class OriginalData {
-		
+
 		private ITrace trace;
 		private String name;
-		
+
 		private IDataset       image=null;
 		private List<IDataset> axes=null;
-		
-		private IDataset xLineData=null, yLineData=null;
 
+		private IDataset xLineData=null, yLineData=null;
 
 		public OriginalData(TraceWillPlotEvent evt) {
 			this.trace = (ITrace)evt.getSource();
@@ -184,7 +173,6 @@ public abstract class AbstractPlottingFilter implements IPlottingFilter {
 				((IImageTrace)trace).setData(image, axes, true);
 			}
 		}
-
 
 		@Override
 		public int hashCode() {
@@ -227,7 +215,6 @@ public abstract class AbstractPlottingFilter implements IPlottingFilter {
 				return false;
 			return true;
 		}
-		
 	}
 	
 	public boolean isActive() {
@@ -244,7 +231,7 @@ public abstract class AbstractPlottingFilter implements IPlottingFilter {
 	}
 
 	public Map<String, Object> getConfiguration() {
-		if (configuration==null) configuration = new HashMap<String, Object>();
+		if (configuration==null) configuration = new HashMap<>();
 		return configuration;
 	}
 

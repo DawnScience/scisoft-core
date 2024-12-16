@@ -38,28 +38,23 @@ public abstract class AbstractDelayedFilter extends AbstractPlottingFilter  {
 
 	@Override
 	public void filter(IPlottingSystem<?> system, TraceWillPlotEvent evt) throws Exception {
-
-		if (job == null)
-			this.job = new FilterJob(filterName);
-
-		if (!job.getName().equals(filterName))
-			this.job = new FilterJob(filterName);
+		if (job == null) this.job = new FilterJob(filterName);
+		if (!job.getName().equals(filterName)) this.job = new FilterJob(filterName);
+		
 		this.system = system;
 		final ITrace trace = (ITrace)evt.getSource();
-		if (trace.getRank()!=getRank()) {
-			if (getRank()>0) return;
-		}
-		
+		if (trace.getRank()!=getRank() && getRank()>0) return;
+
 		this.evt = evt;
 		if (!isOn) return;
-		cache.add(new OriginalData(evt));
-		
+		cacheOriginalData(evt);
+
 		system.setEnabled(false);
 		job.schedule();
 	}
-	
+
 	private class FilterJob extends Job {
-				
+
 		public FilterJob(String filterName) {
 			super(filterName);
 		}
@@ -77,7 +72,6 @@ public abstract class AbstractDelayedFilter extends AbstractPlottingFilter  {
 					system.updatePlot2D((IDataset)filtered[0], (List<IDataset>)filtered[1], getName(), monitor);
 				}
 				fireFilterApplied(new FilterEvent(this));
-
 			} catch (Exception ne) {
 				ne.printStackTrace();
 				return Status.CANCEL_STATUS;
@@ -85,7 +79,6 @@ public abstract class AbstractDelayedFilter extends AbstractPlottingFilter  {
 				isOn = true;
 				system.setEnabled(true);
 			}
-
 			return Status.OK_STATUS;
 		}
 	}
@@ -101,5 +94,4 @@ public abstract class AbstractDelayedFilter extends AbstractPlottingFilter  {
 	public void setFilterName(String filterName) {
 		this.filterName = filterName;
 	}
-
 }

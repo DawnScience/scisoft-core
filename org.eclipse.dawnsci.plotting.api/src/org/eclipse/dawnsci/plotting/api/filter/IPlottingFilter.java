@@ -11,10 +11,7 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.plotting.api.filter;
 
-import java.util.List;
-
 import org.eclipse.dawnsci.plotting.api.IPlottingSystem;
-import org.eclipse.dawnsci.plotting.api.trace.ITrace;
 import org.eclipse.dawnsci.plotting.api.trace.TraceWillPlotEvent;
 
 public interface IPlottingFilter {
@@ -59,13 +56,7 @@ public interface IPlottingFilter {
 	 * @param active
 	 */
 	public void setActive(boolean active);
-	
-	/**
-	 * 
-	 * @return a list of traces already processed by this filter.
-	 */
-	public List<ITrace> getFilteredTraces();
-	
+
 	/**
 	 * Called when the plotting system is disposed and the filter is
 	 * no longer active.

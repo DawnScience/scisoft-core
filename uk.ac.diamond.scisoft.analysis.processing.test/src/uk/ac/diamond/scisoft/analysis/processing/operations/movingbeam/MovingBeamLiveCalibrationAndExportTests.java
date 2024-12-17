@@ -1,5 +1,10 @@
 package uk.ac.diamond.scisoft.analysis.processing.operations.movingbeam;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -7,7 +12,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.eclipse.dawnsci.analysis.api.diffraction.DetectorProperties;
@@ -27,7 +31,6 @@ import org.eclipse.dawnsci.hdf5.nexus.NexusFileHDF5;
 import org.eclipse.dawnsci.json.MarshallerService;
 import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusException;
-import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 import org.eclipse.january.dataset.DatasetUtils;
@@ -38,7 +41,6 @@ import org.eclipse.january.dataset.IntegerDataset;
 import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.metadata.OriginMetadata;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -119,7 +121,7 @@ public class MovingBeamLiveCalibrationAndExportTests extends AbstractMovingBeamC
 			writeReferenceMetadata(calRef);
 			pathToReferenceCalibration = calRef.getAbsolutePath();
 		} catch (Exception e) {
-			Assert.fail("Check write access privaleges!");
+			fail("Check write access privaleges!");
 		}
 		setMovingBeamConfig();
 
@@ -143,18 +145,18 @@ public class MovingBeamLiveCalibrationAndExportTests extends AbstractMovingBeamC
 		// post-initialisation setting of the values for floatEnergy and
 		// isPointCalibration.
 
-		Assert.assertEquals("Dataset path not correct", MovingBeamConstants.DATASETPATH, conf.getDatasetPath());
-		Assert.assertEquals("Calibration path not correct", pathToReferenceCalibration,
+		assertEquals("Dataset path not correct", MovingBeamConstants.DATASETPATH, conf.getDatasetPath());
+		assertEquals("Calibration path not correct", pathToReferenceCalibration,
 				conf.getInitialCalibration());
-		Assert.assertEquals("X axis path not correct", MovingBeamConstants.XAXISREFERENCE,
+		assertEquals("X axis path not correct", MovingBeamConstants.XAXISREFERENCE,
 				conf.getXReferenceAxisPath());
-		Assert.assertEquals("Y axis path not correct", MovingBeamConstants.YAXISREFERENCE,
+		assertEquals("Y axis path not correct", MovingBeamConstants.YAXISREFERENCE,
 				conf.getYReferenceAxisPath());
-		Assert.assertEquals("Standard name not correct", STANDARD, conf.getStandard());
-		Assert.assertEquals("Pad with zeros not correct", ZeroPad, conf.getPadWithZeros());
-		Assert.assertArrayEquals("Position assigned to reference calibration not correct", referenceFramePos,
+		assertEquals("Standard name not correct", STANDARD, conf.getStandard());
+		assertEquals("Pad with zeros not correct", ZeroPad, conf.getPadWithZeros());
+		assertArrayEquals("Position assigned to reference calibration not correct", referenceFramePos,
 				conf.getReferenceAxesPositionXY(), 1e-6);
-		Assert.assertTrue("Local calibration parameter model differs from expected model",
+		assertTrue("Local calibration parameter model differs from expected model",
 				compareSimpleCalibrationParameterModels(lmodel, cmod));
 
 	}
@@ -173,16 +175,15 @@ public class MovingBeamLiveCalibrationAndExportTests extends AbstractMovingBeamC
 		DiffractionImageData dimage = scanSplitter.calibrateFrameFromSlice(testFrame);
 
 		IPowderCalibrationInfo calInfo = dimage.getCalibrationInfo();
-		Assert.assertTrue("Calibrant name doesnt match!", calInfo.getCalibrantName().equals(STANDARD));
-		Assert.assertTrue("Incorrect decription", calInfo.getMethodDescription()
-				.equals("Manual powder diffraction image calibration using point parameters"));
+		assertEquals("Calibrant name doesnt match!", STANDARD, calInfo.getCalibrantName());
+		assertEquals("Incorrect decription", "Manual powder diffraction image calibration using point parameters",
+				calInfo.getMethodDescription());
 
 		DoubleDataset ds = DatasetUtils.cast(DoubleDataset.class, calInfo.getCalibrantDSpaceValues());
 		double[] actual = CalibrationFactory.getCalibrationStandards().getCalibrationPeakMap(STANDARD).getHKLs()
 				.stream().mapToDouble(hkl -> hkl.getDNano() * 10.).toArray();
 
-		Assert.assertArrayEquals("incorrect dspacings used in calibration", ds.getData(), actual, 1e-6);
-
+		assertArrayEquals("incorrect dspacings used in calibration", ds.getData(), actual, 1e-6);
 	}
 
 	@Test
@@ -194,7 +195,7 @@ public class MovingBeamLiveCalibrationAndExportTests extends AbstractMovingBeamC
 		scanSplitter.setConfig(conf);
 
 		double[] test = scanSplitter.getCalibratedPositionOfReference();
-		Assert.assertArrayEquals("Calibrated position has not been updated", ref, test, 1e-6);
+		assertArrayEquals("Calibrated position has not been updated", ref, test, 1e-6);
 
 	}
 
@@ -219,7 +220,7 @@ public class MovingBeamLiveCalibrationAndExportTests extends AbstractMovingBeamC
 				.getDiffractionMetadataFromNexus(pathToReferenceCalibration, ssm.getParent())
 				.getDiffractionCrystalEnvironment();
 		DiffractionCrystalEnvironment actualMeta = dimage.getMetaData().getDiffractionCrystalEnvironment();
-		Assert.assertEquals("Unexpected beam energy change!", expectedMeta.getEnergy(), actualMeta.getEnergy(), 1e-6);
+		assertEquals("Unexpected beam energy change!", expectedMeta.getEnergy(), actualMeta.getEnergy(), 1e-6);
 	}
 
 	/**
@@ -285,12 +286,13 @@ public class MovingBeamLiveCalibrationAndExportTests extends AbstractMovingBeamC
 
 		DetectorProperties dpAct = dmetaTest.getDetector2DProperties();
 		DetectorProperties dpRef = centralMetadata.getDetector2DProperties();
-		Assert.assertTrue("Offset Metadata not as expected", dpAct.equals(dpRef));
+		dpRef.setEpsilon(1e-12);
+		assertEquals("Offset Metadata not as expected", dpRef, dpAct);
 
 		ReferencePosition2DMetadata pMeta = cacheModel.getPositionMeta(ssmtest);
-		double[] position = pMeta.getReferencePosition().getData();
-		Assert.assertArrayEquals("Source offsets not assigned correctly",
-				new double[] { xpos[1] - xpos[0], ypos[1] - ypos[0], 0 }, position, 1e-6);
+		double[] posn = pMeta.getReferencePosition().getData();
+		assertArrayEquals("Source offsets not assigned correctly",
+				new double[] { xpos[1] - xpos[0], ypos[1] - ypos[0], 0 }, posn, 1e-6);
 	}
 
 	@Test
@@ -298,19 +300,19 @@ public class MovingBeamLiveCalibrationAndExportTests extends AbstractMovingBeamC
 
 		setMovingBeamConfig();
 
-		File scan = genererateScanFile();
-		IDataHolder dh = MovingBeamTestUtils.loadScan(scan);
+		File lScan = genererateScanFile();
+		IDataHolder dh = MovingBeamTestUtils.loadScan(lScan);
 
 		DoubleDataset xReadback = DatasetUtils.cast(DoubleDataset.class,
 				DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset(config.getXReferenceAxisPath())));
 		DoubleDataset yReadback = DatasetUtils.cast(DoubleDataset.class,
 				DatasetUtils.sliceAndConvertLazyDataset(dh.getLazyDataset(config.getYReferenceAxisPath())));
 		IntegerDataset frameKeys = DatasetUtils.cast(IntegerDataset.class, DatasetUtils.sliceAndConvertLazyDataset(
-				dh.getLazyDataset(buildFrameKeysPath(scan.getAbsolutePath(), false, true))));
+				dh.getLazyDataset(buildFrameKeysPath(lScan.getAbsolutePath(), false, true))));
 
-		Assert.assertArrayEquals(xReadback.getData(), new double[] { -1., 0, 1 }, 1e-6);
-		Assert.assertArrayEquals(yReadback.getData(), new double[] { -1, 0, 1 }, 1e-6);
-		Assert.assertArrayEquals(frameKeys.getData(), new int[] { 0, 2, 1 });
+		assertArrayEquals(xReadback.getData(), new double[] { -1., 0, 1 }, 1e-6);
+		assertArrayEquals(yReadback.getData(), new double[] { -1, 0, 1 }, 1e-6);
+		assertArrayEquals(frameKeys.getData(), new int[] { 0, 2, 1 });
 
 	}
 
@@ -389,16 +391,17 @@ public class MovingBeamLiveCalibrationAndExportTests extends AbstractMovingBeamC
 		ReferencePosition2DMetadata pos2D = testCache
 				.getPositionMeta(frame.getFirstMetadata(SliceFromSeriesMetadata.class));
 
-		Assert.assertEquals("Error in assigned frame index",
+		assertEquals("Error in assigned frame index",
 				testCache.getFrameIDForPosition(frame.getFirstMetadata(SliceFromSeriesMetadata.class)), scanFrames[2]);
 
-		Assert.assertArrayEquals("Error in position returned from cache!", new double[] { xpos[2], ypos[2] },
+		assertArrayEquals("Error in position returned from cache!", new double[] { xpos[2], ypos[2] },
 				pos2D.getReferencePosition().getData(), 1e-6);
 		IDiffractionMetadata rmeta = testCache
 				.getDiffractionMetadata(frame.getFirstMetadata(SliceFromSeriesMetadata.class));
 
-		Assert.assertTrue("Incorrect metadata retrieved from the cache",
-				rmeta.getDetector2DProperties().equals(frameMeta.getDetector2DProperties()));
+		rmeta.getDetector2DProperties().setEpsilon(1e-12);
+		assertEquals("Incorrect metadata retrieved from the cache",
+				rmeta.getDetector2DProperties(), frameMeta.getDetector2DProperties());
 
 	}
 
@@ -427,7 +430,7 @@ public class MovingBeamLiveCalibrationAndExportTests extends AbstractMovingBeamC
 	 * @return A slice representing a numerically generated frame with the
 	 * correctly configured SliceFromSeriesMetadata.
 	 */
-	private Dataset generateScanAndLoadTestSlice() throws DatasetException, Exception {
+	private Dataset generateScanAndLoadTestSlice() throws Exception {
 
 		int frameID = 0;
 		this.scan = genererateScanFile();
@@ -441,14 +444,14 @@ public class MovingBeamLiveCalibrationAndExportTests extends AbstractMovingBeamC
 		SliceND currentSlice = new SliceND(images.getShape(), new int[] { frameID, 0, 0 },
 				new int[] { frameID + 1, shape[1], shape[2] }, new int[] { 1, 1, 1 });
 		Dataset frame = images.getSlice(currentSlice);
-		SliceND sampling = new SliceND(images.getShape(), new int[] { 0, 0, 0 },
+		SliceND lSampling = new SliceND(images.getShape(), new int[] { 0, 0, 0 },
 				new int[] { shape[0], shape[1], shape[2] }, new int[] { 1, 1, 1 });
 
 		SourceInformation sinfo = null;
 		SliceInformation slinfo;
 		OriginMetadata sOrigin = frame.getFirstMetadata(OriginMetadata.class);
 		sinfo = new SourceInformation(scan.getAbsolutePath(), sOrigin.getDatasetName(), sOrigin.getParent());
-		slinfo = new SliceInformation(currentSlice, currentSlice, sampling, new int[] { 1, 2 }, shape[0], 1);
+		slinfo = new SliceInformation(currentSlice, currentSlice, lSampling, new int[] { 1, 2 }, shape[0], 1);
 
 		frame.addMetadata(new SliceFromSeriesMetadata(sinfo, slinfo));
 		return frame;
@@ -515,7 +518,7 @@ public class MovingBeamLiveCalibrationAndExportTests extends AbstractMovingBeamC
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(tmpFile.getAbsolutePath()))) {
 			writer.write(json);
 		} catch (IOException e) {
-			Assert.fail("Error writing json to file");
+			fail("Error writing json to file");
 		}
 		return tmpFile;
 	}
@@ -588,7 +591,7 @@ public class MovingBeamLiveCalibrationAndExportTests extends AbstractMovingBeamC
 	 */
 	private File genererateScanFile() throws Exception {
 
-		File scan = File.createTempFile("k11-MockData", ".nxs", tmp);
+		File lScan = File.createTempFile("k11-MockData", ".nxs", tmp);
 
 		IDiffractionMetadata ometa = getDefaultPilatusMetadata();
 
@@ -600,7 +603,7 @@ public class MovingBeamLiveCalibrationAndExportTests extends AbstractMovingBeamC
 			IDiffractionMetadata doff = DiffractionMetadataUtils.getOffsetMetadata(ometa,
 					new double[] { xpos[i], ypos[i], 0 });
 			return makeImage(doff);
-		}).collect(Collectors.toList());
+		}).toList();
 
 		Dataset images = DatasetFactory.zeros(scanShape);
 
@@ -617,7 +620,7 @@ public class MovingBeamLiveCalibrationAndExportTests extends AbstractMovingBeamC
 
 		}
 
-		try (NexusFileHDF5 nexusFile = new NexusFileHDF5(scan.getAbsolutePath(), false)) {
+		try (NexusFileHDF5 nexusFile = new NexusFileHDF5(lScan.getAbsolutePath(), false)) {
 			GroupNode gn = NexusTreeUtils.createNXGroup(NexusConstants.ENTRY);
 
 			GroupNode gndiff = NexusTreeUtils.createNXGroup(NexusConstants.DATA);
@@ -633,7 +636,7 @@ public class MovingBeamLiveCalibrationAndExportTests extends AbstractMovingBeamC
 
 			GroupNode kgroup = NexusTreeUtils.createNXGroup(NexusConstants.COLLECTION);
 
-			kgroup.addDataNode(buildFrameKeysPath(scan.getAbsolutePath(), true, true),
+			kgroup.addDataNode(buildFrameKeysPath(lScan.getAbsolutePath(), true, true),
 					NexusTreeUtils.createDataNode("", keys, null));
 
 			GroupNode scanGroup = NexusTreeUtils.createNXGroup(NexusConstants.COLLECTION);
@@ -646,7 +649,7 @@ public class MovingBeamLiveCalibrationAndExportTests extends AbstractMovingBeamC
 		} catch (NexusException e) {
 			throw e;
 		}
-		return scan;
+		return lScan;
 
 	}
 

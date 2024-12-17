@@ -72,6 +72,8 @@ public class DetectorProperties implements Serializable, Cloneable {
 	private transient double distance;
 	private transient Vector3d closestPoint;
 
+	private double epsilon;
+
 	/**
 	 * Null constructor
 	 */
@@ -303,19 +305,19 @@ public class DetectorProperties implements Serializable, Cloneable {
 		if (beamVector == null) {
 			if (other.beamVector != null)
 				return false;
-		} else if (!beamVector.equals(other.beamVector))
+		} else if (!beamVector.epsilonEquals(other.beamVector, epsilon))
 			return false;
 		if (Double.doubleToLongBits(hPxSize) != Double.doubleToLongBits(other.hPxSize))
 			return false;
 		if (orientation == null) {
 			if (other.orientation != null)
 				return false;
-		} else if (!orientation.equals(other.orientation))
+		} else if (!orientation.epsilonEquals(other.orientation, epsilon))
 			return false;
 		if (origin == null) {
 			if (other.origin != null)
 				return false;
-		} else if (!origin.equals(other.origin))
+		} else if (!origin.epsilonEquals(other.origin, epsilon))
 			return false;
 		if (px != other.px)
 			return false;
@@ -1286,5 +1288,13 @@ public class DetectorProperties implements Serializable, Cloneable {
 	 */
 	public void setUpperThreshold(double upper) {
 		this.upper = upper;
+	}
+
+	/**
+	 * Set epsilon
+	 * @param epsilon value used for equality testing of vectors
+	 */
+	public void setEpsilon(double epsilon) {
+		this.epsilon = epsilon;
 	}
 }

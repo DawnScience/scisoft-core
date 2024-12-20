@@ -49,14 +49,12 @@ public abstract class UniqueNamedPlottingFilter extends AbstractPlottingFilter {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void filter(final IPlottingSystem<?> system, final TraceWillPlotEvent evt) throws Exception {
-		
-		
 		final ITrace trace = (ITrace)evt.getSource();
 		final String dName = trace.getDataName() != null ? trace.getDataName() : null; 
 		if (!dataName.equals(dName)) return;
-				
-		cache.add(new OriginalData(evt));
-		
+
+		cacheOriginalData(evt);
+
 		if (trace.getRank()==1) {
 			IDataset[] filtered = filter(evt.getXData(), evt.getYData());
 			if (filtered!=null) evt.setLineData(filtered[0]!=null?filtered[0]:evt.getXData(), filtered[1]);
@@ -64,7 +62,5 @@ public abstract class UniqueNamedPlottingFilter extends AbstractPlottingFilter {
 			Object[] filtered = filter(evt.getImage(), evt.getAxes());
 			if (filtered!=null) evt.setImageData((IDataset)filtered[0], (List<IDataset>)filtered[1]);
 		}
-		
 	}
-
 }

@@ -25,7 +25,7 @@ suite [#GDA]_ used throughout Diamond.
 
 ScisoftPy
 =========
-This section documents version 2.29 of the Scisoft Python package.
+This section documents version 2.37 of the Scisoft Python package.
 
 This package emulates behaviour of NumPy [#Numpy]_ together with some I/O,
 plotting and fitting routines. At its core, it contains an N-dimensional array

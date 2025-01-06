@@ -1,5 +1,5 @@
 {% set name = "scisoftpy" %}
-{% set version = "2.33.0" %}
+{% set version = "2.37.0" %}
 
 package:
   name: {{ name }}
@@ -27,7 +27,6 @@ requirements:
     - tifffile
     - pycbf  # [py3k]
     - packaging  # [py >= 40]
-    - subprocess32  # [unix and py2k]
 
 test:
   imports:

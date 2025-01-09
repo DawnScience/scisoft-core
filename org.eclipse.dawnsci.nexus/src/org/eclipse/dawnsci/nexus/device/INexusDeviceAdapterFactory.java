@@ -22,11 +22,12 @@ import org.eclipse.dawnsci.nexus.INexusDevice;
 import org.eclipse.dawnsci.nexus.NXdetector;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NexusException;
+import org.eclipse.dawnsci.nexus.NexusScanInfo.ScanRole;
 
 /**
  * Instances of classes that implement this interface can adapt (i.e. wrap) a device in
- * an object that implements {@link INexusDevice}. This m
- * created for the device and added to the nexus file for the scan
+ * an object that implements {@link INexusDevice}. This allows for the device to be added 
+ * to the nexus file during a scan when using NexusScanDataWriter.
  *
  * @param <T>
  */
@@ -36,10 +37,11 @@ public interface INexusDeviceAdapterFactory<T> {
 	 * Returns whether this adapter factory can create an adapter to {@link INexusDevice}
 	 * for the given device object.
 	 * @param device the device object to adapt
+	 * @param scanRole the role the device is taking part in the scan
 	 * @return <code>true</code> if an adapter can be created for the given device object,
 	 * 		<code>false</code> otherwise
 	 */
-	public boolean canAdapt(Object device);
+	public boolean canAdapt(Object device, ScanRole scanRole);
 
 	/**
 	 * Creates and returns an adapter implementing {@link INexusDevice} for the given device object,
@@ -48,9 +50,10 @@ public interface INexusDeviceAdapterFactory<T> {
 	 * 		this method is called with an device object that cannot be adapted by this adapter factory,
 	 * 		where {@link #canAdapt(Object)} would return <code>false</code>.
 	 * @param device the device object to adapt
+	 * @param scanRole the role the device is taking part in the scan
 	 * @return an {@link INexusDevice} adapting the given device object
 	 * @throws NexusException if an error occurs creating the adapter
 	 */
-	public <N extends NXobject> INexusDevice<N> createNexusDevice(T device) throws NexusException;
-	
+	public <N extends NXobject> INexusDevice<N> createNexusDevice(T device, ScanRole scanRole) throws NexusException;
+
 }

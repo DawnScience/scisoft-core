@@ -8,6 +8,7 @@ import org.eclipse.dawnsci.nexus.INexusDevice;
 import org.eclipse.dawnsci.nexus.INexusDeviceDecorator;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NexusException;
+import org.eclipse.dawnsci.nexus.NexusScanInfo.ScanRole;
 import org.eclipse.dawnsci.nexus.device.INexusDeviceAdapterFactory;
 import org.eclipse.dawnsci.nexus.device.INexusDeviceService;
 import org.slf4j.Logger;
@@ -105,13 +106,12 @@ public class NexusDeviceService implements INexusDeviceService {
 	}
 
 	@Override
-	public <N extends NXobject, T> INexusDevice<N> getNexusDevice(T device) throws NexusException {
+	public <N extends NXobject, T> INexusDevice<N> getNexusDevice(T device, ScanRole scanRole) throws NexusException {
 		@SuppressWarnings("unchecked")
 		final INexusDeviceAdapterFactory<T> factory = (INexusDeviceAdapterFactory<T>) ServiceProvider.getService(INexusDeviceAdapterFactory.class);
-		if (factory != null && factory.canAdapt(device)) {
-			return factory.createNexusDevice(device);
+		if (factory != null && factory.canAdapt(device, scanRole)) {
+			return factory.createNexusDevice(device, scanRole);
 		}
 		return null;
 	}
-	
 }

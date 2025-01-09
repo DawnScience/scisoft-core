@@ -4,6 +4,7 @@ import org.eclipse.dawnsci.nexus.INexusDevice;
 import org.eclipse.dawnsci.nexus.INexusDeviceDecorator;
 import org.eclipse.dawnsci.nexus.NXobject;
 import org.eclipse.dawnsci.nexus.NexusException;
+import org.eclipse.dawnsci.nexus.NexusScanInfo.ScanRole;
 
 /**
  * A service to store and retrieve nexus devices. This service is not necessary if devices in a scan
@@ -48,10 +49,11 @@ public interface INexusDeviceService {
 	 * Gets the {@link INexusDevice} for the given object, if possible, otherwise <code>null</code>.
 	 * @param device the device to get the {@link INexusDevice} for
 	 * @param <N> subclass of {@link NXobject} created by this device
+	 * @param scanRole the role the device is taking part in the scan
 	 * @return the nexus device with the given name, or <code>null</code> if no nexus device can be created
 	 * @throws NexusException 
 	 */
-	public <N extends NXobject, T> INexusDevice<N> getNexusDevice(T device) throws NexusException;
+	public <N extends NXobject, T> INexusDevice<N> getNexusDevice(T device, ScanRole scanRole) throws NexusException;
 	
 	/**
 	 * Returns whether a {@link INexusDeviceDecorator} is registered with the given name.
@@ -85,5 +87,5 @@ public interface INexusDeviceService {
 	 * @return the decorated nexus device
 	 */
 	public <N extends NXobject> INexusDevice<N> decorateNexusDevice(INexusDevice<N> nexusDevice);
-	
+
 }

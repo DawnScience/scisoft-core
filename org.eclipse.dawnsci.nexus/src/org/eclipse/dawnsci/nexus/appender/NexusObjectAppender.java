@@ -31,13 +31,13 @@ import org.eclipse.dawnsci.nexus.device.AbstractNexusDecorator;
  * @param <N> subclass of {@link NXobject} to be appended
  */
 public class NexusObjectAppender<N extends NXobject> extends AbstractNexusDecorator<N> {
-	
+
 	private final Optional<Consumer<N>> appender;
-	
+
 	public NexusObjectAppender() {
 		appender = Optional.empty();
 	}
-	
+
 	public NexusObjectAppender(String name, Consumer<N> decorator) {
 		setName(name);
 		this.appender = Optional.of(decorator); 
@@ -46,7 +46,6 @@ public class NexusObjectAppender<N extends NXobject> extends AbstractNexusDecora
 	@Override
 	public final NexusObjectProvider<N> getNexusProvider(NexusScanInfo info) throws NexusException {
 		final NexusObjectProvider<N> nexusObjectProvider = super.getNexusProvider(info);
-		
 		// NOTE: we can only copy a subclass of AbstractNexusObjectProvider. If we need to support other possible
 		// implementations, we may need to wrap the NexusObjectProvider instead of copying it, at least in that case
 		// This is because the decorator may need to continue to configure the nexus provider, and NexusObjectProvider
@@ -54,13 +53,11 @@ public class NexusObjectAppender<N extends NXobject> extends AbstractNexusDecora
 		if (!(nexusObjectProvider instanceof AbstractNexusObjectProvider<?>)) {
 			throw new IllegalArgumentException(); 
 		}
-		
 		final N nexusObject = nexusObjectProvider.getNexusObject();
 		appendNexusObject(nexusObject, (AbstractNexusObjectProvider<N>) nexusObjectProvider, info);
-
 		return nexusObjectProvider;
 	}
-	
+
 	/**
 	 * Override this method to append to a nexus object if information from the {@link NexusScanInfo}
 	 * is required, or it is required to make changes to the {@link AbstractNexusObjectProvider},
@@ -74,7 +71,7 @@ public class NexusObjectAppender<N extends NXobject> extends AbstractNexusDecora
 	protected void appendNexusObject(N nexusObject, AbstractNexusObjectProvider<N> provider, NexusScanInfo info) throws NexusException {
 		appendNexusObject(nexusObject, provider);
 	}
-	
+
 	/**
 	 * Override this method to append to a nexus object if it is required to make changes to the {@link AbstractNexusObjectProvider}. 
 	 * @param nexusObject nexus object to append
@@ -84,8 +81,7 @@ public class NexusObjectAppender<N extends NXobject> extends AbstractNexusDecora
 	protected void appendNexusObject(N nexusObject, AbstractNexusObjectProvider<N> wrapper) throws NexusException {
 		appendNexusObject(nexusObject);
 	}
-	
-	
+
 	/**
 	 * Appends additional nodes to a nexus object.
 	 * <p>

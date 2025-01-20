@@ -227,7 +227,7 @@ public class NexusFileHDF5 implements NexusFile {
 		return fileName;
 	}
 
-	
+
 	@Override
 	public void openToRead() throws NexusException {
 		try {
@@ -411,7 +411,7 @@ public class NexusFileHDF5 implements NexusFile {
 			H5O_info_t objInfo = H5.H5Oget_info_by_name(fileId, path, HDF5Constants.H5O_INFO_NUM_ATTRS, HDF5Constants.H5P_DEFAULT);
 			long numAttrs = objInfo.num_attrs;
 			for (long i = 0; i < numAttrs; i++) {
-				
+
 				Dataset dataset = HDF5Utils.getAttrDataset(fileId, path, i);
 				if (dataset == null || node.containsAttribute(dataset.getName())) {
 					//we don't need to read an attribute we already have
@@ -524,7 +524,7 @@ public class NexusFileHDF5 implements NexusFile {
 					//we have to add the mounted node and process the new tree
 					childNode = extFile.getGroup(externalMountPoint, false);
 					String internalPath = internalMountPoint + pathAfterMount;
-	
+
 					GroupNode newNode = TreeFactory.createGroupNode(internalPath.hashCode());
 					//we want a copy of the node in the other file since we do not want to
 					//adding attributes in the other file's cache
@@ -780,7 +780,7 @@ public class NexusFileHDF5 implements NexusFile {
 		try (HDF5Resource hdfDataset = new HDF5DatasetResource(openDataset(path));
 				HDF5Resource hdfDataspace = new HDF5DataspaceResource( H5.H5Dget_space(hdfDataset.getResource()) );
 				HDF5Resource hdfDatatype = new HDF5DatatypeResource( H5.H5Dget_type(hdfDataset.getResource()) );
-				 HDF5Resource hdfNativetype = new HDF5DatatypeResource( H5.H5Tget_native_type(hdfDatatype.getResource()))) {
+				HDF5Resource hdfNativetype = new HDF5DatatypeResource( H5.H5Tget_native_type(hdfDatatype.getResource()))) {
 			final long datasetId = hdfDataset.getResource();
 			final long dataspaceId = hdfDataspace.getResource();
 			type = HDF5Utils.getDatasetType(hdfDatatype.getResource(), hdfNativetype.getResource());
@@ -864,9 +864,17 @@ public class NexusFileHDF5 implements NexusFile {
 	private static final int BASE_CHUNK = 16 * 1024;
 	private static final int UNLIMITED_DIM_ESTIMATE = 64; //we'd like this to be lower than typical detector sizes
 
+
+	/**
+	 * Estimate chunk size
+	 * @param shape shape of the dataset
+	 * @param maxshape maxshape of the dataset
+	 * @param typeSize
+	 * @return chunk size
+	 */
 	//TODO: lustre might prefer larger chunks (1MB or 4MB)
 	//      we might want to reconsider this later as a result
-	private long[] estimateChunking(long[] shape, long[] maxshape, int typeSize) {
+	public static long[] estimateChunking(long[] shape, long[] maxshape, int typeSize) {
 		boolean fixedSize = true;
 		long[] chunk = new long[shape.length];
 		boolean[] fixedDims = new boolean[shape.length];
@@ -1327,7 +1335,7 @@ public class NexusFileHDF5 implements NexusFile {
 		} else if (node instanceof SymbolicNode linkNode) {
 			if (linkNode.getSourceURI() == null) {
 				// if no source uri is specified, add to map of hard links to create
-				// note: we delay this as the node at the linkPath may not yet exist 
+				// note: we delay this as the node at the linkPath may not yet exist
 				linksToCreate.put(fullPath, linkNode.getPath());
 			} else if (linkNode.getSourceURI().getPath() == null || linkNode.getSourceURI().getPath().equals("")) {
 				throw new NexusException("Symbolic link node URI does not specify a target file");
@@ -1603,7 +1611,7 @@ public class NexusFileHDF5 implements NexusFile {
 		}
 		swmrOn = true;
 	}
-	
+
 	@Override
 	public int flush() throws NexusException {
 		if (fileId == -1) {
@@ -1620,7 +1628,7 @@ public class NexusFileHDF5 implements NexusFile {
 	public void flushAllCachedDatasets() {
 		file.flushDatasets();
 	}
-	
+
 
 	@Override
 	public void close() throws NexusException {

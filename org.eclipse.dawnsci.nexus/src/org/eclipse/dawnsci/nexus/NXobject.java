@@ -123,7 +123,7 @@ public interface NXobject extends GroupNode {
 	 * Creates and adds a new {@link ILazyWriteableDataset} to this group for the given field
 	 * name with the given fixed shape and of the given element class
 	 * @param name field name
-	 * @param size the shape
+	 * @param size shape
 	 * @param clazz dataset element class
 	 * @return new lazy writable dataset
 	 */
@@ -131,14 +131,25 @@ public interface NXobject extends GroupNode {
 
 	/**
 	 * Creates and adds a new {@link ILazyWriteableDataset} to this group for the given field name,
-	 * with the given maximum shape and of the given element class
+	 * with the given maximum shape, and of the given element class
 	 * @param name field name
-	 * @param maxShape the maximum shape 
+	 * @param maxShape maximum shape
 	 * @param clazz dataset element class
 	 * @return new lazy writable dataset
 	 */
 	public ILazyWriteableDataset initializeLazyDataset(String name, int[] maxShape, Class<?> clazz);
-	
+
+	/**
+	 * Creates and adds a new {@link ILazyWriteableDataset} to this group for the given field name,
+	 * with the given initial and maximum shapes, and of the given element class
+	 * @param name field name
+	 * @param shape initial shape
+	 * @param maxShape maximum shape
+	 * @param clazz dataset element class
+	 * @return new lazy writable dataset
+	 */
+	public ILazyWriteableDataset initializeLazyDataset(String name, int[] shape, int[] maxShape, Class<?> clazz);
+
 	/**
 	 * Creates and adds a new datanode to this group for the given field name and
 	 * with the given dataset as its value. The given dataset may be either a

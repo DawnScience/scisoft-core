@@ -185,17 +185,22 @@ public abstract class NXobjectImpl extends GroupNodeImpl implements NXobject {
 		Arrays.fill(shape, ILazyWriteableDataset.UNLIMITED);
 		return initializeLazyDataset(name, shape, eClass);
 	}
-	
+
 	@Override
 	public ILazyWriteableDataset initializeLazyDataset(String name,
 			int[] maxShape, Class<?> eClass) {
-		int[] shape = new int[maxShape.length];
+		return initializeLazyDataset(name, new int[maxShape.length], maxShape, eClass);
+	}
+
+	@Override
+	public ILazyWriteableDataset initializeLazyDataset(String name, int[] shape,
+			int[] maxShape, Class<?> eClass) {
 		ILazyWriteableDataset dataset = new LazyWriteableDataset(name, eClass, shape, maxShape, null, null);
 		createDataNode(name, dataset);
 		
 		return dataset;
 	}
-	
+
 	@Override
 	public ILazyWriteableDataset initializeFixedSizeLazyDataset(String name, int[] shape,
 			Class<?> eClass) {

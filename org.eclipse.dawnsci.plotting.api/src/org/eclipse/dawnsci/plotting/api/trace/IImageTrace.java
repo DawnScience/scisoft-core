@@ -254,5 +254,12 @@ public interface IImageTrace extends IPaletteTrace, IDownsampledTrace, ICoordina
 	 * @return trueAxes
 	 */
 	public boolean hasTrueAxes();
+
+	/**
+	 * Get Image object.
+	 * 
+	 * @return Image or null(default)
+	 */
+	public default Object getImage() { return null;}
 	
 }

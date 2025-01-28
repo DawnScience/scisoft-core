@@ -1023,7 +1023,7 @@ public class NexusFileHDF5 implements NexusFile {
 					logger.debug("New chunking = {}", Arrays.toString(iChunks));
 					data.setChunking(iChunks);
 				}
-				if (chunks != null) {
+				if (chunks != null && chunks.length > 0) {
 					//these have to be set in this order
 					H5.H5Pset_layout(hdfPropertiesId, HDF5Constants.H5D_CHUNKED);
 					H5.H5Pset_chunk(hdfPropertiesId, chunks.length, chunks);

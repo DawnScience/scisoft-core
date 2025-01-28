@@ -48,6 +48,7 @@ public class MillerSpaceMapperBean implements Cloneable {
 	private String maskFilePath; // file path to image weight 
 
 	private OutputMode outputMode = OutputMode.Volume_HKL;
+	private boolean toCrystalFrame = true;
 
 	private int[][] pixelIndexes; // to used calculate coordinates at given pixels indexes
 	private String images;
@@ -620,6 +621,18 @@ public class MillerSpaceMapperBean implements Cloneable {
 		return o;
 	}
 
+	/**
+	 * Set output frame to crystal (default)
+	 * @param toCrystalFrame if true, output to crystal frame otherwise leave in lab frame
+	 */
+	public void setToCrystalFrame(boolean toCrystalFrame) {
+		this.toCrystalFrame = toCrystalFrame;
+	}
+
+	public boolean isToCrystalFrame() {
+		return toCrystalFrame;
+	}
+
 	@Override
 	protected MillerSpaceMapperBean clone() {
 		MillerSpaceMapperBean copy = null;
@@ -645,6 +658,7 @@ public class MillerSpaceMapperBean implements Cloneable {
 			copy.maskFilePath = maskFilePath;
 			copy.monitorName = monitorName;
 			copy.outputMode = outputMode;
+			copy.toCrystalFrame = toCrystalFrame;
 			copy.reduceToNonZero = reduceToNonZero;
 			copy.sampleName = sampleName;
 			copy.scaleFactor = scaleFactor;
@@ -670,7 +684,7 @@ public class MillerSpaceMapperBean implements Cloneable {
 		result = prime * result + Arrays.hashCode(thirdAxis);
 		result = prime * result + Objects.hash(attenuatorName, correctPolarization, dataName, detectorName, entryPath,
 				images, instrumentName, listMillerEntries, maskFilePath, monitorName, output, outputMode,
-				reduceToNonZero, sampleName, scaleFactor, splitterName, splitterParameter);
+				reduceToNonZero, sampleName, scaleFactor, splitterName, splitterParameter, toCrystalFrame);
 		return result;
 	}
 
@@ -690,7 +704,7 @@ public class MillerSpaceMapperBean implements Cloneable {
 				&& Objects.equals(images, other.images) && Arrays.equals(inputs, other.inputs)
 				&& Objects.equals(instrumentName, other.instrumentName) && listMillerEntries == other.listMillerEntries
 				&& Objects.equals(maskFilePath, other.maskFilePath) && Objects.equals(monitorName, other.monitorName)
-				&& Objects.equals(output, other.output) && outputMode == other.outputMode
+				&& Objects.equals(output, other.output) && outputMode == other.outputMode && toCrystalFrame == other.toCrystalFrame
 				&& Arrays.deepEquals(pixelIndexes, other.pixelIndexes) && reduceToNonZero == other.reduceToNonZero
 				&& Arrays.equals(region, other.region) && Objects.equals(sampleName, other.sampleName)
 				&& Double.doubleToLongBits(scaleFactor) == Double.doubleToLongBits(other.scaleFactor)

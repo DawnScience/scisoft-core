@@ -88,6 +88,7 @@ public interface ImagePixelMapping {
 		protected double cos; // cosine of scattering angle between incident and final
 		protected Vector3d p;
 		protected Matrix3d volTransform;
+		protected boolean toCrystalFrame;
 
 		@Override
 		public void setSpaces(QSpace qSpace, MillerSpace mSpace) {
@@ -133,13 +134,17 @@ public interface ImagePixelMapping {
 	static final String RADIAN = "rad";
 
 	/**
-	 * Mapping to QxQyQz
+	 * Mapping to QxQyQz in the crystal (default) or lab frame
 	 */
 	public static class QxyzMapping extends BaseMapping {
 		protected static final String[] Q_XYZ_AXES = { "x-axis", "y-axis", "z-axis" };
 		protected static final String[] Q_XYZ_UNITS = { INVERSE_ANGSTROM, INVERSE_ANGSTROM, INVERSE_ANGSTROM };
 
-		public QxyzMapping() {
+		/**
+		 * @param toCrystalFrame if true (default), output to crystal frame otherwise leave in lab frame
+		 */
+		public QxyzMapping(boolean toCrystalFrame) {
+			this.toCrystalFrame = toCrystalFrame;
 			p = new Vector3d();
 		}
 
@@ -150,7 +155,7 @@ public interface ImagePixelMapping {
 		}
 
 		/**
-		 * Returns q vector
+		 * Returns q vector in crystal or lab frame
 		 * @param q
 		 */
 		@Override
@@ -159,7 +164,9 @@ public interface ImagePixelMapping {
 			cos = beam.dot(p)/p.length();
 			q.set(p);
 			qSpace.convertToQ(q);
-			transform.transform(q);
+			if (toCrystalFrame) {
+				transform.transform(q);
+			}
 			if (volTransform != null) {
 				volTransform.transform(q);
 			}
@@ -177,7 +184,7 @@ public interface ImagePixelMapping {
 
 		@Override
 		public QxyzMapping clone() {
-			QxyzMapping c = new QxyzMapping();
+			QxyzMapping c = new QxyzMapping(toCrystalFrame);
 			c.qSpace = qSpace;
 			c.detector = detector;
 			c.beam = beam;
@@ -195,7 +202,7 @@ public interface ImagePixelMapping {
 		protected static final String[] HKL_UNITS = { null, null, null };
 
 		public HKLMapping() {
-			super();
+			super(true);
 		}
 
 		@Override
@@ -233,8 +240,11 @@ public interface ImagePixelMapping {
 		private static final String[] Q_PP_AXES = { "q-per-axis", "q-par-axis" };
 		private static final String[] Q_PP_UNITS = { Q_XYZ_UNITS[0], Q_XYZ_UNITS[1] };
 
-		public Qpp2DMapping() {
-			super();
+		/**
+		 * @param toCrystalFrame if true, output to crystal frame
+		 */
+		public Qpp2DMapping(boolean toCrystalFrame) {
+			super(toCrystalFrame);
 		}
 
 		/**
@@ -261,7 +271,7 @@ public interface ImagePixelMapping {
 
 		@Override
 		public Qpp2DMapping clone() {
-			Qpp2DMapping c = new Qpp2DMapping();
+			Qpp2DMapping c = new Qpp2DMapping(toCrystalFrame);
 			c.qSpace = qSpace;
 			c.detector = detector;
 			c.beam = beam;
@@ -281,10 +291,11 @@ public interface ImagePixelMapping {
 
 		/**
 		 * Mapping using given projection in Q space to 2D
+		 * @param toCrystalFrame if true, output to crystal frame
 		 * @param mode
 		 */
-		public QPermuted2DMapping(DimChoice mode) {
-			super();
+		public QPermuted2DMapping(boolean toCrystalFrame, DimChoice mode) {
+			super(toCrystalFrame);
 
 			this.mode = mode;
 			switch (mode) {
@@ -341,7 +352,7 @@ public interface ImagePixelMapping {
 
 		@Override
 		public QPermuted2DMapping clone() {
-			QPermuted2DMapping c = new QPermuted2DMapping(mode);
+			QPermuted2DMapping c = new QPermuted2DMapping(toCrystalFrame, mode);
 			c.qSpace = qSpace;
 			c.detector = detector;
 			c.beam = beam;
@@ -358,8 +369,11 @@ public interface ImagePixelMapping {
 		private static final String[] Q_POL_AXES = { "q-par-axis", "phi-axis", "qz-axis" };
 		private static final String[] Q_POL_UNITS = { Q_XYZ_UNITS[0], RADIAN, Q_XYZ_UNITS[2] };
 
-		public QPolarMapping() {
-			super();
+		/**
+		 * @param toCrystalFrame if true, output to crystal frame
+		 */
+		public QPolarMapping(boolean toCrystalFrame) {
+			super(toCrystalFrame);
 		}
 
 		/**
@@ -385,7 +399,7 @@ public interface ImagePixelMapping {
 
 		@Override
 		public QPolarMapping clone() {
-			QPolarMapping c = new QPolarMapping();
+			QPolarMapping c = new QPolarMapping(toCrystalFrame);
 			c.qSpace = qSpace;
 			c.detector = detector;
 			c.beam = beam;
@@ -401,8 +415,11 @@ public interface ImagePixelMapping {
 	public static class QEquatorialStereoMapping extends QxyzMapping {
 		private static final String[] Q_ES_AXES = { "ex-axis", "ey-axis", "q-axis" };
 
-		public QEquatorialStereoMapping() {
-			super();
+		/**
+		 * @param toCrystalFrame if true, output to crystal frame
+		 */
+		public QEquatorialStereoMapping(boolean toCrystalFrame) {
+			super(toCrystalFrame);
 		}
 
 		/**
@@ -426,7 +443,7 @@ public interface ImagePixelMapping {
 
 		@Override
 		public QEquatorialStereoMapping clone() {
-			QEquatorialStereoMapping c = new QEquatorialStereoMapping();
+			QEquatorialStereoMapping c = new QEquatorialStereoMapping(toCrystalFrame);
 			c.qSpace = qSpace;
 			c.detector = detector;
 			c.beam = beam;
@@ -445,7 +462,7 @@ public interface ImagePixelMapping {
 		private DimChoice mode;
 
 		/**
-		 * Mapping using given projection in Q space to 2D
+		 * Mapping using given projection in HKL space to 2D
 		 * @param mode
 		 */
 		public HKLPermuted2DMapping(DimChoice mode) {
@@ -517,14 +534,14 @@ public interface ImagePixelMapping {
 	}
 
 	/**
-	 * Mapping to Qtheta
+	 * Mapping to Qtheta (in radians)
 	 */
 	public static class QThetaMapping extends QxyzMapping {
 		private static final String[] Q_Theta_AXES = { "q-theta-axis" };
 		private static final String[] Q_Theta_UNITS = { "radians" };
 
 		public QThetaMapping() {
-			super();
+			super(false);
 		}
 
 		/**
@@ -567,8 +584,11 @@ public interface ImagePixelMapping {
 		private static final String[] Q_2Theta_AXES = { "q-2theta-axis" };
 		private static final String[] Q_2Theta_UNITS = { DEGREE };
 
+		/**
+		 * 
+		 */
 		public Q2ThetaMapping() {
-			super();
+			super(false);
 		}
 
 		/**
@@ -614,10 +634,11 @@ public interface ImagePixelMapping {
 
 		/**
 		 * Mapping using given projection in Q space to 2D
+		 * @param toCrystalFrame if true, output to crystal frame
 		 * @param mode
 		 */
-		public Q1DMapping(DimChoice mode) {
-			super();
+		public Q1DMapping(boolean toCrystalFrame, DimChoice mode) {
+			super(toCrystalFrame);
 
 			this.mode = mode;
 			switch (mode) {
@@ -674,7 +695,7 @@ public interface ImagePixelMapping {
 
 		@Override
 		public Q1DMapping clone() {
-			Q1DMapping c = new Q1DMapping(mode);
+			Q1DMapping c = new Q1DMapping(toCrystalFrame, mode);
 			c.qSpace = qSpace;
 			c.detector = detector;
 			c.beam = beam;
@@ -693,7 +714,7 @@ public interface ImagePixelMapping {
 		private DimChoice mode;
 
 		/**
-		 * Mapping using given projection in Q space to 2D
+		 * Mapping using given projection in HKL space to 2D
 		 * @param mode
 		 */
 		public HKL1DMapping(DimChoice mode) {
@@ -767,9 +788,10 @@ public interface ImagePixelMapping {
 	/**
 	 * Create an image pixel mapping
 	 * @param outputMode
+	 * @param toCrystalFrame if true, output to crystal frame otherwise to lab frame
 	 * @return image pixel mapping for output mode
 	 */
-	public static ImagePixelMapping createPixelMapping(OutputMode outputMode) {
+	public static ImagePixelMapping createPixelMapping(OutputMode outputMode, boolean toCrystalFrame) {
 		switch (outputMode) {
 		case Line_H:
 			return new HKL1DMapping(DimChoice.X);
@@ -782,11 +804,11 @@ public interface ImagePixelMapping {
 		case Line_2Theta:
 			return new Q2ThetaMapping();
 		case Line_QX:
-			return new Q1DMapping(DimChoice.X);
+			return new Q1DMapping(toCrystalFrame, DimChoice.X);
 		case Line_QY:
-			return new Q1DMapping(DimChoice.Y);
+			return new Q1DMapping(toCrystalFrame, DimChoice.Y);
 		case Line_QZ:
-			return new Q1DMapping(DimChoice.Z);
+			return new Q1DMapping(toCrystalFrame, DimChoice.Z);
 		case Area_HK:
 			return new HKLPermuted2DMapping(DimChoice.X);
 		case Area_KL:
@@ -794,23 +816,23 @@ public interface ImagePixelMapping {
 		case Area_LH:
 			return new HKLPermuted2DMapping(DimChoice.Z);
 		case Area_QPP:
-			return new Qpp2DMapping();
+			return new Qpp2DMapping(toCrystalFrame);
 		case Area_QXY:
-			return new QPermuted2DMapping(DimChoice.X);
+			return new QPermuted2DMapping(toCrystalFrame, DimChoice.X);
 		case Area_QYZ:
-			return new QPermuted2DMapping(DimChoice.Y);
+			return new QPermuted2DMapping(toCrystalFrame, DimChoice.Y);
 		case Area_QZX:
-			return new QPermuted2DMapping(DimChoice.Z);
+			return new QPermuted2DMapping(toCrystalFrame, DimChoice.Z);
 		case Volume_HKL:
 		case Coords_HKL:
 			return new HKLMapping();
 		case Volume_QCP:
-			return new QPolarMapping();
+			return new QPolarMapping(toCrystalFrame);
 		case Volume_QES:
-			return new QEquatorialStereoMapping();
+			return new QEquatorialStereoMapping(toCrystalFrame);
 		case Volume_Q:
 		case Coords_Q:
-			return new QxyzMapping();
+			return new QxyzMapping(toCrystalFrame);
 		default:
 			return null;
 		}

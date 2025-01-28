@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.dawnsci.analysis.api.io.ScanFileHolderException;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
@@ -48,22 +49,45 @@ public class MillerSpaceMapperApplication implements IApplication {
 
 	private static final String CORES = "-cores";
 	private static final String BEAN_PATH = "-bean";
+	private static final String VERSION = "-V";
+	private static final String HELP = "-h";
 
 	/**
 	 * @param args can have -cores argument and must have -bean argument
 	 * @return exit code
 	 */
 	private Integer main(String[] args) {
+		String usage = String.format("usage: msmapper [%s] [%s] [%s CORES] [%s BEAN_PATH]", HELP, VERSION, CORES, BEAN_PATH);
 		try {
 			int n = args.length;
 			int i = 0;
 			String path = null;
 			for (; i < n; i++) {
 				String a = args[i];
-				if (a.equals(BEAN_PATH)) {
-					path  = args[++i];
-				} else if (a.equals(CORES)) {
-					MillerSpaceMapper.setCores(Integer.parseInt(args[++i]));
+				switch (a) {
+				case BEAN_PATH:
+					if (++i == n) {
+						System.out.println(usage);
+						throw new IllegalArgumentException("Value missing from arguments");
+					}
+					path = args[i];
+					break;
+				case CORES:
+					if (++i == n) {
+						System.out.println(usage);
+						throw new IllegalArgumentException("Value missing from arguments");
+					}
+					MillerSpaceMapper.setCores(Integer.parseInt(args[i]));
+					break;
+				case HELP:
+					System.out.println(usage);
+					return IApplication.EXIT_OK;
+				case VERSION:
+					System.out.printf("msmapper version %s\n", Platform.getProduct().getDefiningBundle().getVersion());
+					return IApplication.EXIT_OK;
+				default:
+					System.out.println(usage);
+					throw new IllegalArgumentException("Unexpected value: " + a);
 				}
 			}
 			if (path == null) {

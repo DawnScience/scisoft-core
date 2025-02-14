@@ -16,6 +16,7 @@ import java.util.Date;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Information recorded as a function of time.
@@ -76,7 +77,7 @@ public interface NXlog extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTime();
+	public Dataset getTime();
 
 	/**
 	 * Time of logged entry. The times are relative to the "start" attribute
@@ -166,7 +167,7 @@ public interface NXlog extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getValue();
+	public Dataset getValue();
 
 	/**
 	 * Array of logged value, such as temperature. If this is
@@ -222,7 +223,7 @@ public interface NXlog extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRaw_value();
+	public Dataset getRaw_value();
 
 	/**
 	 * Array of raw information, such as thermocouple voltage
@@ -262,7 +263,7 @@ public interface NXlog extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * Description of logged value
@@ -293,7 +294,7 @@ public interface NXlog extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAverage_value();
+	public Dataset getAverage_value();
 
 	/**
 	 * <p>
@@ -336,7 +337,7 @@ public interface NXlog extends NXobject {
 	 * @return  the value.
 	 */
 	@Deprecated
-	public IDataset getAverage_value_error();
+	public Dataset getAverage_value_error();
 
 	/**
 	 * estimated uncertainty (often used: standard deviation) of average_value
@@ -386,7 +387,7 @@ public interface NXlog extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAverage_value_errors();
+	public Dataset getAverage_value_errors();
 
 	/**
 	 * estimated uncertainty (often used: standard deviation) of average_value
@@ -429,7 +430,7 @@ public interface NXlog extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMinimum_value();
+	public Dataset getMinimum_value();
 
 	/**
 	 * <p>
@@ -469,7 +470,7 @@ public interface NXlog extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMaximum_value();
+	public Dataset getMaximum_value();
 
 	/**
 	 * <p>
@@ -510,7 +511,7 @@ public interface NXlog extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDuration();
+	public Dataset getDuration();
 
 	/**
 	 * Total time log was taken
@@ -555,7 +556,7 @@ public interface NXlog extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCue_timestamp_zero();
+	public Dataset getCue_timestamp_zero();
 
 	/**
 	 * Timestamps matching the corresponding cue_index into the
@@ -630,7 +631,7 @@ public interface NXlog extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCue_index();
+	public Dataset getCue_index();
 
 	/**
 	 * Index into the time, value pair matching the corresponding

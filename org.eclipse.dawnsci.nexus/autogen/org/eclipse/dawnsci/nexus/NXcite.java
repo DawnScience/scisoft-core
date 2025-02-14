@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A literature reference
@@ -41,7 +42,7 @@ public interface NXcite extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * This should describe the reason for including this reference.
@@ -87,7 +88,7 @@ public interface NXcite extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getUrl();
+	public Dataset getUrl();
 
 	/**
 	 * URL referencing the document or data.
@@ -127,7 +128,7 @@ public interface NXcite extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDoi();
+	public Dataset getDoi();
 
 	/**
 	 * DOI referencing the document or data.
@@ -167,7 +168,7 @@ public interface NXcite extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEndnote();
+	public Dataset getEndnote();
 
 	/**
 	 * Bibliographic reference data in EndNote format.
@@ -207,7 +208,7 @@ public interface NXcite extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBibtex();
+	public Dataset getBibtex();
 
 	/**
 	 * Bibliographic reference data in BibTeX format.

@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * This describes a dispersion function for a material or layer
@@ -46,7 +47,7 @@ public interface NXdispersion_function extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getModel_name();
+	public Dataset getModel_name();
 
 	/**
 	 * The name of this dispersion model.
@@ -88,7 +89,7 @@ public interface NXdispersion_function extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFormula();
+	public Dataset getFormula();
 
 	/**
 	 * This should be a python parsable function.
@@ -137,7 +138,7 @@ public interface NXdispersion_function extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getConvention();
+	public Dataset getConvention();
 
 	/**
 	 * The sign convention being used (n + or - ik)
@@ -187,7 +188,7 @@ public interface NXdispersion_function extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEnergy_identifier();
+	public Dataset getEnergy_identifier();
 
 	/**
 	 * The identifier used to represent energy
@@ -231,7 +232,7 @@ public interface NXdispersion_function extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEnergy_min();
+	public Dataset getEnergy_min();
 
 	/**
 	 * The minimum energy value at which this formula is valid.
@@ -275,7 +276,7 @@ public interface NXdispersion_function extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEnergy_max();
+	public Dataset getEnergy_max();
 
 	/**
 	 * The maximum energy value at which this formula is valid.
@@ -322,7 +323,7 @@ public interface NXdispersion_function extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEnergy_unit();
+	public Dataset getEnergy_unit();
 
 	/**
 	 * The energy unit used in the formula.
@@ -375,7 +376,7 @@ public interface NXdispersion_function extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWavelength_identifier();
+	public Dataset getWavelength_identifier();
 
 	/**
 	 * The identifier useed to represent wavelength
@@ -422,7 +423,7 @@ public interface NXdispersion_function extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWavelength_unit();
+	public Dataset getWavelength_unit();
 
 	/**
 	 * The wavelength unit used in the formula.
@@ -475,7 +476,7 @@ public interface NXdispersion_function extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWavelength_min();
+	public Dataset getWavelength_min();
 
 	/**
 	 * The minimum wavelength value at which this formula is valid.
@@ -519,7 +520,7 @@ public interface NXdispersion_function extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWavelength_max();
+	public Dataset getWavelength_max();
 
 	/**
 	 * The maximum wavelength value at which this formula is valid.
@@ -567,7 +568,7 @@ public interface NXdispersion_function extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRepresentation();
+	public Dataset getRepresentation();
 
 	/**
 	 * Which representation does the formula evaluate to.

@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A monitor of incident beam data.
@@ -56,7 +57,7 @@ public interface NXmonitor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMode();
+	public Dataset getMode();
 
 	/**
 	 * Count to a preset value based on either clock time (timer)
@@ -105,7 +106,7 @@ public interface NXmonitor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getStart_time();
+	public Dataset getStart_time();
 
 	/**
 	 * Starting time of measurement
@@ -145,7 +146,7 @@ public interface NXmonitor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEnd_time();
+	public Dataset getEnd_time();
 
 	/**
 	 * Ending time of measurement
@@ -186,7 +187,7 @@ public interface NXmonitor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPreset();
+	public Dataset getPreset();
 
 	/**
 	 * preset value for time or monitor
@@ -232,7 +233,7 @@ public interface NXmonitor extends NXobject {
 	 * @return  the value.
 	 */
 	@Deprecated
-	public IDataset getDistance();
+	public Dataset getDistance();
 
 	/**
 	 * Distance of monitor from sample
@@ -283,7 +284,7 @@ public interface NXmonitor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRange();
+	public Dataset getRange();
 
 	/**
 	 * Range (X-axis, Time-of-flight, etc.) over which the integral was calculated
@@ -330,7 +331,7 @@ public interface NXmonitor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNominal();
+	public Dataset getNominal();
 
 	/**
 	 * Nominal reading to be used for normalisation purposes.
@@ -374,7 +375,7 @@ public interface NXmonitor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIntegral();
+	public Dataset getIntegral();
 
 	/**
 	 * Total integral monitor counts
@@ -432,7 +433,7 @@ public interface NXmonitor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * <p>
@@ -477,7 +478,7 @@ public interface NXmonitor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTime_of_flight();
+	public Dataset getTime_of_flight();
 
 	/**
 	 * Time-of-flight
@@ -525,7 +526,7 @@ public interface NXmonitor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEfficiency();
+	public Dataset getEfficiency();
 
 	/**
 	 * Monitor efficiency
@@ -573,7 +574,7 @@ public interface NXmonitor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getData();
+	public Dataset getData();
 
 	/**
 	 * Monitor data
@@ -620,7 +621,7 @@ public interface NXmonitor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSampled_fraction();
+	public Dataset getSampled_fraction();
 
 	/**
 	 * Proportion of incident beam sampled by the monitor (0<x<1)
@@ -741,7 +742,7 @@ public interface NXmonitor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCount_time();
+	public Dataset getCount_time();
 
 	/**
 	 * Elapsed actual counting time, can be an array of size ``np``
@@ -892,7 +893,7 @@ public interface NXmonitor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

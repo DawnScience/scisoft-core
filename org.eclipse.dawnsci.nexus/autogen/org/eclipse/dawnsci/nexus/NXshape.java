@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * legacy class - (used by :ref:`NXgeometry`) - the shape and size of a component.
@@ -45,7 +46,7 @@ public interface NXshape extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getShape();
+	public Dataset getShape();
 
 	/**
 	 * general shape of a component
@@ -127,7 +128,7 @@ public interface NXshape extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSize();
+	public Dataset getSize();
 
 	/**
 	 * physical extent of the object along its local axes (after NXorientation)
@@ -213,7 +214,7 @@ public interface NXshape extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDirection();
+	public Dataset getDirection();
 
 	/**
 	 * <p>

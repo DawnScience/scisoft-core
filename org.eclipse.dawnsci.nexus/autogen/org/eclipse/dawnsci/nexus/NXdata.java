@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * The :ref:`NXdata` class is designed to encapsulate all the information required for a set of data to be plotted.
@@ -391,7 +392,7 @@ public interface NXdata extends NXobject {
 	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public IDataset getAxisname(String axisname);
+	public Dataset getAxisname(String axisname);
 
 	/**
 	 * Coordinate values along one or more :ref:`data </NXdata/DATA-field>` dimensions. The rank must be equal
@@ -589,7 +590,7 @@ public interface NXdata extends NXobject {
 	 * @param data the data
 	 * @return  the value.
 	 */
-	public IDataset getData(String data);
+	public Dataset getData(String data);
 
 	/**
 	 * .. index:: plotting
@@ -749,7 +750,7 @@ public interface NXdata extends NXobject {
 	 * @param fieldname the fieldname
 	 * @return  the value.
 	 */
-	public IDataset getErrors(String fieldname);
+	public Dataset getErrors(String fieldname);
 
 	/**
 	 * "Errors" (meaning *uncertainties* or *standard deviations*)
@@ -828,7 +829,7 @@ public interface NXdata extends NXobject {
 	 * @return  the value.
 	 */
 	@Deprecated
-	public IDataset getErrors();
+	public Dataset getErrors();
 
 	/**
 	 * Standard deviations of data values -
@@ -890,7 +891,7 @@ public interface NXdata extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getScaling_factor();
+	public Dataset getScaling_factor();
 
 	/**
 	 * The elements in data are usually float values really. For
@@ -942,7 +943,7 @@ public interface NXdata extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getOffset();
+	public Dataset getOffset();
 
 	/**
 	 * An optional offset to apply to the values in data.
@@ -979,7 +980,7 @@ public interface NXdata extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTitle();
+	public Dataset getTitle();
 
 	/**
 	 * Title for the plot.
@@ -1015,7 +1016,7 @@ public interface NXdata extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getX();
+	public Dataset getX();
 
 	/**
 	 * This is an array holding the values to use for the x-axis of
@@ -1075,7 +1076,7 @@ public interface NXdata extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getY();
+	public Dataset getY();
 
 	/**
 	 * This is an array holding the values to use for the y-axis of
@@ -1135,7 +1136,7 @@ public interface NXdata extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getZ();
+	public Dataset getZ();
 
 	/**
 	 * This is an array holding the values to use for the z-axis of

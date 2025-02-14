@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -162,7 +163,7 @@ public class NXgeometryImpl extends NXobjectImpl implements NXgeometry {
 	}
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -182,7 +183,7 @@ public class NXgeometryImpl extends NXobjectImpl implements NXgeometry {
 	}
 
 	@Override
-	public IDataset getComponent_index() {
+	public Dataset getComponent_index() {
 		return getDataset(NX_COMPONENT_INDEX);
 	}
 

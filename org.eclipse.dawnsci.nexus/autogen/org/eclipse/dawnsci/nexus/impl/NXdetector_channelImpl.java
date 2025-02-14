@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -79,7 +80,7 @@ public class NXdetector_channelImpl extends NXobjectImpl implements NXdetector_c
 
 
 	@Override
-	public IDataset getThreshold_energy() {
+	public Dataset getThreshold_energy() {
 		return getDataset(NX_THRESHOLD_ENERGY);
 	}
 
@@ -99,7 +100,7 @@ public class NXdetector_channelImpl extends NXobjectImpl implements NXdetector_c
 	}
 
 	@Override
-	public IDataset getFlatfield_applied() {
+	public Dataset getFlatfield_applied() {
 		return getDataset(NX_FLATFIELD_APPLIED);
 	}
 
@@ -119,7 +120,7 @@ public class NXdetector_channelImpl extends NXobjectImpl implements NXdetector_c
 	}
 
 	@Override
-	public IDataset getFlatfield() {
+	public Dataset getFlatfield() {
 		return getDataset(NX_FLATFIELD);
 	}
 
@@ -139,7 +140,7 @@ public class NXdetector_channelImpl extends NXobjectImpl implements NXdetector_c
 	}
 
 	@Override
-	public IDataset getFlatfield_errors() {
+	public Dataset getFlatfield_errors() {
 		return getDataset(NX_FLATFIELD_ERRORS);
 	}
 
@@ -159,7 +160,7 @@ public class NXdetector_channelImpl extends NXobjectImpl implements NXdetector_c
 	}
 
 	@Override
-	public IDataset getPixel_mask_applied() {
+	public Dataset getPixel_mask_applied() {
 		return getDataset(NX_PIXEL_MASK_APPLIED);
 	}
 
@@ -179,7 +180,7 @@ public class NXdetector_channelImpl extends NXobjectImpl implements NXdetector_c
 	}
 
 	@Override
-	public IDataset getPixel_mask() {
+	public Dataset getPixel_mask() {
 		return getDataset(NX_PIXEL_MASK);
 	}
 
@@ -199,7 +200,7 @@ public class NXdetector_channelImpl extends NXobjectImpl implements NXdetector_c
 	}
 
 	@Override
-	public IDataset getSaturation_value() {
+	public Dataset getSaturation_value() {
 		return getDataset(NX_SATURATION_VALUE);
 	}
 
@@ -219,7 +220,7 @@ public class NXdetector_channelImpl extends NXobjectImpl implements NXdetector_c
 	}
 
 	@Override
-	public IDataset getUnderload_value() {
+	public Dataset getUnderload_value() {
 		return getDataset(NX_UNDERLOAD_VALUE);
 	}
 

@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -62,7 +63,7 @@ public class NXcollectioncolumnImpl extends NXobjectImpl implements NXcollection
 
 
 	@Override
-	public IDataset getScheme() {
+	public Dataset getScheme() {
 		return getDataset(NX_SCHEME);
 	}
 
@@ -82,7 +83,7 @@ public class NXcollectioncolumnImpl extends NXobjectImpl implements NXcollection
 	}
 
 	@Override
-	public IDataset getExtractor_voltage() {
+	public Dataset getExtractor_voltage() {
 		return getDataset(NX_EXTRACTOR_VOLTAGE);
 	}
 
@@ -102,7 +103,7 @@ public class NXcollectioncolumnImpl extends NXobjectImpl implements NXcollection
 	}
 
 	@Override
-	public IDataset getExtractor_current() {
+	public Dataset getExtractor_current() {
 		return getDataset(NX_EXTRACTOR_CURRENT);
 	}
 
@@ -122,7 +123,7 @@ public class NXcollectioncolumnImpl extends NXobjectImpl implements NXcollection
 	}
 
 	@Override
-	public IDataset getWorking_distance() {
+	public Dataset getWorking_distance() {
 		return getDataset(NX_WORKING_DISTANCE);
 	}
 
@@ -142,7 +143,7 @@ public class NXcollectioncolumnImpl extends NXobjectImpl implements NXcollection
 	}
 
 	@Override
-	public IDataset getMode() {
+	public Dataset getMode() {
 		return getDataset(NX_MODE);
 	}
 
@@ -162,7 +163,7 @@ public class NXcollectioncolumnImpl extends NXobjectImpl implements NXcollection
 	}
 
 	@Override
-	public IDataset getProjection() {
+	public Dataset getProjection() {
 		return getDataset(NX_PROJECTION);
 	}
 
@@ -182,7 +183,7 @@ public class NXcollectioncolumnImpl extends NXobjectImpl implements NXcollection
 	}
 
 	@Override
-	public IDataset getMagnification() {
+	public Dataset getMagnification() {
 		return getDataset(NX_MAGNIFICATION);
 	}
 
@@ -202,7 +203,7 @@ public class NXcollectioncolumnImpl extends NXobjectImpl implements NXcollection
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

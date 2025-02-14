@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -55,7 +56,7 @@ public class NXquadricImpl extends NXobjectImpl implements NXquadric {
 
 
 	@Override
-	public IDataset getParameters() {
+	public Dataset getParameters() {
 		return getDataset(NX_PARAMETERS);
 	}
 
@@ -75,7 +76,7 @@ public class NXquadricImpl extends NXobjectImpl implements NXquadric {
 	}
 
 	@Override
-	public IDataset getSurface_type() {
+	public Dataset getSurface_type() {
 		return getDataset(NX_SURFACE_TYPE);
 	}
 
@@ -95,7 +96,7 @@ public class NXquadricImpl extends NXobjectImpl implements NXquadric {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

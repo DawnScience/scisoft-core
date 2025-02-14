@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Computational geometry description of a set of cylinders in Euclidean space.
@@ -54,7 +55,7 @@ public interface NXcg_cylinder_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDimensionality();
+	public Dataset getDimensionality();
 
 	/**
 	 * <p>
@@ -100,7 +101,7 @@ public interface NXcg_cylinder_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCardinality();
+	public Dataset getCardinality();
 
 	/**
 	 * <p>
@@ -148,7 +149,7 @@ public interface NXcg_cylinder_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier_offset();
+	public Dataset getIdentifier_offset();
 
 	/**
 	 * Integer which specifies the first index to be used for distinguishing
@@ -213,7 +214,7 @@ public interface NXcg_cylinder_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier();
+	public Dataset getIdentifier();
 
 	/**
 	 * Integer used to distinguish members for explicit indexing.
@@ -258,7 +259,7 @@ public interface NXcg_cylinder_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCenter();
+	public Dataset getCenter();
 
 	/**
 	 * The geometric center of each member.
@@ -307,7 +308,7 @@ public interface NXcg_cylinder_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getHeight();
+	public Dataset getHeight();
 
 	/**
 	 * A direction vector which is parallel to the cylinder/cone axis and
@@ -357,7 +358,7 @@ public interface NXcg_cylinder_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRadii();
+	public Dataset getRadii();
 
 	/**
 	 * <p>
@@ -404,7 +405,7 @@ public interface NXcg_cylinder_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getUpper_cap_radius();
+	public Dataset getUpper_cap_radius();
 
 	/**
 	 * The radius of the upper circular cap.
@@ -460,7 +461,7 @@ public interface NXcg_cylinder_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLower_cap_radius();
+	public Dataset getLower_cap_radius();
 
 	/**
 	 * The radius of the upper circular cap.
@@ -582,7 +583,7 @@ public interface NXcg_cylinder_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getVolume();
+	public Dataset getVolume();
 
 	/**
 	 * Interior volume of each cylinder
@@ -630,7 +631,7 @@ public interface NXcg_cylinder_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLateral_surface_area();
+	public Dataset getLateral_surface_area();
 
 	/**
 	 * Lateral surface area
@@ -678,7 +679,7 @@ public interface NXcg_cylinder_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCap_surface_area();
+	public Dataset getCap_surface_area();
 
 	/**
 	 * Area of the upper and the lower cap of each cylinder respectively.
@@ -726,7 +727,7 @@ public interface NXcg_cylinder_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSurface_area();
+	public Dataset getSurface_area();
 
 	/**
 	 * Cap and lateral surface area for each cylinder.

@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Computational geometry description of a set of points in Euclidean space.
@@ -51,7 +52,7 @@ public interface NXcg_point_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDimensionality();
+	public Dataset getDimensionality();
 
 	/**
 	 * <p>
@@ -91,7 +92,7 @@ public interface NXcg_point_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCardinality();
+	public Dataset getCardinality();
 
 	/**
 	 * <p>
@@ -139,7 +140,7 @@ public interface NXcg_point_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier_offset();
+	public Dataset getIdentifier_offset();
 
 	/**
 	 * Integer which specifies the first index to be used for distinguishing
@@ -205,7 +206,7 @@ public interface NXcg_point_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier();
+	public Dataset getIdentifier();
 
 	/**
 	 * Integer used to distinguish points for explicit indexing.
@@ -253,7 +254,7 @@ public interface NXcg_point_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPosition();
+	public Dataset getPosition();
 
 	/**
 	 * The array of point coordinates.
@@ -301,7 +302,7 @@ public interface NXcg_point_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTime();
+	public Dataset getTime();
 
 	/**
 	 * The optional array of time for each vertex.

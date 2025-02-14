@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -65,7 +66,7 @@ public class NXbeam_splitterImpl extends NXobjectImpl implements NXbeam_splitter
 
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -85,7 +86,7 @@ public class NXbeam_splitterImpl extends NXobjectImpl implements NXbeam_splitter
 	}
 
 	@Override
-	public IDataset getOther_type() {
+	public Dataset getOther_type() {
 		return getDataset(NX_OTHER_TYPE);
 	}
 
@@ -105,7 +106,7 @@ public class NXbeam_splitterImpl extends NXobjectImpl implements NXbeam_splitter
 	}
 
 	@Override
-	public IDataset getPolarizing() {
+	public Dataset getPolarizing() {
 		return getDataset(NX_POLARIZING);
 	}
 
@@ -125,7 +126,7 @@ public class NXbeam_splitterImpl extends NXobjectImpl implements NXbeam_splitter
 	}
 
 	@Override
-	public IDataset getMultiple_outputs() {
+	public Dataset getMultiple_outputs() {
 		return getDataset(NX_MULTIPLE_OUTPUTS);
 	}
 
@@ -177,7 +178,7 @@ public class NXbeam_splitterImpl extends NXobjectImpl implements NXbeam_splitter
 	// Unprocessed group: sketch
 
 	@Override
-	public IDataset getSplitting_ratio() {
+	public Dataset getSplitting_ratio() {
 		return getDataset(NX_SPLITTING_RATIO);
 	}
 
@@ -197,7 +198,7 @@ public class NXbeam_splitterImpl extends NXobjectImpl implements NXbeam_splitter
 	}
 
 	@Override
-	public IDataset getClear_aperture() {
+	public Dataset getClear_aperture() {
 		return getDataset(NX_CLEAR_APERTURE);
 	}
 
@@ -239,7 +240,7 @@ public class NXbeam_splitterImpl extends NXobjectImpl implements NXbeam_splitter
 	}
 
 	@Override
-	public IDataset getWavelength_range() {
+	public Dataset getWavelength_range() {
 		return getDataset(NX_WAVELENGTH_RANGE);
 	}
 
@@ -259,7 +260,7 @@ public class NXbeam_splitterImpl extends NXobjectImpl implements NXbeam_splitter
 	}
 
 	@Override
-	public IDataset getOptical_loss() {
+	public Dataset getOptical_loss() {
 		return getDataset(NX_OPTICAL_LOSS);
 	}
 
@@ -279,7 +280,7 @@ public class NXbeam_splitterImpl extends NXobjectImpl implements NXbeam_splitter
 	}
 
 	@Override
-	public IDataset getIncident_angle() {
+	public Dataset getIncident_angle() {
 		return getDataset(NX_INCIDENT_ANGLE);
 	}
 
@@ -299,7 +300,7 @@ public class NXbeam_splitterImpl extends NXobjectImpl implements NXbeam_splitter
 	}
 
 	@Override
-	public IDataset getDeflection_angle() {
+	public Dataset getDeflection_angle() {
 		return getDataset(NX_DEFLECTION_ANGLE);
 	}
 
@@ -319,7 +320,7 @@ public class NXbeam_splitterImpl extends NXobjectImpl implements NXbeam_splitter
 	}
 
 	@Override
-	public IDataset getAoi_range() {
+	public Dataset getAoi_range() {
 		return getDataset(NX_AOI_RANGE);
 	}
 
@@ -339,7 +340,7 @@ public class NXbeam_splitterImpl extends NXobjectImpl implements NXbeam_splitter
 	}
 
 	@Override
-	public IDataset getReflectance() {
+	public Dataset getReflectance() {
 		return getDataset(NX_REFLECTANCE);
 	}
 
@@ -359,7 +360,7 @@ public class NXbeam_splitterImpl extends NXobjectImpl implements NXbeam_splitter
 	}
 
 	@Override
-	public IDataset getTransmission() {
+	public Dataset getTransmission() {
 		return getDataset(NX_TRANSMISSION);
 	}
 

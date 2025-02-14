@@ -16,6 +16,7 @@ import java.util.Date;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Computer science description of a profiling event.
@@ -45,7 +46,7 @@ public interface NXcs_profiling_event extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getStart_time();
+	public Dataset getStart_time();
 
 	/**
 	 * ISO 8601 time code with local time zone offset to UTC information
@@ -89,7 +90,7 @@ public interface NXcs_profiling_event extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEnd_time();
+	public Dataset getEnd_time();
 
 	/**
 	 * ISO 8601 time code with local time zone offset to UTC information
@@ -129,7 +130,7 @@ public interface NXcs_profiling_event extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * Free-text description what was monitored/executed during the event.
@@ -165,7 +166,7 @@ public interface NXcs_profiling_event extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getElapsed_time();
+	public Dataset getElapsed_time();
 
 	/**
 	 * Wall-clock time how long the event took. This may be in principle
@@ -221,7 +222,7 @@ public interface NXcs_profiling_event extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_processes();
+	public Dataset getNumber_of_processes();
 
 	/**
 	 * Number of processes used (max) during the execution of this event.
@@ -265,7 +266,7 @@ public interface NXcs_profiling_event extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_threads();
+	public Dataset getNumber_of_threads();
 
 	/**
 	 * Number of threads used (max) during the execution of this event.
@@ -309,7 +310,7 @@ public interface NXcs_profiling_event extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_gpus();
+	public Dataset getNumber_of_gpus();
 
 	/**
 	 * Number of GPUs used (max) during the execution of this event.
@@ -354,7 +355,7 @@ public interface NXcs_profiling_event extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMax_virtual_memory_snapshot();
+	public Dataset getMax_virtual_memory_snapshot();
 
 	/**
 	 * Maximum amount of virtual memory allocated per process during the event.
@@ -402,7 +403,7 @@ public interface NXcs_profiling_event extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMax_resident_memory_snapshot();
+	public Dataset getMax_resident_memory_snapshot();
 
 	/**
 	 * Maximum amount of resident memory allocated per process during the event.

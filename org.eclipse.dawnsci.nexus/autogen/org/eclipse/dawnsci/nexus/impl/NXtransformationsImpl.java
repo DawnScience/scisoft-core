@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -112,7 +113,7 @@ public class NXtransformationsImpl extends NXobjectImpl implements NXtransformat
 
 
 	@Override
-	public IDataset getAxisname(String axisname) {
+	public Dataset getAxisname(String axisname) {
 		return getDataset(axisname);
 	}
 
@@ -132,7 +133,7 @@ public class NXtransformationsImpl extends NXobjectImpl implements NXtransformat
 	}
 
 	@Override
-	public Map<String, IDataset> getAllAxisname() {
+	public Map<String, Dataset> getAllAxisname() {
 		return getAllDatasets(); // note: returns all datasets in the group!
 	}
 
@@ -197,7 +198,7 @@ public class NXtransformationsImpl extends NXobjectImpl implements NXtransformat
 	}
 
 	@Override
-	public IDataset getEnd(String axisname) {
+	public Dataset getEnd(String axisname) {
 		return getDataset(axisname + NX_END_SUFFIX);
 	}
 
@@ -217,12 +218,12 @@ public class NXtransformationsImpl extends NXobjectImpl implements NXtransformat
 	}
 
 	@Override
-	public Map<String, IDataset> getAllEnd() {
+	public Map<String, Dataset> getAllEnd() {
 		return getAllDatasets(); // note: returns all datasets in the group!
 	}
 
 	@Override
-	public IDataset getIncrement_set(String axisname) {
+	public Dataset getIncrement_set(String axisname) {
 		return getDataset(axisname + NX_INCREMENT_SET_SUFFIX);
 	}
 
@@ -242,7 +243,7 @@ public class NXtransformationsImpl extends NXobjectImpl implements NXtransformat
 	}
 
 	@Override
-	public Map<String, IDataset> getAllIncrement_set() {
+	public Map<String, Dataset> getAllIncrement_set() {
 		return getAllDatasets(); // note: returns all datasets in the group!
 	}
 

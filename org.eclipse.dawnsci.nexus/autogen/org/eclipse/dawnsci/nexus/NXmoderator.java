@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A neutron moderator
@@ -116,7 +117,7 @@ public interface NXmoderator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDistance();
+	public Dataset getDistance();
 
 	/**
 	 * Effective distance as seen by measuring radiation.
@@ -170,7 +171,7 @@ public interface NXmoderator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * <p>
@@ -234,7 +235,7 @@ public interface NXmoderator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPoison_depth();
+	public Dataset getPoison_depth();
 
 	/**
 	 * <p>
@@ -274,7 +275,7 @@ public interface NXmoderator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCoupled();
+	public Dataset getCoupled();
 
 	/**
 	 * whether the moderator is coupled
@@ -311,7 +312,7 @@ public interface NXmoderator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCoupling_material();
+	public Dataset getCoupling_material();
 
 	/**
 	 * The material used for coupling. Usually Cd.
@@ -343,7 +344,7 @@ public interface NXmoderator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPoison_material();
+	public Dataset getPoison_material();
 
 	/**
 	 * <p>
@@ -387,7 +388,7 @@ public interface NXmoderator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTemperature();
+	public Dataset getTemperature();
 
 	/**
 	 * average/nominal moderator temperature
@@ -555,7 +556,7 @@ public interface NXmoderator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

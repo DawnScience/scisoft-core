@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -72,7 +73,7 @@ public class NXcg_polyhedron_setImpl extends NXobjectImpl implements NXcg_polyhe
 
 
 	@Override
-	public IDataset getDimensionality() {
+	public Dataset getDimensionality() {
 		return getDataset(NX_DIMENSIONALITY);
 	}
 
@@ -92,7 +93,7 @@ public class NXcg_polyhedron_setImpl extends NXobjectImpl implements NXcg_polyhe
 	}
 
 	@Override
-	public IDataset getCardinality() {
+	public Dataset getCardinality() {
 		return getDataset(NX_CARDINALITY);
 	}
 
@@ -112,7 +113,7 @@ public class NXcg_polyhedron_setImpl extends NXobjectImpl implements NXcg_polyhe
 	}
 
 	@Override
-	public IDataset getVolume() {
+	public Dataset getVolume() {
 		return getDataset(NX_VOLUME);
 	}
 
@@ -132,7 +133,7 @@ public class NXcg_polyhedron_setImpl extends NXobjectImpl implements NXcg_polyhe
 	}
 
 	@Override
-	public IDataset getCenter() {
+	public Dataset getCenter() {
 		return getDataset(NX_CENTER);
 	}
 
@@ -152,7 +153,7 @@ public class NXcg_polyhedron_setImpl extends NXobjectImpl implements NXcg_polyhe
 	}
 
 	@Override
-	public IDataset getSurface_area() {
+	public Dataset getSurface_area() {
 		return getDataset(NX_SURFACE_AREA);
 	}
 
@@ -172,7 +173,7 @@ public class NXcg_polyhedron_setImpl extends NXobjectImpl implements NXcg_polyhe
 	}
 
 	@Override
-	public IDataset getNumber_of_faces() {
+	public Dataset getNumber_of_faces() {
 		return getDataset(NX_NUMBER_OF_FACES);
 	}
 
@@ -192,7 +193,7 @@ public class NXcg_polyhedron_setImpl extends NXobjectImpl implements NXcg_polyhe
 	}
 
 	@Override
-	public IDataset getFace_area() {
+	public Dataset getFace_area() {
 		return getDataset(NX_FACE_AREA);
 	}
 
@@ -212,7 +213,7 @@ public class NXcg_polyhedron_setImpl extends NXobjectImpl implements NXcg_polyhe
 	}
 
 	@Override
-	public IDataset getNumber_of_edges() {
+	public Dataset getNumber_of_edges() {
 		return getDataset(NX_NUMBER_OF_EDGES);
 	}
 
@@ -232,7 +233,7 @@ public class NXcg_polyhedron_setImpl extends NXobjectImpl implements NXcg_polyhe
 	}
 
 	@Override
-	public IDataset getEdge_length() {
+	public Dataset getEdge_length() {
 		return getDataset(NX_EDGE_LENGTH);
 	}
 
@@ -283,7 +284,7 @@ public class NXcg_polyhedron_setImpl extends NXobjectImpl implements NXcg_polyhe
 	}
 
 	@Override
-	public IDataset getIdentifier_offset() {
+	public Dataset getIdentifier_offset() {
 		return getDataset(NX_IDENTIFIER_OFFSET);
 	}
 
@@ -303,7 +304,7 @@ public class NXcg_polyhedron_setImpl extends NXobjectImpl implements NXcg_polyhe
 	}
 
 	@Override
-	public IDataset getIdentifier() {
+	public Dataset getIdentifier() {
 		return getDataset(NX_IDENTIFIER);
 	}
 

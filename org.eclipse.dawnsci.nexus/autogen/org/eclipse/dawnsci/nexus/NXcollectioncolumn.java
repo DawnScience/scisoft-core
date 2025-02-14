@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Subclass of NXelectronanalyser to describe the electron collection column of a
@@ -41,7 +42,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getScheme();
+	public Dataset getScheme();
 
 	/**
 	 * Scheme of the electron collection lens, i.e. standard, deflector, PEEM, momentum
@@ -85,7 +86,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getExtractor_voltage();
+	public Dataset getExtractor_voltage();
 
 	/**
 	 * Voltage applied to the extractor lens
@@ -130,7 +131,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getExtractor_current();
+	public Dataset getExtractor_current();
 
 	/**
 	 * Current necessary to keep the extractor lens at a set voltage. Variations
@@ -177,7 +178,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWorking_distance();
+	public Dataset getWorking_distance();
 
 	/**
 	 * Distance between sample and detector entrance
@@ -220,7 +221,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMode();
+	public Dataset getMode();
 
 	/**
 	 * Labelling of the lens setting in use.
@@ -263,7 +264,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getProjection();
+	public Dataset getProjection();
 
 	/**
 	 * The space projected in the angularly dispersive directions, real or reciprocal
@@ -313,7 +314,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMagnification();
+	public Dataset getMagnification();
 
 	/**
 	 * The magnification of the electron lens assembly.
@@ -357,7 +358,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * Specifies the position of the collectioncolumn by pointing to the last

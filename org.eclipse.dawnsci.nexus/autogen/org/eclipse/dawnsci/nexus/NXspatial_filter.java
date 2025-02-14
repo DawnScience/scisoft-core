@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Spatial filter to filter entries within a region-of-interest based on their
@@ -61,7 +62,7 @@ public interface NXspatial_filter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWindowing_method();
+	public Dataset getWindowing_method();
 
 	/**
 	 * Qualitative statement which specifies which spatial filtering with respective

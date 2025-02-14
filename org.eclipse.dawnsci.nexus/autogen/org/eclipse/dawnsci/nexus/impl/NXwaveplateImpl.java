@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -57,7 +58,7 @@ public class NXwaveplateImpl extends NXobjectImpl implements NXwaveplate {
 
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -77,7 +78,7 @@ public class NXwaveplateImpl extends NXobjectImpl implements NXwaveplate {
 	}
 
 	@Override
-	public IDataset getOther_type() {
+	public Dataset getOther_type() {
 		return getDataset(NX_OTHER_TYPE);
 	}
 
@@ -97,7 +98,7 @@ public class NXwaveplateImpl extends NXobjectImpl implements NXwaveplate {
 	}
 
 	@Override
-	public IDataset getRetardance() {
+	public Dataset getRetardance() {
 		return getDataset(NX_RETARDANCE);
 	}
 
@@ -117,7 +118,7 @@ public class NXwaveplateImpl extends NXobjectImpl implements NXwaveplate {
 	}
 
 	@Override
-	public IDataset getWavelengths() {
+	public Dataset getWavelengths() {
 		return getDataset(NX_WAVELENGTHS);
 	}
 
@@ -137,7 +138,7 @@ public class NXwaveplateImpl extends NXobjectImpl implements NXwaveplate {
 	}
 
 	@Override
-	public IDataset getDiameter() {
+	public Dataset getDiameter() {
 		return getDataset(NX_DIAMETER);
 	}
 
@@ -157,7 +158,7 @@ public class NXwaveplateImpl extends NXobjectImpl implements NXwaveplate {
 	}
 
 	@Override
-	public IDataset getClear_aperture() {
+	public Dataset getClear_aperture() {
 		return getDataset(NX_CLEAR_APERTURE);
 	}
 
@@ -199,7 +200,7 @@ public class NXwaveplateImpl extends NXobjectImpl implements NXwaveplate {
 	}
 
 	@Override
-	public IDataset getReflectance() {
+	public Dataset getReflectance() {
 		return getDataset(NX_REFLECTANCE);
 	}
 

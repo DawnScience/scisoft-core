@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -64,7 +65,7 @@ public class NXcg_polyline_setImpl extends NXobjectImpl implements NXcg_polyline
 
 
 	@Override
-	public IDataset getDimensionality() {
+	public Dataset getDimensionality() {
 		return getDataset(NX_DIMENSIONALITY);
 	}
 
@@ -84,7 +85,7 @@ public class NXcg_polyline_setImpl extends NXobjectImpl implements NXcg_polyline
 	}
 
 	@Override
-	public IDataset getCardinality() {
+	public Dataset getCardinality() {
 		return getDataset(NX_CARDINALITY);
 	}
 
@@ -104,7 +105,7 @@ public class NXcg_polyline_setImpl extends NXobjectImpl implements NXcg_polyline
 	}
 
 	@Override
-	public IDataset getNumber_of_total_vertices() {
+	public Dataset getNumber_of_total_vertices() {
 		return getDataset(NX_NUMBER_OF_TOTAL_VERTICES);
 	}
 
@@ -124,7 +125,7 @@ public class NXcg_polyline_setImpl extends NXobjectImpl implements NXcg_polyline
 	}
 
 	@Override
-	public IDataset getNumber_of_vertices() {
+	public Dataset getNumber_of_vertices() {
 		return getDataset(NX_NUMBER_OF_VERTICES);
 	}
 
@@ -175,7 +176,7 @@ public class NXcg_polyline_setImpl extends NXobjectImpl implements NXcg_polyline
 	}
 
 	@Override
-	public IDataset getIdentifier_offset() {
+	public Dataset getIdentifier_offset() {
 		return getDataset(NX_IDENTIFIER_OFFSET);
 	}
 
@@ -195,7 +196,7 @@ public class NXcg_polyline_setImpl extends NXobjectImpl implements NXcg_polyline
 	}
 
 	@Override
-	public IDataset getIdentifier() {
+	public Dataset getIdentifier() {
 		return getDataset(NX_IDENTIFIER);
 	}
 
@@ -215,7 +216,7 @@ public class NXcg_polyline_setImpl extends NXobjectImpl implements NXcg_polyline
 	}
 
 	@Override
-	public IDataset getVertices() {
+	public Dataset getVertices() {
 		return getDataset(NX_VERTICES);
 	}
 
@@ -235,7 +236,7 @@ public class NXcg_polyline_setImpl extends NXobjectImpl implements NXcg_polyline
 	}
 
 	@Override
-	public IDataset getVertices_are_unique() {
+	public Dataset getVertices_are_unique() {
 		return getDataset(NX_VERTICES_ARE_UNIQUE);
 	}
 
@@ -255,7 +256,7 @@ public class NXcg_polyline_setImpl extends NXobjectImpl implements NXcg_polyline
 	}
 
 	@Override
-	public IDataset getPolylines() {
+	public Dataset getPolylines() {
 		return getDataset(NX_POLYLINES);
 	}
 
@@ -275,7 +276,7 @@ public class NXcg_polyline_setImpl extends NXobjectImpl implements NXcg_polyline
 	}
 
 	@Override
-	public IDataset getLength() {
+	public Dataset getLength() {
 		return getDataset(NX_LENGTH);
 	}
 
@@ -295,7 +296,7 @@ public class NXcg_polyline_setImpl extends NXobjectImpl implements NXcg_polyline
 	}
 
 	@Override
-	public IDataset getIs_closed() {
+	public Dataset getIs_closed() {
 		return getDataset(NX_IS_CLOSED);
 	}
 

@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A beam splitter, i.e. a device splitting the light into two or more beams.
@@ -75,7 +76,7 @@ public interface NXbeam_splitter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * Specify the beam splitter type (e.g. dielectric mirror, pellicle,
@@ -149,7 +150,7 @@ public interface NXbeam_splitter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getOther_type();
+	public Dataset getOther_type();
 
 	/**
 	 * If you selected 'other' in 'type' use this field to specify which type of
@@ -183,7 +184,7 @@ public interface NXbeam_splitter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPolarizing();
+	public Dataset getPolarizing();
 
 	/**
 	 * Is the beam splitter polarizing?
@@ -224,7 +225,7 @@ public interface NXbeam_splitter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMultiple_outputs();
+	public Dataset getMultiple_outputs();
 
 	/**
 	 * Does the beam splitter have multiple outputs (diffractive optical
@@ -359,7 +360,7 @@ public interface NXbeam_splitter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSplitting_ratio();
+	public Dataset getSplitting_ratio();
 
 	/**
 	 * Beam splitting ratio(s) for the various outputs (i.e. the
@@ -416,7 +417,7 @@ public interface NXbeam_splitter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getClear_aperture();
+	public Dataset getClear_aperture();
 
 	/**
 	 * Clear aperture of the device (e.g. 90% of diameter for a disc, or 90% of
@@ -507,7 +508,7 @@ public interface NXbeam_splitter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWavelength_range();
+	public Dataset getWavelength_range();
 
 	/**
 	 * Wavelength range for which the beam splitter is designed. Enter the
@@ -568,7 +569,7 @@ public interface NXbeam_splitter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getOptical_loss();
+	public Dataset getOptical_loss();
 
 	/**
 	 * Optical loss of the beam splitter for the various outputs (i.e. the paths
@@ -627,7 +628,7 @@ public interface NXbeam_splitter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIncident_angle();
+	public Dataset getIncident_angle();
 
 	/**
 	 * Optimized angle of incidence for the desired splitting ratio.
@@ -672,7 +673,7 @@ public interface NXbeam_splitter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDeflection_angle();
+	public Dataset getDeflection_angle();
 
 	/**
 	 * Angle of deflection corresponding to the optimized angle of incidence
@@ -721,7 +722,7 @@ public interface NXbeam_splitter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAoi_range();
+	public Dataset getAoi_range();
 
 	/**
 	 * Range of the angles of incidence (AOI) for which the beam splitter can be
@@ -772,7 +773,7 @@ public interface NXbeam_splitter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getReflectance();
+	public Dataset getReflectance();
 
 	/**
 	 * Reflectance of the beam splitter at given spectral values.
@@ -824,7 +825,7 @@ public interface NXbeam_splitter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTransmission();
+	public Dataset getTransmission();
 
 	/**
 	 * Transmission at given spectral values for the various outputs (i.e. the

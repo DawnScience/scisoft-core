@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A Fermi chopper, possibly with curved slits.
@@ -43,7 +44,7 @@ public interface NXfermi_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * Fermi chopper type
@@ -75,7 +76,7 @@ public interface NXfermi_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRotation_speed();
+	public Dataset getRotation_speed();
 
 	/**
 	 * chopper rotation speed
@@ -119,7 +120,7 @@ public interface NXfermi_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRadius();
+	public Dataset getRadius();
 
 	/**
 	 * radius of chopper
@@ -163,7 +164,7 @@ public interface NXfermi_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSlit();
+	public Dataset getSlit();
 
 	/**
 	 * width of an individual slit
@@ -207,7 +208,7 @@ public interface NXfermi_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getR_slit();
+	public Dataset getR_slit();
 
 	/**
 	 * radius of curvature of slits
@@ -251,7 +252,7 @@ public interface NXfermi_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber();
+	public Dataset getNumber();
 
 	/**
 	 * number of slits
@@ -295,7 +296,7 @@ public interface NXfermi_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getHeight();
+	public Dataset getHeight();
 
 	/**
 	 * input beam height
@@ -339,7 +340,7 @@ public interface NXfermi_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWidth();
+	public Dataset getWidth();
 
 	/**
 	 * input beam width
@@ -383,7 +384,7 @@ public interface NXfermi_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDistance();
+	public Dataset getDistance();
 
 	/**
 	 * distance. Note, it is recommended to use NXtransformations instead.
@@ -427,7 +428,7 @@ public interface NXfermi_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWavelength();
+	public Dataset getWavelength();
 
 	/**
 	 * Wavelength transmitted by chopper
@@ -471,7 +472,7 @@ public interface NXfermi_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEnergy();
+	public Dataset getEnergy();
 
 	/**
 	 * energy selected
@@ -585,7 +586,7 @@ public interface NXfermi_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAbsorbing_material();
+	public Dataset getAbsorbing_material();
 
 	/**
 	 * absorbing material
@@ -613,7 +614,7 @@ public interface NXfermi_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTransmitting_material();
+	public Dataset getTransmitting_material();
 
 	/**
 	 * transmitting material
@@ -739,7 +740,7 @@ public interface NXfermi_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

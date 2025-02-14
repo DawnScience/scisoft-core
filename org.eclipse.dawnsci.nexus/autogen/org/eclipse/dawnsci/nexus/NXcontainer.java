@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * State of a container holding the sample under investigation.
@@ -65,7 +66,7 @@ public interface NXcontainer extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getName();
+	public Dataset getName();
 
 	/**
 	 * Descriptive name of container.
@@ -94,7 +95,7 @@ public interface NXcontainer extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * Verbose description of container and how it fits into the wider
@@ -145,7 +146,7 @@ public interface NXcontainer extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getChemical_formula();
+	public Dataset getChemical_formula();
 
 	/**
 	 * Chemical composition of the material the container is made from.
@@ -238,7 +239,7 @@ public interface NXcontainer extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDensity();
+	public Dataset getDensity();
 
 	/**
 	 * Density of the material the container is made from.
@@ -287,7 +288,7 @@ public interface NXcontainer extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPacking_fraction();
+	public Dataset getPacking_fraction();
 
 	/**
 	 * Fraction of the volume of the container occupied by the material
@@ -338,7 +339,7 @@ public interface NXcontainer extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRelative_molecular_mass();
+	public Dataset getRelative_molecular_mass();
 
 	/**
 	 * Relative molecular mass of container.

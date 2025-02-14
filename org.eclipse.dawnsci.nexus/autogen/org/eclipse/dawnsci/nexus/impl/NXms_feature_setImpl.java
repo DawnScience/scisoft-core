@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -69,7 +70,7 @@ public class NXms_feature_setImpl extends NXobjectImpl implements NXms_feature_s
 	}
 
 	@Override
-	public IDataset getDimensionality() {
+	public Dataset getDimensionality() {
 		return getDataset(NX_DIMENSIONALITY);
 	}
 
@@ -89,7 +90,7 @@ public class NXms_feature_setImpl extends NXobjectImpl implements NXms_feature_s
 	}
 
 	@Override
-	public IDataset getCardinality() {
+	public Dataset getCardinality() {
 		return getDataset(NX_CARDINALITY);
 	}
 
@@ -109,7 +110,7 @@ public class NXms_feature_setImpl extends NXobjectImpl implements NXms_feature_s
 	}
 
 	@Override
-	public IDataset getType_dict_keyword() {
+	public Dataset getType_dict_keyword() {
 		return getDataset(NX_TYPE_DICT_KEYWORD);
 	}
 
@@ -129,7 +130,7 @@ public class NXms_feature_setImpl extends NXobjectImpl implements NXms_feature_s
 	}
 
 	@Override
-	public IDataset getType_dict_value() {
+	public Dataset getType_dict_value() {
 		return getDataset(NX_TYPE_DICT_VALUE);
 	}
 
@@ -149,7 +150,7 @@ public class NXms_feature_setImpl extends NXobjectImpl implements NXms_feature_s
 	}
 
 	@Override
-	public IDataset getNumber_of_parent_identifier() {
+	public Dataset getNumber_of_parent_identifier() {
 		return getDataset(NX_NUMBER_OF_PARENT_IDENTIFIER);
 	}
 
@@ -169,7 +170,7 @@ public class NXms_feature_setImpl extends NXobjectImpl implements NXms_feature_s
 	}
 
 	@Override
-	public IDataset getParent_identifier() {
+	public Dataset getParent_identifier() {
 		return getDataset(NX_PARENT_IDENTIFIER);
 	}
 
@@ -189,7 +190,7 @@ public class NXms_feature_setImpl extends NXobjectImpl implements NXms_feature_s
 	}
 
 	@Override
-	public IDataset getIdentifier_offset() {
+	public Dataset getIdentifier_offset() {
 		return getDataset(NX_IDENTIFIER_OFFSET);
 	}
 
@@ -209,7 +210,7 @@ public class NXms_feature_setImpl extends NXobjectImpl implements NXms_feature_s
 	}
 
 	@Override
-	public IDataset getIdentifier() {
+	public Dataset getIdentifier() {
 		return getDataset(NX_IDENTIFIER);
 	}
 

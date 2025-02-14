@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -55,7 +56,7 @@ public class NXaberrationImpl extends NXobjectImpl implements NXaberration {
 
 
 	@Override
-	public IDataset getMagnitude() {
+	public Dataset getMagnitude() {
 		return getDataset(NX_MAGNITUDE);
 	}
 
@@ -75,7 +76,7 @@ public class NXaberrationImpl extends NXobjectImpl implements NXaberration {
 	}
 
 	@Override
-	public IDataset getUncertainty() {
+	public Dataset getUncertainty() {
 		return getDataset(NX_UNCERTAINTY);
 	}
 
@@ -95,7 +96,7 @@ public class NXaberrationImpl extends NXobjectImpl implements NXaberration {
 	}
 
 	@Override
-	public IDataset getUncertainty_model() {
+	public Dataset getUncertainty_model() {
 		return getDataset(NX_UNCERTAINTY_MODEL);
 	}
 
@@ -115,7 +116,7 @@ public class NXaberrationImpl extends NXobjectImpl implements NXaberration {
 	}
 
 	@Override
-	public IDataset getDelta_time() {
+	public Dataset getDelta_time() {
 		return getDataset(NX_DELTA_TIME);
 	}
 
@@ -135,7 +136,7 @@ public class NXaberrationImpl extends NXobjectImpl implements NXaberration {
 	}
 
 	@Override
-	public IDataset getAngle() {
+	public Dataset getAngle() {
 		return getDataset(NX_ANGLE);
 	}
 
@@ -155,7 +156,7 @@ public class NXaberrationImpl extends NXobjectImpl implements NXaberration {
 	}
 
 	@Override
-	public IDataset getName() {
+	public Dataset getName() {
 		return getDataset(NX_NAME);
 	}
 
@@ -175,7 +176,7 @@ public class NXaberrationImpl extends NXobjectImpl implements NXaberration {
 	}
 
 	@Override
-	public IDataset getAlias() {
+	public Dataset getAlias() {
 		return getDataset(NX_ALIAS);
 	}
 

@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A diffraction grating, as could be used in a soft X-ray monochromator
@@ -49,7 +50,7 @@ public interface NXgrating extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAngles();
+	public Dataset getAngles();
 
 	/**
 	 * Blaze or trapezoidal angles, with the angle of the upstream facing edge listed first. Blazed gratings can be identified by the low value of the first-listed angle.
@@ -97,7 +98,7 @@ public interface NXgrating extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPeriod();
+	public Dataset getPeriod();
 
 	/**
 	 * List of polynomial coefficients describing the spatial separation of lines/grooves as a function of position along the grating, in increasing powers of position. Gratings which do not have variable line spacing will only have a single coefficient (constant).
@@ -143,7 +144,7 @@ public interface NXgrating extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDuty_cycle();
+	public Dataset getDuty_cycle();
 
 	/**
 	 * <p>
@@ -183,7 +184,7 @@ public interface NXgrating extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepth();
+	public Dataset getDepth();
 
 	/**
 	 * <p>
@@ -223,7 +224,7 @@ public interface NXgrating extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDiffraction_order();
+	public Dataset getDiffraction_order();
 
 	/**
 	 * <p>
@@ -264,7 +265,7 @@ public interface NXgrating extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDeflection_angle();
+	public Dataset getDeflection_angle();
 
 	/**
 	 * Angle between the incident beam and the utilised outgoing beam.
@@ -309,7 +310,7 @@ public interface NXgrating extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getInterior_atmosphere();
+	public Dataset getInterior_atmosphere();
 
 	/**
 	 * <p>
@@ -351,7 +352,7 @@ public interface NXgrating extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSubstrate_material();
+	public Dataset getSubstrate_material();
 
 	/**
 	 *
@@ -379,7 +380,7 @@ public interface NXgrating extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSubstrate_density();
+	public Dataset getSubstrate_density();
 
 	/**
 	 * <p>
@@ -419,7 +420,7 @@ public interface NXgrating extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSubstrate_thickness();
+	public Dataset getSubstrate_thickness();
 
 	/**
 	 * <p>
@@ -455,7 +456,7 @@ public interface NXgrating extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCoating_material();
+	public Dataset getCoating_material();
 
 	/**
 	 *
@@ -483,7 +484,7 @@ public interface NXgrating extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSubstrate_roughness();
+	public Dataset getSubstrate_roughness();
 
 	/**
 	 * <p>
@@ -523,7 +524,7 @@ public interface NXgrating extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCoating_roughness();
+	public Dataset getCoating_roughness();
 
 	/**
 	 * <p>
@@ -564,7 +565,7 @@ public interface NXgrating extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLayer_thickness();
+	public Dataset getLayer_thickness();
 
 	/**
 	 * An array describing the thickness of each layer
@@ -734,7 +735,7 @@ public interface NXgrating extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

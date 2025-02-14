@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -120,7 +121,7 @@ public class NXstage_labImpl extends NXobjectImpl implements NXstage_lab {
 
 
 	@Override
-	public IDataset getDesign() {
+	public Dataset getDesign() {
 		return getDataset(NX_DESIGN);
 	}
 
@@ -140,7 +141,7 @@ public class NXstage_labImpl extends NXobjectImpl implements NXstage_lab {
 	}
 
 	@Override
-	public IDataset getName() {
+	public Dataset getName() {
 		return getDataset(NX_NAME);
 	}
 
@@ -191,7 +192,7 @@ public class NXstage_labImpl extends NXobjectImpl implements NXstage_lab {
 	}
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -211,7 +212,7 @@ public class NXstage_labImpl extends NXobjectImpl implements NXstage_lab {
 	}
 
 	@Override
-	public IDataset getTilt_1() {
+	public Dataset getTilt_1() {
 		return getDataset(NX_TILT_1);
 	}
 
@@ -231,7 +232,7 @@ public class NXstage_labImpl extends NXobjectImpl implements NXstage_lab {
 	}
 
 	@Override
-	public IDataset getTilt_2() {
+	public Dataset getTilt_2() {
 		return getDataset(NX_TILT_2);
 	}
 
@@ -251,7 +252,7 @@ public class NXstage_labImpl extends NXobjectImpl implements NXstage_lab {
 	}
 
 	@Override
-	public IDataset getRotation() {
+	public Dataset getRotation() {
 		return getDataset(NX_ROTATION);
 	}
 
@@ -271,7 +272,7 @@ public class NXstage_labImpl extends NXobjectImpl implements NXstage_lab {
 	}
 
 	@Override
-	public IDataset getPosition() {
+	public Dataset getPosition() {
 		return getDataset(NX_POSITION);
 	}
 
@@ -291,7 +292,7 @@ public class NXstage_labImpl extends NXobjectImpl implements NXstage_lab {
 	}
 
 	@Override
-	public IDataset getBias_voltage() {
+	public Dataset getBias_voltage() {
 		return getDataset(NX_BIAS_VOLTAGE);
 	}
 

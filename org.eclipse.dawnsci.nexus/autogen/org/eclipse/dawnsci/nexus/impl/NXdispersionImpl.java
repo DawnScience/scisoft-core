@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -61,7 +62,7 @@ public class NXdispersionImpl extends NXobjectImpl implements NXdispersion {
 
 
 	@Override
-	public IDataset getModel_name() {
+	public Dataset getModel_name() {
 		return getDataset(NX_MODEL_NAME);
 	}
 

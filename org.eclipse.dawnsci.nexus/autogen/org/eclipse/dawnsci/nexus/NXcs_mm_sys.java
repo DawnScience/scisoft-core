@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Computer science description of a main memory system of a computer.
@@ -32,7 +33,7 @@ public interface NXcs_mm_sys extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTotal_physical_memory();
+	public Dataset getTotal_physical_memory();
 
 	/**
 	 * How much physical memory does the system provide.

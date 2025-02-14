@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A sensor used to monitor an external condition
@@ -44,7 +45,7 @@ public interface NXsensor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getModel();
+	public Dataset getModel();
 
 	/**
 	 * Sensor identification code/model number
@@ -72,7 +73,7 @@ public interface NXsensor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getName();
+	public Dataset getName();
 
 	/**
 	 * Name for the sensor
@@ -100,7 +101,7 @@ public interface NXsensor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getShort_name();
+	public Dataset getShort_name();
 
 	/**
 	 * Short name of sensor used e.g. on monitor display program
@@ -128,7 +129,7 @@ public interface NXsensor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAttached_to();
+	public Dataset getAttached_to();
 
 	/**
 	 * where sensor is attached to ("sample" | "can")
@@ -190,7 +191,7 @@ public interface NXsensor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMeasurement();
+	public Dataset getMeasurement();
 
 	/**
 	 * name for measured signal
@@ -277,7 +278,7 @@ public interface NXsensor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * The type of hardware used for the measurement.
@@ -342,7 +343,7 @@ public interface NXsensor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRun_control();
+	public Dataset getRun_control();
 
 	/**
 	 * Is data collection controlled or synchronised to this quantity:
@@ -386,7 +387,7 @@ public interface NXsensor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getHigh_trip_value();
+	public Dataset getHigh_trip_value();
 
 	/**
 	 * Upper control bound of sensor reading if using run_control
@@ -430,7 +431,7 @@ public interface NXsensor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLow_trip_value();
+	public Dataset getLow_trip_value();
 
 	/**
 	 * Lower control bound of sensor reading if using run_control
@@ -476,7 +477,7 @@ public interface NXsensor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getValue();
+	public Dataset getValue();
 
 	/**
 	 * nominal setpoint or average value
@@ -529,7 +530,7 @@ public interface NXsensor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getValue_deriv1();
+	public Dataset getValue_deriv1();
 
 	/**
 	 * Nominal/average first derivative of value
@@ -584,7 +585,7 @@ public interface NXsensor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getValue_deriv2();
+	public Dataset getValue_deriv2();
 
 	/**
 	 * Nominal/average second derivative of value
@@ -680,7 +681,7 @@ public interface NXsensor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getExternal_field_brief();
+	public Dataset getExternal_field_brief();
 
 	/**
 	 * <p>
@@ -844,7 +845,7 @@ public interface NXsensor extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

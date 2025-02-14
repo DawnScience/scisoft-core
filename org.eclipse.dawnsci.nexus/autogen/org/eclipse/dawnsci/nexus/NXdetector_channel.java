@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Description and metadata for a single channel from a multi-channel detector.
@@ -80,7 +81,7 @@ public interface NXdetector_channel extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getThreshold_energy();
+	public Dataset getThreshold_energy();
 
 	/**
 	 * Energy at which a photon will be recorded
@@ -124,7 +125,7 @@ public interface NXdetector_channel extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFlatfield_applied();
+	public Dataset getFlatfield_applied();
 
 	/**
 	 * True when the flat field correction has been applied in the
@@ -168,7 +169,7 @@ public interface NXdetector_channel extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFlatfield();
+	public Dataset getFlatfield();
 
 	/**
 	 * Response of each pixel given a constant input
@@ -213,7 +214,7 @@ public interface NXdetector_channel extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFlatfield_errors();
+	public Dataset getFlatfield_errors();
 
 	/**
 	 * Errors of the flat field correction data.
@@ -260,7 +261,7 @@ public interface NXdetector_channel extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPixel_mask_applied();
+	public Dataset getPixel_mask_applied();
 
 	/**
 	 * True when the pixel mask correction has been applied in the
@@ -305,7 +306,7 @@ public interface NXdetector_channel extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPixel_mask();
+	public Dataset getPixel_mask();
 
 	/**
 	 * Custom pixel mask for this channel. May include nP as the first dimension for
@@ -357,7 +358,7 @@ public interface NXdetector_channel extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSaturation_value();
+	public Dataset getSaturation_value();
 
 	/**
 	 * The value at which the detector goes into saturation.
@@ -420,7 +421,7 @@ public interface NXdetector_channel extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getUnderload_value();
+	public Dataset getUnderload_value();
 
 	/**
 	 * The lowest value at which pixels for this detector would be reasonably

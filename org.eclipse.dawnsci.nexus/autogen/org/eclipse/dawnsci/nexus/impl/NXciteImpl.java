@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -59,7 +60,7 @@ public class NXciteImpl extends NXobjectImpl implements NXcite {
 
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -79,7 +80,7 @@ public class NXciteImpl extends NXobjectImpl implements NXcite {
 	}
 
 	@Override
-	public IDataset getUrl() {
+	public Dataset getUrl() {
 		return getDataset(NX_URL);
 	}
 
@@ -99,7 +100,7 @@ public class NXciteImpl extends NXobjectImpl implements NXcite {
 	}
 
 	@Override
-	public IDataset getDoi() {
+	public Dataset getDoi() {
 		return getDataset(NX_DOI);
 	}
 
@@ -119,7 +120,7 @@ public class NXciteImpl extends NXobjectImpl implements NXcite {
 	}
 
 	@Override
-	public IDataset getEndnote() {
+	public Dataset getEndnote() {
 		return getDataset(NX_ENDNOTE);
 	}
 
@@ -139,7 +140,7 @@ public class NXciteImpl extends NXobjectImpl implements NXcite {
 	}
 
 	@Override
-	public IDataset getBibtex() {
+	public Dataset getBibtex() {
 		return getDataset(NX_BIBTEX);
 	}
 

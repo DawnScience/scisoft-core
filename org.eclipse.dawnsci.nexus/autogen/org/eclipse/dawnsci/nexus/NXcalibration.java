@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Subclass of NXprocess to describe post-processing calibrations.
@@ -46,7 +47,7 @@ public interface NXcalibration extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLast_process();
+	public Dataset getLast_process();
 
 	/**
 	 * Indicates the name of the last operation applied in the NXprocess sequence.
@@ -86,7 +87,7 @@ public interface NXcalibration extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getApplied();
+	public Dataset getApplied();
 
 	/**
 	 * Has the calibration been applied?
@@ -130,7 +131,7 @@ public interface NXcalibration extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCoefficients();
+	public Dataset getCoefficients();
 
 	/**
 	 * For non-linear energy calibrations, e.g. in a TOF, a polynomial function is fit
@@ -186,7 +187,7 @@ public interface NXcalibration extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFit_function();
+	public Dataset getFit_function();
 
 	/**
 	 * For non-linear energy calibrations. Here we can store the formula of the
@@ -239,7 +240,7 @@ public interface NXcalibration extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getScaling();
+	public Dataset getScaling();
 
 	/**
 	 * For linear calibration. Scaling parameter.
@@ -283,7 +284,7 @@ public interface NXcalibration extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getOffset();
+	public Dataset getOffset();
 
 	/**
 	 * For linear calibration. Offset parameter.
@@ -328,7 +329,7 @@ public interface NXcalibration extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCalibrated_axis();
+	public Dataset getCalibrated_axis();
 
 	/**
 	 * A vector representing the axis after calibration, matching the data length
@@ -376,7 +377,7 @@ public interface NXcalibration extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getOriginal_axis();
+	public Dataset getOriginal_axis();
 
 	/**
 	 * Vector containing the data coordinates in the original uncalibrated axis
@@ -422,7 +423,7 @@ public interface NXcalibration extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * A description of the procedures employed.

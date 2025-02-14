@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -103,7 +104,7 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -123,7 +124,7 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public IDataset getStatus() {
+	public Dataset getStatus() {
 		return getDataset(NX_STATUS);
 	}
 
@@ -154,7 +155,7 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public IDataset getTemperature() {
+	public Dataset getTemperature() {
 		return getDataset(NX_TEMPERATURE);
 	}
 
@@ -185,7 +186,7 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public IDataset getThickness() {
+	public Dataset getThickness() {
 		return getDataset(NX_THICKNESS);
 	}
 
@@ -205,7 +206,7 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public IDataset getDensity() {
+	public Dataset getDensity() {
 		return getDataset(NX_DENSITY);
 	}
 
@@ -225,7 +226,7 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public IDataset getChemical_formula() {
+	public Dataset getChemical_formula() {
 		return getDataset(NX_CHEMICAL_FORMULA);
 	}
 
@@ -256,7 +257,7 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public IDataset getUnit_cell_a() {
+	public Dataset getUnit_cell_a() {
 		return getDataset(NX_UNIT_CELL_A);
 	}
 
@@ -276,7 +277,7 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public IDataset getUnit_cell_b() {
+	public Dataset getUnit_cell_b() {
 		return getDataset(NX_UNIT_CELL_B);
 	}
 
@@ -296,7 +297,7 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public IDataset getUnit_cell_c() {
+	public Dataset getUnit_cell_c() {
 		return getDataset(NX_UNIT_CELL_C);
 	}
 
@@ -316,7 +317,7 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public IDataset getUnit_cell_alpha() {
+	public Dataset getUnit_cell_alpha() {
 		return getDataset(NX_UNIT_CELL_ALPHA);
 	}
 
@@ -336,7 +337,7 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public IDataset getUnit_cell_beta() {
+	public Dataset getUnit_cell_beta() {
 		return getDataset(NX_UNIT_CELL_BETA);
 	}
 
@@ -356,7 +357,7 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public IDataset getUnit_cell_gamma() {
+	public Dataset getUnit_cell_gamma() {
 		return getDataset(NX_UNIT_CELL_GAMMA);
 	}
 
@@ -376,7 +377,7 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public IDataset getUnit_cell_volume() {
+	public Dataset getUnit_cell_volume() {
 		return getDataset(NX_UNIT_CELL_VOLUME);
 	}
 
@@ -396,7 +397,7 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public IDataset getOrientation_matrix() {
+	public Dataset getOrientation_matrix() {
 		return getDataset(NX_ORIENTATION_MATRIX);
 	}
 
@@ -416,7 +417,7 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public IDataset getM_value() {
+	public Dataset getM_value() {
 		return getDataset(NX_M_VALUE);
 	}
 
@@ -436,7 +437,7 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public IDataset getSubstrate_material() {
+	public Dataset getSubstrate_material() {
 		return getDataset(NX_SUBSTRATE_MATERIAL);
 	}
 
@@ -456,7 +457,7 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public IDataset getSubstrate_thickness() {
+	public Dataset getSubstrate_thickness() {
 		return getDataset(NX_SUBSTRATE_THICKNESS);
 	}
 
@@ -476,7 +477,7 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public IDataset getCoating_material() {
+	public Dataset getCoating_material() {
 		return getDataset(NX_COATING_MATERIAL);
 	}
 
@@ -496,7 +497,7 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public IDataset getSubstrate_roughness() {
+	public Dataset getSubstrate_roughness() {
 		return getDataset(NX_SUBSTRATE_ROUGHNESS);
 	}
 
@@ -516,7 +517,7 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public IDataset getCoating_roughness() {
+	public Dataset getCoating_roughness() {
 		return getDataset(NX_COATING_ROUGHNESS);
 	}
 
@@ -577,7 +578,7 @@ public class NXfilterImpl extends NXobjectImpl implements NXfilter {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

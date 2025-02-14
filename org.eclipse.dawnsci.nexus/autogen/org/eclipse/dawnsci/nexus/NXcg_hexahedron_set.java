@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Computational geometry description of a set of hexahedra in Euclidean space.
@@ -91,7 +92,7 @@ public interface NXcg_hexahedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDimensionality();
+	public Dataset getDimensionality();
 
 	/**
 	 * <p>
@@ -137,7 +138,7 @@ public interface NXcg_hexahedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCardinality();
+	public Dataset getCardinality();
 
 	/**
 	 * <p>
@@ -179,7 +180,7 @@ public interface NXcg_hexahedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getShape();
+	public Dataset getShape();
 
 	/**
 	 * A qualitative description of each hexahedron/cuboid/cube/box.
@@ -229,7 +230,7 @@ public interface NXcg_hexahedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLength();
+	public Dataset getLength();
 
 	/**
 	 * Qualifier how one edge is longer than all other edges of the hexahedra.
@@ -284,7 +285,7 @@ public interface NXcg_hexahedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWidth();
+	public Dataset getWidth();
 
 	/**
 	 * Qualifier often used to describe the length of an edge within
@@ -336,7 +337,7 @@ public interface NXcg_hexahedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getHeight();
+	public Dataset getHeight();
 
 	/**
 	 * Qualifier often used to describe the length of an edge within
@@ -388,7 +389,7 @@ public interface NXcg_hexahedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCenter();
+	public Dataset getCenter();
 
 	/**
 	 * Position of the geometric center, which often is but not necessarily
@@ -438,7 +439,7 @@ public interface NXcg_hexahedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getVolume();
+	public Dataset getVolume();
 
 	/**
 	 * <p>
@@ -483,7 +484,7 @@ public interface NXcg_hexahedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSurface_area();
+	public Dataset getSurface_area();
 
 	/**
 	 * Total area (of all six faces) of each hexahedron.
@@ -531,7 +532,7 @@ public interface NXcg_hexahedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFace_area();
+	public Dataset getFace_area();
 
 	/**
 	 * Area of each of the six faces of each hexahedron.
@@ -579,7 +580,7 @@ public interface NXcg_hexahedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIs_box();
+	public Dataset getIs_box();
 
 	/**
 	 * Specifies if the hexahedra represent cuboids or cubes eventually rotated
@@ -628,7 +629,7 @@ public interface NXcg_hexahedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIs_axis_aligned();
+	public Dataset getIs_axis_aligned();
 
 	/**
 	 * Only to be used if is_box is present. In this case, this field describes
@@ -753,7 +754,7 @@ public interface NXcg_hexahedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier_offset();
+	public Dataset getIdentifier_offset();
 
 	/**
 	 * Integer which specifies the first index to be used for distinguishing
@@ -819,7 +820,7 @@ public interface NXcg_hexahedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier();
+	public Dataset getIdentifier();
 
 	/**
 	 * Integer used to distinguish hexahedra for explicit indexing.

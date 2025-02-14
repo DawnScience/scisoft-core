@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -55,7 +56,7 @@ public class NXionImpl extends NXobjectImpl implements NXion {
 
 
 	@Override
-	public IDataset getIdentifier() {
+	public Dataset getIdentifier() {
 		return getDataset(NX_IDENTIFIER);
 	}
 
@@ -75,7 +76,7 @@ public class NXionImpl extends NXobjectImpl implements NXion {
 	}
 
 	@Override
-	public IDataset getIdentifier_type() {
+	public Dataset getIdentifier_type() {
 		return getDataset(NX_IDENTIFIER_TYPE);
 	}
 
@@ -95,7 +96,7 @@ public class NXionImpl extends NXobjectImpl implements NXion {
 	}
 
 	@Override
-	public IDataset getIon_type() {
+	public Dataset getIon_type() {
 		return getDataset(NX_ION_TYPE);
 	}
 
@@ -115,7 +116,7 @@ public class NXionImpl extends NXobjectImpl implements NXion {
 	}
 
 	@Override
-	public IDataset getIsotope_vector() {
+	public Dataset getIsotope_vector() {
 		return getDataset(NX_ISOTOPE_VECTOR);
 	}
 
@@ -135,7 +136,7 @@ public class NXionImpl extends NXobjectImpl implements NXion {
 	}
 
 	@Override
-	public IDataset getNuclid_list() {
+	public Dataset getNuclid_list() {
 		return getDataset(NX_NUCLID_LIST);
 	}
 
@@ -155,7 +156,7 @@ public class NXionImpl extends NXobjectImpl implements NXion {
 	}
 
 	@Override
-	public IDataset getColor() {
+	public Dataset getColor() {
 		return getDataset(NX_COLOR);
 	}
 
@@ -175,7 +176,7 @@ public class NXionImpl extends NXobjectImpl implements NXion {
 	}
 
 	@Override
-	public IDataset getVolume() {
+	public Dataset getVolume() {
 		return getDataset(NX_VOLUME);
 	}
 
@@ -195,7 +196,7 @@ public class NXionImpl extends NXobjectImpl implements NXion {
 	}
 
 	@Override
-	public IDataset getCharge() {
+	public Dataset getCharge() {
 		return getDataset(NX_CHARGE);
 	}
 
@@ -215,7 +216,7 @@ public class NXionImpl extends NXobjectImpl implements NXion {
 	}
 
 	@Override
-	public IDataset getCharge_state() {
+	public Dataset getCharge_state() {
 		return getDataset(NX_CHARGE_STATE);
 	}
 
@@ -235,7 +236,7 @@ public class NXionImpl extends NXobjectImpl implements NXion {
 	}
 
 	@Override
-	public IDataset getName() {
+	public Dataset getName() {
 		return getDataset(NX_NAME);
 	}
 
@@ -255,7 +256,7 @@ public class NXionImpl extends NXobjectImpl implements NXion {
 	}
 
 	@Override
-	public IDataset getMass_to_charge_range() {
+	public Dataset getMass_to_charge_range() {
 		return getDataset(NX_MASS_TO_CHARGE_RANGE);
 	}
 

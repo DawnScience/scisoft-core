@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Computational geometry description of a Wigner-Seitz cell grid in Euclidean space.
@@ -59,7 +60,7 @@ public interface NXcg_grid extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDimensionality();
+	public Dataset getDimensionality();
 
 	/**
 	 * <p>
@@ -111,7 +112,7 @@ public interface NXcg_grid extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCardinality();
+	public Dataset getCardinality();
 
 	/**
 	 * <p>
@@ -151,7 +152,7 @@ public interface NXcg_grid extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getOrigin();
+	public Dataset getOrigin();
 
 	/**
 	 * <p>
@@ -192,7 +193,7 @@ public interface NXcg_grid extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSymmetry();
+	public Dataset getSymmetry();
 
 	/**
 	 * The symmetry of the lattice defining the shape of the unit cell.
@@ -237,7 +238,7 @@ public interface NXcg_grid extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCell_dimensions();
+	public Dataset getCell_dimensions();
 
 	/**
 	 * The unit cell dimensions using crystallographic notation.
@@ -290,7 +291,7 @@ public interface NXcg_grid extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getExtent();
+	public Dataset getExtent();
 
 	/**
 	 * Number of unit cells along each of the d unit vectors.
@@ -427,7 +428,7 @@ public interface NXcg_grid extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier_offset();
+	public Dataset getIdentifier_offset();
 
 	/**
 	 * Integer which specifies the first index to be used for distinguishing
@@ -493,7 +494,7 @@ public interface NXcg_grid extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier();
+	public Dataset getIdentifier();
 
 	/**
 	 * Integer used to distinguish cells for explicit indexing.
@@ -541,7 +542,7 @@ public interface NXcg_grid extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPosition();
+	public Dataset getPosition();
 
 	/**
 	 * Position of each cell in Euclidean space.
@@ -589,7 +590,7 @@ public interface NXcg_grid extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCoordinate();
+	public Dataset getCoordinate();
 
 	/**
 	 * Coordinate of each cell with respect to the discrete grid.
@@ -652,7 +653,7 @@ public interface NXcg_grid extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_boundaries();
+	public Dataset getNumber_of_boundaries();
 
 	/**
 	 * How many distinct boundaries are distinguished?
@@ -702,7 +703,7 @@ public interface NXcg_grid extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBoundaries();
+	public Dataset getBoundaries();
 
 	/**
 	 * Name of domain boundaries of the simulation box/ROI e.g. left, right,
@@ -753,7 +754,7 @@ public interface NXcg_grid extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBoundary_conditions();
+	public Dataset getBoundary_conditions();
 
 	/**
 	 * The boundary conditions for each boundary:

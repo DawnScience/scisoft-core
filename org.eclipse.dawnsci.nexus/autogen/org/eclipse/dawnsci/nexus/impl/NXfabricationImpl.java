@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -55,7 +56,7 @@ public class NXfabricationImpl extends NXobjectImpl implements NXfabrication {
 
 
 	@Override
-	public IDataset getVendor() {
+	public Dataset getVendor() {
 		return getDataset(NX_VENDOR);
 	}
 
@@ -75,7 +76,7 @@ public class NXfabricationImpl extends NXobjectImpl implements NXfabrication {
 	}
 
 	@Override
-	public IDataset getModel() {
+	public Dataset getModel() {
 		return getDataset(NX_MODEL);
 	}
 
@@ -95,7 +96,7 @@ public class NXfabricationImpl extends NXobjectImpl implements NXfabrication {
 	}
 
 	@Override
-	public IDataset getIdentifier() {
+	public Dataset getIdentifier() {
 		return getDataset(NX_IDENTIFIER);
 	}
 
@@ -115,7 +116,7 @@ public class NXfabricationImpl extends NXobjectImpl implements NXfabrication {
 	}
 
 	@Override
-	public IDataset getCapability() {
+	public Dataset getCapability() {
 		return getDataset(NX_CAPABILITY);
 	}
 

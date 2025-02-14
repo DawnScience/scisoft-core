@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A beamline aperture.
@@ -46,7 +47,7 @@ public interface NXaperture extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations
@@ -391,7 +392,7 @@ public interface NXaperture extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMaterial();
+	public Dataset getMaterial();
 
 	/**
 	 * Absorbing material of the aperture
@@ -419,7 +420,7 @@ public interface NXaperture extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * Description of aperture

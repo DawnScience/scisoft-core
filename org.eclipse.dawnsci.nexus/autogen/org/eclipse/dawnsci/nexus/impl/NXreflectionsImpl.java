@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -55,7 +56,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 
 
 	@Override
-	public IDataset getExperiments() {
+	public Dataset getExperiments() {
 		return getDataset(NX_EXPERIMENTS);
 	}
 
@@ -75,7 +76,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getH() {
+	public Dataset getH() {
 		return getDataset(NX_H);
 	}
 
@@ -105,7 +106,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getK() {
+	public Dataset getK() {
 		return getDataset(NX_K);
 	}
 
@@ -135,7 +136,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getL() {
+	public Dataset getL() {
 		return getDataset(NX_L);
 	}
 
@@ -165,7 +166,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getId() {
+	public Dataset getId() {
 		return getDataset(NX_ID);
 	}
 
@@ -195,7 +196,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getReflection_id() {
+	public Dataset getReflection_id() {
 		return getDataset(NX_REFLECTION_ID);
 	}
 
@@ -225,7 +226,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getEntering() {
+	public Dataset getEntering() {
 		return getDataset(NX_ENTERING);
 	}
 
@@ -255,7 +256,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getDet_module() {
+	public Dataset getDet_module() {
 		return getDataset(NX_DET_MODULE);
 	}
 
@@ -285,7 +286,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getFlags() {
+	public Dataset getFlags() {
 		return getDataset(NX_FLAGS);
 	}
 
@@ -315,7 +316,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getD() {
+	public Dataset getD() {
 		return getDataset(NX_D);
 	}
 
@@ -345,7 +346,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getPartiality() {
+	public Dataset getPartiality() {
 		return getDataset(NX_PARTIALITY);
 	}
 
@@ -375,7 +376,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getPredicted_frame() {
+	public Dataset getPredicted_frame() {
 		return getDataset(NX_PREDICTED_FRAME);
 	}
 
@@ -405,7 +406,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getPredicted_x() {
+	public Dataset getPredicted_x() {
 		return getDataset(NX_PREDICTED_X);
 	}
 
@@ -435,7 +436,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getPredicted_y() {
+	public Dataset getPredicted_y() {
 		return getDataset(NX_PREDICTED_Y);
 	}
 
@@ -465,7 +466,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getPredicted_phi() {
+	public Dataset getPredicted_phi() {
 		return getDataset(NX_PREDICTED_PHI);
 	}
 
@@ -495,7 +496,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getPredicted_px_x() {
+	public Dataset getPredicted_px_x() {
 		return getDataset(NX_PREDICTED_PX_X);
 	}
 
@@ -525,7 +526,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getPredicted_px_y() {
+	public Dataset getPredicted_px_y() {
 		return getDataset(NX_PREDICTED_PX_Y);
 	}
 
@@ -555,7 +556,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getObserved_frame() {
+	public Dataset getObserved_frame() {
 		return getDataset(NX_OBSERVED_FRAME);
 	}
 
@@ -585,7 +586,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getObserved_frame_var() {
+	public Dataset getObserved_frame_var() {
 		return getDataset(NX_OBSERVED_FRAME_VAR);
 	}
 
@@ -615,7 +616,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getObserved_frame_errors() {
+	public Dataset getObserved_frame_errors() {
 		return getDataset(NX_OBSERVED_FRAME_ERRORS);
 	}
 
@@ -645,7 +646,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getObserved_px_x() {
+	public Dataset getObserved_px_x() {
 		return getDataset(NX_OBSERVED_PX_X);
 	}
 
@@ -675,7 +676,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getObserved_px_x_var() {
+	public Dataset getObserved_px_x_var() {
 		return getDataset(NX_OBSERVED_PX_X_VAR);
 	}
 
@@ -705,7 +706,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getObserved_px_x_errors() {
+	public Dataset getObserved_px_x_errors() {
 		return getDataset(NX_OBSERVED_PX_X_ERRORS);
 	}
 
@@ -735,7 +736,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getObserved_px_y() {
+	public Dataset getObserved_px_y() {
 		return getDataset(NX_OBSERVED_PX_Y);
 	}
 
@@ -765,7 +766,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getObserved_px_y_var() {
+	public Dataset getObserved_px_y_var() {
 		return getDataset(NX_OBSERVED_PX_Y_VAR);
 	}
 
@@ -795,7 +796,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getObserved_px_y_errors() {
+	public Dataset getObserved_px_y_errors() {
 		return getDataset(NX_OBSERVED_PX_Y_ERRORS);
 	}
 
@@ -825,7 +826,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getObserved_phi() {
+	public Dataset getObserved_phi() {
 		return getDataset(NX_OBSERVED_PHI);
 	}
 
@@ -855,7 +856,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getObserved_phi_var() {
+	public Dataset getObserved_phi_var() {
 		return getDataset(NX_OBSERVED_PHI_VAR);
 	}
 
@@ -885,7 +886,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getObserved_phi_errors() {
+	public Dataset getObserved_phi_errors() {
 		return getDataset(NX_OBSERVED_PHI_ERRORS);
 	}
 
@@ -915,7 +916,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getObserved_x() {
+	public Dataset getObserved_x() {
 		return getDataset(NX_OBSERVED_X);
 	}
 
@@ -945,7 +946,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getObserved_x_var() {
+	public Dataset getObserved_x_var() {
 		return getDataset(NX_OBSERVED_X_VAR);
 	}
 
@@ -975,7 +976,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getObserved_x_errors() {
+	public Dataset getObserved_x_errors() {
 		return getDataset(NX_OBSERVED_X_ERRORS);
 	}
 
@@ -1005,7 +1006,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getObserved_y() {
+	public Dataset getObserved_y() {
 		return getDataset(NX_OBSERVED_Y);
 	}
 
@@ -1035,7 +1036,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getObserved_y_var() {
+	public Dataset getObserved_y_var() {
 		return getDataset(NX_OBSERVED_Y_VAR);
 	}
 
@@ -1065,7 +1066,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getObserved_y_errors() {
+	public Dataset getObserved_y_errors() {
 		return getDataset(NX_OBSERVED_Y_ERRORS);
 	}
 
@@ -1095,7 +1096,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getBounding_box() {
+	public Dataset getBounding_box() {
 		return getDataset(NX_BOUNDING_BOX);
 	}
 
@@ -1125,7 +1126,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getBackground_mean() {
+	public Dataset getBackground_mean() {
 		return getDataset(NX_BACKGROUND_MEAN);
 	}
 
@@ -1155,7 +1156,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getInt_prf() {
+	public Dataset getInt_prf() {
 		return getDataset(NX_INT_PRF);
 	}
 
@@ -1185,7 +1186,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getInt_prf_var() {
+	public Dataset getInt_prf_var() {
 		return getDataset(NX_INT_PRF_VAR);
 	}
 
@@ -1215,7 +1216,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getInt_prf_errors() {
+	public Dataset getInt_prf_errors() {
 		return getDataset(NX_INT_PRF_ERRORS);
 	}
 
@@ -1245,7 +1246,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getInt_sum() {
+	public Dataset getInt_sum() {
 		return getDataset(NX_INT_SUM);
 	}
 
@@ -1275,7 +1276,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getInt_sum_var() {
+	public Dataset getInt_sum_var() {
 		return getDataset(NX_INT_SUM_VAR);
 	}
 
@@ -1305,7 +1306,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getInt_sum_errors() {
+	public Dataset getInt_sum_errors() {
 		return getDataset(NX_INT_SUM_ERRORS);
 	}
 
@@ -1335,7 +1336,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getLp() {
+	public Dataset getLp() {
 		return getDataset(NX_LP);
 	}
 
@@ -1365,7 +1366,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getPrf_cc() {
+	public Dataset getPrf_cc() {
 		return getDataset(NX_PRF_CC);
 	}
 
@@ -1395,7 +1396,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getOverlaps() {
+	public Dataset getOverlaps() {
 		return getDataset(NX_OVERLAPS);
 	}
 
@@ -1425,7 +1426,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getPolar_angle() {
+	public Dataset getPolar_angle() {
 		return getDataset(NX_POLAR_ANGLE);
 	}
 
@@ -1455,7 +1456,7 @@ public class NXreflectionsImpl extends NXobjectImpl implements NXreflections {
 	}
 
 	@Override
-	public IDataset getAzimuthal_angle() {
+	public Dataset getAzimuthal_angle() {
 		return getDataset(NX_AZIMUTHAL_ANGLE);
 	}
 

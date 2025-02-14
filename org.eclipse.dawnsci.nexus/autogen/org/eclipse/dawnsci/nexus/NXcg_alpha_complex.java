@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Computational geometry description of alpha shapes or wrappings to primitives.
@@ -55,7 +56,7 @@ public interface NXcg_alpha_complex extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDimensionality();
+	public Dataset getDimensionality();
 
 	/**
 	 * <p>
@@ -109,7 +110,7 @@ public interface NXcg_alpha_complex extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * Specify which general type of alpha shape is computed.
@@ -167,7 +168,7 @@ public interface NXcg_alpha_complex extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMode();
+	public Dataset getMode();
 
 	/**
 	 * Specifically when computed with the CGAL, the mode specifies if singular
@@ -218,7 +219,7 @@ public interface NXcg_alpha_complex extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAlpha();
+	public Dataset getAlpha();
 
 	/**
 	 * The alpha, (radius of the alpha-sphere) parameter to be used for alpha
@@ -266,7 +267,7 @@ public interface NXcg_alpha_complex extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getOffset();
+	public Dataset getOffset();
 
 	/**
 	 * The offset distance parameter to be used in addition to alpha

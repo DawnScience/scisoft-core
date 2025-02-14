@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Collection of axis-based translations and rotations to describe a geometry.
@@ -104,7 +105,7 @@ public interface NXtransformations extends NXobject {
 	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public IDataset getAxisname(String axisname);
+	public Dataset getAxisname(String axisname);
 
 	/**
 	 * Units need to be appropriate for translation or rotation
@@ -356,7 +357,7 @@ public interface NXtransformations extends NXobject {
 	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public IDataset getEnd(String axisname);
+	public Dataset getEnd(String axisname);
 
 	/**
 	 * ``AXISNAME_end`` is a placeholder for a name constructed from the actual
@@ -437,7 +438,7 @@ public interface NXtransformations extends NXobject {
 	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public IDataset getIncrement_set(String axisname);
+	public Dataset getIncrement_set(String axisname);
 
 	/**
 	 * ``AXISNAME_increment_set`` is a placeholder for a name constructed from the actual

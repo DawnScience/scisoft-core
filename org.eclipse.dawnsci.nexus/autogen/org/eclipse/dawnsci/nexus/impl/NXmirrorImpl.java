@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -100,7 +101,7 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -120,7 +121,7 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -140,7 +141,7 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public IDataset getIncident_angle() {
+	public Dataset getIncident_angle() {
 		return getDataset(NX_INCIDENT_ANGLE);
 	}
 
@@ -171,7 +172,7 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public IDataset getBend_angle_x() {
+	public Dataset getBend_angle_x() {
 		return getDataset(NX_BEND_ANGLE_X);
 	}
 
@@ -191,7 +192,7 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public IDataset getBend_angle_y() {
+	public Dataset getBend_angle_y() {
 		return getDataset(NX_BEND_ANGLE_Y);
 	}
 
@@ -211,7 +212,7 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public IDataset getInterior_atmosphere() {
+	public Dataset getInterior_atmosphere() {
 		return getDataset(NX_INTERIOR_ATMOSPHERE);
 	}
 
@@ -231,7 +232,7 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public IDataset getExternal_material() {
+	public Dataset getExternal_material() {
 		return getDataset(NX_EXTERNAL_MATERIAL);
 	}
 
@@ -251,7 +252,7 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public IDataset getM_value() {
+	public Dataset getM_value() {
 		return getDataset(NX_M_VALUE);
 	}
 
@@ -271,7 +272,7 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public IDataset getSubstrate_material() {
+	public Dataset getSubstrate_material() {
 		return getDataset(NX_SUBSTRATE_MATERIAL);
 	}
 
@@ -291,7 +292,7 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public IDataset getSubstrate_density() {
+	public Dataset getSubstrate_density() {
 		return getDataset(NX_SUBSTRATE_DENSITY);
 	}
 
@@ -311,7 +312,7 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public IDataset getSubstrate_thickness() {
+	public Dataset getSubstrate_thickness() {
 		return getDataset(NX_SUBSTRATE_THICKNESS);
 	}
 
@@ -331,7 +332,7 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public IDataset getCoating_material() {
+	public Dataset getCoating_material() {
 		return getDataset(NX_COATING_MATERIAL);
 	}
 
@@ -351,7 +352,7 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public IDataset getSubstrate_roughness() {
+	public Dataset getSubstrate_roughness() {
 		return getDataset(NX_SUBSTRATE_ROUGHNESS);
 	}
 
@@ -371,7 +372,7 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public IDataset getCoating_roughness() {
+	public Dataset getCoating_roughness() {
 		return getDataset(NX_COATING_ROUGHNESS);
 	}
 
@@ -391,7 +392,7 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public IDataset getEven_layer_material() {
+	public Dataset getEven_layer_material() {
 		return getDataset(NX_EVEN_LAYER_MATERIAL);
 	}
 
@@ -411,7 +412,7 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public IDataset getEven_layer_density() {
+	public Dataset getEven_layer_density() {
 		return getDataset(NX_EVEN_LAYER_DENSITY);
 	}
 
@@ -431,7 +432,7 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public IDataset getOdd_layer_material() {
+	public Dataset getOdd_layer_material() {
 		return getDataset(NX_ODD_LAYER_MATERIAL);
 	}
 
@@ -451,7 +452,7 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public IDataset getOdd_layer_density() {
+	public Dataset getOdd_layer_density() {
 		return getDataset(NX_ODD_LAYER_DENSITY);
 	}
 
@@ -471,7 +472,7 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public IDataset getLayer_thickness() {
+	public Dataset getLayer_thickness() {
 		return getDataset(NX_LAYER_THICKNESS);
 	}
 
@@ -556,7 +557,7 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

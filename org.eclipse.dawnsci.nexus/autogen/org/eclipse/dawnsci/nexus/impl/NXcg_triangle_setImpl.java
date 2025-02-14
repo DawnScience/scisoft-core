@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -63,7 +64,7 @@ public class NXcg_triangle_setImpl extends NXobjectImpl implements NXcg_triangle
 
 
 	@Override
-	public IDataset getDimensionality() {
+	public Dataset getDimensionality() {
 		return getDataset(NX_DIMENSIONALITY);
 	}
 
@@ -83,7 +84,7 @@ public class NXcg_triangle_setImpl extends NXobjectImpl implements NXcg_triangle
 	}
 
 	@Override
-	public IDataset getCardinality() {
+	public Dataset getCardinality() {
 		return getDataset(NX_CARDINALITY);
 	}
 
@@ -103,7 +104,7 @@ public class NXcg_triangle_setImpl extends NXobjectImpl implements NXcg_triangle
 	}
 
 	@Override
-	public IDataset getNumber_of_unique_vertices() {
+	public Dataset getNumber_of_unique_vertices() {
 		return getDataset(NX_NUMBER_OF_UNIQUE_VERTICES);
 	}
 
@@ -154,7 +155,7 @@ public class NXcg_triangle_setImpl extends NXobjectImpl implements NXcg_triangle
 	}
 
 	@Override
-	public IDataset getIdentifier_offset() {
+	public Dataset getIdentifier_offset() {
 		return getDataset(NX_IDENTIFIER_OFFSET);
 	}
 
@@ -174,7 +175,7 @@ public class NXcg_triangle_setImpl extends NXobjectImpl implements NXcg_triangle
 	}
 
 	@Override
-	public IDataset getIdentifier() {
+	public Dataset getIdentifier() {
 		return getDataset(NX_IDENTIFIER);
 	}
 
@@ -238,7 +239,7 @@ public class NXcg_triangle_setImpl extends NXobjectImpl implements NXcg_triangle
 	}
 
 	@Override
-	public IDataset getArea() {
+	public Dataset getArea() {
 		return getDataset(NX_AREA);
 	}
 
@@ -258,7 +259,7 @@ public class NXcg_triangle_setImpl extends NXobjectImpl implements NXcg_triangle
 	}
 
 	@Override
-	public IDataset getEdge_length() {
+	public Dataset getEdge_length() {
 		return getDataset(NX_EDGE_LENGTH);
 	}
 
@@ -278,7 +279,7 @@ public class NXcg_triangle_setImpl extends NXobjectImpl implements NXcg_triangle
 	}
 
 	@Override
-	public IDataset getInterior_angle() {
+	public Dataset getInterior_angle() {
 		return getDataset(NX_INTERIOR_ANGLE);
 	}
 
@@ -298,7 +299,7 @@ public class NXcg_triangle_setImpl extends NXobjectImpl implements NXcg_triangle
 	}
 
 	@Override
-	public IDataset getCenter() {
+	public Dataset getCenter() {
 		return getDataset(NX_CENTER);
 	}
 

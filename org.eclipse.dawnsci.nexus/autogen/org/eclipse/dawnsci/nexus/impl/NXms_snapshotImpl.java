@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -56,7 +57,7 @@ public class NXms_snapshotImpl extends NXobjectImpl implements NXms_snapshot {
 
 
 	@Override
-	public IDataset getComment() {
+	public Dataset getComment() {
 		return getDataset(NX_COMMENT);
 	}
 
@@ -76,7 +77,7 @@ public class NXms_snapshotImpl extends NXobjectImpl implements NXms_snapshot {
 	}
 
 	@Override
-	public IDataset getTime() {
+	public Dataset getTime() {
 		return getDataset(NX_TIME);
 	}
 
@@ -96,7 +97,7 @@ public class NXms_snapshotImpl extends NXobjectImpl implements NXms_snapshot {
 	}
 
 	@Override
-	public IDataset getIteration() {
+	public Dataset getIteration() {
 		return getDataset(NX_ITERATION);
 	}
 

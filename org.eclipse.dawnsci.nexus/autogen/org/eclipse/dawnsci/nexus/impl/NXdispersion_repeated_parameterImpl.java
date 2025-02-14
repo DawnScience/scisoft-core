@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -55,7 +56,7 @@ public class NXdispersion_repeated_parameterImpl extends NXobjectImpl implements
 
 
 	@Override
-	public IDataset getName() {
+	public Dataset getName() {
 		return getDataset(NX_NAME);
 	}
 
@@ -75,7 +76,7 @@ public class NXdispersion_repeated_parameterImpl extends NXobjectImpl implements
 	}
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -95,7 +96,7 @@ public class NXdispersion_repeated_parameterImpl extends NXobjectImpl implements
 	}
 
 	@Override
-	public IDataset getParameter_units() {
+	public Dataset getParameter_units() {
 		return getDataset(NX_PARAMETER_UNITS);
 	}
 
@@ -115,7 +116,7 @@ public class NXdispersion_repeated_parameterImpl extends NXobjectImpl implements
 	}
 
 	@Override
-	public IDataset getValues() {
+	public Dataset getValues() {
 		return getDataset(NX_VALUES);
 	}
 

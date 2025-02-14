@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Document an event of data processing, reconstruction, or analysis for this data.
@@ -37,7 +38,7 @@ public interface NXprocess extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getProgram();
+	public Dataset getProgram();
 
 	/**
 	 * Name of the program used
@@ -79,7 +80,7 @@ public interface NXprocess extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSequence_index();
+	public Dataset getSequence_index();
 
 	/**
 	 * Sequence index of processing,
@@ -125,7 +126,7 @@ public interface NXprocess extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getVersion();
+	public Dataset getVersion();
 
 	/**
 	 * Version of the program used
@@ -165,7 +166,7 @@ public interface NXprocess extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDate();
+	public Dataset getDate();
 
 	/**
 	 * Date and time of processing.

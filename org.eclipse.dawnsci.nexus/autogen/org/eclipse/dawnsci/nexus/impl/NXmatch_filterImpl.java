@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -55,7 +56,7 @@ public class NXmatch_filterImpl extends NXobjectImpl implements NXmatch_filter {
 
 
 	@Override
-	public IDataset getMethod() {
+	public Dataset getMethod() {
 		return getDataset(NX_METHOD);
 	}
 
@@ -75,7 +76,7 @@ public class NXmatch_filterImpl extends NXobjectImpl implements NXmatch_filter {
 	}
 
 	@Override
-	public IDataset getMatch() {
+	public Dataset getMatch() {
 		return getDataset(NX_MATCH);
 	}
 

@@ -96,7 +96,7 @@ public interface NXobject extends GroupNode {
 	 * @return the dataset for the field with the given name, or <code>null</code> if the no such dataset exists
 	 * @throws IllegalStateException if the dataset is too large to load into memory
 	 */
-	public IDataset getDataset(String name);
+	public Dataset getDataset(String name);
 	
 	/**
 	 * Gets the dataset for the field with the given name, if it exists, otherwise <code>null</code>.
@@ -336,6 +336,6 @@ public interface NXobject extends GroupNode {
 	 * Returns all datasets as a map keyed by field name
 	 * @return all datasets
 	 */
-	public Map<String, IDataset> getAllDatasets();
+	public Map<String, Dataset> getAllDatasets();
 
 }

@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -71,7 +72,7 @@ public class NXmonochromatorImpl extends NXobjectImpl implements NXmonochromator
 
 
 	@Override
-	public IDataset getWavelength() {
+	public Dataset getWavelength() {
 		return getDataset(NX_WAVELENGTH);
 	}
 
@@ -92,7 +93,7 @@ public class NXmonochromatorImpl extends NXobjectImpl implements NXmonochromator
 
 	@Override
 	@Deprecated
-	public IDataset getWavelength_error() {
+	public Dataset getWavelength_error() {
 		return getDataset(NX_WAVELENGTH_ERROR);
 	}
 
@@ -115,7 +116,7 @@ public class NXmonochromatorImpl extends NXobjectImpl implements NXmonochromator
 	}
 
 	@Override
-	public IDataset getWavelength_errors() {
+	public Dataset getWavelength_errors() {
 		return getDataset(NX_WAVELENGTH_ERRORS);
 	}
 
@@ -135,7 +136,7 @@ public class NXmonochromatorImpl extends NXobjectImpl implements NXmonochromator
 	}
 
 	@Override
-	public IDataset getEnergy() {
+	public Dataset getEnergy() {
 		return getDataset(NX_ENERGY);
 	}
 
@@ -156,7 +157,7 @@ public class NXmonochromatorImpl extends NXobjectImpl implements NXmonochromator
 
 	@Override
 	@Deprecated
-	public IDataset getEnergy_error() {
+	public Dataset getEnergy_error() {
 		return getDataset(NX_ENERGY_ERROR);
 	}
 
@@ -179,7 +180,7 @@ public class NXmonochromatorImpl extends NXobjectImpl implements NXmonochromator
 	}
 
 	@Override
-	public IDataset getEnergy_errors() {
+	public Dataset getEnergy_errors() {
 		return getDataset(NX_ENERGY_ERRORS);
 	}
 
@@ -357,7 +358,7 @@ public class NXmonochromatorImpl extends NXobjectImpl implements NXmonochromator
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

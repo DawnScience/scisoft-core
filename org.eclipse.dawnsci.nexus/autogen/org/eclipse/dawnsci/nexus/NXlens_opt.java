@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Description of an optical lens.
@@ -56,7 +57,7 @@ public interface NXlens_opt extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * Type of the lens (e.g. concave, convex etc.).
@@ -117,7 +118,7 @@ public interface NXlens_opt extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getOther_type();
+	public Dataset getOther_type();
 
 	/**
 	 * If you chose 'other' as type specify what it is.
@@ -148,7 +149,7 @@ public interface NXlens_opt extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getChromatic();
+	public Dataset getChromatic();
 
 	/**
 	 * Is it a chromatic lens?
@@ -189,7 +190,7 @@ public interface NXlens_opt extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLens_diameter();
+	public Dataset getLens_diameter();
 
 	/**
 	 * Diameter of the lens.
@@ -275,7 +276,7 @@ public interface NXlens_opt extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getReflectance();
+	public Dataset getReflectance();
 
 	/**
 	 * Reflectance of the lens at given spectral values.
@@ -319,7 +320,7 @@ public interface NXlens_opt extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTransmission();
+	public Dataset getTransmission();
 
 	/**
 	 * Transmission of the lens at given spectral values.
@@ -365,7 +366,7 @@ public interface NXlens_opt extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFocal_length();
+	public Dataset getFocal_length();
 
 	/**
 	 * Focal length of the lens on the front side (first value), i.e. where the
@@ -420,7 +421,7 @@ public interface NXlens_opt extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCurvature_radius_face();
+	public Dataset getCurvature_radius_face();
 
 	/**
 	 * Curvature radius of the lens.
@@ -479,7 +480,7 @@ public interface NXlens_opt extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAbbe_number();
+	public Dataset getAbbe_number();
 
 	/**
 	 * Abbe number (or V-number) of the lens.

@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Computer science base class for packing and unpacking booleans.
@@ -64,7 +65,7 @@ public interface NXcs_filter_boolean_mask extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_objects();
+	public Dataset getNumber_of_objects();
 
 	/**
 	 * Number of objects represented by the mask.
@@ -109,7 +110,7 @@ public interface NXcs_filter_boolean_mask extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBitdepth();
+	public Dataset getBitdepth();
 
 	/**
 	 * Number of bits assumed matching on a default datatype.
@@ -158,7 +159,7 @@ public interface NXcs_filter_boolean_mask extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMask();
+	public Dataset getMask();
 
 	/**
 	 * The unsigned integer array representing the content of the mask.
@@ -211,7 +212,7 @@ public interface NXcs_filter_boolean_mask extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier();
+	public Dataset getIdentifier();
 
 	/**
 	 * Link to/or array of identifiers for the objects. The decoded mask is

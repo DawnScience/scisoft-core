@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -55,7 +56,7 @@ public class NXdispersion_single_parameterImpl extends NXobjectImpl implements N
 
 
 	@Override
-	public IDataset getName() {
+	public Dataset getName() {
 		return getDataset(NX_NAME);
 	}
 
@@ -75,7 +76,7 @@ public class NXdispersion_single_parameterImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -95,7 +96,7 @@ public class NXdispersion_single_parameterImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getValue() {
+	public Dataset getValue() {
 		return getDataset(NX_VALUE);
 	}
 

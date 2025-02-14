@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -242,7 +243,7 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	}
 
 	@Override
-	public IDataset getAxisname(String axisname) {
+	public Dataset getAxisname(String axisname) {
 		return getDataset(axisname);
 	}
 
@@ -268,7 +269,7 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	}
 
 	@Override
-	public Map<String, IDataset> getAllAxisname() {
+	public Map<String, Dataset> getAllAxisname() {
 		return getAllDatasets(); // note: returns all datasets in the group!
 	}
 
@@ -335,7 +336,7 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	}
 
 	@Override
-	public IDataset getData(String data) {
+	public Dataset getData(String data) {
 		return getDataset(data);
 	}
 
@@ -355,7 +356,7 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	}
 
 	@Override
-	public Map<String, IDataset> getAllData() {
+	public Map<String, Dataset> getAllData() {
 		return getAllDatasets(); // note: returns all datasets in the group!
 	}
 
@@ -394,7 +395,7 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	}
 
 	@Override
-	public IDataset getErrors(String fieldname) {
+	public Dataset getErrors(String fieldname) {
 		return getDataset(fieldname + NX_ERRORS_SUFFIX);
 	}
 
@@ -414,13 +415,13 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	}
 
 	@Override
-	public Map<String, IDataset> getAllErrors() {
+	public Map<String, Dataset> getAllErrors() {
 		return getAllDatasets(); // note: returns all datasets in the group!
 	}
 
 	@Override
 	@Deprecated
-	public IDataset getErrors() {
+	public Dataset getErrors() {
 		return getDataset(NX_ERRORS);
 	}
 
@@ -443,7 +444,7 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	}
 
 	@Override
-	public IDataset getScaling_factor() {
+	public Dataset getScaling_factor() {
 		return getDataset(NX_SCALING_FACTOR);
 	}
 
@@ -463,7 +464,7 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	}
 
 	@Override
-	public IDataset getOffset() {
+	public Dataset getOffset() {
 		return getDataset(NX_OFFSET);
 	}
 
@@ -483,7 +484,7 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	}
 
 	@Override
-	public IDataset getTitle() {
+	public Dataset getTitle() {
 		return getDataset(NX_TITLE);
 	}
 
@@ -503,7 +504,7 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	}
 
 	@Override
-	public IDataset getX() {
+	public Dataset getX() {
 		return getDataset(NX_X);
 	}
 
@@ -523,7 +524,7 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	}
 
 	@Override
-	public IDataset getY() {
+	public Dataset getY() {
 		return getDataset(NX_Y);
 	}
 
@@ -543,7 +544,7 @@ public class NXdataImpl extends NXobjectImpl implements NXdata {
 	}
 
 	@Override
-	public IDataset getZ() {
+	public Dataset getZ() {
 		return getDataset(NX_Z);
 	}
 

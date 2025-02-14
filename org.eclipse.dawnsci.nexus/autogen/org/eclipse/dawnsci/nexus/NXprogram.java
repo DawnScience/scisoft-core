@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Base class to describe a software tool or library.
@@ -32,7 +33,7 @@ public interface NXprogram extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getProgram();
+	public Dataset getProgram();
 
 	/**
 	 * Given name of the program. Program can be a commercial one a script,

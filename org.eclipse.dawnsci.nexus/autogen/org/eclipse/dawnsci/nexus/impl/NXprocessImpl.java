@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -59,7 +60,7 @@ public class NXprocessImpl extends NXobjectImpl implements NXprocess {
 
 
 	@Override
-	public IDataset getProgram() {
+	public Dataset getProgram() {
 		return getDataset(NX_PROGRAM);
 	}
 
@@ -79,7 +80,7 @@ public class NXprocessImpl extends NXobjectImpl implements NXprocess {
 	}
 
 	@Override
-	public IDataset getSequence_index() {
+	public Dataset getSequence_index() {
 		return getDataset(NX_SEQUENCE_INDEX);
 	}
 
@@ -99,7 +100,7 @@ public class NXprocessImpl extends NXobjectImpl implements NXprocess {
 	}
 
 	@Override
-	public IDataset getVersion() {
+	public Dataset getVersion() {
 		return getDataset(NX_VERSION);
 	}
 
@@ -119,7 +120,7 @@ public class NXprocessImpl extends NXobjectImpl implements NXprocess {
 	}
 
 	@Override
-	public IDataset getDate() {
+	public Dataset getDate() {
 		return getDataset(NX_DATE);
 	}
 

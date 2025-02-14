@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -61,7 +62,7 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 
 
 	@Override
-	public IDataset getAngles() {
+	public Dataset getAngles() {
 		return getDataset(NX_ANGLES);
 	}
 
@@ -81,7 +82,7 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public IDataset getPeriod() {
+	public Dataset getPeriod() {
 		return getDataset(NX_PERIOD);
 	}
 
@@ -101,7 +102,7 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public IDataset getDuty_cycle() {
+	public Dataset getDuty_cycle() {
 		return getDataset(NX_DUTY_CYCLE);
 	}
 
@@ -121,7 +122,7 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public IDataset getDepth() {
+	public Dataset getDepth() {
 		return getDataset(NX_DEPTH);
 	}
 
@@ -141,7 +142,7 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public IDataset getDiffraction_order() {
+	public Dataset getDiffraction_order() {
 		return getDataset(NX_DIFFRACTION_ORDER);
 	}
 
@@ -161,7 +162,7 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public IDataset getDeflection_angle() {
+	public Dataset getDeflection_angle() {
 		return getDataset(NX_DEFLECTION_ANGLE);
 	}
 
@@ -181,7 +182,7 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public IDataset getInterior_atmosphere() {
+	public Dataset getInterior_atmosphere() {
 		return getDataset(NX_INTERIOR_ATMOSPHERE);
 	}
 
@@ -201,7 +202,7 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public IDataset getSubstrate_material() {
+	public Dataset getSubstrate_material() {
 		return getDataset(NX_SUBSTRATE_MATERIAL);
 	}
 
@@ -221,7 +222,7 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public IDataset getSubstrate_density() {
+	public Dataset getSubstrate_density() {
 		return getDataset(NX_SUBSTRATE_DENSITY);
 	}
 
@@ -241,7 +242,7 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public IDataset getSubstrate_thickness() {
+	public Dataset getSubstrate_thickness() {
 		return getDataset(NX_SUBSTRATE_THICKNESS);
 	}
 
@@ -261,7 +262,7 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public IDataset getCoating_material() {
+	public Dataset getCoating_material() {
 		return getDataset(NX_COATING_MATERIAL);
 	}
 
@@ -281,7 +282,7 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public IDataset getSubstrate_roughness() {
+	public Dataset getSubstrate_roughness() {
 		return getDataset(NX_SUBSTRATE_ROUGHNESS);
 	}
 
@@ -301,7 +302,7 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public IDataset getCoating_roughness() {
+	public Dataset getCoating_roughness() {
 		return getDataset(NX_COATING_ROUGHNESS);
 	}
 
@@ -321,7 +322,7 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public IDataset getLayer_thickness() {
+	public Dataset getLayer_thickness() {
 		return getDataset(NX_LAYER_THICKNESS);
 	}
 
@@ -406,7 +407,7 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

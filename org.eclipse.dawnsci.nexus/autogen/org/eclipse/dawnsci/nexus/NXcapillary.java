@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A capillary lens to focus the X-ray beam.
@@ -44,7 +45,7 @@ public interface NXcapillary extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * Type of the capillary
@@ -97,7 +98,7 @@ public interface NXcapillary extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getManufacturer();
+	public Dataset getManufacturer();
 
 	/**
 	 * The manufacturer of the capillary. This is actually important as
@@ -140,7 +141,7 @@ public interface NXcapillary extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMaximum_incident_angle();
+	public Dataset getMaximum_incident_angle();
 
 	/**
 	 * <p>
@@ -180,7 +181,7 @@ public interface NXcapillary extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAccepting_aperture();
+	public Dataset getAccepting_aperture();
 
 	/**
 	 * <p>
@@ -248,7 +249,7 @@ public interface NXcapillary extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWorking_distance();
+	public Dataset getWorking_distance();
 
 	/**
 	 * <p>
@@ -288,7 +289,7 @@ public interface NXcapillary extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFocal_size();
+	public Dataset getFocal_size();
 
 	/**
 	 * The focal size in FWHM
@@ -361,7 +362,7 @@ public interface NXcapillary extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

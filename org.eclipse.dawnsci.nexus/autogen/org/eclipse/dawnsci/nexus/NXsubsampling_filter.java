@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Settings of a filter to sample entries based on their value.
@@ -39,7 +40,7 @@ public interface NXsubsampling_filter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLinear_range_min_incr_max();
+	public Dataset getLinear_range_min_incr_max();
 
 	/**
 	 * Triplet of the minimum, increment, and maximum value which will

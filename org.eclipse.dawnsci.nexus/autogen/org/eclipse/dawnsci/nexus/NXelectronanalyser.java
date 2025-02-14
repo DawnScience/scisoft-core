@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Subclass of NXinstrument to describe a photoelectron analyser.
@@ -48,7 +49,7 @@ public interface NXelectronanalyser extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * Free text description of the type of the detector
@@ -88,7 +89,7 @@ public interface NXelectronanalyser extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getName();
+	public Dataset getName();
 
 	/**
 	 * Name or model of the equipment
@@ -143,7 +144,7 @@ public interface NXelectronanalyser extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEnergy_resolution();
+	public Dataset getEnergy_resolution();
 
 	/**
 	 * Energy resolution of the electron analyser (FWHM of gaussian broadening)
@@ -187,7 +188,7 @@ public interface NXelectronanalyser extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMomentum_resolution();
+	public Dataset getMomentum_resolution();
 
 	/**
 	 * Momentum resolution of the electron analyser (FWHM)
@@ -231,7 +232,7 @@ public interface NXelectronanalyser extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAngular_resolution();
+	public Dataset getAngular_resolution();
 
 	/**
 	 * Angular resolution of the electron analyser (FWHM)
@@ -275,7 +276,7 @@ public interface NXelectronanalyser extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSpatial_resolution();
+	public Dataset getSpatial_resolution();
 
 	/**
 	 * Spatial resolution of the electron analyser (Airy disk radius)
@@ -329,7 +330,7 @@ public interface NXelectronanalyser extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFast_axes();
+	public Dataset getFast_axes();
 
 	/**
 	 * List of the axes that are acquired simultaneously by the detector.
@@ -404,7 +405,7 @@ public interface NXelectronanalyser extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSlow_axes();
+	public Dataset getSlow_axes();
 
 	/**
 	 * List of the axes that are acquired by scanning a physical parameter, listed in
@@ -451,7 +452,7 @@ public interface NXelectronanalyser extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * Refers to the last transformation specifying the positon of the manipulator in

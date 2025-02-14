@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -55,7 +56,7 @@ public class NXprogramImpl extends NXobjectImpl implements NXprogram {
 
 
 	@Override
-	public IDataset getProgram() {
+	public Dataset getProgram() {
 		return getDataset(NX_PROGRAM);
 	}
 

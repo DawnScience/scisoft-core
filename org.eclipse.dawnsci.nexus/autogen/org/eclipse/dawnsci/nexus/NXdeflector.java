@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Deflectors as they are used e.g. in an electron analyser.
@@ -43,7 +44,7 @@ public interface NXdeflector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * Qualitative type of deflector with respect to the number of pole pieces
@@ -93,7 +94,7 @@ public interface NXdeflector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getName();
+	public Dataset getName();
 
 	/**
 	 * Colloquial or short name for the deflector. For manufacturer names and
@@ -124,7 +125,7 @@ public interface NXdeflector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getManufacturer_name();
+	public Dataset getManufacturer_name();
 
 	/**
 	 * Name of the manufacturer who built/constructed the deflector.
@@ -153,7 +154,7 @@ public interface NXdeflector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getManufacturer_model();
+	public Dataset getManufacturer_model();
 
 	/**
 	 * Hardware name, hash identifier, or serial number that was given by the
@@ -185,7 +186,7 @@ public interface NXdeflector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * Ideally an identifier, persistent link, or free text which gives further details
@@ -221,7 +222,7 @@ public interface NXdeflector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getVoltage();
+	public Dataset getVoltage();
 
 	/**
 	 * Excitation voltage of the deflector. For dipoles it is a single number. For
@@ -269,7 +270,7 @@ public interface NXdeflector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCurrent();
+	public Dataset getCurrent();
 
 	/**
 	 * Excitation current of the deflector. For dipoles it is a single number. For
@@ -316,7 +317,7 @@ public interface NXdeflector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * Specifies the position of the deflector by pointing to the last transformation

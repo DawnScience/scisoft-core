@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -55,7 +56,7 @@ public class NXparametersImpl extends NXobjectImpl implements NXparameters {
 
 
 	@Override
-	public IDataset getTerm() {
+	public Dataset getTerm() {
 		return getDataset(NX_TERM);
 	}
 

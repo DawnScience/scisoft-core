@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -61,7 +62,7 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -81,7 +82,7 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	}
 
 	@Override
-	public IDataset getGap() {
+	public Dataset getGap() {
 		return getDataset(NX_GAP);
 	}
 
@@ -101,7 +102,7 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	}
 
 	@Override
-	public IDataset getTaper() {
+	public Dataset getTaper() {
 		return getDataset(NX_TAPER);
 	}
 
@@ -121,7 +122,7 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	}
 
 	@Override
-	public IDataset getPhase() {
+	public Dataset getPhase() {
 		return getDataset(NX_PHASE);
 	}
 
@@ -141,7 +142,7 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	}
 
 	@Override
-	public IDataset getPoles() {
+	public Dataset getPoles() {
 		return getDataset(NX_POLES);
 	}
 
@@ -161,7 +162,7 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	}
 
 	@Override
-	public IDataset getMagnetic_wavelength() {
+	public Dataset getMagnetic_wavelength() {
 		return getDataset(NX_MAGNETIC_WAVELENGTH);
 	}
 
@@ -181,7 +182,7 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	}
 
 	@Override
-	public IDataset getK() {
+	public Dataset getK() {
 		return getDataset(NX_K);
 	}
 
@@ -201,7 +202,7 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	}
 
 	@Override
-	public IDataset getLength() {
+	public Dataset getLength() {
 		return getDataset(NX_LENGTH);
 	}
 
@@ -221,7 +222,7 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	}
 
 	@Override
-	public IDataset getPower() {
+	public Dataset getPower() {
 		return getDataset(NX_POWER);
 	}
 
@@ -241,7 +242,7 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	}
 
 	@Override
-	public IDataset getEnergy() {
+	public Dataset getEnergy() {
 		return getDataset(NX_ENERGY);
 	}
 
@@ -261,7 +262,7 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	}
 
 	@Override
-	public IDataset getBandwidth() {
+	public Dataset getBandwidth() {
 		return getDataset(NX_BANDWIDTH);
 	}
 
@@ -281,7 +282,7 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	}
 
 	@Override
-	public IDataset getHarmonic() {
+	public Dataset getHarmonic() {
 		return getDataset(NX_HARMONIC);
 	}
 
@@ -390,7 +391,7 @@ public class NXinsertion_deviceImpl extends NXobjectImpl implements NXinsertion_
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

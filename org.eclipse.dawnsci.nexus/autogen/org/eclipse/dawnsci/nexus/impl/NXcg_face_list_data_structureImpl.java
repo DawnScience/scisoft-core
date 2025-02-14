@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -72,7 +73,7 @@ public class NXcg_face_list_data_structureImpl extends NXobjectImpl implements N
 
 
 	@Override
-	public IDataset getDimensionality() {
+	public Dataset getDimensionality() {
 		return getDataset(NX_DIMENSIONALITY);
 	}
 
@@ -92,7 +93,7 @@ public class NXcg_face_list_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getNumber_of_vertices() {
+	public Dataset getNumber_of_vertices() {
 		return getDataset(NX_NUMBER_OF_VERTICES);
 	}
 
@@ -112,7 +113,7 @@ public class NXcg_face_list_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getNumber_of_edges() {
+	public Dataset getNumber_of_edges() {
 		return getDataset(NX_NUMBER_OF_EDGES);
 	}
 
@@ -132,7 +133,7 @@ public class NXcg_face_list_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getNumber_of_faces() {
+	public Dataset getNumber_of_faces() {
 		return getDataset(NX_NUMBER_OF_FACES);
 	}
 
@@ -152,7 +153,7 @@ public class NXcg_face_list_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getVertex_identifier_offset() {
+	public Dataset getVertex_identifier_offset() {
 		return getDataset(NX_VERTEX_IDENTIFIER_OFFSET);
 	}
 
@@ -172,7 +173,7 @@ public class NXcg_face_list_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getEdge_identifier_offset() {
+	public Dataset getEdge_identifier_offset() {
 		return getDataset(NX_EDGE_IDENTIFIER_OFFSET);
 	}
 
@@ -192,7 +193,7 @@ public class NXcg_face_list_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getFace_identifier_offset() {
+	public Dataset getFace_identifier_offset() {
 		return getDataset(NX_FACE_IDENTIFIER_OFFSET);
 	}
 
@@ -212,7 +213,7 @@ public class NXcg_face_list_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getVertex_identifier() {
+	public Dataset getVertex_identifier() {
 		return getDataset(NX_VERTEX_IDENTIFIER);
 	}
 
@@ -232,7 +233,7 @@ public class NXcg_face_list_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getEdge_identifier() {
+	public Dataset getEdge_identifier() {
 		return getDataset(NX_EDGE_IDENTIFIER);
 	}
 
@@ -252,7 +253,7 @@ public class NXcg_face_list_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getFace_identifier() {
+	public Dataset getFace_identifier() {
 		return getDataset(NX_FACE_IDENTIFIER);
 	}
 
@@ -272,7 +273,7 @@ public class NXcg_face_list_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getVertices() {
+	public Dataset getVertices() {
 		return getDataset(NX_VERTICES);
 	}
 
@@ -292,7 +293,7 @@ public class NXcg_face_list_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getEdges() {
+	public Dataset getEdges() {
 		return getDataset(NX_EDGES);
 	}
 
@@ -312,7 +313,7 @@ public class NXcg_face_list_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getFaces() {
+	public Dataset getFaces() {
 		return getDataset(NX_FACES);
 	}
 
@@ -332,7 +333,7 @@ public class NXcg_face_list_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getVertices_are_unique() {
+	public Dataset getVertices_are_unique() {
 		return getDataset(NX_VERTICES_ARE_UNIQUE);
 	}
 
@@ -352,7 +353,7 @@ public class NXcg_face_list_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getEdges_are_unique() {
+	public Dataset getEdges_are_unique() {
 		return getDataset(NX_EDGES_ARE_UNIQUE);
 	}
 
@@ -372,7 +373,7 @@ public class NXcg_face_list_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getFaces_are_unique() {
+	public Dataset getFaces_are_unique() {
 		return getDataset(NX_FACES_ARE_UNIQUE);
 	}
 
@@ -392,7 +393,7 @@ public class NXcg_face_list_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getWinding_order() {
+	public Dataset getWinding_order() {
 		return getDataset(NX_WINDING_ORDER);
 	}
 

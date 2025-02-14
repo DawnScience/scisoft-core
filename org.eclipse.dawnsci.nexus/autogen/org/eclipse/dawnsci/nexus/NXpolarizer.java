@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A spin polarizer.
@@ -34,7 +35,7 @@ public interface NXpolarizer extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * one of these values: "crystal", "supermirror", "3He"
@@ -62,7 +63,7 @@ public interface NXpolarizer extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getComposition();
+	public Dataset getComposition();
 
 	/**
 	 * description of the composition of the polarizing material
@@ -95,7 +96,7 @@ public interface NXpolarizer extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getReflection();
+	public Dataset getReflection();
 
 	/**
 	 * [hkl] values of nominal reflection
@@ -142,7 +143,7 @@ public interface NXpolarizer extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEfficiency();
+	public Dataset getEfficiency();
 
 	/**
 	 * polarizing efficiency
@@ -218,7 +219,7 @@ public interface NXpolarizer extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

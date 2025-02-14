@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -68,7 +69,7 @@ public class NXisocontourImpl extends NXobjectImpl implements NXisocontour {
 
 
 	@Override
-	public IDataset getDimensionality() {
+	public Dataset getDimensionality() {
 		return getDataset(NX_DIMENSIONALITY);
 	}
 
@@ -99,7 +100,7 @@ public class NXisocontourImpl extends NXobjectImpl implements NXisocontour {
 	}
 
 	@Override
-	public IDataset getIsovalue() {
+	public Dataset getIsovalue() {
 		return getDataset(NX_ISOVALUE);
 	}
 

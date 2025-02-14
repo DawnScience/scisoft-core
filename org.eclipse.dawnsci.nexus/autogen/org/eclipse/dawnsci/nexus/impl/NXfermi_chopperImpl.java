@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -60,7 +61,7 @@ public class NXfermi_chopperImpl extends NXobjectImpl implements NXfermi_chopper
 
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -80,7 +81,7 @@ public class NXfermi_chopperImpl extends NXobjectImpl implements NXfermi_chopper
 	}
 
 	@Override
-	public IDataset getRotation_speed() {
+	public Dataset getRotation_speed() {
 		return getDataset(NX_ROTATION_SPEED);
 	}
 
@@ -100,7 +101,7 @@ public class NXfermi_chopperImpl extends NXobjectImpl implements NXfermi_chopper
 	}
 
 	@Override
-	public IDataset getRadius() {
+	public Dataset getRadius() {
 		return getDataset(NX_RADIUS);
 	}
 
@@ -120,7 +121,7 @@ public class NXfermi_chopperImpl extends NXobjectImpl implements NXfermi_chopper
 	}
 
 	@Override
-	public IDataset getSlit() {
+	public Dataset getSlit() {
 		return getDataset(NX_SLIT);
 	}
 
@@ -140,7 +141,7 @@ public class NXfermi_chopperImpl extends NXobjectImpl implements NXfermi_chopper
 	}
 
 	@Override
-	public IDataset getR_slit() {
+	public Dataset getR_slit() {
 		return getDataset(NX_R_SLIT);
 	}
 
@@ -160,7 +161,7 @@ public class NXfermi_chopperImpl extends NXobjectImpl implements NXfermi_chopper
 	}
 
 	@Override
-	public IDataset getNumber() {
+	public Dataset getNumber() {
 		return getDataset(NX_NUMBER);
 	}
 
@@ -180,7 +181,7 @@ public class NXfermi_chopperImpl extends NXobjectImpl implements NXfermi_chopper
 	}
 
 	@Override
-	public IDataset getHeight() {
+	public Dataset getHeight() {
 		return getDataset(NX_HEIGHT);
 	}
 
@@ -200,7 +201,7 @@ public class NXfermi_chopperImpl extends NXobjectImpl implements NXfermi_chopper
 	}
 
 	@Override
-	public IDataset getWidth() {
+	public Dataset getWidth() {
 		return getDataset(NX_WIDTH);
 	}
 
@@ -220,7 +221,7 @@ public class NXfermi_chopperImpl extends NXobjectImpl implements NXfermi_chopper
 	}
 
 	@Override
-	public IDataset getDistance() {
+	public Dataset getDistance() {
 		return getDataset(NX_DISTANCE);
 	}
 
@@ -240,7 +241,7 @@ public class NXfermi_chopperImpl extends NXobjectImpl implements NXfermi_chopper
 	}
 
 	@Override
-	public IDataset getWavelength() {
+	public Dataset getWavelength() {
 		return getDataset(NX_WAVELENGTH);
 	}
 
@@ -260,7 +261,7 @@ public class NXfermi_chopperImpl extends NXobjectImpl implements NXfermi_chopper
 	}
 
 	@Override
-	public IDataset getEnergy() {
+	public Dataset getEnergy() {
 		return getDataset(NX_ENERGY);
 	}
 
@@ -317,7 +318,7 @@ public class NXfermi_chopperImpl extends NXobjectImpl implements NXfermi_chopper
 	}
 
 	@Override
-	public IDataset getAbsorbing_material() {
+	public Dataset getAbsorbing_material() {
 		return getDataset(NX_ABSORBING_MATERIAL);
 	}
 
@@ -337,7 +338,7 @@ public class NXfermi_chopperImpl extends NXobjectImpl implements NXfermi_chopper
 	}
 
 	@Override
-	public IDataset getTransmitting_material() {
+	public Dataset getTransmitting_material() {
 		return getDataset(NX_TRANSMITTING_MATERIAL);
 	}
 
@@ -398,7 +399,7 @@ public class NXfermi_chopperImpl extends NXobjectImpl implements NXfermi_chopper
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

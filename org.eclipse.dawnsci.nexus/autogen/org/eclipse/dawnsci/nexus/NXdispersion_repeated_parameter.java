@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A repeated parameter for a dispersion function
@@ -36,7 +37,7 @@ public interface NXdispersion_repeated_parameter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getName();
+	public Dataset getName();
 
 	/**
 	 * The name of the parameter
@@ -76,7 +77,7 @@ public interface NXdispersion_repeated_parameter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * A description of what this parameter represents
@@ -121,7 +122,7 @@ public interface NXdispersion_repeated_parameter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getParameter_units();
+	public Dataset getParameter_units();
 
 	/**
 	 * A unit array associating a unit with each parameter.
@@ -178,7 +179,7 @@ public interface NXdispersion_repeated_parameter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getValues();
+	public Dataset getValues();
 
 	/**
 	 * The value of the parameter

@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -61,7 +62,7 @@ public class NXenvironmentImpl extends NXobjectImpl implements NXenvironment {
 
 
 	@Override
-	public IDataset getName() {
+	public Dataset getName() {
 		return getDataset(NX_NAME);
 	}
 
@@ -81,7 +82,7 @@ public class NXenvironmentImpl extends NXobjectImpl implements NXenvironment {
 	}
 
 	@Override
-	public IDataset getShort_name() {
+	public Dataset getShort_name() {
 		return getDataset(NX_SHORT_NAME);
 	}
 
@@ -101,7 +102,7 @@ public class NXenvironmentImpl extends NXobjectImpl implements NXenvironment {
 	}
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -121,7 +122,7 @@ public class NXenvironmentImpl extends NXobjectImpl implements NXenvironment {
 	}
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -141,7 +142,7 @@ public class NXenvironmentImpl extends NXobjectImpl implements NXenvironment {
 	}
 
 	@Override
-	public IDataset getProgram() {
+	public Dataset getProgram() {
 		return getDataset(NX_PROGRAM);
 	}
 
@@ -172,7 +173,7 @@ public class NXenvironmentImpl extends NXobjectImpl implements NXenvironment {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Computational geometry description of a polyhedra in Euclidean space.
@@ -60,7 +61,7 @@ public interface NXcg_polyhedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDimensionality();
+	public Dataset getDimensionality();
 
 	/**
 	 * <p>
@@ -106,7 +107,7 @@ public interface NXcg_polyhedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCardinality();
+	public Dataset getCardinality();
 
 	/**
 	 * <p>
@@ -148,7 +149,7 @@ public interface NXcg_polyhedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getVolume();
+	public Dataset getVolume();
 
 	/**
 	 * Interior volume
@@ -197,7 +198,7 @@ public interface NXcg_polyhedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCenter();
+	public Dataset getCenter();
 
 	/**
 	 * Position of the geometric center, which often is but not necessarily
@@ -248,7 +249,7 @@ public interface NXcg_polyhedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSurface_area();
+	public Dataset getSurface_area();
 
 	/**
 	 * Total surface area as the sum of all faces.
@@ -298,7 +299,7 @@ public interface NXcg_polyhedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_faces();
+	public Dataset getNumber_of_faces();
 
 	/**
 	 * The number of faces for each polyhedron. Faces of adjoining polyhedra
@@ -352,7 +353,7 @@ public interface NXcg_polyhedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFace_area();
+	public Dataset getFace_area();
 
 	/**
 	 * Area of each of the four triangular faces of each tetrahedron.
@@ -400,7 +401,7 @@ public interface NXcg_polyhedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_edges();
+	public Dataset getNumber_of_edges();
 
 	/**
 	 * The number of edges for each polyhedron. Edges of adjoining polyhedra
@@ -448,7 +449,7 @@ public interface NXcg_polyhedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEdge_length();
+	public Dataset getEdge_length();
 
 	/**
 	 * Length of each edge of each tetrahedron.
@@ -570,7 +571,7 @@ public interface NXcg_polyhedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier_offset();
+	public Dataset getIdentifier_offset();
 
 	/**
 	 * Integer which specifies the first index to be used for distinguishing
@@ -636,7 +637,7 @@ public interface NXcg_polyhedron_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier();
+	public Dataset getIdentifier();
 
 	/**
 	 * Integer used to distinguish polyhedra for explicit indexing.

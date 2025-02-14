@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -55,7 +56,7 @@ public class NXdistortionImpl extends NXobjectImpl implements NXdistortion {
 
 
 	@Override
-	public IDataset getLast_process() {
+	public Dataset getLast_process() {
 		return getDataset(NX_LAST_PROCESS);
 	}
 
@@ -75,7 +76,7 @@ public class NXdistortionImpl extends NXobjectImpl implements NXdistortion {
 	}
 
 	@Override
-	public IDataset getApplied() {
+	public Dataset getApplied() {
 		return getDataset(NX_APPLIED);
 	}
 
@@ -95,7 +96,7 @@ public class NXdistortionImpl extends NXobjectImpl implements NXdistortion {
 	}
 
 	@Override
-	public IDataset getSymmetry() {
+	public Dataset getSymmetry() {
 		return getDataset(NX_SYMMETRY);
 	}
 
@@ -115,7 +116,7 @@ public class NXdistortionImpl extends NXobjectImpl implements NXdistortion {
 	}
 
 	@Override
-	public IDataset getOriginal_centre() {
+	public Dataset getOriginal_centre() {
 		return getDataset(NX_ORIGINAL_CENTRE);
 	}
 
@@ -135,7 +136,7 @@ public class NXdistortionImpl extends NXobjectImpl implements NXdistortion {
 	}
 
 	@Override
-	public IDataset getOriginal_points() {
+	public Dataset getOriginal_points() {
 		return getDataset(NX_ORIGINAL_POINTS);
 	}
 
@@ -155,7 +156,7 @@ public class NXdistortionImpl extends NXobjectImpl implements NXdistortion {
 	}
 
 	@Override
-	public IDataset getCdeform_field() {
+	public Dataset getCdeform_field() {
 		return getDataset(NX_CDEFORM_FIELD);
 	}
 
@@ -175,7 +176,7 @@ public class NXdistortionImpl extends NXobjectImpl implements NXdistortion {
 	}
 
 	@Override
-	public IDataset getRdeform_field() {
+	public Dataset getRdeform_field() {
 		return getDataset(NX_RDEFORM_FIELD);
 	}
 
@@ -195,7 +196,7 @@ public class NXdistortionImpl extends NXobjectImpl implements NXdistortion {
 	}
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 

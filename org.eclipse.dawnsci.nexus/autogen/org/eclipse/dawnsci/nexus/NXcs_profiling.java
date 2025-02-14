@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Computer science description for summary performance/profiling data of an application.
@@ -72,7 +73,7 @@ public interface NXcs_profiling extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCurrent_working_directory();
+	public Dataset getCurrent_working_directory();
 
 	/**
 	 * Path to the directory from which the tool was called.
@@ -100,7 +101,7 @@ public interface NXcs_profiling extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCommand_line_call();
+	public Dataset getCommand_line_call();
 
 	/**
 	 * Command line call with arguments if applicable.
@@ -132,7 +133,7 @@ public interface NXcs_profiling extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getStart_time();
+	public Dataset getStart_time();
 
 	/**
 	 * ISO 8601 time code with local time zone offset to UTC information
@@ -176,7 +177,7 @@ public interface NXcs_profiling extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEnd_time();
+	public Dataset getEnd_time();
 
 	/**
 	 * ISO 8601 time code with local time zone offset to UTC information
@@ -223,7 +224,7 @@ public interface NXcs_profiling extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTotal_elapsed_time();
+	public Dataset getTotal_elapsed_time();
 
 	/**
 	 * Wall-clock time how long the app execution took. This may be in principle
@@ -284,7 +285,7 @@ public interface NXcs_profiling extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_processes();
+	public Dataset getNumber_of_processes();
 
 	/**
 	 * Qualifier which specifies with how many nominal processes the app was
@@ -354,7 +355,7 @@ public interface NXcs_profiling extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_threads();
+	public Dataset getNumber_of_threads();
 
 	/**
 	 * Qualifier with how many nominal threads were accessible to the app at
@@ -404,7 +405,7 @@ public interface NXcs_profiling extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_gpus();
+	public Dataset getNumber_of_gpus();
 
 	/**
 	 * Qualifier with how many nominal GPUs the app was invoked at runtime.

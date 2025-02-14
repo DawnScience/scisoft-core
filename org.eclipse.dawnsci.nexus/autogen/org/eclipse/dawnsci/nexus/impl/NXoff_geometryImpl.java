@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -60,7 +61,7 @@ public class NXoff_geometryImpl extends NXobjectImpl implements NXoff_geometry {
 
 
 	@Override
-	public IDataset getVertices() {
+	public Dataset getVertices() {
 		return getDataset(NX_VERTICES);
 	}
 
@@ -80,7 +81,7 @@ public class NXoff_geometryImpl extends NXobjectImpl implements NXoff_geometry {
 	}
 
 	@Override
-	public IDataset getWinding_order() {
+	public Dataset getWinding_order() {
 		return getDataset(NX_WINDING_ORDER);
 	}
 
@@ -100,7 +101,7 @@ public class NXoff_geometryImpl extends NXobjectImpl implements NXoff_geometry {
 	}
 
 	@Override
-	public IDataset getFaces() {
+	public Dataset getFaces() {
 		return getDataset(NX_FACES);
 	}
 
@@ -120,7 +121,7 @@ public class NXoff_geometryImpl extends NXobjectImpl implements NXoff_geometry {
 	}
 
 	@Override
-	public IDataset getDetector_faces() {
+	public Dataset getDetector_faces() {
 		return getDataset(NX_DETECTOR_FACES);
 	}
 

@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Metadata and settings of an electron microscope for scans and images.
@@ -154,7 +155,7 @@ public interface NXevent_data_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getStart_time();
+	public Dataset getStart_time();
 
 	/**
 	 * ISO 8601 time code with local time zone offset to UTC information included
@@ -210,7 +211,7 @@ public interface NXevent_data_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEnd_time();
+	public Dataset getEnd_time();
 
 	/**
 	 * ISO 8601 time code with local time zone offset to UTC information included
@@ -250,7 +251,7 @@ public interface NXevent_data_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEvent_identifier();
+	public Dataset getEvent_identifier();
 
 	/**
 	 * Reference to a specific state and setting of the microscope.
@@ -293,7 +294,7 @@ public interface NXevent_data_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEvent_type();
+	public Dataset getEvent_type();
 
 	/**
 	 * Which specific event/measurement type. Examples are:

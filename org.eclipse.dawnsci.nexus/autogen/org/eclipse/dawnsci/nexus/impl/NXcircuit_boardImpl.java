@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -63,7 +64,7 @@ public class NXcircuit_boardImpl extends NXobjectImpl implements NXcircuit_board
 
 
 	@Override
-	public IDataset getRelay() {
+	public Dataset getRelay() {
 		return getDataset(NX_RELAY);
 	}
 

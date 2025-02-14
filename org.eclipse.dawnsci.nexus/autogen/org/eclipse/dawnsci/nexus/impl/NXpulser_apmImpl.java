@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -90,7 +91,7 @@ public class NXpulser_apmImpl extends NXobjectImpl implements NXpulser_apm {
 	}
 
 	@Override
-	public IDataset getPulse_mode() {
+	public Dataset getPulse_mode() {
 		return getDataset(NX_PULSE_MODE);
 	}
 
@@ -110,7 +111,7 @@ public class NXpulser_apmImpl extends NXobjectImpl implements NXpulser_apm {
 	}
 
 	@Override
-	public IDataset getPulse_frequency() {
+	public Dataset getPulse_frequency() {
 		return getDataset(NX_PULSE_FREQUENCY);
 	}
 
@@ -130,7 +131,7 @@ public class NXpulser_apmImpl extends NXobjectImpl implements NXpulser_apm {
 	}
 
 	@Override
-	public IDataset getPulse_fraction() {
+	public Dataset getPulse_fraction() {
 		return getDataset(NX_PULSE_FRACTION);
 	}
 
@@ -150,7 +151,7 @@ public class NXpulser_apmImpl extends NXobjectImpl implements NXpulser_apm {
 	}
 
 	@Override
-	public IDataset getPulsed_voltage() {
+	public Dataset getPulsed_voltage() {
 		return getDataset(NX_PULSED_VOLTAGE);
 	}
 
@@ -170,7 +171,7 @@ public class NXpulser_apmImpl extends NXobjectImpl implements NXpulser_apm {
 	}
 
 	@Override
-	public IDataset getPulse_number() {
+	public Dataset getPulse_number() {
 		return getDataset(NX_PULSE_NUMBER);
 	}
 
@@ -190,7 +191,7 @@ public class NXpulser_apmImpl extends NXobjectImpl implements NXpulser_apm {
 	}
 
 	@Override
-	public IDataset getStanding_voltage() {
+	public Dataset getStanding_voltage() {
 		return getDataset(NX_STANDING_VOLTAGE);
 	}
 

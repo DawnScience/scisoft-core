@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Description of peaks, their functional form or measured support.
@@ -37,7 +38,7 @@ public interface NXpeak extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLabel();
+	public Dataset getLabel();
 
 	/**
 	 * Human-readable identifier to specify which concept/entity
@@ -80,7 +81,7 @@ public interface NXpeak extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPeak_model();
+	public Dataset getPeak_model();
 
 	/**
 	 * Is the peak described analytically via a functional form
@@ -150,7 +151,7 @@ public interface NXpeak extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPosition();
+	public Dataset getPosition();
 
 	/**
 	 * In the case of an empirical description of the peak and its shoulders,
@@ -202,7 +203,7 @@ public interface NXpeak extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIntensity();
+	public Dataset getIntensity();
 
 	/**
 	 * In the case of an empirical description of the peak and its shoulders,

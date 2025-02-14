@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -62,7 +63,7 @@ public class NXclusteringImpl extends NXobjectImpl implements NXclustering {
 
 
 	@Override
-	public IDataset getNumber_of_numeric_labels() {
+	public Dataset getNumber_of_numeric_labels() {
 		return getDataset(NX_NUMBER_OF_NUMERIC_LABELS);
 	}
 
@@ -82,7 +83,7 @@ public class NXclusteringImpl extends NXobjectImpl implements NXclustering {
 	}
 
 	@Override
-	public IDataset getNumber_of_categorical_labels() {
+	public Dataset getNumber_of_categorical_labels() {
 		return getDataset(NX_NUMBER_OF_CATEGORICAL_LABELS);
 	}
 
@@ -102,7 +103,7 @@ public class NXclusteringImpl extends NXobjectImpl implements NXclustering {
 	}
 
 	@Override
-	public IDataset getObjects() {
+	public Dataset getObjects() {
 		return getDataset(NX_OBJECTS);
 	}
 
@@ -122,7 +123,7 @@ public class NXclusteringImpl extends NXobjectImpl implements NXclustering {
 	}
 
 	@Override
-	public IDataset getNumeric_label() {
+	public Dataset getNumeric_label() {
 		return getDataset(NX_NUMERIC_LABEL);
 	}
 
@@ -142,7 +143,7 @@ public class NXclusteringImpl extends NXobjectImpl implements NXclustering {
 	}
 
 	@Override
-	public IDataset getCategorical_label() {
+	public Dataset getCategorical_label() {
 		return getDataset(NX_CATEGORICAL_LABEL);
 	}
 
@@ -162,7 +163,7 @@ public class NXclusteringImpl extends NXobjectImpl implements NXclustering {
 	}
 
 	@Override
-	public IDataset getIdentifier_offset() {
+	public Dataset getIdentifier_offset() {
 		return getDataset(NX_IDENTIFIER_OFFSET);
 	}
 
@@ -182,7 +183,7 @@ public class NXclusteringImpl extends NXobjectImpl implements NXclustering {
 	}
 
 	@Override
-	public IDataset getUnassigned() {
+	public Dataset getUnassigned() {
 		return getDataset(NX_UNASSIGNED);
 	}
 
@@ -202,7 +203,7 @@ public class NXclusteringImpl extends NXobjectImpl implements NXclustering {
 	}
 
 	@Override
-	public IDataset getNoise() {
+	public Dataset getNoise() {
 		return getDataset(NX_NOISE);
 	}
 
@@ -222,7 +223,7 @@ public class NXclusteringImpl extends NXobjectImpl implements NXclustering {
 	}
 
 	@Override
-	public IDataset getNumber_of_cluster() {
+	public Dataset getNumber_of_cluster() {
 		return getDataset(NX_NUMBER_OF_CLUSTER);
 	}
 
@@ -242,7 +243,7 @@ public class NXclusteringImpl extends NXobjectImpl implements NXclustering {
 	}
 
 	@Override
-	public IDataset getSize() {
+	public Dataset getSize() {
 		return getDataset(NX_SIZE);
 	}
 

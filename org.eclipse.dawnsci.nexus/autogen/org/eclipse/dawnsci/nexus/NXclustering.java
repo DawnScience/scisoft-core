@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Metadata to the results of a clustering analysis.
@@ -55,7 +56,7 @@ public interface NXclustering extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_numeric_labels();
+	public Dataset getNumber_of_numeric_labels();
 
 	/**
 	 * How many numeric labels does each object have.
@@ -99,7 +100,7 @@ public interface NXclustering extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_categorical_labels();
+	public Dataset getNumber_of_categorical_labels();
 
 	/**
 	 * How many categorical labels does each object have.
@@ -140,7 +141,7 @@ public interface NXclustering extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getObjects();
+	public Dataset getObjects();
 
 	/**
 	 * Reference to a set of objects investigated in a cluster analysis.
@@ -174,7 +175,7 @@ public interface NXclustering extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumeric_label();
+	public Dataset getNumeric_label();
 
 	/**
 	 * Reference to numeric attribute data for each object.
@@ -211,7 +212,7 @@ public interface NXclustering extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCategorical_label();
+	public Dataset getCategorical_label();
 
 	/**
 	 * Reference to categorical attribute data for each object.
@@ -248,7 +249,7 @@ public interface NXclustering extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier_offset();
+	public Dataset getIdentifier_offset();
 
 	/**
 	 * Which identifier is the first to be used to label a cluster.
@@ -307,7 +308,7 @@ public interface NXclustering extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getUnassigned();
+	public Dataset getUnassigned();
 
 	/**
 	 * Total number of objects categorized as unassigned.
@@ -351,7 +352,7 @@ public interface NXclustering extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNoise();
+	public Dataset getNoise();
 
 	/**
 	 * Total number of objects categorized as noise.
@@ -395,7 +396,7 @@ public interface NXclustering extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_cluster();
+	public Dataset getNumber_of_cluster();
 
 	/**
 	 * Total number of clusters (excluding noise and unassigned).
@@ -444,7 +445,7 @@ public interface NXclustering extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSize();
+	public Dataset getSize();
 
 	/**
 	 * Number of objects associated to each cluster. The labels are implicit,

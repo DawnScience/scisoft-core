@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Corrector for aberrations in an electron microscope.
@@ -38,7 +39,7 @@ public interface NXcorrector_cs extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getApplied();
+	public Dataset getApplied();
 
 	/**
 	 * Was the corrector used?
@@ -75,7 +76,7 @@ public interface NXcorrector_cs extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getName();
+	public Dataset getName();
 
 	/**
 	 * Given name/alias.
@@ -161,7 +162,7 @@ public interface NXcorrector_cs extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * Ideally, a (globally) unique persistent identifier, link,

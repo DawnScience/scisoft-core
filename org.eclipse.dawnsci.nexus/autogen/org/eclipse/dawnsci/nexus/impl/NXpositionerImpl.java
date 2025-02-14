@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -58,7 +59,7 @@ public class NXpositionerImpl extends NXobjectImpl implements NXpositioner {
 
 
 	@Override
-	public IDataset getName() {
+	public Dataset getName() {
 		return getDataset(NX_NAME);
 	}
 
@@ -78,7 +79,7 @@ public class NXpositionerImpl extends NXobjectImpl implements NXpositioner {
 	}
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -98,7 +99,7 @@ public class NXpositionerImpl extends NXobjectImpl implements NXpositioner {
 	}
 
 	@Override
-	public IDataset getValue() {
+	public Dataset getValue() {
 		return getDataset(NX_VALUE);
 	}
 
@@ -118,7 +119,7 @@ public class NXpositionerImpl extends NXobjectImpl implements NXpositioner {
 	}
 
 	@Override
-	public IDataset getRaw_value() {
+	public Dataset getRaw_value() {
 		return getDataset(NX_RAW_VALUE);
 	}
 
@@ -138,7 +139,7 @@ public class NXpositionerImpl extends NXobjectImpl implements NXpositioner {
 	}
 
 	@Override
-	public IDataset getTarget_value() {
+	public Dataset getTarget_value() {
 		return getDataset(NX_TARGET_VALUE);
 	}
 
@@ -158,7 +159,7 @@ public class NXpositionerImpl extends NXobjectImpl implements NXpositioner {
 	}
 
 	@Override
-	public IDataset getTolerance() {
+	public Dataset getTolerance() {
 		return getDataset(NX_TOLERANCE);
 	}
 
@@ -178,7 +179,7 @@ public class NXpositionerImpl extends NXobjectImpl implements NXpositioner {
 	}
 
 	@Override
-	public IDataset getSoft_limit_min() {
+	public Dataset getSoft_limit_min() {
 		return getDataset(NX_SOFT_LIMIT_MIN);
 	}
 
@@ -198,7 +199,7 @@ public class NXpositionerImpl extends NXobjectImpl implements NXpositioner {
 	}
 
 	@Override
-	public IDataset getSoft_limit_max() {
+	public Dataset getSoft_limit_max() {
 		return getDataset(NX_SOFT_LIMIT_MAX);
 	}
 
@@ -218,7 +219,7 @@ public class NXpositionerImpl extends NXobjectImpl implements NXpositioner {
 	}
 
 	@Override
-	public IDataset getVelocity() {
+	public Dataset getVelocity() {
 		return getDataset(NX_VELOCITY);
 	}
 
@@ -238,7 +239,7 @@ public class NXpositionerImpl extends NXobjectImpl implements NXpositioner {
 	}
 
 	@Override
-	public IDataset getAcceleration_time() {
+	public Dataset getAcceleration_time() {
 		return getDataset(NX_ACCELERATION_TIME);
 	}
 
@@ -258,7 +259,7 @@ public class NXpositionerImpl extends NXobjectImpl implements NXpositioner {
 	}
 
 	@Override
-	public IDataset getController_record() {
+	public Dataset getController_record() {
 		return getDataset(NX_CONTROLLER_RECORD);
 	}
 
@@ -288,7 +289,7 @@ public class NXpositionerImpl extends NXobjectImpl implements NXpositioner {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

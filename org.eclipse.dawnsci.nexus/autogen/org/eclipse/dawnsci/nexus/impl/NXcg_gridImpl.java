@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -62,7 +63,7 @@ public class NXcg_gridImpl extends NXobjectImpl implements NXcg_grid {
 
 
 	@Override
-	public IDataset getDimensionality() {
+	public Dataset getDimensionality() {
 		return getDataset(NX_DIMENSIONALITY);
 	}
 
@@ -82,7 +83,7 @@ public class NXcg_gridImpl extends NXobjectImpl implements NXcg_grid {
 	}
 
 	@Override
-	public IDataset getCardinality() {
+	public Dataset getCardinality() {
 		return getDataset(NX_CARDINALITY);
 	}
 
@@ -102,7 +103,7 @@ public class NXcg_gridImpl extends NXobjectImpl implements NXcg_grid {
 	}
 
 	@Override
-	public IDataset getOrigin() {
+	public Dataset getOrigin() {
 		return getDataset(NX_ORIGIN);
 	}
 
@@ -122,7 +123,7 @@ public class NXcg_gridImpl extends NXobjectImpl implements NXcg_grid {
 	}
 
 	@Override
-	public IDataset getSymmetry() {
+	public Dataset getSymmetry() {
 		return getDataset(NX_SYMMETRY);
 	}
 
@@ -142,7 +143,7 @@ public class NXcg_gridImpl extends NXobjectImpl implements NXcg_grid {
 	}
 
 	@Override
-	public IDataset getCell_dimensions() {
+	public Dataset getCell_dimensions() {
 		return getDataset(NX_CELL_DIMENSIONS);
 	}
 
@@ -162,7 +163,7 @@ public class NXcg_gridImpl extends NXobjectImpl implements NXcg_grid {
 	}
 
 	@Override
-	public IDataset getExtent() {
+	public Dataset getExtent() {
 		return getDataset(NX_EXTENT);
 	}
 
@@ -213,7 +214,7 @@ public class NXcg_gridImpl extends NXobjectImpl implements NXcg_grid {
 	}
 
 	@Override
-	public IDataset getIdentifier_offset() {
+	public Dataset getIdentifier_offset() {
 		return getDataset(NX_IDENTIFIER_OFFSET);
 	}
 
@@ -233,7 +234,7 @@ public class NXcg_gridImpl extends NXobjectImpl implements NXcg_grid {
 	}
 
 	@Override
-	public IDataset getIdentifier() {
+	public Dataset getIdentifier() {
 		return getDataset(NX_IDENTIFIER);
 	}
 
@@ -253,7 +254,7 @@ public class NXcg_gridImpl extends NXobjectImpl implements NXcg_grid {
 	}
 
 	@Override
-	public IDataset getPosition() {
+	public Dataset getPosition() {
 		return getDataset(NX_POSITION);
 	}
 
@@ -273,7 +274,7 @@ public class NXcg_gridImpl extends NXobjectImpl implements NXcg_grid {
 	}
 
 	@Override
-	public IDataset getCoordinate() {
+	public Dataset getCoordinate() {
 		return getDataset(NX_COORDINATE);
 	}
 
@@ -304,7 +305,7 @@ public class NXcg_gridImpl extends NXobjectImpl implements NXcg_grid {
 	}
 
 	@Override
-	public IDataset getNumber_of_boundaries() {
+	public Dataset getNumber_of_boundaries() {
 		return getDataset(NX_NUMBER_OF_BOUNDARIES);
 	}
 
@@ -324,7 +325,7 @@ public class NXcg_gridImpl extends NXobjectImpl implements NXcg_grid {
 	}
 
 	@Override
-	public IDataset getBoundaries() {
+	public Dataset getBoundaries() {
 		return getDataset(NX_BOUNDARIES);
 	}
 
@@ -344,7 +345,7 @@ public class NXcg_gridImpl extends NXobjectImpl implements NXcg_grid {
 	}
 
 	@Override
-	public IDataset getBoundary_conditions() {
+	public Dataset getBoundary_conditions() {
 		return getDataset(NX_BOUNDARY_CONDITIONS);
 	}
 

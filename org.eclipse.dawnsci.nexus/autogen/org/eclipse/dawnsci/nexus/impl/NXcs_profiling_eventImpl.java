@@ -18,6 +18,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -57,7 +58,7 @@ public class NXcs_profiling_eventImpl extends NXobjectImpl implements NXcs_profi
 
 
 	@Override
-	public IDataset getStart_time() {
+	public Dataset getStart_time() {
 		return getDataset(NX_START_TIME);
 	}
 
@@ -77,7 +78,7 @@ public class NXcs_profiling_eventImpl extends NXobjectImpl implements NXcs_profi
 	}
 
 	@Override
-	public IDataset getEnd_time() {
+	public Dataset getEnd_time() {
 		return getDataset(NX_END_TIME);
 	}
 
@@ -97,7 +98,7 @@ public class NXcs_profiling_eventImpl extends NXobjectImpl implements NXcs_profi
 	}
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -117,7 +118,7 @@ public class NXcs_profiling_eventImpl extends NXobjectImpl implements NXcs_profi
 	}
 
 	@Override
-	public IDataset getElapsed_time() {
+	public Dataset getElapsed_time() {
 		return getDataset(NX_ELAPSED_TIME);
 	}
 
@@ -137,7 +138,7 @@ public class NXcs_profiling_eventImpl extends NXobjectImpl implements NXcs_profi
 	}
 
 	@Override
-	public IDataset getNumber_of_processes() {
+	public Dataset getNumber_of_processes() {
 		return getDataset(NX_NUMBER_OF_PROCESSES);
 	}
 
@@ -157,7 +158,7 @@ public class NXcs_profiling_eventImpl extends NXobjectImpl implements NXcs_profi
 	}
 
 	@Override
-	public IDataset getNumber_of_threads() {
+	public Dataset getNumber_of_threads() {
 		return getDataset(NX_NUMBER_OF_THREADS);
 	}
 
@@ -177,7 +178,7 @@ public class NXcs_profiling_eventImpl extends NXobjectImpl implements NXcs_profi
 	}
 
 	@Override
-	public IDataset getNumber_of_gpus() {
+	public Dataset getNumber_of_gpus() {
 		return getDataset(NX_NUMBER_OF_GPUS);
 	}
 
@@ -197,7 +198,7 @@ public class NXcs_profiling_eventImpl extends NXobjectImpl implements NXcs_profi
 	}
 
 	@Override
-	public IDataset getMax_virtual_memory_snapshot() {
+	public Dataset getMax_virtual_memory_snapshot() {
 		return getDataset(NX_MAX_VIRTUAL_MEMORY_SNAPSHOT);
 	}
 
@@ -217,7 +218,7 @@ public class NXcs_profiling_eventImpl extends NXobjectImpl implements NXcs_profi
 	}
 
 	@Override
-	public IDataset getMax_resident_memory_snapshot() {
+	public Dataset getMax_resident_memory_snapshot() {
 		return getDataset(NX_MAX_RESIDENT_MEMORY_SNAPSHOT);
 	}
 

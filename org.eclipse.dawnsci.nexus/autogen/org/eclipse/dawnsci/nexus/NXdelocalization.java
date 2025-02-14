@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Base class to describe the delocalization of point-like objects on a grid.
@@ -47,7 +48,7 @@ public interface NXdelocalization extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getGrid();
+	public Dataset getGrid();
 
 	/**
 	 * Reference or link to the grid on which the delocalization is applied.
@@ -75,7 +76,7 @@ public interface NXdelocalization extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getObjects();
+	public Dataset getObjects();
 
 	/**
 	 * Reference or link to the points which are delocalized on the grid.
@@ -119,7 +120,7 @@ public interface NXdelocalization extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWeighting_model();
+	public Dataset getWeighting_model();
 
 	/**
 	 * The weighting model specifies how mark data are mapped to a weight per point.
@@ -201,7 +202,7 @@ public interface NXdelocalization extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getElement_whitelist();
+	public Dataset getElement_whitelist();
 
 	/**
 	 * A list of elements (via proton number) to consider for the atomic_decomposition
@@ -255,7 +256,7 @@ public interface NXdelocalization extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIsotope_whitelist();
+	public Dataset getIsotope_whitelist();
 
 	/**
 	 * A list of isotopes to consider for the isotope_decomposition weighting model.
@@ -313,7 +314,7 @@ public interface NXdelocalization extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMark();
+	public Dataset getMark();
 
 	/**
 	 * Attribute data for each member of the point cloud. For APM these are the
@@ -365,7 +366,7 @@ public interface NXdelocalization extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWeight();
+	public Dataset getWeight();
 
 	/**
 	 * Weighting factor with which the integrated intensity per grid cell is

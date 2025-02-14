@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Set of topological/spatial features in materials build from other features.
@@ -75,7 +76,7 @@ public interface NXms_feature_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDimensionality();
+	public Dataset getDimensionality();
 
 	/**
 	 * What is the best matching description how dimensional the feature is.
@@ -131,7 +132,7 @@ public interface NXms_feature_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCardinality();
+	public Dataset getCardinality();
 
 	/**
 	 * How many features/members are in this set?
@@ -180,7 +181,7 @@ public interface NXms_feature_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType_dict_keyword();
+	public Dataset getType_dict_keyword();
 
 	/**
 	 * The keywords of the dictionary of human-readable types of features.
@@ -241,7 +242,7 @@ public interface NXms_feature_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType_dict_value();
+	public Dataset getType_dict_value();
 
 	/**
 	 * The integer identifier used to resolve of which type each feature is,
@@ -296,7 +297,7 @@ public interface NXms_feature_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_parent_identifier();
+	public Dataset getNumber_of_parent_identifier();
 
 	/**
 	 * For each feature in the set specify the associated number of identifier
@@ -359,7 +360,7 @@ public interface NXms_feature_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getParent_identifier();
+	public Dataset getParent_identifier();
 
 	/**
 	 * Concatenated array of parent identifier for each feature (in the sequence)
@@ -422,7 +423,7 @@ public interface NXms_feature_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier_offset();
+	public Dataset getIdentifier_offset();
 
 	/**
 	 * Integer which specifies the first index to be used for distinguishing
@@ -488,7 +489,7 @@ public interface NXms_feature_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier();
+	public Dataset getIdentifier();
 
 	/**
 	 * Integer used to distinguish features for explicit indexing.

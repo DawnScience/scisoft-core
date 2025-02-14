@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Computer science description of a set of computing nodes.
@@ -34,7 +35,7 @@ public interface NXcs_computer extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getName();
+	public Dataset getName();
 
 	/**
 	 * Given name/alias to the computing system, e.g. MyDesktop.
@@ -62,7 +63,7 @@ public interface NXcs_computer extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getOperating_system();
+	public Dataset getOperating_system();
 
 	/**
 	 * Name of the operating system, e.g. Windows, Linux, Mac, Android.
@@ -113,7 +114,7 @@ public interface NXcs_computer extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getUuid();
+	public Dataset getUuid();
 
 	/**
 	 * Ideally a (globally) unique persistent identifier of the computer, i.e.

@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A device that reduces the intensity of a beam by attenuation.
@@ -46,7 +47,7 @@ public interface NXattenuator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDistance();
+	public Dataset getDistance();
 
 	/**
 	 * Distance from sample. Note, it is recommended to use NXtransformations instead.
@@ -86,7 +87,7 @@ public interface NXattenuator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * Type or composition of attenuator, e.g. polythene
@@ -118,7 +119,7 @@ public interface NXattenuator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getThickness();
+	public Dataset getThickness();
 
 	/**
 	 * Thickness of attenuator along beam direction
@@ -162,7 +163,7 @@ public interface NXattenuator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getScattering_cross_section();
+	public Dataset getScattering_cross_section();
 
 	/**
 	 * Scattering cross section (coherent+incoherent)
@@ -206,7 +207,7 @@ public interface NXattenuator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAbsorption_cross_section();
+	public Dataset getAbsorption_cross_section();
 
 	/**
 	 * Absorption cross section
@@ -251,7 +252,7 @@ public interface NXattenuator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAttenuator_transmission();
+	public Dataset getAttenuator_transmission();
 
 	/**
 	 * The nominal amount of the beam that gets through
@@ -300,7 +301,7 @@ public interface NXattenuator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getStatus();
+	public Dataset getStatus();
 
 	/**
 	 * In or out or moving of the beam
@@ -399,7 +400,7 @@ public interface NXattenuator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

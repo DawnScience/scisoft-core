@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Metadata for laser- and/or voltage-pulsing in atom probe microscopy.
@@ -100,7 +101,7 @@ public interface NXpulser_apm extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPulse_mode();
+	public Dataset getPulse_mode();
 
 	/**
 	 * How is field evaporation physically triggered.
@@ -151,7 +152,7 @@ public interface NXpulser_apm extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPulse_frequency();
+	public Dataset getPulse_frequency();
 
 	/**
 	 * Frequency with which the high voltage or laser pulser fires.
@@ -203,7 +204,7 @@ public interface NXpulser_apm extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPulse_fraction();
+	public Dataset getPulse_fraction();
 
 	/**
 	 * Fraction of the pulse_voltage that is applied in addition
@@ -264,7 +265,7 @@ public interface NXpulser_apm extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPulsed_voltage();
+	public Dataset getPulsed_voltage();
 
 	/**
 	 * In laser pulsing mode the values will be zero so the this field is recommended.
@@ -315,7 +316,7 @@ public interface NXpulser_apm extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPulse_number();
+	public Dataset getPulse_number();
 
 	/**
 	 * Absolute number of pulses starting from the beginning of the experiment.
@@ -365,7 +366,7 @@ public interface NXpulser_apm extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getStanding_voltage();
+	public Dataset getStanding_voltage();
 
 	/**
 	 * Direct current voltage between the specimen and the (local electrode) in

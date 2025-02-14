@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -67,7 +68,7 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 
 
 	@Override
-	public IDataset getMode() {
+	public Dataset getMode() {
 		return getDataset(NX_MODE);
 	}
 
@@ -87,7 +88,7 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public IDataset getStart_time() {
+	public Dataset getStart_time() {
 		return getDataset(NX_START_TIME);
 	}
 
@@ -107,7 +108,7 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public IDataset getEnd_time() {
+	public Dataset getEnd_time() {
 		return getDataset(NX_END_TIME);
 	}
 
@@ -127,7 +128,7 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public IDataset getPreset() {
+	public Dataset getPreset() {
 		return getDataset(NX_PRESET);
 	}
 
@@ -148,7 +149,7 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 
 	@Override
 	@Deprecated
-	public IDataset getDistance() {
+	public Dataset getDistance() {
 		return getDataset(NX_DISTANCE);
 	}
 
@@ -171,7 +172,7 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public IDataset getRange() {
+	public Dataset getRange() {
 		return getDataset(NX_RANGE);
 	}
 
@@ -191,7 +192,7 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public IDataset getNominal() {
+	public Dataset getNominal() {
 		return getDataset(NX_NOMINAL);
 	}
 
@@ -211,7 +212,7 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public IDataset getIntegral() {
+	public Dataset getIntegral() {
 		return getDataset(NX_INTEGRAL);
 	}
 
@@ -242,7 +243,7 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -262,7 +263,7 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public IDataset getTime_of_flight() {
+	public Dataset getTime_of_flight() {
 		return getDataset(NX_TIME_OF_FLIGHT);
 	}
 
@@ -282,7 +283,7 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public IDataset getEfficiency() {
+	public Dataset getEfficiency() {
 		return getDataset(NX_EFFICIENCY);
 	}
 
@@ -302,7 +303,7 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public IDataset getData() {
+	public Dataset getData() {
 		return getDataset(NX_DATA);
 	}
 
@@ -322,7 +323,7 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public IDataset getSampled_fraction() {
+	public Dataset getSampled_fraction() {
 		return getDataset(NX_SAMPLED_FRACTION);
 	}
 
@@ -379,7 +380,7 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public IDataset getCount_time() {
+	public Dataset getCount_time() {
 		return getDataset(NX_COUNT_TIME);
 	}
 
@@ -440,7 +441,7 @@ public class NXmonitorImpl extends NXobjectImpl implements NXmonitor {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

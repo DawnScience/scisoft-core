@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Device to reduce an atmosphere to a controlled remaining pressure level.
@@ -92,7 +93,7 @@ public interface NXpump extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDesign();
+	public Dataset getDesign();
 
 	/**
 	 * Principle type of the pump.

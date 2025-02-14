@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * (**required**) :ref:`NXentry` describes the measurement.
@@ -303,7 +304,7 @@ public interface NXentry extends NXsubentry {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTitle();
+	public Dataset getTitle();
 
 	/**
 	 * Extended title for entry
@@ -333,7 +334,7 @@ public interface NXentry extends NXsubentry {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getExperiment_identifier();
+	public Dataset getExperiment_identifier();
 
 	/**
 	 * Unique identifier for the experiment,
@@ -367,7 +368,7 @@ public interface NXentry extends NXsubentry {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getExperiment_description();
+	public Dataset getExperiment_description();
 
 	/**
 	 * Brief summary of the experiment, including key objectives.
@@ -409,7 +410,7 @@ public interface NXentry extends NXsubentry {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCollection_identifier();
+	public Dataset getCollection_identifier();
 
 	/**
 	 * User or Data Acquisition defined group of NeXus files or NXentry
@@ -437,7 +438,7 @@ public interface NXentry extends NXsubentry {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCollection_description();
+	public Dataset getCollection_description();
 
 	/**
 	 * Brief summary of the collection, including grouping criteria.
@@ -465,7 +466,7 @@ public interface NXentry extends NXsubentry {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEntry_identifier();
+	public Dataset getEntry_identifier();
 
 	/**
 	 * unique identifier for the measurement, defined by the facility.
@@ -493,7 +494,7 @@ public interface NXentry extends NXsubentry {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEntry_identifier_uuid();
+	public Dataset getEntry_identifier_uuid();
 
 	/**
 	 * UUID identifier for the measurement.
@@ -536,7 +537,7 @@ public interface NXentry extends NXsubentry {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFeatures();
+	public Dataset getFeatures();
 
 	/**
 	 * Reserved for future use by NIAC.
@@ -576,7 +577,7 @@ public interface NXentry extends NXsubentry {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDefinition();
+	public Dataset getDefinition();
 
 	/**
 	 * (alternate use: see same field in :ref:`NXsubentry` for preferred)
@@ -664,7 +665,7 @@ public interface NXentry extends NXsubentry {
 	 * @return  the value.
 	 */
 	@Deprecated
-	public IDataset getDefinition_local();
+	public Dataset getDefinition_local();
 
 	/**
 	 * Local NXDL schema extended from the entry
@@ -738,7 +739,7 @@ public interface NXentry extends NXsubentry {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getStart_time();
+	public Dataset getStart_time();
 
 	/**
 	 * Starting time of measurement
@@ -778,7 +779,7 @@ public interface NXentry extends NXsubentry {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEnd_time();
+	public Dataset getEnd_time();
 
 	/**
 	 * Ending time of measurement
@@ -819,7 +820,7 @@ public interface NXentry extends NXsubentry {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDuration();
+	public Dataset getDuration();
 
 	/**
 	 * Duration of measurement
@@ -864,7 +865,7 @@ public interface NXentry extends NXsubentry {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCollection_time();
+	public Dataset getCollection_time();
 
 	/**
 	 * Time transpired actually collecting data i.e. taking out time when collection was
@@ -907,7 +908,7 @@ public interface NXentry extends NXsubentry {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRun_cycle();
+	public Dataset getRun_cycle();
 
 	/**
 	 * Such as "2007-3". Some user facilities organize their beam time into run cycles.
@@ -935,7 +936,7 @@ public interface NXentry extends NXsubentry {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getProgram_name();
+	public Dataset getProgram_name();
 
 	/**
 	 * Name of program used to generate this file
@@ -992,7 +993,7 @@ public interface NXentry extends NXsubentry {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRevision();
+	public Dataset getRevision();
 
 	/**
 	 * Revision id of the file due to re-calibration, reprocessing, new analysis, new
@@ -1042,7 +1043,7 @@ public interface NXentry extends NXsubentry {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPre_sample_flightpath();
+	public Dataset getPre_sample_flightpath();
 
 	/**
 	 * This is the flightpath before the sample position. This can be determined by a chopper,

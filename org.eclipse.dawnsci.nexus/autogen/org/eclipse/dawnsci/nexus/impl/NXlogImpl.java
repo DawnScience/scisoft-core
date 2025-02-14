@@ -18,6 +18,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -78,7 +79,7 @@ public class NXlogImpl extends NXobjectImpl implements NXlog {
 
 
 	@Override
-	public IDataset getTime() {
+	public Dataset getTime() {
 		return getDataset(NX_TIME);
 	}
 
@@ -118,7 +119,7 @@ public class NXlogImpl extends NXobjectImpl implements NXlog {
 	}
 
 	@Override
-	public IDataset getValue() {
+	public Dataset getValue() {
 		return getDataset(NX_VALUE);
 	}
 
@@ -138,7 +139,7 @@ public class NXlogImpl extends NXobjectImpl implements NXlog {
 	}
 
 	@Override
-	public IDataset getRaw_value() {
+	public Dataset getRaw_value() {
 		return getDataset(NX_RAW_VALUE);
 	}
 
@@ -158,7 +159,7 @@ public class NXlogImpl extends NXobjectImpl implements NXlog {
 	}
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -178,7 +179,7 @@ public class NXlogImpl extends NXobjectImpl implements NXlog {
 	}
 
 	@Override
-	public IDataset getAverage_value() {
+	public Dataset getAverage_value() {
 		return getDataset(NX_AVERAGE_VALUE);
 	}
 
@@ -199,7 +200,7 @@ public class NXlogImpl extends NXobjectImpl implements NXlog {
 
 	@Override
 	@Deprecated
-	public IDataset getAverage_value_error() {
+	public Dataset getAverage_value_error() {
 		return getDataset(NX_AVERAGE_VALUE_ERROR);
 	}
 
@@ -222,7 +223,7 @@ public class NXlogImpl extends NXobjectImpl implements NXlog {
 	}
 
 	@Override
-	public IDataset getAverage_value_errors() {
+	public Dataset getAverage_value_errors() {
 		return getDataset(NX_AVERAGE_VALUE_ERRORS);
 	}
 
@@ -242,7 +243,7 @@ public class NXlogImpl extends NXobjectImpl implements NXlog {
 	}
 
 	@Override
-	public IDataset getMinimum_value() {
+	public Dataset getMinimum_value() {
 		return getDataset(NX_MINIMUM_VALUE);
 	}
 
@@ -262,7 +263,7 @@ public class NXlogImpl extends NXobjectImpl implements NXlog {
 	}
 
 	@Override
-	public IDataset getMaximum_value() {
+	public Dataset getMaximum_value() {
 		return getDataset(NX_MAXIMUM_VALUE);
 	}
 
@@ -282,7 +283,7 @@ public class NXlogImpl extends NXobjectImpl implements NXlog {
 	}
 
 	@Override
-	public IDataset getDuration() {
+	public Dataset getDuration() {
 		return getDataset(NX_DURATION);
 	}
 
@@ -302,7 +303,7 @@ public class NXlogImpl extends NXobjectImpl implements NXlog {
 	}
 
 	@Override
-	public IDataset getCue_timestamp_zero() {
+	public Dataset getCue_timestamp_zero() {
 		return getDataset(NX_CUE_TIMESTAMP_ZERO);
 	}
 
@@ -342,7 +343,7 @@ public class NXlogImpl extends NXobjectImpl implements NXlog {
 	}
 
 	@Override
-	public IDataset getCue_index() {
+	public Dataset getCue_index() {
 		return getDataset(NX_CUE_INDEX);
 	}
 

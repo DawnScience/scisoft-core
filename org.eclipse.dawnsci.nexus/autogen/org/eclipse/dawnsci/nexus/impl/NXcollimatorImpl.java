@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -98,7 +99,7 @@ public class NXcollimatorImpl extends NXobjectImpl implements NXcollimator {
 	}
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -118,7 +119,7 @@ public class NXcollimatorImpl extends NXobjectImpl implements NXcollimator {
 	}
 
 	@Override
-	public IDataset getSoller_angle() {
+	public Dataset getSoller_angle() {
 		return getDataset(NX_SOLLER_ANGLE);
 	}
 
@@ -138,7 +139,7 @@ public class NXcollimatorImpl extends NXobjectImpl implements NXcollimator {
 	}
 
 	@Override
-	public IDataset getDivergence_x() {
+	public Dataset getDivergence_x() {
 		return getDataset(NX_DIVERGENCE_X);
 	}
 
@@ -158,7 +159,7 @@ public class NXcollimatorImpl extends NXobjectImpl implements NXcollimator {
 	}
 
 	@Override
-	public IDataset getDivergence_y() {
+	public Dataset getDivergence_y() {
 		return getDataset(NX_DIVERGENCE_Y);
 	}
 
@@ -178,7 +179,7 @@ public class NXcollimatorImpl extends NXobjectImpl implements NXcollimator {
 	}
 
 	@Override
-	public IDataset getFrequency() {
+	public Dataset getFrequency() {
 		return getDataset(NX_FREQUENCY);
 	}
 
@@ -209,7 +210,7 @@ public class NXcollimatorImpl extends NXobjectImpl implements NXcollimator {
 	}
 
 	@Override
-	public IDataset getBlade_thickness() {
+	public Dataset getBlade_thickness() {
 		return getDataset(NX_BLADE_THICKNESS);
 	}
 
@@ -229,7 +230,7 @@ public class NXcollimatorImpl extends NXobjectImpl implements NXcollimator {
 	}
 
 	@Override
-	public IDataset getBlade_spacing() {
+	public Dataset getBlade_spacing() {
 		return getDataset(NX_BLADE_SPACING);
 	}
 
@@ -249,7 +250,7 @@ public class NXcollimatorImpl extends NXobjectImpl implements NXcollimator {
 	}
 
 	@Override
-	public IDataset getAbsorbing_material() {
+	public Dataset getAbsorbing_material() {
 		return getDataset(NX_ABSORBING_MATERIAL);
 	}
 
@@ -269,7 +270,7 @@ public class NXcollimatorImpl extends NXobjectImpl implements NXcollimator {
 	}
 
 	@Override
-	public IDataset getTransmitting_material() {
+	public Dataset getTransmitting_material() {
 		return getDataset(NX_TRANSMITTING_MATERIAL);
 	}
 
@@ -330,7 +331,7 @@ public class NXcollimatorImpl extends NXobjectImpl implements NXcollimator {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

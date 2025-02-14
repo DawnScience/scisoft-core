@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Contact information for a user.
@@ -40,7 +41,7 @@ public interface NXuser extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getName();
+	public Dataset getName();
 
 	/**
 	 * Name of user responsible for this entry
@@ -70,7 +71,7 @@ public interface NXuser extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRole();
+	public Dataset getRole();
 
 	/**
 	 * Role of user responsible for this entry.
@@ -104,7 +105,7 @@ public interface NXuser extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAffiliation();
+	public Dataset getAffiliation();
 
 	/**
 	 * Affiliation of user
@@ -132,7 +133,7 @@ public interface NXuser extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAddress();
+	public Dataset getAddress();
 
 	/**
 	 * Address of user
@@ -160,7 +161,7 @@ public interface NXuser extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTelephone_number();
+	public Dataset getTelephone_number();
 
 	/**
 	 * Telephone number of user
@@ -188,7 +189,7 @@ public interface NXuser extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFax_number();
+	public Dataset getFax_number();
 
 	/**
 	 * Fax number of user
@@ -216,7 +217,7 @@ public interface NXuser extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEmail();
+	public Dataset getEmail();
 
 	/**
 	 * Email of user
@@ -246,7 +247,7 @@ public interface NXuser extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFacility_user_id();
+	public Dataset getFacility_user_id();
 
 	/**
 	 * facility based unique identifier for this person
@@ -281,7 +282,7 @@ public interface NXuser extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getOrcid();
+	public Dataset getOrcid();
 
 	/**
 	 * an author code, Open Researcher and Contributor ID,

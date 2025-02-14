@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -61,7 +62,7 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 
 
 	@Override
-	public IDataset getLens_geometry() {
+	public Dataset getLens_geometry() {
 		return getDataset(NX_LENS_GEOMETRY);
 	}
 
@@ -81,7 +82,7 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	}
 
 	@Override
-	public IDataset getSymmetric() {
+	public Dataset getSymmetric() {
 		return getDataset(NX_SYMMETRIC);
 	}
 
@@ -101,7 +102,7 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	}
 
 	@Override
-	public IDataset getCylindrical() {
+	public Dataset getCylindrical() {
 		return getDataset(NX_CYLINDRICAL);
 	}
 
@@ -132,7 +133,7 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	}
 
 	@Override
-	public IDataset getFocus_type() {
+	public Dataset getFocus_type() {
 		return getDataset(NX_FOCUS_TYPE);
 	}
 
@@ -152,7 +153,7 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	}
 
 	@Override
-	public IDataset getLens_thickness() {
+	public Dataset getLens_thickness() {
 		return getDataset(NX_LENS_THICKNESS);
 	}
 
@@ -172,7 +173,7 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	}
 
 	@Override
-	public IDataset getLens_length() {
+	public Dataset getLens_length() {
 		return getDataset(NX_LENS_LENGTH);
 	}
 
@@ -192,7 +193,7 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	}
 
 	@Override
-	public IDataset getCurvature() {
+	public Dataset getCurvature() {
 		return getDataset(NX_CURVATURE);
 	}
 
@@ -212,7 +213,7 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	}
 
 	@Override
-	public IDataset getAperture() {
+	public Dataset getAperture() {
 		return getDataset(NX_APERTURE);
 	}
 
@@ -232,7 +233,7 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	}
 
 	@Override
-	public IDataset getNumber_of_lenses() {
+	public Dataset getNumber_of_lenses() {
 		return getDataset(NX_NUMBER_OF_LENSES);
 	}
 
@@ -252,7 +253,7 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	}
 
 	@Override
-	public IDataset getLens_material() {
+	public Dataset getLens_material() {
 		return getDataset(NX_LENS_MATERIAL);
 	}
 
@@ -272,7 +273,7 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	}
 
 	@Override
-	public IDataset getGas() {
+	public Dataset getGas() {
 		return getDataset(NX_GAS);
 	}
 
@@ -292,7 +293,7 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	}
 
 	@Override
-	public IDataset getGas_pressure() {
+	public Dataset getGas_pressure() {
 		return getDataset(NX_GAS_PRESSURE);
 	}
 
@@ -353,7 +354,7 @@ public class NXxraylensImpl extends NXobjectImpl implements NXxraylens {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

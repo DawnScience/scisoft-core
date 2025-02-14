@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Computational geometry description of geometric primitives via a face and edge list.
@@ -78,7 +79,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDimensionality();
+	public Dataset getDimensionality();
 
 	/**
 	 * Dimensionality.
@@ -125,7 +126,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_vertices();
+	public Dataset getNumber_of_vertices();
 
 	/**
 	 * Array which specifies of how many vertices each face is built.
@@ -178,7 +179,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_edges();
+	public Dataset getNumber_of_edges();
 
 	/**
 	 * Number of edges.
@@ -222,7 +223,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_faces();
+	public Dataset getNumber_of_faces();
 
 	/**
 	 * Number of faces.
@@ -273,7 +274,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getVertex_identifier_offset();
+	public Dataset getVertex_identifier_offset();
 
 	/**
 	 * Integer which specifies the first index to be used for distinguishing
@@ -345,7 +346,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEdge_identifier_offset();
+	public Dataset getEdge_identifier_offset();
 
 	/**
 	 * Integer which specifies the first index to be used for distinguishing
@@ -417,7 +418,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFace_identifier_offset();
+	public Dataset getFace_identifier_offset();
 
 	/**
 	 * Integer which specifies the first index to be used for distinguishing
@@ -483,7 +484,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getVertex_identifier();
+	public Dataset getVertex_identifier();
 
 	/**
 	 * Integer used to distinguish vertices explicitly.
@@ -531,7 +532,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEdge_identifier();
+	public Dataset getEdge_identifier();
 
 	/**
 	 * Integer used to distinguish edges explicitly.
@@ -579,7 +580,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFace_identifier();
+	public Dataset getFace_identifier();
 
 	/**
 	 * Integer used to distinguish faces explicitly.
@@ -634,7 +635,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getVertices();
+	public Dataset getVertices();
 
 	/**
 	 * Positions of the vertices.
@@ -703,7 +704,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEdges();
+	public Dataset getEdges();
 
 	/**
 	 * The edges are stored as a pairs of vertex identifier values.
@@ -758,7 +759,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFaces();
+	public Dataset getFaces();
 
 	/**
 	 * Array of identifiers from vertices which describe each face.
@@ -826,7 +827,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getVertices_are_unique();
+	public Dataset getVertices_are_unique();
 
 	/**
 	 * If true indicates that the vertices are all placed at different positions
@@ -871,7 +872,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEdges_are_unique();
+	public Dataset getEdges_are_unique();
 
 	/**
 	 * If true indicates that no edge is stored twice. Users are encouraged to
@@ -916,7 +917,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFaces_are_unique();
+	public Dataset getFaces_are_unique();
 
 	/**
 	 * <p>
@@ -958,7 +959,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWinding_order();
+	public Dataset getWinding_order();
 
 	/**
 	 * Specifies for each face which winding order was used if any:

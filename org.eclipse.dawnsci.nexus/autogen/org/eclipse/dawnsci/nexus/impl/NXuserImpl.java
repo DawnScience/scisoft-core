@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -59,7 +60,7 @@ public class NXuserImpl extends NXobjectImpl implements NXuser {
 
 
 	@Override
-	public IDataset getName() {
+	public Dataset getName() {
 		return getDataset(NX_NAME);
 	}
 
@@ -79,7 +80,7 @@ public class NXuserImpl extends NXobjectImpl implements NXuser {
 	}
 
 	@Override
-	public IDataset getRole() {
+	public Dataset getRole() {
 		return getDataset(NX_ROLE);
 	}
 
@@ -99,7 +100,7 @@ public class NXuserImpl extends NXobjectImpl implements NXuser {
 	}
 
 	@Override
-	public IDataset getAffiliation() {
+	public Dataset getAffiliation() {
 		return getDataset(NX_AFFILIATION);
 	}
 
@@ -119,7 +120,7 @@ public class NXuserImpl extends NXobjectImpl implements NXuser {
 	}
 
 	@Override
-	public IDataset getAddress() {
+	public Dataset getAddress() {
 		return getDataset(NX_ADDRESS);
 	}
 
@@ -139,7 +140,7 @@ public class NXuserImpl extends NXobjectImpl implements NXuser {
 	}
 
 	@Override
-	public IDataset getTelephone_number() {
+	public Dataset getTelephone_number() {
 		return getDataset(NX_TELEPHONE_NUMBER);
 	}
 
@@ -159,7 +160,7 @@ public class NXuserImpl extends NXobjectImpl implements NXuser {
 	}
 
 	@Override
-	public IDataset getFax_number() {
+	public Dataset getFax_number() {
 		return getDataset(NX_FAX_NUMBER);
 	}
 
@@ -179,7 +180,7 @@ public class NXuserImpl extends NXobjectImpl implements NXuser {
 	}
 
 	@Override
-	public IDataset getEmail() {
+	public Dataset getEmail() {
 		return getDataset(NX_EMAIL);
 	}
 
@@ -199,7 +200,7 @@ public class NXuserImpl extends NXobjectImpl implements NXuser {
 	}
 
 	@Override
-	public IDataset getFacility_user_id() {
+	public Dataset getFacility_user_id() {
 		return getDataset(NX_FACILITY_USER_ID);
 	}
 
@@ -219,7 +220,7 @@ public class NXuserImpl extends NXobjectImpl implements NXuser {
 	}
 
 	@Override
-	public IDataset getOrcid() {
+	public Dataset getOrcid() {
 		return getDataset(NX_ORCID);
 	}
 

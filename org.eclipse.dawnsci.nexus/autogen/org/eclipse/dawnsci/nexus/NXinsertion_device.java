@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * An insertion device, as used in a synchrotron light source.
@@ -46,7 +47,7 @@ public interface NXinsertion_device extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * <p>
@@ -90,7 +91,7 @@ public interface NXinsertion_device extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getGap();
+	public Dataset getGap();
 
 	/**
 	 * separation between opposing pairs of magnetic poles
@@ -134,7 +135,7 @@ public interface NXinsertion_device extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTaper();
+	public Dataset getTaper();
 
 	/**
 	 * angular of gap difference between upstream and downstream ends of the insertion device
@@ -177,7 +178,7 @@ public interface NXinsertion_device extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPhase();
+	public Dataset getPhase();
 
 	/**
 	 * <p>
@@ -218,7 +219,7 @@ public interface NXinsertion_device extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPoles();
+	public Dataset getPoles();
 
 	/**
 	 * number of poles
@@ -261,7 +262,7 @@ public interface NXinsertion_device extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMagnetic_wavelength();
+	public Dataset getMagnetic_wavelength();
 
 	/**
 	 * <p>
@@ -302,7 +303,7 @@ public interface NXinsertion_device extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getK();
+	public Dataset getK();
 
 	/**
 	 * beam displacement parameter
@@ -346,7 +347,7 @@ public interface NXinsertion_device extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLength();
+	public Dataset getLength();
 
 	/**
 	 * length of insertion device
@@ -390,7 +391,7 @@ public interface NXinsertion_device extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPower();
+	public Dataset getPower();
 
 	/**
 	 * total power delivered by insertion device
@@ -434,7 +435,7 @@ public interface NXinsertion_device extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEnergy();
+	public Dataset getEnergy();
 
 	/**
 	 * energy of peak intensity in output spectrum
@@ -478,7 +479,7 @@ public interface NXinsertion_device extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBandwidth();
+	public Dataset getBandwidth();
 
 	/**
 	 * bandwidth of peak energy
@@ -522,7 +523,7 @@ public interface NXinsertion_device extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getHarmonic();
+	public Dataset getHarmonic();
 
 	/**
 	 * harmonic number of peak
@@ -748,7 +749,7 @@ public interface NXinsertion_device extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

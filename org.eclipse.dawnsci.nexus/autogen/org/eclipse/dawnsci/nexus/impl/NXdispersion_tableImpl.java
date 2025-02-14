@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -55,7 +56,7 @@ public class NXdispersion_tableImpl extends NXobjectImpl implements NXdispersion
 
 
 	@Override
-	public IDataset getModel_name() {
+	public Dataset getModel_name() {
 		return getDataset(NX_MODEL_NAME);
 	}
 
@@ -75,7 +76,7 @@ public class NXdispersion_tableImpl extends NXobjectImpl implements NXdispersion
 	}
 
 	@Override
-	public IDataset getConvention() {
+	public Dataset getConvention() {
 		return getDataset(NX_CONVENTION);
 	}
 
@@ -95,7 +96,7 @@ public class NXdispersion_tableImpl extends NXobjectImpl implements NXdispersion
 	}
 
 	@Override
-	public IDataset getWavelength() {
+	public Dataset getWavelength() {
 		return getDataset(NX_WAVELENGTH);
 	}
 
@@ -115,7 +116,7 @@ public class NXdispersion_tableImpl extends NXobjectImpl implements NXdispersion
 	}
 
 	@Override
-	public IDataset getEnergy() {
+	public Dataset getEnergy() {
 		return getDataset(NX_ENERGY);
 	}
 
@@ -135,7 +136,7 @@ public class NXdispersion_tableImpl extends NXobjectImpl implements NXdispersion
 	}
 
 	@Override
-	public IDataset getRefractive_index() {
+	public Dataset getRefractive_index() {
 		return getDataset(NX_REFRACTIVE_INDEX);
 	}
 
@@ -155,7 +156,7 @@ public class NXdispersion_tableImpl extends NXobjectImpl implements NXdispersion
 	}
 
 	@Override
-	public IDataset getDielectric_function() {
+	public Dataset getDielectric_function() {
 		return getDataset(NX_DIELECTRIC_FUNCTION);
 	}
 

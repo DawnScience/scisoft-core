@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Constructive Solid Geometry base class, using :ref:`NXquadric` and :ref:`NXoff_geometry`
@@ -39,7 +40,7 @@ public interface NXcsg extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getOperation();
+	public Dataset getOperation();
 
 	/**
 	 * One of the standard construction solid geometry set operations,
@@ -143,7 +144,7 @@ public interface NXcsg extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getGeometry();
+	public Dataset getGeometry();
 
 	/**
 	 * Path to a field that is either an :ref:`NXquadric` (if

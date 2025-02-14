@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Scan box and coils which deflect an electron beam in a controlled manner.
@@ -38,7 +39,7 @@ public interface NXscanbox_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCalibration_style();
+	public Dataset getCalibration_style();
 
 	/**
 	 *
@@ -66,7 +67,7 @@ public interface NXscanbox_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCenter();
+	public Dataset getCenter();
 
 	/**
 	 * <p>
@@ -106,7 +107,7 @@ public interface NXscanbox_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFlyback_time();
+	public Dataset getFlyback_time();
 
 	/**
 	 * <p>
@@ -146,7 +147,7 @@ public interface NXscanbox_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLine_time();
+	public Dataset getLine_time();
 
 	/**
 	 * <p>
@@ -186,7 +187,7 @@ public interface NXscanbox_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPixel_time();
+	public Dataset getPixel_time();
 
 	/**
 	 * <p>
@@ -226,7 +227,7 @@ public interface NXscanbox_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRequested_pixel_time();
+	public Dataset getRequested_pixel_time();
 
 	/**
 	 * <p>
@@ -266,7 +267,7 @@ public interface NXscanbox_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRotation();
+	public Dataset getRotation();
 
 	/**
 	 * <p>
@@ -305,7 +306,7 @@ public interface NXscanbox_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAc_line_sync();
+	public Dataset getAc_line_sync();
 
 	/**
 	 * <p>

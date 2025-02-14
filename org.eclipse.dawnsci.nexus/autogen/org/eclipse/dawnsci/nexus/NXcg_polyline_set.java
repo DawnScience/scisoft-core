@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Computational geometry description of a set of polylines in Euclidean space.
@@ -56,7 +57,7 @@ public interface NXcg_polyline_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDimensionality();
+	public Dataset getDimensionality();
 
 	/**
 	 * <p>
@@ -96,7 +97,7 @@ public interface NXcg_polyline_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCardinality();
+	public Dataset getCardinality();
 
 	/**
 	 * <p>
@@ -139,7 +140,7 @@ public interface NXcg_polyline_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_total_vertices();
+	public Dataset getNumber_of_total_vertices();
 
 	/**
 	 * The total number of vertices, irrespective of their eventual uniqueness,
@@ -194,7 +195,7 @@ public interface NXcg_polyline_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_vertices();
+	public Dataset getNumber_of_vertices();
 
 	/**
 	 * Array which specifies of how many vertices each polyline is built.
@@ -328,7 +329,7 @@ public interface NXcg_polyline_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier_offset();
+	public Dataset getIdentifier_offset();
 
 	/**
 	 * Integer which specifies the first index to be used for distinguishing
@@ -394,7 +395,7 @@ public interface NXcg_polyline_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier();
+	public Dataset getIdentifier();
 
 	/**
 	 * Integer used to distinguish polylines for explicit indexing.
@@ -449,7 +450,7 @@ public interface NXcg_polyline_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getVertices();
+	public Dataset getVertices();
 
 	/**
 	 * Positions of the vertices which support the members of the polyline set.
@@ -518,7 +519,7 @@ public interface NXcg_polyline_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getVertices_are_unique();
+	public Dataset getVertices_are_unique();
 
 	/**
 	 * If true indicates that the vertices are all placed at different
@@ -580,7 +581,7 @@ public interface NXcg_polyline_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPolylines();
+	public Dataset getPolylines();
 
 	/**
 	 * Sequence of vertex identifiers which describe each polyline.
@@ -670,7 +671,7 @@ public interface NXcg_polyline_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLength();
+	public Dataset getLength();
 
 	/**
 	 * The length of each polyline.
@@ -718,7 +719,7 @@ public interface NXcg_polyline_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIs_closed();
+	public Dataset getIs_closed();
 
 	/**
 	 * If true specifies that a polyline is closed, i.e.

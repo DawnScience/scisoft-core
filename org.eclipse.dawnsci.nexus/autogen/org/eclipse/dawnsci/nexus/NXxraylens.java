@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * An X-ray lens, typically at a synchrotron X-ray beam line.
@@ -51,7 +52,7 @@ public interface NXxraylens extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLens_geometry();
+	public Dataset getLens_geometry();
 
 	/**
 	 * Geometry of the lens
@@ -106,7 +107,7 @@ public interface NXxraylens extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSymmetric();
+	public Dataset getSymmetric();
 
 	/**
 	 * Is the device symmetric?
@@ -146,7 +147,7 @@ public interface NXxraylens extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCylindrical();
+	public Dataset getCylindrical();
 
 	/**
 	 * Is the device cylindrical?
@@ -203,7 +204,7 @@ public interface NXxraylens extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFocus_type();
+	public Dataset getFocus_type();
 
 	/**
 	 * The type of focus of the lens
@@ -253,7 +254,7 @@ public interface NXxraylens extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLens_thickness();
+	public Dataset getLens_thickness();
 
 	/**
 	 * Thickness of the lens
@@ -297,7 +298,7 @@ public interface NXxraylens extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLens_length();
+	public Dataset getLens_length();
 
 	/**
 	 * Length of the lens
@@ -341,7 +342,7 @@ public interface NXxraylens extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCurvature();
+	public Dataset getCurvature();
 
 	/**
 	 * Radius of the curvature as measured in the middle of the lens
@@ -385,7 +386,7 @@ public interface NXxraylens extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAperture();
+	public Dataset getAperture();
 
 	/**
 	 * Diameter of the lens.
@@ -428,7 +429,7 @@ public interface NXxraylens extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_lenses();
+	public Dataset getNumber_of_lenses();
 
 	/**
 	 * Number of lenses that make up the compound lens.
@@ -468,7 +469,7 @@ public interface NXxraylens extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLens_material();
+	public Dataset getLens_material();
 
 	/**
 	 * Material used to make the lens.
@@ -508,7 +509,7 @@ public interface NXxraylens extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getGas();
+	public Dataset getGas();
 
 	/**
 	 * Gas used to fill the lens
@@ -549,7 +550,7 @@ public interface NXxraylens extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getGas_pressure();
+	public Dataset getGas_pressure();
 
 	/**
 	 * Gas pressure in the lens
@@ -687,7 +688,7 @@ public interface NXxraylens extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

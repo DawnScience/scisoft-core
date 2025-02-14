@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A device that blocks the beam completely, usually to protect a detector.
@@ -117,7 +118,7 @@ public interface NXbeam_stop extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * description of beamstop
@@ -295,7 +296,7 @@ public interface NXbeam_stop extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSize();
+	public Dataset getSize();
 
 	/**
 	 * Size of beamstop. If this is not sufficient to describe the beam stop use
@@ -343,7 +344,7 @@ public interface NXbeam_stop extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getX();
+	public Dataset getX();
 
 	/**
 	 * x position of the beamstop in relation to the detector.
@@ -391,7 +392,7 @@ public interface NXbeam_stop extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getY();
+	public Dataset getY();
 
 	/**
 	 * y position of the beamstop in relation to the detector.
@@ -439,7 +440,7 @@ public interface NXbeam_stop extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDistance_to_detector();
+	public Dataset getDistance_to_detector();
 
 	/**
 	 * distance of the beamstop to the detector.
@@ -486,7 +487,7 @@ public interface NXbeam_stop extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getStatus();
+	public Dataset getStatus();
 
 	/**
 	 * <p>
@@ -564,7 +565,7 @@ public interface NXbeam_stop extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

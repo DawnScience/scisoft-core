@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -67,7 +68,7 @@ public class NXcg_alpha_complexImpl extends NXobjectImpl implements NXcg_alpha_c
 
 
 	@Override
-	public IDataset getDimensionality() {
+	public Dataset getDimensionality() {
 		return getDataset(NX_DIMENSIONALITY);
 	}
 
@@ -87,7 +88,7 @@ public class NXcg_alpha_complexImpl extends NXobjectImpl implements NXcg_alpha_c
 	}
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -107,7 +108,7 @@ public class NXcg_alpha_complexImpl extends NXobjectImpl implements NXcg_alpha_c
 	}
 
 	@Override
-	public IDataset getMode() {
+	public Dataset getMode() {
 		return getDataset(NX_MODE);
 	}
 
@@ -127,7 +128,7 @@ public class NXcg_alpha_complexImpl extends NXobjectImpl implements NXcg_alpha_c
 	}
 
 	@Override
-	public IDataset getAlpha() {
+	public Dataset getAlpha() {
 		return getDataset(NX_ALPHA);
 	}
 
@@ -147,7 +148,7 @@ public class NXcg_alpha_complexImpl extends NXobjectImpl implements NXcg_alpha_c
 	}
 
 	@Override
-	public IDataset getOffset() {
+	public Dataset getOffset() {
 		return getDataset(NX_OFFSET);
 	}
 

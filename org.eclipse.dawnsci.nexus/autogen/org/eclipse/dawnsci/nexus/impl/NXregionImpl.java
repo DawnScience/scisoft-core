@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -102,7 +103,7 @@ public class NXregionImpl extends NXobjectImpl implements NXregion {
 	}
 
 	@Override
-	public IDataset getParent() {
+	public Dataset getParent() {
 		return getDataset(NX_PARENT);
 	}
 
@@ -122,7 +123,7 @@ public class NXregionImpl extends NXobjectImpl implements NXregion {
 	}
 
 	@Override
-	public IDataset getParent_mask() {
+	public Dataset getParent_mask() {
 		return getDataset(NX_PARENT_MASK);
 	}
 
@@ -142,7 +143,7 @@ public class NXregionImpl extends NXobjectImpl implements NXregion {
 	}
 
 	@Override
-	public IDataset getStart() {
+	public Dataset getStart() {
 		return getDataset(NX_START);
 	}
 
@@ -162,7 +163,7 @@ public class NXregionImpl extends NXobjectImpl implements NXregion {
 	}
 
 	@Override
-	public IDataset getCount() {
+	public Dataset getCount() {
 		return getDataset(NX_COUNT);
 	}
 
@@ -182,7 +183,7 @@ public class NXregionImpl extends NXobjectImpl implements NXregion {
 	}
 
 	@Override
-	public IDataset getStride() {
+	public Dataset getStride() {
 		return getDataset(NX_STRIDE);
 	}
 
@@ -202,7 +203,7 @@ public class NXregionImpl extends NXobjectImpl implements NXregion {
 	}
 
 	@Override
-	public IDataset getBlock() {
+	public Dataset getBlock() {
 		return getDataset(NX_BLOCK);
 	}
 
@@ -222,7 +223,7 @@ public class NXregionImpl extends NXobjectImpl implements NXregion {
 	}
 
 	@Override
-	public IDataset getScale() {
+	public Dataset getScale() {
 		return getDataset(NX_SCALE);
 	}
 

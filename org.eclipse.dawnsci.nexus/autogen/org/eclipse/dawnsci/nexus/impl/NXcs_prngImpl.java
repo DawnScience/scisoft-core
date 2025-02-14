@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -57,7 +58,7 @@ public class NXcs_prngImpl extends NXobjectImpl implements NXcs_prng {
 
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -77,7 +78,7 @@ public class NXcs_prngImpl extends NXobjectImpl implements NXcs_prng {
 	}
 
 	@Override
-	public IDataset getProgram() {
+	public Dataset getProgram() {
 		return getDataset(NX_PROGRAM);
 	}
 
@@ -107,7 +108,7 @@ public class NXcs_prngImpl extends NXobjectImpl implements NXcs_prng {
 	}
 
 	@Override
-	public IDataset getSeed() {
+	public Dataset getSeed() {
 		return getDataset(NX_SEED);
 	}
 
@@ -127,7 +128,7 @@ public class NXcs_prngImpl extends NXobjectImpl implements NXcs_prng {
 	}
 
 	@Override
-	public IDataset getWarmup() {
+	public Dataset getWarmup() {
 		return getDataset(NX_WARMUP);
 	}
 

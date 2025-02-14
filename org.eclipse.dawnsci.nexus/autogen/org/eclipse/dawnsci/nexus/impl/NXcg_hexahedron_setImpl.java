@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -105,7 +106,7 @@ public class NXcg_hexahedron_setImpl extends NXobjectImpl implements NXcg_hexahe
 
 
 	@Override
-	public IDataset getDimensionality() {
+	public Dataset getDimensionality() {
 		return getDataset(NX_DIMENSIONALITY);
 	}
 
@@ -125,7 +126,7 @@ public class NXcg_hexahedron_setImpl extends NXobjectImpl implements NXcg_hexahe
 	}
 
 	@Override
-	public IDataset getCardinality() {
+	public Dataset getCardinality() {
 		return getDataset(NX_CARDINALITY);
 	}
 
@@ -145,7 +146,7 @@ public class NXcg_hexahedron_setImpl extends NXobjectImpl implements NXcg_hexahe
 	}
 
 	@Override
-	public IDataset getShape() {
+	public Dataset getShape() {
 		return getDataset(NX_SHAPE);
 	}
 
@@ -165,7 +166,7 @@ public class NXcg_hexahedron_setImpl extends NXobjectImpl implements NXcg_hexahe
 	}
 
 	@Override
-	public IDataset getLength() {
+	public Dataset getLength() {
 		return getDataset(NX_LENGTH);
 	}
 
@@ -185,7 +186,7 @@ public class NXcg_hexahedron_setImpl extends NXobjectImpl implements NXcg_hexahe
 	}
 
 	@Override
-	public IDataset getWidth() {
+	public Dataset getWidth() {
 		return getDataset(NX_WIDTH);
 	}
 
@@ -205,7 +206,7 @@ public class NXcg_hexahedron_setImpl extends NXobjectImpl implements NXcg_hexahe
 	}
 
 	@Override
-	public IDataset getHeight() {
+	public Dataset getHeight() {
 		return getDataset(NX_HEIGHT);
 	}
 
@@ -225,7 +226,7 @@ public class NXcg_hexahedron_setImpl extends NXobjectImpl implements NXcg_hexahe
 	}
 
 	@Override
-	public IDataset getCenter() {
+	public Dataset getCenter() {
 		return getDataset(NX_CENTER);
 	}
 
@@ -245,7 +246,7 @@ public class NXcg_hexahedron_setImpl extends NXobjectImpl implements NXcg_hexahe
 	}
 
 	@Override
-	public IDataset getVolume() {
+	public Dataset getVolume() {
 		return getDataset(NX_VOLUME);
 	}
 
@@ -265,7 +266,7 @@ public class NXcg_hexahedron_setImpl extends NXobjectImpl implements NXcg_hexahe
 	}
 
 	@Override
-	public IDataset getSurface_area() {
+	public Dataset getSurface_area() {
 		return getDataset(NX_SURFACE_AREA);
 	}
 
@@ -285,7 +286,7 @@ public class NXcg_hexahedron_setImpl extends NXobjectImpl implements NXcg_hexahe
 	}
 
 	@Override
-	public IDataset getFace_area() {
+	public Dataset getFace_area() {
 		return getDataset(NX_FACE_AREA);
 	}
 
@@ -305,7 +306,7 @@ public class NXcg_hexahedron_setImpl extends NXobjectImpl implements NXcg_hexahe
 	}
 
 	@Override
-	public IDataset getIs_box() {
+	public Dataset getIs_box() {
 		return getDataset(NX_IS_BOX);
 	}
 
@@ -325,7 +326,7 @@ public class NXcg_hexahedron_setImpl extends NXobjectImpl implements NXcg_hexahe
 	}
 
 	@Override
-	public IDataset getIs_axis_aligned() {
+	public Dataset getIs_axis_aligned() {
 		return getDataset(NX_IS_AXIS_ALIGNED);
 	}
 
@@ -376,7 +377,7 @@ public class NXcg_hexahedron_setImpl extends NXobjectImpl implements NXcg_hexahe
 	}
 
 	@Override
-	public IDataset getIdentifier_offset() {
+	public Dataset getIdentifier_offset() {
 		return getDataset(NX_IDENTIFIER_OFFSET);
 	}
 
@@ -396,7 +397,7 @@ public class NXcg_hexahedron_setImpl extends NXobjectImpl implements NXcg_hexahe
 	}
 
 	@Override
-	public IDataset getIdentifier() {
+	public Dataset getIdentifier() {
 		return getDataset(NX_IDENTIFIER);
 	}
 

@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Computational geometry description of a set of spheres in Euclidean space.
@@ -48,7 +49,7 @@ public interface NXcg_sphere_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDimensionality();
+	public Dataset getDimensionality();
 
 	/**
 	 * <p>
@@ -88,7 +89,7 @@ public interface NXcg_sphere_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCardinality();
+	public Dataset getCardinality();
 
 	/**
 	 * <p>
@@ -136,7 +137,7 @@ public interface NXcg_sphere_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier_offset();
+	public Dataset getIdentifier_offset();
 
 	/**
 	 * Integer which specifies the first index to be used for distinguishing
@@ -202,7 +203,7 @@ public interface NXcg_sphere_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier();
+	public Dataset getIdentifier();
 
 	/**
 	 * Integer used to distinguish spheres for explicit indexing.
@@ -254,7 +255,7 @@ public interface NXcg_sphere_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCenter();
+	public Dataset getCenter();
 
 	/**
 	 * Geometric center of the spheres. This can be the center of mass.
@@ -313,7 +314,7 @@ public interface NXcg_sphere_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRadius();
+	public Dataset getRadius();
 
 	/**
 	 * In the case that all spheres have the same radius.
@@ -359,7 +360,7 @@ public interface NXcg_sphere_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRadii();
+	public Dataset getRadii();
 
 	/**
 	 * In the case that spheres have different radius use this
@@ -477,7 +478,7 @@ public interface NXcg_sphere_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIs_closed();
+	public Dataset getIs_closed();
 
 	/**
 	 * Are the spheres closed or hollow?
@@ -521,7 +522,7 @@ public interface NXcg_sphere_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getVolume();
+	public Dataset getVolume();
 
 	/**
 	 * <p>
@@ -565,7 +566,7 @@ public interface NXcg_sphere_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSurface_area();
+	public Dataset getSurface_area();
 
 	/**
 	 * <p>

@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Computational geometry description of a set of (oriented) unit normal vectors.
@@ -39,7 +40,7 @@ public interface NXcg_unit_normal_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDimensionality();
+	public Dataset getDimensionality();
 
 	/**
 	 * <p>
@@ -79,7 +80,7 @@ public interface NXcg_unit_normal_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCardinality();
+	public Dataset getCardinality();
 
 	/**
 	 * <p>
@@ -121,7 +122,7 @@ public interface NXcg_unit_normal_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNormals();
+	public Dataset getNormals();
 
 	/**
 	 * Direction of each normal
@@ -173,7 +174,7 @@ public interface NXcg_unit_normal_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getOrientation();
+	public Dataset getOrientation();
 
 	/**
 	 * Qualifier how which specifically oriented normal to its primitive each

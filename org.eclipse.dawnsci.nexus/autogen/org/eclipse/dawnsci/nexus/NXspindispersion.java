@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Subclass of NXelectronanalyser to describe the spin filters in photoemission
@@ -42,7 +43,7 @@ public interface NXspindispersion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * Type of spin detector, VLEED, SPLEED, Mott, etc.
@@ -83,7 +84,7 @@ public interface NXspindispersion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFigure_of_merit();
+	public Dataset getFigure_of_merit();
 
 	/**
 	 * Figure of merit of the spin detector
@@ -127,7 +128,7 @@ public interface NXspindispersion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getShermann_function();
+	public Dataset getShermann_function();
 
 	/**
 	 * Effective Shermann function, calibrated spin selectivity factor
@@ -171,7 +172,7 @@ public interface NXspindispersion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getScattering_energy();
+	public Dataset getScattering_energy();
 
 	/**
 	 * Energy of the spin-selective scattering
@@ -215,7 +216,7 @@ public interface NXspindispersion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getScattering_angle();
+	public Dataset getScattering_angle();
 
 	/**
 	 * Angle of the spin-selective scattering
@@ -258,7 +259,7 @@ public interface NXspindispersion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTarget();
+	public Dataset getTarget();
 
 	/**
 	 * Name of the target
@@ -298,7 +299,7 @@ public interface NXspindispersion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTarget_preparation();
+	public Dataset getTarget_preparation();
 
 	/**
 	 * Preparation procedure of the spin target
@@ -338,7 +339,7 @@ public interface NXspindispersion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTarget_preparation_date();
+	public Dataset getTarget_preparation_date();
 
 	/**
 	 * Date of last preparation of the spin target
@@ -379,7 +380,7 @@ public interface NXspindispersion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * Specifies the position of the lens by pointing to the last transformation in the

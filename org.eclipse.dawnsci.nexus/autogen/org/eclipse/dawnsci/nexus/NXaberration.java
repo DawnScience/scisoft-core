@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Quantified aberration coefficient in an aberration_model.
@@ -36,7 +37,7 @@ public interface NXaberration extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMagnitude();
+	public Dataset getMagnitude();
 
 	/**
 	 * <p>
@@ -77,7 +78,7 @@ public interface NXaberration extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getUncertainty();
+	public Dataset getUncertainty();
 
 	/**
 	 * Confidence
@@ -117,7 +118,7 @@ public interface NXaberration extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getUncertainty_model();
+	public Dataset getUncertainty_model();
 
 	/**
 	 * How was the uncertainty quantified e.g. via the 95% confidence interval.
@@ -149,7 +150,7 @@ public interface NXaberration extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDelta_time();
+	public Dataset getDelta_time();
 
 	/**
 	 * Time elapsed since the last measurement.
@@ -197,7 +198,7 @@ public interface NXaberration extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAngle();
+	public Dataset getAngle();
 
 	/**
 	 * For the CEOS definitions the C aberrations are radial-symmetric and have no
@@ -248,7 +249,7 @@ public interface NXaberration extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getName();
+	public Dataset getName();
 
 	/**
 	 *
@@ -272,7 +273,7 @@ public interface NXaberration extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAlias();
+	public Dataset getAlias();
 
 	/**
 	 *

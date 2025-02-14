@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -99,7 +100,7 @@ public class NXmoderatorImpl extends NXobjectImpl implements NXmoderator {
 	}
 
 	@Override
-	public IDataset getDistance() {
+	public Dataset getDistance() {
 		return getDataset(NX_DISTANCE);
 	}
 
@@ -119,7 +120,7 @@ public class NXmoderatorImpl extends NXobjectImpl implements NXmoderator {
 	}
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -139,7 +140,7 @@ public class NXmoderatorImpl extends NXobjectImpl implements NXmoderator {
 	}
 
 	@Override
-	public IDataset getPoison_depth() {
+	public Dataset getPoison_depth() {
 		return getDataset(NX_POISON_DEPTH);
 	}
 
@@ -159,7 +160,7 @@ public class NXmoderatorImpl extends NXobjectImpl implements NXmoderator {
 	}
 
 	@Override
-	public IDataset getCoupled() {
+	public Dataset getCoupled() {
 		return getDataset(NX_COUPLED);
 	}
 
@@ -179,7 +180,7 @@ public class NXmoderatorImpl extends NXobjectImpl implements NXmoderator {
 	}
 
 	@Override
-	public IDataset getCoupling_material() {
+	public Dataset getCoupling_material() {
 		return getDataset(NX_COUPLING_MATERIAL);
 	}
 
@@ -199,7 +200,7 @@ public class NXmoderatorImpl extends NXobjectImpl implements NXmoderator {
 	}
 
 	@Override
-	public IDataset getPoison_material() {
+	public Dataset getPoison_material() {
 		return getDataset(NX_POISON_MATERIAL);
 	}
 
@@ -219,7 +220,7 @@ public class NXmoderatorImpl extends NXobjectImpl implements NXmoderator {
 	}
 
 	@Override
-	public IDataset getTemperature() {
+	public Dataset getTemperature() {
 		return getDataset(NX_TEMPERATURE);
 	}
 
@@ -302,7 +303,7 @@ public class NXmoderatorImpl extends NXobjectImpl implements NXmoderator {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -60,7 +61,7 @@ public class NXvelocity_selectorImpl extends NXobjectImpl implements NXvelocity_
 
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -80,7 +81,7 @@ public class NXvelocity_selectorImpl extends NXobjectImpl implements NXvelocity_
 	}
 
 	@Override
-	public IDataset getRotation_speed() {
+	public Dataset getRotation_speed() {
 		return getDataset(NX_ROTATION_SPEED);
 	}
 
@@ -100,7 +101,7 @@ public class NXvelocity_selectorImpl extends NXobjectImpl implements NXvelocity_
 	}
 
 	@Override
-	public IDataset getRadius() {
+	public Dataset getRadius() {
 		return getDataset(NX_RADIUS);
 	}
 
@@ -120,7 +121,7 @@ public class NXvelocity_selectorImpl extends NXobjectImpl implements NXvelocity_
 	}
 
 	@Override
-	public IDataset getSpwidth() {
+	public Dataset getSpwidth() {
 		return getDataset(NX_SPWIDTH);
 	}
 
@@ -140,7 +141,7 @@ public class NXvelocity_selectorImpl extends NXobjectImpl implements NXvelocity_
 	}
 
 	@Override
-	public IDataset getLength() {
+	public Dataset getLength() {
 		return getDataset(NX_LENGTH);
 	}
 
@@ -160,7 +161,7 @@ public class NXvelocity_selectorImpl extends NXobjectImpl implements NXvelocity_
 	}
 
 	@Override
-	public IDataset getNum() {
+	public Dataset getNum() {
 		return getDataset(NX_NUM);
 	}
 
@@ -180,7 +181,7 @@ public class NXvelocity_selectorImpl extends NXobjectImpl implements NXvelocity_
 	}
 
 	@Override
-	public IDataset getTwist() {
+	public Dataset getTwist() {
 		return getDataset(NX_TWIST);
 	}
 
@@ -200,7 +201,7 @@ public class NXvelocity_selectorImpl extends NXobjectImpl implements NXvelocity_
 	}
 
 	@Override
-	public IDataset getTable() {
+	public Dataset getTable() {
 		return getDataset(NX_TABLE);
 	}
 
@@ -220,7 +221,7 @@ public class NXvelocity_selectorImpl extends NXobjectImpl implements NXvelocity_
 	}
 
 	@Override
-	public IDataset getHeight() {
+	public Dataset getHeight() {
 		return getDataset(NX_HEIGHT);
 	}
 
@@ -240,7 +241,7 @@ public class NXvelocity_selectorImpl extends NXobjectImpl implements NXvelocity_
 	}
 
 	@Override
-	public IDataset getWidth() {
+	public Dataset getWidth() {
 		return getDataset(NX_WIDTH);
 	}
 
@@ -260,7 +261,7 @@ public class NXvelocity_selectorImpl extends NXobjectImpl implements NXvelocity_
 	}
 
 	@Override
-	public IDataset getWavelength() {
+	public Dataset getWavelength() {
 		return getDataset(NX_WAVELENGTH);
 	}
 
@@ -280,7 +281,7 @@ public class NXvelocity_selectorImpl extends NXobjectImpl implements NXvelocity_
 	}
 
 	@Override
-	public IDataset getWavelength_spread() {
+	public Dataset getWavelength_spread() {
 		return getDataset(NX_WAVELENGTH_SPREAD);
 	}
 
@@ -354,7 +355,7 @@ public class NXvelocity_selectorImpl extends NXobjectImpl implements NXvelocity_
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Computational geeometry description of a half-edge data structure.
@@ -57,7 +58,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDimensionality();
+	public Dataset getDimensionality();
 
 	/**
 	 * <p>
@@ -97,7 +98,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_vertices();
+	public Dataset getNumber_of_vertices();
 
 	/**
 	 * <p>
@@ -137,7 +138,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_faces();
+	public Dataset getNumber_of_faces();
 
 	/**
 	 * <p>
@@ -177,7 +178,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_half_edges();
+	public Dataset getNumber_of_half_edges();
 
 	/**
 	 * <p>
@@ -222,7 +223,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getVertex_identifier_offset();
+	public Dataset getVertex_identifier_offset();
 
 	/**
 	 * In this half-edge data structure vertex identifiers start at 1.
@@ -283,7 +284,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFace_identifier_offset();
+	public Dataset getFace_identifier_offset();
 
 	/**
 	 * In this half-edge data structure face identifiers start at 1.
@@ -346,7 +347,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getHalf_edge_identifier_offset();
+	public Dataset getHalf_edge_identifier_offset();
 
 	/**
 	 * In this half-edge data structure half-edge identifiers start at 1.
@@ -403,7 +404,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPosition();
+	public Dataset getPosition();
 
 	/**
 	 * The position of the vertices.
@@ -451,7 +452,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getVertex_incident_half_edge();
+	public Dataset getVertex_incident_half_edge();
 
 	/**
 	 * Identifier of the incident half-edge.
@@ -499,7 +500,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFace_half_edge();
+	public Dataset getFace_half_edge();
 
 	/**
 	 * Identifier of the (starting)/associated half-edge of the face.
@@ -547,7 +548,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getHalf_edge_vertex_origin();
+	public Dataset getHalf_edge_vertex_origin();
 
 	/**
 	 * The identifier of the vertex from which this half-edge is outwards pointing.
@@ -595,7 +596,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getHalf_edge_twin();
+	public Dataset getHalf_edge_twin();
 
 	/**
 	 * Identifier of the associated oppositely pointing half-edge.
@@ -644,7 +645,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getHalf_edge_incident_face();
+	public Dataset getHalf_edge_incident_face();
 
 	/**
 	 * If the half-edge is a boundary half-edge the
@@ -695,7 +696,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getHalf_edge_next();
+	public Dataset getHalf_edge_next();
 
 	/**
 	 * Identifier of the next half-edge.
@@ -743,7 +744,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getHalf_edge_prev();
+	public Dataset getHalf_edge_prev();
 
 	/**
 	 * Identifier of the previous half-edge.
@@ -792,7 +793,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWeinberg_vector();
+	public Dataset getWeinberg_vector();
 
 	/**
 	 * Users are referred to the literature for the background of L. Weinberg's

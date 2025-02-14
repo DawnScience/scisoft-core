@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -63,7 +64,7 @@ public class NXapertureImpl extends NXobjectImpl implements NXaperture {
 
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 
@@ -195,7 +196,7 @@ public class NXapertureImpl extends NXobjectImpl implements NXaperture {
 	}
 
 	@Override
-	public IDataset getMaterial() {
+	public Dataset getMaterial() {
 		return getDataset(NX_MATERIAL);
 	}
 
@@ -215,7 +216,7 @@ public class NXapertureImpl extends NXobjectImpl implements NXaperture {
 	}
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 

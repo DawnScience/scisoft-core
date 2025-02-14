@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Metadata to ranging definitions made for a dataset in atom probe microscopy.
@@ -38,7 +39,7 @@ public interface NXapm_input_ranging extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFilename();
+	public Dataset getFilename();
 
 	/**
 	 * Path and name of the NeXus/HDF5 file which stores ranging definitions.
@@ -90,7 +91,7 @@ public interface NXapm_input_ranging extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getGroup_name_iontypes();
+	public Dataset getGroup_name_iontypes();
 
 	/**
 	 * Name of the group (prefix to the individual ranging definitions) inside

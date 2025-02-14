@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Set of atoms of a molecular ion or fragment in e.g. ToF mass spectrometry.
@@ -44,7 +45,7 @@ public interface NXion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier();
+	public Dataset getIdentifier();
 
 	/**
 	 * A unique identifier whereby such an ion can be referred to
@@ -79,7 +80,7 @@ public interface NXion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier_type();
+	public Dataset getIdentifier_type();
 
 	/**
 	 * How can the identifier be resolved?
@@ -124,7 +125,7 @@ public interface NXion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIon_type();
+	public Dataset getIon_type();
 
 	/**
 	 * Ion type (ion species) identifier. The identifier zero
@@ -180,7 +181,7 @@ public interface NXion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIsotope_vector();
+	public Dataset getIsotope_vector();
 
 	/**
 	 * A vector of isotope hash values.
@@ -261,7 +262,7 @@ public interface NXion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNuclid_list();
+	public Dataset getNuclid_list();
 
 	/**
 	 * A supplementary row vector which decodes the isotope_vector into
@@ -331,7 +332,7 @@ public interface NXion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getColor();
+	public Dataset getColor();
 
 	/**
 	 * Color code used for visualizing such ions.
@@ -367,7 +368,7 @@ public interface NXion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getVolume();
+	public Dataset getVolume();
 
 	/**
 	 * Assumed volume of the ion.
@@ -423,7 +424,7 @@ public interface NXion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCharge();
+	public Dataset getCharge();
 
 	/**
 	 * Charge of the ion.
@@ -481,7 +482,7 @@ public interface NXion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCharge_state();
+	public Dataset getCharge_state();
 
 	/**
 	 * Signed charge state of the ion in multiples of electron charge.
@@ -570,7 +571,7 @@ public interface NXion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getName();
+	public Dataset getName();
 
 	/**
 	 * Human-readable ion type name (e.g. Al +++)
@@ -628,7 +629,7 @@ public interface NXion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMass_to_charge_range();
+	public Dataset getMass_to_charge_range();
 
 	/**
 	 * Associated lower (mqmin) and upper (mqmax) bounds of

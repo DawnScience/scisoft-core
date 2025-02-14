@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Geometry (shape) description.
@@ -55,7 +56,7 @@ public interface NXoff_geometry extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getVertices();
+	public Dataset getVertices();
 
 	/**
 	 * List of x,y,z coordinates for vertices.
@@ -118,7 +119,7 @@ public interface NXoff_geometry extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWinding_order();
+	public Dataset getWinding_order();
 
 	/**
 	 * List of indices of vertices in the ``vertices`` dataset to form each face,
@@ -165,7 +166,7 @@ public interface NXoff_geometry extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFaces();
+	public Dataset getFaces();
 
 	/**
 	 * The start index in ``winding_order`` for each face.
@@ -216,7 +217,7 @@ public interface NXoff_geometry extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDetector_faces();
+	public Dataset getDetector_faces();
 
 	/**
 	 * List of pairs of index in the "faces" dataset and detector id. Face IDs in

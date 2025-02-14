@@ -105,6 +105,8 @@
 	<xsl:variable name="hasVariableName" select="not($variableName = '')"/>
 	<xsl:variable name="fieldType"><xsl:apply-templates select="." mode="fieldType"/></xsl:variable>
 	<xsl:variable name="extendedFieldType"><xsl:apply-templates select="." mode="extendedFieldType"/></xsl:variable>
+	<!-- allow input to be IDataset -->
+	<xsl:variable name="inputFieldType" select="if ($fieldType = 'Dataset') then 'IDataset' else $fieldType"/>
 	<xsl:variable name="methodNameSuffix"><xsl:apply-templates select="." mode="methodNameSuffix">
 		<xsl:with-param name="fieldName" select="$fieldName"/>
 	</xsl:apply-templates></xsl:variable>
@@ -136,7 +138,7 @@
 	<xsl:value-of select="$setMethodReturnType"/> set<xsl:value-of select="$methodNameSuffix"/>
 	<xsl:text>(</xsl:text>
 	<xsl:if test="($hasVariableName)">String <xsl:value-of select="$variableName"/>, </xsl:if>
-	<xsl:value-of select="$fieldType || ' ' || $setParamName"/>
+	<xsl:value-of select="$inputFieldType || ' ' || $setParamName"/>
 	<xsl:text>);&#10;</xsl:text>
 
 	<xsl:if test="self::nx:field">
@@ -204,7 +206,7 @@
 	 * @param name the name of the node
 	 * @param <xsl:value-of select="$fieldName"/> the value to set
 	 */<xsl:apply-templates mode="methodAnnotations" select="."/>
-	public void set<xsl:value-of select="$methodNameSuffix"/>(String name, <xsl:value-of select="$fieldType || ' ' || $fieldName"/>);
+	public void set<xsl:value-of select="$methodNameSuffix"/>(String name, <xsl:value-of select="$inputFieldType || ' ' || $fieldName"/>);
 
 	/**
 	 * Get all <xsl:value-of select="$fieldType"/> nodes:
@@ -349,6 +351,8 @@
 	
 	<xsl:variable name="fieldType"><xsl:apply-templates select="." mode="fieldType"/></xsl:variable>
 	<xsl:variable name="extendedFieldType"><xsl:apply-templates select="." mode="extendedFieldType"/></xsl:variable>
+	<!-- allow input to be IDataset -->
+	<xsl:variable name="inputFieldType" select="if ($fieldType = 'Dataset') then 'IDataset' else $fieldType"/>
 	<xsl:variable name="setMethodReturnType" select="if (self::nx:field) then 'DataNode' else 'void'"/>
 
 	<xsl:variable name="methodNameSuffix"><xsl:apply-templates select="." mode="methodNameSuffix">
@@ -390,7 +394,7 @@
 	public <xsl:value-of select="$setMethodReturnType"/> set<xsl:value-of select="$methodNameSuffix"/>
 	<xsl:text>(</xsl:text>
 	<xsl:if test="($hasVariableName)">String <xsl:value-of select="$variableName"/>, </xsl:if>
-	<xsl:value-of select="$fieldType || ' ' || $setParamName"/><xsl:text>) {</xsl:text>
+	<xsl:value-of select="$inputFieldType || ' ' || $setParamName"/><xsl:text>) {</xsl:text>
 	<xsl:apply-templates select="." mode="setMethod">
 		<xsl:with-param name="fieldName" select="$fieldName"/>
 		<xsl:with-param name="setParamName" select="$setParamName"/>
@@ -415,7 +419,7 @@
 <!-- Extra methods for fields with name=Type="any" (i.e. name is variable). -->
 <xsl:if test="self::nx:field[@nameType='any']">
 	@Override<xsl:apply-templates mode="methodAnnotations" select="."/>
-	public Map&lt;String, IDataset> getAll<xsl:value-of select="$methodNameSuffix"/>() {
+	public Map&lt;String, Dataset> getAll<xsl:value-of select="$methodNameSuffix"/>() {
 		return getAllDatasets(); // note: returns all datasets in the group!
 	}
 </xsl:if>
@@ -427,7 +431,7 @@
 	}
 
 	@Override<xsl:apply-templates mode="methodAnnotations" select="."/>
-	public void set<xsl:value-of select="$methodNameSuffix"/>(String name, <xsl:value-of select="$fieldType"/><xsl:text> </xsl:text><xsl:value-of select="$fieldName"/>) {
+	public void set<xsl:value-of select="$methodNameSuffix"/>(String name, <xsl:value-of select="$inputFieldType"/><xsl:text> </xsl:text><xsl:value-of select="$fieldName"/>) {
 		putChild(name, <xsl:value-of select="$fieldName"/>);
 	}
 
@@ -657,6 +661,7 @@
 	<xsl:variable name="types">
 		<xsl:apply-templates select="descendant::*" mode="fieldType"/>
 		<xsl:apply-templates select="descendant::*" mode="scalarFieldType"/>
+		<xsl:apply-templates select="descendant::*" mode="extendedFieldType"/>
 		<xsl:if test="descendant::nx:group[not(@name)] | descendant::nx:field[@nameType='any']">Map</xsl:if>
 	</xsl:variable>
 
@@ -669,6 +674,7 @@
 	</xsl:if>
 	<xsl:text>&#10;import org.eclipse.dawnsci.analysis.api.tree.DataNode;&#10;</xsl:text>
 	<xsl:if test="contains($types, 'IDataset')">&#10;import org.eclipse.january.dataset.IDataset;</xsl:if>
+	<xsl:if test="matches($types, '[^I]Dataset')">&#10;import org.eclipse.january.dataset.Dataset;</xsl:if>
 	<xsl:if test="contains($types, 'Binary')">&#10;import org.eclipse.january.dataset.DatasetFactory;</xsl:if>
 </xsl:template>
 
@@ -686,7 +692,7 @@
 <xsl:template mode="methodAnnotations" match="*"/>
 
 <!-- Field types in Java -->
-<xsl:template mode="fieldType" match="nx:field">IDataset</xsl:template>
+<xsl:template mode="fieldType" match="nx:field">Dataset</xsl:template>
 <xsl:template mode="fieldType" match="*[self::nx:attribute][@type='NX_DATE_TIME' or @type='ISO8601']">Date</xsl:template>
 <xsl:template mode="fieldType" match="*[self::nx:attribute][matches(@type, 'NX_(INT|POSINT|UINT)')]">Long</xsl:template>
 <xsl:template mode="fieldType" match="*[self::nx:attribute][@type='NX_FLOAT']">Double</xsl:template>

@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A collection of spatiotemporal microstructure data.
@@ -37,7 +38,7 @@ public interface NXms_snapshot_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getComment();
+	public Dataset getComment();
 
 	/**
 	 * Is this set describing a measurement or a simulation?
@@ -91,7 +92,7 @@ public interface NXms_snapshot_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier_offset();
+	public Dataset getIdentifier_offset();
 
 	/**
 	 * Integer which specifies the first index to be used for distinguishing

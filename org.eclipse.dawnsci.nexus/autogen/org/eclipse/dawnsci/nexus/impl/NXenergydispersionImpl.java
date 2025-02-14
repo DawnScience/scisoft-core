@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -61,7 +62,7 @@ public class NXenergydispersionImpl extends NXobjectImpl implements NXenergydisp
 
 
 	@Override
-	public IDataset getScheme() {
+	public Dataset getScheme() {
 		return getDataset(NX_SCHEME);
 	}
 
@@ -81,7 +82,7 @@ public class NXenergydispersionImpl extends NXobjectImpl implements NXenergydisp
 	}
 
 	@Override
-	public IDataset getPass_energy() {
+	public Dataset getPass_energy() {
 		return getDataset(NX_PASS_ENERGY);
 	}
 
@@ -101,7 +102,7 @@ public class NXenergydispersionImpl extends NXobjectImpl implements NXenergydisp
 	}
 
 	@Override
-	public IDataset getCenter_energy() {
+	public Dataset getCenter_energy() {
 		return getDataset(NX_CENTER_ENERGY);
 	}
 
@@ -121,7 +122,7 @@ public class NXenergydispersionImpl extends NXobjectImpl implements NXenergydisp
 	}
 
 	@Override
-	public IDataset getEnergy_interval() {
+	public Dataset getEnergy_interval() {
 		return getDataset(NX_ENERGY_INTERVAL);
 	}
 
@@ -172,7 +173,7 @@ public class NXenergydispersionImpl extends NXobjectImpl implements NXenergydisp
 	}
 
 	@Override
-	public IDataset getDiameter() {
+	public Dataset getDiameter() {
 		return getDataset(NX_DIAMETER);
 	}
 
@@ -192,7 +193,7 @@ public class NXenergydispersionImpl extends NXobjectImpl implements NXenergydisp
 	}
 
 	@Override
-	public IDataset getEnergy_scan_mode() {
+	public Dataset getEnergy_scan_mode() {
 		return getDataset(NX_ENERGY_SCAN_MODE);
 	}
 
@@ -212,7 +213,7 @@ public class NXenergydispersionImpl extends NXobjectImpl implements NXenergydisp
 	}
 
 	@Override
-	public IDataset getTof_distance() {
+	public Dataset getTof_distance() {
 		return getDataset(NX_TOF_DISTANCE);
 	}
 

@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A dispersion table denoting energy, dielectric function tabulated values.
@@ -39,7 +40,7 @@ public interface NXdispersion_table extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getModel_name();
+	public Dataset getModel_name();
 
 	/**
 	 * The name of this dispersion model.
@@ -82,7 +83,7 @@ public interface NXdispersion_table extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getConvention();
+	public Dataset getConvention();
 
 	/**
 	 * The sign convention being used (n + or - ik)
@@ -135,7 +136,7 @@ public interface NXdispersion_table extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWavelength();
+	public Dataset getWavelength();
 
 	/**
 	 * The wavelength array of the tabulated dataset.
@@ -191,7 +192,7 @@ public interface NXdispersion_table extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEnergy();
+	public Dataset getEnergy();
 
 	/**
 	 * The energy array of the tabulated dataset.
@@ -245,7 +246,7 @@ public interface NXdispersion_table extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRefractive_index();
+	public Dataset getRefractive_index();
 
 	/**
 	 * The refractive index array of the tabulated dataset.
@@ -293,7 +294,7 @@ public interface NXdispersion_table extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDielectric_function();
+	public Dataset getDielectric_function();
 
 	/**
 	 * The dielectric function of the tabulated dataset.

@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -76,7 +77,7 @@ public class NXdetector_groupImpl extends NXobjectImpl implements NXdetector_gro
 
 
 	@Override
-	public IDataset getGroup_names() {
+	public Dataset getGroup_names() {
 		return getDataset(NX_GROUP_NAMES);
 	}
 
@@ -96,7 +97,7 @@ public class NXdetector_groupImpl extends NXobjectImpl implements NXdetector_gro
 	}
 
 	@Override
-	public IDataset getGroup_index() {
+	public Dataset getGroup_index() {
 		return getDataset(NX_GROUP_INDEX);
 	}
 
@@ -116,7 +117,7 @@ public class NXdetector_groupImpl extends NXobjectImpl implements NXdetector_gro
 	}
 
 	@Override
-	public IDataset getGroup_parent() {
+	public Dataset getGroup_parent() {
 		return getDataset(NX_GROUP_PARENT);
 	}
 
@@ -136,7 +137,7 @@ public class NXdetector_groupImpl extends NXobjectImpl implements NXdetector_gro
 	}
 
 	@Override
-	public IDataset getGroup_type() {
+	public Dataset getGroup_type() {
 		return getDataset(NX_GROUP_TYPE);
 	}
 

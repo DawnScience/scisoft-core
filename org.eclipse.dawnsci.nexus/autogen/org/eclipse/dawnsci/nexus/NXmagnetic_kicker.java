@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * definition for a magnetic kicker.
@@ -35,7 +36,7 @@ public interface NXmagnetic_kicker extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * extended description of the kicker.
@@ -76,7 +77,7 @@ public interface NXmagnetic_kicker extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBeamline_distance();
+	public Dataset getBeamline_distance();
 
 	/**
 	 * define position of beamline element relative to production target
@@ -120,7 +121,7 @@ public interface NXmagnetic_kicker extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTiming();
+	public Dataset getTiming();
 
 	/**
 	 * kicker timing as defined by ``description`` attribute
@@ -176,7 +177,7 @@ public interface NXmagnetic_kicker extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSet_current();
+	public Dataset getSet_current();
 
 	/**
 	 * current set on supply.
@@ -234,7 +235,7 @@ public interface NXmagnetic_kicker extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSet_voltage();
+	public Dataset getSet_voltage();
 
 	/**
 	 * voltage set on supply.

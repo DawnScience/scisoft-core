@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -66,7 +67,7 @@ public class NXcg_point_setImpl extends NXobjectImpl implements NXcg_point_set {
 
 
 	@Override
-	public IDataset getDimensionality() {
+	public Dataset getDimensionality() {
 		return getDataset(NX_DIMENSIONALITY);
 	}
 
@@ -86,7 +87,7 @@ public class NXcg_point_setImpl extends NXobjectImpl implements NXcg_point_set {
 	}
 
 	@Override
-	public IDataset getCardinality() {
+	public Dataset getCardinality() {
 		return getDataset(NX_CARDINALITY);
 	}
 
@@ -106,7 +107,7 @@ public class NXcg_point_setImpl extends NXobjectImpl implements NXcg_point_set {
 	}
 
 	@Override
-	public IDataset getIdentifier_offset() {
+	public Dataset getIdentifier_offset() {
 		return getDataset(NX_IDENTIFIER_OFFSET);
 	}
 
@@ -126,7 +127,7 @@ public class NXcg_point_setImpl extends NXobjectImpl implements NXcg_point_set {
 	}
 
 	@Override
-	public IDataset getIdentifier() {
+	public Dataset getIdentifier() {
 		return getDataset(NX_IDENTIFIER);
 	}
 
@@ -146,7 +147,7 @@ public class NXcg_point_setImpl extends NXobjectImpl implements NXcg_point_set {
 	}
 
 	@Override
-	public IDataset getPosition() {
+	public Dataset getPosition() {
 		return getDataset(NX_POSITION);
 	}
 
@@ -166,7 +167,7 @@ public class NXcg_point_setImpl extends NXobjectImpl implements NXcg_point_set {
 	}
 
 	@Override
-	public IDataset getTime() {
+	public Dataset getTime() {
 		return getDataset(NX_TIME);
 	}
 

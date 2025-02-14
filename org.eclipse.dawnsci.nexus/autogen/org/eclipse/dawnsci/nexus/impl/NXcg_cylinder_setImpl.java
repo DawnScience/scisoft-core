@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -62,7 +63,7 @@ public class NXcg_cylinder_setImpl extends NXobjectImpl implements NXcg_cylinder
 
 
 	@Override
-	public IDataset getDimensionality() {
+	public Dataset getDimensionality() {
 		return getDataset(NX_DIMENSIONALITY);
 	}
 
@@ -82,7 +83,7 @@ public class NXcg_cylinder_setImpl extends NXobjectImpl implements NXcg_cylinder
 	}
 
 	@Override
-	public IDataset getCardinality() {
+	public Dataset getCardinality() {
 		return getDataset(NX_CARDINALITY);
 	}
 
@@ -102,7 +103,7 @@ public class NXcg_cylinder_setImpl extends NXobjectImpl implements NXcg_cylinder
 	}
 
 	@Override
-	public IDataset getIdentifier_offset() {
+	public Dataset getIdentifier_offset() {
 		return getDataset(NX_IDENTIFIER_OFFSET);
 	}
 
@@ -122,7 +123,7 @@ public class NXcg_cylinder_setImpl extends NXobjectImpl implements NXcg_cylinder
 	}
 
 	@Override
-	public IDataset getIdentifier() {
+	public Dataset getIdentifier() {
 		return getDataset(NX_IDENTIFIER);
 	}
 
@@ -142,7 +143,7 @@ public class NXcg_cylinder_setImpl extends NXobjectImpl implements NXcg_cylinder
 	}
 
 	@Override
-	public IDataset getCenter() {
+	public Dataset getCenter() {
 		return getDataset(NX_CENTER);
 	}
 
@@ -162,7 +163,7 @@ public class NXcg_cylinder_setImpl extends NXobjectImpl implements NXcg_cylinder
 	}
 
 	@Override
-	public IDataset getHeight() {
+	public Dataset getHeight() {
 		return getDataset(NX_HEIGHT);
 	}
 
@@ -182,7 +183,7 @@ public class NXcg_cylinder_setImpl extends NXobjectImpl implements NXcg_cylinder
 	}
 
 	@Override
-	public IDataset getRadii() {
+	public Dataset getRadii() {
 		return getDataset(NX_RADII);
 	}
 
@@ -202,7 +203,7 @@ public class NXcg_cylinder_setImpl extends NXobjectImpl implements NXcg_cylinder
 	}
 
 	@Override
-	public IDataset getUpper_cap_radius() {
+	public Dataset getUpper_cap_radius() {
 		return getDataset(NX_UPPER_CAP_RADIUS);
 	}
 
@@ -222,7 +223,7 @@ public class NXcg_cylinder_setImpl extends NXobjectImpl implements NXcg_cylinder
 	}
 
 	@Override
-	public IDataset getLower_cap_radius() {
+	public Dataset getLower_cap_radius() {
 		return getDataset(NX_LOWER_CAP_RADIUS);
 	}
 
@@ -273,7 +274,7 @@ public class NXcg_cylinder_setImpl extends NXobjectImpl implements NXcg_cylinder
 	}
 
 	@Override
-	public IDataset getVolume() {
+	public Dataset getVolume() {
 		return getDataset(NX_VOLUME);
 	}
 
@@ -293,7 +294,7 @@ public class NXcg_cylinder_setImpl extends NXobjectImpl implements NXcg_cylinder
 	}
 
 	@Override
-	public IDataset getLateral_surface_area() {
+	public Dataset getLateral_surface_area() {
 		return getDataset(NX_LATERAL_SURFACE_AREA);
 	}
 
@@ -313,7 +314,7 @@ public class NXcg_cylinder_setImpl extends NXobjectImpl implements NXcg_cylinder
 	}
 
 	@Override
-	public IDataset getCap_surface_area() {
+	public Dataset getCap_surface_area() {
 		return getDataset(NX_CAP_SURFACE_AREA);
 	}
 
@@ -333,7 +334,7 @@ public class NXcg_cylinder_setImpl extends NXobjectImpl implements NXcg_cylinder
 	}
 
 	@Override
-	public IDataset getSurface_area() {
+	public Dataset getSurface_area() {
 		return getDataset(NX_SURFACE_AREA);
 	}
 

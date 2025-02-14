@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -55,7 +56,7 @@ public class NXcalibrationImpl extends NXobjectImpl implements NXcalibration {
 
 
 	@Override
-	public IDataset getLast_process() {
+	public Dataset getLast_process() {
 		return getDataset(NX_LAST_PROCESS);
 	}
 
@@ -75,7 +76,7 @@ public class NXcalibrationImpl extends NXobjectImpl implements NXcalibration {
 	}
 
 	@Override
-	public IDataset getApplied() {
+	public Dataset getApplied() {
 		return getDataset(NX_APPLIED);
 	}
 
@@ -95,7 +96,7 @@ public class NXcalibrationImpl extends NXobjectImpl implements NXcalibration {
 	}
 
 	@Override
-	public IDataset getCoefficients() {
+	public Dataset getCoefficients() {
 		return getDataset(NX_COEFFICIENTS);
 	}
 
@@ -115,7 +116,7 @@ public class NXcalibrationImpl extends NXobjectImpl implements NXcalibration {
 	}
 
 	@Override
-	public IDataset getFit_function() {
+	public Dataset getFit_function() {
 		return getDataset(NX_FIT_FUNCTION);
 	}
 
@@ -135,7 +136,7 @@ public class NXcalibrationImpl extends NXobjectImpl implements NXcalibration {
 	}
 
 	@Override
-	public IDataset getScaling() {
+	public Dataset getScaling() {
 		return getDataset(NX_SCALING);
 	}
 
@@ -155,7 +156,7 @@ public class NXcalibrationImpl extends NXobjectImpl implements NXcalibration {
 	}
 
 	@Override
-	public IDataset getOffset() {
+	public Dataset getOffset() {
 		return getDataset(NX_OFFSET);
 	}
 
@@ -175,7 +176,7 @@ public class NXcalibrationImpl extends NXobjectImpl implements NXcalibration {
 	}
 
 	@Override
-	public IDataset getCalibrated_axis() {
+	public Dataset getCalibrated_axis() {
 		return getDataset(NX_CALIBRATED_AXIS);
 	}
 
@@ -195,7 +196,7 @@ public class NXcalibrationImpl extends NXobjectImpl implements NXcalibration {
 	}
 
 	@Override
-	public IDataset getOriginal_axis() {
+	public Dataset getOriginal_axis() {
 		return getDataset(NX_ORIGINAL_AXIS);
 	}
 
@@ -215,7 +216,7 @@ public class NXcalibrationImpl extends NXobjectImpl implements NXcalibration {
 	}
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 

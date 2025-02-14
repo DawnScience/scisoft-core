@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -63,7 +64,7 @@ public class NXattenuatorImpl extends NXobjectImpl implements NXattenuator {
 
 
 	@Override
-	public IDataset getDistance() {
+	public Dataset getDistance() {
 		return getDataset(NX_DISTANCE);
 	}
 
@@ -83,7 +84,7 @@ public class NXattenuatorImpl extends NXobjectImpl implements NXattenuator {
 	}
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -103,7 +104,7 @@ public class NXattenuatorImpl extends NXobjectImpl implements NXattenuator {
 	}
 
 	@Override
-	public IDataset getThickness() {
+	public Dataset getThickness() {
 		return getDataset(NX_THICKNESS);
 	}
 
@@ -123,7 +124,7 @@ public class NXattenuatorImpl extends NXobjectImpl implements NXattenuator {
 	}
 
 	@Override
-	public IDataset getScattering_cross_section() {
+	public Dataset getScattering_cross_section() {
 		return getDataset(NX_SCATTERING_CROSS_SECTION);
 	}
 
@@ -143,7 +144,7 @@ public class NXattenuatorImpl extends NXobjectImpl implements NXattenuator {
 	}
 
 	@Override
-	public IDataset getAbsorption_cross_section() {
+	public Dataset getAbsorption_cross_section() {
 		return getDataset(NX_ABSORPTION_CROSS_SECTION);
 	}
 
@@ -163,7 +164,7 @@ public class NXattenuatorImpl extends NXobjectImpl implements NXattenuator {
 	}
 
 	@Override
-	public IDataset getAttenuator_transmission() {
+	public Dataset getAttenuator_transmission() {
 		return getDataset(NX_ATTENUATOR_TRANSMISSION);
 	}
 
@@ -183,7 +184,7 @@ public class NXattenuatorImpl extends NXobjectImpl implements NXattenuator {
 	}
 
 	@Override
-	public IDataset getStatus() {
+	public Dataset getStatus() {
 		return getDataset(NX_STATUS);
 	}
 
@@ -223,7 +224,7 @@ public class NXattenuatorImpl extends NXobjectImpl implements NXattenuator {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

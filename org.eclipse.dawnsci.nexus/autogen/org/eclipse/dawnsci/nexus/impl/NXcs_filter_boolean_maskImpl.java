@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -77,7 +78,7 @@ public class NXcs_filter_boolean_maskImpl extends NXobjectImpl implements NXcs_f
 
 
 	@Override
-	public IDataset getNumber_of_objects() {
+	public Dataset getNumber_of_objects() {
 		return getDataset(NX_NUMBER_OF_OBJECTS);
 	}
 
@@ -97,7 +98,7 @@ public class NXcs_filter_boolean_maskImpl extends NXobjectImpl implements NXcs_f
 	}
 
 	@Override
-	public IDataset getBitdepth() {
+	public Dataset getBitdepth() {
 		return getDataset(NX_BITDEPTH);
 	}
 
@@ -117,7 +118,7 @@ public class NXcs_filter_boolean_maskImpl extends NXobjectImpl implements NXcs_f
 	}
 
 	@Override
-	public IDataset getMask() {
+	public Dataset getMask() {
 		return getDataset(NX_MASK);
 	}
 
@@ -137,7 +138,7 @@ public class NXcs_filter_boolean_maskImpl extends NXobjectImpl implements NXcs_f
 	}
 
 	@Override
-	public IDataset getIdentifier() {
+	public Dataset getIdentifier() {
 		return getDataset(NX_IDENTIFIER);
 	}
 

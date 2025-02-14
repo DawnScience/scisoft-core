@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -58,7 +59,7 @@ public class NXdeflectorImpl extends NXobjectImpl implements NXdeflector {
 
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -78,7 +79,7 @@ public class NXdeflectorImpl extends NXobjectImpl implements NXdeflector {
 	}
 
 	@Override
-	public IDataset getName() {
+	public Dataset getName() {
 		return getDataset(NX_NAME);
 	}
 
@@ -98,7 +99,7 @@ public class NXdeflectorImpl extends NXobjectImpl implements NXdeflector {
 	}
 
 	@Override
-	public IDataset getManufacturer_name() {
+	public Dataset getManufacturer_name() {
 		return getDataset(NX_MANUFACTURER_NAME);
 	}
 
@@ -118,7 +119,7 @@ public class NXdeflectorImpl extends NXobjectImpl implements NXdeflector {
 	}
 
 	@Override
-	public IDataset getManufacturer_model() {
+	public Dataset getManufacturer_model() {
 		return getDataset(NX_MANUFACTURER_MODEL);
 	}
 
@@ -138,7 +139,7 @@ public class NXdeflectorImpl extends NXobjectImpl implements NXdeflector {
 	}
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -158,7 +159,7 @@ public class NXdeflectorImpl extends NXobjectImpl implements NXdeflector {
 	}
 
 	@Override
-	public IDataset getVoltage() {
+	public Dataset getVoltage() {
 		return getDataset(NX_VOLTAGE);
 	}
 
@@ -178,7 +179,7 @@ public class NXdeflectorImpl extends NXobjectImpl implements NXdeflector {
 	}
 
 	@Override
-	public IDataset getCurrent() {
+	public Dataset getCurrent() {
 		return getDataset(NX_CURRENT);
 	}
 
@@ -198,7 +199,7 @@ public class NXdeflectorImpl extends NXobjectImpl implements NXdeflector {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

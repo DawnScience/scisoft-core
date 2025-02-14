@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -69,7 +70,7 @@ public class NXcg_marching_cubesImpl extends NXobjectImpl implements NXcg_marchi
 	}
 
 	@Override
-	public IDataset getImplementation() {
+	public Dataset getImplementation() {
 		return getDataset(NX_IMPLEMENTATION);
 	}
 
@@ -89,7 +90,7 @@ public class NXcg_marching_cubesImpl extends NXobjectImpl implements NXcg_marchi
 	}
 
 	@Override
-	public IDataset getProgram() {
+	public Dataset getProgram() {
 		return getDataset(NX_PROGRAM);
 	}
 

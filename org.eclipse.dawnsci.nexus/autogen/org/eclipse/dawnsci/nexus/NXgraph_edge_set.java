@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A set of (eventually directed) edges which connect nodes/vertices of a graph.
@@ -41,7 +42,7 @@ public interface NXgraph_edge_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_edges();
+	public Dataset getNumber_of_edges();
 
 	/**
 	 * Total number of edges, counting eventual bidirectional edges only once.
@@ -92,7 +93,7 @@ public interface NXgraph_edge_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier_offset();
+	public Dataset getIdentifier_offset();
 
 	/**
 	 * Integer which specifies the first index to be used for distinguishing
@@ -158,7 +159,7 @@ public interface NXgraph_edge_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier();
+	public Dataset getIdentifier();
 
 	/**
 	 * Integer used to distinguish edges for explicit indexing.
@@ -211,7 +212,7 @@ public interface NXgraph_edge_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDirectionality();
+	public Dataset getDirectionality();
 
 	/**
 	 * Specifier whether each edge is non-directional, one-directional,
@@ -281,7 +282,7 @@ public interface NXgraph_edge_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNode_pair();
+	public Dataset getNode_pair();
 
 	/**
 	 * Pairs of node/vertex identifier. Each pair represents the connection
@@ -349,7 +350,7 @@ public interface NXgraph_edge_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIs_a();
+	public Dataset getIs_a();
 
 	/**
 	 * A human-readable qualifier which type or e.g. class instance the
@@ -392,7 +393,7 @@ public interface NXgraph_edge_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLabel();
+	public Dataset getLabel();
 
 	/**
 	 * A human-readable label/caption/tag for the edge.

@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -58,7 +59,7 @@ public class NXpolarizerImpl extends NXobjectImpl implements NXpolarizer {
 
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -78,7 +79,7 @@ public class NXpolarizerImpl extends NXobjectImpl implements NXpolarizer {
 	}
 
 	@Override
-	public IDataset getComposition() {
+	public Dataset getComposition() {
 		return getDataset(NX_COMPOSITION);
 	}
 
@@ -98,7 +99,7 @@ public class NXpolarizerImpl extends NXobjectImpl implements NXpolarizer {
 	}
 
 	@Override
-	public IDataset getReflection() {
+	public Dataset getReflection() {
 		return getDataset(NX_REFLECTION);
 	}
 
@@ -118,7 +119,7 @@ public class NXpolarizerImpl extends NXobjectImpl implements NXpolarizer {
 	}
 
 	@Override
-	public IDataset getEfficiency() {
+	public Dataset getEfficiency() {
 		return getDataset(NX_EFFICIENCY);
 	}
 
@@ -148,7 +149,7 @@ public class NXpolarizerImpl extends NXobjectImpl implements NXpolarizer {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

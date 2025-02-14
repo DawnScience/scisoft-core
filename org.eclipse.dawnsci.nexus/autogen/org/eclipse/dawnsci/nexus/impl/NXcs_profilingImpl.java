@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -93,7 +94,7 @@ public class NXcs_profilingImpl extends NXobjectImpl implements NXcs_profiling {
 
 
 	@Override
-	public IDataset getCurrent_working_directory() {
+	public Dataset getCurrent_working_directory() {
 		return getDataset(NX_CURRENT_WORKING_DIRECTORY);
 	}
 
@@ -113,7 +114,7 @@ public class NXcs_profilingImpl extends NXobjectImpl implements NXcs_profiling {
 	}
 
 	@Override
-	public IDataset getCommand_line_call() {
+	public Dataset getCommand_line_call() {
 		return getDataset(NX_COMMAND_LINE_CALL);
 	}
 
@@ -133,7 +134,7 @@ public class NXcs_profilingImpl extends NXobjectImpl implements NXcs_profiling {
 	}
 
 	@Override
-	public IDataset getStart_time() {
+	public Dataset getStart_time() {
 		return getDataset(NX_START_TIME);
 	}
 
@@ -153,7 +154,7 @@ public class NXcs_profilingImpl extends NXobjectImpl implements NXcs_profiling {
 	}
 
 	@Override
-	public IDataset getEnd_time() {
+	public Dataset getEnd_time() {
 		return getDataset(NX_END_TIME);
 	}
 
@@ -173,7 +174,7 @@ public class NXcs_profilingImpl extends NXobjectImpl implements NXcs_profiling {
 	}
 
 	@Override
-	public IDataset getTotal_elapsed_time() {
+	public Dataset getTotal_elapsed_time() {
 		return getDataset(NX_TOTAL_ELAPSED_TIME);
 	}
 
@@ -193,7 +194,7 @@ public class NXcs_profilingImpl extends NXobjectImpl implements NXcs_profiling {
 	}
 
 	@Override
-	public IDataset getNumber_of_processes() {
+	public Dataset getNumber_of_processes() {
 		return getDataset(NX_NUMBER_OF_PROCESSES);
 	}
 
@@ -213,7 +214,7 @@ public class NXcs_profilingImpl extends NXobjectImpl implements NXcs_profiling {
 	}
 
 	@Override
-	public IDataset getNumber_of_threads() {
+	public Dataset getNumber_of_threads() {
 		return getDataset(NX_NUMBER_OF_THREADS);
 	}
 
@@ -233,7 +234,7 @@ public class NXcs_profilingImpl extends NXobjectImpl implements NXcs_profiling {
 	}
 
 	@Override
-	public IDataset getNumber_of_gpus() {
+	public Dataset getNumber_of_gpus() {
 		return getDataset(NX_NUMBER_OF_GPUS);
 	}
 

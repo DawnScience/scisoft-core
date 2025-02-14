@@ -184,7 +184,7 @@ public interface NXdata extends NXobject {
 	public static final String NX_DATA_ATTRIBUTE_SIGNAL = "signal";
 	public static final String NX_DATA_ATTRIBUTE_AXES = "axes";
 	public static final String NX_DATA_ATTRIBUTE_LONG_NAME = "long_name";
-	public static final String NX_ERRORS_SUFFIX = "errors";
+	public static final String NX_ERRORS_SUFFIX = "_errors";
 	public static final String NX_ERRORS = "errors";
 	public static final String NX_SCALING_FACTOR = "scaling_factor";
 	public static final String NX_OFFSET = "offset";

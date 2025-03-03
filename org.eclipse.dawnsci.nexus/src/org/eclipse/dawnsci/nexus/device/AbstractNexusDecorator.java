@@ -47,7 +47,7 @@ public abstract class AbstractNexusDecorator<N extends NXobject> implements INex
 	}
 
 	@Override
-	public List<NexusObjectProvider<?>> getNexusProviders(NexusScanInfo info) throws NexusException {
+	public List<NexusObjectProvider<N>> getNexusProviders(NexusScanInfo info) throws NexusException {
 		return decorated.getNexusProviders(info);
 	}
 

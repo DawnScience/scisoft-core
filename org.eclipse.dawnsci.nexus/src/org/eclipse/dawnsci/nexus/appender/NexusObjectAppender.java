@@ -52,9 +52,9 @@ public class NexusObjectAppender<N extends NXobject> extends AbstractNexusDecora
 	}
 
 	@Override
-	public final List<NexusObjectProvider<?>> getNexusProviders(NexusScanInfo info) throws NexusException {
-		final List<NexusObjectProvider<?>> nexusObjectProviders = super.getNexusProviders(info);
-		for (NexusObjectProvider<?> nexusObjectProvider : nexusObjectProviders) {
+	public final List<NexusObjectProvider<N>> getNexusProviders(NexusScanInfo info) throws NexusException {
+		final List<NexusObjectProvider<N>> nexusObjectProviders = super.getNexusProviders(info);
+		for (NexusObjectProvider<N> nexusObjectProvider : nexusObjectProviders) {
 			appendDataToWrappedNexusObject(nexusObjectProvider, info);
 		}
 		return nexusObjectProviders;

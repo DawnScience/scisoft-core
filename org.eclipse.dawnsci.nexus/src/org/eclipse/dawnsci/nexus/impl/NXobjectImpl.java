@@ -205,7 +205,8 @@ public abstract class NXobjectImpl extends GroupNodeImpl implements NXobject {
 	public ILazyWriteableDataset initializeFixedSizeLazyDataset(String name, int[] shape,
 			Class<?> eClass) {
 		// set chunk as a workaround for bug in SWMR reading contiguous dataset in HDF5 1.14.4+
-		ILazyWriteableDataset dataset = new LazyWriteableDataset(name, eClass, shape, shape, shape, null);
+		int[] chunks = shape == null || shape.length == 0 ? null : shape; // avoid setting chunks if scalar or empty
+		ILazyWriteableDataset dataset = new LazyWriteableDataset(name, eClass, shape, shape, chunks, null);
 		createDataNode(name, dataset);
 		
 		return dataset;

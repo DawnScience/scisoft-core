@@ -131,7 +131,7 @@ class Test(unittest.TestCase):
 #        efunexception()
 
     def testPyAna(self):
-        efun = dnp.external.create_function("funpyana", "external_functions", dls_module="python/anaconda")
+        efun = dnp.external.create_function("funpyana", "external_functions", dls_module="python/3.10")
         print('2,7', end=' ')
         self.assertEqual(efun(), (2,7))
         print('passed')

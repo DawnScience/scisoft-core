@@ -279,7 +279,7 @@ _dls_modules = dict() # cache for modules
 
 _PYTHONPATH = 'PYTHONPATH'
 
-def get_dls_module(module='python/3.7', module_init='/etc/profile.d/modules.sh'):
+def get_dls_module(module='python/3.10', module_init='/etc/profile.d/modules.sh'):
     if module in _dls_modules:
         return _dls_modules[module]
 

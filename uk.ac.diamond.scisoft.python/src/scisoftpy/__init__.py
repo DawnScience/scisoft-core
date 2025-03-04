@@ -130,7 +130,7 @@ else:
     from .python.pycomparisons import *
     from .python.pyscisoft import *
 
-__version__ = "2.33.0"
+__version__ = "2.37.0"
 
 '''
 Imports should work with python+numpy only agreed with MB 11 Nov 2011

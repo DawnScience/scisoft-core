@@ -51,21 +51,14 @@ with argument passing and output return, plus exception handling
 from os import path as _path
 
 import sys
+import subprocess as sub
 
 _pyhexver = sys.hexversion
 py3 = _pyhexver >= 0x03000000
 if py3:
     from pickle import dump as _psave, load as _pload
-    import subprocess as sub
 else:
     from cPickle import dump as _psave, load as _pload
-    if os.name == 'posix':
-        try:
-            import subprocess32 as sub
-        except ImportError:
-            import subprocess as sub
-    else:
-        import subprocess as sub
 
 if _pyhexver < 0x03060000:
     import linecache

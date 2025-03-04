@@ -624,8 +624,10 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 			validateGroup_NXentry_NXinstrument_NXdetector_NXdetector_module(detector_module);
 		}
 
-		// validate child group 'CHANNELNAME_channel' of type NXdetector_channel
-		validateGroup_NXentry_NXinstrument_NXdetector_CHANNELNAME_channel(group.getChannelname_channel());
+		// validate optional child group 'CHANNELNAME_channel' of type NXdetector_channel
+		if (group.getChannelname_channel() != null) {
+			validateGroup_NXentry_NXinstrument_NXdetector_CHANNELNAME_channel(group.getChannelname_channel());
+		}
 	}
 
 	/**
@@ -783,7 +785,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 	}
 
 	/**
-	 * Validate group 'CHANNELNAME_channel' of type NXdetector_channel.
+	 * Validate optional group 'CHANNELNAME_channel' of type NXdetector_channel.
 	 */
 	private void validateGroup_NXentry_NXinstrument_NXdetector_CHANNELNAME_channel(final NXdetector_channel group) {
 		// validate that the group is not null

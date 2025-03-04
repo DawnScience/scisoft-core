@@ -85,8 +85,8 @@ public interface NXtransformations extends NXobject {
 	public static final String NX_AXISNAME_ATTRIBUTE_OFFSET_UNITS = "offset_units";
 	public static final String NX_AXISNAME_ATTRIBUTE_DEPENDS_ON = "depends_on";
 	public static final String NX_AXISNAME_ATTRIBUTE_EQUIPMENT_COMPONENT = "equipment_component";
-	public static final String NX_END_SUFFIX = "end";
-	public static final String NX_INCREMENT_SET_SUFFIX = "increment_set";
+	public static final String NX_END_SUFFIX = "_end";
+	public static final String NX_INCREMENT_SET_SUFFIX = "_increment_set";
 	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * Units need to be appropriate for translation or rotation

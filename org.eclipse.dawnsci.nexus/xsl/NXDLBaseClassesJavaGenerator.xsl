@@ -76,7 +76,7 @@
 		<xsl:text>&#10;&#10;</xsl:text>
 		<xsl:text>/**</xsl:text><xsl:apply-templates select="nx:doc"/><xsl:apply-templates select="nx:symbols"/>
 		<xsl:text>&#10; *</xsl:text><xsl:apply-templates select="@version|@deprecated"/>
-        <xsl:text>&#10; */</xsl:text><xsl:apply-templates mode="typeAnnotations" select="."/>
+		<xsl:text>&#10; */</xsl:text><xsl:apply-templates mode="typeAnnotations" select="."/>
 		<xsl:text>&#10;public interface </xsl:text><xsl:value-of select="$interfaceName"/>
 
 		<xsl:choose>
@@ -96,8 +96,8 @@
 <xsl:template mode="interface" match="
 	nx:definition/nx:attribute
 	| nx:definition/nx:field[not(@name = preceding-sibling::nx:field/@name)]
- 	| nx:field/nx:attribute
- 	| nx:definition/nx:group[@name or not(@type = preceding-sibling::nx:group[not(@name)]/@type)]">
+	| nx:field/nx:attribute
+	| nx:definition/nx:group[@name or not(@type = preceding-sibling::nx:group[not(@name)]/@type)]">
 
 	<!-- Template variables -->
 	<xsl:variable name="fieldName"><xsl:apply-templates select="." mode="fieldName"/></xsl:variable>
@@ -315,7 +315,8 @@
 			<xsl:with-param name="variableName" select="$variableName"/>
 		</xsl:apply-templates>
 	</xsl:variable>
-	public static final String <xsl:value-of select="$fieldLabel"/> = "<xsl:value-of select="$fieldName"/><xsl:text>";</xsl:text>
+	<xsl:variable name="prefix" select="if (ends-with($fieldLabel, 'SUFFIX')) then '_' else ''"/>
+	public static final String <xsl:value-of select="$fieldLabel"/> = "<xsl:value-of select="$prefix"/><xsl:value-of select="$fieldName"/><xsl:text>";</xsl:text>
 	<xsl:apply-templates mode="classFields" select="*"/>
 </xsl:template>
 

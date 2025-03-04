@@ -45,7 +45,7 @@ public class DiffractionCrystalEnvironment implements Serializable, Cloneable {
 	private final static Vector3d DEFAULT_DIR = new Vector3d(0, 0, 1);
 
 	private Vector3d dirn = new Vector3d(DEFAULT_DIR);
-	private Vector3d referenceNormal = new Vector3d(0, 1, 0); // horizontal
+	private Vector3d referenceNormal = new Vector3d(0, 1, 0); // horizontal plane in DLS frame has normal in vertical direction
 	private Vector4d stokesVector = new Vector4d(1, 1, 0, 0); // fully polarized horizontally
 
 	/**

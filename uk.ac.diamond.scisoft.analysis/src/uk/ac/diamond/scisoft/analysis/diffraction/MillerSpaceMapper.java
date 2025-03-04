@@ -304,16 +304,34 @@ public class MillerSpaceMapper {
 		Maths.dividez(map, weight, map); // normalize by tally
 	
 		if (reduceToNonZeroBB) {
-			logger.warn("Reduced to non-zero bounding box: {} to {}", Arrays.toString(sMin), Arrays.toString(sMax));
-			for (int i = 0; i < vShape.length; i++) {
-				vMin[i] += sMin[i]*vDel[i];
-				sMax[i]++;
-				vShape[i] = sMax[i] - sMin[i];
-			}
-			logger.warn("so now start = {} for shape = {}", Arrays.toString(vMin), Arrays.toString(vShape));
-			map = (DoubleDataset) map.getSliceView(sMin, sMax, null);
+			map = sliceToBoundingBox(map, null)[0];
 		}
 		return map;
+	}
+
+	private DoubleDataset[] sliceToBoundingBox(DoubleDataset map, DoubleDataset weight) {
+		logger.warn("Reduced to non-zero bounding box: {} to {}", Arrays.toString(sMin), Arrays.toString(sMax));
+		for (int i = 0; i < vShape.length; i++) {
+			int b = sMin[i];
+			int e = sMax[i];
+			if (b > e) {
+				logger.error("Cannot reduce bounding box as in {}-th dimension, start must be greater than stop but {} <= {}", i, b, e);
+				if (weight != null) {
+					return new DoubleDataset[] { map, weight };
+				}
+				return new DoubleDataset[] { map };
+			}
+			vMin[i] += b * vDel[i];
+			sMax[i] = ++e;
+			vShape[i] = e - b;
+		}
+
+		logger.warn("so now start = {} for shape = {}", Arrays.toString(vMin), Arrays.toString(vShape));
+		map = (DoubleDataset) map.getSliceView(sMin, sMax, null);
+		if (weight != null) {
+			return new DoubleDataset[] { map, (DoubleDataset) weight.getSliceView(sMin, sMax, null) };
+		}
+		return new DoubleDataset[] { map };
 	}
 
 	private int mapToOutput(Tree tree, PositionIterator[] iters) throws ScanFileHolderException, DatasetException {
@@ -609,7 +627,7 @@ public class MillerSpaceMapper {
 			throw new IllegalArgumentException("Only one input file allowed");
 		}
 		initializeFromBean(inputs[0], false);
-		pixelMapping = ImagePixelMapping.createPixelMapping(bean.getOutputMode());
+		pixelMapping = ImagePixelMapping.createPixelMapping(bean.getOutputMode(), bean.isToCrystalFrame());
 		Matrix3d vOri = MillerSpaceMapperBean.getVolumeOrientation(bean);
 		if (vOri != null) {
 			logger.info("Setting volume orientation: %s", vOri);
@@ -1658,7 +1676,7 @@ public class MillerSpaceMapper {
 		int outputRank = bean.getOutputMode().getRank();
 		this.splitter = PixelSplitter.createSplitter(outputRank, bean.getSplitterName(), bean.getSplitterParameter());
 		listMillerEntries = bean.isListMillerEntries();
-		pixelMapping = ImagePixelMapping.createPixelMapping(bean.getOutputMode());
+		pixelMapping = ImagePixelMapping.createPixelMapping(bean.getOutputMode(), bean.isToCrystalFrame());
 		Matrix3d vOri = MillerSpaceMapperBean.getVolumeOrientation(bean);
 		if (vOri != null) {
 			logger.info("Setting volume orientation: %s", vOri);
@@ -1948,15 +1966,9 @@ public class MillerSpaceMapper {
 			Maths.dividez(map, weight, map); // normalize by tally
 
 			if (reduceToNonZeroBB) {
-				logger.warn("Reduced to non-zero bounding box: {} to {}", Arrays.toString(sMin), Arrays.toString(sMax));
-				for (int i = 0; i < vShape.length; i++) {
-					vMin[i] += sMin[i]*vDel[i];
-					sMax[i]++;
-					vShape[i] = sMax[i] - sMin[i];
-				}
-				logger.warn("so now start = {} for shape = {}", Arrays.toString(vMin), Arrays.toString(vShape));
-				map = (DoubleDataset) map.getSliceView(sMin, sMax, null);
-				weight = (DoubleDataset) weight.getSliceView(sMin, sMax, null);
+				DoubleDataset[] out = sliceToBoundingBox(map, weight);
+				map = out[0];
+				weight = out[1];
 			}
 
 			if (findResultBB) {

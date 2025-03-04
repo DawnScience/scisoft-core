@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -62,7 +63,7 @@ public class NXspindispersionImpl extends NXobjectImpl implements NXspindispersi
 
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -82,7 +83,7 @@ public class NXspindispersionImpl extends NXobjectImpl implements NXspindispersi
 	}
 
 	@Override
-	public IDataset getFigure_of_merit() {
+	public Dataset getFigure_of_merit() {
 		return getDataset(NX_FIGURE_OF_MERIT);
 	}
 
@@ -102,7 +103,7 @@ public class NXspindispersionImpl extends NXobjectImpl implements NXspindispersi
 	}
 
 	@Override
-	public IDataset getShermann_function() {
+	public Dataset getShermann_function() {
 		return getDataset(NX_SHERMANN_FUNCTION);
 	}
 
@@ -122,7 +123,7 @@ public class NXspindispersionImpl extends NXobjectImpl implements NXspindispersi
 	}
 
 	@Override
-	public IDataset getScattering_energy() {
+	public Dataset getScattering_energy() {
 		return getDataset(NX_SCATTERING_ENERGY);
 	}
 
@@ -142,7 +143,7 @@ public class NXspindispersionImpl extends NXobjectImpl implements NXspindispersi
 	}
 
 	@Override
-	public IDataset getScattering_angle() {
+	public Dataset getScattering_angle() {
 		return getDataset(NX_SCATTERING_ANGLE);
 	}
 
@@ -162,7 +163,7 @@ public class NXspindispersionImpl extends NXobjectImpl implements NXspindispersi
 	}
 
 	@Override
-	public IDataset getTarget() {
+	public Dataset getTarget() {
 		return getDataset(NX_TARGET);
 	}
 
@@ -182,7 +183,7 @@ public class NXspindispersionImpl extends NXobjectImpl implements NXspindispersi
 	}
 
 	@Override
-	public IDataset getTarget_preparation() {
+	public Dataset getTarget_preparation() {
 		return getDataset(NX_TARGET_PREPARATION);
 	}
 
@@ -202,7 +203,7 @@ public class NXspindispersionImpl extends NXobjectImpl implements NXspindispersi
 	}
 
 	@Override
-	public IDataset getTarget_preparation_date() {
+	public Dataset getTarget_preparation_date() {
 		return getDataset(NX_TARGET_PREPARATION_DATE);
 	}
 
@@ -222,7 +223,7 @@ public class NXspindispersionImpl extends NXobjectImpl implements NXspindispersi
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

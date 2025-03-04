@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A simple slit.
@@ -47,7 +48,7 @@ public interface NXslit extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * Points to the path of the last element in the geometry chain that places
@@ -122,7 +123,7 @@ public interface NXslit extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getX_gap();
+	public Dataset getX_gap();
 
 	/**
 	 * Size of the gap opening in the first dimension of the local
@@ -170,7 +171,7 @@ public interface NXslit extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getY_gap();
+	public Dataset getY_gap();
 
 	/**
 	 * Size of the gap opening in the second dimension of the local

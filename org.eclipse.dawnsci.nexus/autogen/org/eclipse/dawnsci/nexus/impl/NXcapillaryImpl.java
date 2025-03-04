@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -61,7 +62,7 @@ public class NXcapillaryImpl extends NXobjectImpl implements NXcapillary {
 
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -81,7 +82,7 @@ public class NXcapillaryImpl extends NXobjectImpl implements NXcapillary {
 	}
 
 	@Override
-	public IDataset getManufacturer() {
+	public Dataset getManufacturer() {
 		return getDataset(NX_MANUFACTURER);
 	}
 
@@ -101,7 +102,7 @@ public class NXcapillaryImpl extends NXobjectImpl implements NXcapillary {
 	}
 
 	@Override
-	public IDataset getMaximum_incident_angle() {
+	public Dataset getMaximum_incident_angle() {
 		return getDataset(NX_MAXIMUM_INCIDENT_ANGLE);
 	}
 
@@ -121,7 +122,7 @@ public class NXcapillaryImpl extends NXobjectImpl implements NXcapillary {
 	}
 
 	@Override
-	public IDataset getAccepting_aperture() {
+	public Dataset getAccepting_aperture() {
 		return getDataset(NX_ACCEPTING_APERTURE);
 	}
 
@@ -163,7 +164,7 @@ public class NXcapillaryImpl extends NXobjectImpl implements NXcapillary {
 	}
 
 	@Override
-	public IDataset getWorking_distance() {
+	public Dataset getWorking_distance() {
 		return getDataset(NX_WORKING_DISTANCE);
 	}
 
@@ -183,7 +184,7 @@ public class NXcapillaryImpl extends NXobjectImpl implements NXcapillary {
 	}
 
 	@Override
-	public IDataset getFocal_size() {
+	public Dataset getFocal_size() {
 		return getDataset(NX_FOCAL_SIZE);
 	}
 
@@ -213,7 +214,7 @@ public class NXcapillaryImpl extends NXobjectImpl implements NXcapillary {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

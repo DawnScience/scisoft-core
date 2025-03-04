@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -59,7 +60,7 @@ public class NXseparatorImpl extends NXobjectImpl implements NXseparator {
 
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -79,7 +80,7 @@ public class NXseparatorImpl extends NXobjectImpl implements NXseparator {
 	}
 
 	@Override
-	public IDataset getBeamline_distance() {
+	public Dataset getBeamline_distance() {
 		return getDataset(NX_BEAMLINE_DISTANCE);
 	}
 
@@ -99,7 +100,7 @@ public class NXseparatorImpl extends NXobjectImpl implements NXseparator {
 	}
 
 	@Override
-	public IDataset getSet_bfield_current() {
+	public Dataset getSet_bfield_current() {
 		return getDataset(NX_SET_BFIELD_CURRENT);
 	}
 
@@ -141,7 +142,7 @@ public class NXseparatorImpl extends NXobjectImpl implements NXseparator {
 	}
 
 	@Override
-	public IDataset getSet_efield_voltage() {
+	public Dataset getSet_efield_voltage() {
 		return getDataset(NX_SET_EFIELD_VOLTAGE);
 	}
 

@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Logical grouping of detectors. When used, describes a group of detectors.
@@ -59,7 +60,7 @@ public interface NXdetector_group extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getGroup_names();
+	public Dataset getGroup_names();
 
 	/**
 	 * An array of the names of the detectors given in NXdetector
@@ -116,7 +117,7 @@ public interface NXdetector_group extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getGroup_index();
+	public Dataset getGroup_index();
 
 	/**
 	 * An array of unique identifiers for detectors or groupings
@@ -174,7 +175,7 @@ public interface NXdetector_group extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getGroup_parent();
+	public Dataset getGroup_parent();
 
 	/**
 	 * An array of the hierarchical levels of the parents of detectors
@@ -224,7 +225,7 @@ public interface NXdetector_group extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getGroup_type();
+	public Dataset getGroup_type();
 
 	/**
 	 * Code number for group type, e.g. bank=1, tube=2 etc.

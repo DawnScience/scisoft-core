@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -100,7 +101,7 @@ public class NXbeam_stopImpl extends NXobjectImpl implements NXbeam_stop {
 	}
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -182,7 +183,7 @@ public class NXbeam_stopImpl extends NXobjectImpl implements NXbeam_stop {
 	}
 
 	@Override
-	public IDataset getSize() {
+	public Dataset getSize() {
 		return getDataset(NX_SIZE);
 	}
 
@@ -202,7 +203,7 @@ public class NXbeam_stopImpl extends NXobjectImpl implements NXbeam_stop {
 	}
 
 	@Override
-	public IDataset getX() {
+	public Dataset getX() {
 		return getDataset(NX_X);
 	}
 
@@ -222,7 +223,7 @@ public class NXbeam_stopImpl extends NXobjectImpl implements NXbeam_stop {
 	}
 
 	@Override
-	public IDataset getY() {
+	public Dataset getY() {
 		return getDataset(NX_Y);
 	}
 
@@ -242,7 +243,7 @@ public class NXbeam_stopImpl extends NXobjectImpl implements NXbeam_stop {
 	}
 
 	@Override
-	public IDataset getDistance_to_detector() {
+	public Dataset getDistance_to_detector() {
 		return getDataset(NX_DISTANCE_TO_DETECTOR);
 	}
 
@@ -262,7 +263,7 @@ public class NXbeam_stopImpl extends NXobjectImpl implements NXbeam_stop {
 	}
 
 	@Override
-	public IDataset getStatus() {
+	public Dataset getStatus() {
 		return getDataset(NX_STATUS);
 	}
 
@@ -292,7 +293,7 @@ public class NXbeam_stopImpl extends NXobjectImpl implements NXbeam_stop {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

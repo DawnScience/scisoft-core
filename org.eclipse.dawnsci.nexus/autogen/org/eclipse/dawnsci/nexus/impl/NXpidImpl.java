@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -56,7 +57,7 @@ public class NXpidImpl extends NXobjectImpl implements NXpid {
 
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -88,7 +89,7 @@ public class NXpidImpl extends NXobjectImpl implements NXpid {
 	// Unprocessed group: value_log
 
 	@Override
-	public IDataset getSetpoint() {
+	public Dataset getSetpoint() {
 		return getDataset(NX_SETPOINT);
 	}
 
@@ -108,7 +109,7 @@ public class NXpidImpl extends NXobjectImpl implements NXpid {
 	}
 
 	@Override
-	public IDataset getK_p_value() {
+	public Dataset getK_p_value() {
 		return getDataset(NX_K_P_VALUE);
 	}
 
@@ -128,7 +129,7 @@ public class NXpidImpl extends NXobjectImpl implements NXpid {
 	}
 
 	@Override
-	public IDataset getK_i_value() {
+	public Dataset getK_i_value() {
 		return getDataset(NX_K_I_VALUE);
 	}
 
@@ -148,7 +149,7 @@ public class NXpidImpl extends NXobjectImpl implements NXpid {
 	}
 
 	@Override
-	public IDataset getK_d_value() {
+	public Dataset getK_d_value() {
 		return getDataset(NX_K_D_VALUE);
 	}
 

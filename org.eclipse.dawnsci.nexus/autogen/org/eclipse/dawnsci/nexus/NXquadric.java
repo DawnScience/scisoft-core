@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * definition of a quadric surface.
@@ -39,7 +40,7 @@ public interface NXquadric extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getParameters();
+	public Dataset getParameters();
 
 	/**
 	 * Ten real values of the matrix that defines the quadric surface
@@ -119,7 +120,7 @@ public interface NXquadric extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSurface_type();
+	public Dataset getSurface_type();
 
 	/**
 	 * An optional description of the form of the quadric surface:
@@ -217,7 +218,7 @@ public interface NXquadric extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * Path to an :ref:`NXtransformations` that defining the axis on

@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -59,7 +60,7 @@ public class NXslitImpl extends NXobjectImpl implements NXslit {
 
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 
@@ -79,7 +80,7 @@ public class NXslitImpl extends NXobjectImpl implements NXslit {
 	}
 
 	@Override
-	public IDataset getX_gap() {
+	public Dataset getX_gap() {
 		return getDataset(NX_X_GAP);
 	}
 
@@ -99,7 +100,7 @@ public class NXslitImpl extends NXobjectImpl implements NXslit {
 	}
 
 	@Override
-	public IDataset getY_gap() {
+	public Dataset getY_gap() {
 		return getDataset(NX_Y_GAP);
 	}
 

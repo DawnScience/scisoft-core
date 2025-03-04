@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -66,7 +67,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 
 
 	@Override
-	public IDataset getTime_of_flight() {
+	public Dataset getTime_of_flight() {
 		return getDataset(NX_TIME_OF_FLIGHT);
 	}
 
@@ -120,7 +121,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getRaw_time_of_flight() {
+	public Dataset getRaw_time_of_flight() {
 		return getDataset(NX_RAW_TIME_OF_FLIGHT);
 	}
 
@@ -150,7 +151,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getDetector_number() {
+	public Dataset getDetector_number() {
 		return getDataset(NX_DETECTOR_NUMBER);
 	}
 
@@ -170,7 +171,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getData() {
+	public Dataset getData() {
 		return getDataset(NX_DATA);
 	}
 
@@ -210,7 +211,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getData_errors() {
+	public Dataset getData_errors() {
 		return getDataset(NX_DATA_ERRORS);
 	}
 
@@ -230,7 +231,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getX_pixel_offset() {
+	public Dataset getX_pixel_offset() {
 		return getDataset(NX_X_PIXEL_OFFSET);
 	}
 
@@ -284,7 +285,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getY_pixel_offset() {
+	public Dataset getY_pixel_offset() {
 		return getDataset(NX_Y_PIXEL_OFFSET);
 	}
 
@@ -338,7 +339,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getZ_pixel_offset() {
+	public Dataset getZ_pixel_offset() {
 		return getDataset(NX_Z_PIXEL_OFFSET);
 	}
 
@@ -392,7 +393,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getDistance() {
+	public Dataset getDistance() {
 		return getDataset(NX_DISTANCE);
 	}
 
@@ -412,7 +413,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getPolar_angle() {
+	public Dataset getPolar_angle() {
 		return getDataset(NX_POLAR_ANGLE);
 	}
 
@@ -432,7 +433,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getAzimuthal_angle() {
+	public Dataset getAzimuthal_angle() {
 		return getDataset(NX_AZIMUTHAL_ANGLE);
 	}
 
@@ -452,7 +453,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -472,7 +473,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getSerial_number() {
+	public Dataset getSerial_number() {
 		return getDataset(NX_SERIAL_NUMBER);
 	}
 
@@ -492,7 +493,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getLocal_name() {
+	public Dataset getLocal_name() {
 		return getDataset(NX_LOCAL_NAME);
 	}
 
@@ -549,7 +550,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getSolid_angle() {
+	public Dataset getSolid_angle() {
 		return getDataset(NX_SOLID_ANGLE);
 	}
 
@@ -569,7 +570,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getX_pixel_size() {
+	public Dataset getX_pixel_size() {
 		return getDataset(NX_X_PIXEL_SIZE);
 	}
 
@@ -589,7 +590,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getY_pixel_size() {
+	public Dataset getY_pixel_size() {
 		return getDataset(NX_Y_PIXEL_SIZE);
 	}
 
@@ -609,7 +610,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getDead_time() {
+	public Dataset getDead_time() {
 		return getDataset(NX_DEAD_TIME);
 	}
 
@@ -629,7 +630,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getGas_pressure() {
+	public Dataset getGas_pressure() {
 		return getDataset(NX_GAS_PRESSURE);
 	}
 
@@ -649,7 +650,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getDetection_gas_path() {
+	public Dataset getDetection_gas_path() {
 		return getDataset(NX_DETECTION_GAS_PATH);
 	}
 
@@ -669,7 +670,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getCrate() {
+	public Dataset getCrate() {
 		return getDataset(NX_CRATE);
 	}
 
@@ -699,7 +700,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getSlot() {
+	public Dataset getSlot() {
 		return getDataset(NX_SLOT);
 	}
 
@@ -729,7 +730,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getInput() {
+	public Dataset getInput() {
 		return getDataset(NX_INPUT);
 	}
 
@@ -759,7 +760,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -801,7 +802,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getReal_time() {
+	public Dataset getReal_time() {
 		return getDataset(NX_REAL_TIME);
 	}
 
@@ -821,7 +822,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getStart_time() {
+	public Dataset getStart_time() {
 		return getDataset(NX_START_TIME);
 	}
 
@@ -851,7 +852,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getStop_time() {
+	public Dataset getStop_time() {
 		return getDataset(NX_STOP_TIME);
 	}
 
@@ -881,7 +882,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getCalibration_date() {
+	public Dataset getCalibration_date() {
 		return getDataset(NX_CALIBRATION_DATE);
 	}
 
@@ -912,7 +913,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getLayout() {
+	public Dataset getLayout() {
 		return getDataset(NX_LAYOUT);
 	}
 
@@ -932,7 +933,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getCount_time() {
+	public Dataset getCount_time() {
 		return getDataset(NX_COUNT_TIME);
 	}
 
@@ -994,7 +995,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getSequence_number() {
+	public Dataset getSequence_number() {
 		return getDataset(NX_SEQUENCE_NUMBER);
 	}
 
@@ -1014,7 +1015,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getBeam_center_x() {
+	public Dataset getBeam_center_x() {
 		return getDataset(NX_BEAM_CENTER_X);
 	}
 
@@ -1034,7 +1035,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getBeam_center_y() {
+	public Dataset getBeam_center_y() {
 		return getDataset(NX_BEAM_CENTER_Y);
 	}
 
@@ -1054,7 +1055,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getFrame_start_number() {
+	public Dataset getFrame_start_number() {
 		return getDataset(NX_FRAME_START_NUMBER);
 	}
 
@@ -1074,7 +1075,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getDiameter() {
+	public Dataset getDiameter() {
 		return getDataset(NX_DIAMETER);
 	}
 
@@ -1094,7 +1095,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getAcquisition_mode() {
+	public Dataset getAcquisition_mode() {
 		return getDataset(NX_ACQUISITION_MODE);
 	}
 
@@ -1114,7 +1115,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getAngular_calibration_applied() {
+	public Dataset getAngular_calibration_applied() {
 		return getDataset(NX_ANGULAR_CALIBRATION_APPLIED);
 	}
 
@@ -1134,7 +1135,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getAngular_calibration() {
+	public Dataset getAngular_calibration() {
 		return getDataset(NX_ANGULAR_CALIBRATION);
 	}
 
@@ -1154,7 +1155,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getFlatfield_applied() {
+	public Dataset getFlatfield_applied() {
 		return getDataset(NX_FLATFIELD_APPLIED);
 	}
 
@@ -1174,7 +1175,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getFlatfield() {
+	public Dataset getFlatfield() {
 		return getDataset(NX_FLATFIELD);
 	}
 
@@ -1194,7 +1195,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getFlatfield_errors() {
+	public Dataset getFlatfield_errors() {
 		return getDataset(NX_FLATFIELD_ERRORS);
 	}
 
@@ -1214,7 +1215,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getPixel_mask_applied() {
+	public Dataset getPixel_mask_applied() {
 		return getDataset(NX_PIXEL_MASK_APPLIED);
 	}
 
@@ -1234,7 +1235,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getPixel_mask() {
+	public Dataset getPixel_mask() {
 		return getDataset(NX_PIXEL_MASK);
 	}
 
@@ -1254,7 +1255,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getImage_key() {
+	public Dataset getImage_key() {
 		return getDataset(NX_IMAGE_KEY);
 	}
 
@@ -1274,7 +1275,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getCountrate_correction_applied() {
+	public Dataset getCountrate_correction_applied() {
 		return getDataset(NX_COUNTRATE_CORRECTION_APPLIED);
 	}
 
@@ -1294,7 +1295,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getCountrate_correction_lookup_table() {
+	public Dataset getCountrate_correction_lookup_table() {
 		return getDataset(NX_COUNTRATE_CORRECTION_LOOKUP_TABLE);
 	}
 
@@ -1314,7 +1315,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getVirtual_pixel_interpolation_applied() {
+	public Dataset getVirtual_pixel_interpolation_applied() {
 		return getDataset(NX_VIRTUAL_PIXEL_INTERPOLATION_APPLIED);
 	}
 
@@ -1334,7 +1335,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getBit_depth_readout() {
+	public Dataset getBit_depth_readout() {
 		return getDataset(NX_BIT_DEPTH_READOUT);
 	}
 
@@ -1354,7 +1355,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getDetector_readout_time() {
+	public Dataset getDetector_readout_time() {
 		return getDataset(NX_DETECTOR_READOUT_TIME);
 	}
 
@@ -1374,7 +1375,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getTrigger_delay_time() {
+	public Dataset getTrigger_delay_time() {
 		return getDataset(NX_TRIGGER_DELAY_TIME);
 	}
 
@@ -1394,7 +1395,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getTrigger_delay_time_set() {
+	public Dataset getTrigger_delay_time_set() {
 		return getDataset(NX_TRIGGER_DELAY_TIME_SET);
 	}
 
@@ -1414,7 +1415,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getTrigger_internal_delay_time() {
+	public Dataset getTrigger_internal_delay_time() {
 		return getDataset(NX_TRIGGER_INTERNAL_DELAY_TIME);
 	}
 
@@ -1434,7 +1435,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getTrigger_dead_time() {
+	public Dataset getTrigger_dead_time() {
 		return getDataset(NX_TRIGGER_DEAD_TIME);
 	}
 
@@ -1454,7 +1455,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getFrame_time() {
+	public Dataset getFrame_time() {
 		return getDataset(NX_FRAME_TIME);
 	}
 
@@ -1474,7 +1475,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getGain_setting() {
+	public Dataset getGain_setting() {
 		return getDataset(NX_GAIN_SETTING);
 	}
 
@@ -1494,7 +1495,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getSaturation_value() {
+	public Dataset getSaturation_value() {
 		return getDataset(NX_SATURATION_VALUE);
 	}
 
@@ -1514,7 +1515,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getUnderload_value() {
+	public Dataset getUnderload_value() {
 		return getDataset(NX_UNDERLOAD_VALUE);
 	}
 
@@ -1534,7 +1535,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getNumber_of_cycles() {
+	public Dataset getNumber_of_cycles() {
 		return getDataset(NX_NUMBER_OF_CYCLES);
 	}
 
@@ -1554,7 +1555,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getSensor_material() {
+	public Dataset getSensor_material() {
 		return getDataset(NX_SENSOR_MATERIAL);
 	}
 
@@ -1574,7 +1575,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getSensor_thickness() {
+	public Dataset getSensor_thickness() {
 		return getDataset(NX_SENSOR_THICKNESS);
 	}
 
@@ -1594,7 +1595,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getThreshold_energy() {
+	public Dataset getThreshold_energy() {
 		return getDataset(NX_THRESHOLD_ENERGY);
 	}
 
@@ -1657,7 +1658,7 @@ public class NXdetectorImpl extends NXobjectImpl implements NXdetector {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

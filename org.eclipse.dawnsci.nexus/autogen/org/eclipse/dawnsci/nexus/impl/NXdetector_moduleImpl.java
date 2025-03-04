@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -60,7 +61,7 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 
 
 	@Override
-	public IDataset getData_origin() {
+	public Dataset getData_origin() {
 		return getDataset(NX_DATA_ORIGIN);
 	}
 
@@ -80,7 +81,7 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public IDataset getData_size() {
+	public Dataset getData_size() {
 		return getDataset(NX_DATA_SIZE);
 	}
 
@@ -100,7 +101,7 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public IDataset getModule_offset() {
+	public Dataset getModule_offset() {
 		return getDataset(NX_MODULE_OFFSET);
 	}
 
@@ -170,7 +171,7 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public IDataset getFast_pixel_direction() {
+	public Dataset getFast_pixel_direction() {
 		return getDataset(NX_FAST_PIXEL_DIRECTION);
 	}
 
@@ -240,7 +241,7 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public IDataset getSlow_pixel_direction() {
+	public Dataset getSlow_pixel_direction() {
 		return getDataset(NX_SLOW_PIXEL_DIRECTION);
 	}
 
@@ -310,7 +311,7 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

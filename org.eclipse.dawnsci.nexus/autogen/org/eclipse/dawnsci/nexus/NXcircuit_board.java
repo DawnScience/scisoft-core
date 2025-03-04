@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Circuit board with e.g. ADC and/or DAC electronic components.
@@ -39,7 +40,7 @@ public interface NXcircuit_board extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRelay();
+	public Dataset getRelay();
 
 	/**
 	 * TBD by Nion Co.

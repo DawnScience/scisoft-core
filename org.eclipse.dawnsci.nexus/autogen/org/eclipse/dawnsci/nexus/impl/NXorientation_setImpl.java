@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -95,7 +96,7 @@ public class NXorientation_setImpl extends NXobjectImpl implements NXorientation
 	}
 
 	@Override
-	public IDataset getParameterization() {
+	public Dataset getParameterization() {
 		return getDataset(NX_PARAMETERIZATION);
 	}
 
@@ -115,7 +116,7 @@ public class NXorientation_setImpl extends NXobjectImpl implements NXorientation
 	}
 
 	@Override
-	public IDataset getObjects() {
+	public Dataset getObjects() {
 		return getDataset(NX_OBJECTS);
 	}
 
@@ -135,7 +136,7 @@ public class NXorientation_setImpl extends NXobjectImpl implements NXorientation
 	}
 
 	@Override
-	public IDataset getIdentifier_offset() {
+	public Dataset getIdentifier_offset() {
 		return getDataset(NX_IDENTIFIER_OFFSET);
 	}
 
@@ -155,7 +156,7 @@ public class NXorientation_setImpl extends NXobjectImpl implements NXorientation
 	}
 
 	@Override
-	public IDataset getIdentifier() {
+	public Dataset getIdentifier() {
 		return getDataset(NX_IDENTIFIER);
 	}
 
@@ -175,7 +176,7 @@ public class NXorientation_setImpl extends NXobjectImpl implements NXorientation
 	}
 
 	@Override
-	public IDataset getOrientation() {
+	public Dataset getOrientation() {
 		return getDataset(NX_ORIENTATION);
 	}
 

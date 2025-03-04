@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Computer science description of a storage object in an input/output system.
@@ -39,7 +40,7 @@ public interface NXcs_io_obj extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTechnology();
+	public Dataset getTechnology();
 
 	/**
 	 * Qualifier for the type of storage medium used.
@@ -88,7 +89,7 @@ public interface NXcs_io_obj extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMax_physical_capacity();
+	public Dataset getMax_physical_capacity();
 
 	/**
 	 * Total amount of data which the medium can hold.
@@ -125,7 +126,7 @@ public interface NXcs_io_obj extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getName();
+	public Dataset getName();
 
 	/**
 	 * Given name to the I/O unit.

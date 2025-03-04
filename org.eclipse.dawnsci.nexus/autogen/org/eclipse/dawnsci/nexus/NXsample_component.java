@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * One group like this per component can be recorded For a sample consisting of multiple components.
@@ -55,7 +56,7 @@ public interface NXsample_component extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getName();
+	public Dataset getName();
 
 	/**
 	 * Descriptive name of sample component
@@ -97,7 +98,7 @@ public interface NXsample_component extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getChemical_formula();
+	public Dataset getChemical_formula();
 
 	/**
 	 * The chemical formula specified using CIF conventions.
@@ -172,7 +173,7 @@ public interface NXsample_component extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getUnit_cell_abc();
+	public Dataset getUnit_cell_abc();
 
 	/**
 	 * Crystallography unit cell parameters a, b, and c
@@ -220,7 +221,7 @@ public interface NXsample_component extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getUnit_cell_alphabetagamma();
+	public Dataset getUnit_cell_alphabetagamma();
 
 	/**
 	 * Crystallography unit cell parameters alpha, beta, and gamma
@@ -267,7 +268,7 @@ public interface NXsample_component extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getUnit_cell_volume();
+	public Dataset getUnit_cell_volume();
 
 	/**
 	 * Volume of the unit cell
@@ -312,7 +313,7 @@ public interface NXsample_component extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSample_orientation();
+	public Dataset getSample_orientation();
 
 	/**
 	 * This will follow the Busing and Levy convention from Acta.Crysta v22, p457 (1967)
@@ -360,7 +361,7 @@ public interface NXsample_component extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getOrientation_matrix();
+	public Dataset getOrientation_matrix();
 
 	/**
 	 * Orientation matrix of single crystal sample component.
@@ -407,7 +408,7 @@ public interface NXsample_component extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMass();
+	public Dataset getMass();
 
 	/**
 	 * Mass of sample component
@@ -451,7 +452,7 @@ public interface NXsample_component extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDensity();
+	public Dataset getDensity();
 
 	/**
 	 * Density of sample component
@@ -495,7 +496,7 @@ public interface NXsample_component extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRelative_molecular_mass();
+	public Dataset getRelative_molecular_mass();
 
 	/**
 	 * Relative Molecular Mass of sample component
@@ -535,7 +536,7 @@ public interface NXsample_component extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * Description of the sample component
@@ -566,7 +567,7 @@ public interface NXsample_component extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getVolume_fraction();
+	public Dataset getVolume_fraction();
 
 	/**
 	 * Volume fraction of component
@@ -607,7 +608,7 @@ public interface NXsample_component extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getScattering_length_density();
+	public Dataset getScattering_length_density();
 
 	/**
 	 * Scattering length density of component
@@ -657,7 +658,7 @@ public interface NXsample_component extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getUnit_cell_class();
+	public Dataset getUnit_cell_class();
 
 	/**
 	 * In case it is all we know and we want to record/document it
@@ -715,7 +716,7 @@ public interface NXsample_component extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSpace_group();
+	public Dataset getSpace_group();
 
 	/**
 	 * Crystallographic space group
@@ -743,7 +744,7 @@ public interface NXsample_component extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPoint_group();
+	public Dataset getPoint_group();
 
 	/**
 	 * Crystallographic point group, deprecated if space_group present

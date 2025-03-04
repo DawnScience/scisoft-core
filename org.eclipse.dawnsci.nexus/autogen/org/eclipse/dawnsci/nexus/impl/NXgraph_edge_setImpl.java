@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -55,7 +56,7 @@ public class NXgraph_edge_setImpl extends NXobjectImpl implements NXgraph_edge_s
 
 
 	@Override
-	public IDataset getNumber_of_edges() {
+	public Dataset getNumber_of_edges() {
 		return getDataset(NX_NUMBER_OF_EDGES);
 	}
 
@@ -75,7 +76,7 @@ public class NXgraph_edge_setImpl extends NXobjectImpl implements NXgraph_edge_s
 	}
 
 	@Override
-	public IDataset getIdentifier_offset() {
+	public Dataset getIdentifier_offset() {
 		return getDataset(NX_IDENTIFIER_OFFSET);
 	}
 
@@ -95,7 +96,7 @@ public class NXgraph_edge_setImpl extends NXobjectImpl implements NXgraph_edge_s
 	}
 
 	@Override
-	public IDataset getIdentifier() {
+	public Dataset getIdentifier() {
 		return getDataset(NX_IDENTIFIER);
 	}
 
@@ -115,7 +116,7 @@ public class NXgraph_edge_setImpl extends NXobjectImpl implements NXgraph_edge_s
 	}
 
 	@Override
-	public IDataset getDirectionality() {
+	public Dataset getDirectionality() {
 		return getDataset(NX_DIRECTIONALITY);
 	}
 
@@ -135,7 +136,7 @@ public class NXgraph_edge_setImpl extends NXobjectImpl implements NXgraph_edge_s
 	}
 
 	@Override
-	public IDataset getNode_pair() {
+	public Dataset getNode_pair() {
 		return getDataset(NX_NODE_PAIR);
 	}
 
@@ -155,7 +156,7 @@ public class NXgraph_edge_setImpl extends NXobjectImpl implements NXgraph_edge_s
 	}
 
 	@Override
-	public IDataset getIs_a() {
+	public Dataset getIs_a() {
 		return getDataset(NX_IS_A);
 	}
 
@@ -175,7 +176,7 @@ public class NXgraph_edge_setImpl extends NXobjectImpl implements NXgraph_edge_s
 	}
 
 	@Override
-	public IDataset getLabel() {
+	public Dataset getLabel() {
 		return getDataset(NX_LABEL);
 	}
 

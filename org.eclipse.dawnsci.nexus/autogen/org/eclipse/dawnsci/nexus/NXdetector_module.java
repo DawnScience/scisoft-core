@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Geometry and logical description of a detector module. When used, child group to NXdetector.
@@ -65,7 +66,7 @@ public interface NXdetector_module extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getData_origin();
+	public Dataset getData_origin();
 
 	/**
 	 * A dimension-2 or dimension-3 field which gives the indices
@@ -134,7 +135,7 @@ public interface NXdetector_module extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getData_size();
+	public Dataset getData_size();
 
 	/**
 	 * Two or three values for the size of the module in pixels in
@@ -182,7 +183,7 @@ public interface NXdetector_module extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getModule_offset();
+	public Dataset getModule_offset();
 
 	/**
 	 * Offset of the module in regards to the origin of the detector in an
@@ -308,7 +309,7 @@ public interface NXdetector_module extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFast_pixel_direction();
+	public Dataset getFast_pixel_direction();
 
 	/**
 	 * Values along the direction of :ref:`fastest varying <Design-ArrayStorageOrder>` :index:`pixel direction<dimension; fastest varying>`. Each value in this
@@ -440,7 +441,7 @@ public interface NXdetector_module extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSlow_pixel_direction();
+	public Dataset getSlow_pixel_direction();
 
 	/**
 	 * Values along the direction of :ref:`slowest varying<Design-ArrayStorageOrder>` :index:`pixel direction<dimension; slowest varying>`. Each value in this
@@ -568,7 +569,7 @@ public interface NXdetector_module extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * Points to the start of the dependency chain for this module.

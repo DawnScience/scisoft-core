@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -58,7 +59,7 @@ public class NXflipperImpl extends NXobjectImpl implements NXflipper {
 
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -78,7 +79,7 @@ public class NXflipperImpl extends NXobjectImpl implements NXflipper {
 	}
 
 	@Override
-	public IDataset getFlip_turns() {
+	public Dataset getFlip_turns() {
 		return getDataset(NX_FLIP_TURNS);
 	}
 
@@ -98,7 +99,7 @@ public class NXflipperImpl extends NXobjectImpl implements NXflipper {
 	}
 
 	@Override
-	public IDataset getComp_turns() {
+	public Dataset getComp_turns() {
 		return getDataset(NX_COMP_TURNS);
 	}
 
@@ -118,7 +119,7 @@ public class NXflipperImpl extends NXobjectImpl implements NXflipper {
 	}
 
 	@Override
-	public IDataset getGuide_turns() {
+	public Dataset getGuide_turns() {
 		return getDataset(NX_GUIDE_TURNS);
 	}
 
@@ -138,7 +139,7 @@ public class NXflipperImpl extends NXobjectImpl implements NXflipper {
 	}
 
 	@Override
-	public IDataset getFlip_current() {
+	public Dataset getFlip_current() {
 		return getDataset(NX_FLIP_CURRENT);
 	}
 
@@ -158,7 +159,7 @@ public class NXflipperImpl extends NXobjectImpl implements NXflipper {
 	}
 
 	@Override
-	public IDataset getComp_current() {
+	public Dataset getComp_current() {
 		return getDataset(NX_COMP_CURRENT);
 	}
 
@@ -178,7 +179,7 @@ public class NXflipperImpl extends NXobjectImpl implements NXflipper {
 	}
 
 	@Override
-	public IDataset getGuide_current() {
+	public Dataset getGuide_current() {
 		return getDataset(NX_GUIDE_CURRENT);
 	}
 
@@ -198,7 +199,7 @@ public class NXflipperImpl extends NXobjectImpl implements NXflipper {
 	}
 
 	@Override
-	public IDataset getThickness() {
+	public Dataset getThickness() {
 		return getDataset(NX_THICKNESS);
 	}
 
@@ -228,7 +229,7 @@ public class NXflipperImpl extends NXobjectImpl implements NXflipper {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A simple pinhole.
@@ -45,7 +46,7 @@ public interface NXpinhole extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * Points to the path of the last element in the geometry chain that places
@@ -116,7 +117,7 @@ public interface NXpinhole extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDiameter();
+	public Dataset getDiameter();
 
 	/**
 	 * Size of the circular hole defining the transmitted beam size.

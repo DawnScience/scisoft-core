@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -61,7 +62,7 @@ public class NXscanbox_emImpl extends NXobjectImpl implements NXscanbox_em {
 
 
 	@Override
-	public IDataset getCalibration_style() {
+	public Dataset getCalibration_style() {
 		return getDataset(NX_CALIBRATION_STYLE);
 	}
 
@@ -81,7 +82,7 @@ public class NXscanbox_emImpl extends NXobjectImpl implements NXscanbox_em {
 	}
 
 	@Override
-	public IDataset getCenter() {
+	public Dataset getCenter() {
 		return getDataset(NX_CENTER);
 	}
 
@@ -101,7 +102,7 @@ public class NXscanbox_emImpl extends NXobjectImpl implements NXscanbox_em {
 	}
 
 	@Override
-	public IDataset getFlyback_time() {
+	public Dataset getFlyback_time() {
 		return getDataset(NX_FLYBACK_TIME);
 	}
 
@@ -121,7 +122,7 @@ public class NXscanbox_emImpl extends NXobjectImpl implements NXscanbox_em {
 	}
 
 	@Override
-	public IDataset getLine_time() {
+	public Dataset getLine_time() {
 		return getDataset(NX_LINE_TIME);
 	}
 
@@ -141,7 +142,7 @@ public class NXscanbox_emImpl extends NXobjectImpl implements NXscanbox_em {
 	}
 
 	@Override
-	public IDataset getPixel_time() {
+	public Dataset getPixel_time() {
 		return getDataset(NX_PIXEL_TIME);
 	}
 
@@ -161,7 +162,7 @@ public class NXscanbox_emImpl extends NXobjectImpl implements NXscanbox_em {
 	}
 
 	@Override
-	public IDataset getRequested_pixel_time() {
+	public Dataset getRequested_pixel_time() {
 		return getDataset(NX_REQUESTED_PIXEL_TIME);
 	}
 
@@ -181,7 +182,7 @@ public class NXscanbox_emImpl extends NXobjectImpl implements NXscanbox_em {
 	}
 
 	@Override
-	public IDataset getRotation() {
+	public Dataset getRotation() {
 		return getDataset(NX_ROTATION);
 	}
 
@@ -201,7 +202,7 @@ public class NXscanbox_emImpl extends NXobjectImpl implements NXscanbox_em {
 	}
 
 	@Override
-	public IDataset getAc_line_sync() {
+	public Dataset getAc_line_sync() {
 		return getDataset(NX_AC_LINE_SYNC);
 	}
 

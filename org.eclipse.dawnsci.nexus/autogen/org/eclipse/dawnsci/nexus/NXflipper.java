@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A spin flipper.
@@ -42,7 +43,7 @@ public interface NXflipper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * <p>
@@ -86,7 +87,7 @@ public interface NXflipper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFlip_turns();
+	public Dataset getFlip_turns();
 
 	/**
 	 * Linear density of turns (such as number of turns/cm) in flipping field coils
@@ -130,7 +131,7 @@ public interface NXflipper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getComp_turns();
+	public Dataset getComp_turns();
 
 	/**
 	 * Linear density of turns (such as number of turns/cm) in compensating field coils
@@ -174,7 +175,7 @@ public interface NXflipper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getGuide_turns();
+	public Dataset getGuide_turns();
 
 	/**
 	 * Linear density of turns (such as number of turns/cm) in guide field coils
@@ -218,7 +219,7 @@ public interface NXflipper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFlip_current();
+	public Dataset getFlip_current();
 
 	/**
 	 * Flipping field coil current in "on" state"
@@ -262,7 +263,7 @@ public interface NXflipper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getComp_current();
+	public Dataset getComp_current();
 
 	/**
 	 * Compensating field coil current in "on" state"
@@ -306,7 +307,7 @@ public interface NXflipper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getGuide_current();
+	public Dataset getGuide_current();
 
 	/**
 	 * Guide field coil current in "on" state
@@ -350,7 +351,7 @@ public interface NXflipper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getThickness();
+	public Dataset getThickness();
 
 	/**
 	 * thickness along path of neutron travel
@@ -426,7 +427,7 @@ public interface NXflipper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

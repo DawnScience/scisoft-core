@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Details of an individual aperture for beams in electron microscopy.
@@ -31,7 +32,7 @@ public interface NXaperture_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getName();
+	public Dataset getName();
 
 	/**
 	 * Given name/alias of the aperture.
@@ -69,7 +70,7 @@ public interface NXaperture_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getValue();
+	public Dataset getValue();
 
 	/**
 	 * Relevant value from the control software.
@@ -128,7 +129,7 @@ public interface NXaperture_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * Ideally, a (globally) unique persistent identifier, link, or text to a

@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A device blocking the beam in a temporal periodic pattern.
@@ -66,7 +67,7 @@ public interface NXdisk_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * Type of the disk-chopper: only one from the enumerated list (match text exactly)
@@ -117,7 +118,7 @@ public interface NXdisk_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRotation_speed();
+	public Dataset getRotation_speed();
 
 	/**
 	 * Chopper rotation speed. Positive for anticlockwise rotation when
@@ -163,7 +164,7 @@ public interface NXdisk_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSlits();
+	public Dataset getSlits();
 
 	/**
 	 * Number of slits
@@ -204,7 +205,7 @@ public interface NXdisk_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSlit_angle();
+	public Dataset getSlit_angle();
 
 	/**
 	 * Angular opening
@@ -248,7 +249,7 @@ public interface NXdisk_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPair_separation();
+	public Dataset getPair_separation();
 
 	/**
 	 * Disk spacing in direction of beam
@@ -297,7 +298,7 @@ public interface NXdisk_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSlit_edges();
+	public Dataset getSlit_edges();
 
 	/**
 	 * Angle of each edge of every slit from the position of the
@@ -359,7 +360,7 @@ public interface NXdisk_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTop_dead_center();
+	public Dataset getTop_dead_center();
 
 	/**
 	 * Timestamps of the top-dead-center signal. The times are relative
@@ -426,7 +427,7 @@ public interface NXdisk_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBeam_position();
+	public Dataset getBeam_position();
 
 	/**
 	 * Angular separation of the center of the beam and the
@@ -476,7 +477,7 @@ public interface NXdisk_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRadius();
+	public Dataset getRadius();
 
 	/**
 	 * Radius of the disk
@@ -520,7 +521,7 @@ public interface NXdisk_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSlit_height();
+	public Dataset getSlit_height();
 
 	/**
 	 * Total slit height
@@ -564,7 +565,7 @@ public interface NXdisk_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPhase();
+	public Dataset getPhase();
 
 	/**
 	 * Chopper phase angle
@@ -608,7 +609,7 @@ public interface NXdisk_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDelay();
+	public Dataset getDelay();
 
 	/**
 	 * Time difference between timing system t0 and chopper driving clock signal
@@ -652,7 +653,7 @@ public interface NXdisk_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRatio();
+	public Dataset getRatio();
 
 	/**
 	 * Pulse reduction factor of this chopper in relation to other
@@ -697,7 +698,7 @@ public interface NXdisk_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDistance();
+	public Dataset getDistance();
 
 	/**
 	 * Effective distance to the origin.
@@ -745,7 +746,7 @@ public interface NXdisk_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWavelength_range();
+	public Dataset getWavelength_range();
 
 	/**
 	 * Low and high values of wavelength range transmitted
@@ -959,7 +960,7 @@ public interface NXdisk_chopper extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

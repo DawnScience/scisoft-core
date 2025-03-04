@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -62,7 +63,7 @@ public class NXspatial_filterImpl extends NXobjectImpl implements NXspatial_filt
 
 
 	@Override
-	public IDataset getWindowing_method() {
+	public Dataset getWindowing_method() {
 		return getDataset(NX_WINDOWING_METHOD);
 	}
 

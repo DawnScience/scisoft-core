@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A generic positioner such as a motor or piezo-electric transducer.
@@ -41,7 +42,7 @@ public interface NXpositioner extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getName();
+	public Dataset getName();
 
 	/**
 	 * symbolic or mnemonic name (one word)
@@ -69,7 +70,7 @@ public interface NXpositioner extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * description of positioner
@@ -102,7 +103,7 @@ public interface NXpositioner extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getValue();
+	public Dataset getValue();
 
 	/**
 	 * best known value of positioner - need [n] as may be scanned
@@ -150,7 +151,7 @@ public interface NXpositioner extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRaw_value();
+	public Dataset getRaw_value();
 
 	/**
 	 * raw value of positioner - need [n] as may be scanned
@@ -198,7 +199,7 @@ public interface NXpositioner extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTarget_value();
+	public Dataset getTarget_value();
 
 	/**
 	 * targeted (commanded) value of positioner - need [n] as may be scanned
@@ -246,7 +247,7 @@ public interface NXpositioner extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTolerance();
+	public Dataset getTolerance();
 
 	/**
 	 * maximum allowable difference between target_value and value
@@ -293,7 +294,7 @@ public interface NXpositioner extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSoft_limit_min();
+	public Dataset getSoft_limit_min();
 
 	/**
 	 * minimum allowed limit to set value
@@ -337,7 +338,7 @@ public interface NXpositioner extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSoft_limit_max();
+	public Dataset getSoft_limit_max();
 
 	/**
 	 * maximum allowed limit to set value
@@ -381,7 +382,7 @@ public interface NXpositioner extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getVelocity();
+	public Dataset getVelocity();
 
 	/**
 	 * velocity of the positioner (distance moved per unit time)
@@ -425,7 +426,7 @@ public interface NXpositioner extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAcceleration_time();
+	public Dataset getAcceleration_time();
 
 	/**
 	 * time to ramp the velocity up to full speed
@@ -465,7 +466,7 @@ public interface NXpositioner extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getController_record();
+	public Dataset getController_record();
 
 	/**
 	 * Hardware device record, e.g. EPICS process variable, taco/tango ...
@@ -529,7 +530,7 @@ public interface NXpositioner extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

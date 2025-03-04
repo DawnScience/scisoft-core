@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -56,7 +57,7 @@ public class NXchemical_compositionImpl extends NXobjectImpl implements NXchemic
 
 
 	@Override
-	public IDataset getTotal() {
+	public Dataset getTotal() {
 		return getDataset(NX_TOTAL);
 	}
 

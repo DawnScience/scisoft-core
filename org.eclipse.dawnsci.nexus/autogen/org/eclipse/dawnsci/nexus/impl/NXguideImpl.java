@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -118,7 +119,7 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -138,7 +139,7 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public IDataset getIncident_angle() {
+	public Dataset getIncident_angle() {
 		return getDataset(NX_INCIDENT_ANGLE);
 	}
 
@@ -169,7 +170,7 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public IDataset getBend_angle_x() {
+	public Dataset getBend_angle_x() {
 		return getDataset(NX_BEND_ANGLE_X);
 	}
 
@@ -189,7 +190,7 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public IDataset getBend_angle_y() {
+	public Dataset getBend_angle_y() {
 		return getDataset(NX_BEND_ANGLE_Y);
 	}
 
@@ -209,7 +210,7 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public IDataset getInterior_atmosphere() {
+	public Dataset getInterior_atmosphere() {
 		return getDataset(NX_INTERIOR_ATMOSPHERE);
 	}
 
@@ -229,7 +230,7 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public IDataset getExternal_material() {
+	public Dataset getExternal_material() {
 		return getDataset(NX_EXTERNAL_MATERIAL);
 	}
 
@@ -249,7 +250,7 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public IDataset getM_value() {
+	public Dataset getM_value() {
 		return getDataset(NX_M_VALUE);
 	}
 
@@ -269,7 +270,7 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public IDataset getSubstrate_material() {
+	public Dataset getSubstrate_material() {
 		return getDataset(NX_SUBSTRATE_MATERIAL);
 	}
 
@@ -289,7 +290,7 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public IDataset getSubstrate_thickness() {
+	public Dataset getSubstrate_thickness() {
 		return getDataset(NX_SUBSTRATE_THICKNESS);
 	}
 
@@ -309,7 +310,7 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public IDataset getCoating_material() {
+	public Dataset getCoating_material() {
 		return getDataset(NX_COATING_MATERIAL);
 	}
 
@@ -329,7 +330,7 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public IDataset getSubstrate_roughness() {
+	public Dataset getSubstrate_roughness() {
 		return getDataset(NX_SUBSTRATE_ROUGHNESS);
 	}
 
@@ -349,7 +350,7 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public IDataset getCoating_roughness() {
+	public Dataset getCoating_roughness() {
 		return getDataset(NX_COATING_ROUGHNESS);
 	}
 
@@ -369,7 +370,7 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public IDataset getNumber_sections() {
+	public Dataset getNumber_sections() {
 		return getDataset(NX_NUMBER_SECTIONS);
 	}
 
@@ -430,7 +431,7 @@ public class NXguideImpl extends NXobjectImpl implements NXguide {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

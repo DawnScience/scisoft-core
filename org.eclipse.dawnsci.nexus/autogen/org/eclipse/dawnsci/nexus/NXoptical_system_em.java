@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A container for qualifying an electron optical system.
@@ -39,7 +40,7 @@ public interface NXoptical_system_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCamera_length();
+	public Dataset getCamera_length();
 
 	/**
 	 * Citing the JEOL TEM glossary this is *an effective distance from a specimen
@@ -86,7 +87,7 @@ public interface NXoptical_system_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMagnification();
+	public Dataset getMagnification();
 
 	/**
 	 * The factor of enlargement of the apparent size, not physical size, of an object.
@@ -131,7 +132,7 @@ public interface NXoptical_system_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDefocus();
+	public Dataset getDefocus();
 
 	/**
 	 * The defocus aberration constant oftentimes taken as the C_1_0 which
@@ -180,7 +181,7 @@ public interface NXoptical_system_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSemi_convergence_angle();
+	public Dataset getSemi_convergence_angle();
 
 	/**
 	 * Citing the JEOL TEM glosssary this is the value *when a cone shaped,
@@ -231,7 +232,7 @@ public interface NXoptical_system_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getField_of_view();
+	public Dataset getField_of_view();
 
 	/**
 	 * The extent of the observable parts of the specimen given the current
@@ -279,7 +280,7 @@ public interface NXoptical_system_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWorking_distance();
+	public Dataset getWorking_distance();
 
 	/**
 	 * Citing `Globalsino <https://www.globalsino.com/EM/page4586.html>`_ this is
@@ -328,7 +329,7 @@ public interface NXoptical_system_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBeam_current();
+	public Dataset getBeam_current();
 
 	/**
 	 * Beam current as measured relevant for the illumination of the specimen.
@@ -374,7 +375,7 @@ public interface NXoptical_system_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBeam_current_description();
+	public Dataset getBeam_current_description();
 
 	/**
 	 * Specify further details how the beam current was measured or estimated.

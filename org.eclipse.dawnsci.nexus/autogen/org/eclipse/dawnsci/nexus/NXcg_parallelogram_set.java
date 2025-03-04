@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Computational geometry description of a set of parallelograms in Euclidean space.
@@ -78,7 +79,7 @@ public interface NXcg_parallelogram_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDimensionality();
+	public Dataset getDimensionality();
 
 	/**
 	 * <p>
@@ -124,7 +125,7 @@ public interface NXcg_parallelogram_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCardinality();
+	public Dataset getCardinality();
 
 	/**
 	 * <p>
@@ -166,7 +167,7 @@ public interface NXcg_parallelogram_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getShape();
+	public Dataset getShape();
 
 	/**
 	 * A qualitative description of each parallelogram/rectangle/square/box.
@@ -216,7 +217,7 @@ public interface NXcg_parallelogram_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLength();
+	public Dataset getLength();
 
 	/**
 	 * Qualifier how one edge is longer than all the other edge of the parallelogam.
@@ -271,7 +272,7 @@ public interface NXcg_parallelogram_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWidth();
+	public Dataset getWidth();
 
 	/**
 	 * Qualifier often used to describe the length of an edge within
@@ -323,7 +324,7 @@ public interface NXcg_parallelogram_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCenter();
+	public Dataset getCenter();
 
 	/**
 	 * Position of the geometric center, which often is but not necessarily
@@ -373,7 +374,7 @@ public interface NXcg_parallelogram_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSurface_area();
+	public Dataset getSurface_area();
 
 	/**
 	 * <p>
@@ -419,7 +420,7 @@ public interface NXcg_parallelogram_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIs_axis_aligned();
+	public Dataset getIs_axis_aligned();
 
 	/**
 	 * Only to be used if is_box is present. In this case, this field describes
@@ -544,7 +545,7 @@ public interface NXcg_parallelogram_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier_offset();
+	public Dataset getIdentifier_offset();
 
 	/**
 	 * Integer which specifies the first index to be used for distinguishing
@@ -610,7 +611,7 @@ public interface NXcg_parallelogram_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier();
+	public Dataset getIdentifier();
 
 	/**
 	 * Integer used to distinguish parallelograms for explicit indexing.

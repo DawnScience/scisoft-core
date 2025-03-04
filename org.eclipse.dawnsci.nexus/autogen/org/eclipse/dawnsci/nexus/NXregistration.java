@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Describes image registration procedures.
@@ -35,7 +36,7 @@ public interface NXregistration extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getApplied();
+	public Dataset getApplied();
 
 	/**
 	 * Has the registration been applied?
@@ -75,7 +76,7 @@ public interface NXregistration extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLast_process();
+	public Dataset getLast_process();
 
 	/**
 	 * Indicates the name of the last operation applied in the NXprocess sequence.
@@ -116,7 +117,7 @@ public interface NXregistration extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * Specifies the position by pointing to the last transformation in the
@@ -227,7 +228,7 @@ public interface NXregistration extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * Description of the procedures employed.

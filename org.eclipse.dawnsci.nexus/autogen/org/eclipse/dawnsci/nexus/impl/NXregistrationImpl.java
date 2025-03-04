@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -58,7 +59,7 @@ public class NXregistrationImpl extends NXobjectImpl implements NXregistration {
 
 
 	@Override
-	public IDataset getApplied() {
+	public Dataset getApplied() {
 		return getDataset(NX_APPLIED);
 	}
 
@@ -78,7 +79,7 @@ public class NXregistrationImpl extends NXobjectImpl implements NXregistration {
 	}
 
 	@Override
-	public IDataset getLast_process() {
+	public Dataset getLast_process() {
 		return getDataset(NX_LAST_PROCESS);
 	}
 
@@ -98,7 +99,7 @@ public class NXregistrationImpl extends NXobjectImpl implements NXregistration {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 
@@ -149,7 +150,7 @@ public class NXregistrationImpl extends NXobjectImpl implements NXregistration {
 	}
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 

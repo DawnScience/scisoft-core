@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * An optical polarizer.
@@ -61,7 +62,7 @@ public interface NXpolarizer_opt extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * Type of the polarizer (e.g. dichroic, linear, circular etc.)
@@ -137,7 +138,7 @@ public interface NXpolarizer_opt extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType_other();
+	public Dataset getType_other();
 
 	/**
 	 * If you selected 'other' in type specify what it is.
@@ -169,7 +170,7 @@ public interface NXpolarizer_opt extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPolarizer_angle();
+	public Dataset getPolarizer_angle();
 
 	/**
 	 * Angle of the polarizer.
@@ -214,7 +215,7 @@ public interface NXpolarizer_opt extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAcceptance_angle();
+	public Dataset getAcceptance_angle();
 
 	/**
 	 * Acceptance angle of the polarizer (range).
@@ -350,7 +351,7 @@ public interface NXpolarizer_opt extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWavelength_range();
+	public Dataset getWavelength_range();
 
 	/**
 	 * Wavelength range for which the polarizer is designed. Enter the minimum
@@ -439,7 +440,7 @@ public interface NXpolarizer_opt extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getExtinction_ratio();
+	public Dataset getExtinction_ratio();
 
 	/**
 	 * Extinction ratio (maximum to minimum transmission).
@@ -487,7 +488,7 @@ public interface NXpolarizer_opt extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getReflection();
+	public Dataset getReflection();
 
 	/**
 	 * Reflection of the polarizer at given wavelength values.
@@ -535,7 +536,7 @@ public interface NXpolarizer_opt extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTransmission();
+	public Dataset getTransmission();
 
 	/**
 	 * Transmission of the polarizer at given wavelength values.

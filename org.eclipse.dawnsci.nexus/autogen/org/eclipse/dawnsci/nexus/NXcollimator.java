@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A beamline collimator.
@@ -119,7 +120,7 @@ public interface NXcollimator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * <p>
@@ -169,7 +170,7 @@ public interface NXcollimator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSoller_angle();
+	public Dataset getSoller_angle();
 
 	/**
 	 * Angular divergence of Soller collimator
@@ -213,7 +214,7 @@ public interface NXcollimator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDivergence_x();
+	public Dataset getDivergence_x();
 
 	/**
 	 * divergence of collimator in local x direction
@@ -257,7 +258,7 @@ public interface NXcollimator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDivergence_y();
+	public Dataset getDivergence_y();
 
 	/**
 	 * divergence of collimator in local y direction
@@ -301,7 +302,7 @@ public interface NXcollimator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFrequency();
+	public Dataset getFrequency();
 
 	/**
 	 * Frequency of oscillating collimator
@@ -359,7 +360,7 @@ public interface NXcollimator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBlade_thickness();
+	public Dataset getBlade_thickness();
 
 	/**
 	 * blade thickness
@@ -403,7 +404,7 @@ public interface NXcollimator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBlade_spacing();
+	public Dataset getBlade_spacing();
 
 	/**
 	 * blade spacing
@@ -443,7 +444,7 @@ public interface NXcollimator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAbsorbing_material();
+	public Dataset getAbsorbing_material();
 
 	/**
 	 * name of absorbing material
@@ -471,7 +472,7 @@ public interface NXcollimator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTransmitting_material();
+	public Dataset getTransmitting_material();
 
 	/**
 	 * name of transmitting material
@@ -600,7 +601,7 @@ public interface NXcollimator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

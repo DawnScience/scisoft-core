@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * legacy class - recommend to use :ref:`NXtransformations` now
@@ -106,7 +107,7 @@ public interface NXorientation extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getValue();
+	public Dataset getValue();
 
 	/**
 	 * The orientation information is stored as direction cosines. The direction cosines will

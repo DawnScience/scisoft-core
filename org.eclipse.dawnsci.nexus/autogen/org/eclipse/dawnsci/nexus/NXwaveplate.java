@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A waveplate or retarder.
@@ -49,7 +50,7 @@ public interface NXwaveplate extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * Type of waveplate (e.g. achromatic waveplate or zero-order waveplate).
@@ -101,7 +102,7 @@ public interface NXwaveplate extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getOther_type();
+	public Dataset getOther_type();
 
 	/**
 	 * If you selected 'other' in type describe what it is.
@@ -136,7 +137,7 @@ public interface NXwaveplate extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRetardance();
+	public Dataset getRetardance();
 
 	/**
 	 * Specify the retardance of the waveplate (e.g. full-wave, half-wave
@@ -192,7 +193,7 @@ public interface NXwaveplate extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWavelengths();
+	public Dataset getWavelengths();
 
 	/**
 	 * Discrete wavelengths for which the waveplate is designed. If the
@@ -245,7 +246,7 @@ public interface NXwaveplate extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDiameter();
+	public Dataset getDiameter();
 
 	/**
 	 * Diameter of the waveplate.
@@ -290,7 +291,7 @@ public interface NXwaveplate extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getClear_aperture();
+	public Dataset getClear_aperture();
 
 	/**
 	 * Clear aperture of the device (e.g. 90% of diameter for a disc or 90% of
@@ -373,7 +374,7 @@ public interface NXwaveplate extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getReflectance();
+	public Dataset getReflectance();
 
 	/**
 	 * Average reflectance of the waveplate in percentage.

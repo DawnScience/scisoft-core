@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A wavelength defining device.
@@ -47,7 +48,7 @@ public interface NXmonochromator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWavelength();
+	public Dataset getWavelength();
 
 	/**
 	 * wavelength selected
@@ -93,7 +94,7 @@ public interface NXmonochromator extends NXobject {
 	 * @return  the value.
 	 */
 	@Deprecated
-	public IDataset getWavelength_error();
+	public Dataset getWavelength_error();
 
 	/**
 	 * wavelength standard deviation
@@ -143,7 +144,7 @@ public interface NXmonochromator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWavelength_errors();
+	public Dataset getWavelength_errors();
 
 	/**
 	 * wavelength standard deviation
@@ -187,7 +188,7 @@ public interface NXmonochromator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEnergy();
+	public Dataset getEnergy();
 
 	/**
 	 * energy selected
@@ -233,7 +234,7 @@ public interface NXmonochromator extends NXobject {
 	 * @return  the value.
 	 */
 	@Deprecated
-	public IDataset getEnergy_error();
+	public Dataset getEnergy_error();
 
 	/**
 	 * energy standard deviation
@@ -283,7 +284,7 @@ public interface NXmonochromator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEnergy_errors();
+	public Dataset getEnergy_errors();
 
 	/**
 	 * energy standard deviation
@@ -629,7 +630,7 @@ public interface NXmonochromator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

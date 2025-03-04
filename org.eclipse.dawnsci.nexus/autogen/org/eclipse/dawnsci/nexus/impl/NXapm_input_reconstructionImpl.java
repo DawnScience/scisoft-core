@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -55,7 +56,7 @@ public class NXapm_input_reconstructionImpl extends NXobjectImpl implements NXap
 
 
 	@Override
-	public IDataset getFilename() {
+	public Dataset getFilename() {
 		return getDataset(NX_FILENAME);
 	}
 
@@ -85,7 +86,7 @@ public class NXapm_input_reconstructionImpl extends NXobjectImpl implements NXap
 	}
 
 	@Override
-	public IDataset getDataset_name_reconstruction() {
+	public Dataset getDataset_name_reconstruction() {
 		return getDataset(NX_DATASET_NAME_RECONSTRUCTION);
 	}
 
@@ -105,7 +106,7 @@ public class NXapm_input_reconstructionImpl extends NXobjectImpl implements NXap
 	}
 
 	@Override
-	public IDataset getDataset_name_mass_to_charge() {
+	public Dataset getDataset_name_mass_to_charge() {
 		return getDataset(NX_DATASET_NAME_MASS_TO_CHARGE);
 	}
 

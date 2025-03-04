@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -58,7 +59,7 @@ public class NXfresnel_zone_plateImpl extends NXobjectImpl implements NXfresnel_
 
 
 	@Override
-	public IDataset getFocus_parameters() {
+	public Dataset getFocus_parameters() {
 		return getDataset(NX_FOCUS_PARAMETERS);
 	}
 
@@ -78,7 +79,7 @@ public class NXfresnel_zone_plateImpl extends NXobjectImpl implements NXfresnel_
 	}
 
 	@Override
-	public IDataset getOuter_diameter() {
+	public Dataset getOuter_diameter() {
 		return getDataset(NX_OUTER_DIAMETER);
 	}
 
@@ -98,7 +99,7 @@ public class NXfresnel_zone_plateImpl extends NXobjectImpl implements NXfresnel_
 	}
 
 	@Override
-	public IDataset getOutermost_zone_width() {
+	public Dataset getOutermost_zone_width() {
 		return getDataset(NX_OUTERMOST_ZONE_WIDTH);
 	}
 
@@ -118,7 +119,7 @@ public class NXfresnel_zone_plateImpl extends NXobjectImpl implements NXfresnel_
 	}
 
 	@Override
-	public IDataset getCentral_stop_diameter() {
+	public Dataset getCentral_stop_diameter() {
 		return getDataset(NX_CENTRAL_STOP_DIAMETER);
 	}
 
@@ -138,7 +139,7 @@ public class NXfresnel_zone_plateImpl extends NXobjectImpl implements NXfresnel_
 	}
 
 	@Override
-	public IDataset getFabrication() {
+	public Dataset getFabrication() {
 		return getDataset(NX_FABRICATION);
 	}
 
@@ -158,7 +159,7 @@ public class NXfresnel_zone_plateImpl extends NXobjectImpl implements NXfresnel_
 	}
 
 	@Override
-	public IDataset getZone_height() {
+	public Dataset getZone_height() {
 		return getDataset(NX_ZONE_HEIGHT);
 	}
 
@@ -178,7 +179,7 @@ public class NXfresnel_zone_plateImpl extends NXobjectImpl implements NXfresnel_
 	}
 
 	@Override
-	public IDataset getZone_material() {
+	public Dataset getZone_material() {
 		return getDataset(NX_ZONE_MATERIAL);
 	}
 
@@ -198,7 +199,7 @@ public class NXfresnel_zone_plateImpl extends NXobjectImpl implements NXfresnel_
 	}
 
 	@Override
-	public IDataset getZone_support_material() {
+	public Dataset getZone_support_material() {
 		return getDataset(NX_ZONE_SUPPORT_MATERIAL);
 	}
 
@@ -218,7 +219,7 @@ public class NXfresnel_zone_plateImpl extends NXobjectImpl implements NXfresnel_
 	}
 
 	@Override
-	public IDataset getCentral_stop_material() {
+	public Dataset getCentral_stop_material() {
 		return getDataset(NX_CENTRAL_STOP_MATERIAL);
 	}
 
@@ -238,7 +239,7 @@ public class NXfresnel_zone_plateImpl extends NXobjectImpl implements NXfresnel_
 	}
 
 	@Override
-	public IDataset getCentral_stop_thickness() {
+	public Dataset getCentral_stop_thickness() {
 		return getDataset(NX_CENTRAL_STOP_THICKNESS);
 	}
 
@@ -258,7 +259,7 @@ public class NXfresnel_zone_plateImpl extends NXobjectImpl implements NXfresnel_
 	}
 
 	@Override
-	public IDataset getMask_thickness() {
+	public Dataset getMask_thickness() {
 		return getDataset(NX_MASK_THICKNESS);
 	}
 
@@ -278,7 +279,7 @@ public class NXfresnel_zone_plateImpl extends NXobjectImpl implements NXfresnel_
 	}
 
 	@Override
-	public IDataset getMask_material() {
+	public Dataset getMask_material() {
 		return getDataset(NX_MASK_MATERIAL);
 	}
 
@@ -298,7 +299,7 @@ public class NXfresnel_zone_plateImpl extends NXobjectImpl implements NXfresnel_
 	}
 
 	@Override
-	public IDataset getSupport_membrane_material() {
+	public Dataset getSupport_membrane_material() {
 		return getDataset(NX_SUPPORT_MEMBRANE_MATERIAL);
 	}
 
@@ -318,7 +319,7 @@ public class NXfresnel_zone_plateImpl extends NXobjectImpl implements NXfresnel_
 	}
 
 	@Override
-	public IDataset getSupport_membrane_thickness() {
+	public Dataset getSupport_membrane_thickness() {
 		return getDataset(NX_SUPPORT_MEMBRANE_THICKNESS);
 	}
 
@@ -348,7 +349,7 @@ public class NXfresnel_zone_plateImpl extends NXobjectImpl implements NXfresnel_
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

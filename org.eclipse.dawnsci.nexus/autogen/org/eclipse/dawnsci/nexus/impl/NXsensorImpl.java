@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -65,7 +66,7 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 
 
 	@Override
-	public IDataset getModel() {
+	public Dataset getModel() {
 		return getDataset(NX_MODEL);
 	}
 
@@ -85,7 +86,7 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public IDataset getName() {
+	public Dataset getName() {
 		return getDataset(NX_NAME);
 	}
 
@@ -105,7 +106,7 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public IDataset getShort_name() {
+	public Dataset getShort_name() {
 		return getDataset(NX_SHORT_NAME);
 	}
 
@@ -125,7 +126,7 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public IDataset getAttached_to() {
+	public Dataset getAttached_to() {
 		return getDataset(NX_ATTACHED_TO);
 	}
 
@@ -158,7 +159,7 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public IDataset getMeasurement() {
+	public Dataset getMeasurement() {
 		return getDataset(NX_MEASUREMENT);
 	}
 
@@ -178,7 +179,7 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -198,7 +199,7 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public IDataset getRun_control() {
+	public Dataset getRun_control() {
 		return getDataset(NX_RUN_CONTROL);
 	}
 
@@ -218,7 +219,7 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public IDataset getHigh_trip_value() {
+	public Dataset getHigh_trip_value() {
 		return getDataset(NX_HIGH_TRIP_VALUE);
 	}
 
@@ -238,7 +239,7 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public IDataset getLow_trip_value() {
+	public Dataset getLow_trip_value() {
 		return getDataset(NX_LOW_TRIP_VALUE);
 	}
 
@@ -258,7 +259,7 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public IDataset getValue() {
+	public Dataset getValue() {
 		return getDataset(NX_VALUE);
 	}
 
@@ -278,7 +279,7 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public IDataset getValue_deriv1() {
+	public Dataset getValue_deriv1() {
 		return getDataset(NX_VALUE_DERIV1);
 	}
 
@@ -298,7 +299,7 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public IDataset getValue_deriv2() {
+	public Dataset getValue_deriv2() {
 		return getDataset(NX_VALUE_DERIV2);
 	}
 
@@ -351,7 +352,7 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public IDataset getExternal_field_brief() {
+	public Dataset getExternal_field_brief() {
 		return getDataset(NX_EXTERNAL_FIELD_BRIEF);
 	}
 
@@ -423,7 +424,7 @@ public class NXsensorImpl extends NXobjectImpl implements NXsensor {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

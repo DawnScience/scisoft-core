@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -55,7 +56,7 @@ public class NXcs_mm_sysImpl extends NXobjectImpl implements NXcs_mm_sys {
 
 
 	@Override
-	public IDataset getTotal_physical_memory() {
+	public Dataset getTotal_physical_memory() {
 		return getDataset(NX_TOTAL_PHYSICAL_MEMORY);
 	}
 

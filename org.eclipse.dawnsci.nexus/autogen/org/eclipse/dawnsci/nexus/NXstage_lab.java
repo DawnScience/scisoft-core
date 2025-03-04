@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A stage lab can be used to hold, align, orient, and prepare a specimen.
@@ -101,7 +102,7 @@ public interface NXstage_lab extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDesign();
+	public Dataset getDesign();
 
 	/**
 	 * Principal design of the stage.
@@ -144,7 +145,7 @@ public interface NXstage_lab extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getName();
+	public Dataset getName();
 
 	/**
 	 * Given name/alias for the components making the stage.
@@ -229,7 +230,7 @@ public interface NXstage_lab extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * Ideally, a (globally) unique persistent identifier, link,
@@ -264,7 +265,7 @@ public interface NXstage_lab extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTilt_1();
+	public Dataset getTilt_1();
 
 	/**
 	 * Should be defined by the application definition.
@@ -308,7 +309,7 @@ public interface NXstage_lab extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTilt_2();
+	public Dataset getTilt_2();
 
 	/**
 	 * Should be defined by the application definition.
@@ -352,7 +353,7 @@ public interface NXstage_lab extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRotation();
+	public Dataset getRotation();
 
 	/**
 	 * Should be defined by the application definition.
@@ -397,7 +398,7 @@ public interface NXstage_lab extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPosition();
+	public Dataset getPosition();
 
 	/**
 	 * Should be defined by the application definition.
@@ -444,7 +445,7 @@ public interface NXstage_lab extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBias_voltage();
+	public Dataset getBias_voltage();
 
 	/**
 	 * Voltage applied to the stage to decelerate electrons.

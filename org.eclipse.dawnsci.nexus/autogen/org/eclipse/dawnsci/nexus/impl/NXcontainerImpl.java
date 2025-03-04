@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -91,7 +92,7 @@ public class NXcontainerImpl extends NXobjectImpl implements NXcontainer {
 
 
 	@Override
-	public IDataset getName() {
+	public Dataset getName() {
 		return getDataset(NX_NAME);
 	}
 
@@ -111,7 +112,7 @@ public class NXcontainerImpl extends NXobjectImpl implements NXcontainer {
 	}
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -131,7 +132,7 @@ public class NXcontainerImpl extends NXobjectImpl implements NXcontainer {
 	}
 
 	@Override
-	public IDataset getChemical_formula() {
+	public Dataset getChemical_formula() {
 		return getDataset(NX_CHEMICAL_FORMULA);
 	}
 
@@ -151,7 +152,7 @@ public class NXcontainerImpl extends NXobjectImpl implements NXcontainer {
 	}
 
 	@Override
-	public IDataset getDensity() {
+	public Dataset getDensity() {
 		return getDataset(NX_DENSITY);
 	}
 
@@ -171,7 +172,7 @@ public class NXcontainerImpl extends NXobjectImpl implements NXcontainer {
 	}
 
 	@Override
-	public IDataset getPacking_fraction() {
+	public Dataset getPacking_fraction() {
 		return getDataset(NX_PACKING_FRACTION);
 	}
 
@@ -191,7 +192,7 @@ public class NXcontainerImpl extends NXobjectImpl implements NXcontainer {
 	}
 
 	@Override
-	public IDataset getRelative_molecular_mass() {
+	public Dataset getRelative_molecular_mass() {
 		return getDataset(NX_RELATIVE_MOLECULAR_MASS);
 	}
 

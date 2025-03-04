@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -71,7 +72,7 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 
 
 	@Override
-	public IDataset getDistance() {
+	public Dataset getDistance() {
 		return getDataset(NX_DISTANCE);
 	}
 
@@ -91,7 +92,7 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public IDataset getIncident_energy() {
+	public Dataset getIncident_energy() {
 		return getDataset(NX_INCIDENT_ENERGY);
 	}
 
@@ -111,7 +112,7 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public IDataset getFinal_energy() {
+	public Dataset getFinal_energy() {
 		return getDataset(NX_FINAL_ENERGY);
 	}
 
@@ -131,7 +132,7 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public IDataset getEnergy_transfer() {
+	public Dataset getEnergy_transfer() {
 		return getDataset(NX_ENERGY_TRANSFER);
 	}
 
@@ -151,7 +152,7 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public IDataset getIncident_wavelength() {
+	public Dataset getIncident_wavelength() {
 		return getDataset(NX_INCIDENT_WAVELENGTH);
 	}
 
@@ -171,7 +172,7 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public IDataset getIncident_wavelength_weights() {
+	public Dataset getIncident_wavelength_weights() {
 		return getDataset(NX_INCIDENT_WAVELENGTH_WEIGHTS);
 	}
 
@@ -191,7 +192,7 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public IDataset getIncident_wavelength_spread() {
+	public Dataset getIncident_wavelength_spread() {
 		return getDataset(NX_INCIDENT_WAVELENGTH_SPREAD);
 	}
 
@@ -211,7 +212,7 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public IDataset getIncident_beam_divergence() {
+	public Dataset getIncident_beam_divergence() {
 		return getDataset(NX_INCIDENT_BEAM_DIVERGENCE);
 	}
 
@@ -231,7 +232,7 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public IDataset getExtent() {
+	public Dataset getExtent() {
 		return getDataset(NX_EXTENT);
 	}
 
@@ -251,7 +252,7 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public IDataset getFinal_wavelength() {
+	public Dataset getFinal_wavelength() {
 		return getDataset(NX_FINAL_WAVELENGTH);
 	}
 
@@ -271,7 +272,7 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public IDataset getIncident_polarization() {
+	public Dataset getIncident_polarization() {
 		return getDataset(NX_INCIDENT_POLARIZATION);
 	}
 
@@ -291,7 +292,7 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public IDataset getFinal_polarization() {
+	public Dataset getFinal_polarization() {
 		return getDataset(NX_FINAL_POLARIZATION);
 	}
 
@@ -311,7 +312,7 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public IDataset getIncident_polarization_stokes() {
+	public Dataset getIncident_polarization_stokes() {
 		return getDataset(NX_INCIDENT_POLARIZATION_STOKES);
 	}
 
@@ -331,7 +332,7 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public IDataset getFinal_polarization_stokes() {
+	public Dataset getFinal_polarization_stokes() {
 		return getDataset(NX_FINAL_POLARIZATION_STOKES);
 	}
 
@@ -351,7 +352,7 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public IDataset getFinal_wavelength_spread() {
+	public Dataset getFinal_wavelength_spread() {
 		return getDataset(NX_FINAL_WAVELENGTH_SPREAD);
 	}
 
@@ -371,7 +372,7 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public IDataset getFinal_beam_divergence() {
+	public Dataset getFinal_beam_divergence() {
 		return getDataset(NX_FINAL_BEAM_DIVERGENCE);
 	}
 
@@ -391,7 +392,7 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public IDataset getFlux() {
+	public Dataset getFlux() {
 		return getDataset(NX_FLUX);
 	}
 
@@ -452,7 +453,7 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

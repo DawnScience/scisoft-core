@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -176,7 +177,7 @@ public class NXevent_data_emImpl extends NXobjectImpl implements NXevent_data_em
 
 
 	@Override
-	public IDataset getStart_time() {
+	public Dataset getStart_time() {
 		return getDataset(NX_START_TIME);
 	}
 
@@ -196,7 +197,7 @@ public class NXevent_data_emImpl extends NXobjectImpl implements NXevent_data_em
 	}
 
 	@Override
-	public IDataset getEnd_time() {
+	public Dataset getEnd_time() {
 		return getDataset(NX_END_TIME);
 	}
 
@@ -216,7 +217,7 @@ public class NXevent_data_emImpl extends NXobjectImpl implements NXevent_data_em
 	}
 
 	@Override
-	public IDataset getEvent_identifier() {
+	public Dataset getEvent_identifier() {
 		return getDataset(NX_EVENT_IDENTIFIER);
 	}
 
@@ -236,7 +237,7 @@ public class NXevent_data_emImpl extends NXobjectImpl implements NXevent_data_em
 	}
 
 	@Override
-	public IDataset getEvent_type() {
+	public Dataset getEvent_type() {
 		return getDataset(NX_EVENT_TYPE);
 	}
 

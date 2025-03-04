@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -58,7 +59,7 @@ public class NXcs_io_objImpl extends NXobjectImpl implements NXcs_io_obj {
 
 
 	@Override
-	public IDataset getTechnology() {
+	public Dataset getTechnology() {
 		return getDataset(NX_TECHNOLOGY);
 	}
 
@@ -78,7 +79,7 @@ public class NXcs_io_objImpl extends NXobjectImpl implements NXcs_io_obj {
 	}
 
 	@Override
-	public IDataset getMax_physical_capacity() {
+	public Dataset getMax_physical_capacity() {
 		return getDataset(NX_MAX_PHYSICAL_CAPACITY);
 	}
 
@@ -98,7 +99,7 @@ public class NXcs_io_objImpl extends NXobjectImpl implements NXcs_io_obj {
 	}
 
 	@Override
-	public IDataset getName() {
+	public Dataset getName() {
 		return getDataset(NX_NAME);
 	}
 

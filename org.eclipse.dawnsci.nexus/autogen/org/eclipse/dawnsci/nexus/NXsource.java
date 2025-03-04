@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * The neutron or x-ray storage ring/facility.
@@ -62,7 +63,7 @@ public interface NXsource extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDistance();
+	public Dataset getDistance();
 
 	/**
 	 * Effective distance from sample
@@ -108,7 +109,7 @@ public interface NXsource extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getName();
+	public Dataset getName();
 
 	/**
 	 * Name of source
@@ -166,7 +167,7 @@ public interface NXsource extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * type of radiation source (pick one from the enumerated list and spell exactly)
@@ -253,7 +254,7 @@ public interface NXsource extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getProbe();
+	public Dataset getProbe();
 
 	/**
 	 * type of radiation probe (pick one from the enumerated list and spell exactly)
@@ -318,7 +319,7 @@ public interface NXsource extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPower();
+	public Dataset getPower();
 
 	/**
 	 * Source power
@@ -362,7 +363,7 @@ public interface NXsource extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEmittance_x();
+	public Dataset getEmittance_x();
 
 	/**
 	 * Source emittance (nm-rad) in X (horizontal) direction.
@@ -406,7 +407,7 @@ public interface NXsource extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEmittance_y();
+	public Dataset getEmittance_y();
 
 	/**
 	 * Source emittance (nm-rad) in Y (horizontal) direction.
@@ -450,7 +451,7 @@ public interface NXsource extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSigma_x();
+	public Dataset getSigma_x();
 
 	/**
 	 * particle beam size in x
@@ -494,7 +495,7 @@ public interface NXsource extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSigma_y();
+	public Dataset getSigma_y();
 
 	/**
 	 * particle beam size in y
@@ -538,7 +539,7 @@ public interface NXsource extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFlux();
+	public Dataset getFlux();
 
 	/**
 	 * Source intensity/area (example: s-1 cm-2)
@@ -584,7 +585,7 @@ public interface NXsource extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEnergy();
+	public Dataset getEnergy();
 
 	/**
 	 * Source energy.
@@ -634,7 +635,7 @@ public interface NXsource extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCurrent();
+	public Dataset getCurrent();
 
 	/**
 	 * Accelerator, X-ray tube, or storage ring current
@@ -678,7 +679,7 @@ public interface NXsource extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getVoltage();
+	public Dataset getVoltage();
 
 	/**
 	 * Accelerator voltage
@@ -722,7 +723,7 @@ public interface NXsource extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFrequency();
+	public Dataset getFrequency();
 
 	/**
 	 * Frequency of pulsed source
@@ -766,7 +767,7 @@ public interface NXsource extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPeriod();
+	public Dataset getPeriod();
 
 	/**
 	 * Period of pulsed source
@@ -816,7 +817,7 @@ public interface NXsource extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTarget_material();
+	public Dataset getTarget_material();
 
 	/**
 	 * Pulsed source target material
@@ -909,7 +910,7 @@ public interface NXsource extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_bunches();
+	public Dataset getNumber_of_bunches();
 
 	/**
 	 * For storage rings, the number of bunches in use.
@@ -950,7 +951,7 @@ public interface NXsource extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBunch_length();
+	public Dataset getBunch_length();
 
 	/**
 	 * For storage rings, temporal length of the bunch
@@ -994,7 +995,7 @@ public interface NXsource extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBunch_distance();
+	public Dataset getBunch_distance();
 
 	/**
 	 * For storage rings, time between bunches
@@ -1038,7 +1039,7 @@ public interface NXsource extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPulse_width();
+	public Dataset getPulse_width();
 
 	/**
 	 * temporal width of source pulse
@@ -1099,7 +1100,7 @@ public interface NXsource extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMode();
+	public Dataset getMode();
 
 	/**
 	 * source operating mode
@@ -1151,7 +1152,7 @@ public interface NXsource extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTop_up();
+	public Dataset getTop_up();
 
 	/**
 	 * Is the synchrotron operating in top_up mode?
@@ -1192,7 +1193,7 @@ public interface NXsource extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLast_fill();
+	public Dataset getLast_fill();
 
 	/**
 	 * For storage rings, the current at the end of the most recent injection.
@@ -1378,7 +1379,7 @@ public interface NXsource extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

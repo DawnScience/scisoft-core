@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -64,7 +65,7 @@ public class NXelectronanalyserImpl extends NXobjectImpl implements NXelectronan
 
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -84,7 +85,7 @@ public class NXelectronanalyserImpl extends NXobjectImpl implements NXelectronan
 	}
 
 	@Override
-	public IDataset getName() {
+	public Dataset getName() {
 		return getDataset(NX_NAME);
 	}
 
@@ -114,7 +115,7 @@ public class NXelectronanalyserImpl extends NXobjectImpl implements NXelectronan
 	}
 
 	@Override
-	public IDataset getEnergy_resolution() {
+	public Dataset getEnergy_resolution() {
 		return getDataset(NX_ENERGY_RESOLUTION);
 	}
 
@@ -134,7 +135,7 @@ public class NXelectronanalyserImpl extends NXobjectImpl implements NXelectronan
 	}
 
 	@Override
-	public IDataset getMomentum_resolution() {
+	public Dataset getMomentum_resolution() {
 		return getDataset(NX_MOMENTUM_RESOLUTION);
 	}
 
@@ -154,7 +155,7 @@ public class NXelectronanalyserImpl extends NXobjectImpl implements NXelectronan
 	}
 
 	@Override
-	public IDataset getAngular_resolution() {
+	public Dataset getAngular_resolution() {
 		return getDataset(NX_ANGULAR_RESOLUTION);
 	}
 
@@ -174,7 +175,7 @@ public class NXelectronanalyserImpl extends NXobjectImpl implements NXelectronan
 	}
 
 	@Override
-	public IDataset getSpatial_resolution() {
+	public Dataset getSpatial_resolution() {
 		return getDataset(NX_SPATIAL_RESOLUTION);
 	}
 
@@ -194,7 +195,7 @@ public class NXelectronanalyserImpl extends NXobjectImpl implements NXelectronan
 	}
 
 	@Override
-	public IDataset getFast_axes() {
+	public Dataset getFast_axes() {
 		return getDataset(NX_FAST_AXES);
 	}
 
@@ -214,7 +215,7 @@ public class NXelectronanalyserImpl extends NXobjectImpl implements NXelectronan
 	}
 
 	@Override
-	public IDataset getSlow_axes() {
+	public Dataset getSlow_axes() {
 		return getDataset(NX_SLOW_AXES);
 	}
 
@@ -234,7 +235,7 @@ public class NXelectronanalyserImpl extends NXobjectImpl implements NXelectronan
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

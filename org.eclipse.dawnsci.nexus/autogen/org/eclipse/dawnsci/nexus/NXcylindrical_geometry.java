@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Geometry description for cylindrical shapes.
@@ -56,7 +57,7 @@ public interface NXcylindrical_geometry extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getVertices();
+	public Dataset getVertices();
 
 	/**
 	 * List of x,y,z coordinates for vertices.
@@ -121,7 +122,7 @@ public interface NXcylindrical_geometry extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCylinders();
+	public Dataset getCylinders();
 
 	/**
 	 * List of indices of vertices in the ``vertices`` dataset to form each cylinder.
@@ -174,7 +175,7 @@ public interface NXcylindrical_geometry extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDetector_number();
+	public Dataset getDetector_number();
 
 	/**
 	 * Maps cylinders in ``cylinder``, by index, with a detector id.

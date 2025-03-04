@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -56,7 +57,7 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 
 
 	@Override
-	public IDataset getName() {
+	public Dataset getName() {
 		return getDataset(NX_NAME);
 	}
 
@@ -76,7 +77,7 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public IDataset getChemical_formula() {
+	public Dataset getChemical_formula() {
 		return getDataset(NX_CHEMICAL_FORMULA);
 	}
 
@@ -96,7 +97,7 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public IDataset getUnit_cell_abc() {
+	public Dataset getUnit_cell_abc() {
 		return getDataset(NX_UNIT_CELL_ABC);
 	}
 
@@ -116,7 +117,7 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public IDataset getUnit_cell_alphabetagamma() {
+	public Dataset getUnit_cell_alphabetagamma() {
 		return getDataset(NX_UNIT_CELL_ALPHABETAGAMMA);
 	}
 
@@ -136,7 +137,7 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public IDataset getUnit_cell_volume() {
+	public Dataset getUnit_cell_volume() {
 		return getDataset(NX_UNIT_CELL_VOLUME);
 	}
 
@@ -156,7 +157,7 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public IDataset getSample_orientation() {
+	public Dataset getSample_orientation() {
 		return getDataset(NX_SAMPLE_ORIENTATION);
 	}
 
@@ -176,7 +177,7 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public IDataset getOrientation_matrix() {
+	public Dataset getOrientation_matrix() {
 		return getDataset(NX_ORIENTATION_MATRIX);
 	}
 
@@ -196,7 +197,7 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public IDataset getMass() {
+	public Dataset getMass() {
 		return getDataset(NX_MASS);
 	}
 
@@ -216,7 +217,7 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public IDataset getDensity() {
+	public Dataset getDensity() {
 		return getDataset(NX_DENSITY);
 	}
 
@@ -236,7 +237,7 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public IDataset getRelative_molecular_mass() {
+	public Dataset getRelative_molecular_mass() {
 		return getDataset(NX_RELATIVE_MOLECULAR_MASS);
 	}
 
@@ -256,7 +257,7 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -276,7 +277,7 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public IDataset getVolume_fraction() {
+	public Dataset getVolume_fraction() {
 		return getDataset(NX_VOLUME_FRACTION);
 	}
 
@@ -296,7 +297,7 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public IDataset getScattering_length_density() {
+	public Dataset getScattering_length_density() {
 		return getDataset(NX_SCATTERING_LENGTH_DENSITY);
 	}
 
@@ -316,7 +317,7 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public IDataset getUnit_cell_class() {
+	public Dataset getUnit_cell_class() {
 		return getDataset(NX_UNIT_CELL_CLASS);
 	}
 
@@ -336,7 +337,7 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public IDataset getSpace_group() {
+	public Dataset getSpace_group() {
 		return getDataset(NX_SPACE_GROUP);
 	}
 
@@ -356,7 +357,7 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public IDataset getPoint_group() {
+	public Dataset getPoint_group() {
 		return getDataset(NX_POINT_GROUP);
 	}
 

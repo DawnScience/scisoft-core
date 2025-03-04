@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -61,7 +62,7 @@ public class NXfiberImpl extends NXobjectImpl implements NXfiber {
 
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -81,7 +82,7 @@ public class NXfiberImpl extends NXobjectImpl implements NXfiber {
 	}
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -101,7 +102,7 @@ public class NXfiberImpl extends NXobjectImpl implements NXfiber {
 	}
 
 	@Override
-	public IDataset getDispersion_type() {
+	public Dataset getDispersion_type() {
 		return getDataset(NX_DISPERSION_TYPE);
 	}
 
@@ -121,7 +122,7 @@ public class NXfiberImpl extends NXobjectImpl implements NXfiber {
 	}
 
 	@Override
-	public IDataset getDispersion() {
+	public Dataset getDispersion() {
 		return getDataset(NX_DISPERSION);
 	}
 
@@ -174,7 +175,7 @@ public class NXfiberImpl extends NXobjectImpl implements NXfiber {
 	}
 
 	@Override
-	public IDataset getLength() {
+	public Dataset getLength() {
 		return getDataset(NX_LENGTH);
 	}
 
@@ -194,7 +195,7 @@ public class NXfiberImpl extends NXobjectImpl implements NXfiber {
 	}
 
 	@Override
-	public IDataset getSpectral_range() {
+	public Dataset getSpectral_range() {
 		return getDataset(NX_SPECTRAL_RANGE);
 	}
 
@@ -224,7 +225,7 @@ public class NXfiberImpl extends NXobjectImpl implements NXfiber {
 	}
 
 	@Override
-	public IDataset getTransfer_rate() {
+	public Dataset getTransfer_rate() {
 		return getDataset(NX_TRANSFER_RATE);
 	}
 
@@ -254,7 +255,7 @@ public class NXfiberImpl extends NXobjectImpl implements NXfiber {
 	}
 
 	@Override
-	public IDataset getNumerical_aperture() {
+	public Dataset getNumerical_aperture() {
 		return getDataset(NX_NUMERICAL_APERTURE);
 	}
 
@@ -274,7 +275,7 @@ public class NXfiberImpl extends NXobjectImpl implements NXfiber {
 	}
 
 	@Override
-	public IDataset getAttenuation() {
+	public Dataset getAttenuation() {
 		return getDataset(NX_ATTENUATION);
 	}
 
@@ -304,7 +305,7 @@ public class NXfiberImpl extends NXobjectImpl implements NXfiber {
 	}
 
 	@Override
-	public IDataset getPower_loss() {
+	public Dataset getPower_loss() {
 		return getDataset(NX_POWER_LOSS);
 	}
 
@@ -324,7 +325,7 @@ public class NXfiberImpl extends NXobjectImpl implements NXfiber {
 	}
 
 	@Override
-	public IDataset getAcceptance_angle() {
+	public Dataset getAcceptance_angle() {
 		return getDataset(NX_ACCEPTANCE_ANGLE);
 	}
 

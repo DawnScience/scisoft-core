@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Parameters for controlling external conditions
@@ -34,7 +35,7 @@ public interface NXenvironment extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getName();
+	public Dataset getName();
 
 	/**
 	 * Apparatus identification code/model number; e.g. OC100 011
@@ -62,7 +63,7 @@ public interface NXenvironment extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getShort_name();
+	public Dataset getShort_name();
 
 	/**
 	 * Alternative short name, perhaps for dashboard display like a present Seblock name
@@ -90,7 +91,7 @@ public interface NXenvironment extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * Type of apparatus. This could be the SE codes in scheduling database; e.g. OC/100
@@ -118,7 +119,7 @@ public interface NXenvironment extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * Description of the apparatus; e.g. 100mm bore orange cryostat with Roots pump
@@ -146,7 +147,7 @@ public interface NXenvironment extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getProgram();
+	public Dataset getProgram();
 
 	/**
 	 * Program controlling the apparatus; e.g. LabView VI name
@@ -198,7 +199,7 @@ public interface NXenvironment extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

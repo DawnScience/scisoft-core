@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Subclass of NXelectronanalyser to describe the energy dispersion section of a
@@ -40,7 +41,7 @@ public interface NXenergydispersion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getScheme();
+	public Dataset getScheme();
 
 	/**
 	 * Energy dispersion scheme employed, for example: tof, hemispherical, cylindrical,
@@ -85,7 +86,7 @@ public interface NXenergydispersion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPass_energy();
+	public Dataset getPass_energy();
 
 	/**
 	 * Energy of the electrons on the mean path of the analyser. Pass energy for
@@ -132,7 +133,7 @@ public interface NXenergydispersion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCenter_energy();
+	public Dataset getCenter_energy();
 
 	/**
 	 * Center of the energy window
@@ -180,7 +181,7 @@ public interface NXenergydispersion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEnergy_interval();
+	public Dataset getEnergy_interval();
 
 	/**
 	 * The interval of transmitted energies. It can be two different things depending
@@ -304,7 +305,7 @@ public interface NXenergydispersion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDiameter();
+	public Dataset getDiameter();
 
 	/**
 	 * Diameter of the dispersive orbit
@@ -350,7 +351,7 @@ public interface NXenergydispersion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEnergy_scan_mode();
+	public Dataset getEnergy_scan_mode();
 
 	/**
 	 * Way of scanning the energy axis (fixed or sweep).
@@ -400,7 +401,7 @@ public interface NXenergydispersion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTof_distance();
+	public Dataset getTof_distance();
 
 	/**
 	 * Length of the tof drift electrode

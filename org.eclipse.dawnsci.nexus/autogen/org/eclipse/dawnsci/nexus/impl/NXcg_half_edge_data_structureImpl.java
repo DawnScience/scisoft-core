@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -57,7 +58,7 @@ public class NXcg_half_edge_data_structureImpl extends NXobjectImpl implements N
 
 
 	@Override
-	public IDataset getDimensionality() {
+	public Dataset getDimensionality() {
 		return getDataset(NX_DIMENSIONALITY);
 	}
 
@@ -77,7 +78,7 @@ public class NXcg_half_edge_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getNumber_of_vertices() {
+	public Dataset getNumber_of_vertices() {
 		return getDataset(NX_NUMBER_OF_VERTICES);
 	}
 
@@ -97,7 +98,7 @@ public class NXcg_half_edge_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getNumber_of_faces() {
+	public Dataset getNumber_of_faces() {
 		return getDataset(NX_NUMBER_OF_FACES);
 	}
 
@@ -117,7 +118,7 @@ public class NXcg_half_edge_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getNumber_of_half_edges() {
+	public Dataset getNumber_of_half_edges() {
 		return getDataset(NX_NUMBER_OF_HALF_EDGES);
 	}
 
@@ -137,7 +138,7 @@ public class NXcg_half_edge_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getVertex_identifier_offset() {
+	public Dataset getVertex_identifier_offset() {
 		return getDataset(NX_VERTEX_IDENTIFIER_OFFSET);
 	}
 
@@ -157,7 +158,7 @@ public class NXcg_half_edge_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getFace_identifier_offset() {
+	public Dataset getFace_identifier_offset() {
 		return getDataset(NX_FACE_IDENTIFIER_OFFSET);
 	}
 
@@ -177,7 +178,7 @@ public class NXcg_half_edge_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getHalf_edge_identifier_offset() {
+	public Dataset getHalf_edge_identifier_offset() {
 		return getDataset(NX_HALF_EDGE_IDENTIFIER_OFFSET);
 	}
 
@@ -197,7 +198,7 @@ public class NXcg_half_edge_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getPosition() {
+	public Dataset getPosition() {
 		return getDataset(NX_POSITION);
 	}
 
@@ -217,7 +218,7 @@ public class NXcg_half_edge_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getVertex_incident_half_edge() {
+	public Dataset getVertex_incident_half_edge() {
 		return getDataset(NX_VERTEX_INCIDENT_HALF_EDGE);
 	}
 
@@ -237,7 +238,7 @@ public class NXcg_half_edge_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getFace_half_edge() {
+	public Dataset getFace_half_edge() {
 		return getDataset(NX_FACE_HALF_EDGE);
 	}
 
@@ -257,7 +258,7 @@ public class NXcg_half_edge_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getHalf_edge_vertex_origin() {
+	public Dataset getHalf_edge_vertex_origin() {
 		return getDataset(NX_HALF_EDGE_VERTEX_ORIGIN);
 	}
 
@@ -277,7 +278,7 @@ public class NXcg_half_edge_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getHalf_edge_twin() {
+	public Dataset getHalf_edge_twin() {
 		return getDataset(NX_HALF_EDGE_TWIN);
 	}
 
@@ -297,7 +298,7 @@ public class NXcg_half_edge_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getHalf_edge_incident_face() {
+	public Dataset getHalf_edge_incident_face() {
 		return getDataset(NX_HALF_EDGE_INCIDENT_FACE);
 	}
 
@@ -317,7 +318,7 @@ public class NXcg_half_edge_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getHalf_edge_next() {
+	public Dataset getHalf_edge_next() {
 		return getDataset(NX_HALF_EDGE_NEXT);
 	}
 
@@ -337,7 +338,7 @@ public class NXcg_half_edge_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getHalf_edge_prev() {
+	public Dataset getHalf_edge_prev() {
 		return getDataset(NX_HALF_EDGE_PREV);
 	}
 
@@ -357,7 +358,7 @@ public class NXcg_half_edge_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public IDataset getWeinberg_vector() {
+	public Dataset getWeinberg_vector() {
 		return getDataset(NX_WEINBERG_VECTOR);
 	}
 

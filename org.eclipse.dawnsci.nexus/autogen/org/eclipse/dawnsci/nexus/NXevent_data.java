@@ -16,6 +16,7 @@ import java.util.Date;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * NXevent_data is a special group for storing data from neutron
@@ -63,7 +64,7 @@ public interface NXevent_data extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEvent_time_offset();
+	public Dataset getEvent_time_offset();
 
 	/**
 	 * A list of timestamps for each event as it comes in.
@@ -112,7 +113,7 @@ public interface NXevent_data extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEvent_id();
+	public Dataset getEvent_id();
 
 	/**
 	 * There will be extra information in the NXdetector to convert
@@ -163,7 +164,7 @@ public interface NXevent_data extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEvent_time_zero();
+	public Dataset getEvent_time_zero();
 
 	/**
 	 * The time that each pulse started with respect to the offset
@@ -226,7 +227,7 @@ public interface NXevent_data extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEvent_index();
+	public Dataset getEvent_index();
 
 	/**
 	 * The index into the event_time_offset, event_id pair for
@@ -280,7 +281,7 @@ public interface NXevent_data extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPulse_height();
+	public Dataset getPulse_height();
 
 	/**
 	 * If voltages from the ends of the detector are read out this
@@ -337,7 +338,7 @@ public interface NXevent_data extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCue_timestamp_zero();
+	public Dataset getCue_timestamp_zero();
 
 	/**
 	 * Timestamps matching the corresponding cue_index into the
@@ -396,7 +397,7 @@ public interface NXevent_data extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCue_index();
+	public Dataset getCue_index();
 
 	/**
 	 * Index into the event_id, event_time_offset pair matching the corresponding

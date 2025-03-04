@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Settings of a filter to select or remove entries based on their value.
@@ -41,7 +42,7 @@ public interface NXmatch_filter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMethod();
+	public Dataset getMethod();
 
 	/**
 	 * Meaning of the filter:
@@ -104,7 +105,7 @@ public interface NXmatch_filter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMatch();
+	public Dataset getMatch();
 
 	/**
 	 * Array of values to filter according to method. For example if the filter

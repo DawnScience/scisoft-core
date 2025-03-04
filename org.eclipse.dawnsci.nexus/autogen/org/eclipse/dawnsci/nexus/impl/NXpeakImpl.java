@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -58,7 +59,7 @@ public class NXpeakImpl extends NXobjectImpl implements NXpeak {
 
 
 	@Override
-	public IDataset getLabel() {
+	public Dataset getLabel() {
 		return getDataset(NX_LABEL);
 	}
 
@@ -78,7 +79,7 @@ public class NXpeakImpl extends NXobjectImpl implements NXpeak {
 	}
 
 	@Override
-	public IDataset getPeak_model() {
+	public Dataset getPeak_model() {
 		return getDataset(NX_PEAK_MODEL);
 	}
 
@@ -98,7 +99,7 @@ public class NXpeakImpl extends NXobjectImpl implements NXpeak {
 	}
 
 	@Override
-	public IDataset getPosition() {
+	public Dataset getPosition() {
 		return getDataset(NX_POSITION);
 	}
 
@@ -118,7 +119,7 @@ public class NXpeakImpl extends NXobjectImpl implements NXpeak {
 	}
 
 	@Override
-	public IDataset getIntensity() {
+	public Dataset getIntensity() {
 		return getDataset(NX_INTENSITY);
 	}
 

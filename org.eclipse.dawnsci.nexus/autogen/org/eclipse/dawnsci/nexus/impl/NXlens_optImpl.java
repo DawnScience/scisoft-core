@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -57,7 +58,7 @@ public class NXlens_optImpl extends NXobjectImpl implements NXlens_opt {
 
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -77,7 +78,7 @@ public class NXlens_optImpl extends NXobjectImpl implements NXlens_opt {
 	}
 
 	@Override
-	public IDataset getOther_type() {
+	public Dataset getOther_type() {
 		return getDataset(NX_OTHER_TYPE);
 	}
 
@@ -97,7 +98,7 @@ public class NXlens_optImpl extends NXobjectImpl implements NXlens_opt {
 	}
 
 	@Override
-	public IDataset getChromatic() {
+	public Dataset getChromatic() {
 		return getDataset(NX_CHROMATIC);
 	}
 
@@ -117,7 +118,7 @@ public class NXlens_optImpl extends NXobjectImpl implements NXlens_opt {
 	}
 
 	@Override
-	public IDataset getLens_diameter() {
+	public Dataset getLens_diameter() {
 		return getDataset(NX_LENS_DIAMETER);
 	}
 
@@ -159,7 +160,7 @@ public class NXlens_optImpl extends NXobjectImpl implements NXlens_opt {
 	}
 
 	@Override
-	public IDataset getReflectance() {
+	public Dataset getReflectance() {
 		return getDataset(NX_REFLECTANCE);
 	}
 
@@ -179,7 +180,7 @@ public class NXlens_optImpl extends NXobjectImpl implements NXlens_opt {
 	}
 
 	@Override
-	public IDataset getTransmission() {
+	public Dataset getTransmission() {
 		return getDataset(NX_TRANSMISSION);
 	}
 
@@ -199,7 +200,7 @@ public class NXlens_optImpl extends NXobjectImpl implements NXlens_opt {
 	}
 
 	@Override
-	public IDataset getFocal_length() {
+	public Dataset getFocal_length() {
 		return getDataset(NX_FOCAL_LENGTH);
 	}
 
@@ -219,7 +220,7 @@ public class NXlens_optImpl extends NXobjectImpl implements NXlens_opt {
 	}
 
 	@Override
-	public IDataset getCurvature_radius_face() {
+	public Dataset getCurvature_radius_face() {
 		return getDataset(NX_CURVATURE_RADIUS_FACE);
 	}
 
@@ -239,7 +240,7 @@ public class NXlens_optImpl extends NXobjectImpl implements NXlens_opt {
 	}
 
 	@Override
-	public IDataset getAbbe_number() {
+	public Dataset getAbbe_number() {
 		return getDataset(NX_ABBE_NUMBER);
 	}
 

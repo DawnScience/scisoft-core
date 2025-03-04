@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * legacy class - recommend to use :ref:`NXtransformations` now
@@ -228,7 +229,7 @@ public interface NXgeometry extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * Optional description/label. Probably only present if we are
@@ -267,7 +268,7 @@ public interface NXgeometry extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getComponent_index();
+	public Dataset getComponent_index();
 
 	/**
 	 * Position of the component along the beam path. The sample is at 0, components upstream

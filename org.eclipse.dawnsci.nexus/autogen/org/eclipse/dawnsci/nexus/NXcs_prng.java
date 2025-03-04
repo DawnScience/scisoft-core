@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Computer science description of pseudo-random number generator.
@@ -51,7 +52,7 @@ public interface NXcs_prng extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * Different approaches for generating random numbers with a computer exists.
@@ -129,7 +130,7 @@ public interface NXcs_prng extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getProgram();
+	public Dataset getProgram();
 
 	/**
 	 * Name of the PRNG implementation and version. If such information is not
@@ -182,7 +183,7 @@ public interface NXcs_prng extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSeed();
+	public Dataset getSeed();
 
 	/**
 	 * Parameter of the PRNG controlling its initialization and thus the specific
@@ -232,7 +233,7 @@ public interface NXcs_prng extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWarmup();
+	public Dataset getWarmup();
 
 	/**
 	 * Number of initial draws from the PRNG which are discarded in an effort

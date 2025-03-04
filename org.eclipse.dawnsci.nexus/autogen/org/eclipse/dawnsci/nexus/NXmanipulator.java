@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Extension of NXpositioner to include fields to describe the use of manipulators
@@ -42,7 +43,7 @@ public interface NXmanipulator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getName();
+	public Dataset getName();
 
 	/**
 	 * Name of the manipulator.
@@ -82,7 +83,7 @@ public interface NXmanipulator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * A description of the manipulator.
@@ -122,7 +123,7 @@ public interface NXmanipulator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * Type of manipulator, Hexapod, Rod, etc.
@@ -162,7 +163,7 @@ public interface NXmanipulator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCryocoolant();
+	public Dataset getCryocoolant();
 
 	/**
 	 * Is cryocoolant flowing through the manipulator?
@@ -203,7 +204,7 @@ public interface NXmanipulator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCryostat_temperature();
+	public Dataset getCryostat_temperature();
 
 	/**
 	 * Temperature of the cryostat (coldest point)
@@ -247,7 +248,7 @@ public interface NXmanipulator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getHeater_power();
+	public Dataset getHeater_power();
 
 	/**
 	 * Power in the heater for temperature control.
@@ -292,7 +293,7 @@ public interface NXmanipulator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSample_temperature();
+	public Dataset getSample_temperature();
 
 	/**
 	 * Temperature at the closest point to the sample. This field may also be found in
@@ -340,7 +341,7 @@ public interface NXmanipulator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDrain_current();
+	public Dataset getDrain_current();
 
 	/**
 	 * Current to neutralize the photoemission current. This field may also be found in
@@ -388,7 +389,7 @@ public interface NXmanipulator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSample_bias();
+	public Dataset getSample_bias();
 
 	/**
 	 * Possible bias of the sample with trespect to analyser ground. This field may
@@ -497,7 +498,7 @@ public interface NXmanipulator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * Refers to the last transformation specifying the positon of the manipulator in

@@ -16,6 +16,7 @@ import java.util.Date;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 
 /**
@@ -39,7 +40,7 @@ public interface NXnote extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAuthor();
+	public Dataset getAuthor();
 
 	/**
 	 * Author or creator of note
@@ -70,7 +71,7 @@ public interface NXnote extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDate();
+	public Dataset getDate();
 
 	/**
 	 * Date note created/added
@@ -107,7 +108,7 @@ public interface NXnote extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * Mime content type of note data field e.g. image/jpeg, text/plain, text/html
@@ -135,7 +136,7 @@ public interface NXnote extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFile_name();
+	public Dataset getFile_name();
 
 	/**
 	 * Name of original file name if note was read from an external source
@@ -163,7 +164,7 @@ public interface NXnote extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * Title of an image or other details of the note
@@ -195,7 +196,7 @@ public interface NXnote extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSequence_index();
+	public Dataset getSequence_index();
 
 	/**
 	 * Sequence index of note, for placing a sequence of
@@ -238,7 +239,7 @@ public interface NXnote extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getData();
+	public Dataset getData();
 
 	/**
 	 * Binary note data - if text, line terminator is [CR][LF].

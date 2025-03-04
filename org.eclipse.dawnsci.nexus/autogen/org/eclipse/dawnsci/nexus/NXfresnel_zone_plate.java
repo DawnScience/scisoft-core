@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A fresnel zone plate
@@ -49,7 +50,7 @@ public interface NXfresnel_zone_plate extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFocus_parameters();
+	public Dataset getFocus_parameters();
 
 	/**
 	 * list of polynomial coefficients describing the focal length of the zone plate, in increasing powers of photon energy,
@@ -95,7 +96,7 @@ public interface NXfresnel_zone_plate extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getOuter_diameter();
+	public Dataset getOuter_diameter();
 
 	/**
 	 * <p>
@@ -135,7 +136,7 @@ public interface NXfresnel_zone_plate extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getOutermost_zone_width();
+	public Dataset getOutermost_zone_width();
 
 	/**
 	 * <p>
@@ -175,7 +176,7 @@ public interface NXfresnel_zone_plate extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCentral_stop_diameter();
+	public Dataset getCentral_stop_diameter();
 
 	/**
 	 * <p>
@@ -219,7 +220,7 @@ public interface NXfresnel_zone_plate extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFabrication();
+	public Dataset getFabrication();
 
 	/**
 	 * how the zone plate was manufactured
@@ -271,7 +272,7 @@ public interface NXfresnel_zone_plate extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getZone_height();
+	public Dataset getZone_height();
 
 	/**
 	 * <p>
@@ -308,7 +309,7 @@ public interface NXfresnel_zone_plate extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getZone_material();
+	public Dataset getZone_material();
 
 	/**
 	 * Material of the zones themselves
@@ -336,7 +337,7 @@ public interface NXfresnel_zone_plate extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getZone_support_material();
+	public Dataset getZone_support_material();
 
 	/**
 	 * Material present between the zones. This is usually only present for the "zone doubled" fabrication process
@@ -363,7 +364,7 @@ public interface NXfresnel_zone_plate extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCentral_stop_material();
+	public Dataset getCentral_stop_material();
 
 	/**
 	 *
@@ -391,7 +392,7 @@ public interface NXfresnel_zone_plate extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCentral_stop_thickness();
+	public Dataset getCentral_stop_thickness();
 
 	/**
 	 * <p>
@@ -431,7 +432,7 @@ public interface NXfresnel_zone_plate extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMask_thickness();
+	public Dataset getMask_thickness();
 
 	/**
 	 * <p>
@@ -468,7 +469,7 @@ public interface NXfresnel_zone_plate extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMask_material();
+	public Dataset getMask_material();
 
 	/**
 	 * If no mask is present, set mask_thickness to 0 and omit the mask_material field
@@ -495,7 +496,7 @@ public interface NXfresnel_zone_plate extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSupport_membrane_material();
+	public Dataset getSupport_membrane_material();
 
 	/**
 	 *
@@ -523,7 +524,7 @@ public interface NXfresnel_zone_plate extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSupport_membrane_thickness();
+	public Dataset getSupport_membrane_thickness();
 
 	/**
 	 * <p>
@@ -596,7 +597,7 @@ public interface NXfresnel_zone_plate extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

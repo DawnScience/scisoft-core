@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -59,7 +60,7 @@ public class NXdelocalizationImpl extends NXobjectImpl implements NXdelocalizati
 
 
 	@Override
-	public IDataset getGrid() {
+	public Dataset getGrid() {
 		return getDataset(NX_GRID);
 	}
 
@@ -79,7 +80,7 @@ public class NXdelocalizationImpl extends NXobjectImpl implements NXdelocalizati
 	}
 
 	@Override
-	public IDataset getObjects() {
+	public Dataset getObjects() {
 		return getDataset(NX_OBJECTS);
 	}
 
@@ -99,7 +100,7 @@ public class NXdelocalizationImpl extends NXobjectImpl implements NXdelocalizati
 	}
 
 	@Override
-	public IDataset getWeighting_model() {
+	public Dataset getWeighting_model() {
 		return getDataset(NX_WEIGHTING_MODEL);
 	}
 
@@ -119,7 +120,7 @@ public class NXdelocalizationImpl extends NXobjectImpl implements NXdelocalizati
 	}
 
 	@Override
-	public IDataset getElement_whitelist() {
+	public Dataset getElement_whitelist() {
 		return getDataset(NX_ELEMENT_WHITELIST);
 	}
 
@@ -139,7 +140,7 @@ public class NXdelocalizationImpl extends NXobjectImpl implements NXdelocalizati
 	}
 
 	@Override
-	public IDataset getIsotope_whitelist() {
+	public Dataset getIsotope_whitelist() {
 		return getDataset(NX_ISOTOPE_WHITELIST);
 	}
 
@@ -159,7 +160,7 @@ public class NXdelocalizationImpl extends NXobjectImpl implements NXdelocalizati
 	}
 
 	@Override
-	public IDataset getMark() {
+	public Dataset getMark() {
 		return getDataset(NX_MARK);
 	}
 
@@ -179,7 +180,7 @@ public class NXdelocalizationImpl extends NXobjectImpl implements NXdelocalizati
 	}
 
 	@Override
-	public IDataset getWeight() {
+	public Dataset getWeight() {
 		return getDataset(NX_WEIGHT);
 	}
 

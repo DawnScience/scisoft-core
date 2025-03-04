@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -125,7 +126,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	}
 
 	@Override
-	public IDataset getTitle() {
+	public Dataset getTitle() {
 		return getDataset(NX_TITLE);
 	}
 
@@ -145,7 +146,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	}
 
 	@Override
-	public IDataset getExperiment_identifier() {
+	public Dataset getExperiment_identifier() {
 		return getDataset(NX_EXPERIMENT_IDENTIFIER);
 	}
 
@@ -165,7 +166,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	}
 
 	@Override
-	public IDataset getExperiment_description() {
+	public Dataset getExperiment_description() {
 		return getDataset(NX_EXPERIMENT_DESCRIPTION);
 	}
 
@@ -196,7 +197,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	}
 
 	@Override
-	public IDataset getCollection_identifier() {
+	public Dataset getCollection_identifier() {
 		return getDataset(NX_COLLECTION_IDENTIFIER);
 	}
 
@@ -216,7 +217,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	}
 
 	@Override
-	public IDataset getCollection_description() {
+	public Dataset getCollection_description() {
 		return getDataset(NX_COLLECTION_DESCRIPTION);
 	}
 
@@ -236,7 +237,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	}
 
 	@Override
-	public IDataset getEntry_identifier() {
+	public Dataset getEntry_identifier() {
 		return getDataset(NX_ENTRY_IDENTIFIER);
 	}
 
@@ -256,7 +257,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	}
 
 	@Override
-	public IDataset getEntry_identifier_uuid() {
+	public Dataset getEntry_identifier_uuid() {
 		return getDataset(NX_ENTRY_IDENTIFIER_UUID);
 	}
 
@@ -286,7 +287,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	}
 
 	@Override
-	public IDataset getFeatures() {
+	public Dataset getFeatures() {
 		return getDataset(NX_FEATURES);
 	}
 
@@ -306,7 +307,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	}
 
 	@Override
-	public IDataset getDefinition() {
+	public Dataset getDefinition() {
 		return getDataset(NX_DEFINITION);
 	}
 
@@ -347,7 +348,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 
 	@Override
 	@Deprecated
-	public IDataset getDefinition_local() {
+	public Dataset getDefinition_local() {
 		return getDataset(NX_DEFINITION_LOCAL);
 	}
 
@@ -390,7 +391,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	}
 
 	@Override
-	public IDataset getStart_time() {
+	public Dataset getStart_time() {
 		return getDataset(NX_START_TIME);
 	}
 
@@ -410,7 +411,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	}
 
 	@Override
-	public IDataset getEnd_time() {
+	public Dataset getEnd_time() {
 		return getDataset(NX_END_TIME);
 	}
 
@@ -430,7 +431,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	}
 
 	@Override
-	public IDataset getDuration() {
+	public Dataset getDuration() {
 		return getDataset(NX_DURATION);
 	}
 
@@ -450,7 +451,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	}
 
 	@Override
-	public IDataset getCollection_time() {
+	public Dataset getCollection_time() {
 		return getDataset(NX_COLLECTION_TIME);
 	}
 
@@ -470,7 +471,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	}
 
 	@Override
-	public IDataset getRun_cycle() {
+	public Dataset getRun_cycle() {
 		return getDataset(NX_RUN_CYCLE);
 	}
 
@@ -490,7 +491,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	}
 
 	@Override
-	public IDataset getProgram_name() {
+	public Dataset getProgram_name() {
 		return getDataset(NX_PROGRAM_NAME);
 	}
 
@@ -530,7 +531,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	}
 
 	@Override
-	public IDataset getRevision() {
+	public Dataset getRevision() {
 		return getDataset(NX_REVISION);
 	}
 
@@ -560,7 +561,7 @@ public class NXentryImpl extends NXobjectImpl implements NXentry {
 	}
 
 	@Override
-	public IDataset getPre_sample_flightpath() {
+	public Dataset getPre_sample_flightpath() {
 		return getDataset(NX_PRE_SAMPLE_FLIGHTPATH);
 	}
 

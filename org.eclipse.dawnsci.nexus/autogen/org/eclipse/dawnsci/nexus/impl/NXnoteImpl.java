@@ -18,6 +18,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 import org.eclipse.january.dataset.DatasetFactory;
 
 import org.eclipse.dawnsci.nexus.*;
@@ -60,7 +61,7 @@ public class NXnoteImpl extends NXobjectImpl implements NXnote {
 
 
 	@Override
-	public IDataset getAuthor() {
+	public Dataset getAuthor() {
 		return getDataset(NX_AUTHOR);
 	}
 
@@ -80,7 +81,7 @@ public class NXnoteImpl extends NXobjectImpl implements NXnote {
 	}
 
 	@Override
-	public IDataset getDate() {
+	public Dataset getDate() {
 		return getDataset(NX_DATE);
 	}
 
@@ -100,7 +101,7 @@ public class NXnoteImpl extends NXobjectImpl implements NXnote {
 	}
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -120,7 +121,7 @@ public class NXnoteImpl extends NXobjectImpl implements NXnote {
 	}
 
 	@Override
-	public IDataset getFile_name() {
+	public Dataset getFile_name() {
 		return getDataset(NX_FILE_NAME);
 	}
 
@@ -140,7 +141,7 @@ public class NXnoteImpl extends NXobjectImpl implements NXnote {
 	}
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -160,7 +161,7 @@ public class NXnoteImpl extends NXobjectImpl implements NXnote {
 	}
 
 	@Override
-	public IDataset getSequence_index() {
+	public Dataset getSequence_index() {
 		return getDataset(NX_SEQUENCE_INDEX);
 	}
 
@@ -180,7 +181,7 @@ public class NXnoteImpl extends NXobjectImpl implements NXnote {
 	}
 
 	@Override
-	public IDataset getData() {
+	public Dataset getData() {
 		return getDataset(NX_DATA);
 	}
 

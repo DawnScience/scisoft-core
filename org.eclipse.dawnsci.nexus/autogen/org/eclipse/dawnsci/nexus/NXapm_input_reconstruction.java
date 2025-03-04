@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Metadata of a dataset (tomographic reconstruction) in atom probe microscopy.
@@ -35,7 +36,7 @@ public interface NXapm_input_reconstruction extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFilename();
+	public Dataset getFilename();
 
 	/**
 	 * Name of the (NeXus)/HDF5 file which stores reconstructed ion position
@@ -97,7 +98,7 @@ public interface NXapm_input_reconstruction extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDataset_name_reconstruction();
+	public Dataset getDataset_name_reconstruction();
 
 	/**
 	 * Name of the dataset inside the HDF5 file which refers to the
@@ -129,7 +130,7 @@ public interface NXapm_input_reconstruction extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDataset_name_mass_to_charge();
+	public Dataset getDataset_name_mass_to_charge();
 
 	/**
 	 * Name of the dataset inside the HDF5 file which refers to the

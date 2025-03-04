@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -64,7 +65,7 @@ public class NXlens_emImpl extends NXobjectImpl implements NXlens_em {
 
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -84,7 +85,7 @@ public class NXlens_emImpl extends NXobjectImpl implements NXlens_em {
 	}
 
 	@Override
-	public IDataset getName() {
+	public Dataset getName() {
 		return getDataset(NX_NAME);
 	}
 
@@ -104,7 +105,7 @@ public class NXlens_emImpl extends NXobjectImpl implements NXlens_em {
 	}
 
 	@Override
-	public IDataset getManufacturer_name() {
+	public Dataset getManufacturer_name() {
 		return getDataset(NX_MANUFACTURER_NAME);
 	}
 
@@ -155,7 +156,7 @@ public class NXlens_emImpl extends NXobjectImpl implements NXlens_em {
 	}
 
 	@Override
-	public IDataset getModel() {
+	public Dataset getModel() {
 		return getDataset(NX_MODEL);
 	}
 
@@ -175,7 +176,7 @@ public class NXlens_emImpl extends NXobjectImpl implements NXlens_em {
 	}
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -195,7 +196,7 @@ public class NXlens_emImpl extends NXobjectImpl implements NXlens_em {
 	}
 
 	@Override
-	public IDataset getVoltage() {
+	public Dataset getVoltage() {
 		return getDataset(NX_VOLTAGE);
 	}
 
@@ -215,7 +216,7 @@ public class NXlens_emImpl extends NXobjectImpl implements NXlens_em {
 	}
 
 	@Override
-	public IDataset getCurrent() {
+	public Dataset getCurrent() {
 		return getDataset(NX_CURRENT);
 	}
 
@@ -235,7 +236,7 @@ public class NXlens_emImpl extends NXobjectImpl implements NXlens_em {
 	}
 
 	@Override
-	public IDataset getValue() {
+	public Dataset getValue() {
 		return getDataset(NX_VALUE);
 	}
 
@@ -255,7 +256,7 @@ public class NXlens_emImpl extends NXobjectImpl implements NXlens_em {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

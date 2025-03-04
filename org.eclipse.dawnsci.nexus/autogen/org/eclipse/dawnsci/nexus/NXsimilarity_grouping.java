@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Metadata to the results of a similarity grouping analysis.
@@ -57,7 +58,7 @@ public interface NXsimilarity_grouping extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCardinality();
+	public Dataset getCardinality();
 
 	/**
 	 * Number of members in the set which is partitioned into features.
@@ -101,7 +102,7 @@ public interface NXsimilarity_grouping extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_numeric_labels();
+	public Dataset getNumber_of_numeric_labels();
 
 	/**
 	 * How many numerical labels does each feature have.
@@ -145,7 +146,7 @@ public interface NXsimilarity_grouping extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_categorical_labels();
+	public Dataset getNumber_of_categorical_labels();
 
 	/**
 	 * How many categorical labels does each feature have.
@@ -196,7 +197,7 @@ public interface NXsimilarity_grouping extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier_offset();
+	public Dataset getIdentifier_offset();
 
 	/**
 	 * Which identifier is the first to be used to label a cluster.
@@ -264,7 +265,7 @@ public interface NXsimilarity_grouping extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumerical_label();
+	public Dataset getNumerical_label();
 
 	/**
 	 * Matrix of numerical label for each member in the set.
@@ -317,7 +318,7 @@ public interface NXsimilarity_grouping extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCategorical_label();
+	public Dataset getCategorical_label();
 
 	/**
 	 * Matrix of categorical attribute data for each member in the set.

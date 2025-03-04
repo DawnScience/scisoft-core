@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A neutron velocity selector
@@ -42,7 +43,7 @@ public interface NXvelocity_selector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * velocity selector type
@@ -74,7 +75,7 @@ public interface NXvelocity_selector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRotation_speed();
+	public Dataset getRotation_speed();
 
 	/**
 	 * velocity selector rotation speed
@@ -118,7 +119,7 @@ public interface NXvelocity_selector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRadius();
+	public Dataset getRadius();
 
 	/**
 	 * radius at beam centre
@@ -162,7 +163,7 @@ public interface NXvelocity_selector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSpwidth();
+	public Dataset getSpwidth();
 
 	/**
 	 * spoke width at beam centre
@@ -206,7 +207,7 @@ public interface NXvelocity_selector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLength();
+	public Dataset getLength();
 
 	/**
 	 * rotor length
@@ -250,7 +251,7 @@ public interface NXvelocity_selector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNum();
+	public Dataset getNum();
 
 	/**
 	 * number of spokes/lamella
@@ -294,7 +295,7 @@ public interface NXvelocity_selector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTwist();
+	public Dataset getTwist();
 
 	/**
 	 * twist angle along axis
@@ -338,7 +339,7 @@ public interface NXvelocity_selector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTable();
+	public Dataset getTable();
 
 	/**
 	 * offset vertical angle
@@ -382,7 +383,7 @@ public interface NXvelocity_selector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getHeight();
+	public Dataset getHeight();
 
 	/**
 	 * input beam height
@@ -426,7 +427,7 @@ public interface NXvelocity_selector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWidth();
+	public Dataset getWidth();
 
 	/**
 	 * input beam width
@@ -470,7 +471,7 @@ public interface NXvelocity_selector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWavelength();
+	public Dataset getWavelength();
 
 	/**
 	 * wavelength
@@ -514,7 +515,7 @@ public interface NXvelocity_selector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getWavelength_spread();
+	public Dataset getWavelength_spread();
 
 	/**
 	 * deviation FWHM /Wavelength
@@ -668,7 +669,7 @@ public interface NXvelocity_selector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

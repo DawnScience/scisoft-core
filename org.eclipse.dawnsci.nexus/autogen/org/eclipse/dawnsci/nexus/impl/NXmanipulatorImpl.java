@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -60,7 +61,7 @@ public class NXmanipulatorImpl extends NXobjectImpl implements NXmanipulator {
 
 
 	@Override
-	public IDataset getName() {
+	public Dataset getName() {
 		return getDataset(NX_NAME);
 	}
 
@@ -80,7 +81,7 @@ public class NXmanipulatorImpl extends NXobjectImpl implements NXmanipulator {
 	}
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -100,7 +101,7 @@ public class NXmanipulatorImpl extends NXobjectImpl implements NXmanipulator {
 	}
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -120,7 +121,7 @@ public class NXmanipulatorImpl extends NXobjectImpl implements NXmanipulator {
 	}
 
 	@Override
-	public IDataset getCryocoolant() {
+	public Dataset getCryocoolant() {
 		return getDataset(NX_CRYOCOOLANT);
 	}
 
@@ -140,7 +141,7 @@ public class NXmanipulatorImpl extends NXobjectImpl implements NXmanipulator {
 	}
 
 	@Override
-	public IDataset getCryostat_temperature() {
+	public Dataset getCryostat_temperature() {
 		return getDataset(NX_CRYOSTAT_TEMPERATURE);
 	}
 
@@ -160,7 +161,7 @@ public class NXmanipulatorImpl extends NXobjectImpl implements NXmanipulator {
 	}
 
 	@Override
-	public IDataset getHeater_power() {
+	public Dataset getHeater_power() {
 		return getDataset(NX_HEATER_POWER);
 	}
 
@@ -180,7 +181,7 @@ public class NXmanipulatorImpl extends NXobjectImpl implements NXmanipulator {
 	}
 
 	@Override
-	public IDataset getSample_temperature() {
+	public Dataset getSample_temperature() {
 		return getDataset(NX_SAMPLE_TEMPERATURE);
 	}
 
@@ -200,7 +201,7 @@ public class NXmanipulatorImpl extends NXobjectImpl implements NXmanipulator {
 	}
 
 	@Override
-	public IDataset getDrain_current() {
+	public Dataset getDrain_current() {
 		return getDataset(NX_DRAIN_CURRENT);
 	}
 
@@ -220,7 +221,7 @@ public class NXmanipulatorImpl extends NXobjectImpl implements NXmanipulator {
 	}
 
 	@Override
-	public IDataset getSample_bias() {
+	public Dataset getSample_bias() {
 		return getDataset(NX_SAMPLE_BIAS);
 	}
 
@@ -271,7 +272,7 @@ public class NXmanipulatorImpl extends NXobjectImpl implements NXmanipulator {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

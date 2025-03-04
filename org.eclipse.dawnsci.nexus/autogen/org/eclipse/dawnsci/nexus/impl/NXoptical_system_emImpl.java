@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -55,7 +56,7 @@ public class NXoptical_system_emImpl extends NXobjectImpl implements NXoptical_s
 
 
 	@Override
-	public IDataset getCamera_length() {
+	public Dataset getCamera_length() {
 		return getDataset(NX_CAMERA_LENGTH);
 	}
 
@@ -75,7 +76,7 @@ public class NXoptical_system_emImpl extends NXobjectImpl implements NXoptical_s
 	}
 
 	@Override
-	public IDataset getMagnification() {
+	public Dataset getMagnification() {
 		return getDataset(NX_MAGNIFICATION);
 	}
 
@@ -95,7 +96,7 @@ public class NXoptical_system_emImpl extends NXobjectImpl implements NXoptical_s
 	}
 
 	@Override
-	public IDataset getDefocus() {
+	public Dataset getDefocus() {
 		return getDataset(NX_DEFOCUS);
 	}
 
@@ -115,7 +116,7 @@ public class NXoptical_system_emImpl extends NXobjectImpl implements NXoptical_s
 	}
 
 	@Override
-	public IDataset getSemi_convergence_angle() {
+	public Dataset getSemi_convergence_angle() {
 		return getDataset(NX_SEMI_CONVERGENCE_ANGLE);
 	}
 
@@ -135,7 +136,7 @@ public class NXoptical_system_emImpl extends NXobjectImpl implements NXoptical_s
 	}
 
 	@Override
-	public IDataset getField_of_view() {
+	public Dataset getField_of_view() {
 		return getDataset(NX_FIELD_OF_VIEW);
 	}
 
@@ -155,7 +156,7 @@ public class NXoptical_system_emImpl extends NXobjectImpl implements NXoptical_s
 	}
 
 	@Override
-	public IDataset getWorking_distance() {
+	public Dataset getWorking_distance() {
 		return getDataset(NX_WORKING_DISTANCE);
 	}
 
@@ -175,7 +176,7 @@ public class NXoptical_system_emImpl extends NXobjectImpl implements NXoptical_s
 	}
 
 	@Override
-	public IDataset getBeam_current() {
+	public Dataset getBeam_current() {
 		return getDataset(NX_BEAM_CURRENT);
 	}
 
@@ -195,7 +196,7 @@ public class NXoptical_system_emImpl extends NXobjectImpl implements NXoptical_s
 	}
 
 	@Override
-	public IDataset getBeam_current_description() {
+	public Dataset getBeam_current_description() {
 		return getDataset(NX_BEAM_CURRENT_DESCRIPTION);
 	}
 

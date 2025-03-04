@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Description of an electro-magnetic lens or a compound lens.
@@ -50,7 +51,7 @@ public interface NXlens_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * Qualitative type of lens with respect to the number of pole pieces.
@@ -103,7 +104,7 @@ public interface NXlens_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getName();
+	public Dataset getName();
 
 	/**
 	 * Given name, alias, colloquial, or short name for the lens.
@@ -134,7 +135,7 @@ public interface NXlens_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getManufacturer_name();
+	public Dataset getManufacturer_name();
 
 	/**
 	 * Name of the manufacturer who built/constructed the lens.
@@ -219,7 +220,7 @@ public interface NXlens_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getModel();
+	public Dataset getModel();
 
 	/**
 	 * Hardware name, hash identifier, or serial number that was given by the
@@ -251,7 +252,7 @@ public interface NXlens_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * Ideally an identifier, persistent link, or free text which gives further details
@@ -287,7 +288,7 @@ public interface NXlens_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getVoltage();
+	public Dataset getVoltage();
 
 	/**
 	 * Excitation voltage of the lens. For dipoles it is a single number. For higher
@@ -335,7 +336,7 @@ public interface NXlens_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCurrent();
+	public Dataset getCurrent();
 
 	/**
 	 * Excitation current of the lens. For dipoles it is a single number. For higher
@@ -388,7 +389,7 @@ public interface NXlens_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getValue();
+	public Dataset getValue();
 
 	/**
 	 * This field should be used when the exact voltage or current of the lens is not directly controllable
@@ -447,7 +448,7 @@ public interface NXlens_em extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * Specifies the position of the lens by pointing to the last transformation in the

@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -66,7 +67,7 @@ public class NXem_ebsd_crystal_structure_modelImpl extends NXobjectImpl implemen
 
 
 	@Override
-	public IDataset getCrystallographic_database_identifier() {
+	public Dataset getCrystallographic_database_identifier() {
 		return getDataset(NX_CRYSTALLOGRAPHIC_DATABASE_IDENTIFIER);
 	}
 
@@ -86,7 +87,7 @@ public class NXem_ebsd_crystal_structure_modelImpl extends NXobjectImpl implemen
 	}
 
 	@Override
-	public IDataset getCrystallographic_database() {
+	public Dataset getCrystallographic_database() {
 		return getDataset(NX_CRYSTALLOGRAPHIC_DATABASE);
 	}
 
@@ -106,7 +107,7 @@ public class NXem_ebsd_crystal_structure_modelImpl extends NXobjectImpl implemen
 	}
 
 	@Override
-	public IDataset getUnit_cell_abc() {
+	public Dataset getUnit_cell_abc() {
 		return getDataset(NX_UNIT_CELL_ABC);
 	}
 
@@ -126,7 +127,7 @@ public class NXem_ebsd_crystal_structure_modelImpl extends NXobjectImpl implemen
 	}
 
 	@Override
-	public IDataset getUnit_cell_alphabetagamma() {
+	public Dataset getUnit_cell_alphabetagamma() {
 		return getDataset(NX_UNIT_CELL_ALPHABETAGAMMA);
 	}
 
@@ -146,7 +147,7 @@ public class NXem_ebsd_crystal_structure_modelImpl extends NXobjectImpl implemen
 	}
 
 	@Override
-	public IDataset getUnit_cell_volume() {
+	public Dataset getUnit_cell_volume() {
 		return getDataset(NX_UNIT_CELL_VOLUME);
 	}
 
@@ -166,7 +167,7 @@ public class NXem_ebsd_crystal_structure_modelImpl extends NXobjectImpl implemen
 	}
 
 	@Override
-	public IDataset getSpace_group() {
+	public Dataset getSpace_group() {
 		return getDataset(NX_SPACE_GROUP);
 	}
 
@@ -186,7 +187,7 @@ public class NXem_ebsd_crystal_structure_modelImpl extends NXobjectImpl implemen
 	}
 
 	@Override
-	public IDataset getIs_centrosymmetric() {
+	public Dataset getIs_centrosymmetric() {
 		return getDataset(NX_IS_CENTROSYMMETRIC);
 	}
 
@@ -206,7 +207,7 @@ public class NXem_ebsd_crystal_structure_modelImpl extends NXobjectImpl implemen
 	}
 
 	@Override
-	public IDataset getIs_chiral() {
+	public Dataset getIs_chiral() {
 		return getDataset(NX_IS_CHIRAL);
 	}
 
@@ -226,7 +227,7 @@ public class NXem_ebsd_crystal_structure_modelImpl extends NXobjectImpl implemen
 	}
 
 	@Override
-	public IDataset getLaue_group() {
+	public Dataset getLaue_group() {
 		return getDataset(NX_LAUE_GROUP);
 	}
 
@@ -246,7 +247,7 @@ public class NXem_ebsd_crystal_structure_modelImpl extends NXobjectImpl implemen
 	}
 
 	@Override
-	public IDataset getPoint_group() {
+	public Dataset getPoint_group() {
 		return getDataset(NX_POINT_GROUP);
 	}
 
@@ -266,7 +267,7 @@ public class NXem_ebsd_crystal_structure_modelImpl extends NXobjectImpl implemen
 	}
 
 	@Override
-	public IDataset getUnit_cell_class() {
+	public Dataset getUnit_cell_class() {
 		return getDataset(NX_UNIT_CELL_CLASS);
 	}
 
@@ -286,7 +287,7 @@ public class NXem_ebsd_crystal_structure_modelImpl extends NXobjectImpl implemen
 	}
 
 	@Override
-	public IDataset getPhase_identifier() {
+	public Dataset getPhase_identifier() {
 		return getDataset(NX_PHASE_IDENTIFIER);
 	}
 
@@ -306,7 +307,7 @@ public class NXem_ebsd_crystal_structure_modelImpl extends NXobjectImpl implemen
 	}
 
 	@Override
-	public IDataset getPhase_name() {
+	public Dataset getPhase_name() {
 		return getDataset(NX_PHASE_NAME);
 	}
 
@@ -326,7 +327,7 @@ public class NXem_ebsd_crystal_structure_modelImpl extends NXobjectImpl implemen
 	}
 
 	@Override
-	public IDataset getAtom_identifier() {
+	public Dataset getAtom_identifier() {
 		return getDataset(NX_ATOM_IDENTIFIER);
 	}
 
@@ -346,7 +347,7 @@ public class NXem_ebsd_crystal_structure_modelImpl extends NXobjectImpl implemen
 	}
 
 	@Override
-	public IDataset getAtom() {
+	public Dataset getAtom() {
 		return getDataset(NX_ATOM);
 	}
 
@@ -366,7 +367,7 @@ public class NXem_ebsd_crystal_structure_modelImpl extends NXobjectImpl implemen
 	}
 
 	@Override
-	public IDataset getAtom_positions() {
+	public Dataset getAtom_positions() {
 		return getDataset(NX_ATOM_POSITIONS);
 	}
 
@@ -386,7 +387,7 @@ public class NXem_ebsd_crystal_structure_modelImpl extends NXobjectImpl implemen
 	}
 
 	@Override
-	public IDataset getAtom_occupancy() {
+	public Dataset getAtom_occupancy() {
 		return getDataset(NX_ATOM_OCCUPANCY);
 	}
 
@@ -406,7 +407,7 @@ public class NXem_ebsd_crystal_structure_modelImpl extends NXobjectImpl implemen
 	}
 
 	@Override
-	public IDataset getNumber_of_planes() {
+	public Dataset getNumber_of_planes() {
 		return getDataset(NX_NUMBER_OF_PLANES);
 	}
 
@@ -426,7 +427,7 @@ public class NXem_ebsd_crystal_structure_modelImpl extends NXobjectImpl implemen
 	}
 
 	@Override
-	public IDataset getPlane_miller() {
+	public Dataset getPlane_miller() {
 		return getDataset(NX_PLANE_MILLER);
 	}
 
@@ -446,7 +447,7 @@ public class NXem_ebsd_crystal_structure_modelImpl extends NXobjectImpl implemen
 	}
 
 	@Override
-	public IDataset getDspacing() {
+	public Dataset getDspacing() {
 		return getDataset(NX_DSPACING);
 	}
 
@@ -466,7 +467,7 @@ public class NXem_ebsd_crystal_structure_modelImpl extends NXobjectImpl implemen
 	}
 
 	@Override
-	public IDataset getRelative_intensity() {
+	public Dataset getRelative_intensity() {
 		return getDataset(NX_RELATIVE_INTENSITY);
 	}
 

@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Contains the settings of a PID controller.
@@ -32,7 +33,7 @@ public interface NXpid extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * Description of how the Process Value for the PID controller is produced by sensor(s) in the setup.
@@ -85,7 +86,7 @@ public interface NXpid extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSetpoint();
+	public Dataset getSetpoint();
 
 	/**
 	 * The Setpoint(s) used as an input for the PID controller.
@@ -134,7 +135,7 @@ public interface NXpid extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getK_p_value();
+	public Dataset getK_p_value();
 
 	/**
 	 * Proportional term. The proportional term produces an output value
@@ -189,7 +190,7 @@ public interface NXpid extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getK_i_value();
+	public Dataset getK_i_value();
 
 	/**
 	 * The contribution from the integral term is proportional to both
@@ -251,7 +252,7 @@ public interface NXpid extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getK_d_value();
+	public Dataset getK_d_value();
 
 	/**
 	 * The derivative of the process error is calculated by determining

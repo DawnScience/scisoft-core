@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Subclass of NXprocess to describe post-processing distortion correction.
@@ -45,7 +46,7 @@ public interface NXdistortion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLast_process();
+	public Dataset getLast_process();
 
 	/**
 	 * Indicates the name of the last operation applied in the NXprocess sequence.
@@ -85,7 +86,7 @@ public interface NXdistortion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getApplied();
+	public Dataset getApplied();
 
 	/**
 	 * Has the distortion correction been applied?
@@ -129,7 +130,7 @@ public interface NXdistortion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSymmetry();
+	public Dataset getSymmetry();
 
 	/**
 	 * For `symmetry-guided distortion correction`_,
@@ -184,7 +185,7 @@ public interface NXdistortion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getOriginal_centre();
+	public Dataset getOriginal_centre();
 
 	/**
 	 * For symmetry-guided distortion correction. Here we record the coordinates of the
@@ -236,7 +237,7 @@ public interface NXdistortion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getOriginal_points();
+	public Dataset getOriginal_points();
 
 	/**
 	 * For symmetry-guided distortion correction. Here we record the coordinates of the
@@ -288,7 +289,7 @@ public interface NXdistortion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCdeform_field();
+	public Dataset getCdeform_field();
 
 	/**
 	 * Column deformation field for general non-rigid distortion corrections. 2D matrix
@@ -340,7 +341,7 @@ public interface NXdistortion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRdeform_field();
+	public Dataset getRdeform_field();
 
 	/**
 	 * Row deformation field for general non-rigid distortion corrections. 2D matrix
@@ -389,7 +390,7 @@ public interface NXdistortion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * Description of the procedures employed.

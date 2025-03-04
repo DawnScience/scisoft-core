@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * An optical fiber, e.g. glass fiber.
@@ -56,7 +57,7 @@ public interface NXfiber extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * Descriptive name or brief description of the fiber, e.g. by stating its
@@ -100,7 +101,7 @@ public interface NXfiber extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * Type/mode of the fiber. Modes of fiber transmission are shown in
@@ -155,7 +156,7 @@ public interface NXfiber extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDispersion_type();
+	public Dataset getDispersion_type();
 
 	/**
 	 * Type of dispersion.
@@ -207,7 +208,7 @@ public interface NXfiber extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDispersion();
+	public Dataset getDispersion();
 
 	/**
 	 * Spectrum-dependent (or refractive index-dependent) dispersion of the
@@ -299,7 +300,7 @@ public interface NXfiber extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLength();
+	public Dataset getLength();
 
 	/**
 	 * Length of the fiber.
@@ -345,7 +346,7 @@ public interface NXfiber extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSpectral_range();
+	public Dataset getSpectral_range();
 
 	/**
 	 * Spectral range for which the fiber is designed. Enter the minimum and
@@ -411,7 +412,7 @@ public interface NXfiber extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTransfer_rate();
+	public Dataset getTransfer_rate();
 
 	/**
 	 * Transfer rate of the fiber (in GB per second).
@@ -469,7 +470,7 @@ public interface NXfiber extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumerical_aperture();
+	public Dataset getNumerical_aperture();
 
 	/**
 	 * Numerical aperture (NA) of the fiber.
@@ -514,7 +515,7 @@ public interface NXfiber extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAttenuation();
+	public Dataset getAttenuation();
 
 	/**
 	 * Wavelength-dependent attenuation of the fiber (specify in dB/km).
@@ -583,7 +584,7 @@ public interface NXfiber extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPower_loss();
+	public Dataset getPower_loss();
 
 	/**
 	 * Power loss of the fiber in percentage.
@@ -627,7 +628,7 @@ public interface NXfiber extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAcceptance_angle();
+	public Dataset getAcceptance_angle();
 
 	/**
 	 * Acceptance angle of the fiber.

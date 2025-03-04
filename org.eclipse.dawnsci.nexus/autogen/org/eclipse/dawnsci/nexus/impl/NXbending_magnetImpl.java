@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -61,7 +62,7 @@ public class NXbending_magnetImpl extends NXobjectImpl implements NXbending_magn
 
 
 	@Override
-	public IDataset getCritical_energy() {
+	public Dataset getCritical_energy() {
 		return getDataset(NX_CRITICAL_ENERGY);
 	}
 
@@ -81,7 +82,7 @@ public class NXbending_magnetImpl extends NXobjectImpl implements NXbending_magn
 	}
 
 	@Override
-	public IDataset getBending_radius() {
+	public Dataset getBending_radius() {
 		return getDataset(NX_BENDING_RADIUS);
 	}
 
@@ -101,7 +102,7 @@ public class NXbending_magnetImpl extends NXobjectImpl implements NXbending_magn
 	}
 
 	@Override
-	public IDataset getMagnetic_field() {
+	public Dataset getMagnetic_field() {
 		return getDataset(NX_MAGNETIC_FIELD);
 	}
 
@@ -121,7 +122,7 @@ public class NXbending_magnetImpl extends NXobjectImpl implements NXbending_magn
 	}
 
 	@Override
-	public IDataset getAccepted_photon_beam_divergence() {
+	public Dataset getAccepted_photon_beam_divergence() {
 		return getDataset(NX_ACCEPTED_PHOTON_BEAM_DIVERGENCE);
 	}
 
@@ -141,7 +142,7 @@ public class NXbending_magnetImpl extends NXobjectImpl implements NXbending_magn
 	}
 
 	@Override
-	public IDataset getSource_distance_x() {
+	public Dataset getSource_distance_x() {
 		return getDataset(NX_SOURCE_DISTANCE_X);
 	}
 
@@ -161,7 +162,7 @@ public class NXbending_magnetImpl extends NXobjectImpl implements NXbending_magn
 	}
 
 	@Override
-	public IDataset getSource_distance_y() {
+	public Dataset getSource_distance_y() {
 		return getDataset(NX_SOURCE_DISTANCE_Y);
 	}
 
@@ -181,7 +182,7 @@ public class NXbending_magnetImpl extends NXobjectImpl implements NXbending_magn
 	}
 
 	@Override
-	public IDataset getDivergence_x_plus() {
+	public Dataset getDivergence_x_plus() {
 		return getDataset(NX_DIVERGENCE_X_PLUS);
 	}
 
@@ -201,7 +202,7 @@ public class NXbending_magnetImpl extends NXobjectImpl implements NXbending_magn
 	}
 
 	@Override
-	public IDataset getDivergence_x_minus() {
+	public Dataset getDivergence_x_minus() {
 		return getDataset(NX_DIVERGENCE_X_MINUS);
 	}
 
@@ -221,7 +222,7 @@ public class NXbending_magnetImpl extends NXobjectImpl implements NXbending_magn
 	}
 
 	@Override
-	public IDataset getDivergence_y_plus() {
+	public Dataset getDivergence_y_plus() {
 		return getDataset(NX_DIVERGENCE_Y_PLUS);
 	}
 
@@ -241,7 +242,7 @@ public class NXbending_magnetImpl extends NXobjectImpl implements NXbending_magn
 	}
 
 	@Override
-	public IDataset getDivergence_y_minus() {
+	public Dataset getDivergence_y_minus() {
 		return getDataset(NX_DIVERGENCE_Y_MINUS);
 	}
 
@@ -350,7 +351,7 @@ public class NXbending_magnetImpl extends NXobjectImpl implements NXbending_magn
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -62,7 +63,7 @@ public class NXpolarizer_optImpl extends NXobjectImpl implements NXpolarizer_opt
 
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -82,7 +83,7 @@ public class NXpolarizer_optImpl extends NXobjectImpl implements NXpolarizer_opt
 	}
 
 	@Override
-	public IDataset getType_other() {
+	public Dataset getType_other() {
 		return getDataset(NX_TYPE_OTHER);
 	}
 
@@ -102,7 +103,7 @@ public class NXpolarizer_optImpl extends NXobjectImpl implements NXpolarizer_opt
 	}
 
 	@Override
-	public IDataset getPolarizer_angle() {
+	public Dataset getPolarizer_angle() {
 		return getDataset(NX_POLARIZER_ANGLE);
 	}
 
@@ -122,7 +123,7 @@ public class NXpolarizer_optImpl extends NXobjectImpl implements NXpolarizer_opt
 	}
 
 	@Override
-	public IDataset getAcceptance_angle() {
+	public Dataset getAcceptance_angle() {
 		return getDataset(NX_ACCEPTANCE_ANGLE);
 	}
 
@@ -174,7 +175,7 @@ public class NXpolarizer_optImpl extends NXobjectImpl implements NXpolarizer_opt
 	// Unprocessed group: sketch
 
 	@Override
-	public IDataset getWavelength_range() {
+	public Dataset getWavelength_range() {
 		return getDataset(NX_WAVELENGTH_RANGE);
 	}
 
@@ -216,7 +217,7 @@ public class NXpolarizer_optImpl extends NXobjectImpl implements NXpolarizer_opt
 	}
 
 	@Override
-	public IDataset getExtinction_ratio() {
+	public Dataset getExtinction_ratio() {
 		return getDataset(NX_EXTINCTION_RATIO);
 	}
 
@@ -236,7 +237,7 @@ public class NXpolarizer_optImpl extends NXobjectImpl implements NXpolarizer_opt
 	}
 
 	@Override
-	public IDataset getReflection() {
+	public Dataset getReflection() {
 		return getDataset(NX_REFLECTION);
 	}
 
@@ -256,7 +257,7 @@ public class NXpolarizer_optImpl extends NXobjectImpl implements NXpolarizer_opt
 	}
 
 	@Override
-	public IDataset getTransmission() {
+	public Dataset getTransmission() {
 		return getDataset(NX_TRANSMISSION);
 	}
 

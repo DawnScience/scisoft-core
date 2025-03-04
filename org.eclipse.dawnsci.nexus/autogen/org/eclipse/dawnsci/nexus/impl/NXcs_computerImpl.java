@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -61,7 +62,7 @@ public class NXcs_computerImpl extends NXobjectImpl implements NXcs_computer {
 
 
 	@Override
-	public IDataset getName() {
+	public Dataset getName() {
 		return getDataset(NX_NAME);
 	}
 
@@ -81,7 +82,7 @@ public class NXcs_computerImpl extends NXobjectImpl implements NXcs_computer {
 	}
 
 	@Override
-	public IDataset getOperating_system() {
+	public Dataset getOperating_system() {
 		return getDataset(NX_OPERATING_SYSTEM);
 	}
 
@@ -111,7 +112,7 @@ public class NXcs_computerImpl extends NXobjectImpl implements NXcs_computer {
 	}
 
 	@Override
-	public IDataset getUuid() {
+	public Dataset getUuid() {
 		return getDataset(NX_UUID);
 	}
 

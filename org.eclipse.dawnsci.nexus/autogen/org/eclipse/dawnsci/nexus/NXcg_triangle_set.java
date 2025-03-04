@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Computational geometry description of a set of triangles in Euclidean space.
@@ -48,7 +49,7 @@ public interface NXcg_triangle_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDimensionality();
+	public Dataset getDimensionality();
 
 	/**
 	 * <p>
@@ -88,7 +89,7 @@ public interface NXcg_triangle_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCardinality();
+	public Dataset getCardinality();
 
 	/**
 	 * <p>
@@ -128,7 +129,7 @@ public interface NXcg_triangle_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_unique_vertices();
+	public Dataset getNumber_of_unique_vertices();
 
 	/**
 	 * <p>
@@ -244,7 +245,7 @@ public interface NXcg_triangle_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier_offset();
+	public Dataset getIdentifier_offset();
 
 	/**
 	 * Integer which specifies the first index to be used for distinguishing
@@ -310,7 +311,7 @@ public interface NXcg_triangle_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier();
+	public Dataset getIdentifier();
 
 	/**
 	 * Integer used to distinguish triangles for explicit indexing.
@@ -409,7 +410,7 @@ public interface NXcg_triangle_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getArea();
+	public Dataset getArea();
 
 	/**
 	 * <p>
@@ -456,7 +457,7 @@ public interface NXcg_triangle_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEdge_length();
+	public Dataset getEdge_length();
 
 	/**
 	 * Array of edge length values. For each triangle the edge length is
@@ -512,7 +513,7 @@ public interface NXcg_triangle_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getInterior_angle();
+	public Dataset getInterior_angle();
 
 	/**
 	 * Array of interior angle values. For each triangle the angle is
@@ -566,7 +567,7 @@ public interface NXcg_triangle_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCenter();
+	public Dataset getCenter();
 
 	/**
 	 * The center of mass of each polygon.

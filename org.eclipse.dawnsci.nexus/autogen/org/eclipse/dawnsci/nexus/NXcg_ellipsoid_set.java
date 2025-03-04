@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Computational geometry description of a set of ellipsoids in Euclidean space.
@@ -49,7 +50,7 @@ public interface NXcg_ellipsoid_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDimensionality();
+	public Dataset getDimensionality();
 
 	/**
 	 * <p>
@@ -89,7 +90,7 @@ public interface NXcg_ellipsoid_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCardinality();
+	public Dataset getCardinality();
 
 	/**
 	 * <p>
@@ -137,7 +138,7 @@ public interface NXcg_ellipsoid_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier_offset();
+	public Dataset getIdentifier_offset();
 
 	/**
 	 * Integer which specifies the first index to be used for distinguishing
@@ -203,7 +204,7 @@ public interface NXcg_ellipsoid_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier();
+	public Dataset getIdentifier();
 
 	/**
 	 * Integer used to distinguish ellipsoids for explicit indexing.
@@ -255,7 +256,7 @@ public interface NXcg_ellipsoid_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCenter();
+	public Dataset getCenter();
 
 	/**
 	 * Geometric center of the ellipsoids. This can be the center of mass.
@@ -315,7 +316,7 @@ public interface NXcg_ellipsoid_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getHalf_axes_radius();
+	public Dataset getHalf_axes_radius();
 
 	/**
 	 * If all ellipsoids in the set have the same half-axes.
@@ -364,7 +365,7 @@ public interface NXcg_ellipsoid_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getHalf_axes_radii();
+	public Dataset getHalf_axes_radii();
 
 	/**
 	 * In the case that ellipsoids have different radii use this field
@@ -482,7 +483,7 @@ public interface NXcg_ellipsoid_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIs_closed();
+	public Dataset getIs_closed();
 
 	/**
 	 * Are the ellipsoids closed or hollow?
@@ -526,7 +527,7 @@ public interface NXcg_ellipsoid_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getVolume();
+	public Dataset getVolume();
 
 	/**
 	 * <p>
@@ -570,7 +571,7 @@ public interface NXcg_ellipsoid_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSurface_area();
+	public Dataset getSurface_area();
 
 	/**
 	 * <p>
@@ -615,7 +616,7 @@ public interface NXcg_ellipsoid_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getOrientation();
+	public Dataset getOrientation();
 
 	/**
 	 * Direction unit vector which points along the largest half-axes.

@@ -130,9 +130,9 @@ public abstract class NXobjectImpl extends GroupNodeImpl implements NXobject {
 		
 		return null;
 	}
-	
+
 	@Override
-	public IDataset getDataset(String name) {
+	public Dataset getDataset(String name) {
 		if (!containsDataNode(name)) {
 			return null;
 		}
@@ -307,8 +307,8 @@ public abstract class NXobjectImpl extends GroupNodeImpl implements NXobject {
 	}
 
 	@Override
-	public Map<String, IDataset> getAllDatasets() {
-		Map<String, IDataset> map = new LinkedHashMap<>();
+	public Map<String, Dataset> getAllDatasets() {
+		Map<String, Dataset> map = new LinkedHashMap<>();
 		
 		for (NodeLink n : this) {
 			if (n.isDestinationData()) {

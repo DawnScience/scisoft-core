@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -89,7 +90,7 @@ public class NXpumpImpl extends NXobjectImpl implements NXpump {
 	}
 
 	@Override
-	public IDataset getDesign() {
+	public Dataset getDesign() {
 		return getDataset(NX_DESIGN);
 	}
 

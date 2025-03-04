@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -64,7 +65,7 @@ public class NXapm_input_rangingImpl extends NXobjectImpl implements NXapm_input
 
 
 	@Override
-	public IDataset getFilename() {
+	public Dataset getFilename() {
 		return getDataset(NX_FILENAME);
 	}
 
@@ -94,7 +95,7 @@ public class NXapm_input_rangingImpl extends NXobjectImpl implements NXapm_input
 	}
 
 	@Override
-	public IDataset getGroup_name_iontypes() {
+	public Dataset getGroup_name_iontypes() {
 		return getDataset(NX_GROUP_NAME_IONTYPES);
 	}
 

@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A set of nodes/vertices in space representing members of a graph.
@@ -41,7 +42,7 @@ public interface NXgraph_node_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDimensionality();
+	public Dataset getDimensionality();
 
 	/**
 	 * <p>
@@ -81,7 +82,7 @@ public interface NXgraph_node_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCardinality();
+	public Dataset getCardinality();
 
 	/**
 	 * <p>
@@ -129,7 +130,7 @@ public interface NXgraph_node_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier_offset();
+	public Dataset getIdentifier_offset();
 
 	/**
 	 * Integer which specifies the first index to be used for distinguishing
@@ -195,7 +196,7 @@ public interface NXgraph_node_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier();
+	public Dataset getIdentifier();
 
 	/**
 	 * Integer used to distinguish nodes for explicit indexing.
@@ -245,7 +246,7 @@ public interface NXgraph_node_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIs_a();
+	public Dataset getIs_a();
 
 	/**
 	 * A human-readable qualifier which type or e.g. class instance the
@@ -297,7 +298,7 @@ public interface NXgraph_node_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLabel();
+	public Dataset getLabel();
 
 	/**
 	 * A human-readable label/caption/tag of the graph.

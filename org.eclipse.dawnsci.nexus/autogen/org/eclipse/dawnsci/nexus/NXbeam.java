@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Properties of the neutron or X-ray beam at a given location.
@@ -71,7 +72,7 @@ public interface NXbeam extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDistance();
+	public Dataset getDistance();
 
 	/**
 	 * Distance from sample. Note, it is recommended to use NXtransformations instead.
@@ -116,7 +117,7 @@ public interface NXbeam extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIncident_energy();
+	public Dataset getIncident_energy();
 
 	/**
 	 * Energy carried by each particle of the beam on entering the beamline component
@@ -164,7 +165,7 @@ public interface NXbeam extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFinal_energy();
+	public Dataset getFinal_energy();
 
 	/**
 	 * Energy carried by each particle of the beam on leaving the beamline component
@@ -212,7 +213,7 @@ public interface NXbeam extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEnergy_transfer();
+	public Dataset getEnergy_transfer();
 
 	/**
 	 * Change in particle energy caused by the beamline component
@@ -284,7 +285,7 @@ public interface NXbeam extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIncident_wavelength();
+	public Dataset getIncident_wavelength();
 
 	/**
 	 * In the case of a monochromatic beam this is the scalar
@@ -408,7 +409,7 @@ public interface NXbeam extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIncident_wavelength_weights();
+	public Dataset getIncident_wavelength_weights();
 
 	/**
 	 * In the case of a polychromatic beam this is an array of
@@ -473,7 +474,7 @@ public interface NXbeam extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIncident_wavelength_spread();
+	public Dataset getIncident_wavelength_spread();
 
 	/**
 	 * The wavelength spread FWHM for the corresponding
@@ -542,7 +543,7 @@ public interface NXbeam extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIncident_beam_divergence();
+	public Dataset getIncident_beam_divergence();
 
 	/**
 	 * Beam crossfire in degrees parallel to the laboratory X axis
@@ -609,7 +610,7 @@ public interface NXbeam extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getExtent();
+	public Dataset getExtent();
 
 	/**
 	 * Size of the beam entering this component. Note this represents
@@ -660,7 +661,7 @@ public interface NXbeam extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFinal_wavelength();
+	public Dataset getFinal_wavelength();
 
 	/**
 	 * Wavelength on leaving beamline component
@@ -708,7 +709,7 @@ public interface NXbeam extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIncident_polarization();
+	public Dataset getIncident_polarization();
 
 	/**
 	 * Polarization vector on entering beamline component
@@ -756,7 +757,7 @@ public interface NXbeam extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFinal_polarization();
+	public Dataset getFinal_polarization();
 
 	/**
 	 * Polarization vector on leaving beamline component
@@ -819,7 +820,7 @@ public interface NXbeam extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIncident_polarization_stokes();
+	public Dataset getIncident_polarization_stokes();
 
 	/**
 	 * Polarization vector on entering beamline component using Stokes notation
@@ -913,7 +914,7 @@ public interface NXbeam extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFinal_polarization_stokes();
+	public Dataset getFinal_polarization_stokes();
 
 	/**
 	 * Polarization vector on leaving beamline component using Stokes notation
@@ -964,7 +965,7 @@ public interface NXbeam extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFinal_wavelength_spread();
+	public Dataset getFinal_wavelength_spread();
 
 	/**
 	 * Wavelength spread FWHM of beam leaving this component
@@ -1012,7 +1013,7 @@ public interface NXbeam extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFinal_beam_divergence();
+	public Dataset getFinal_beam_divergence();
 
 	/**
 	 * Divergence FWHM of beam leaving this component
@@ -1060,7 +1061,7 @@ public interface NXbeam extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFlux();
+	public Dataset getFlux();
 
 	/**
 	 * flux incident on beam plane area
@@ -1211,7 +1212,7 @@ public interface NXbeam extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * The NeXus coordinate system defines the Z axis to be along the nominal beam

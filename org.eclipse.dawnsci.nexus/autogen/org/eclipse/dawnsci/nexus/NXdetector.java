@@ -17,6 +17,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A detector, detector bank, or multidetector.
@@ -133,7 +134,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTime_of_flight();
+	public Dataset getTime_of_flight();
 
 	/**
 	 * Total time of flight
@@ -243,7 +244,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRaw_time_of_flight();
+	public Dataset getRaw_time_of_flight();
 
 	/**
 	 * In DAQ clock pulses
@@ -304,7 +305,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDetector_number();
+	public Dataset getDetector_number();
 
 	/**
 	 * Identifier for detector (pixels)
@@ -366,7 +367,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getData();
+	public Dataset getData();
 
 	/**
 	 * Data values from the detector. The rank and dimension ordering should follow a principle of
@@ -495,7 +496,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getData_errors();
+	public Dataset getData_errors();
 
 	/**
 	 * The best estimate of the uncertainty in the data value (array size should match the data field). Where
@@ -550,7 +551,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getX_pixel_offset();
+	public Dataset getX_pixel_offset();
 
 	/**
 	 * Offset from the detector center in x-direction.
@@ -664,7 +665,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getY_pixel_offset();
+	public Dataset getY_pixel_offset();
 
 	/**
 	 * Offset from the detector center in the y-direction.
@@ -778,7 +779,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getZ_pixel_offset();
+	public Dataset getZ_pixel_offset();
 
 	/**
 	 * Offset from the detector center in the z-direction.
@@ -896,7 +897,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDistance();
+	public Dataset getDistance();
 
 	/**
 	 * This is the distance to the previous component in the
@@ -967,7 +968,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPolar_angle();
+	public Dataset getPolar_angle();
 
 	/**
 	 * This is the polar angle of the detector towards the previous
@@ -1047,7 +1048,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAzimuthal_angle();
+	public Dataset getAzimuthal_angle();
 
 	/**
 	 * This is the azimuthal angle angle of the detector towards
@@ -1114,7 +1115,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * name/manufacturer/model/etc. information
@@ -1142,7 +1143,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSerial_number();
+	public Dataset getSerial_number();
 
 	/**
 	 * Serial number for the detector
@@ -1170,7 +1171,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLocal_name();
+	public Dataset getLocal_name();
 
 	/**
 	 * Local name for the detector
@@ -1277,7 +1278,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSolid_angle();
+	public Dataset getSolid_angle();
 
 	/**
 	 * Solid angle subtended by the detector at the sample
@@ -1325,7 +1326,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getX_pixel_size();
+	public Dataset getX_pixel_size();
 
 	/**
 	 * Size of each detector pixel. If it is scalar all pixels are the same size.
@@ -1373,7 +1374,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getY_pixel_size();
+	public Dataset getY_pixel_size();
 
 	/**
 	 * Size of each detector pixel. If it is scalar all pixels are the same size
@@ -1421,7 +1422,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDead_time();
+	public Dataset getDead_time();
 
 	/**
 	 * Detector dead time
@@ -1469,7 +1470,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getGas_pressure();
+	public Dataset getGas_pressure();
 
 	/**
 	 * Detector gas pressure
@@ -1516,7 +1517,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDetection_gas_path();
+	public Dataset getDetection_gas_path();
 
 	/**
 	 * maximum drift space dimension
@@ -1560,7 +1561,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCrate();
+	public Dataset getCrate();
 
 	/**
 	 * Crate number of detector
@@ -1618,7 +1619,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSlot();
+	public Dataset getSlot();
 
 	/**
 	 * Slot number of detector
@@ -1676,7 +1677,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getInput();
+	public Dataset getInput();
 
 	/**
 	 * Input number of detector
@@ -1732,7 +1733,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * Description of type such as He3 gas cylinder, He3 PSD, scintillator,
@@ -1815,7 +1816,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getReal_time();
+	public Dataset getReal_time();
 
 	/**
 	 * Real-time of the exposure (use this if exposure time varies for
@@ -1881,7 +1882,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getStart_time();
+	public Dataset getStart_time();
 
 	/**
 	 * start time for each frame, with the ``start`` attribute as absolute reference
@@ -1941,7 +1942,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getStop_time();
+	public Dataset getStop_time();
 
 	/**
 	 * stop time for each frame, with the ``start`` attribute as absolute reference
@@ -1999,7 +2000,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCalibration_date();
+	public Dataset getCalibration_date();
 
 	/**
 	 * date of last calibration (geometry and/or efficiency) measurements
@@ -2058,7 +2059,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLayout();
+	public Dataset getLayout();
 
 	/**
 	 * How the detector is represented
@@ -2109,7 +2110,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCount_time();
+	public Dataset getCount_time();
 
 	/**
 	 * Elapsed actual counting time
@@ -2232,7 +2233,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSequence_number();
+	public Dataset getSequence_number();
 
 	/**
 	 * In order to properly sort the order of the images taken in (for
@@ -2285,7 +2286,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBeam_center_x();
+	public Dataset getBeam_center_x();
 
 	/**
 	 * This is the x position where the direct beam would hit the detector.
@@ -2341,7 +2342,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBeam_center_y();
+	public Dataset getBeam_center_y();
 
 	/**
 	 * This is the y position where the direct beam would hit the detector.
@@ -2396,7 +2397,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFrame_start_number();
+	public Dataset getFrame_start_number();
 
 	/**
 	 * This is the start number of the first frame of a scan. In protein crystallography measurements one
@@ -2446,7 +2447,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDiameter();
+	public Dataset getDiameter();
 
 	/**
 	 * The diameter of a cylindrical detector
@@ -2496,7 +2497,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAcquisition_mode();
+	public Dataset getAcquisition_mode();
 
 	/**
 	 * The acquisition mode of the detector.
@@ -2558,7 +2559,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAngular_calibration_applied();
+	public Dataset getAngular_calibration_applied();
 
 	/**
 	 * True when the angular calibration has been applied in the
@@ -2602,7 +2603,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAngular_calibration();
+	public Dataset getAngular_calibration();
 
 	/**
 	 * Angular calibration data.
@@ -2646,7 +2647,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFlatfield_applied();
+	public Dataset getFlatfield_applied();
 
 	/**
 	 * True when the flat field correction has been applied in the
@@ -2690,7 +2691,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFlatfield();
+	public Dataset getFlatfield();
 
 	/**
 	 * Flat field correction data.
@@ -2735,7 +2736,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFlatfield_errors();
+	public Dataset getFlatfield_errors();
 
 	/**
 	 * Errors of the flat field correction data.
@@ -2782,7 +2783,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPixel_mask_applied();
+	public Dataset getPixel_mask_applied();
 
 	/**
 	 * True when the pixel mask correction has been applied in the
@@ -2863,7 +2864,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPixel_mask();
+	public Dataset getPixel_mask();
 
 	/**
 	 * The 32-bit pixel mask for the detector. Can be either one mask
@@ -3030,7 +3031,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getImage_key();
+	public Dataset getImage_key();
 
 	/**
 	 * This field allow to distinguish different types of exposure to the same detector "data" field.
@@ -3112,7 +3113,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCountrate_correction_applied();
+	public Dataset getCountrate_correction_applied();
 
 	/**
 	 * Counting detectors usually are not able to measure all incoming particles,
@@ -3165,7 +3166,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCountrate_correction_lookup_table();
+	public Dataset getCountrate_correction_lookup_table();
 
 	/**
 	 * The countrate_correction_lookup_table defines the LUT used for count-rate
@@ -3222,7 +3223,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getVirtual_pixel_interpolation_applied();
+	public Dataset getVirtual_pixel_interpolation_applied();
 
 	/**
 	 * True when virtual pixel interpolation has been applied, false otherwise.
@@ -3280,7 +3281,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBit_depth_readout();
+	public Dataset getBit_depth_readout();
 
 	/**
 	 * How many bits the electronics reads per pixel.
@@ -3331,7 +3332,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDetector_readout_time();
+	public Dataset getDetector_readout_time();
 
 	/**
 	 * Time it takes to read the detector (typically milliseconds).
@@ -3381,7 +3382,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTrigger_delay_time();
+	public Dataset getTrigger_delay_time();
 
 	/**
 	 * Time it takes to start exposure after a trigger signal has been received.
@@ -3434,7 +3435,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTrigger_delay_time_set();
+	public Dataset getTrigger_delay_time_set();
 
 	/**
 	 * User-specified trigger delay.
@@ -3482,7 +3483,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTrigger_internal_delay_time();
+	public Dataset getTrigger_internal_delay_time();
 
 	/**
 	 * Time it takes to start exposure after a trigger signal has been received.
@@ -3541,7 +3542,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTrigger_dead_time();
+	public Dataset getTrigger_dead_time();
 
 	/**
 	 * Time during which no new trigger signal can be accepted.
@@ -3595,7 +3596,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFrame_time();
+	public Dataset getFrame_time();
 
 	/**
 	 * This is time for each frame. This is exposure_time + readout time.
@@ -3654,7 +3655,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getGain_setting();
+	public Dataset getGain_setting();
 
 	/**
 	 * The gain setting of the detector. This is a detector-specific value
@@ -3739,7 +3740,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSaturation_value();
+	public Dataset getSaturation_value();
 
 	/**
 	 * The value at which the detector goes into saturation.
@@ -3802,7 +3803,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getUnderload_value();
+	public Dataset getUnderload_value();
 
 	/**
 	 * The lowest value at which pixels for this detector would be reasonably
@@ -3861,7 +3862,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_cycles();
+	public Dataset getNumber_of_cycles();
 
 	/**
 	 * CCD images are sometimes constructed by summing
@@ -3916,7 +3917,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSensor_material();
+	public Dataset getSensor_material();
 
 	/**
 	 * At times, radiation is not directly sensed by the detector.
@@ -3969,7 +3970,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSensor_thickness();
+	public Dataset getSensor_thickness();
 
 	/**
 	 * At times, radiation is not directly sensed by the detector.
@@ -4024,7 +4025,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getThreshold_energy();
+	public Dataset getThreshold_energy();
 
 	/**
 	 * Single photon counter detectors can be adjusted
@@ -4176,7 +4177,7 @@ public interface NXdetector extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -57,7 +58,7 @@ public class NXelectrostatic_kickerImpl extends NXobjectImpl implements NXelectr
 
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -77,7 +78,7 @@ public class NXelectrostatic_kickerImpl extends NXobjectImpl implements NXelectr
 	}
 
 	@Override
-	public IDataset getBeamline_distance() {
+	public Dataset getBeamline_distance() {
 		return getDataset(NX_BEAMLINE_DISTANCE);
 	}
 
@@ -97,7 +98,7 @@ public class NXelectrostatic_kickerImpl extends NXobjectImpl implements NXelectr
 	}
 
 	@Override
-	public IDataset getTiming() {
+	public Dataset getTiming() {
 		return getDataset(NX_TIMING);
 	}
 
@@ -127,7 +128,7 @@ public class NXelectrostatic_kickerImpl extends NXobjectImpl implements NXelectr
 	}
 
 	@Override
-	public IDataset getSet_current() {
+	public Dataset getSet_current() {
 		return getDataset(NX_SET_CURRENT);
 	}
 
@@ -158,7 +159,7 @@ public class NXelectrostatic_kickerImpl extends NXobjectImpl implements NXelectr
 	}
 
 	@Override
-	public IDataset getSet_voltage() {
+	public Dataset getSet_voltage() {
 		return getDataset(NX_SET_VOLTAGE);
 	}
 

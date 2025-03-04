@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * definition for an electrostatic separator.
@@ -33,7 +34,7 @@ public interface NXseparator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * extended description of the separator.
@@ -74,7 +75,7 @@ public interface NXseparator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBeamline_distance();
+	public Dataset getBeamline_distance();
 
 	/**
 	 * define position of beamline element relative to production target
@@ -118,7 +119,7 @@ public interface NXseparator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSet_bfield_current();
+	public Dataset getSet_bfield_current();
 
 	/**
 	 * current set on magnet supply.
@@ -190,7 +191,7 @@ public interface NXseparator extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSet_efield_voltage();
+	public Dataset getSet_efield_voltage();
 
 	/**
 	 * current set on HT supply.

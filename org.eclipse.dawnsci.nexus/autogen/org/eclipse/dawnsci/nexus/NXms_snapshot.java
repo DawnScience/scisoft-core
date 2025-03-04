@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Base class for data on the state of the microstructure at a given
@@ -37,7 +38,7 @@ public interface NXms_snapshot extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getComment();
+	public Dataset getComment();
 
 	/**
 	 * Is this time for a measurement or a simulation.
@@ -85,7 +86,7 @@ public interface NXms_snapshot extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTime();
+	public Dataset getTime();
 
 	/**
 	 * Measured or simulated physical time stamp for this snapshot.
@@ -132,7 +133,7 @@ public interface NXms_snapshot extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIteration();
+	public Dataset getIteration();
 
 	/**
 	 * Iteration or increment counter.

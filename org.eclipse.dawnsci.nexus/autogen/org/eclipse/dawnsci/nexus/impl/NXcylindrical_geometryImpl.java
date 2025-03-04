@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -63,7 +64,7 @@ public class NXcylindrical_geometryImpl extends NXobjectImpl implements NXcylind
 
 
 	@Override
-	public IDataset getVertices() {
+	public Dataset getVertices() {
 		return getDataset(NX_VERTICES);
 	}
 
@@ -83,7 +84,7 @@ public class NXcylindrical_geometryImpl extends NXobjectImpl implements NXcylind
 	}
 
 	@Override
-	public IDataset getCylinders() {
+	public Dataset getCylinders() {
 		return getDataset(NX_CYLINDERS);
 	}
 
@@ -103,7 +104,7 @@ public class NXcylindrical_geometryImpl extends NXobjectImpl implements NXcylind
 	}
 
 	@Override
-	public IDataset getDetector_number() {
+	public Dataset getDetector_number() {
 		return getDataset(NX_DETECTOR_NUMBER);
 	}
 

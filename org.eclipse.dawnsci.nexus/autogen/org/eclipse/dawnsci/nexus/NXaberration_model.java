@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Models for aberrations of electro-magnetic lenses in electron microscopy.
@@ -50,7 +51,7 @@ public interface NXaberration_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getModel();
+	public Dataset getModel();
 
 	/**
 	 * <p>
@@ -150,7 +151,7 @@ public interface NXaberration_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getC_1_0();
+	public Dataset getC_1_0();
 
 	/**
 	 * Defocus
@@ -194,7 +195,7 @@ public interface NXaberration_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getC_1_2_a();
+	public Dataset getC_1_2_a();
 
 	/**
 	 * Two-fold astigmatism
@@ -238,7 +239,7 @@ public interface NXaberration_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getC_1_2_b();
+	public Dataset getC_1_2_b();
 
 	/**
 	 * Two-fold astigmatism
@@ -282,7 +283,7 @@ public interface NXaberration_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getC_2_1_a();
+	public Dataset getC_2_1_a();
 
 	/**
 	 * Second-order axial coma
@@ -326,7 +327,7 @@ public interface NXaberration_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getC_2_1_b();
+	public Dataset getC_2_1_b();
 
 	/**
 	 * Second-order axial coma
@@ -370,7 +371,7 @@ public interface NXaberration_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getC_2_3_a();
+	public Dataset getC_2_3_a();
 
 	/**
 	 * Threefold astigmatism
@@ -414,7 +415,7 @@ public interface NXaberration_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getC_2_3_b();
+	public Dataset getC_2_3_b();
 
 	/**
 	 * Threefold astigmatism
@@ -458,7 +459,7 @@ public interface NXaberration_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getC_3_0();
+	public Dataset getC_3_0();
 
 	/**
 	 * Spherical aberration
@@ -502,7 +503,7 @@ public interface NXaberration_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getC_3_2_a();
+	public Dataset getC_3_2_a();
 
 	/**
 	 * Star aberration
@@ -546,7 +547,7 @@ public interface NXaberration_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getC_3_2_b();
+	public Dataset getC_3_2_b();
 
 	/**
 	 * Star aberration
@@ -590,7 +591,7 @@ public interface NXaberration_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getC_3_4_a();
+	public Dataset getC_3_4_a();
 
 	/**
 	 * Fourfold astigmatism
@@ -634,7 +635,7 @@ public interface NXaberration_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getC_3_4_b();
+	public Dataset getC_3_4_b();
 
 	/**
 	 * Fourfold astigmatism
@@ -678,7 +679,7 @@ public interface NXaberration_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getC_5_0();
+	public Dataset getC_5_0();
 
 	/**
 	 * Fifth-order spherical aberration

@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -70,7 +71,7 @@ public class NXdisk_chopperImpl extends NXobjectImpl implements NXdisk_chopper {
 
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -90,7 +91,7 @@ public class NXdisk_chopperImpl extends NXobjectImpl implements NXdisk_chopper {
 	}
 
 	@Override
-	public IDataset getRotation_speed() {
+	public Dataset getRotation_speed() {
 		return getDataset(NX_ROTATION_SPEED);
 	}
 
@@ -110,7 +111,7 @@ public class NXdisk_chopperImpl extends NXobjectImpl implements NXdisk_chopper {
 	}
 
 	@Override
-	public IDataset getSlits() {
+	public Dataset getSlits() {
 		return getDataset(NX_SLITS);
 	}
 
@@ -130,7 +131,7 @@ public class NXdisk_chopperImpl extends NXobjectImpl implements NXdisk_chopper {
 	}
 
 	@Override
-	public IDataset getSlit_angle() {
+	public Dataset getSlit_angle() {
 		return getDataset(NX_SLIT_ANGLE);
 	}
 
@@ -150,7 +151,7 @@ public class NXdisk_chopperImpl extends NXobjectImpl implements NXdisk_chopper {
 	}
 
 	@Override
-	public IDataset getPair_separation() {
+	public Dataset getPair_separation() {
 		return getDataset(NX_PAIR_SEPARATION);
 	}
 
@@ -170,7 +171,7 @@ public class NXdisk_chopperImpl extends NXobjectImpl implements NXdisk_chopper {
 	}
 
 	@Override
-	public IDataset getSlit_edges() {
+	public Dataset getSlit_edges() {
 		return getDataset(NX_SLIT_EDGES);
 	}
 
@@ -190,7 +191,7 @@ public class NXdisk_chopperImpl extends NXobjectImpl implements NXdisk_chopper {
 	}
 
 	@Override
-	public IDataset getTop_dead_center() {
+	public Dataset getTop_dead_center() {
 		return getDataset(NX_TOP_DEAD_CENTER);
 	}
 
@@ -220,7 +221,7 @@ public class NXdisk_chopperImpl extends NXobjectImpl implements NXdisk_chopper {
 	}
 
 	@Override
-	public IDataset getBeam_position() {
+	public Dataset getBeam_position() {
 		return getDataset(NX_BEAM_POSITION);
 	}
 
@@ -240,7 +241,7 @@ public class NXdisk_chopperImpl extends NXobjectImpl implements NXdisk_chopper {
 	}
 
 	@Override
-	public IDataset getRadius() {
+	public Dataset getRadius() {
 		return getDataset(NX_RADIUS);
 	}
 
@@ -260,7 +261,7 @@ public class NXdisk_chopperImpl extends NXobjectImpl implements NXdisk_chopper {
 	}
 
 	@Override
-	public IDataset getSlit_height() {
+	public Dataset getSlit_height() {
 		return getDataset(NX_SLIT_HEIGHT);
 	}
 
@@ -280,7 +281,7 @@ public class NXdisk_chopperImpl extends NXobjectImpl implements NXdisk_chopper {
 	}
 
 	@Override
-	public IDataset getPhase() {
+	public Dataset getPhase() {
 		return getDataset(NX_PHASE);
 	}
 
@@ -300,7 +301,7 @@ public class NXdisk_chopperImpl extends NXobjectImpl implements NXdisk_chopper {
 	}
 
 	@Override
-	public IDataset getDelay() {
+	public Dataset getDelay() {
 		return getDataset(NX_DELAY);
 	}
 
@@ -320,7 +321,7 @@ public class NXdisk_chopperImpl extends NXobjectImpl implements NXdisk_chopper {
 	}
 
 	@Override
-	public IDataset getRatio() {
+	public Dataset getRatio() {
 		return getDataset(NX_RATIO);
 	}
 
@@ -340,7 +341,7 @@ public class NXdisk_chopperImpl extends NXobjectImpl implements NXdisk_chopper {
 	}
 
 	@Override
-	public IDataset getDistance() {
+	public Dataset getDistance() {
 		return getDataset(NX_DISTANCE);
 	}
 
@@ -360,7 +361,7 @@ public class NXdisk_chopperImpl extends NXobjectImpl implements NXdisk_chopper {
 	}
 
 	@Override
-	public IDataset getWavelength_range() {
+	public Dataset getWavelength_range() {
 		return getDataset(NX_WAVELENGTH_RANGE);
 	}
 
@@ -458,7 +459,7 @@ public class NXdisk_chopperImpl extends NXobjectImpl implements NXdisk_chopper {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

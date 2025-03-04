@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Details about individual orientations of a set of objects.
@@ -119,7 +120,7 @@ public interface NXorientation_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getParameterization();
+	public Dataset getParameterization();
 
 	/**
 	 * <p>
@@ -161,7 +162,7 @@ public interface NXorientation_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getObjects();
+	public Dataset getObjects();
 
 	/**
 	 * A link or reference to the objects whose identifier are referred to in
@@ -207,7 +208,7 @@ public interface NXorientation_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier_offset();
+	public Dataset getIdentifier_offset();
 
 	/**
 	 * Integer which specifies which orientation (row of array orientation) matches
@@ -283,7 +284,7 @@ public interface NXorientation_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIdentifier();
+	public Dataset getIdentifier();
 
 	/**
 	 * Integer used to distinguish how a row in orientation describes a specific
@@ -352,7 +353,7 @@ public interface NXorientation_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getOrientation();
+	public Dataset getOrientation();
 
 	/**
 	 * Parameterized orientations.

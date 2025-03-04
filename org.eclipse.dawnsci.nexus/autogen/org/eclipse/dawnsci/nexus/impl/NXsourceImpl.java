@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -65,7 +66,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 
 
 	@Override
-	public IDataset getDistance() {
+	public Dataset getDistance() {
 		return getDataset(NX_DISTANCE);
 	}
 
@@ -85,7 +86,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public IDataset getName() {
+	public Dataset getName() {
 		return getDataset(NX_NAME);
 	}
 
@@ -115,7 +116,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -135,7 +136,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public IDataset getProbe() {
+	public Dataset getProbe() {
 		return getDataset(NX_PROBE);
 	}
 
@@ -155,7 +156,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public IDataset getPower() {
+	public Dataset getPower() {
 		return getDataset(NX_POWER);
 	}
 
@@ -175,7 +176,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public IDataset getEmittance_x() {
+	public Dataset getEmittance_x() {
 		return getDataset(NX_EMITTANCE_X);
 	}
 
@@ -195,7 +196,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public IDataset getEmittance_y() {
+	public Dataset getEmittance_y() {
 		return getDataset(NX_EMITTANCE_Y);
 	}
 
@@ -215,7 +216,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public IDataset getSigma_x() {
+	public Dataset getSigma_x() {
 		return getDataset(NX_SIGMA_X);
 	}
 
@@ -235,7 +236,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public IDataset getSigma_y() {
+	public Dataset getSigma_y() {
 		return getDataset(NX_SIGMA_Y);
 	}
 
@@ -255,7 +256,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public IDataset getFlux() {
+	public Dataset getFlux() {
 		return getDataset(NX_FLUX);
 	}
 
@@ -275,7 +276,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public IDataset getEnergy() {
+	public Dataset getEnergy() {
 		return getDataset(NX_ENERGY);
 	}
 
@@ -295,7 +296,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public IDataset getCurrent() {
+	public Dataset getCurrent() {
 		return getDataset(NX_CURRENT);
 	}
 
@@ -315,7 +316,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public IDataset getVoltage() {
+	public Dataset getVoltage() {
 		return getDataset(NX_VOLTAGE);
 	}
 
@@ -335,7 +336,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public IDataset getFrequency() {
+	public Dataset getFrequency() {
 		return getDataset(NX_FREQUENCY);
 	}
 
@@ -355,7 +356,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public IDataset getPeriod() {
+	public Dataset getPeriod() {
 		return getDataset(NX_PERIOD);
 	}
 
@@ -375,7 +376,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public IDataset getTarget_material() {
+	public Dataset getTarget_material() {
 		return getDataset(NX_TARGET_MATERIAL);
 	}
 
@@ -417,7 +418,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public IDataset getNumber_of_bunches() {
+	public Dataset getNumber_of_bunches() {
 		return getDataset(NX_NUMBER_OF_BUNCHES);
 	}
 
@@ -437,7 +438,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public IDataset getBunch_length() {
+	public Dataset getBunch_length() {
 		return getDataset(NX_BUNCH_LENGTH);
 	}
 
@@ -457,7 +458,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public IDataset getBunch_distance() {
+	public Dataset getBunch_distance() {
 		return getDataset(NX_BUNCH_DISTANCE);
 	}
 
@@ -477,7 +478,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public IDataset getPulse_width() {
+	public Dataset getPulse_width() {
 		return getDataset(NX_PULSE_WIDTH);
 	}
 
@@ -508,7 +509,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public IDataset getMode() {
+	public Dataset getMode() {
 		return getDataset(NX_MODE);
 	}
 
@@ -528,7 +529,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public IDataset getTop_up() {
+	public Dataset getTop_up() {
 		return getDataset(NX_TOP_UP);
 	}
 
@@ -548,7 +549,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public IDataset getLast_fill() {
+	public Dataset getLast_fill() {
 		return getDataset(NX_LAST_FILL);
 	}
 
@@ -643,7 +644,7 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

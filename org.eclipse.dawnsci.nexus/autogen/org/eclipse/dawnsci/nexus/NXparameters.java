@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Container for parameters, usually used in processing or analysis.
@@ -32,7 +33,7 @@ public interface NXparameters extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTerm();
+	public Dataset getTerm();
 
 	/**
 	 * A parameter (also known as a term) that is used in or results from processing.

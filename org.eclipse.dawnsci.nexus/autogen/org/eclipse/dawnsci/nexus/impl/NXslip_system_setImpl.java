@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -55,7 +56,7 @@ public class NXslip_system_setImpl extends NXobjectImpl implements NXslip_system
 
 
 	@Override
-	public IDataset getLattice_type() {
+	public Dataset getLattice_type() {
 		return getDataset(NX_LATTICE_TYPE);
 	}
 
@@ -75,7 +76,7 @@ public class NXslip_system_setImpl extends NXobjectImpl implements NXslip_system
 	}
 
 	@Override
-	public IDataset getMiller_plane() {
+	public Dataset getMiller_plane() {
 		return getDataset(NX_MILLER_PLANE);
 	}
 
@@ -95,7 +96,7 @@ public class NXslip_system_setImpl extends NXobjectImpl implements NXslip_system
 	}
 
 	@Override
-	public IDataset getMiller_direction() {
+	public Dataset getMiller_direction() {
 		return getDataset(NX_MILLER_DIRECTION);
 	}
 
@@ -115,7 +116,7 @@ public class NXslip_system_setImpl extends NXobjectImpl implements NXslip_system
 	}
 
 	@Override
-	public IDataset getIs_specific() {
+	public Dataset getIs_specific() {
 		return getDataset(NX_IS_SPECIFIC);
 	}
 

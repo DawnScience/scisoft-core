@@ -281,7 +281,7 @@ public class NXobjectTest {
 		detector.setNumber_of_cycles(numberOfCycles);
 		detector.setDistance(distance);
 		
-		final Map<String, IDataset> datasets = detector.getAllDatasets();
+		final Map<String, Dataset> datasets = detector.getAllDatasets();
 		assertEquals(3, datasets.size());
 		assertSame(azimuthalAngle, datasets.get(NXdetector.NX_AZIMUTHAL_ANGLE));
 		assertSame(numberOfCycles, datasets.get(NXdetector.NX_NUMBER_OF_CYCLES));

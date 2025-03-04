@@ -18,6 +18,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -77,7 +78,7 @@ public class NXevent_dataImpl extends NXobjectImpl implements NXevent_data {
 
 
 	@Override
-	public IDataset getEvent_time_offset() {
+	public Dataset getEvent_time_offset() {
 		return getDataset(NX_EVENT_TIME_OFFSET);
 	}
 
@@ -97,7 +98,7 @@ public class NXevent_dataImpl extends NXobjectImpl implements NXevent_data {
 	}
 
 	@Override
-	public IDataset getEvent_id() {
+	public Dataset getEvent_id() {
 		return getDataset(NX_EVENT_ID);
 	}
 
@@ -117,7 +118,7 @@ public class NXevent_dataImpl extends NXobjectImpl implements NXevent_data {
 	}
 
 	@Override
-	public IDataset getEvent_time_zero() {
+	public Dataset getEvent_time_zero() {
 		return getDataset(NX_EVENT_TIME_ZERO);
 	}
 
@@ -147,7 +148,7 @@ public class NXevent_dataImpl extends NXobjectImpl implements NXevent_data {
 	}
 
 	@Override
-	public IDataset getEvent_index() {
+	public Dataset getEvent_index() {
 		return getDataset(NX_EVENT_INDEX);
 	}
 
@@ -167,7 +168,7 @@ public class NXevent_dataImpl extends NXobjectImpl implements NXevent_data {
 	}
 
 	@Override
-	public IDataset getPulse_height() {
+	public Dataset getPulse_height() {
 		return getDataset(NX_PULSE_HEIGHT);
 	}
 
@@ -187,7 +188,7 @@ public class NXevent_dataImpl extends NXobjectImpl implements NXevent_data {
 	}
 
 	@Override
-	public IDataset getCue_timestamp_zero() {
+	public Dataset getCue_timestamp_zero() {
 		return getDataset(NX_CUE_TIMESTAMP_ZERO);
 	}
 
@@ -217,7 +218,7 @@ public class NXevent_dataImpl extends NXobjectImpl implements NXevent_data {
 	}
 
 	@Override
-	public IDataset getCue_index() {
+	public Dataset getCue_index() {
 		return getDataset(NX_CUE_INDEX);
 	}
 

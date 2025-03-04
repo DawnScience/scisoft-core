@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Crystal structure phase models used for indexing Kikuchi pattern.
@@ -64,7 +65,7 @@ public interface NXem_ebsd_crystal_structure_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCrystallographic_database_identifier();
+	public Dataset getCrystallographic_database_identifier();
 
 	/**
 	 * Identifier of an entry from crystallographic_database which was used
@@ -96,7 +97,7 @@ public interface NXem_ebsd_crystal_structure_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCrystallographic_database();
+	public Dataset getCrystallographic_database();
 
 	/**
 	 * Name of the crystallographic database to resolve
@@ -132,7 +133,7 @@ public interface NXem_ebsd_crystal_structure_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getUnit_cell_abc();
+	public Dataset getUnit_cell_abc();
 
 	/**
 	 * Crystallography unit cell parameters a, b, and c.
@@ -180,7 +181,7 @@ public interface NXem_ebsd_crystal_structure_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getUnit_cell_alphabetagamma();
+	public Dataset getUnit_cell_alphabetagamma();
 
 	/**
 	 * Crystallography unit cell parameters alpha, beta, and gamma.
@@ -227,7 +228,7 @@ public interface NXem_ebsd_crystal_structure_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getUnit_cell_volume();
+	public Dataset getUnit_cell_volume();
 
 	/**
 	 * Volume of the unit cell
@@ -267,7 +268,7 @@ public interface NXem_ebsd_crystal_structure_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSpace_group();
+	public Dataset getSpace_group();
 
 	/**
 	 * Crystallographic space group
@@ -303,7 +304,7 @@ public interface NXem_ebsd_crystal_structure_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIs_centrosymmetric();
+	public Dataset getIs_centrosymmetric();
 
 	/**
 	 * True if space group is considered a centrosymmetric one.
@@ -359,7 +360,7 @@ public interface NXem_ebsd_crystal_structure_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIs_chiral();
+	public Dataset getIs_chiral();
 
 	/**
 	 * True if space group is considered a chiral one.
@@ -399,7 +400,7 @@ public interface NXem_ebsd_crystal_structure_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLaue_group();
+	public Dataset getLaue_group();
 
 	/**
 	 * Laue group
@@ -427,7 +428,7 @@ public interface NXem_ebsd_crystal_structure_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPoint_group();
+	public Dataset getPoint_group();
 
 	/**
 	 * Point group using International Notation.
@@ -465,7 +466,7 @@ public interface NXem_ebsd_crystal_structure_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getUnit_cell_class();
+	public Dataset getUnit_cell_class();
 
 	/**
 	 * Crystal system
@@ -530,7 +531,7 @@ public interface NXem_ebsd_crystal_structure_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPhase_identifier();
+	public Dataset getPhase_identifier();
 
 	/**
 	 * Numeric identifier for each phase.
@@ -579,7 +580,7 @@ public interface NXem_ebsd_crystal_structure_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPhase_name();
+	public Dataset getPhase_name();
 
 	/**
 	 * Name of the phase/alias.
@@ -610,7 +611,7 @@ public interface NXem_ebsd_crystal_structure_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAtom_identifier();
+	public Dataset getAtom_identifier();
 
 	/**
 	 * Labels for each atom position
@@ -655,7 +656,7 @@ public interface NXem_ebsd_crystal_structure_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAtom();
+	public Dataset getAtom();
 
 	/**
 	 * The hash value :math:`H` is :math:`H = Z + N*256` with :math:`Z`
@@ -712,7 +713,7 @@ public interface NXem_ebsd_crystal_structure_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAtom_positions();
+	public Dataset getAtom_positions();
 
 	/**
 	 * Atom positions x, y, z.
@@ -760,7 +761,7 @@ public interface NXem_ebsd_crystal_structure_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAtom_occupancy();
+	public Dataset getAtom_occupancy();
 
 	/**
 	 * Relative occupancy of the atom position.
@@ -807,7 +808,7 @@ public interface NXem_ebsd_crystal_structure_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_of_planes();
+	public Dataset getNumber_of_planes();
 
 	/**
 	 * How many reflectors are distinguished. Value has to be n_hkl.
@@ -852,7 +853,7 @@ public interface NXem_ebsd_crystal_structure_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPlane_miller();
+	public Dataset getPlane_miller();
 
 	/**
 	 * Miller indices :math:`(hkl)`.
@@ -900,7 +901,7 @@ public interface NXem_ebsd_crystal_structure_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDspacing();
+	public Dataset getDspacing();
 
 	/**
 	 * D-spacing.
@@ -948,7 +949,7 @@ public interface NXem_ebsd_crystal_structure_model extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getRelative_intensity();
+	public Dataset getRelative_intensity();
 
 	/**
 	 * Relative intensity of the signal for the plane.

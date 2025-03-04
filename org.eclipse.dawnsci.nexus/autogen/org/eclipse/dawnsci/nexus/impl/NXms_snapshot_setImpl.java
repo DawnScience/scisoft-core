@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -58,7 +59,7 @@ public class NXms_snapshot_setImpl extends NXobjectImpl implements NXms_snapshot
 
 
 	@Override
-	public IDataset getComment() {
+	public Dataset getComment() {
 		return getDataset(NX_COMMENT);
 	}
 
@@ -78,7 +79,7 @@ public class NXms_snapshot_setImpl extends NXobjectImpl implements NXms_snapshot
 	}
 
 	@Override
-	public IDataset getIdentifier_offset() {
+	public Dataset getIdentifier_offset() {
 		return getDataset(NX_IDENTIFIER_OFFSET);
 	}
 

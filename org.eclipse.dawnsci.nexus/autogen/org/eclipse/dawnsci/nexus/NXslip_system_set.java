@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Base class for describing a set of crystallographic slip systems.
@@ -43,7 +44,7 @@ public interface NXslip_system_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLattice_type();
+	public Dataset getLattice_type();
 
 	/**
 	 * <p>
@@ -103,7 +104,7 @@ public interface NXslip_system_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMiller_plane();
+	public Dataset getMiller_plane();
 
 	/**
 	 * Array of Miller indices which describe the crystallographic plane.
@@ -151,7 +152,7 @@ public interface NXslip_system_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMiller_direction();
+	public Dataset getMiller_direction();
 
 	/**
 	 * Array of Miller indices which describe the crystallographic direction.
@@ -201,7 +202,7 @@ public interface NXslip_system_set extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIs_specific();
+	public Dataset getIs_specific();
 
 	/**
 	 * For each slip system a marker whether the specified Miller indices

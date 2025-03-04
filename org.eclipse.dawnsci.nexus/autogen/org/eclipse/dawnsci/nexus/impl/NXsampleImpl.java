@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -74,7 +75,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 
 
 	@Override
-	public IDataset getName() {
+	public Dataset getName() {
 		return getDataset(NX_NAME);
 	}
 
@@ -94,7 +95,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getChemical_formula() {
+	public Dataset getChemical_formula() {
 		return getDataset(NX_CHEMICAL_FORMULA);
 	}
 
@@ -114,7 +115,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getTemperature() {
+	public Dataset getTemperature() {
 		return getDataset(NX_TEMPERATURE);
 	}
 
@@ -134,7 +135,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getElectric_field() {
+	public Dataset getElectric_field() {
 		return getDataset(NX_ELECTRIC_FIELD);
 	}
 
@@ -164,7 +165,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getMagnetic_field() {
+	public Dataset getMagnetic_field() {
 		return getDataset(NX_MAGNETIC_FIELD);
 	}
 
@@ -194,7 +195,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getStress_field() {
+	public Dataset getStress_field() {
 		return getDataset(NX_STRESS_FIELD);
 	}
 
@@ -224,7 +225,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getPressure() {
+	public Dataset getPressure() {
 		return getDataset(NX_PRESSURE);
 	}
 
@@ -244,7 +245,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getChanger_position() {
+	public Dataset getChanger_position() {
 		return getDataset(NX_CHANGER_POSITION);
 	}
 
@@ -264,7 +265,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getUnit_cell_abc() {
+	public Dataset getUnit_cell_abc() {
 		return getDataset(NX_UNIT_CELL_ABC);
 	}
 
@@ -284,7 +285,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getUnit_cell_alphabetagamma() {
+	public Dataset getUnit_cell_alphabetagamma() {
 		return getDataset(NX_UNIT_CELL_ALPHABETAGAMMA);
 	}
 
@@ -304,7 +305,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getUnit_cell() {
+	public Dataset getUnit_cell() {
 		return getDataset(NX_UNIT_CELL);
 	}
 
@@ -324,7 +325,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getUnit_cell_volume() {
+	public Dataset getUnit_cell_volume() {
 		return getDataset(NX_UNIT_CELL_VOLUME);
 	}
 
@@ -344,7 +345,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getSample_orientation() {
+	public Dataset getSample_orientation() {
 		return getDataset(NX_SAMPLE_ORIENTATION);
 	}
 
@@ -364,7 +365,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getOrientation_matrix() {
+	public Dataset getOrientation_matrix() {
 		return getDataset(NX_ORIENTATION_MATRIX);
 	}
 
@@ -384,7 +385,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getUb_matrix() {
+	public Dataset getUb_matrix() {
 		return getDataset(NX_UB_MATRIX);
 	}
 
@@ -404,7 +405,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getMass() {
+	public Dataset getMass() {
 		return getDataset(NX_MASS);
 	}
 
@@ -424,7 +425,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getDensity() {
+	public Dataset getDensity() {
 		return getDataset(NX_DENSITY);
 	}
 
@@ -444,7 +445,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getRelative_molecular_mass() {
+	public Dataset getRelative_molecular_mass() {
 		return getDataset(NX_RELATIVE_MOLECULAR_MASS);
 	}
 
@@ -464,7 +465,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getType() {
+	public Dataset getType() {
 		return getDataset(NX_TYPE);
 	}
 
@@ -484,7 +485,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getSituation() {
+	public Dataset getSituation() {
 		return getDataset(NX_SITUATION);
 	}
 
@@ -504,7 +505,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getDescription() {
+	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
 
@@ -524,7 +525,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getPreparation_date() {
+	public Dataset getPreparation_date() {
 		return getDataset(NX_PREPARATION_DATE);
 	}
 
@@ -619,7 +620,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getComponent() {
+	public Dataset getComponent() {
 		return getDataset(NX_COMPONENT);
 	}
 
@@ -639,7 +640,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getSample_component() {
+	public Dataset getSample_component() {
 		return getDataset(NX_SAMPLE_COMPONENT);
 	}
 
@@ -659,7 +660,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getConcentration() {
+	public Dataset getConcentration() {
 		return getDataset(NX_CONCENTRATION);
 	}
 
@@ -679,7 +680,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getVolume_fraction() {
+	public Dataset getVolume_fraction() {
 		return getDataset(NX_VOLUME_FRACTION);
 	}
 
@@ -699,7 +700,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getScattering_length_density() {
+	public Dataset getScattering_length_density() {
 		return getDataset(NX_SCATTERING_LENGTH_DENSITY);
 	}
 
@@ -719,7 +720,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getUnit_cell_class() {
+	public Dataset getUnit_cell_class() {
 		return getDataset(NX_UNIT_CELL_CLASS);
 	}
 
@@ -739,7 +740,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getSpace_group() {
+	public Dataset getSpace_group() {
 		return getDataset(NX_SPACE_GROUP);
 	}
 
@@ -759,7 +760,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getPoint_group() {
+	public Dataset getPoint_group() {
 		return getDataset(NX_POINT_GROUP);
 	}
 
@@ -779,7 +780,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getPath_length() {
+	public Dataset getPath_length() {
 		return getDataset(NX_PATH_LENGTH);
 	}
 
@@ -799,7 +800,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getPath_length_window() {
+	public Dataset getPath_length_window() {
 		return getDataset(NX_PATH_LENGTH_WINDOW);
 	}
 
@@ -819,7 +820,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getThickness() {
+	public Dataset getThickness() {
 		return getDataset(NX_THICKNESS);
 	}
 
@@ -909,7 +910,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getExternal_dac() {
+	public Dataset getExternal_dac() {
 		return getDataset(NX_EXTERNAL_DAC);
 	}
 
@@ -940,7 +941,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getShort_title() {
+	public Dataset getShort_title() {
 		return getDataset(NX_SHORT_TITLE);
 	}
 
@@ -960,7 +961,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getRotation_angle() {
+	public Dataset getRotation_angle() {
 		return getDataset(NX_ROTATION_ANGLE);
 	}
 
@@ -980,7 +981,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getX_translation() {
+	public Dataset getX_translation() {
 		return getDataset(NX_X_TRANSLATION);
 	}
 
@@ -1000,7 +1001,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getDistance() {
+	public Dataset getDistance() {
 		return getDataset(NX_DISTANCE);
 	}
 
@@ -1092,7 +1093,7 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public IDataset getDepends_on() {
+	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
 

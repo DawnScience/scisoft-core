@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A beamline mirror or supermirror.
@@ -123,7 +124,7 @@ public interface NXmirror extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getType();
+	public Dataset getType();
 
 	/**
 	 * <p>
@@ -169,7 +170,7 @@ public interface NXmirror extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * description of this mirror
@@ -200,7 +201,7 @@ public interface NXmirror extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIncident_angle();
+	public Dataset getIncident_angle();
 
 	/**
 	 * <p>
@@ -254,7 +255,7 @@ public interface NXmirror extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBend_angle_x();
+	public Dataset getBend_angle_x();
 
 	/**
 	 * <p>
@@ -294,7 +295,7 @@ public interface NXmirror extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBend_angle_y();
+	public Dataset getBend_angle_y();
 
 	/**
 	 * <p>
@@ -336,7 +337,7 @@ public interface NXmirror extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getInterior_atmosphere();
+	public Dataset getInterior_atmosphere();
 
 	/**
 	 * <p>
@@ -379,7 +380,7 @@ public interface NXmirror extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getExternal_material();
+	public Dataset getExternal_material();
 
 	/**
 	 * external material outside substrate
@@ -412,7 +413,7 @@ public interface NXmirror extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getM_value();
+	public Dataset getM_value();
 
 	/**
 	 * The m value for a supermirror, which defines the supermirror
@@ -454,7 +455,7 @@ public interface NXmirror extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSubstrate_material();
+	public Dataset getSubstrate_material();
 
 	/**
 	 *
@@ -482,7 +483,7 @@ public interface NXmirror extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSubstrate_density();
+	public Dataset getSubstrate_density();
 
 	/**
 	 * <p>
@@ -522,7 +523,7 @@ public interface NXmirror extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSubstrate_thickness();
+	public Dataset getSubstrate_thickness();
 
 	/**
 	 * <p>
@@ -558,7 +559,7 @@ public interface NXmirror extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCoating_material();
+	public Dataset getCoating_material();
 
 	/**
 	 *
@@ -586,7 +587,7 @@ public interface NXmirror extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSubstrate_roughness();
+	public Dataset getSubstrate_roughness();
 
 	/**
 	 * <p>
@@ -626,7 +627,7 @@ public interface NXmirror extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCoating_roughness();
+	public Dataset getCoating_roughness();
 
 	/**
 	 * <p>
@@ -662,7 +663,7 @@ public interface NXmirror extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEven_layer_material();
+	public Dataset getEven_layer_material();
 
 	/**
 	 *
@@ -690,7 +691,7 @@ public interface NXmirror extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEven_layer_density();
+	public Dataset getEven_layer_density();
 
 	/**
 	 * <p>
@@ -726,7 +727,7 @@ public interface NXmirror extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getOdd_layer_material();
+	public Dataset getOdd_layer_material();
 
 	/**
 	 *
@@ -754,7 +755,7 @@ public interface NXmirror extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getOdd_layer_density();
+	public Dataset getOdd_layer_density();
 
 	/**
 	 * <p>
@@ -795,7 +796,7 @@ public interface NXmirror extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLayer_thickness();
+	public Dataset getLayer_thickness();
 
 	/**
 	 * An array describing the thickness of each layer
@@ -968,7 +969,7 @@ public interface NXmirror extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

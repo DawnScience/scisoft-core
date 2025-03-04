@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -59,7 +60,7 @@ public class NXdispersion_functionImpl extends NXobjectImpl implements NXdispers
 
 
 	@Override
-	public IDataset getModel_name() {
+	public Dataset getModel_name() {
 		return getDataset(NX_MODEL_NAME);
 	}
 
@@ -79,7 +80,7 @@ public class NXdispersion_functionImpl extends NXobjectImpl implements NXdispers
 	}
 
 	@Override
-	public IDataset getFormula() {
+	public Dataset getFormula() {
 		return getDataset(NX_FORMULA);
 	}
 
@@ -99,7 +100,7 @@ public class NXdispersion_functionImpl extends NXobjectImpl implements NXdispers
 	}
 
 	@Override
-	public IDataset getConvention() {
+	public Dataset getConvention() {
 		return getDataset(NX_CONVENTION);
 	}
 
@@ -119,7 +120,7 @@ public class NXdispersion_functionImpl extends NXobjectImpl implements NXdispers
 	}
 
 	@Override
-	public IDataset getEnergy_identifier() {
+	public Dataset getEnergy_identifier() {
 		return getDataset(NX_ENERGY_IDENTIFIER);
 	}
 
@@ -139,7 +140,7 @@ public class NXdispersion_functionImpl extends NXobjectImpl implements NXdispers
 	}
 
 	@Override
-	public IDataset getEnergy_min() {
+	public Dataset getEnergy_min() {
 		return getDataset(NX_ENERGY_MIN);
 	}
 
@@ -159,7 +160,7 @@ public class NXdispersion_functionImpl extends NXobjectImpl implements NXdispers
 	}
 
 	@Override
-	public IDataset getEnergy_max() {
+	public Dataset getEnergy_max() {
 		return getDataset(NX_ENERGY_MAX);
 	}
 
@@ -179,7 +180,7 @@ public class NXdispersion_functionImpl extends NXobjectImpl implements NXdispers
 	}
 
 	@Override
-	public IDataset getEnergy_unit() {
+	public Dataset getEnergy_unit() {
 		return getDataset(NX_ENERGY_UNIT);
 	}
 
@@ -199,7 +200,7 @@ public class NXdispersion_functionImpl extends NXobjectImpl implements NXdispers
 	}
 
 	@Override
-	public IDataset getWavelength_identifier() {
+	public Dataset getWavelength_identifier() {
 		return getDataset(NX_WAVELENGTH_IDENTIFIER);
 	}
 
@@ -219,7 +220,7 @@ public class NXdispersion_functionImpl extends NXobjectImpl implements NXdispers
 	}
 
 	@Override
-	public IDataset getWavelength_unit() {
+	public Dataset getWavelength_unit() {
 		return getDataset(NX_WAVELENGTH_UNIT);
 	}
 
@@ -239,7 +240,7 @@ public class NXdispersion_functionImpl extends NXobjectImpl implements NXdispers
 	}
 
 	@Override
-	public IDataset getWavelength_min() {
+	public Dataset getWavelength_min() {
 		return getDataset(NX_WAVELENGTH_MIN);
 	}
 
@@ -259,7 +260,7 @@ public class NXdispersion_functionImpl extends NXobjectImpl implements NXdispers
 	}
 
 	@Override
-	public IDataset getWavelength_max() {
+	public Dataset getWavelength_max() {
 		return getDataset(NX_WAVELENGTH_MAX);
 	}
 
@@ -279,7 +280,7 @@ public class NXdispersion_functionImpl extends NXobjectImpl implements NXdispers
 	}
 
 	@Override
-	public IDataset getRepresentation() {
+	public Dataset getRepresentation() {
 		return getDataset(NX_REPRESENTATION);
 	}
 

@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A bending magnet
@@ -43,7 +44,7 @@ public interface NXbending_magnet extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCritical_energy();
+	public Dataset getCritical_energy();
 
 	/**
 	 * <p>
@@ -83,7 +84,7 @@ public interface NXbending_magnet extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBending_radius();
+	public Dataset getBending_radius();
 
 	/**
 	 * <p>
@@ -124,7 +125,7 @@ public interface NXbending_magnet extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getMagnetic_field();
+	public Dataset getMagnetic_field();
 
 	/**
 	 * strength of magnetic field of dipole magnets
@@ -168,7 +169,7 @@ public interface NXbending_magnet extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAccepted_photon_beam_divergence();
+	public Dataset getAccepted_photon_beam_divergence();
 
 	/**
 	 * An array of four numbers giving X+, X-, Y+ and Y- half divergence
@@ -213,7 +214,7 @@ public interface NXbending_magnet extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSource_distance_x();
+	public Dataset getSource_distance_x();
 
 	/**
 	 * Distance of source point from particle beam waist in X (horizontal) direction.
@@ -261,7 +262,7 @@ public interface NXbending_magnet extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSource_distance_y();
+	public Dataset getSource_distance_y();
 
 	/**
 	 * Distance of source point from particle beam waist in Y (vertical) direction.
@@ -309,7 +310,7 @@ public interface NXbending_magnet extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDivergence_x_plus();
+	public Dataset getDivergence_x_plus();
 
 	/**
 	 * Accepted photon beam divergence in X+ (horizontal outboard) direction.
@@ -357,7 +358,7 @@ public interface NXbending_magnet extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDivergence_x_minus();
+	public Dataset getDivergence_x_minus();
 
 	/**
 	 * Accepted photon beam divergence in X- (horizontal inboard) direction.
@@ -405,7 +406,7 @@ public interface NXbending_magnet extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDivergence_y_plus();
+	public Dataset getDivergence_y_plus();
 
 	/**
 	 * Accepted photon beam divergence in Y+ (vertical upward) direction.
@@ -453,7 +454,7 @@ public interface NXbending_magnet extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDivergence_y_minus();
+	public Dataset getDivergence_y_minus();
 
 	/**
 	 * Accepted photon beam divergence in Y- (vertical downward) direction.
@@ -682,7 +683,7 @@ public interface NXbending_magnet extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

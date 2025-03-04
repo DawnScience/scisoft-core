@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Geometry and logical description of a region of data in a parent group. When used, it could be a child group to, say, :ref:`NXdetector`.
@@ -104,7 +105,7 @@ public interface NXregion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getParent();
+	public Dataset getParent();
 
 	/**
 	 * The name of data field in the parent group or the path of a data field relative
@@ -137,7 +138,7 @@ public interface NXregion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getParent_mask();
+	public Dataset getParent_mask();
 
 	/**
 	 * The name of an optional mask field in the parent group with rank :math:`\boldsymbol{R}` and
@@ -177,7 +178,7 @@ public interface NXregion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getStart();
+	public Dataset getStart();
 
 	/**
 	 * The starting position for region in detector data field array.
@@ -229,7 +230,7 @@ public interface NXregion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCount();
+	public Dataset getCount();
 
 	/**
 	 * The number of blocks or items in the hyperslab selection.
@@ -280,7 +281,7 @@ public interface NXregion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getStride();
+	public Dataset getStride();
 
 	/**
 	 * An optional field to define striding used to downsample data.
@@ -331,7 +332,7 @@ public interface NXregion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBlock();
+	public Dataset getBlock();
 
 	/**
 	 * An optional field to define the block size used to copy or downsample data. In the
@@ -392,7 +393,7 @@ public interface NXregion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getScale();
+	public Dataset getScale();
 
 	/**
 	 * An optional field to define a divisor for scaling of reduced data. For example, in a

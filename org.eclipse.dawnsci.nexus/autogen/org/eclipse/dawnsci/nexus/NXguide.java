@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A neutron optical element to direct the path of the beam.
@@ -142,7 +143,7 @@ public interface NXguide extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * A description of this particular instance of ``NXguide``.
@@ -174,7 +175,7 @@ public interface NXguide extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getIncident_angle();
+	public Dataset getIncident_angle();
 
 	/**
 	 * TODO: documentation needed
@@ -232,7 +233,7 @@ public interface NXguide extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBend_angle_x();
+	public Dataset getBend_angle_x();
 
 	/**
 	 * TODO: documentation needed
@@ -276,7 +277,7 @@ public interface NXguide extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBend_angle_y();
+	public Dataset getBend_angle_y();
 
 	/**
 	 * TODO: documentation needed
@@ -321,7 +322,7 @@ public interface NXguide extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getInterior_atmosphere();
+	public Dataset getInterior_atmosphere();
 
 	/**
 	 * <p>
@@ -364,7 +365,7 @@ public interface NXguide extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getExternal_material();
+	public Dataset getExternal_material();
 
 	/**
 	 * external material outside substrate
@@ -397,7 +398,7 @@ public interface NXguide extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getM_value();
+	public Dataset getM_value();
 
 	/**
 	 * The ``m`` value for a supermirror, which defines the supermirror
@@ -444,7 +445,7 @@ public interface NXguide extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSubstrate_material();
+	public Dataset getSubstrate_material();
 
 	/**
 	 * TODO: documentation needed
@@ -489,7 +490,7 @@ public interface NXguide extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSubstrate_thickness();
+	public Dataset getSubstrate_thickness();
 
 	/**
 	 * TODO: documentation needed
@@ -536,7 +537,7 @@ public interface NXguide extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCoating_material();
+	public Dataset getCoating_material();
 
 	/**
 	 * TODO: documentation needed
@@ -581,7 +582,7 @@ public interface NXguide extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSubstrate_roughness();
+	public Dataset getSubstrate_roughness();
 
 	/**
 	 * TODO: documentation needed
@@ -629,7 +630,7 @@ public interface NXguide extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCoating_roughness();
+	public Dataset getCoating_roughness();
 
 	/**
 	 * TODO: documentation needed
@@ -677,7 +678,7 @@ public interface NXguide extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getNumber_sections();
+	public Dataset getNumber_sections();
 
 	/**
 	 * number of substrate sections (also called ``nsurf`` as an
@@ -822,7 +823,7 @@ public interface NXguide extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

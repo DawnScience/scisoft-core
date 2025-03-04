@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Digital-to-analog converter component/integrated circuit.
@@ -33,7 +34,7 @@ public interface NXdac extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getValue();
+	public Dataset getValue();
 
 	/**
 	 * TBD.

@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -55,7 +56,7 @@ public class NXcg_unit_normal_setImpl extends NXobjectImpl implements NXcg_unit_
 
 
 	@Override
-	public IDataset getDimensionality() {
+	public Dataset getDimensionality() {
 		return getDataset(NX_DIMENSIONALITY);
 	}
 
@@ -75,7 +76,7 @@ public class NXcg_unit_normal_setImpl extends NXobjectImpl implements NXcg_unit_
 	}
 
 	@Override
-	public IDataset getCardinality() {
+	public Dataset getCardinality() {
 		return getDataset(NX_CARDINALITY);
 	}
 
@@ -95,7 +96,7 @@ public class NXcg_unit_normal_setImpl extends NXobjectImpl implements NXcg_unit_
 	}
 
 	@Override
-	public IDataset getNormals() {
+	public Dataset getNormals() {
 		return getDataset(NX_NORMALS);
 	}
 
@@ -115,7 +116,7 @@ public class NXcg_unit_normal_setImpl extends NXobjectImpl implements NXcg_unit_
 	}
 
 	@Override
-	public IDataset getOrientation() {
+	public Dataset getOrientation() {
 		return getDataset(NX_ORIENTATION);
 	}
 

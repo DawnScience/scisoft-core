@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -59,7 +60,7 @@ public class NXcg_sphere_setImpl extends NXobjectImpl implements NXcg_sphere_set
 
 
 	@Override
-	public IDataset getDimensionality() {
+	public Dataset getDimensionality() {
 		return getDataset(NX_DIMENSIONALITY);
 	}
 
@@ -79,7 +80,7 @@ public class NXcg_sphere_setImpl extends NXobjectImpl implements NXcg_sphere_set
 	}
 
 	@Override
-	public IDataset getCardinality() {
+	public Dataset getCardinality() {
 		return getDataset(NX_CARDINALITY);
 	}
 
@@ -99,7 +100,7 @@ public class NXcg_sphere_setImpl extends NXobjectImpl implements NXcg_sphere_set
 	}
 
 	@Override
-	public IDataset getIdentifier_offset() {
+	public Dataset getIdentifier_offset() {
 		return getDataset(NX_IDENTIFIER_OFFSET);
 	}
 
@@ -119,7 +120,7 @@ public class NXcg_sphere_setImpl extends NXobjectImpl implements NXcg_sphere_set
 	}
 
 	@Override
-	public IDataset getIdentifier() {
+	public Dataset getIdentifier() {
 		return getDataset(NX_IDENTIFIER);
 	}
 
@@ -139,7 +140,7 @@ public class NXcg_sphere_setImpl extends NXobjectImpl implements NXcg_sphere_set
 	}
 
 	@Override
-	public IDataset getCenter() {
+	public Dataset getCenter() {
 		return getDataset(NX_CENTER);
 	}
 
@@ -159,7 +160,7 @@ public class NXcg_sphere_setImpl extends NXobjectImpl implements NXcg_sphere_set
 	}
 
 	@Override
-	public IDataset getRadius() {
+	public Dataset getRadius() {
 		return getDataset(NX_RADIUS);
 	}
 
@@ -179,7 +180,7 @@ public class NXcg_sphere_setImpl extends NXobjectImpl implements NXcg_sphere_set
 	}
 
 	@Override
-	public IDataset getRadii() {
+	public Dataset getRadii() {
 		return getDataset(NX_RADII);
 	}
 
@@ -230,7 +231,7 @@ public class NXcg_sphere_setImpl extends NXobjectImpl implements NXcg_sphere_set
 	}
 
 	@Override
-	public IDataset getIs_closed() {
+	public Dataset getIs_closed() {
 		return getDataset(NX_IS_CLOSED);
 	}
 
@@ -250,7 +251,7 @@ public class NXcg_sphere_setImpl extends NXobjectImpl implements NXcg_sphere_set
 	}
 
 	@Override
-	public IDataset getVolume() {
+	public Dataset getVolume() {
 		return getDataset(NX_VOLUME);
 	}
 
@@ -270,7 +271,7 @@ public class NXcg_sphere_setImpl extends NXobjectImpl implements NXcg_sphere_set
 	}
 
 	@Override
-	public IDataset getSurface_area() {
+	public Dataset getSurface_area() {
 		return getDataset(NX_SURFACE_AREA);
 	}
 

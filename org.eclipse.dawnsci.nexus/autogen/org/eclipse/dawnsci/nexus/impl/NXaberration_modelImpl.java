@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -62,7 +63,7 @@ public class NXaberration_modelImpl extends NXobjectImpl implements NXaberration
 
 
 	@Override
-	public IDataset getModel() {
+	public Dataset getModel() {
 		return getDataset(NX_MODEL);
 	}
 
@@ -113,7 +114,7 @@ public class NXaberration_modelImpl extends NXobjectImpl implements NXaberration
 	}
 
 	@Override
-	public IDataset getC_1_0() {
+	public Dataset getC_1_0() {
 		return getDataset(NX_C_1_0);
 	}
 
@@ -133,7 +134,7 @@ public class NXaberration_modelImpl extends NXobjectImpl implements NXaberration
 	}
 
 	@Override
-	public IDataset getC_1_2_a() {
+	public Dataset getC_1_2_a() {
 		return getDataset(NX_C_1_2_A);
 	}
 
@@ -153,7 +154,7 @@ public class NXaberration_modelImpl extends NXobjectImpl implements NXaberration
 	}
 
 	@Override
-	public IDataset getC_1_2_b() {
+	public Dataset getC_1_2_b() {
 		return getDataset(NX_C_1_2_B);
 	}
 
@@ -173,7 +174,7 @@ public class NXaberration_modelImpl extends NXobjectImpl implements NXaberration
 	}
 
 	@Override
-	public IDataset getC_2_1_a() {
+	public Dataset getC_2_1_a() {
 		return getDataset(NX_C_2_1_A);
 	}
 
@@ -193,7 +194,7 @@ public class NXaberration_modelImpl extends NXobjectImpl implements NXaberration
 	}
 
 	@Override
-	public IDataset getC_2_1_b() {
+	public Dataset getC_2_1_b() {
 		return getDataset(NX_C_2_1_B);
 	}
 
@@ -213,7 +214,7 @@ public class NXaberration_modelImpl extends NXobjectImpl implements NXaberration
 	}
 
 	@Override
-	public IDataset getC_2_3_a() {
+	public Dataset getC_2_3_a() {
 		return getDataset(NX_C_2_3_A);
 	}
 
@@ -233,7 +234,7 @@ public class NXaberration_modelImpl extends NXobjectImpl implements NXaberration
 	}
 
 	@Override
-	public IDataset getC_2_3_b() {
+	public Dataset getC_2_3_b() {
 		return getDataset(NX_C_2_3_B);
 	}
 
@@ -253,7 +254,7 @@ public class NXaberration_modelImpl extends NXobjectImpl implements NXaberration
 	}
 
 	@Override
-	public IDataset getC_3_0() {
+	public Dataset getC_3_0() {
 		return getDataset(NX_C_3_0);
 	}
 
@@ -273,7 +274,7 @@ public class NXaberration_modelImpl extends NXobjectImpl implements NXaberration
 	}
 
 	@Override
-	public IDataset getC_3_2_a() {
+	public Dataset getC_3_2_a() {
 		return getDataset(NX_C_3_2_A);
 	}
 
@@ -293,7 +294,7 @@ public class NXaberration_modelImpl extends NXobjectImpl implements NXaberration
 	}
 
 	@Override
-	public IDataset getC_3_2_b() {
+	public Dataset getC_3_2_b() {
 		return getDataset(NX_C_3_2_B);
 	}
 
@@ -313,7 +314,7 @@ public class NXaberration_modelImpl extends NXobjectImpl implements NXaberration
 	}
 
 	@Override
-	public IDataset getC_3_4_a() {
+	public Dataset getC_3_4_a() {
 		return getDataset(NX_C_3_4_A);
 	}
 
@@ -333,7 +334,7 @@ public class NXaberration_modelImpl extends NXobjectImpl implements NXaberration
 	}
 
 	@Override
-	public IDataset getC_3_4_b() {
+	public Dataset getC_3_4_b() {
 		return getDataset(NX_C_3_4_B);
 	}
 
@@ -353,7 +354,7 @@ public class NXaberration_modelImpl extends NXobjectImpl implements NXaberration
 	}
 
 	@Override
-	public IDataset getC_5_0() {
+	public Dataset getC_5_0() {
 		return getDataset(NX_C_5_0);
 	}
 

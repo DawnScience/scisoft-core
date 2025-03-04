@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -84,7 +85,7 @@ public class NXaberration_model_nionImpl extends NXobjectImpl implements NXaberr
 
 
 	@Override
-	public IDataset getModel() {
+	public Dataset getModel() {
 		return getDataset(NX_MODEL);
 	}
 

@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * For band pass beam filters.
@@ -132,7 +133,7 @@ public interface NXfilter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDescription();
+	public Dataset getDescription();
 
 	/**
 	 * Composition of the filter. Chemical formula can be specified separately.
@@ -182,7 +183,7 @@ public interface NXfilter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getStatus();
+	public Dataset getStatus();
 
 	/**
 	 * position with respect to in or out of the beam (choice of only "in" or "out")
@@ -249,7 +250,7 @@ public interface NXfilter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getTemperature();
+	public Dataset getTemperature();
 
 	/**
 	 * average/nominal filter temperature
@@ -307,7 +308,7 @@ public interface NXfilter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getThickness();
+	public Dataset getThickness();
 
 	/**
 	 * Thickness of the filter
@@ -351,7 +352,7 @@ public interface NXfilter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDensity();
+	public Dataset getDensity();
 
 	/**
 	 * mass density of the filter
@@ -405,7 +406,7 @@ public interface NXfilter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getChemical_formula();
+	public Dataset getChemical_formula();
 
 	/**
 	 * The chemical formula specified using CIF conventions.
@@ -493,7 +494,7 @@ public interface NXfilter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getUnit_cell_a();
+	public Dataset getUnit_cell_a();
 
 	/**
 	 * Unit cell lattice parameter: length of side a
@@ -537,7 +538,7 @@ public interface NXfilter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getUnit_cell_b();
+	public Dataset getUnit_cell_b();
 
 	/**
 	 * Unit cell lattice parameter: length of side b
@@ -581,7 +582,7 @@ public interface NXfilter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getUnit_cell_c();
+	public Dataset getUnit_cell_c();
 
 	/**
 	 * Unit cell lattice parameter: length of side c
@@ -625,7 +626,7 @@ public interface NXfilter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getUnit_cell_alpha();
+	public Dataset getUnit_cell_alpha();
 
 	/**
 	 * Unit cell lattice parameter: angle alpha
@@ -669,7 +670,7 @@ public interface NXfilter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getUnit_cell_beta();
+	public Dataset getUnit_cell_beta();
 
 	/**
 	 * Unit cell lattice parameter: angle beta
@@ -713,7 +714,7 @@ public interface NXfilter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getUnit_cell_gamma();
+	public Dataset getUnit_cell_gamma();
 
 	/**
 	 * Unit cell lattice parameter: angle gamma
@@ -758,7 +759,7 @@ public interface NXfilter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getUnit_cell_volume();
+	public Dataset getUnit_cell_volume();
 
 	/**
 	 * Unit cell
@@ -806,7 +807,7 @@ public interface NXfilter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getOrientation_matrix();
+	public Dataset getOrientation_matrix();
 
 	/**
 	 * Orientation matrix of single crystal filter using Busing-Levy convention:
@@ -853,7 +854,7 @@ public interface NXfilter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getM_value();
+	public Dataset getM_value();
 
 	/**
 	 * m value of supermirror filter
@@ -893,7 +894,7 @@ public interface NXfilter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSubstrate_material();
+	public Dataset getSubstrate_material();
 
 	/**
 	 * substrate material of supermirror filter
@@ -925,7 +926,7 @@ public interface NXfilter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSubstrate_thickness();
+	public Dataset getSubstrate_thickness();
 
 	/**
 	 * substrate thickness of supermirror filter
@@ -965,7 +966,7 @@ public interface NXfilter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCoating_material();
+	public Dataset getCoating_material();
 
 	/**
 	 * coating material of supermirror filter
@@ -997,7 +998,7 @@ public interface NXfilter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getSubstrate_roughness();
+	public Dataset getSubstrate_roughness();
 
 	/**
 	 * substrate roughness (RMS) of supermirror filter
@@ -1042,7 +1043,7 @@ public interface NXfilter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getCoating_roughness();
+	public Dataset getCoating_roughness();
 
 	/**
 	 * coating roughness (RMS) of supermirror filter
@@ -1183,7 +1184,7 @@ public interface NXfilter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDepends_on();
+	public Dataset getDepends_on();
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations

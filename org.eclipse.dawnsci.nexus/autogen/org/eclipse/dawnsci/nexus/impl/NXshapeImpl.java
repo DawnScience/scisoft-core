@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -58,7 +59,7 @@ public class NXshapeImpl extends NXobjectImpl implements NXshape {
 
 
 	@Override
-	public IDataset getShape() {
+	public Dataset getShape() {
 		return getDataset(NX_SHAPE);
 	}
 
@@ -78,7 +79,7 @@ public class NXshapeImpl extends NXobjectImpl implements NXshape {
 	}
 
 	@Override
-	public IDataset getSize() {
+	public Dataset getSize() {
 		return getDataset(NX_SIZE);
 	}
 
@@ -98,7 +99,7 @@ public class NXshapeImpl extends NXobjectImpl implements NXshape {
 	}
 
 	@Override
-	public IDataset getDirection() {
+	public Dataset getDirection() {
 		return getDataset(NX_DIRECTION);
 	}
 

@@ -16,6 +16,7 @@ import java.util.Map;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * A dispersion denoting a sum of different dispersions.
@@ -34,7 +35,7 @@ public interface NXdispersion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getModel_name();
+	public Dataset getModel_name();
 
 	/**
 	 * The name of the composite model.

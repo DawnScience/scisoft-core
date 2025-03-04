@@ -14,6 +14,7 @@ package org.eclipse.dawnsci.nexus;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 /**
  * Reflection data from diffraction experiments
@@ -130,7 +131,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getExperiments();
+	public Dataset getExperiments();
 
 	/**
 	 * The experiments from which the reflection data derives
@@ -171,7 +172,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getH();
+	public Dataset getH();
 
 	/**
 	 * The h component of the miller index
@@ -229,7 +230,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getK();
+	public Dataset getK();
 
 	/**
 	 * The k component of the miller index
@@ -287,7 +288,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getL();
+	public Dataset getL();
 
 	/**
 	 * The l component of the miller index
@@ -347,7 +348,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getId();
+	public Dataset getId();
 
 	/**
 	 * The id of the experiment which resulted in the reflection. If the value
@@ -412,7 +413,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getReflection_id();
+	public Dataset getReflection_id();
 
 	/**
 	 * The id of the reflection. Multiple partials from the same reflection
@@ -473,7 +474,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getEntering();
+	public Dataset getEntering();
 
 	/**
 	 * Is the reflection entering or exiting the Ewald sphere
@@ -531,7 +532,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getDet_module();
+	public Dataset getDet_module();
 
 	/**
 	 * The detector module on which the reflection was recorded
@@ -620,7 +621,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getFlags();
+	public Dataset getFlags();
 
 	/**
 	 * Status flags describing the reflection.
@@ -771,7 +772,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getD();
+	public Dataset getD();
 
 	/**
 	 * The resolution of the reflection
@@ -831,7 +832,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPartiality();
+	public Dataset getPartiality();
 
 	/**
 	 * The partiality of the reflection.
@@ -896,7 +897,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPredicted_frame();
+	public Dataset getPredicted_frame();
 
 	/**
 	 * The frame on which the bragg peak of the reflection is predicted
@@ -959,7 +960,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPredicted_x();
+	public Dataset getPredicted_x();
 
 	/**
 	 * The x position at which the bragg peak of the reflection
@@ -1025,7 +1026,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPredicted_y();
+	public Dataset getPredicted_y();
 
 	/**
 	 * The y position at which the bragg peak of the reflection
@@ -1090,7 +1091,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPredicted_phi();
+	public Dataset getPredicted_phi();
 
 	/**
 	 * The phi angle at which the bragg peak of the reflection is predicted
@@ -1153,7 +1154,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPredicted_px_x();
+	public Dataset getPredicted_px_x();
 
 	/**
 	 * The x pixel position at which the bragg peak of the reflection is
@@ -1219,7 +1220,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPredicted_px_y();
+	public Dataset getPredicted_px_y();
 
 	/**
 	 * The y pixel position at which the bragg peak of the reflection is
@@ -1285,7 +1286,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getObserved_frame();
+	public Dataset getObserved_frame();
 
 	/**
 	 * The estimate of the frame at which the central impact of the
@@ -1351,7 +1352,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getObserved_frame_var();
+	public Dataset getObserved_frame_var();
 
 	/**
 	 * The variance on the estimate of the frame at which the central
@@ -1417,7 +1418,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getObserved_frame_errors();
+	public Dataset getObserved_frame_errors();
 
 	/**
 	 * The standard deviation of the estimate of the frame at which the central
@@ -1483,7 +1484,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getObserved_px_x();
+	public Dataset getObserved_px_x();
 
 	/**
 	 * The estimate of the pixel x position at which the central impact of
@@ -1549,7 +1550,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getObserved_px_x_var();
+	public Dataset getObserved_px_x_var();
 
 	/**
 	 * The variance on the estimate of the pixel x position at which the
@@ -1615,7 +1616,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getObserved_px_x_errors();
+	public Dataset getObserved_px_x_errors();
 
 	/**
 	 * The standard deviation of the estimate of the pixel x position at which the
@@ -1681,7 +1682,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getObserved_px_y();
+	public Dataset getObserved_px_y();
 
 	/**
 	 * The estimate of the pixel y position at which the central impact of
@@ -1747,7 +1748,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getObserved_px_y_var();
+	public Dataset getObserved_px_y_var();
 
 	/**
 	 * The variance on the estimate of the pixel y position at which the
@@ -1813,7 +1814,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getObserved_px_y_errors();
+	public Dataset getObserved_px_y_errors();
 
 	/**
 	 * The standard deviation of the estimate of the pixel y position at which the
@@ -1879,7 +1880,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getObserved_phi();
+	public Dataset getObserved_phi();
 
 	/**
 	 * The estimate of the phi angle at which the central impact of the
@@ -1945,7 +1946,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getObserved_phi_var();
+	public Dataset getObserved_phi_var();
 
 	/**
 	 * The variance on the estimate of the phi angle at which the central
@@ -2011,7 +2012,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getObserved_phi_errors();
+	public Dataset getObserved_phi_errors();
 
 	/**
 	 * The standard deviation of the estimate of the phi angle at which the central
@@ -2077,7 +2078,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getObserved_x();
+	public Dataset getObserved_x();
 
 	/**
 	 * The estimate of the x position at which the central
@@ -2143,7 +2144,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getObserved_x_var();
+	public Dataset getObserved_x_var();
 
 	/**
 	 * The variance on the estimate of the x position at which
@@ -2209,7 +2210,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getObserved_x_errors();
+	public Dataset getObserved_x_errors();
 
 	/**
 	 * The standard deviation of the estimate of the x position at which
@@ -2275,7 +2276,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getObserved_y();
+	public Dataset getObserved_y();
 
 	/**
 	 * The estimate of the y position at which the central
@@ -2341,7 +2342,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getObserved_y_var();
+	public Dataset getObserved_y_var();
 
 	/**
 	 * The variance on the estimate of the y position at which
@@ -2407,7 +2408,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getObserved_y_errors();
+	public Dataset getObserved_y_errors();
 
 	/**
 	 * The standard deviation of the estimate of the y position at which
@@ -2484,7 +2485,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBounding_box();
+	public Dataset getBounding_box();
 
 	/**
 	 * The bounding box around the recorded recorded reflection.
@@ -2581,7 +2582,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getBackground_mean();
+	public Dataset getBackground_mean();
 
 	/**
 	 * The mean background under the reflection peak
@@ -2639,7 +2640,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getInt_prf();
+	public Dataset getInt_prf();
 
 	/**
 	 * The estimate of the reflection intensity by profile fitting
@@ -2698,7 +2699,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getInt_prf_var();
+	public Dataset getInt_prf_var();
 
 	/**
 	 * The variance on the estimate of the reflection intensity by profile
@@ -2760,7 +2761,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getInt_prf_errors();
+	public Dataset getInt_prf_errors();
 
 	/**
 	 * The standard deviation of the estimate of the reflection intensity by profile
@@ -2821,7 +2822,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getInt_sum();
+	public Dataset getInt_sum();
 
 	/**
 	 * The estimate of the reflection intensity by summation
@@ -2880,7 +2881,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getInt_sum_var();
+	public Dataset getInt_sum_var();
 
 	/**
 	 * The variance on the estimate of the reflection intensity by
@@ -2942,7 +2943,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getInt_sum_errors();
+	public Dataset getInt_sum_errors();
 
 	/**
 	 * The standard deviation of the estimate of the reflection intensity by
@@ -3003,7 +3004,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getLp();
+	public Dataset getLp();
 
 	/**
 	 * The LP correction factor to be applied to the reflection intensities
@@ -3062,7 +3063,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPrf_cc();
+	public Dataset getPrf_cc();
 
 	/**
 	 * The correlation of the reflection profile with the reference profile
@@ -3124,7 +3125,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getOverlaps();
+	public Dataset getOverlaps();
 
 	/**
 	 * An adjacency list specifying the spatial overlaps of reflections. The
@@ -3186,7 +3187,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getPolar_angle();
+	public Dataset getPolar_angle();
 
 	/**
 	 * Polar angle of reflection centroid, following the NeXus simple (spherical polar) coordinate system
@@ -3248,7 +3249,7 @@ public interface NXreflections extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public IDataset getAzimuthal_angle();
+	public Dataset getAzimuthal_angle();
 
 	/**
 	 * Azimuthal angle of reflection centroid, following the NeXus simple (spherical polar) coordinate system

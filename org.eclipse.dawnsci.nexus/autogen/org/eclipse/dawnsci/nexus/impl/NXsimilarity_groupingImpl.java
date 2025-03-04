@@ -16,6 +16,7 @@ import java.util.EnumSet;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
+import org.eclipse.january.dataset.Dataset;
 
 import org.eclipse.dawnsci.nexus.*;
 
@@ -67,7 +68,7 @@ public class NXsimilarity_groupingImpl extends NXobjectImpl implements NXsimilar
 
 
 	@Override
-	public IDataset getCardinality() {
+	public Dataset getCardinality() {
 		return getDataset(NX_CARDINALITY);
 	}
 
@@ -87,7 +88,7 @@ public class NXsimilarity_groupingImpl extends NXobjectImpl implements NXsimilar
 	}
 
 	@Override
-	public IDataset getNumber_of_numeric_labels() {
+	public Dataset getNumber_of_numeric_labels() {
 		return getDataset(NX_NUMBER_OF_NUMERIC_LABELS);
 	}
 
@@ -107,7 +108,7 @@ public class NXsimilarity_groupingImpl extends NXobjectImpl implements NXsimilar
 	}
 
 	@Override
-	public IDataset getNumber_of_categorical_labels() {
+	public Dataset getNumber_of_categorical_labels() {
 		return getDataset(NX_NUMBER_OF_CATEGORICAL_LABELS);
 	}
 
@@ -127,7 +128,7 @@ public class NXsimilarity_groupingImpl extends NXobjectImpl implements NXsimilar
 	}
 
 	@Override
-	public IDataset getIdentifier_offset() {
+	public Dataset getIdentifier_offset() {
 		return getDataset(NX_IDENTIFIER_OFFSET);
 	}
 
@@ -147,7 +148,7 @@ public class NXsimilarity_groupingImpl extends NXobjectImpl implements NXsimilar
 	}
 
 	@Override
-	public IDataset getNumerical_label() {
+	public Dataset getNumerical_label() {
 		return getDataset(NX_NUMERICAL_LABEL);
 	}
 
@@ -167,7 +168,7 @@ public class NXsimilarity_groupingImpl extends NXobjectImpl implements NXsimilar
 	}
 
 	@Override
-	public IDataset getCategorical_label() {
+	public Dataset getCategorical_label() {
 		return getDataset(NX_CATEGORICAL_LABEL);
 	}
 

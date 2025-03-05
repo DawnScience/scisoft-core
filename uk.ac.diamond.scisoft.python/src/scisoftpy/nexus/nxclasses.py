@@ -1,12 +1,12 @@
 ###
 # Copyright 2011 Diamond Light Source Ltd.
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #   http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,26 +15,21 @@
 ###
 
 
-# These classes were part of NeXpy by Paul Kienzle and
-# declared public domain 
-
-#import os
-#if os.name == 'java':
-#    from scisoftpy.jython.jynxs import NeXusError
-#else:
-#    from scisoftpy.python.pynxs import NeXusError
-
 from .hdf5 import HDF5tree as _tree
 from .hdf5 import HDF5group as _group
 
+
 class NeXusError(Exception):
-    '''NeXus Error'''
+    """NeXus Error"""
+
     pass
 
+
 class NXobject(_group):
-    '''
-    NXobject is the base object of NeXus and is a group
-    '''
+    """
+    NXobject is the base object of NeXus and is a group, https://manual.nexusformat.org/classes/base_classes/NXobject.html
+    """
+
     def __init__(self, attrs={}, parent=None, warn=True):
         _group.__init__(self, attrs, parent, warn)
         self.nxname = self.__class__.__name__
@@ -44,12 +39,14 @@ class NXobject(_group):
         _group.init_group(self, nodes)
         self.nxname = n
 
+
 class NXroot(_tree):
-    '''
-    NXroot node. This is a subclass of the NXobject class.
-    
+    """
+    NXroot node, https://manual.nexusformat.org/classes/base_classes/NXroot.html. This is a subclass of the NXobject class.
+
     See the NXobject documentation for more details.
-    '''
+    """
+
     def __init__(self, filename, attrs={}, native=None, warn=True):
         _tree.__init__(self, filename, attrs, native, warn)
         self.nxname = self.__class__.__name__
@@ -59,594 +56,219 @@ class NXroot(_tree):
         _tree.init_group(self, nodes)
         self.nxname = n
 
-class NXentry(NXobject):
-    '''
-    NXentry node. This is a subclass of the NXobject class.
 
-    Each NXdata and NXmonitor object of the same name will be added
-    together, raising an NeXusError if any of the groups do not exist 
-    in both NXentry groups or if any of the NXdata additions fail. 
-    The resulting NXentry group contains a copy of all the other metadata 
-    contained in the first group. Note that other extensible data, such 
-    as the run duration, are not currently added together. 
+def create_NX_class(name, contributed=False):
+    subdir = "contributed_definitions" if contributed else "base_classes"
+    ds = """
+    %s node, https://manual.nexusformat.org/classes/%s/%s.html. This is a subclass of the NXobject class.
 
     See the NXobject documentation for more details.
-    '''
-    def __add__(self, other):
-        '''
-        Add two NXentry objects       
-        '''
-        result = NXentry(entries=self.nxentries, attrs=self.nxattrs)
-        try:
-            names = [group.nxname for group in self.nxcomponent("NXdata")]
-            for name in names:
-                if isinstance(other.__dict__[name], NXdata):
-                    result.__dict__[name] = self.__dict__[name] + other.__dict__[name]
-                else:
-                    raise KeyError
-            names = [group.nxname for group in self.nxcomponent("NXmonitor")]
-            for name in names:
-                if isinstance(other.__dict__[name], NXmonitor):
-                    result.__dict__[name] = self.__dict__[name] + other.__dict__[name]
-                else:
-                    raise KeyError
-            return result
-        except KeyError:
-            raise NeXusError("Inconsistency between two NXentry groups")
-
-    def __sub__(self, other):
-        '''
-        Subtract two NXentry objects
-        '''
-        result = NXentry(entries=self.nxentries, attrs=self.nxattrs)
-        try:
-            names = [group.nxname for group in self.nxcomponent("NXdata")]
-            for name in names:
-                if isinstance(other.__dict__[name], NXdata):
-                    result.__dict__[name] = self.__dict__[name] - other.__dict__[name]
-                else:
-                    raise KeyError
-            names = [group.nxname for group in self.nxcomponent("NXmonitor")]
-            for name in names:
-                if isinstance(other.__dict__[name], NXmonitor):
-                    result.__dict__[name] = self.__dict__[name] - other.__dict__[name]
-                else:
-                    raise KeyError
-            return result
-        except KeyError:
-            raise NeXusError("Inconsistency between two NXentry groups")
-
-class NXdata(NXobject):
-    '''
-    NXdata node. This is a subclass of the NXobject class.
-    
-    The constructor assumes that the first argument contains the signal and
-    the second contains either the axis, for one-dimensional data, or a list
-    of axes, for multidimenional data. These arguments can either be SDS 
-    objects or Numpy arrays, which are converted to SDS objects with default 
-    names.
-
-    Attributes
-    ----------
-    nxsignal : The SDS containing the attribute 'signal' with value 1
-    nxaxes   : A list of SDSs containing the signal axes
-    nxerrors : The SDS containing the errors
+    """ % (name, subdir, name)
+    cls = type(name, (NXobject,), {"__doc__": ds})
+    return cls
 
 
-    Examples
-    --------
-    >>> x = np.linspace(0, 2*np.pi, 101)
-    >>> line = NXdata(sin(x), x)
-    data:NXdata
-      signal = float64(101)
-        @axes = x
-        @signal = 1
-      x = float64(101)
-    >>> X, Y = np.meshgrid(x, x)
-    >>> z = SDS(sin(X) * sin(Y), name='intensity')
-    >>> entry = NXentry()
-    >>> entry.grid = NXdata(z, (x, x))
-    >>> grid.nxtree()
-    entry:NXentry
-      grid:NXdata
-        axis1 = float64(101)
-        axis2 = float64(101)
-        intensity = float64(101x101)
-          @axes = axis1:axis2
-          @signal = 1    
+_BASE_CLASSES = (
+    "NXaperture",
+    "NXattenuator",
+    "NXbeam",
+    "NXbeam_stop",
+    "NXbending_magnet",
+    "NXcapillary",
+    "NXcite",
+    "NXcollection",
+    "NXcollimator",
+    "NXcrystal",
+    "NXcylindrical_geometry",
+    "NXdata",
+    "NXdetector_channel",
+    "NXdetector_group",
+    "NXdetector_module",
+    "NXdetector",
+    "NXdisk_chopper",
+    "NXentry",
+    "NXenvironment",
+    "NXevent_data",
+    "NXfermi_chopper",
+    "NXfilter",
+    "NXflipper",
+    "NXfresnel_zone_plate",
+    "NXgeometry",
+    "NXgrating",
+    "NXguide",
+    "NXinsertion_device",
+    "NXinstrument",
+    "NXlog",
+    "NXmirror",
+    "NXmoderator",
+    "NXmonitor",
+    "NXmonochromator",
+    "NXnote",
+    # "NXobject",
+    "NXoff_geometry",
+    "NXorientation",
+    "NXparameters",
+    "NXpdb",
+    "NXpinhole",
+    "NXpolarizer",
+    "NXpositioner",
+    "NXprocess",
+    "NXreflections",
+    # "NXroot",
+    "NXsample_component",
+    "NXsample",
+    "NXsensor",
+    "NXshape",
+    "NXslit",
+    "NXsource",
+    "NXsubentry",
+    "NXtransformations",
+    "NXtranslation",
+    "NXuser",
+    "NXvelocity_selector",
+    "NXxraylens",
+)
 
-    See the NXobject documentation for more details.
-    '''
-    pass
-#    def __init__(self, signal=None, axes=(), *items, **opts):
-#        NXobject.__init__(self, *items, **opts)
-#        if signal is not None:
-#            signalname = self._setSDS(signal, "signal")
-#            self.__dict__[signalname].signal = 1
-#            if axes is not None:
-#                if isinstance(axes,tuple) or isinstance(axes,list):
-#                    axisname = {}
-#                    i = 0
-#                    for axis in axes:
-#                        i = i + 1
-#                        axisname[i] = self._setSDS(axis, "axis%s" % i)
-#                    self.__dict__[signalname].axes = ":".join(axisname.values())
-#                else:
-#                    axisname = self._setSDS(axes, 'x')
-#                    self.__dict__[signalname].axes = axisname
 
-class NXmonitor(NXdata):
-    '''
-    NXmonitor node. This is a subclass of the NXdata class.
-    
-    See the NXdata and NXobject documentation for more details.
-    '''
-    pass
-#    def __init__(self, signal=None, axes=(), *items, **opts):
-#        NXdata.__init__(self, signal=signal, axes=axes, *items, **opts)
-#        if "nxname" not in opts.keys():
-#            self.nxname = "monitor"
+# contributed base classes to add when they are ratified by the NIAC
+_CONTRIBUTED_CLASSES = (
+    "NXaberration_model_ceos",
+    "NXaberration_model_nion",
+    "NXaberration_model",
+    "NXaberration",
+    "NXadc",
+    "NXaperture_em",
+    "NXapm_input_ranging",
+    "NXapm_input_reconstruction",
+    "NXbeam_path",
+    "NXbeam_splitter",
+    "NXcalibration",
+    "NXcg_alpha_complex",
+    "NXcg_cylinder_set",
+    "NXcg_ellipsoid_set",
+    "NXcg_face_list_data_structure",
+    "NXcg_geodesic_mesh",
+    "NXcg_grid",
+    "NXcg_half_edge_data_structure",
+    "NXcg_hexahedron_set",
+    "NXcg_marching_cubes",
+    "NXcg_parallelogram_set",
+    "NXcg_point_set",
+    "NXcg_polygon_set",
+    "NXcg_polyhedron_set",
+    "NXcg_polyline_set",
+    "NXcg_roi_set",
+    "NXcg_sphere_set",
+    "NXcg_tetrahedron_set",
+    "NXcg_triangle_set",
+    "NXcg_triangulated_surface_mesh",
+    "NXcg_unit_normal_set",
+    "NXchamber",
+    "NXchemical_composition",
+    "NXcircuit_board",
+    "NXclustering",
+    "NXcollectioncolumn",
+    "NXcontainer",
+    "NXcoordinate_system_set",
+    "NXcorrector_cs",
+    "NXcs_computer",
+    "NXcs_cpu",
+    "NXcs_filter_boolean_mask",
+    "NXcsg",
+    "NXcs_gpu",
+    "NXcs_io_obj",
+    "NXcs_io_sys",
+    "NXcs_mm_sys",
+    "NXcs_prng",
+    "NXcs_profiling_event",
+    "NXcs_profiling",
+    "NXdac",
+    "NXdeflector",
+    "NXdelocalization",
+    "NXdispersion_function",
+    "NXdispersion",
+    "NXdispersion_repeated_parameter",
+    "NXdispersion_single_parameter",
+    "NXdispersion_table",
+    "NXdistortion",
+    "NXebeam_column",
+    "NXelectronanalyser",
+    "NXelectrostatic_kicker",
+    "NXem_ebsd_conventions",
+    "NXem_ebsd_crystal_structure_model",
+    "NXenergydispersion",
+    "NXevent_data_em",
+    "NXevent_data_em_set",
+    "NXfabrication",
+    "NXfiber",
+    "NXgraph_edge_set",
+    "NXgraph_node_set",
+    "NXgraph_root",
+    "NXibeam_column",
+    "NXimage_set_em_adf",
+    "NXimage_set_em_kikuchi",
+    "NXimage_set",
+    "NXinteraction_vol_em",
+    "NXion",
+    "NXisocontour",
+    "NXlens_em",
+    "NXlens_opt",
+    "NXmagnetic_kicker",
+    "NXmanipulator",
+    "NXmatch_filter",
+    "NXms_feature_set",
+    "NXms_snapshot",
+    "NXms_snapshot_set",
+    "NXoptical_system_em",
+    "NXorientation_set",
+    "NXpeak",
+    "NXpid",
+    "NXpolarizer_opt",
+    "NXprogram",
+    "NXpulser_apm",
+    "NXpump",
+    "NXquadric",
+    "NXquadrupole_magnet",
+    "NXreflectron",
+    "NXregion",
+    "NXregistration",
+    "NXscanbox_em",
+    "NXseparator",
+    "NXsimilarity_grouping",
+    "NXslip_system_set",
+    "NXsolenoid_magnet",
+    "NXsolid_geometry",
+    "NXspatial_filter",
+    "NXspectrum_set_em_eels",
+    "NXspectrum_set_em_xray",
+    "NXspectrum_set",
+    "NXspindispersion",
+    "NXspin_rotator",
+    "NXstage_lab",
+    "NXsubsampling_filter",
+    "NXwaveplate",
+)
 
-class NXaperture(NXobject):
-    '''
-    NXaperture node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
+_m_ns = globals()
+for c in _BASE_CLASSES:
+    _m_ns[c] = create_NX_class(c)
 
-class NXattenuator(NXobject):
-    '''
-    NXattenuator node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
+for c in _CONTRIBUTED_CLASSES:
+    _m_ns[c] = create_NX_class(c, True)
 
-class NXbeam(NXobject):
-    '''
-    NXbeam node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXbeam_stop(NXobject):
-    '''
-    NXbeam_stop node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXbending_magnet(NXobject):
-    '''
-    NXbending_magnet node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXcapillary(NXobject):
-    '''
-    NXcapillary node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXcharacterization(NXobject):
-    '''
-    NXcharacterization node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXcite(NXobject):
-    '''
-    NXcite node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXcollection(NXobject):
-    '''
-    NXcollection node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXcollimator(NXobject):
-    '''
-    NXcollimator node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXcrystal(NXobject):
-    '''
-    NXcrystal node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXcylindrical_geometry(NXobject):
-    '''
-    NXcylindrical_geometry node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXdetector(NXobject):
-    '''
-    NXdetector node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXdetector_group(NXobject):
-    '''
-    NXdetector_group node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXdetector_module(NXobject):
-    '''
-    NXdetector_module node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXdisk_chopper(NXobject):
-    '''
-    NXdisk_chopper node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXenvironment(NXobject):
-    '''
-    NXenvironment node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXevent_data(NXobject):
-    '''
-    NXevent_data node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXfermi_chopper(NXobject):
-    '''
-    NXfermi_chopper node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXfilter(NXobject):
-    '''
-    NXfilter node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXflipper(NXobject):
-    '''
-    NXflipper node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXfresnel_zone_plate(NXobject):
-    '''
-    NXfresnel_zone_plate node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXgeometry(NXobject):
-    '''
-    NXgeometry node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXgrating(NXobject):
-    '''
-    NXgrating node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXguide(NXobject):
-    '''
-    NXguide node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXinsertion_device(NXobject):
-    '''
-    NXinsertion_device node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXinstrument(NXobject):
-    '''
-    NXinstrument node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXlog(NXobject):
-    '''
-    NXlog node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXmirror(NXobject):
-    '''
-    NXmirror node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXmoderator(NXobject):
-    '''
-    NXmoderator node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXmonochromator(NXobject):
-    '''
-    NXmonochromator node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXnote(NXobject):
-    '''
-    NXnote node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXoff_geometry(NXobject):
-    '''
-    NXoff_geometry node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXorientation(NXobject):
-    '''
-    NXorientation node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXparameters(NXobject):
-    '''
-    NXparameters node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXpdb(NXobject):
-    '''
-    NXpdb node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXpinhole(NXobject):
-    '''
-    NXpinhole node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXpolarizer(NXobject):
-    '''
-    NXpolarizer node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXpositioner(NXobject):
-    '''
-    NXpositioner node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXprocess(NXobject):
-    '''
-    NXprocess node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXreflections(NXobject):
-    '''
-    NXreflections node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXsample(NXobject):
-    '''
-    NXsample node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXsample_component(NXobject):
-    '''
-    NXsample_component node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXsensor(NXobject):
-    '''
-    NXsensor node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXshape(NXobject):
-    '''
-    NXshape node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXslit(NXobject):
-    '''
-    NXslit node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXsource(NXobject):
-    '''
-    NXsource node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXsubentry(NXobject):
-    '''
-    NXsubentry node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXtransformations(NXobject):
-    '''
-    NXtransformations node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXtranslation(NXobject):
-    '''
-    NXtranslation node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXuser(NXobject):
-    '''
-    NXuser node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXvelocity_selector(NXobject):
-    '''
-    NXvelocity_selector node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-class NXxraylens(NXobject):
-    '''
-    NXxraylens node. This is a subclass of the NXobject class.
-    
-    See the NXobject documentation for more details.
-    '''
-    pass
-
-# contributed classes to add when they are ratified by the NIAC
-# 
-# NXcontainer
-# NXcsg
-# NXelectrostatic_kicker
-# NXmagnetic_kicker
-# NXquadric
-# NXquadrupole_magnet
-# NXseparator
-# NXsnsevent
-# NXsnshisto
-# NXsolenoid_magnet
-# NXsolid_geometry
-# NXspecdata
-# NXspin_rotor
-
-#class Unknown(NXnode):
-#    '''
-#    Unknown group type; class does not start with NX or SDS.
-#    '''
-#    def __init__(self, nxname="unknown", nxclass="unknown"):
-#        self.nxname = nxname
-#        self.nxclass = nxclass
-#
-#    def __repr__(self):
-#        return "Unknown('%s','%s')"%(self.nxname,self.nxclass)
 
 def _get_all_nx_classes():
     d = {}
     import sys
     import inspect
-    for n, obj in inspect.getmembers(sys.modules[__name__],
-                                    lambda m : inspect.isclass(m) and m.__module__ == __name__):
-        if n.startswith('NX'):
+
+    for n, obj in inspect.getmembers(
+        sys.modules[__name__], lambda m: inspect.isclass(m) and m.__module__ == __name__
+    ):
+        if n.startswith("NX"):
             d[n] = obj
 
     return d
+
 
 NX_CLASSES = _get_all_nx_classes()

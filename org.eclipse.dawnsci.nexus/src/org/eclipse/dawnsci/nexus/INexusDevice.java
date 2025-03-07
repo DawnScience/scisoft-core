@@ -106,7 +106,7 @@ public interface INexusDevice<N extends NXobject> {
 	 *         to represent this device
 	 * @throws NexusException if the nexus object could not be created for any reason
 	 */
-	public default List<NexusObjectProvider<?>> getNexusProviders(NexusScanInfo info) throws NexusException {
+	public default List<NexusObjectProvider<N>> getNexusProviders(NexusScanInfo info) throws NexusException {
 		return Arrays.asList(getNexusProvider(info)); // override either this method or getNexusProvider
 	}
 	

@@ -32,7 +32,9 @@ else:
 
 _np_version_cur = _Version(_np.version.version)
 _is_np_version_ge_1_8 = _np_version_cur >= _Version('1.8')
-_is_np_version_ge_1_18 = _np_version_cur >= _Version('1.18')
+_is_np_version_ge_1_10 = _np_version_cur >= _Version('1.10')
+_is_np_version_ge_1_25 = _np_version_cur >= _Version('1.25')
+_is_np_version_ge_2_0 = _np_version_cur >= _Version('2.0')
 
 newaxis = _np.newaxis
 
@@ -66,7 +68,7 @@ complex = _np.complex128 #@ReservedAssignment
 
 import types as _types
 
-AxisError = _np.AxisError
+AxisError = _np.exceptions.AxisError if _is_np_version_ge_1_25 else _np.AxisError
 
 def asIterable(items):
     '''
@@ -108,7 +110,18 @@ isrealobj = _np.isrealobj
 
 asarray = _np.asarray
 
-asfarray = _np.asfarray
+if _is_np_version_ge_2_0:
+    def asfarray(a, dtype=None):
+        if dtype is None:
+            a = _np.asarray(a)
+            dtype = a.dtype
+        if _np.issubdtype(dtype, _np.integer):
+            dtype = _np.float64
+        elif not _np.issubdtype(dtype, _np.floating):
+            raise TypeError('Not convertible to a float')
+        return _np.asarray(a, dtype=dtype)
+else:
+    asfarray = _np.asfarray
 
 asanyarray = _np.asanyarray
 
@@ -143,7 +156,7 @@ empty = _np.empty
 
 empty_like = _np.empty_like
 
-if _is_np_version_ge_1_8 :
+if _is_np_version_ge_1_8:
     full = _np.full
     full_like = _np.full_like
 
@@ -177,7 +190,8 @@ concatenate = _np.concatenate
 
 expand_dims = _np.expand_dims
 
-stack = _np.stack # 1.10+
+if _is_np_version_ge_1_10:
+    stack = _np.stack
 
 vstack = _np.vstack
 
@@ -207,7 +221,7 @@ repeat = _np.repeat
 
 append = _np.append
 
-cast = _np.cast
+cast = _np.asarray
 
 copy = _np.copy
 

@@ -128,8 +128,7 @@ class _lazydataset(object):
                         dst_pos.append(slice(None))
                         sl = slices[i]
                         src_pos.append(sl if sl else slice(None))
-    
-    #            print dst_pos, src_pos
+
                 v[tuple(dst_pos)] = ds[tuple(src_pos)]
         finally:
             fh.close()
@@ -145,13 +144,6 @@ class SDS(_dataset):
         if not isinstance(dataset, (_lazydataset, ndarray, h5py.Dataset)):
             dataset = asarray(dataset)
         _dataset.__init__(self, dataset, attrs=attrs, parent=parent, warn=warn)
-#        self.__data = dataset
-#        if not isinstance(dataset, ndarray):
-#            self.__shape = tuple(dataset.shape)
-#            self.__maxshape = tuple(dataset.maxshape)
-#        else:
-#            self.__shape = self.__maxshape = tuple(dataset.shape)
-
 
 class HDF5Loader(object):
     def __init__(self, name):
@@ -239,22 +231,23 @@ class HDF5Loader(object):
 
 class NXLoader(HDF5Loader):
     def _mkgroup(self, node, attrs, parent):
-        try:
-            cls = node.attrs['NX_class']
-        except KeyError:
-            cls = None
+        cls = node.attrs.get('NX_class')
+
         if cls is not None:
             if not isinstance(cls, str):
                 cls = str(cls, 'utf-8')
-            if cls in _nx.NX_CLASSES:
-                g = _nx.NX_CLASSES[cls](attrs, parent, self.warn)
-            else:
-                print("Unknown Nexus class: %s" % cls)
-                g = super(NXLoader, self)._mkgroup(node, attrs, parent)
         elif node.name == '/':
-            g = _nx.NXroot(node.filename, attrs, warn=self.warn)
+            cls = 'NXroot'
         else:
-            g = _nx.NXobject(attrs, parent, self.warn)
+            cls = 'NXobject'
+
+        if cls == 'NXroot':
+            g = _nx.NXroot(node.filename, attrs, warn=self.warn)
+        elif cls in _nx.NX_CLASSES:
+            g = _nx.NX_CLASSES[cls](attrs, parent, self.warn)
+        else:
+            print("Unknown Nexus class: %s" % cls)
+            g = super(NXLoader, self)._mkgroup(node, attrs, parent)
 
         return g
 

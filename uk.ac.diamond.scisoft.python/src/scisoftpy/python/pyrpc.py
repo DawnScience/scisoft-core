@@ -18,11 +18,10 @@
 AnalysisRpc implementation in Python
 '''
 
-from six.moves.socketserver import TCPServer, ThreadingMixIn
-from six.moves.xmlrpc_server import SimpleXMLRPCRequestHandler, SimpleXMLRPCServer
-from six.moves.xmlrpc_client import ServerProxy
+from socketserver import TCPServer, ThreadingMixIn
+from xmlrpc.server import SimpleXMLRPCRequestHandler, SimpleXMLRPCServer
+from xmlrpc.client import ServerProxy
 import scisoftpy.python.pyflatten as _flatten
-from six.moves import map
 
 class _method:
     def __init__(self, send, destination):

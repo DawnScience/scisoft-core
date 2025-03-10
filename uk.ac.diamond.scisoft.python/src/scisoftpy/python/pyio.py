@@ -57,6 +57,7 @@ class NumPySaver(PythonSaver):
 
 from re import compile as _compile
 _begin_number = _compile(r'^[-+]?[\d]?\.?\d')
+_cs_regex = _compile(r'\s+')
 
 class SRSLoader(PythonLoader):
     '''
@@ -216,23 +217,21 @@ class SRSLoader(PythonLoader):
         Convert to all data to dictionary. Keys are column headers and values are
         1D NumPy arrays 
         '''
-        import re
-        cs_regex = re.compile('\s+')
 
         if cols is None:
             # use first line
-            r = cs_regex.split(text[0].strip())
+            r = _cs_regex.split(text[0].strip())
             lc = len(r)
             cols = [ "Column_%d" % (i+1,) for i in range(lc) ]
         else:
             if cols.count('\t') > 0: # columns separated by tabs
                 cols = cols.split('\t')
             else:
-                cols = cs_regex.split(cols)
+                cols = _cs_regex.split(cols)
             lc = len(cols)
         data = [[] for dummy in cols]
         for t in text:
-            r = cs_regex.split(t.strip())
+            r = _cs_regex.split(t.strip())
             lr = len(r)
             if lr > lc:
                 if warn:

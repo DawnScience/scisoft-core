@@ -32,9 +32,6 @@ import sys
 import copy
 import uuid
 import traceback
-import six
-from six.moves import map
-from six.moves import zip
 
 TYPE = "__type__"
 CONTENT = "content"
@@ -75,14 +72,14 @@ class roiHelper(flatteningHelper):
     def flatten(self, thisRoiBase):
         d = copy.deepcopy(thisRoiBase.__dict__)
         rval = dict()
-        for k, v in six.iteritems(d):
+        for k, v in d.items():
             rval[k] = flatten(v)
         rval[TYPE] = self.typeName
         return rval
     
     def unflatten(self, obj):
         unflattenedObj = dict()
-        for k, v in six.iteritems(obj):
+        for k, v in obj.items():
             if k == TYPE:
                 continue
             v = unflatten(v)
@@ -174,7 +171,7 @@ class dictHelper(flatteningHelper):
         rval[self.VALUES] = []
         from collections import OrderedDict
         rval[self.ORDERED] = isinstance(thisDict, OrderedDict)
-        for k, v in six.iteritems(thisDict):
+        for k, v in thisDict.items():
             rval[self.KEYS].append(flatten(k))
             rval[self.VALUES].append(flatten(v))
         return rval
@@ -194,7 +191,7 @@ class passThroughHelper(object):
         return obj
 
     def canflatten(self, obj):
-        return isinstance(obj, (six.text_type, str, int, int, float, _wrapper.binarywrapper))
+        return isinstance(obj, (str, int, int, float, _wrapper.binarywrapper))
 
     def canunflatten(self, obj):
         return self.canflatten(obj)
@@ -267,7 +264,7 @@ class guiBeanHelper(flatteningHelper):
     
     def flatten(self, obj):
         rval = dict()
-        for k, v in six.iteritems(obj):
+        for k, v in obj.items():
             rval[str(k)] = flatten(v)
             
         rval[TYPE] = self.TYPE_NAME
@@ -275,7 +272,7 @@ class guiBeanHelper(flatteningHelper):
 
     def unflatten(self, thisDict):
         rval = _beans.guibean()
-        for k, v in six.iteritems(thisDict):
+        for k, v in thisDict.items():
             if k == TYPE:
                 continue
             guiparam = _beans.parameters.get(k)

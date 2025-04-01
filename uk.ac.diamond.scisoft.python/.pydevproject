@@ -29,7 +29,7 @@
 
 		<path>${BUNDLE_POOL_LOC}/plugins/javax.vecmath_1.5.2.jar</path>
 
-		<path>${MVN_LOCAL_REPO}/org/apache/commons/collections4/4.4/org.apache.commons.collections4-4.4.jar</path>
+		<path>${MVN_LOCAL_REPO}/org/apache/commons/commons-collections4/4.4/commons-collections4-4.4.jar</path>
 
 		<path>${BUNDLE_POOL_LOC}/plugins/org.apache.commons.lang3_3.1.0.v201403281430.jar</path>
 

@@ -27,6 +27,7 @@ import org.eclipse.dawnsci.nexus.NXentry;
 import org.eclipse.dawnsci.nexus.NXinstrument;
 import org.eclipse.dawnsci.nexus.NXsample;
 import org.eclipse.dawnsci.nexus.NXtransformations;
+import org.eclipse.dawnsci.nexus.NexusConstants;
 import org.eclipse.dawnsci.nexus.NexusNodeFactory;
 import org.eclipse.dawnsci.nexus.validation.ValidationReportEntry.Level;
 import org.eclipse.dawnsci.nexus.validation.ValidationReportEntry.NodeType;
@@ -258,6 +259,10 @@ public class AbstractNexusValidatorTest {
 	public void testValidateFieldUnits_unitless() {
 		final DataNode dataNode = NexusNodeFactory.createDataNode();
 		dataNode.setDataset(DatasetFactory.zeros(DoubleDataset.class, 10));
+		validator.validateFieldUnits("distance", dataNode, NexusUnitCategory.NX_UNITLESS);
+		assertThat(validator.getValidationReport().isOk(), is(true));
+
+		dataNode.addAttribute(TreeFactory.createAttribute(NexusConstants.UNITS, ""));
 		validator.validateFieldUnits("distance", dataNode, NexusUnitCategory.NX_UNITLESS);
 		assertThat(validator.getValidationReport().isOk(), is(true));
 	}

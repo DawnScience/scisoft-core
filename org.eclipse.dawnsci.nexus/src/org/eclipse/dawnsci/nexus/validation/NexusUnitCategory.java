@@ -133,7 +133,7 @@ public enum NexusUnitCategory {
 
 		@Override
 		public boolean isCompatible(Unit<?> unit) {
-			return false; // no unit attribute is valid in this case
+			return unit.equals(AbstractUnit.ONE); // no unit attribute is valid in this case
 		}
 		
 		public boolean isRequired() {

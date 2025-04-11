@@ -105,6 +105,20 @@ public class JythonPath {
 		"uk.ac.diamond.daq.logging-utils", // Required for DeprecationLogger
 	};
 
+	private static final String[] requiredPaths = { // populate from .pydevproject
+		// org.eclipse.dawnsci.analysis.dataset
+		"pl/edu/icm/JLargeArrays",
+		"com/github/wendykierp/JTransforms",
+		// uk.ac.diamond.python
+		"javax/measure/unit-api",
+		"org/apache/commons/commons-collections4",
+		"org/apache/commons/commons-math3",
+		"org/apache/ws/commons/util/ws-commons-util",
+		"org/apache/xmlrpc/xmlrpc-common",
+		"org/apache/xmlrpc/xmlrpc-server",
+		"org/apache/xmlrpc/xmlrpc-client",
+	};
+
 	/*
 	 * Plugins we want
 	 */
@@ -170,7 +184,7 @@ public class JythonPath {
 		if (bundle == null) {
 			return null;
 		}
-		return FileLocator.getBundleFile(bundle).getCanonicalFile();
+		return FileLocator.getBundleFileLocation(bundle).orElseThrow(() -> new IOException("Unable to locate the bundle file: " + bundle)).getCanonicalFile();
 	}
 
 
@@ -230,7 +244,7 @@ public class JythonPath {
 		final Set<String> jyPaths = new HashSet<String>();
 
 		// Find third party jar files & add them all
-		final List<File> thirdPartyJars = findJars(pluginsDir, extras);
+		final List<File> thirdPartyJars = pruneJars(findJars(pluginsDir, extras));
 		for (File jar : thirdPartyJars) {
 			if (jyPaths.add(jar.getAbsolutePath())) {
 				logger.debug("Adding jar file to jython path: {} ", jar.getAbsolutePath());
@@ -248,7 +262,7 @@ public class JythonPath {
 			// Now that we use Oomph, look in P2 bundle pool for required jars
 			File wsDir = new File(System.getProperty("osgi.syspath"));
 			if (wsDir.isDirectory()) {
-				final List<File> tJars = findJars(wsDir, extras);
+				final List<File> tJars = pruneJars(findJars(wsDir, extras));
 				for (File file : tJars) {
 					if (jyPaths.add(file.getAbsolutePath())) {
 						logger.debug("Adding jar file to jython path: {} ", file.getAbsolutePath());
@@ -288,8 +302,18 @@ public class JythonPath {
 					}
 				}
 			}
-		}
-		else {
+			
+			String mvnLocalRepo = System.getProperty("mvn.local.repo");
+			if (mvnLocalRepo != null) {
+				File mLRF = new File(mvnLocalRepo);
+				final List<File> mJars = pruneJars(findJarsWithPath(mLRF));
+				for (File file : mJars) {
+					if (jyPaths.add(file.getAbsolutePath())) {
+						logger.debug("Adding Maven jar file to jython path: {} ", file.getAbsolutePath());
+					}
+				}
+			}
+		} else {
 			// Only add directories to pyPaths
 			for (File dir: allPluginDirs) {
 				String dirPath = dir.getAbsolutePath();
@@ -331,7 +355,34 @@ public class JythonPath {
 				jarFiles.addAll(findJars(file, extraPlugins));
 			}
 		}
-		return pruneJars(jarFiles);
+		return jarFiles;
+	}
+
+	/**
+	 * Recursively search through a given directory to locate all (non-sources) jar files provided
+	 * they are in the requiredPath list
+	 * @param directory location searched for jar files 
+	 * @return List of jar files which will be added to the path
+	 */
+	private static final List<File> findJarsWithPath(File directory) {
+		if (!directory.isDirectory()) {
+			return Collections.emptyList();
+		}
+
+		final List<File> jarFiles = new ArrayList<>();
+
+		for (File file : directory.listFiles()) {
+			final String name = file.getName();
+			//If the file is a jar, then add it
+			if (name.endsWith(".jar") && !name.endsWith("sources.jar")) {
+				if (isRequiredPath(file, requiredPaths)) {
+					jarFiles.add(file);
+				}
+			} else if (!name.startsWith("bnd-") && file.isDirectory()) {
+				jarFiles.addAll(findJarsWithPath(file));
+			}
+		}
+		return jarFiles;
 	}
 
 	/**
@@ -384,6 +435,9 @@ public class JythonPath {
 					jarFiles.add(last);
 				}
 				int i = n.lastIndexOf('_');
+				if (i < 0) {
+					i = n.lastIndexOf('-');
+				}
 				current = i >= 0 ? n.substring(0, i + 1) : n;
 			}
 			last = j;
@@ -477,6 +531,20 @@ public class JythonPath {
 			for (String key : extraKeys) {
 				if (filename.startsWith(key)) return true;
 			}
+		}
+		return false;
+	}
+
+	/**
+	 * Check whether a file is in given lists
+	 * @param file Filename to search for
+	 * @param paths List to search against
+	 * @return true if file is in list
+	 */
+	private static boolean isRequiredPath(File file, String[] paths) {
+		String filepath = file.getAbsolutePath();
+		for (String p : paths) {
+			if (filepath.contains(p)) return true;
 		}
 		return false;
 	}

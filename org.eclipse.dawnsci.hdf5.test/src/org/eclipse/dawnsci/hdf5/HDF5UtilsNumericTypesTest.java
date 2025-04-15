@@ -93,6 +93,14 @@ public class HDF5UtilsNumericTypesTest {
 		}
 	}
 
+	@Test
+	public void testLittleEndianArray() throws Throwable {
+		String endian = "le";
+		if (datasetName == "f32" && InterfaceUtils.isFloating(datasetClass)) {
+			checkArrayFloats(endian);
+		}
+	}
+
 	private void checkIntegers(String endianness) throws ScanFileHolderException {
 		Slice s = new Slice(1, 31, 2);
 		s.setLength(32);
@@ -121,5 +129,17 @@ public class HDF5UtilsNumericTypesTest {
 		e.set(Double.NEGATIVE_INFINITY, 1);
 		e.set(Double.NaN, 3);
 		assertDatasetEquals(e, d);
+	}
+
+	private void checkArrayFloats(String endianness) throws ScanFileHolderException {
+		Slice s = new Slice(1, 7, 2);
+		s.setLength(8);
+		Dataset d = HDF5Utils.loadDatasetWithClose("testfiles/numeric_types.h5", "arrayfloats_" + endianness + Node.SEPARATOR + datasetName,
+				new int[] {s.getStart()}, new int[] {s.getNumSteps()}, new int[] {s.getStep()}, 
+				-1, null, false);
+
+		Dataset e = expected.reshape(-1,4).getSliceView(s,null).cast(datasetClass).idivide(32);
+		e.set(Double.NaN, 1, 2);
+		assertDatasetEquals(DatasetUtils.createCompoundDataset(e, 4).flatten(), d);
 	}
 }

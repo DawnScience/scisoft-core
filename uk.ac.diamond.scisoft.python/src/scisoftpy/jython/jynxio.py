@@ -19,7 +19,6 @@ from .jyhdf5io import HDF5Loader as _h5loader
 from org.eclipse.dawnsci.analysis.api.tree import Tree as _jtree
 from org.eclipse.dawnsci.analysis.api.tree import TreeFile as _jtreefile
 
-#from jyhdf5io import SDS
 
 import scisoftpy.nexus as _nx
 
@@ -28,17 +27,18 @@ class NXLoader(_h5loader):
         cls = link.getDestination().getAttribute('NX_class')
         if cls is not None:
             cls = cls.getFirstElement()
-            if cls in _nx.NX_CLASSES:
-                g = _nx.NX_CLASSES[cls](attrs, parent, self.warn)
-            else:
-                if cls:
-                    print("Unknown Nexus class: %s" % cls)
-                g = super(NXLoader, self)._mkgroup(name, link, attrs, parent)
         elif name == '/' or isinstance(parent, _jtree):
+            cls = 'NXroot'
+        else:
+            cls = 'NXobject'
+
+        if cls == 'NXroot':
             src = parent.getFilename() if isinstance(parent, _jtreefile) else parent.getSourceURI()
             g = _nx.NXroot(src, attrs, parent, self.warn)
+        elif cls in _nx.NX_CLASSES:
+            g = _nx.NX_CLASSES[cls](attrs, parent, self.warn)
         else:
-            g = _nx.NXobject(attrs, parent, self.warn)
+            print("Unknown Nexus class: %s" % cls)
+            g = super(NXLoader, self)._mkgroup(name, link, attrs, parent)
 
         return g
-

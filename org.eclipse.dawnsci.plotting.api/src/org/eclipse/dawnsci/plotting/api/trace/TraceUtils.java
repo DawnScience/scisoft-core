@@ -92,7 +92,7 @@ public class TraceUtils {
 	 * @return true if it is custom
 	 */
 	public static boolean isAxisCustom(IDataset axis, int length) {
-		if (axis == null) {
+		if (axis == null || axis.getSize() == 0) {
 			return false;
 		}
 
@@ -106,23 +106,17 @@ public class TraceUtils {
 		}
 
 		length--;
-		return axis.getDouble(0) != 0 && axis.getDouble(length) != length;
+		return axis.getDouble() != 0 && (length == 0 || axis.getDouble(length) != length);
 	}
 
-	public final static void transform(Dataset label, int index, double[] point) {
-		if (label != null) {
-			internalTransform(label, index, point);
-		}
-	}
-
-	public final static void transform(Dataset label, int index, double[] pointA, double[] pointB) {
+	public static final void transform(Dataset label, int index, double[] pointA, double[] pointB) {
 		if (label != null) {
 			internalTransform(label, index, pointA);
 			internalTransform(label, index, pointB);
 		}
 	}
 
-	public final static void transform(Dataset label, int index, double[]... points) {
+	public static final void transform(Dataset label, int index, double[]... points) {
 		if (label != null) {
 			for (double[] ds : points) {
 				internalTransform(label, index, ds);
@@ -130,7 +124,7 @@ public class TraceUtils {
 		}
 	}
 
-	private final static void internalTransform(Dataset label, int index, double[] point) {
+	private static final void internalTransform(Dataset label, int index, double[] point) {
 		double lIndex = point[index];
 		double floor  = Math.floor(lIndex);
 		double frac   = lIndex - floor;

@@ -89,15 +89,16 @@ class Test(unittest.TestCase):
 
     def testDLSmodule(self):
         print(dnp.external.get_dls_module())
+        print(dnp.external.get_dls_module('python/3.12'))
 
     def testPythonInstallation(self):
         print(dnp.external.get_python())
 
     def testExternal(self):
         try:
-            from .external_functions import fun, funadd, fundec#, funexception
+            from .external_functions import fun, funadd, fundec#, funexception @UnusedImport @UnresolvedImport
         except: # so this file can run when not part of all_tests
-            from external_functions import fun, funadd, fundec#, funexception
+            from external_functions import fun, funadd, fundec#, funexception @Reimport
 
         a = fun()
         efun = dnp.external.create_function(fun, dls_module=True)
@@ -131,9 +132,9 @@ class Test(unittest.TestCase):
 #        efunexception()
 
     def testPyAna(self):
-        efun = dnp.external.create_function("funpyana", "external_functions", dls_module="python/3.10")
-        print('2,7', end=' ')
-        self.assertEqual(efun(), (2,7))
+        efun = dnp.external.create_function("funpyana", "external_functions", dls_module="python/3.12")
+        print('3,12', end=' ')
+        self.assertEqual(efun(), (3,12))
         print('passed')
 
     def testArrayScalar(self):
@@ -147,9 +148,9 @@ class Test(unittest.TestCase):
         efun = dnp.external.create_function("fun", "external_functions", dls_module=True, keep=False)
 
         try:
-            from time import clock as _clock
+            from time import clock as _clock  # @UnusedImport
         except: # post py3.8
-            from time import process_time as _clock
+            from time import process_time as _clock  # @Reimport @UnresolvedImport
         t = _clock()
 
         for _i in range(10):

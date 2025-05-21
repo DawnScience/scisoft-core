@@ -1,5 +1,5 @@
 {% set name = "scisoftpy" %}
-{% set version = "2.37.0" %}
+{% set version = "2.37.1" %}
 
 package:
   name: {{ name }}
@@ -23,7 +23,6 @@ requirements:
     - python
     - h5py  # depends on numpy
     - pillow
-    - six
     - tifffile
     - pycbf  # [py3k]
     - packaging  # [py >= 40]

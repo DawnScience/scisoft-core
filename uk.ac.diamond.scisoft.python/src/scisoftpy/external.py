@@ -386,10 +386,7 @@ if _isjava:
     # need Java class as the Python code below does not work in Jython!!!
     from uk.ac.diamond.scisoft.python import PythonSubProcess
 else:
-    if py3:
-        from queue import Queue, Empty
-    else:
-        from Queue import Queue, Empty
+    from queue import Queue, Empty
     from threading import Thread
     cmds='''from __future__ import print_function
 # Started by create_function with keep=True (default),
@@ -690,7 +687,8 @@ def create_function(function, module=None, exe=None, path=None, extra_path=None,
         raise ValueError('Cannot find module in path: try specifying it in extra_path')
 
     env = dict(_env)
-    env[_PYTHONPATH] = os.pathsep.join(path)
+    if path:
+        env[_PYTHONPATH] = os.pathsep.join(path)
     if ldpath:
         if sys.platform == 'win32':
             key = 'PATH'

@@ -192,6 +192,7 @@ def gradient(f, *arg):
         if r == 1:
             result /= narg[0]
         else:
+            result = list(result)
             for i in range(r):
                 result[i] /= narg[i]
         return result

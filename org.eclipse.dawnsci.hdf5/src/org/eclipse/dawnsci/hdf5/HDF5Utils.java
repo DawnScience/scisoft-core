@@ -1677,14 +1677,22 @@ public class HDF5Utils {
 				comp.clazz = InterfaceUtils.getInterfaceFromClass(comp.isize, InterfaceUtils.getElementClass(comp.clazz));
 			}
 
-			StringBuilder name = new StringBuilder(comp.isComplex ? "Complex = {" : "Composite of {");
-			for (int i = 0; i < comp.isize; i++) {
-				name.append(names.get(i));
-				name.append(constructType(classes.get(i), widths.get(i), signs.get(i)));
-				name.append(", ");
+			StringBuilder name = new StringBuilder();
+			if (comp.isComplex) {
+				name.append("Complex = {");
+				for (int i = 0; i < comp.isize; i++) {
+					name.append(names.get(i));
+					name.append(constructType(classes.get(i), widths.get(i), signs.get(i)));
+					name.append(", ");
+				}
+				name.delete(name.length() - 2, name.length());
+				name.append("}");
+			} else {
+				name.append("Array of ");
+				name.append(classes.size());
+				name.append(" ");
+				name.append(constructType(classes.get(0), widths.get(0), signs.get(0)).substring(1));
 			}
-			name.delete(name.length() - 2, name.length());
-			name.append("}");
 			comp.name = name.toString();
 			Collections.sort(widths);
 			comp.bits = widths.get(widths.size() - 1);
@@ -1745,15 +1753,31 @@ public class HDF5Utils {
 					flattenCompositeDatasetType(btid, prefix, names, classes, iClazzes, widths, signs);
 					return;
 				}
+				long mtype = H5.H5Tget_native_type(btid);
+				int w = 1;
+				try {
+					w = (int) H5.H5Tget_size(mtype);
+				} catch (HDF5Exception ex) {
+				}
+				boolean s = true;
+				if (tclass == HDF5Constants.H5T_INTEGER) {
+					try {
+						s = H5.H5Tget_sign(mtype) == HDF5Constants.H5T_SGN_2;
+					} catch (HDF5Exception ex) {
+					}
+				}
 				int r = H5.H5Tget_array_ndims(tid);
 				long[] shape = new long[r];
 				H5.H5Tget_array_dims(tid, shape);
 				long size = calcLongSize(shape);
+				widths.add(-w);
+				signs.add(s);
 				for (long i = 0; i < size; i++) {
-					names.add(prefix + i);
 					classes.add(tclass);
 				}
+				iClazzes.add(HDF_TYPES_TO_DATASET_TYPES.get(getTypeRepresentation(mtype)));
 			} catch (HDF5Exception ex) {
+				logger.warn("Problem reading array datatype", ex);
 			} finally {
 				if (btid != -1) {
 					try {
@@ -1762,7 +1786,7 @@ public class HDF5Utils {
 					}
 				}
 			}
-		} else {
+		} else { // compound datatype
 			int n = H5.H5Tget_nmembers(tid);
 			if (n <= 0)
 				return;
@@ -1796,7 +1820,7 @@ public class HDF5Utils {
 		
 					
 					String mname = prefix;
-					if (prefix.length() > 0) {
+					if (!prefix.isEmpty()) {
 						mname += COLON;
 					}
 					mname += H5.H5Tget_member_name(tid, i);

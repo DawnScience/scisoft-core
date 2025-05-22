@@ -211,6 +211,9 @@ class NexusScanFileImpl implements NexusScanFile {
 			final NexusTemplate template = templateService.loadTemplate(templateFilePath);
 			template.apply(tree);
 		}
+		for (NexusTemplate template : nexusScanModel.getNexusTemplates()) {
+			template.apply(tree);
+		}
 	}
 
 	private Map<ScanRole, List<NexusObjectProvider<?>>> extractNexusProviders() throws NexusException {

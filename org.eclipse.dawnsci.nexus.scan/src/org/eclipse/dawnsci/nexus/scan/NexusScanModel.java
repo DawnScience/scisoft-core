@@ -28,6 +28,7 @@ import org.eclipse.dawnsci.nexus.NXcollection;
 import org.eclipse.dawnsci.nexus.NexusScanInfo;
 import org.eclipse.dawnsci.nexus.NexusScanInfo.ScanRole;
 import org.eclipse.dawnsci.nexus.builder.NexusMetadataProvider;
+import org.eclipse.dawnsci.nexus.template.NexusTemplate;
 
 /**
  * An model describing a scan in terms of nexus.
@@ -61,7 +62,12 @@ public class NexusScanModel {
 	/**
 	 * The file paths of nexus template files (YAML files) to apply to the nexus file.
 	 */
-	private Set<String> templateFilePaths;
+	private List<String> templateFilePaths;
+
+	/**
+	 * list of nexus templates to apply to the nexus file.
+	 */
+	private List<NexusTemplate> nexusTemplates = Collections.emptyList();
 
 	/**
 	 * A list of the dimensions names for the scan, each with the same index in the list
@@ -124,14 +130,14 @@ public class NexusScanModel {
 		this.nexusScanInfo = nexusScanInfo;
 	}
 
-	public Set<String> getTemplateFilePaths() {
+	public List<String> getTemplateFilePaths() {
 		if (templateFilePaths == null) {
-			return Collections.emptySet();
+			return Collections.emptyList();
 		}
 		return templateFilePaths;
 	}
 
-	public void setTemplateFilePaths(Set<String> templateFilePaths) {
+	public void setTemplateFilePaths(List<String> templateFilePaths) {
 		this.templateFilePaths = templateFilePaths;
 	}
 
@@ -153,6 +159,14 @@ public class NexusScanModel {
 
 	public void setNexusMetadataProviders(List<NexusMetadataProvider> nexusMetadataProviders) {
 		this.nexusMetadataProviders = nexusMetadataProviders;
+	}
+
+	public List<NexusTemplate> getNexusTemplates() {
+		return nexusTemplates;
+	}
+
+	public void setNexusTemplates(List<NexusTemplate> nexusTemplates) {
+		this.nexusTemplates = nexusTemplates;
 	}
 
 }

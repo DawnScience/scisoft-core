@@ -99,9 +99,13 @@ public enum KnownDetector {
 		if (shape == null) {
 			throw new IllegalArgumentException("Detector or oshape must be defined");
 		}
+		int e = shape.length - 1;
+		if (e < 1) {
+			throw new IllegalArgumentException("Detector data must be at least 2D");
+		}
 
-		int hX = shape[1]/2;
-		int lY = shape[0];
+		int hX = shape[e]/2;
+		int lY = shape[e - 1];
 		RectangularROI roi = null;
 		if (max == 1) {
 			if (detector == KnownDetector.XCAM_OLD) { // use right CCD
@@ -109,7 +113,7 @@ public enum KnownDetector {
 			} else if (detector == KnownDetector.XCAM) { // use left CCD
 				roi = new RectangularROI(0, 0, hX, lY, 0);
 			} else {
-				roi = new RectangularROI(0, 0, shape[1], lY, 0);
+				roi = new RectangularROI(0, 0, shape[e], lY, 0);
 			}
 		} else {
 			roi = new RectangularROI(0, 0, hX, lY, 0);

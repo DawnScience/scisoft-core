@@ -19,10 +19,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -81,6 +83,8 @@ public class NexusScanInfo {
 
 	private long estimatedScanTime = -1; // in ms, or -1 if not specified
 
+	private static final Logger logger = LoggerFactory.getLogger(NexusScanInfo.class);
+
 	public NexusScanInfo() {
 		this(Collections.emptyList());
 	}
@@ -134,39 +138,42 @@ public class NexusScanInfo {
 		return estimatedScanTime;
 	}
 
+	/**
+	 * Sets the provided collection as the names of devices with the given scan role.  Where an attempt is made to give
+	 * the same name two scan roles (presumably the same device), it will prefer roles according to the natural
+	 * (i.e. defined) ordering of ScanRole, this ensures that the scanned scannable will not be overwritten by a monitor
+	 * of the same scannable.
+	 * @param scanRole of the new names to be added
+	 * @param names the names of devices
+	 */
 	private void setDeviceNames(ScanRole scanRole, Collection<String> names) {
-		checkDeviceNamesForDuplicateScanRoles(scanRole, names);
-		// private so that we can ensure the correct type of collection for the role
-		// e.g. List for Scannables
-		deviceNames.put(scanRole, names);
+		List<String> namesWithoutConflicts = names.stream().filter(name -> prepareToAddName(scanRole, name)).collect(Collectors.toList());
+		deviceNames.put(scanRole, namesWithoutConflicts);
 	}
 
-	/**
-	 * Ensure that scannable names do not duplicate scannables in other roles.
-	 * @param scanRole of the new names to be added
-	 * @param newDeviceNames to be checked
-	 * @exception IllegalArgumentException is thrown if found device names in multiple scan roles.
-	 */
-	private void checkDeviceNamesForDuplicateScanRoles(ScanRole scanRole, Collection<String> newDeviceNames) {
-		//Loop through all devices with their scan role to compare them against the scanRole being added with the newDeviceNames
-		for (var entry : deviceNames.entrySet() ) {
-			final ScanRole roleForDeviceNames = entry.getKey();
-			final Collection<String> deviceNamesAtScanRole = entry.getValue();
-			if (!scanRole.equals(roleForDeviceNames) && !Collections.disjoint(newDeviceNames, deviceNamesAtScanRole)) {
-				final Set<String> common = new HashSet<>(deviceNamesAtScanRole);
-				common.retainAll(newDeviceNames);
-				throw new IllegalArgumentException(
-					"Cannot set \"" + scanRole + "\" because it already has device names " + common.toString() + " in \"" + roleForDeviceNames + "\"! Only 1 scan role is permitted per device."
-				);
+	private boolean prepareToAddName(ScanRole scanRole, String name) {
+		boolean passedCurrentRole = false;
+		for (ScanRole role : ScanRole.values()) {
+			if (scanRole == role) {
+				passedCurrentRole = true;
+			} else if (deviceNames.containsKey(role) && deviceNames.get(role).contains(name)) {
+				if (!passedCurrentRole) {
+					logger.warn("Cannot add \"{}\" with role \"{}\" because it already has role \"{}\"!", name, scanRole, role);
+					return false;
+				} else {
+					logger.warn("Removing \"{}\" from scan role \"{}\" because it has role \"{}\"!", name, role, scanRole);
+					deviceNames.get(role).remove(name);
+				}
 			}
 		}
+		return true;
 	}
 
 	public Collection<String> getDeviceNames(ScanRole scanRole) {
 		return deviceNames.get(scanRole);
 	}
 
-	public void setDetectorNames(Set<String> detectorNames) {
+	public void setDetectorNames(Collection<String> detectorNames) {
 		setDeviceNames(ScanRole.DETECTOR, detectorNames);
 	}
 
@@ -175,30 +182,30 @@ public class NexusScanInfo {
 		return detNames == null ? Collections.emptyList() : detNames;
 	}
 
-	public List<String> getScannableNames() {
-		final List<String> scannableNames = (List<String>) getDeviceNames(ScanRole.SCANNABLE);
+	public Collection<String> getScannableNames() {
+		final Collection<String> scannableNames = (List<String>) getDeviceNames(ScanRole.SCANNABLE);
 		return scannableNames == null ? Collections.emptyList() : scannableNames;
 	}
 
-	public void setScannableNames(List<String> axisNames) {
+	public void setScannableNames(Collection<String> axisNames) {
 		setDeviceNames(ScanRole.SCANNABLE, axisNames);
 	}
 
-	public Set<String> getPerPointMonitorNames() {
-		final Set<String> perPointMonitorNames = (Set<String>) getDeviceNames(ScanRole.MONITOR_PER_POINT);
+	public Collection<String> getPerPointMonitorNames() {
+		final Collection<String> perPointMonitorNames = getDeviceNames(ScanRole.MONITOR_PER_POINT);
 		return perPointMonitorNames == null ? Collections.emptySet() : perPointMonitorNames;
 	}
 
-	public void setPerPointMonitorNames(Set<String> monitorNames) {
+	public void setPerPointMonitorNames(Collection<String> monitorNames) {
 		setDeviceNames(ScanRole.MONITOR_PER_POINT, monitorNames);
 	}
 
-	public Set<String> getPerScanMonitorNames() {
-		final Set<String> perScanMonitorNames = (Set<String>) getDeviceNames(ScanRole.MONITOR_PER_SCAN);
+	public Collection<String> getPerScanMonitorNames() {
+		final Collection<String> perScanMonitorNames = getDeviceNames(ScanRole.MONITOR_PER_SCAN);
 		return perScanMonitorNames == null ? Collections.emptySet() : perScanMonitorNames;
 	}
 
-	public void setPerScanMonitorNames(Set<String> metadataScannableNames) {
+	public void setPerScanMonitorNames(Collection<String> metadataScannableNames) {
 		setDeviceNames(ScanRole.MONITOR_PER_SCAN, metadataScannableNames);
 	}
 

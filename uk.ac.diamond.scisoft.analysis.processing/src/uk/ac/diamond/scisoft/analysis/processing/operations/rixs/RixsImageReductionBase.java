@@ -572,7 +572,7 @@ public abstract class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			MetadataUtils.setAxes(this, dh, bins);
 			displayData.set(0, dh);
 			List<Double> z = DatasetUtils.crossings(x, dh, 0);
-			log.append("Histogram derivative zero-crossings = %s", z.subList(0, Math.max(5, z.size())));
+			log.append("Histogram derivative zero-crossings = %s", z.subList(0, Math.min(5, z.size())));
 			single = (int) Math.floor(z.get(0));
 			multiple = single + countsPerPhoton; // (int) Math.floor(z.get(1)); // TODO
 			log.appendSuccess("Setting limits for single photon as [%d, %d)", single, multiple);

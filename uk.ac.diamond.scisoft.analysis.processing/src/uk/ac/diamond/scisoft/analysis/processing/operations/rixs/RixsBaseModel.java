@@ -36,7 +36,7 @@ public class RixsBaseModel extends AbstractOperationModel {
 	private boolean useCutoff = false;
 
 	@OperationModelField(label = "Cutoff for pixels", description = "Cutoff as multiple of single photon count", hint = "Check if peaks are clipped when cutoff is too low", enableif = "useCutoff == true", min = 1.0, expertOnly = true)
-	private double cutoff = 5.0;
+	private double cutoff = 15.0;
 
 	@OperationModelField(label = "Cutoff window size", description = "Size of window to use for cutoff", hint = "Cuts out a (size, size) window", enableif = "useCutoff == true", min = 1, expertOnly = true)
 	private int cutoffSize = 1;

@@ -345,6 +345,12 @@ public class NexusTreeUtils {
 			}
 			try {
 				int[] ashape = a.getShape();
+				int aRank = ashape.length;
+				if (aRank != 1 && aRank != rank) {
+					// filter out candidate axes with illegal rank
+					logger.warn("Discarding axis candidate {} in {} as it has unsuitable rank", l.toString(), groupPath);
+					continue;
+				}
 
 				AxisChoice choice = new AxisChoice(a);
 				String n = getFirstString(dNode.getAttribute(NexusConstants.DATA_NAME));

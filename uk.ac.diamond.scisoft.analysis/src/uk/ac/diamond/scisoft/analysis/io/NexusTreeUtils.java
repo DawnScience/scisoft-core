@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -197,6 +196,8 @@ public class NexusTreeUtils {
 		augmentNodeLink(tree instanceof TreeFile treeFile ? treeFile.getFilename() : null, Tree.ROOT, tree.getNodeLink(), true);
 	}
 
+	private static int MAX_DIM_DIFF = 1;
+
 	/**
 	 * Augment a node with metadata that is pointed by link
 	 * @param filePath
@@ -326,6 +327,7 @@ public class NexusTreeUtils {
 
 		// scan children for datasets as possible axes (could be referenced by @axes)
 		List<AxisChoice> choices = new ArrayList<>();
+		boolean dimensionsMismatch = false;
 		for (NodeLink l : gNode) {
 			if (!l.isDestinationData())
 				continue;
@@ -341,6 +343,10 @@ public class NexusTreeUtils {
 
 			if (a == null) {
 				logger.warn("Dataset {} is empty", l.getName());
+				continue;
+			}
+			if (a.getSize() == 1 && !ArrayUtils.contains(shape, 1)) {
+				logger.warn("Dataset {} has single value but signal does not", l.getName());
 				continue;
 			}
 			try {
@@ -404,20 +410,27 @@ public class NexusTreeUtils {
 					}
 				}
 
-				if (intAxis == null) {
+				if (isSignal && intAxis == null) {
 					attr = d.getAttribute(NexusConstants.DATA_AXIS);
 					if (attr != null) {
 						intAxis = parseIntArray(attr);
-						if (intAxis.length == ashape.length) {
+						if (intAxis.length == aRank) {
 							for (int i = 0, imax = intAxis.length; i < imax; i++) {
 								int j = intAxis[i] - 1;
 								int il = isAxisFortranOrder ? rank - 1 - j : j; // fix C (row-major) dimension
 								intAxis[i] = il;
 								int al = ashape[i];
-								if (il < 0 || il >= rank || al != shape[il]) {
+								int sl = shape[il];
+								if (il < 0 || il >= rank) {
+									logger.debug("Axis attribute {} has invalid values for rank {}: {}", a.getName(),
+											rank, Arrays.toString(intAxis));
 									intAxis = null;
-									logger.debug("Axis attribute {} does not match shape {} != {}", a.getName(),
-											Arrays.toString(a.getShape()), Arrays.toString(shape));
+									break;
+								} else if (al != sl) {
+									logger.debug("Axis attribute {} has shape {} that does not match dataset shape {}: {}", a.getName(),
+											Arrays.toString(ashape), Arrays.toString(shape), Arrays.toString(intAxis));
+									intAxis = null;
+									dimensionsMismatch = true;
 									break;
 								}
 							}
@@ -427,42 +440,61 @@ public class NexusTreeUtils {
 									a.getRank(), shape.length);
 						}
 					}
-				}
 
-				if (intAxis == null) {
-					// remedy bogus or missing @axis by simply pairing matching dimension
-					// lengths to the signal dataset shape (this may be wrong as transposes in
-					// common dimension lengths can occur)
-					Map<Integer, Integer> dims = new LinkedHashMap<>();
-					for (int i = 0; i < rank; i++) {
-						dims.put(i, shape[i]);
-					}
-					intAxis = new int[ashape.length];
-					for (int i = 0; i < intAxis.length; i++) {
-						int al = ashape[i];
-						intAxis[i] = -1;
-						for (Entry<Integer, Integer> e : dims.entrySet()) {
-							if (al == e.getValue()) { // find first signal dimension length that matches
-								Integer k = e.getKey();
-								intAxis[i] = k;
-								dims.remove(k);
-								break;
+					if (intAxis == null) {
+						// remedy bogus or missing @axis by simply pairing matching dimension
+						// lengths to the signal dataset shape (this may be wrong as transposes in
+						// common dimension lengths can occur)
+						intAxis = new int[aRank];
+						Map<Integer, Integer> dims = new LinkedHashMap<>();
+						for (int i = 0; i < rank; i++) {
+							dims.put(i, shape[i]);
+						}
+
+						for (int i = 0,  dimsFound = 0; i < intAxis.length && dimsFound < aRank; i++) {
+							int al = ashape[i];
+							intAxis[i] = -1;
+							for (int k = 0; k < rank; k++) {
+								if (!dims.containsKey(k)) {
+									continue;
+								}
+								int sl = dims.get(k);
+								int dl = Math.abs(al-sl);
+								if (dl <= MAX_DIM_DIFF) { // find first signal dimension length that matches (or off by MAX_DIM_DIFF)
+									if (dl != 0) {
+										if (!dims.containsValue(al)) { // don't crop if it matches another dimension
+											intAxis[i] = k;
+											dims.remove(k);
+											dimensionsMismatch = true;
+											dimsFound++;
+											break;
+										}
+										// else ignore
+									} else {
+										intAxis[i] = k;
+										dims.remove(k);
+										dimsFound++;
+									}
+								}
 							}
 						}
-						if (intAxis[i] == -1)
-							throw new IllegalArgumentException(
-									"Axis dimension does not match any data dimension");
 					}
-				}
 
-				choice.setIndexMapping(intAxis);
-				if (intAxis.length > 0) {
-					choice.setAxisNumber(intAxis[intAxis.length-1]);
+					if (intAxis != null) {
+						choice.setIndexMapping(intAxis);
+						if (intAxis.length > 0) {
+							choice.setAxisNumber(intAxis[intAxis.length-1]);
+						}
+					}
+					choices.add(choice);
 				}
-				choices.add(choice);
 			} catch (Exception e) {
 				logger.debug("Axis attributes in {} are invalid - {}", a.getName(), e.getMessage());
 			}
+		}
+
+		if (!isSignal) {
+			return;
 		}
 
 		List<String> aNames = new ArrayList<>();
@@ -473,9 +505,7 @@ public class NexusTreeUtils {
 				logger.trace("Found @{} tag in group (not in '{}' dataset)", NexusConstants.DATA_AXES, gNode.findLinkedNodeName(dNode));
 		}
 
-		if (axesAttr == null && choices.isEmpty()) {
-			return;
-		} else if (axesAttr != null) { // check axes attribute for list axes
+		if (axesAttr != null) { // check axes attribute for list axes
 			// check if axes referenced by data's @axes tag exists
 			String[] names = parseStringArray(axesAttr);
 			for (String s : names) {
@@ -495,7 +525,27 @@ public class NexusTreeUtils {
 			}
 		}
 
-		List<ILazyDataset> axisList = new ArrayList<>();
+		if (dimensionsMismatch) {
+			List<ILazyDataset> axes = new ArrayList<>();
+			List<String> namedAxes = new ArrayList<>();
+			for (AxisChoice c : choices) {
+				namedAxes.add(c.getName());
+				int d = c.getAxisNumber();
+				ILazyDataset a = c.getValues();
+				if (a.getRank() == 1 && rank > 1) {
+					int[] s = new int[rank];
+					Arrays.fill(s, 1);
+					s[d] = a.getSize();
+					a = a.clone();
+					a.setShape(s);
+				}
+				axes.add(a);
+			}
+			addAxesMetadata(groupPath, gNode, link.getName(), dNode, cData, shape, rank, namedAxes, axes);
+			return;
+		}
+
+		
 		AxesMetadata amd;
 		try {
 			amd = MetadataFactory.createMetadata(AxesMetadata.class, rank);
@@ -503,6 +553,8 @@ public class NexusTreeUtils {
 			logger.error("Problem creating metadata", e);
 			return;
 		}
+
+		List<ILazyDataset> axisList = new ArrayList<>();
 		for (AxisChoice c : choices) {
 			ILazyDataset ad = c.getValues();
 			for (int i = 0; i < rank; i++) {
@@ -787,12 +839,18 @@ public class NexusTreeUtils {
 			}
 		}
 
+		return addAxesMetadata(groupPath, gn, signal, dNode, cData, shape, rank, namedAxes, axes);
+	}
+
+	private static boolean addAxesMetadata(String groupPath, GroupNode gn, String signal, DataNode dNode,
+			ILazyDataset cData, int[] shape, int rank, List<String> namedAxes, List<ILazyDataset> axes) {
 		AxesMetadata amd;
 		try {
 			amd = MetadataFactory.createMetadata(AxesMetadata.class, rank);
 		} catch (MetadataException e) {
 			return false;
 		}
+
 		boolean anySliced = false;
 
 		@SuppressWarnings("unchecked")
@@ -823,16 +881,20 @@ public class NexusTreeUtils {
 					logger.warn("NXdata {} has mismatching axes in {}-th dimension", groupPath, i);
 				} else {
 					logger.warn("NXdata {} has longer axes in {}-th dimension", groupPath, i);
+					axisIndex.clear(); // reset
 					for (int j = 0; j < nAxes; j++) {
 						ILazyDataset a = axes.get(j);
 						int[] aShape = a.getShape();
 						int aLen = aShape[i];
 						if (aLen != 1 && aLen != len) {
+							String n = a.getName();
 							SliceND slice = new SliceND(aShape);
 							slice.setSlice(i, 0, len, 1);
 							a = a.getSliceView(slice);
+							a.setName(n);
 							axes.set(j, a);
 							anySliced = true;
+							axisIndex.add(j);
 						}
 					}
 				}
@@ -851,9 +913,12 @@ public class NexusTreeUtils {
 					int aLen = aShape[i];
 					if (aLen != 1) {
 						if (aLen > min) {
+							String n = a.getName();
 							slice = new SliceND(aShape);
 							slice.setSlice(i, 0, min, 1);
-							axes.set(j, a.getSliceView(slice));
+							a = a.getSliceView(slice);
+							a.setName(n);
+							axes.set(j, a);
 						}
 						axisIndex.add(j);
 					}

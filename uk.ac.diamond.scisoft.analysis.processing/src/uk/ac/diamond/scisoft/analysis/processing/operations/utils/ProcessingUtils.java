@@ -284,7 +284,7 @@ public class ProcessingUtils {
 
 		// If a matching val was not found, throw
 		if (val == null) throw new OperationException(op, "Dataset " + datasetName + " " + Arrays.toString(lz.getShape()) + 
-				" not a compatable shape with " + Arrays.toString(ssm.getParent().getShape()));
+				" not a compatible shape with " + Arrays.toString(ssm.getParent().getShape()));
 		val.squeeze();
 
 		// A non-scalar val is an error at this point

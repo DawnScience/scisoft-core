@@ -205,6 +205,8 @@ def wrapper(func):
 
     return run_func
 
+_cached_pyenv = None
+
 def pyenv(exe=None, path=None, ldpath=None):
     '''Get python environment
     exe -- python executable
@@ -216,6 +218,20 @@ def pyenv(exe=None, path=None, ldpath=None):
 #    print 'ScisoftPy package is in', pkg
     if _isjava:
         if _cached_pyenv is None:
+            try:
+                _cached_pyenv = get_python()
+            except:
+                print('Problem caching python3 environment')
+                ex_type, ex_value, tb = sys.exc_info()
+                try:
+                    _cached_pyenv = get_python(False)
+                except:
+                    traceback.print_exception(ex_type, ex_value, tb)
+                    print('Problem caching python2 environment: ')
+                    traceback.print_exc()
+                    _cached_pyenv = False
+
+        if _cached_pyenv == False:
             if exe is None:
                 raise ValueError('Python executable must be specified when no python environment cached')
             pypath = pyldpath = None
@@ -355,20 +371,6 @@ def parse_for_env(stream, sep=':'):
                 ldpath = [a for a in r[1:] if a]
 
     return exe, path, ldpath
-
-if _isjava:
-    try:
-        _cached_pyenv = get_python()
-    except:
-        print('Problem caching python3 environment')
-        ex_type, ex_value, tb = sys.exc_info()
-        try:
-            _cached_pyenv = get_python(False)
-        except:
-            traceback.print_exception(ex_type, ex_value, tb)
-            print('Problem caching python2 environment: ')
-            traceback.print_exc()
-            _cached_pyenv = None
 
 #PYDEV_SRC='/scratch/eclipse441_64/plugins/org.python.pydev_3.9.2.201502050007/pysrc'
 

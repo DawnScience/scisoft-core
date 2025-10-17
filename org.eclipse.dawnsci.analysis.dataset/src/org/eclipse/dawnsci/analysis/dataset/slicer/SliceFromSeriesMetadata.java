@@ -23,14 +23,21 @@ public class SliceFromSeriesMetadata implements OriginMetadata {
 	
 	private SourceInformation sourceInfo;
 	private SliceInformation sliceInfo;
+	private Slice[] subsampling;
 	
 	public SliceFromSeriesMetadata(SourceInformation source, SliceInformation slice) {
 		this.sourceInfo = source;
 		this.sliceInfo = slice;
+		if (slice != null) {
+			subsampling = slice.getSubSampling();
+		}
 	}
 	
 	public SliceFromSeriesMetadata(SliceInformation slice) {
 		this.sliceInfo = slice;
+		if (slice != null) {
+			subsampling = slice.getSubSampling();
+		}
 	}
 	
 	public SliceFromSeriesMetadata(SourceInformation source) {
@@ -243,10 +250,48 @@ public class SliceFromSeriesMetadata implements OriginMetadata {
 	
 	
 	private Slice getSliceForDim(int[] shape, int[] oShape, int i, Slice[] oSlice) {
-		if (shape[i] != oShape[i]) return null;
+		if (shape[i] != oShape[i]) {
+			int length = Math.min(shape[i], oShape[i]);
+			if (!sliceWithinSlice(oSlice[i], subsampling[i], length)) {
+				return null;
+			}
+		}
 		return oSlice[i].clone();
 	}
-	
+
+	private static int getStart(int length, Slice s) {
+		Integer start = s.getStart();
+		if (start == null) {
+			return s.getStep() >= 0 ? 0 : length - 1;
+		}
+		return start;
+	}
+
+	private static int getStop(int length, Slice s) {
+		Integer stop = s.getStop();
+		if (stop == null) {
+			return s.getStep() >= 0 ? length : -1;
+		}
+		return stop;
+	}
+
+	private static boolean sliceWithinSlice(Slice a, Slice b, int length) {
+		int aStart = getStart(length, a);
+		int bStart = getStart(length, b);
+		if (aStart < bStart) {
+			return false;
+		}
+		int aStop = getStop(length, a);
+		if (aStop < bStart) {
+			return false;
+		}
+		int bStop = getStop(length, b);
+		if (aStart >= bStop) {
+			return false;
+		}
+		return aStop <= bStop;
+	}
+
 	public void setSliceDimensionToFull(int dim) {
 		if (sliceInfo.isDataDimension(dim)) throw new IllegalArgumentException("Cannot apply to data dimension!");
 		sliceInfo.convertSliceDimensionToFull(dim);

@@ -157,8 +157,11 @@ public class DatLoader extends AbstractFileLoader {
 			
 			if (columns == 0) throw new ScanFileHolderException("Cannot read header for data set names!");
 
+			int[] rowsMissing = new int[columns]; // row of first missing data
+			Arrays.fill(rowsMissing, -1);
+
 			// Read data
- 			int count = 0;
+			int count = 0;
 
 			DATA: while (line != null) {
 				if (!monitorIncrement(mon)) {
@@ -180,11 +183,19 @@ public class DatLoader extends AbstractFileLoader {
 							vals.get(name).add(Utils.parseDouble(value.trim()));
 						} else {
 							if (values.length != columns) {
-								throw new ScanFileHolderException("Data and header must be the same size!");
+								for (int j = values.length; j < columns; j++) {
+									if (rowsMissing[j] < 0) {
+										rowsMissing[j] = count;
+									}
+								}
 							}
 							final Iterator<String> it = vals.keySet().iterator();
+							int c = 0;
 							for (String value : values) {
-								vals.get(it.next()).add(Utils.parseDouble(value.trim())); 
+								if (rowsMissing[c++] >= 0) {
+									throw new ScanFileHolderException("Data columns can only be short than others: column " + c + " has gap");
+								}
+								vals.get(it.next()).add(Utils.parseDouble(value.trim()));
 							}
 						}
 					}
@@ -340,7 +351,8 @@ public class DatLoader extends AbstractFileLoader {
 		String line = in.readLine();
 		if (line == null)
 			throw new ScanFileHolderException("No lines found");
- 		if (line.trim().startsWith("&")) throw new Exception("Cannot load SRS files with DatLoader!");
+		String trimmedLine = line.trim();
+ 		if (trimmedLine.startsWith("&")) throw new Exception("Cannot load SRS files with DatLoader!");
 		metadataMap.clear();
 		vals.clear();
 		
@@ -349,20 +361,20 @@ public class DatLoader extends AbstractFileLoader {
 		boolean foundHeaderLine = false;
 		boolean wasScanLine     = false;
 		// TODO clarify why this is a while loop
-		while (line.startsWith("#") || "".equals(line.trim())) {
+		while (line.startsWith("#") || trimmedLine.isEmpty()) {
 			
 			try {
-				if ("".equals(line.trim())) continue;
+				if (trimmedLine.isEmpty()) continue;
 				foundHeaderLine = true;
 
 				if (!monitorIncrement(mon)) {
 					throw new ScanFileHolderException("Loader cancelled during reading!");
 				}
 				
-				if (wasScanLine && DATE_LINE.matcher(line.trim()).matches()) {
+				if (wasScanLine && DATE_LINE.matcher(trimmedLine).matches()) {
 					throw new ScanFileHolderException("This file is a multi-scan spec file - use SpecLoader instead!");
 				}
-				wasScanLine = SCAN_LINE.matcher(line.trim()).matches();
+				wasScanLine = SCAN_LINE.matcher(trimmedLine).matches();
 				
 				header.add(line);
 				
@@ -386,19 +398,23 @@ public class DatLoader extends AbstractFileLoader {
 				}
 				
 			} finally {
-			    line = in.readLine();
+				line = in.readLine();
+				if (line == null) {
+					break;
+				}
+				trimmedLine = line.trim();
 			}
 		}
 
-		if (header.size() < 1) {
+		if (header.isEmpty()) {
 			if (!foundHeaderLine) {
 				createDefaultHeaders(line);
 			}
 			return line;
 		}
 
-        createHeaders(header, line, name);		
-        		
+		createHeaders(header, line, name);
+
 		return line;
 	}
 	
@@ -461,7 +477,7 @@ public class DatLoader extends AbstractFileLoader {
 		name = name.trim();
 		if (name.startsWith("\"")) name = name.substring(1);
 		if (name.endsWith("\""))   name = name.substring(0, name.length()-2);
-        return name;		
+		return name;
 	}
 
 	protected void createDefaultHeaders(String line) {

@@ -7,10 +7,12 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package uk.ac.diamond.scisoft.analysis.processing.metadata;
+package org.eclipse.dawnsci.analysis.dataset.metadata;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
+
+import org.eclipse.dawnsci.analysis.api.metadata.FitMetadata;
 
 public class FitMetadataImpl implements FitMetadata {
 

@@ -34,20 +34,20 @@ import org.slf4j.LoggerFactory;
 public class ColumnTextSaver implements IFileSaver {
 	protected static final Logger logger = LoggerFactory.getLogger(ColumnTextSaver.class);
 
+	public static final char COMMA = ColumnTextLoader.COMMA;
+	public static final char SEMICOLON = ColumnTextLoader.SEMICOLON;
+	public static final char SPACE = ColumnTextLoader.SPACE;
+	public static final char TAB = ColumnTextLoader.TAB;
+
 	public static final String COLUMN_HEADING = "Column_%d";
 
 	private String fileName = "";
-	protected char delimiter = '\t';
+	protected char delimiter = TAB;
 
 	protected String cellFormat;
 
 	private String[] preHeading = null;
 	private String[] headings = null;
-
-	public static final char COMMA = ColumnTextLoader.COMMA;
-	public static final char SEMICOLON = ColumnTextLoader.SEMICOLON;
-	public static final char SPACE = ColumnTextLoader.SPACE;
-	public static final char TAB = ColumnTextLoader.TAB;
 
 	/**
 	 * Takes either several 1D datasets or a single 2D dataset from a data holder and output a height x width array called 'filename'.txt.

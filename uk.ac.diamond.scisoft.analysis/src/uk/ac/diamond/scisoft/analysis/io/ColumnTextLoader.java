@@ -38,23 +38,22 @@ import org.slf4j.LoggerFactory;
 public class ColumnTextLoader extends AbstractFileLoader {
 	private static final Logger logger = LoggerFactory.getLogger(ColumnTextLoader.class);
 
+	public static final char COMMA = ',';
+	public static final char SEMICOLON = ';';
+	public static final char SPACE = ' ';
+	public static final char TAB = '\t';
+
 	static final String COMMENT = "#";
 
 	private static final Pattern NUMBERS = Pattern.compile("^" + Utils.FLOATING_POINT_NUMBER + ".*");
 
-	private char delimiter = '\t';
+	private char delimiter = TAB;
 	private boolean trim;
 
 	private List<String> headers;
 	private String[] headings;
 
 	private int columns;
-
-
-	public final static char COMMA = ',';
-	public final static char SEMICOLON = ';';
-	public final static char SPACE = ' ';
-	public final static char TAB = '\t';
 
 	ColumnTextLoader() {
 	}

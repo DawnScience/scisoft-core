@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IFunction;
 import org.eclipse.dawnsci.analysis.api.fitting.functions.IParameter;
+import org.eclipse.dawnsci.analysis.api.metadata.FitMetadata;
 import org.eclipse.dawnsci.analysis.api.processing.IOperation;
 import org.eclipse.dawnsci.analysis.api.processing.OperationData;
 import org.eclipse.dawnsci.analysis.api.processing.OperationDataForDisplay;
@@ -61,7 +62,6 @@ import uk.ac.diamond.scisoft.analysis.fitting.functions.Quadratic;
 import uk.ac.diamond.scisoft.analysis.fitting.functions.StraightLine;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer;
 import uk.ac.diamond.scisoft.analysis.optimize.ApacheOptimizer.Optimizer;
-import uk.ac.diamond.scisoft.analysis.processing.metadata.FitMetadata;
 import uk.ac.diamond.scisoft.analysis.processing.operations.MetadataUtils;
 import uk.ac.diamond.scisoft.analysis.processing.operations.backgroundsubtraction.SubtractFittedBackgroundOperation;
 import uk.ac.diamond.scisoft.analysis.processing.operations.utils.ProcessingUtils;

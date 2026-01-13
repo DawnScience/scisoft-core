@@ -12,9 +12,6 @@
 
 package org.eclipse.dawnsci.plotting.api.histogram;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.january.dataset.CompoundDataset;
 import org.eclipse.january.dataset.Dataset;
@@ -224,9 +221,18 @@ public class ImageServiceBean {
 	public HistogramBound getMaximumCutBound() {
 		return maximumCutBound;
 	}
+
 	public void setMaximumCutBound(HistogramBound maximumBound) {
 		this.maximumCutBound = maximumBound;
 	}
+
+	/**
+	 * @return value of maximum cut
+	 */
+	public double getMaximumCutValue() {
+		return (maximumCutBound == null ? HistogramBound.DEFAULT_MAXIMUM : maximumCutBound).getBound().doubleValue();
+	}
+
 	/**
 	 * Default colour for negative infinity with red
 	 * @return
@@ -234,9 +240,18 @@ public class ImageServiceBean {
 	public HistogramBound getMinimumCutBound() {
 		return minimumCutBound;
 	}
+
 	public void setMinimumCutBound(HistogramBound minimumBound) {
 		this.minimumCutBound = minimumBound;
 	}
+
+	/**
+	 * @return value of minimum cut
+	 */
+	public double getMinimumCutValue() {
+		return (minimumCutBound == null ? HistogramBound.DEFAULT_MINIMUM : minimumCutBound).getBound().doubleValue();
+	}
+
 	/**
 	 * Default colour for NaN with green
 	 * @return
@@ -270,7 +285,7 @@ public class ImageServiceBean {
 	}
 	
 	/**
-	 * Normally null or may be a SDAFunctionBean which
+	 * Normally null or may be a FunctionContainer which
 	 * defines the functions to use.
 	 * 
 	 * @return
@@ -279,31 +294,27 @@ public class ImageServiceBean {
 		return functionObject;
 	}
 	/**
-	 * Normally null or you may set to a SDAFunctionBean which
+	 * Normally null or you may set to a FunctionContainer which
 	 * defines the functions to use.
-	 * 
-	 * @return
 	 */
 	public void setFunctionObject(Object userObject) {
 		this.functionObject = userObject;
 	}
 
 	public boolean isInBounds(double dv) {
-		if (!isInsideMinCut(dv)) return false;
-		if (!isInsideMaxCut(dv)) return false;
-        return true;
+		return isInsideMinCut(dv) && isInsideMaxCut(dv);
 	}
 	
 	public boolean isInsideMinCut(double dv) {
-		if (getMinimumCutBound()==null) return true;
-	    if (dv<=getMinimumCutBound().getBound().doubleValue()) return false;
-		return true;
+		if (minimumCutBound==null) return true;
+		return dv > minimumCutBound.getBound().doubleValue();
 	}
+
 	public boolean isInsideMaxCut(double dv) {
-		if (getMaximumCutBound()==null) return true;
-	    if (dv>=getMaximumCutBound().getBound().doubleValue()) return false;
-		return true;
+		if (maximumCutBound==null) return true;
+		return dv < maximumCutBound.getBound().doubleValue();
 	}
+
 	public boolean isValidNumber(double dv) {
 		if (getNanBound()==null) return true;
 		if (Double.isNaN(dv)) return false;
@@ -369,23 +380,15 @@ public class ImageServiceBean {
 		public int getIndex() {
 			return index;
 		}
-		public static List<HistoType> histoTypes;
-		static {
-			histoTypes = new ArrayList<HistoType>();
-			histoTypes.add(MEAN);
-			histoTypes.add(MEDIAN);
-			histoTypes.add(OUTLIER_VALUES);
-			histoTypes.add(FULL_RANGE);
-		}
+
 		public static HistoType forLabel(String label) {
-			for (HistoType t : histoTypes) {
+			for (HistoType t : HistoType.values()) {
 				if (t.label.equals(label)) return t;
 			}
 			return null;
 		}
-
 	}
-	
+
 	/**
 	 * Decodes the histo string and sets the
 	 * values into this bean.

@@ -14,11 +14,15 @@ package org.eclipse.dawnsci.plotting.api.histogram;
 
 import java.util.Arrays;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Immutable HistogramBound class. Keep immutable so that static
  * bound defaults cannot be modified.
  */
 public final class HistogramBound {
+	private final static Logger logger = LoggerFactory.getLogger(HistogramBound.class);
 
 	public static final HistogramBound DEFAULT_MAXIMUM;
 	public static final HistogramBound DEFAULT_MINIMUM;
@@ -134,26 +138,44 @@ public final class HistogramBound {
 		}
 
 		final String[] sa = encoded.split(",");
-		if (sa[1]!=null && sa[1].startsWith("["))sa[1]=sa[1].substring(1);
-		if (sa.length > 3 && sa[3] != null && sa[3].endsWith("]")) {
-			sa[3] = sa[3].substring(0, sa[3].length() - 1);
-		}
-		for (int i = 0; i < sa.length; i++) {
-			if (sa[i]!=null) sa[i] = sa[i].trim();
-		}
-		
 		Number bound = null;
+		int[] color = null;
 		if (sa[0].equals("null")) {
 			bound = null;
 		} else {
 			bound = Double.parseDouble(sa[0]);
 		}
-		
-		int[] color = null;
-		if (sa[1].equals("null")) {
-			color = null;
-		} else {
-			color = new int[]{Integer.parseInt(sa[1]), Integer.parseInt(sa[2]), Integer.parseInt(sa[3])};
+		if (sa.length > 1) {
+			String sa1 = sa[1];
+			if (sa1 != null) {
+				sa1 = sa1.trim();
+				if (sa1.startsWith("[")) {
+					sa1 = sa1.substring(1).trim();
+				}
+				try {
+					if (sa.length < 3) {
+						if (!"null".equals(sa1)) {
+							int g = Integer.parseInt(sa1);
+							color = new int[] {g, g, g};
+						}
+					} else {
+						String sa2 = sa[2];
+						if (sa2 != null) {
+							sa2 = sa2.trim();
+						}
+						String sa3 = sa[3];
+						if (sa3 != null) {
+							sa3 = sa3.trim();
+							if (sa3.endsWith("]")) {
+								sa3 = sa3.substring(0, sa3.length() - 1).trim();
+							}
+						}
+						color = new int[] {Integer.parseInt(sa1), Integer.parseInt(sa2), Integer.parseInt(sa3)};
+					}
+				} catch (NumberFormatException e) {
+					logger.warn("Problem parsing colour from {}", color, e);
+				}
+			}
 		}
 		return new HistogramBound(bound, color);
 	}

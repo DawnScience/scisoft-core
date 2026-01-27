@@ -17,7 +17,9 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * Constructive Solid Geometry base class, using :ref:`NXquadric` and :ref:`NXoff_geometry`
+ * Constructive Solid Geometry (CSG) base class.
+ * Offers concepts for combining the definitions of leaf and
+ * branching nodes of a CSG tree.
  *
  */
 public interface NXcsg extends NXobject {
@@ -26,8 +28,8 @@ public interface NXcsg extends NXobject {
 	public static final String NX_GEOMETRY = "geometry";
 	/**
 	 * One of the standard construction solid geometry set operations,
-	 * or if the CSG is a pointer to the geometry provided by an
-	 * :ref:`NXquadric` or an :ref:`NXoff_geometry`. Takes values:
+	 * or statement IS_QUADRIC or IS_MESH if the CSG is a pointer to an
+	 * instance of a geometry class. Takes values:
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>UNION</b> </li>
@@ -44,8 +46,8 @@ public interface NXcsg extends NXobject {
 
 	/**
 	 * One of the standard construction solid geometry set operations,
-	 * or if the CSG is a pointer to the geometry provided by an
-	 * :ref:`NXquadric` or an :ref:`NXoff_geometry`. Takes values:
+	 * or statement IS_QUADRIC or IS_MESH if the CSG is a pointer to an
+	 * instance of a geometry class. Takes values:
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>UNION</b> </li>
@@ -62,8 +64,8 @@ public interface NXcsg extends NXobject {
 
 	/**
 	 * One of the standard construction solid geometry set operations,
-	 * or if the CSG is a pointer to the geometry provided by an
-	 * :ref:`NXquadric` or an :ref:`NXoff_geometry`. Takes values:
+	 * or statement IS_QUADRIC or IS_MESH if the CSG is a pointer to an
+	 * instance of a geometry class. Takes values:
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>UNION</b> </li>
@@ -80,8 +82,8 @@ public interface NXcsg extends NXobject {
 
 	/**
 	 * One of the standard construction solid geometry set operations,
-	 * or if the CSG is a pointer to the geometry provided by an
-	 * :ref:`NXquadric` or an :ref:`NXoff_geometry`. Takes values:
+	 * or statement IS_QUADRIC or IS_MESH if the CSG is a pointer to an
+	 * instance of a geometry class. Takes values:
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>UNION</b> </li>
@@ -97,8 +99,8 @@ public interface NXcsg extends NXobject {
 	public DataNode setOperationScalar(String operationValue);
 
 	/**
-	 * The first operand of constructive solid geometry
-	 * operation. Compulsory if 'operation' is UNION, INTERSECTION,
+	 * The first operand of constructive solid geometry operation.
+	 * Compulsory if 'operation' is UNION, INTERSECTION,
 	 * DIFFERENCE or COMPLEMENT.
 	 *
 	 * @return  the value.
@@ -106,8 +108,8 @@ public interface NXcsg extends NXobject {
 	public NXcsg getA();
 
 	/**
-	 * The first operand of constructive solid geometry
-	 * operation. Compulsory if 'operation' is UNION, INTERSECTION,
+	 * The first operand of constructive solid geometry operation.
+	 * Compulsory if 'operation' is UNION, INTERSECTION,
 	 * DIFFERENCE or COMPLEMENT.
 	 *
 	 * @param aGroup the aGroup
@@ -115,8 +117,8 @@ public interface NXcsg extends NXobject {
 	public void setA(NXcsg aGroup);
 
 	/**
-	 * The second operand of constructive solid geometry
-	 * operation. Compulsory if 'operation' is UNION, INTERSECTION or
+	 * The second operand of constructive solid geometry operation.
+	 * Compulsory if 'operation' is UNION, INTERSECTION or
 	 * DIFFERENCE.
 	 *
 	 * @return  the value.
@@ -124,8 +126,8 @@ public interface NXcsg extends NXobject {
 	public NXcsg getB();
 
 	/**
-	 * The second operand of constructive solid geometry
-	 * operation. Compulsory if 'operation' is UNION, INTERSECTION or
+	 * The second operand of constructive solid geometry operation.
+	 * Compulsory if 'operation' is UNION, INTERSECTION or
 	 * DIFFERENCE.
 	 *
 	 * @param bGroup the bGroup
@@ -133,11 +135,13 @@ public interface NXcsg extends NXobject {
 	public void setB(NXcsg bGroup);
 
 	/**
-	 * Path to a field that is either an :ref:`NXquadric` (if
-	 * 'operation' = IS_QUADRIC) or an :ref:`NXoff_geometry` (if
-	 * 'operation' = IS_MESH) that defines the surface making up the
-	 * constructive solid geometry component. Compulsory if 'operation'
-	 * is IS_QUADRIC or IS_MESH.
+	 * Path to a field that is an instance of one of several possible geometry
+	 * classes: Specifically, :ref:`NXquadric` if 'operation' is IS_QUADRIC,
+	 * :ref:`NXoff_geometry`, or other primitive based base classes
+	 * if 'operation' is IS_MESH.
+	 * The instance defines the surface making up the constructive solid
+	 * geometry component. This field is compulsory if 'operation' is
+	 * IS_QUADRIC or IS_MESH.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
@@ -147,11 +151,13 @@ public interface NXcsg extends NXobject {
 	public Dataset getGeometry();
 
 	/**
-	 * Path to a field that is either an :ref:`NXquadric` (if
-	 * 'operation' = IS_QUADRIC) or an :ref:`NXoff_geometry` (if
-	 * 'operation' = IS_MESH) that defines the surface making up the
-	 * constructive solid geometry component. Compulsory if 'operation'
-	 * is IS_QUADRIC or IS_MESH.
+	 * Path to a field that is an instance of one of several possible geometry
+	 * classes: Specifically, :ref:`NXquadric` if 'operation' is IS_QUADRIC,
+	 * :ref:`NXoff_geometry`, or other primitive based base classes
+	 * if 'operation' is IS_MESH.
+	 * The instance defines the surface making up the constructive solid
+	 * geometry component. This field is compulsory if 'operation' is
+	 * IS_QUADRIC or IS_MESH.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
@@ -161,11 +167,13 @@ public interface NXcsg extends NXobject {
 	public DataNode setGeometry(IDataset geometryDataset);
 
 	/**
-	 * Path to a field that is either an :ref:`NXquadric` (if
-	 * 'operation' = IS_QUADRIC) or an :ref:`NXoff_geometry` (if
-	 * 'operation' = IS_MESH) that defines the surface making up the
-	 * constructive solid geometry component. Compulsory if 'operation'
-	 * is IS_QUADRIC or IS_MESH.
+	 * Path to a field that is an instance of one of several possible geometry
+	 * classes: Specifically, :ref:`NXquadric` if 'operation' is IS_QUADRIC,
+	 * :ref:`NXoff_geometry`, or other primitive based base classes
+	 * if 'operation' is IS_MESH.
+	 * The instance defines the surface making up the constructive solid
+	 * geometry component. This field is compulsory if 'operation' is
+	 * IS_QUADRIC or IS_MESH.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
@@ -175,11 +183,13 @@ public interface NXcsg extends NXobject {
 	public String getGeometryScalar();
 
 	/**
-	 * Path to a field that is either an :ref:`NXquadric` (if
-	 * 'operation' = IS_QUADRIC) or an :ref:`NXoff_geometry` (if
-	 * 'operation' = IS_MESH) that defines the surface making up the
-	 * constructive solid geometry component. Compulsory if 'operation'
-	 * is IS_QUADRIC or IS_MESH.
+	 * Path to a field that is an instance of one of several possible geometry
+	 * classes: Specifically, :ref:`NXquadric` if 'operation' is IS_QUADRIC,
+	 * :ref:`NXoff_geometry`, or other primitive based base classes
+	 * if 'operation' is IS_MESH.
+	 * The instance defines the surface making up the constructive solid
+	 * geometry component. This field is compulsory if 'operation' is
+	 * IS_QUADRIC or IS_MESH.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>

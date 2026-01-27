@@ -13,8 +13,6 @@ package org.eclipse.dawnsci.nexus.impl;
 
 import java.util.Set;
 import java.util.EnumSet;
-import java.util.Map;
-
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
@@ -23,7 +21,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Computer science description of a set of computing nodes.
+ * Base class for reporting the description of a computer
 
  */
 public class NXcs_computerImpl extends NXobjectImpl implements NXcs_computer {
@@ -32,10 +30,9 @@ public class NXcs_computerImpl extends NXobjectImpl implements NXcs_computer {
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_CS_CPU,
-		NexusBaseClass.NX_CS_GPU,
-		NexusBaseClass.NX_CS_MM_SYS,
-		NexusBaseClass.NX_CS_IO_SYS);
+		NexusBaseClass.NX_CS_PROCESSOR,
+		NexusBaseClass.NX_CS_MEMORY,
+		NexusBaseClass.NX_CS_STORAGE);
 
 	public NXcs_computerImpl() {
 		super();
@@ -132,127 +129,36 @@ public class NXcs_computerImpl extends NXobjectImpl implements NXcs_computer {
 	}
 
 	@Override
-	public NXcs_cpu getCs_cpu() {
-		// dataNodeName = NX_CS_CPU
-		return getChild("cs_cpu", NXcs_cpu.class);
+	public NXcs_processor getProcessorid() {
+		// dataNodeName = NX_PROCESSORID
+		return getChild("processorid", NXcs_processor.class);
 	}
 
 	@Override
-	public void setCs_cpu(NXcs_cpu cs_cpuGroup) {
-		putChild("cs_cpu", cs_cpuGroup);
+	public void setProcessorid(NXcs_processor processoridGroup) {
+		putChild("processorid", processoridGroup);
 	}
 
 	@Override
-	public NXcs_cpu getCs_cpu(String name) {
-		return getChild(name, NXcs_cpu.class);
+	public NXcs_memory getMemoryid() {
+		// dataNodeName = NX_MEMORYID
+		return getChild("memoryid", NXcs_memory.class);
 	}
 
 	@Override
-	public void setCs_cpu(String name, NXcs_cpu cs_cpu) {
-		putChild(name, cs_cpu);
+	public void setMemoryid(NXcs_memory memoryidGroup) {
+		putChild("memoryid", memoryidGroup);
 	}
 
 	@Override
-	public Map<String, NXcs_cpu> getAllCs_cpu() {
-		return getChildren(NXcs_cpu.class);
+	public NXcs_storage getStorageid() {
+		// dataNodeName = NX_STORAGEID
+		return getChild("storageid", NXcs_storage.class);
 	}
 
 	@Override
-	public void setAllCs_cpu(Map<String, NXcs_cpu> cs_cpu) {
-		setChildren(cs_cpu);
-	}
-
-	@Override
-	public NXcs_gpu getCs_gpu() {
-		// dataNodeName = NX_CS_GPU
-		return getChild("cs_gpu", NXcs_gpu.class);
-	}
-
-	@Override
-	public void setCs_gpu(NXcs_gpu cs_gpuGroup) {
-		putChild("cs_gpu", cs_gpuGroup);
-	}
-
-	@Override
-	public NXcs_gpu getCs_gpu(String name) {
-		return getChild(name, NXcs_gpu.class);
-	}
-
-	@Override
-	public void setCs_gpu(String name, NXcs_gpu cs_gpu) {
-		putChild(name, cs_gpu);
-	}
-
-	@Override
-	public Map<String, NXcs_gpu> getAllCs_gpu() {
-		return getChildren(NXcs_gpu.class);
-	}
-
-	@Override
-	public void setAllCs_gpu(Map<String, NXcs_gpu> cs_gpu) {
-		setChildren(cs_gpu);
-	}
-
-	@Override
-	public NXcs_mm_sys getCs_mm_sys() {
-		// dataNodeName = NX_CS_MM_SYS
-		return getChild("cs_mm_sys", NXcs_mm_sys.class);
-	}
-
-	@Override
-	public void setCs_mm_sys(NXcs_mm_sys cs_mm_sysGroup) {
-		putChild("cs_mm_sys", cs_mm_sysGroup);
-	}
-
-	@Override
-	public NXcs_mm_sys getCs_mm_sys(String name) {
-		return getChild(name, NXcs_mm_sys.class);
-	}
-
-	@Override
-	public void setCs_mm_sys(String name, NXcs_mm_sys cs_mm_sys) {
-		putChild(name, cs_mm_sys);
-	}
-
-	@Override
-	public Map<String, NXcs_mm_sys> getAllCs_mm_sys() {
-		return getChildren(NXcs_mm_sys.class);
-	}
-
-	@Override
-	public void setAllCs_mm_sys(Map<String, NXcs_mm_sys> cs_mm_sys) {
-		setChildren(cs_mm_sys);
-	}
-
-	@Override
-	public NXcs_io_sys getCs_io_sys() {
-		// dataNodeName = NX_CS_IO_SYS
-		return getChild("cs_io_sys", NXcs_io_sys.class);
-	}
-
-	@Override
-	public void setCs_io_sys(NXcs_io_sys cs_io_sysGroup) {
-		putChild("cs_io_sys", cs_io_sysGroup);
-	}
-
-	@Override
-	public NXcs_io_sys getCs_io_sys(String name) {
-		return getChild(name, NXcs_io_sys.class);
-	}
-
-	@Override
-	public void setCs_io_sys(String name, NXcs_io_sys cs_io_sys) {
-		putChild(name, cs_io_sys);
-	}
-
-	@Override
-	public Map<String, NXcs_io_sys> getAllCs_io_sys() {
-		return getChildren(NXcs_io_sys.class);
-	}
-
-	@Override
-	public void setAllCs_io_sys(Map<String, NXcs_io_sys> cs_io_sys) {
-		setChildren(cs_io_sys);
+	public void setStorageid(NXcs_storage storageidGroup) {
+		putChild("storageid", storageidGroup);
 	}
 
 }

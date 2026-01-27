@@ -24,16 +24,13 @@ import org.eclipse.january.dataset.Dataset;
  * and SAXS experiments.
  *
  */
-public interface NXbeam_stop extends NXobject {
+public interface NXbeam_stop extends NXcomponent {
 
-	public static final String NX_DESCRIPTION = "description";
 	public static final String NX_SIZE = "size";
 	public static final String NX_X = "x";
 	public static final String NX_Y = "y";
 	public static final String NX_DISTANCE_TO_DETECTOR = "distance_to_detector";
 	public static final String NX_STATUS = "status";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
-	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
 	 * engineering shape, orientation and position of the beam stop.
 	 *
@@ -523,38 +520,6 @@ public interface NXbeam_stop extends NXobject {
 	public DataNode setStatusScalar(String statusValue);
 
 	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
-
-	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * The reference point of the beam stop is its center in the x and y axis. The reference point on the z axis is the
 	 * surface of the beam stop pointing towards the source.
 	 * .. image:: beam_stop/beam_stop.png
@@ -568,12 +533,6 @@ public interface NXbeam_stop extends NXobject {
 	public Dataset getDepends_on();
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * The reference point of the beam stop is its center in the x and y axis. The reference point on the z axis is the
 	 * surface of the beam stop pointing towards the source.
 	 * .. image:: beam_stop/beam_stop.png
@@ -587,12 +546,6 @@ public interface NXbeam_stop extends NXobject {
 	public DataNode setDepends_on(IDataset depends_onDataset);
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * The reference point of the beam stop is its center in the x and y axis. The reference point on the z axis is the
 	 * surface of the beam stop pointing towards the source.
 	 * .. image:: beam_stop/beam_stop.png
@@ -606,12 +559,6 @@ public interface NXbeam_stop extends NXobject {
 	public String getDepends_onScalar();
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * The reference point of the beam stop is its center in the x and y axis. The reference point on the z axis is the
 	 * surface of the beam stop pointing towards the source.
 	 * .. image:: beam_stop/beam_stop.png
@@ -623,85 +570,5 @@ public interface NXbeam_stop extends NXobject {
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
-
-	/**
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.
-	 *
-	 * @return  the value.
-	 */
-	public NXtransformations getTransformations();
-
-	/**
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.
-	 *
-	 * @param transformationsGroup the transformationsGroup
-	 */
-	public void setTransformations(NXtransformations transformationsGroup);
-
-	/**
-	 * Get a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public NXtransformations getTransformations(String name);
-
-	/**
-	 * Set a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @param name the name of the node
-	 * @param transformations the value to set
-	 */
-	public void setTransformations(String name, NXtransformations transformations);
-
-	/**
-	 * Get all NXtransformations nodes:
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public Map<String, NXtransformations> getAllTransformations();
-
-	/**
-	 * Set multiple child nodes of a particular type.
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @param transformations the child nodes to add
-	 */
-
-	public void setAllTransformations(Map<String, NXtransformations> transformations);
-
 
 }

@@ -22,7 +22,7 @@ import org.eclipse.january.dataset.Dataset;
  * A diffraction grating, as could be used in a soft X-ray monochromator
  *
  */
-public interface NXgrating extends NXobject {
+public interface NXgrating extends NXcomponent {
 
 	public static final String NX_ANGLES = "angles";
 	public static final String NX_PERIOD = "period";
@@ -38,8 +38,6 @@ public interface NXgrating extends NXobject {
 	public static final String NX_SUBSTRATE_ROUGHNESS = "substrate_roughness";
 	public static final String NX_COATING_ROUGHNESS = "coating_roughness";
 	public static final String NX_LAYER_THICKNESS = "layer_thickness";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
-	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
 	 * Blaze or trapezoidal angles, with the angle of the upstream facing edge listed first. Blazed gratings can be identified by the low value of the first-listed angle.
 	 * <p>
@@ -695,38 +693,6 @@ public interface NXgrating extends NXobject {
 
 
 	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
-
-	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * .. todo::
 	 * Add a definition for the reference point of a bending grating.
 	 * <p>
@@ -738,12 +704,6 @@ public interface NXgrating extends NXobject {
 	public Dataset getDepends_on();
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * .. todo::
 	 * Add a definition for the reference point of a bending grating.
 	 * <p>
@@ -755,12 +715,6 @@ public interface NXgrating extends NXobject {
 	public DataNode setDepends_on(IDataset depends_onDataset);
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * .. todo::
 	 * Add a definition for the reference point of a bending grating.
 	 * <p>
@@ -772,12 +726,6 @@ public interface NXgrating extends NXobject {
 	public String getDepends_onScalar();
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * .. todo::
 	 * Add a definition for the reference point of a bending grating.
 	 * <p>

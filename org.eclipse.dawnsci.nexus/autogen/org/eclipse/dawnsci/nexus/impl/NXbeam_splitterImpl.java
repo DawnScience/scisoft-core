@@ -26,12 +26,12 @@ import org.eclipse.dawnsci.nexus.*;
  * A beam splitter, i.e. a device splitting the light into two or more beams.
  * Information about types and properties of beam splitters is provided e.g.
  * [here](https://www.rp-photonics.com/beam_splitters.html).
- * Use two or more NXbeam_paths to describe the beam paths after the beam
+ * Use two or more instances of NXbeam to describe the beam paths after the beam
  * splitter. In the dependency chain of the new beam paths, the first elements
  * each point to this beam splitter, as this is the previous element.
 
  */
-public class NXbeam_splitterImpl extends NXobjectImpl implements NXbeam_splitter {
+public class NXbeam_splitterImpl extends NXcomponentImpl implements NXbeam_splitter {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
@@ -83,26 +83,6 @@ public class NXbeam_splitterImpl extends NXobjectImpl implements NXbeam_splitter
 	@Override
 	public DataNode setTypeScalar(String typeValue) {
 		return setString(NX_TYPE, typeValue);
-	}
-
-	@Override
-	public Dataset getOther_type() {
-		return getDataset(NX_OTHER_TYPE);
-	}
-
-	@Override
-	public String getOther_typeScalar() {
-		return getString(NX_OTHER_TYPE);
-	}
-
-	@Override
-	public DataNode setOther_type(IDataset other_typeDataset) {
-		return setDataset(NX_OTHER_TYPE, other_typeDataset);
-	}
-
-	@Override
-	public DataNode setOther_typeScalar(String other_typeValue) {
-		return setString(NX_OTHER_TYPE, other_typeValue);
 	}
 
 	@Override

@@ -38,33 +38,37 @@ public class NXdirecttofValidator extends AbstractNexusValidator implements Nexu
 
 	@Override
 	public ValidationReport validate(NXroot root) {
-		// validate child group 'entry' of type NXentry
-		validateGroup_entry(root.getEntry());
+		// validate unnamed child group of type NXentry (possibly multiple)
+		validateUnnamedGroupOccurrences(root, NXentry.class, false, true);
+		final Map<String, NXentry> allEntry = root.getAllEntry();
+		for (final NXentry entry : allEntry.values()) {
+			validateGroup_NXentry(entry);
+		}
 		return validationReport;
 	}
 
 	@Override
 	public ValidationReport validate(NXentry entry) {
-		validateGroup_entry(entry);
+		validateGroup_NXentry(entry);
 		return validationReport;
 	}
 
 	@Override
 	public ValidationReport validate(NXsubentry subentry) {
-		validateGroup_entry(subentry);
+		validateGroup_NXentry(subentry);
 		return validationReport;
 	}
 
 
 	/**
-	 * Validate group 'entry' of type NXentry.
+	 * Validate unnamed group of type NXentry.
 	 */
-	private void validateGroup_entry(final NXsubentry group) {
+	private void validateGroup_NXentry(final NXsubentry group) {
 		// set the current entry, required for validating links
 		setEntry(group);
 
 		// validate that the group is not null
-		if (!(validateGroupNotNull("entry", NXentry.class, group))) return;
+		if (!(validateGroupNotNull(null, NXentry.class, group))) return;
 
 		// validate field 'title' of type NX_CHAR.
 		final ILazyDataset title = group.getLazyDataset("title");
@@ -96,32 +100,32 @@ public class NXdirecttofValidator extends AbstractNexusValidator implements Nexu
 		validateUnnamedGroupOccurrences(group, NXinstrument.class, false, true);
 		final Map<String, NXinstrument> allInstrument = group.getAllInstrument();
 		for (final NXinstrument instrument : allInstrument.values()) {
-			validateGroup_entry_NXinstrument(instrument);
+			validateGroup_NXentry_NXinstrument(instrument);
 		}
 	}
 
 	/**
 	 * Validate unnamed group of type NXinstrument.
 	 */
-	private void validateGroup_entry_NXinstrument(final NXinstrument group) {
+	private void validateGroup_NXentry_NXinstrument(final NXinstrument group) {
 		// validate that the group is not null
 		if (!(validateGroupNotNull(null, NXinstrument.class, group))) return;
 
 		// validate optional child group 'fermi_chopper' of type NXfermi_chopper
 		if (group.getFermi_chopper() != null) {
-			validateGroup_entry_NXinstrument_fermi_chopper(group.getFermi_chopper());
+			validateGroup_NXentry_NXinstrument_fermi_chopper(group.getFermi_chopper());
 		}
 
 		// validate optional child group 'disk_chopper' of type NXdisk_chopper
 		if (group.getDisk_chopper() != null) {
-			validateGroup_entry_NXinstrument_disk_chopper(group.getDisk_chopper());
+			validateGroup_NXentry_NXinstrument_disk_chopper(group.getDisk_chopper());
 		}
 	}
 
 	/**
 	 * Validate optional group 'fermi_chopper' of type NXfermi_chopper.
 	 */
-	private void validateGroup_entry_NXinstrument_fermi_chopper(final NXfermi_chopper group) {
+	private void validateGroup_NXentry_NXinstrument_fermi_chopper(final NXfermi_chopper group) {
 		// validate that the group is not null
 		if (!(validateGroupNotNull("fermi_chopper", NXfermi_chopper.class, group))) return;
 
@@ -147,7 +151,7 @@ public class NXdirecttofValidator extends AbstractNexusValidator implements Nexu
 	/**
 	 * Validate optional group 'disk_chopper' of type NXdisk_chopper.
 	 */
-	private void validateGroup_entry_NXinstrument_disk_chopper(final NXdisk_chopper group) {
+	private void validateGroup_NXentry_NXinstrument_disk_chopper(final NXdisk_chopper group) {
 		// validate that the group is not null
 		if (!(validateGroupNotNull("disk_chopper", NXdisk_chopper.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();

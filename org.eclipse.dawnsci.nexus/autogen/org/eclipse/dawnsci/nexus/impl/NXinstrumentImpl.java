@@ -38,6 +38,7 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
+		NexusBaseClass.NX_ACTUATOR,
 		NexusBaseClass.NX_APERTURE,
 		NexusBaseClass.NX_ATTENUATOR,
 		NexusBaseClass.NX_BEAM,
@@ -51,16 +52,19 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 		NexusBaseClass.NX_DETECTOR_GROUP,
 		NexusBaseClass.NX_DISK_CHOPPER,
 		NexusBaseClass.NX_EVENT_DATA,
+		NexusBaseClass.NX_FABRICATION,
 		NexusBaseClass.NX_FERMI_CHOPPER,
 		NexusBaseClass.NX_FILTER,
 		NexusBaseClass.NX_FLIPPER,
 		NexusBaseClass.NX_GUIDE,
+		NexusBaseClass.NX_HISTORY,
 		NexusBaseClass.NX_INSERTION_DEVICE,
 		NexusBaseClass.NX_MIRROR,
 		NexusBaseClass.NX_MODERATOR,
 		NexusBaseClass.NX_MONOCHROMATOR,
 		NexusBaseClass.NX_POLARIZER,
 		NexusBaseClass.NX_POSITIONER,
+		NexusBaseClass.NX_SENSOR,
 		NexusBaseClass.NX_SOURCE,
 		NexusBaseClass.NX_TRANSFORMATIONS,
 		NexusBaseClass.NX_VELOCITY_SELECTOR,
@@ -118,6 +122,37 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	@Override
 	public void setNameAttributeShort_name(String short_nameValue) {
 		setAttribute(NX_NAME, NX_NAME_ATTRIBUTE_SHORT_NAME, short_nameValue);
+	}
+
+	@Override
+	public NXactuator getActuator() {
+		// dataNodeName = NX_ACTUATOR
+		return getChild("actuator", NXactuator.class);
+	}
+
+	@Override
+	public void setActuator(NXactuator actuatorGroup) {
+		putChild("actuator", actuatorGroup);
+	}
+
+	@Override
+	public NXactuator getActuator(String name) {
+		return getChild(name, NXactuator.class);
+	}
+
+	@Override
+	public void setActuator(String name, NXactuator actuator) {
+		putChild(name, actuator);
+	}
+
+	@Override
+	public Map<String, NXactuator> getAllActuator() {
+		return getChildren(NXactuator.class);
+	}
+
+	@Override
+	public void setAllActuator(Map<String, NXactuator> actuator) {
+		setChildren(actuator);
 	}
 
 	@Override
@@ -524,6 +559,37 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	}
 
 	@Override
+	public NXfabrication getFabrication() {
+		// dataNodeName = NX_FABRICATION
+		return getChild("fabrication", NXfabrication.class);
+	}
+
+	@Override
+	public void setFabrication(NXfabrication fabricationGroup) {
+		putChild("fabrication", fabricationGroup);
+	}
+
+	@Override
+	public NXfabrication getFabrication(String name) {
+		return getChild(name, NXfabrication.class);
+	}
+
+	@Override
+	public void setFabrication(String name, NXfabrication fabrication) {
+		putChild(name, fabrication);
+	}
+
+	@Override
+	public Map<String, NXfabrication> getAllFabrication() {
+		return getChildren(NXfabrication.class);
+	}
+
+	@Override
+	public void setAllFabrication(Map<String, NXfabrication> fabrication) {
+		setChildren(fabrication);
+	}
+
+	@Override
 	public NXfermi_chopper getFermi_chopper() {
 		// dataNodeName = NX_FERMI_CHOPPER
 		return getChild("fermi_chopper", NXfermi_chopper.class);
@@ -645,6 +711,37 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	@Override
 	public void setAllGuide(Map<String, NXguide> guide) {
 		setChildren(guide);
+	}
+
+	@Override
+	public NXhistory getHistory() {
+		// dataNodeName = NX_HISTORY
+		return getChild("history", NXhistory.class);
+	}
+
+	@Override
+	public void setHistory(NXhistory historyGroup) {
+		putChild("history", historyGroup);
+	}
+
+	@Override
+	public NXhistory getHistory(String name) {
+		return getChild(name, NXhistory.class);
+	}
+
+	@Override
+	public void setHistory(String name, NXhistory history) {
+		putChild(name, history);
+	}
+
+	@Override
+	public Map<String, NXhistory> getAllHistory() {
+		return getChildren(NXhistory.class);
+	}
+
+	@Override
+	public void setAllHistory(Map<String, NXhistory> history) {
+		setChildren(history);
 	}
 
 	@Override
@@ -834,6 +931,37 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	}
 
 	@Override
+	public NXsensor getSensor() {
+		// dataNodeName = NX_SENSOR
+		return getChild("sensor", NXsensor.class);
+	}
+
+	@Override
+	public void setSensor(NXsensor sensorGroup) {
+		putChild("sensor", sensorGroup);
+	}
+
+	@Override
+	public NXsensor getSensor(String name) {
+		return getChild(name, NXsensor.class);
+	}
+
+	@Override
+	public void setSensor(String name, NXsensor sensor) {
+		putChild(name, sensor);
+	}
+
+	@Override
+	public Map<String, NXsensor> getAllSensor() {
+		return getChildren(NXsensor.class);
+	}
+
+	@Override
+	public void setAllSensor(Map<String, NXsensor> sensor) {
+		setChildren(sensor);
+	}
+
+	@Override
 	public NXsource getSource() {
 		// dataNodeName = NX_SOURCE
 		return getChild("source", NXsource.class);
@@ -935,16 +1063,6 @@ public class NXinstrumentImpl extends NXobjectImpl implements NXinstrument {
 	@Override
 	public void setAllXraylens(Map<String, NXxraylens> xraylens) {
 		setChildren(xraylens);
-	}
-
-	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
-	}
-
-	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

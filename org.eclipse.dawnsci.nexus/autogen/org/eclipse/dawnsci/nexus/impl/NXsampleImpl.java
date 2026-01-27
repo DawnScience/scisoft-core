@@ -30,7 +30,7 @@ import org.eclipse.dawnsci.nexus.*;
  * logged data, e.g. monitored temperature vs elapsed time.
 
  */
-public class NXsampleImpl extends NXobjectImpl implements NXsample {
+public class NXsampleImpl extends NXcomponentImpl implements NXsample {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
@@ -48,7 +48,8 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 		NexusBaseClass.NX_LOG,
 		NexusBaseClass.NX_POSITIONER,
 		NexusBaseClass.NX_OFF_GEOMETRY,
-		NexusBaseClass.NX_TRANSFORMATIONS);
+		NexusBaseClass.NX_ENVIRONMENT,
+		NexusBaseClass.NX_HISTORY);
 
 	public NXsampleImpl() {
 		super();
@@ -1083,64 +1084,65 @@ public class NXsampleImpl extends NXobjectImpl implements NXsample {
 	}
 
 	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	public Dataset getPhysical_form() {
+		return getDataset(NX_PHYSICAL_FORM);
 	}
 
 	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
+	public String getPhysical_formScalar() {
+		return getString(NX_PHYSICAL_FORM);
 	}
 
 	@Override
-	public Dataset getDepends_on() {
-		return getDataset(NX_DEPENDS_ON);
+	public DataNode setPhysical_form(IDataset physical_formDataset) {
+		return setDataset(NX_PHYSICAL_FORM, physical_formDataset);
 	}
 
 	@Override
-	public String getDepends_onScalar() {
-		return getString(NX_DEPENDS_ON);
+	public DataNode setPhysical_formScalar(String physical_formValue) {
+		return setString(NX_PHYSICAL_FORM, physical_formValue);
 	}
 
 	@Override
-	public DataNode setDepends_on(IDataset depends_onDataset) {
-		return setDataset(NX_DEPENDS_ON, depends_onDataset);
+	public NXenvironment getEnvironment() {
+		// dataNodeName = NX_ENVIRONMENT
+		return getChild("environment", NXenvironment.class);
 	}
 
 	@Override
-	public DataNode setDepends_onScalar(String depends_onValue) {
-		return setString(NX_DEPENDS_ON, depends_onValue);
+	public void setEnvironment(NXenvironment environmentGroup) {
+		putChild("environment", environmentGroup);
 	}
 
 	@Override
-	public NXtransformations getTransformations() {
-		// dataNodeName = NX_TRANSFORMATIONS
-		return getChild("transformations", NXtransformations.class);
+	public NXenvironment getEnvironment(String name) {
+		return getChild(name, NXenvironment.class);
 	}
 
 	@Override
-	public void setTransformations(NXtransformations transformationsGroup) {
-		putChild("transformations", transformationsGroup);
+	public void setEnvironment(String name, NXenvironment environment) {
+		putChild(name, environment);
 	}
 
 	@Override
-	public NXtransformations getTransformations(String name) {
-		return getChild(name, NXtransformations.class);
+	public Map<String, NXenvironment> getAllEnvironment() {
+		return getChildren(NXenvironment.class);
 	}
 
 	@Override
-	public void setTransformations(String name, NXtransformations transformations) {
-		putChild(name, transformations);
+	public void setAllEnvironment(Map<String, NXenvironment> environment) {
+		setChildren(environment);
 	}
 
 	@Override
-	public Map<String, NXtransformations> getAllTransformations() {
-		return getChildren(NXtransformations.class);
+	public NXhistory getHistory() {
+		// dataNodeName = NX_HISTORY
+		return getChild("history", NXhistory.class);
 	}
 
 	@Override
-	public void setAllTransformations(Map<String, NXtransformations> transformations) {
-		setChildren(transformations);
+	public void setHistory(NXhistory historyGroup) {
+		putChild("history", historyGroup);
 	}
 
 }

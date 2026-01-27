@@ -23,7 +23,6 @@ import org.eclipse.january.dataset.Dataset;
 public interface NXtranslation extends NXobject {
 
 	public static final String NX_DISTANCES = "distances";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * Link to other object if we are relative, else absent
 	 *
@@ -117,31 +116,5 @@ public interface NXtranslation extends NXobject {
 	 * @param distances the distances
 	 */
 	public DataNode setDistancesScalar(Double distancesValue);
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
 
 }

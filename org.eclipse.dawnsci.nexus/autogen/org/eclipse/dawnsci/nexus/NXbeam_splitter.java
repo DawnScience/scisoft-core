@@ -22,7 +22,7 @@ import org.eclipse.january.dataset.Dataset;
  * A beam splitter, i.e. a device splitting the light into two or more beams.
  * Information about types and properties of beam splitters is provided e.g.
  * [here](https://www.rp-photonics.com/beam_splitters.html).
- * Use two or more NXbeam_paths to describe the beam paths after the beam
+ * Use two or more instances of NXbeam to describe the beam paths after the beam
  * splitter. In the dependency chain of the new beam paths, the first elements
  * each point to this beam splitter, as this is the previous element.
  * <p><b>Symbols:</b><ul>
@@ -33,7 +33,7 @@ import org.eclipse.january.dataset.Dataset;
  * Length of the spectrum vector (e.g. wavelength or energy) for which the
  * reflectance or transmission of the beam splitter is given.</li>
  * <li><b>N_shapepar</b>
- * Number of parameters needed do descripe the shape of the beam splitter.</li>
+ * Number of parameters needed do describe the shape of the beam splitter.</li>
  * <li><b>N_objects</b>
  * Number of objects the beam splitter is made up of.</li>
  * <li><b>N_outputs</b>
@@ -41,10 +41,9 @@ import org.eclipse.january.dataset.Dataset;
  * the beam splitter.</li></ul></p>
  *
  */
-public interface NXbeam_splitter extends NXobject {
+public interface NXbeam_splitter extends NXcomponent {
 
 	public static final String NX_TYPE = "type";
-	public static final String NX_OTHER_TYPE = "other_type";
 	public static final String NX_POLARIZING = "polarizing";
 	public static final String NX_MULTIPLE_OUTPUTS = "multiple_outputs";
 	public static final String NX_SPLITTING_RATIO = "splitting_ratio";
@@ -70,8 +69,7 @@ public interface NXbeam_splitter extends NXobject {
 	 * <li><b>Glan-Thompson prism</b> </li>
 	 * <li><b>pellicle mirror</b> </li>
 	 * <li><b>Polka dot beam splitter</b> </li>
-	 * <li><b>fiber optic splitter</b> </li>
-	 * <li><b>other</b> </li></ul></p>
+	 * <li><b>fiber optic splitter</b> </li></ul></p>
 	 * </p>
 	 *
 	 * @return  the value.
@@ -92,8 +90,7 @@ public interface NXbeam_splitter extends NXobject {
 	 * <li><b>Glan-Thompson prism</b> </li>
 	 * <li><b>pellicle mirror</b> </li>
 	 * <li><b>Polka dot beam splitter</b> </li>
-	 * <li><b>fiber optic splitter</b> </li>
-	 * <li><b>other</b> </li></ul></p>
+	 * <li><b>fiber optic splitter</b> </li></ul></p>
 	 * </p>
 	 *
 	 * @param typeDataset the typeDataset
@@ -114,8 +111,7 @@ public interface NXbeam_splitter extends NXobject {
 	 * <li><b>Glan-Thompson prism</b> </li>
 	 * <li><b>pellicle mirror</b> </li>
 	 * <li><b>Polka dot beam splitter</b> </li>
-	 * <li><b>fiber optic splitter</b> </li>
-	 * <li><b>other</b> </li></ul></p>
+	 * <li><b>fiber optic splitter</b> </li></ul></p>
 	 * </p>
 	 *
 	 * @return  the value.
@@ -136,45 +132,12 @@ public interface NXbeam_splitter extends NXobject {
 	 * <li><b>Glan-Thompson prism</b> </li>
 	 * <li><b>pellicle mirror</b> </li>
 	 * <li><b>Polka dot beam splitter</b> </li>
-	 * <li><b>fiber optic splitter</b> </li>
-	 * <li><b>other</b> </li></ul></p>
+	 * <li><b>fiber optic splitter</b> </li></ul></p>
 	 * </p>
 	 *
 	 * @param type the type
 	 */
 	public DataNode setTypeScalar(String typeValue);
-
-	/**
-	 * If you selected 'other' in 'type' use this field to specify which type of
-	 * beam splitter was used.
-	 *
-	 * @return  the value.
-	 */
-	public Dataset getOther_type();
-
-	/**
-	 * If you selected 'other' in 'type' use this field to specify which type of
-	 * beam splitter was used.
-	 *
-	 * @param other_typeDataset the other_typeDataset
-	 */
-	public DataNode setOther_type(IDataset other_typeDataset);
-
-	/**
-	 * If you selected 'other' in 'type' use this field to specify which type of
-	 * beam splitter was used.
-	 *
-	 * @return  the value.
-	 */
-	public String getOther_typeScalar();
-
-	/**
-	 * If you selected 'other' in 'type' use this field to specify which type of
-	 * beam splitter was used.
-	 *
-	 * @param other_type the other_type
-	 */
-	public DataNode setOther_typeScalar(String other_typeValue);
 
 	/**
 	 * Is the beam splitter polarizing?

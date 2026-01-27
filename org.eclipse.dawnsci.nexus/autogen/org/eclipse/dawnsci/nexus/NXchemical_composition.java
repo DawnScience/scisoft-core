@@ -17,7 +17,7 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * (Chemical) composition of a sample or a set of things.
+ * Chemical composition of a sample or a set of things.
  * <p><b>Symbols:</b>
  * The symbols used in the schema to specify e.g. dimensions of arrays.<ul>
  * <li><b>n</b>
@@ -26,9 +26,91 @@ import org.eclipse.january.dataset.Dataset;
  */
 public interface NXchemical_composition extends NXobject {
 
+	public static final String NX_NORMALIZATION = "normalization";
 	public static final String NX_TOTAL = "total";
 	/**
-	 * Total based on which composition information is normalized.
+	 * Reporting compositions as atom and weight percent yields both
+	 * dimensionless quantities but their conceptual interpretation differs.
+	 * A normalization based on atom_percent counts relative to the
+	 * total number of atoms which are of a particular type.
+	 * By contrast, weight_percent normalization factorizes in the
+	 * respective mass of the elements. Software libraries that work with
+	 * units, like pint in Python, are challenged by these differences as
+	 * at.-% and wt.-% are both fractional quantities.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * <p><b>Enumeration:</b><ul>
+	 * <li><b>atom_percent</b> </li>
+	 * <li><b>weight_percent</b> </li></ul></p>
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getNormalization();
+
+	/**
+	 * Reporting compositions as atom and weight percent yields both
+	 * dimensionless quantities but their conceptual interpretation differs.
+	 * A normalization based on atom_percent counts relative to the
+	 * total number of atoms which are of a particular type.
+	 * By contrast, weight_percent normalization factorizes in the
+	 * respective mass of the elements. Software libraries that work with
+	 * units, like pint in Python, are challenged by these differences as
+	 * at.-% and wt.-% are both fractional quantities.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * <p><b>Enumeration:</b><ul>
+	 * <li><b>atom_percent</b> </li>
+	 * <li><b>weight_percent</b> </li></ul></p>
+	 * </p>
+	 *
+	 * @param normalizationDataset the normalizationDataset
+	 */
+	public DataNode setNormalization(IDataset normalizationDataset);
+
+	/**
+	 * Reporting compositions as atom and weight percent yields both
+	 * dimensionless quantities but their conceptual interpretation differs.
+	 * A normalization based on atom_percent counts relative to the
+	 * total number of atoms which are of a particular type.
+	 * By contrast, weight_percent normalization factorizes in the
+	 * respective mass of the elements. Software libraries that work with
+	 * units, like pint in Python, are challenged by these differences as
+	 * at.-% and wt.-% are both fractional quantities.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * <p><b>Enumeration:</b><ul>
+	 * <li><b>atom_percent</b> </li>
+	 * <li><b>weight_percent</b> </li></ul></p>
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public String getNormalizationScalar();
+
+	/**
+	 * Reporting compositions as atom and weight percent yields both
+	 * dimensionless quantities but their conceptual interpretation differs.
+	 * A normalization based on atom_percent counts relative to the
+	 * total number of atoms which are of a particular type.
+	 * By contrast, weight_percent normalization factorizes in the
+	 * respective mass of the elements. Software libraries that work with
+	 * units, like pint in Python, are challenged by these differences as
+	 * at.-% and wt.-% are both fractional quantities.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * <p><b>Enumeration:</b><ul>
+	 * <li><b>atom_percent</b> </li>
+	 * <li><b>weight_percent</b> </li></ul></p>
+	 * </p>
+	 *
+	 * @param normalization the normalization
+	 */
+	public DataNode setNormalizationScalar(String normalizationValue);
+
+	/**
+	 * Total formula mass or number of atoms, depending on the
+	 * normalization stated in the normalization field.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_UNITLESS
@@ -40,7 +122,8 @@ public interface NXchemical_composition extends NXobject {
 	public Dataset getTotal();
 
 	/**
-	 * Total based on which composition information is normalized.
+	 * Total formula mass or number of atoms, depending on the
+	 * normalization stated in the normalization field.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_UNITLESS
@@ -52,7 +135,8 @@ public interface NXchemical_composition extends NXobject {
 	public DataNode setTotal(IDataset totalDataset);
 
 	/**
-	 * Total based on which composition information is normalized.
+	 * Total formula mass or number of atoms, depending on the
+	 * normalization stated in the normalization field.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_UNITLESS
@@ -64,7 +148,8 @@ public interface NXchemical_composition extends NXobject {
 	public Number getTotalScalar();
 
 	/**
-	 * Total based on which composition information is normalized.
+	 * Total formula mass or number of atoms, depending on the
+	 * normalization stated in the normalization field.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_UNITLESS
@@ -76,15 +161,21 @@ public interface NXchemical_composition extends NXobject {
 	public DataNode setTotalScalar(Number totalValue);
 
 	/**
+	 * If this group is used to report the composition of elements from the periodic table,
+	 * the group should use the chemical symbol of that element. For other case the
+	 * group name is unconstrained.
 	 *
 	 * @return  the value.
 	 */
-	public NXion getIon();
+	public NXatom getElement();
 
 	/**
+	 * If this group is used to report the composition of elements from the periodic table,
+	 * the group should use the chemical symbol of that element. For other case the
+	 * group name is unconstrained.
 	 *
-	 * @param ionGroup the ionGroup
+	 * @param elementGroup the elementGroup
 	 */
-	public void setIon(NXion ionGroup);
+	public void setElement(NXatom elementGroup);
 
 }

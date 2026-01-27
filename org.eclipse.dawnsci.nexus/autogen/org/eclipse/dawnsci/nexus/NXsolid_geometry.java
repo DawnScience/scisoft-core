@@ -16,7 +16,11 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 
 /**
- * the head node for constructively defined geometry
+ * The head node for constructively defined geometry.
+ * * `S. Ghebi <https://doi.org/10.1007/978-1-84800-115-2>`_
+ * * `L. H. Laidlaw <https://doi.org/10.1145/15886.15904>`_
+ * for an introduction into the topic of modeling shapes with constructive
+ * solid geometry (CSG).
  *
  */
 public interface NXsolid_geometry extends NXobject {
@@ -146,14 +150,16 @@ public interface NXsolid_geometry extends NXobject {
 
 
 	/**
-	 * The geometries defined, made up of instances of :ref:`NXquadric` and :ref:`NXoff_geometry`.
+	 * The geometries defined, made up of e.g. instances of :ref:`NXquadric`, :ref:`NXoff_geometry`,
+	 * or instances of other base classes that define geometries.
 	 *
 	 * @return  the value.
 	 */
 	public NXcsg getCsg();
 
 	/**
-	 * The geometries defined, made up of instances of :ref:`NXquadric` and :ref:`NXoff_geometry`.
+	 * The geometries defined, made up of e.g. instances of :ref:`NXquadric`, :ref:`NXoff_geometry`,
+	 * or instances of other base classes that define geometries.
 	 *
 	 * @param csgGroup the csgGroup
 	 */
@@ -163,7 +169,8 @@ public interface NXsolid_geometry extends NXobject {
 	 * Get a NXcsg node by name:
 	 * <ul>
 	 * <li>
-	 * The geometries defined, made up of instances of :ref:`NXquadric` and :ref:`NXoff_geometry`.</li>
+	 * The geometries defined, made up of e.g. instances of :ref:`NXquadric`, :ref:`NXoff_geometry`,
+	 * or instances of other base classes that define geometries.</li>
 	 * </ul>
 	 *
 	 * @param name  the name of the node.
@@ -175,7 +182,8 @@ public interface NXsolid_geometry extends NXobject {
 	 * Set a NXcsg node by name:
 	 * <ul>
 	 * <li>
-	 * The geometries defined, made up of instances of :ref:`NXquadric` and :ref:`NXoff_geometry`.</li>
+	 * The geometries defined, made up of e.g. instances of :ref:`NXquadric`, :ref:`NXoff_geometry`,
+	 * or instances of other base classes that define geometries.</li>
 	 * </ul>
 	 *
 	 * @param name the name of the node
@@ -187,7 +195,8 @@ public interface NXsolid_geometry extends NXobject {
 	 * Get all NXcsg nodes:
 	 * <ul>
 	 * <li>
-	 * The geometries defined, made up of instances of :ref:`NXquadric` and :ref:`NXoff_geometry`.</li>
+	 * The geometries defined, made up of e.g. instances of :ref:`NXquadric`, :ref:`NXoff_geometry`,
+	 * or instances of other base classes that define geometries.</li>
 	 * </ul>
 	 *
 	 * @return  a map from node names to the NXcsg for that node.
@@ -198,7 +207,8 @@ public interface NXsolid_geometry extends NXobject {
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
-	 * The geometries defined, made up of instances of :ref:`NXquadric` and :ref:`NXoff_geometry`.</li>
+	 * The geometries defined, made up of e.g. instances of :ref:`NXquadric`, :ref:`NXoff_geometry`,
+	 * or instances of other base classes that define geometries.</li>
 	 * </ul>
 	 *
 	 * @param csg the child nodes to add

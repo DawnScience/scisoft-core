@@ -17,17 +17,16 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * definition for an electrostatic separator.
+ * Base class for an electrostatic separator.
  *
  */
-public interface NXseparator extends NXobject {
+public interface NXseparator extends NXcomponent {
 
-	public static final String NX_DESCRIPTION = "description";
 	public static final String NX_BEAMLINE_DISTANCE = "beamline_distance";
 	public static final String NX_SET_BFIELD_CURRENT = "set_bfield_current";
 	public static final String NX_SET_EFIELD_VOLTAGE = "set_efield_voltage";
 	/**
-	 * extended description of the separator.
+	 * Extended description of the separator.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
@@ -37,7 +36,7 @@ public interface NXseparator extends NXobject {
 	public Dataset getDescription();
 
 	/**
-	 * extended description of the separator.
+	 * Extended description of the separator.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
@@ -47,7 +46,7 @@ public interface NXseparator extends NXobject {
 	public DataNode setDescription(IDataset descriptionDataset);
 
 	/**
-	 * extended description of the separator.
+	 * Extended description of the separator.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
@@ -57,7 +56,7 @@ public interface NXseparator extends NXobject {
 	public String getDescriptionScalar();
 
 	/**
-	 * extended description of the separator.
+	 * Extended description of the separator.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
@@ -67,7 +66,7 @@ public interface NXseparator extends NXobject {
 	public DataNode setDescriptionScalar(String descriptionValue);
 
 	/**
-	 * define position of beamline element relative to production target
+	 * Define position of beamline element relative to production target
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
@@ -78,7 +77,7 @@ public interface NXseparator extends NXobject {
 	public Dataset getBeamline_distance();
 
 	/**
-	 * define position of beamline element relative to production target
+	 * Define position of beamline element relative to production target
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
@@ -89,7 +88,7 @@ public interface NXseparator extends NXobject {
 	public DataNode setBeamline_distance(IDataset beamline_distanceDataset);
 
 	/**
-	 * define position of beamline element relative to production target
+	 * Define position of beamline element relative to production target
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
@@ -100,7 +99,7 @@ public interface NXseparator extends NXobject {
 	public Double getBeamline_distanceScalar();
 
 	/**
-	 * define position of beamline element relative to production target
+	 * Define position of beamline element relative to production target
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
@@ -111,7 +110,7 @@ public interface NXseparator extends NXobject {
 	public DataNode setBeamline_distanceScalar(Double beamline_distanceValue);
 
 	/**
-	 * current set on magnet supply.
+	 * Current set on magnet supply.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
@@ -122,7 +121,7 @@ public interface NXseparator extends NXobject {
 	public Dataset getSet_bfield_current();
 
 	/**
-	 * current set on magnet supply.
+	 * Current set on magnet supply.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
@@ -133,7 +132,7 @@ public interface NXseparator extends NXobject {
 	public DataNode setSet_bfield_current(IDataset set_bfield_currentDataset);
 
 	/**
-	 * current set on magnet supply.
+	 * Current set on magnet supply.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
@@ -144,7 +143,7 @@ public interface NXseparator extends NXobject {
 	public Double getSet_bfield_currentScalar();
 
 	/**
-	 * current set on magnet supply.
+	 * Current set on magnet supply.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT

@@ -24,7 +24,10 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Document an event of data processing, reconstruction, or analysis for this data.
+ * The :ref:`NXprocess` class describes an operation used to
+ * process data as part of an analysis workflow, providing
+ * information such as the software used, the date of the
+ * operation, the input parameters, and the resulting data.
 
  */
 public class NXprocessImpl extends NXobjectImpl implements NXprocess {
@@ -33,7 +36,9 @@ public class NXprocessImpl extends NXobjectImpl implements NXprocess {
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_NOTE);
+		NexusBaseClass.NX_NOTE,
+		NexusBaseClass.NX_PARAMETERS,
+		NexusBaseClass.NX_DATA);
 
 	public NXprocessImpl() {
 		super();
@@ -171,13 +176,65 @@ public class NXprocessImpl extends NXobjectImpl implements NXprocess {
 	}
 
 	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	public NXparameters getParameters() {
+		// dataNodeName = NX_PARAMETERS
+		return getChild("parameters", NXparameters.class);
 	}
 
 	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
+	public void setParameters(NXparameters parametersGroup) {
+		putChild("parameters", parametersGroup);
+	}
+
+	@Override
+	public NXparameters getParameters(String name) {
+		return getChild(name, NXparameters.class);
+	}
+
+	@Override
+	public void setParameters(String name, NXparameters parameters) {
+		putChild(name, parameters);
+	}
+
+	@Override
+	public Map<String, NXparameters> getAllParameters() {
+		return getChildren(NXparameters.class);
+	}
+
+	@Override
+	public void setAllParameters(Map<String, NXparameters> parameters) {
+		setChildren(parameters);
+	}
+
+	@Override
+	public NXdata getData() {
+		// dataNodeName = NX_DATA
+		return getChild("data", NXdata.class);
+	}
+
+	@Override
+	public void setData(NXdata dataGroup) {
+		putChild("data", dataGroup);
+	}
+
+	@Override
+	public NXdata getData(String name) {
+		return getChild(name, NXdata.class);
+	}
+
+	@Override
+	public void setData(String name, NXdata data) {
+		putChild(name, data);
+	}
+
+	@Override
+	public Map<String, NXdata> getAllData() {
+		return getChildren(NXdata.class);
+	}
+
+	@Override
+	public void setAllData(Map<String, NXdata> data) {
+		setChildren(data);
 	}
 
 }

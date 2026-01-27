@@ -32,7 +32,6 @@ public interface NXinstrument extends NXobject {
 
 	public static final String NX_NAME = "name";
 	public static final String NX_NAME_ATTRIBUTE_SHORT_NAME = "short_name";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * Name of instrument
 	 *
@@ -74,6 +73,62 @@ public interface NXinstrument extends NXobject {
 	 * @param short_nameValue the short_nameValue
 	 */
 	public void setNameAttributeShort_name(String short_nameValue);
+
+	/**
+	 *
+	 * @return  the value.
+	 */
+	public NXactuator getActuator();
+
+	/**
+	 *
+	 * @param actuatorGroup the actuatorGroup
+	 */
+	public void setActuator(NXactuator actuatorGroup);
+
+	/**
+	 * Get a NXactuator node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXactuator for that node.
+	 */
+	public NXactuator getActuator(String name);
+
+	/**
+	 * Set a NXactuator node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param actuator the value to set
+	 */
+	public void setActuator(String name, NXactuator actuator);
+
+	/**
+	 * Get all NXactuator nodes:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXactuator for that node.
+	 */
+	public Map<String, NXactuator> getAllActuator();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param actuator the child nodes to add
+	 */
+
+	public void setAllActuator(Map<String, NXactuator> actuator);
+
 
 	/**
 	 *
@@ -807,6 +862,62 @@ public interface NXinstrument extends NXobject {
 	 *
 	 * @return  the value.
 	 */
+	public NXfabrication getFabrication();
+
+	/**
+	 *
+	 * @param fabricationGroup the fabricationGroup
+	 */
+	public void setFabrication(NXfabrication fabricationGroup);
+
+	/**
+	 * Get a NXfabrication node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXfabrication for that node.
+	 */
+	public NXfabrication getFabrication(String name);
+
+	/**
+	 * Set a NXfabrication node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param fabrication the value to set
+	 */
+	public void setFabrication(String name, NXfabrication fabrication);
+
+	/**
+	 * Get all NXfabrication nodes:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXfabrication for that node.
+	 */
+	public Map<String, NXfabrication> getAllFabrication();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param fabrication the child nodes to add
+	 */
+
+	public void setAllFabrication(Map<String, NXfabrication> fabrication);
+
+
+	/**
+	 *
+	 * @return  the value.
+	 */
 	public NXfermi_chopper getFermi_chopper();
 
 	/**
@@ -1025,6 +1136,62 @@ public interface NXinstrument extends NXobject {
 	 */
 
 	public void setAllGuide(Map<String, NXguide> guide);
+
+
+	/**
+	 *
+	 * @return  the value.
+	 */
+	public NXhistory getHistory();
+
+	/**
+	 *
+	 * @param historyGroup the historyGroup
+	 */
+	public void setHistory(NXhistory historyGroup);
+
+	/**
+	 * Get a NXhistory node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXhistory for that node.
+	 */
+	public NXhistory getHistory(String name);
+
+	/**
+	 * Set a NXhistory node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param history the value to set
+	 */
+	public void setHistory(String name, NXhistory history);
+
+	/**
+	 * Get all NXhistory nodes:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXhistory for that node.
+	 */
+	public Map<String, NXhistory> getAllHistory();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param history the child nodes to add
+	 */
+
+	public void setAllHistory(Map<String, NXhistory> history);
 
 
 	/**
@@ -1367,6 +1534,62 @@ public interface NXinstrument extends NXobject {
 	 *
 	 * @return  the value.
 	 */
+	public NXsensor getSensor();
+
+	/**
+	 *
+	 * @param sensorGroup the sensorGroup
+	 */
+	public void setSensor(NXsensor sensorGroup);
+
+	/**
+	 * Get a NXsensor node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXsensor for that node.
+	 */
+	public NXsensor getSensor(String name);
+
+	/**
+	 * Set a NXsensor node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param sensor the value to set
+	 */
+	public void setSensor(String name, NXsensor sensor);
+
+	/**
+	 * Get all NXsensor nodes:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXsensor for that node.
+	 */
+	public Map<String, NXsensor> getAllSensor();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param sensor the child nodes to add
+	 */
+
+	public void setAllSensor(Map<String, NXsensor> sensor);
+
+
+	/**
+	 *
+	 * @return  the value.
+	 */
 	public NXsource getSource();
 
 	/**
@@ -1542,31 +1765,5 @@ public interface NXinstrument extends NXobject {
 
 	public void setAllXraylens(Map<String, NXxraylens> xraylens);
 
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
 
 }

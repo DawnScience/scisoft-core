@@ -48,7 +48,6 @@ public interface NXdetector_module extends NXobject {
 	public static final String NX_SLOW_PIXEL_DIRECTION_ATTRIBUTE_OFFSET_UNITS = "offset_units";
 	public static final String NX_SLOW_PIXEL_DIRECTION_ATTRIBUTE_DEPENDS_ON = "depends_on";
 	public static final String NX_DEPENDS_ON = "depends_on";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * A dimension-2 or dimension-3 field which gives the indices
 	 * of the origin of the hyperslab of data for this module in the
@@ -600,31 +599,5 @@ public interface NXdetector_module extends NXobject {
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
 
 }

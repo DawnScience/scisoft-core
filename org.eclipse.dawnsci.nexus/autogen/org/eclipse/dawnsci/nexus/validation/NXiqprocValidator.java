@@ -74,12 +74,6 @@ public class NXiqprocValidator extends AbstractNexusValidator implements NexusAp
 		// validate that the group is not null
 		if (!(validateGroupNotNull(null, NXentry.class, group))) return;
 
-		// validate attribute 'entry' of type NX_CHAR.
-		final Attribute entry_attr = group.getAttribute("entry");
-		if (!(validateAttributeNotNull("entry", entry_attr))) return;
-		// validate any properties of this attribute specified in the NXDL file: type, enumeration
-		validateAttributeType("entry", entry_attr, NX_CHAR);
-
 		// validate field 'title' of type NX_CHAR.
 		final ILazyDataset title = group.getLazyDataset("title");
 		validateFieldNotNull("title", title);
@@ -167,7 +161,16 @@ public class NXiqprocValidator extends AbstractNexusValidator implements NexusAp
 					"Optical Laser",
 					"Ion Source",
 					"UV Plasma Source",
-					"Metal Jet X-ray");
+					"Metal Jet X-ray",
+					"Laser",
+					"Dye Laser",
+					"Broadband Tunable Light Source",
+					"Halogen Lamp",
+					"LED",
+					"Mercury Cadmium Telluride Lamp",
+					"Deuterium Lamp",
+					"Xenon Lamp",
+					"Globar");
 		}
 
 		// validate field 'name' of type NX_CHAR.
@@ -232,10 +235,10 @@ public class NXiqprocValidator extends AbstractNexusValidator implements NexusAp
 		}
 
 		// validate child group 'input' of type NXparameters
-		validateGroup_NXentry_reduction_input(group.getChild("input", NXparameters.class));
+		validateGroup_NXentry_reduction_input(group.getParameters("input"));
 
 		// validate child group 'output' of type NXparameters
-		validateGroup_NXentry_reduction_output(group.getChild("output", NXparameters.class));
+		validateGroup_NXentry_reduction_output(group.getParameters("output"));
 	}
 
 	/**

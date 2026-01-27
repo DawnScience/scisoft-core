@@ -24,7 +24,7 @@ import org.eclipse.dawnsci.nexus.*;
  * Geometry (shape) description.
  * The format closely matches the Object File Format (OFF) which can be output
  * by most CAD software.
- * It can be used to describe the shape of any beamline component, including detectors.
+ * It can be used to describe the shape of any component, including detectors.
  * In the case of detectors it can be used to define the shape of a single pixel, or,
  * if the pixel shapes are non-uniform, to describe the shape of the whole detector.
 
@@ -138,16 +138,6 @@ public class NXoff_geometryImpl extends NXobjectImpl implements NXoff_geometry {
 	@Override
 	public DataNode setDetector_facesScalar(Long detector_facesValue) {
 		return setField(NX_DETECTOR_FACES, detector_facesValue);
-	}
-
-	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
-	}
-
-	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

@@ -57,7 +57,7 @@ import org.eclipse.dawnsci.nexus.*;
  * beam energy/measurement time) to be made.
 
  */
-public class NXcontainerImpl extends NXobjectImpl implements NXcontainer {
+public class NXcontainerImpl extends NXcomponentImpl implements NXcontainer {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 

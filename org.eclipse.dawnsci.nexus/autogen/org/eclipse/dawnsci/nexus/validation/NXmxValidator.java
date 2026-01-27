@@ -173,6 +173,20 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 			validateFieldType("data", data, NX_NUMBER);
 			validateFieldDimensions("data", data, null, "nP", "i", "j", "k");
 		}
+
+		// validate optional field 'data_scaling_factor' of type NX_NUMBER. Note: field not defined in base class.
+		final ILazyDataset data_scaling_factor = group.getLazyDataset("data_scaling_factor");
+				if (data_scaling_factor != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("data_scaling_factor", data_scaling_factor, NX_NUMBER);
+		}
+
+		// validate optional field 'data_offset' of type NX_NUMBER. Note: field not defined in base class.
+		final ILazyDataset data_offset = group.getLazyDataset("data_offset");
+				if (data_offset != null) {
+			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
+			validateFieldType("data_offset", data_offset, NX_NUMBER);
+		}
 	}
 
 	/**
@@ -191,7 +205,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 			validateFieldType("name", name, NX_CHAR);
 		}
 
-		// validate field 'depends_on' of type NX_CHAR.
+		// validate field 'depends_on' of type NX_CHAR. Note: field not defined in base class.
 		final ILazyDataset depends_on = group.getLazyDataset("depends_on");
 		validateFieldNotNull("depends_on", depends_on);
 		if (depends_on != null) {
@@ -209,7 +223,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 		}
 		// validate unnamed child group of type NXtransformations (possibly multiple)
 		validateUnnamedGroupOccurrences(group, NXtransformations.class, false, true);
-		final Map<String, NXtransformations> allTransformations = group.getAllTransformations();
+		final Map<String, NXtransformations> allTransformations = group.getChildren(NXtransformations.class);
 		for (final NXtransformations transformations : allTransformations.values()) {
 			validateGroup_NXentry_NXsample_NXtransformations(transformations);
 		}
@@ -602,7 +616,7 @@ public class NXmxValidator extends AbstractNexusValidator implements NexusApplic
 
 		// validate unnamed child group of type NXtransformations (possibly multiple)
 		validateUnnamedGroupOccurrences(group, NXtransformations.class, false, true);
-		final Map<String, NXtransformations> allTransformations = group.getAllTransformations();
+		final Map<String, NXtransformations> allTransformations = group.getChildren(NXtransformations.class);
 		for (final NXtransformations transformations : allTransformations.values()) {
 			validateGroup_NXentry_NXinstrument_NXdetector_NXtransformations(transformations);
 		}

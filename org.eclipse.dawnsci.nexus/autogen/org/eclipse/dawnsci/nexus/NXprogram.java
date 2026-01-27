@@ -18,8 +18,6 @@ import org.eclipse.january.dataset.Dataset;
 
 /**
  * Base class to describe a software tool or library.
- * <p><b>Symbols:</b>
- * The symbols used in the schema to specify e.g. dimensions of arrays.<ul></ul></p>
  *
  */
 public interface NXprogram extends NXobject {

@@ -17,17 +17,16 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * definition for a spin rotator.
+ * Base class for a spin rotator.
  *
  */
-public interface NXspin_rotator extends NXobject {
+public interface NXspin_rotator extends NXcomponent {
 
-	public static final String NX_DESCRIPTION = "description";
 	public static final String NX_BEAMLINE_DISTANCE = "beamline_distance";
 	public static final String NX_SET_BFIELD_CURRENT = "set_bfield_current";
 	public static final String NX_SET_EFIELD_VOLTAGE = "set_efield_voltage";
 	/**
-	 * extended description of the spin rotator.
+	 * Extended description of the spin rotator.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
@@ -37,7 +36,7 @@ public interface NXspin_rotator extends NXobject {
 	public Dataset getDescription();
 
 	/**
-	 * extended description of the spin rotator.
+	 * Extended description of the spin rotator.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
@@ -47,7 +46,7 @@ public interface NXspin_rotator extends NXobject {
 	public DataNode setDescription(IDataset descriptionDataset);
 
 	/**
-	 * extended description of the spin rotator.
+	 * Extended description of the spin rotator.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
@@ -57,7 +56,7 @@ public interface NXspin_rotator extends NXobject {
 	public String getDescriptionScalar();
 
 	/**
-	 * extended description of the spin rotator.
+	 * Extended description of the spin rotator.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
@@ -67,7 +66,7 @@ public interface NXspin_rotator extends NXobject {
 	public DataNode setDescriptionScalar(String descriptionValue);
 
 	/**
-	 * define position of beamline element relative to production target
+	 * Define position of beamline element relative to production target
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
@@ -78,7 +77,7 @@ public interface NXspin_rotator extends NXobject {
 	public Dataset getBeamline_distance();
 
 	/**
-	 * define position of beamline element relative to production target
+	 * Define position of beamline element relative to production target
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
@@ -89,7 +88,7 @@ public interface NXspin_rotator extends NXobject {
 	public DataNode setBeamline_distance(IDataset beamline_distanceDataset);
 
 	/**
-	 * define position of beamline element relative to production target
+	 * Define position of beamline element relative to production target
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
@@ -100,7 +99,7 @@ public interface NXspin_rotator extends NXobject {
 	public Double getBeamline_distanceScalar();
 
 	/**
-	 * define position of beamline element relative to production target
+	 * Define position of beamline element relative to production target
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH

@@ -17,9 +17,11 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * Computational geeometry description of a half-edge data structure.
+ * Computational geometry description of a half-edge data structure.
  * Such a data structure can be used to efficiently circulate around faces
- * and iterate over vertices of a planar graph.
+ * and iterate over vertices of a planar graph. The data structure is also
+ * known as a doubly connected edge list.
+ * Indices can be used as identifier and thus names for individual instances.
  * <p><b>Symbols:</b>
  * The symbols used in the schema to specify e.g. dimensions of arrays.<ul>
  * <li><b>d</b>
@@ -32,15 +34,13 @@ import org.eclipse.january.dataset.Dataset;
  * The number of half-edges.</li></ul></p>
  *
  */
-public interface NXcg_half_edge_data_structure extends NXobject {
+public interface NXcg_half_edge_data_structure extends NXcg_primitive {
 
-	public static final String NX_DIMENSIONALITY = "dimensionality";
 	public static final String NX_NUMBER_OF_VERTICES = "number_of_vertices";
-	public static final String NX_NUMBER_OF_FACES = "number_of_faces";
-	public static final String NX_NUMBER_OF_HALF_EDGES = "number_of_half_edges";
-	public static final String NX_VERTEX_IDENTIFIER_OFFSET = "vertex_identifier_offset";
-	public static final String NX_FACE_IDENTIFIER_OFFSET = "face_identifier_offset";
-	public static final String NX_HALF_EDGE_IDENTIFIER_OFFSET = "half_edge_identifier_offset";
+	public static final String NX_NUMBER_OF_EDGES = "number_of_edges";
+	public static final String NX_INDEX_OFFSET_VERTEX = "index_offset_vertex";
+	public static final String NX_INDEX_OFFSET_EDGE = "index_offset_edge";
+	public static final String NX_INDEX_OFFSET_FACE = "index_offset_face";
 	public static final String NX_POSITION = "position";
 	public static final String NX_VERTEX_INCIDENT_HALF_EDGE = "vertex_incident_half_edge";
 	public static final String NX_FACE_HALF_EDGE = "face_half_edge";
@@ -51,6 +51,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	public static final String NX_HALF_EDGE_PREV = "half_edge_prev";
 	public static final String NX_WEINBERG_VECTOR = "weinberg_vector";
 	/**
+	 * Dimensionality of the primitives described.
 	 * <p>
 	 * <b>Type:</b> NX_POSINT
 	 * <b>Units:</b> NX_UNITLESS
@@ -61,6 +62,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	public Dataset getDimensionality();
 
 	/**
+	 * Dimensionality of the primitives described.
 	 * <p>
 	 * <b>Type:</b> NX_POSINT
 	 * <b>Units:</b> NX_UNITLESS
@@ -71,6 +73,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	public DataNode setDimensionality(IDataset dimensionalityDataset);
 
 	/**
+	 * Dimensionality of the primitives described.
 	 * <p>
 	 * <b>Type:</b> NX_POSINT
 	 * <b>Units:</b> NX_UNITLESS
@@ -81,6 +84,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	public Long getDimensionalityScalar();
 
 	/**
+	 * Dimensionality of the primitives described.
 	 * <p>
 	 * <b>Type:</b> NX_POSINT
 	 * <b>Units:</b> NX_UNITLESS
@@ -91,9 +95,13 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	public DataNode setDimensionalityScalar(Long dimensionalityValue);
 
 	/**
+	 * Number of vertices for each face.
+	 * Each entry represents the total number of vertices for that face,
+	 * irrespectively whether vertices are shared among faces or not.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
+	 * <b>Dimensions:</b> 1: n_f;
 	 * </p>
 	 *
 	 * @return  the value.
@@ -101,9 +109,13 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	public Dataset getNumber_of_vertices();
 
 	/**
+	 * Number of vertices for each face.
+	 * Each entry represents the total number of vertices for that face,
+	 * irrespectively whether vertices are shared among faces or not.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
+	 * <b>Dimensions:</b> 1: n_f;
 	 * </p>
 	 *
 	 * @param number_of_verticesDataset the number_of_verticesDataset
@@ -111,9 +123,13 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	public DataNode setNumber_of_vertices(IDataset number_of_verticesDataset);
 
 	/**
+	 * Number of vertices for each face.
+	 * Each entry represents the total number of vertices for that face,
+	 * irrespectively whether vertices are shared among faces or not.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
+	 * <b>Dimensions:</b> 1: n_f;
 	 * </p>
 	 *
 	 * @return  the value.
@@ -121,9 +137,13 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	public Long getNumber_of_verticesScalar();
 
 	/**
+	 * Number of vertices for each face.
+	 * Each entry represents the total number of vertices for that face,
+	 * irrespectively whether vertices are shared among faces or not.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
+	 * <b>Dimensions:</b> 1: n_f;
 	 * </p>
 	 *
 	 * @param number_of_vertices the number_of_vertices
@@ -131,91 +151,66 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	public DataNode setNumber_of_verticesScalar(Long number_of_verticesValue);
 
 	/**
+	 * Number of edges for each face.
+	 * Each entry represents the total number of edges for that face,
+	 * irrespectively whether edges are shared across faces or not.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
+	 * <b>Dimensions:</b> 1: n_he;
 	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getNumber_of_faces();
+	public Dataset getNumber_of_edges();
 
 	/**
+	 * Number of edges for each face.
+	 * Each entry represents the total number of edges for that face,
+	 * irrespectively whether edges are shared across faces or not.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
+	 * <b>Dimensions:</b> 1: n_he;
 	 * </p>
 	 *
-	 * @param number_of_facesDataset the number_of_facesDataset
+	 * @param number_of_edgesDataset the number_of_edgesDataset
 	 */
-	public DataNode setNumber_of_faces(IDataset number_of_facesDataset);
+	public DataNode setNumber_of_edges(IDataset number_of_edgesDataset);
 
 	/**
+	 * Number of edges for each face.
+	 * Each entry represents the total number of edges for that face,
+	 * irrespectively whether edges are shared across faces or not.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Long getNumber_of_facesScalar();
-
-	/**
-	 * <p>
-	 * <b>Type:</b> NX_POSINT
-	 * <b>Units:</b> NX_UNITLESS
-	 * </p>
-	 *
-	 * @param number_of_faces the number_of_faces
-	 */
-	public DataNode setNumber_of_facesScalar(Long number_of_facesValue);
-
-	/**
-	 * <p>
-	 * <b>Type:</b> NX_POSINT
-	 * <b>Units:</b> NX_UNITLESS
+	 * <b>Dimensions:</b> 1: n_he;
 	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getNumber_of_half_edges();
+	public Long getNumber_of_edgesScalar();
 
 	/**
+	 * Number of edges for each face.
+	 * Each entry represents the total number of edges for that face,
+	 * irrespectively whether edges are shared across faces or not.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
+	 * <b>Dimensions:</b> 1: n_he;
 	 * </p>
 	 *
-	 * @param number_of_half_edgesDataset the number_of_half_edgesDataset
+	 * @param number_of_edges the number_of_edges
 	 */
-	public DataNode setNumber_of_half_edges(IDataset number_of_half_edgesDataset);
+	public DataNode setNumber_of_edgesScalar(Long number_of_edgesValue);
 
 	/**
-	 * <p>
-	 * <b>Type:</b> NX_POSINT
-	 * <b>Units:</b> NX_UNITLESS
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Long getNumber_of_half_edgesScalar();
-
-	/**
-	 * <p>
-	 * <b>Type:</b> NX_POSINT
-	 * <b>Units:</b> NX_UNITLESS
-	 * </p>
-	 *
-	 * @param number_of_half_edges the number_of_half_edges
-	 */
-	public DataNode setNumber_of_half_edgesScalar(Long number_of_half_edgesValue);
-
-	/**
-	 * In this half-edge data structure vertex identifiers start at 1.
-	 * Vertices are identified with consecutive integers up to number_of_vertices.
-	 * This field can be used to document which constant integer has to be
-	 * added to another set of vertex_identifier to assure that these other
-	 * identifiers also start at 1.
+	 * Integer offset whereby the identifier of the first member
+	 * of the vertices differs from zero.
+	 * Identifier can be defined explicitly or implicitly.
+	 * Inspect the definition of :ref:`NXcg_primitive` for further details.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
@@ -223,60 +218,27 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getVertex_identifier_offset();
+	public Dataset getIndex_offset_vertex();
 
 	/**
-	 * In this half-edge data structure vertex identifiers start at 1.
-	 * Vertices are identified with consecutive integers up to number_of_vertices.
-	 * This field can be used to document which constant integer has to be
-	 * added to another set of vertex_identifier to assure that these other
-	 * identifiers also start at 1.
+	 * Integer offset whereby the identifier of the first member
+	 * of the vertices differs from zero.
+	 * Identifier can be defined explicitly or implicitly.
+	 * Inspect the definition of :ref:`NXcg_primitive` for further details.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
-	 * @param vertex_identifier_offsetDataset the vertex_identifier_offsetDataset
+	 * @param index_offset_vertexDataset the index_offset_vertexDataset
 	 */
-	public DataNode setVertex_identifier_offset(IDataset vertex_identifier_offsetDataset);
+	public DataNode setIndex_offset_vertex(IDataset index_offset_vertexDataset);
 
 	/**
-	 * In this half-edge data structure vertex identifiers start at 1.
-	 * Vertices are identified with consecutive integers up to number_of_vertices.
-	 * This field can be used to document which constant integer has to be
-	 * added to another set of vertex_identifier to assure that these other
-	 * identifiers also start at 1.
-	 * <p>
-	 * <b>Type:</b> NX_INT
-	 * <b>Units:</b> NX_UNITLESS
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Long getVertex_identifier_offsetScalar();
-
-	/**
-	 * In this half-edge data structure vertex identifiers start at 1.
-	 * Vertices are identified with consecutive integers up to number_of_vertices.
-	 * This field can be used to document which constant integer has to be
-	 * added to another set of vertex_identifier to assure that these other
-	 * identifiers also start at 1.
-	 * <p>
-	 * <b>Type:</b> NX_INT
-	 * <b>Units:</b> NX_UNITLESS
-	 * </p>
-	 *
-	 * @param vertex_identifier_offset the vertex_identifier_offset
-	 */
-	public DataNode setVertex_identifier_offsetScalar(Long vertex_identifier_offsetValue);
-
-	/**
-	 * In this half-edge data structure face identifiers start at 1.
-	 * Faces are identified with consecutive integers up to number_of_faces.
-	 * This field can be used to document which constant integer has to be
-	 * added to another set of face_identifier to assure that these other
-	 * identifiers also start at 1.
-	 * The face identifier zero is reserved for the NULL face !
+	 * Integer offset whereby the identifier of the first member
+	 * of the vertices differs from zero.
+	 * Identifier can be defined explicitly or implicitly.
+	 * Inspect the definition of :ref:`NXcg_primitive` for further details.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
@@ -284,62 +246,27 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getFace_identifier_offset();
+	public Long getIndex_offset_vertexScalar();
 
 	/**
-	 * In this half-edge data structure face identifiers start at 1.
-	 * Faces are identified with consecutive integers up to number_of_faces.
-	 * This field can be used to document which constant integer has to be
-	 * added to another set of face_identifier to assure that these other
-	 * identifiers also start at 1.
-	 * The face identifier zero is reserved for the NULL face !
+	 * Integer offset whereby the identifier of the first member
+	 * of the vertices differs from zero.
+	 * Identifier can be defined explicitly or implicitly.
+	 * Inspect the definition of :ref:`NXcg_primitive` for further details.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
-	 * @param face_identifier_offsetDataset the face_identifier_offsetDataset
+	 * @param index_offset_vertex the index_offset_vertex
 	 */
-	public DataNode setFace_identifier_offset(IDataset face_identifier_offsetDataset);
+	public DataNode setIndex_offset_vertexScalar(Long index_offset_vertexValue);
 
 	/**
-	 * In this half-edge data structure face identifiers start at 1.
-	 * Faces are identified with consecutive integers up to number_of_faces.
-	 * This field can be used to document which constant integer has to be
-	 * added to another set of face_identifier to assure that these other
-	 * identifiers also start at 1.
-	 * The face identifier zero is reserved for the NULL face !
-	 * <p>
-	 * <b>Type:</b> NX_INT
-	 * <b>Units:</b> NX_UNITLESS
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Long getFace_identifier_offsetScalar();
-
-	/**
-	 * In this half-edge data structure face identifiers start at 1.
-	 * Faces are identified with consecutive integers up to number_of_faces.
-	 * This field can be used to document which constant integer has to be
-	 * added to another set of face_identifier to assure that these other
-	 * identifiers also start at 1.
-	 * The face identifier zero is reserved for the NULL face !
-	 * <p>
-	 * <b>Type:</b> NX_INT
-	 * <b>Units:</b> NX_UNITLESS
-	 * </p>
-	 *
-	 * @param face_identifier_offset the face_identifier_offset
-	 */
-	public DataNode setFace_identifier_offsetScalar(Long face_identifier_offsetValue);
-
-	/**
-	 * In this half-edge data structure half-edge identifiers start at 1.
-	 * Half-edges are identified with consecutive integers up to number_of_half_edges.
-	 * This field can be used to document which constant integer has to be
-	 * added to another set of half_edge_identifier to assure that these other
-	 * identifiers also start at 1.
+	 * Integer offset whereby the identifier of the first member
+	 * of the edges differs from zero.
+	 * Identifier can be defined explicitly or implicitly.
+	 * Inspect the definition of :ref:`NXcg_primitive` for further details.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
@@ -347,29 +274,27 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getHalf_edge_identifier_offset();
+	public Dataset getIndex_offset_edge();
 
 	/**
-	 * In this half-edge data structure half-edge identifiers start at 1.
-	 * Half-edges are identified with consecutive integers up to number_of_half_edges.
-	 * This field can be used to document which constant integer has to be
-	 * added to another set of half_edge_identifier to assure that these other
-	 * identifiers also start at 1.
+	 * Integer offset whereby the identifier of the first member
+	 * of the edges differs from zero.
+	 * Identifier can be defined explicitly or implicitly.
+	 * Inspect the definition of :ref:`NXcg_primitive` for further details.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
-	 * @param half_edge_identifier_offsetDataset the half_edge_identifier_offsetDataset
+	 * @param index_offset_edgeDataset the index_offset_edgeDataset
 	 */
-	public DataNode setHalf_edge_identifier_offset(IDataset half_edge_identifier_offsetDataset);
+	public DataNode setIndex_offset_edge(IDataset index_offset_edgeDataset);
 
 	/**
-	 * In this half-edge data structure half-edge identifiers start at 1.
-	 * Half-edges are identified with consecutive integers up to number_of_half_edges.
-	 * This field can be used to document which constant integer has to be
-	 * added to another set of half_edge_identifier to assure that these other
-	 * identifiers also start at 1.
+	 * Integer offset whereby the identifier of the first member
+	 * of the edges differs from zero.
+	 * Identifier can be defined explicitly or implicitly.
+	 * Inspect the definition of :ref:`NXcg_primitive` for further details.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
@@ -377,28 +302,79 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public Long getHalf_edge_identifier_offsetScalar();
+	public Long getIndex_offset_edgeScalar();
 
 	/**
-	 * In this half-edge data structure half-edge identifiers start at 1.
-	 * Half-edges are identified with consecutive integers up to number_of_half_edges.
-	 * This field can be used to document which constant integer has to be
-	 * added to another set of half_edge_identifier to assure that these other
-	 * identifiers also start at 1.
+	 * Integer offset whereby the identifier of the first member
+	 * of the edges differs from zero.
+	 * Identifier can be defined explicitly or implicitly.
+	 * Inspect the definition of :ref:`NXcg_primitive` for further details.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
-	 * @param half_edge_identifier_offset the half_edge_identifier_offset
+	 * @param index_offset_edge the index_offset_edge
 	 */
-	public DataNode setHalf_edge_identifier_offsetScalar(Long half_edge_identifier_offsetValue);
+	public DataNode setIndex_offset_edgeScalar(Long index_offset_edgeValue);
+
+	/**
+	 * Integer offset whereby the identifier of the first member
+	 * of the faces differs from zero.
+	 * Identifier can be defined explicitly or implicitly.
+	 * Inspect the definition of :ref:`NXcg_primitive` for further details.
+	 * <p>
+	 * <b>Type:</b> NX_INT
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getIndex_offset_face();
+
+	/**
+	 * Integer offset whereby the identifier of the first member
+	 * of the faces differs from zero.
+	 * Identifier can be defined explicitly or implicitly.
+	 * Inspect the definition of :ref:`NXcg_primitive` for further details.
+	 * <p>
+	 * <b>Type:</b> NX_INT
+	 * </p>
+	 *
+	 * @param index_offset_faceDataset the index_offset_faceDataset
+	 */
+	public DataNode setIndex_offset_face(IDataset index_offset_faceDataset);
+
+	/**
+	 * Integer offset whereby the identifier of the first member
+	 * of the faces differs from zero.
+	 * Identifier can be defined explicitly or implicitly.
+	 * Inspect the definition of :ref:`NXcg_primitive` for further details.
+	 * <p>
+	 * <b>Type:</b> NX_INT
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Long getIndex_offset_faceScalar();
+
+	/**
+	 * Integer offset whereby the identifier of the first member
+	 * of the faces differs from zero.
+	 * Identifier can be defined explicitly or implicitly.
+	 * Inspect the definition of :ref:`NXcg_primitive` for further details.
+	 * <p>
+	 * <b>Type:</b> NX_INT
+	 * </p>
+	 *
+	 * @param index_offset_face the index_offset_face
+	 */
+	public DataNode setIndex_offset_faceScalar(Long index_offset_faceValue);
 
 	/**
 	 * The position of the vertices.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n_v; 2: d;
 	 * </p>
 	 *
@@ -410,7 +386,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 * The position of the vertices.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n_v; 2: d;
 	 * </p>
 	 *
@@ -422,7 +398,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 * The position of the vertices.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n_v; 2: d;
 	 * </p>
 	 *
@@ -434,7 +410,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 * The position of the vertices.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n_v; 2: d;
 	 * </p>
 	 *
@@ -445,7 +421,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	/**
 	 * Identifier of the incident half-edge.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_v;
 	 * </p>
@@ -457,7 +433,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	/**
 	 * Identifier of the incident half-edge.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_v;
 	 * </p>
@@ -469,7 +445,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	/**
 	 * Identifier of the incident half-edge.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_v;
 	 * </p>
@@ -481,7 +457,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	/**
 	 * Identifier of the incident half-edge.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_v;
 	 * </p>
@@ -493,7 +469,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	/**
 	 * Identifier of the (starting)/associated half-edge of the face.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_f;
 	 * </p>
@@ -505,7 +481,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	/**
 	 * Identifier of the (starting)/associated half-edge of the face.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_f;
 	 * </p>
@@ -517,7 +493,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	/**
 	 * Identifier of the (starting)/associated half-edge of the face.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_f;
 	 * </p>
@@ -529,7 +505,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	/**
 	 * Identifier of the (starting)/associated half-edge of the face.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_f;
 	 * </p>
@@ -541,7 +517,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	/**
 	 * The identifier of the vertex from which this half-edge is outwards pointing.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_he;
 	 * </p>
@@ -553,7 +529,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	/**
 	 * The identifier of the vertex from which this half-edge is outwards pointing.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_he;
 	 * </p>
@@ -565,7 +541,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	/**
 	 * The identifier of the vertex from which this half-edge is outwards pointing.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_he;
 	 * </p>
@@ -577,7 +553,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	/**
 	 * The identifier of the vertex from which this half-edge is outwards pointing.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_he;
 	 * </p>
@@ -589,7 +565,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	/**
 	 * Identifier of the associated oppositely pointing half-edge.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_he;
 	 * </p>
@@ -601,7 +577,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	/**
 	 * Identifier of the associated oppositely pointing half-edge.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_he;
 	 * </p>
@@ -613,7 +589,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	/**
 	 * Identifier of the associated oppositely pointing half-edge.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_he;
 	 * </p>
@@ -625,7 +601,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	/**
 	 * Identifier of the associated oppositely pointing half-edge.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_he;
 	 * </p>
@@ -638,7 +614,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 * If the half-edge is a boundary half-edge the
 	 * incident face identifier is NULL, i.e. 0.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_he;
 	 * </p>
@@ -651,7 +627,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 * If the half-edge is a boundary half-edge the
 	 * incident face identifier is NULL, i.e. 0.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_he;
 	 * </p>
@@ -664,7 +640,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 * If the half-edge is a boundary half-edge the
 	 * incident face identifier is NULL, i.e. 0.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_he;
 	 * </p>
@@ -677,7 +653,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	 * If the half-edge is a boundary half-edge the
 	 * incident face identifier is NULL, i.e. 0.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_he;
 	 * </p>
@@ -689,7 +665,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	/**
 	 * Identifier of the next half-edge.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_he;
 	 * </p>
@@ -701,7 +677,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	/**
 	 * Identifier of the next half-edge.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_he;
 	 * </p>
@@ -713,7 +689,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	/**
 	 * Identifier of the next half-edge.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_he;
 	 * </p>
@@ -725,7 +701,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	/**
 	 * Identifier of the next half-edge.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_he;
 	 * </p>
@@ -737,7 +713,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	/**
 	 * Identifier of the previous half-edge.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_he;
 	 * </p>
@@ -749,7 +725,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	/**
 	 * Identifier of the previous half-edge.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_he;
 	 * </p>
@@ -761,7 +737,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	/**
 	 * Identifier of the previous half-edge.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_he;
 	 * </p>
@@ -773,7 +749,7 @@ public interface NXcg_half_edge_data_structure extends NXobject {
 	/**
 	 * Identifier of the previous half-edge.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_he;
 	 * </p>

@@ -122,7 +122,6 @@ public interface NXreflections extends NXobject {
 	public static final String NX_POLAR_ANGLE_ATTRIBUTE_DESCRIPTION = "description";
 	public static final String NX_AZIMUTHAL_ANGLE = "azimuthal_angle";
 	public static final String NX_ATTRIBUTE_DESCRIPTION = "description";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * The experiments from which the reflection data derives
 	 * <p>
@@ -3300,31 +3299,5 @@ public interface NXreflections extends NXobject {
 	 * @param descriptionValue the descriptionValue
 	 */
 	public void setAttributeDescription(String descriptionValue);
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
 
 }

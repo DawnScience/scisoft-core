@@ -23,18 +23,24 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Extension of NXpositioner to include fields to describe the use of manipulators
- * in photoemission experiments.
+ * Base class to describe the use of manipulators and sample stages.
 
  */
-public class NXmanipulatorImpl extends NXobjectImpl implements NXmanipulator {
+public class NXmanipulatorImpl extends NXcomponentImpl implements NXmanipulator {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_POSITIONER,
-		NexusBaseClass.NX_TRANSFORMATIONS);
+		NexusBaseClass.NX_ACTUATOR,
+		NexusBaseClass.NX_SENSOR,
+		NexusBaseClass.NX_ACTUATOR,
+		NexusBaseClass.NX_SENSOR,
+		NexusBaseClass.NX_ACTUATOR,
+		NexusBaseClass.NX_SENSOR,
+		NexusBaseClass.NX_ACTUATOR,
+		NexusBaseClass.NX_SENSOR,
+		NexusBaseClass.NX_POSITIONER);
 
 	public NXmanipulatorImpl() {
 		super();
@@ -121,123 +127,138 @@ public class NXmanipulatorImpl extends NXobjectImpl implements NXmanipulator {
 	}
 
 	@Override
-	public Dataset getCryocoolant() {
-		return getDataset(NX_CRYOCOOLANT);
+	public NXactuator getCryostat() {
+		// dataNodeName = NX_CRYOSTAT
+		return getChild("cryostat", NXactuator.class);
 	}
 
 	@Override
-	public Boolean getCryocoolantScalar() {
-		return getBoolean(NX_CRYOCOOLANT);
+	public void setCryostat(NXactuator cryostatGroup) {
+		putChild("cryostat", cryostatGroup);
+	}
+	// Unprocessed group:
+
+	@Override
+	public NXsensor getTemperature_sensor() {
+		// dataNodeName = NX_TEMPERATURE_SENSOR
+		return getChild("temperature_sensor", NXsensor.class);
 	}
 
 	@Override
-	public DataNode setCryocoolant(IDataset cryocoolantDataset) {
-		return setDataset(NX_CRYOCOOLANT, cryocoolantDataset);
+	public void setTemperature_sensor(NXsensor temperature_sensorGroup) {
+		putChild("temperature_sensor", temperature_sensorGroup);
+	}
+	// Unprocessed group: value_log
+
+	@Override
+	public NXactuator getSample_heater() {
+		// dataNodeName = NX_SAMPLE_HEATER
+		return getChild("sample_heater", NXactuator.class);
 	}
 
 	@Override
-	public DataNode setCryocoolantScalar(Boolean cryocoolantValue) {
-		return setField(NX_CRYOCOOLANT, cryocoolantValue);
+	public void setSample_heater(NXactuator sample_heaterGroup) {
+		putChild("sample_heater", sample_heaterGroup);
+	}
+	// Unprocessed group: output_heater_power_log
+	// Unprocessed group:
+
+	@Override
+	public NXsensor getDrain_current_ammeter() {
+		// dataNodeName = NX_DRAIN_CURRENT_AMMETER
+		return getChild("drain_current_ammeter", NXsensor.class);
 	}
 
 	@Override
-	public Dataset getCryostat_temperature() {
-		return getDataset(NX_CRYOSTAT_TEMPERATURE);
+	public void setDrain_current_ammeter(NXsensor drain_current_ammeterGroup) {
+		putChild("drain_current_ammeter", drain_current_ammeterGroup);
+	}
+	// Unprocessed group: value_log
+
+	@Override
+	public NXactuator getSample_bias_potentiostat() {
+		// dataNodeName = NX_SAMPLE_BIAS_POTENTIOSTAT
+		return getChild("sample_bias_potentiostat", NXactuator.class);
 	}
 
 	@Override
-	public Double getCryostat_temperatureScalar() {
-		return getDouble(NX_CRYOSTAT_TEMPERATURE);
+	public void setSample_bias_potentiostat(NXactuator sample_bias_potentiostatGroup) {
+		putChild("sample_bias_potentiostat", sample_bias_potentiostatGroup);
+	}
+	// Unprocessed group:
+
+	@Override
+	public NXsensor getSample_bias_voltmeter() {
+		// dataNodeName = NX_SAMPLE_BIAS_VOLTMETER
+		return getChild("sample_bias_voltmeter", NXsensor.class);
 	}
 
 	@Override
-	public DataNode setCryostat_temperature(IDataset cryostat_temperatureDataset) {
-		return setDataset(NX_CRYOSTAT_TEMPERATURE, cryostat_temperatureDataset);
+	public void setSample_bias_voltmeter(NXsensor sample_bias_voltmeterGroup) {
+		putChild("sample_bias_voltmeter", sample_bias_voltmeterGroup);
+	}
+	// Unprocessed group: value_log
+
+	@Override
+	public NXactuator getActuator() {
+		// dataNodeName = NX_ACTUATOR
+		return getChild("actuator", NXactuator.class);
 	}
 
 	@Override
-	public DataNode setCryostat_temperatureScalar(Double cryostat_temperatureValue) {
-		return setField(NX_CRYOSTAT_TEMPERATURE, cryostat_temperatureValue);
+	public void setActuator(NXactuator actuatorGroup) {
+		putChild("actuator", actuatorGroup);
 	}
 
 	@Override
-	public Dataset getHeater_power() {
-		return getDataset(NX_HEATER_POWER);
+	public NXactuator getActuator(String name) {
+		return getChild(name, NXactuator.class);
 	}
 
 	@Override
-	public Double getHeater_powerScalar() {
-		return getDouble(NX_HEATER_POWER);
+	public void setActuator(String name, NXactuator actuator) {
+		putChild(name, actuator);
 	}
 
 	@Override
-	public DataNode setHeater_power(IDataset heater_powerDataset) {
-		return setDataset(NX_HEATER_POWER, heater_powerDataset);
+	public Map<String, NXactuator> getAllActuator() {
+		return getChildren(NXactuator.class);
 	}
 
 	@Override
-	public DataNode setHeater_powerScalar(Double heater_powerValue) {
-		return setField(NX_HEATER_POWER, heater_powerValue);
+	public void setAllActuator(Map<String, NXactuator> actuator) {
+		setChildren(actuator);
 	}
 
 	@Override
-	public Dataset getSample_temperature() {
-		return getDataset(NX_SAMPLE_TEMPERATURE);
+	public NXsensor getSensor() {
+		// dataNodeName = NX_SENSOR
+		return getChild("sensor", NXsensor.class);
 	}
 
 	@Override
-	public Double getSample_temperatureScalar() {
-		return getDouble(NX_SAMPLE_TEMPERATURE);
+	public void setSensor(NXsensor sensorGroup) {
+		putChild("sensor", sensorGroup);
 	}
 
 	@Override
-	public DataNode setSample_temperature(IDataset sample_temperatureDataset) {
-		return setDataset(NX_SAMPLE_TEMPERATURE, sample_temperatureDataset);
+	public NXsensor getSensor(String name) {
+		return getChild(name, NXsensor.class);
 	}
 
 	@Override
-	public DataNode setSample_temperatureScalar(Double sample_temperatureValue) {
-		return setField(NX_SAMPLE_TEMPERATURE, sample_temperatureValue);
+	public void setSensor(String name, NXsensor sensor) {
+		putChild(name, sensor);
 	}
 
 	@Override
-	public Dataset getDrain_current() {
-		return getDataset(NX_DRAIN_CURRENT);
+	public Map<String, NXsensor> getAllSensor() {
+		return getChildren(NXsensor.class);
 	}
 
 	@Override
-	public Double getDrain_currentScalar() {
-		return getDouble(NX_DRAIN_CURRENT);
-	}
-
-	@Override
-	public DataNode setDrain_current(IDataset drain_currentDataset) {
-		return setDataset(NX_DRAIN_CURRENT, drain_currentDataset);
-	}
-
-	@Override
-	public DataNode setDrain_currentScalar(Double drain_currentValue) {
-		return setField(NX_DRAIN_CURRENT, drain_currentValue);
-	}
-
-	@Override
-	public Dataset getSample_bias() {
-		return getDataset(NX_SAMPLE_BIAS);
-	}
-
-	@Override
-	public Double getSample_biasScalar() {
-		return getDouble(NX_SAMPLE_BIAS);
-	}
-
-	@Override
-	public DataNode setSample_bias(IDataset sample_biasDataset) {
-		return setDataset(NX_SAMPLE_BIAS, sample_biasDataset);
-	}
-
-	@Override
-	public DataNode setSample_biasScalar(Double sample_biasValue) {
-		return setField(NX_SAMPLE_BIAS, sample_biasValue);
+	public void setAllSensor(Map<String, NXsensor> sensor) {
+		setChildren(sensor);
 	}
 
 	@Override
@@ -269,57 +290,6 @@ public class NXmanipulatorImpl extends NXobjectImpl implements NXmanipulator {
 	@Override
 	public void setAllPositioner(Map<String, NXpositioner> positioner) {
 		setChildren(positioner);
-	}
-
-	@Override
-	public Dataset getDepends_on() {
-		return getDataset(NX_DEPENDS_ON);
-	}
-
-	@Override
-	public String getDepends_onScalar() {
-		return getString(NX_DEPENDS_ON);
-	}
-
-	@Override
-	public DataNode setDepends_on(IDataset depends_onDataset) {
-		return setDataset(NX_DEPENDS_ON, depends_onDataset);
-	}
-
-	@Override
-	public DataNode setDepends_onScalar(String depends_onValue) {
-		return setString(NX_DEPENDS_ON, depends_onValue);
-	}
-
-	@Override
-	public NXtransformations getTransformations() {
-		// dataNodeName = NX_TRANSFORMATIONS
-		return getChild("transformations", NXtransformations.class);
-	}
-
-	@Override
-	public void setTransformations(NXtransformations transformationsGroup) {
-		putChild("transformations", transformationsGroup);
-	}
-
-	@Override
-	public NXtransformations getTransformations(String name) {
-		return getChild(name, NXtransformations.class);
-	}
-
-	@Override
-	public void setTransformations(String name, NXtransformations transformations) {
-		putChild(name, transformations);
-	}
-
-	@Override
-	public Map<String, NXtransformations> getAllTransformations() {
-		return getChildren(NXtransformations.class);
-	}
-
-	@Override
-	public void setAllTransformations(Map<String, NXtransformations> transformations) {
-		setChildren(transformations);
 	}
 
 }

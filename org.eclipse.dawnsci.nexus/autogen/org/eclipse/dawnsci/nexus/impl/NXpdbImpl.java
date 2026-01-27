@@ -36,8 +36,8 @@ import org.eclipse.dawnsci.nexus.*;
  * should always be presented as a 1-dimensional array. The columns
  * in an unlooped PDB category should be presented as scalar values.
  * If a PDB category specifies particular units for columns, the same
- * units should beused for the corresponding fields.
- * A PDB entry is unambigous when all information is carried as text.
+ * units should be used for the corresponding fields.
+ * A PDB entry is unambiguous when all information is carried as text.
  * All text data should be presented as quoted strings, with the quote
  * marks except for the null values "." or "?"
  * For clarity in NXpdb form, numeric data may be presented using the
@@ -50,7 +50,7 @@ import org.eclipse.dawnsci.nexus.*;
  * frame. NXpdb attributes are not required for other CIF components,
  * but may be used to provide internal documentation.
  * The nesting of NXpdb groups and datasets that correspond to a CIF with
- * two categories and one saveframe, including the NXpdb_class attribues is::
+ * two categories and one saveframe, including the NXpdb_class attributes is::
  * (datablock1):NXpdb
  * @NXpdb_class:CBF_cbfdb
  * (category1):NXpdb

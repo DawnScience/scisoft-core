@@ -21,10 +21,10 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Settings of a filter to select or remove entries based on their value.
+ * Base class of a filter to select members of a set based on their identifier.
 
  */
-public class NXmatch_filterImpl extends NXobjectImpl implements NXmatch_filter {
+public class NXmatch_filterImpl extends NXparametersImpl implements NXmatch_filter {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 

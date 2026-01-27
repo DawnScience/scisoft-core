@@ -11,7 +11,6 @@
 
 package org.eclipse.dawnsci.nexus.impl;
 
-import java.util.Date;
 import java.util.Set;
 import java.util.EnumSet;
 import java.util.Map;
@@ -24,19 +23,18 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Subclass of NXelectronanalyser to describe the spin filters in photoemission
- * experiments.
+ * Class to describe spin filters in photoemission experiments.
 
  */
-public class NXspindispersionImpl extends NXobjectImpl implements NXspindispersion {
+public class NXspindispersionImpl extends NXcomponentImpl implements NXspindispersion {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_TRANSFORMATIONS,
+		NexusBaseClass.NX_HISTORY,
 		NexusBaseClass.NX_DEFLECTOR,
-		NexusBaseClass.NX_LENS_EM);
+		NexusBaseClass.NX_ELECTROMAGNETIC_LENS);
 
 	public NXspindispersionImpl() {
 		super();
@@ -163,115 +161,36 @@ public class NXspindispersionImpl extends NXobjectImpl implements NXspindispersi
 	}
 
 	@Override
-	public Dataset getTarget() {
-		return getDataset(NX_TARGET);
+	public Dataset getScattering_target() {
+		return getDataset(NX_SCATTERING_TARGET);
 	}
 
 	@Override
-	public String getTargetScalar() {
-		return getString(NX_TARGET);
+	public String getScattering_targetScalar() {
+		return getString(NX_SCATTERING_TARGET);
 	}
 
 	@Override
-	public DataNode setTarget(IDataset targetDataset) {
-		return setDataset(NX_TARGET, targetDataset);
+	public DataNode setScattering_target(IDataset scattering_targetDataset) {
+		return setDataset(NX_SCATTERING_TARGET, scattering_targetDataset);
 	}
 
 	@Override
-	public DataNode setTargetScalar(String targetValue) {
-		return setString(NX_TARGET, targetValue);
+	public DataNode setScattering_targetScalar(String scattering_targetValue) {
+		return setString(NX_SCATTERING_TARGET, scattering_targetValue);
 	}
 
 	@Override
-	public Dataset getTarget_preparation() {
-		return getDataset(NX_TARGET_PREPARATION);
+	public NXhistory getScattering_target_history() {
+		// dataNodeName = NX_SCATTERING_TARGET_HISTORY
+		return getChild("scattering_target_history", NXhistory.class);
 	}
 
 	@Override
-	public String getTarget_preparationScalar() {
-		return getString(NX_TARGET_PREPARATION);
+	public void setScattering_target_history(NXhistory scattering_target_historyGroup) {
+		putChild("scattering_target_history", scattering_target_historyGroup);
 	}
-
-	@Override
-	public DataNode setTarget_preparation(IDataset target_preparationDataset) {
-		return setDataset(NX_TARGET_PREPARATION, target_preparationDataset);
-	}
-
-	@Override
-	public DataNode setTarget_preparationScalar(String target_preparationValue) {
-		return setString(NX_TARGET_PREPARATION, target_preparationValue);
-	}
-
-	@Override
-	public Dataset getTarget_preparation_date() {
-		return getDataset(NX_TARGET_PREPARATION_DATE);
-	}
-
-	@Override
-	public Date getTarget_preparation_dateScalar() {
-		return getDate(NX_TARGET_PREPARATION_DATE);
-	}
-
-	@Override
-	public DataNode setTarget_preparation_date(IDataset target_preparation_dateDataset) {
-		return setDataset(NX_TARGET_PREPARATION_DATE, target_preparation_dateDataset);
-	}
-
-	@Override
-	public DataNode setTarget_preparation_dateScalar(Date target_preparation_dateValue) {
-		return setDate(NX_TARGET_PREPARATION_DATE, target_preparation_dateValue);
-	}
-
-	@Override
-	public Dataset getDepends_on() {
-		return getDataset(NX_DEPENDS_ON);
-	}
-
-	@Override
-	public String getDepends_onScalar() {
-		return getString(NX_DEPENDS_ON);
-	}
-
-	@Override
-	public DataNode setDepends_on(IDataset depends_onDataset) {
-		return setDataset(NX_DEPENDS_ON, depends_onDataset);
-	}
-
-	@Override
-	public DataNode setDepends_onScalar(String depends_onValue) {
-		return setString(NX_DEPENDS_ON, depends_onValue);
-	}
-
-	@Override
-	public NXtransformations getTransformations() {
-		// dataNodeName = NX_TRANSFORMATIONS
-		return getChild("transformations", NXtransformations.class);
-	}
-
-	@Override
-	public void setTransformations(NXtransformations transformationsGroup) {
-		putChild("transformations", transformationsGroup);
-	}
-
-	@Override
-	public NXtransformations getTransformations(String name) {
-		return getChild(name, NXtransformations.class);
-	}
-
-	@Override
-	public void setTransformations(String name, NXtransformations transformations) {
-		putChild(name, transformations);
-	}
-
-	@Override
-	public Map<String, NXtransformations> getAllTransformations() {
-		return getChildren(NXtransformations.class);
-	}
-
-	@Override
-	public void setAllTransformations(Map<String, NXtransformations> transformations) {
-		setChildren(transformations);
-	}
+	// Unprocessed group: preparation
 
 	@Override
 	public NXdeflector getDeflector() {
@@ -305,34 +224,34 @@ public class NXspindispersionImpl extends NXobjectImpl implements NXspindispersi
 	}
 
 	@Override
-	public NXlens_em getLens_em() {
-		// dataNodeName = NX_LENS_EM
-		return getChild("lens_em", NXlens_em.class);
+	public NXelectromagnetic_lens getElectromagnetic_lens() {
+		// dataNodeName = NX_ELECTROMAGNETIC_LENS
+		return getChild("electromagnetic_lens", NXelectromagnetic_lens.class);
 	}
 
 	@Override
-	public void setLens_em(NXlens_em lens_emGroup) {
-		putChild("lens_em", lens_emGroup);
+	public void setElectromagnetic_lens(NXelectromagnetic_lens electromagnetic_lensGroup) {
+		putChild("electromagnetic_lens", electromagnetic_lensGroup);
 	}
 
 	@Override
-	public NXlens_em getLens_em(String name) {
-		return getChild(name, NXlens_em.class);
+	public NXelectromagnetic_lens getElectromagnetic_lens(String name) {
+		return getChild(name, NXelectromagnetic_lens.class);
 	}
 
 	@Override
-	public void setLens_em(String name, NXlens_em lens_em) {
-		putChild(name, lens_em);
+	public void setElectromagnetic_lens(String name, NXelectromagnetic_lens electromagnetic_lens) {
+		putChild(name, electromagnetic_lens);
 	}
 
 	@Override
-	public Map<String, NXlens_em> getAllLens_em() {
-		return getChildren(NXlens_em.class);
+	public Map<String, NXelectromagnetic_lens> getAllElectromagnetic_lens() {
+		return getChildren(NXelectromagnetic_lens.class);
 	}
 
 	@Override
-	public void setAllLens_em(Map<String, NXlens_em> lens_em) {
-		setChildren(lens_em);
+	public void setAllElectromagnetic_lens(Map<String, NXelectromagnetic_lens> electromagnetic_lens) {
+		setChildren(electromagnetic_lens);
 	}
 
 }

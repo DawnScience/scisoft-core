@@ -13,6 +13,8 @@ package org.eclipse.dawnsci.nexus.impl;
 
 import java.util.Set;
 import java.util.EnumSet;
+import java.util.Map;
+
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
@@ -24,12 +26,16 @@ import org.eclipse.dawnsci.nexus.*;
  * Subclass of NXprocess to describe post-processing calibrations.
 
  */
-public class NXcalibrationImpl extends NXobjectImpl implements NXcalibration {
+public class NXcalibrationImpl extends NXprocessImpl implements NXcalibration {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
 
-	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.noneOf(NexusBaseClass.class);
+	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
+		NexusBaseClass.NX_NOTE,
+		NexusBaseClass.NX_PARAMETERS,
+		NexusBaseClass.NX_PARAMETERS,
+		NexusBaseClass.NX_DATA);
 
 	public NXcalibrationImpl() {
 		super();
@@ -54,6 +60,97 @@ public class NXcalibrationImpl extends NXobjectImpl implements NXcalibration {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
 
+
+	@Override
+	public Dataset getDescription() {
+		return getDataset(NX_DESCRIPTION);
+	}
+
+	@Override
+	public String getDescriptionScalar() {
+		return getString(NX_DESCRIPTION);
+	}
+
+	@Override
+	public DataNode setDescription(IDataset descriptionDataset) {
+		return setDataset(NX_DESCRIPTION, descriptionDataset);
+	}
+
+	@Override
+	public DataNode setDescriptionScalar(String descriptionValue) {
+		return setString(NX_DESCRIPTION, descriptionValue);
+	}
+
+	@Override
+	public Dataset getPhysical_quantity() {
+		return getDataset(NX_PHYSICAL_QUANTITY);
+	}
+
+	@Override
+	public String getPhysical_quantityScalar() {
+		return getString(NX_PHYSICAL_QUANTITY);
+	}
+
+	@Override
+	public DataNode setPhysical_quantity(IDataset physical_quantityDataset) {
+		return setDataset(NX_PHYSICAL_QUANTITY, physical_quantityDataset);
+	}
+
+	@Override
+	public DataNode setPhysical_quantityScalar(String physical_quantityValue) {
+		return setString(NX_PHYSICAL_QUANTITY, physical_quantityValue);
+	}
+
+	@Override
+	public Dataset getIdentifier_calibration_method() {
+		return getDataset(NX_IDENTIFIER_CALIBRATION_METHOD);
+	}
+
+	@Override
+	public String getIdentifier_calibration_methodScalar() {
+		return getString(NX_IDENTIFIER_CALIBRATION_METHOD);
+	}
+
+	@Override
+	public DataNode setIdentifier_calibration_method(IDataset identifier_calibration_methodDataset) {
+		return setDataset(NX_IDENTIFIER_CALIBRATION_METHOD, identifier_calibration_methodDataset);
+	}
+
+	@Override
+	public DataNode setIdentifier_calibration_methodScalar(String identifier_calibration_methodValue) {
+		return setString(NX_IDENTIFIER_CALIBRATION_METHOD, identifier_calibration_methodValue);
+	}
+
+	@Override
+	public Dataset getIdentifier_calibration_reference() {
+		return getDataset(NX_IDENTIFIER_CALIBRATION_REFERENCE);
+	}
+
+	@Override
+	public String getIdentifier_calibration_referenceScalar() {
+		return getString(NX_IDENTIFIER_CALIBRATION_REFERENCE);
+	}
+
+	@Override
+	public DataNode setIdentifier_calibration_reference(IDataset identifier_calibration_referenceDataset) {
+		return setDataset(NX_IDENTIFIER_CALIBRATION_REFERENCE, identifier_calibration_referenceDataset);
+	}
+
+	@Override
+	public DataNode setIdentifier_calibration_referenceScalar(String identifier_calibration_referenceValue) {
+		return setString(NX_IDENTIFIER_CALIBRATION_REFERENCE, identifier_calibration_referenceValue);
+	}
+
+	@Override
+	public NXnote getCalibration_object() {
+		// dataNodeName = NX_CALIBRATION_OBJECT
+		return getChild("calibration_object", NXnote.class);
+	}
+
+	@Override
+	public void setCalibration_object(NXnote calibration_objectGroup) {
+		putChild("calibration_object", calibration_objectGroup);
+	}
 
 	@Override
 	public Dataset getLast_process() {
@@ -96,83 +193,105 @@ public class NXcalibrationImpl extends NXobjectImpl implements NXcalibration {
 	}
 
 	@Override
-	public Dataset getCoefficients() {
-		return getDataset(NX_COEFFICIENTS);
+	public Dataset getOriginal_axis() {
+		return getDataset(NX_ORIGINAL_AXIS);
 	}
 
 	@Override
-	public Double getCoefficientsScalar() {
-		return getDouble(NX_COEFFICIENTS);
+	public Double getOriginal_axisScalar() {
+		return getDouble(NX_ORIGINAL_AXIS);
 	}
 
 	@Override
-	public DataNode setCoefficients(IDataset coefficientsDataset) {
-		return setDataset(NX_COEFFICIENTS, coefficientsDataset);
+	public DataNode setOriginal_axis(IDataset original_axisDataset) {
+		return setDataset(NX_ORIGINAL_AXIS, original_axisDataset);
 	}
 
 	@Override
-	public DataNode setCoefficientsScalar(Double coefficientsValue) {
-		return setField(NX_COEFFICIENTS, coefficientsValue);
+	public DataNode setOriginal_axisScalar(Double original_axisValue) {
+		return setField(NX_ORIGINAL_AXIS, original_axisValue);
 	}
 
 	@Override
-	public Dataset getFit_function() {
-		return getDataset(NX_FIT_FUNCTION);
+	public String getOriginal_axisAttributeSymbol() {
+		return getAttrString(NX_ORIGINAL_AXIS, NX_ORIGINAL_AXIS_ATTRIBUTE_SYMBOL);
 	}
 
 	@Override
-	public String getFit_functionScalar() {
-		return getString(NX_FIT_FUNCTION);
+	public void setOriginal_axisAttributeSymbol(String symbolValue) {
+		setAttribute(NX_ORIGINAL_AXIS, NX_ORIGINAL_AXIS_ATTRIBUTE_SYMBOL, symbolValue);
 	}
 
 	@Override
-	public DataNode setFit_function(IDataset fit_functionDataset) {
-		return setDataset(NX_FIT_FUNCTION, fit_functionDataset);
+	public String getOriginal_axisAttributeInput_path() {
+		return getAttrString(NX_ORIGINAL_AXIS, NX_ORIGINAL_AXIS_ATTRIBUTE_INPUT_PATH);
 	}
 
 	@Override
-	public DataNode setFit_functionScalar(String fit_functionValue) {
-		return setString(NX_FIT_FUNCTION, fit_functionValue);
+	public void setOriginal_axisAttributeInput_path(String input_pathValue) {
+		setAttribute(NX_ORIGINAL_AXIS, NX_ORIGINAL_AXIS_ATTRIBUTE_INPUT_PATH, input_pathValue);
 	}
 
 	@Override
-	public Dataset getScaling() {
-		return getDataset(NX_SCALING);
+	public NXparameters getFit_formula_inputs() {
+		// dataNodeName = NX_FIT_FORMULA_INPUTS
+		return getChild("fit_formula_inputs", NXparameters.class);
 	}
 
 	@Override
-	public Double getScalingScalar() {
-		return getDouble(NX_SCALING);
+	public void setFit_formula_inputs(NXparameters fit_formula_inputsGroup) {
+		putChild("fit_formula_inputs", fit_formula_inputsGroup);
 	}
 
 	@Override
-	public DataNode setScaling(IDataset scalingDataset) {
-		return setDataset(NX_SCALING, scalingDataset);
+	public NXparameters getCalibration_parameters() {
+		// dataNodeName = NX_CALIBRATION_PARAMETERS
+		return getChild("calibration_parameters", NXparameters.class);
 	}
 
 	@Override
-	public DataNode setScalingScalar(Double scalingValue) {
-		return setField(NX_SCALING, scalingValue);
+	public void setCalibration_parameters(NXparameters calibration_parametersGroup) {
+		putChild("calibration_parameters", calibration_parametersGroup);
 	}
 
 	@Override
-	public Dataset getOffset() {
-		return getDataset(NX_OFFSET);
+	public Dataset getFit_formula_description() {
+		return getDataset(NX_FIT_FORMULA_DESCRIPTION);
 	}
 
 	@Override
-	public Double getOffsetScalar() {
-		return getDouble(NX_OFFSET);
+	public String getFit_formula_descriptionScalar() {
+		return getString(NX_FIT_FORMULA_DESCRIPTION);
 	}
 
 	@Override
-	public DataNode setOffset(IDataset offsetDataset) {
-		return setDataset(NX_OFFSET, offsetDataset);
+	public DataNode setFit_formula_description(IDataset fit_formula_descriptionDataset) {
+		return setDataset(NX_FIT_FORMULA_DESCRIPTION, fit_formula_descriptionDataset);
 	}
 
 	@Override
-	public DataNode setOffsetScalar(Double offsetValue) {
-		return setField(NX_OFFSET, offsetValue);
+	public DataNode setFit_formula_descriptionScalar(String fit_formula_descriptionValue) {
+		return setString(NX_FIT_FORMULA_DESCRIPTION, fit_formula_descriptionValue);
+	}
+
+	@Override
+	public Dataset getMapping_mapping() {
+		return getDataset(NX_MAPPING_MAPPING);
+	}
+
+	@Override
+	public Double getMapping_mappingScalar() {
+		return getDouble(NX_MAPPING_MAPPING);
+	}
+
+	@Override
+	public DataNode setMapping_mapping(IDataset mapping_mappingDataset) {
+		return setDataset(NX_MAPPING_MAPPING, mapping_mappingDataset);
+	}
+
+	@Override
+	public DataNode setMapping_mappingScalar(Double mapping_mappingValue) {
+		return setField(NX_MAPPING_MAPPING, mapping_mappingValue);
 	}
 
 	@Override
@@ -196,43 +315,34 @@ public class NXcalibrationImpl extends NXobjectImpl implements NXcalibration {
 	}
 
 	@Override
-	public Dataset getOriginal_axis() {
-		return getDataset(NX_ORIGINAL_AXIS);
+	public NXdata getData() {
+		// dataNodeName = NX_DATA
+		return getChild("data", NXdata.class);
 	}
 
 	@Override
-	public Double getOriginal_axisScalar() {
-		return getDouble(NX_ORIGINAL_AXIS);
+	public void setData(NXdata dataGroup) {
+		putChild("data", dataGroup);
 	}
 
 	@Override
-	public DataNode setOriginal_axis(IDataset original_axisDataset) {
-		return setDataset(NX_ORIGINAL_AXIS, original_axisDataset);
+	public NXdata getData(String name) {
+		return getChild(name, NXdata.class);
 	}
 
 	@Override
-	public DataNode setOriginal_axisScalar(Double original_axisValue) {
-		return setField(NX_ORIGINAL_AXIS, original_axisValue);
+	public void setData(String name, NXdata data) {
+		putChild(name, data);
 	}
 
 	@Override
-	public Dataset getDescription() {
-		return getDataset(NX_DESCRIPTION);
+	public Map<String, NXdata> getAllData() {
+		return getChildren(NXdata.class);
 	}
 
 	@Override
-	public String getDescriptionScalar() {
-		return getString(NX_DESCRIPTION);
-	}
-
-	@Override
-	public DataNode setDescription(IDataset descriptionDataset) {
-		return setDataset(NX_DESCRIPTION, descriptionDataset);
-	}
-
-	@Override
-	public DataNode setDescriptionScalar(String descriptionValue) {
-		return setString(NX_DESCRIPTION, descriptionValue);
+	public void setAllData(Map<String, NXdata> data) {
+		setChildren(data);
 	}
 
 }

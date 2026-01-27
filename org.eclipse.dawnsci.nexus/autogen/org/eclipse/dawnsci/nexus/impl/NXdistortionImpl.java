@@ -24,7 +24,7 @@ import org.eclipse.dawnsci.nexus.*;
  * Subclass of NXprocess to describe post-processing distortion correction.
 
  */
-public class NXdistortionImpl extends NXobjectImpl implements NXdistortion {
+public class NXdistortionImpl extends NXprocessImpl implements NXdistortion {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
@@ -54,26 +54,6 @@ public class NXdistortionImpl extends NXobjectImpl implements NXdistortion {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
 
-
-	@Override
-	public Dataset getLast_process() {
-		return getDataset(NX_LAST_PROCESS);
-	}
-
-	@Override
-	public String getLast_processScalar() {
-		return getString(NX_LAST_PROCESS);
-	}
-
-	@Override
-	public DataNode setLast_process(IDataset last_processDataset) {
-		return setDataset(NX_LAST_PROCESS, last_processDataset);
-	}
-
-	@Override
-	public DataNode setLast_processScalar(String last_processValue) {
-		return setString(NX_LAST_PROCESS, last_processValue);
-	}
 
 	@Override
 	public Dataset getApplied() {

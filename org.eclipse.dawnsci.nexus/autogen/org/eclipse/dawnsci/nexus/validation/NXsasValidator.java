@@ -207,7 +207,16 @@ public class NXsasValidator extends AbstractNexusValidator implements NexusAppli
 					"Optical Laser",
 					"Ion Source",
 					"UV Plasma Source",
-					"Metal Jet X-ray");
+					"Metal Jet X-ray",
+					"Laser",
+					"Dye Laser",
+					"Broadband Tunable Light Source",
+					"Halogen Lamp",
+					"LED",
+					"Mercury Cadmium Telluride Lamp",
+					"Deuterium Lamp",
+					"Xenon Lamp",
+					"Globar");
 		}
 
 		// validate optional field 'name' of type NX_CHAR.

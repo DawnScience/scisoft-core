@@ -21,29 +21,17 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Computer science base class for packing and unpacking booleans.
- * One use case is processing of object sets (like point cloud data).
- * When one applies e.g. a spatial filter to a set of points to define which
- * points are analyzed and which not, it is useful to document which points were
- * taken. One can store this information in a compact manner with an array of
- * boolean values. If the value is True the point is taken, else it is not.
- * If the points are identified by an array of integer identifiers and an
- * arbitrary spatial filtering, the boolean array will be filled with True and False
- * values in an arbitrary manner. Especially when the number of points is large,
- * for instance several thousands and more, some situations can be more efficiently
- * stored if one would not store the boolean array but just list the identifiers
- * of the points taken. For instance if within a set of 1000 points only one point is
- * taken, it would take (naively) 4000 bits to store the array but only 32 bits
- * to store e.g. the ID of that taken point. Of course the 4000 bit field is so
- * sparse that it could be compressed resulting also in a substantial reduction
- * of the storage demands. Therefore boolean masks are useful compact descriptions
- * to store information about set memberships in a compact manner.
- * In general it is true, though, that which representation is best, i.e.
- * most compact (especially when compressed) depends strongly on occupation of
- * the array.
- * This base class just bookkeeps metadata to inform software about necessary
- * modulo operations to decode the set membership of each object. This is useful
- * because the number of objects not necessarily is an integer multiple of the bit depth.
+ * Base class for packing and unpacking booleans.
+ * The field mask should be constructed from packing a vector of booleans
+ * (a bitfield) into unsigned integers with bytesize bitdepth. Padding to
+ * an integer number of such integers is assumed.
+ * Thereby, this base class can be used to inform software about necessary modulo
+ * operations to decode the mask to recover e.g. set membership of objects in sets
+ * whose membership has been encoded as a vector of booleans.
+ * This is useful e.g. when processing object sets such as point cloud data.
+ * If e.g. a spatial filter has been applied to a set of points, we may wish to document
+ * memory-space efficiently which points were analyzed. An array of boolean values
+ * is one option to achieve this. A value is true if the point is included and false otherwise.
 
  */
 public class NXcs_filter_boolean_maskImpl extends NXobjectImpl implements NXcs_filter_boolean_mask {
@@ -76,6 +64,26 @@ public class NXcs_filter_boolean_maskImpl extends NXobjectImpl implements NXcs_f
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
 
+
+	@Override
+	public Dataset getDepends_on() {
+		return getDataset(NX_DEPENDS_ON);
+	}
+
+	@Override
+	public String getDepends_onScalar() {
+		return getString(NX_DEPENDS_ON);
+	}
+
+	@Override
+	public DataNode setDepends_on(IDataset depends_onDataset) {
+		return setDataset(NX_DEPENDS_ON, depends_onDataset);
+	}
+
+	@Override
+	public DataNode setDepends_onScalar(String depends_onValue) {
+		return setString(NX_DEPENDS_ON, depends_onValue);
+	}
 
 	@Override
 	public Dataset getNumber_of_objects() {
@@ -135,26 +143,6 @@ public class NXcs_filter_boolean_maskImpl extends NXobjectImpl implements NXcs_f
 	@Override
 	public DataNode setMaskScalar(Long maskValue) {
 		return setField(NX_MASK, maskValue);
-	}
-
-	@Override
-	public Dataset getIdentifier() {
-		return getDataset(NX_IDENTIFIER);
-	}
-
-	@Override
-	public Long getIdentifierScalar() {
-		return getLong(NX_IDENTIFIER);
-	}
-
-	@Override
-	public DataNode setIdentifier(IDataset identifierDataset) {
-		return setDataset(NX_IDENTIFIER, identifierDataset);
-	}
-
-	@Override
-	public DataNode setIdentifierScalar(Long identifierValue) {
-		return setField(NX_IDENTIFIER, identifierValue);
 	}
 
 }

@@ -19,7 +19,6 @@ import java.util.Map;
 import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
-import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 
 import org.eclipse.dawnsci.nexus.NXroot;
 import org.eclipse.dawnsci.nexus.NXsubentry;
@@ -71,12 +70,6 @@ public class NXxasprocValidator extends AbstractNexusValidator implements NexusA
 
 		// validate that the group is not null
 		if (!(validateGroupNotNull(null, NXentry.class, group))) return;
-
-		// validate attribute 'entry' of type NX_CHAR.
-		final Attribute entry_attr = group.getAttribute("entry");
-		if (!(validateAttributeNotNull("entry", entry_attr))) return;
-		// validate any properties of this attribute specified in the NXDL file: type, enumeration
-		validateAttributeType("entry", entry_attr, NX_CHAR);
 
 		// validate field 'title' of type NX_CHAR.
 		final ILazyDataset title = group.getLazyDataset("title");
@@ -163,7 +156,7 @@ public class NXxasprocValidator extends AbstractNexusValidator implements NexusA
 		}
 
 		// validate child group 'parameters' of type NXparameters
-		validateGroup_NXentry_XAS_data_reduction_parameters(group.getChild("parameters", NXparameters.class));
+		validateGroup_NXentry_XAS_data_reduction_parameters(group.getParameters());
 	}
 
 	/**

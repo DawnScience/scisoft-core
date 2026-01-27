@@ -20,13 +20,14 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * The neutron or x-ray storage ring/facility.
+ * Radiation source emitting a beam.
+ * Examples include particle sources (electrons, neutrons, protons) or sources for electromagnetic radiation (photons).
+ * This base class can also be used to describe neutron or x-ray storage ring/facilities.
  *
  */
-public interface NXsource extends NXobject {
+public interface NXsource extends NXcomponent {
 
 	public static final String NX_DISTANCE = "distance";
-	public static final String NX_NAME = "name";
 	public static final String NX_NAME_ATTRIBUTE_SHORT_NAME = "short_name";
 	public static final String NX_TYPE = "type";
 	public static final String NX_PROBE = "probe";
@@ -50,8 +51,14 @@ public interface NXsource extends NXobject {
 	public static final String NX_TOP_UP = "top_up";
 	public static final String NX_LAST_FILL = "last_fill";
 	public static final String NX_LAST_FILL_ATTRIBUTE_TIME = "time";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
-	public static final String NX_DEPENDS_ON = "depends_on";
+	public static final String NX_WAVELENGTH = "wavelength";
+	public static final String NX_PULSE_ENERGY = "pulse_energy";
+	public static final String NX_PEAK_POWER = "peak_power";
+	public static final String NX_ANODE_MATERIAL = "anode_material";
+	public static final String NX_FILAMENT_CURRENT = "filament_current";
+	public static final String NX_EMISSION_CURRENT = "emission_current";
+	public static final String NX_GAS_PRESSURE = "gas_pressure";
+	public static final String NX_PREVIOUS_SOURCE = "previous_source";
 	/**
 	 * Effective distance from sample
 	 * Distance as seen by radiation from sample. This number should be negative
@@ -162,7 +169,16 @@ public interface NXsource extends NXobject {
 	 * <li><b>Optical Laser</b> </li>
 	 * <li><b>Ion Source</b> </li>
 	 * <li><b>UV Plasma Source</b> </li>
-	 * <li><b>Metal Jet X-ray</b> </li></ul></p>
+	 * <li><b>Metal Jet X-ray</b> </li>
+	 * <li><b>Laser</b> </li>
+	 * <li><b>Dye Laser</b> </li>
+	 * <li><b>Broadband Tunable Light Source</b> </li>
+	 * <li><b>Halogen Lamp</b> </li>
+	 * <li><b>LED</b> </li>
+	 * <li><b>Mercury Cadmium Telluride Lamp</b> </li>
+	 * <li><b>Deuterium Lamp</b> </li>
+	 * <li><b>Xenon Lamp</b> </li>
+	 * <li><b>Globar</b> </li></ul></p>
 	 * </p>
 	 *
 	 * @return  the value.
@@ -185,7 +201,16 @@ public interface NXsource extends NXobject {
 	 * <li><b>Optical Laser</b> </li>
 	 * <li><b>Ion Source</b> </li>
 	 * <li><b>UV Plasma Source</b> </li>
-	 * <li><b>Metal Jet X-ray</b> </li></ul></p>
+	 * <li><b>Metal Jet X-ray</b> </li>
+	 * <li><b>Laser</b> </li>
+	 * <li><b>Dye Laser</b> </li>
+	 * <li><b>Broadband Tunable Light Source</b> </li>
+	 * <li><b>Halogen Lamp</b> </li>
+	 * <li><b>LED</b> </li>
+	 * <li><b>Mercury Cadmium Telluride Lamp</b> </li>
+	 * <li><b>Deuterium Lamp</b> </li>
+	 * <li><b>Xenon Lamp</b> </li>
+	 * <li><b>Globar</b> </li></ul></p>
 	 * </p>
 	 *
 	 * @param typeDataset the typeDataset
@@ -208,7 +233,16 @@ public interface NXsource extends NXobject {
 	 * <li><b>Optical Laser</b> </li>
 	 * <li><b>Ion Source</b> </li>
 	 * <li><b>UV Plasma Source</b> </li>
-	 * <li><b>Metal Jet X-ray</b> </li></ul></p>
+	 * <li><b>Metal Jet X-ray</b> </li>
+	 * <li><b>Laser</b> </li>
+	 * <li><b>Dye Laser</b> </li>
+	 * <li><b>Broadband Tunable Light Source</b> </li>
+	 * <li><b>Halogen Lamp</b> </li>
+	 * <li><b>LED</b> </li>
+	 * <li><b>Mercury Cadmium Telluride Lamp</b> </li>
+	 * <li><b>Deuterium Lamp</b> </li>
+	 * <li><b>Xenon Lamp</b> </li>
+	 * <li><b>Globar</b> </li></ul></p>
 	 * </p>
 	 *
 	 * @return  the value.
@@ -231,7 +265,16 @@ public interface NXsource extends NXobject {
 	 * <li><b>Optical Laser</b> </li>
 	 * <li><b>Ion Source</b> </li>
 	 * <li><b>UV Plasma Source</b> </li>
-	 * <li><b>Metal Jet X-ray</b> </li></ul></p>
+	 * <li><b>Metal Jet X-ray</b> </li>
+	 * <li><b>Laser</b> </li>
+	 * <li><b>Dye Laser</b> </li>
+	 * <li><b>Broadband Tunable Light Source</b> </li>
+	 * <li><b>Halogen Lamp</b> </li>
+	 * <li><b>LED</b> </li>
+	 * <li><b>Mercury Cadmium Telluride Lamp</b> </li>
+	 * <li><b>Deuterium Lamp</b> </li>
+	 * <li><b>Xenon Lamp</b> </li>
+	 * <li><b>Globar</b> </li></ul></p>
 	 * </p>
 	 *
 	 * @param type the type
@@ -243,6 +286,7 @@ public interface NXsource extends NXobject {
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>neutron</b> </li>
+	 * <li><b>photon</b> </li>
 	 * <li><b>x-ray</b> </li>
 	 * <li><b>muon</b> </li>
 	 * <li><b>electron</b> </li>
@@ -261,6 +305,7 @@ public interface NXsource extends NXobject {
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>neutron</b> </li>
+	 * <li><b>photon</b> </li>
 	 * <li><b>x-ray</b> </li>
 	 * <li><b>muon</b> </li>
 	 * <li><b>electron</b> </li>
@@ -279,6 +324,7 @@ public interface NXsource extends NXobject {
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>neutron</b> </li>
+	 * <li><b>photon</b> </li>
 	 * <li><b>x-ray</b> </li>
 	 * <li><b>muon</b> </li>
 	 * <li><b>electron</b> </li>
@@ -297,6 +343,7 @@ public interface NXsource extends NXobject {
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>neutron</b> </li>
+	 * <li><b>photon</b> </li>
 	 * <li><b>x-ray</b> </li>
 	 * <li><b>muon</b> </li>
 	 * <li><b>electron</b> </li>
@@ -575,9 +622,9 @@ public interface NXsource extends NXobject {
 	public DataNode setFluxScalar(Double fluxValue);
 
 	/**
-	 * Source energy.
-	 * For storage rings, this would be the particle beam energy.
-	 * For X-ray tubes, this would be the excitation voltage.
+	 * Source energy. Typically, this would be the energy of
+	 * the emitted beam. For storage rings, this would be
+	 * the particle beam energy.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
@@ -588,9 +635,9 @@ public interface NXsource extends NXobject {
 	public Dataset getEnergy();
 
 	/**
-	 * Source energy.
-	 * For storage rings, this would be the particle beam energy.
-	 * For X-ray tubes, this would be the excitation voltage.
+	 * Source energy. Typically, this would be the energy of
+	 * the emitted beam. For storage rings, this would be
+	 * the particle beam energy.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
@@ -601,9 +648,9 @@ public interface NXsource extends NXobject {
 	public DataNode setEnergy(IDataset energyDataset);
 
 	/**
-	 * Source energy.
-	 * For storage rings, this would be the particle beam energy.
-	 * For X-ray tubes, this would be the excitation voltage.
+	 * Source energy. Typically, this would be the energy of
+	 * the emitted beam. For storage rings, this would be
+	 * the particle beam energy.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
@@ -614,9 +661,9 @@ public interface NXsource extends NXobject {
 	public Double getEnergyScalar();
 
 	/**
-	 * Source energy.
-	 * For storage rings, this would be the particle beam energy.
-	 * For X-ray tubes, this would be the excitation voltage.
+	 * Source energy. Typically, this would be the energy of
+	 * the emitted beam. For storage rings, this would be
+	 * the particle beam energy.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
@@ -1243,6 +1290,358 @@ public interface NXsource extends NXobject {
 	public void setLast_fillAttributeTime(Date timeValue);
 
 	/**
+	 * The wavelength of the radiation emitted by the source.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_WAVELENGTH
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getWavelength();
+
+	/**
+	 * The wavelength of the radiation emitted by the source.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_WAVELENGTH
+	 * </p>
+	 *
+	 * @param wavelengthDataset the wavelengthDataset
+	 */
+	public DataNode setWavelength(IDataset wavelengthDataset);
+
+	/**
+	 * The wavelength of the radiation emitted by the source.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_WAVELENGTH
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Double getWavelengthScalar();
+
+	/**
+	 * The wavelength of the radiation emitted by the source.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_WAVELENGTH
+	 * </p>
+	 *
+	 * @param wavelength the wavelength
+	 */
+	public DataNode setWavelengthScalar(Double wavelengthValue);
+
+	/**
+	 * For pulsed sources, the energy of a single pulse.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ENERGY
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getPulse_energy();
+
+	/**
+	 * For pulsed sources, the energy of a single pulse.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ENERGY
+	 * </p>
+	 *
+	 * @param pulse_energyDataset the pulse_energyDataset
+	 */
+	public DataNode setPulse_energy(IDataset pulse_energyDataset);
+
+	/**
+	 * For pulsed sources, the energy of a single pulse.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ENERGY
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Double getPulse_energyScalar();
+
+	/**
+	 * For pulsed sources, the energy of a single pulse.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ENERGY
+	 * </p>
+	 *
+	 * @param pulse_energy the pulse_energy
+	 */
+	public DataNode setPulse_energyScalar(Double pulse_energyValue);
+
+	/**
+	 * For pulsed sources, the pulse energy divided
+	 * by the pulse duration
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_POWER
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getPeak_power();
+
+	/**
+	 * For pulsed sources, the pulse energy divided
+	 * by the pulse duration
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_POWER
+	 * </p>
+	 *
+	 * @param peak_powerDataset the peak_powerDataset
+	 */
+	public DataNode setPeak_power(IDataset peak_powerDataset);
+
+	/**
+	 * For pulsed sources, the pulse energy divided
+	 * by the pulse duration
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_POWER
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Double getPeak_powerScalar();
+
+	/**
+	 * For pulsed sources, the pulse energy divided
+	 * by the pulse duration
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_POWER
+	 * </p>
+	 *
+	 * @param peak_power the peak_power
+	 */
+	public DataNode setPeak_powerScalar(Double peak_powerValue);
+
+	/**
+	 * Material of the anode (for X-ray tubes).
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getAnode_material();
+
+	/**
+	 * Material of the anode (for X-ray tubes).
+	 *
+	 * @param anode_materialDataset the anode_materialDataset
+	 */
+	public DataNode setAnode_material(IDataset anode_materialDataset);
+
+	/**
+	 * Material of the anode (for X-ray tubes).
+	 *
+	 * @return  the value.
+	 */
+	public String getAnode_materialScalar();
+
+	/**
+	 * Material of the anode (for X-ray tubes).
+	 *
+	 * @param anode_material the anode_material
+	 */
+	public DataNode setAnode_materialScalar(String anode_materialValue);
+
+	/**
+	 * Filament current (for X-ray tubes).
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_CURRENT
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getFilament_current();
+
+	/**
+	 * Filament current (for X-ray tubes).
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_CURRENT
+	 * </p>
+	 *
+	 * @param filament_currentDataset the filament_currentDataset
+	 */
+	public DataNode setFilament_current(IDataset filament_currentDataset);
+
+	/**
+	 * Filament current (for X-ray tubes).
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_CURRENT
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Double getFilament_currentScalar();
+
+	/**
+	 * Filament current (for X-ray tubes).
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_CURRENT
+	 * </p>
+	 *
+	 * @param filament_current the filament_current
+	 */
+	public DataNode setFilament_currentScalar(Double filament_currentValue);
+
+	/**
+	 * Emission current of the generated beam.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_CURRENT
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getEmission_current();
+
+	/**
+	 * Emission current of the generated beam.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_CURRENT
+	 * </p>
+	 *
+	 * @param emission_currentDataset the emission_currentDataset
+	 */
+	public DataNode setEmission_current(IDataset emission_currentDataset);
+
+	/**
+	 * Emission current of the generated beam.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_CURRENT
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Double getEmission_currentScalar();
+
+	/**
+	 * Emission current of the generated beam.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_CURRENT
+	 * </p>
+	 *
+	 * @param emission_current the emission_current
+	 */
+	public DataNode setEmission_currentScalar(Double emission_currentValue);
+
+	/**
+	 * Gas pressure inside ionization source.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_PRESSURE
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getGas_pressure();
+
+	/**
+	 * Gas pressure inside ionization source.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_PRESSURE
+	 * </p>
+	 *
+	 * @param gas_pressureDataset the gas_pressureDataset
+	 */
+	public DataNode setGas_pressure(IDataset gas_pressureDataset);
+
+	/**
+	 * Gas pressure inside ionization source.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_PRESSURE
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Double getGas_pressureScalar();
+
+	/**
+	 * Gas pressure inside ionization source.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_PRESSURE
+	 * </p>
+	 *
+	 * @param gas_pressure the gas_pressure
+	 */
+	public DataNode setGas_pressureScalar(Double gas_pressureValue);
+
+	/**
+	 * Single instance or list of instances of NXsource pointing to the sources from which a beam originated to reach this source.
+	 * This can be used, for example, for secondary sources to describe which other source(s) they are derived from.
+	 * An example is the white light source in transient absorption spectroscopy, which is a supercontinuum crystal that is pumped by a
+	 * another laser.
+	 * In case of a primary source, this field should not be filled.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getPrevious_source();
+
+	/**
+	 * Single instance or list of instances of NXsource pointing to the sources from which a beam originated to reach this source.
+	 * This can be used, for example, for secondary sources to describe which other source(s) they are derived from.
+	 * An example is the white light source in transient absorption spectroscopy, which is a supercontinuum crystal that is pumped by a
+	 * another laser.
+	 * In case of a primary source, this field should not be filled.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @param previous_sourceDataset the previous_sourceDataset
+	 */
+	public DataNode setPrevious_source(IDataset previous_sourceDataset);
+
+	/**
+	 * Single instance or list of instances of NXsource pointing to the sources from which a beam originated to reach this source.
+	 * This can be used, for example, for secondary sources to describe which other source(s) they are derived from.
+	 * An example is the white light source in transient absorption spectroscopy, which is a supercontinuum crystal that is pumped by a
+	 * another laser.
+	 * In case of a primary source, this field should not be filled.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public String getPrevious_sourceScalar();
+
+	/**
+	 * Single instance or list of instances of NXsource pointing to the sources from which a beam originated to reach this source.
+	 * This can be used, for example, for secondary sources to describe which other source(s) they are derived from.
+	 * An example is the white light source in transient absorption spectroscopy, which is a supercontinuum crystal that is pumped by a
+	 * another laser.
+	 * In case of a primary source, this field should not be filled.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @param previous_source the previous_source
+	 */
+	public DataNode setPrevious_sourceScalar(String previous_sourceValue);
+
+	/**
 	 * "Engineering" location of source.
 	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the source and NXoff_geometry to describe its shape instead
@@ -1259,6 +1658,248 @@ public interface NXsource extends NXobject {
 	 */
 	@Deprecated
 	public void setGeometry(NXgeometry geometryGroup);
+
+	/**
+	 * The size and position of an aperture inside the source.
+	 *
+	 * @return  the value.
+	 */
+	public NXaperture getAperture();
+
+	/**
+	 * The size and position of an aperture inside the source.
+	 *
+	 * @param apertureGroup the apertureGroup
+	 */
+	public void setAperture(NXaperture apertureGroup);
+
+	/**
+	 * Get a NXaperture node by name:
+	 * <ul>
+	 * <li>
+	 * The size and position of an aperture inside the source.</li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXaperture for that node.
+	 */
+	public NXaperture getAperture(String name);
+
+	/**
+	 * Set a NXaperture node by name:
+	 * <ul>
+	 * <li>
+	 * The size and position of an aperture inside the source.</li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param aperture the value to set
+	 */
+	public void setAperture(String name, NXaperture aperture);
+
+	/**
+	 * Get all NXaperture nodes:
+	 * <ul>
+	 * <li>
+	 * The size and position of an aperture inside the source.</li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXaperture for that node.
+	 */
+	public Map<String, NXaperture> getAllAperture();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li>
+	 * The size and position of an aperture inside the source.</li>
+	 * </ul>
+	 *
+	 * @param aperture the child nodes to add
+	 */
+
+	public void setAllAperture(Map<String, NXaperture> aperture);
+
+
+	/**
+	 * Individual electromagnetic lenses inside the source.
+	 *
+	 * @return  the value.
+	 */
+	public NXelectromagnetic_lens getElectromagnetic_lens();
+
+	/**
+	 * Individual electromagnetic lenses inside the source.
+	 *
+	 * @param electromagnetic_lensGroup the electromagnetic_lensGroup
+	 */
+	public void setElectromagnetic_lens(NXelectromagnetic_lens electromagnetic_lensGroup);
+
+	/**
+	 * Get a NXelectromagnetic_lens node by name:
+	 * <ul>
+	 * <li>
+	 * Individual electromagnetic lenses inside the source.</li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXelectromagnetic_lens for that node.
+	 */
+	public NXelectromagnetic_lens getElectromagnetic_lens(String name);
+
+	/**
+	 * Set a NXelectromagnetic_lens node by name:
+	 * <ul>
+	 * <li>
+	 * Individual electromagnetic lenses inside the source.</li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param electromagnetic_lens the value to set
+	 */
+	public void setElectromagnetic_lens(String name, NXelectromagnetic_lens electromagnetic_lens);
+
+	/**
+	 * Get all NXelectromagnetic_lens nodes:
+	 * <ul>
+	 * <li>
+	 * Individual electromagnetic lenses inside the source.</li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXelectromagnetic_lens for that node.
+	 */
+	public Map<String, NXelectromagnetic_lens> getAllElectromagnetic_lens();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li>
+	 * Individual electromagnetic lenses inside the source.</li>
+	 * </ul>
+	 *
+	 * @param electromagnetic_lens the child nodes to add
+	 */
+
+	public void setAllElectromagnetic_lens(Map<String, NXelectromagnetic_lens> electromagnetic_lens);
+
+
+	/**
+	 * Deflectors inside the source.
+	 *
+	 * @return  the value.
+	 */
+	public NXdeflector getDeflector();
+
+	/**
+	 * Deflectors inside the source.
+	 *
+	 * @param deflectorGroup the deflectorGroup
+	 */
+	public void setDeflector(NXdeflector deflectorGroup);
+
+	/**
+	 * Get a NXdeflector node by name:
+	 * <ul>
+	 * <li>
+	 * Deflectors inside the source.</li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXdeflector for that node.
+	 */
+	public NXdeflector getDeflector(String name);
+
+	/**
+	 * Set a NXdeflector node by name:
+	 * <ul>
+	 * <li>
+	 * Deflectors inside the source.</li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param deflector the value to set
+	 */
+	public void setDeflector(String name, NXdeflector deflector);
+
+	/**
+	 * Get all NXdeflector nodes:
+	 * <ul>
+	 * <li>
+	 * Deflectors inside the source.</li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXdeflector for that node.
+	 */
+	public Map<String, NXdeflector> getAllDeflector();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li>
+	 * Deflectors inside the source.</li>
+	 * </ul>
+	 *
+	 * @param deflector the child nodes to add
+	 */
+
+	public void setAllDeflector(Map<String, NXdeflector> deflector);
+
+
+	/**
+	 *
+	 * @return  the value.
+	 */
+	public NXfabrication getFabrication();
+
+	/**
+	 *
+	 * @param fabricationGroup the fabricationGroup
+	 */
+	public void setFabrication(NXfabrication fabricationGroup);
+
+	/**
+	 * Get a NXfabrication node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXfabrication for that node.
+	 */
+	public NXfabrication getFabrication(String name);
+
+	/**
+	 * Set a NXfabrication node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param fabrication the value to set
+	 */
+	public void setFabrication(String name, NXfabrication fabrication);
+
+	/**
+	 * Get all NXfabrication nodes:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXfabrication for that node.
+	 */
+	public Map<String, NXfabrication> getAllFabrication();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param fabrication the child nodes to add
+	 */
+
+	public void setAllFabrication(Map<String, NXfabrication> fabrication);
+
 
 	/**
 	 * This group describes the shape of the beam line component
@@ -1337,38 +1978,6 @@ public interface NXsource extends NXobject {
 	public void setDistribution(NXdata distributionGroup);
 
 	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
-
-	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * The reference point of the source plane is its center in the x and y axis. The source is considered infinitely thin in the
 	 * z axis.
 	 * .. image:: source/source.png
@@ -1382,12 +1991,6 @@ public interface NXsource extends NXobject {
 	public Dataset getDepends_on();
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * The reference point of the source plane is its center in the x and y axis. The source is considered infinitely thin in the
 	 * z axis.
 	 * .. image:: source/source.png
@@ -1401,12 +2004,6 @@ public interface NXsource extends NXobject {
 	public DataNode setDepends_on(IDataset depends_onDataset);
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * The reference point of the source plane is its center in the x and y axis. The source is considered infinitely thin in the
 	 * z axis.
 	 * .. image:: source/source.png
@@ -1420,12 +2017,6 @@ public interface NXsource extends NXobject {
 	public String getDepends_onScalar();
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * The reference point of the source plane is its center in the x and y axis. The source is considered infinitely thin in the
 	 * z axis.
 	 * .. image:: source/source.png
@@ -1437,85 +2028,5 @@ public interface NXsource extends NXobject {
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
-
-	/**
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.
-	 *
-	 * @return  the value.
-	 */
-	public NXtransformations getTransformations();
-
-	/**
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.
-	 *
-	 * @param transformationsGroup the transformationsGroup
-	 */
-	public void setTransformations(NXtransformations transformationsGroup);
-
-	/**
-	 * Get a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public NXtransformations getTransformations(String name);
-
-	/**
-	 * Set a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @param name the name of the node
-	 * @param transformations the value to set
-	 */
-	public void setTransformations(String name, NXtransformations transformations);
-
-	/**
-	 * Get all NXtransformations nodes:
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public Map<String, NXtransformations> getAllTransformations();
-
-	/**
-	 * Set multiple child nodes of a particular type.
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @param transformations the child nodes to add
-	 */
-
-	public void setAllTransformations(Map<String, NXtransformations> transformations);
-
 
 }

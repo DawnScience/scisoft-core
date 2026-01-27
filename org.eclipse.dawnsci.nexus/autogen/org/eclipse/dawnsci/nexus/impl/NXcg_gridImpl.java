@@ -13,8 +13,6 @@ package org.eclipse.dawnsci.nexus.impl;
 
 import java.util.Set;
 import java.util.EnumSet;
-import java.util.Map;
-
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
@@ -23,20 +21,21 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Computational geometry description of a Wigner-Seitz cell grid in Euclidean space.
- * Frequently convenient three-dimensional grids with cubic cells are used.
- * Exemplar applications are spectral-solver based crystal plasticity
- * and stencil methods like phase-field or cellular automata.
+ * Computational geometry description of a grid of Wigner-Seitz cells in Euclidean space.
+ * Three-dimensional grids with cubic cells are if not the most frequently used
+ * example of such grids. Numerical methods and models that use grids are used
+ * in many cases in the natural sciences and engineering disciplines. Examples are
+ * discretizations in space and time used for phase-field, cellular automata, or Monte Carlo
+ * modeling.
 
  */
-public class NXcg_gridImpl extends NXobjectImpl implements NXcg_grid {
+public class NXcg_gridImpl extends NXcg_primitiveImpl implements NXcg_grid {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_TRANSFORMATIONS,
-		NexusBaseClass.NX_CG_POLYHEDRON_SET);
+		NexusBaseClass.NX_CG_POLYHEDRON);
 
 	public NXcg_gridImpl() {
 		super();
@@ -61,46 +60,6 @@ public class NXcg_gridImpl extends NXobjectImpl implements NXcg_grid {
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
 
-
-	@Override
-	public Dataset getDimensionality() {
-		return getDataset(NX_DIMENSIONALITY);
-	}
-
-	@Override
-	public Long getDimensionalityScalar() {
-		return getLong(NX_DIMENSIONALITY);
-	}
-
-	@Override
-	public DataNode setDimensionality(IDataset dimensionalityDataset) {
-		return setDataset(NX_DIMENSIONALITY, dimensionalityDataset);
-	}
-
-	@Override
-	public DataNode setDimensionalityScalar(Long dimensionalityValue) {
-		return setField(NX_DIMENSIONALITY, dimensionalityValue);
-	}
-
-	@Override
-	public Dataset getCardinality() {
-		return getDataset(NX_CARDINALITY);
-	}
-
-	@Override
-	public Long getCardinalityScalar() {
-		return getLong(NX_CARDINALITY);
-	}
-
-	@Override
-	public DataNode setCardinality(IDataset cardinalityDataset) {
-		return setDataset(NX_CARDINALITY, cardinalityDataset);
-	}
-
-	@Override
-	public DataNode setCardinalityScalar(Long cardinalityValue) {
-		return setField(NX_CARDINALITY, cardinalityValue);
-	}
 
 	@Override
 	public Dataset getOrigin() {
@@ -183,77 +142,6 @@ public class NXcg_gridImpl extends NXobjectImpl implements NXcg_grid {
 	}
 
 	@Override
-	public NXtransformations getTransformations() {
-		// dataNodeName = NX_TRANSFORMATIONS
-		return getChild("transformations", NXtransformations.class);
-	}
-
-	@Override
-	public void setTransformations(NXtransformations transformationsGroup) {
-		putChild("transformations", transformationsGroup);
-	}
-
-	@Override
-	public NXtransformations getTransformations(String name) {
-		return getChild(name, NXtransformations.class);
-	}
-
-	@Override
-	public void setTransformations(String name, NXtransformations transformations) {
-		putChild(name, transformations);
-	}
-
-	@Override
-	public Map<String, NXtransformations> getAllTransformations() {
-		return getChildren(NXtransformations.class);
-	}
-
-	@Override
-	public void setAllTransformations(Map<String, NXtransformations> transformations) {
-		setChildren(transformations);
-	}
-
-	@Override
-	public Dataset getIdentifier_offset() {
-		return getDataset(NX_IDENTIFIER_OFFSET);
-	}
-
-	@Override
-	public Long getIdentifier_offsetScalar() {
-		return getLong(NX_IDENTIFIER_OFFSET);
-	}
-
-	@Override
-	public DataNode setIdentifier_offset(IDataset identifier_offsetDataset) {
-		return setDataset(NX_IDENTIFIER_OFFSET, identifier_offsetDataset);
-	}
-
-	@Override
-	public DataNode setIdentifier_offsetScalar(Long identifier_offsetValue) {
-		return setField(NX_IDENTIFIER_OFFSET, identifier_offsetValue);
-	}
-
-	@Override
-	public Dataset getIdentifier() {
-		return getDataset(NX_IDENTIFIER);
-	}
-
-	@Override
-	public Long getIdentifierScalar() {
-		return getLong(NX_IDENTIFIER);
-	}
-
-	@Override
-	public DataNode setIdentifier(IDataset identifierDataset) {
-		return setDataset(NX_IDENTIFIER, identifierDataset);
-	}
-
-	@Override
-	public DataNode setIdentifierScalar(Long identifierValue) {
-		return setField(NX_IDENTIFIER, identifierValue);
-	}
-
-	@Override
 	public Dataset getPosition() {
 		return getDataset(NX_POSITION);
 	}
@@ -294,13 +182,13 @@ public class NXcg_gridImpl extends NXobjectImpl implements NXcg_grid {
 	}
 
 	@Override
-	public NXcg_polyhedron_set getBounding_box() {
+	public NXcg_polyhedron getBounding_box() {
 		// dataNodeName = NX_BOUNDING_BOX
-		return getChild("bounding_box", NXcg_polyhedron_set.class);
+		return getChild("bounding_box", NXcg_polyhedron.class);
 	}
 
 	@Override
-	public void setBounding_box(NXcg_polyhedron_set bounding_boxGroup) {
+	public void setBounding_box(NXcg_polyhedron bounding_boxGroup) {
 		putChild("bounding_box", bounding_boxGroup);
 	}
 
@@ -362,6 +250,26 @@ public class NXcg_gridImpl extends NXobjectImpl implements NXcg_grid {
 	@Override
 	public DataNode setBoundary_conditionsScalar(Long boundary_conditionsValue) {
 		return setField(NX_BOUNDARY_CONDITIONS, boundary_conditionsValue);
+	}
+
+	@Override
+	public Dataset getSurface_reconstruction() {
+		return getDataset(NX_SURFACE_RECONSTRUCTION);
+	}
+
+	@Override
+	public String getSurface_reconstructionScalar() {
+		return getString(NX_SURFACE_RECONSTRUCTION);
+	}
+
+	@Override
+	public DataNode setSurface_reconstruction(IDataset surface_reconstructionDataset) {
+		return setDataset(NX_SURFACE_RECONSTRUCTION, surface_reconstructionDataset);
+	}
+
+	@Override
+	public DataNode setSurface_reconstructionScalar(String surface_reconstructionValue) {
+		return setString(NX_SURFACE_RECONSTRUCTION, surface_reconstructionValue);
 	}
 
 }

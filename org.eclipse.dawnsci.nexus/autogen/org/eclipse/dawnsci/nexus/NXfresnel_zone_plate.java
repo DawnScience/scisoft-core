@@ -11,8 +11,6 @@
 
 package org.eclipse.dawnsci.nexus;
 
-import java.util.Map;
-
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
@@ -22,7 +20,7 @@ import org.eclipse.january.dataset.Dataset;
  * A fresnel zone plate
  *
  */
-public interface NXfresnel_zone_plate extends NXobject {
+public interface NXfresnel_zone_plate extends NXcomponent {
 
 	public static final String NX_FOCUS_PARAMETERS = "focus_parameters";
 	public static final String NX_OUTER_DIAMETER = "outer_diameter";
@@ -38,8 +36,6 @@ public interface NXfresnel_zone_plate extends NXobject {
 	public static final String NX_MASK_MATERIAL = "mask_material";
 	public static final String NX_SUPPORT_MEMBRANE_MATERIAL = "support_membrane_material";
 	public static final String NX_SUPPORT_MEMBRANE_THICKNESS = "support_membrane_thickness";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
-	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
 	 * list of polynomial coefficients describing the focal length of the zone plate, in increasing powers of photon energy,
 	 * that describes the focal length of the zone plate (in microns) at an X-ray photon energy (in electron volts).
@@ -220,7 +216,7 @@ public interface NXfresnel_zone_plate extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getFabrication();
+	public Dataset getFabricationString();
 
 	/**
 	 * how the zone plate was manufactured
@@ -234,7 +230,7 @@ public interface NXfresnel_zone_plate extends NXobject {
 	 *
 	 * @param fabricationDataset the fabricationDataset
 	 */
-	public DataNode setFabrication(IDataset fabricationDataset);
+	public DataNode setFabricationString(IDataset fabricationDataset);
 
 	/**
 	 * how the zone plate was manufactured
@@ -248,7 +244,7 @@ public interface NXfresnel_zone_plate extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public String getFabricationScalar();
+	public String getFabricationStringScalar();
 
 	/**
 	 * how the zone plate was manufactured
@@ -262,7 +258,7 @@ public interface NXfresnel_zone_plate extends NXobject {
 	 *
 	 * @param fabrication the fabrication
 	 */
-	public DataNode setFabricationScalar(String fabricationValue);
+	public DataNode setFabricationStringScalar(String fabricationValue);
 
 	/**
 	 * <p>
@@ -557,38 +553,6 @@ public interface NXfresnel_zone_plate extends NXobject {
 	public DataNode setSupport_membrane_thicknessScalar(Double support_membrane_thicknessValue);
 
 	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
-
-	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * .. todo::
 	 * Add a definition for the reference point of a fresnel zone plate.
 	 * <p>
@@ -600,12 +564,6 @@ public interface NXfresnel_zone_plate extends NXobject {
 	public Dataset getDepends_on();
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * .. todo::
 	 * Add a definition for the reference point of a fresnel zone plate.
 	 * <p>
@@ -617,12 +575,6 @@ public interface NXfresnel_zone_plate extends NXobject {
 	public DataNode setDepends_on(IDataset depends_onDataset);
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * .. todo::
 	 * Add a definition for the reference point of a fresnel zone plate.
 	 * <p>
@@ -634,12 +586,6 @@ public interface NXfresnel_zone_plate extends NXobject {
 	public String getDepends_onScalar();
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * .. todo::
 	 * Add a definition for the reference point of a fresnel zone plate.
 	 * <p>
@@ -649,91 +595,5 @@ public interface NXfresnel_zone_plate extends NXobject {
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
-
-	/**
-	 * "Engineering" position of the fresnel zone plate
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.
-	 *
-	 * @return  the value.
-	 */
-	public NXtransformations getTransformations();
-
-	/**
-	 * "Engineering" position of the fresnel zone plate
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.
-	 *
-	 * @param transformationsGroup the transformationsGroup
-	 */
-	public void setTransformations(NXtransformations transformationsGroup);
-
-	/**
-	 * Get a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * "Engineering" position of the fresnel zone plate
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public NXtransformations getTransformations(String name);
-
-	/**
-	 * Set a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * "Engineering" position of the fresnel zone plate
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @param name the name of the node
-	 * @param transformations the value to set
-	 */
-	public void setTransformations(String name, NXtransformations transformations);
-
-	/**
-	 * Get all NXtransformations nodes:
-	 * <ul>
-	 * <li>
-	 * "Engineering" position of the fresnel zone plate
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public Map<String, NXtransformations> getAllTransformations();
-
-	/**
-	 * Set multiple child nodes of a particular type.
-	 * <ul>
-	 * <li>
-	 * "Engineering" position of the fresnel zone plate
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @param transformations the child nodes to add
-	 */
-
-	public void setAllTransformations(Map<String, NXtransformations> transformations);
-
 
 }

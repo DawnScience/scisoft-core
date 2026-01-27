@@ -21,7 +21,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * definition of a quadric surface.
+ * Definition of a quadric surface.
 
  */
 public class NXquadricImpl extends NXobjectImpl implements NXquadric {

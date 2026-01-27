@@ -21,10 +21,18 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Settings of a filter to sample entries based on their value.
+ * Base class of a filter to sample members in a set based on their indices.
+ * The filter defines three parameters: The minimum, the increment, and the maximum
+ * index of values to include of a sequence :math:`[i_0, i_0 + 1, i_0 + 2, \ldots, i_0 + \mathcal{N}] with i_0 \in \mathcal{Z}`
+ * of indices. The increment controls which n-th index (value) to take.
+ * Take as an example a dataset with 100 indices (aka entries). Assume that the indices start at zero,
+ * i.e., index_offset is 0. Assume further that min, increment, max are set to 0, 1, and 99, respectively.
+ * In this case the filter will yield all indices. Setting min, increment, max to 0, 2, and 99, respectively
+ * will yield each second index value. Setting min, increment, max to 90, 3, and 99 respectively will yield
+ * each third index value beginning from index values 90 up to 99.
 
  */
-public class NXsubsampling_filterImpl extends NXobjectImpl implements NXsubsampling_filter {
+public class NXsubsampling_filterImpl extends NXparametersImpl implements NXsubsampling_filter {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
@@ -56,23 +64,63 @@ public class NXsubsampling_filterImpl extends NXobjectImpl implements NXsubsampl
 
 
 	@Override
-	public Dataset getLinear_range_min_incr_max() {
-		return getDataset(NX_LINEAR_RANGE_MIN_INCR_MAX);
+	public Dataset getMin() {
+		return getDataset(NX_MIN);
 	}
 
 	@Override
-	public Long getLinear_range_min_incr_maxScalar() {
-		return getLong(NX_LINEAR_RANGE_MIN_INCR_MAX);
+	public Long getMinScalar() {
+		return getLong(NX_MIN);
 	}
 
 	@Override
-	public DataNode setLinear_range_min_incr_max(IDataset linear_range_min_incr_maxDataset) {
-		return setDataset(NX_LINEAR_RANGE_MIN_INCR_MAX, linear_range_min_incr_maxDataset);
+	public DataNode setMin(IDataset minDataset) {
+		return setDataset(NX_MIN, minDataset);
 	}
 
 	@Override
-	public DataNode setLinear_range_min_incr_maxScalar(Long linear_range_min_incr_maxValue) {
-		return setField(NX_LINEAR_RANGE_MIN_INCR_MAX, linear_range_min_incr_maxValue);
+	public DataNode setMinScalar(Long minValue) {
+		return setField(NX_MIN, minValue);
+	}
+
+	@Override
+	public Dataset getIncrement() {
+		return getDataset(NX_INCREMENT);
+	}
+
+	@Override
+	public Long getIncrementScalar() {
+		return getLong(NX_INCREMENT);
+	}
+
+	@Override
+	public DataNode setIncrement(IDataset incrementDataset) {
+		return setDataset(NX_INCREMENT, incrementDataset);
+	}
+
+	@Override
+	public DataNode setIncrementScalar(Long incrementValue) {
+		return setField(NX_INCREMENT, incrementValue);
+	}
+
+	@Override
+	public Dataset getMax() {
+		return getDataset(NX_MAX);
+	}
+
+	@Override
+	public Long getMaxScalar() {
+		return getLong(NX_MAX);
+	}
+
+	@Override
+	public DataNode setMax(IDataset maxDataset) {
+		return setDataset(NX_MAX, maxDataset);
+	}
+
+	@Override
+	public DataNode setMaxScalar(Long maxValue) {
+		return setField(NX_MAX, maxValue);
 	}
 
 }

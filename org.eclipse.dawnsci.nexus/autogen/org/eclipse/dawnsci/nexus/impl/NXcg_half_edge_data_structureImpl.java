@@ -21,12 +21,14 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Computational geeometry description of a half-edge data structure.
+ * Computational geometry description of a half-edge data structure.
  * Such a data structure can be used to efficiently circulate around faces
- * and iterate over vertices of a planar graph.
+ * and iterate over vertices of a planar graph. The data structure is also
+ * known as a doubly connected edge list.
+ * Indices can be used as identifier and thus names for individual instances.
 
  */
-public class NXcg_half_edge_data_structureImpl extends NXobjectImpl implements NXcg_half_edge_data_structure {
+public class NXcg_half_edge_data_structureImpl extends NXcg_primitiveImpl implements NXcg_half_edge_data_structure {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
@@ -98,103 +100,83 @@ public class NXcg_half_edge_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public Dataset getNumber_of_faces() {
-		return getDataset(NX_NUMBER_OF_FACES);
+	public Dataset getNumber_of_edges() {
+		return getDataset(NX_NUMBER_OF_EDGES);
 	}
 
 	@Override
-	public Long getNumber_of_facesScalar() {
-		return getLong(NX_NUMBER_OF_FACES);
+	public Long getNumber_of_edgesScalar() {
+		return getLong(NX_NUMBER_OF_EDGES);
 	}
 
 	@Override
-	public DataNode setNumber_of_faces(IDataset number_of_facesDataset) {
-		return setDataset(NX_NUMBER_OF_FACES, number_of_facesDataset);
+	public DataNode setNumber_of_edges(IDataset number_of_edgesDataset) {
+		return setDataset(NX_NUMBER_OF_EDGES, number_of_edgesDataset);
 	}
 
 	@Override
-	public DataNode setNumber_of_facesScalar(Long number_of_facesValue) {
-		return setField(NX_NUMBER_OF_FACES, number_of_facesValue);
+	public DataNode setNumber_of_edgesScalar(Long number_of_edgesValue) {
+		return setField(NX_NUMBER_OF_EDGES, number_of_edgesValue);
 	}
 
 	@Override
-	public Dataset getNumber_of_half_edges() {
-		return getDataset(NX_NUMBER_OF_HALF_EDGES);
+	public Dataset getIndex_offset_vertex() {
+		return getDataset(NX_INDEX_OFFSET_VERTEX);
 	}
 
 	@Override
-	public Long getNumber_of_half_edgesScalar() {
-		return getLong(NX_NUMBER_OF_HALF_EDGES);
+	public Long getIndex_offset_vertexScalar() {
+		return getLong(NX_INDEX_OFFSET_VERTEX);
 	}
 
 	@Override
-	public DataNode setNumber_of_half_edges(IDataset number_of_half_edgesDataset) {
-		return setDataset(NX_NUMBER_OF_HALF_EDGES, number_of_half_edgesDataset);
+	public DataNode setIndex_offset_vertex(IDataset index_offset_vertexDataset) {
+		return setDataset(NX_INDEX_OFFSET_VERTEX, index_offset_vertexDataset);
 	}
 
 	@Override
-	public DataNode setNumber_of_half_edgesScalar(Long number_of_half_edgesValue) {
-		return setField(NX_NUMBER_OF_HALF_EDGES, number_of_half_edgesValue);
+	public DataNode setIndex_offset_vertexScalar(Long index_offset_vertexValue) {
+		return setField(NX_INDEX_OFFSET_VERTEX, index_offset_vertexValue);
 	}
 
 	@Override
-	public Dataset getVertex_identifier_offset() {
-		return getDataset(NX_VERTEX_IDENTIFIER_OFFSET);
+	public Dataset getIndex_offset_edge() {
+		return getDataset(NX_INDEX_OFFSET_EDGE);
 	}
 
 	@Override
-	public Long getVertex_identifier_offsetScalar() {
-		return getLong(NX_VERTEX_IDENTIFIER_OFFSET);
+	public Long getIndex_offset_edgeScalar() {
+		return getLong(NX_INDEX_OFFSET_EDGE);
 	}
 
 	@Override
-	public DataNode setVertex_identifier_offset(IDataset vertex_identifier_offsetDataset) {
-		return setDataset(NX_VERTEX_IDENTIFIER_OFFSET, vertex_identifier_offsetDataset);
+	public DataNode setIndex_offset_edge(IDataset index_offset_edgeDataset) {
+		return setDataset(NX_INDEX_OFFSET_EDGE, index_offset_edgeDataset);
 	}
 
 	@Override
-	public DataNode setVertex_identifier_offsetScalar(Long vertex_identifier_offsetValue) {
-		return setField(NX_VERTEX_IDENTIFIER_OFFSET, vertex_identifier_offsetValue);
+	public DataNode setIndex_offset_edgeScalar(Long index_offset_edgeValue) {
+		return setField(NX_INDEX_OFFSET_EDGE, index_offset_edgeValue);
 	}
 
 	@Override
-	public Dataset getFace_identifier_offset() {
-		return getDataset(NX_FACE_IDENTIFIER_OFFSET);
+	public Dataset getIndex_offset_face() {
+		return getDataset(NX_INDEX_OFFSET_FACE);
 	}
 
 	@Override
-	public Long getFace_identifier_offsetScalar() {
-		return getLong(NX_FACE_IDENTIFIER_OFFSET);
+	public Long getIndex_offset_faceScalar() {
+		return getLong(NX_INDEX_OFFSET_FACE);
 	}
 
 	@Override
-	public DataNode setFace_identifier_offset(IDataset face_identifier_offsetDataset) {
-		return setDataset(NX_FACE_IDENTIFIER_OFFSET, face_identifier_offsetDataset);
+	public DataNode setIndex_offset_face(IDataset index_offset_faceDataset) {
+		return setDataset(NX_INDEX_OFFSET_FACE, index_offset_faceDataset);
 	}
 
 	@Override
-	public DataNode setFace_identifier_offsetScalar(Long face_identifier_offsetValue) {
-		return setField(NX_FACE_IDENTIFIER_OFFSET, face_identifier_offsetValue);
-	}
-
-	@Override
-	public Dataset getHalf_edge_identifier_offset() {
-		return getDataset(NX_HALF_EDGE_IDENTIFIER_OFFSET);
-	}
-
-	@Override
-	public Long getHalf_edge_identifier_offsetScalar() {
-		return getLong(NX_HALF_EDGE_IDENTIFIER_OFFSET);
-	}
-
-	@Override
-	public DataNode setHalf_edge_identifier_offset(IDataset half_edge_identifier_offsetDataset) {
-		return setDataset(NX_HALF_EDGE_IDENTIFIER_OFFSET, half_edge_identifier_offsetDataset);
-	}
-
-	@Override
-	public DataNode setHalf_edge_identifier_offsetScalar(Long half_edge_identifier_offsetValue) {
-		return setField(NX_HALF_EDGE_IDENTIFIER_OFFSET, half_edge_identifier_offsetValue);
+	public DataNode setIndex_offset_faceScalar(Long index_offset_faceValue) {
+		return setField(NX_INDEX_OFFSET_FACE, index_offset_faceValue);
 	}
 
 	@Override

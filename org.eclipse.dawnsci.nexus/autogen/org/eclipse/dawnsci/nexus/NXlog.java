@@ -30,7 +30,7 @@ import org.eclipse.january.dataset.Dataset;
  * the logged or streamed values and the times at which they were measured as elapsed time since a starting
  * time recorded in ISO8601 format. The time units are
  * specified in the units attribute. An optional scaling attribute
- * can be used to accomodate non standard clocks.
+ * can be used to accommodate non standard clocks.
  * This method of storing logged data helps to distinguish instances in which a variable contains signal or
  * axis coordinate values of plottable data, in which case it is stored
  * in an :ref:`NXdata` group, and instances in which it is logged during the
@@ -61,7 +61,6 @@ public interface NXlog extends NXobject {
 	public static final String NX_CUE_TIMESTAMP_ZERO_ATTRIBUTE_START = "start";
 	public static final String NX_CUE_TIMESTAMP_ZERO_ATTRIBUTE_SCALING_FACTOR = "scaling_factor";
 	public static final String NX_CUE_INDEX = "cue_index";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * Time of logged entry. The times are relative to the "start" attribute
 	 * and in the units specified in the "units"
@@ -665,31 +664,5 @@ public interface NXlog extends NXobject {
 	 * @param cue_index the cue_index
 	 */
 	public DataNode setCue_indexScalar(Long cue_indexValue);
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
 
 }

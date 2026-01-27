@@ -197,7 +197,16 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 					"Optical Laser",
 					"Ion Source",
 					"UV Plasma Source",
-					"Metal Jet X-ray");
+					"Metal Jet X-ray",
+					"Laser",
+					"Dye Laser",
+					"Broadband Tunable Light Source",
+					"Halogen Lamp",
+					"LED",
+					"Mercury Cadmium Telluride Lamp",
+					"Deuterium Lamp",
+					"Xenon Lamp",
+					"Globar");
 		}
 
 		// validate field 'name' of type NX_CHAR.
@@ -216,6 +225,7 @@ public class NXstxmValidator extends AbstractNexusValidator implements NexusAppl
 			validateFieldType("probe", probe, NX_CHAR);
 			validateFieldEnumeration("probe", probe,
 					"neutron",
+					"photon",
 					"x-ray",
 					"muon",
 					"electron",

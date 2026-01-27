@@ -17,18 +17,15 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * Metadata to the results of a similarity grouping analysis.
- * Similarity grouping analyses can be supervised segmentation or machine learning
- * clustering algorithms. These are routine methods which partition the member of
- * a set of objects/geometric primitives into (sub-)groups, features of
- * different type. A plethora of algorithms have been proposed which can be applied
- * also on geometric primitives like points, triangles, or (abstract) features aka
- * objects (including categorical sub-groups).
- * This base class considers metadata and results of one similarity grouping
- * analysis applied to a set in which objects are either categorized as noise
- * or belonging to a cluster.
- * As the results of the analysis each similarity group, here called feature
- * aka object can get a number of numerical and/or categorical labels.
+ * Base class to store results obtained from applying a similarity grouping (clustering) algorithm.
+ * Similarity grouping algorithms are segmentation or machine learning algorithms for
+ * partitioning the members of a set of objects (e.g. geometric primitives) into
+ * (sub-)groups aka features of different kind/type. A plethora of algorithms exists.
+ * This base class considers metadata and results of having a similarity grouping
+ * algorithm applied to a set in which objects are either categorized as noise
+ * or belonging to a cluster, i.e. members of a cluster.
+ * The algorithm assigns each similarity group (feature/cluster) at least one
+ * identifier (numerical or categorical labels) to distinguish different cluster.
  * <p><b>Symbols:</b>
  * The symbols used in the schema to specify e.g. dimensions of arrays.<ul>
  * <li><b>c</b>
@@ -38,7 +35,7 @@ import org.eclipse.january.dataset.Dataset;
  * <li><b>n_lbl_cat</b>
  * Number of categorical labels per object.</li>
  * <li><b>n_features</b>
- * Total number of similarity groups aka features, objects, clusters.</li></ul></p>
+ * Total number of similarity groups aka features/clusters.</li></ul></p>
  *
  */
 public interface NXsimilarity_grouping extends NXobject {
@@ -46,13 +43,13 @@ public interface NXsimilarity_grouping extends NXobject {
 	public static final String NX_CARDINALITY = "cardinality";
 	public static final String NX_NUMBER_OF_NUMERIC_LABELS = "number_of_numeric_labels";
 	public static final String NX_NUMBER_OF_CATEGORICAL_LABELS = "number_of_categorical_labels";
-	public static final String NX_IDENTIFIER_OFFSET = "identifier_offset";
+	public static final String NX_INDEX_OFFSET = "index_offset";
 	public static final String NX_NUMERICAL_LABEL = "numerical_label";
 	public static final String NX_CATEGORICAL_LABEL = "categorical_label";
 	/**
-	 * Number of members in the set which is partitioned into features.
+	 * Number of members in the set which gets partitioned into features.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_POSINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
@@ -61,9 +58,9 @@ public interface NXsimilarity_grouping extends NXobject {
 	public Dataset getCardinality();
 
 	/**
-	 * Number of members in the set which is partitioned into features.
+	 * Number of members in the set which gets partitioned into features.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_POSINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
@@ -72,9 +69,9 @@ public interface NXsimilarity_grouping extends NXobject {
 	public DataNode setCardinality(IDataset cardinalityDataset);
 
 	/**
-	 * Number of members in the set which is partitioned into features.
+	 * Number of members in the set which gets partitioned into features.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_POSINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
@@ -83,9 +80,9 @@ public interface NXsimilarity_grouping extends NXobject {
 	public Long getCardinalityScalar();
 
 	/**
-	 * Number of members in the set which is partitioned into features.
+	 * Number of members in the set which gets partitioned into features.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_POSINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
@@ -182,83 +179,79 @@ public interface NXsimilarity_grouping extends NXobject {
 	public DataNode setNumber_of_categorical_labelsScalar(Long number_of_categorical_labelsValue);
 
 	/**
-	 * Which identifier is the first to be used to label a cluster.
+	 * Which numerical index is the first to be used to label a feature.
 	 * The value should be chosen in such a way that special values can be resolved:
-	 * * identifier_offset-1 indicates an object belongs to no cluster.
-	 * * identifier_offset-2 indicates an object belongs to the noise category.
-	 * Setting for instance identifier_offset to 1 recovers the commonly used
-	 * case that objects of the noise category get values to -1 and unassigned points to 0.
-	 * Numerical identifier have to be strictly increasing.
+	 * * index_offset - 1 indicates that an object belongs to no cluster.
+	 * * index_offset - 2 indicates that an object belongs to the noise category.
+	 * Setting for instance index_offset to 1 recovers the commonly used
+	 * case that objects of the noise category get values to -1 and unassigned
+	 * points to 0. Numerical identifier have to be strictly increasing.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
-	 * <b>Dimensions:</b> 1: n_lbl_num;
 	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getIdentifier_offset();
+	public Dataset getIndex_offset();
 
 	/**
-	 * Which identifier is the first to be used to label a cluster.
+	 * Which numerical index is the first to be used to label a feature.
 	 * The value should be chosen in such a way that special values can be resolved:
-	 * * identifier_offset-1 indicates an object belongs to no cluster.
-	 * * identifier_offset-2 indicates an object belongs to the noise category.
-	 * Setting for instance identifier_offset to 1 recovers the commonly used
-	 * case that objects of the noise category get values to -1 and unassigned points to 0.
-	 * Numerical identifier have to be strictly increasing.
+	 * * index_offset - 1 indicates that an object belongs to no cluster.
+	 * * index_offset - 2 indicates that an object belongs to the noise category.
+	 * Setting for instance index_offset to 1 recovers the commonly used
+	 * case that objects of the noise category get values to -1 and unassigned
+	 * points to 0. Numerical identifier have to be strictly increasing.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
-	 * <b>Dimensions:</b> 1: n_lbl_num;
 	 * </p>
 	 *
-	 * @param identifier_offsetDataset the identifier_offsetDataset
+	 * @param index_offsetDataset the index_offsetDataset
 	 */
-	public DataNode setIdentifier_offset(IDataset identifier_offsetDataset);
+	public DataNode setIndex_offset(IDataset index_offsetDataset);
 
 	/**
-	 * Which identifier is the first to be used to label a cluster.
+	 * Which numerical index is the first to be used to label a feature.
 	 * The value should be chosen in such a way that special values can be resolved:
-	 * * identifier_offset-1 indicates an object belongs to no cluster.
-	 * * identifier_offset-2 indicates an object belongs to the noise category.
-	 * Setting for instance identifier_offset to 1 recovers the commonly used
-	 * case that objects of the noise category get values to -1 and unassigned points to 0.
-	 * Numerical identifier have to be strictly increasing.
+	 * * index_offset - 1 indicates that an object belongs to no cluster.
+	 * * index_offset - 2 indicates that an object belongs to the noise category.
+	 * Setting for instance index_offset to 1 recovers the commonly used
+	 * case that objects of the noise category get values to -1 and unassigned
+	 * points to 0. Numerical identifier have to be strictly increasing.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
-	 * <b>Dimensions:</b> 1: n_lbl_num;
 	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public Long getIdentifier_offsetScalar();
+	public Long getIndex_offsetScalar();
 
 	/**
-	 * Which identifier is the first to be used to label a cluster.
+	 * Which numerical index is the first to be used to label a feature.
 	 * The value should be chosen in such a way that special values can be resolved:
-	 * * identifier_offset-1 indicates an object belongs to no cluster.
-	 * * identifier_offset-2 indicates an object belongs to the noise category.
-	 * Setting for instance identifier_offset to 1 recovers the commonly used
-	 * case that objects of the noise category get values to -1 and unassigned points to 0.
-	 * Numerical identifier have to be strictly increasing.
+	 * * index_offset - 1 indicates that an object belongs to no cluster.
+	 * * index_offset - 2 indicates that an object belongs to the noise category.
+	 * Setting for instance index_offset to 1 recovers the commonly used
+	 * case that objects of the noise category get values to -1 and unassigned
+	 * points to 0. Numerical identifier have to be strictly increasing.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
-	 * <b>Dimensions:</b> 1: n_lbl_num;
 	 * </p>
 	 *
-	 * @param identifier_offset the identifier_offset
+	 * @param index_offset the index_offset
 	 */
-	public DataNode setIdentifier_offsetScalar(Long identifier_offsetValue);
+	public DataNode setIndex_offsetScalar(Long index_offsetValue);
 
 	/**
 	 * Matrix of numerical label for each member in the set.
 	 * For classical clustering algorithms this can for instance
-	 * encode the cluster_identifier.
+	 * encode the indices_cluster.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: c; 2: n_lbl_num;
 	 * </p>
@@ -270,9 +263,9 @@ public interface NXsimilarity_grouping extends NXobject {
 	/**
 	 * Matrix of numerical label for each member in the set.
 	 * For classical clustering algorithms this can for instance
-	 * encode the cluster_identifier.
+	 * encode the indices_cluster.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: c; 2: n_lbl_num;
 	 * </p>
@@ -284,9 +277,9 @@ public interface NXsimilarity_grouping extends NXobject {
 	/**
 	 * Matrix of numerical label for each member in the set.
 	 * For classical clustering algorithms this can for instance
-	 * encode the cluster_identifier.
+	 * encode the indices_cluster.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: c; 2: n_lbl_num;
 	 * </p>
@@ -298,9 +291,9 @@ public interface NXsimilarity_grouping extends NXobject {
 	/**
 	 * Matrix of numerical label for each member in the set.
 	 * For classical clustering algorithms this can for instance
-	 * encode the cluster_identifier.
+	 * encode the indices_cluster.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: c; 2: n_lbl_num;
 	 * </p>
@@ -354,7 +347,7 @@ public interface NXsimilarity_grouping extends NXobject {
 	public DataNode setCategorical_labelScalar(String categorical_labelValue);
 
 	/**
-	 * In addition to the detailed storage which members was grouped to which
+	 * In addition to the detailed storage which objects were grouped to which
 	 * feature/group summary statistics are stored under this group.
 	 *
 	 * @return  the value.
@@ -362,7 +355,7 @@ public interface NXsimilarity_grouping extends NXobject {
 	public NXprocess getStatistics();
 
 	/**
-	 * In addition to the detailed storage which members was grouped to which
+	 * In addition to the detailed storage which objects were grouped to which
 	 * feature/group summary statistics are stored under this group.
 	 *
 	 * @param statisticsGroup the statisticsGroup

@@ -21,7 +21,9 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Constructive Solid Geometry base class, using :ref:`NXquadric` and :ref:`NXoff_geometry`
+ * Constructive Solid Geometry (CSG) base class.
+ * Offers concepts for combining the definitions of leaf and
+ * branching nodes of a CSG tree.
 
  */
 public class NXcsgImpl extends NXobjectImpl implements NXcsg {

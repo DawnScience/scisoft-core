@@ -40,9 +40,8 @@ import org.eclipse.january.dataset.Dataset;
  * number of values in applied stress field</li></ul></p>
  *
  */
-public interface NXsample extends NXobject {
+public interface NXsample extends NXcomponent {
 
-	public static final String NX_NAME = "name";
 	public static final String NX_CHEMICAL_FORMULA = "chemical_formula";
 	public static final String NX_TEMPERATURE = "temperature";
 	public static final String NX_ELECTRIC_FIELD = "electric_field";
@@ -65,7 +64,6 @@ public interface NXsample extends NXobject {
 	public static final String NX_RELATIVE_MOLECULAR_MASS = "relative_molecular_mass";
 	public static final String NX_TYPE = "type";
 	public static final String NX_SITUATION = "situation";
-	public static final String NX_DESCRIPTION = "description";
 	public static final String NX_PREPARATION_DATE = "preparation_date";
 	public static final String NX_COMPONENT = "component";
 	public static final String NX_SAMPLE_COMPONENT = "sample_component";
@@ -83,8 +81,7 @@ public interface NXsample extends NXobject {
 	public static final String NX_ROTATION_ANGLE = "rotation_angle";
 	public static final String NX_X_TRANSLATION = "x_translation";
 	public static final String NX_DISTANCE = "distance";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
-	public static final String NX_DEPENDS_ON = "depends_on";
+	public static final String NX_PHYSICAL_FORM = "physical_form";
 	/**
 	 * Descriptive name of sample
 	 *
@@ -1351,7 +1348,7 @@ public interface NXsample extends NXobject {
 
 	/**
 	 * One group per sample component
-	 * This is the perferred way of recording per component information over the n_comp arrays
+	 * This is the preferred way of recording per component information over the n_comp arrays
 	 *
 	 * @return  the value.
 	 */
@@ -1359,7 +1356,7 @@ public interface NXsample extends NXobject {
 
 	/**
 	 * One group per sample component
-	 * This is the perferred way of recording per component information over the n_comp arrays
+	 * This is the preferred way of recording per component information over the n_comp arrays
 	 *
 	 * @param sample_componentGroupGroup the sample_componentGroupGroup
 	 */
@@ -1370,7 +1367,7 @@ public interface NXsample extends NXobject {
 	 * <ul>
 	 * <li>
 	 * One group per sample component
-	 * This is the perferred way of recording per component information over the n_comp arrays</li>
+	 * This is the preferred way of recording per component information over the n_comp arrays</li>
 	 * </ul>
 	 *
 	 * @param name  the name of the node.
@@ -1383,7 +1380,7 @@ public interface NXsample extends NXobject {
 	 * <ul>
 	 * <li>
 	 * One group per sample component
-	 * This is the perferred way of recording per component information over the n_comp arrays</li>
+	 * This is the preferred way of recording per component information over the n_comp arrays</li>
 	 * </ul>
 	 *
 	 * @param name the name of the node
@@ -1396,7 +1393,7 @@ public interface NXsample extends NXobject {
 	 * <ul>
 	 * <li>
 	 * One group per sample component
-	 * This is the perferred way of recording per component information over the n_comp arrays</li>
+	 * This is the preferred way of recording per component information over the n_comp arrays</li>
 	 * </ul>
 	 *
 	 * @return  a map from node names to the NXsample_component for that node.
@@ -1408,7 +1405,7 @@ public interface NXsample extends NXobject {
 	 * <ul>
 	 * <li>
 	 * One group per sample component
-	 * This is the perferred way of recording per component information over the n_comp arrays</li>
+	 * This is the preferred way of recording per component information over the n_comp arrays</li>
 	 * </ul>
 	 *
 	 * @param sample_componentGroup the child nodes to add
@@ -2400,169 +2397,145 @@ public interface NXsample extends NXobject {
 
 
 	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
+	 * Physical form of the sample material.
+	 * Examples include single crystal, foil, pellet, powder, thin film, disc, foam, gas, liquid, amorphous.
 	 *
 	 * @return  the value.
 	 */
-	public String getAttributeDefault();
+	public Dataset getPhysical_form();
 
 	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
+	 * Physical form of the sample material.
+	 * Examples include single crystal, foil, pellet, powder, thin film, disc, foam, gas, liquid, amorphous.
 	 *
-	 * @param defaultValue the defaultValue
+	 * @param physical_formDataset the physical_formDataset
 	 */
-	public void setAttributeDefault(String defaultValue);
+	public DataNode setPhysical_form(IDataset physical_formDataset);
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
+	 * Physical form of the sample material.
+	 * Examples include single crystal, foil, pellet, powder, thin film, disc, foam, gas, liquid, amorphous.
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getDepends_on();
+	public String getPhysical_formScalar();
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
+	 * Physical form of the sample material.
+	 * Examples include single crystal, foil, pellet, powder, thin film, disc, foam, gas, liquid, amorphous.
 	 *
-	 * @param depends_onDataset the depends_onDataset
+	 * @param physical_form the physical_form
 	 */
-	public DataNode setDepends_on(IDataset depends_onDataset);
+	public DataNode setPhysical_formScalar(String physical_formValue);
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
+	 * Any environmental or external stimuli/measurements.
+	 * These can include, among others:
+	 * applied pressure, surrounding gas phase and gas pressure,
+	 * external electric/magnetic/mechanical fields, temperature, ...
 	 *
 	 * @return  the value.
 	 */
-	public String getDepends_onScalar();
+	public NXenvironment getEnvironment();
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
+	 * Any environmental or external stimuli/measurements.
+	 * These can include, among others:
+	 * applied pressure, surrounding gas phase and gas pressure,
+	 * external electric/magnetic/mechanical fields, temperature, ...
 	 *
-	 * @param depends_on the depends_on
+	 * @param environmentGroup the environmentGroup
 	 */
-	public DataNode setDepends_onScalar(String depends_onValue);
+	public void setEnvironment(NXenvironment environmentGroup);
 
 	/**
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.
-	 *
-	 * @return  the value.
-	 */
-	public NXtransformations getTransformations();
-
-	/**
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.
-	 *
-	 * @param transformationsGroup the transformationsGroup
-	 */
-	public void setTransformations(NXtransformations transformationsGroup);
-
-	/**
-	 * Get a NXtransformations node by name:
+	 * Get a NXenvironment node by name:
 	 * <ul>
 	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
+	 * Additional sample temperature environment information</li>
+	 * <li>
+	 * Additional sample magnetic environment information</li>
+	 * <li>
+	 * Any environmental or external stimuli/measurements.
+	 * These can include, among others:
+	 * applied pressure, surrounding gas phase and gas pressure,
+	 * external electric/magnetic/mechanical fields, temperature, ...</li>
 	 * </ul>
 	 *
 	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXtransformations for that node.
+	 * @return  a map from node names to the NXenvironment for that node.
 	 */
-	public NXtransformations getTransformations(String name);
+	public NXenvironment getEnvironment(String name);
 
 	/**
-	 * Set a NXtransformations node by name:
+	 * Set a NXenvironment node by name:
 	 * <ul>
 	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
+	 * Additional sample temperature environment information</li>
+	 * <li>
+	 * Additional sample magnetic environment information</li>
+	 * <li>
+	 * Any environmental or external stimuli/measurements.
+	 * These can include, among others:
+	 * applied pressure, surrounding gas phase and gas pressure,
+	 * external electric/magnetic/mechanical fields, temperature, ...</li>
 	 * </ul>
 	 *
 	 * @param name the name of the node
-	 * @param transformations the value to set
+	 * @param environment the value to set
 	 */
-	public void setTransformations(String name, NXtransformations transformations);
+	public void setEnvironment(String name, NXenvironment environment);
 
 	/**
-	 * Get all NXtransformations nodes:
+	 * Get all NXenvironment nodes:
 	 * <ul>
 	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
+	 * Additional sample temperature environment information</li>
+	 * <li>
+	 * Additional sample magnetic environment information</li>
+	 * <li>
+	 * Any environmental or external stimuli/measurements.
+	 * These can include, among others:
+	 * applied pressure, surrounding gas phase and gas pressure,
+	 * external electric/magnetic/mechanical fields, temperature, ...</li>
 	 * </ul>
 	 *
-	 * @return  a map from node names to the NXtransformations for that node.
+	 * @return  a map from node names to the NXenvironment for that node.
 	 */
-	public Map<String, NXtransformations> getAllTransformations();
+	public Map<String, NXenvironment> getAllEnvironment();
 
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
+	 * Additional sample temperature environment information</li>
+	 * <li>
+	 * Additional sample magnetic environment information</li>
+	 * <li>
+	 * Any environmental or external stimuli/measurements.
+	 * These can include, among others:
+	 * applied pressure, surrounding gas phase and gas pressure,
+	 * external electric/magnetic/mechanical fields, temperature, ...</li>
 	 * </ul>
 	 *
-	 * @param transformations the child nodes to add
+	 * @param environment the child nodes to add
 	 */
 
-	public void setAllTransformations(Map<String, NXtransformations> transformations);
+	public void setAllEnvironment(Map<String, NXenvironment> environment);
 
+
+	/**
+	 * A set of physical processes that occurred to the sample prior/during experiment.
+	 *
+	 * @return  the value.
+	 */
+	public NXhistory getHistory();
+
+	/**
+	 * A set of physical processes that occurred to the sample prior/during experiment.
+	 *
+	 * @param historyGroup the historyGroup
+	 */
+	public void setHistory(NXhistory historyGroup);
 
 }

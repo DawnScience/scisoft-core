@@ -13,8 +13,6 @@ package org.eclipse.dawnsci.nexus.impl;
 
 import java.util.Set;
 import java.util.EnumSet;
-import java.util.Map;
-
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
@@ -23,16 +21,15 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Device to reduce an atmosphere to a controlled remaining pressure level.
+ * Device to reduce an atmosphere to a controlled pressure.
 
  */
-public class NXpumpImpl extends NXobjectImpl implements NXpump {
+public class NXpumpImpl extends NXcomponentImpl implements NXpump {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
 
-	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_FABRICATION);
+	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.noneOf(NexusBaseClass.class);
 
 	public NXpumpImpl() {
 		super();
@@ -59,37 +56,6 @@ public class NXpumpImpl extends NXobjectImpl implements NXpump {
 
 
 	@Override
-	public NXfabrication getFabrication() {
-		// dataNodeName = NX_FABRICATION
-		return getChild("fabrication", NXfabrication.class);
-	}
-
-	@Override
-	public void setFabrication(NXfabrication fabricationGroup) {
-		putChild("fabrication", fabricationGroup);
-	}
-
-	@Override
-	public NXfabrication getFabrication(String name) {
-		return getChild(name, NXfabrication.class);
-	}
-
-	@Override
-	public void setFabrication(String name, NXfabrication fabrication) {
-		putChild(name, fabrication);
-	}
-
-	@Override
-	public Map<String, NXfabrication> getAllFabrication() {
-		return getChildren(NXfabrication.class);
-	}
-
-	@Override
-	public void setAllFabrication(Map<String, NXfabrication> fabrication) {
-		setChildren(fabrication);
-	}
-
-	@Override
 	public Dataset getDesign() {
 		return getDataset(NX_DESIGN);
 	}
@@ -107,6 +73,46 @@ public class NXpumpImpl extends NXobjectImpl implements NXpump {
 	@Override
 	public DataNode setDesignScalar(String designValue) {
 		return setString(NX_DESIGN, designValue);
+	}
+
+	@Override
+	public Dataset getBase_pressure() {
+		return getDataset(NX_BASE_PRESSURE);
+	}
+
+	@Override
+	public Double getBase_pressureScalar() {
+		return getDouble(NX_BASE_PRESSURE);
+	}
+
+	@Override
+	public DataNode setBase_pressure(IDataset base_pressureDataset) {
+		return setDataset(NX_BASE_PRESSURE, base_pressureDataset);
+	}
+
+	@Override
+	public DataNode setBase_pressureScalar(Double base_pressureValue) {
+		return setField(NX_BASE_PRESSURE, base_pressureValue);
+	}
+
+	@Override
+	public Dataset getMedium() {
+		return getDataset(NX_MEDIUM);
+	}
+
+	@Override
+	public String getMediumScalar() {
+		return getString(NX_MEDIUM);
+	}
+
+	@Override
+	public DataNode setMedium(IDataset mediumDataset) {
+		return setDataset(NX_MEDIUM, mediumDataset);
+	}
+
+	@Override
+	public DataNode setMediumScalar(String mediumValue) {
+		return setString(NX_MEDIUM, mediumValue);
 	}
 
 }

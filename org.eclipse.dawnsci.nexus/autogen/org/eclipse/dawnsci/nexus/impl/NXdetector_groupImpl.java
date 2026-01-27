@@ -156,14 +156,4 @@ public class NXdetector_groupImpl extends NXobjectImpl implements NXdetector_gro
 		return setField(NX_GROUP_TYPE, group_typeValue);
 	}
 
-	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
-	}
-
-	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
-	}
-
 }

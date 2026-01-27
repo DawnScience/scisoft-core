@@ -22,10 +22,9 @@ import org.eclipse.january.dataset.Dataset;
  * Describes image registration procedures.
  *
  */
-public interface NXregistration extends NXobject {
+public interface NXregistration extends NXprocess {
 
 	public static final String NX_APPLIED = "applied";
-	public static final String NX_LAST_PROCESS = "last_process";
 	public static final String NX_DEPENDS_ON = "depends_on";
 	public static final String NX_DESCRIPTION = "description";
 	/**
@@ -67,46 +66,6 @@ public interface NXregistration extends NXobject {
 	 * @param applied the applied
 	 */
 	public DataNode setAppliedScalar(Boolean appliedValue);
-
-	/**
-	 * Indicates the name of the last operation applied in the NXprocess sequence.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Dataset getLast_process();
-
-	/**
-	 * Indicates the name of the last operation applied in the NXprocess sequence.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 *
-	 * @param last_processDataset the last_processDataset
-	 */
-	public DataNode setLast_process(IDataset last_processDataset);
-
-	/**
-	 * Indicates the name of the last operation applied in the NXprocess sequence.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public String getLast_processScalar();
-
-	/**
-	 * Indicates the name of the last operation applied in the NXprocess sequence.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 *
-	 * @param last_process the last_process
-	 */
-	public DataNode setLast_processScalar(String last_processValue);
 
 	/**
 	 * Specifies the position by pointing to the last transformation in the

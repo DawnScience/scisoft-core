@@ -25,16 +25,17 @@ import org.eclipse.dawnsci.nexus.*;
 /**
  * A beamline aperture.
  * Note, the group was incorrectly documented as deprecated, but it is not and it is in common use.
+ * You can specify the geometry of the aperture using either NXoff_geometry or for simpler geometry shape and size.
 
  */
-public class NXapertureImpl extends NXobjectImpl implements NXaperture {
+public class NXapertureImpl extends NXcomponentImpl implements NXaperture {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_TRANSFORMATIONS,
 		NexusBaseClass.NX_OFF_GEOMETRY,
+		NexusBaseClass.NX_POSITIONER,
 		NexusBaseClass.NX_GEOMETRY,
 		NexusBaseClass.NX_GEOMETRY,
 		NexusBaseClass.NX_NOTE);
@@ -84,37 +85,6 @@ public class NXapertureImpl extends NXobjectImpl implements NXaperture {
 	}
 
 	@Override
-	public NXtransformations getTransformations() {
-		// dataNodeName = NX_TRANSFORMATIONS
-		return getChild("transformations", NXtransformations.class);
-	}
-
-	@Override
-	public void setTransformations(NXtransformations transformationsGroup) {
-		putChild("transformations", transformationsGroup);
-	}
-
-	@Override
-	public NXtransformations getTransformations(String name) {
-		return getChild(name, NXtransformations.class);
-	}
-
-	@Override
-	public void setTransformations(String name, NXtransformations transformations) {
-		putChild(name, transformations);
-	}
-
-	@Override
-	public Map<String, NXtransformations> getAllTransformations() {
-		return getChildren(NXtransformations.class);
-	}
-
-	@Override
-	public void setAllTransformations(Map<String, NXtransformations> transformations) {
-		setChildren(transformations);
-	}
-
-	@Override
 	public NXoff_geometry getOff_geometry() {
 		// dataNodeName = NX_OFF_GEOMETRY
 		return getChild("off_geometry", NXoff_geometry.class);
@@ -143,6 +113,37 @@ public class NXapertureImpl extends NXobjectImpl implements NXaperture {
 	@Override
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry) {
 		setChildren(off_geometry);
+	}
+
+	@Override
+	public NXpositioner getPositioner() {
+		// dataNodeName = NX_POSITIONER
+		return getChild("positioner", NXpositioner.class);
+	}
+
+	@Override
+	public void setPositioner(NXpositioner positionerGroup) {
+		putChild("positioner", positionerGroup);
+	}
+
+	@Override
+	public NXpositioner getPositioner(String name) {
+		return getChild(name, NXpositioner.class);
+	}
+
+	@Override
+	public void setPositioner(String name, NXpositioner positioner) {
+		putChild(name, positioner);
+	}
+
+	@Override
+	public Map<String, NXpositioner> getAllPositioner() {
+		return getChildren(NXpositioner.class);
+	}
+
+	@Override
+	public void setAllPositioner(Map<String, NXpositioner> positioner) {
+		setChildren(positioner);
 	}
 
 	@Override
@@ -236,6 +237,46 @@ public class NXapertureImpl extends NXobjectImpl implements NXaperture {
 	}
 
 	@Override
+	public Dataset getShape() {
+		return getDataset(NX_SHAPE);
+	}
+
+	@Override
+	public String getShapeScalar() {
+		return getString(NX_SHAPE);
+	}
+
+	@Override
+	public DataNode setShape(IDataset shapeDataset) {
+		return setDataset(NX_SHAPE, shapeDataset);
+	}
+
+	@Override
+	public DataNode setShapeScalar(String shapeValue) {
+		return setString(NX_SHAPE, shapeValue);
+	}
+
+	@Override
+	public Dataset getSize() {
+		return getDataset(NX_SIZE);
+	}
+
+	@Override
+	public Number getSizeScalar() {
+		return getNumber(NX_SIZE);
+	}
+
+	@Override
+	public DataNode setSize(IDataset sizeDataset) {
+		return setDataset(NX_SIZE, sizeDataset);
+	}
+
+	@Override
+	public DataNode setSizeScalar(Number sizeValue) {
+		return setField(NX_SIZE, sizeValue);
+	}
+
+	@Override
 	public NXnote getNote() {
 		// dataNodeName = NX_NOTE
 		return getChild("note", NXnote.class);
@@ -264,16 +305,6 @@ public class NXapertureImpl extends NXobjectImpl implements NXaperture {
 	@Override
 	public void setAllNote(Map<String, NXnote> note) {
 		setChildren(note);
-	}
-
-	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
-	}
-
-	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

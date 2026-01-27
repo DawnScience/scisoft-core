@@ -23,11 +23,10 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Subclass of NXelectronanalyser to describe the energy dispersion section of a
- * photoelectron analyser.
+ * Energy dispersion section of an electron analyzer.
 
  */
-public class NXenergydispersionImpl extends NXobjectImpl implements NXenergydispersion {
+public class NXenergydispersionImpl extends NXcomponentImpl implements NXenergydispersion {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
@@ -35,7 +34,8 @@ public class NXenergydispersionImpl extends NXobjectImpl implements NXenergydisp
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
 		NexusBaseClass.NX_APERTURE,
 		NexusBaseClass.NX_DEFLECTOR,
-		NexusBaseClass.NX_LENS_EM);
+		NexusBaseClass.NX_ELECTROMAGNETIC_LENS,
+		NexusBaseClass.NX_FABRICATION);
 
 	public NXenergydispersionImpl() {
 		super();
@@ -102,6 +102,46 @@ public class NXenergydispersionImpl extends NXobjectImpl implements NXenergydisp
 	}
 
 	@Override
+	public Dataset getKinetic_energy() {
+		return getDataset(NX_KINETIC_ENERGY);
+	}
+
+	@Override
+	public Double getKinetic_energyScalar() {
+		return getDouble(NX_KINETIC_ENERGY);
+	}
+
+	@Override
+	public DataNode setKinetic_energy(IDataset kinetic_energyDataset) {
+		return setDataset(NX_KINETIC_ENERGY, kinetic_energyDataset);
+	}
+
+	@Override
+	public DataNode setKinetic_energyScalar(Double kinetic_energyValue) {
+		return setField(NX_KINETIC_ENERGY, kinetic_energyValue);
+	}
+
+	@Override
+	public Dataset getDrift_energy() {
+		return getDataset(NX_DRIFT_ENERGY);
+	}
+
+	@Override
+	public Double getDrift_energyScalar() {
+		return getDouble(NX_DRIFT_ENERGY);
+	}
+
+	@Override
+	public DataNode setDrift_energy(IDataset drift_energyDataset) {
+		return setDataset(NX_DRIFT_ENERGY, drift_energyDataset);
+	}
+
+	@Override
+	public DataNode setDrift_energyScalar(Double drift_energyValue) {
+		return setField(NX_DRIFT_ENERGY, drift_energyValue);
+	}
+
+	@Override
 	public Dataset getCenter_energy() {
 		return getDataset(NX_CENTER_ENERGY);
 	}
@@ -142,37 +182,6 @@ public class NXenergydispersionImpl extends NXobjectImpl implements NXenergydisp
 	}
 
 	@Override
-	public NXaperture getAperture() {
-		// dataNodeName = NX_APERTURE
-		return getChild("aperture", NXaperture.class);
-	}
-
-	@Override
-	public void setAperture(NXaperture apertureGroup) {
-		putChild("aperture", apertureGroup);
-	}
-
-	@Override
-	public NXaperture getAperture(String name) {
-		return getChild(name, NXaperture.class);
-	}
-
-	@Override
-	public void setAperture(String name, NXaperture aperture) {
-		putChild(name, aperture);
-	}
-
-	@Override
-	public Map<String, NXaperture> getAllAperture() {
-		return getChildren(NXaperture.class);
-	}
-
-	@Override
-	public void setAllAperture(Map<String, NXaperture> aperture) {
-		setChildren(aperture);
-	}
-
-	@Override
 	public Dataset getDiameter() {
 		return getDataset(NX_DIAMETER);
 	}
@@ -190,6 +199,26 @@ public class NXenergydispersionImpl extends NXobjectImpl implements NXenergydisp
 	@Override
 	public DataNode setDiameterScalar(Double diameterValue) {
 		return setField(NX_DIAMETER, diameterValue);
+	}
+
+	@Override
+	public Dataset getRadius() {
+		return getDataset(NX_RADIUS);
+	}
+
+	@Override
+	public Double getRadiusScalar() {
+		return getDouble(NX_RADIUS);
+	}
+
+	@Override
+	public DataNode setRadius(IDataset radiusDataset) {
+		return setDataset(NX_RADIUS, radiusDataset);
+	}
+
+	@Override
+	public DataNode setRadiusScalar(Double radiusValue) {
+		return setField(NX_RADIUS, radiusValue);
 	}
 
 	@Override
@@ -233,6 +262,37 @@ public class NXenergydispersionImpl extends NXobjectImpl implements NXenergydisp
 	}
 
 	@Override
+	public NXaperture getAperture() {
+		// dataNodeName = NX_APERTURE
+		return getChild("aperture", NXaperture.class);
+	}
+
+	@Override
+	public void setAperture(NXaperture apertureGroup) {
+		putChild("aperture", apertureGroup);
+	}
+
+	@Override
+	public NXaperture getAperture(String name) {
+		return getChild(name, NXaperture.class);
+	}
+
+	@Override
+	public void setAperture(String name, NXaperture aperture) {
+		putChild(name, aperture);
+	}
+
+	@Override
+	public Map<String, NXaperture> getAllAperture() {
+		return getChildren(NXaperture.class);
+	}
+
+	@Override
+	public void setAllAperture(Map<String, NXaperture> aperture) {
+		setChildren(aperture);
+	}
+
+	@Override
 	public NXdeflector getDeflector() {
 		// dataNodeName = NX_DEFLECTOR
 		return getChild("deflector", NXdeflector.class);
@@ -264,34 +324,65 @@ public class NXenergydispersionImpl extends NXobjectImpl implements NXenergydisp
 	}
 
 	@Override
-	public NXlens_em getLens_em() {
-		// dataNodeName = NX_LENS_EM
-		return getChild("lens_em", NXlens_em.class);
+	public NXelectromagnetic_lens getElectromagnetic_lens() {
+		// dataNodeName = NX_ELECTROMAGNETIC_LENS
+		return getChild("electromagnetic_lens", NXelectromagnetic_lens.class);
 	}
 
 	@Override
-	public void setLens_em(NXlens_em lens_emGroup) {
-		putChild("lens_em", lens_emGroup);
+	public void setElectromagnetic_lens(NXelectromagnetic_lens electromagnetic_lensGroup) {
+		putChild("electromagnetic_lens", electromagnetic_lensGroup);
 	}
 
 	@Override
-	public NXlens_em getLens_em(String name) {
-		return getChild(name, NXlens_em.class);
+	public NXelectromagnetic_lens getElectromagnetic_lens(String name) {
+		return getChild(name, NXelectromagnetic_lens.class);
 	}
 
 	@Override
-	public void setLens_em(String name, NXlens_em lens_em) {
-		putChild(name, lens_em);
+	public void setElectromagnetic_lens(String name, NXelectromagnetic_lens electromagnetic_lens) {
+		putChild(name, electromagnetic_lens);
 	}
 
 	@Override
-	public Map<String, NXlens_em> getAllLens_em() {
-		return getChildren(NXlens_em.class);
+	public Map<String, NXelectromagnetic_lens> getAllElectromagnetic_lens() {
+		return getChildren(NXelectromagnetic_lens.class);
 	}
 
 	@Override
-	public void setAllLens_em(Map<String, NXlens_em> lens_em) {
-		setChildren(lens_em);
+	public void setAllElectromagnetic_lens(Map<String, NXelectromagnetic_lens> electromagnetic_lens) {
+		setChildren(electromagnetic_lens);
+	}
+
+	@Override
+	public NXfabrication getFabrication() {
+		// dataNodeName = NX_FABRICATION
+		return getChild("fabrication", NXfabrication.class);
+	}
+
+	@Override
+	public void setFabrication(NXfabrication fabricationGroup) {
+		putChild("fabrication", fabricationGroup);
+	}
+
+	@Override
+	public NXfabrication getFabrication(String name) {
+		return getChild(name, NXfabrication.class);
+	}
+
+	@Override
+	public void setFabrication(String name, NXfabrication fabrication) {
+		putChild(name, fabrication);
+	}
+
+	@Override
+	public Map<String, NXfabrication> getAllFabrication() {
+		return getChildren(NXfabrication.class);
+	}
+
+	@Override
+	public void setAllFabrication(Map<String, NXfabrication> fabrication) {
+		setChildren(fabrication);
 	}
 
 }

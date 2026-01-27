@@ -141,6 +141,66 @@ public class NXnoteImpl extends NXobjectImpl implements NXnote {
 	}
 
 	@Override
+	public Dataset getIdentifiername() {
+		return getDataset(NX_IDENTIFIERNAME);
+	}
+
+	@Override
+	public String getIdentifiernameScalar() {
+		return getString(NX_IDENTIFIERNAME);
+	}
+
+	@Override
+	public DataNode setIdentifiername(IDataset identifiernameDataset) {
+		return setDataset(NX_IDENTIFIERNAME, identifiernameDataset);
+	}
+
+	@Override
+	public DataNode setIdentifiernameScalar(String identifiernameValue) {
+		return setString(NX_IDENTIFIERNAME, identifiernameValue);
+	}
+
+	@Override
+	public Dataset getChecksum() {
+		return getDataset(NX_CHECKSUM);
+	}
+
+	@Override
+	public String getChecksumScalar() {
+		return getString(NX_CHECKSUM);
+	}
+
+	@Override
+	public DataNode setChecksum(IDataset checksumDataset) {
+		return setDataset(NX_CHECKSUM, checksumDataset);
+	}
+
+	@Override
+	public DataNode setChecksumScalar(String checksumValue) {
+		return setString(NX_CHECKSUM, checksumValue);
+	}
+
+	@Override
+	public Dataset getAlgorithm() {
+		return getDataset(NX_ALGORITHM);
+	}
+
+	@Override
+	public String getAlgorithmScalar() {
+		return getString(NX_ALGORITHM);
+	}
+
+	@Override
+	public DataNode setAlgorithm(IDataset algorithmDataset) {
+		return setDataset(NX_ALGORITHM, algorithmDataset);
+	}
+
+	@Override
+	public DataNode setAlgorithmScalar(String algorithmValue) {
+		return setString(NX_ALGORITHM, algorithmValue);
+	}
+
+	@Override
 	public Dataset getDescription() {
 		return getDataset(NX_DESCRIPTION);
 	}
@@ -198,16 +258,6 @@ public class NXnoteImpl extends NXobjectImpl implements NXnote {
 	@Override
 	public DataNode setDataScalar(Object dataValue) {
 		return setField(NX_DATA, dataValue);
-	}
-
-	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
-	}
-
-	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

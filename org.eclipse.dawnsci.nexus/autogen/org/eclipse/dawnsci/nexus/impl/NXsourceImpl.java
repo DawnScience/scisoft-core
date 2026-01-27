@@ -24,10 +24,12 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * The neutron or x-ray storage ring/facility.
+ * Radiation source emitting a beam.
+ * Examples include particle sources (electrons, neutrons, protons) or sources for electromagnetic radiation (photons).
+ * This base class can also be used to describe neutron or x-ray storage ring/facilities.
 
  */
-public class NXsourceImpl extends NXobjectImpl implements NXsource {
+public class NXsourceImpl extends NXcomponentImpl implements NXsource {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
@@ -37,9 +39,12 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 		NexusBaseClass.NX_DATA,
 		NexusBaseClass.NX_DATA,
 		NexusBaseClass.NX_GEOMETRY,
+		NexusBaseClass.NX_APERTURE,
+		NexusBaseClass.NX_ELECTROMAGNETIC_LENS,
+		NexusBaseClass.NX_DEFLECTOR,
+		NexusBaseClass.NX_FABRICATION,
 		NexusBaseClass.NX_OFF_GEOMETRY,
-		NexusBaseClass.NX_DATA,
-		NexusBaseClass.NX_TRANSFORMATIONS);
+		NexusBaseClass.NX_DATA);
 
 	public NXsourceImpl() {
 		super();
@@ -579,6 +584,166 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
+	public Dataset getWavelength() {
+		return getDataset(NX_WAVELENGTH);
+	}
+
+	@Override
+	public Double getWavelengthScalar() {
+		return getDouble(NX_WAVELENGTH);
+	}
+
+	@Override
+	public DataNode setWavelength(IDataset wavelengthDataset) {
+		return setDataset(NX_WAVELENGTH, wavelengthDataset);
+	}
+
+	@Override
+	public DataNode setWavelengthScalar(Double wavelengthValue) {
+		return setField(NX_WAVELENGTH, wavelengthValue);
+	}
+
+	@Override
+	public Dataset getPulse_energy() {
+		return getDataset(NX_PULSE_ENERGY);
+	}
+
+	@Override
+	public Double getPulse_energyScalar() {
+		return getDouble(NX_PULSE_ENERGY);
+	}
+
+	@Override
+	public DataNode setPulse_energy(IDataset pulse_energyDataset) {
+		return setDataset(NX_PULSE_ENERGY, pulse_energyDataset);
+	}
+
+	@Override
+	public DataNode setPulse_energyScalar(Double pulse_energyValue) {
+		return setField(NX_PULSE_ENERGY, pulse_energyValue);
+	}
+
+	@Override
+	public Dataset getPeak_power() {
+		return getDataset(NX_PEAK_POWER);
+	}
+
+	@Override
+	public Double getPeak_powerScalar() {
+		return getDouble(NX_PEAK_POWER);
+	}
+
+	@Override
+	public DataNode setPeak_power(IDataset peak_powerDataset) {
+		return setDataset(NX_PEAK_POWER, peak_powerDataset);
+	}
+
+	@Override
+	public DataNode setPeak_powerScalar(Double peak_powerValue) {
+		return setField(NX_PEAK_POWER, peak_powerValue);
+	}
+
+	@Override
+	public Dataset getAnode_material() {
+		return getDataset(NX_ANODE_MATERIAL);
+	}
+
+	@Override
+	public String getAnode_materialScalar() {
+		return getString(NX_ANODE_MATERIAL);
+	}
+
+	@Override
+	public DataNode setAnode_material(IDataset anode_materialDataset) {
+		return setDataset(NX_ANODE_MATERIAL, anode_materialDataset);
+	}
+
+	@Override
+	public DataNode setAnode_materialScalar(String anode_materialValue) {
+		return setString(NX_ANODE_MATERIAL, anode_materialValue);
+	}
+
+	@Override
+	public Dataset getFilament_current() {
+		return getDataset(NX_FILAMENT_CURRENT);
+	}
+
+	@Override
+	public Double getFilament_currentScalar() {
+		return getDouble(NX_FILAMENT_CURRENT);
+	}
+
+	@Override
+	public DataNode setFilament_current(IDataset filament_currentDataset) {
+		return setDataset(NX_FILAMENT_CURRENT, filament_currentDataset);
+	}
+
+	@Override
+	public DataNode setFilament_currentScalar(Double filament_currentValue) {
+		return setField(NX_FILAMENT_CURRENT, filament_currentValue);
+	}
+
+	@Override
+	public Dataset getEmission_current() {
+		return getDataset(NX_EMISSION_CURRENT);
+	}
+
+	@Override
+	public Double getEmission_currentScalar() {
+		return getDouble(NX_EMISSION_CURRENT);
+	}
+
+	@Override
+	public DataNode setEmission_current(IDataset emission_currentDataset) {
+		return setDataset(NX_EMISSION_CURRENT, emission_currentDataset);
+	}
+
+	@Override
+	public DataNode setEmission_currentScalar(Double emission_currentValue) {
+		return setField(NX_EMISSION_CURRENT, emission_currentValue);
+	}
+
+	@Override
+	public Dataset getGas_pressure() {
+		return getDataset(NX_GAS_PRESSURE);
+	}
+
+	@Override
+	public Double getGas_pressureScalar() {
+		return getDouble(NX_GAS_PRESSURE);
+	}
+
+	@Override
+	public DataNode setGas_pressure(IDataset gas_pressureDataset) {
+		return setDataset(NX_GAS_PRESSURE, gas_pressureDataset);
+	}
+
+	@Override
+	public DataNode setGas_pressureScalar(Double gas_pressureValue) {
+		return setField(NX_GAS_PRESSURE, gas_pressureValue);
+	}
+
+	@Override
+	public Dataset getPrevious_source() {
+		return getDataset(NX_PREVIOUS_SOURCE);
+	}
+
+	@Override
+	public String getPrevious_sourceScalar() {
+		return getString(NX_PREVIOUS_SOURCE);
+	}
+
+	@Override
+	public DataNode setPrevious_source(IDataset previous_sourceDataset) {
+		return setDataset(NX_PREVIOUS_SOURCE, previous_sourceDataset);
+	}
+
+	@Override
+	public DataNode setPrevious_sourceScalar(String previous_sourceValue) {
+		return setString(NX_PREVIOUS_SOURCE, previous_sourceValue);
+	}
+
+	@Override
 	@Deprecated
 	public NXgeometry getGeometry() {
 		// dataNodeName = NX_GEOMETRY
@@ -589,6 +754,130 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	@Deprecated
 	public void setGeometry(NXgeometry geometryGroup) {
 		putChild("geometry", geometryGroup);
+	}
+
+	@Override
+	public NXaperture getAperture() {
+		// dataNodeName = NX_APERTURE
+		return getChild("aperture", NXaperture.class);
+	}
+
+	@Override
+	public void setAperture(NXaperture apertureGroup) {
+		putChild("aperture", apertureGroup);
+	}
+
+	@Override
+	public NXaperture getAperture(String name) {
+		return getChild(name, NXaperture.class);
+	}
+
+	@Override
+	public void setAperture(String name, NXaperture aperture) {
+		putChild(name, aperture);
+	}
+
+	@Override
+	public Map<String, NXaperture> getAllAperture() {
+		return getChildren(NXaperture.class);
+	}
+
+	@Override
+	public void setAllAperture(Map<String, NXaperture> aperture) {
+		setChildren(aperture);
+	}
+
+	@Override
+	public NXelectromagnetic_lens getElectromagnetic_lens() {
+		// dataNodeName = NX_ELECTROMAGNETIC_LENS
+		return getChild("electromagnetic_lens", NXelectromagnetic_lens.class);
+	}
+
+	@Override
+	public void setElectromagnetic_lens(NXelectromagnetic_lens electromagnetic_lensGroup) {
+		putChild("electromagnetic_lens", electromagnetic_lensGroup);
+	}
+
+	@Override
+	public NXelectromagnetic_lens getElectromagnetic_lens(String name) {
+		return getChild(name, NXelectromagnetic_lens.class);
+	}
+
+	@Override
+	public void setElectromagnetic_lens(String name, NXelectromagnetic_lens electromagnetic_lens) {
+		putChild(name, electromagnetic_lens);
+	}
+
+	@Override
+	public Map<String, NXelectromagnetic_lens> getAllElectromagnetic_lens() {
+		return getChildren(NXelectromagnetic_lens.class);
+	}
+
+	@Override
+	public void setAllElectromagnetic_lens(Map<String, NXelectromagnetic_lens> electromagnetic_lens) {
+		setChildren(electromagnetic_lens);
+	}
+
+	@Override
+	public NXdeflector getDeflector() {
+		// dataNodeName = NX_DEFLECTOR
+		return getChild("deflector", NXdeflector.class);
+	}
+
+	@Override
+	public void setDeflector(NXdeflector deflectorGroup) {
+		putChild("deflector", deflectorGroup);
+	}
+
+	@Override
+	public NXdeflector getDeflector(String name) {
+		return getChild(name, NXdeflector.class);
+	}
+
+	@Override
+	public void setDeflector(String name, NXdeflector deflector) {
+		putChild(name, deflector);
+	}
+
+	@Override
+	public Map<String, NXdeflector> getAllDeflector() {
+		return getChildren(NXdeflector.class);
+	}
+
+	@Override
+	public void setAllDeflector(Map<String, NXdeflector> deflector) {
+		setChildren(deflector);
+	}
+
+	@Override
+	public NXfabrication getFabrication() {
+		// dataNodeName = NX_FABRICATION
+		return getChild("fabrication", NXfabrication.class);
+	}
+
+	@Override
+	public void setFabrication(NXfabrication fabricationGroup) {
+		putChild("fabrication", fabricationGroup);
+	}
+
+	@Override
+	public NXfabrication getFabrication(String name) {
+		return getChild(name, NXfabrication.class);
+	}
+
+	@Override
+	public void setFabrication(String name, NXfabrication fabrication) {
+		putChild(name, fabrication);
+	}
+
+	@Override
+	public Map<String, NXfabrication> getAllFabrication() {
+		return getChildren(NXfabrication.class);
+	}
+
+	@Override
+	public void setAllFabrication(Map<String, NXfabrication> fabrication) {
+		setChildren(fabrication);
 	}
 
 	@Override
@@ -634,16 +923,6 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	}
 
 	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
-	}
-
-	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
-	}
-
-	@Override
 	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
@@ -661,37 +940,6 @@ public class NXsourceImpl extends NXobjectImpl implements NXsource {
 	@Override
 	public DataNode setDepends_onScalar(String depends_onValue) {
 		return setString(NX_DEPENDS_ON, depends_onValue);
-	}
-
-	@Override
-	public NXtransformations getTransformations() {
-		// dataNodeName = NX_TRANSFORMATIONS
-		return getChild("transformations", NXtransformations.class);
-	}
-
-	@Override
-	public void setTransformations(NXtransformations transformationsGroup) {
-		putChild("transformations", transformationsGroup);
-	}
-
-	@Override
-	public NXtransformations getTransformations(String name) {
-		return getChild(name, NXtransformations.class);
-	}
-
-	@Override
-	public void setTransformations(String name, NXtransformations transformations) {
-		putChild(name, transformations);
-	}
-
-	@Override
-	public Map<String, NXtransformations> getAllTransformations() {
-		return getChildren(NXtransformations.class);
-	}
-
-	@Override
-	public void setAllTransformations(Map<String, NXtransformations> transformations) {
-		setChildren(transformations);
 	}
 
 }

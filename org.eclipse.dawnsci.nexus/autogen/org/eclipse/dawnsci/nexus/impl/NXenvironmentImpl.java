@@ -35,6 +35,7 @@ public class NXenvironmentImpl extends NXobjectImpl implements NXenvironment {
 		NexusBaseClass.NX_GEOMETRY,
 		NexusBaseClass.NX_TRANSFORMATIONS,
 		NexusBaseClass.NX_NOTE,
+		NexusBaseClass.NX_ACTUATOR,
 		NexusBaseClass.NX_SENSOR);
 
 	public NXenvironmentImpl() {
@@ -173,6 +174,26 @@ public class NXenvironmentImpl extends NXobjectImpl implements NXenvironment {
 	}
 
 	@Override
+	public Dataset getValue() {
+		return getDataset(NX_VALUE);
+	}
+
+	@Override
+	public Double getValueScalar() {
+		return getDouble(NX_VALUE);
+	}
+
+	@Override
+	public DataNode setValue(IDataset valueDataset) {
+		return setDataset(NX_VALUE, valueDataset);
+	}
+
+	@Override
+	public DataNode setValueScalar(Double valueValue) {
+		return setField(NX_VALUE, valueValue);
+	}
+
+	@Override
 	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
@@ -252,6 +273,37 @@ public class NXenvironmentImpl extends NXobjectImpl implements NXenvironment {
 	@Override
 	public void setAllNote(Map<String, NXnote> note) {
 		setChildren(note);
+	}
+
+	@Override
+	public NXactuator getActuator() {
+		// dataNodeName = NX_ACTUATOR
+		return getChild("actuator", NXactuator.class);
+	}
+
+	@Override
+	public void setActuator(NXactuator actuatorGroup) {
+		putChild("actuator", actuatorGroup);
+	}
+
+	@Override
+	public NXactuator getActuator(String name) {
+		return getChild(name, NXactuator.class);
+	}
+
+	@Override
+	public void setActuator(String name, NXactuator actuator) {
+		putChild(name, actuator);
+	}
+
+	@Override
+	public Map<String, NXactuator> getAllActuator() {
+		return getChildren(NXactuator.class);
+	}
+
+	@Override
+	public void setAllActuator(Map<String, NXactuator> actuator) {
+		setChildren(actuator);
 	}
 
 	@Override

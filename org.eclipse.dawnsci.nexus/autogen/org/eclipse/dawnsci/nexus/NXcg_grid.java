@@ -11,142 +11,47 @@
 
 package org.eclipse.dawnsci.nexus;
 
-import java.util.Map;
-
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * Computational geometry description of a Wigner-Seitz cell grid in Euclidean space.
- * Frequently convenient three-dimensional grids with cubic cells are used.
- * Exemplar applications are spectral-solver based crystal plasticity
- * and stencil methods like phase-field or cellular automata.
+ * Computational geometry description of a grid of Wigner-Seitz cells in Euclidean space.
+ * Three-dimensional grids with cubic cells are if not the most frequently used
+ * example of such grids. Numerical methods and models that use grids are used
+ * in many cases in the natural sciences and engineering disciplines. Examples are
+ * discretizations in space and time used for phase-field, cellular automata, or Monte Carlo
+ * modeling.
  * <p><b>Symbols:</b>
  * The symbols used in the schema to specify e.g. dimensions of arrays.<ul>
  * <li><b>d</b>
  * The dimensionality of the grid.</li>
  * <li><b>c</b>
- * The cardinality or total number of cells/grid points.</li>
+ * The cardinality or total number of cells aka grid points.</li>
  * <li><b>n_b</b>
- * Number of boundaries of the bounding box or primitive to the grid.</li></ul></p>
+ * Number of boundaries of the bounding box or primitive housing the grid.</li></ul></p>
  *
  */
-public interface NXcg_grid extends NXobject {
+public interface NXcg_grid extends NXcg_primitive {
 
-	public static final String NX_DIMENSIONALITY = "dimensionality";
-	public static final String NX_CARDINALITY = "cardinality";
 	public static final String NX_ORIGIN = "origin";
 	public static final String NX_SYMMETRY = "symmetry";
 	public static final String NX_CELL_DIMENSIONS = "cell_dimensions";
 	public static final String NX_EXTENT = "extent";
-	public static final String NX_IDENTIFIER_OFFSET = "identifier_offset";
-	public static final String NX_IDENTIFIER = "identifier";
 	public static final String NX_POSITION = "position";
 	public static final String NX_COORDINATE = "coordinate";
 	public static final String NX_NUMBER_OF_BOUNDARIES = "number_of_boundaries";
 	public static final String NX_BOUNDARIES = "boundaries";
 	public static final String NX_BOUNDARY_CONDITIONS = "boundary_conditions";
+	public static final String NX_SURFACE_RECONSTRUCTION = "surface_reconstruction";
 	/**
-	 * <p>
-	 * <b>Type:</b> NX_POSINT
-	 * <b>Units:</b> NX_UNITLESS
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>1</b> </li>
-	 * <li><b>2</b> </li>
-	 * <li><b>3</b> </li></ul></p>
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Dataset getDimensionality();
-
-	/**
-	 * <p>
-	 * <b>Type:</b> NX_POSINT
-	 * <b>Units:</b> NX_UNITLESS
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>1</b> </li>
-	 * <li><b>2</b> </li>
-	 * <li><b>3</b> </li></ul></p>
-	 * </p>
-	 *
-	 * @param dimensionalityDataset the dimensionalityDataset
-	 */
-	public DataNode setDimensionality(IDataset dimensionalityDataset);
-
-	/**
-	 * <p>
-	 * <b>Type:</b> NX_POSINT
-	 * <b>Units:</b> NX_UNITLESS
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>1</b> </li>
-	 * <li><b>2</b> </li>
-	 * <li><b>3</b> </li></ul></p>
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Long getDimensionalityScalar();
-
-	/**
-	 * <p>
-	 * <b>Type:</b> NX_POSINT
-	 * <b>Units:</b> NX_UNITLESS
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>1</b> </li>
-	 * <li><b>2</b> </li>
-	 * <li><b>3</b> </li></ul></p>
-	 * </p>
-	 *
-	 * @param dimensionality the dimensionality
-	 */
-	public DataNode setDimensionalityScalar(Long dimensionalityValue);
-
-	/**
-	 * <p>
-	 * <b>Type:</b> NX_POSINT
-	 * <b>Units:</b> NX_UNITLESS
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Dataset getCardinality();
-
-	/**
-	 * <p>
-	 * <b>Type:</b> NX_POSINT
-	 * <b>Units:</b> NX_UNITLESS
-	 * </p>
-	 *
-	 * @param cardinalityDataset the cardinalityDataset
-	 */
-	public DataNode setCardinality(IDataset cardinalityDataset);
-
-	/**
-	 * <p>
-	 * <b>Type:</b> NX_POSINT
-	 * <b>Units:</b> NX_UNITLESS
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Long getCardinalityScalar();
-
-	/**
-	 * <p>
-	 * <b>Type:</b> NX_POSINT
-	 * <b>Units:</b> NX_UNITLESS
-	 * </p>
-	 *
-	 * @param cardinality the cardinality
-	 */
-	public DataNode setCardinalityScalar(Long cardinalityValue);
-
-	/**
+	 * Location of the origin of the grid.
+	 * Use the depends_on field that is inherited from the :ref:`NXcg_primitive`
+	 * class to specify the coordinate system in which the origin location is defined.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: d;
 	 * </p>
 	 *
@@ -155,8 +60,12 @@ public interface NXcg_grid extends NXobject {
 	public Dataset getOrigin();
 
 	/**
+	 * Location of the origin of the grid.
+	 * Use the depends_on field that is inherited from the :ref:`NXcg_primitive`
+	 * class to specify the coordinate system in which the origin location is defined.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: d;
 	 * </p>
 	 *
@@ -165,8 +74,12 @@ public interface NXcg_grid extends NXobject {
 	public DataNode setOrigin(IDataset originDataset);
 
 	/**
+	 * Location of the origin of the grid.
+	 * Use the depends_on field that is inherited from the :ref:`NXcg_primitive`
+	 * class to specify the coordinate system in which the origin location is defined.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: d;
 	 * </p>
 	 *
@@ -175,8 +88,12 @@ public interface NXcg_grid extends NXobject {
 	public Number getOriginScalar();
 
 	/**
+	 * Location of the origin of the grid.
+	 * Use the depends_on field that is inherited from the :ref:`NXcg_primitive`
+	 * class to specify the coordinate system in which the origin location is defined.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: d;
 	 * </p>
 	 *
@@ -187,6 +104,7 @@ public interface NXcg_grid extends NXobject {
 	/**
 	 * The symmetry of the lattice defining the shape of the unit cell.
 	 * <p>
+	 * <b>Type:</b> NX_CHAR
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>cubic</b> </li></ul></p>
 	 * </p>
@@ -198,6 +116,7 @@ public interface NXcg_grid extends NXobject {
 	/**
 	 * The symmetry of the lattice defining the shape of the unit cell.
 	 * <p>
+	 * <b>Type:</b> NX_CHAR
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>cubic</b> </li></ul></p>
 	 * </p>
@@ -209,6 +128,7 @@ public interface NXcg_grid extends NXobject {
 	/**
 	 * The symmetry of the lattice defining the shape of the unit cell.
 	 * <p>
+	 * <b>Type:</b> NX_CHAR
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>cubic</b> </li></ul></p>
 	 * </p>
@@ -220,6 +140,7 @@ public interface NXcg_grid extends NXobject {
 	/**
 	 * The symmetry of the lattice defining the shape of the unit cell.
 	 * <p>
+	 * <b>Type:</b> NX_CHAR
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>cubic</b> </li></ul></p>
 	 * </p>
@@ -278,13 +199,13 @@ public interface NXcg_grid extends NXobject {
 
 	/**
 	 * Number of unit cells along each of the d unit vectors.
-	 * The total number of cells, or grid points has to be the cardinality.
+	 * The total number of cells or grid points has to be the cardinality.
 	 * If the grid has an irregular number of grid positions in each direction,
 	 * as it could be for instance the case of a grid where all grid points
 	 * outside some masking primitive are removed, this extent field should
-	 * not be used. Instead use the coordinate field.
+	 * not be used. Instead, use the coordinate field.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: d;
 	 * </p>
@@ -295,13 +216,13 @@ public interface NXcg_grid extends NXobject {
 
 	/**
 	 * Number of unit cells along each of the d unit vectors.
-	 * The total number of cells, or grid points has to be the cardinality.
+	 * The total number of cells or grid points has to be the cardinality.
 	 * If the grid has an irregular number of grid positions in each direction,
 	 * as it could be for instance the case of a grid where all grid points
 	 * outside some masking primitive are removed, this extent field should
-	 * not be used. Instead use the coordinate field.
+	 * not be used. Instead, use the coordinate field.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: d;
 	 * </p>
@@ -312,13 +233,13 @@ public interface NXcg_grid extends NXobject {
 
 	/**
 	 * Number of unit cells along each of the d unit vectors.
-	 * The total number of cells, or grid points has to be the cardinality.
+	 * The total number of cells or grid points has to be the cardinality.
 	 * If the grid has an irregular number of grid positions in each direction,
 	 * as it could be for instance the case of a grid where all grid points
 	 * outside some masking primitive are removed, this extent field should
-	 * not be used. Instead use the coordinate field.
+	 * not be used. Instead, use the coordinate field.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: d;
 	 * </p>
@@ -329,13 +250,13 @@ public interface NXcg_grid extends NXobject {
 
 	/**
 	 * Number of unit cells along each of the d unit vectors.
-	 * The total number of cells, or grid points has to be the cardinality.
+	 * The total number of cells or grid points has to be the cardinality.
 	 * If the grid has an irregular number of grid positions in each direction,
 	 * as it could be for instance the case of a grid where all grid points
 	 * outside some masking primitive are removed, this extent field should
-	 * not be used. Instead use the coordinate field.
+	 * not be used. Instead, use the coordinate field.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: d;
 	 * </p>
@@ -345,198 +266,10 @@ public interface NXcg_grid extends NXobject {
 	public DataNode setExtentScalar(Long extentValue);
 
 	/**
-	 * Reference to or definition of a coordinate system with
-	 * which the positions and directions are interpretable.
-	 *
-	 * @return  the value.
-	 */
-	public NXtransformations getTransformations();
-
-	/**
-	 * Reference to or definition of a coordinate system with
-	 * which the positions and directions are interpretable.
-	 *
-	 * @param transformationsGroup the transformationsGroup
-	 */
-	public void setTransformations(NXtransformations transformationsGroup);
-
-	/**
-	 * Get a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * Reference to or definition of a coordinate system with
-	 * which the positions and directions are interpretable.</li>
-	 * </ul>
-	 *
-	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public NXtransformations getTransformations(String name);
-
-	/**
-	 * Set a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * Reference to or definition of a coordinate system with
-	 * which the positions and directions are interpretable.</li>
-	 * </ul>
-	 *
-	 * @param name the name of the node
-	 * @param transformations the value to set
-	 */
-	public void setTransformations(String name, NXtransformations transformations);
-
-	/**
-	 * Get all NXtransformations nodes:
-	 * <ul>
-	 * <li>
-	 * Reference to or definition of a coordinate system with
-	 * which the positions and directions are interpretable.</li>
-	 * </ul>
-	 *
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public Map<String, NXtransformations> getAllTransformations();
-
-	/**
-	 * Set multiple child nodes of a particular type.
-	 * <ul>
-	 * <li>
-	 * Reference to or definition of a coordinate system with
-	 * which the positions and directions are interpretable.</li>
-	 * </ul>
-	 *
-	 * @param transformations the child nodes to add
-	 */
-
-	public void setAllTransformations(Map<String, NXtransformations> transformations);
-
-
-	/**
-	 * Integer which specifies the first index to be used for distinguishing
-	 * identifiers for cells. Identifiers are defined either implicitly
-	 * or explicitly. For implicit indexing the identifiers are defined on the
-	 * interval [identifier_offset, identifier_offset+c-1].
-	 * For explicit indexing the identifier array has to be defined.
-	 * The identifier_offset field can for example be used to communicate if the
-	 * identifiers are expected to start from 1 (referred to as Fortran-/Matlab-)
-	 * or from 0 (referred to as C-, Python-style index notation) respectively.
-	 * <p>
-	 * <b>Type:</b> NX_INT
-	 * <b>Units:</b> NX_UNITLESS
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Dataset getIdentifier_offset();
-
-	/**
-	 * Integer which specifies the first index to be used for distinguishing
-	 * identifiers for cells. Identifiers are defined either implicitly
-	 * or explicitly. For implicit indexing the identifiers are defined on the
-	 * interval [identifier_offset, identifier_offset+c-1].
-	 * For explicit indexing the identifier array has to be defined.
-	 * The identifier_offset field can for example be used to communicate if the
-	 * identifiers are expected to start from 1 (referred to as Fortran-/Matlab-)
-	 * or from 0 (referred to as C-, Python-style index notation) respectively.
-	 * <p>
-	 * <b>Type:</b> NX_INT
-	 * <b>Units:</b> NX_UNITLESS
-	 * </p>
-	 *
-	 * @param identifier_offsetDataset the identifier_offsetDataset
-	 */
-	public DataNode setIdentifier_offset(IDataset identifier_offsetDataset);
-
-	/**
-	 * Integer which specifies the first index to be used for distinguishing
-	 * identifiers for cells. Identifiers are defined either implicitly
-	 * or explicitly. For implicit indexing the identifiers are defined on the
-	 * interval [identifier_offset, identifier_offset+c-1].
-	 * For explicit indexing the identifier array has to be defined.
-	 * The identifier_offset field can for example be used to communicate if the
-	 * identifiers are expected to start from 1 (referred to as Fortran-/Matlab-)
-	 * or from 0 (referred to as C-, Python-style index notation) respectively.
-	 * <p>
-	 * <b>Type:</b> NX_INT
-	 * <b>Units:</b> NX_UNITLESS
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Long getIdentifier_offsetScalar();
-
-	/**
-	 * Integer which specifies the first index to be used for distinguishing
-	 * identifiers for cells. Identifiers are defined either implicitly
-	 * or explicitly. For implicit indexing the identifiers are defined on the
-	 * interval [identifier_offset, identifier_offset+c-1].
-	 * For explicit indexing the identifier array has to be defined.
-	 * The identifier_offset field can for example be used to communicate if the
-	 * identifiers are expected to start from 1 (referred to as Fortran-/Matlab-)
-	 * or from 0 (referred to as C-, Python-style index notation) respectively.
-	 * <p>
-	 * <b>Type:</b> NX_INT
-	 * <b>Units:</b> NX_UNITLESS
-	 * </p>
-	 *
-	 * @param identifier_offset the identifier_offset
-	 */
-	public DataNode setIdentifier_offsetScalar(Long identifier_offsetValue);
-
-	/**
-	 * Integer used to distinguish cells for explicit indexing.
-	 * <p>
-	 * <b>Type:</b> NX_INT
-	 * <b>Units:</b> NX_UNITLESS
-	 * <b>Dimensions:</b> 1: c;
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Dataset getIdentifier();
-
-	/**
-	 * Integer used to distinguish cells for explicit indexing.
-	 * <p>
-	 * <b>Type:</b> NX_INT
-	 * <b>Units:</b> NX_UNITLESS
-	 * <b>Dimensions:</b> 1: c;
-	 * </p>
-	 *
-	 * @param identifierDataset the identifierDataset
-	 */
-	public DataNode setIdentifier(IDataset identifierDataset);
-
-	/**
-	 * Integer used to distinguish cells for explicit indexing.
-	 * <p>
-	 * <b>Type:</b> NX_INT
-	 * <b>Units:</b> NX_UNITLESS
-	 * <b>Dimensions:</b> 1: c;
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Long getIdentifierScalar();
-
-	/**
-	 * Integer used to distinguish cells for explicit indexing.
-	 * <p>
-	 * <b>Type:</b> NX_INT
-	 * <b>Units:</b> NX_UNITLESS
-	 * <b>Dimensions:</b> 1: c;
-	 * </p>
-	 *
-	 * @param identifier the identifier
-	 */
-	public DataNode setIdentifierScalar(Long identifierValue);
-
-	/**
 	 * Position of each cell in Euclidean space.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: c; 2: d;
 	 * </p>
 	 *
@@ -548,7 +281,7 @@ public interface NXcg_grid extends NXobject {
 	 * Position of each cell in Euclidean space.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: c; 2: d;
 	 * </p>
 	 *
@@ -560,7 +293,7 @@ public interface NXcg_grid extends NXobject {
 	 * Position of each cell in Euclidean space.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: c; 2: d;
 	 * </p>
 	 *
@@ -572,7 +305,7 @@ public interface NXcg_grid extends NXobject {
 	 * Position of each cell in Euclidean space.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: c; 2: d;
 	 * </p>
 	 *
@@ -629,25 +362,25 @@ public interface NXcg_grid extends NXobject {
 	public DataNode setCoordinateScalar(Long coordinateValue);
 
 	/**
-	 * A tight bounding box or sphere or bounding primitive about the grid.
+	 * A tight bounding box about the grid.
 	 *
 	 * @return  the value.
 	 */
-	public NXcg_polyhedron_set getBounding_box();
+	public NXcg_polyhedron getBounding_box();
 
 	/**
-	 * A tight bounding box or sphere or bounding primitive about the grid.
+	 * A tight bounding box about the grid.
 	 *
 	 * @param bounding_boxGroup the bounding_boxGroup
 	 */
-	public void setBounding_box(NXcg_polyhedron_set bounding_boxGroup);
+	public void setBounding_box(NXcg_polyhedron bounding_boxGroup);
 
 	/**
-	 * How many distinct boundaries are distinguished?
+	 * Number of boundaries distinguished
 	 * Most grids discretize a cubic or cuboidal region. In this case
 	 * six sides can be distinguished, each making an own boundary.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
@@ -656,11 +389,11 @@ public interface NXcg_grid extends NXobject {
 	public Dataset getNumber_of_boundaries();
 
 	/**
-	 * How many distinct boundaries are distinguished?
+	 * Number of boundaries distinguished
 	 * Most grids discretize a cubic or cuboidal region. In this case
 	 * six sides can be distinguished, each making an own boundary.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
@@ -669,11 +402,11 @@ public interface NXcg_grid extends NXobject {
 	public DataNode setNumber_of_boundaries(IDataset number_of_boundariesDataset);
 
 	/**
-	 * How many distinct boundaries are distinguished?
+	 * Number of boundaries distinguished
 	 * Most grids discretize a cubic or cuboidal region. In this case
 	 * six sides can be distinguished, each making an own boundary.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
@@ -682,11 +415,11 @@ public interface NXcg_grid extends NXobject {
 	public Long getNumber_of_boundariesScalar();
 
 	/**
-	 * How many distinct boundaries are distinguished?
+	 * Number of boundaries distinguished
 	 * Most grids discretize a cubic or cuboidal region. In this case
 	 * six sides can be distinguished, each making an own boundary.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
@@ -695,9 +428,10 @@ public interface NXcg_grid extends NXobject {
 	public DataNode setNumber_of_boundariesScalar(Long number_of_boundariesValue);
 
 	/**
-	 * Name of domain boundaries of the simulation box/ROI e.g. left, right,
-	 * front, back, bottom, top.
+	 * Name of domain boundaries of the simulation box/ROI
+	 * e.g. left, right, front, back, bottom, top.
 	 * <p>
+	 * <b>Type:</b> NX_CHAR
 	 * <b>Dimensions:</b> 1: n_b;
 	 * </p>
 	 *
@@ -706,9 +440,10 @@ public interface NXcg_grid extends NXobject {
 	public Dataset getBoundaries();
 
 	/**
-	 * Name of domain boundaries of the simulation box/ROI e.g. left, right,
-	 * front, back, bottom, top.
+	 * Name of domain boundaries of the simulation box/ROI
+	 * e.g. left, right, front, back, bottom, top.
 	 * <p>
+	 * <b>Type:</b> NX_CHAR
 	 * <b>Dimensions:</b> 1: n_b;
 	 * </p>
 	 *
@@ -717,9 +452,10 @@ public interface NXcg_grid extends NXobject {
 	public DataNode setBoundaries(IDataset boundariesDataset);
 
 	/**
-	 * Name of domain boundaries of the simulation box/ROI e.g. left, right,
-	 * front, back, bottom, top.
+	 * Name of domain boundaries of the simulation box/ROI
+	 * e.g. left, right, front, back, bottom, top.
 	 * <p>
+	 * <b>Type:</b> NX_CHAR
 	 * <b>Dimensions:</b> 1: n_b;
 	 * </p>
 	 *
@@ -728,9 +464,10 @@ public interface NXcg_grid extends NXobject {
 	public String getBoundariesScalar();
 
 	/**
-	 * Name of domain boundaries of the simulation box/ROI e.g. left, right,
-	 * front, back, bottom, top.
+	 * Name of domain boundaries of the simulation box/ROI
+	 * e.g. left, right, front, back, bottom, top.
 	 * <p>
+	 * <b>Type:</b> NX_CHAR
 	 * <b>Dimensions:</b> 1: n_b;
 	 * </p>
 	 *
@@ -809,5 +546,93 @@ public interface NXcg_grid extends NXobject {
 	 * @param boundary_conditions the boundary_conditions
 	 */
 	public DataNode setBoundary_conditionsScalar(Long boundary_conditionsValue);
+
+	/**
+	 * Details about the computational geometry method and implementation
+	 * used for discretizing internal surfaces as e.g. obtained with marching methods,
+	 * like marching squares or marching cubes.
+	 * Documenting which specific version was used helps with understanding how
+	 * robust the results are with respect to the topology of the triangulation.
+	 * Reference to the specific implementation of marching cubes used.
+	 * See for example the following papers for details about how to identify a
+	 * DOI which specifies the implementation used:
+	 * * `W. E. Lorensen <https://doi.org/10.1109/MCG.2020.2971284>`_
+	 * * `T. S. Newman and H. Yi <https://doi.org/10.1016/j.cag.2006.07.021>`_
+	 * The value placed here should ideally be an identifier of a program.
+	 * If not possible, an identifier for a paper, technical report, or free-text
+	 * description can be used instead.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getSurface_reconstruction();
+
+	/**
+	 * Details about the computational geometry method and implementation
+	 * used for discretizing internal surfaces as e.g. obtained with marching methods,
+	 * like marching squares or marching cubes.
+	 * Documenting which specific version was used helps with understanding how
+	 * robust the results are with respect to the topology of the triangulation.
+	 * Reference to the specific implementation of marching cubes used.
+	 * See for example the following papers for details about how to identify a
+	 * DOI which specifies the implementation used:
+	 * * `W. E. Lorensen <https://doi.org/10.1109/MCG.2020.2971284>`_
+	 * * `T. S. Newman and H. Yi <https://doi.org/10.1016/j.cag.2006.07.021>`_
+	 * The value placed here should ideally be an identifier of a program.
+	 * If not possible, an identifier for a paper, technical report, or free-text
+	 * description can be used instead.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @param surface_reconstructionDataset the surface_reconstructionDataset
+	 */
+	public DataNode setSurface_reconstruction(IDataset surface_reconstructionDataset);
+
+	/**
+	 * Details about the computational geometry method and implementation
+	 * used for discretizing internal surfaces as e.g. obtained with marching methods,
+	 * like marching squares or marching cubes.
+	 * Documenting which specific version was used helps with understanding how
+	 * robust the results are with respect to the topology of the triangulation.
+	 * Reference to the specific implementation of marching cubes used.
+	 * See for example the following papers for details about how to identify a
+	 * DOI which specifies the implementation used:
+	 * * `W. E. Lorensen <https://doi.org/10.1109/MCG.2020.2971284>`_
+	 * * `T. S. Newman and H. Yi <https://doi.org/10.1016/j.cag.2006.07.021>`_
+	 * The value placed here should ideally be an identifier of a program.
+	 * If not possible, an identifier for a paper, technical report, or free-text
+	 * description can be used instead.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public String getSurface_reconstructionScalar();
+
+	/**
+	 * Details about the computational geometry method and implementation
+	 * used for discretizing internal surfaces as e.g. obtained with marching methods,
+	 * like marching squares or marching cubes.
+	 * Documenting which specific version was used helps with understanding how
+	 * robust the results are with respect to the topology of the triangulation.
+	 * Reference to the specific implementation of marching cubes used.
+	 * See for example the following papers for details about how to identify a
+	 * DOI which specifies the implementation used:
+	 * * `W. E. Lorensen <https://doi.org/10.1109/MCG.2020.2971284>`_
+	 * * `T. S. Newman and H. Yi <https://doi.org/10.1016/j.cag.2006.07.021>`_
+	 * The value placed here should ideally be an identifier of a program.
+	 * If not possible, an identifier for a paper, technical report, or free-text
+	 * description can be used instead.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @param surface_reconstruction the surface_reconstruction
+	 */
+	public DataNode setSurface_reconstructionScalar(String surface_reconstructionValue);
 
 }

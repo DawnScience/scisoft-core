@@ -21,10 +21,10 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * definition for a quadrupole magnet.
+ * Base class for a quadrupole magnet.
 
  */
-public class NXquadrupole_magnetImpl extends NXobjectImpl implements NXquadrupole_magnet {
+public class NXquadrupole_magnetImpl extends NXcomponentImpl implements NXquadrupole_magnet {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 

@@ -29,9 +29,9 @@ import org.eclipse.january.dataset.Dataset;
  * considered as a beamline component and this group may be defined as a subgroup directly inside
  * :ref:`NXinstrument`, in which case it is recommended that the position of the beam is specified by an
  * :ref:`NXtransformations` group, unless the beam is at the origin (which is the sample).
- * Note that incident_wavelength and related fields can be a scalar values or arrays, depending on the use case.
+ * Note that ``incident_wavelength``, ``incident_energy``, and related fields can be a scalar values or arrays, depending on the use case.
  * To support these use cases, the explicit dimensionality of these fields is not specified, but it can be inferred
- * by the presense of and shape of accompanying fields, such as incident_wavelength_weights for a polychromatic beam.
+ * by the presence of and shape of accompanying fields, such as incident_wavelength_weights for a polychromatic beam.
  * <p><b>Symbols:</b>
  * These symbols coordinate datasets with the same shape.<ul>
  * <li><b>nP</b>
@@ -46,6 +46,8 @@ public interface NXbeam extends NXobject {
 
 	public static final String NX_DISTANCE = "distance";
 	public static final String NX_INCIDENT_ENERGY = "incident_energy";
+	public static final String NX_INCIDENT_ENERGY_SPREAD = "incident_energy_spread";
+	public static final String NX_INCIDENT_ENERGY_WEIGHTS = "incident_energy_weights";
 	public static final String NX_FINAL_ENERGY = "final_energy";
 	public static final String NX_ENERGY_TRANSFER = "energy_transfer";
 	public static final String NX_INCIDENT_WAVELENGTH = "incident_wavelength";
@@ -61,7 +63,17 @@ public interface NXbeam extends NXobject {
 	public static final String NX_FINAL_WAVELENGTH_SPREAD = "final_wavelength_spread";
 	public static final String NX_FINAL_BEAM_DIVERGENCE = "final_beam_divergence";
 	public static final String NX_FLUX = "flux";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
+	public static final String NX_PULSE_ENERGY = "pulse_energy";
+	public static final String NX_AVERAGE_POWER = "average_power";
+	public static final String NX_FLUENCE = "fluence";
+	public static final String NX_PULSE_DURATION = "pulse_duration";
+	public static final String NX_PULSE_DELAY = "pulse_delay";
+	public static final String NX_PULSE_DELAY_ATTRIBUTE_REFERENCE_BEAM = "reference_beam";
+	public static final String NX_FROG_TRACE = "frog_trace";
+	public static final String NX_FROG_DELAYS = "frog_delays";
+	public static final String NX_FROG_FREQUENCIES = "frog_frequencies";
+	public static final String NX_CHIRP_TYPE = "chirp_type";
+	public static final String NX_CHIRP_GDD = "chirp_gdd";
 	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
 	 * Distance from sample. Note, it is recommended to use NXtransformations instead.
@@ -108,7 +120,10 @@ public interface NXbeam extends NXobject {
 	public DataNode setDistanceScalar(Double distanceValue);
 
 	/**
-	 * Energy carried by each particle of the beam on entering the beamline component
+	 * Energy carried by each particle of the beam on entering the given location.
+	 * Several use cases are permitted, depending on the presence or absence of
+	 * other ``incident_energy_X`` fields. The usage should follow that of
+	 * :ref:`incident_wavelength </NXbeam/incident_wavelength-field>`.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
@@ -120,7 +135,10 @@ public interface NXbeam extends NXobject {
 	public Dataset getIncident_energy();
 
 	/**
-	 * Energy carried by each particle of the beam on entering the beamline component
+	 * Energy carried by each particle of the beam on entering the given location.
+	 * Several use cases are permitted, depending on the presence or absence of
+	 * other ``incident_energy_X`` fields. The usage should follow that of
+	 * :ref:`incident_wavelength </NXbeam/incident_wavelength-field>`.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
@@ -132,7 +150,10 @@ public interface NXbeam extends NXobject {
 	public DataNode setIncident_energy(IDataset incident_energyDataset);
 
 	/**
-	 * Energy carried by each particle of the beam on entering the beamline component
+	 * Energy carried by each particle of the beam on entering the given location.
+	 * Several use cases are permitted, depending on the presence or absence of
+	 * other ``incident_energy_X`` fields. The usage should follow that of
+	 * :ref:`incident_wavelength </NXbeam/incident_wavelength-field>`.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
@@ -144,7 +165,10 @@ public interface NXbeam extends NXobject {
 	public Double getIncident_energyScalar();
 
 	/**
-	 * Energy carried by each particle of the beam on entering the beamline component
+	 * Energy carried by each particle of the beam on entering the given location.
+	 * Several use cases are permitted, depending on the presence or absence of
+	 * other ``incident_energy_X`` fields. The usage should follow that of
+	 * :ref:`incident_wavelength </NXbeam/incident_wavelength-field>`.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
@@ -156,7 +180,111 @@ public interface NXbeam extends NXobject {
 	public DataNode setIncident_energyScalar(Double incident_energyValue);
 
 	/**
-	 * Energy carried by each particle of the beam on leaving the beamline component
+	 * The energy spread FWHM for the corresponding energy(ies) in incident_energy.
+	 * The usage of this field should follow that of
+	 * :ref:`incident_wavelength </NXbeam/incident_wavelength-field>`.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ENERGY
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getIncident_energy_spread();
+
+	/**
+	 * The energy spread FWHM for the corresponding energy(ies) in incident_energy.
+	 * The usage of this field should follow that of
+	 * :ref:`incident_wavelength </NXbeam/incident_wavelength-field>`.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ENERGY
+	 * </p>
+	 *
+	 * @param incident_energy_spreadDataset the incident_energy_spreadDataset
+	 */
+	public DataNode setIncident_energy_spread(IDataset incident_energy_spreadDataset);
+
+	/**
+	 * The energy spread FWHM for the corresponding energy(ies) in incident_energy.
+	 * The usage of this field should follow that of
+	 * :ref:`incident_wavelength </NXbeam/incident_wavelength-field>`.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ENERGY
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Number getIncident_energy_spreadScalar();
+
+	/**
+	 * The energy spread FWHM for the corresponding energy(ies) in incident_energy.
+	 * The usage of this field should follow that of
+	 * :ref:`incident_wavelength </NXbeam/incident_wavelength-field>`.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ENERGY
+	 * </p>
+	 *
+	 * @param incident_energy_spread the incident_energy_spread
+	 */
+	public DataNode setIncident_energy_spreadScalar(Number incident_energy_spreadValue);
+
+	/**
+	 * Relative weights of the corresponding energies in ``incident_energy``.
+	 * The usage of this field should follow that of
+	 * :ref:`incident_wavelength </NXbeam/incident_wavelength-field>`.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ENERGY
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getIncident_energy_weights();
+
+	/**
+	 * Relative weights of the corresponding energies in ``incident_energy``.
+	 * The usage of this field should follow that of
+	 * :ref:`incident_wavelength </NXbeam/incident_wavelength-field>`.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ENERGY
+	 * </p>
+	 *
+	 * @param incident_energy_weightsDataset the incident_energy_weightsDataset
+	 */
+	public DataNode setIncident_energy_weights(IDataset incident_energy_weightsDataset);
+
+	/**
+	 * Relative weights of the corresponding energies in ``incident_energy``.
+	 * The usage of this field should follow that of
+	 * :ref:`incident_wavelength </NXbeam/incident_wavelength-field>`.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ENERGY
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Number getIncident_energy_weightsScalar();
+
+	/**
+	 * Relative weights of the corresponding energies in ``incident_energy``.
+	 * The usage of this field should follow that of
+	 * :ref:`incident_wavelength </NXbeam/incident_wavelength-field>`.
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ENERGY
+	 * </p>
+	 *
+	 * @param incident_energy_weights the incident_energy_weights
+	 */
+	public DataNode setIncident_energy_weightsScalar(Number incident_energy_weightsValue);
+
+	/**
+	 * Energy carried by each particle of the beam on leaving the given location
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
@@ -168,7 +296,7 @@ public interface NXbeam extends NXobject {
 	public Dataset getFinal_energy();
 
 	/**
-	 * Energy carried by each particle of the beam on leaving the beamline component
+	 * Energy carried by each particle of the beam on leaving the given location
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
@@ -180,7 +308,7 @@ public interface NXbeam extends NXobject {
 	public DataNode setFinal_energy(IDataset final_energyDataset);
 
 	/**
-	 * Energy carried by each particle of the beam on leaving the beamline component
+	 * Energy carried by each particle of the beam on leaving the given location
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
@@ -192,7 +320,7 @@ public interface NXbeam extends NXobject {
 	public Double getFinal_energyScalar();
 
 	/**
-	 * Energy carried by each particle of the beam on leaving the beamline component
+	 * Energy carried by each particle of the beam on leaving the given location
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_ENERGY
@@ -601,7 +729,11 @@ public interface NXbeam extends NXobject {
 
 	/**
 	 * Size of the beam entering this component. Note this represents
-	 * a rectangular beam aperture, and values represent FWHM
+	 * a rectangular beam aperture, and values represent FWHM.
+	 * If applicable, the first dimension shall represent the extent
+	 * in the direction parallel to the azimuthal reference plane
+	 * (by default it is [1,0,0]), and the second dimension shall be
+	 * the normal to the reference plane (by default it is [0,1,0]).
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
@@ -614,7 +746,11 @@ public interface NXbeam extends NXobject {
 
 	/**
 	 * Size of the beam entering this component. Note this represents
-	 * a rectangular beam aperture, and values represent FWHM
+	 * a rectangular beam aperture, and values represent FWHM.
+	 * If applicable, the first dimension shall represent the extent
+	 * in the direction parallel to the azimuthal reference plane
+	 * (by default it is [1,0,0]), and the second dimension shall be
+	 * the normal to the reference plane (by default it is [0,1,0]).
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
@@ -627,7 +763,11 @@ public interface NXbeam extends NXobject {
 
 	/**
 	 * Size of the beam entering this component. Note this represents
-	 * a rectangular beam aperture, and values represent FWHM
+	 * a rectangular beam aperture, and values represent FWHM.
+	 * If applicable, the first dimension shall represent the extent
+	 * in the direction parallel to the azimuthal reference plane
+	 * (by default it is [1,0,0]), and the second dimension shall be
+	 * the normal to the reference plane (by default it is [0,1,0]).
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
@@ -640,7 +780,11 @@ public interface NXbeam extends NXobject {
 
 	/**
 	 * Size of the beam entering this component. Note this represents
-	 * a rectangular beam aperture, and values represent FWHM
+	 * a rectangular beam aperture, and values represent FWHM.
+	 * If applicable, the first dimension shall represent the extent
+	 * in the direction parallel to the azimuthal reference plane
+	 * (by default it is [1,0,0]), and the second dimension shall be
+	 * the normal to the reference plane (by default it is [0,1,0]).
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
@@ -1100,6 +1244,496 @@ public interface NXbeam extends NXobject {
 	public DataNode setFluxScalar(Double fluxValue);
 
 	/**
+	 * Energy of a single pulse at the given location.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ENERGY
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getPulse_energy();
+
+	/**
+	 * Energy of a single pulse at the given location.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ENERGY
+	 * </p>
+	 *
+	 * @param pulse_energyDataset the pulse_energyDataset
+	 */
+	public DataNode setPulse_energy(IDataset pulse_energyDataset);
+
+	/**
+	 * Energy of a single pulse at the given location.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ENERGY
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Double getPulse_energyScalar();
+
+	/**
+	 * Energy of a single pulse at the given location.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ENERGY
+	 * </p>
+	 *
+	 * @param pulse_energy the pulse_energy
+	 */
+	public DataNode setPulse_energyScalar(Double pulse_energyValue);
+
+	/**
+	 * Average power at the at the given location.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_POWER
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getAverage_power();
+
+	/**
+	 * Average power at the at the given location.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_POWER
+	 * </p>
+	 *
+	 * @param average_powerDataset the average_powerDataset
+	 */
+	public DataNode setAverage_power(IDataset average_powerDataset);
+
+	/**
+	 * Average power at the at the given location.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_POWER
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Double getAverage_powerScalar();
+
+	/**
+	 * Average power at the at the given location.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_POWER
+	 * </p>
+	 *
+	 * @param average_power the average_power
+	 */
+	public DataNode setAverage_powerScalar(Double average_powerValue);
+
+	/**
+	 * Incident energy fluence at the given location.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> mJ/cm^2
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getFluence();
+
+	/**
+	 * Incident energy fluence at the given location.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> mJ/cm^2
+	 * </p>
+	 *
+	 * @param fluenceDataset the fluenceDataset
+	 */
+	public DataNode setFluence(IDataset fluenceDataset);
+
+	/**
+	 * Incident energy fluence at the given location.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> mJ/cm^2
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Double getFluenceScalar();
+
+	/**
+	 * Incident energy fluence at the given location.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> mJ/cm^2
+	 * </p>
+	 *
+	 * @param fluence the fluence
+	 */
+	public DataNode setFluenceScalar(Double fluenceValue);
+
+	/**
+	 * FWHM duration of the pulses at the given location.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getPulse_duration();
+
+	/**
+	 * FWHM duration of the pulses at the given location.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * </p>
+	 *
+	 * @param pulse_durationDataset the pulse_durationDataset
+	 */
+	public DataNode setPulse_duration(IDataset pulse_durationDataset);
+
+	/**
+	 * FWHM duration of the pulses at the given location.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Double getPulse_durationScalar();
+
+	/**
+	 * FWHM duration of the pulses at the given location.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * </p>
+	 *
+	 * @param pulse_duration the pulse_duration
+	 */
+	public DataNode setPulse_durationScalar(Double pulse_durationValue);
+
+	/**
+	 * Delay time between two pulses of a pulsed beam.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getPulse_delay();
+
+	/**
+	 * Delay time between two pulses of a pulsed beam.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * </p>
+	 *
+	 * @param pulse_delayDataset the pulse_delayDataset
+	 */
+	public DataNode setPulse_delay(IDataset pulse_delayDataset);
+
+	/**
+	 * Delay time between two pulses of a pulsed beam.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Double getPulse_delayScalar();
+
+	/**
+	 * Delay time between two pulses of a pulsed beam.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * </p>
+	 *
+	 * @param pulse_delay the pulse_delay
+	 */
+	public DataNode setPulse_delayScalar(Double pulse_delayValue);
+
+	/**
+	 * A reference to the beam in relation to which the delay is.
+	 * This should be the path to another instance of ``NXbeam``. The use
+	 * of this attribute should be similar to that of the
+	 * :ref:`depends_on attribute </NXtransformations/AXISNAME@depends_on-attribute>`.
+	 * in NXtransformations.
+	 *
+	 * @return  the value.
+	 */
+	public String getPulse_delayAttributeReference_beam();
+
+	/**
+	 * A reference to the beam in relation to which the delay is.
+	 * This should be the path to another instance of ``NXbeam``. The use
+	 * of this attribute should be similar to that of the
+	 * :ref:`depends_on attribute </NXtransformations/AXISNAME@depends_on-attribute>`.
+	 * in NXtransformations.
+	 *
+	 * @param reference_beamValue the reference_beamValue
+	 */
+	public void setPulse_delayAttributeReference_beam(String reference_beamValue);
+
+	/**
+	 * FROG (frequency-resolved optical gating) trace of the pulse.
+	 * This is to be used for ultrashort laser pulses in a
+	 * FROG (frequency-resolved optical gating) setup.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Dimensions:</b> 1: nx; 2: ny;
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getFrog_trace();
+
+	/**
+	 * FROG (frequency-resolved optical gating) trace of the pulse.
+	 * This is to be used for ultrashort laser pulses in a
+	 * FROG (frequency-resolved optical gating) setup.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Dimensions:</b> 1: nx; 2: ny;
+	 * </p>
+	 *
+	 * @param frog_traceDataset the frog_traceDataset
+	 */
+	public DataNode setFrog_trace(IDataset frog_traceDataset);
+
+	/**
+	 * FROG (frequency-resolved optical gating) trace of the pulse.
+	 * This is to be used for ultrashort laser pulses in a
+	 * FROG (frequency-resolved optical gating) setup.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Dimensions:</b> 1: nx; 2: ny;
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Double getFrog_traceScalar();
+
+	/**
+	 * FROG (frequency-resolved optical gating) trace of the pulse.
+	 * This is to be used for ultrashort laser pulses in a
+	 * FROG (frequency-resolved optical gating) setup.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Dimensions:</b> 1: nx; 2: ny;
+	 * </p>
+	 *
+	 * @param frog_trace the frog_trace
+	 */
+	public DataNode setFrog_traceScalar(Double frog_traceValue);
+
+	/**
+	 * Horizontal axis of a FROG trace, i.e. delay.
+	 * This is to be used for ultrashort laser pulses in a
+	 * FROG (frequency-resolved optical gating) setup.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * <b>Dimensions:</b> 1: nx;
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getFrog_delays();
+
+	/**
+	 * Horizontal axis of a FROG trace, i.e. delay.
+	 * This is to be used for ultrashort laser pulses in a
+	 * FROG (frequency-resolved optical gating) setup.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * <b>Dimensions:</b> 1: nx;
+	 * </p>
+	 *
+	 * @param frog_delaysDataset the frog_delaysDataset
+	 */
+	public DataNode setFrog_delays(IDataset frog_delaysDataset);
+
+	/**
+	 * Horizontal axis of a FROG trace, i.e. delay.
+	 * This is to be used for ultrashort laser pulses in a
+	 * FROG (frequency-resolved optical gating) setup.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * <b>Dimensions:</b> 1: nx;
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Double getFrog_delaysScalar();
+
+	/**
+	 * Horizontal axis of a FROG trace, i.e. delay.
+	 * This is to be used for ultrashort laser pulses in a
+	 * FROG (frequency-resolved optical gating) setup.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * <b>Dimensions:</b> 1: nx;
+	 * </p>
+	 *
+	 * @param frog_delays the frog_delays
+	 */
+	public DataNode setFrog_delaysScalar(Double frog_delaysValue);
+
+	/**
+	 * Vertical axis of a FROG trace, i.e. frequency.
+	 * This is to be used for ultrashort laser pulses in a
+	 * FROG (frequency-resolved optical gating) setup.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_FREQUENCY
+	 * <b>Dimensions:</b> 1: ny;
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getFrog_frequencies();
+
+	/**
+	 * Vertical axis of a FROG trace, i.e. frequency.
+	 * This is to be used for ultrashort laser pulses in a
+	 * FROG (frequency-resolved optical gating) setup.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_FREQUENCY
+	 * <b>Dimensions:</b> 1: ny;
+	 * </p>
+	 *
+	 * @param frog_frequenciesDataset the frog_frequenciesDataset
+	 */
+	public DataNode setFrog_frequencies(IDataset frog_frequenciesDataset);
+
+	/**
+	 * Vertical axis of a FROG trace, i.e. frequency.
+	 * This is to be used for ultrashort laser pulses in a
+	 * FROG (frequency-resolved optical gating) setup.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_FREQUENCY
+	 * <b>Dimensions:</b> 1: ny;
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Double getFrog_frequenciesScalar();
+
+	/**
+	 * Vertical axis of a FROG trace, i.e. frequency.
+	 * This is to be used for ultrashort laser pulses in a
+	 * FROG (frequency-resolved optical gating) setup.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_FREQUENCY
+	 * <b>Dimensions:</b> 1: ny;
+	 * </p>
+	 *
+	 * @param frog_frequencies the frog_frequencies
+	 */
+	public DataNode setFrog_frequenciesScalar(Double frog_frequenciesValue);
+
+	/**
+	 * The type of chirp implemented
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getChirp_type();
+
+	/**
+	 * The type of chirp implemented
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @param chirp_typeDataset the chirp_typeDataset
+	 */
+	public DataNode setChirp_type(IDataset chirp_typeDataset);
+
+	/**
+	 * The type of chirp implemented
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public String getChirp_typeScalar();
+
+	/**
+	 * The type of chirp implemented
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @param chirp_type the chirp_type
+	 */
+	public DataNode setChirp_typeScalar(String chirp_typeValue);
+
+	/**
+	 * Group delay dispersion of the pulse for linear chirp
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getChirp_gdd();
+
+	/**
+	 * Group delay dispersion of the pulse for linear chirp
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * </p>
+	 *
+	 * @param chirp_gddDataset the chirp_gddDataset
+	 */
+	public DataNode setChirp_gdd(IDataset chirp_gddDataset);
+
+	/**
+	 * Group delay dispersion of the pulse for linear chirp
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Double getChirp_gddScalar();
+
+	/**
+	 * Group delay dispersion of the pulse for linear chirp
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_TIME
+	 * </p>
+	 *
+	 * @param chirp_gdd the chirp_gdd
+	 */
+	public DataNode setChirp_gddScalar(Double chirp_gddValue);
+
+	/**
 	 * Distribution of beam with respect to relevant variable e.g. wavelength. This is mainly
 	 * useful for simulations which need to store plottable information at each beamline
 	 * component.
@@ -1172,32 +1806,6 @@ public interface NXbeam extends NXobject {
 
 	public void setAllData(Map<String, NXdata> data);
 
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
 
 	/**
 	 * The NeXus coordinate system defines the Z axis to be along the nominal beam

@@ -43,33 +43,37 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 
 	@Override
 	public ValidationReport validate(NXroot root) {
-		// validate child group 'entry' of type NXentry
-		validateGroup_entry(root.getEntry());
+		// validate unnamed child group of type NXentry (possibly multiple)
+		validateUnnamedGroupOccurrences(root, NXentry.class, false, true);
+		final Map<String, NXentry> allEntry = root.getAllEntry();
+		for (final NXentry entry : allEntry.values()) {
+			validateGroup_NXentry(entry);
+		}
 		return validationReport;
 	}
 
 	@Override
 	public ValidationReport validate(NXentry entry) {
-		validateGroup_entry(entry);
+		validateGroup_NXentry(entry);
 		return validationReport;
 	}
 
 	@Override
 	public ValidationReport validate(NXsubentry subentry) {
-		validateGroup_entry(subentry);
+		validateGroup_NXentry(subentry);
 		return validationReport;
 	}
 
 
 	/**
-	 * Validate group 'entry' of type NXentry.
+	 * Validate unnamed group of type NXentry.
 	 */
-	private void validateGroup_entry(final NXsubentry group) {
+	private void validateGroup_NXentry(final NXsubentry group) {
 		// set the current entry, required for validating links
 		setEntry(group);
 
 		// validate that the group is not null
-		if (!(validateGroupNotNull("entry", NXentry.class, group))) return;
+		if (!(validateGroupNotNull(null, NXentry.class, group))) return;
 
 		// validate field 'title' of type NX_CHAR.
 		final ILazyDataset title = group.getLazyDataset("title");
@@ -98,43 +102,43 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 		}
 
 		// validate child group 'instrument' of type NXinstrument
-		validateGroup_entry_instrument(group.getInstrument());
+		validateGroup_NXentry_instrument(group.getInstrument());
 
 		// validate child group 'sample' of type NXsample
-		validateGroup_entry_sample(group.getSample());
+		validateGroup_NXentry_sample(group.getSample());
 
 		// validate child group 'control' of type NXmonitor
-		validateGroup_entry_control(group.getMonitor("control"));
+		validateGroup_NXentry_control(group.getMonitor("control"));
 
 		// validate unnamed child group of type NXdata (possibly multiple)
 		validateUnnamedGroupOccurrences(group, NXdata.class, false, true);
 		final Map<String, NXdata> allData = group.getAllData();
 		for (final NXdata data : allData.values()) {
-			validateGroup_entry_NXdata(data);
+			validateGroup_NXentry_NXdata(data);
 		}
 	}
 
 	/**
 	 * Validate group 'instrument' of type NXinstrument.
 	 */
-	private void validateGroup_entry_instrument(final NXinstrument group) {
+	private void validateGroup_NXentry_instrument(final NXinstrument group) {
 		// validate that the group is not null
 		if (!(validateGroupNotNull("instrument", NXinstrument.class, group))) return;
 
 		// validate child group 'source' of type NXsource
-		validateGroup_entry_instrument_source(group.getSource());
+		validateGroup_NXentry_instrument_source(group.getSource());
 
 		// validate child group 'monochromator' of type NXmonochromator
-		validateGroup_entry_instrument_monochromator(group.getMonochromator());
+		validateGroup_NXentry_instrument_monochromator(group.getMonochromator());
 
 		// validate child group 'detector' of type NXdetector
-		validateGroup_entry_instrument_detector(group.getDetector());
+		validateGroup_NXentry_instrument_detector(group.getDetector());
 	}
 
 	/**
 	 * Validate group 'source' of type NXsource.
 	 */
-	private void validateGroup_entry_instrument_source(final NXsource group) {
+	private void validateGroup_NXentry_instrument_source(final NXsource group) {
 		// validate that the group is not null
 		if (!(validateGroupNotNull("source", NXsource.class, group))) return;
 
@@ -157,7 +161,16 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 					"Optical Laser",
 					"Ion Source",
 					"UV Plasma Source",
-					"Metal Jet X-ray");
+					"Metal Jet X-ray",
+					"Laser",
+					"Dye Laser",
+					"Broadband Tunable Light Source",
+					"Halogen Lamp",
+					"LED",
+					"Mercury Cadmium Telluride Lamp",
+					"Deuterium Lamp",
+					"Xenon Lamp",
+					"Globar");
 		}
 
 		// validate field 'name' of type NX_CHAR.
@@ -184,7 +197,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 	/**
 	 * Validate group 'monochromator' of type NXmonochromator.
 	 */
-	private void validateGroup_entry_instrument_monochromator(final NXmonochromator group) {
+	private void validateGroup_NXentry_instrument_monochromator(final NXmonochromator group) {
 		// validate that the group is not null
 		if (!(validateGroupNotNull("monochromator", NXmonochromator.class, group))) return;
 
@@ -201,7 +214,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 	/**
 	 * Validate group 'detector' of type NXdetector.
 	 */
-	private void validateGroup_entry_instrument_detector(final NXdetector group) {
+	private void validateGroup_NXentry_instrument_detector(final NXdetector group) {
 		// validate that the group is not null
 		if (!(validateGroupNotNull("detector", NXdetector.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
@@ -270,7 +283,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 	/**
 	 * Validate group 'sample' of type NXsample.
 	 */
-	private void validateGroup_entry_sample(final NXsample group) {
+	private void validateGroup_NXentry_sample(final NXsample group) {
 		// validate that the group is not null
 		if (!(validateGroupNotNull("sample", NXsample.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
@@ -346,7 +359,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 	/**
 	 * Validate group 'control' of type NXmonitor.
 	 */
-	private void validateGroup_entry_control(final NXmonitor group) {
+	private void validateGroup_NXentry_control(final NXmonitor group) {
 		// validate that the group is not null
 		if (!(validateGroupNotNull("control", NXmonitor.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
@@ -384,7 +397,7 @@ public class NXxbaseValidator extends AbstractNexusValidator implements NexusApp
 	/**
 	 * Validate unnamed group of type NXdata.
 	 */
-	private void validateGroup_entry_NXdata(final NXdata group) {
+	private void validateGroup_NXentry_NXdata(final NXdata group) {
 		// validate that the group is not null
 		if (!(validateGroupNotNull(null, NXdata.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();

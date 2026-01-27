@@ -17,29 +17,17 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * Computer science base class for packing and unpacking booleans.
- * One use case is processing of object sets (like point cloud data).
- * When one applies e.g. a spatial filter to a set of points to define which
- * points are analyzed and which not, it is useful to document which points were
- * taken. One can store this information in a compact manner with an array of
- * boolean values. If the value is True the point is taken, else it is not.
- * If the points are identified by an array of integer identifiers and an
- * arbitrary spatial filtering, the boolean array will be filled with True and False
- * values in an arbitrary manner. Especially when the number of points is large,
- * for instance several thousands and more, some situations can be more efficiently
- * stored if one would not store the boolean array but just list the identifiers
- * of the points taken. For instance if within a set of 1000 points only one point is
- * taken, it would take (naively) 4000 bits to store the array but only 32 bits
- * to store e.g. the ID of that taken point. Of course the 4000 bit field is so
- * sparse that it could be compressed resulting also in a substantial reduction
- * of the storage demands. Therefore boolean masks are useful compact descriptions
- * to store information about set memberships in a compact manner.
- * In general it is true, though, that which representation is best, i.e.
- * most compact (especially when compressed) depends strongly on occupation of
- * the array.
- * This base class just bookkeeps metadata to inform software about necessary
- * modulo operations to decode the set membership of each object. This is useful
- * because the number of objects not necessarily is an integer multiple of the bit depth.
+ * Base class for packing and unpacking booleans.
+ * The field mask should be constructed from packing a vector of booleans
+ * (a bitfield) into unsigned integers with bytesize bitdepth. Padding to
+ * an integer number of such integers is assumed.
+ * Thereby, this base class can be used to inform software about necessary modulo
+ * operations to decode the mask to recover e.g. set membership of objects in sets
+ * whose membership has been encoded as a vector of booleans.
+ * This is useful e.g. when processing object sets such as point cloud data.
+ * If e.g. a spatial filter has been applied to a set of points, we may wish to document
+ * memory-space efficiently which points were analyzed. An array of boolean values
+ * is one option to achieve this. A value is true if the point is included and false otherwise.
  * <p><b>Symbols:</b>
  * The symbols used in the schema to specify e.g. dimensions of arrays.<ul>
  * <li><b>n_objs</b>
@@ -52,10 +40,58 @@ import org.eclipse.january.dataset.Dataset;
  */
 public interface NXcs_filter_boolean_mask extends NXobject {
 
+	public static final String NX_DEPENDS_ON = "depends_on";
 	public static final String NX_NUMBER_OF_OBJECTS = "number_of_objects";
 	public static final String NX_BITDEPTH = "bitdepth";
 	public static final String NX_MASK = "mask";
-	public static final String NX_IDENTIFIER = "identifier";
+	/**
+	 * Possibility to refer to which set this mask applies.
+	 * If depends_on is not provided, it is assumed that the mask
+	 * applies to its direct parent.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getDepends_on();
+
+	/**
+	 * Possibility to refer to which set this mask applies.
+	 * If depends_on is not provided, it is assumed that the mask
+	 * applies to its direct parent.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @param depends_onDataset the depends_onDataset
+	 */
+	public DataNode setDepends_on(IDataset depends_onDataset);
+
+	/**
+	 * Possibility to refer to which set this mask applies.
+	 * If depends_on is not provided, it is assumed that the mask
+	 * applies to its direct parent.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public String getDepends_onScalar();
+
+	/**
+	 * Possibility to refer to which set this mask applies.
+	 * If depends_on is not provided, it is assumed that the mask
+	 * applies to its direct parent.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @param depends_on the depends_on
+	 */
+	public DataNode setDepends_onScalar(String depends_onValue);
+
 	/**
 	 * Number of objects represented by the mask.
 	 * <p>
@@ -149,12 +185,11 @@ public interface NXcs_filter_boolean_mask extends NXobject {
 	public DataNode setBitdepthScalar(Long bitdepthValue);
 
 	/**
-	 * The unsigned integer array representing the content of the mask.
-	 * If padding is used the padded bits have to be set to 0.
+	 * The content of the mask. If padding is used,
+	 * padding bits have to be set to 0.
 	 * <p>
 	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
-	 * <b>Dimensions:</b> 1: n_total;
 	 * </p>
 	 *
 	 * @return  the value.
@@ -162,12 +197,11 @@ public interface NXcs_filter_boolean_mask extends NXobject {
 	public Dataset getMask();
 
 	/**
-	 * The unsigned integer array representing the content of the mask.
-	 * If padding is used the padded bits have to be set to 0.
+	 * The content of the mask. If padding is used,
+	 * padding bits have to be set to 0.
 	 * <p>
 	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
-	 * <b>Dimensions:</b> 1: n_total;
 	 * </p>
 	 *
 	 * @param maskDataset the maskDataset
@@ -175,12 +209,11 @@ public interface NXcs_filter_boolean_mask extends NXobject {
 	public DataNode setMask(IDataset maskDataset);
 
 	/**
-	 * The unsigned integer array representing the content of the mask.
-	 * If padding is used the padded bits have to be set to 0.
+	 * The content of the mask. If padding is used,
+	 * padding bits have to be set to 0.
 	 * <p>
 	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
-	 * <b>Dimensions:</b> 1: n_total;
 	 * </p>
 	 *
 	 * @return  the value.
@@ -188,72 +221,15 @@ public interface NXcs_filter_boolean_mask extends NXobject {
 	public Long getMaskScalar();
 
 	/**
-	 * The unsigned integer array representing the content of the mask.
-	 * If padding is used the padded bits have to be set to 0.
+	 * The content of the mask. If padding is used,
+	 * padding bits have to be set to 0.
 	 * <p>
 	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
-	 * <b>Dimensions:</b> 1: n_total;
 	 * </p>
 	 *
 	 * @param mask the mask
 	 */
 	public DataNode setMaskScalar(Long maskValue);
-
-	/**
-	 * Link to/or array of identifiers for the objects. The decoded mask is
-	 * interpreted consecutively, i.e. the first bit in the mask matches
-	 * to the first identifier, the second bit in the mask to the second
-	 * identifier and so on and so forth.
-	 * <p>
-	 * <b>Type:</b> NX_UINT
-	 * <b>Dimensions:</b> 1: n_object;
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Dataset getIdentifier();
-
-	/**
-	 * Link to/or array of identifiers for the objects. The decoded mask is
-	 * interpreted consecutively, i.e. the first bit in the mask matches
-	 * to the first identifier, the second bit in the mask to the second
-	 * identifier and so on and so forth.
-	 * <p>
-	 * <b>Type:</b> NX_UINT
-	 * <b>Dimensions:</b> 1: n_object;
-	 * </p>
-	 *
-	 * @param identifierDataset the identifierDataset
-	 */
-	public DataNode setIdentifier(IDataset identifierDataset);
-
-	/**
-	 * Link to/or array of identifiers for the objects. The decoded mask is
-	 * interpreted consecutively, i.e. the first bit in the mask matches
-	 * to the first identifier, the second bit in the mask to the second
-	 * identifier and so on and so forth.
-	 * <p>
-	 * <b>Type:</b> NX_UINT
-	 * <b>Dimensions:</b> 1: n_object;
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Long getIdentifierScalar();
-
-	/**
-	 * Link to/or array of identifiers for the objects. The decoded mask is
-	 * interpreted consecutively, i.e. the first bit in the mask matches
-	 * to the first identifier, the second bit in the mask to the second
-	 * identifier and so on and so forth.
-	 * <p>
-	 * <b>Type:</b> NX_UINT
-	 * <b>Dimensions:</b> 1: n_object;
-	 * </p>
-	 *
-	 * @param identifier the identifier
-	 */
-	public DataNode setIdentifierScalar(Long identifierValue);
 
 }

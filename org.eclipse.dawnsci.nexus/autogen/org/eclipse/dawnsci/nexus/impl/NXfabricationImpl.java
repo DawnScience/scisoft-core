@@ -11,8 +11,10 @@
 
 package org.eclipse.dawnsci.nexus.impl;
 
+import java.util.Date;
 import java.util.Set;
 import java.util.EnumSet;
+
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
@@ -21,7 +23,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Details about a component as defined by its manufacturer.
+ * Details about a component as it is defined by its manufacturer.
 
  */
 public class NXfabricationImpl extends NXobjectImpl implements NXfabrication {
@@ -96,23 +98,53 @@ public class NXfabricationImpl extends NXobjectImpl implements NXfabrication {
 	}
 
 	@Override
-	public Dataset getIdentifier() {
-		return getDataset(NX_IDENTIFIER);
+	public String getModelAttributeVersion() {
+		return getAttrString(NX_MODEL, NX_MODEL_ATTRIBUTE_VERSION);
 	}
 
 	@Override
-	public String getIdentifierScalar() {
-		return getString(NX_IDENTIFIER);
+	public void setModelAttributeVersion(String versionValue) {
+		setAttribute(NX_MODEL, NX_MODEL_ATTRIBUTE_VERSION, versionValue);
 	}
 
 	@Override
-	public DataNode setIdentifier(IDataset identifierDataset) {
-		return setDataset(NX_IDENTIFIER, identifierDataset);
+	public Dataset getSerial_number() {
+		return getDataset(NX_SERIAL_NUMBER);
 	}
 
 	@Override
-	public DataNode setIdentifierScalar(String identifierValue) {
-		return setString(NX_IDENTIFIER, identifierValue);
+	public String getSerial_numberScalar() {
+		return getString(NX_SERIAL_NUMBER);
+	}
+
+	@Override
+	public DataNode setSerial_number(IDataset serial_numberDataset) {
+		return setDataset(NX_SERIAL_NUMBER, serial_numberDataset);
+	}
+
+	@Override
+	public DataNode setSerial_numberScalar(String serial_numberValue) {
+		return setString(NX_SERIAL_NUMBER, serial_numberValue);
+	}
+
+	@Override
+	public Dataset getConstruction_date() {
+		return getDataset(NX_CONSTRUCTION_DATE);
+	}
+
+	@Override
+	public Date getConstruction_dateScalar() {
+		return getDate(NX_CONSTRUCTION_DATE);
+	}
+
+	@Override
+	public DataNode setConstruction_date(IDataset construction_dateDataset) {
+		return setDataset(NX_CONSTRUCTION_DATE, construction_dateDataset);
+	}
+
+	@Override
+	public DataNode setConstruction_dateScalar(Date construction_dateValue) {
+		return setDate(NX_CONSTRUCTION_DATE, construction_dateValue);
 	}
 
 	@Override

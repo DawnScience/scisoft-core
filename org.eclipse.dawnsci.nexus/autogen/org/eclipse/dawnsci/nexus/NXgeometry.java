@@ -35,7 +35,6 @@ public interface NXgeometry extends NXobject {
 
 	public static final String NX_DESCRIPTION = "description";
 	public static final String NX_COMPONENT_INDEX = "component_index";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * shape/size information of component
 	 *
@@ -305,31 +304,5 @@ public interface NXgeometry extends NXobject {
 	 * @param component_index the component_index
 	 */
 	public DataNode setComponent_indexScalar(Long component_indexValue);
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
 
 }

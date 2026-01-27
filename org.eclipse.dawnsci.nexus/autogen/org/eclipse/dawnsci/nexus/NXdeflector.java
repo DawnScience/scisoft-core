@@ -11,30 +11,26 @@
 
 package org.eclipse.dawnsci.nexus;
 
-import java.util.Map;
-
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * Deflectors as they are used e.g. in an electron analyser.
+ * Component of an electron analyzer that deflects the paths of electrons. This includes electrostatic and electromagnetic deflectors.
  *
  */
-public interface NXdeflector extends NXobject {
+public interface NXdeflector extends NXcomponent {
 
 	public static final String NX_TYPE = "type";
-	public static final String NX_NAME = "name";
-	public static final String NX_MANUFACTURER_NAME = "manufacturer_name";
-	public static final String NX_MANUFACTURER_MODEL = "manufacturer_model";
-	public static final String NX_DESCRIPTION = "description";
 	public static final String NX_VOLTAGE = "voltage";
 	public static final String NX_CURRENT = "current";
-	public static final String NX_DEPENDS_ON = "depends_on";
+	public static final String NX_OFFSET_X = "offset_x";
+	public static final String NX_OFFSET_Y = "offset_y";
 	/**
-	 * Qualitative type of deflector with respect to the number of pole pieces
+	 * Qualitative type of deflector with respect to the number of pole pieces.
 	 * <p>
+	 * <b>Type:</b> NX_CHAR
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>dipole</b> </li>
 	 * <li><b>quadrupole</b> </li>
@@ -47,8 +43,9 @@ public interface NXdeflector extends NXobject {
 	public Dataset getType();
 
 	/**
-	 * Qualitative type of deflector with respect to the number of pole pieces
+	 * Qualitative type of deflector with respect to the number of pole pieces.
 	 * <p>
+	 * <b>Type:</b> NX_CHAR
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>dipole</b> </li>
 	 * <li><b>quadrupole</b> </li>
@@ -61,8 +58,9 @@ public interface NXdeflector extends NXobject {
 	public DataNode setType(IDataset typeDataset);
 
 	/**
-	 * Qualitative type of deflector with respect to the number of pole pieces
+	 * Qualitative type of deflector with respect to the number of pole pieces.
 	 * <p>
+	 * <b>Type:</b> NX_CHAR
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>dipole</b> </li>
 	 * <li><b>quadrupole</b> </li>
@@ -75,8 +73,9 @@ public interface NXdeflector extends NXobject {
 	public String getTypeScalar();
 
 	/**
-	 * Qualitative type of deflector with respect to the number of pole pieces
+	 * Qualitative type of deflector with respect to the number of pole pieces.
 	 * <p>
+	 * <b>Type:</b> NX_CHAR
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>dipole</b> </li>
 	 * <li><b>quadrupole</b> </li>
@@ -90,7 +89,10 @@ public interface NXdeflector extends NXobject {
 
 	/**
 	 * Colloquial or short name for the deflector. For manufacturer names and
-	 * identifiers use respective manufacturer fields.
+	 * identifiers use ``NXfabrication`` and ``identifierNAME``.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @return  the value.
 	 */
@@ -98,7 +100,10 @@ public interface NXdeflector extends NXobject {
 
 	/**
 	 * Colloquial or short name for the deflector. For manufacturer names and
-	 * identifiers use respective manufacturer fields.
+	 * identifiers use ``NXfabrication`` and ``identifierNAME``.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @param nameDataset the nameDataset
 	 */
@@ -106,7 +111,10 @@ public interface NXdeflector extends NXobject {
 
 	/**
 	 * Colloquial or short name for the deflector. For manufacturer names and
-	 * identifiers use respective manufacturer fields.
+	 * identifiers use ``NXfabrication`` and ``identifierNAME``.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @return  the value.
 	 */
@@ -114,107 +122,18 @@ public interface NXdeflector extends NXobject {
 
 	/**
 	 * Colloquial or short name for the deflector. For manufacturer names and
-	 * identifiers use respective manufacturer fields.
+	 * identifiers use ``NXfabrication`` and ``identifierNAME``.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @param name the name
 	 */
 	public DataNode setNameScalar(String nameValue);
 
 	/**
-	 * Name of the manufacturer who built/constructed the deflector.
-	 *
-	 * @return  the value.
-	 */
-	public Dataset getManufacturer_name();
-
-	/**
-	 * Name of the manufacturer who built/constructed the deflector.
-	 *
-	 * @param manufacturer_nameDataset the manufacturer_nameDataset
-	 */
-	public DataNode setManufacturer_name(IDataset manufacturer_nameDataset);
-
-	/**
-	 * Name of the manufacturer who built/constructed the deflector.
-	 *
-	 * @return  the value.
-	 */
-	public String getManufacturer_nameScalar();
-
-	/**
-	 * Name of the manufacturer who built/constructed the deflector.
-	 *
-	 * @param manufacturer_name the manufacturer_name
-	 */
-	public DataNode setManufacturer_nameScalar(String manufacturer_nameValue);
-
-	/**
-	 * Hardware name, hash identifier, or serial number that was given by the
-	 * manufacturer to identify the deflector.
-	 *
-	 * @return  the value.
-	 */
-	public Dataset getManufacturer_model();
-
-	/**
-	 * Hardware name, hash identifier, or serial number that was given by the
-	 * manufacturer to identify the deflector.
-	 *
-	 * @param manufacturer_modelDataset the manufacturer_modelDataset
-	 */
-	public DataNode setManufacturer_model(IDataset manufacturer_modelDataset);
-
-	/**
-	 * Hardware name, hash identifier, or serial number that was given by the
-	 * manufacturer to identify the deflector.
-	 *
-	 * @return  the value.
-	 */
-	public String getManufacturer_modelScalar();
-
-	/**
-	 * Hardware name, hash identifier, or serial number that was given by the
-	 * manufacturer to identify the deflector.
-	 *
-	 * @param manufacturer_model the manufacturer_model
-	 */
-	public DataNode setManufacturer_modelScalar(String manufacturer_modelValue);
-
-	/**
-	 * Ideally an identifier, persistent link, or free text which gives further details
-	 * about the deflector.
-	 *
-	 * @return  the value.
-	 */
-	public Dataset getDescription();
-
-	/**
-	 * Ideally an identifier, persistent link, or free text which gives further details
-	 * about the deflector.
-	 *
-	 * @param descriptionDataset the descriptionDataset
-	 */
-	public DataNode setDescription(IDataset descriptionDataset);
-
-	/**
-	 * Ideally an identifier, persistent link, or free text which gives further details
-	 * about the deflector.
-	 *
-	 * @return  the value.
-	 */
-	public String getDescriptionScalar();
-
-	/**
-	 * Ideally an identifier, persistent link, or free text which gives further details
-	 * about the deflector.
-	 *
-	 * @param description the description
-	 */
-	public DataNode setDescriptionScalar(String descriptionValue);
-
-	/**
-	 * Excitation voltage of the deflector. For dipoles it is a single number. For
-	 * higher orders, it is an array.
+	 * Excitation voltage of the deflector. For dipoles it is a single number.
+	 * For higher order multipoles, it is an array.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_VOLTAGE
@@ -225,8 +144,8 @@ public interface NXdeflector extends NXobject {
 	public Dataset getVoltage();
 
 	/**
-	 * Excitation voltage of the deflector. For dipoles it is a single number. For
-	 * higher orders, it is an array.
+	 * Excitation voltage of the deflector. For dipoles it is a single number.
+	 * For higher order multipoles, it is an array.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_VOLTAGE
@@ -237,8 +156,8 @@ public interface NXdeflector extends NXobject {
 	public DataNode setVoltage(IDataset voltageDataset);
 
 	/**
-	 * Excitation voltage of the deflector. For dipoles it is a single number. For
-	 * higher orders, it is an array.
+	 * Excitation voltage of the deflector. For dipoles it is a single number.
+	 * For higher order multipoles, it is an array.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_VOLTAGE
@@ -249,8 +168,8 @@ public interface NXdeflector extends NXobject {
 	public Number getVoltageScalar();
 
 	/**
-	 * Excitation voltage of the deflector. For dipoles it is a single number. For
-	 * higher orders, it is an array.
+	 * Excitation voltage of the deflector. For dipoles it is a single number.
+	 * For higher order multipoles, it is an array.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_VOLTAGE
@@ -309,151 +228,99 @@ public interface NXdeflector extends NXobject {
 	public DataNode setCurrentScalar(Number currentValue);
 
 	/**
-	 * Specifies the position of the deflector by pointing to the last transformation
-	 * in the transformation chain in the NXtransformations group.
+	 * Spatial offset of the deflector in x direction (perpendicular to
+	 * ```offset_y```).
 	 * <p>
-	 * <b>Type:</b> NX_CHAR
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getDepends_on();
+	public Dataset getOffset_x();
 
 	/**
-	 * Specifies the position of the deflector by pointing to the last transformation
-	 * in the transformation chain in the NXtransformations group.
+	 * Spatial offset of the deflector in x direction (perpendicular to
+	 * ```offset_y```).
 	 * <p>
-	 * <b>Type:</b> NX_CHAR
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 *
-	 * @param depends_onDataset the depends_onDataset
+	 * @param offset_xDataset the offset_xDataset
 	 */
-	public DataNode setDepends_on(IDataset depends_onDataset);
+	public DataNode setOffset_x(IDataset offset_xDataset);
 
 	/**
-	 * Specifies the position of the deflector by pointing to the last transformation
-	 * in the transformation chain in the NXtransformations group.
+	 * Spatial offset of the deflector in x direction (perpendicular to
+	 * ```offset_y```).
 	 * <p>
-	 * <b>Type:</b> NX_CHAR
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public String getDepends_onScalar();
+	public Number getOffset_xScalar();
 
 	/**
-	 * Specifies the position of the deflector by pointing to the last transformation
-	 * in the transformation chain in the NXtransformations group.
+	 * Spatial offset of the deflector in x direction (perpendicular to
+	 * ```offset_y```).
 	 * <p>
-	 * <b>Type:</b> NX_CHAR
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_LENGTH
 	 * </p>
 	 *
-	 * @param depends_on the depends_on
+	 * @param offset_x the offset_x
 	 */
-	public DataNode setDepends_onScalar(String depends_onValue);
+	public DataNode setOffset_xScalar(Number offset_xValue);
 
 	/**
-	 * Collection of axis-based translations and rotations to describe the location and
-	 * geometry of the deflector as a component in the instrument. Conventions from the
-	 * NXtransformations base class are used. In principle, the McStas coordinate
-	 * system is used. The first transformation has to point either to another
-	 * component of the system or . (for pointing to the reference frame) to relate it
-	 * relative to the experimental setup. Typically, the components of a system should
-	 * all be related relative to each other and only one component should relate to
-	 * the reference coordinate system.
+	 * Spatial offset of the deflector in y direction (perpendicular to
+	 * ```offset_x```).
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_LENGTH
+	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public NXtransformations getTransformations();
+	public Dataset getOffset_y();
 
 	/**
-	 * Collection of axis-based translations and rotations to describe the location and
-	 * geometry of the deflector as a component in the instrument. Conventions from the
-	 * NXtransformations base class are used. In principle, the McStas coordinate
-	 * system is used. The first transformation has to point either to another
-	 * component of the system or . (for pointing to the reference frame) to relate it
-	 * relative to the experimental setup. Typically, the components of a system should
-	 * all be related relative to each other and only one component should relate to
-	 * the reference coordinate system.
+	 * Spatial offset of the deflector in y direction (perpendicular to
+	 * ```offset_x```).
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_LENGTH
+	 * </p>
 	 *
-	 * @param transformationsGroup the transformationsGroup
+	 * @param offset_yDataset the offset_yDataset
 	 */
-	public void setTransformations(NXtransformations transformationsGroup);
+	public DataNode setOffset_y(IDataset offset_yDataset);
 
 	/**
-	 * Get a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * Collection of axis-based translations and rotations to describe the location and
-	 * geometry of the deflector as a component in the instrument. Conventions from the
-	 * NXtransformations base class are used. In principle, the McStas coordinate
-	 * system is used. The first transformation has to point either to another
-	 * component of the system or . (for pointing to the reference frame) to relate it
-	 * relative to the experimental setup. Typically, the components of a system should
-	 * all be related relative to each other and only one component should relate to
-	 * the reference coordinate system.</li>
-	 * </ul>
+	 * Spatial offset of the deflector in y direction (perpendicular to
+	 * ```offset_x```).
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_LENGTH
+	 * </p>
 	 *
-	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXtransformations for that node.
+	 * @return  the value.
 	 */
-	public NXtransformations getTransformations(String name);
+	public Number getOffset_yScalar();
 
 	/**
-	 * Set a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * Collection of axis-based translations and rotations to describe the location and
-	 * geometry of the deflector as a component in the instrument. Conventions from the
-	 * NXtransformations base class are used. In principle, the McStas coordinate
-	 * system is used. The first transformation has to point either to another
-	 * component of the system or . (for pointing to the reference frame) to relate it
-	 * relative to the experimental setup. Typically, the components of a system should
-	 * all be related relative to each other and only one component should relate to
-	 * the reference coordinate system.</li>
-	 * </ul>
+	 * Spatial offset of the deflector in y direction (perpendicular to
+	 * ```offset_x```).
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_LENGTH
+	 * </p>
 	 *
-	 * @param name the name of the node
-	 * @param transformations the value to set
+	 * @param offset_y the offset_y
 	 */
-	public void setTransformations(String name, NXtransformations transformations);
-
-	/**
-	 * Get all NXtransformations nodes:
-	 * <ul>
-	 * <li>
-	 * Collection of axis-based translations and rotations to describe the location and
-	 * geometry of the deflector as a component in the instrument. Conventions from the
-	 * NXtransformations base class are used. In principle, the McStas coordinate
-	 * system is used. The first transformation has to point either to another
-	 * component of the system or . (for pointing to the reference frame) to relate it
-	 * relative to the experimental setup. Typically, the components of a system should
-	 * all be related relative to each other and only one component should relate to
-	 * the reference coordinate system.</li>
-	 * </ul>
-	 *
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public Map<String, NXtransformations> getAllTransformations();
-
-	/**
-	 * Set multiple child nodes of a particular type.
-	 * <ul>
-	 * <li>
-	 * Collection of axis-based translations and rotations to describe the location and
-	 * geometry of the deflector as a component in the instrument. Conventions from the
-	 * NXtransformations base class are used. In principle, the McStas coordinate
-	 * system is used. The first transformation has to point either to another
-	 * component of the system or . (for pointing to the reference frame) to relate it
-	 * relative to the experimental setup. Typically, the components of a system should
-	 * all be related relative to each other and only one component should relate to
-	 * the reference coordinate system.</li>
-	 * </ul>
-	 *
-	 * @param transformations the child nodes to add
-	 */
-
-	public void setAllTransformations(Map<String, NXtransformations> transformations);
-
+	public DataNode setOffset_yScalar(Number offset_yValue);
 
 }

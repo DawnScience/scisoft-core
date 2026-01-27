@@ -24,12 +24,13 @@ import org.eclipse.dawnsci.nexus.*;
  * A waveplate or retarder.
 
  */
-public class NXwaveplateImpl extends NXobjectImpl implements NXwaveplate {
+public class NXwaveplateImpl extends NXcomponentImpl implements NXwaveplate {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
+		NexusBaseClass.NX_DATA,
 		NexusBaseClass.NX_SAMPLE,
 		NexusBaseClass.NX_SAMPLE);
 
@@ -78,26 +79,6 @@ public class NXwaveplateImpl extends NXobjectImpl implements NXwaveplate {
 	}
 
 	@Override
-	public Dataset getOther_type() {
-		return getDataset(NX_OTHER_TYPE);
-	}
-
-	@Override
-	public String getOther_typeScalar() {
-		return getString(NX_OTHER_TYPE);
-	}
-
-	@Override
-	public DataNode setOther_type(IDataset other_typeDataset) {
-		return setDataset(NX_OTHER_TYPE, other_typeDataset);
-	}
-
-	@Override
-	public DataNode setOther_typeScalar(String other_typeValue) {
-		return setString(NX_OTHER_TYPE, other_typeValue);
-	}
-
-	@Override
 	public Dataset getRetardance() {
 		return getDataset(NX_RETARDANCE);
 	}
@@ -135,6 +116,17 @@ public class NXwaveplateImpl extends NXobjectImpl implements NXwaveplate {
 	@Override
 	public DataNode setWavelengthsScalar(Number wavelengthsValue) {
 		return setField(NX_WAVELENGTHS, wavelengthsValue);
+	}
+
+	@Override
+	public NXdata getRetardance_distribution() {
+		// dataNodeName = NX_RETARDANCE_DISTRIBUTION
+		return getChild("retardance_distribution", NXdata.class);
+	}
+
+	@Override
+	public void setRetardance_distribution(NXdata retardance_distributionGroup) {
+		putChild("retardance_distribution", retardance_distributionGroup);
 	}
 
 	@Override

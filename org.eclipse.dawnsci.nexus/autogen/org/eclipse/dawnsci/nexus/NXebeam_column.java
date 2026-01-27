@@ -19,126 +19,158 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * Container for components to form a controlled beam in electron microscopy.
+ * Base class for a set of components providing a controllable electron beam.
+ * The idea behind defining :ref:`NXebeam_column` as an own base class vs. adding these
+ * concepts in :ref:`NXem_instrument` is that the electron beam generating component
+ * might be worthwhile to use also in other types of experiments.
  *
  */
-public interface NXebeam_column extends NXobject {
+public interface NXebeam_column extends NXcomponent {
 
+	public static final String NX_OPERATION_MODE = "operation_mode";
 	/**
+	 * Tech-partner, microscope-, and control-software-specific name of the
+	 * specific operation mode how the ebeam_column and its components are
+	 * controlled to achieve specific illumination conditions.
+	 * In many cases the users of an instrument do not or can not be expected to know
+	 * all intricate spatiotemporal dynamics of their hardware. Instead, they rely on
+	 * assumptions that the instrument, its control software, and components work as
+	 * expected to focus on their research questions.
+	 * For these cases, having a place for documenting the operation_mode is useful
+	 * in as much as at least some constraints on how the illumination conditions were
+	 * is documented.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public NXfabrication getFabrication();
+	public Dataset getOperation_mode();
 
 	/**
+	 * Tech-partner, microscope-, and control-software-specific name of the
+	 * specific operation mode how the ebeam_column and its components are
+	 * controlled to achieve specific illumination conditions.
+	 * In many cases the users of an instrument do not or can not be expected to know
+	 * all intricate spatiotemporal dynamics of their hardware. Instead, they rely on
+	 * assumptions that the instrument, its control software, and components work as
+	 * expected to focus on their research questions.
+	 * For these cases, having a place for documenting the operation_mode is useful
+	 * in as much as at least some constraints on how the illumination conditions were
+	 * is documented.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
-	 * @param fabricationGroup the fabricationGroup
+	 * @param operation_modeDataset the operation_modeDataset
 	 */
-	public void setFabrication(NXfabrication fabricationGroup);
+	public DataNode setOperation_mode(IDataset operation_modeDataset);
 
 	/**
-	 * Get a NXfabrication node by name:
-	 * <ul>
-	 * <li></li>
-	 * </ul>
+	 * Tech-partner, microscope-, and control-software-specific name of the
+	 * specific operation mode how the ebeam_column and its components are
+	 * controlled to achieve specific illumination conditions.
+	 * In many cases the users of an instrument do not or can not be expected to know
+	 * all intricate spatiotemporal dynamics of their hardware. Instead, they rely on
+	 * assumptions that the instrument, its control software, and components work as
+	 * expected to focus on their research questions.
+	 * For these cases, having a place for documenting the operation_mode is useful
+	 * in as much as at least some constraints on how the illumination conditions were
+	 * is documented.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
-	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXfabrication for that node.
+	 * @return  the value.
 	 */
-	public NXfabrication getFabrication(String name);
+	public String getOperation_modeScalar();
 
 	/**
-	 * Set a NXfabrication node by name:
-	 * <ul>
-	 * <li></li>
-	 * </ul>
+	 * Tech-partner, microscope-, and control-software-specific name of the
+	 * specific operation mode how the ebeam_column and its components are
+	 * controlled to achieve specific illumination conditions.
+	 * In many cases the users of an instrument do not or can not be expected to know
+	 * all intricate spatiotemporal dynamics of their hardware. Instead, they rely on
+	 * assumptions that the instrument, its control software, and components work as
+	 * expected to focus on their research questions.
+	 * For these cases, having a place for documenting the operation_mode is useful
+	 * in as much as at least some constraints on how the illumination conditions were
+	 * is documented.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
-	 * @param name the name of the node
-	 * @param fabrication the value to set
+	 * @param operation_mode the operation_mode
 	 */
-	public void setFabrication(String name, NXfabrication fabrication);
+	public DataNode setOperation_modeScalar(String operation_modeValue);
 
 	/**
-	 * Get all NXfabrication nodes:
-	 * <ul>
-	 * <li></li>
-	 * </ul>
-	 *
-	 * @return  a map from node names to the NXfabrication for that node.
-	 */
-	public Map<String, NXfabrication> getAllFabrication();
-
-	/**
-	 * Set multiple child nodes of a particular type.
-	 * <ul>
-	 * <li></li>
-	 * </ul>
-	 *
-	 * @param fabrication the child nodes to add
-	 */
-
-	public void setAllFabrication(Map<String, NXfabrication> fabrication);
-
-
-	/**
-	 * The source which creates the electron beam.
+	 * A physical part of an electron or ion microscope from which
+	 * the particles that form the beam are emitted.
+	 * The hardware for an electron source in an electron microscope
+	 * may contain several components which affect the beam path.
+	 * This concept is related to term `Source`_ of the EMglossary standard.
+	 * .. _Source: https://purls.helmholtz-metadaten.de/emg/EMG_00000045
 	 *
 	 * @return  the value.
 	 */
 	public NXsource getElectron_source();
 
 	/**
-	 * The source which creates the electron beam.
+	 * A physical part of an electron or ion microscope from which
+	 * the particles that form the beam are emitted.
+	 * The hardware for an electron source in an electron microscope
+	 * may contain several components which affect the beam path.
+	 * This concept is related to term `Source`_ of the EMglossary standard.
+	 * .. _Source: https://purls.helmholtz-metadaten.de/emg/EMG_00000045
 	 *
 	 * @param electron_sourceGroup the electron_sourceGroup
 	 */
 	public void setElectron_source(NXsource electron_sourceGroup);
-	// Unprocessed group:
-	// Unprocessed group:
 
 	/**
 	 *
 	 * @return  the value.
 	 */
-	public NXaperture_em getAperture_em();
+	public NXelectromagnetic_lens getElectromagnetic_lens();
 
 	/**
 	 *
-	 * @param aperture_emGroup the aperture_emGroup
+	 * @param electromagnetic_lensGroup the electromagnetic_lensGroup
 	 */
-	public void setAperture_em(NXaperture_em aperture_emGroup);
+	public void setElectromagnetic_lens(NXelectromagnetic_lens electromagnetic_lensGroup);
 
 	/**
-	 * Get a NXaperture_em node by name:
+	 * Get a NXelectromagnetic_lens node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
 	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXaperture_em for that node.
+	 * @return  a map from node names to the NXelectromagnetic_lens for that node.
 	 */
-	public NXaperture_em getAperture_em(String name);
+	public NXelectromagnetic_lens getElectromagnetic_lens(String name);
 
 	/**
-	 * Set a NXaperture_em node by name:
+	 * Set a NXelectromagnetic_lens node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
 	 * @param name the name of the node
-	 * @param aperture_em the value to set
+	 * @param electromagnetic_lens the value to set
 	 */
-	public void setAperture_em(String name, NXaperture_em aperture_em);
+	public void setElectromagnetic_lens(String name, NXelectromagnetic_lens electromagnetic_lens);
 
 	/**
-	 * Get all NXaperture_em nodes:
+	 * Get all NXelectromagnetic_lens nodes:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
-	 * @return  a map from node names to the NXaperture_em for that node.
+	 * @return  a map from node names to the NXelectromagnetic_lens for that node.
 	 */
-	public Map<String, NXaperture_em> getAllAperture_em();
+	public Map<String, NXelectromagnetic_lens> getAllElectromagnetic_lens();
 
 	/**
 	 * Set multiple child nodes of a particular type.
@@ -146,55 +178,55 @@ public interface NXebeam_column extends NXobject {
 	 * <li></li>
 	 * </ul>
 	 *
-	 * @param aperture_em the child nodes to add
+	 * @param electromagnetic_lens the child nodes to add
 	 */
 
-	public void setAllAperture_em(Map<String, NXaperture_em> aperture_em);
+	public void setAllElectromagnetic_lens(Map<String, NXelectromagnetic_lens> electromagnetic_lens);
 
 
 	/**
 	 *
 	 * @return  the value.
 	 */
-	public NXlens_em getLens_em();
+	public NXaperture getAperture();
 
 	/**
 	 *
-	 * @param lens_emGroup the lens_emGroup
+	 * @param apertureGroup the apertureGroup
 	 */
-	public void setLens_em(NXlens_em lens_emGroup);
+	public void setAperture(NXaperture apertureGroup);
 
 	/**
-	 * Get a NXlens_em node by name:
+	 * Get a NXaperture node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
 	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXlens_em for that node.
+	 * @return  a map from node names to the NXaperture for that node.
 	 */
-	public NXlens_em getLens_em(String name);
+	public NXaperture getAperture(String name);
 
 	/**
-	 * Set a NXlens_em node by name:
+	 * Set a NXaperture node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
 	 * @param name the name of the node
-	 * @param lens_em the value to set
+	 * @param aperture the value to set
 	 */
-	public void setLens_em(String name, NXlens_em lens_em);
+	public void setAperture(String name, NXaperture aperture);
 
 	/**
-	 * Get all NXlens_em nodes:
+	 * Get all NXaperture nodes:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
-	 * @return  a map from node names to the NXlens_em for that node.
+	 * @return  a map from node names to the NXaperture for that node.
 	 */
-	public Map<String, NXlens_em> getAllLens_em();
+	public Map<String, NXaperture> getAllAperture();
 
 	/**
 	 * Set multiple child nodes of a particular type.
@@ -202,11 +234,176 @@ public interface NXebeam_column extends NXobject {
 	 * <li></li>
 	 * </ul>
 	 *
-	 * @param lens_em the child nodes to add
+	 * @param aperture the child nodes to add
 	 */
 
-	public void setAllLens_em(Map<String, NXlens_em> lens_em);
+	public void setAllAperture(Map<String, NXaperture> aperture);
 
+
+	/**
+	 *
+	 * @return  the value.
+	 */
+	public NXdeflector getDeflector();
+
+	/**
+	 *
+	 * @param deflectorGroup the deflectorGroup
+	 */
+	public void setDeflector(NXdeflector deflectorGroup);
+
+	/**
+	 * Get a NXdeflector node by name:
+	 * <ul>
+	 * <li></li>
+	 * <li>
+	 * A component for blanking the beam or generating pulsed electron beams.
+	 * See e.g . `I. G. C. Weppelman et al. <https://doi.org/10.1016/j.ultramic.2017.10.002>`_
+	 * or `Y. Liao <https://www.globalsino.com/EM/page2464.html>`_ for details.</li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXdeflector for that node.
+	 */
+	public NXdeflector getDeflector(String name);
+
+	/**
+	 * Set a NXdeflector node by name:
+	 * <ul>
+	 * <li></li>
+	 * <li>
+	 * A component for blanking the beam or generating pulsed electron beams.
+	 * See e.g . `I. G. C. Weppelman et al. <https://doi.org/10.1016/j.ultramic.2017.10.002>`_
+	 * or `Y. Liao <https://www.globalsino.com/EM/page2464.html>`_ for details.</li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param deflector the value to set
+	 */
+	public void setDeflector(String name, NXdeflector deflector);
+
+	/**
+	 * Get all NXdeflector nodes:
+	 * <ul>
+	 * <li></li>
+	 * <li>
+	 * A component for blanking the beam or generating pulsed electron beams.
+	 * See e.g . `I. G. C. Weppelman et al. <https://doi.org/10.1016/j.ultramic.2017.10.002>`_
+	 * or `Y. Liao <https://www.globalsino.com/EM/page2464.html>`_ for details.</li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXdeflector for that node.
+	 */
+	public Map<String, NXdeflector> getAllDeflector();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li></li>
+	 * <li>
+	 * A component for blanking the beam or generating pulsed electron beams.
+	 * See e.g . `I. G. C. Weppelman et al. <https://doi.org/10.1016/j.ultramic.2017.10.002>`_
+	 * or `Y. Liao <https://www.globalsino.com/EM/page2464.html>`_ for details.</li>
+	 * </ul>
+	 *
+	 * @param deflector the child nodes to add
+	 */
+
+	public void setAllDeflector(Map<String, NXdeflector> deflector);
+
+
+	/**
+	 * A component for blanking the beam or generating pulsed electron beams.
+	 * See e.g . `I. G. C. Weppelman et al. <https://doi.org/10.1016/j.ultramic.2017.10.002>`_
+	 * or `Y. Liao <https://www.globalsino.com/EM/page2464.html>`_ for details.
+	 *
+	 * @return  the value.
+	 */
+	public NXdeflector getBlankerid();
+
+	/**
+	 * A component for blanking the beam or generating pulsed electron beams.
+	 * See e.g . `I. G. C. Weppelman et al. <https://doi.org/10.1016/j.ultramic.2017.10.002>`_
+	 * or `Y. Liao <https://www.globalsino.com/EM/page2464.html>`_ for details.
+	 *
+	 * @param blankeridGroup the blankeridGroup
+	 */
+	public void setBlankerid(NXdeflector blankeridGroup);
+
+	/**
+	 * Device to improve energy resolution or chromatic aberration.
+	 * Examples are Wien, $\textalpha$-, or $\Omega$- energy filter or `cc corrector
+	 * like <https://www.ceos-gmbh.de/en/basics/cc-corrector>`_
+	 *
+	 * @return  the value.
+	 */
+	public NXmonochromator getMonochromator();
+
+	/**
+	 * Device to improve energy resolution or chromatic aberration.
+	 * Examples are Wien, $\textalpha$-, or $\Omega$- energy filter or `cc corrector
+	 * like <https://www.ceos-gmbh.de/en/basics/cc-corrector>`_
+	 *
+	 * @param monochromatorGroup the monochromatorGroup
+	 */
+	public void setMonochromator(NXmonochromator monochromatorGroup);
+
+	/**
+	 * Get a NXmonochromator node by name:
+	 * <ul>
+	 * <li>
+	 * Device to improve energy resolution or chromatic aberration.
+	 * Examples are Wien, $\textalpha$-, or $\Omega$- energy filter or `cc corrector
+	 * like <https://www.ceos-gmbh.de/en/basics/cc-corrector>`_</li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXmonochromator for that node.
+	 */
+	public NXmonochromator getMonochromator(String name);
+
+	/**
+	 * Set a NXmonochromator node by name:
+	 * <ul>
+	 * <li>
+	 * Device to improve energy resolution or chromatic aberration.
+	 * Examples are Wien, $\textalpha$-, or $\Omega$- energy filter or `cc corrector
+	 * like <https://www.ceos-gmbh.de/en/basics/cc-corrector>`_</li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param monochromator the value to set
+	 */
+	public void setMonochromator(String name, NXmonochromator monochromator);
+
+	/**
+	 * Get all NXmonochromator nodes:
+	 * <ul>
+	 * <li>
+	 * Device to improve energy resolution or chromatic aberration.
+	 * Examples are Wien, $\textalpha$-, or $\Omega$- energy filter or `cc corrector
+	 * like <https://www.ceos-gmbh.de/en/basics/cc-corrector>`_</li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXmonochromator for that node.
+	 */
+	public Map<String, NXmonochromator> getAllMonochromator();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li>
+	 * Device to improve energy resolution or chromatic aberration.
+	 * Examples are Wien, $\textalpha$-, or $\Omega$- energy filter or `cc corrector
+	 * like <https://www.ceos-gmbh.de/en/basics/cc-corrector>`_</li>
+	 * </ul>
+	 *
+	 * @param monochromator the child nodes to add
+	 */
+
+	public void setAllMonochromator(Map<String, NXmonochromator> monochromator);
+
+	// Unprocessed group:
 
 	/**
 	 *
@@ -265,70 +462,64 @@ public interface NXebeam_column extends NXobject {
 
 
 	/**
+	 * Component that reshapes an ellipse-shaped electron beam into a circular one.
+	 * * `L. Reimer 1998, Springer, 1998 <https://dx.doi.org/10.1007/978-3-540-3896>`_
+	 * * `M. Tanaka et al., Electron Microscopy Glossary, 2024 <https://www.jeol.com/words/semterms/20201020.111014.php#gsc.tab=0>`_
+	 * Stigmator is an exact synonym.
 	 *
 	 * @return  the value.
 	 */
-	public NXstage_lab getStage_lab();
+	public NXcomponent getCorrector_ax();
 
 	/**
+	 * Component that reshapes an ellipse-shaped electron beam into a circular one.
+	 * * `L. Reimer 1998, Springer, 1998 <https://dx.doi.org/10.1007/978-3-540-3896>`_
+	 * * `M. Tanaka et al., Electron Microscopy Glossary, 2024 <https://www.jeol.com/words/semterms/20201020.111014.php#gsc.tab=0>`_
+	 * Stigmator is an exact synonym.
 	 *
-	 * @param stage_labGroup the stage_labGroup
+	 * @param corrector_axGroup the corrector_axGroup
 	 */
-	public void setStage_lab(NXstage_lab stage_labGroup);
+	public void setCorrector_ax(NXcomponent corrector_axGroup);
 
 	/**
-	 * Get a NXstage_lab node by name:
-	 * <ul>
-	 * <li></li>
-	 * </ul>
+	 * Electron biprism as it is used e.g. for electron holography.
 	 *
-	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXstage_lab for that node.
+	 * @return  the value.
 	 */
-	public NXstage_lab getStage_lab(String name);
+	public NXcomponent getBiprismid();
 
 	/**
-	 * Set a NXstage_lab node by name:
-	 * <ul>
-	 * <li></li>
-	 * </ul>
+	 * Electron biprism as it is used e.g. for electron holography.
 	 *
-	 * @param name the name of the node
-	 * @param stage_lab the value to set
+	 * @param biprismidGroup the biprismidGroup
 	 */
-	public void setStage_lab(String name, NXstage_lab stage_lab);
+	public void setBiprismid(NXcomponent biprismidGroup);
 
 	/**
-	 * Get all NXstage_lab nodes:
-	 * <ul>
-	 * <li></li>
-	 * </ul>
+	 * Device that causes a change in the phase of an electron wave.
+	 * * `M. Malac et al. <https://doi.org/10.1093/jmicro/dfaa070>`_
+	 * * `R. R. Schröder et al. <https://www.lem.kit.edu/152.php>`_
 	 *
-	 * @return  a map from node names to the NXstage_lab for that node.
+	 * @return  the value.
 	 */
-	public Map<String, NXstage_lab> getAllStage_lab();
+	public NXcomponent getPhaseplateid();
 
 	/**
-	 * Set multiple child nodes of a particular type.
-	 * <ul>
-	 * <li></li>
-	 * </ul>
+	 * Device that causes a change in the phase of an electron wave.
+	 * * `M. Malac et al. <https://doi.org/10.1093/jmicro/dfaa070>`_
+	 * * `R. R. Schröder et al. <https://www.lem.kit.edu/152.php>`_
 	 *
-	 * @param stage_lab the child nodes to add
+	 * @param phaseplateidGroup the phaseplateidGroup
 	 */
-
-	public void setAllStage_lab(Map<String, NXstage_lab> stage_lab);
-
+	public void setPhaseplateid(NXcomponent phaseplateidGroup);
 
 	/**
-	 * A sensor used to monitor an external or internal condition.
 	 *
 	 * @return  the value.
 	 */
 	public NXsensor getSensor();
 
 	/**
-	 * A sensor used to monitor an external or internal condition.
 	 *
 	 * @param sensorGroup the sensorGroup
 	 */
@@ -337,8 +528,7 @@ public interface NXebeam_column extends NXobject {
 	/**
 	 * Get a NXsensor node by name:
 	 * <ul>
-	 * <li>
-	 * A sensor used to monitor an external or internal condition.</li>
+	 * <li></li>
 	 * </ul>
 	 *
 	 * @param name  the name of the node.
@@ -349,8 +539,7 @@ public interface NXebeam_column extends NXobject {
 	/**
 	 * Set a NXsensor node by name:
 	 * <ul>
-	 * <li>
-	 * A sensor used to monitor an external or internal condition.</li>
+	 * <li></li>
 	 * </ul>
 	 *
 	 * @param name the name of the node
@@ -361,8 +550,7 @@ public interface NXebeam_column extends NXobject {
 	/**
 	 * Get all NXsensor nodes:
 	 * <ul>
-	 * <li>
-	 * A sensor used to monitor an external or internal condition.</li>
+	 * <li></li>
 	 * </ul>
 	 *
 	 * @return  a map from node names to the NXsensor for that node.
@@ -372,8 +560,7 @@ public interface NXebeam_column extends NXobject {
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
-	 * <li>
-	 * A sensor used to monitor an external or internal condition.</li>
+	 * <li></li>
 	 * </ul>
 	 *
 	 * @param sensor the child nodes to add
@@ -383,20 +570,80 @@ public interface NXebeam_column extends NXobject {
 
 
 	/**
-	 * Individual ocharacterization results for the position, shape,
-	 * and characteristics of the electron beam.
-	 * NXtransformations should be used to specify the location
-	 * of the position at which the beam was probed.
+	 *
+	 * @return  the value.
+	 */
+	public NXactuator getActuator();
+
+	/**
+	 *
+	 * @param actuatorGroup the actuatorGroup
+	 */
+	public void setActuator(NXactuator actuatorGroup);
+
+	/**
+	 * Get a NXactuator node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXactuator for that node.
+	 */
+	public NXactuator getActuator(String name);
+
+	/**
+	 * Set a NXactuator node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param actuator the value to set
+	 */
+	public void setActuator(String name, NXactuator actuator);
+
+	/**
+	 * Get all NXactuator nodes:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXactuator for that node.
+	 */
+	public Map<String, NXactuator> getAllActuator();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param actuator the child nodes to add
+	 */
+
+	public void setAllActuator(Map<String, NXactuator> actuator);
+
+
+	/**
+	 * Individual characterization results for the position, shape,
+	 * and characteristics of the electron beam at a given location.
+	 * :ref:`NXtransformations` should be used to specify the location
+	 * or the position at which details about the beam were probed.
+	 * This concept is related to term `Electron Beam`_ of the EMglossary standard.
+	 * .. _Electron Beam: https://purls.helmholtz-metadaten.de/emg/EMG_00000021
 	 *
 	 * @return  the value.
 	 */
 	public NXbeam getBeam();
 
 	/**
-	 * Individual ocharacterization results for the position, shape,
-	 * and characteristics of the electron beam.
-	 * NXtransformations should be used to specify the location
-	 * of the position at which the beam was probed.
+	 * Individual characterization results for the position, shape,
+	 * and characteristics of the electron beam at a given location.
+	 * :ref:`NXtransformations` should be used to specify the location
+	 * or the position at which details about the beam were probed.
+	 * This concept is related to term `Electron Beam`_ of the EMglossary standard.
+	 * .. _Electron Beam: https://purls.helmholtz-metadaten.de/emg/EMG_00000021
 	 *
 	 * @param beamGroup the beamGroup
 	 */
@@ -406,10 +653,12 @@ public interface NXebeam_column extends NXobject {
 	 * Get a NXbeam node by name:
 	 * <ul>
 	 * <li>
-	 * Individual ocharacterization results for the position, shape,
-	 * and characteristics of the electron beam.
-	 * NXtransformations should be used to specify the location
-	 * of the position at which the beam was probed.</li>
+	 * Individual characterization results for the position, shape,
+	 * and characteristics of the electron beam at a given location.
+	 * :ref:`NXtransformations` should be used to specify the location
+	 * or the position at which details about the beam were probed.
+	 * This concept is related to term `Electron Beam`_ of the EMglossary standard.
+	 * .. _Electron Beam: https://purls.helmholtz-metadaten.de/emg/EMG_00000021</li>
 	 * </ul>
 	 *
 	 * @param name  the name of the node.
@@ -421,10 +670,12 @@ public interface NXebeam_column extends NXobject {
 	 * Set a NXbeam node by name:
 	 * <ul>
 	 * <li>
-	 * Individual ocharacterization results for the position, shape,
-	 * and characteristics of the electron beam.
-	 * NXtransformations should be used to specify the location
-	 * of the position at which the beam was probed.</li>
+	 * Individual characterization results for the position, shape,
+	 * and characteristics of the electron beam at a given location.
+	 * :ref:`NXtransformations` should be used to specify the location
+	 * or the position at which details about the beam were probed.
+	 * This concept is related to term `Electron Beam`_ of the EMglossary standard.
+	 * .. _Electron Beam: https://purls.helmholtz-metadaten.de/emg/EMG_00000021</li>
 	 * </ul>
 	 *
 	 * @param name the name of the node
@@ -436,10 +687,12 @@ public interface NXebeam_column extends NXobject {
 	 * Get all NXbeam nodes:
 	 * <ul>
 	 * <li>
-	 * Individual ocharacterization results for the position, shape,
-	 * and characteristics of the electron beam.
-	 * NXtransformations should be used to specify the location
-	 * of the position at which the beam was probed.</li>
+	 * Individual characterization results for the position, shape,
+	 * and characteristics of the electron beam at a given location.
+	 * :ref:`NXtransformations` should be used to specify the location
+	 * or the position at which details about the beam were probed.
+	 * This concept is related to term `Electron Beam`_ of the EMglossary standard.
+	 * .. _Electron Beam: https://purls.helmholtz-metadaten.de/emg/EMG_00000021</li>
 	 * </ul>
 	 *
 	 * @return  a map from node names to the NXbeam for that node.
@@ -450,10 +703,12 @@ public interface NXebeam_column extends NXobject {
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
-	 * Individual ocharacterization results for the position, shape,
-	 * and characteristics of the electron beam.
-	 * NXtransformations should be used to specify the location
-	 * of the position at which the beam was probed.</li>
+	 * Individual characterization results for the position, shape,
+	 * and characteristics of the electron beam at a given location.
+	 * :ref:`NXtransformations` should be used to specify the location
+	 * or the position at which details about the beam were probed.
+	 * This concept is related to term `Electron Beam`_ of the EMglossary standard.
+	 * .. _Electron Beam: https://purls.helmholtz-metadaten.de/emg/EMG_00000021</li>
 	 * </ul>
 	 *
 	 * @param beam the child nodes to add
@@ -461,5 +716,117 @@ public interface NXebeam_column extends NXobject {
 
 	public void setAllBeam(Map<String, NXbeam> beam);
 
+
+	/**
+	 *
+	 * @return  the value.
+	 */
+	public NXcomponent getComponent();
+
+	/**
+	 *
+	 * @param componentGroup the componentGroup
+	 */
+	public void setComponent(NXcomponent componentGroup);
+
+	/**
+	 * Get a NXcomponent node by name:
+	 * <ul>
+	 * <li>
+	 * Component that reshapes an ellipse-shaped electron beam into a circular one.
+	 * * `L. Reimer 1998, Springer, 1998 <https://dx.doi.org/10.1007/978-3-540-3896>`_
+	 * * `M. Tanaka et al., Electron Microscopy Glossary, 2024 <https://www.jeol.com/words/semterms/20201020.111014.php#gsc.tab=0>`_
+	 * Stigmator is an exact synonym.</li>
+	 * <li>
+	 * Electron biprism as it is used e.g. for electron holography.</li>
+	 * <li>
+	 * Device that causes a change in the phase of an electron wave.
+	 * * `M. Malac et al. <https://doi.org/10.1093/jmicro/dfaa070>`_
+	 * * `R. R. Schröder et al. <https://www.lem.kit.edu/152.php>`_</li>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXcomponent for that node.
+	 */
+	public NXcomponent getComponent(String name);
+
+	/**
+	 * Set a NXcomponent node by name:
+	 * <ul>
+	 * <li>
+	 * Component that reshapes an ellipse-shaped electron beam into a circular one.
+	 * * `L. Reimer 1998, Springer, 1998 <https://dx.doi.org/10.1007/978-3-540-3896>`_
+	 * * `M. Tanaka et al., Electron Microscopy Glossary, 2024 <https://www.jeol.com/words/semterms/20201020.111014.php#gsc.tab=0>`_
+	 * Stigmator is an exact synonym.</li>
+	 * <li>
+	 * Electron biprism as it is used e.g. for electron holography.</li>
+	 * <li>
+	 * Device that causes a change in the phase of an electron wave.
+	 * * `M. Malac et al. <https://doi.org/10.1093/jmicro/dfaa070>`_
+	 * * `R. R. Schröder et al. <https://www.lem.kit.edu/152.php>`_</li>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param component the value to set
+	 */
+	public void setComponent(String name, NXcomponent component);
+
+	/**
+	 * Get all NXcomponent nodes:
+	 * <ul>
+	 * <li>
+	 * Component that reshapes an ellipse-shaped electron beam into a circular one.
+	 * * `L. Reimer 1998, Springer, 1998 <https://dx.doi.org/10.1007/978-3-540-3896>`_
+	 * * `M. Tanaka et al., Electron Microscopy Glossary, 2024 <https://www.jeol.com/words/semterms/20201020.111014.php#gsc.tab=0>`_
+	 * Stigmator is an exact synonym.</li>
+	 * <li>
+	 * Electron biprism as it is used e.g. for electron holography.</li>
+	 * <li>
+	 * Device that causes a change in the phase of an electron wave.
+	 * * `M. Malac et al. <https://doi.org/10.1093/jmicro/dfaa070>`_
+	 * * `R. R. Schröder et al. <https://www.lem.kit.edu/152.php>`_</li>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXcomponent for that node.
+	 */
+	public Map<String, NXcomponent> getAllComponent();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li>
+	 * Component that reshapes an ellipse-shaped electron beam into a circular one.
+	 * * `L. Reimer 1998, Springer, 1998 <https://dx.doi.org/10.1007/978-3-540-3896>`_
+	 * * `M. Tanaka et al., Electron Microscopy Glossary, 2024 <https://www.jeol.com/words/semterms/20201020.111014.php#gsc.tab=0>`_
+	 * Stigmator is an exact synonym.</li>
+	 * <li>
+	 * Electron biprism as it is used e.g. for electron holography.</li>
+	 * <li>
+	 * Device that causes a change in the phase of an electron wave.
+	 * * `M. Malac et al. <https://doi.org/10.1093/jmicro/dfaa070>`_
+	 * * `R. R. Schröder et al. <https://www.lem.kit.edu/152.php>`_</li>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param component the child nodes to add
+	 */
+
+	public void setAllComponent(Map<String, NXcomponent> component);
+
+
+	/**
+	 *
+	 * @return  the value.
+	 */
+	public NXscan_controller getScan_controller();
+
+	/**
+	 *
+	 * @param scan_controllerGroup the scan_controllerGroup
+	 */
+	public void setScan_controller(NXscan_controller scan_controllerGroup);
 
 }

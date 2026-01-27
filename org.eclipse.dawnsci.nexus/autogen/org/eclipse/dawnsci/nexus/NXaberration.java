@@ -18,21 +18,29 @@ import org.eclipse.january.dataset.Dataset;
 
 /**
  * Quantified aberration coefficient in an aberration_model.
+ * For an introduction in the details about aberrations with relevance for electron microscopy
+ * see `R. Dunin-Borkowski et al. <https://doi.org/10.1017/9781316337455.022>`_ and
+ * `S. J. Pennycock and P. D. Nellist <https://doi.org/10.1007/978-1-4419-7200-2>`_ (page 44ff, and page 118ff)
+ * for different definitions available and further details.
+ * Table 7-2 of Ibid. publication (page 305ff) documents how to convert from the Nion to the CEOS definitions.
+ * Conversion tables are also summarized by `Y. Liao <https://www.globalsino.com/EM/page3740.html>`_ an introduction.
+ * The use of the base class is not restricted to electron microscopy but can also be useful for classical optics.
  *
  */
 public interface NXaberration extends NXobject {
 
 	public static final String NX_MAGNITUDE = "magnitude";
-	public static final String NX_UNCERTAINTY = "uncertainty";
-	public static final String NX_UNCERTAINTY_MODEL = "uncertainty_model";
+	public static final String NX_MAGNITUDE_ERRORS = "magnitude_errors";
+	public static final String NX_MAGNITUDE_ERRORS_MODEL = "magnitude_errors_model";
 	public static final String NX_DELTA_TIME = "delta_time";
 	public static final String NX_ANGLE = "angle";
 	public static final String NX_NAME = "name";
 	public static final String NX_ALIAS = "alias";
 	/**
+	 * Magnitude of the aberration
 	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 *
 	 * @return  the value.
@@ -40,9 +48,10 @@ public interface NXaberration extends NXobject {
 	public Dataset getMagnitude();
 
 	/**
+	 * Magnitude of the aberration
 	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 *
 	 * @param magnitudeDataset the magnitudeDataset
@@ -50,101 +59,123 @@ public interface NXaberration extends NXobject {
 	public DataNode setMagnitude(IDataset magnitudeDataset);
 
 	/**
+	 * Magnitude of the aberration
 	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public Double getMagnitudeScalar();
+	public Number getMagnitudeScalar();
 
 	/**
+	 * Magnitude of the aberration
 	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 *
 	 * @param magnitude the magnitude
 	 */
-	public DataNode setMagnitudeScalar(Double magnitudeValue);
+	public DataNode setMagnitudeScalar(Number magnitudeValue);
 
 	/**
-	 * Confidence
+	 * Uncertainty of the magnitude of the aberration
 	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getUncertainty();
+	public Dataset getMagnitude_errors();
 
 	/**
-	 * Confidence
+	 * Uncertainty of the magnitude of the aberration
 	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 *
-	 * @param uncertaintyDataset the uncertaintyDataset
+	 * @param magnitude_errorsDataset the magnitude_errorsDataset
 	 */
-	public DataNode setUncertainty(IDataset uncertaintyDataset);
+	public DataNode setMagnitude_errors(IDataset magnitude_errorsDataset);
 
 	/**
-	 * Confidence
+	 * Uncertainty of the magnitude of the aberration
 	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public Double getUncertaintyScalar();
+	public Number getMagnitude_errorsScalar();
 
 	/**
-	 * Confidence
+	 * Uncertainty of the magnitude of the aberration
 	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 *
-	 * @param uncertainty the uncertainty
+	 * @param magnitude_errors the magnitude_errors
 	 */
-	public DataNode setUncertaintyScalar(Double uncertaintyValue);
+	public DataNode setMagnitude_errorsScalar(Number magnitude_errorsValue);
 
 	/**
-	 * How was the uncertainty quantified e.g. via the 95% confidence interval.
+	 * Free-text description how magnitude_errors was quantified
+	 * e.g. via the 95% confidence interval, variance, standard deviation,
+	 * using which algorithm or statistical model.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getUncertainty_model();
+	public Dataset getMagnitude_errors_model();
 
 	/**
-	 * How was the uncertainty quantified e.g. via the 95% confidence interval.
+	 * Free-text description how magnitude_errors was quantified
+	 * e.g. via the 95% confidence interval, variance, standard deviation,
+	 * using which algorithm or statistical model.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
-	 * @param uncertainty_modelDataset the uncertainty_modelDataset
+	 * @param magnitude_errors_modelDataset the magnitude_errors_modelDataset
 	 */
-	public DataNode setUncertainty_model(IDataset uncertainty_modelDataset);
+	public DataNode setMagnitude_errors_model(IDataset magnitude_errors_modelDataset);
 
 	/**
-	 * How was the uncertainty quantified e.g. via the 95% confidence interval.
+	 * Free-text description how magnitude_errors was quantified
+	 * e.g. via the 95% confidence interval, variance, standard deviation,
+	 * using which algorithm or statistical model.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public String getUncertainty_modelScalar();
+	public String getMagnitude_errors_modelScalar();
 
 	/**
-	 * How was the uncertainty quantified e.g. via the 95% confidence interval.
+	 * Free-text description how magnitude_errors was quantified
+	 * e.g. via the 95% confidence interval, variance, standard deviation,
+	 * using which algorithm or statistical model.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
-	 * @param uncertainty_model the uncertainty_model
+	 * @param magnitude_errors_model the magnitude_errors_model
 	 */
-	public DataNode setUncertainty_modelScalar(String uncertainty_modelValue);
+	public DataNode setMagnitude_errors_modelScalar(String magnitude_errors_modelValue);
 
 	/**
 	 * Time elapsed since the last measurement.
 	 * <p>
-	 * <b>Type:</b> NX_FLOAT
+	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
 	 *
@@ -155,7 +186,7 @@ public interface NXaberration extends NXobject {
 	/**
 	 * Time elapsed since the last measurement.
 	 * <p>
-	 * <b>Type:</b> NX_FLOAT
+	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
 	 *
@@ -166,33 +197,33 @@ public interface NXaberration extends NXobject {
 	/**
 	 * Time elapsed since the last measurement.
 	 * <p>
-	 * <b>Type:</b> NX_FLOAT
+	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public Double getDelta_timeScalar();
+	public Number getDelta_timeScalar();
 
 	/**
 	 * Time elapsed since the last measurement.
 	 * <p>
-	 * <b>Type:</b> NX_FLOAT
+	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
 	 * </p>
 	 *
 	 * @param delta_time the delta_time
 	 */
-	public DataNode setDelta_timeScalar(Double delta_timeValue);
+	public DataNode setDelta_timeScalar(Number delta_timeValue);
 
 	/**
-	 * For the CEOS definitions the C aberrations are radial-symmetric and have no
-	 * angle entry, while the A, B, D, S, or R aberrations are n-fold
+	 * For the CEOS definitions the C aberrations are radial-symmetric and have
+	 * no angle entry, while the A, B, D, S, or R aberrations are n-fold
 	 * symmetric and have an angle entry.
 	 * For the NION definitions the coordinate system differs to the one
 	 * used in CEOS and instead two aberration coefficients a and b are used.
 	 * <p>
-	 * <b>Type:</b> NX_FLOAT
+	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
 	 *
@@ -201,13 +232,13 @@ public interface NXaberration extends NXobject {
 	public Dataset getAngle();
 
 	/**
-	 * For the CEOS definitions the C aberrations are radial-symmetric and have no
-	 * angle entry, while the A, B, D, S, or R aberrations are n-fold
+	 * For the CEOS definitions the C aberrations are radial-symmetric and have
+	 * no angle entry, while the A, B, D, S, or R aberrations are n-fold
 	 * symmetric and have an angle entry.
 	 * For the NION definitions the coordinate system differs to the one
 	 * used in CEOS and instead two aberration coefficients a and b are used.
 	 * <p>
-	 * <b>Type:</b> NX_FLOAT
+	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
 	 *
@@ -216,78 +247,110 @@ public interface NXaberration extends NXobject {
 	public DataNode setAngle(IDataset angleDataset);
 
 	/**
-	 * For the CEOS definitions the C aberrations are radial-symmetric and have no
-	 * angle entry, while the A, B, D, S, or R aberrations are n-fold
+	 * For the CEOS definitions the C aberrations are radial-symmetric and have
+	 * no angle entry, while the A, B, D, S, or R aberrations are n-fold
 	 * symmetric and have an angle entry.
 	 * For the NION definitions the coordinate system differs to the one
 	 * used in CEOS and instead two aberration coefficients a and b are used.
 	 * <p>
-	 * <b>Type:</b> NX_FLOAT
+	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public Double getAngleScalar();
+	public Number getAngleScalar();
 
 	/**
-	 * For the CEOS definitions the C aberrations are radial-symmetric and have no
-	 * angle entry, while the A, B, D, S, or R aberrations are n-fold
+	 * For the CEOS definitions the C aberrations are radial-symmetric and have
+	 * no angle entry, while the A, B, D, S, or R aberrations are n-fold
 	 * symmetric and have an angle entry.
 	 * For the NION definitions the coordinate system differs to the one
 	 * used in CEOS and instead two aberration coefficients a and b are used.
 	 * <p>
-	 * <b>Type:</b> NX_FLOAT
+	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANGLE
 	 * </p>
 	 *
 	 * @param angle the angle
 	 */
-	public DataNode setAngleScalar(Double angleValue);
+	public DataNode setAngleScalar(Number angleValue);
 
 	/**
+	 * Given name to this aberration.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @return  the value.
 	 */
 	public Dataset getName();
 
 	/**
+	 * Given name to this aberration.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @param nameDataset the nameDataset
 	 */
 	public DataNode setName(IDataset nameDataset);
 
 	/**
+	 * Given name to this aberration.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @return  the value.
 	 */
 	public String getNameScalar();
 
 	/**
+	 * Given name to this aberration.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @param name the name
 	 */
 	public DataNode setNameScalar(String nameValue);
 
 	/**
+	 * Alias to name or refer to this specific type of aberration.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @return  the value.
 	 */
 	public Dataset getAlias();
 
 	/**
+	 * Alias to name or refer to this specific type of aberration.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @param aliasDataset the aliasDataset
 	 */
 	public DataNode setAlias(IDataset aliasDataset);
 
 	/**
+	 * Alias to name or refer to this specific type of aberration.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @return  the value.
 	 */
 	public String getAliasScalar();
 
 	/**
+	 * Alias to name or refer to this specific type of aberration.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @param alias the alias
 	 */

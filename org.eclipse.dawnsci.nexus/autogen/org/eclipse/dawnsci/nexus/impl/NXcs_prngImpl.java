@@ -13,6 +13,8 @@ package org.eclipse.dawnsci.nexus.impl;
 
 import java.util.Set;
 import java.util.EnumSet;
+import java.util.Map;
+
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
@@ -22,8 +24,8 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * Computer science description of pseudo-random number generator.
- * The purpose of such metadata is to identify if exactly the same sequence
- * can be reproduced, like for a PRNG or not (for a true physically random source).
+ * The purpose of this base class is to identify if exactly the same sequence can be
+ * reproduced, like for a PRNG or not, like for a true physically random source.
 
  */
 public class NXcs_prngImpl extends NXobjectImpl implements NXcs_prng {
@@ -31,7 +33,8 @@ public class NXcs_prngImpl extends NXobjectImpl implements NXcs_prng {
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
 
-	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.noneOf(NexusBaseClass.class);
+	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
+		NexusBaseClass.NX_PROGRAM);
 
 	public NXcs_prngImpl() {
 		super();
@@ -78,33 +81,34 @@ public class NXcs_prngImpl extends NXobjectImpl implements NXcs_prng {
 	}
 
 	@Override
-	public Dataset getProgram() {
-		return getDataset(NX_PROGRAM);
+	public NXprogram getProgram() {
+		// dataNodeName = NX_PROGRAM
+		return getChild("program", NXprogram.class);
 	}
 
 	@Override
-	public String getProgramScalar() {
-		return getString(NX_PROGRAM);
+	public void setProgram(NXprogram programGroup) {
+		putChild("program", programGroup);
 	}
 
 	@Override
-	public DataNode setProgram(IDataset programDataset) {
-		return setDataset(NX_PROGRAM, programDataset);
+	public NXprogram getProgram(String name) {
+		return getChild(name, NXprogram.class);
 	}
 
 	@Override
-	public DataNode setProgramScalar(String programValue) {
-		return setString(NX_PROGRAM, programValue);
+	public void setProgram(String name, NXprogram program) {
+		putChild(name, program);
 	}
 
 	@Override
-	public String getProgramAttributeVersion() {
-		return getAttrString(NX_PROGRAM, NX_PROGRAM_ATTRIBUTE_VERSION);
+	public Map<String, NXprogram> getAllProgram() {
+		return getChildren(NXprogram.class);
 	}
 
 	@Override
-	public void setProgramAttributeVersion(String versionValue) {
-		setAttribute(NX_PROGRAM, NX_PROGRAM_ATTRIBUTE_VERSION, versionValue);
+	public void setAllProgram(Map<String, NXprogram> program) {
+		setChildren(program);
 	}
 
 	@Override
@@ -113,8 +117,8 @@ public class NXcs_prngImpl extends NXobjectImpl implements NXcs_prng {
 	}
 
 	@Override
-	public Number getSeedScalar() {
-		return getNumber(NX_SEED);
+	public Long getSeedScalar() {
+		return getLong(NX_SEED);
 	}
 
 	@Override
@@ -123,7 +127,7 @@ public class NXcs_prngImpl extends NXobjectImpl implements NXcs_prng {
 	}
 
 	@Override
-	public DataNode setSeedScalar(Number seedValue) {
+	public DataNode setSeedScalar(Long seedValue) {
 		return setField(NX_SEED, seedValue);
 	}
 
@@ -133,8 +137,8 @@ public class NXcs_prngImpl extends NXobjectImpl implements NXcs_prng {
 	}
 
 	@Override
-	public Number getWarmupScalar() {
-		return getNumber(NX_WARMUP);
+	public Long getWarmupScalar() {
+		return getLong(NX_WARMUP);
 	}
 
 	@Override
@@ -143,7 +147,7 @@ public class NXcs_prngImpl extends NXobjectImpl implements NXcs_prng {
 	}
 
 	@Override
-	public DataNode setWarmupScalar(Number warmupValue) {
+	public DataNode setWarmupScalar(Long warmupValue) {
 		return setField(NX_WARMUP, warmupValue);
 	}
 

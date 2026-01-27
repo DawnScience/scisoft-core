@@ -53,7 +53,6 @@ public interface NXevent_data extends NXobject {
 	public static final String NX_CUE_TIMESTAMP_ZERO = "cue_timestamp_zero";
 	public static final String NX_CUE_TIMESTAMP_ZERO_ATTRIBUTE_START = "start";
 	public static final String NX_CUE_INDEX = "cue_index";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * A list of timestamps for each event as it comes in.
 	 * <p>
@@ -431,31 +430,5 @@ public interface NXevent_data extends NXobject {
 	 * @param cue_index the cue_index
 	 */
 	public DataNode setCue_indexScalar(Long cue_indexValue);
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
 
 }

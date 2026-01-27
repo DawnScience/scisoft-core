@@ -32,6 +32,7 @@ import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;
 import org.eclipse.dawnsci.nexus.NexusBaseClass;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.dawnsci.nexus.NexusFile;
+import org.eclipse.dawnsci.nexus.NexusUtils;
 import org.eclipse.dawnsci.nexus.validation.ValidationReportEntry.Level;
 import org.eclipse.dawnsci.nexus.validation.ValidationReportEntry.NodeType;
 import org.eclipse.january.DatasetException;
@@ -41,7 +42,6 @@ import org.eclipse.january.dataset.ILazyDataset;
 
 import si.uom.NonSI;
 import si.uom.SI;
-import tec.units.indriya.format.SimpleUnitFormat;
 
 /**
  * Abstract superclass for Nexus application definition validators.
@@ -210,7 +210,44 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 		
 		return true;
 	}
-	
+
+	/**
+	 * Validate that the given field has units consistent with the given unit example.
+	 *
+	 * @param fieldName field name
+	 * @param dataNode the {@link DataNode} for the field
+	 * @param unit expected unit example
+	 * @throws Exception if an unexpected exception occurs
+	 */
+	protected boolean validateFieldUnits(final String fieldName, final DataNode dataNode, final String unit) {
+		final Attribute unitsAttribute = dataNode.getAttribute(ATTRIBUTE_NAME_UNITS);
+		if (unitsAttribute == null) {
+			if (unit != null && !unit.isBlank()) {
+				addValidationEntry(Level.ERROR, NodeType.DATA_NODE, fieldName, MessageFormat
+						.format("No units attributes specified, expected unit compatible with ''{0}''.", unit));
+				return false;
+			} else {
+				return true; // units not required
+			}
+		}
+
+		final String unitsStr = unitsAttribute.getFirstElement();
+		try {
+			final Unit<?> givenUnit = NexusUtils.parseUnit(unit);
+			final Unit<?> writtenUnit = NexusUtils.parseUnit(unitsStr);
+			if (!writtenUnit.isCompatible(givenUnit)) {
+				addValidationEntry(Level.ERROR, NodeType.DATA_NODE, fieldName,
+						MessageFormat.format("Units ''{0}'' are not compatible with specified unit ''{1}''.", unitsStr, unit));
+				return false;
+			}
+		} catch (ParserException | NexusException e) {
+			addValidationEntry(Level.ERROR, NodeType.DATA_NODE, fieldName, MessageFormat.format("Invalid units ''{0}'' or ''{1}''.", unitsStr, unit));
+			return false;
+		}
+
+		return true;
+	}
+
 	/**
 	 * Validates that the given field has units consistent with the given unit category.
 	 * 
@@ -232,13 +269,13 @@ public abstract class AbstractNexusValidator implements NexusApplicationValidato
 		
 		final String unitsStr = unitsAttribute.getFirstElement();
 		try {
-			final Unit<?> unit = SimpleUnitFormat.getInstance().parse(unitsStr);
+			final Unit<?> unit = NexusUtils.parseUnit(unitsStr);
 			if (!unitCategory.isCompatible(unit)) {
 				addValidationEntry(Level.ERROR, NodeType.DATA_NODE, fieldName,
 						MessageFormat.format("Units ''{0}'' are not compatible with unit category ''{1}''.", unitsStr, unitCategory));
 				return false;
 			}
-		} catch (ParserException e) {
+		} catch (ParserException | NexusException e) {
 			addValidationEntry(Level.ERROR, NodeType.DATA_NODE, fieldName, MessageFormat.format("Invalid units ''{0}''.", unitsStr));
 			return false;
 		}

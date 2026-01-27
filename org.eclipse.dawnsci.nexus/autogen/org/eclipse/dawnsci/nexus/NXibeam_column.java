@@ -19,82 +19,105 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * Container for components of a focused-ion-beam (FIB) system.
- * FIB capabilities turn especially scanning electron microscopes
- * into specimen preparation labs. FIB is a material preparation
- * technique whereby portions of the sample are illuminated with a
- * focused ion beam with controlled intensity intense enough and with
- * sufficient ion momentum to remove material in a controllable manner.
- * The fact that an electron microscope with FIB capabilities has needs a
- * second gun with own relevant control circuits, focusing lenses, and
- * other components, warrants an own base class to group these components
- * and distinguish them from the lenses and components for creating and
- * shaping the electron beam.
+ * Base class for a set of components equipping an instrument with FIB capabilities.
+ * Focused-ion-beam (FIB) capabilities turn especially scanning electron microscopes
+ * into specimen preparation labs. FIB is a material preparation technique whereby
+ * portions of the sample are illuminated with a focused ion beam with controlled
+ * intensity. The beam is controlled such that it is intense, focused, and equipped
+ * with sufficient ion having sufficient momentum to remove material in a controlled
+ * manner.
+ * The fact that an electron microscope with FIB capabilities achieves these functionalities
+ * via a second component (aka the ion gun) that has its own relevant control circuits,
+ * focusing lenses, and other components, warrants the definition of an own base class
+ * to group these components and distinguish them from the lenses and components for creating
+ * and shaping the electron beam.
  * For more details about the relevant physics and application examples
  * consult the literature, for example:
  * * `L. A. Giannuzzi et al. <https://doi.org/10.1007/b101190>`_
  * * `E. I. Preiß et al. <https://link.springer.com/content/pdf/10.1557/s43578-020-00045-w.pdf>`_
  * * `J. F. Ziegler et al. <https://www.sciencedirect.com/science/article/pii/S0168583X10001862>`_
  * * `J. Lili <https://www.osti.gov/servlets/purl/924801>`_
+ * * `N. Yao <https://doi.org/10.1017/CBO9780511600302>`_
  *
  */
-public interface NXibeam_column extends NXobject {
+public interface NXibeam_column extends NXcomponent {
 
+	public static final String NX_OPERATION_MODE = "operation_mode";
 	/**
+	 * Tech-partner, microscope-, and control-software-specific name of the
+	 * specific operation mode how the ibeam_column and its components are
+	 * controlled to achieve specific illumination conditions.
+	 * In many cases the users of an instrument do not or can not be expected to know
+	 * all intricate spatiotemporal dynamics of their hardware. Instead, they rely on
+	 * assumptions that the instrument, its control software, and components work as
+	 * expected to focus on their research questions.
+	 * For these cases, having a place for documenting the operation_mode is useful
+	 * in as much as at least some constraints on how the illumination conditions were
+	 * is documented.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public NXfabrication getFabrication();
+	public Dataset getOperation_mode();
 
 	/**
+	 * Tech-partner, microscope-, and control-software-specific name of the
+	 * specific operation mode how the ibeam_column and its components are
+	 * controlled to achieve specific illumination conditions.
+	 * In many cases the users of an instrument do not or can not be expected to know
+	 * all intricate spatiotemporal dynamics of their hardware. Instead, they rely on
+	 * assumptions that the instrument, its control software, and components work as
+	 * expected to focus on their research questions.
+	 * For these cases, having a place for documenting the operation_mode is useful
+	 * in as much as at least some constraints on how the illumination conditions were
+	 * is documented.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
-	 * @param fabricationGroup the fabricationGroup
+	 * @param operation_modeDataset the operation_modeDataset
 	 */
-	public void setFabrication(NXfabrication fabricationGroup);
+	public DataNode setOperation_mode(IDataset operation_modeDataset);
 
 	/**
-	 * Get a NXfabrication node by name:
-	 * <ul>
-	 * <li></li>
-	 * </ul>
+	 * Tech-partner, microscope-, and control-software-specific name of the
+	 * specific operation mode how the ibeam_column and its components are
+	 * controlled to achieve specific illumination conditions.
+	 * In many cases the users of an instrument do not or can not be expected to know
+	 * all intricate spatiotemporal dynamics of their hardware. Instead, they rely on
+	 * assumptions that the instrument, its control software, and components work as
+	 * expected to focus on their research questions.
+	 * For these cases, having a place for documenting the operation_mode is useful
+	 * in as much as at least some constraints on how the illumination conditions were
+	 * is documented.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
-	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXfabrication for that node.
+	 * @return  the value.
 	 */
-	public NXfabrication getFabrication(String name);
+	public String getOperation_modeScalar();
 
 	/**
-	 * Set a NXfabrication node by name:
-	 * <ul>
-	 * <li></li>
-	 * </ul>
+	 * Tech-partner, microscope-, and control-software-specific name of the
+	 * specific operation mode how the ibeam_column and its components are
+	 * controlled to achieve specific illumination conditions.
+	 * In many cases the users of an instrument do not or can not be expected to know
+	 * all intricate spatiotemporal dynamics of their hardware. Instead, they rely on
+	 * assumptions that the instrument, its control software, and components work as
+	 * expected to focus on their research questions.
+	 * For these cases, having a place for documenting the operation_mode is useful
+	 * in as much as at least some constraints on how the illumination conditions were
+	 * is documented.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
-	 * @param name the name of the node
-	 * @param fabrication the value to set
+	 * @param operation_mode the operation_mode
 	 */
-	public void setFabrication(String name, NXfabrication fabrication);
-
-	/**
-	 * Get all NXfabrication nodes:
-	 * <ul>
-	 * <li></li>
-	 * </ul>
-	 *
-	 * @return  a map from node names to the NXfabrication for that node.
-	 */
-	public Map<String, NXfabrication> getAllFabrication();
-
-	/**
-	 * Set multiple child nodes of a particular type.
-	 * <ul>
-	 * <li></li>
-	 * </ul>
-	 *
-	 * @param fabrication the child nodes to add
-	 */
-
-	public void setAllFabrication(Map<String, NXfabrication> fabrication);
-
+	public DataNode setOperation_modeScalar(String operation_modeValue);
 
 	/**
 	 * The source which creates the ion beam.
@@ -110,51 +133,50 @@ public interface NXibeam_column extends NXobject {
 	 */
 	public void setIon_source(NXsource ion_sourceGroup);
 	// Unprocessed group:probe
-	// Unprocessed group:
 
 	/**
 	 *
 	 * @return  the value.
 	 */
-	public NXaperture_em getAperture_em();
+	public NXelectromagnetic_lens getElectromagnetic_lens();
 
 	/**
 	 *
-	 * @param aperture_emGroup the aperture_emGroup
+	 * @param electromagnetic_lensGroup the electromagnetic_lensGroup
 	 */
-	public void setAperture_em(NXaperture_em aperture_emGroup);
+	public void setElectromagnetic_lens(NXelectromagnetic_lens electromagnetic_lensGroup);
 
 	/**
-	 * Get a NXaperture_em node by name:
+	 * Get a NXelectromagnetic_lens node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
 	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXaperture_em for that node.
+	 * @return  a map from node names to the NXelectromagnetic_lens for that node.
 	 */
-	public NXaperture_em getAperture_em(String name);
+	public NXelectromagnetic_lens getElectromagnetic_lens(String name);
 
 	/**
-	 * Set a NXaperture_em node by name:
+	 * Set a NXelectromagnetic_lens node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
 	 * @param name the name of the node
-	 * @param aperture_em the value to set
+	 * @param electromagnetic_lens the value to set
 	 */
-	public void setAperture_em(String name, NXaperture_em aperture_em);
+	public void setElectromagnetic_lens(String name, NXelectromagnetic_lens electromagnetic_lens);
 
 	/**
-	 * Get all NXaperture_em nodes:
+	 * Get all NXelectromagnetic_lens nodes:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
-	 * @return  a map from node names to the NXaperture_em for that node.
+	 * @return  a map from node names to the NXelectromagnetic_lens for that node.
 	 */
-	public Map<String, NXaperture_em> getAllAperture_em();
+	public Map<String, NXelectromagnetic_lens> getAllElectromagnetic_lens();
 
 	/**
 	 * Set multiple child nodes of a particular type.
@@ -162,55 +184,55 @@ public interface NXibeam_column extends NXobject {
 	 * <li></li>
 	 * </ul>
 	 *
-	 * @param aperture_em the child nodes to add
+	 * @param electromagnetic_lens the child nodes to add
 	 */
 
-	public void setAllAperture_em(Map<String, NXaperture_em> aperture_em);
+	public void setAllElectromagnetic_lens(Map<String, NXelectromagnetic_lens> electromagnetic_lens);
 
 
 	/**
 	 *
 	 * @return  the value.
 	 */
-	public NXlens_em getLens_em();
+	public NXaperture getAperture();
 
 	/**
 	 *
-	 * @param lens_emGroup the lens_emGroup
+	 * @param apertureGroup the apertureGroup
 	 */
-	public void setLens_em(NXlens_em lens_emGroup);
+	public void setAperture(NXaperture apertureGroup);
 
 	/**
-	 * Get a NXlens_em node by name:
+	 * Get a NXaperture node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
 	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXlens_em for that node.
+	 * @return  a map from node names to the NXaperture for that node.
 	 */
-	public NXlens_em getLens_em(String name);
+	public NXaperture getAperture(String name);
 
 	/**
-	 * Set a NXlens_em node by name:
+	 * Set a NXaperture node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
 	 * @param name the name of the node
-	 * @param lens_em the value to set
+	 * @param aperture the value to set
 	 */
-	public void setLens_em(String name, NXlens_em lens_em);
+	public void setAperture(String name, NXaperture aperture);
 
 	/**
-	 * Get all NXlens_em nodes:
+	 * Get all NXaperture nodes:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
-	 * @return  a map from node names to the NXlens_em for that node.
+	 * @return  a map from node names to the NXaperture for that node.
 	 */
-	public Map<String, NXlens_em> getAllLens_em();
+	public Map<String, NXaperture> getAllAperture();
 
 	/**
 	 * Set multiple child nodes of a particular type.
@@ -218,10 +240,144 @@ public interface NXibeam_column extends NXobject {
 	 * <li></li>
 	 * </ul>
 	 *
-	 * @param lens_em the child nodes to add
+	 * @param aperture the child nodes to add
 	 */
 
-	public void setAllLens_em(Map<String, NXlens_em> lens_em);
+	public void setAllAperture(Map<String, NXaperture> aperture);
+
+
+	/**
+	 *
+	 * @return  the value.
+	 */
+	public NXdeflector getDeflector();
+
+	/**
+	 *
+	 * @param deflectorGroup the deflectorGroup
+	 */
+	public void setDeflector(NXdeflector deflectorGroup);
+
+	/**
+	 * Get a NXdeflector node by name:
+	 * <ul>
+	 * <li></li>
+	 * <li>
+	 * A component for blanking the ion beam or generating pulsed ion beams.</li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXdeflector for that node.
+	 */
+	public NXdeflector getDeflector(String name);
+
+	/**
+	 * Set a NXdeflector node by name:
+	 * <ul>
+	 * <li></li>
+	 * <li>
+	 * A component for blanking the ion beam or generating pulsed ion beams.</li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param deflector the value to set
+	 */
+	public void setDeflector(String name, NXdeflector deflector);
+
+	/**
+	 * Get all NXdeflector nodes:
+	 * <ul>
+	 * <li></li>
+	 * <li>
+	 * A component for blanking the ion beam or generating pulsed ion beams.</li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXdeflector for that node.
+	 */
+	public Map<String, NXdeflector> getAllDeflector();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li></li>
+	 * <li>
+	 * A component for blanking the ion beam or generating pulsed ion beams.</li>
+	 * </ul>
+	 *
+	 * @param deflector the child nodes to add
+	 */
+
+	public void setAllDeflector(Map<String, NXdeflector> deflector);
+
+
+	/**
+	 * A component for blanking the ion beam or generating pulsed ion beams.
+	 *
+	 * @return  the value.
+	 */
+	public NXdeflector getBlankerid();
+
+	/**
+	 * A component for blanking the ion beam or generating pulsed ion beams.
+	 *
+	 * @param blankeridGroup the blankeridGroup
+	 */
+	public void setBlankerid(NXdeflector blankeridGroup);
+
+	/**
+	 *
+	 * @return  the value.
+	 */
+	public NXmonochromator getMonochromator();
+
+	/**
+	 *
+	 * @param monochromatorGroup the monochromatorGroup
+	 */
+	public void setMonochromator(NXmonochromator monochromatorGroup);
+
+	/**
+	 * Get a NXmonochromator node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXmonochromator for that node.
+	 */
+	public NXmonochromator getMonochromator(String name);
+
+	/**
+	 * Set a NXmonochromator node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param monochromator the value to set
+	 */
+	public void setMonochromator(String name, NXmonochromator monochromator);
+
+	/**
+	 * Get all NXmonochromator nodes:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXmonochromator for that node.
+	 */
+	public Map<String, NXmonochromator> getAllMonochromator();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param monochromator the child nodes to add
+	 */
+
+	public void setAllMonochromator(Map<String, NXmonochromator> monochromator);
 
 
 	/**
@@ -281,9 +437,65 @@ public interface NXibeam_column extends NXobject {
 
 
 	/**
+	 *
+	 * @return  the value.
+	 */
+	public NXactuator getActuator();
+
+	/**
+	 *
+	 * @param actuatorGroup the actuatorGroup
+	 */
+	public void setActuator(NXactuator actuatorGroup);
+
+	/**
+	 * Get a NXactuator node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXactuator for that node.
+	 */
+	public NXactuator getActuator(String name);
+
+	/**
+	 * Set a NXactuator node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param actuator the value to set
+	 */
+	public void setActuator(String name, NXactuator actuator);
+
+	/**
+	 * Get all NXactuator nodes:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXactuator for that node.
+	 */
+	public Map<String, NXactuator> getAllActuator();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param actuator the child nodes to add
+	 */
+
+	public void setAllActuator(Map<String, NXactuator> actuator);
+
+
+	/**
 	 * Individual characterization results for the position, shape,
 	 * and characteristics of the ion beam.
-	 * NXtransformations should be used to specify the location or position
+	 * :ref:`NXtransformations` should be used to specify the location or position
 	 * at which details about the ion beam are probed.
 	 *
 	 * @return  the value.
@@ -293,7 +505,7 @@ public interface NXibeam_column extends NXobject {
 	/**
 	 * Individual characterization results for the position, shape,
 	 * and characteristics of the ion beam.
-	 * NXtransformations should be used to specify the location or position
+	 * :ref:`NXtransformations` should be used to specify the location or position
 	 * at which details about the ion beam are probed.
 	 *
 	 * @param beamGroup the beamGroup
@@ -306,7 +518,7 @@ public interface NXibeam_column extends NXobject {
 	 * <li>
 	 * Individual characterization results for the position, shape,
 	 * and characteristics of the ion beam.
-	 * NXtransformations should be used to specify the location or position
+	 * :ref:`NXtransformations` should be used to specify the location or position
 	 * at which details about the ion beam are probed.</li>
 	 * </ul>
 	 *
@@ -321,7 +533,7 @@ public interface NXibeam_column extends NXobject {
 	 * <li>
 	 * Individual characterization results for the position, shape,
 	 * and characteristics of the ion beam.
-	 * NXtransformations should be used to specify the location or position
+	 * :ref:`NXtransformations` should be used to specify the location or position
 	 * at which details about the ion beam are probed.</li>
 	 * </ul>
 	 *
@@ -336,7 +548,7 @@ public interface NXibeam_column extends NXobject {
 	 * <li>
 	 * Individual characterization results for the position, shape,
 	 * and characteristics of the ion beam.
-	 * NXtransformations should be used to specify the location or position
+	 * :ref:`NXtransformations` should be used to specify the location or position
 	 * at which details about the ion beam are probed.</li>
 	 * </ul>
 	 *
@@ -350,7 +562,7 @@ public interface NXibeam_column extends NXobject {
 	 * <li>
 	 * Individual characterization results for the position, shape,
 	 * and characteristics of the ion beam.
-	 * NXtransformations should be used to specify the location or position
+	 * :ref:`NXtransformations` should be used to specify the location or position
 	 * at which details about the ion beam are probed.</li>
 	 * </ul>
 	 *
@@ -359,5 +571,73 @@ public interface NXibeam_column extends NXobject {
 
 	public void setAllBeam(Map<String, NXbeam> beam);
 
+
+	/**
+	 *
+	 * @return  the value.
+	 */
+	public NXcomponent getComponent();
+
+	/**
+	 *
+	 * @param componentGroup the componentGroup
+	 */
+	public void setComponent(NXcomponent componentGroup);
+
+	/**
+	 * Get a NXcomponent node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXcomponent for that node.
+	 */
+	public NXcomponent getComponent(String name);
+
+	/**
+	 * Set a NXcomponent node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param component the value to set
+	 */
+	public void setComponent(String name, NXcomponent component);
+
+	/**
+	 * Get all NXcomponent nodes:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXcomponent for that node.
+	 */
+	public Map<String, NXcomponent> getAllComponent();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param component the child nodes to add
+	 */
+
+	public void setAllComponent(Map<String, NXcomponent> component);
+
+
+	/**
+	 *
+	 * @return  the value.
+	 */
+	public NXscan_controller getScan_controller();
+
+	/**
+	 *
+	 * @param scan_controllerGroup the scan_controllerGroup
+	 */
+	public void setScan_controller(NXscan_controller scan_controllerGroup);
 
 }

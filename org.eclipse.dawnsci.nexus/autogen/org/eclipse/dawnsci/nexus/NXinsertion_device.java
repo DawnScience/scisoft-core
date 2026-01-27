@@ -22,7 +22,7 @@ import org.eclipse.january.dataset.Dataset;
  * An insertion device, as used in a synchrotron light source.
  *
  */
-public interface NXinsertion_device extends NXobject {
+public interface NXinsertion_device extends NXcomponent {
 
 	public static final String NX_TYPE = "type";
 	public static final String NX_GAP = "gap";
@@ -36,13 +36,13 @@ public interface NXinsertion_device extends NXobject {
 	public static final String NX_ENERGY = "energy";
 	public static final String NX_BANDWIDTH = "bandwidth";
 	public static final String NX_HARMONIC = "harmonic";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
-	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
+	 * It is recommended (effective from 2025) to use the "wavelength_shifter" choice for 3-pole wigglers, while reserving the generic "wiggler" designation for extended multipole wigglers.
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>undulator</b> </li>
-	 * <li><b>wiggler</b> </li></ul></p>
+	 * <li><b>wiggler</b> </li>
+	 * <li><b>wavelength_shifter</b> </li></ul></p>
 	 * </p>
 	 *
 	 * @return  the value.
@@ -50,10 +50,12 @@ public interface NXinsertion_device extends NXobject {
 	public Dataset getType();
 
 	/**
+	 * It is recommended (effective from 2025) to use the "wavelength_shifter" choice for 3-pole wigglers, while reserving the generic "wiggler" designation for extended multipole wigglers.
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>undulator</b> </li>
-	 * <li><b>wiggler</b> </li></ul></p>
+	 * <li><b>wiggler</b> </li>
+	 * <li><b>wavelength_shifter</b> </li></ul></p>
 	 * </p>
 	 *
 	 * @param typeDataset the typeDataset
@@ -61,10 +63,12 @@ public interface NXinsertion_device extends NXobject {
 	public DataNode setType(IDataset typeDataset);
 
 	/**
+	 * It is recommended (effective from 2025) to use the "wavelength_shifter" choice for 3-pole wigglers, while reserving the generic "wiggler" designation for extended multipole wigglers.
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>undulator</b> </li>
-	 * <li><b>wiggler</b> </li></ul></p>
+	 * <li><b>wiggler</b> </li>
+	 * <li><b>wavelength_shifter</b> </li></ul></p>
 	 * </p>
 	 *
 	 * @return  the value.
@@ -72,10 +76,12 @@ public interface NXinsertion_device extends NXobject {
 	public String getTypeScalar();
 
 	/**
+	 * It is recommended (effective from 2025) to use the "wavelength_shifter" choice for 3-pole wigglers, while reserving the generic "wiggler" designation for extended multipole wigglers.
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>undulator</b> </li>
-	 * <li><b>wiggler</b> </li></ul></p>
+	 * <li><b>wiggler</b> </li>
+	 * <li><b>wavelength_shifter</b> </li></ul></p>
 	 * </p>
 	 *
 	 * @param type the type
@@ -709,38 +715,6 @@ public interface NXinsertion_device extends NXobject {
 
 
 	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
-
-	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * .. todo::
 	 * Add a definition for the reference point of a insertion device.
 	 * <p>
@@ -752,12 +726,6 @@ public interface NXinsertion_device extends NXobject {
 	public Dataset getDepends_on();
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * .. todo::
 	 * Add a definition for the reference point of a insertion device.
 	 * <p>
@@ -769,12 +737,6 @@ public interface NXinsertion_device extends NXobject {
 	public DataNode setDepends_on(IDataset depends_onDataset);
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * .. todo::
 	 * Add a definition for the reference point of a insertion device.
 	 * <p>
@@ -786,12 +748,6 @@ public interface NXinsertion_device extends NXobject {
 	public String getDepends_onScalar();
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * .. todo::
 	 * Add a definition for the reference point of a insertion device.
 	 * <p>
@@ -801,85 +757,5 @@ public interface NXinsertion_device extends NXobject {
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
-
-	/**
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.
-	 *
-	 * @return  the value.
-	 */
-	public NXtransformations getTransformations();
-
-	/**
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.
-	 *
-	 * @param transformationsGroup the transformationsGroup
-	 */
-	public void setTransformations(NXtransformations transformationsGroup);
-
-	/**
-	 * Get a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public NXtransformations getTransformations(String name);
-
-	/**
-	 * Set a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @param name the name of the node
-	 * @param transformations the value to set
-	 */
-	public void setTransformations(String name, NXtransformations transformations);
-
-	/**
-	 * Get all NXtransformations nodes:
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public Map<String, NXtransformations> getAllTransformations();
-
-	/**
-	 * Set multiple child nodes of a particular type.
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @param transformations the child nodes to add
-	 */
-
-	public void setAllTransformations(Map<String, NXtransformations> transformations);
-
 
 }

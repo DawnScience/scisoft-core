@@ -11,8 +11,6 @@
 
 package org.eclipse.dawnsci.nexus;
 
-import java.util.Map;
-
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
@@ -23,17 +21,11 @@ import org.eclipse.january.dataset.Dataset;
  * For more complex geometries, :ref:`NXaperture` should be used.
  *
  */
-public interface NXslit extends NXobject {
+public interface NXslit extends NXcomponent {
 
-	public static final String NX_DEPENDS_ON = "depends_on";
 	public static final String NX_X_GAP = "x_gap";
 	public static final String NX_Y_GAP = "y_gap";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
-	 * Points to the path of the last element in the geometry chain that places
-	 * this object in space.
-	 * When followed through that chain is supposed to end at an element depending
-	 * on "." i.e. the origin of the coordinate system.
 	 * If desired the location of the slit can also be described relative to
 	 * an NXbeam, which will allow a simple description of a non-centred slit.
 	 * The reference plane of the slit is orthogonal to the z axis and includes the
@@ -51,10 +43,6 @@ public interface NXslit extends NXobject {
 	public Dataset getDepends_on();
 
 	/**
-	 * Points to the path of the last element in the geometry chain that places
-	 * this object in space.
-	 * When followed through that chain is supposed to end at an element depending
-	 * on "." i.e. the origin of the coordinate system.
 	 * If desired the location of the slit can also be described relative to
 	 * an NXbeam, which will allow a simple description of a non-centred slit.
 	 * The reference plane of the slit is orthogonal to the z axis and includes the
@@ -72,10 +60,6 @@ public interface NXslit extends NXobject {
 	public DataNode setDepends_on(IDataset depends_onDataset);
 
 	/**
-	 * Points to the path of the last element in the geometry chain that places
-	 * this object in space.
-	 * When followed through that chain is supposed to end at an element depending
-	 * on "." i.e. the origin of the coordinate system.
 	 * If desired the location of the slit can also be described relative to
 	 * an NXbeam, which will allow a simple description of a non-centred slit.
 	 * The reference plane of the slit is orthogonal to the z axis and includes the
@@ -93,10 +77,6 @@ public interface NXslit extends NXobject {
 	public String getDepends_onScalar();
 
 	/**
-	 * Points to the path of the last element in the geometry chain that places
-	 * this object in space.
-	 * When followed through that chain is supposed to end at an element depending
-	 * on "." i.e. the origin of the coordinate system.
 	 * If desired the location of the slit can also be described relative to
 	 * an NXbeam, which will allow a simple description of a non-centred slit.
 	 * The reference plane of the slit is orthogonal to the z axis and includes the
@@ -208,111 +188,5 @@ public interface NXslit extends NXobject {
 	 * @param y_gap the y_gap
 	 */
 	public DataNode setY_gapScalar(Number y_gapValue);
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
-
-	/**
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.
-	 *
-	 * @return  the value.
-	 */
-	public NXtransformations getTransformations();
-
-	/**
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.
-	 *
-	 * @param transformationsGroup the transformationsGroup
-	 */
-	public void setTransformations(NXtransformations transformationsGroup);
-
-	/**
-	 * Get a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public NXtransformations getTransformations(String name);
-
-	/**
-	 * Set a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @param name the name of the node
-	 * @param transformations the value to set
-	 */
-	public void setTransformations(String name, NXtransformations transformations);
-
-	/**
-	 * Get all NXtransformations nodes:
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public Map<String, NXtransformations> getAllTransformations();
-
-	/**
-	 * Set multiple child nodes of a particular type.
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @param transformations the child nodes to add
-	 */
-
-	public void setAllTransformations(Map<String, NXtransformations> transformations);
-
 
 }

@@ -159,14 +159,4 @@ public class NXciteImpl extends NXobjectImpl implements NXcite {
 		return setString(NX_BIBTEX, bibtexValue);
 	}
 
-	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
-	}
-
-	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
-	}
-
 }

@@ -23,19 +23,21 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Spatial filter to filter entries within a region-of-interest based on their
- * position.
+ * Base class for a spatial filter for objects within a region-of-interest (ROI).
+ * Objects can be points, objects composed from other geometric primitives,
+ * or objects.
 
  */
-public class NXspatial_filterImpl extends NXobjectImpl implements NXspatial_filter {
+public class NXspatial_filterImpl extends NXparametersImpl implements NXspatial_filter {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_CG_ELLIPSOID_SET,
-		NexusBaseClass.NX_CG_CYLINDER_SET,
-		NexusBaseClass.NX_CG_HEXAHEDRON_SET,
+		NexusBaseClass.NX_CG_HEXAHEDRON,
+		NexusBaseClass.NX_CG_CYLINDER,
+		NexusBaseClass.NX_CG_ELLIPSOID,
+		NexusBaseClass.NX_CG_POLYHEDRON,
 		NexusBaseClass.NX_CS_FILTER_BOOLEAN_MASK);
 
 	public NXspatial_filterImpl() {
@@ -83,96 +85,127 @@ public class NXspatial_filterImpl extends NXobjectImpl implements NXspatial_filt
 	}
 
 	@Override
-	public NXcg_ellipsoid_set getCg_ellipsoid_set() {
-		// dataNodeName = NX_CG_ELLIPSOID_SET
-		return getChild("cg_ellipsoid_set", NXcg_ellipsoid_set.class);
+	public NXcg_hexahedron getCg_hexahedron() {
+		// dataNodeName = NX_CG_HEXAHEDRON
+		return getChild("cg_hexahedron", NXcg_hexahedron.class);
 	}
 
 	@Override
-	public void setCg_ellipsoid_set(NXcg_ellipsoid_set cg_ellipsoid_setGroup) {
-		putChild("cg_ellipsoid_set", cg_ellipsoid_setGroup);
+	public void setCg_hexahedron(NXcg_hexahedron cg_hexahedronGroup) {
+		putChild("cg_hexahedron", cg_hexahedronGroup);
 	}
 
 	@Override
-	public NXcg_ellipsoid_set getCg_ellipsoid_set(String name) {
-		return getChild(name, NXcg_ellipsoid_set.class);
+	public NXcg_hexahedron getCg_hexahedron(String name) {
+		return getChild(name, NXcg_hexahedron.class);
 	}
 
 	@Override
-	public void setCg_ellipsoid_set(String name, NXcg_ellipsoid_set cg_ellipsoid_set) {
-		putChild(name, cg_ellipsoid_set);
+	public void setCg_hexahedron(String name, NXcg_hexahedron cg_hexahedron) {
+		putChild(name, cg_hexahedron);
 	}
 
 	@Override
-	public Map<String, NXcg_ellipsoid_set> getAllCg_ellipsoid_set() {
-		return getChildren(NXcg_ellipsoid_set.class);
+	public Map<String, NXcg_hexahedron> getAllCg_hexahedron() {
+		return getChildren(NXcg_hexahedron.class);
 	}
 
 	@Override
-	public void setAllCg_ellipsoid_set(Map<String, NXcg_ellipsoid_set> cg_ellipsoid_set) {
-		setChildren(cg_ellipsoid_set);
+	public void setAllCg_hexahedron(Map<String, NXcg_hexahedron> cg_hexahedron) {
+		setChildren(cg_hexahedron);
 	}
 
 	@Override
-	public NXcg_cylinder_set getCg_cylinder_set() {
-		// dataNodeName = NX_CG_CYLINDER_SET
-		return getChild("cg_cylinder_set", NXcg_cylinder_set.class);
+	public NXcg_cylinder getCg_cylinder() {
+		// dataNodeName = NX_CG_CYLINDER
+		return getChild("cg_cylinder", NXcg_cylinder.class);
 	}
 
 	@Override
-	public void setCg_cylinder_set(NXcg_cylinder_set cg_cylinder_setGroup) {
-		putChild("cg_cylinder_set", cg_cylinder_setGroup);
+	public void setCg_cylinder(NXcg_cylinder cg_cylinderGroup) {
+		putChild("cg_cylinder", cg_cylinderGroup);
 	}
 
 	@Override
-	public NXcg_cylinder_set getCg_cylinder_set(String name) {
-		return getChild(name, NXcg_cylinder_set.class);
+	public NXcg_cylinder getCg_cylinder(String name) {
+		return getChild(name, NXcg_cylinder.class);
 	}
 
 	@Override
-	public void setCg_cylinder_set(String name, NXcg_cylinder_set cg_cylinder_set) {
-		putChild(name, cg_cylinder_set);
+	public void setCg_cylinder(String name, NXcg_cylinder cg_cylinder) {
+		putChild(name, cg_cylinder);
 	}
 
 	@Override
-	public Map<String, NXcg_cylinder_set> getAllCg_cylinder_set() {
-		return getChildren(NXcg_cylinder_set.class);
+	public Map<String, NXcg_cylinder> getAllCg_cylinder() {
+		return getChildren(NXcg_cylinder.class);
 	}
 
 	@Override
-	public void setAllCg_cylinder_set(Map<String, NXcg_cylinder_set> cg_cylinder_set) {
-		setChildren(cg_cylinder_set);
+	public void setAllCg_cylinder(Map<String, NXcg_cylinder> cg_cylinder) {
+		setChildren(cg_cylinder);
 	}
 
 	@Override
-	public NXcg_hexahedron_set getCg_hexahedron_set() {
-		// dataNodeName = NX_CG_HEXAHEDRON_SET
-		return getChild("cg_hexahedron_set", NXcg_hexahedron_set.class);
+	public NXcg_ellipsoid getCg_ellipsoid() {
+		// dataNodeName = NX_CG_ELLIPSOID
+		return getChild("cg_ellipsoid", NXcg_ellipsoid.class);
 	}
 
 	@Override
-	public void setCg_hexahedron_set(NXcg_hexahedron_set cg_hexahedron_setGroup) {
-		putChild("cg_hexahedron_set", cg_hexahedron_setGroup);
+	public void setCg_ellipsoid(NXcg_ellipsoid cg_ellipsoidGroup) {
+		putChild("cg_ellipsoid", cg_ellipsoidGroup);
 	}
 
 	@Override
-	public NXcg_hexahedron_set getCg_hexahedron_set(String name) {
-		return getChild(name, NXcg_hexahedron_set.class);
+	public NXcg_ellipsoid getCg_ellipsoid(String name) {
+		return getChild(name, NXcg_ellipsoid.class);
 	}
 
 	@Override
-	public void setCg_hexahedron_set(String name, NXcg_hexahedron_set cg_hexahedron_set) {
-		putChild(name, cg_hexahedron_set);
+	public void setCg_ellipsoid(String name, NXcg_ellipsoid cg_ellipsoid) {
+		putChild(name, cg_ellipsoid);
 	}
 
 	@Override
-	public Map<String, NXcg_hexahedron_set> getAllCg_hexahedron_set() {
-		return getChildren(NXcg_hexahedron_set.class);
+	public Map<String, NXcg_ellipsoid> getAllCg_ellipsoid() {
+		return getChildren(NXcg_ellipsoid.class);
 	}
 
 	@Override
-	public void setAllCg_hexahedron_set(Map<String, NXcg_hexahedron_set> cg_hexahedron_set) {
-		setChildren(cg_hexahedron_set);
+	public void setAllCg_ellipsoid(Map<String, NXcg_ellipsoid> cg_ellipsoid) {
+		setChildren(cg_ellipsoid);
+	}
+
+	@Override
+	public NXcg_polyhedron getCg_polyhedron() {
+		// dataNodeName = NX_CG_POLYHEDRON
+		return getChild("cg_polyhedron", NXcg_polyhedron.class);
+	}
+
+	@Override
+	public void setCg_polyhedron(NXcg_polyhedron cg_polyhedronGroup) {
+		putChild("cg_polyhedron", cg_polyhedronGroup);
+	}
+
+	@Override
+	public NXcg_polyhedron getCg_polyhedron(String name) {
+		return getChild(name, NXcg_polyhedron.class);
+	}
+
+	@Override
+	public void setCg_polyhedron(String name, NXcg_polyhedron cg_polyhedron) {
+		putChild(name, cg_polyhedron);
+	}
+
+	@Override
+	public Map<String, NXcg_polyhedron> getAllCg_polyhedron() {
+		return getChildren(NXcg_polyhedron.class);
+	}
+
+	@Override
+	public void setAllCg_polyhedron(Map<String, NXcg_polyhedron> cg_polyhedron) {
+		setChildren(cg_polyhedron);
 	}
 
 	@Override

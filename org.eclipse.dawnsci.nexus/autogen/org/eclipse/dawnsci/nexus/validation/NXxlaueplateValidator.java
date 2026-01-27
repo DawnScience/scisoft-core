@@ -14,6 +14,8 @@ package org.eclipse.dawnsci.nexus.validation;
 import static org.eclipse.dawnsci.nexus.validation.NexusDataType.*;
 import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 
+import java.util.Map;
+
 import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
@@ -35,33 +37,37 @@ public class NXxlaueplateValidator extends AbstractNexusValidator implements Nex
 
 	@Override
 	public ValidationReport validate(NXroot root) {
-		// validate child group 'entry' of type NXentry
-		validateGroup_entry(root.getEntry());
+		// validate unnamed child group of type NXentry (possibly multiple)
+		validateUnnamedGroupOccurrences(root, NXentry.class, false, true);
+		final Map<String, NXentry> allEntry = root.getAllEntry();
+		for (final NXentry entry : allEntry.values()) {
+			validateGroup_NXentry(entry);
+		}
 		return validationReport;
 	}
 
 	@Override
 	public ValidationReport validate(NXentry entry) {
-		validateGroup_entry(entry);
+		validateGroup_NXentry(entry);
 		return validationReport;
 	}
 
 	@Override
 	public ValidationReport validate(NXsubentry subentry) {
-		validateGroup_entry(subentry);
+		validateGroup_NXentry(subentry);
 		return validationReport;
 	}
 
 
 	/**
-	 * Validate group 'entry' of type NXentry.
+	 * Validate unnamed group of type NXentry.
 	 */
-	private void validateGroup_entry(final NXsubentry group) {
+	private void validateGroup_NXentry(final NXsubentry group) {
 		// set the current entry, required for validating links
 		setEntry(group);
 
 		// validate that the group is not null
-		if (!(validateGroupNotNull("entry", NXentry.class, group))) return;
+		if (!(validateGroupNotNull(null, NXentry.class, group))) return;
 
 		// validate field 'definition' of type NX_CHAR.
 		final ILazyDataset definition = group.getLazyDataset("definition");
@@ -74,24 +80,24 @@ public class NXxlaueplateValidator extends AbstractNexusValidator implements Nex
 		}
 
 		// validate child group 'instrument' of type NXinstrument
-		validateGroup_entry_instrument(group.getInstrument());
+		validateGroup_NXentry_instrument(group.getInstrument());
 	}
 
 	/**
 	 * Validate group 'instrument' of type NXinstrument.
 	 */
-	private void validateGroup_entry_instrument(final NXinstrument group) {
+	private void validateGroup_NXentry_instrument(final NXinstrument group) {
 		// validate that the group is not null
 		if (!(validateGroupNotNull("instrument", NXinstrument.class, group))) return;
 
 		// validate child group 'detector' of type NXdetector
-		validateGroup_entry_instrument_detector(group.getDetector());
+		validateGroup_NXentry_instrument_detector(group.getDetector());
 	}
 
 	/**
 	 * Validate group 'detector' of type NXdetector.
 	 */
-	private void validateGroup_entry_instrument_detector(final NXdetector group) {
+	private void validateGroup_NXentry_instrument_detector(final NXdetector group) {
 		// validate that the group is not null
 		if (!(validateGroupNotNull("detector", NXdetector.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();

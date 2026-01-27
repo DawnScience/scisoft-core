@@ -28,24 +28,22 @@ import org.eclipse.january.dataset.Dataset;
  * and maximum values of the range should be provided.</li></ul></p>
  *
  */
-public interface NXwaveplate extends NXobject {
+public interface NXwaveplate extends NXcomponent {
 
 	public static final String NX_TYPE = "type";
-	public static final String NX_OTHER_TYPE = "other_type";
 	public static final String NX_RETARDANCE = "retardance";
 	public static final String NX_WAVELENGTHS = "wavelengths";
 	public static final String NX_DIAMETER = "diameter";
 	public static final String NX_CLEAR_APERTURE = "clear_aperture";
 	public static final String NX_REFLECTANCE = "reflectance";
 	/**
-	 * Type of waveplate (e.g. achromatic waveplate or zero-order waveplate).
+	 * Type of waveplate (e.g. achromatic or zero-order).
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>zero-order waveplate</b> </li>
-	 * <li><b>achromatic waveplate</b> </li>
-	 * <li><b>multiple-order waveplate</b> </li>
-	 * <li><b>dual-wavelength waveplate</b> </li>
-	 * <li><b>other</b> </li></ul></p>
+	 * <li><b>zero-order</b> </li>
+	 * <li><b>achromatic</b> </li>
+	 * <li><b>multiple-order</b> </li>
+	 * <li><b>dual-wavelength</b> </li></ul></p>
 	 * </p>
 	 *
 	 * @return  the value.
@@ -53,14 +51,13 @@ public interface NXwaveplate extends NXobject {
 	public Dataset getType();
 
 	/**
-	 * Type of waveplate (e.g. achromatic waveplate or zero-order waveplate).
+	 * Type of waveplate (e.g. achromatic or zero-order).
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>zero-order waveplate</b> </li>
-	 * <li><b>achromatic waveplate</b> </li>
-	 * <li><b>multiple-order waveplate</b> </li>
-	 * <li><b>dual-wavelength waveplate</b> </li>
-	 * <li><b>other</b> </li></ul></p>
+	 * <li><b>zero-order</b> </li>
+	 * <li><b>achromatic</b> </li>
+	 * <li><b>multiple-order</b> </li>
+	 * <li><b>dual-wavelength</b> </li></ul></p>
 	 * </p>
 	 *
 	 * @param typeDataset the typeDataset
@@ -68,14 +65,13 @@ public interface NXwaveplate extends NXobject {
 	public DataNode setType(IDataset typeDataset);
 
 	/**
-	 * Type of waveplate (e.g. achromatic waveplate or zero-order waveplate).
+	 * Type of waveplate (e.g. achromatic or zero-order).
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>zero-order waveplate</b> </li>
-	 * <li><b>achromatic waveplate</b> </li>
-	 * <li><b>multiple-order waveplate</b> </li>
-	 * <li><b>dual-wavelength waveplate</b> </li>
-	 * <li><b>other</b> </li></ul></p>
+	 * <li><b>zero-order</b> </li>
+	 * <li><b>achromatic</b> </li>
+	 * <li><b>multiple-order</b> </li>
+	 * <li><b>dual-wavelength</b> </li></ul></p>
 	 * </p>
 	 *
 	 * @return  the value.
@@ -83,14 +79,13 @@ public interface NXwaveplate extends NXobject {
 	public String getTypeScalar();
 
 	/**
-	 * Type of waveplate (e.g. achromatic waveplate or zero-order waveplate).
+	 * Type of waveplate (e.g. achromatic or zero-order).
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>zero-order waveplate</b> </li>
-	 * <li><b>achromatic waveplate</b> </li>
-	 * <li><b>multiple-order waveplate</b> </li>
-	 * <li><b>dual-wavelength waveplate</b> </li>
-	 * <li><b>other</b> </li></ul></p>
+	 * <li><b>zero-order</b> </li>
+	 * <li><b>achromatic</b> </li>
+	 * <li><b>multiple-order</b> </li>
+	 * <li><b>dual-wavelength</b> </li></ul></p>
 	 * </p>
 	 *
 	 * @param type the type
@@ -98,41 +93,13 @@ public interface NXwaveplate extends NXobject {
 	public DataNode setTypeScalar(String typeValue);
 
 	/**
-	 * If you selected 'other' in type describe what it is.
-	 *
-	 * @return  the value.
-	 */
-	public Dataset getOther_type();
-
-	/**
-	 * If you selected 'other' in type describe what it is.
-	 *
-	 * @param other_typeDataset the other_typeDataset
-	 */
-	public DataNode setOther_type(IDataset other_typeDataset);
-
-	/**
-	 * If you selected 'other' in type describe what it is.
-	 *
-	 * @return  the value.
-	 */
-	public String getOther_typeScalar();
-
-	/**
-	 * If you selected 'other' in type describe what it is.
-	 *
-	 * @param other_type the other_type
-	 */
-	public DataNode setOther_typeScalar(String other_typeValue);
-
-	/**
 	 * Specify the retardance of the waveplate (e.g. full-wave, half-wave
-	 * (lambda/2), quarter-wave (lambda/4) plate).
+	 * (lambda/2), quarter-wave (lambda/4)).
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>full-wave plate</b> </li>
-	 * <li><b>half-wave plate</b> </li>
-	 * <li><b>quarter-wave plate</b> </li></ul></p>
+	 * <li><b>full-wave</b> </li>
+	 * <li><b>half-wave</b> </li>
+	 * <li><b>quarter-wave</b> </li></ul></p>
 	 * </p>
 	 *
 	 * @return  the value.
@@ -141,12 +108,12 @@ public interface NXwaveplate extends NXobject {
 
 	/**
 	 * Specify the retardance of the waveplate (e.g. full-wave, half-wave
-	 * (lambda/2), quarter-wave (lambda/4) plate).
+	 * (lambda/2), quarter-wave (lambda/4)).
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>full-wave plate</b> </li>
-	 * <li><b>half-wave plate</b> </li>
-	 * <li><b>quarter-wave plate</b> </li></ul></p>
+	 * <li><b>full-wave</b> </li>
+	 * <li><b>half-wave</b> </li>
+	 * <li><b>quarter-wave</b> </li></ul></p>
 	 * </p>
 	 *
 	 * @param retardanceDataset the retardanceDataset
@@ -155,12 +122,12 @@ public interface NXwaveplate extends NXobject {
 
 	/**
 	 * Specify the retardance of the waveplate (e.g. full-wave, half-wave
-	 * (lambda/2), quarter-wave (lambda/4) plate).
+	 * (lambda/2), quarter-wave (lambda/4)).
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>full-wave plate</b> </li>
-	 * <li><b>half-wave plate</b> </li>
-	 * <li><b>quarter-wave plate</b> </li></ul></p>
+	 * <li><b>full-wave</b> </li>
+	 * <li><b>half-wave</b> </li>
+	 * <li><b>quarter-wave</b> </li></ul></p>
 	 * </p>
 	 *
 	 * @return  the value.
@@ -169,12 +136,12 @@ public interface NXwaveplate extends NXobject {
 
 	/**
 	 * Specify the retardance of the waveplate (e.g. full-wave, half-wave
-	 * (lambda/2), quarter-wave (lambda/4) plate).
+	 * (lambda/2), quarter-wave (lambda/4)).
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>full-wave plate</b> </li>
-	 * <li><b>half-wave plate</b> </li>
-	 * <li><b>quarter-wave plate</b> </li></ul></p>
+	 * <li><b>full-wave</b> </li>
+	 * <li><b>half-wave</b> </li>
+	 * <li><b>quarter-wave</b> </li></ul></p>
 	 * </p>
 	 *
 	 * @param retardance the retardance
@@ -185,7 +152,7 @@ public interface NXwaveplate extends NXobject {
 	 * Discrete wavelengths for which the waveplate is designed. If the
 	 * waveplate operates over an entire range of wavelengths, enter the minimum
 	 * and maximum values of the wavelength range (in this case
-	 * N_wavelengths = 2).
+	 * N_wavelengths = 2). In this case, also use type="achromatic".
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b> 1: N_wavelengths;
@@ -199,7 +166,7 @@ public interface NXwaveplate extends NXobject {
 	 * Discrete wavelengths for which the waveplate is designed. If the
 	 * waveplate operates over an entire range of wavelengths, enter the minimum
 	 * and maximum values of the wavelength range (in this case
-	 * N_wavelengths = 2).
+	 * N_wavelengths = 2). In this case, also use type="achromatic".
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b> 1: N_wavelengths;
@@ -213,7 +180,7 @@ public interface NXwaveplate extends NXobject {
 	 * Discrete wavelengths for which the waveplate is designed. If the
 	 * waveplate operates over an entire range of wavelengths, enter the minimum
 	 * and maximum values of the wavelength range (in this case
-	 * N_wavelengths = 2).
+	 * N_wavelengths = 2). In this case, also use type="achromatic".
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b> 1: N_wavelengths;
@@ -227,7 +194,7 @@ public interface NXwaveplate extends NXobject {
 	 * Discrete wavelengths for which the waveplate is designed. If the
 	 * waveplate operates over an entire range of wavelengths, enter the minimum
 	 * and maximum values of the wavelength range (in this case
-	 * N_wavelengths = 2).
+	 * N_wavelengths = 2). In this case, also use type="achromatic".
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Dimensions:</b> 1: N_wavelengths;
@@ -238,7 +205,21 @@ public interface NXwaveplate extends NXobject {
 	public DataNode setWavelengthsScalar(Number wavelengthsValue);
 
 	/**
-	 * Diameter of the waveplate.
+	 * Wavelength resolved retardance of the waveplate.
+	 *
+	 * @return  the value.
+	 */
+	public NXdata getRetardance_distribution();
+
+	/**
+	 * Wavelength resolved retardance of the waveplate.
+	 *
+	 * @param retardance_distributionGroup the retardance_distributionGroup
+	 */
+	public void setRetardance_distribution(NXdata retardance_distributionGroup);
+
+	/**
+	 * Diameter of the waveplate (if the waveplate is circular).
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
@@ -249,7 +230,7 @@ public interface NXwaveplate extends NXobject {
 	public Dataset getDiameter();
 
 	/**
-	 * Diameter of the waveplate.
+	 * Diameter of the waveplate (if the waveplate is circular).
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
@@ -260,7 +241,7 @@ public interface NXwaveplate extends NXobject {
 	public DataNode setDiameter(IDataset diameterDataset);
 
 	/**
-	 * Diameter of the waveplate.
+	 * Diameter of the waveplate (if the waveplate is circular).
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
@@ -271,7 +252,7 @@ public interface NXwaveplate extends NXobject {
 	public Double getDiameterScalar();
 
 	/**
-	 * Diameter of the waveplate.
+	 * Diameter of the waveplate (if the waveplate is circular).
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
@@ -330,7 +311,7 @@ public interface NXwaveplate extends NXobject {
 	public DataNode setClear_apertureScalar(Double clear_apertureValue);
 
 	/**
-	 * Describe the material of the substrate of the wave plate in
+	 * Describe the material of the substrate of the waveplate in
 	 * substrate/substrate_material and provide its index of refraction in
 	 * substrate/index_of_refraction_substrate, if known.
 	 *
@@ -339,7 +320,7 @@ public interface NXwaveplate extends NXobject {
 	public NXsample getSubstrate();
 
 	/**
-	 * Describe the material of the substrate of the wave plate in
+	 * Describe the material of the substrate of the waveplate in
 	 * substrate/substrate_material and provide its index of refraction in
 	 * substrate/index_of_refraction_substrate, if known.
 	 *
@@ -348,7 +329,7 @@ public interface NXwaveplate extends NXobject {
 	public void setSubstrate(NXsample substrateGroup);
 
 	/**
-	 * Is the wave plate coated? If yes, specify the type and material of the
+	 * Is the waveplate coated? If yes, specify the type and material of the
 	 * coating and the wavelength range for which it is designed. If known, you
 	 * may also provide its index of refraction.
 	 *
@@ -357,7 +338,7 @@ public interface NXwaveplate extends NXobject {
 	public NXsample getCoating();
 
 	/**
-	 * Is the wave plate coated? If yes, specify the type and material of the
+	 * Is the waveplate coated? If yes, specify the type and material of the
 	 * coating and the wavelength range for which it is designed. If known, you
 	 * may also provide its index of refraction.
 	 *

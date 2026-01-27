@@ -20,7 +20,7 @@ import org.eclipse.january.dataset.Dataset;
  * Geometry (shape) description.
  * The format closely matches the Object File Format (OFF) which can be output
  * by most CAD software.
- * It can be used to describe the shape of any beamline component, including detectors.
+ * It can be used to describe the shape of any component, including detectors.
  * In the case of detectors it can be used to define the shape of a single pixel, or,
  * if the pixel shapes are non-uniform, to describe the shape of the whole detector.
  * <p><b>Symbols:</b>
@@ -40,7 +40,6 @@ public interface NXoff_geometry extends NXobject {
 	public static final String NX_WINDING_ORDER = "winding_order";
 	public static final String NX_FACES = "faces";
 	public static final String NX_DETECTOR_FACES = "detector_faces";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * List of x,y,z coordinates for vertices.
 	 * The origin of the coordinates is the position of the parent component, for
@@ -272,31 +271,5 @@ public interface NXoff_geometry extends NXobject {
 	 * @param detector_faces the detector_faces
 	 */
 	public DataNode setDetector_facesScalar(Long detector_facesValue);
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
 
 }

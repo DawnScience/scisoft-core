@@ -40,10 +40,10 @@ import org.eclipse.january.dataset.Dataset;
  * useful coordinate axes may be defined by using axes for which no transformation
  * type has been specified.
  * The entry point (``depends_on``) will be outside of this class and point to a
- * field in here. Following the chain may also require following ``depends_on``
- * links to transformations outside, for example to a common base table. If
- * a relative path is given, it is relative to the group enclosing the ``depends_on``
- * specification.
+ * field in here (or to an instance of ``NX_coordinate_system``). Following the
+ * chain may also require following ``depends_on`` links to transformations outside,
+ * for example to a common base table. If a relative path is given, it is relative
+ * to the group enclosing the ``depends_on`` specification.
  * For a chain of three transformations, where :math:`T_1` depends on :math:`T_2`
  * and that in turn depends on :math:`T_3`, the final transformation :math:`T_f` is
  * .. math:: T_f = T_3 T_2 T_1
@@ -64,17 +64,23 @@ import org.eclipse.january.dataset.Dataset;
  * for each diffractometer and name the group appropriate to the device.
  * Collecting the motors of a sample table or xyz-stage in an NXtransformations
  * group is equally possible.
- * Following the section on the general dscription of axis in NXtransformations is a section which
+ * Following the section on the general description of axis in NXtransformations is a section which
  * documents the fields commonly used within NeXus for positioning purposes and their meaning. Whenever
  * there is a need for positioning a beam line component please use the existing names. Use as many fields
  * as needed in order to position the component. Feel free to add more axis if required. In the description
- * given below, only those atttributes which are defined through the name are spcified. Add the other attributes
+ * given below, only those attributes which are defined through the name are specified. Add the other attributes
  * of the full set:
  * * vector
  * * offset
  * * transformation_type
  * * depends_on
  * as needed.
+ * NOTE
+ * ``NXtransformations`` follows the **active** transformation convention. This means that the transformation describes
+ * how an object is moved or rotated within the coordinate system. In other words, the transformation
+ * actively changes the position or orientation of the object itself. This is in contrast to a **passive** transformation,
+ * which changes the frame of reference or coordinate system, while the object remains fixed. In case it is needed
+ * to describe multiple coordinate systems, it is strongly suggested to use the :ref:`NXcoordinate_system` base class.
  *
  */
 public interface NXtransformations extends NXobject {
@@ -86,9 +92,8 @@ public interface NXtransformations extends NXobject {
 	public static final String NX_AXISNAME_ATTRIBUTE_OFFSET_UNITS = "offset_units";
 	public static final String NX_AXISNAME_ATTRIBUTE_DEPENDS_ON = "depends_on";
 	public static final String NX_AXISNAME_ATTRIBUTE_EQUIPMENT_COMPONENT = "equipment_component";
-	public static final String NX_END_SUFFIX = "_end";
-	public static final String NX_INCREMENT_SET_SUFFIX = "_increment_set";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
+	public static final String NX_AXISNAME_END = "axisname_end";
+	public static final String NX_AXISNAME_INCREMENT_SET = "axisname_increment_set";
 	/**
 	 * Units need to be appropriate for translation or rotation
 	 * The name of this field is not forced. The user is free to use any name
@@ -187,7 +192,7 @@ public interface NXtransformations extends NXobject {
 	 * values are linear displacements along the axis, ``rotation``,
 	 * in which case the values are angular rotations around the axis.
 	 * If this attribute is omitted, this is an axis for which there
-	 * is no motion to be specifies, such as the direction of gravity,
+	 * is no motion to be specified, such as the direction of gravity,
 	 * or the direction to the source, or a basis vector of a
 	 * coordinate frame. In this case the value of the ``AXISNAME`` field
 	 * is not used and can be set to the number ``NaN``.
@@ -207,7 +212,7 @@ public interface NXtransformations extends NXobject {
 	 * values are linear displacements along the axis, ``rotation``,
 	 * in which case the values are angular rotations around the axis.
 	 * If this attribute is omitted, this is an axis for which there
-	 * is no motion to be specifies, such as the direction of gravity,
+	 * is no motion to be specified, such as the direction of gravity,
 	 * or the direction to the source, or a basis vector of a
 	 * coordinate frame. In this case the value of the ``AXISNAME`` field
 	 * is not used and can be set to the number ``NaN``.
@@ -225,11 +230,27 @@ public interface NXtransformations extends NXobject {
 	/**
 	 * Three values that define the axis for this transformation.
 	 * The axis should be normalized to unit length, making it
-	 * dimensionless. For ``rotation`` axes, the direction should be
-	 * chosen for a right-handed rotation with increasing angle.
+	 * dimensionless.
 	 * For ``translation`` axes the direction should be chosen for
 	 * increasing displacement. For general axes, an appropriate direction
 	 * should be chosen.
+	 * By default, for ``rotation`` axes that do not explicitly depend on a coordinate system,
+	 * the direction should be chosen for a right-handed rotation with increasing angle. Note,
+	 * McStas is a right handed coordinate system.
+	 * If the ``NXtransformation`` depends on a coordinate system (i.e., its ``depends_on``
+	 * attribute (or a ``depends_on`` further up the transformation chain) points to an instance
+	 * of :ref:`NXcoordinate_system`), the rotation convention is the same as the handedness
+	 * of the coordinate system (as defined by the determinant of its base vectors):
+	 * * Rotations in left-handed coordinate systems are left-handed (i.e., they follow the
+	 * left-hand grip rule). In a left-handed coordinate system, positive rotation about an
+	 * axis is clockwise when looking from a point on the positive axis towards
+	 * its origin (from infinity towards the origin).
+	 * * Rotations in right-handed coordinate systems are right-handed (i.e., they follow the
+	 * right-hand grip rule). In a right-handed coordinate system, positive rotation about an
+	 * axis is counter-clockwise when looking from a point on the positive axis towards
+	 * its origin (from infinity towards the origin).
+	 * Note that by using this convention, the transformation matrices in both left- and
+	 * right-handed coordinate systems are the same.
 	 * <p>
 				 1: 3;
 			
@@ -243,11 +264,27 @@ public interface NXtransformations extends NXobject {
 	/**
 	 * Three values that define the axis for this transformation.
 	 * The axis should be normalized to unit length, making it
-	 * dimensionless. For ``rotation`` axes, the direction should be
-	 * chosen for a right-handed rotation with increasing angle.
+	 * dimensionless.
 	 * For ``translation`` axes the direction should be chosen for
 	 * increasing displacement. For general axes, an appropriate direction
 	 * should be chosen.
+	 * By default, for ``rotation`` axes that do not explicitly depend on a coordinate system,
+	 * the direction should be chosen for a right-handed rotation with increasing angle. Note,
+	 * McStas is a right handed coordinate system.
+	 * If the ``NXtransformation`` depends on a coordinate system (i.e., its ``depends_on``
+	 * attribute (or a ``depends_on`` further up the transformation chain) points to an instance
+	 * of :ref:`NXcoordinate_system`), the rotation convention is the same as the handedness
+	 * of the coordinate system (as defined by the determinant of its base vectors):
+	 * * Rotations in left-handed coordinate systems are left-handed (i.e., they follow the
+	 * left-hand grip rule). In a left-handed coordinate system, positive rotation about an
+	 * axis is clockwise when looking from a point on the positive axis towards
+	 * its origin (from infinity towards the origin).
+	 * * Rotations in right-handed coordinate systems are right-handed (i.e., they follow the
+	 * right-hand grip rule). In a right-handed coordinate system, positive rotation about an
+	 * axis is counter-clockwise when looking from a point on the positive axis towards
+	 * its origin (from infinity towards the origin).
+	 * Note that by using this convention, the transformation matrices in both left- and
+	 * right-handed coordinate systems are the same.
 	 * <p>
 				 1: 3;
 			
@@ -303,8 +340,11 @@ public interface NXtransformations extends NXobject {
 	public void setAxisnameAttributeOffset_units(String axisname, String offset_unitsValue);
 
 	/**
-	 * Points to the path to a field defining the axis on which this
-	 * depends or the string ".".
+	 * Points to the path of a field defining the axis on which this instance of
+	 * NXtransformations depends or the string ".". It can also point to an instance of
+	 * ``NX_coordinate_system`` if this transformation depends on it.
+	 * If it is the string ".", it is explicitly pointing towards the default
+	 * `NeXus coordinate system <https://manual.nexusformat.org/design.html#the-nexus-coordinate-system>`_.
 	 *
 	 * @param axisname the axisname
 	 * @return  the value.
@@ -312,8 +352,11 @@ public interface NXtransformations extends NXobject {
 	public String getAxisnameAttributeDepends_on(String axisname);
 
 	/**
-	 * Points to the path to a field defining the axis on which this
-	 * depends or the string ".".
+	 * Points to the path of a field defining the axis on which this instance of
+	 * NXtransformations depends or the string ".". It can also point to an instance of
+	 * ``NX_coordinate_system`` if this transformation depends on it.
+	 * If it is the string ".", it is explicitly pointing towards the default
+	 * `NeXus coordinate system <https://manual.nexusformat.org/design.html#the-nexus-coordinate-system>`_.
 	 *
 	 * @param axisname the axisname
 	 * @param depends_onValue the depends_onValue
@@ -354,10 +397,9 @@ public interface NXtransformations extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 *
-	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public Dataset getEnd(String axisname);
+	public Dataset getAxisname_end();
 
 	/**
 	 * ``AXISNAME_end`` is a placeholder for a name constructed from the actual
@@ -369,10 +411,9 @@ public interface NXtransformations extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 *
-	 * @param axisname the axisname
-	 * @param endDataset the endDataset
+	 * @param axisname_endDataset the axisname_endDataset
 	 */
-	public DataNode setEnd(String axisname, IDataset endDataset);
+	public DataNode setAxisname_end(IDataset axisname_endDataset);
 
 	/**
 	 * ``AXISNAME_end`` is a placeholder for a name constructed from the actual
@@ -384,10 +425,9 @@ public interface NXtransformations extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 *
-	 * @param axisname the axisname
 	 * @return  the value.
 	 */
-	public Number getEndScalar(String axisname);
+	public Number getAxisname_endScalar();
 
 	/**
 	 * ``AXISNAME_end`` is a placeholder for a name constructed from the actual
@@ -399,28 +439,9 @@ public interface NXtransformations extends NXobject {
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
 	 *
-	 * @param axisname the axisname
-	 * @param end the end
+	 * @param axisname_end the axisname_end
 	 */
-	public DataNode setEndScalar(String axisname, Number endValue);
-
-
-	/**
-	 * Get all End fields:
-	 *
-	 * ``AXISNAME_end`` is a placeholder for a name constructed from the actual
-	 * name of an axis to which ``_end`` has been appended.
-	 * The values in this field are the end points of the motions that start
-	 * at the corresponding positions given in the ``AXISNAME`` field.
-	 * <p>
-	 * <b>Units:</b> NX_TRANSFORMATION
-	 * <b>Type:</b> NX_NUMBER
-	 * </p>
-	 * <p> <em>Note: this method returns ALL datasets within this group.</em> 
-	 *
-	 * @return  a map from node names to the ? extends IDataset for that node.
-	 */
-	public Map<String, ? extends IDataset> getAllEnd();
+	public DataNode setAxisname_endScalar(Number axisname_endValue);
 
 	/**
 	 * ``AXISNAME_increment_set`` is a placeholder for a name constructed from the actual
@@ -434,111 +455,60 @@ public interface NXtransformations extends NXobject {
 	 * <b>Units:</b> NX_TRANSFORMATION
 	 * <b>Type:</b> NX_NUMBER
 	 * </p>
-	 *
-	 * @param axisname the axisname
-	 * @return  the value.
-	 */
-	public Dataset getIncrement_set(String axisname);
-
-	/**
-	 * ``AXISNAME_increment_set`` is a placeholder for a name constructed from the actual
-	 * name of an axis to which ``_increment_set`` has been appended.
-	 * The value of this optional field is the intended average range through which
-	 * the corresponding axis moves during the exposure of a frame. Ideally, the
-	 * value of this field added to each value of ``AXISNAME`` would agree with the
-	 * corresponding values of ``AXISNAME_end``, but there is a possibility of significant
-	 * differences. Use of ``AXISNAME_end`` is recommended.
-	 * <p>
-	 * <b>Units:</b> NX_TRANSFORMATION
-	 * <b>Type:</b> NX_NUMBER
-	 * </p>
-	 *
-	 * @param axisname the axisname
-	 * @param increment_setDataset the increment_setDataset
-	 */
-	public DataNode setIncrement_set(String axisname, IDataset increment_setDataset);
-
-	/**
-	 * ``AXISNAME_increment_set`` is a placeholder for a name constructed from the actual
-	 * name of an axis to which ``_increment_set`` has been appended.
-	 * The value of this optional field is the intended average range through which
-	 * the corresponding axis moves during the exposure of a frame. Ideally, the
-	 * value of this field added to each value of ``AXISNAME`` would agree with the
-	 * corresponding values of ``AXISNAME_end``, but there is a possibility of significant
-	 * differences. Use of ``AXISNAME_end`` is recommended.
-	 * <p>
-	 * <b>Units:</b> NX_TRANSFORMATION
-	 * <b>Type:</b> NX_NUMBER
-	 * </p>
-	 *
-	 * @param axisname the axisname
-	 * @return  the value.
-	 */
-	public Number getIncrement_setScalar(String axisname);
-
-	/**
-	 * ``AXISNAME_increment_set`` is a placeholder for a name constructed from the actual
-	 * name of an axis to which ``_increment_set`` has been appended.
-	 * The value of this optional field is the intended average range through which
-	 * the corresponding axis moves during the exposure of a frame. Ideally, the
-	 * value of this field added to each value of ``AXISNAME`` would agree with the
-	 * corresponding values of ``AXISNAME_end``, but there is a possibility of significant
-	 * differences. Use of ``AXISNAME_end`` is recommended.
-	 * <p>
-	 * <b>Units:</b> NX_TRANSFORMATION
-	 * <b>Type:</b> NX_NUMBER
-	 * </p>
-	 *
-	 * @param axisname the axisname
-	 * @param increment_set the increment_set
-	 */
-	public DataNode setIncrement_setScalar(String axisname, Number increment_setValue);
-
-
-	/**
-	 * Get all Increment_set fields:
-	 *
-	 * ``AXISNAME_increment_set`` is a placeholder for a name constructed from the actual
-	 * name of an axis to which ``_increment_set`` has been appended.
-	 * The value of this optional field is the intended average range through which
-	 * the corresponding axis moves during the exposure of a frame. Ideally, the
-	 * value of this field added to each value of ``AXISNAME`` would agree with the
-	 * corresponding values of ``AXISNAME_end``, but there is a possibility of significant
-	 * differences. Use of ``AXISNAME_end`` is recommended.
-	 * <p>
-	 * <b>Units:</b> NX_TRANSFORMATION
-	 * <b>Type:</b> NX_NUMBER
-	 * </p>
-	 * <p> <em>Note: this method returns ALL datasets within this group.</em> 
-	 *
-	 * @return  a map from node names to the ? extends IDataset for that node.
-	 */
-	public Map<String, ? extends IDataset> getAllIncrement_set();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
 	 *
 	 * @return  the value.
 	 */
-	public String getAttributeDefault();
+	public Dataset getAxisname_increment_set();
 
 	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
+	 * ``AXISNAME_increment_set`` is a placeholder for a name constructed from the actual
+	 * name of an axis to which ``_increment_set`` has been appended.
+	 * The value of this optional field is the intended average range through which
+	 * the corresponding axis moves during the exposure of a frame. Ideally, the
+	 * value of this field added to each value of ``AXISNAME`` would agree with the
+	 * corresponding values of ``AXISNAME_end``, but there is a possibility of significant
+	 * differences. Use of ``AXISNAME_end`` is recommended.
+	 * <p>
+	 * <b>Units:</b> NX_TRANSFORMATION
+	 * <b>Type:</b> NX_NUMBER
+	 * </p>
 	 *
-	 * @param defaultValue the defaultValue
+	 * @param axisname_increment_setDataset the axisname_increment_setDataset
 	 */
-	public void setAttributeDefault(String defaultValue);
+	public DataNode setAxisname_increment_set(IDataset axisname_increment_setDataset);
+
+	/**
+	 * ``AXISNAME_increment_set`` is a placeholder for a name constructed from the actual
+	 * name of an axis to which ``_increment_set`` has been appended.
+	 * The value of this optional field is the intended average range through which
+	 * the corresponding axis moves during the exposure of a frame. Ideally, the
+	 * value of this field added to each value of ``AXISNAME`` would agree with the
+	 * corresponding values of ``AXISNAME_end``, but there is a possibility of significant
+	 * differences. Use of ``AXISNAME_end`` is recommended.
+	 * <p>
+	 * <b>Units:</b> NX_TRANSFORMATION
+	 * <b>Type:</b> NX_NUMBER
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Number getAxisname_increment_setScalar();
+
+	/**
+	 * ``AXISNAME_increment_set`` is a placeholder for a name constructed from the actual
+	 * name of an axis to which ``_increment_set`` has been appended.
+	 * The value of this optional field is the intended average range through which
+	 * the corresponding axis moves during the exposure of a frame. Ideally, the
+	 * value of this field added to each value of ``AXISNAME`` would agree with the
+	 * corresponding values of ``AXISNAME_end``, but there is a possibility of significant
+	 * differences. Use of ``AXISNAME_end`` is recommended.
+	 * <p>
+	 * <b>Units:</b> NX_TRANSFORMATION
+	 * <b>Type:</b> NX_NUMBER
+	 * </p>
+	 *
+	 * @param axisname_increment_set the axisname_increment_set
+	 */
+	public DataNode setAxisname_increment_setScalar(Number axisname_increment_setValue);
 
 }

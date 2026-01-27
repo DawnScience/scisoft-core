@@ -53,10 +53,8 @@ import org.eclipse.january.dataset.Dataset;
  * beam energy/measurement time) to be made.
  *
  */
-public interface NXcontainer extends NXobject {
+public interface NXcontainer extends NXcomponent {
 
-	public static final String NX_NAME = "name";
-	public static final String NX_DESCRIPTION = "description";
 	public static final String NX_CHEMICAL_FORMULA = "chemical_formula";
 	public static final String NX_DENSITY = "density";
 	public static final String NX_PACKING_FRACTION = "packing_fraction";

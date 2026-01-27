@@ -37,33 +37,37 @@ public class NXindirecttofValidator extends AbstractNexusValidator implements Ne
 
 	@Override
 	public ValidationReport validate(NXroot root) {
-		// validate child group 'entry' of type NXentry
-		validateGroup_entry(root.getEntry());
+		// validate unnamed child group of type NXentry (possibly multiple)
+		validateUnnamedGroupOccurrences(root, NXentry.class, false, true);
+		final Map<String, NXentry> allEntry = root.getAllEntry();
+		for (final NXentry entry : allEntry.values()) {
+			validateGroup_NXentry(entry);
+		}
 		return validationReport;
 	}
 
 	@Override
 	public ValidationReport validate(NXentry entry) {
-		validateGroup_entry(entry);
+		validateGroup_NXentry(entry);
 		return validationReport;
 	}
 
 	@Override
 	public ValidationReport validate(NXsubentry subentry) {
-		validateGroup_entry(subentry);
+		validateGroup_NXentry(subentry);
 		return validationReport;
 	}
 
 
 	/**
-	 * Validate group 'entry' of type NXentry.
+	 * Validate unnamed group of type NXentry.
 	 */
-	private void validateGroup_entry(final NXsubentry group) {
+	private void validateGroup_NXentry(final NXsubentry group) {
 		// set the current entry, required for validating links
 		setEntry(group);
 
 		// validate that the group is not null
-		if (!(validateGroupNotNull("entry", NXentry.class, group))) return;
+		if (!(validateGroupNotNull(null, NXentry.class, group))) return;
 
 		// validate field 'title' of type NX_CHAR.
 		final ILazyDataset title = group.getLazyDataset("title");
@@ -95,25 +99,25 @@ public class NXindirecttofValidator extends AbstractNexusValidator implements Ne
 		validateUnnamedGroupOccurrences(group, NXinstrument.class, false, true);
 		final Map<String, NXinstrument> allInstrument = group.getAllInstrument();
 		for (final NXinstrument instrument : allInstrument.values()) {
-			validateGroup_entry_NXinstrument(instrument);
+			validateGroup_NXentry_NXinstrument(instrument);
 		}
 	}
 
 	/**
 	 * Validate unnamed group of type NXinstrument.
 	 */
-	private void validateGroup_entry_NXinstrument(final NXinstrument group) {
+	private void validateGroup_NXentry_NXinstrument(final NXinstrument group) {
 		// validate that the group is not null
 		if (!(validateGroupNotNull(null, NXinstrument.class, group))) return;
 
 		// validate child group 'analyser' of type NXmonochromator
-		validateGroup_entry_NXinstrument_analyser(group.getMonochromator("analyser"));
+		validateGroup_NXentry_NXinstrument_analyser(group.getMonochromator("analyser"));
 	}
 
 	/**
 	 * Validate group 'analyser' of type NXmonochromator.
 	 */
-	private void validateGroup_entry_NXinstrument_analyser(final NXmonochromator group) {
+	private void validateGroup_NXentry_NXinstrument_analyser(final NXmonochromator group) {
 		// validate that the group is not null
 		if (!(validateGroupNotNull("analyser", NXmonochromator.class, group))) return;
 

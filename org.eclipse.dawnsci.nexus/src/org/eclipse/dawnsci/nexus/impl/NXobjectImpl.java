@@ -504,4 +504,13 @@ public abstract class NXobjectImpl extends GroupNodeImpl implements NXobject {
 		s.append('\n');
 	}
 
+	@Override
+	public String getAttributeDefault() {
+		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	}
+
+	@Override
+	public void setAttributeDefault(String defaultValue) {
+		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
+	}
 }

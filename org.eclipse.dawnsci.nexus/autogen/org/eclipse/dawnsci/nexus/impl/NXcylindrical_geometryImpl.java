@@ -27,7 +27,7 @@ import org.eclipse.dawnsci.nexus.*;
  * This class can be used in place of ``NXoff_geometry`` when an exact
  * representation for cylinders is preferred.
  * For example, for Helium-tube, neutron detectors.
- * It can be used to describe the shape of any beamline component, including detectors.
+ * It can be used to describe the shape of any component, including detectors.
  * In the case of detectors it can be used to define the shape of a single pixel, or,
  * if the pixel shapes are non-uniform, to describe the shape of the whole detector.
 
@@ -121,16 +121,6 @@ public class NXcylindrical_geometryImpl extends NXobjectImpl implements NXcylind
 	@Override
 	public DataNode setDetector_numberScalar(Long detector_numberValue) {
 		return setField(NX_DETECTOR_NUMBER, detector_numberValue);
-	}
-
-	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
-	}
-
-	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

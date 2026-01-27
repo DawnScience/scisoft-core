@@ -21,18 +21,15 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Metadata to the results of a similarity grouping analysis.
- * Similarity grouping analyses can be supervised segmentation or machine learning
- * clustering algorithms. These are routine methods which partition the member of
- * a set of objects/geometric primitives into (sub-)groups, features of
- * different type. A plethora of algorithms have been proposed which can be applied
- * also on geometric primitives like points, triangles, or (abstract) features aka
- * objects (including categorical sub-groups).
- * This base class considers metadata and results of one similarity grouping
- * analysis applied to a set in which objects are either categorized as noise
- * or belonging to a cluster.
- * As the results of the analysis each similarity group, here called feature
- * aka object can get a number of numerical and/or categorical labels.
+ * Base class to store results obtained from applying a similarity grouping (clustering) algorithm.
+ * Similarity grouping algorithms are segmentation or machine learning algorithms for
+ * partitioning the members of a set of objects (e.g. geometric primitives) into
+ * (sub-)groups aka features of different kind/type. A plethora of algorithms exists.
+ * This base class considers metadata and results of having a similarity grouping
+ * algorithm applied to a set in which objects are either categorized as noise
+ * or belonging to a cluster, i.e. members of a cluster.
+ * The algorithm assigns each similarity group (feature/cluster) at least one
+ * identifier (numerical or categorical labels) to distinguish different cluster.
 
  */
 public class NXsimilarity_groupingImpl extends NXobjectImpl implements NXsimilarity_grouping {
@@ -128,23 +125,23 @@ public class NXsimilarity_groupingImpl extends NXobjectImpl implements NXsimilar
 	}
 
 	@Override
-	public Dataset getIdentifier_offset() {
-		return getDataset(NX_IDENTIFIER_OFFSET);
+	public Dataset getIndex_offset() {
+		return getDataset(NX_INDEX_OFFSET);
 	}
 
 	@Override
-	public Long getIdentifier_offsetScalar() {
-		return getLong(NX_IDENTIFIER_OFFSET);
+	public Long getIndex_offsetScalar() {
+		return getLong(NX_INDEX_OFFSET);
 	}
 
 	@Override
-	public DataNode setIdentifier_offset(IDataset identifier_offsetDataset) {
-		return setDataset(NX_IDENTIFIER_OFFSET, identifier_offsetDataset);
+	public DataNode setIndex_offset(IDataset index_offsetDataset) {
+		return setDataset(NX_INDEX_OFFSET, index_offsetDataset);
 	}
 
 	@Override
-	public DataNode setIdentifier_offsetScalar(Long identifier_offsetValue) {
-		return setField(NX_IDENTIFIER_OFFSET, identifier_offsetValue);
+	public DataNode setIndex_offsetScalar(Long index_offsetValue) {
+		return setField(NX_INDEX_OFFSET, index_offsetValue);
 	}
 
 	@Override

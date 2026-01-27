@@ -21,10 +21,10 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * definition for a magnetic kicker.
+ * Base class for a magnetic kicker.
 
  */
-public class NXmagnetic_kickerImpl extends NXobjectImpl implements NXmagnetic_kicker {
+public class NXmagnetic_kickerImpl extends NXcomponentImpl implements NXmagnetic_kicker {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 

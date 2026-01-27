@@ -26,7 +26,7 @@ import org.eclipse.dawnsci.nexus.*;
  * A beamline mirror or supermirror.
 
  */
-public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
+public class NXmirrorImpl extends NXcomponentImpl implements NXmirror {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
@@ -36,8 +36,7 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 		NexusBaseClass.NX_DATA,
 		NexusBaseClass.NX_SHAPE,
 		NexusBaseClass.NX_DATA,
-		NexusBaseClass.NX_OFF_GEOMETRY,
-		NexusBaseClass.NX_TRANSFORMATIONS);
+		NexusBaseClass.NX_OFF_GEOMETRY);
 
 	public NXmirrorImpl() {
 		super();
@@ -547,16 +546,6 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	}
 
 	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
-	}
-
-	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
-	}
-
-	@Override
 	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
@@ -574,37 +563,6 @@ public class NXmirrorImpl extends NXobjectImpl implements NXmirror {
 	@Override
 	public DataNode setDepends_onScalar(String depends_onValue) {
 		return setString(NX_DEPENDS_ON, depends_onValue);
-	}
-
-	@Override
-	public NXtransformations getTransformations() {
-		// dataNodeName = NX_TRANSFORMATIONS
-		return getChild("transformations", NXtransformations.class);
-	}
-
-	@Override
-	public void setTransformations(NXtransformations transformationsGroup) {
-		putChild("transformations", transformationsGroup);
-	}
-
-	@Override
-	public NXtransformations getTransformations(String name) {
-		return getChild(name, NXtransformations.class);
-	}
-
-	@Override
-	public void setTransformations(String name, NXtransformations transformations) {
-		putChild(name, transformations);
-	}
-
-	@Override
-	public Map<String, NXtransformations> getAllTransformations() {
-		return getChildren(NXtransformations.class);
-	}
-
-	@Override
-	public void setAllTransformations(Map<String, NXtransformations> transformations) {
-		setChildren(transformations);
 	}
 
 }

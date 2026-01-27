@@ -21,24 +21,18 @@ import org.eclipse.january.dataset.Dataset;
 /**
  * A beamline aperture.
  * Note, the group was incorrectly documented as deprecated, but it is not and it is in common use.
+ * You can specify the geometry of the aperture using either NXoff_geometry or for simpler geometry shape and size.
  *
  */
-public interface NXaperture extends NXobject {
+public interface NXaperture extends NXcomponent {
 
-	public static final String NX_DEPENDS_ON = "depends_on";
 	public static final String NX_MATERIAL = "material";
-	public static final String NX_DESCRIPTION = "description";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
+	public static final String NX_SHAPE = "shape";
+	public static final String NX_SIZE = "size";
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * The reference point of the aperture is its center in the x and y axis. The reference point on the z axis is the
 	 * surface of the aperture pointing towards the source.
-	 * In complex (asymmetic) geometries an NXoff_geometry group can be used to provide an unambiguous reference.
+	 * In complex (asymmetric) geometries an NXoff_geometry group can be used to provide an unambiguous reference.
 	 * .. image:: aperture/aperture.png
 	 * :width: 40%
 	 * <p>
@@ -50,15 +44,9 @@ public interface NXaperture extends NXobject {
 	public Dataset getDepends_on();
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * The reference point of the aperture is its center in the x and y axis. The reference point on the z axis is the
 	 * surface of the aperture pointing towards the source.
-	 * In complex (asymmetic) geometries an NXoff_geometry group can be used to provide an unambiguous reference.
+	 * In complex (asymmetric) geometries an NXoff_geometry group can be used to provide an unambiguous reference.
 	 * .. image:: aperture/aperture.png
 	 * :width: 40%
 	 * <p>
@@ -70,15 +58,9 @@ public interface NXaperture extends NXobject {
 	public DataNode setDepends_on(IDataset depends_onDataset);
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * The reference point of the aperture is its center in the x and y axis. The reference point on the z axis is the
 	 * surface of the aperture pointing towards the source.
-	 * In complex (asymmetic) geometries an NXoff_geometry group can be used to provide an unambiguous reference.
+	 * In complex (asymmetric) geometries an NXoff_geometry group can be used to provide an unambiguous reference.
 	 * .. image:: aperture/aperture.png
 	 * :width: 40%
 	 * <p>
@@ -90,15 +72,9 @@ public interface NXaperture extends NXobject {
 	public String getDepends_onScalar();
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * The reference point of the aperture is its center in the x and y axis. The reference point on the z axis is the
 	 * surface of the aperture pointing towards the source.
-	 * In complex (asymmetic) geometries an NXoff_geometry group can be used to provide an unambiguous reference.
+	 * In complex (asymmetric) geometries an NXoff_geometry group can be used to provide an unambiguous reference.
 	 * .. image:: aperture/aperture.png
 	 * :width: 40%
 	 * <p>
@@ -110,94 +86,14 @@ public interface NXaperture extends NXobject {
 	public DataNode setDepends_onScalar(String depends_onValue);
 
 	/**
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.
-	 *
-	 * @return  the value.
-	 */
-	public NXtransformations getTransformations();
-
-	/**
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.
-	 *
-	 * @param transformationsGroup the transformationsGroup
-	 */
-	public void setTransformations(NXtransformations transformationsGroup);
-
-	/**
-	 * Get a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public NXtransformations getTransformations(String name);
-
-	/**
-	 * Set a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @param name the name of the node
-	 * @param transformations the value to set
-	 */
-	public void setTransformations(String name, NXtransformations transformations);
-
-	/**
-	 * Get all NXtransformations nodes:
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public Map<String, NXtransformations> getAllTransformations();
-
-	/**
-	 * Set multiple child nodes of a particular type.
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @param transformations the child nodes to add
-	 */
-
-	public void setAllTransformations(Map<String, NXtransformations> transformations);
-
-
-	/**
-	 * Use this group to describe the shape of the aperture
+	 * Use this group to describe the shape of the aperture.
 	 *
 	 * @return  the value.
 	 */
 	public NXoff_geometry getOff_geometry();
 
 	/**
-	 * Use this group to describe the shape of the aperture
+	 * Use this group to describe the shape of the aperture.
 	 *
 	 * @param off_geometryGroup the off_geometryGroup
 	 */
@@ -207,7 +103,7 @@ public interface NXaperture extends NXobject {
 	 * Get a NXoff_geometry node by name:
 	 * <ul>
 	 * <li>
-	 * Use this group to describe the shape of the aperture</li>
+	 * Use this group to describe the shape of the aperture.</li>
 	 * </ul>
 	 *
 	 * @param name  the name of the node.
@@ -219,7 +115,7 @@ public interface NXaperture extends NXobject {
 	 * Set a NXoff_geometry node by name:
 	 * <ul>
 	 * <li>
-	 * Use this group to describe the shape of the aperture</li>
+	 * Use this group to describe the shape of the aperture.</li>
 	 * </ul>
 	 *
 	 * @param name the name of the node
@@ -231,7 +127,7 @@ public interface NXaperture extends NXobject {
 	 * Get all NXoff_geometry nodes:
 	 * <ul>
 	 * <li>
-	 * Use this group to describe the shape of the aperture</li>
+	 * Use this group to describe the shape of the aperture.</li>
 	 * </ul>
 	 *
 	 * @return  a map from node names to the NXoff_geometry for that node.
@@ -242,7 +138,7 @@ public interface NXaperture extends NXobject {
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
-	 * Use this group to describe the shape of the aperture</li>
+	 * Use this group to describe the shape of the aperture.</li>
 	 * </ul>
 	 *
 	 * @param off_geometry the child nodes to add
@@ -252,7 +148,69 @@ public interface NXaperture extends NXobject {
 
 
 	/**
-	 * location and shape of aperture
+	 * Stores the raw positions of aperture motors.
+	 *
+	 * @return  the value.
+	 */
+	public NXpositioner getPositioner();
+
+	/**
+	 * Stores the raw positions of aperture motors.
+	 *
+	 * @param positionerGroup the positionerGroup
+	 */
+	public void setPositioner(NXpositioner positionerGroup);
+
+	/**
+	 * Get a NXpositioner node by name:
+	 * <ul>
+	 * <li>
+	 * Stores the raw positions of aperture motors.</li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXpositioner for that node.
+	 */
+	public NXpositioner getPositioner(String name);
+
+	/**
+	 * Set a NXpositioner node by name:
+	 * <ul>
+	 * <li>
+	 * Stores the raw positions of aperture motors.</li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param positioner the value to set
+	 */
+	public void setPositioner(String name, NXpositioner positioner);
+
+	/**
+	 * Get all NXpositioner nodes:
+	 * <ul>
+	 * <li>
+	 * Stores the raw positions of aperture motors.</li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXpositioner for that node.
+	 */
+	public Map<String, NXpositioner> getAllPositioner();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li>
+	 * Stores the raw positions of aperture motors.</li>
+	 * </ul>
+	 *
+	 * @param positioner the child nodes to add
+	 */
+
+	public void setAllPositioner(Map<String, NXpositioner> positioner);
+
+
+	/**
+	 * Location and shape of aperture
 	 * .. TODO: documentation needs improvement, contributions welcome
 	 * * description of terms is poor and leaves much to interpretation
 	 * * Describe what is meant by translation _here_ and ...
@@ -267,7 +225,7 @@ public interface NXaperture extends NXobject {
 	public NXgeometry getGeometry();
 
 	/**
-	 * location and shape of aperture
+	 * Location and shape of aperture
 	 * .. TODO: documentation needs improvement, contributions welcome
 	 * * description of terms is poor and leaves much to interpretation
 	 * * Describe what is meant by translation _here_ and ...
@@ -285,7 +243,7 @@ public interface NXaperture extends NXobject {
 	 * Get a NXgeometry node by name:
 	 * <ul>
 	 * <li>
-	 * location and shape of aperture
+	 * Location and shape of aperture
 	 * .. TODO: documentation needs improvement, contributions welcome
 	 * * description of terms is poor and leaves much to interpretation
 	 * * Describe what is meant by translation _here_ and ...
@@ -307,7 +265,7 @@ public interface NXaperture extends NXobject {
 	 * Set a NXgeometry node by name:
 	 * <ul>
 	 * <li>
-	 * location and shape of aperture
+	 * Location and shape of aperture
 	 * .. TODO: documentation needs improvement, contributions welcome
 	 * * description of terms is poor and leaves much to interpretation
 	 * * Describe what is meant by translation _here_ and ...
@@ -329,7 +287,7 @@ public interface NXaperture extends NXobject {
 	 * Get all NXgeometry nodes:
 	 * <ul>
 	 * <li>
-	 * location and shape of aperture
+	 * Location and shape of aperture
 	 * .. TODO: documentation needs improvement, contributions welcome
 	 * * description of terms is poor and leaves much to interpretation
 	 * * Describe what is meant by translation _here_ and ...
@@ -350,7 +308,7 @@ public interface NXaperture extends NXobject {
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
-	 * location and shape of aperture
+	 * Location and shape of aperture
 	 * .. TODO: documentation needs improvement, contributions welcome
 	 * * description of terms is poor and leaves much to interpretation
 	 * * Describe what is meant by translation _here_ and ...
@@ -444,14 +402,142 @@ public interface NXaperture extends NXobject {
 	public DataNode setDescriptionScalar(String descriptionValue);
 
 	/**
-	 * describe any additional information in a note
+	 * Shape of the aperture.
+	 * <p>
+	 * <p><b>Enumeration:</b><ul>
+	 * <li><b>straight slit</b> </li>
+	 * <li><b>curved slit</b> </li>
+	 * <li><b>pinhole</b> </li>
+	 * <li><b>circle</b> </li>
+	 * <li><b>square</b> </li>
+	 * <li><b>hexagon</b> </li>
+	 * <li><b>octagon</b> </li>
+	 * <li><b>bladed</b> </li>
+	 * <li><b>open</b> </li>
+	 * <li><b>grid</b> </li></ul></p>
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getShape();
+
+	/**
+	 * Shape of the aperture.
+	 * <p>
+	 * <p><b>Enumeration:</b><ul>
+	 * <li><b>straight slit</b> </li>
+	 * <li><b>curved slit</b> </li>
+	 * <li><b>pinhole</b> </li>
+	 * <li><b>circle</b> </li>
+	 * <li><b>square</b> </li>
+	 * <li><b>hexagon</b> </li>
+	 * <li><b>octagon</b> </li>
+	 * <li><b>bladed</b> </li>
+	 * <li><b>open</b> </li>
+	 * <li><b>grid</b> </li></ul></p>
+	 * </p>
+	 *
+	 * @param shapeDataset the shapeDataset
+	 */
+	public DataNode setShape(IDataset shapeDataset);
+
+	/**
+	 * Shape of the aperture.
+	 * <p>
+	 * <p><b>Enumeration:</b><ul>
+	 * <li><b>straight slit</b> </li>
+	 * <li><b>curved slit</b> </li>
+	 * <li><b>pinhole</b> </li>
+	 * <li><b>circle</b> </li>
+	 * <li><b>square</b> </li>
+	 * <li><b>hexagon</b> </li>
+	 * <li><b>octagon</b> </li>
+	 * <li><b>bladed</b> </li>
+	 * <li><b>open</b> </li>
+	 * <li><b>grid</b> </li></ul></p>
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public String getShapeScalar();
+
+	/**
+	 * Shape of the aperture.
+	 * <p>
+	 * <p><b>Enumeration:</b><ul>
+	 * <li><b>straight slit</b> </li>
+	 * <li><b>curved slit</b> </li>
+	 * <li><b>pinhole</b> </li>
+	 * <li><b>circle</b> </li>
+	 * <li><b>square</b> </li>
+	 * <li><b>hexagon</b> </li>
+	 * <li><b>octagon</b> </li>
+	 * <li><b>bladed</b> </li>
+	 * <li><b>open</b> </li>
+	 * <li><b>grid</b> </li></ul></p>
+	 * </p>
+	 *
+	 * @param shape the shape
+	 */
+	public DataNode setShapeScalar(String shapeValue);
+
+	/**
+	 * The relevant dimension for the aperture, i.e. slit width, pinhole and iris
+	 * diameter
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_LENGTH
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getSize();
+
+	/**
+	 * The relevant dimension for the aperture, i.e. slit width, pinhole and iris
+	 * diameter
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_LENGTH
+	 * </p>
+	 *
+	 * @param sizeDataset the sizeDataset
+	 */
+	public DataNode setSize(IDataset sizeDataset);
+
+	/**
+	 * The relevant dimension for the aperture, i.e. slit width, pinhole and iris
+	 * diameter
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_LENGTH
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Number getSizeScalar();
+
+	/**
+	 * The relevant dimension for the aperture, i.e. slit width, pinhole and iris
+	 * diameter
+	 * <p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_LENGTH
+	 * </p>
+	 *
+	 * @param size the size
+	 */
+	public DataNode setSizeScalar(Number sizeValue);
+
+	/**
+	 * Describe any additional information in a note.
 	 *
 	 * @return  the value.
 	 */
 	public NXnote getNote();
 
 	/**
-	 * describe any additional information in a note
+	 * Describe any additional information in a note.
 	 *
 	 * @param noteGroup the noteGroup
 	 */
@@ -461,7 +547,7 @@ public interface NXaperture extends NXobject {
 	 * Get a NXnote node by name:
 	 * <ul>
 	 * <li>
-	 * describe any additional information in a note</li>
+	 * Describe any additional information in a note.</li>
 	 * </ul>
 	 *
 	 * @param name  the name of the node.
@@ -473,7 +559,7 @@ public interface NXaperture extends NXobject {
 	 * Set a NXnote node by name:
 	 * <ul>
 	 * <li>
-	 * describe any additional information in a note</li>
+	 * Describe any additional information in a note.</li>
 	 * </ul>
 	 *
 	 * @param name the name of the node
@@ -485,7 +571,7 @@ public interface NXaperture extends NXobject {
 	 * Get all NXnote nodes:
 	 * <ul>
 	 * <li>
-	 * describe any additional information in a note</li>
+	 * Describe any additional information in a note.</li>
 	 * </ul>
 	 *
 	 * @return  a map from node names to the NXnote for that node.
@@ -496,7 +582,7 @@ public interface NXaperture extends NXobject {
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
-	 * describe any additional information in a note</li>
+	 * Describe any additional information in a note.</li>
 	 * </ul>
 	 *
 	 * @param note the child nodes to add
@@ -504,31 +590,5 @@ public interface NXaperture extends NXobject {
 
 	public void setAllNote(Map<String, NXnote> note);
 
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
 
 }

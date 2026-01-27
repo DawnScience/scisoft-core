@@ -314,7 +314,7 @@ public interface NXdispersion_function extends NXobject {
 	/**
 	 * The energy unit used in the formula.
 	 * The field value is a scaling factor for the units attribute.
-	 * It is recommeded to set the field value to 1 and carry all the unit
+	 * It is recommended to set the field value to 1 and carry all the unit
 	 * scaling information in the units attribute.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
@@ -328,7 +328,7 @@ public interface NXdispersion_function extends NXobject {
 	/**
 	 * The energy unit used in the formula.
 	 * The field value is a scaling factor for the units attribute.
-	 * It is recommeded to set the field value to 1 and carry all the unit
+	 * It is recommended to set the field value to 1 and carry all the unit
 	 * scaling information in the units attribute.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
@@ -342,7 +342,7 @@ public interface NXdispersion_function extends NXobject {
 	/**
 	 * The energy unit used in the formula.
 	 * The field value is a scaling factor for the units attribute.
-	 * It is recommeded to set the field value to 1 and carry all the unit
+	 * It is recommended to set the field value to 1 and carry all the unit
 	 * scaling information in the units attribute.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
@@ -356,7 +356,7 @@ public interface NXdispersion_function extends NXobject {
 	/**
 	 * The energy unit used in the formula.
 	 * The field value is a scaling factor for the units attribute.
-	 * It is recommeded to set the field value to 1 and carry all the unit
+	 * It is recommended to set the field value to 1 and carry all the unit
 	 * scaling information in the units attribute.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
@@ -368,7 +368,7 @@ public interface NXdispersion_function extends NXobject {
 	public DataNode setEnergy_unitScalar(Number energy_unitValue);
 
 	/**
-	 * The identifier useed to represent wavelength
+	 * The identifier used to represent wavelength
 	 * in the formula. It is recommended to use `lambda`.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
@@ -379,7 +379,7 @@ public interface NXdispersion_function extends NXobject {
 	public Dataset getWavelength_identifier();
 
 	/**
-	 * The identifier useed to represent wavelength
+	 * The identifier used to represent wavelength
 	 * in the formula. It is recommended to use `lambda`.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
@@ -390,7 +390,7 @@ public interface NXdispersion_function extends NXobject {
 	public DataNode setWavelength_identifier(IDataset wavelength_identifierDataset);
 
 	/**
-	 * The identifier useed to represent wavelength
+	 * The identifier used to represent wavelength
 	 * in the formula. It is recommended to use `lambda`.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
@@ -401,7 +401,7 @@ public interface NXdispersion_function extends NXobject {
 	public String getWavelength_identifierScalar();
 
 	/**
-	 * The identifier useed to represent wavelength
+	 * The identifier used to represent wavelength
 	 * in the formula. It is recommended to use `lambda`.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
@@ -414,7 +414,7 @@ public interface NXdispersion_function extends NXobject {
 	/**
 	 * The wavelength unit used in the formula.
 	 * The field value is a scaling factor for the units attribute.
-	 * It is recommeded to set the field value to 1 and carry all the unit
+	 * It is recommended to set the field value to 1 and carry all the unit
 	 * scaling information in the units attribute.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
@@ -428,7 +428,7 @@ public interface NXdispersion_function extends NXobject {
 	/**
 	 * The wavelength unit used in the formula.
 	 * The field value is a scaling factor for the units attribute.
-	 * It is recommeded to set the field value to 1 and carry all the unit
+	 * It is recommended to set the field value to 1 and carry all the unit
 	 * scaling information in the units attribute.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
@@ -442,7 +442,7 @@ public interface NXdispersion_function extends NXobject {
 	/**
 	 * The wavelength unit used in the formula.
 	 * The field value is a scaling factor for the units attribute.
-	 * It is recommeded to set the field value to 1 and carry all the unit
+	 * It is recommended to set the field value to 1 and carry all the unit
 	 * scaling information in the units attribute.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
@@ -456,7 +456,7 @@ public interface NXdispersion_function extends NXobject {
 	/**
 	 * The wavelength unit used in the formula.
 	 * The field value is a scaling factor for the units attribute.
-	 * It is recommeded to set the field value to 1 and carry all the unit
+	 * It is recommended to set the field value to 1 and carry all the unit
 	 * scaling information in the units attribute.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER

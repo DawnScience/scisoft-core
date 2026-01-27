@@ -26,7 +26,7 @@ import org.eclipse.dawnsci.nexus.*;
  * Describes image registration procedures.
 
  */
-public class NXregistrationImpl extends NXobjectImpl implements NXregistration {
+public class NXregistrationImpl extends NXprocessImpl implements NXregistration {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
@@ -76,26 +76,6 @@ public class NXregistrationImpl extends NXobjectImpl implements NXregistration {
 	@Override
 	public DataNode setAppliedScalar(Boolean appliedValue) {
 		return setField(NX_APPLIED, appliedValue);
-	}
-
-	@Override
-	public Dataset getLast_process() {
-		return getDataset(NX_LAST_PROCESS);
-	}
-
-	@Override
-	public String getLast_processScalar() {
-		return getString(NX_LAST_PROCESS);
-	}
-
-	@Override
-	public DataNode setLast_process(IDataset last_processDataset) {
-		return setDataset(NX_LAST_PROCESS, last_processDataset);
-	}
-
-	@Override
-	public DataNode setLast_processScalar(String last_processValue) {
-		return setString(NX_LAST_PROCESS, last_processValue);
 	}
 
 	@Override

@@ -21,10 +21,10 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * definition for an electrostatic separator.
+ * Base class for an electrostatic separator.
 
  */
-public class NXseparatorImpl extends NXobjectImpl implements NXseparator {
+public class NXseparatorImpl extends NXcomponentImpl implements NXseparator {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 

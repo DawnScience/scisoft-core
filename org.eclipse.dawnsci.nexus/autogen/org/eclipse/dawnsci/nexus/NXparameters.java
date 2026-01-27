@@ -11,6 +11,8 @@
 
 package org.eclipse.dawnsci.nexus;
 
+import java.util.Map;
+
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
@@ -22,85 +24,83 @@ import org.eclipse.january.dataset.Dataset;
  */
 public interface NXparameters extends NXobject {
 
-	public static final String NX_TERM = "term";
-	public static final String NX_TERM_ATTRIBUTE_UNITS = "units";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
+	public static final String NX_PARAMETER = "parameter";
+	public static final String NX_PARAMETER_ATTRIBUTE_UNITS = "units";
 	/**
 	 * A parameter (also known as a term) that is used in or results from processing.
 	 * <p>
-	 * <b>Type:</b> NX_CHAR
+	 * <b>Type:</b> NX_CHAR_OR_NUMBER
+	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 *
+	 * @param parameter the parameter
 	 * @return  the value.
 	 */
-	public Dataset getTerm();
+	public Dataset getParameter(String parameter);
 
 	/**
 	 * A parameter (also known as a term) that is used in or results from processing.
 	 * <p>
-	 * <b>Type:</b> NX_CHAR
+	 * <b>Type:</b> NX_CHAR_OR_NUMBER
+	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 *
-	 * @param termDataset the termDataset
+	 * @param parameter the parameter
+	 * @param parameterDataset the parameterDataset
 	 */
-	public DataNode setTerm(IDataset termDataset);
+	public DataNode setParameter(String parameter, IDataset parameterDataset);
 
 	/**
 	 * A parameter (also known as a term) that is used in or results from processing.
 	 * <p>
-	 * <b>Type:</b> NX_CHAR
+	 * <b>Type:</b> NX_CHAR_OR_NUMBER
+	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 *
+	 * @param parameter the parameter
 	 * @return  the value.
 	 */
-	public String getTermScalar();
+	public Object getParameterScalar(String parameter);
 
 	/**
 	 * A parameter (also known as a term) that is used in or results from processing.
 	 * <p>
-	 * <b>Type:</b> NX_CHAR
+	 * <b>Type:</b> NX_CHAR_OR_NUMBER
+	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 *
-	 * @param term the term
+	 * @param parameter the parameter
+	 * @param parameter the parameter
 	 */
-	public DataNode setTermScalar(String termValue);
+	public DataNode setParameterScalar(String parameter, Object parameterValue);
+
+
+	/**
+	 * Get all Parameter fields:
+	 *
+	 * A parameter (also known as a term) that is used in or results from processing.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR_OR_NUMBER
+	 * <b>Units:</b> NX_ANY
+	 * </p>
+	 * <p> <em>Note: this method returns ALL datasets within this group.</em> 
+	 *
+	 * @return  a map from node names to the ? extends IDataset for that node.
+	 */
+	public Map<String, ? extends IDataset> getAllParameter();
 
 	/**
 	 *
+	 * @param parameter the parameter
 	 * @return  the value.
 	 */
-	public String getTermAttributeUnits();
+	public String getParameterAttributeUnits(String parameter);
 
 	/**
 	 *
+	 * @param parameter the parameter
 	 * @param unitsValue the unitsValue
 	 */
-	public void setTermAttributeUnits(String unitsValue);
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
+	public void setParameterAttributeUnits(String parameter, String unitsValue);
 
 }

@@ -34,7 +34,7 @@ import org.eclipse.dawnsci.nexus.*;
  * the logged or streamed values and the times at which they were measured as elapsed time since a starting
  * time recorded in ISO8601 format. The time units are
  * specified in the units attribute. An optional scaling attribute
- * can be used to accomodate non standard clocks.
+ * can be used to accommodate non standard clocks.
  * This method of storing logged data helps to distinguish instances in which a variable contains signal or
  * axis coordinate values of plottable data, in which case it is stored
  * in an :ref:`NXdata` group, and instances in which it is logged during the
@@ -360,16 +360,6 @@ public class NXlogImpl extends NXobjectImpl implements NXlog {
 	@Override
 	public DataNode setCue_indexScalar(Long cue_indexValue) {
 		return setField(NX_CUE_INDEX, cue_indexValue);
-	}
-
-	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
-	}
-
-	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

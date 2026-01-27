@@ -33,19 +33,20 @@ import org.eclipse.dawnsci.nexus.*;
  * * energy: eV
 
  */
-public class NXmonochromatorImpl extends NXobjectImpl implements NXmonochromator {
+public class NXmonochromatorImpl extends NXcomponentImpl implements NXmonochromator {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
+		NexusBaseClass.NX_APERTURE,
+		NexusBaseClass.NX_APERTURE,
 		NexusBaseClass.NX_DATA,
 		NexusBaseClass.NX_GEOMETRY,
 		NexusBaseClass.NX_OFF_GEOMETRY,
 		NexusBaseClass.NX_CRYSTAL,
 		NexusBaseClass.NX_VELOCITY_SELECTOR,
-		NexusBaseClass.NX_GRATING,
-		NexusBaseClass.NX_TRANSFORMATIONS);
+		NexusBaseClass.NX_GRATING);
 
 	public NXmonochromatorImpl() {
 		super();
@@ -200,6 +201,68 @@ public class NXmonochromatorImpl extends NXobjectImpl implements NXmonochromator
 	}
 
 	@Override
+	public Dataset getEnergy_dispersion() {
+		return getDataset(NX_ENERGY_DISPERSION);
+	}
+
+	@Override
+	public Double getEnergy_dispersionScalar() {
+		return getDouble(NX_ENERGY_DISPERSION);
+	}
+
+	@Override
+	public DataNode setEnergy_dispersion(IDataset energy_dispersionDataset) {
+		return setDataset(NX_ENERGY_DISPERSION, energy_dispersionDataset);
+	}
+
+	@Override
+	public DataNode setEnergy_dispersionScalar(Double energy_dispersionValue) {
+		return setField(NX_ENERGY_DISPERSION, energy_dispersionValue);
+	}
+
+	@Override
+	public Dataset getWavelength_dispersion() {
+		return getDataset(NX_WAVELENGTH_DISPERSION);
+	}
+
+	@Override
+	public Double getWavelength_dispersionScalar() {
+		return getDouble(NX_WAVELENGTH_DISPERSION);
+	}
+
+	@Override
+	public DataNode setWavelength_dispersion(IDataset wavelength_dispersionDataset) {
+		return setDataset(NX_WAVELENGTH_DISPERSION, wavelength_dispersionDataset);
+	}
+
+	@Override
+	public DataNode setWavelength_dispersionScalar(Double wavelength_dispersionValue) {
+		return setField(NX_WAVELENGTH_DISPERSION, wavelength_dispersionValue);
+	}
+
+	@Override
+	public NXaperture getEntrance_slit() {
+		// dataNodeName = NX_ENTRANCE_SLIT
+		return getChild("entrance_slit", NXaperture.class);
+	}
+
+	@Override
+	public void setEntrance_slit(NXaperture entrance_slitGroup) {
+		putChild("entrance_slit", entrance_slitGroup);
+	}
+
+	@Override
+	public NXaperture getExit_slit() {
+		// dataNodeName = NX_EXIT_SLIT
+		return getChild("exit_slit", NXaperture.class);
+	}
+
+	@Override
+	public void setExit_slit(NXaperture exit_slitGroup) {
+		putChild("exit_slit", exit_slitGroup);
+	}
+
+	@Override
 	public NXdata getDistribution() {
 		// dataNodeName = NX_DISTRIBUTION
 		return getChild("distribution", NXdata.class);
@@ -348,16 +411,6 @@ public class NXmonochromatorImpl extends NXobjectImpl implements NXmonochromator
 	}
 
 	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
-	}
-
-	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
-	}
-
-	@Override
 	public Dataset getDepends_on() {
 		return getDataset(NX_DEPENDS_ON);
 	}
@@ -375,37 +428,6 @@ public class NXmonochromatorImpl extends NXobjectImpl implements NXmonochromator
 	@Override
 	public DataNode setDepends_onScalar(String depends_onValue) {
 		return setString(NX_DEPENDS_ON, depends_onValue);
-	}
-
-	@Override
-	public NXtransformations getTransformations() {
-		// dataNodeName = NX_TRANSFORMATIONS
-		return getChild("transformations", NXtransformations.class);
-	}
-
-	@Override
-	public void setTransformations(NXtransformations transformationsGroup) {
-		putChild("transformations", transformationsGroup);
-	}
-
-	@Override
-	public NXtransformations getTransformations(String name) {
-		return getChild(name, NXtransformations.class);
-	}
-
-	@Override
-	public void setTransformations(String name, NXtransformations transformations) {
-		putChild(name, transformations);
-	}
-
-	@Override
-	public Map<String, NXtransformations> getAllTransformations() {
-		return getChildren(NXtransformations.class);
-	}
-
-	@Override
-	public void setAllTransformations(Map<String, NXtransformations> transformations) {
-		setChildren(transformations);
 	}
 
 }

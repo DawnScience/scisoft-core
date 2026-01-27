@@ -17,7 +17,7 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * One group like this per component can be recorded For a sample consisting of multiple components.
+ * One group like this per component can be recorded for a sample consisting of multiple components.
  * <p><b>Symbols:</b>
  * symbolic array lengths to be coordinated between various fields<ul>
  * <li><b>n_Temp</b>
@@ -32,9 +32,8 @@ import org.eclipse.january.dataset.Dataset;
  * number of values in applied stress field</li></ul></p>
  *
  */
-public interface NXsample_component extends NXobject {
+public interface NXsample_component extends NXcomponent {
 
-	public static final String NX_NAME = "name";
 	public static final String NX_CHEMICAL_FORMULA = "chemical_formula";
 	public static final String NX_UNIT_CELL_ABC = "unit_cell_abc";
 	public static final String NX_UNIT_CELL_ALPHABETAGAMMA = "unit_cell_alphabetagamma";
@@ -44,13 +43,11 @@ public interface NXsample_component extends NXobject {
 	public static final String NX_MASS = "mass";
 	public static final String NX_DENSITY = "density";
 	public static final String NX_RELATIVE_MOLECULAR_MASS = "relative_molecular_mass";
-	public static final String NX_DESCRIPTION = "description";
 	public static final String NX_VOLUME_FRACTION = "volume_fraction";
 	public static final String NX_SCATTERING_LENGTH_DENSITY = "scattering_length_density";
 	public static final String NX_UNIT_CELL_CLASS = "unit_cell_class";
 	public static final String NX_SPACE_GROUP = "space_group";
 	public static final String NX_POINT_GROUP = "point_group";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * Descriptive name of sample component
 	 *
@@ -782,29 +779,19 @@ public interface NXsample_component extends NXobject {
 	public void setTransmission(NXdata transmissionGroup);
 
 	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
+	 * A set of physical processes that occurred to the sample component prior/during
+	 * experiment.
 	 *
 	 * @return  the value.
 	 */
-	public String getAttributeDefault();
+	public NXhistory getHistory();
 
 	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
+	 * A set of physical processes that occurred to the sample component prior/during
+	 * experiment.
 	 *
-	 * @param defaultValue the defaultValue
+	 * @param historyGroup the historyGroup
 	 */
-	public void setAttributeDefault(String defaultValue);
+	public void setHistory(NXhistory historyGroup);
 
 }

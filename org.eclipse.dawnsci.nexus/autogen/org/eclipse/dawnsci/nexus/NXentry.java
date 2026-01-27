@@ -29,7 +29,6 @@ import org.eclipse.january.dataset.Dataset;
  */
 public interface NXentry extends NXsubentry {
 
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	public static final String NX_ATTRIBUTE_IDF_VERSION = "idf_version";
 	public static final String NX_TITLE = "title";
 	public static final String NX_EXPERIMENT_IDENTIFIER = "experiment_identifier";
@@ -58,46 +57,6 @@ public interface NXentry extends NXsubentry {
 	public static final String NX_REVISION_ATTRIBUTE_COMMENT = "comment";
 	public static final String NX_PRE_SAMPLE_FLIGHTPATH = "pre_sample_flightpath";
 	/**
-	 * .. index:: find the default plottable data
-	 * .. index:: plotting
-	 * .. index:: default attribute value
-	 * Declares which :ref:`NXdata` group contains the data
-	 * to be shown by default.
-	 * It is used to resolve ambiguity when
-	 * one :ref:`NXdata` group exists.
-	 * The value :ref:`names <validItemName>` a child group. If that group
-	 * itself has a ``default`` attribute, continue this chain until an
-	 * :ref:`NXdata` group is reached.
-	 * For more information about how NeXus identifies the default
-	 * plottable data, see the
-	 * :ref:`Find Plottable Data, v3 <Find-Plottable-Data-v3>`
-	 * section.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: find the default plottable data
-	 * .. index:: plotting
-	 * .. index:: default attribute value
-	 * Declares which :ref:`NXdata` group contains the data
-	 * to be shown by default.
-	 * It is used to resolve ambiguity when
-	 * one :ref:`NXdata` group exists.
-	 * The value :ref:`names <validItemName>` a child group. If that group
-	 * itself has a ``default`` attribute, continue this chain until an
-	 * :ref:`NXdata` group is reached.
-	 * For more information about how NeXus identifies the default
-	 * plottable data, see the
-	 * :ref:`Find Plottable Data, v3 <Find-Plottable-Data-v3>`
-	 * section.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
-
-	/**
 	 * The data group
 	 * .. note:: Before the NIAC2016 meeting [#]_, at least one
 	 * :ref:`NXdata` group was required in each :ref:`NXentry` group.
@@ -106,7 +65,7 @@ public interface NXentry extends NXsubentry {
 	 * do not use an application definition.
 	 * It is recommended strongly that all NeXus data files provide
 	 * a NXdata group.
-	 * It is permissable to omit the NXdata group only when
+	 * It is permissible to omit the NXdata group only when
 	 * defining the default plot is not practical or possible
 	 * from the available data.
 	 * For example, neutron event data may not have anything that
@@ -134,7 +93,7 @@ public interface NXentry extends NXsubentry {
 	 * do not use an application definition.
 	 * It is recommended strongly that all NeXus data files provide
 	 * a NXdata group.
-	 * It is permissable to omit the NXdata group only when
+	 * It is permissible to omit the NXdata group only when
 	 * defining the default plot is not practical or possible
 	 * from the available data.
 	 * For example, neutron event data may not have anything that
@@ -165,7 +124,7 @@ public interface NXentry extends NXsubentry {
 	 * do not use an application definition.
 	 * It is recommended strongly that all NeXus data files provide
 	 * a NXdata group.
-	 * It is permissable to omit the NXdata group only when
+	 * It is permissible to omit the NXdata group only when
 	 * defining the default plot is not practical or possible
 	 * from the available data.
 	 * For example, neutron event data may not have anything that
@@ -198,7 +157,7 @@ public interface NXentry extends NXsubentry {
 	 * do not use an application definition.
 	 * It is recommended strongly that all NeXus data files provide
 	 * a NXdata group.
-	 * It is permissable to omit the NXdata group only when
+	 * It is permissible to omit the NXdata group only when
 	 * defining the default plot is not practical or possible
 	 * from the available data.
 	 * For example, neutron event data may not have anything that
@@ -231,7 +190,7 @@ public interface NXentry extends NXsubentry {
 	 * do not use an application definition.
 	 * It is recommended strongly that all NeXus data files provide
 	 * a NXdata group.
-	 * It is permissable to omit the NXdata group only when
+	 * It is permissible to omit the NXdata group only when
 	 * defining the default plot is not practical or possible
 	 * from the available data.
 	 * For example, neutron event data may not have anything that
@@ -263,7 +222,7 @@ public interface NXentry extends NXsubentry {
 	 * do not use an application definition.
 	 * It is recommended strongly that all NeXus data files provide
 	 * a NXdata group.
-	 * It is permissable to omit the NXdata group only when
+	 * It is permissible to omit the NXdata group only when
 	 * defining the default plot is not practical or possible
 	 * from the available data.
 	 * For example, neutron event data may not have anything that
@@ -462,28 +421,28 @@ public interface NXentry extends NXsubentry {
 	public DataNode setCollection_descriptionScalar(String collection_descriptionValue);
 
 	/**
-	 * unique identifier for the measurement, defined by the facility.
+	 * Unique identifier for the measurement, defined by the facility.
 	 *
 	 * @return  the value.
 	 */
 	public Dataset getEntry_identifier();
 
 	/**
-	 * unique identifier for the measurement, defined by the facility.
+	 * Unique identifier for the measurement, defined by the facility.
 	 *
 	 * @param entry_identifierDataset the entry_identifierDataset
 	 */
 	public DataNode setEntry_identifier(IDataset entry_identifierDataset);
 
 	/**
-	 * unique identifier for the measurement, defined by the facility.
+	 * Unique identifier for the measurement, defined by the facility.
 	 *
 	 * @return  the value.
 	 */
 	public String getEntry_identifierScalar();
 
 	/**
-	 * unique identifier for the measurement, defined by the facility.
+	 * Unique identifier for the measurement, defined by the facility.
 	 *
 	 * @param entry_identifier the entry_identifier
 	 */

@@ -112,6 +112,7 @@
 	</xsl:apply-templates></xsl:variable>
 	<xsl:variable name="setMethodReturnType" select="if (self::nx:field) then 'DataNode' else 'void'"/>
 	
+	<xsl:if test="$methodNameSuffix!='AttributeDefault'"><!-- XXX: workaround override -->
 	<!-- Get method -->
 	<xsl:call-template name="methodJavadoc">
 		<xsl:with-param name="variableName" select="$variableName"/>
@@ -140,9 +141,10 @@
 	<xsl:if test="($hasVariableName)">String <xsl:value-of select="$variableName"/>, </xsl:if>
 	<xsl:value-of select="$inputFieldType || ' ' || $setParamName"/>
 	<xsl:text>);&#10;</xsl:text>
+	</xsl:if>
 
 	<xsl:if test="self::nx:field">
-		<!-- Get scalar method -->	
+		<!-- Get scalar method -->
 		<xsl:variable name="scalarFieldType"><xsl:apply-templates select="." mode="scalarFieldType"/></xsl:variable>
 		<xsl:call-template name="methodJavadoc">
 			<xsl:with-param name="variableName" select="$variableName"/>
@@ -317,8 +319,43 @@
 			<xsl:with-param name="variableName" select="$variableName"/>
 		</xsl:apply-templates>
 	</xsl:variable>
+	<!-- XXX: Filter out constants being redefined in subclasses of
+		 NXcomponent, NXcg_primitive, NXaperture, NXinstrument, NXelectromagnetic_lens
+ 	 -->
+	<xsl:variable name="superInterface" select="/nx:definition/@extends"/>
 	<xsl:variable name="prefix" select="if (ends-with($fieldLabel, 'SUFFIX')) then '_' else ''"/>
+	<xsl:choose>
+		<xsl:when test="$superInterface='NXcomponent'">
+			<xsl:if test="(empty(index-of(('NX_APPLIED', 'NX_NAME', 'NX_DESCRIPTION', 'NX_INPUTS', 'NX_OUTPUTS', 'NX_DEPENDS_ON'), $fieldLabel)))">
 	public static final String <xsl:value-of select="$fieldLabel"/> = "<xsl:value-of select="$prefix"/><xsl:value-of select="$fieldName"/><xsl:text>";</xsl:text>
+			</xsl:if>
+		</xsl:when>
+		<xsl:when test="$superInterface='NXcg_primitive'">
+			<xsl:if test="(empty(index-of(('NX_DEPENDS_ON', 'NX_DIMENSIONALITY', 'NX_CARDINALITY', 'NX_INDEX_OFFSET', 'NX_INDICES', 'NX_CENTER', 'NX_IS_CENTER_OF_MASS', 'NX_SHAPE', 'NX_LENGTH', 'NX_WIDTH', 'NX_HEIGHT', 'NX_IS_CLOSED', 'NX_VOLUME', 'NX_AREA', 'NX_ORIENTATION', 'NX_IS_MESH', 'NX_IS_TRIANGLE_MESH', 'NX_IS_SURFACE_MESH', 'NX_IS_GEODESIC_MESH', 'NX_DESCRIPTION'), $fieldLabel)))">
+	public static final String <xsl:value-of select="$fieldLabel"/> = "<xsl:value-of select="$prefix"/><xsl:value-of select="$fieldName"/><xsl:text>";</xsl:text>
+			</xsl:if>
+		</xsl:when>
+		<xsl:when test="$superInterface='NXaperture'">
+			<xsl:if test="(empty(index-of(('NX_MATERIAL', 'NX_SHAPE', 'NX_SIZE'), $fieldLabel)))">
+	public static final String <xsl:value-of select="$fieldLabel"/> = "<xsl:value-of select="$prefix"/><xsl:value-of select="$fieldName"/><xsl:text>";</xsl:text>
+			</xsl:if>
+		</xsl:when>
+		<xsl:when test="$superInterface='NXinstrument'">
+			<xsl:if test="(empty(index-of(('NX_NAME', 'NX_NAME_ATTRIBUTE_SHORT_NAME'), $fieldLabel)))">
+	public static final String <xsl:value-of select="$fieldLabel"/> = "<xsl:value-of select="$prefix"/><xsl:value-of select="$fieldName"/><xsl:text>";</xsl:text>
+			</xsl:if>
+		</xsl:when>
+		<xsl:when test="$superInterface='NXelectromagnetic_lens'">
+			<xsl:if test="(empty(index-of(('NX_POWER_SETTING', 'NX_MODE', 'NX_VOLTAGE', 'NX_CURRENT', 'NX_TYPE', 'NX_NUMBER_OF_POLES'), $fieldLabel)))">
+	public static final String <xsl:value-of select="$fieldLabel"/> = "<xsl:value-of select="$prefix"/><xsl:value-of select="$fieldName"/><xsl:text>";</xsl:text>
+			</xsl:if>
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:if test="$fieldLabel!='NX_ATTRIBUTE_DEFAULT'">
+	public static final String <xsl:value-of select="$fieldLabel"/> = "<xsl:value-of select="$prefix"/><xsl:value-of select="$fieldName"/><xsl:text>";</xsl:text>
+			</xsl:if>
+		</xsl:otherwise>
+	</xsl:choose>
 	<xsl:apply-templates mode="classFields" select="*"/>
 </xsl:template>
 
@@ -358,6 +395,7 @@
 	<xsl:variable name="methodNameSuffix"><xsl:apply-templates select="." mode="methodNameSuffix">
 		<xsl:with-param name="fieldName" select="$fieldName"/>
 	</xsl:apply-templates></xsl:variable>
+	<xsl:if test="$methodNameSuffix!='AttributeDefault'"><!-- XXX: workaround override -->
 	@Override<xsl:apply-templates mode="methodAnnotations" select="."/>
 	public <xsl:value-of select="$fieldType"/> get<xsl:value-of select="$methodNameSuffix"/>
 	<xsl:text>(</xsl:text>
@@ -369,6 +407,7 @@
 		<xsl:with-param name="fieldType" select="$fieldType"/>
 	</xsl:apply-templates>
 	<xsl:text>&#10;&#09;}&#10;</xsl:text> <!-- closing '}' on newline, followed by blank line -->
+	</xsl:if>
 
 	<xsl:if test="self::nx:field">
 	<xsl:variable name="scalarFieldType"><xsl:apply-templates select="." mode="scalarFieldType"/></xsl:variable>
@@ -390,6 +429,7 @@
 			<xsl:with-param name="fieldName" select="$fieldName"/>
 		</xsl:apply-templates>
 	</xsl:variable>
+	<xsl:if test="$methodNameSuffix!='AttributeDefault'"><!-- XXX: workaround override -->
 	@Override<xsl:apply-templates mode="methodAnnotations" select="."/>
 	public <xsl:value-of select="$setMethodReturnType"/> set<xsl:value-of select="$methodNameSuffix"/>
 	<xsl:text>(</xsl:text>
@@ -401,6 +441,7 @@
 		<xsl:with-param name="dataNodeName" select="$dataNodeName"/>
 	</xsl:apply-templates>
 	<xsl:text>&#10;&#09;}&#10;</xsl:text> <!-- closing '}' on newline, followed by blank line -->
+	</xsl:if>
 
 	<xsl:if test="self::nx:field">
 	<xsl:variable name="scalarFieldType"><xsl:apply-templates select="." mode="scalarFieldType"/></xsl:variable>
@@ -529,10 +570,11 @@
 <xsl:template mode="setScalarMethod" match="nx:field[@type='NX_CHAR_OR_NUMBER']">
 	<xsl:param name="fieldName"/>
 	<xsl:param name="dataNodeName"/>
-	<xsl:text>&#10;&#09;&#09;if (</xsl:text><xsl:value-of select="$dataNodeName || 'Value'"/><xsl:text> instanceof Number) {&#10;</xsl:text>
-	<xsl:text>&#09;&#09;&#09;return setField(</xsl:text><xsl:value-of select="$dataNodeName || ', ' || $fieldName"/><xsl:text>Value);&#10;</xsl:text>
-	<xsl:text>&#09;&#09;} else if (</xsl:text><xsl:value-of select="$dataNodeName"/><xsl:text> instanceof String) {&#10;</xsl:text>
-	<xsl:text>&#09;&#09;&#09;return setString(</xsl:text><xsl:value-of select="$dataNodeName || ', (String) ' || $fieldName"/><xsl:text>Value);&#10;</xsl:text>
+	<xsl:variable name="valueName" select="$fieldName || 'Value'"/>
+	<xsl:text>&#10;&#09;&#09;if (</xsl:text><xsl:value-of select="$valueName"/><xsl:text> instanceof Number) {&#10;</xsl:text>
+	<xsl:text>&#09;&#09;&#09;return setField(</xsl:text><xsl:value-of select="$dataNodeName || ', ' || $valueName"/>)<xsl:text>;&#10;</xsl:text>
+	<xsl:text>&#09;&#09;} else if (</xsl:text><xsl:value-of select="$valueName"/><xsl:text> instanceof String) {&#10;</xsl:text>
+	<xsl:text>&#09;&#09;&#09;return setString(</xsl:text><xsl:value-of select="$dataNodeName || ', (String) ' || $valueName"/><xsl:text>);&#10;</xsl:text>
 	<xsl:text>&#09;&#09;} else {&#10;</xsl:text>
 	<xsl:text>&#09;&#09;&#09;throw new IllegalArgumentException("Value must be String or Number");&#10;</xsl:text>
 	<xsl:text>&#09;&#09;}</xsl:text>
@@ -809,7 +851,17 @@
 <xsl:template mode="methodNameSuffix" match="nx:field|nx:group">
 	<xsl:param name="fieldName">
 		<xsl:apply-templates mode="fieldName" select="."/>
-	</xsl:param><xsl:value-of select="dawnsci:capitalise-first($fieldName)"/>
+	</xsl:param>
+	<!--
+		 Also, NXcomponent with NXfabrication has fabrication clash in fresnel_zone_plate
+		 NXprocess has program clash in apm_ranging and NXapm_reconstruction with NXprogram
+	 -->
+	<xsl:variable name="className" select="/nx:definition/@name"/>
+	<xsl:choose>
+		<xsl:when test="starts-with($className,'NXfresnel_zone_plate') and ($fieldName='fabrication')">FabricationString</xsl:when>
+		<xsl:when test="starts-with($className,'NXapm_') and ($fieldName='program')">NXProgram</xsl:when>
+		<xsl:otherwise><xsl:value-of select="dawnsci:capitalise-first($fieldName)"/></xsl:otherwise>
+	</xsl:choose>
 </xsl:template>
 
 <xsl:template mode="methodNameSuffix" match="nx:definition/nx:attribute">

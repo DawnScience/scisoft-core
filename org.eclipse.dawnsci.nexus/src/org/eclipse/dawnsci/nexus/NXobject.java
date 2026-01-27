@@ -28,6 +28,8 @@ import org.eclipse.january.dataset.ILazyWriteableDataset;
  */
 public interface NXobject extends GroupNode {
 
+	public static final String NX_ATTRIBUTE_DEFAULT = "default";
+
 	/**
 	 * Java {@link Class} object of the interface for this base class, e.g. {@link NXsample}.class. 
 	 * @return name of Nexus class
@@ -349,4 +351,43 @@ public interface NXobject extends GroupNode {
 	 */
 	public Map<String, Dataset> getAllDatasets();
 
+	/**
+	 * .. index:: find the default plottable data
+	 * .. index:: plotting
+	 * .. index:: default attribute value
+	 * Declares which :ref:`NXdata` group contains the data
+	 * to be shown by default.
+	 * It is used to resolve ambiguity when
+	 * one :ref:`NXdata` group exists.
+	 * The value :ref:`names <validItemName>` a child group. If that group
+	 * itself has a ``default`` attribute, continue this chain until an
+	 * :ref:`NXdata` group is reached.
+	 * For more information about how NeXus identifies the default
+	 * plottable data, see the
+	 * :ref:`Find Plottable Data, v3 <Find-Plottable-Data-v3>`
+	 * section.
+	 *
+	 * @return  the value.
+	 */
+	public String getAttributeDefault();
+
+	/**
+	 * .. index:: find the default plottable data
+	 * .. index:: plotting
+	 * .. index:: default attribute value
+	 * Declares which :ref:`NXdata` group contains the data
+	 * to be shown by default.
+	 * It is used to resolve ambiguity when
+	 * one :ref:`NXdata` group exists.
+	 * The value :ref:`names <validItemName>` a child group. If that group
+	 * itself has a ``default`` attribute, continue this chain until an
+	 * :ref:`NXdata` group is reached.
+	 * For more information about how NeXus identifies the default
+	 * plottable data, see the
+	 * :ref:`Find Plottable Data, v3 <Find-Plottable-Data-v3>`
+	 * section.
+	 *
+	 * @param defaultValue the defaultValue
+	 */
+	public void setAttributeDefault(String defaultValue);
 }

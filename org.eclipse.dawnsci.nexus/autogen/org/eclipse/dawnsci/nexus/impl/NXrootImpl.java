@@ -21,7 +21,16 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Definition of the root NeXus group.
+ * The root of a NeXus file.
+ * In the NeXus standard, only NXentry groups are allowed at the
+ * root level of a file, although it is permitted to include
+ * additional groups and fields that are not part of the NeXus
+ * standard and will not be validated by NeXus tools. NeXus defines
+ * a number of root-level attributes that can be used to annotate
+ * the NeXus tree.
+ * Note that NXroot is the only base class that does not inherit
+ * from the NXobject class, since the latter permits the inclusion
+ * of NeXus objects that are not allowed at the root level.
 
  */
 public class NXrootImpl extends NXobjectImpl implements NXroot {
@@ -57,16 +66,6 @@ public class NXrootImpl extends NXobjectImpl implements NXroot {
 
 
 	@Override
-	public String getAttributeNx_class() {
-		return getAttrString(null, NX_ATTRIBUTE_NX_CLASS);
-	}
-
-	@Override
-	public void setAttributeNx_class(String nx_classValue) {
-		setAttribute(null, NX_ATTRIBUTE_NX_CLASS, nx_classValue);
-	}
-
-	@Override
 	public Date getAttributeFile_time() {
 		return getAttrDate(null, NX_ATTRIBUTE_FILE_TIME);
 	}
@@ -97,13 +96,35 @@ public class NXrootImpl extends NXobjectImpl implements NXroot {
 	}
 
 	@Override
+	@Deprecated
 	public String getAttributeNexus_version() {
 		return getAttrString(null, NX_ATTRIBUTE_NEXUS_VERSION);
 	}
 
 	@Override
+	@Deprecated
 	public void setAttributeNexus_version(String nexus_versionValue) {
 		setAttribute(null, NX_ATTRIBUTE_NEXUS_VERSION, nexus_versionValue);
+	}
+
+	@Override
+	public String getAttributeNexus_repository() {
+		return getAttrString(null, NX_ATTRIBUTE_NEXUS_REPOSITORY);
+	}
+
+	@Override
+	public void setAttributeNexus_repository(String nexus_repositoryValue) {
+		setAttribute(null, NX_ATTRIBUTE_NEXUS_REPOSITORY, nexus_repositoryValue);
+	}
+
+	@Override
+	public String getAttributeNexus_release() {
+		return getAttrString(null, NX_ATTRIBUTE_NEXUS_RELEASE);
+	}
+
+	@Override
+	public void setAttributeNexus_release(String nexus_releaseValue) {
+		setAttribute(null, NX_ATTRIBUTE_NEXUS_RELEASE, nexus_releaseValue);
 	}
 
 	@Override
@@ -195,16 +216,6 @@ public class NXrootImpl extends NXobjectImpl implements NXroot {
 	@Override
 	public void setAllEntry(Map<String, NXentry> entry) {
 		setChildren(entry);
-	}
-
-	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
-	}
-
-	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 }

@@ -17,80 +17,152 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * Settings of a filter to sample entries based on their value.
- * <p><b>Symbols:</b>
- * The symbols used in the schema to specify e.g. dimensions of arrays.<ul></ul></p>
+ * Base class of a filter to sample members in a set based on their indices.
+ * The filter defines three parameters: The minimum, the increment, and the maximum
+ * index of values to include of a sequence :math:`[i_0, i_0 + 1, i_0 + 2, \ldots, i_0 + \mathcal{N}] with i_0 \in \mathcal{Z}`
+ * of indices. The increment controls which n-th index (value) to take.
+ * Take as an example a dataset with 100 indices (aka entries). Assume that the indices start at zero,
+ * i.e., index_offset is 0. Assume further that min, increment, max are set to 0, 1, and 99, respectively.
+ * In this case the filter will yield all indices. Setting min, increment, max to 0, 2, and 99, respectively
+ * will yield each second index value. Setting min, increment, max to 90, 3, and 99 respectively will yield
+ * each third index value beginning from index values 90 up to 99.
  *
  */
-public interface NXsubsampling_filter extends NXobject {
+public interface NXsubsampling_filter extends NXparameters {
 
-	public static final String NX_LINEAR_RANGE_MIN_INCR_MAX = "linear_range_min_incr_max";
+	public static final String NX_MIN = "min";
+	public static final String NX_INCREMENT = "increment";
+	public static final String NX_MAX = "max";
 	/**
-	 * Triplet of the minimum, increment, and maximum value which will
-	 * be included in the analysis. The increment controls which n-th entry to take.
-	 * Take as an example a dataset with 100 entries (their indices start at zero)
-	 * and the filter set to 0, 1, 99. This will process each entry.
-	 * 0, 2, 99 will take each second entry. 90, 3, 99 will take only each third
-	 * entry beginning from entry 90 up to 99.
+	 * Minimum index.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
-	 * <b>Dimensions:</b> 1: 3;
 	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getLinear_range_min_incr_max();
+	public Dataset getMin();
 
 	/**
-	 * Triplet of the minimum, increment, and maximum value which will
-	 * be included in the analysis. The increment controls which n-th entry to take.
-	 * Take as an example a dataset with 100 entries (their indices start at zero)
-	 * and the filter set to 0, 1, 99. This will process each entry.
-	 * 0, 2, 99 will take each second entry. 90, 3, 99 will take only each third
-	 * entry beginning from entry 90 up to 99.
+	 * Minimum index.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
-	 * <b>Dimensions:</b> 1: 3;
 	 * </p>
 	 *
-	 * @param linear_range_min_incr_maxDataset the linear_range_min_incr_maxDataset
+	 * @param minDataset the minDataset
 	 */
-	public DataNode setLinear_range_min_incr_max(IDataset linear_range_min_incr_maxDataset);
+	public DataNode setMin(IDataset minDataset);
 
 	/**
-	 * Triplet of the minimum, increment, and maximum value which will
-	 * be included in the analysis. The increment controls which n-th entry to take.
-	 * Take as an example a dataset with 100 entries (their indices start at zero)
-	 * and the filter set to 0, 1, 99. This will process each entry.
-	 * 0, 2, 99 will take each second entry. 90, 3, 99 will take only each third
-	 * entry beginning from entry 90 up to 99.
+	 * Minimum index.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
-	 * <b>Dimensions:</b> 1: 3;
 	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public Long getLinear_range_min_incr_maxScalar();
+	public Long getMinScalar();
 
 	/**
-	 * Triplet of the minimum, increment, and maximum value which will
-	 * be included in the analysis. The increment controls which n-th entry to take.
-	 * Take as an example a dataset with 100 entries (their indices start at zero)
-	 * and the filter set to 0, 1, 99. This will process each entry.
-	 * 0, 2, 99 will take each second entry. 90, 3, 99 will take only each third
-	 * entry beginning from entry 90 up to 99.
+	 * Minimum index.
 	 * <p>
-	 * <b>Type:</b> NX_UINT
+	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
-	 * <b>Dimensions:</b> 1: 3;
 	 * </p>
 	 *
-	 * @param linear_range_min_incr_max the linear_range_min_incr_max
+	 * @param min the min
 	 */
-	public DataNode setLinear_range_min_incr_maxScalar(Long linear_range_min_incr_maxValue);
+	public DataNode setMinScalar(Long minValue);
+
+	/**
+	 * Increment.
+	 * <p>
+	 * <b>Type:</b> NX_INT
+	 * <b>Units:</b> NX_UNITLESS
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getIncrement();
+
+	/**
+	 * Increment.
+	 * <p>
+	 * <b>Type:</b> NX_INT
+	 * <b>Units:</b> NX_UNITLESS
+	 * </p>
+	 *
+	 * @param incrementDataset the incrementDataset
+	 */
+	public DataNode setIncrement(IDataset incrementDataset);
+
+	/**
+	 * Increment.
+	 * <p>
+	 * <b>Type:</b> NX_INT
+	 * <b>Units:</b> NX_UNITLESS
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Long getIncrementScalar();
+
+	/**
+	 * Increment.
+	 * <p>
+	 * <b>Type:</b> NX_INT
+	 * <b>Units:</b> NX_UNITLESS
+	 * </p>
+	 *
+	 * @param increment the increment
+	 */
+	public DataNode setIncrementScalar(Long incrementValue);
+
+	/**
+	 * Maximum index.
+	 * <p>
+	 * <b>Type:</b> NX_INT
+	 * <b>Units:</b> NX_UNITLESS
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getMax();
+
+	/**
+	 * Maximum index.
+	 * <p>
+	 * <b>Type:</b> NX_INT
+	 * <b>Units:</b> NX_UNITLESS
+	 * </p>
+	 *
+	 * @param maxDataset the maxDataset
+	 */
+	public DataNode setMax(IDataset maxDataset);
+
+	/**
+	 * Maximum index.
+	 * <p>
+	 * <b>Type:</b> NX_INT
+	 * <b>Units:</b> NX_UNITLESS
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Long getMaxScalar();
+
+	/**
+	 * Maximum index.
+	 * <p>
+	 * <b>Type:</b> NX_INT
+	 * <b>Units:</b> NX_UNITLESS
+	 * </p>
+	 *
+	 * @param max the max
+	 */
+	public DataNode setMaxScalar(Long maxValue);
 
 }

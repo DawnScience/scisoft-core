@@ -17,19 +17,18 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * definition for a electrostatic kicker.
+ * Base class for an electrostatic kicker.
  *
  */
-public interface NXelectrostatic_kicker extends NXobject {
+public interface NXelectrostatic_kicker extends NXcomponent {
 
-	public static final String NX_DESCRIPTION = "description";
 	public static final String NX_BEAMLINE_DISTANCE = "beamline_distance";
 	public static final String NX_TIMING = "timing";
 	public static final String NX_TIMING_ATTRIBUTE_DESCRIPTION = "description";
 	public static final String NX_SET_CURRENT = "set_current";
 	public static final String NX_SET_VOLTAGE = "set_voltage";
 	/**
-	 * extended description of the kicker.
+	 * Extended description of the kicker.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
@@ -39,7 +38,7 @@ public interface NXelectrostatic_kicker extends NXobject {
 	public Dataset getDescription();
 
 	/**
-	 * extended description of the kicker.
+	 * Extended description of the kicker.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
@@ -49,7 +48,7 @@ public interface NXelectrostatic_kicker extends NXobject {
 	public DataNode setDescription(IDataset descriptionDataset);
 
 	/**
-	 * extended description of the kicker.
+	 * Extended description of the kicker.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
@@ -59,7 +58,7 @@ public interface NXelectrostatic_kicker extends NXobject {
 	public String getDescriptionScalar();
 
 	/**
-	 * extended description of the kicker.
+	 * Extended description of the kicker.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
@@ -69,7 +68,7 @@ public interface NXelectrostatic_kicker extends NXobject {
 	public DataNode setDescriptionScalar(String descriptionValue);
 
 	/**
-	 * define position of beamline element relative to production target
+	 * Define position of beamline element relative to production target
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
@@ -80,7 +79,7 @@ public interface NXelectrostatic_kicker extends NXobject {
 	public Dataset getBeamline_distance();
 
 	/**
-	 * define position of beamline element relative to production target
+	 * Define position of beamline element relative to production target
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
@@ -91,7 +90,7 @@ public interface NXelectrostatic_kicker extends NXobject {
 	public DataNode setBeamline_distance(IDataset beamline_distanceDataset);
 
 	/**
-	 * define position of beamline element relative to production target
+	 * Define position of beamline element relative to production target
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
@@ -102,7 +101,7 @@ public interface NXelectrostatic_kicker extends NXobject {
 	public Double getBeamline_distanceScalar();
 
 	/**
-	 * define position of beamline element relative to production target
+	 * Define position of beamline element relative to production target
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_LENGTH
@@ -113,7 +112,7 @@ public interface NXelectrostatic_kicker extends NXobject {
 	public DataNode setBeamline_distanceScalar(Double beamline_distanceValue);
 
 	/**
-	 * kicker timing as defined by ``description`` attribute
+	 * Kicker timing as defined by ``description`` attribute
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TIME
@@ -124,7 +123,7 @@ public interface NXelectrostatic_kicker extends NXobject {
 	public Dataset getTiming();
 
 	/**
-	 * kicker timing as defined by ``description`` attribute
+	 * Kicker timing as defined by ``description`` attribute
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TIME
@@ -135,7 +134,7 @@ public interface NXelectrostatic_kicker extends NXobject {
 	public DataNode setTiming(IDataset timingDataset);
 
 	/**
-	 * kicker timing as defined by ``description`` attribute
+	 * Kicker timing as defined by ``description`` attribute
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TIME
@@ -146,7 +145,7 @@ public interface NXelectrostatic_kicker extends NXobject {
 	public Double getTimingScalar();
 
 	/**
-	 * kicker timing as defined by ``description`` attribute
+	 * Kicker timing as defined by ``description`` attribute
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_TIME
@@ -169,7 +168,7 @@ public interface NXelectrostatic_kicker extends NXobject {
 	public void setTimingAttributeDescription(String descriptionValue);
 
 	/**
-	 * current set on supply.
+	 * Current set on supply.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
@@ -180,7 +179,7 @@ public interface NXelectrostatic_kicker extends NXobject {
 	public Dataset getSet_current();
 
 	/**
-	 * current set on supply.
+	 * Current set on supply.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
@@ -191,7 +190,7 @@ public interface NXelectrostatic_kicker extends NXobject {
 	public DataNode setSet_current(IDataset set_currentDataset);
 
 	/**
-	 * current set on supply.
+	 * Current set on supply.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
@@ -202,7 +201,7 @@ public interface NXelectrostatic_kicker extends NXobject {
 	public Double getSet_currentScalar();
 
 	/**
-	 * current set on supply.
+	 * Current set on supply.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_CURRENT
@@ -213,21 +212,21 @@ public interface NXelectrostatic_kicker extends NXobject {
 	public DataNode setSet_currentScalar(Double set_currentValue);
 
 	/**
-	 * current read from supply.
+	 * Current read from supply.
 	 *
 	 * @return  the value.
 	 */
 	public NXlog getRead_current();
 
 	/**
-	 * current read from supply.
+	 * Current read from supply.
 	 *
 	 * @param read_currentGroup the read_currentGroup
 	 */
 	public void setRead_current(NXlog read_currentGroup);
 
 	/**
-	 * volage set on supply.
+	 * Voltage set on supply.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_VOLTAGE
@@ -238,7 +237,7 @@ public interface NXelectrostatic_kicker extends NXobject {
 	public Dataset getSet_voltage();
 
 	/**
-	 * volage set on supply.
+	 * Voltage set on supply.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_VOLTAGE
@@ -249,7 +248,7 @@ public interface NXelectrostatic_kicker extends NXobject {
 	public DataNode setSet_voltage(IDataset set_voltageDataset);
 
 	/**
-	 * volage set on supply.
+	 * Voltage set on supply.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_VOLTAGE
@@ -260,7 +259,7 @@ public interface NXelectrostatic_kicker extends NXobject {
 	public Double getSet_voltageScalar();
 
 	/**
-	 * volage set on supply.
+	 * Voltage set on supply.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
 	 * <b>Units:</b> NX_VOLTAGE
@@ -271,14 +270,14 @@ public interface NXelectrostatic_kicker extends NXobject {
 	public DataNode setSet_voltageScalar(Double set_voltageValue);
 
 	/**
-	 * voltage read from supply.
+	 * Voltage read from supply.
 	 *
 	 * @return  the value.
 	 */
 	public NXlog getRead_voltage();
 
 	/**
-	 * voltage read from supply.
+	 * Voltage read from supply.
 	 *
 	 * @param read_voltageGroup the read_voltageGroup
 	 */

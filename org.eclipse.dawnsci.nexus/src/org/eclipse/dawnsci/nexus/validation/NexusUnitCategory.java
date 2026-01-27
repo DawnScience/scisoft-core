@@ -50,6 +50,8 @@ public enum NexusUnitCategory {
 	
 	NX_CHARGE(Units.COULOMB),
 	
+	NX_COUNT(AbstractUnit.ONE),
+
 	NX_CROSS_SECTION(Units.SQUARE_METRE), // alias of NX_AREA
 	
 	NX_CURRENT(Units.AMPERE),

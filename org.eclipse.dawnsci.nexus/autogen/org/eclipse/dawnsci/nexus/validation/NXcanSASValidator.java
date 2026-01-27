@@ -472,12 +472,23 @@ public class NXcanSASValidator extends AbstractNexusValidator implements NexusAp
 		validateAttributeEnumeration("canSAS_class", canSAS_class_attr,
 				"SASaperture");
 
-		// validate field 'shape' of type NX_CHAR. Note: field not defined in base class.
+		// validate field 'shape' of type NX_CHAR.
 		final ILazyDataset shape = group.getLazyDataset("shape");
 		validateFieldNotNull("shape", shape);
 		if (shape != null) {
 			// validate any properties of this field specified in the NXDL file: type, units, enumeration, dimensions
 			validateFieldType("shape", shape, NX_CHAR);
+			validateFieldEnumeration("shape", shape,
+					"straight slit",
+					"curved slit",
+					"pinhole",
+					"circle",
+					"square",
+					"hexagon",
+					"octagon",
+					"bladed",
+					"open",
+					"grid");
 		}
 
 		// validate optional field 'x_gap' of type NX_NUMBER. Note: field not defined in base class.

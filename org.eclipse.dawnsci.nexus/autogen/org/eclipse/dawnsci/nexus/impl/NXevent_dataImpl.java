@@ -237,14 +237,4 @@ public class NXevent_dataImpl extends NXobjectImpl implements NXevent_data {
 		return setField(NX_CUE_INDEX, cue_indexValue);
 	}
 
-	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
-	}
-
-	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
-	}
-
 }

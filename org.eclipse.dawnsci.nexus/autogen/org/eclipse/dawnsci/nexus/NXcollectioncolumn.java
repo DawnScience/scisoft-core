@@ -19,23 +19,23 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * Subclass of NXelectronanalyser to describe the electron collection column of a
- * photoelectron analyser.
+ * Electron collection column of an electron analyzer.
  *
  */
-public interface NXcollectioncolumn extends NXobject {
+public interface NXcollectioncolumn extends NXcomponent {
 
 	public static final String NX_SCHEME = "scheme";
 	public static final String NX_EXTRACTOR_VOLTAGE = "extractor_voltage";
 	public static final String NX_EXTRACTOR_CURRENT = "extractor_current";
 	public static final String NX_WORKING_DISTANCE = "working_distance";
-	public static final String NX_MODE = "mode";
+	public static final String NX_LENS_MODE = "lens_mode";
 	public static final String NX_PROJECTION = "projection";
+	public static final String NX_ANGULAR_ACCEPTANCE = "angular_acceptance";
+	public static final String NX_SPATIAL_ACCEPTANCE = "spatial_acceptance";
 	public static final String NX_MAGNIFICATION = "magnification";
-	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
-	 * Scheme of the electron collection lens, i.e. standard, deflector, PEEM, momentum
-	 * microscope, etc.
+	 * Scheme of the electron collection lens, i.e. angular dispersive,
+	 * spatial dispersive, momentum dispersive, non-dispersive, etc.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
@@ -45,8 +45,8 @@ public interface NXcollectioncolumn extends NXobject {
 	public Dataset getScheme();
 
 	/**
-	 * Scheme of the electron collection lens, i.e. standard, deflector, PEEM, momentum
-	 * microscope, etc.
+	 * Scheme of the electron collection lens, i.e. angular dispersive,
+	 * spatial dispersive, momentum dispersive, non-dispersive, etc.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
@@ -56,8 +56,8 @@ public interface NXcollectioncolumn extends NXobject {
 	public DataNode setScheme(IDataset schemeDataset);
 
 	/**
-	 * Scheme of the electron collection lens, i.e. standard, deflector, PEEM, momentum
-	 * microscope, etc.
+	 * Scheme of the electron collection lens, i.e. angular dispersive,
+	 * spatial dispersive, momentum dispersive, non-dispersive, etc.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
@@ -67,8 +67,8 @@ public interface NXcollectioncolumn extends NXobject {
 	public String getSchemeScalar();
 
 	/**
-	 * Scheme of the electron collection lens, i.e. standard, deflector, PEEM, momentum
-	 * microscope, etc.
+	 * Scheme of the electron collection lens, i.e. angular dispersive,
+	 * spatial dispersive, momentum dispersive, non-dispersive, etc.
 	 * <p>
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
@@ -221,7 +221,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getMode();
+	public Dataset getLens_mode();
 
 	/**
 	 * Labelling of the lens setting in use.
@@ -229,9 +229,9 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
 	 *
-	 * @param modeDataset the modeDataset
+	 * @param lens_modeDataset the lens_modeDataset
 	 */
-	public DataNode setMode(IDataset modeDataset);
+	public DataNode setLens_mode(IDataset lens_modeDataset);
 
 	/**
 	 * Labelling of the lens setting in use.
@@ -241,7 +241,7 @@ public interface NXcollectioncolumn extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public String getModeScalar();
+	public String getLens_modeScalar();
 
 	/**
 	 * Labelling of the lens setting in use.
@@ -249,9 +249,9 @@ public interface NXcollectioncolumn extends NXobject {
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
 	 *
-	 * @param mode the mode
+	 * @param lens_mode the lens_mode
 	 */
-	public DataNode setModeScalar(String modeValue);
+	public DataNode setLens_modeScalar(String lens_modeValue);
 
 	/**
 	 * The space projected in the angularly dispersive directions, real or reciprocal
@@ -306,6 +306,102 @@ public interface NXcollectioncolumn extends NXobject {
 	public DataNode setProjectionScalar(String projectionValue);
 
 	/**
+	 * Acceptance angle of the collection column.
+	 * This concept is related to term `7.4`_ of the ISO 18115-1:2023 standard.
+	 * .. _7.4: https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:term:7.4
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ANGLE
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getAngular_acceptance();
+
+	/**
+	 * Acceptance angle of the collection column.
+	 * This concept is related to term `7.4`_ of the ISO 18115-1:2023 standard.
+	 * .. _7.4: https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:term:7.4
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ANGLE
+	 * </p>
+	 *
+	 * @param angular_acceptanceDataset the angular_acceptanceDataset
+	 */
+	public DataNode setAngular_acceptance(IDataset angular_acceptanceDataset);
+
+	/**
+	 * Acceptance angle of the collection column.
+	 * This concept is related to term `7.4`_ of the ISO 18115-1:2023 standard.
+	 * .. _7.4: https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:term:7.4
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ANGLE
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Double getAngular_acceptanceScalar();
+
+	/**
+	 * Acceptance angle of the collection column.
+	 * This concept is related to term `7.4`_ of the ISO 18115-1:2023 standard.
+	 * .. _7.4: https://www.iso.org/obp/ui/en/#iso:std:iso:18115:-1:ed-3:v1:en:term:7.4
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ANGLE
+	 * </p>
+	 *
+	 * @param angular_acceptance the angular_acceptance
+	 */
+	public DataNode setAngular_acceptanceScalar(Double angular_acceptanceValue);
+
+	/**
+	 * Acceptance length or area of the collection column.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_LENGTH
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getSpatial_acceptance();
+
+	/**
+	 * Acceptance length or area of the collection column.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_LENGTH
+	 * </p>
+	 *
+	 * @param spatial_acceptanceDataset the spatial_acceptanceDataset
+	 */
+	public DataNode setSpatial_acceptance(IDataset spatial_acceptanceDataset);
+
+	/**
+	 * Acceptance length or area of the collection column.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_LENGTH
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Double getSpatial_acceptanceScalar();
+
+	/**
+	 * Acceptance length or area of the collection column.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_LENGTH
+	 * </p>
+	 *
+	 * @param spatial_acceptance the spatial_acceptance
+	 */
+	public DataNode setSpatial_acceptanceScalar(Double spatial_acceptanceValue);
+
+	/**
 	 * The magnification of the electron lens assembly.
 	 * <p>
 	 * <b>Type:</b> NX_FLOAT
@@ -348,154 +444,6 @@ public interface NXcollectioncolumn extends NXobject {
 	 * @param magnification the magnification
 	 */
 	public DataNode setMagnificationScalar(Double magnificationValue);
-
-	/**
-	 * Specifies the position of the collectioncolumn by pointing to the last
-	 * transformation in the transformation chain in the NXtransformations group.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Dataset getDepends_on();
-
-	/**
-	 * Specifies the position of the collectioncolumn by pointing to the last
-	 * transformation in the transformation chain in the NXtransformations group.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 *
-	 * @param depends_onDataset the depends_onDataset
-	 */
-	public DataNode setDepends_on(IDataset depends_onDataset);
-
-	/**
-	 * Specifies the position of the collectioncolumn by pointing to the last
-	 * transformation in the transformation chain in the NXtransformations group.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public String getDepends_onScalar();
-
-	/**
-	 * Specifies the position of the collectioncolumn by pointing to the last
-	 * transformation in the transformation chain in the NXtransformations group.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 *
-	 * @param depends_on the depends_on
-	 */
-	public DataNode setDepends_onScalar(String depends_onValue);
-
-	/**
-	 * Collection of axis-based translations and rotations to describe the location and
-	 * geometry of the deflector as a component in the instrument. Conventions from the
-	 * NXtransformations base class are used. In principle, the McStas coordinate
-	 * system is used. The first transformation has to point either to another
-	 * component of the system or . (for pointing to the reference frame) to relate it
-	 * relative to the experimental setup. Typically, the components of a system should
-	 * all be related relative to each other and only one component should relate to
-	 * the reference coordinate system.
-	 *
-	 * @return  the value.
-	 */
-	public NXtransformations getTransformations();
-
-	/**
-	 * Collection of axis-based translations and rotations to describe the location and
-	 * geometry of the deflector as a component in the instrument. Conventions from the
-	 * NXtransformations base class are used. In principle, the McStas coordinate
-	 * system is used. The first transformation has to point either to another
-	 * component of the system or . (for pointing to the reference frame) to relate it
-	 * relative to the experimental setup. Typically, the components of a system should
-	 * all be related relative to each other and only one component should relate to
-	 * the reference coordinate system.
-	 *
-	 * @param transformationsGroup the transformationsGroup
-	 */
-	public void setTransformations(NXtransformations transformationsGroup);
-
-	/**
-	 * Get a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * Collection of axis-based translations and rotations to describe the location and
-	 * geometry of the deflector as a component in the instrument. Conventions from the
-	 * NXtransformations base class are used. In principle, the McStas coordinate
-	 * system is used. The first transformation has to point either to another
-	 * component of the system or . (for pointing to the reference frame) to relate it
-	 * relative to the experimental setup. Typically, the components of a system should
-	 * all be related relative to each other and only one component should relate to
-	 * the reference coordinate system.</li>
-	 * </ul>
-	 *
-	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public NXtransformations getTransformations(String name);
-
-	/**
-	 * Set a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * Collection of axis-based translations and rotations to describe the location and
-	 * geometry of the deflector as a component in the instrument. Conventions from the
-	 * NXtransformations base class are used. In principle, the McStas coordinate
-	 * system is used. The first transformation has to point either to another
-	 * component of the system or . (for pointing to the reference frame) to relate it
-	 * relative to the experimental setup. Typically, the components of a system should
-	 * all be related relative to each other and only one component should relate to
-	 * the reference coordinate system.</li>
-	 * </ul>
-	 *
-	 * @param name the name of the node
-	 * @param transformations the value to set
-	 */
-	public void setTransformations(String name, NXtransformations transformations);
-
-	/**
-	 * Get all NXtransformations nodes:
-	 * <ul>
-	 * <li>
-	 * Collection of axis-based translations and rotations to describe the location and
-	 * geometry of the deflector as a component in the instrument. Conventions from the
-	 * NXtransformations base class are used. In principle, the McStas coordinate
-	 * system is used. The first transformation has to point either to another
-	 * component of the system or . (for pointing to the reference frame) to relate it
-	 * relative to the experimental setup. Typically, the components of a system should
-	 * all be related relative to each other and only one component should relate to
-	 * the reference coordinate system.</li>
-	 * </ul>
-	 *
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public Map<String, NXtransformations> getAllTransformations();
-
-	/**
-	 * Set multiple child nodes of a particular type.
-	 * <ul>
-	 * <li>
-	 * Collection of axis-based translations and rotations to describe the location and
-	 * geometry of the deflector as a component in the instrument. Conventions from the
-	 * NXtransformations base class are used. In principle, the McStas coordinate
-	 * system is used. The first transformation has to point either to another
-	 * component of the system or . (for pointing to the reference frame) to relate it
-	 * relative to the experimental setup. Typically, the components of a system should
-	 * all be related relative to each other and only one component should relate to
-	 * the reference coordinate system.</li>
-	 * </ul>
-	 *
-	 * @param transformations the child nodes to add
-	 */
-
-	public void setAllTransformations(Map<String, NXtransformations> transformations);
-
 
 	/**
 	 * The size and position of an aperture inserted in the column, e.g. field aperture
@@ -632,49 +580,49 @@ public interface NXcollectioncolumn extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public NXlens_em getLens_em();
+	public NXelectromagnetic_lens getElectromagnetic_lens();
 
 	/**
 	 * Individual lenses in the collection column section
 	 *
-	 * @param lens_emGroup the lens_emGroup
+	 * @param electromagnetic_lensGroup the electromagnetic_lensGroup
 	 */
-	public void setLens_em(NXlens_em lens_emGroup);
+	public void setElectromagnetic_lens(NXelectromagnetic_lens electromagnetic_lensGroup);
 
 	/**
-	 * Get a NXlens_em node by name:
+	 * Get a NXelectromagnetic_lens node by name:
 	 * <ul>
 	 * <li>
 	 * Individual lenses in the collection column section</li>
 	 * </ul>
 	 *
 	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXlens_em for that node.
+	 * @return  a map from node names to the NXelectromagnetic_lens for that node.
 	 */
-	public NXlens_em getLens_em(String name);
+	public NXelectromagnetic_lens getElectromagnetic_lens(String name);
 
 	/**
-	 * Set a NXlens_em node by name:
+	 * Set a NXelectromagnetic_lens node by name:
 	 * <ul>
 	 * <li>
 	 * Individual lenses in the collection column section</li>
 	 * </ul>
 	 *
 	 * @param name the name of the node
-	 * @param lens_em the value to set
+	 * @param electromagnetic_lens the value to set
 	 */
-	public void setLens_em(String name, NXlens_em lens_em);
+	public void setElectromagnetic_lens(String name, NXelectromagnetic_lens electromagnetic_lens);
 
 	/**
-	 * Get all NXlens_em nodes:
+	 * Get all NXelectromagnetic_lens nodes:
 	 * <ul>
 	 * <li>
 	 * Individual lenses in the collection column section</li>
 	 * </ul>
 	 *
-	 * @return  a map from node names to the NXlens_em for that node.
+	 * @return  a map from node names to the NXelectromagnetic_lens for that node.
 	 */
-	public Map<String, NXlens_em> getAllLens_em();
+	public Map<String, NXelectromagnetic_lens> getAllElectromagnetic_lens();
 
 	/**
 	 * Set multiple child nodes of a particular type.
@@ -683,10 +631,10 @@ public interface NXcollectioncolumn extends NXobject {
 	 * Individual lenses in the collection column section</li>
 	 * </ul>
 	 *
-	 * @param lens_em the child nodes to add
+	 * @param electromagnetic_lens the child nodes to add
 	 */
 
-	public void setAllLens_em(Map<String, NXlens_em> lens_em);
+	public void setAllElectromagnetic_lens(Map<String, NXelectromagnetic_lens> electromagnetic_lens);
 
 
 }

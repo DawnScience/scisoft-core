@@ -41,7 +41,6 @@ import org.eclipse.january.dataset.Dataset;
  */
 public interface NXsubentry extends NXobject {
 
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	public static final String NX_ATTRIBUTE_IDF_VERSION = "idf_version";
 	public static final String NX_TITLE = "title";
 	public static final String NX_EXPERIMENT_IDENTIFIER = "experiment_identifier";
@@ -66,46 +65,6 @@ public interface NXsubentry extends NXobject {
 	public static final String NX_REVISION = "revision";
 	public static final String NX_REVISION_ATTRIBUTE_COMMENT = "comment";
 	public static final String NX_PRE_SAMPLE_FLIGHTPATH = "pre_sample_flightpath";
-	/**
-	 * .. index:: find the default plottable data
-	 * .. index:: plotting
-	 * .. index:: default attribute value
-	 * Declares which :ref:`NXdata` group contains the data
-	 * to be shown by default.
-	 * It is used to resolve ambiguity when
-	 * one :ref:`NXdata` group exists.
-	 * The value :ref:`names <validItemName>` the default :ref:`NXentry` group. The
-	 * value must be the name of a child of the current group. The child must be a
-	 * NeXus group or a link to a NeXus group.
-	 * For more information about how NeXus identifies the default
-	 * plottable data, see the
-	 * :ref:`Find Plottable Data, v3 <Find-Plottable-Data-v3>`
-	 * section.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: find the default plottable data
-	 * .. index:: plotting
-	 * .. index:: default attribute value
-	 * Declares which :ref:`NXdata` group contains the data
-	 * to be shown by default.
-	 * It is used to resolve ambiguity when
-	 * one :ref:`NXdata` group exists.
-	 * The value :ref:`names <validItemName>` the default :ref:`NXentry` group. The
-	 * value must be the name of a child of the current group. The child must be a
-	 * NeXus group or a link to a NeXus group.
-	 * For more information about how NeXus identifies the default
-	 * plottable data, see the
-	 * :ref:`Find Plottable Data, v3 <Find-Plottable-Data-v3>`
-	 * section.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
-
 	/**
 	 * ISIS Muon IDF_Version
 	 *

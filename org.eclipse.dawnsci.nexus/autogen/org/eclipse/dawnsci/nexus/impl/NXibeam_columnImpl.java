@@ -23,37 +23,44 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Container for components of a focused-ion-beam (FIB) system.
- * FIB capabilities turn especially scanning electron microscopes
- * into specimen preparation labs. FIB is a material preparation
- * technique whereby portions of the sample are illuminated with a
- * focused ion beam with controlled intensity intense enough and with
- * sufficient ion momentum to remove material in a controllable manner.
- * The fact that an electron microscope with FIB capabilities has needs a
- * second gun with own relevant control circuits, focusing lenses, and
- * other components, warrants an own base class to group these components
- * and distinguish them from the lenses and components for creating and
- * shaping the electron beam.
+ * Base class for a set of components equipping an instrument with FIB capabilities.
+ * Focused-ion-beam (FIB) capabilities turn especially scanning electron microscopes
+ * into specimen preparation labs. FIB is a material preparation technique whereby
+ * portions of the sample are illuminated with a focused ion beam with controlled
+ * intensity. The beam is controlled such that it is intense, focused, and equipped
+ * with sufficient ion having sufficient momentum to remove material in a controlled
+ * manner.
+ * The fact that an electron microscope with FIB capabilities achieves these functionalities
+ * via a second component (aka the ion gun) that has its own relevant control circuits,
+ * focusing lenses, and other components, warrants the definition of an own base class
+ * to group these components and distinguish them from the lenses and components for creating
+ * and shaping the electron beam.
  * For more details about the relevant physics and application examples
  * consult the literature, for example:
  * * `L. A. Giannuzzi et al. <https://doi.org/10.1007/b101190>`_
  * * `E. I. Preiß et al. <https://link.springer.com/content/pdf/10.1557/s43578-020-00045-w.pdf>`_
  * * `J. F. Ziegler et al. <https://www.sciencedirect.com/science/article/pii/S0168583X10001862>`_
  * * `J. Lili <https://www.osti.gov/servlets/purl/924801>`_
+ * * `N. Yao <https://doi.org/10.1017/CBO9780511600302>`_
 
  */
-public class NXibeam_columnImpl extends NXobjectImpl implements NXibeam_column {
+public class NXibeam_columnImpl extends NXcomponentImpl implements NXibeam_column {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_FABRICATION,
 		NexusBaseClass.NX_SOURCE,
-		NexusBaseClass.NX_APERTURE_EM,
-		NexusBaseClass.NX_LENS_EM,
+		NexusBaseClass.NX_ELECTROMAGNETIC_LENS,
+		NexusBaseClass.NX_APERTURE,
+		NexusBaseClass.NX_DEFLECTOR,
+		NexusBaseClass.NX_DEFLECTOR,
+		NexusBaseClass.NX_MONOCHROMATOR,
 		NexusBaseClass.NX_SENSOR,
-		NexusBaseClass.NX_BEAM);
+		NexusBaseClass.NX_ACTUATOR,
+		NexusBaseClass.NX_BEAM,
+		NexusBaseClass.NX_COMPONENT,
+		NexusBaseClass.NX_SCAN_CONTROLLER);
 
 	public NXibeam_columnImpl() {
 		super();
@@ -80,34 +87,23 @@ public class NXibeam_columnImpl extends NXobjectImpl implements NXibeam_column {
 
 
 	@Override
-	public NXfabrication getFabrication() {
-		// dataNodeName = NX_FABRICATION
-		return getChild("fabrication", NXfabrication.class);
+	public Dataset getOperation_mode() {
+		return getDataset(NX_OPERATION_MODE);
 	}
 
 	@Override
-	public void setFabrication(NXfabrication fabricationGroup) {
-		putChild("fabrication", fabricationGroup);
+	public String getOperation_modeScalar() {
+		return getString(NX_OPERATION_MODE);
 	}
 
 	@Override
-	public NXfabrication getFabrication(String name) {
-		return getChild(name, NXfabrication.class);
+	public DataNode setOperation_mode(IDataset operation_modeDataset) {
+		return setDataset(NX_OPERATION_MODE, operation_modeDataset);
 	}
 
 	@Override
-	public void setFabrication(String name, NXfabrication fabrication) {
-		putChild(name, fabrication);
-	}
-
-	@Override
-	public Map<String, NXfabrication> getAllFabrication() {
-		return getChildren(NXfabrication.class);
-	}
-
-	@Override
-	public void setAllFabrication(Map<String, NXfabrication> fabrication) {
-		setChildren(fabrication);
+	public DataNode setOperation_modeScalar(String operation_modeValue) {
+		return setString(NX_OPERATION_MODE, operation_modeValue);
 	}
 
 	@Override
@@ -121,68 +117,140 @@ public class NXibeam_columnImpl extends NXobjectImpl implements NXibeam_column {
 		putChild("ion_source", ion_sourceGroup);
 	}
 	// Unprocessed group: probe
-	// Unprocessed group:
 
 	@Override
-	public NXaperture_em getAperture_em() {
-		// dataNodeName = NX_APERTURE_EM
-		return getChild("aperture_em", NXaperture_em.class);
+	public NXelectromagnetic_lens getElectromagnetic_lens() {
+		// dataNodeName = NX_ELECTROMAGNETIC_LENS
+		return getChild("electromagnetic_lens", NXelectromagnetic_lens.class);
 	}
 
 	@Override
-	public void setAperture_em(NXaperture_em aperture_emGroup) {
-		putChild("aperture_em", aperture_emGroup);
+	public void setElectromagnetic_lens(NXelectromagnetic_lens electromagnetic_lensGroup) {
+		putChild("electromagnetic_lens", electromagnetic_lensGroup);
 	}
 
 	@Override
-	public NXaperture_em getAperture_em(String name) {
-		return getChild(name, NXaperture_em.class);
+	public NXelectromagnetic_lens getElectromagnetic_lens(String name) {
+		return getChild(name, NXelectromagnetic_lens.class);
 	}
 
 	@Override
-	public void setAperture_em(String name, NXaperture_em aperture_em) {
-		putChild(name, aperture_em);
+	public void setElectromagnetic_lens(String name, NXelectromagnetic_lens electromagnetic_lens) {
+		putChild(name, electromagnetic_lens);
 	}
 
 	@Override
-	public Map<String, NXaperture_em> getAllAperture_em() {
-		return getChildren(NXaperture_em.class);
+	public Map<String, NXelectromagnetic_lens> getAllElectromagnetic_lens() {
+		return getChildren(NXelectromagnetic_lens.class);
 	}
 
 	@Override
-	public void setAllAperture_em(Map<String, NXaperture_em> aperture_em) {
-		setChildren(aperture_em);
+	public void setAllElectromagnetic_lens(Map<String, NXelectromagnetic_lens> electromagnetic_lens) {
+		setChildren(electromagnetic_lens);
 	}
 
 	@Override
-	public NXlens_em getLens_em() {
-		// dataNodeName = NX_LENS_EM
-		return getChild("lens_em", NXlens_em.class);
+	public NXaperture getAperture() {
+		// dataNodeName = NX_APERTURE
+		return getChild("aperture", NXaperture.class);
 	}
 
 	@Override
-	public void setLens_em(NXlens_em lens_emGroup) {
-		putChild("lens_em", lens_emGroup);
+	public void setAperture(NXaperture apertureGroup) {
+		putChild("aperture", apertureGroup);
 	}
 
 	@Override
-	public NXlens_em getLens_em(String name) {
-		return getChild(name, NXlens_em.class);
+	public NXaperture getAperture(String name) {
+		return getChild(name, NXaperture.class);
 	}
 
 	@Override
-	public void setLens_em(String name, NXlens_em lens_em) {
-		putChild(name, lens_em);
+	public void setAperture(String name, NXaperture aperture) {
+		putChild(name, aperture);
 	}
 
 	@Override
-	public Map<String, NXlens_em> getAllLens_em() {
-		return getChildren(NXlens_em.class);
+	public Map<String, NXaperture> getAllAperture() {
+		return getChildren(NXaperture.class);
 	}
 
 	@Override
-	public void setAllLens_em(Map<String, NXlens_em> lens_em) {
-		setChildren(lens_em);
+	public void setAllAperture(Map<String, NXaperture> aperture) {
+		setChildren(aperture);
+	}
+
+	@Override
+	public NXdeflector getDeflector() {
+		// dataNodeName = NX_DEFLECTOR
+		return getChild("deflector", NXdeflector.class);
+	}
+
+	@Override
+	public void setDeflector(NXdeflector deflectorGroup) {
+		putChild("deflector", deflectorGroup);
+	}
+
+	@Override
+	public NXdeflector getDeflector(String name) {
+		return getChild(name, NXdeflector.class);
+	}
+
+	@Override
+	public void setDeflector(String name, NXdeflector deflector) {
+		putChild(name, deflector);
+	}
+
+	@Override
+	public Map<String, NXdeflector> getAllDeflector() {
+		return getChildren(NXdeflector.class);
+	}
+
+	@Override
+	public void setAllDeflector(Map<String, NXdeflector> deflector) {
+		setChildren(deflector);
+	}
+
+	@Override
+	public NXdeflector getBlankerid() {
+		// dataNodeName = NX_BLANKERID
+		return getChild("blankerid", NXdeflector.class);
+	}
+
+	@Override
+	public void setBlankerid(NXdeflector blankeridGroup) {
+		putChild("blankerid", blankeridGroup);
+	}
+
+	@Override
+	public NXmonochromator getMonochromator() {
+		// dataNodeName = NX_MONOCHROMATOR
+		return getChild("monochromator", NXmonochromator.class);
+	}
+
+	@Override
+	public void setMonochromator(NXmonochromator monochromatorGroup) {
+		putChild("monochromator", monochromatorGroup);
+	}
+
+	@Override
+	public NXmonochromator getMonochromator(String name) {
+		return getChild(name, NXmonochromator.class);
+	}
+
+	@Override
+	public void setMonochromator(String name, NXmonochromator monochromator) {
+		putChild(name, monochromator);
+	}
+
+	@Override
+	public Map<String, NXmonochromator> getAllMonochromator() {
+		return getChildren(NXmonochromator.class);
+	}
+
+	@Override
+	public void setAllMonochromator(Map<String, NXmonochromator> monochromator) {
+		setChildren(monochromator);
 	}
 
 	@Override
@@ -217,6 +285,37 @@ public class NXibeam_columnImpl extends NXobjectImpl implements NXibeam_column {
 	}
 
 	@Override
+	public NXactuator getActuator() {
+		// dataNodeName = NX_ACTUATOR
+		return getChild("actuator", NXactuator.class);
+	}
+
+	@Override
+	public void setActuator(NXactuator actuatorGroup) {
+		putChild("actuator", actuatorGroup);
+	}
+
+	@Override
+	public NXactuator getActuator(String name) {
+		return getChild(name, NXactuator.class);
+	}
+
+	@Override
+	public void setActuator(String name, NXactuator actuator) {
+		putChild(name, actuator);
+	}
+
+	@Override
+	public Map<String, NXactuator> getAllActuator() {
+		return getChildren(NXactuator.class);
+	}
+
+	@Override
+	public void setAllActuator(Map<String, NXactuator> actuator) {
+		setChildren(actuator);
+	}
+
+	@Override
 	public NXbeam getBeam() {
 		// dataNodeName = NX_BEAM
 		return getChild("beam", NXbeam.class);
@@ -245,6 +344,48 @@ public class NXibeam_columnImpl extends NXobjectImpl implements NXibeam_column {
 	@Override
 	public void setAllBeam(Map<String, NXbeam> beam) {
 		setChildren(beam);
+	}
+
+	@Override
+	public NXcomponent getComponent() {
+		// dataNodeName = NX_COMPONENT
+		return getChild("component", NXcomponent.class);
+	}
+
+	@Override
+	public void setComponent(NXcomponent componentGroup) {
+		putChild("component", componentGroup);
+	}
+
+	@Override
+	public NXcomponent getComponent(String name) {
+		return getChild(name, NXcomponent.class);
+	}
+
+	@Override
+	public void setComponent(String name, NXcomponent component) {
+		putChild(name, component);
+	}
+
+	@Override
+	public Map<String, NXcomponent> getAllComponent() {
+		return getChildren(NXcomponent.class);
+	}
+
+	@Override
+	public void setAllComponent(Map<String, NXcomponent> component) {
+		setChildren(component);
+	}
+
+	@Override
+	public NXscan_controller getScan_controller() {
+		// dataNodeName = NX_SCAN_CONTROLLER
+		return getChild("scan_controller", NXscan_controller.class);
+	}
+
+	@Override
+	public void setScan_controller(NXscan_controller scan_controllerGroup) {
+		putChild("scan_controller", scan_controllerGroup);
 	}
 
 }

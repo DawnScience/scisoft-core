@@ -118,14 +118,4 @@ public class NXshapeImpl extends NXobjectImpl implements NXshape {
 		return setString(NX_DIRECTION, directionValue);
 	}
 
-	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
-	}
-
-	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
-	}
-
 }

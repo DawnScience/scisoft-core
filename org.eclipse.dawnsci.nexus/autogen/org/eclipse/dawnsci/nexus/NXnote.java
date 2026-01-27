@@ -31,10 +31,12 @@ public interface NXnote extends NXobject {
 	public static final String NX_DATE = "date";
 	public static final String NX_TYPE = "type";
 	public static final String NX_FILE_NAME = "file_name";
+	public static final String NX_IDENTIFIERNAME = "identifiername";
+	public static final String NX_CHECKSUM = "checksum";
+	public static final String NX_ALGORITHM = "algorithm";
 	public static final String NX_DESCRIPTION = "description";
 	public static final String NX_SEQUENCE_INDEX = "sequence_index";
 	public static final String NX_DATA = "data";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * Author or creator of note
 	 *
@@ -160,6 +162,138 @@ public interface NXnote extends NXobject {
 	public DataNode setFile_nameScalar(String file_nameValue);
 
 	/**
+	 * Identifier of the resource if that resource that has been serialized.
+	 * For example, the identifier to a resource in another database.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getIdentifiername();
+
+	/**
+	 * Identifier of the resource if that resource that has been serialized.
+	 * For example, the identifier to a resource in another database.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @param identifiernameDataset the identifiernameDataset
+	 */
+	public DataNode setIdentifiername(IDataset identifiernameDataset);
+
+	/**
+	 * Identifier of the resource if that resource that has been serialized.
+	 * For example, the identifier to a resource in another database.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public String getIdentifiernameScalar();
+
+	/**
+	 * Identifier of the resource if that resource that has been serialized.
+	 * For example, the identifier to a resource in another database.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @param identifiername the identifiername
+	 */
+	public DataNode setIdentifiernameScalar(String identifiernameValue);
+
+	/**
+	 * Value of the hash that is obtained when running algorithm
+	 * on the content of the resource referred to by ``identifierNAME``.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getChecksum();
+
+	/**
+	 * Value of the hash that is obtained when running algorithm
+	 * on the content of the resource referred to by ``identifierNAME``.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @param checksumDataset the checksumDataset
+	 */
+	public DataNode setChecksum(IDataset checksumDataset);
+
+	/**
+	 * Value of the hash that is obtained when running algorithm
+	 * on the content of the resource referred to by ``identifierNAME``.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public String getChecksumScalar();
+
+	/**
+	 * Value of the hash that is obtained when running algorithm
+	 * on the content of the resource referred to by ``identifierNAME``.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @param checksum the checksum
+	 */
+	public DataNode setChecksumScalar(String checksumValue);
+
+	/**
+	 * Name of the algorithm whereby the ``checksum`` was computed.
+	 * Examples: md5, sha256
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getAlgorithm();
+
+	/**
+	 * Name of the algorithm whereby the ``checksum`` was computed.
+	 * Examples: md5, sha256
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @param algorithmDataset the algorithmDataset
+	 */
+	public DataNode setAlgorithm(IDataset algorithmDataset);
+
+	/**
+	 * Name of the algorithm whereby the ``checksum`` was computed.
+	 * Examples: md5, sha256
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public String getAlgorithmScalar();
+
+	/**
+	 * Name of the algorithm whereby the ``checksum`` was computed.
+	 * Examples: md5, sha256
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @param algorithm the algorithm
+	 */
+	public DataNode setAlgorithmScalar(String algorithmValue);
+
+	/**
 	 * Title of an image or other details of the note
 	 *
 	 * @return  the value.
@@ -270,31 +404,5 @@ public interface NXnote extends NXobject {
 	 * @param data the data
 	 */
 	public DataNode setDataScalar(Object dataValue);
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
 
 }

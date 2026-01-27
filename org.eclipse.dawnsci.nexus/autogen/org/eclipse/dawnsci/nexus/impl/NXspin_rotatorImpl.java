@@ -21,10 +21,10 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * definition for a spin rotator.
+ * Base class for a spin rotator.
 
  */
-public class NXspin_rotatorImpl extends NXobjectImpl implements NXspin_rotator {
+public class NXspin_rotatorImpl extends NXcomponentImpl implements NXspin_rotator {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 

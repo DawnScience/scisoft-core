@@ -13,6 +13,8 @@ package org.eclipse.dawnsci.nexus.impl;
 
 import java.util.Set;
 import java.util.EnumSet;
+import java.util.Map;
+
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
@@ -56,43 +58,44 @@ public class NXparametersImpl extends NXobjectImpl implements NXparameters {
 
 
 	@Override
-	public Dataset getTerm() {
-		return getDataset(NX_TERM);
+	public Dataset getParameter(String parameter) {
+		return getDataset(parameter);
 	}
 
 	@Override
-	public String getTermScalar() {
-		return getString(NX_TERM);
+	public Object getParameterScalar(String parameter) {
+		return getDataset(parameter).getObject();
 	}
 
 	@Override
-	public DataNode setTerm(IDataset termDataset) {
-		return setDataset(NX_TERM, termDataset);
+	public DataNode setParameter(String parameter, IDataset parameterDataset) {
+		return setDataset(parameter, parameterDataset);
 	}
 
 	@Override
-	public DataNode setTermScalar(String termValue) {
-		return setString(NX_TERM, termValue);
+	public DataNode setParameterScalar(String parameter, Object parameterValue) {
+		if (parameterValue instanceof Number) {
+			return setField(parameter, parameterValue);
+		} else if (parameterValue instanceof String) {
+			return setString(parameter, (String) parameterValue);
+		} else {
+			throw new IllegalArgumentException("Value must be String or Number");
+		}
 	}
 
 	@Override
-	public String getTermAttributeUnits() {
-		return getAttrString(NX_TERM, NX_TERM_ATTRIBUTE_UNITS);
+	public Map<String, Dataset> getAllParameter() {
+		return getAllDatasets(); // note: returns all datasets in the group!
 	}
 
 	@Override
-	public void setTermAttributeUnits(String unitsValue) {
-		setAttribute(NX_TERM, NX_TERM_ATTRIBUTE_UNITS, unitsValue);
+	public String getParameterAttributeUnits(String parameter) {
+		return getAttrString(parameter, NX_PARAMETER_ATTRIBUTE_UNITS);
 	}
 
 	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
-	}
-
-	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
+	public void setParameterAttributeUnits(String parameter, String unitsValue) {
+		setAttribute(parameter, NX_PARAMETER_ATTRIBUTE_UNITS, unitsValue);
 	}
 
 }

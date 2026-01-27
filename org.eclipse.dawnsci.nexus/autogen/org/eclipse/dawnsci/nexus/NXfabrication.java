@@ -11,23 +11,30 @@
 
 package org.eclipse.dawnsci.nexus;
 
+import java.util.Date;
+
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * Details about a component as defined by its manufacturer.
+ * Details about a component as it is defined by its manufacturer.
  *
  */
 public interface NXfabrication extends NXobject {
 
 	public static final String NX_VENDOR = "vendor";
 	public static final String NX_MODEL = "model";
-	public static final String NX_IDENTIFIER = "identifier";
+	public static final String NX_MODEL_ATTRIBUTE_VERSION = "version";
+	public static final String NX_SERIAL_NUMBER = "serial_number";
+	public static final String NX_CONSTRUCTION_DATE = "construction_date";
 	public static final String NX_CAPABILITY = "capability";
 	/**
 	 * Company name of the manufacturer.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @return  the value.
 	 */
@@ -35,6 +42,9 @@ public interface NXfabrication extends NXobject {
 
 	/**
 	 * Company name of the manufacturer.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @param vendorDataset the vendorDataset
 	 */
@@ -42,6 +52,9 @@ public interface NXfabrication extends NXobject {
 
 	/**
 	 * Company name of the manufacturer.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @return  the value.
 	 */
@@ -49,6 +62,9 @@ public interface NXfabrication extends NXobject {
 
 	/**
 	 * Company name of the manufacturer.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @param vendor the vendor
 	 */
@@ -56,6 +72,9 @@ public interface NXfabrication extends NXobject {
 
 	/**
 	 * Version or model of the component named by the manufacturer.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @return  the value.
 	 */
@@ -63,6 +82,9 @@ public interface NXfabrication extends NXobject {
 
 	/**
 	 * Version or model of the component named by the manufacturer.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @param modelDataset the modelDataset
 	 */
@@ -70,6 +92,9 @@ public interface NXfabrication extends NXobject {
 
 	/**
 	 * Version or model of the component named by the manufacturer.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @return  the value.
 	 */
@@ -77,70 +102,161 @@ public interface NXfabrication extends NXobject {
 
 	/**
 	 * Version or model of the component named by the manufacturer.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @param model the model
 	 */
 	public DataNode setModelScalar(String modelValue);
 
 	/**
-	 * Ideally, (globally) unique persistent identifier, i.e.
-	 * a serial number or hash identifier of the component.
+	 * If it is possible that different versions exist, the value in this field should be made
+	 * specific enough to resolve the version.
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getIdentifier();
+	public String getModelAttributeVersion();
 
 	/**
-	 * Ideally, (globally) unique persistent identifier, i.e.
-	 * a serial number or hash identifier of the component.
+	 * If it is possible that different versions exist, the value in this field should be made
+	 * specific enough to resolve the version.
 	 *
-	 * @param identifierDataset the identifierDataset
+	 * @param versionValue the versionValue
 	 */
-	public DataNode setIdentifier(IDataset identifierDataset);
+	public void setModelAttributeVersion(String versionValue);
 
 	/**
-	 * Ideally, (globally) unique persistent identifier, i.e.
-	 * a serial number or hash identifier of the component.
+	 * Serial number of the component.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public String getIdentifierScalar();
+	public Dataset getSerial_number();
 
 	/**
-	 * Ideally, (globally) unique persistent identifier, i.e.
-	 * a serial number or hash identifier of the component.
+	 * Serial number of the component.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
-	 * @param identifier the identifier
+	 * @param serial_numberDataset the serial_numberDataset
 	 */
-	public DataNode setIdentifierScalar(String identifierValue);
+	public DataNode setSerial_number(IDataset serial_numberDataset);
 
 	/**
-	 * Free-text list with eventually multiple terms of
-	 * functionalities which the component offers.
+	 * Serial number of the component.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public String getSerial_numberScalar();
+
+	/**
+	 * Serial number of the component.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
+	 *
+	 * @param serial_number the serial_number
+	 */
+	public DataNode setSerial_numberScalar(String serial_numberValue);
+
+	/**
+	 * Datetime of component's initial construction. This refers to the date of
+	 * first measurement after new construction or to the relocation date,
+	 * if it describes a multicomponent/custom-build setup.
+	 * Just the year is often sufficient, but if a full date/time is used,
+	 * it is recommended to add an explicit time zone.
+	 * <p>
+	 * <b>Type:</b> NX_DATE_TIME
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getConstruction_date();
+
+	/**
+	 * Datetime of component's initial construction. This refers to the date of
+	 * first measurement after new construction or to the relocation date,
+	 * if it describes a multicomponent/custom-build setup.
+	 * Just the year is often sufficient, but if a full date/time is used,
+	 * it is recommended to add an explicit time zone.
+	 * <p>
+	 * <b>Type:</b> NX_DATE_TIME
+	 * </p>
+	 *
+	 * @param construction_dateDataset the construction_dateDataset
+	 */
+	public DataNode setConstruction_date(IDataset construction_dateDataset);
+
+	/**
+	 * Datetime of component's initial construction. This refers to the date of
+	 * first measurement after new construction or to the relocation date,
+	 * if it describes a multicomponent/custom-build setup.
+	 * Just the year is often sufficient, but if a full date/time is used,
+	 * it is recommended to add an explicit time zone.
+	 * <p>
+	 * <b>Type:</b> NX_DATE_TIME
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Date getConstruction_dateScalar();
+
+	/**
+	 * Datetime of component's initial construction. This refers to the date of
+	 * first measurement after new construction or to the relocation date,
+	 * if it describes a multicomponent/custom-build setup.
+	 * Just the year is often sufficient, but if a full date/time is used,
+	 * it is recommended to add an explicit time zone.
+	 * <p>
+	 * <b>Type:</b> NX_DATE_TIME
+	 * </p>
+	 *
+	 * @param construction_date the construction_date
+	 */
+	public DataNode setConstruction_dateScalar(Date construction_dateValue);
+
+	/**
+	 * Free-text list of functionalities which the component offers.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @return  the value.
 	 */
 	public Dataset getCapability();
 
 	/**
-	 * Free-text list with eventually multiple terms of
-	 * functionalities which the component offers.
+	 * Free-text list of functionalities which the component offers.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @param capabilityDataset the capabilityDataset
 	 */
 	public DataNode setCapability(IDataset capabilityDataset);
 
 	/**
-	 * Free-text list with eventually multiple terms of
-	 * functionalities which the component offers.
+	 * Free-text list of functionalities which the component offers.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @return  the value.
 	 */
 	public String getCapabilityScalar();
 
 	/**
-	 * Free-text list with eventually multiple terms of
-	 * functionalities which the component offers.
+	 * Free-text list of functionalities which the component offers.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @param capability the capability
 	 */

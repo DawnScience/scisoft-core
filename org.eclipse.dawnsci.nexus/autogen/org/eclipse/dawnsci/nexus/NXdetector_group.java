@@ -47,7 +47,6 @@ public interface NXdetector_group extends NXobject {
 	public static final String NX_GROUP_INDEX = "group_index";
 	public static final String NX_GROUP_PARENT = "group_parent";
 	public static final String NX_GROUP_TYPE = "group_type";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * An array of the names of the detectors given in NXdetector
 	 * groups or the names of hierarchical groupings of detectors
@@ -259,31 +258,5 @@ public interface NXdetector_group extends NXobject {
 	 * @param group_type the group_type
 	 */
 	public DataNode setGroup_typeScalar(Long group_typeValue);
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
 
 }

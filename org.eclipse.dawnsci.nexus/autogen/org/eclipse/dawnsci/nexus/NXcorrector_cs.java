@@ -19,18 +19,34 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * Corrector for aberrations in an electron microscope.
- * Different technology partners use different naming schemes and models
- * for quantifying the aberration coefficients.
- * The corrector in an electron microscope is composed of multiple lenses and
- * multipole stigmators with vendor-specific details which are often undisclosed.
+ * Base class for a corrector reducing (spherical) aberrations of an electron optical setup.
+ * Different technology partners use different conventions and
+ * models for quantifying the aberration coefficients.
+ * Aberration correction components are especially important for (scanning)
+ * transmission electron microscopy. Composed of multiple lenses and multipole stigmators,
+ * their technical details are specific for the technology partner as well as
+ * the microscope and instrument. Most technical details are proprietary knowledge.
+ * If one component corrects for multiple types of aberrations (like it is the case
+ * reported here `CEOS <https://www.ceos-gmbh.de/en/research/electrostat>`_) follow this
+ * design when using corrector and monochromator in an application definition:
+ * * Use :ref:`NXcorrector_cs` for spherical aberration
+ * * Use :ref:`NXmonochromator` for energy filtering or chromatic aberration
+ * * Use the group corrector_ax in :ref:`NXem` for axial astigmatism aberration
+ * Although this base class currently provides concepts that are foremost used in
+ * the field of electron microscopy using this base class is not restricted to this
+ * research field. NXcorrector_cs can also serve as a container to detail, in
+ * combination with :ref:`NXaberration`, about measured aberrations in classical optics.
+ * In optics, though, the difference is that the design of the :ref:NXoptical_lens`
+ * itself (e.g., using aspheric lenses or combinations of lenses) enables to
+ * reduce spherical aberrations.
+ * <p><b>Symbols:</b>
+ * The symbols used in the schema to specify e.g. dimensions of arrays.<ul>
+ * <li><b>n_img</b>
+ * Number of images taken, at least one.</li></ul></p>
  *
  */
-public interface NXcorrector_cs extends NXobject {
+public interface NXcorrector_cs extends NXcomponent {
 
-	public static final String NX_APPLIED = "applied";
-	public static final String NX_NAME = "name";
-	public static final String NX_DESCRIPTION = "description";
 	/**
 	 * Was the corrector used?
 	 * <p>
@@ -72,76 +88,108 @@ public interface NXcorrector_cs extends NXobject {
 	public DataNode setAppliedScalar(Boolean appliedValue);
 
 	/**
-	 * Given name/alias.
+	 * Specific information about the alignment procedure. This is a process during which
+	 * the corrector is configured to enable calibrated usage of the instrument.
+	 * This :ref:`NXprocess` group should also be used when one describes in a computer
+	 * simulation the specific details about the modeled or assumed aberrations.
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getName();
+	public NXprocess getTableauid();
 
 	/**
-	 * Given name/alias.
+	 * Specific information about the alignment procedure. This is a process during which
+	 * the corrector is configured to enable calibrated usage of the instrument.
+	 * This :ref:`NXprocess` group should also be used when one describes in a computer
+	 * simulation the specific details about the modeled or assumed aberrations.
 	 *
-	 * @param nameDataset the nameDataset
+	 * @param tableauidGroup the tableauidGroup
 	 */
-	public DataNode setName(IDataset nameDataset);
+	public void setTableauid(NXprocess tableauidGroup);
+	// Unprocessed group:imageID
+	// Unprocessed group:c_1
+	// Unprocessed group:a_1
+	// Unprocessed group:b_2
+	// Unprocessed group:a_2
+	// Unprocessed group:c_3
+	// Unprocessed group:s_3
+	// Unprocessed group:a_3
+	// Unprocessed group:b_4
+	// Unprocessed group:d_4
+	// Unprocessed group:a_4
+	// Unprocessed group:c_5
+	// Unprocessed group:s_5
+	// Unprocessed group:r_5
+	// Unprocessed group:a_6
+	// Unprocessed group:c_1_0
+	// Unprocessed group:c_1_2_a
+	// Unprocessed group:c_1_2_b
+	// Unprocessed group:c_2_1_a
+	// Unprocessed group:c_2_1_b
+	// Unprocessed group:c_2_3_a
+	// Unprocessed group:c_2_3_b
+	// Unprocessed group:c_3_0
+	// Unprocessed group:c_3_2_a
+	// Unprocessed group:c_3_2_b
+	// Unprocessed group:c_3_4_a
+	// Unprocessed group:c_3_4_b
+	// Unprocessed group:c_4_1_a
+	// Unprocessed group:c_4_1_b
+	// Unprocessed group:c_4_3_a
+	// Unprocessed group:c_4_3_b
+	// Unprocessed group:c_4_5_a
+	// Unprocessed group:c_4_5_b
+	// Unprocessed group:c_5_0
+	// Unprocessed group:c_5_2_a
+	// Unprocessed group:c_5_2_b
+	// Unprocessed group:c_5_4_a
+	// Unprocessed group:c_5_4_b
+	// Unprocessed group:c_5_6_a
+	// Unprocessed group:c_5_6_b
 
 	/**
-	 * Given name/alias.
 	 *
 	 * @return  the value.
 	 */
-	public String getNameScalar();
-
-	/**
-	 * Given name/alias.
-	 *
-	 * @param name the name
-	 */
-	public DataNode setNameScalar(String nameValue);
+	public NXelectromagnetic_lens getElectromagnetic_lens();
 
 	/**
 	 *
-	 * @return  the value.
+	 * @param electromagnetic_lensGroup the electromagnetic_lensGroup
 	 */
-	public NXfabrication getFabrication();
+	public void setElectromagnetic_lens(NXelectromagnetic_lens electromagnetic_lensGroup);
 
 	/**
-	 *
-	 * @param fabricationGroup the fabricationGroup
-	 */
-	public void setFabrication(NXfabrication fabricationGroup);
-
-	/**
-	 * Get a NXfabrication node by name:
+	 * Get a NXelectromagnetic_lens node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
 	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXfabrication for that node.
+	 * @return  a map from node names to the NXelectromagnetic_lens for that node.
 	 */
-	public NXfabrication getFabrication(String name);
+	public NXelectromagnetic_lens getElectromagnetic_lens(String name);
 
 	/**
-	 * Set a NXfabrication node by name:
+	 * Set a NXelectromagnetic_lens node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
 	 * @param name the name of the node
-	 * @param fabrication the value to set
+	 * @param electromagnetic_lens the value to set
 	 */
-	public void setFabrication(String name, NXfabrication fabrication);
+	public void setElectromagnetic_lens(String name, NXelectromagnetic_lens electromagnetic_lens);
 
 	/**
-	 * Get all NXfabrication nodes:
+	 * Get all NXelectromagnetic_lens nodes:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
-	 * @return  a map from node names to the NXfabrication for that node.
+	 * @return  a map from node names to the NXelectromagnetic_lens for that node.
 	 */
-	public Map<String, NXfabrication> getAllFabrication();
+	public Map<String, NXelectromagnetic_lens> getAllElectromagnetic_lens();
 
 	/**
 	 * Set multiple child nodes of a particular type.
@@ -149,110 +197,55 @@ public interface NXcorrector_cs extends NXobject {
 	 * <li></li>
 	 * </ul>
 	 *
-	 * @param fabrication the child nodes to add
+	 * @param electromagnetic_lens the child nodes to add
 	 */
 
-	public void setAllFabrication(Map<String, NXfabrication> fabrication);
+	public void setAllElectromagnetic_lens(Map<String, NXelectromagnetic_lens> electromagnetic_lens);
 
-
-	/**
-	 * Ideally, a (globally) unique persistent identifier, link,
-	 * or text to a resource which gives further details. If this does not exist
-	 * a free-text field to report further details about the corrector.
-	 *
-	 * @return  the value.
-	 */
-	public Dataset getDescription();
-
-	/**
-	 * Ideally, a (globally) unique persistent identifier, link,
-	 * or text to a resource which gives further details. If this does not exist
-	 * a free-text field to report further details about the corrector.
-	 *
-	 * @param descriptionDataset the descriptionDataset
-	 */
-	public DataNode setDescription(IDataset descriptionDataset);
-
-	/**
-	 * Ideally, a (globally) unique persistent identifier, link,
-	 * or text to a resource which gives further details. If this does not exist
-	 * a free-text field to report further details about the corrector.
-	 *
-	 * @return  the value.
-	 */
-	public String getDescriptionScalar();
-
-	/**
-	 * Ideally, a (globally) unique persistent identifier, link,
-	 * or text to a resource which gives further details. If this does not exist
-	 * a free-text field to report further details about the corrector.
-	 *
-	 * @param description the description
-	 */
-	public DataNode setDescriptionScalar(String descriptionValue);
-
-	/**
-	 * Specific information about the concrete alignment procedure which is a
-	 * process during which the corrector is configured to enable a calibrated
-	 * usage of the microscope.
-	 *
-	 * @return  the value.
-	 */
-	public NXprocess getZemlin_tableau();
-
-	/**
-	 * Specific information about the concrete alignment procedure which is a
-	 * process during which the corrector is configured to enable a calibrated
-	 * usage of the microscope.
-	 *
-	 * @param zemlin_tableauGroup the zemlin_tableauGroup
-	 */
-	public void setZemlin_tableau(NXprocess zemlin_tableauGroup);
-	// Unprocessed group:
 
 	/**
 	 *
 	 * @return  the value.
 	 */
-	public NXlens_em getLens_em();
+	public NXoptical_lens getOptical_lens();
 
 	/**
 	 *
-	 * @param lens_emGroup the lens_emGroup
+	 * @param optical_lensGroup the optical_lensGroup
 	 */
-	public void setLens_em(NXlens_em lens_emGroup);
+	public void setOptical_lens(NXoptical_lens optical_lensGroup);
 
 	/**
-	 * Get a NXlens_em node by name:
+	 * Get a NXoptical_lens node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
 	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXlens_em for that node.
+	 * @return  a map from node names to the NXoptical_lens for that node.
 	 */
-	public NXlens_em getLens_em(String name);
+	public NXoptical_lens getOptical_lens(String name);
 
 	/**
-	 * Set a NXlens_em node by name:
+	 * Set a NXoptical_lens node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
 	 * @param name the name of the node
-	 * @param lens_em the value to set
+	 * @param optical_lens the value to set
 	 */
-	public void setLens_em(String name, NXlens_em lens_em);
+	public void setOptical_lens(String name, NXoptical_lens optical_lens);
 
 	/**
-	 * Get all NXlens_em nodes:
+	 * Get all NXoptical_lens nodes:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
-	 * @return  a map from node names to the NXlens_em for that node.
+	 * @return  a map from node names to the NXoptical_lens for that node.
 	 */
-	public Map<String, NXlens_em> getAllLens_em();
+	public Map<String, NXoptical_lens> getAllOptical_lens();
 
 	/**
 	 * Set multiple child nodes of a particular type.
@@ -260,55 +253,55 @@ public interface NXcorrector_cs extends NXobject {
 	 * <li></li>
 	 * </ul>
 	 *
-	 * @param lens_em the child nodes to add
+	 * @param optical_lens the child nodes to add
 	 */
 
-	public void setAllLens_em(Map<String, NXlens_em> lens_em);
+	public void setAllOptical_lens(Map<String, NXoptical_lens> optical_lens);
 
 
 	/**
 	 *
 	 * @return  the value.
 	 */
-	public NXtransformations getTransformations();
+	public NXaperture getAperture();
 
 	/**
 	 *
-	 * @param transformationsGroup the transformationsGroup
+	 * @param apertureGroup the apertureGroup
 	 */
-	public void setTransformations(NXtransformations transformationsGroup);
+	public void setAperture(NXaperture apertureGroup);
 
 	/**
-	 * Get a NXtransformations node by name:
+	 * Get a NXaperture node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
 	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXtransformations for that node.
+	 * @return  a map from node names to the NXaperture for that node.
 	 */
-	public NXtransformations getTransformations(String name);
+	public NXaperture getAperture(String name);
 
 	/**
-	 * Set a NXtransformations node by name:
+	 * Set a NXaperture node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
 	 * @param name the name of the node
-	 * @param transformations the value to set
+	 * @param aperture the value to set
 	 */
-	public void setTransformations(String name, NXtransformations transformations);
+	public void setAperture(String name, NXaperture aperture);
 
 	/**
-	 * Get all NXtransformations nodes:
+	 * Get all NXaperture nodes:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
-	 * @return  a map from node names to the NXtransformations for that node.
+	 * @return  a map from node names to the NXaperture for that node.
 	 */
-	public Map<String, NXtransformations> getAllTransformations();
+	public Map<String, NXaperture> getAllAperture();
 
 	/**
 	 * Set multiple child nodes of a particular type.
@@ -316,10 +309,66 @@ public interface NXcorrector_cs extends NXobject {
 	 * <li></li>
 	 * </ul>
 	 *
-	 * @param transformations the child nodes to add
+	 * @param aperture the child nodes to add
 	 */
 
-	public void setAllTransformations(Map<String, NXtransformations> transformations);
+	public void setAllAperture(Map<String, NXaperture> aperture);
+
+
+	/**
+	 *
+	 * @return  the value.
+	 */
+	public NXdeflector getDeflector();
+
+	/**
+	 *
+	 * @param deflectorGroup the deflectorGroup
+	 */
+	public void setDeflector(NXdeflector deflectorGroup);
+
+	/**
+	 * Get a NXdeflector node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXdeflector for that node.
+	 */
+	public NXdeflector getDeflector(String name);
+
+	/**
+	 * Set a NXdeflector node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param deflector the value to set
+	 */
+	public void setDeflector(String name, NXdeflector deflector);
+
+	/**
+	 * Get all NXdeflector nodes:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXdeflector for that node.
+	 */
+	public Map<String, NXdeflector> getAllDeflector();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param deflector the child nodes to add
+	 */
+
+	public void setAllDeflector(Map<String, NXdeflector> deflector);
 
 
 }

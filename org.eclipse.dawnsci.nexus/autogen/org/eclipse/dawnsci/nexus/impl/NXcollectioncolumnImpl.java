@@ -23,20 +23,18 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Subclass of NXelectronanalyser to describe the electron collection column of a
- * photoelectron analyser.
+ * Electron collection column of an electron analyzer.
 
  */
-public class NXcollectioncolumnImpl extends NXobjectImpl implements NXcollectioncolumn {
+public class NXcollectioncolumnImpl extends NXcomponentImpl implements NXcollectioncolumn {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_TRANSFORMATIONS,
 		NexusBaseClass.NX_APERTURE,
 		NexusBaseClass.NX_DEFLECTOR,
-		NexusBaseClass.NX_LENS_EM);
+		NexusBaseClass.NX_ELECTROMAGNETIC_LENS);
 
 	public NXcollectioncolumnImpl() {
 		super();
@@ -143,23 +141,23 @@ public class NXcollectioncolumnImpl extends NXobjectImpl implements NXcollection
 	}
 
 	@Override
-	public Dataset getMode() {
-		return getDataset(NX_MODE);
+	public Dataset getLens_mode() {
+		return getDataset(NX_LENS_MODE);
 	}
 
 	@Override
-	public String getModeScalar() {
-		return getString(NX_MODE);
+	public String getLens_modeScalar() {
+		return getString(NX_LENS_MODE);
 	}
 
 	@Override
-	public DataNode setMode(IDataset modeDataset) {
-		return setDataset(NX_MODE, modeDataset);
+	public DataNode setLens_mode(IDataset lens_modeDataset) {
+		return setDataset(NX_LENS_MODE, lens_modeDataset);
 	}
 
 	@Override
-	public DataNode setModeScalar(String modeValue) {
-		return setString(NX_MODE, modeValue);
+	public DataNode setLens_modeScalar(String lens_modeValue) {
+		return setString(NX_LENS_MODE, lens_modeValue);
 	}
 
 	@Override
@@ -183,6 +181,46 @@ public class NXcollectioncolumnImpl extends NXobjectImpl implements NXcollection
 	}
 
 	@Override
+	public Dataset getAngular_acceptance() {
+		return getDataset(NX_ANGULAR_ACCEPTANCE);
+	}
+
+	@Override
+	public Double getAngular_acceptanceScalar() {
+		return getDouble(NX_ANGULAR_ACCEPTANCE);
+	}
+
+	@Override
+	public DataNode setAngular_acceptance(IDataset angular_acceptanceDataset) {
+		return setDataset(NX_ANGULAR_ACCEPTANCE, angular_acceptanceDataset);
+	}
+
+	@Override
+	public DataNode setAngular_acceptanceScalar(Double angular_acceptanceValue) {
+		return setField(NX_ANGULAR_ACCEPTANCE, angular_acceptanceValue);
+	}
+
+	@Override
+	public Dataset getSpatial_acceptance() {
+		return getDataset(NX_SPATIAL_ACCEPTANCE);
+	}
+
+	@Override
+	public Double getSpatial_acceptanceScalar() {
+		return getDouble(NX_SPATIAL_ACCEPTANCE);
+	}
+
+	@Override
+	public DataNode setSpatial_acceptance(IDataset spatial_acceptanceDataset) {
+		return setDataset(NX_SPATIAL_ACCEPTANCE, spatial_acceptanceDataset);
+	}
+
+	@Override
+	public DataNode setSpatial_acceptanceScalar(Double spatial_acceptanceValue) {
+		return setField(NX_SPATIAL_ACCEPTANCE, spatial_acceptanceValue);
+	}
+
+	@Override
 	public Dataset getMagnification() {
 		return getDataset(NX_MAGNIFICATION);
 	}
@@ -200,57 +238,6 @@ public class NXcollectioncolumnImpl extends NXobjectImpl implements NXcollection
 	@Override
 	public DataNode setMagnificationScalar(Double magnificationValue) {
 		return setField(NX_MAGNIFICATION, magnificationValue);
-	}
-
-	@Override
-	public Dataset getDepends_on() {
-		return getDataset(NX_DEPENDS_ON);
-	}
-
-	@Override
-	public String getDepends_onScalar() {
-		return getString(NX_DEPENDS_ON);
-	}
-
-	@Override
-	public DataNode setDepends_on(IDataset depends_onDataset) {
-		return setDataset(NX_DEPENDS_ON, depends_onDataset);
-	}
-
-	@Override
-	public DataNode setDepends_onScalar(String depends_onValue) {
-		return setString(NX_DEPENDS_ON, depends_onValue);
-	}
-
-	@Override
-	public NXtransformations getTransformations() {
-		// dataNodeName = NX_TRANSFORMATIONS
-		return getChild("transformations", NXtransformations.class);
-	}
-
-	@Override
-	public void setTransformations(NXtransformations transformationsGroup) {
-		putChild("transformations", transformationsGroup);
-	}
-
-	@Override
-	public NXtransformations getTransformations(String name) {
-		return getChild(name, NXtransformations.class);
-	}
-
-	@Override
-	public void setTransformations(String name, NXtransformations transformations) {
-		putChild(name, transformations);
-	}
-
-	@Override
-	public Map<String, NXtransformations> getAllTransformations() {
-		return getChildren(NXtransformations.class);
-	}
-
-	@Override
-	public void setAllTransformations(Map<String, NXtransformations> transformations) {
-		setChildren(transformations);
 	}
 
 	@Override
@@ -316,34 +303,34 @@ public class NXcollectioncolumnImpl extends NXobjectImpl implements NXcollection
 	}
 
 	@Override
-	public NXlens_em getLens_em() {
-		// dataNodeName = NX_LENS_EM
-		return getChild("lens_em", NXlens_em.class);
+	public NXelectromagnetic_lens getElectromagnetic_lens() {
+		// dataNodeName = NX_ELECTROMAGNETIC_LENS
+		return getChild("electromagnetic_lens", NXelectromagnetic_lens.class);
 	}
 
 	@Override
-	public void setLens_em(NXlens_em lens_emGroup) {
-		putChild("lens_em", lens_emGroup);
+	public void setElectromagnetic_lens(NXelectromagnetic_lens electromagnetic_lensGroup) {
+		putChild("electromagnetic_lens", electromagnetic_lensGroup);
 	}
 
 	@Override
-	public NXlens_em getLens_em(String name) {
-		return getChild(name, NXlens_em.class);
+	public NXelectromagnetic_lens getElectromagnetic_lens(String name) {
+		return getChild(name, NXelectromagnetic_lens.class);
 	}
 
 	@Override
-	public void setLens_em(String name, NXlens_em lens_em) {
-		putChild(name, lens_em);
+	public void setElectromagnetic_lens(String name, NXelectromagnetic_lens electromagnetic_lens) {
+		putChild(name, electromagnetic_lens);
 	}
 
 	@Override
-	public Map<String, NXlens_em> getAllLens_em() {
-		return getChildren(NXlens_em.class);
+	public Map<String, NXelectromagnetic_lens> getAllElectromagnetic_lens() {
+		return getChildren(NXelectromagnetic_lens.class);
 	}
 
 	@Override
-	public void setAllLens_em(Map<String, NXlens_em> lens_em) {
-		setChildren(lens_em);
+	public void setAllElectromagnetic_lens(Map<String, NXelectromagnetic_lens> electromagnetic_lens) {
+		setChildren(electromagnetic_lens);
 	}
 
 }

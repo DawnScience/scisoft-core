@@ -11,317 +11,139 @@
 
 package org.eclipse.dawnsci.nexus;
 
-import java.util.Map;
-
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * Description of peaks, their functional form or measured support.
+ * Base class for describing a peak, its functional form, and support values
+ * i.e., the discretization points at which the function has been evaluated.
  * <p><b>Symbols:</b>
  * The symbols used in the schema to specify e.g. dimensions of arrays.<ul>
- * <li><b>n_support</b>
- * Number of support points</li></ul></p>
+ * <li><b>dimRank</b>
+ * Rank of the dependent and independent data arrays
+ * (for multivariate scalar-valued fit).</li></ul></p>
  *
  */
 public interface NXpeak extends NXobject {
 
 	public static final String NX_LABEL = "label";
-	public static final String NX_PEAK_MODEL = "peak_model";
-	public static final String NX_POSITION = "position";
-	public static final String NX_INTENSITY = "intensity";
+	public static final String NX_TOTAL_AREA = "total_area";
 	/**
-	 * Human-readable identifier to specify which concept/entity
+	 * Human-readable label which specifies which concept/entity
 	 * the peak represents/identifies.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @return  the value.
 	 */
 	public Dataset getLabel();
 
 	/**
-	 * Human-readable identifier to specify which concept/entity
+	 * Human-readable label which specifies which concept/entity
 	 * the peak represents/identifies.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @param labelDataset the labelDataset
 	 */
 	public DataNode setLabel(IDataset labelDataset);
 
 	/**
-	 * Human-readable identifier to specify which concept/entity
+	 * Human-readable label which specifies which concept/entity
 	 * the peak represents/identifies.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @return  the value.
 	 */
 	public String getLabelScalar();
 
 	/**
-	 * Human-readable identifier to specify which concept/entity
+	 * Human-readable label which specifies which concept/entity
 	 * the peak represents/identifies.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @param label the label
 	 */
 	public DataNode setLabelScalar(String labelValue);
 
 	/**
-	 * Is the peak described analytically via a functional form
-	 * or is it empirically defined via measured/reported
-	 * intensity/counts as a function of an independent variable.
-	 * If the functional form is not empirical or gaussian, users
-	 * should enter other for the peak_model and add relevant details
-	 * in the NXcollection.
+	 *
+	 * @return  the value.
+	 */
+	public NXdata getData();
+
+	/**
+	 *
+	 * @param dataGroup the dataGroup
+	 */
+	public void setData(NXdata dataGroup);
+
+	/**
+	 * The functional form of the peak. This could be a Gaussian, Lorentzian, Voigt,
+	 * etc.
+	 *
+	 * @return  the value.
+	 */
+	public NXfit_function getFunction();
+
+	/**
+	 * The functional form of the peak. This could be a Gaussian, Lorentzian, Voigt,
+	 * etc.
+	 *
+	 * @param functionGroup the functionGroup
+	 */
+	public void setFunction(NXfit_function functionGroup);
+
+	/**
+	 * Total area under the curve.
 	 * <p>
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>empirical</b> </li>
-	 * <li><b>gaussian</b> </li>
-	 * <li><b>lorentzian</b> </li>
-	 * <li><b>other</b> </li></ul></p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getPeak_model();
+	public Dataset getTotal_area();
 
 	/**
-	 * Is the peak described analytically via a functional form
-	 * or is it empirically defined via measured/reported
-	 * intensity/counts as a function of an independent variable.
-	 * If the functional form is not empirical or gaussian, users
-	 * should enter other for the peak_model and add relevant details
-	 * in the NXcollection.
+	 * Total area under the curve.
 	 * <p>
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>empirical</b> </li>
-	 * <li><b>gaussian</b> </li>
-	 * <li><b>lorentzian</b> </li>
-	 * <li><b>other</b> </li></ul></p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 *
-	 * @param peak_modelDataset the peak_modelDataset
+	 * @param total_areaDataset the total_areaDataset
 	 */
-	public DataNode setPeak_model(IDataset peak_modelDataset);
+	public DataNode setTotal_area(IDataset total_areaDataset);
 
 	/**
-	 * Is the peak described analytically via a functional form
-	 * or is it empirically defined via measured/reported
-	 * intensity/counts as a function of an independent variable.
-	 * If the functional form is not empirical or gaussian, users
-	 * should enter other for the peak_model and add relevant details
-	 * in the NXcollection.
+	 * Total area under the curve.
 	 * <p>
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>empirical</b> </li>
-	 * <li><b>gaussian</b> </li>
-	 * <li><b>lorentzian</b> </li>
-	 * <li><b>other</b> </li></ul></p>
+	 * <b>Type:</b> NX_NUMBER
+	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public String getPeak_modelScalar();
+	public Number getTotal_areaScalar();
 
 	/**
-	 * Is the peak described analytically via a functional form
-	 * or is it empirically defined via measured/reported
-	 * intensity/counts as a function of an independent variable.
-	 * If the functional form is not empirical or gaussian, users
-	 * should enter other for the peak_model and add relevant details
-	 * in the NXcollection.
-	 * <p>
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>empirical</b> </li>
-	 * <li><b>gaussian</b> </li>
-	 * <li><b>lorentzian</b> </li>
-	 * <li><b>other</b> </li></ul></p>
-	 * </p>
-	 *
-	 * @param peak_model the peak_model
-	 */
-	public DataNode setPeak_modelScalar(String peak_modelValue);
-
-	/**
-	 * In the case of an empirical description of the peak and its shoulders,
-	 * this array holds the position values for the independent variable.
+	 * Total area under the curve.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_ANY
-	 * <b>Dimensions:</b> 1: n_support;
 	 * </p>
 	 *
-	 * @return  the value.
+	 * @param total_area the total_area
 	 */
-	public Dataset getPosition();
-
-	/**
-	 * In the case of an empirical description of the peak and its shoulders,
-	 * this array holds the position values for the independent variable.
-	 * <p>
-	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_ANY
-	 * <b>Dimensions:</b> 1: n_support;
-	 * </p>
-	 *
-	 * @param positionDataset the positionDataset
-	 */
-	public DataNode setPosition(IDataset positionDataset);
-
-	/**
-	 * In the case of an empirical description of the peak and its shoulders,
-	 * this array holds the position values for the independent variable.
-	 * <p>
-	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_ANY
-	 * <b>Dimensions:</b> 1: n_support;
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Number getPositionScalar();
-
-	/**
-	 * In the case of an empirical description of the peak and its shoulders,
-	 * this array holds the position values for the independent variable.
-	 * <p>
-	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_ANY
-	 * <b>Dimensions:</b> 1: n_support;
-	 * </p>
-	 *
-	 * @param position the position
-	 */
-	public DataNode setPositionScalar(Number positionValue);
-
-	/**
-	 * In the case of an empirical description of the peak and its shoulders,
-	 * this array holds the intensity/count values at each position.
-	 * <p>
-	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_ANY
-	 * <b>Dimensions:</b> 1: n_support;
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Dataset getIntensity();
-
-	/**
-	 * In the case of an empirical description of the peak and its shoulders,
-	 * this array holds the intensity/count values at each position.
-	 * <p>
-	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_ANY
-	 * <b>Dimensions:</b> 1: n_support;
-	 * </p>
-	 *
-	 * @param intensityDataset the intensityDataset
-	 */
-	public DataNode setIntensity(IDataset intensityDataset);
-
-	/**
-	 * In the case of an empirical description of the peak and its shoulders,
-	 * this array holds the intensity/count values at each position.
-	 * <p>
-	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_ANY
-	 * <b>Dimensions:</b> 1: n_support;
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Number getIntensityScalar();
-
-	/**
-	 * In the case of an empirical description of the peak and its shoulders,
-	 * this array holds the intensity/count values at each position.
-	 * <p>
-	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_ANY
-	 * <b>Dimensions:</b> 1: n_support;
-	 * </p>
-	 *
-	 * @param intensity the intensity
-	 */
-	public DataNode setIntensityScalar(Number intensityValue);
-
-	/**
-	 * In the case of an analytical description (or if peak_model is other) this
-	 * collection holds parameter of (and eventually) the functional form.
-	 * For example in the case of Gaussians mu, sigma, cut-off values,
-	 * and background intensity are relevant parameter.
-	 *
-	 * @return  the value.
-	 */
-	public NXcollection getCollection();
-
-	/**
-	 * In the case of an analytical description (or if peak_model is other) this
-	 * collection holds parameter of (and eventually) the functional form.
-	 * For example in the case of Gaussians mu, sigma, cut-off values,
-	 * and background intensity are relevant parameter.
-	 *
-	 * @param collectionGroup the collectionGroup
-	 */
-	public void setCollection(NXcollection collectionGroup);
-
-	/**
-	 * Get a NXcollection node by name:
-	 * <ul>
-	 * <li>
-	 * In the case of an analytical description (or if peak_model is other) this
-	 * collection holds parameter of (and eventually) the functional form.
-	 * For example in the case of Gaussians mu, sigma, cut-off values,
-	 * and background intensity are relevant parameter.</li>
-	 * </ul>
-	 *
-	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXcollection for that node.
-	 */
-	public NXcollection getCollection(String name);
-
-	/**
-	 * Set a NXcollection node by name:
-	 * <ul>
-	 * <li>
-	 * In the case of an analytical description (or if peak_model is other) this
-	 * collection holds parameter of (and eventually) the functional form.
-	 * For example in the case of Gaussians mu, sigma, cut-off values,
-	 * and background intensity are relevant parameter.</li>
-	 * </ul>
-	 *
-	 * @param name the name of the node
-	 * @param collection the value to set
-	 */
-	public void setCollection(String name, NXcollection collection);
-
-	/**
-	 * Get all NXcollection nodes:
-	 * <ul>
-	 * <li>
-	 * In the case of an analytical description (or if peak_model is other) this
-	 * collection holds parameter of (and eventually) the functional form.
-	 * For example in the case of Gaussians mu, sigma, cut-off values,
-	 * and background intensity are relevant parameter.</li>
-	 * </ul>
-	 *
-	 * @return  a map from node names to the NXcollection for that node.
-	 */
-	public Map<String, NXcollection> getAllCollection();
-
-	/**
-	 * Set multiple child nodes of a particular type.
-	 * <ul>
-	 * <li>
-	 * In the case of an analytical description (or if peak_model is other) this
-	 * collection holds parameter of (and eventually) the functional form.
-	 * For example in the case of Gaussians mu, sigma, cut-off values,
-	 * and background intensity are relevant parameter.</li>
-	 * </ul>
-	 *
-	 * @param collection the child nodes to add
-	 */
-
-	public void setAllCollection(Map<String, NXcollection> collection);
-
+	public DataNode setTotal_areaScalar(Number total_areaValue);
 
 }

@@ -33,9 +33,9 @@ import org.eclipse.dawnsci.nexus.*;
  * considered as a beamline component and this group may be defined as a subgroup directly inside
  * :ref:`NXinstrument`, in which case it is recommended that the position of the beam is specified by an
  * :ref:`NXtransformations` group, unless the beam is at the origin (which is the sample).
- * Note that incident_wavelength and related fields can be a scalar values or arrays, depending on the use case.
+ * Note that ``incident_wavelength``, ``incident_energy``, and related fields can be a scalar values or arrays, depending on the use case.
  * To support these use cases, the explicit dimensionality of these fields is not specified, but it can be inferred
- * by the presense of and shape of accompanying fields, such as incident_wavelength_weights for a polychromatic beam.
+ * by the presence of and shape of accompanying fields, such as incident_wavelength_weights for a polychromatic beam.
 
  */
 public class NXbeamImpl extends NXobjectImpl implements NXbeam {
@@ -109,6 +109,46 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	@Override
 	public DataNode setIncident_energyScalar(Double incident_energyValue) {
 		return setField(NX_INCIDENT_ENERGY, incident_energyValue);
+	}
+
+	@Override
+	public Dataset getIncident_energy_spread() {
+		return getDataset(NX_INCIDENT_ENERGY_SPREAD);
+	}
+
+	@Override
+	public Number getIncident_energy_spreadScalar() {
+		return getNumber(NX_INCIDENT_ENERGY_SPREAD);
+	}
+
+	@Override
+	public DataNode setIncident_energy_spread(IDataset incident_energy_spreadDataset) {
+		return setDataset(NX_INCIDENT_ENERGY_SPREAD, incident_energy_spreadDataset);
+	}
+
+	@Override
+	public DataNode setIncident_energy_spreadScalar(Number incident_energy_spreadValue) {
+		return setField(NX_INCIDENT_ENERGY_SPREAD, incident_energy_spreadValue);
+	}
+
+	@Override
+	public Dataset getIncident_energy_weights() {
+		return getDataset(NX_INCIDENT_ENERGY_WEIGHTS);
+	}
+
+	@Override
+	public Number getIncident_energy_weightsScalar() {
+		return getNumber(NX_INCIDENT_ENERGY_WEIGHTS);
+	}
+
+	@Override
+	public DataNode setIncident_energy_weights(IDataset incident_energy_weightsDataset) {
+		return setDataset(NX_INCIDENT_ENERGY_WEIGHTS, incident_energy_weightsDataset);
+	}
+
+	@Override
+	public DataNode setIncident_energy_weightsScalar(Number incident_energy_weightsValue) {
+		return setField(NX_INCIDENT_ENERGY_WEIGHTS, incident_energy_weightsValue);
 	}
 
 	@Override
@@ -412,6 +452,216 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	}
 
 	@Override
+	public Dataset getPulse_energy() {
+		return getDataset(NX_PULSE_ENERGY);
+	}
+
+	@Override
+	public Double getPulse_energyScalar() {
+		return getDouble(NX_PULSE_ENERGY);
+	}
+
+	@Override
+	public DataNode setPulse_energy(IDataset pulse_energyDataset) {
+		return setDataset(NX_PULSE_ENERGY, pulse_energyDataset);
+	}
+
+	@Override
+	public DataNode setPulse_energyScalar(Double pulse_energyValue) {
+		return setField(NX_PULSE_ENERGY, pulse_energyValue);
+	}
+
+	@Override
+	public Dataset getAverage_power() {
+		return getDataset(NX_AVERAGE_POWER);
+	}
+
+	@Override
+	public Double getAverage_powerScalar() {
+		return getDouble(NX_AVERAGE_POWER);
+	}
+
+	@Override
+	public DataNode setAverage_power(IDataset average_powerDataset) {
+		return setDataset(NX_AVERAGE_POWER, average_powerDataset);
+	}
+
+	@Override
+	public DataNode setAverage_powerScalar(Double average_powerValue) {
+		return setField(NX_AVERAGE_POWER, average_powerValue);
+	}
+
+	@Override
+	public Dataset getFluence() {
+		return getDataset(NX_FLUENCE);
+	}
+
+	@Override
+	public Double getFluenceScalar() {
+		return getDouble(NX_FLUENCE);
+	}
+
+	@Override
+	public DataNode setFluence(IDataset fluenceDataset) {
+		return setDataset(NX_FLUENCE, fluenceDataset);
+	}
+
+	@Override
+	public DataNode setFluenceScalar(Double fluenceValue) {
+		return setField(NX_FLUENCE, fluenceValue);
+	}
+
+	@Override
+	public Dataset getPulse_duration() {
+		return getDataset(NX_PULSE_DURATION);
+	}
+
+	@Override
+	public Double getPulse_durationScalar() {
+		return getDouble(NX_PULSE_DURATION);
+	}
+
+	@Override
+	public DataNode setPulse_duration(IDataset pulse_durationDataset) {
+		return setDataset(NX_PULSE_DURATION, pulse_durationDataset);
+	}
+
+	@Override
+	public DataNode setPulse_durationScalar(Double pulse_durationValue) {
+		return setField(NX_PULSE_DURATION, pulse_durationValue);
+	}
+
+	@Override
+	public Dataset getPulse_delay() {
+		return getDataset(NX_PULSE_DELAY);
+	}
+
+	@Override
+	public Double getPulse_delayScalar() {
+		return getDouble(NX_PULSE_DELAY);
+	}
+
+	@Override
+	public DataNode setPulse_delay(IDataset pulse_delayDataset) {
+		return setDataset(NX_PULSE_DELAY, pulse_delayDataset);
+	}
+
+	@Override
+	public DataNode setPulse_delayScalar(Double pulse_delayValue) {
+		return setField(NX_PULSE_DELAY, pulse_delayValue);
+	}
+
+	@Override
+	public String getPulse_delayAttributeReference_beam() {
+		return getAttrString(NX_PULSE_DELAY, NX_PULSE_DELAY_ATTRIBUTE_REFERENCE_BEAM);
+	}
+
+	@Override
+	public void setPulse_delayAttributeReference_beam(String reference_beamValue) {
+		setAttribute(NX_PULSE_DELAY, NX_PULSE_DELAY_ATTRIBUTE_REFERENCE_BEAM, reference_beamValue);
+	}
+
+	@Override
+	public Dataset getFrog_trace() {
+		return getDataset(NX_FROG_TRACE);
+	}
+
+	@Override
+	public Double getFrog_traceScalar() {
+		return getDouble(NX_FROG_TRACE);
+	}
+
+	@Override
+	public DataNode setFrog_trace(IDataset frog_traceDataset) {
+		return setDataset(NX_FROG_TRACE, frog_traceDataset);
+	}
+
+	@Override
+	public DataNode setFrog_traceScalar(Double frog_traceValue) {
+		return setField(NX_FROG_TRACE, frog_traceValue);
+	}
+
+	@Override
+	public Dataset getFrog_delays() {
+		return getDataset(NX_FROG_DELAYS);
+	}
+
+	@Override
+	public Double getFrog_delaysScalar() {
+		return getDouble(NX_FROG_DELAYS);
+	}
+
+	@Override
+	public DataNode setFrog_delays(IDataset frog_delaysDataset) {
+		return setDataset(NX_FROG_DELAYS, frog_delaysDataset);
+	}
+
+	@Override
+	public DataNode setFrog_delaysScalar(Double frog_delaysValue) {
+		return setField(NX_FROG_DELAYS, frog_delaysValue);
+	}
+
+	@Override
+	public Dataset getFrog_frequencies() {
+		return getDataset(NX_FROG_FREQUENCIES);
+	}
+
+	@Override
+	public Double getFrog_frequenciesScalar() {
+		return getDouble(NX_FROG_FREQUENCIES);
+	}
+
+	@Override
+	public DataNode setFrog_frequencies(IDataset frog_frequenciesDataset) {
+		return setDataset(NX_FROG_FREQUENCIES, frog_frequenciesDataset);
+	}
+
+	@Override
+	public DataNode setFrog_frequenciesScalar(Double frog_frequenciesValue) {
+		return setField(NX_FROG_FREQUENCIES, frog_frequenciesValue);
+	}
+
+	@Override
+	public Dataset getChirp_type() {
+		return getDataset(NX_CHIRP_TYPE);
+	}
+
+	@Override
+	public String getChirp_typeScalar() {
+		return getString(NX_CHIRP_TYPE);
+	}
+
+	@Override
+	public DataNode setChirp_type(IDataset chirp_typeDataset) {
+		return setDataset(NX_CHIRP_TYPE, chirp_typeDataset);
+	}
+
+	@Override
+	public DataNode setChirp_typeScalar(String chirp_typeValue) {
+		return setString(NX_CHIRP_TYPE, chirp_typeValue);
+	}
+
+	@Override
+	public Dataset getChirp_gdd() {
+		return getDataset(NX_CHIRP_GDD);
+	}
+
+	@Override
+	public Double getChirp_gddScalar() {
+		return getDouble(NX_CHIRP_GDD);
+	}
+
+	@Override
+	public DataNode setChirp_gdd(IDataset chirp_gddDataset) {
+		return setDataset(NX_CHIRP_GDD, chirp_gddDataset);
+	}
+
+	@Override
+	public DataNode setChirp_gddScalar(Double chirp_gddValue) {
+		return setField(NX_CHIRP_GDD, chirp_gddValue);
+	}
+
+	@Override
 	public NXdata getData() {
 		// dataNodeName = NX_DATA
 		return getChild("data", NXdata.class);
@@ -440,16 +690,6 @@ public class NXbeamImpl extends NXobjectImpl implements NXbeam {
 	@Override
 	public void setAllData(Map<String, NXdata> data) {
 		setChildren(data);
-	}
-
-	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
-	}
-
-	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 	@Override

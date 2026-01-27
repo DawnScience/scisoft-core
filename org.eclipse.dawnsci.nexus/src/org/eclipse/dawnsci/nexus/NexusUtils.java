@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.measure.Unit;
+
 import org.eclipse.dawnsci.analysis.api.tree.Attribute;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.analysis.api.tree.GroupNode;
@@ -41,6 +43,7 @@ import org.eclipse.january.dataset.Slice;
 import org.eclipse.january.dataset.SliceND;
 import org.eclipse.january.metadata.AxesMetadata;
 
+import tec.units.indriya.format.SimpleUnitFormat;
 import uk.ac.diamond.osgi.services.ServiceProvider;
 
 /**
@@ -1187,5 +1190,21 @@ public class NexusUtils {
 		writeAttribute(file, g, NexusConstants.DATA_AXES, DatasetFactory.createFromList(axisNames));
 
 		return g;
+	}
+
+	/**
+	 * @param unit
+	 * @return unit object or null
+	 * @throws NexusException
+	 */
+	public static Unit<?> parseUnit(String unit) throws NexusException {
+		if (unit != null) {
+			try {
+				return SimpleUnitFormat.getInstance().parse(unit);
+			} catch (Exception e) {
+				throw new NexusException("Could not parse unit " + unit, e);
+			}
+		}
+		return null;
 	}
 }

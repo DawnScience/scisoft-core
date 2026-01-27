@@ -24,7 +24,7 @@ import org.eclipse.dawnsci.nexus.*;
  * definition for a solenoid magnet.
 
  */
-public class NXsolenoid_magnetImpl extends NXobjectImpl implements NXsolenoid_magnet {
+public class NXsolenoid_magnetImpl extends NXcomponentImpl implements NXsolenoid_magnet {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 

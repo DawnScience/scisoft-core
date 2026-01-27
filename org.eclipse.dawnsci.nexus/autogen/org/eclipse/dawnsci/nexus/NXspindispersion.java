@@ -11,7 +11,6 @@
 
 package org.eclipse.dawnsci.nexus;
 
-import java.util.Date;
 import java.util.Map;
 
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
@@ -20,21 +19,17 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * Subclass of NXelectronanalyser to describe the spin filters in photoemission
- * experiments.
+ * Class to describe spin filters in photoemission experiments.
  *
  */
-public interface NXspindispersion extends NXobject {
+public interface NXspindispersion extends NXcomponent {
 
 	public static final String NX_TYPE = "type";
 	public static final String NX_FIGURE_OF_MERIT = "figure_of_merit";
 	public static final String NX_SHERMANN_FUNCTION = "shermann_function";
 	public static final String NX_SCATTERING_ENERGY = "scattering_energy";
 	public static final String NX_SCATTERING_ANGLE = "scattering_angle";
-	public static final String NX_TARGET = "target";
-	public static final String NX_TARGET_PREPARATION = "target_preparation";
-	public static final String NX_TARGET_PREPARATION_DATE = "target_preparation_date";
-	public static final String NX_DEPENDS_ON = "depends_on";
+	public static final String NX_SCATTERING_TARGET = "scattering_target";
 	/**
 	 * Type of spin detector, VLEED, SPLEED, Mott, etc.
 	 * <p>
@@ -259,7 +254,7 @@ public interface NXspindispersion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getTarget();
+	public Dataset getScattering_target();
 
 	/**
 	 * Name of the target
@@ -267,9 +262,9 @@ public interface NXspindispersion extends NXobject {
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
 	 *
-	 * @param targetDataset the targetDataset
+	 * @param scattering_targetDataset the scattering_targetDataset
 	 */
-	public DataNode setTarget(IDataset targetDataset);
+	public DataNode setScattering_target(IDataset scattering_targetDataset);
 
 	/**
 	 * Name of the target
@@ -279,7 +274,7 @@ public interface NXspindispersion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public String getTargetScalar();
+	public String getScattering_targetScalar();
 
 	/**
 	 * Name of the target
@@ -287,237 +282,28 @@ public interface NXspindispersion extends NXobject {
 	 * <b>Type:</b> NX_CHAR
 	 * </p>
 	 *
-	 * @param target the target
+	 * @param scattering_target the scattering_target
 	 */
-	public DataNode setTargetScalar(String targetValue);
+	public DataNode setScattering_targetScalar(String scattering_targetValue);
 
 	/**
-	 * Preparation procedure of the spin target
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
+	 * A set of activities that occurred to the ``scattering_target`` prior to/during the.
+	 * experiment. For example, this group can be used to describe the preparation of the
+	 * ``scattering_target``.
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getTarget_preparation();
+	public NXhistory getScattering_target_history();
 
 	/**
-	 * Preparation procedure of the spin target
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
+	 * A set of activities that occurred to the ``scattering_target`` prior to/during the.
+	 * experiment. For example, this group can be used to describe the preparation of the
+	 * ``scattering_target``.
 	 *
-	 * @param target_preparationDataset the target_preparationDataset
+	 * @param scattering_target_historyGroup the scattering_target_historyGroup
 	 */
-	public DataNode setTarget_preparation(IDataset target_preparationDataset);
-
-	/**
-	 * Preparation procedure of the spin target
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public String getTarget_preparationScalar();
-
-	/**
-	 * Preparation procedure of the spin target
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 *
-	 * @param target_preparation the target_preparation
-	 */
-	public DataNode setTarget_preparationScalar(String target_preparationValue);
-
-	/**
-	 * Date of last preparation of the spin target
-	 * <p>
-	 * <b>Type:</b> NX_DATE_TIME
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Dataset getTarget_preparation_date();
-
-	/**
-	 * Date of last preparation of the spin target
-	 * <p>
-	 * <b>Type:</b> NX_DATE_TIME
-	 * </p>
-	 *
-	 * @param target_preparation_dateDataset the target_preparation_dateDataset
-	 */
-	public DataNode setTarget_preparation_date(IDataset target_preparation_dateDataset);
-
-	/**
-	 * Date of last preparation of the spin target
-	 * <p>
-	 * <b>Type:</b> NX_DATE_TIME
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Date getTarget_preparation_dateScalar();
-
-	/**
-	 * Date of last preparation of the spin target
-	 * <p>
-	 * <b>Type:</b> NX_DATE_TIME
-	 * </p>
-	 *
-	 * @param target_preparation_date the target_preparation_date
-	 */
-	public DataNode setTarget_preparation_dateScalar(Date target_preparation_dateValue);
-
-	/**
-	 * Specifies the position of the lens by pointing to the last transformation in the
-	 * transformation chain in the NXtransformations group.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Dataset getDepends_on();
-
-	/**
-	 * Specifies the position of the lens by pointing to the last transformation in the
-	 * transformation chain in the NXtransformations group.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 *
-	 * @param depends_onDataset the depends_onDataset
-	 */
-	public DataNode setDepends_on(IDataset depends_onDataset);
-
-	/**
-	 * Specifies the position of the lens by pointing to the last transformation in the
-	 * transformation chain in the NXtransformations group.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public String getDepends_onScalar();
-
-	/**
-	 * Specifies the position of the lens by pointing to the last transformation in the
-	 * transformation chain in the NXtransformations group.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 *
-	 * @param depends_on the depends_on
-	 */
-	public DataNode setDepends_onScalar(String depends_onValue);
-
-	/**
-	 * Collection of axis-based translations and rotations to describe the location and
-	 * geometry of the deflector as a component in the instrument. Conventions from the
-	 * NXtransformations base class are used. In principle, the McStas coordinate
-	 * system is used. The first transformation has to point either to another
-	 * component of the system or . (for pointing to the reference frame) to relate it
-	 * relative to the experimental setup. Typically, the components of a system should
-	 * all be related relative to each other and only one component should relate to
-	 * the reference coordinate system.
-	 *
-	 * @return  the value.
-	 */
-	public NXtransformations getTransformations();
-
-	/**
-	 * Collection of axis-based translations and rotations to describe the location and
-	 * geometry of the deflector as a component in the instrument. Conventions from the
-	 * NXtransformations base class are used. In principle, the McStas coordinate
-	 * system is used. The first transformation has to point either to another
-	 * component of the system or . (for pointing to the reference frame) to relate it
-	 * relative to the experimental setup. Typically, the components of a system should
-	 * all be related relative to each other and only one component should relate to
-	 * the reference coordinate system.
-	 *
-	 * @param transformationsGroup the transformationsGroup
-	 */
-	public void setTransformations(NXtransformations transformationsGroup);
-
-	/**
-	 * Get a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * Collection of axis-based translations and rotations to describe the location and
-	 * geometry of the deflector as a component in the instrument. Conventions from the
-	 * NXtransformations base class are used. In principle, the McStas coordinate
-	 * system is used. The first transformation has to point either to another
-	 * component of the system or . (for pointing to the reference frame) to relate it
-	 * relative to the experimental setup. Typically, the components of a system should
-	 * all be related relative to each other and only one component should relate to
-	 * the reference coordinate system.</li>
-	 * </ul>
-	 *
-	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public NXtransformations getTransformations(String name);
-
-	/**
-	 * Set a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * Collection of axis-based translations and rotations to describe the location and
-	 * geometry of the deflector as a component in the instrument. Conventions from the
-	 * NXtransformations base class are used. In principle, the McStas coordinate
-	 * system is used. The first transformation has to point either to another
-	 * component of the system or . (for pointing to the reference frame) to relate it
-	 * relative to the experimental setup. Typically, the components of a system should
-	 * all be related relative to each other and only one component should relate to
-	 * the reference coordinate system.</li>
-	 * </ul>
-	 *
-	 * @param name the name of the node
-	 * @param transformations the value to set
-	 */
-	public void setTransformations(String name, NXtransformations transformations);
-
-	/**
-	 * Get all NXtransformations nodes:
-	 * <ul>
-	 * <li>
-	 * Collection of axis-based translations and rotations to describe the location and
-	 * geometry of the deflector as a component in the instrument. Conventions from the
-	 * NXtransformations base class are used. In principle, the McStas coordinate
-	 * system is used. The first transformation has to point either to another
-	 * component of the system or . (for pointing to the reference frame) to relate it
-	 * relative to the experimental setup. Typically, the components of a system should
-	 * all be related relative to each other and only one component should relate to
-	 * the reference coordinate system.</li>
-	 * </ul>
-	 *
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public Map<String, NXtransformations> getAllTransformations();
-
-	/**
-	 * Set multiple child nodes of a particular type.
-	 * <ul>
-	 * <li>
-	 * Collection of axis-based translations and rotations to describe the location and
-	 * geometry of the deflector as a component in the instrument. Conventions from the
-	 * NXtransformations base class are used. In principle, the McStas coordinate
-	 * system is used. The first transformation has to point either to another
-	 * component of the system or . (for pointing to the reference frame) to relate it
-	 * relative to the experimental setup. Typically, the components of a system should
-	 * all be related relative to each other and only one component should relate to
-	 * the reference coordinate system.</li>
-	 * </ul>
-	 *
-	 * @param transformations the child nodes to add
-	 */
-
-	public void setAllTransformations(Map<String, NXtransformations> transformations);
-
+	public void setScattering_target_history(NXhistory scattering_target_historyGroup);
+	// Unprocessed group:preparation
 
 	/**
 	 * Deflectors in the spin dispersive section
@@ -586,49 +372,49 @@ public interface NXspindispersion extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public NXlens_em getLens_em();
+	public NXelectromagnetic_lens getElectromagnetic_lens();
 
 	/**
 	 * Individual lenses in the spin dispersive section
 	 *
-	 * @param lens_emGroup the lens_emGroup
+	 * @param electromagnetic_lensGroup the electromagnetic_lensGroup
 	 */
-	public void setLens_em(NXlens_em lens_emGroup);
+	public void setElectromagnetic_lens(NXelectromagnetic_lens electromagnetic_lensGroup);
 
 	/**
-	 * Get a NXlens_em node by name:
+	 * Get a NXelectromagnetic_lens node by name:
 	 * <ul>
 	 * <li>
 	 * Individual lenses in the spin dispersive section</li>
 	 * </ul>
 	 *
 	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXlens_em for that node.
+	 * @return  a map from node names to the NXelectromagnetic_lens for that node.
 	 */
-	public NXlens_em getLens_em(String name);
+	public NXelectromagnetic_lens getElectromagnetic_lens(String name);
 
 	/**
-	 * Set a NXlens_em node by name:
+	 * Set a NXelectromagnetic_lens node by name:
 	 * <ul>
 	 * <li>
 	 * Individual lenses in the spin dispersive section</li>
 	 * </ul>
 	 *
 	 * @param name the name of the node
-	 * @param lens_em the value to set
+	 * @param electromagnetic_lens the value to set
 	 */
-	public void setLens_em(String name, NXlens_em lens_em);
+	public void setElectromagnetic_lens(String name, NXelectromagnetic_lens electromagnetic_lens);
 
 	/**
-	 * Get all NXlens_em nodes:
+	 * Get all NXelectromagnetic_lens nodes:
 	 * <ul>
 	 * <li>
 	 * Individual lenses in the spin dispersive section</li>
 	 * </ul>
 	 *
-	 * @return  a map from node names to the NXlens_em for that node.
+	 * @return  a map from node names to the NXelectromagnetic_lens for that node.
 	 */
-	public Map<String, NXlens_em> getAllLens_em();
+	public Map<String, NXelectromagnetic_lens> getAllElectromagnetic_lens();
 
 	/**
 	 * Set multiple child nodes of a particular type.
@@ -637,10 +423,10 @@ public interface NXspindispersion extends NXobject {
 	 * Individual lenses in the spin dispersive section</li>
 	 * </ul>
 	 *
-	 * @param lens_em the child nodes to add
+	 * @param electromagnetic_lens the child nodes to add
 	 */
 
-	public void setAllLens_em(Map<String, NXlens_em> lens_em);
+	public void setAllElectromagnetic_lens(Map<String, NXelectromagnetic_lens> electromagnetic_lens);
 
 
 }

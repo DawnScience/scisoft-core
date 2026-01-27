@@ -24,7 +24,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Computer science description for summary performance/profiling data of an application.
+ * Computer science description for performance and profiling data of an application.
  * Performance monitoring and benchmarking of software is a task where questions
  * can be asked at various levels of detail. In general, there are three main
  * contributions to performance:
@@ -32,24 +32,25 @@ import org.eclipse.dawnsci.nexus.*;
  * * Software configuration and capabilities
  * * Dynamic effects of the system in operation and the system working together
  * with eventually multiple computers, especially when these have to exchange
- * information across a network.
+ * information across a network and these are used usually by multiple users.
  * At the most basic level users may wish to document how long e.g. a data
- * analysis with a scientific software (app).
- * A frequent idea is here to judge how critical the effect is on the workflow
- * of the scientists, i.e. is the analysis possible in a few seconds or would it
- * take days if I were to run this analysis on a comparable machine. In this case,
- * mainly the order of magnitude is relevant, as well as how this can be achieved
- * with using parallelization (i.e. reporting the number of CPU and GPU resources
- * used, the number of processes and/or threads, and basic details about the
- * computing node/computer.
+ * analysis with a scientific software, i.e. an app took.
+ * A frequent idea is here to answer practical questions like how critical is the
+ * effect on the workflow of the scientists, i.e. is the analysis possible in
+ * a few seconds or would it take days if I were to run this analysis on a
+ * comparable machine?
+ * For this more qualitative performance monitoring, mainly the order of
+ * magnitude is relevant, as well as how this was achieved using parallelization
+ * (i.e. reporting the number of CPU and GPU resources used, the number of
+ * processes and threads configured, and providing basic details about the computer).
  * At more advanced levels benchmarks may go as deep as detailed temporal tracking
  * of individual processor instructions, their relation to other instructions, the
- * state of call stacks, in short eventually the entire app execution history
+ * state of call stacks; in short eventually the entire app execution history
  * and hardware state history. Such analyses are mainly used for performance
- * optimization as well as for tracking bugs and other development purposes.
- * Specialized software exists which documents such performance data in
- * specifically-formatted event log files or databases.
- * This base class cannot and should not replace these specific solutions.
+ * optimization, i.e. by software and hardware developers as well as for
+ * tracking bugs. Specialized software exists which documents such performance
+ * data in specifically-formatted event log files or databases.
+ * This base class cannot and should not replace these specific solutions for now.
  * Instead, the intention of the base class is to serve scientists at the
  * basic level to enable simple monitoring of performance data and log profiling
  * data of key algorithmic steps or parts of computational workflows, so that
@@ -194,63 +195,63 @@ public class NXcs_profilingImpl extends NXobjectImpl implements NXcs_profiling {
 	}
 
 	@Override
-	public Dataset getNumber_of_processes() {
-		return getDataset(NX_NUMBER_OF_PROCESSES);
+	public Dataset getMax_processes() {
+		return getDataset(NX_MAX_PROCESSES);
 	}
 
 	@Override
-	public Long getNumber_of_processesScalar() {
-		return getLong(NX_NUMBER_OF_PROCESSES);
+	public Long getMax_processesScalar() {
+		return getLong(NX_MAX_PROCESSES);
 	}
 
 	@Override
-	public DataNode setNumber_of_processes(IDataset number_of_processesDataset) {
-		return setDataset(NX_NUMBER_OF_PROCESSES, number_of_processesDataset);
+	public DataNode setMax_processes(IDataset max_processesDataset) {
+		return setDataset(NX_MAX_PROCESSES, max_processesDataset);
 	}
 
 	@Override
-	public DataNode setNumber_of_processesScalar(Long number_of_processesValue) {
-		return setField(NX_NUMBER_OF_PROCESSES, number_of_processesValue);
+	public DataNode setMax_processesScalar(Long max_processesValue) {
+		return setField(NX_MAX_PROCESSES, max_processesValue);
 	}
 
 	@Override
-	public Dataset getNumber_of_threads() {
-		return getDataset(NX_NUMBER_OF_THREADS);
+	public Dataset getMax_threads() {
+		return getDataset(NX_MAX_THREADS);
 	}
 
 	@Override
-	public Long getNumber_of_threadsScalar() {
-		return getLong(NX_NUMBER_OF_THREADS);
+	public Long getMax_threadsScalar() {
+		return getLong(NX_MAX_THREADS);
 	}
 
 	@Override
-	public DataNode setNumber_of_threads(IDataset number_of_threadsDataset) {
-		return setDataset(NX_NUMBER_OF_THREADS, number_of_threadsDataset);
+	public DataNode setMax_threads(IDataset max_threadsDataset) {
+		return setDataset(NX_MAX_THREADS, max_threadsDataset);
 	}
 
 	@Override
-	public DataNode setNumber_of_threadsScalar(Long number_of_threadsValue) {
-		return setField(NX_NUMBER_OF_THREADS, number_of_threadsValue);
+	public DataNode setMax_threadsScalar(Long max_threadsValue) {
+		return setField(NX_MAX_THREADS, max_threadsValue);
 	}
 
 	@Override
-	public Dataset getNumber_of_gpus() {
-		return getDataset(NX_NUMBER_OF_GPUS);
+	public Dataset getMax_gpus() {
+		return getDataset(NX_MAX_GPUS);
 	}
 
 	@Override
-	public Long getNumber_of_gpusScalar() {
-		return getLong(NX_NUMBER_OF_GPUS);
+	public Long getMax_gpusScalar() {
+		return getLong(NX_MAX_GPUS);
 	}
 
 	@Override
-	public DataNode setNumber_of_gpus(IDataset number_of_gpusDataset) {
-		return setDataset(NX_NUMBER_OF_GPUS, number_of_gpusDataset);
+	public DataNode setMax_gpus(IDataset max_gpusDataset) {
+		return setDataset(NX_MAX_GPUS, max_gpusDataset);
 	}
 
 	@Override
-	public DataNode setNumber_of_gpusScalar(Long number_of_gpusValue) {
-		return setField(NX_NUMBER_OF_GPUS, number_of_gpusValue);
+	public DataNode setMax_gpusScalar(Long max_gpusValue) {
+		return setField(NX_MAX_GPUS, max_gpusValue);
 	}
 
 	@Override
@@ -285,34 +286,14 @@ public class NXcs_profilingImpl extends NXobjectImpl implements NXcs_profiling {
 	}
 
 	@Override
-	public NXcs_profiling_event getCs_profiling_event() {
-		// dataNodeName = NX_CS_PROFILING_EVENT
-		return getChild("cs_profiling_event", NXcs_profiling_event.class);
+	public NXcs_profiling_event getEventid() {
+		// dataNodeName = NX_EVENTID
+		return getChild("eventid", NXcs_profiling_event.class);
 	}
 
 	@Override
-	public void setCs_profiling_event(NXcs_profiling_event cs_profiling_eventGroup) {
-		putChild("cs_profiling_event", cs_profiling_eventGroup);
-	}
-
-	@Override
-	public NXcs_profiling_event getCs_profiling_event(String name) {
-		return getChild(name, NXcs_profiling_event.class);
-	}
-
-	@Override
-	public void setCs_profiling_event(String name, NXcs_profiling_event cs_profiling_event) {
-		putChild(name, cs_profiling_event);
-	}
-
-	@Override
-	public Map<String, NXcs_profiling_event> getAllCs_profiling_event() {
-		return getChildren(NXcs_profiling_event.class);
-	}
-
-	@Override
-	public void setAllCs_profiling_event(Map<String, NXcs_profiling_event> cs_profiling_event) {
-		setChildren(cs_profiling_event);
+	public void setEventid(NXcs_profiling_event eventidGroup) {
+		putChild("eventid", eventidGroup);
 	}
 
 }

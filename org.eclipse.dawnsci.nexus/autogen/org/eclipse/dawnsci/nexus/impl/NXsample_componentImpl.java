@@ -21,16 +21,17 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * One group like this per component can be recorded For a sample consisting of multiple components.
+ * One group like this per component can be recorded for a sample consisting of multiple components.
 
  */
-public class NXsample_componentImpl extends NXobjectImpl implements NXsample_component {
+public class NXsample_componentImpl extends NXcomponentImpl implements NXsample_component {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_DATA);
+		NexusBaseClass.NX_DATA,
+		NexusBaseClass.NX_HISTORY);
 
 	public NXsample_componentImpl() {
 		super();
@@ -388,13 +389,14 @@ public class NXsample_componentImpl extends NXobjectImpl implements NXsample_com
 	}
 
 	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
+	public NXhistory getHistory() {
+		// dataNodeName = NX_HISTORY
+		return getChild("history", NXhistory.class);
 	}
 
 	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
+	public void setHistory(NXhistory historyGroup) {
+		putChild("history", historyGroup);
 	}
 
 }

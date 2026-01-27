@@ -20,9 +20,8 @@ import org.eclipse.january.dataset.Dataset;
  * definition for a solenoid magnet.
  *
  */
-public interface NXsolenoid_magnet extends NXobject {
+public interface NXsolenoid_magnet extends NXcomponent {
 
-	public static final String NX_DESCRIPTION = "description";
 	public static final String NX_BEAMLINE_DISTANCE = "beamline_distance";
 	public static final String NX_SET_CURRENT = "set_current";
 	/**

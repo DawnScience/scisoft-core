@@ -40,33 +40,37 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 
 	@Override
 	public ValidationReport validate(NXroot root) {
-		// validate child group 'entry' of type NXentry
-		validateGroup_entry(root.getEntry());
+		// validate unnamed child group of type NXentry (possibly multiple)
+		validateUnnamedGroupOccurrences(root, NXentry.class, false, true);
+		final Map<String, NXentry> allEntry = root.getAllEntry();
+		for (final NXentry entry : allEntry.values()) {
+			validateGroup_NXentry(entry);
+		}
 		return validationReport;
 	}
 
 	@Override
 	public ValidationReport validate(NXentry entry) {
-		validateGroup_entry(entry);
+		validateGroup_NXentry(entry);
 		return validationReport;
 	}
 
 	@Override
 	public ValidationReport validate(NXsubentry subentry) {
-		validateGroup_entry(subentry);
+		validateGroup_NXentry(subentry);
 		return validationReport;
 	}
 
 
 	/**
-	 * Validate group 'entry' of type NXentry.
+	 * Validate unnamed group of type NXentry.
 	 */
-	private void validateGroup_entry(final NXsubentry group) {
+	private void validateGroup_NXentry(final NXsubentry group) {
 		// set the current entry, required for validating links
 		setEntry(group);
 
 		// validate that the group is not null
-		if (!(validateGroupNotNull("entry", NXentry.class, group))) return;
+		if (!(validateGroupNotNull(null, NXentry.class, group))) return;
 
 		// validate attribute 'index' of type NX_CHAR.
 		final Attribute index_attr = group.getAttribute("index");
@@ -206,19 +210,19 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 		}
 
 		// validate child group 'user' of type NXuser
-		validateGroup_entry_user(group.getUser());
+		validateGroup_NXentry_user(group.getUser());
 
 		// validate child group 'instrument' of type NXinstrument
-		validateGroup_entry_instrument(group.getInstrument());
+		validateGroup_NXentry_instrument(group.getInstrument());
 
 		// validate child group 'sample' of type NXsample
-		validateGroup_entry_sample(group.getSample());
+		validateGroup_NXentry_sample(group.getSample());
 	}
 
 	/**
 	 * Validate group 'user' of type NXuser.
 	 */
-	private void validateGroup_entry_user(final NXuser group) {
+	private void validateGroup_NXentry_user(final NXuser group) {
 		// validate that the group is not null
 		if (!(validateGroupNotNull("user", NXuser.class, group))) return;
 
@@ -250,7 +254,7 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 	/**
 	 * Validate group 'instrument' of type NXinstrument.
 	 */
-	private void validateGroup_entry_instrument(final NXinstrument group) {
+	private void validateGroup_NXentry_instrument(final NXinstrument group) {
 		// validate that the group is not null
 		if (!(validateGroupNotNull("instrument", NXinstrument.class, group))) return;
 
@@ -273,14 +277,14 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 		validateUnnamedGroupOccurrences(group, NXsource.class, false, true);
 		final Map<String, NXsource> allSource = group.getAllSource();
 		for (final NXsource source : allSource.values()) {
-			validateGroup_entry_instrument_NXsource(source);
+			validateGroup_NXentry_instrument_NXsource(source);
 		}
 	}
 
 	/**
 	 * Validate unnamed group of type NXsource.
 	 */
-	private void validateGroup_entry_instrument_NXsource(final NXsource group) {
+	private void validateGroup_NXentry_instrument_NXsource(final NXsource group) {
 		// validate that the group is not null
 		if (!(validateGroupNotNull(null, NXsource.class, group))) return;
 
@@ -324,7 +328,7 @@ public class NXarchiveValidator extends AbstractNexusValidator implements NexusA
 	/**
 	 * Validate group 'sample' of type NXsample.
 	 */
-	private void validateGroup_entry_sample(final NXsample group) {
+	private void validateGroup_NXentry_sample(final NXsample group) {
 		// validate that the group is not null
 		if (!(validateGroupNotNull("sample", NXsample.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();

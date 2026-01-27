@@ -22,6 +22,13 @@ import org.eclipse.dawnsci.nexus.*;
 
 /**
  * Quantified aberration coefficient in an aberration_model.
+ * For an introduction in the details about aberrations with relevance for electron microscopy
+ * see `R. Dunin-Borkowski et al. <https://doi.org/10.1017/9781316337455.022>`_ and
+ * `S. J. Pennycock and P. D. Nellist <https://doi.org/10.1007/978-1-4419-7200-2>`_ (page 44ff, and page 118ff)
+ * for different definitions available and further details.
+ * Table 7-2 of Ibid. publication (page 305ff) documents how to convert from the Nion to the CEOS definitions.
+ * Conversion tables are also summarized by `Y. Liao <https://www.globalsino.com/EM/page3740.html>`_ an introduction.
+ * The use of the base class is not restricted to electron microscopy but can also be useful for classical optics.
 
  */
 public class NXaberrationImpl extends NXobjectImpl implements NXaberration {
@@ -61,8 +68,8 @@ public class NXaberrationImpl extends NXobjectImpl implements NXaberration {
 	}
 
 	@Override
-	public Double getMagnitudeScalar() {
-		return getDouble(NX_MAGNITUDE);
+	public Number getMagnitudeScalar() {
+		return getNumber(NX_MAGNITUDE);
 	}
 
 	@Override
@@ -71,48 +78,48 @@ public class NXaberrationImpl extends NXobjectImpl implements NXaberration {
 	}
 
 	@Override
-	public DataNode setMagnitudeScalar(Double magnitudeValue) {
+	public DataNode setMagnitudeScalar(Number magnitudeValue) {
 		return setField(NX_MAGNITUDE, magnitudeValue);
 	}
 
 	@Override
-	public Dataset getUncertainty() {
-		return getDataset(NX_UNCERTAINTY);
+	public Dataset getMagnitude_errors() {
+		return getDataset(NX_MAGNITUDE_ERRORS);
 	}
 
 	@Override
-	public Double getUncertaintyScalar() {
-		return getDouble(NX_UNCERTAINTY);
+	public Number getMagnitude_errorsScalar() {
+		return getNumber(NX_MAGNITUDE_ERRORS);
 	}
 
 	@Override
-	public DataNode setUncertainty(IDataset uncertaintyDataset) {
-		return setDataset(NX_UNCERTAINTY, uncertaintyDataset);
+	public DataNode setMagnitude_errors(IDataset magnitude_errorsDataset) {
+		return setDataset(NX_MAGNITUDE_ERRORS, magnitude_errorsDataset);
 	}
 
 	@Override
-	public DataNode setUncertaintyScalar(Double uncertaintyValue) {
-		return setField(NX_UNCERTAINTY, uncertaintyValue);
+	public DataNode setMagnitude_errorsScalar(Number magnitude_errorsValue) {
+		return setField(NX_MAGNITUDE_ERRORS, magnitude_errorsValue);
 	}
 
 	@Override
-	public Dataset getUncertainty_model() {
-		return getDataset(NX_UNCERTAINTY_MODEL);
+	public Dataset getMagnitude_errors_model() {
+		return getDataset(NX_MAGNITUDE_ERRORS_MODEL);
 	}
 
 	@Override
-	public String getUncertainty_modelScalar() {
-		return getString(NX_UNCERTAINTY_MODEL);
+	public String getMagnitude_errors_modelScalar() {
+		return getString(NX_MAGNITUDE_ERRORS_MODEL);
 	}
 
 	@Override
-	public DataNode setUncertainty_model(IDataset uncertainty_modelDataset) {
-		return setDataset(NX_UNCERTAINTY_MODEL, uncertainty_modelDataset);
+	public DataNode setMagnitude_errors_model(IDataset magnitude_errors_modelDataset) {
+		return setDataset(NX_MAGNITUDE_ERRORS_MODEL, magnitude_errors_modelDataset);
 	}
 
 	@Override
-	public DataNode setUncertainty_modelScalar(String uncertainty_modelValue) {
-		return setString(NX_UNCERTAINTY_MODEL, uncertainty_modelValue);
+	public DataNode setMagnitude_errors_modelScalar(String magnitude_errors_modelValue) {
+		return setString(NX_MAGNITUDE_ERRORS_MODEL, magnitude_errors_modelValue);
 	}
 
 	@Override
@@ -121,8 +128,8 @@ public class NXaberrationImpl extends NXobjectImpl implements NXaberration {
 	}
 
 	@Override
-	public Double getDelta_timeScalar() {
-		return getDouble(NX_DELTA_TIME);
+	public Number getDelta_timeScalar() {
+		return getNumber(NX_DELTA_TIME);
 	}
 
 	@Override
@@ -131,7 +138,7 @@ public class NXaberrationImpl extends NXobjectImpl implements NXaberration {
 	}
 
 	@Override
-	public DataNode setDelta_timeScalar(Double delta_timeValue) {
+	public DataNode setDelta_timeScalar(Number delta_timeValue) {
 		return setField(NX_DELTA_TIME, delta_timeValue);
 	}
 
@@ -141,8 +148,8 @@ public class NXaberrationImpl extends NXobjectImpl implements NXaberration {
 	}
 
 	@Override
-	public Double getAngleScalar() {
-		return getDouble(NX_ANGLE);
+	public Number getAngleScalar() {
+		return getNumber(NX_ANGLE);
 	}
 
 	@Override
@@ -151,7 +158,7 @@ public class NXaberrationImpl extends NXobjectImpl implements NXaberration {
 	}
 
 	@Override
-	public DataNode setAngleScalar(Double angleValue) {
+	public DataNode setAngleScalar(Number angleValue) {
 		return setField(NX_ANGLE, angleValue);
 	}
 

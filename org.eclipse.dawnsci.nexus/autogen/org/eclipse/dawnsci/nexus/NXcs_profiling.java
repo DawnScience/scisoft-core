@@ -20,7 +20,7 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * Computer science description for summary performance/profiling data of an application.
+ * Computer science description for performance and profiling data of an application.
  * Performance monitoring and benchmarking of software is a task where questions
  * can be asked at various levels of detail. In general, there are three main
  * contributions to performance:
@@ -28,24 +28,25 @@ import org.eclipse.january.dataset.Dataset;
  * * Software configuration and capabilities
  * * Dynamic effects of the system in operation and the system working together
  * with eventually multiple computers, especially when these have to exchange
- * information across a network.
+ * information across a network and these are used usually by multiple users.
  * At the most basic level users may wish to document how long e.g. a data
- * analysis with a scientific software (app).
- * A frequent idea is here to judge how critical the effect is on the workflow
- * of the scientists, i.e. is the analysis possible in a few seconds or would it
- * take days if I were to run this analysis on a comparable machine. In this case,
- * mainly the order of magnitude is relevant, as well as how this can be achieved
- * with using parallelization (i.e. reporting the number of CPU and GPU resources
- * used, the number of processes and/or threads, and basic details about the
- * computing node/computer.
+ * analysis with a scientific software, i.e. an app took.
+ * A frequent idea is here to answer practical questions like how critical is the
+ * effect on the workflow of the scientists, i.e. is the analysis possible in
+ * a few seconds or would it take days if I were to run this analysis on a
+ * comparable machine?
+ * For this more qualitative performance monitoring, mainly the order of
+ * magnitude is relevant, as well as how this was achieved using parallelization
+ * (i.e. reporting the number of CPU and GPU resources used, the number of
+ * processes and threads configured, and providing basic details about the computer).
  * At more advanced levels benchmarks may go as deep as detailed temporal tracking
  * of individual processor instructions, their relation to other instructions, the
- * state of call stacks, in short eventually the entire app execution history
+ * state of call stacks; in short eventually the entire app execution history
  * and hardware state history. Such analyses are mainly used for performance
- * optimization as well as for tracking bugs and other development purposes.
- * Specialized software exists which documents such performance data in
- * specifically-formatted event log files or databases.
- * This base class cannot and should not replace these specific solutions.
+ * optimization, i.e. by software and hardware developers as well as for
+ * tracking bugs. Specialized software exists which documents such performance
+ * data in specifically-formatted event log files or databases.
+ * This base class cannot and should not replace these specific solutions for now.
  * Instead, the intention of the base class is to serve scientists at the
  * basic level to enable simple monitoring of performance data and log profiling
  * data of key algorithmic steps or parts of computational workflows, so that
@@ -65,11 +66,14 @@ public interface NXcs_profiling extends NXobject {
 	public static final String NX_START_TIME = "start_time";
 	public static final String NX_END_TIME = "end_time";
 	public static final String NX_TOTAL_ELAPSED_TIME = "total_elapsed_time";
-	public static final String NX_NUMBER_OF_PROCESSES = "number_of_processes";
-	public static final String NX_NUMBER_OF_THREADS = "number_of_threads";
-	public static final String NX_NUMBER_OF_GPUS = "number_of_gpus";
+	public static final String NX_MAX_PROCESSES = "max_processes";
+	public static final String NX_MAX_THREADS = "max_threads";
+	public static final String NX_MAX_GPUS = "max_gpus";
 	/**
 	 * Path to the directory from which the tool was called.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @return  the value.
 	 */
@@ -77,6 +81,9 @@ public interface NXcs_profiling extends NXobject {
 
 	/**
 	 * Path to the directory from which the tool was called.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @param current_working_directoryDataset the current_working_directoryDataset
 	 */
@@ -84,6 +91,9 @@ public interface NXcs_profiling extends NXobject {
 
 	/**
 	 * Path to the directory from which the tool was called.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @return  the value.
 	 */
@@ -91,6 +101,9 @@ public interface NXcs_profiling extends NXobject {
 
 	/**
 	 * Path to the directory from which the tool was called.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @param current_working_directory the current_working_directory
 	 */
@@ -98,6 +111,9 @@ public interface NXcs_profiling extends NXobject {
 
 	/**
 	 * Command line call with arguments if applicable.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @return  the value.
 	 */
@@ -105,6 +121,9 @@ public interface NXcs_profiling extends NXobject {
 
 	/**
 	 * Command line call with arguments if applicable.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @param command_line_callDataset the command_line_callDataset
 	 */
@@ -112,6 +131,9 @@ public interface NXcs_profiling extends NXobject {
 
 	/**
 	 * Command line call with arguments if applicable.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @return  the value.
 	 */
@@ -119,6 +141,9 @@ public interface NXcs_profiling extends NXobject {
 
 	/**
 	 * Command line call with arguments if applicable.
+	 * <p>
+	 * <b>Type:</b> NX_CHAR
+	 * </p>
 	 *
 	 * @param command_line_call the command_line_call
 	 */
@@ -216,7 +241,7 @@ public interface NXcs_profiling extends NXobject {
 	 * Wall-clock time how long the app execution took. This may be in principle
 	 * end_time minus start_time; however usage of eventually more precise timers
 	 * may warrant to use a finer temporal discretization,
-	 * and thus demand a more precise record of the wall-clock time.
+	 * and thus demands a more precise record of the wall-clock time.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
@@ -230,7 +255,7 @@ public interface NXcs_profiling extends NXobject {
 	 * Wall-clock time how long the app execution took. This may be in principle
 	 * end_time minus start_time; however usage of eventually more precise timers
 	 * may warrant to use a finer temporal discretization,
-	 * and thus demand a more precise record of the wall-clock time.
+	 * and thus demands a more precise record of the wall-clock time.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
@@ -244,7 +269,7 @@ public interface NXcs_profiling extends NXobject {
 	 * Wall-clock time how long the app execution took. This may be in principle
 	 * end_time minus start_time; however usage of eventually more precise timers
 	 * may warrant to use a finer temporal discretization,
-	 * and thus demand a more precise record of the wall-clock time.
+	 * and thus demands a more precise record of the wall-clock time.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
@@ -258,7 +283,7 @@ public interface NXcs_profiling extends NXobject {
 	 * Wall-clock time how long the app execution took. This may be in principle
 	 * end_time minus start_time; however usage of eventually more precise timers
 	 * may warrant to use a finer temporal discretization,
-	 * and thus demand a more precise record of the wall-clock time.
+	 * and thus demands a more precise record of the wall-clock time.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_TIME
@@ -269,176 +294,172 @@ public interface NXcs_profiling extends NXobject {
 	public DataNode setTotal_elapsed_timeScalar(Number total_elapsed_timeValue);
 
 	/**
-	 * Qualifier which specifies with how many nominal processes the app was
-	 * invoked. The main idea behind this field, for instance for app using a
-	 * Message Passing Interface parallelization is to communicate how many
-	 * processes were used.
+	 * The number of nominal processes that the app invoked at runtime.
+	 * The main idea behind this field e.g. for apps which use e.g. MPI
+	 * (Message Passing Interface) parallelization is to communicate
+	 * how many processes were used.
 	 * For sequentially running apps number_of_processes and number_of_threads
-	 * is 1. If the app uses exclusively GPU parallelization number_of_gpus
-	 * can be larger than 1. If no GPU is used number_of_gpus is 0 even though
-	 * the hardware may have GPUs installed, thus indicating these were not
-	 * used though.
+	 * is one. If the app exclusively uses GPU parallelization, number_of_gpus
+	 * can be larger than one. If no GPU is used, number_of_gpus is zero,
+	 * even though the hardware may have GPUs installed.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getNumber_of_processes();
+	public Dataset getMax_processes();
 
 	/**
-	 * Qualifier which specifies with how many nominal processes the app was
-	 * invoked. The main idea behind this field, for instance for app using a
-	 * Message Passing Interface parallelization is to communicate how many
-	 * processes were used.
+	 * The number of nominal processes that the app invoked at runtime.
+	 * The main idea behind this field e.g. for apps which use e.g. MPI
+	 * (Message Passing Interface) parallelization is to communicate
+	 * how many processes were used.
 	 * For sequentially running apps number_of_processes and number_of_threads
-	 * is 1. If the app uses exclusively GPU parallelization number_of_gpus
-	 * can be larger than 1. If no GPU is used number_of_gpus is 0 even though
-	 * the hardware may have GPUs installed, thus indicating these were not
-	 * used though.
+	 * is one. If the app exclusively uses GPU parallelization, number_of_gpus
+	 * can be larger than one. If no GPU is used, number_of_gpus is zero,
+	 * even though the hardware may have GPUs installed.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
-	 * @param number_of_processesDataset the number_of_processesDataset
+	 * @param max_processesDataset the max_processesDataset
 	 */
-	public DataNode setNumber_of_processes(IDataset number_of_processesDataset);
+	public DataNode setMax_processes(IDataset max_processesDataset);
 
 	/**
-	 * Qualifier which specifies with how many nominal processes the app was
-	 * invoked. The main idea behind this field, for instance for app using a
-	 * Message Passing Interface parallelization is to communicate how many
-	 * processes were used.
+	 * The number of nominal processes that the app invoked at runtime.
+	 * The main idea behind this field e.g. for apps which use e.g. MPI
+	 * (Message Passing Interface) parallelization is to communicate
+	 * how many processes were used.
 	 * For sequentially running apps number_of_processes and number_of_threads
-	 * is 1. If the app uses exclusively GPU parallelization number_of_gpus
-	 * can be larger than 1. If no GPU is used number_of_gpus is 0 even though
-	 * the hardware may have GPUs installed, thus indicating these were not
-	 * used though.
+	 * is one. If the app exclusively uses GPU parallelization, number_of_gpus
+	 * can be larger than one. If no GPU is used, number_of_gpus is zero,
+	 * even though the hardware may have GPUs installed.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public Long getNumber_of_processesScalar();
+	public Long getMax_processesScalar();
 
 	/**
-	 * Qualifier which specifies with how many nominal processes the app was
-	 * invoked. The main idea behind this field, for instance for app using a
-	 * Message Passing Interface parallelization is to communicate how many
-	 * processes were used.
+	 * The number of nominal processes that the app invoked at runtime.
+	 * The main idea behind this field e.g. for apps which use e.g. MPI
+	 * (Message Passing Interface) parallelization is to communicate
+	 * how many processes were used.
 	 * For sequentially running apps number_of_processes and number_of_threads
-	 * is 1. If the app uses exclusively GPU parallelization number_of_gpus
-	 * can be larger than 1. If no GPU is used number_of_gpus is 0 even though
-	 * the hardware may have GPUs installed, thus indicating these were not
-	 * used though.
+	 * is one. If the app exclusively uses GPU parallelization, number_of_gpus
+	 * can be larger than one. If no GPU is used, number_of_gpus is zero,
+	 * even though the hardware may have GPUs installed.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
-	 * @param number_of_processes the number_of_processes
+	 * @param max_processes the max_processes
 	 */
-	public DataNode setNumber_of_processesScalar(Long number_of_processesValue);
+	public DataNode setMax_processesScalar(Long max_processesValue);
 
 	/**
-	 * Qualifier with how many nominal threads were accessible to the app at
-	 * runtime. Specifically here the maximum number of threads used for the
+	 * The number of nominal threads that the app invoked at runtime.
+	 * Specifically here the maximum number of threads used for the
 	 * high-level threading library used (e.g. OMP_NUM_THREADS), posix.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getNumber_of_threads();
+	public Dataset getMax_threads();
 
 	/**
-	 * Qualifier with how many nominal threads were accessible to the app at
-	 * runtime. Specifically here the maximum number of threads used for the
+	 * The number of nominal threads that the app invoked at runtime.
+	 * Specifically here the maximum number of threads used for the
 	 * high-level threading library used (e.g. OMP_NUM_THREADS), posix.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
-	 * @param number_of_threadsDataset the number_of_threadsDataset
+	 * @param max_threadsDataset the max_threadsDataset
 	 */
-	public DataNode setNumber_of_threads(IDataset number_of_threadsDataset);
+	public DataNode setMax_threads(IDataset max_threadsDataset);
 
 	/**
-	 * Qualifier with how many nominal threads were accessible to the app at
-	 * runtime. Specifically here the maximum number of threads used for the
+	 * The number of nominal threads that the app invoked at runtime.
+	 * Specifically here the maximum number of threads used for the
 	 * high-level threading library used (e.g. OMP_NUM_THREADS), posix.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public Long getNumber_of_threadsScalar();
+	public Long getMax_threadsScalar();
 
 	/**
-	 * Qualifier with how many nominal threads were accessible to the app at
-	 * runtime. Specifically here the maximum number of threads used for the
+	 * The number of nominal threads that the app invoked at runtime.
+	 * Specifically here the maximum number of threads used for the
 	 * high-level threading library used (e.g. OMP_NUM_THREADS), posix.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
-	 * @param number_of_threads the number_of_threads
+	 * @param max_threads the max_threads
 	 */
-	public DataNode setNumber_of_threadsScalar(Long number_of_threadsValue);
+	public DataNode setMax_threadsScalar(Long max_threadsValue);
 
 	/**
-	 * Qualifier with how many nominal GPUs the app was invoked at runtime.
+	 * The number of nominal GPUs that the app invoked at runtime.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getNumber_of_gpus();
+	public Dataset getMax_gpus();
 
 	/**
-	 * Qualifier with how many nominal GPUs the app was invoked at runtime.
+	 * The number of nominal GPUs that the app invoked at runtime.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
-	 * @param number_of_gpusDataset the number_of_gpusDataset
+	 * @param max_gpusDataset the max_gpusDataset
 	 */
-	public DataNode setNumber_of_gpus(IDataset number_of_gpusDataset);
+	public DataNode setMax_gpus(IDataset max_gpusDataset);
 
 	/**
-	 * Qualifier with how many nominal GPUs the app was invoked at runtime.
+	 * The number of nominal GPUs that the app invoked at runtime.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public Long getNumber_of_gpusScalar();
+	public Long getMax_gpusScalar();
 
 	/**
-	 * Qualifier with how many nominal GPUs the app was invoked at runtime.
+	 * The number of nominal GPUs that the app invoked at runtime.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
-	 * @param number_of_gpus the number_of_gpus
+	 * @param max_gpus the max_gpus
 	 */
-	public DataNode setNumber_of_gpusScalar(Long number_of_gpusValue);
+	public DataNode setMax_gpusScalar(Long max_gpusValue);
 
 	/**
 	 * A collection with one or more computing nodes each with own resources.
@@ -512,74 +533,20 @@ public interface NXcs_profiling extends NXobject {
 	 * A collection of individual profiling event data which detail e.g. how
 	 * much time the app took for certain computational steps and/or how much
 	 * memory was consumed during these operations.
+	 * ID is an increasing unsigned integer starting at 1.
 	 *
 	 * @return  the value.
 	 */
-	public NXcs_profiling_event getCs_profiling_event();
+	public NXcs_profiling_event getEventid();
 
 	/**
 	 * A collection of individual profiling event data which detail e.g. how
 	 * much time the app took for certain computational steps and/or how much
 	 * memory was consumed during these operations.
+	 * ID is an increasing unsigned integer starting at 1.
 	 *
-	 * @param cs_profiling_eventGroup the cs_profiling_eventGroup
+	 * @param eventidGroup the eventidGroup
 	 */
-	public void setCs_profiling_event(NXcs_profiling_event cs_profiling_eventGroup);
-
-	/**
-	 * Get a NXcs_profiling_event node by name:
-	 * <ul>
-	 * <li>
-	 * A collection of individual profiling event data which detail e.g. how
-	 * much time the app took for certain computational steps and/or how much
-	 * memory was consumed during these operations.</li>
-	 * </ul>
-	 *
-	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXcs_profiling_event for that node.
-	 */
-	public NXcs_profiling_event getCs_profiling_event(String name);
-
-	/**
-	 * Set a NXcs_profiling_event node by name:
-	 * <ul>
-	 * <li>
-	 * A collection of individual profiling event data which detail e.g. how
-	 * much time the app took for certain computational steps and/or how much
-	 * memory was consumed during these operations.</li>
-	 * </ul>
-	 *
-	 * @param name the name of the node
-	 * @param cs_profiling_event the value to set
-	 */
-	public void setCs_profiling_event(String name, NXcs_profiling_event cs_profiling_event);
-
-	/**
-	 * Get all NXcs_profiling_event nodes:
-	 * <ul>
-	 * <li>
-	 * A collection of individual profiling event data which detail e.g. how
-	 * much time the app took for certain computational steps and/or how much
-	 * memory was consumed during these operations.</li>
-	 * </ul>
-	 *
-	 * @return  a map from node names to the NXcs_profiling_event for that node.
-	 */
-	public Map<String, NXcs_profiling_event> getAllCs_profiling_event();
-
-	/**
-	 * Set multiple child nodes of a particular type.
-	 * <ul>
-	 * <li>
-	 * A collection of individual profiling event data which detail e.g. how
-	 * much time the app took for certain computational steps and/or how much
-	 * memory was consumed during these operations.</li>
-	 * </ul>
-	 *
-	 * @param cs_profiling_event the child nodes to add
-	 */
-
-	public void setAllCs_profiling_event(Map<String, NXcs_profiling_event> cs_profiling_event);
-
+	public void setEventid(NXcs_profiling_event eventidGroup);
 
 }

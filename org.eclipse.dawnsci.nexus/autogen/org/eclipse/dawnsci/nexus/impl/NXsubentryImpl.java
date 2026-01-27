@@ -86,16 +86,6 @@ public class NXsubentryImpl extends NXobjectImpl implements NXsubentry {
 
 
 	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
-	}
-
-	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
-	}
-
-	@Override
 	public String getAttributeIdf_version() {
 		return getAttrString(null, NX_ATTRIBUTE_IDF_VERSION);
 	}

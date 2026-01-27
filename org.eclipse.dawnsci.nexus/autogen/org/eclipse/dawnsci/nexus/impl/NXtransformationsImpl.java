@@ -44,10 +44,10 @@ import org.eclipse.dawnsci.nexus.*;
  * useful coordinate axes may be defined by using axes for which no transformation
  * type has been specified.
  * The entry point (``depends_on``) will be outside of this class and point to a
- * field in here. Following the chain may also require following ``depends_on``
- * links to transformations outside, for example to a common base table. If
- * a relative path is given, it is relative to the group enclosing the ``depends_on``
- * specification.
+ * field in here (or to an instance of ``NX_coordinate_system``). Following the
+ * chain may also require following ``depends_on`` links to transformations outside,
+ * for example to a common base table. If a relative path is given, it is relative
+ * to the group enclosing the ``depends_on`` specification.
  * For a chain of three transformations, where :math:`T_1` depends on :math:`T_2`
  * and that in turn depends on :math:`T_3`, the final transformation :math:`T_f` is
  * .. math:: T_f = T_3 T_2 T_1
@@ -68,17 +68,23 @@ import org.eclipse.dawnsci.nexus.*;
  * for each diffractometer and name the group appropriate to the device.
  * Collecting the motors of a sample table or xyz-stage in an NXtransformations
  * group is equally possible.
- * Following the section on the general dscription of axis in NXtransformations is a section which
+ * Following the section on the general description of axis in NXtransformations is a section which
  * documents the fields commonly used within NeXus for positioning purposes and their meaning. Whenever
  * there is a need for positioning a beam line component please use the existing names. Use as many fields
  * as needed in order to position the component. Feel free to add more axis if required. In the description
- * given below, only those atttributes which are defined through the name are spcified. Add the other attributes
+ * given below, only those attributes which are defined through the name are specified. Add the other attributes
  * of the full set:
  * * vector
  * * offset
  * * transformation_type
  * * depends_on
  * as needed.
+ * NOTE
+ * ``NXtransformations`` follows the **active** transformation convention. This means that the transformation describes
+ * how an object is moved or rotated within the coordinate system. In other words, the transformation
+ * actively changes the position or orientation of the object itself. This is in contrast to a **passive** transformation,
+ * which changes the frame of reference or coordinate system, while the object remains fixed. In case it is needed
+ * to describe multiple coordinate systems, it is strongly suggested to use the :ref:`NXcoordinate_system` base class.
 
  */
 public class NXtransformationsImpl extends NXobjectImpl implements NXtransformations {
@@ -198,63 +204,43 @@ public class NXtransformationsImpl extends NXobjectImpl implements NXtransformat
 	}
 
 	@Override
-	public Dataset getEnd(String axisname) {
-		return getDataset(axisname + NX_END_SUFFIX);
+	public Dataset getAxisname_end() {
+		return getDataset(NX_AXISNAME_END);
 	}
 
 	@Override
-	public Number getEndScalar(String axisname) {
-		return getNumber(axisname + NX_END_SUFFIX);
+	public Number getAxisname_endScalar() {
+		return getNumber(NX_AXISNAME_END);
 	}
 
 	@Override
-	public DataNode setEnd(String axisname, IDataset endDataset) {
-		return setDataset(axisname + NX_END_SUFFIX, endDataset);
+	public DataNode setAxisname_end(IDataset axisname_endDataset) {
+		return setDataset(NX_AXISNAME_END, axisname_endDataset);
 	}
 
 	@Override
-	public DataNode setEndScalar(String axisname, Number endValue) {
-		return setField(axisname + NX_END_SUFFIX, endValue);
+	public DataNode setAxisname_endScalar(Number axisname_endValue) {
+		return setField(NX_AXISNAME_END, axisname_endValue);
 	}
 
 	@Override
-	public Map<String, Dataset> getAllEnd() {
-		return getAllDatasets(); // note: returns all datasets in the group!
+	public Dataset getAxisname_increment_set() {
+		return getDataset(NX_AXISNAME_INCREMENT_SET);
 	}
 
 	@Override
-	public Dataset getIncrement_set(String axisname) {
-		return getDataset(axisname + NX_INCREMENT_SET_SUFFIX);
+	public Number getAxisname_increment_setScalar() {
+		return getNumber(NX_AXISNAME_INCREMENT_SET);
 	}
 
 	@Override
-	public Number getIncrement_setScalar(String axisname) {
-		return getNumber(axisname + NX_INCREMENT_SET_SUFFIX);
+	public DataNode setAxisname_increment_set(IDataset axisname_increment_setDataset) {
+		return setDataset(NX_AXISNAME_INCREMENT_SET, axisname_increment_setDataset);
 	}
 
 	@Override
-	public DataNode setIncrement_set(String axisname, IDataset increment_setDataset) {
-		return setDataset(axisname + NX_INCREMENT_SET_SUFFIX, increment_setDataset);
-	}
-
-	@Override
-	public DataNode setIncrement_setScalar(String axisname, Number increment_setValue) {
-		return setField(axisname + NX_INCREMENT_SET_SUFFIX, increment_setValue);
-	}
-
-	@Override
-	public Map<String, Dataset> getAllIncrement_set() {
-		return getAllDatasets(); // note: returns all datasets in the group!
-	}
-
-	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
-	}
-
-	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
+	public DataNode setAxisname_increment_setScalar(Number axisname_increment_setValue) {
+		return setField(NX_AXISNAME_INCREMENT_SET, axisname_increment_setValue);
 	}
 
 }

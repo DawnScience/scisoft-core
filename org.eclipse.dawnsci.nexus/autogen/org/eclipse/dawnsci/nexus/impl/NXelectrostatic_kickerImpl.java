@@ -21,10 +21,10 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * definition for a electrostatic kicker.
+ * Base class for an electrostatic kicker.
 
  */
-public class NXelectrostatic_kickerImpl extends NXobjectImpl implements NXelectrostatic_kicker {
+public class NXelectrostatic_kickerImpl extends NXcomponentImpl implements NXelectrostatic_kicker {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 

@@ -21,7 +21,7 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * (Chemical) composition of a sample or a set of things.
+ * Chemical composition of a sample or a set of things.
 
  */
 public class NXchemical_compositionImpl extends NXobjectImpl implements NXchemical_composition {
@@ -30,7 +30,7 @@ public class NXchemical_compositionImpl extends NXobjectImpl implements NXchemic
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_ION);
+		NexusBaseClass.NX_ATOM);
 
 	public NXchemical_compositionImpl() {
 		super();
@@ -57,6 +57,26 @@ public class NXchemical_compositionImpl extends NXobjectImpl implements NXchemic
 
 
 	@Override
+	public Dataset getNormalization() {
+		return getDataset(NX_NORMALIZATION);
+	}
+
+	@Override
+	public String getNormalizationScalar() {
+		return getString(NX_NORMALIZATION);
+	}
+
+	@Override
+	public DataNode setNormalization(IDataset normalizationDataset) {
+		return setDataset(NX_NORMALIZATION, normalizationDataset);
+	}
+
+	@Override
+	public DataNode setNormalizationScalar(String normalizationValue) {
+		return setString(NX_NORMALIZATION, normalizationValue);
+	}
+
+	@Override
 	public Dataset getTotal() {
 		return getDataset(NX_TOTAL);
 	}
@@ -77,14 +97,14 @@ public class NXchemical_compositionImpl extends NXobjectImpl implements NXchemic
 	}
 
 	@Override
-	public NXion getIon() {
-		// dataNodeName = NX_ION
-		return getChild("ion", NXion.class);
+	public NXatom getElement() {
+		// dataNodeName = NX_ELEMENT
+		return getChild("element", NXatom.class);
 	}
 
 	@Override
-	public void setIon(NXion ionGroup) {
-		putChild("ion", ionGroup);
+	public void setElement(NXatom elementGroup) {
+		putChild("element", elementGroup);
 	}
 
 }

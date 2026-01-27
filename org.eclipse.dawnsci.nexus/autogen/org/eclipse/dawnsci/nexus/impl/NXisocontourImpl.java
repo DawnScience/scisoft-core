@@ -21,19 +21,20 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Computational geometry description of isocontouring/phase-fields in Euclidean space.
- * Iso-contouring algorithms such as MarchingCubes and others are frequently
- * used to segment d-dimensional regions into regions where intensities are
- * lower or higher than a threshold value, the so-called isovalue.
- * Frequently in computational materials science phase-field methods are
- * used which generate data on discretized grids. Isocontour algorithms
- * are often used in such context to pinpoint the locations of microstructural
- * features from this implicit phase-field-variable-based description.
+ * Base class for describing isocontouring/phase-fields in Euclidean space.
+ * Iso-contouring algorithms such as Marching Cubes and others are frequently
+ * used to segment d-dimensional regions at crossings of a threshold value,
+ * the so-called isovalue.
+ * In Computational Materials Science phase-field methods are frequently used.
+ * Phase-field variables are discretized frequently using regular grids.
+ * Isocontour algorithms are often used in such context to pinpoint the
+ * locations of microstructural features from this implicit phase-field-
+ * variable-value-based description.
  * One of the key intentions of this base class is to provide a starting point
- * for scientists from the phase-field community (condensed matter physicists,
- * and materials engineers) to incentivize that also phase-field simulation
- * data could be described with NeXus, provided base classes such as the this one
- * get further extend according to the liking of the phase-field community.
+ * for scientists from the phase-field community (condensed-matter physicists,
+ * and materials engineers) to incentivize that also phase-field (and other)
+ * simulation data can take advantage of NeXus base class to improve
+ * interoperability.
 
  */
 public class NXisocontourImpl extends NXobjectImpl implements NXisocontour {

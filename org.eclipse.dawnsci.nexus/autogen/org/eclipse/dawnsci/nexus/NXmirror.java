@@ -22,10 +22,9 @@ import org.eclipse.january.dataset.Dataset;
  * A beamline mirror or supermirror.
  *
  */
-public interface NXmirror extends NXobject {
+public interface NXmirror extends NXcomponent {
 
 	public static final String NX_TYPE = "type";
-	public static final String NX_DESCRIPTION = "description";
 	public static final String NX_INCIDENT_ANGLE = "incident_angle";
 	public static final String NX_BEND_ANGLE_X = "bend_angle_x";
 	public static final String NX_BEND_ANGLE_Y = "bend_angle_y";
@@ -43,8 +42,6 @@ public interface NXmirror extends NXobject {
 	public static final String NX_ODD_LAYER_MATERIAL = "odd_layer_material";
 	public static final String NX_ODD_LAYER_DENSITY = "odd_layer_density";
 	public static final String NX_LAYER_THICKNESS = "layer_thickness";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
-	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
 	 *
 	 * @deprecated Use the field `depends_on` and :ref:`NXtransformations` to position the mirror and NXoff_geometry to describe its shape instead
@@ -926,38 +923,6 @@ public interface NXmirror extends NXobject {
 
 
 	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
-
-	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * Given a flat mirror, the reference plane is the plane which contains the "entry" surface of the mirror. The reference
 	 * point of the mirror in the x and y axis is the centre of the mirror on that plane. The reference plane is orthogonal
 	 * to the z axis and the location of this plane is the reference point on the z axis. The mirror faces negative z values.
@@ -972,12 +937,6 @@ public interface NXmirror extends NXobject {
 	public Dataset getDepends_on();
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * Given a flat mirror, the reference plane is the plane which contains the "entry" surface of the mirror. The reference
 	 * point of the mirror in the x and y axis is the centre of the mirror on that plane. The reference plane is orthogonal
 	 * to the z axis and the location of this plane is the reference point on the z axis. The mirror faces negative z values.
@@ -992,12 +951,6 @@ public interface NXmirror extends NXobject {
 	public DataNode setDepends_on(IDataset depends_onDataset);
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * Given a flat mirror, the reference plane is the plane which contains the "entry" surface of the mirror. The reference
 	 * point of the mirror in the x and y axis is the centre of the mirror on that plane. The reference plane is orthogonal
 	 * to the z axis and the location of this plane is the reference point on the z axis. The mirror faces negative z values.
@@ -1012,12 +965,6 @@ public interface NXmirror extends NXobject {
 	public String getDepends_onScalar();
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * Given a flat mirror, the reference plane is the plane which contains the "entry" surface of the mirror. The reference
 	 * point of the mirror in the x and y axis is the centre of the mirror on that plane. The reference plane is orthogonal
 	 * to the z axis and the location of this plane is the reference point on the z axis. The mirror faces negative z values.
@@ -1030,85 +977,5 @@ public interface NXmirror extends NXobject {
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
-
-	/**
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.
-	 *
-	 * @return  the value.
-	 */
-	public NXtransformations getTransformations();
-
-	/**
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.
-	 *
-	 * @param transformationsGroup the transformationsGroup
-	 */
-	public void setTransformations(NXtransformations transformationsGroup);
-
-	/**
-	 * Get a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public NXtransformations getTransformations(String name);
-
-	/**
-	 * Set a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @param name the name of the node
-	 * @param transformations the value to set
-	 */
-	public void setTransformations(String name, NXtransformations transformations);
-
-	/**
-	 * Get all NXtransformations nodes:
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public Map<String, NXtransformations> getAllTransformations();
-
-	/**
-	 * Set multiple child nodes of a particular type.
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @param transformations the child nodes to add
-	 */
-
-	public void setAllTransformations(Map<String, NXtransformations> transformations);
-
 
 }

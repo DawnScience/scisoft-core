@@ -13,8 +13,6 @@ package org.eclipse.dawnsci.nexus.impl;
 
 import java.util.Set;
 import java.util.EnumSet;
-import java.util.Map;
-
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
@@ -23,7 +21,8 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Description of peaks, their functional form or measured support.
+ * Base class for describing a peak, its functional form, and support values
+ * i.e., the discretization points at which the function has been evaluated.
 
  */
 public class NXpeakImpl extends NXobjectImpl implements NXpeak {
@@ -32,7 +31,8 @@ public class NXpeakImpl extends NXobjectImpl implements NXpeak {
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_COLLECTION);
+		NexusBaseClass.NX_DATA,
+		NexusBaseClass.NX_FIT_FUNCTION);
 
 	public NXpeakImpl() {
 		super();
@@ -79,94 +79,45 @@ public class NXpeakImpl extends NXobjectImpl implements NXpeak {
 	}
 
 	@Override
-	public Dataset getPeak_model() {
-		return getDataset(NX_PEAK_MODEL);
+	public NXdata getData() {
+		// dataNodeName = NX_DATA
+		return getChild("data", NXdata.class);
 	}
 
 	@Override
-	public String getPeak_modelScalar() {
-		return getString(NX_PEAK_MODEL);
+	public void setData(NXdata dataGroup) {
+		putChild("data", dataGroup);
 	}
 
 	@Override
-	public DataNode setPeak_model(IDataset peak_modelDataset) {
-		return setDataset(NX_PEAK_MODEL, peak_modelDataset);
+	public NXfit_function getFunction() {
+		// dataNodeName = NX_FUNCTION
+		return getChild("function", NXfit_function.class);
 	}
 
 	@Override
-	public DataNode setPeak_modelScalar(String peak_modelValue) {
-		return setString(NX_PEAK_MODEL, peak_modelValue);
+	public void setFunction(NXfit_function functionGroup) {
+		putChild("function", functionGroup);
 	}
 
 	@Override
-	public Dataset getPosition() {
-		return getDataset(NX_POSITION);
+	public Dataset getTotal_area() {
+		return getDataset(NX_TOTAL_AREA);
 	}
 
 	@Override
-	public Number getPositionScalar() {
-		return getNumber(NX_POSITION);
+	public Number getTotal_areaScalar() {
+		return getNumber(NX_TOTAL_AREA);
 	}
 
 	@Override
-	public DataNode setPosition(IDataset positionDataset) {
-		return setDataset(NX_POSITION, positionDataset);
+	public DataNode setTotal_area(IDataset total_areaDataset) {
+		return setDataset(NX_TOTAL_AREA, total_areaDataset);
 	}
 
 	@Override
-	public DataNode setPositionScalar(Number positionValue) {
-		return setField(NX_POSITION, positionValue);
-	}
-
-	@Override
-	public Dataset getIntensity() {
-		return getDataset(NX_INTENSITY);
-	}
-
-	@Override
-	public Number getIntensityScalar() {
-		return getNumber(NX_INTENSITY);
-	}
-
-	@Override
-	public DataNode setIntensity(IDataset intensityDataset) {
-		return setDataset(NX_INTENSITY, intensityDataset);
-	}
-
-	@Override
-	public DataNode setIntensityScalar(Number intensityValue) {
-		return setField(NX_INTENSITY, intensityValue);
-	}
-
-	@Override
-	public NXcollection getCollection() {
-		// dataNodeName = NX_COLLECTION
-		return getChild("collection", NXcollection.class);
-	}
-
-	@Override
-	public void setCollection(NXcollection collectionGroup) {
-		putChild("collection", collectionGroup);
-	}
-
-	@Override
-	public NXcollection getCollection(String name) {
-		return getChild(name, NXcollection.class);
-	}
-
-	@Override
-	public void setCollection(String name, NXcollection collection) {
-		putChild(name, collection);
-	}
-
-	@Override
-	public Map<String, NXcollection> getAllCollection() {
-		return getChildren(NXcollection.class);
-	}
-
-	@Override
-	public void setAllCollection(Map<String, NXcollection> collection) {
-		setChildren(collection);
+	public DataNode setTotal_areaScalar(Number total_areaValue) {
+		return setField(NX_TOTAL_AREA, total_areaValue);
 	}
 
 }

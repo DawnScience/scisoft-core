@@ -20,7 +20,11 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * the head node for constructively defined geometry
+ * The head node for constructively defined geometry.
+ * * `S. Ghebi <https://doi.org/10.1007/978-1-84800-115-2>`_
+ * * `L. H. Laidlaw <https://doi.org/10.1145/15886.15904>`_
+ * for an introduction into the topic of modeling shapes with constructive
+ * solid geometry (CSG).
 
  */
 public class NXsolid_geometryImpl extends NXobjectImpl implements NXsolid_geometry {

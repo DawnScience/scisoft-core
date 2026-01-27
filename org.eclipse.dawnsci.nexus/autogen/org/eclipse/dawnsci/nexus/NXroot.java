@@ -17,49 +17,32 @@ import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 
 /**
- * Definition of the root NeXus group.
+ * The root of a NeXus file.
+ * In the NeXus standard, only NXentry groups are allowed at the
+ * root level of a file, although it is permitted to include
+ * additional groups and fields that are not part of the NeXus
+ * standard and will not be validated by NeXus tools. NeXus defines
+ * a number of root-level attributes that can be used to annotate
+ * the NeXus tree.
+ * Note that NXroot is the only base class that does not inherit
+ * from the NXobject class, since the latter permits the inclusion
+ * of NeXus objects that are not allowed at the root level.
  *
  */
 public interface NXroot extends NXobject {
 
-	public static final String NX_ATTRIBUTE_NX_CLASS = "nx_class";
 	public static final String NX_ATTRIBUTE_FILE_TIME = "file_time";
 	public static final String NX_ATTRIBUTE_FILE_NAME = "file_name";
 	public static final String NX_ATTRIBUTE_FILE_UPDATE_TIME = "file_update_time";
 	public static final String NX_ATTRIBUTE_NEXUS_VERSION = "nexus_version";
+	public static final String NX_ATTRIBUTE_NEXUS_REPOSITORY = "nexus_repository";
+	public static final String NX_ATTRIBUTE_NEXUS_RELEASE = "nexus_release";
 	public static final String NX_ATTRIBUTE_HDF_VERSION = "hdf_version";
 	public static final String NX_ATTRIBUTE_HDF5_VERSION = "hdf5_version";
 	public static final String NX_ATTRIBUTE_XML_VERSION = "xml_version";
 	public static final String NX_ATTRIBUTE_H5PY_VERSION = "h5py_version";
 	public static final String NX_ATTRIBUTE_CREATOR = "creator";
 	public static final String NX_ATTRIBUTE_CREATOR_VERSION = "creator_version";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
-	/**
-	 * The root of any NeXus data file is an ``NXroot`` class
-	 * (no other choice is allowed for a valid NeXus data file).
-	 * This attribute cements that definition.
-	 * <p>
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>NXroot</b> </li></ul></p>
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeNx_class();
-
-	/**
-	 * The root of any NeXus data file is an ``NXroot`` class
-	 * (no other choice is allowed for a valid NeXus data file).
-	 * This attribute cements that definition.
-	 * <p>
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>NXroot</b> </li></ul></p>
-	 * </p>
-	 *
-	 * @param nx_classValue the nx_classValue
-	 */
-	public void setAttributeNx_class(String nx_classValue);
-
 	/**
 	 * Date and time file was originally created
 	 *
@@ -104,23 +87,77 @@ public interface NXroot extends NXobject {
 
 	/**
 	 * Version of NeXus API used in writing the file.
-	 * Only used when the NAPI has written the file.
 	 * Note that this is different from the version of the
 	 * base class or application definition version number.
 	 *
+	 * @deprecated NAPI is frozen.
 	 * @return  the value.
 	 */
+	@Deprecated
 	public String getAttributeNexus_version();
 
 	/**
 	 * Version of NeXus API used in writing the file.
-	 * Only used when the NAPI has written the file.
 	 * Note that this is different from the version of the
 	 * base class or application definition version number.
 	 *
+	 * @deprecated NAPI is frozen.
 	 * @param nexus_versionValue the nexus_versionValue
 	 */
+	@Deprecated
 	public void setAttributeNexus_version(String nexus_versionValue);
+
+	/**
+	 * A repository containing the application definitions
+	 * used for creating this file.
+	 * If the ``NeXus_release`` attribute contains a commit distance and hash,
+	 * this should refer to this repository.
+	 *
+	 * @return  the value.
+	 */
+	public String getAttributeNexus_repository();
+
+	/**
+	 * A repository containing the application definitions
+	 * used for creating this file.
+	 * If the ``NeXus_release`` attribute contains a commit distance and hash,
+	 * this should refer to this repository.
+	 *
+	 * @param nexus_repositoryValue the nexus_repositoryValue
+	 */
+	public void setAttributeNexus_repository(String nexus_repositoryValue);
+
+	/**
+	 * The version of NeXus definitions used in writing the file. This can either be a date-based
+	 * NeXus release (e.g., YYYY.MM), see https://github.com/nexusformat/definitions/releases or
+	 * a version tag that includes additional development information, such as a commit distance and
+	 * a Git hash. This is typically formatted as `vYYYY.MM.post1.dev<commit-distance>-g<git-hash>`,
+	 * where `YYYY.MM` refers to the base version of the NeXus definitions. `post1.dev<commit-distance>`
+	 * indicates that the definitions are based on a commit after the base version (post1), with
+	 * `<commit-distance>` being the number of commits since that version. `g<git-hash>` is the
+	 * abbreviated Git hash that identifies the specific commit of the definitions being used.
+	 * If the version includes both a commit distance and a Git hash, the ``NeXus_repository``
+	 * attribute must be included, specifying the URL of the repository containing that version.
+	 *
+	 * @return  the value.
+	 */
+	public String getAttributeNexus_release();
+
+	/**
+	 * The version of NeXus definitions used in writing the file. This can either be a date-based
+	 * NeXus release (e.g., YYYY.MM), see https://github.com/nexusformat/definitions/releases or
+	 * a version tag that includes additional development information, such as a commit distance and
+	 * a Git hash. This is typically formatted as `vYYYY.MM.post1.dev<commit-distance>-g<git-hash>`,
+	 * where `YYYY.MM` refers to the base version of the NeXus definitions. `post1.dev<commit-distance>`
+	 * indicates that the definitions are based on a commit after the base version (post1), with
+	 * `<commit-distance>` being the number of commits since that version. `g<git-hash>` is the
+	 * abbreviated Git hash that identifies the specific commit of the definitions being used.
+	 * If the version includes both a commit distance and a Git hash, the ``NeXus_repository``
+	 * attribute must be included, specifying the URL of the repository containing that version.
+	 *
+	 * @param nexus_releaseValue the nexus_releaseValue
+	 */
+	public void setAttributeNexus_release(String nexus_releaseValue);
 
 	/**
 	 * Version of HDF (version 4) library used in writing the file
@@ -271,45 +308,5 @@ public interface NXroot extends NXobject {
 
 	public void setAllEntry(Map<String, NXentry> entry);
 
-
-	/**
-	 * .. index:: find the default plottable data
-	 * .. index:: plotting
-	 * .. index:: default attribute value
-	 * Declares which :ref:`NXentry` group contains
-	 * the data to be shown by default.
-	 * It is used to resolve ambiguity when
-	 * more than one :ref:`NXentry` group exists.
-	 * The value :ref:`names <validItemName>` the default :ref:`NXentry` group. The
-	 * value must be the name of a child of the current group. The child must be a
-	 * NeXus group or a link to a NeXus group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: find the default plottable data
-	 * .. index:: plotting
-	 * .. index:: default attribute value
-	 * Declares which :ref:`NXentry` group contains
-	 * the data to be shown by default.
-	 * It is used to resolve ambiguity when
-	 * more than one :ref:`NXentry` group exists.
-	 * The value :ref:`names <validItemName>` the default :ref:`NXentry` group. The
-	 * value must be the name of a child of the current group. The child must be a
-	 * NeXus group or a link to a NeXus group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
 
 }

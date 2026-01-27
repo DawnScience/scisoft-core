@@ -19,41 +19,37 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * Spatial filter to filter entries within a region-of-interest based on their
- * position.
+ * Base class for a spatial filter for objects within a region-of-interest (ROI).
+ * Objects can be points, objects composed from other geometric primitives,
+ * or objects.
  * <p><b>Symbols:</b>
  * The symbols used in the schema to specify e.g. dimensions of arrays.<ul>
- * <li><b>n_ellipsoids</b>
- * Number of ellipsoids.</li>
  * <li><b>n_hexahedra</b>
  * Number of hexahedra.</li>
  * <li><b>n_cylinders</b>
- * Number of cylinders.</li></ul></p>
+ * Number of cylinders.</li>
+ * <li><b>n_ellipsoids</b>
+ * Number of ellipsoids.</li>
+ * <li><b>n_polyhedra</b>
+ * Number of polyhedra.</li></ul></p>
  *
  */
-public interface NXspatial_filter extends NXobject {
+public interface NXspatial_filter extends NXparameters {
 
 	public static final String NX_WINDOWING_METHOD = "windowing_method";
 	/**
-	 * Qualitative statement which specifies which spatial filtering with respective
-	 * geometric primitives or bitmask is used. These settings are possible:
-	 * * entire_dataset, no filter is applied, the entire dataset is used.
-	 * * union_of_primitives, a filter with (rotated) geometric primitives.
-	 * All ions in or on the surface of the primitives are considered
-	 * while all other ions are ignored.
-	 * * bitmasked_points, a boolean array whose bits encode with 1
-	 * which ions should be included. Those ions whose bit is set to 0
-	 * will be excluded. Users of python can use the bitfield operations
-	 * of the numpy package to define such bitfields.
-	 * Conditions:
-	 * In the case that windowing_method is entire_dataset all entries are processed.
-	 * In the case that windowing_method is union_of_primitives,
-	 * it is possible to specify none or all types of primitives
-	 * (ellipsoids, cylinder, hexahedra). If no primitives are specified
-	 * the filter falls back to entire_dataset.
-	 * In the case that windowing_method is bitmask, the bitmask has to be defined;
-	 * otherwise the filter falls back to entire dataset.
+	 * Qualitative statement which describes the logical operations
+	 * that define which objects will be included and which excluded:
+	 * * entire_dataset, no filter is applied, all objects are included.
+	 * * union_of_primitives, a filter with (possibly non-axis-aligned) geometric
+	 * primitives. Objects in or on the surface of the primitives are included.
+	 * All other objects are excluded.
+	 * * bitmask, a boolean array whose bits encode with 1 which objects
+	 * are included. Bits set to zero encode which objects are excluded.
+	 * Users of python can use the bitfield operations of the numpy package to work with bitfields.
+	 * Multiple instances of NXcg base classes are used to compose a union_of_primitives.
 	 * <p>
+	 * <b>Type:</b> NX_CHAR
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>entire_dataset</b> </li>
 	 * <li><b>union_of_primitives</b> </li>
@@ -65,25 +61,18 @@ public interface NXspatial_filter extends NXobject {
 	public Dataset getWindowing_method();
 
 	/**
-	 * Qualitative statement which specifies which spatial filtering with respective
-	 * geometric primitives or bitmask is used. These settings are possible:
-	 * * entire_dataset, no filter is applied, the entire dataset is used.
-	 * * union_of_primitives, a filter with (rotated) geometric primitives.
-	 * All ions in or on the surface of the primitives are considered
-	 * while all other ions are ignored.
-	 * * bitmasked_points, a boolean array whose bits encode with 1
-	 * which ions should be included. Those ions whose bit is set to 0
-	 * will be excluded. Users of python can use the bitfield operations
-	 * of the numpy package to define such bitfields.
-	 * Conditions:
-	 * In the case that windowing_method is entire_dataset all entries are processed.
-	 * In the case that windowing_method is union_of_primitives,
-	 * it is possible to specify none or all types of primitives
-	 * (ellipsoids, cylinder, hexahedra). If no primitives are specified
-	 * the filter falls back to entire_dataset.
-	 * In the case that windowing_method is bitmask, the bitmask has to be defined;
-	 * otherwise the filter falls back to entire dataset.
+	 * Qualitative statement which describes the logical operations
+	 * that define which objects will be included and which excluded:
+	 * * entire_dataset, no filter is applied, all objects are included.
+	 * * union_of_primitives, a filter with (possibly non-axis-aligned) geometric
+	 * primitives. Objects in or on the surface of the primitives are included.
+	 * All other objects are excluded.
+	 * * bitmask, a boolean array whose bits encode with 1 which objects
+	 * are included. Bits set to zero encode which objects are excluded.
+	 * Users of python can use the bitfield operations of the numpy package to work with bitfields.
+	 * Multiple instances of NXcg base classes are used to compose a union_of_primitives.
 	 * <p>
+	 * <b>Type:</b> NX_CHAR
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>entire_dataset</b> </li>
 	 * <li><b>union_of_primitives</b> </li>
@@ -95,25 +84,18 @@ public interface NXspatial_filter extends NXobject {
 	public DataNode setWindowing_method(IDataset windowing_methodDataset);
 
 	/**
-	 * Qualitative statement which specifies which spatial filtering with respective
-	 * geometric primitives or bitmask is used. These settings are possible:
-	 * * entire_dataset, no filter is applied, the entire dataset is used.
-	 * * union_of_primitives, a filter with (rotated) geometric primitives.
-	 * All ions in or on the surface of the primitives are considered
-	 * while all other ions are ignored.
-	 * * bitmasked_points, a boolean array whose bits encode with 1
-	 * which ions should be included. Those ions whose bit is set to 0
-	 * will be excluded. Users of python can use the bitfield operations
-	 * of the numpy package to define such bitfields.
-	 * Conditions:
-	 * In the case that windowing_method is entire_dataset all entries are processed.
-	 * In the case that windowing_method is union_of_primitives,
-	 * it is possible to specify none or all types of primitives
-	 * (ellipsoids, cylinder, hexahedra). If no primitives are specified
-	 * the filter falls back to entire_dataset.
-	 * In the case that windowing_method is bitmask, the bitmask has to be defined;
-	 * otherwise the filter falls back to entire dataset.
+	 * Qualitative statement which describes the logical operations
+	 * that define which objects will be included and which excluded:
+	 * * entire_dataset, no filter is applied, all objects are included.
+	 * * union_of_primitives, a filter with (possibly non-axis-aligned) geometric
+	 * primitives. Objects in or on the surface of the primitives are included.
+	 * All other objects are excluded.
+	 * * bitmask, a boolean array whose bits encode with 1 which objects
+	 * are included. Bits set to zero encode which objects are excluded.
+	 * Users of python can use the bitfield operations of the numpy package to work with bitfields.
+	 * Multiple instances of NXcg base classes are used to compose a union_of_primitives.
 	 * <p>
+	 * <b>Type:</b> NX_CHAR
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>entire_dataset</b> </li>
 	 * <li><b>union_of_primitives</b> </li>
@@ -125,25 +107,18 @@ public interface NXspatial_filter extends NXobject {
 	public String getWindowing_methodScalar();
 
 	/**
-	 * Qualitative statement which specifies which spatial filtering with respective
-	 * geometric primitives or bitmask is used. These settings are possible:
-	 * * entire_dataset, no filter is applied, the entire dataset is used.
-	 * * union_of_primitives, a filter with (rotated) geometric primitives.
-	 * All ions in or on the surface of the primitives are considered
-	 * while all other ions are ignored.
-	 * * bitmasked_points, a boolean array whose bits encode with 1
-	 * which ions should be included. Those ions whose bit is set to 0
-	 * will be excluded. Users of python can use the bitfield operations
-	 * of the numpy package to define such bitfields.
-	 * Conditions:
-	 * In the case that windowing_method is entire_dataset all entries are processed.
-	 * In the case that windowing_method is union_of_primitives,
-	 * it is possible to specify none or all types of primitives
-	 * (ellipsoids, cylinder, hexahedra). If no primitives are specified
-	 * the filter falls back to entire_dataset.
-	 * In the case that windowing_method is bitmask, the bitmask has to be defined;
-	 * otherwise the filter falls back to entire dataset.
+	 * Qualitative statement which describes the logical operations
+	 * that define which objects will be included and which excluded:
+	 * * entire_dataset, no filter is applied, all objects are included.
+	 * * union_of_primitives, a filter with (possibly non-axis-aligned) geometric
+	 * primitives. Objects in or on the surface of the primitives are included.
+	 * All other objects are excluded.
+	 * * bitmask, a boolean array whose bits encode with 1 which objects
+	 * are included. Bits set to zero encode which objects are excluded.
+	 * Users of python can use the bitfield operations of the numpy package to work with bitfields.
+	 * Multiple instances of NXcg base classes are used to compose a union_of_primitives.
 	 * <p>
+	 * <b>Type:</b> NX_CHAR
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>entire_dataset</b> </li>
 	 * <li><b>union_of_primitives</b> </li>
@@ -158,45 +133,45 @@ public interface NXspatial_filter extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public NXcg_ellipsoid_set getCg_ellipsoid_set();
+	public NXcg_hexahedron getCg_hexahedron();
 
 	/**
 	 *
-	 * @param cg_ellipsoid_setGroup the cg_ellipsoid_setGroup
+	 * @param cg_hexahedronGroup the cg_hexahedronGroup
 	 */
-	public void setCg_ellipsoid_set(NXcg_ellipsoid_set cg_ellipsoid_setGroup);
+	public void setCg_hexahedron(NXcg_hexahedron cg_hexahedronGroup);
 
 	/**
-	 * Get a NXcg_ellipsoid_set node by name:
+	 * Get a NXcg_hexahedron node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
 	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXcg_ellipsoid_set for that node.
+	 * @return  a map from node names to the NXcg_hexahedron for that node.
 	 */
-	public NXcg_ellipsoid_set getCg_ellipsoid_set(String name);
+	public NXcg_hexahedron getCg_hexahedron(String name);
 
 	/**
-	 * Set a NXcg_ellipsoid_set node by name:
+	 * Set a NXcg_hexahedron node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
 	 * @param name the name of the node
-	 * @param cg_ellipsoid_set the value to set
+	 * @param cg_hexahedron the value to set
 	 */
-	public void setCg_ellipsoid_set(String name, NXcg_ellipsoid_set cg_ellipsoid_set);
+	public void setCg_hexahedron(String name, NXcg_hexahedron cg_hexahedron);
 
 	/**
-	 * Get all NXcg_ellipsoid_set nodes:
+	 * Get all NXcg_hexahedron nodes:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
-	 * @return  a map from node names to the NXcg_ellipsoid_set for that node.
+	 * @return  a map from node names to the NXcg_hexahedron for that node.
 	 */
-	public Map<String, NXcg_ellipsoid_set> getAllCg_ellipsoid_set();
+	public Map<String, NXcg_hexahedron> getAllCg_hexahedron();
 
 	/**
 	 * Set multiple child nodes of a particular type.
@@ -204,55 +179,55 @@ public interface NXspatial_filter extends NXobject {
 	 * <li></li>
 	 * </ul>
 	 *
-	 * @param cg_ellipsoid_set the child nodes to add
+	 * @param cg_hexahedron the child nodes to add
 	 */
 
-	public void setAllCg_ellipsoid_set(Map<String, NXcg_ellipsoid_set> cg_ellipsoid_set);
+	public void setAllCg_hexahedron(Map<String, NXcg_hexahedron> cg_hexahedron);
 
 
 	/**
 	 *
 	 * @return  the value.
 	 */
-	public NXcg_cylinder_set getCg_cylinder_set();
+	public NXcg_cylinder getCg_cylinder();
 
 	/**
 	 *
-	 * @param cg_cylinder_setGroup the cg_cylinder_setGroup
+	 * @param cg_cylinderGroup the cg_cylinderGroup
 	 */
-	public void setCg_cylinder_set(NXcg_cylinder_set cg_cylinder_setGroup);
+	public void setCg_cylinder(NXcg_cylinder cg_cylinderGroup);
 
 	/**
-	 * Get a NXcg_cylinder_set node by name:
+	 * Get a NXcg_cylinder node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
 	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXcg_cylinder_set for that node.
+	 * @return  a map from node names to the NXcg_cylinder for that node.
 	 */
-	public NXcg_cylinder_set getCg_cylinder_set(String name);
+	public NXcg_cylinder getCg_cylinder(String name);
 
 	/**
-	 * Set a NXcg_cylinder_set node by name:
+	 * Set a NXcg_cylinder node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
 	 * @param name the name of the node
-	 * @param cg_cylinder_set the value to set
+	 * @param cg_cylinder the value to set
 	 */
-	public void setCg_cylinder_set(String name, NXcg_cylinder_set cg_cylinder_set);
+	public void setCg_cylinder(String name, NXcg_cylinder cg_cylinder);
 
 	/**
-	 * Get all NXcg_cylinder_set nodes:
+	 * Get all NXcg_cylinder nodes:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
-	 * @return  a map from node names to the NXcg_cylinder_set for that node.
+	 * @return  a map from node names to the NXcg_cylinder for that node.
 	 */
-	public Map<String, NXcg_cylinder_set> getAllCg_cylinder_set();
+	public Map<String, NXcg_cylinder> getAllCg_cylinder();
 
 	/**
 	 * Set multiple child nodes of a particular type.
@@ -260,55 +235,55 @@ public interface NXspatial_filter extends NXobject {
 	 * <li></li>
 	 * </ul>
 	 *
-	 * @param cg_cylinder_set the child nodes to add
+	 * @param cg_cylinder the child nodes to add
 	 */
 
-	public void setAllCg_cylinder_set(Map<String, NXcg_cylinder_set> cg_cylinder_set);
+	public void setAllCg_cylinder(Map<String, NXcg_cylinder> cg_cylinder);
 
 
 	/**
 	 *
 	 * @return  the value.
 	 */
-	public NXcg_hexahedron_set getCg_hexahedron_set();
+	public NXcg_ellipsoid getCg_ellipsoid();
 
 	/**
 	 *
-	 * @param cg_hexahedron_setGroup the cg_hexahedron_setGroup
+	 * @param cg_ellipsoidGroup the cg_ellipsoidGroup
 	 */
-	public void setCg_hexahedron_set(NXcg_hexahedron_set cg_hexahedron_setGroup);
+	public void setCg_ellipsoid(NXcg_ellipsoid cg_ellipsoidGroup);
 
 	/**
-	 * Get a NXcg_hexahedron_set node by name:
+	 * Get a NXcg_ellipsoid node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
 	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXcg_hexahedron_set for that node.
+	 * @return  a map from node names to the NXcg_ellipsoid for that node.
 	 */
-	public NXcg_hexahedron_set getCg_hexahedron_set(String name);
+	public NXcg_ellipsoid getCg_ellipsoid(String name);
 
 	/**
-	 * Set a NXcg_hexahedron_set node by name:
+	 * Set a NXcg_ellipsoid node by name:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
 	 * @param name the name of the node
-	 * @param cg_hexahedron_set the value to set
+	 * @param cg_ellipsoid the value to set
 	 */
-	public void setCg_hexahedron_set(String name, NXcg_hexahedron_set cg_hexahedron_set);
+	public void setCg_ellipsoid(String name, NXcg_ellipsoid cg_ellipsoid);
 
 	/**
-	 * Get all NXcg_hexahedron_set nodes:
+	 * Get all NXcg_ellipsoid nodes:
 	 * <ul>
 	 * <li></li>
 	 * </ul>
 	 *
-	 * @return  a map from node names to the NXcg_hexahedron_set for that node.
+	 * @return  a map from node names to the NXcg_ellipsoid for that node.
 	 */
-	public Map<String, NXcg_hexahedron_set> getAllCg_hexahedron_set();
+	public Map<String, NXcg_ellipsoid> getAllCg_ellipsoid();
 
 	/**
 	 * Set multiple child nodes of a particular type.
@@ -316,10 +291,66 @@ public interface NXspatial_filter extends NXobject {
 	 * <li></li>
 	 * </ul>
 	 *
-	 * @param cg_hexahedron_set the child nodes to add
+	 * @param cg_ellipsoid the child nodes to add
 	 */
 
-	public void setAllCg_hexahedron_set(Map<String, NXcg_hexahedron_set> cg_hexahedron_set);
+	public void setAllCg_ellipsoid(Map<String, NXcg_ellipsoid> cg_ellipsoid);
+
+
+	/**
+	 *
+	 * @return  the value.
+	 */
+	public NXcg_polyhedron getCg_polyhedron();
+
+	/**
+	 *
+	 * @param cg_polyhedronGroup the cg_polyhedronGroup
+	 */
+	public void setCg_polyhedron(NXcg_polyhedron cg_polyhedronGroup);
+
+	/**
+	 * Get a NXcg_polyhedron node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXcg_polyhedron for that node.
+	 */
+	public NXcg_polyhedron getCg_polyhedron(String name);
+
+	/**
+	 * Set a NXcg_polyhedron node by name:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param cg_polyhedron the value to set
+	 */
+	public void setCg_polyhedron(String name, NXcg_polyhedron cg_polyhedron);
+
+	/**
+	 * Get all NXcg_polyhedron nodes:
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXcg_polyhedron for that node.
+	 */
+	public Map<String, NXcg_polyhedron> getAllCg_polyhedron();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li></li>
+	 * </ul>
+	 *
+	 * @param cg_polyhedron the child nodes to add
+	 */
+
+	public void setAllCg_polyhedron(Map<String, NXcg_polyhedron> cg_polyhedron);
 
 
 	/**

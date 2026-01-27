@@ -29,6 +29,7 @@ public interface NXenvironment extends NXobject {
 	public static final String NX_TYPE = "type";
 	public static final String NX_DESCRIPTION = "description";
 	public static final String NX_PROGRAM = "program";
+	public static final String NX_VALUE = "value";
 	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
 	 * Apparatus identification code/model number; e.g. OC100 011
@@ -185,6 +186,70 @@ public interface NXenvironment extends NXobject {
 	 * @param positionGroup the positionGroup
 	 */
 	public void setPosition(NXgeometry positionGroup);
+
+	/**
+	 * This is to be used if there is no actuator/sensor that controls/measures
+	 * the environment parameters, but the user would still like to give a value for
+	 * it. An example would be a room temperature experiment where the temperature is
+	 * not actively measured, but rather estimated.
+	 * Note that this method for recording the environment parameters is not advised,
+	 * but using NXsensor and NXactuator is strongly recommended instead.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ANY
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getValue();
+
+	/**
+	 * This is to be used if there is no actuator/sensor that controls/measures
+	 * the environment parameters, but the user would still like to give a value for
+	 * it. An example would be a room temperature experiment where the temperature is
+	 * not actively measured, but rather estimated.
+	 * Note that this method for recording the environment parameters is not advised,
+	 * but using NXsensor and NXactuator is strongly recommended instead.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ANY
+	 * </p>
+	 *
+	 * @param valueDataset the valueDataset
+	 */
+	public DataNode setValue(IDataset valueDataset);
+
+	/**
+	 * This is to be used if there is no actuator/sensor that controls/measures
+	 * the environment parameters, but the user would still like to give a value for
+	 * it. An example would be a room temperature experiment where the temperature is
+	 * not actively measured, but rather estimated.
+	 * Note that this method for recording the environment parameters is not advised,
+	 * but using NXsensor and NXactuator is strongly recommended instead.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ANY
+	 * </p>
+	 *
+	 * @return  the value.
+	 */
+	public Double getValueScalar();
+
+	/**
+	 * This is to be used if there is no actuator/sensor that controls/measures
+	 * the environment parameters, but the user would still like to give a value for
+	 * it. An example would be a room temperature experiment where the temperature is
+	 * not actively measured, but rather estimated.
+	 * Note that this method for recording the environment parameters is not advised,
+	 * but using NXsensor and NXactuator is strongly recommended instead.
+	 * <p>
+	 * <b>Type:</b> NX_FLOAT
+	 * <b>Units:</b> NX_ANY
+	 * </p>
+	 *
+	 * @param value the value
+	 */
+	public DataNode setValueScalar(Double valueValue);
 
 	/**
 	 * NeXus positions components by applying a set of translations and rotations
@@ -389,12 +454,84 @@ public interface NXenvironment extends NXobject {
 
 
 	/**
+	 * Any actuator used to control the environment. This can be linked to an actuator
+	 * defined in an NXinstrument instance.
+	 *
+	 * @return  the value.
+	 */
+	public NXactuator getActuator();
+
+	/**
+	 * Any actuator used to control the environment. This can be linked to an actuator
+	 * defined in an NXinstrument instance.
+	 *
+	 * @param actuatorGroup the actuatorGroup
+	 */
+	public void setActuator(NXactuator actuatorGroup);
+
+	/**
+	 * Get a NXactuator node by name:
+	 * <ul>
+	 * <li>
+	 * Any actuator used to control the environment. This can be linked to an actuator
+	 * defined in an NXinstrument instance.</li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXactuator for that node.
+	 */
+	public NXactuator getActuator(String name);
+
+	/**
+	 * Set a NXactuator node by name:
+	 * <ul>
+	 * <li>
+	 * Any actuator used to control the environment. This can be linked to an actuator
+	 * defined in an NXinstrument instance.</li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param actuator the value to set
+	 */
+	public void setActuator(String name, NXactuator actuator);
+
+	/**
+	 * Get all NXactuator nodes:
+	 * <ul>
+	 * <li>
+	 * Any actuator used to control the environment. This can be linked to an actuator
+	 * defined in an NXinstrument instance.</li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXactuator for that node.
+	 */
+	public Map<String, NXactuator> getAllActuator();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li>
+	 * Any actuator used to control the environment. This can be linked to an actuator
+	 * defined in an NXinstrument instance.</li>
+	 * </ul>
+	 *
+	 * @param actuator the child nodes to add
+	 */
+
+	public void setAllActuator(Map<String, NXactuator> actuator);
+
+
+	/**
+	 * Any sensor used to monitor the environment. This can be linked to a sensor
+	 * defined in an NXinstrument instance.
 	 *
 	 * @return  the value.
 	 */
 	public NXsensor getSensor();
 
 	/**
+	 * Any sensor used to monitor the environment. This can be linked to a sensor
+	 * defined in an NXinstrument instance.
 	 *
 	 * @param sensorGroup the sensorGroup
 	 */
@@ -403,7 +540,9 @@ public interface NXenvironment extends NXobject {
 	/**
 	 * Get a NXsensor node by name:
 	 * <ul>
-	 * <li></li>
+	 * <li>
+	 * Any sensor used to monitor the environment. This can be linked to a sensor
+	 * defined in an NXinstrument instance.</li>
 	 * </ul>
 	 *
 	 * @param name  the name of the node.
@@ -414,7 +553,9 @@ public interface NXenvironment extends NXobject {
 	/**
 	 * Set a NXsensor node by name:
 	 * <ul>
-	 * <li></li>
+	 * <li>
+	 * Any sensor used to monitor the environment. This can be linked to a sensor
+	 * defined in an NXinstrument instance.</li>
 	 * </ul>
 	 *
 	 * @param name the name of the node
@@ -425,7 +566,9 @@ public interface NXenvironment extends NXobject {
 	/**
 	 * Get all NXsensor nodes:
 	 * <ul>
-	 * <li></li>
+	 * <li>
+	 * Any sensor used to monitor the environment. This can be linked to a sensor
+	 * defined in an NXinstrument instance.</li>
 	 * </ul>
 	 *
 	 * @return  a map from node names to the NXsensor for that node.
@@ -435,7 +578,9 @@ public interface NXenvironment extends NXobject {
 	/**
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
-	 * <li></li>
+	 * <li>
+	 * Any sensor used to monitor the environment. This can be linked to a sensor
+	 * defined in an NXinstrument instance.</li>
 	 * </ul>
 	 *
 	 * @param sensor the child nodes to add

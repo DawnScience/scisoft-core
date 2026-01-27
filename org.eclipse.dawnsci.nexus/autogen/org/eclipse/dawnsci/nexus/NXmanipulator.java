@@ -19,22 +19,12 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * Extension of NXpositioner to include fields to describe the use of manipulators
- * in photoemission experiments.
+ * Base class to describe the use of manipulators and sample stages.
  *
  */
-public interface NXmanipulator extends NXobject {
+public interface NXmanipulator extends NXcomponent {
 
-	public static final String NX_NAME = "name";
-	public static final String NX_DESCRIPTION = "description";
 	public static final String NX_TYPE = "type";
-	public static final String NX_CRYOCOOLANT = "cryocoolant";
-	public static final String NX_CRYOSTAT_TEMPERATURE = "cryostat_temperature";
-	public static final String NX_HEATER_POWER = "heater_power";
-	public static final String NX_SAMPLE_TEMPERATURE = "sample_temperature";
-	public static final String NX_DRAIN_CURRENT = "drain_current";
-	public static final String NX_SAMPLE_BIAS = "sample_bias";
-	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
 	 * Name of the manipulator.
 	 * <p>
@@ -156,286 +146,283 @@ public interface NXmanipulator extends NXobject {
 	public DataNode setTypeScalar(String typeValue);
 
 	/**
-	 * Is cryocoolant flowing through the manipulator?
-	 * <p>
-	 * <b>Type:</b> NX_BOOLEAN
-	 * </p>
+	 * Cryostat for cooling the sample (and, potentially, the whole manipulator).
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getCryocoolant();
+	public NXactuator getCryostat();
 
 	/**
-	 * Is cryocoolant flowing through the manipulator?
-	 * <p>
-	 * <b>Type:</b> NX_BOOLEAN
-	 * </p>
+	 * Cryostat for cooling the sample (and, potentially, the whole manipulator).
 	 *
-	 * @param cryocoolantDataset the cryocoolantDataset
+	 * @param cryostatGroup the cryostatGroup
 	 */
-	public DataNode setCryocoolant(IDataset cryocoolantDataset);
+	public void setCryostat(NXactuator cryostatGroup);
+	// Unprocessed group:
 
 	/**
-	 * Is cryocoolant flowing through the manipulator?
-	 * <p>
-	 * <b>Type:</b> NX_BOOLEAN
-	 * </p>
+	 * Temperature sensor measuring the sample temperature.
 	 *
 	 * @return  the value.
 	 */
-	public Boolean getCryocoolantScalar();
+	public NXsensor getTemperature_sensor();
 
 	/**
-	 * Is cryocoolant flowing through the manipulator?
-	 * <p>
-	 * <b>Type:</b> NX_BOOLEAN
-	 * </p>
+	 * Temperature sensor measuring the sample temperature.
 	 *
-	 * @param cryocoolant the cryocoolant
+	 * @param temperature_sensorGroup the temperature_sensorGroup
 	 */
-	public DataNode setCryocoolantScalar(Boolean cryocoolantValue);
+	public void setTemperature_sensor(NXsensor temperature_sensorGroup);
+	// Unprocessed group:value_log
 
 	/**
-	 * Temperature of the cryostat (coldest point)
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_TEMPERATURE
-	 * </p>
+	 * Device to heat the sample.
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getCryostat_temperature();
+	public NXactuator getSample_heater();
 
 	/**
-	 * Temperature of the cryostat (coldest point)
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_TEMPERATURE
-	 * </p>
+	 * Device to heat the sample.
 	 *
-	 * @param cryostat_temperatureDataset the cryostat_temperatureDataset
+	 * @param sample_heaterGroup the sample_heaterGroup
 	 */
-	public DataNode setCryostat_temperature(IDataset cryostat_temperatureDataset);
+	public void setSample_heater(NXactuator sample_heaterGroup);
+	// Unprocessed group:output_heater_power_log
+	// Unprocessed group:
 
 	/**
-	 * Temperature of the cryostat (coldest point)
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_TEMPERATURE
-	 * </p>
+	 * Ammeter measuring the drain current of the sample and sample holder.
 	 *
 	 * @return  the value.
 	 */
-	public Double getCryostat_temperatureScalar();
+	public NXsensor getDrain_current_ammeter();
 
 	/**
-	 * Temperature of the cryostat (coldest point)
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_TEMPERATURE
-	 * </p>
+	 * Ammeter measuring the drain current of the sample and sample holder.
 	 *
-	 * @param cryostat_temperature the cryostat_temperature
+	 * @param drain_current_ammeterGroup the drain_current_ammeterGroup
 	 */
-	public DataNode setCryostat_temperatureScalar(Double cryostat_temperatureValue);
+	public void setDrain_current_ammeter(NXsensor drain_current_ammeterGroup);
+	// Unprocessed group:value_log
 
 	/**
-	 * Power in the heater for temperature control.
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_POWER
-	 * </p>
+	 * Actuator applying a voltage between sample holder and sample.
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getHeater_power();
+	public NXactuator getSample_bias_potentiostat();
 
 	/**
-	 * Power in the heater for temperature control.
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_POWER
-	 * </p>
+	 * Actuator applying a voltage between sample holder and sample.
 	 *
-	 * @param heater_powerDataset the heater_powerDataset
+	 * @param sample_bias_potentiostatGroup the sample_bias_potentiostatGroup
 	 */
-	public DataNode setHeater_power(IDataset heater_powerDataset);
+	public void setSample_bias_potentiostat(NXactuator sample_bias_potentiostatGroup);
+	// Unprocessed group:
 
 	/**
-	 * Power in the heater for temperature control.
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_POWER
-	 * </p>
+	 * Sensor measuring the voltage applied to sample and sample holder.
 	 *
 	 * @return  the value.
 	 */
-	public Double getHeater_powerScalar();
+	public NXsensor getSample_bias_voltmeter();
 
 	/**
-	 * Power in the heater for temperature control.
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_POWER
-	 * </p>
+	 * Sensor measuring the voltage applied to sample and sample holder.
 	 *
-	 * @param heater_power the heater_power
+	 * @param sample_bias_voltmeterGroup the sample_bias_voltmeterGroup
 	 */
-	public DataNode setHeater_powerScalar(Double heater_powerValue);
+	public void setSample_bias_voltmeter(NXsensor sample_bias_voltmeterGroup);
+	// Unprocessed group:value_log
 
 	/**
-	 * Temperature at the closest point to the sample. This field may also be found in
-	 * NXsample if present.
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_TEMPERATURE
-	 * </p>
+	 * Any additional actuator on the manipulator used to control an external
+	 * condition.
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getSample_temperature();
+	public NXactuator getActuator();
 
 	/**
-	 * Temperature at the closest point to the sample. This field may also be found in
-	 * NXsample if present.
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_TEMPERATURE
-	 * </p>
+	 * Any additional actuator on the manipulator used to control an external
+	 * condition.
 	 *
-	 * @param sample_temperatureDataset the sample_temperatureDataset
+	 * @param actuatorGroup the actuatorGroup
 	 */
-	public DataNode setSample_temperature(IDataset sample_temperatureDataset);
+	public void setActuator(NXactuator actuatorGroup);
 
 	/**
-	 * Temperature at the closest point to the sample. This field may also be found in
-	 * NXsample if present.
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_TEMPERATURE
-	 * </p>
+	 * Get a NXactuator node by name:
+	 * <ul>
+	 * <li>
+	 * Cryostat for cooling the sample (and, potentially, the whole manipulator).</li>
+	 * <li>
+	 * Device to heat the sample.</li>
+	 * <li>
+	 * Actuator applying a voltage between sample holder and sample.</li>
+	 * <li>
+	 * Any additional actuator on the manipulator used to control an external
+	 * condition.</li>
+	 * </ul>
 	 *
-	 * @return  the value.
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXactuator for that node.
 	 */
-	public Double getSample_temperatureScalar();
+	public NXactuator getActuator(String name);
 
 	/**
-	 * Temperature at the closest point to the sample. This field may also be found in
-	 * NXsample if present.
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_TEMPERATURE
-	 * </p>
+	 * Set a NXactuator node by name:
+	 * <ul>
+	 * <li>
+	 * Cryostat for cooling the sample (and, potentially, the whole manipulator).</li>
+	 * <li>
+	 * Device to heat the sample.</li>
+	 * <li>
+	 * Actuator applying a voltage between sample holder and sample.</li>
+	 * <li>
+	 * Any additional actuator on the manipulator used to control an external
+	 * condition.</li>
+	 * </ul>
 	 *
-	 * @param sample_temperature the sample_temperature
+	 * @param name the name of the node
+	 * @param actuator the value to set
 	 */
-	public DataNode setSample_temperatureScalar(Double sample_temperatureValue);
+	public void setActuator(String name, NXactuator actuator);
 
 	/**
-	 * Current to neutralize the photoemission current. This field may also be found in
-	 * NXsample if present.
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_CURRENT
-	 * </p>
+	 * Get all NXactuator nodes:
+	 * <ul>
+	 * <li>
+	 * Cryostat for cooling the sample (and, potentially, the whole manipulator).</li>
+	 * <li>
+	 * Device to heat the sample.</li>
+	 * <li>
+	 * Actuator applying a voltage between sample holder and sample.</li>
+	 * <li>
+	 * Any additional actuator on the manipulator used to control an external
+	 * condition.</li>
+	 * </ul>
 	 *
-	 * @return  the value.
+	 * @return  a map from node names to the NXactuator for that node.
 	 */
-	public Dataset getDrain_current();
+	public Map<String, NXactuator> getAllActuator();
 
 	/**
-	 * Current to neutralize the photoemission current. This field may also be found in
-	 * NXsample if present.
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_CURRENT
-	 * </p>
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li>
+	 * Cryostat for cooling the sample (and, potentially, the whole manipulator).</li>
+	 * <li>
+	 * Device to heat the sample.</li>
+	 * <li>
+	 * Actuator applying a voltage between sample holder and sample.</li>
+	 * <li>
+	 * Any additional actuator on the manipulator used to control an external
+	 * condition.</li>
+	 * </ul>
 	 *
-	 * @param drain_currentDataset the drain_currentDataset
+	 * @param actuator the child nodes to add
 	 */
-	public DataNode setDrain_current(IDataset drain_currentDataset);
+
+	public void setAllActuator(Map<String, NXactuator> actuator);
+
 
 	/**
-	 * Current to neutralize the photoemission current. This field may also be found in
-	 * NXsample if present.
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_CURRENT
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Double getDrain_currentScalar();
-
-	/**
-	 * Current to neutralize the photoemission current. This field may also be found in
-	 * NXsample if present.
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_CURRENT
-	 * </p>
-	 *
-	 * @param drain_current the drain_current
-	 */
-	public DataNode setDrain_currentScalar(Double drain_currentValue);
-
-	/**
-	 * Possible bias of the sample with trespect to analyser ground. This field may
-	 * also be found in NXsample if present.
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_CURRENT
-	 * </p>
+	 * Any additional sensors on the manipulator used to monitor an external condition.
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getSample_bias();
+	public NXsensor getSensor();
 
 	/**
-	 * Possible bias of the sample with trespect to analyser ground. This field may
-	 * also be found in NXsample if present.
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_CURRENT
-	 * </p>
+	 * Any additional sensors on the manipulator used to monitor an external condition.
 	 *
-	 * @param sample_biasDataset the sample_biasDataset
+	 * @param sensorGroup the sensorGroup
 	 */
-	public DataNode setSample_bias(IDataset sample_biasDataset);
+	public void setSensor(NXsensor sensorGroup);
 
 	/**
-	 * Possible bias of the sample with trespect to analyser ground. This field may
-	 * also be found in NXsample if present.
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_CURRENT
-	 * </p>
+	 * Get a NXsensor node by name:
+	 * <ul>
+	 * <li>
+	 * Temperature sensor measuring the sample temperature.</li>
+	 * <li>
+	 * Ammeter measuring the drain current of the sample and sample holder.</li>
+	 * <li>
+	 * Sensor measuring the voltage applied to sample and sample holder.</li>
+	 * <li>
+	 * Any additional sensors on the manipulator used to monitor an external condition.</li>
+	 * </ul>
 	 *
-	 * @return  the value.
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXsensor for that node.
 	 */
-	public Double getSample_biasScalar();
+	public NXsensor getSensor(String name);
 
 	/**
-	 * Possible bias of the sample with trespect to analyser ground. This field may
-	 * also be found in NXsample if present.
-	 * <p>
-	 * <b>Type:</b> NX_FLOAT
-	 * <b>Units:</b> NX_CURRENT
-	 * </p>
+	 * Set a NXsensor node by name:
+	 * <ul>
+	 * <li>
+	 * Temperature sensor measuring the sample temperature.</li>
+	 * <li>
+	 * Ammeter measuring the drain current of the sample and sample holder.</li>
+	 * <li>
+	 * Sensor measuring the voltage applied to sample and sample holder.</li>
+	 * <li>
+	 * Any additional sensors on the manipulator used to monitor an external condition.</li>
+	 * </ul>
 	 *
-	 * @param sample_bias the sample_bias
+	 * @param name the name of the node
+	 * @param sensor the value to set
 	 */
-	public DataNode setSample_biasScalar(Double sample_biasValue);
+	public void setSensor(String name, NXsensor sensor);
 
 	/**
-	 * Class to describe the motors that are used in the manipulator
+	 * Get all NXsensor nodes:
+	 * <ul>
+	 * <li>
+	 * Temperature sensor measuring the sample temperature.</li>
+	 * <li>
+	 * Ammeter measuring the drain current of the sample and sample holder.</li>
+	 * <li>
+	 * Sensor measuring the voltage applied to sample and sample holder.</li>
+	 * <li>
+	 * Any additional sensors on the manipulator used to monitor an external condition.</li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXsensor for that node.
+	 */
+	public Map<String, NXsensor> getAllSensor();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li>
+	 * Temperature sensor measuring the sample temperature.</li>
+	 * <li>
+	 * Ammeter measuring the drain current of the sample and sample holder.</li>
+	 * <li>
+	 * Sensor measuring the voltage applied to sample and sample holder.</li>
+	 * <li>
+	 * Any additional sensors on the manipulator used to monitor an external condition.</li>
+	 * </ul>
+	 *
+	 * @param sensor the child nodes to add
+	 */
+
+	public void setAllSensor(Map<String, NXsensor> sensor);
+
+
+	/**
+	 * Class to describe the motors that are used in the manipulator.
 	 *
 	 * @return  the value.
 	 */
 	public NXpositioner getPositioner();
 
 	/**
-	 * Class to describe the motors that are used in the manipulator
+	 * Class to describe the motors that are used in the manipulator.
 	 *
 	 * @param positionerGroup the positionerGroup
 	 */
@@ -445,7 +432,7 @@ public interface NXmanipulator extends NXobject {
 	 * Get a NXpositioner node by name:
 	 * <ul>
 	 * <li>
-	 * Class to describe the motors that are used in the manipulator</li>
+	 * Class to describe the motors that are used in the manipulator.</li>
 	 * </ul>
 	 *
 	 * @param name  the name of the node.
@@ -457,7 +444,7 @@ public interface NXmanipulator extends NXobject {
 	 * Set a NXpositioner node by name:
 	 * <ul>
 	 * <li>
-	 * Class to describe the motors that are used in the manipulator</li>
+	 * Class to describe the motors that are used in the manipulator.</li>
 	 * </ul>
 	 *
 	 * @param name the name of the node
@@ -469,7 +456,7 @@ public interface NXmanipulator extends NXobject {
 	 * Get all NXpositioner nodes:
 	 * <ul>
 	 * <li>
-	 * Class to describe the motors that are used in the manipulator</li>
+	 * Class to describe the motors that are used in the manipulator.</li>
 	 * </ul>
 	 *
 	 * @return  a map from node names to the NXpositioner for that node.
@@ -480,161 +467,13 @@ public interface NXmanipulator extends NXobject {
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
-	 * Class to describe the motors that are used in the manipulator</li>
+	 * Class to describe the motors that are used in the manipulator.</li>
 	 * </ul>
 	 *
 	 * @param positioner the child nodes to add
 	 */
 
 	public void setAllPositioner(Map<String, NXpositioner> positioner);
-
-
-	/**
-	 * Refers to the last transformation specifying the positon of the manipulator in
-	 * the NXtransformations chain.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Dataset getDepends_on();
-
-	/**
-	 * Refers to the last transformation specifying the positon of the manipulator in
-	 * the NXtransformations chain.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 *
-	 * @param depends_onDataset the depends_onDataset
-	 */
-	public DataNode setDepends_on(IDataset depends_onDataset);
-
-	/**
-	 * Refers to the last transformation specifying the positon of the manipulator in
-	 * the NXtransformations chain.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public String getDepends_onScalar();
-
-	/**
-	 * Refers to the last transformation specifying the positon of the manipulator in
-	 * the NXtransformations chain.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 *
-	 * @param depends_on the depends_on
-	 */
-	public DataNode setDepends_onScalar(String depends_onValue);
-
-	/**
-	 * Collection of axis-based translations and rotations to describe the location and
-	 * geometry of the manipulator as a component in the instrument. Conventions from
-	 * the NXtransformations base class are used. In principle, the McStas coordinate
-	 * system is used. The first transformation has to point either to another
-	 * component of the system or . (for pointing to the reference frame) to relate it
-	 * relative to the experimental setup. Typically, the components of a system should
-	 * all be related relative to each other and only one component should relate to
-	 * the reference coordinate system.
-	 *
-	 * @return  the value.
-	 */
-	public NXtransformations getTransformations();
-
-	/**
-	 * Collection of axis-based translations and rotations to describe the location and
-	 * geometry of the manipulator as a component in the instrument. Conventions from
-	 * the NXtransformations base class are used. In principle, the McStas coordinate
-	 * system is used. The first transformation has to point either to another
-	 * component of the system or . (for pointing to the reference frame) to relate it
-	 * relative to the experimental setup. Typically, the components of a system should
-	 * all be related relative to each other and only one component should relate to
-	 * the reference coordinate system.
-	 *
-	 * @param transformationsGroup the transformationsGroup
-	 */
-	public void setTransformations(NXtransformations transformationsGroup);
-
-	/**
-	 * Get a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * Collection of axis-based translations and rotations to describe the location and
-	 * geometry of the manipulator as a component in the instrument. Conventions from
-	 * the NXtransformations base class are used. In principle, the McStas coordinate
-	 * system is used. The first transformation has to point either to another
-	 * component of the system or . (for pointing to the reference frame) to relate it
-	 * relative to the experimental setup. Typically, the components of a system should
-	 * all be related relative to each other and only one component should relate to
-	 * the reference coordinate system.</li>
-	 * </ul>
-	 *
-	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public NXtransformations getTransformations(String name);
-
-	/**
-	 * Set a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * Collection of axis-based translations and rotations to describe the location and
-	 * geometry of the manipulator as a component in the instrument. Conventions from
-	 * the NXtransformations base class are used. In principle, the McStas coordinate
-	 * system is used. The first transformation has to point either to another
-	 * component of the system or . (for pointing to the reference frame) to relate it
-	 * relative to the experimental setup. Typically, the components of a system should
-	 * all be related relative to each other and only one component should relate to
-	 * the reference coordinate system.</li>
-	 * </ul>
-	 *
-	 * @param name the name of the node
-	 * @param transformations the value to set
-	 */
-	public void setTransformations(String name, NXtransformations transformations);
-
-	/**
-	 * Get all NXtransformations nodes:
-	 * <ul>
-	 * <li>
-	 * Collection of axis-based translations and rotations to describe the location and
-	 * geometry of the manipulator as a component in the instrument. Conventions from
-	 * the NXtransformations base class are used. In principle, the McStas coordinate
-	 * system is used. The first transformation has to point either to another
-	 * component of the system or . (for pointing to the reference frame) to relate it
-	 * relative to the experimental setup. Typically, the components of a system should
-	 * all be related relative to each other and only one component should relate to
-	 * the reference coordinate system.</li>
-	 * </ul>
-	 *
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public Map<String, NXtransformations> getAllTransformations();
-
-	/**
-	 * Set multiple child nodes of a particular type.
-	 * <ul>
-	 * <li>
-	 * Collection of axis-based translations and rotations to describe the location and
-	 * geometry of the manipulator as a component in the instrument. Conventions from
-	 * the NXtransformations base class are used. In principle, the McStas coordinate
-	 * system is used. The first transformation has to point either to another
-	 * component of the system or . (for pointing to the reference frame) to relate it
-	 * relative to the experimental setup. Typically, the components of a system should
-	 * all be related relative to each other and only one component should relate to
-	 * the reference coordinate system.</li>
-	 * </ul>
-	 *
-	 * @param transformations the child nodes to add
-	 */
-
-	public void setAllTransformations(Map<String, NXtransformations> transformations);
 
 
 }

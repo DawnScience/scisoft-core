@@ -189,7 +189,8 @@ public class NXdiamondValidator extends AbstractNexusValidator implements NexusA
 			validateFieldType("type", type, NX_CHAR);
 			validateFieldEnumeration("type", type,
 					"undulator",
-					"wiggler");
+					"wiggler",
+					"wavelength_shifter");
 		}
 
 		// validate field 'gap' of type NX_FLOAT.

@@ -202,14 +202,4 @@ public class NXgeometryImpl extends NXobjectImpl implements NXgeometry {
 		return setField(NX_COMPONENT_INDEX, component_indexValue);
 	}
 
-	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
-	}
-
-	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
-	}
-
 }

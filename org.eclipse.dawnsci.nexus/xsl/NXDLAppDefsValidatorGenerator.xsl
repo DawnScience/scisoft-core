@@ -33,10 +33,10 @@
 <xsl:output name="text-format" method="text" omit-xml-declaration="yes" indent="no"/>
 
 <xsl:variable name="base-classes" select="collection($nxdlDefinitionsPath || '/base_classes?select=*.nxdl.xml')/nx:definition"/>
-<xsl:variable name="diamond-app-def" select="./NXdiamond.nxdl.xml"/>
 <xsl:variable name="nexus-application-definitions" select="collection($nxdlDefinitionsPath || '/applications?select=*.nxdl.xml')/nx:definition"/>
+<xsl:variable name="nexus-contributed-application-definitions" select="collection($nxdlDefinitionsPath || '/contributed_definitions?select=*.nxdl.xml')/nx:definition"/>
 <xsl:variable name="extra-application-definitions" select="collection($extraDefinitionsPath || '/?select=*.nxdl.xml')/nx:definition"/>
-<xsl:variable name="application-definitions" select="$nexus-application-definitions | $extra-application-definitions"/>
+<xsl:variable name="application-definitions" select="$nexus-application-definitions | $nexus-contributed-application-definitions | $extra-application-definitions"/>
 
 <xsl:variable name="fileHeaderComment">/*-
  *******************************************************************************
@@ -63,6 +63,7 @@
 
 <!-- Template matches a definition in an NXDL application definition file. -->
 <xsl:template match="nx:definition">
+	<xsl:if test="@category='application'">
 
 	<!-- The 'NXroot' base class -->
 	<xsl:variable name="baseClass" select="$base-classes[@name = 'NXroot']"/>
@@ -146,6 +147,8 @@
 		<xsl:text>}&#10;</xsl:text> 
 
 	</xsl:result-document>
+
+	</xsl:if>
 </xsl:template>
 
 <!-- Template matches a group to add the invocation of the group's validate method. -->
@@ -217,7 +220,15 @@
 			</xsl:when>
 			<xsl:when test="@name">
 				<xsl:value-of select="$parentGroupVariableName"/>
-				<xsl:text>.get</xsl:text><xsl:value-of select="dawnsci:capitalise-first(lower-case($groupNameInBaseClass))"/>
+				<xsl:text>.get</xsl:text>
+				<xsl:variable name="className" select="/nx:definition/@name"/>
+				<xsl:choose>
+					<!-- XXX: Workaround NXProgram clash -->
+					<xsl:when test="starts-with($className,'NXapm') and (@name='programID')">NXProgram</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="dawnsci:capitalise-first(lower-case($groupNameInBaseClass))"/>
+					</xsl:otherwise>
+				</xsl:choose>
 				<xsl:text>("</xsl:text><xsl:value-of select="@name"/><xsl:text>")</xsl:text>
 			</xsl:when>
 			<xsl:otherwise>
@@ -266,8 +277,17 @@
 		<xsl:value-of select="$group"/><xsl:text> = </xsl:text>
 		<xsl:text>getFirstGroupOrNull(</xsl:text>
 		<xsl:value-of select="$parentGroupVariableName"/>
-		<xsl:text>.getAll</xsl:text><xsl:value-of select="dawnsci:capitalise-first($groupNameInBaseClass)"/>
-		<xsl:text>());&#10;</xsl:text>
+		<xsl:choose>
+			<xsl:when test="not($baseClassGroupDef)">
+				<xsl:text>.getChildren(</xsl:text>
+				<xsl:value-of select="@type"/>
+				<xsl:text>.class)</xsl:text>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>.getAll</xsl:text><xsl:value-of select="dawnsci:capitalise-first($groupNameInBaseClass) || '()'"/>
+			</xsl:otherwise>
+		</xsl:choose>
+		<xsl:text>);&#10;</xsl:text>
 	</xsl:if>
 	
 	<!-- Null test for optional groups -->
@@ -590,7 +610,16 @@
 		<xsl:value-of select="dawnsci:tabs($tabLevel)"/>
 		<xsl:text>validateFieldUnits("</xsl:text><xsl:value-of select="@name"/>
 		<xsl:text>", group.getDataNode("</xsl:text><xsl:value-of select="@name"/>
-		<xsl:text>"), </xsl:text><xsl:value-of select="$units"/><xsl:text>);&#10;</xsl:text>
+		<xsl:text>"), </xsl:text>
+		<xsl:choose>
+			<xsl:when test="starts-with($units, 'NX_')">
+				<xsl:value-of select="$units"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>"</xsl:text><xsl:value-of select="$units"/><xsl:text>"</xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
+		<xsl:text>);&#10;</xsl:text>
 	</xsl:if>
 </xsl:template>
 
@@ -769,11 +798,13 @@ public enum NexusApplicationDefinition {
 
 <!-- Template to produce the enum value for a nexus application definition -->
 <xsl:template mode="appdef-enum" match="nx:definition">
-	<xsl:variable name="validatorClassName" select="@name || 'Validator'"/>
-	<xsl:text>	</xsl:text><xsl:value-of select="dawnsci:appdef-enum-name(@name)"/>
-	<xsl:text>("</xsl:text><xsl:value-of select="@name"/><xsl:text>", </xsl:text>
-	<xsl:value-of select="$validatorClassName"/><xsl:text>.class)</xsl:text>
-	<xsl:value-of select="if (position()=last()) then ';' else ','"/><xsl:text>&#10;</xsl:text>
+	<xsl:if test="@category='application'">
+		<xsl:variable name="validatorClassName" select="@name || 'Validator'"/>
+		<xsl:text>	</xsl:text><xsl:value-of select="dawnsci:appdef-enum-name(@name)"/>
+		<xsl:text>("</xsl:text><xsl:value-of select="@name"/><xsl:text>", </xsl:text>
+		<xsl:value-of select="$validatorClassName"/><xsl:text>.class)</xsl:text>
+		<xsl:value-of select="if (position()=last()) then ';' else ','"/><xsl:text>&#10;</xsl:text>
+	</xsl:if>
 </xsl:template>
 
 <!-- A function to insert n tab characters into the output document. -->

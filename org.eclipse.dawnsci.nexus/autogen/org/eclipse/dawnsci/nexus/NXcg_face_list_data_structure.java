@@ -17,24 +17,17 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * Computational geometry description of geometric primitives via a face and edge list.
- * Primitives must not be degenerated or self-intersect.
- * Such descriptions of primitives are frequently used for triangles and polyhedra
- * to store them on disk for visualization purposes. Although storage efficient,
- * such a description is not well suited for topological and neighborhood queries
- * of especially meshes that are built from primitives.
- * In this case, scientists may need a different view on the primitives which
- * is better represented for instance with a half_edge_data_structure instance.
- * The reason to split thus the geometric description of primitives, sets, and
- * specifically meshes of primitives is to keep the structure simple enough for
- * users without these computational geometry demands but also enable those more
- * computational geometry savy users the storing of the additionally relevant
- * data structure.
- * This is beneficial and superior over NXoff_geometry because for instance a
- * half_edge_data_structure instance can be immediately use to reinstantiate
- * the set without having to recompute the half_edge_structure from the vertex
- * and face-list based representation and thus offer a more efficient route
- * to serve applications where topological and graph-based operations are key.
+ * Computational geometry of primitives via a face-and-edge-list data structure.
+ * Primitives must neither be degenerated nor self-intersect but can have different
+ * properties. A face-and-edge-list-based description of primitives is
+ * frequently used for triangles and polyhedra to store them on disk for
+ * visualization purposes (see OFF, PLY, VTK, or STL file formats).
+ * Although this description is storage efficient, it is not well-suited for
+ * topological analyses. In this case using a half-edge data structure is
+ * an alternative.
+ * Having an own base class for the data structure how primitives are stored is
+ * useful to embrace both users with small or detailed specification demands.
+ * Indices can be used as identifier and thus names for individual instances.
  * <p><b>Symbols:</b>
  * The symbols used in the schema to specify e.g. dimensions of arrays.<ul>
  * <li><b>d</b>
@@ -46,23 +39,20 @@ import org.eclipse.january.dataset.Dataset;
  * <li><b>n_f</b>
  * The number of faces.</li>
  * <li><b>n_total</b>
- * The total number of vertices of all faces. Faces are polygons.</li>
- * <li><b>n_weinberg</b>
- * The total number of Weinberg vector values of all faces.</li></ul></p>
+ * The total number of vertices of all faces. Faces are polygons.</li></ul></p>
  *
  */
-public interface NXcg_face_list_data_structure extends NXobject {
+public interface NXcg_face_list_data_structure extends NXcg_primitive {
 
-	public static final String NX_DIMENSIONALITY = "dimensionality";
 	public static final String NX_NUMBER_OF_VERTICES = "number_of_vertices";
 	public static final String NX_NUMBER_OF_EDGES = "number_of_edges";
 	public static final String NX_NUMBER_OF_FACES = "number_of_faces";
-	public static final String NX_VERTEX_IDENTIFIER_OFFSET = "vertex_identifier_offset";
-	public static final String NX_EDGE_IDENTIFIER_OFFSET = "edge_identifier_offset";
-	public static final String NX_FACE_IDENTIFIER_OFFSET = "face_identifier_offset";
-	public static final String NX_VERTEX_IDENTIFIER = "vertex_identifier";
-	public static final String NX_EDGE_IDENTIFIER = "edge_identifier";
-	public static final String NX_FACE_IDENTIFIER = "face_identifier";
+	public static final String NX_INDEX_OFFSET_VERTEX = "index_offset_vertex";
+	public static final String NX_INDEX_OFFSET_EDGE = "index_offset_edge";
+	public static final String NX_INDEX_OFFSET_FACE = "index_offset_face";
+	public static final String NX_INDICES_VERTEX = "indices_vertex";
+	public static final String NX_INDICES_EDGE = "indices_edge";
+	public static final String NX_INDICES_FACE = "indices_face";
 	public static final String NX_VERTICES = "vertices";
 	public static final String NX_EDGES = "edges";
 	public static final String NX_FACES = "faces";
@@ -71,55 +61,11 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public static final String NX_FACES_ARE_UNIQUE = "faces_are_unique";
 	public static final String NX_WINDING_ORDER = "winding_order";
 	/**
-	 * Dimensionality.
+	 * Number of vertices for each face.
+	 * Each entry represents the total number of vertices for that face,
+	 * irrespectively whether vertices are shared among faces or not.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
-	 * <b>Units:</b> NX_UNITLESS
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Dataset getDimensionality();
-
-	/**
-	 * Dimensionality.
-	 * <p>
-	 * <b>Type:</b> NX_POSINT
-	 * <b>Units:</b> NX_UNITLESS
-	 * </p>
-	 *
-	 * @param dimensionalityDataset the dimensionalityDataset
-	 */
-	public DataNode setDimensionality(IDataset dimensionalityDataset);
-
-	/**
-	 * Dimensionality.
-	 * <p>
-	 * <b>Type:</b> NX_POSINT
-	 * <b>Units:</b> NX_UNITLESS
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Long getDimensionalityScalar();
-
-	/**
-	 * Dimensionality.
-	 * <p>
-	 * <b>Type:</b> NX_POSINT
-	 * <b>Units:</b> NX_UNITLESS
-	 * </p>
-	 *
-	 * @param dimensionality the dimensionality
-	 */
-	public DataNode setDimensionalityScalar(Long dimensionalityValue);
-
-	/**
-	 * Array which specifies of how many vertices each face is built.
-	 * Each entry represent the total number of vertices for face, irrespectively
-	 * whether vertices are shared among faces/are unique or not.
-	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_f;
 	 * </p>
@@ -129,11 +75,11 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public Dataset getNumber_of_vertices();
 
 	/**
-	 * Array which specifies of how many vertices each face is built.
-	 * Each entry represent the total number of vertices for face, irrespectively
-	 * whether vertices are shared among faces/are unique or not.
+	 * Number of vertices for each face.
+	 * Each entry represents the total number of vertices for that face,
+	 * irrespectively whether vertices are shared among faces or not.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_f;
 	 * </p>
@@ -143,11 +89,11 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public DataNode setNumber_of_vertices(IDataset number_of_verticesDataset);
 
 	/**
-	 * Array which specifies of how many vertices each face is built.
-	 * Each entry represent the total number of vertices for face, irrespectively
-	 * whether vertices are shared among faces/are unique or not.
+	 * Number of vertices for each face.
+	 * Each entry represents the total number of vertices for that face,
+	 * irrespectively whether vertices are shared among faces or not.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_f;
 	 * </p>
@@ -157,11 +103,11 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public Long getNumber_of_verticesScalar();
 
 	/**
-	 * Array which specifies of how many vertices each face is built.
-	 * Each entry represent the total number of vertices for face, irrespectively
-	 * whether vertices are shared among faces/are unique or not.
+	 * Number of vertices for each face.
+	 * Each entry represents the total number of vertices for that face,
+	 * irrespectively whether vertices are shared among faces or not.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_f;
 	 * </p>
@@ -171,10 +117,13 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public DataNode setNumber_of_verticesScalar(Long number_of_verticesValue);
 
 	/**
-	 * Number of edges.
+	 * Number of edges for each face.
+	 * Each entry represents the total number of edges for that face,
+	 * irrespectively whether edges are shared across faces or not.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
+	 * <b>Dimensions:</b> 1: n_e;
 	 * </p>
 	 *
 	 * @return  the value.
@@ -182,10 +131,13 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public Dataset getNumber_of_edges();
 
 	/**
-	 * Number of edges.
+	 * Number of edges for each face.
+	 * Each entry represents the total number of edges for that face,
+	 * irrespectively whether edges are shared across faces or not.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
+	 * <b>Dimensions:</b> 1: n_e;
 	 * </p>
 	 *
 	 * @param number_of_edgesDataset the number_of_edgesDataset
@@ -193,10 +145,13 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public DataNode setNumber_of_edges(IDataset number_of_edgesDataset);
 
 	/**
-	 * Number of edges.
+	 * Number of edges for each face.
+	 * Each entry represents the total number of edges for that face,
+	 * irrespectively whether edges are shared across faces or not.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
+	 * <b>Dimensions:</b> 1: n_e;
 	 * </p>
 	 *
 	 * @return  the value.
@@ -204,10 +159,13 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public Long getNumber_of_edgesScalar();
 
 	/**
-	 * Number of edges.
+	 * Number of edges for each face.
+	 * Each entry represents the total number of edges for that face,
+	 * irrespectively whether edges are shared across faces or not.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
+	 * <b>Dimensions:</b> 1: n_e;
 	 * </p>
 	 *
 	 * @param number_of_edges the number_of_edges
@@ -215,9 +173,9 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public DataNode setNumber_of_edgesScalar(Long number_of_edgesValue);
 
 	/**
-	 * Number of faces.
+	 * Number of faces of the primitives.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
@@ -226,9 +184,9 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public Dataset getNumber_of_faces();
 
 	/**
-	 * Number of faces.
+	 * Number of faces of the primitives.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
@@ -237,9 +195,9 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public DataNode setNumber_of_faces(IDataset number_of_facesDataset);
 
 	/**
-	 * Number of faces.
+	 * Number of faces of the primitives.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
@@ -248,9 +206,9 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public Long getNumber_of_facesScalar();
 
 	/**
-	 * Number of faces.
+	 * Number of faces of the primitives.
 	 * <p>
-	 * <b>Type:</b> NX_POSINT
+	 * <b>Type:</b> NX_UINT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
@@ -259,14 +217,10 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public DataNode setNumber_of_facesScalar(Long number_of_facesValue);
 
 	/**
-	 * Integer which specifies the first index to be used for distinguishing
-	 * identifiers for vertices. Identifiers are defined either implicitly
-	 * or explicitly. For implicit indexing the identifiers are defined on the
-	 * interval [identifier_offset, identifier_offset+c-1].
-	 * For explicit indexing the identifier array has to be defined.
-	 * The identifier_offset field can for example be used to communicate if
-	 * identifiers are expected to start from 1 (referred to as Fortran-/Matlab-)
-	 * or from 0 (referred to as C-, Python-style index notation) respectively.
+	 * Integer offset whereby the identifier of the first member
+	 * of the vertices differs from zero.
+	 * Identifier can be defined explicitly or implicitly.
+	 * Inspect the definition of NXcg_primitive for further details.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
@@ -274,35 +228,27 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getVertex_identifier_offset();
+	public Dataset getIndex_offset_vertex();
 
 	/**
-	 * Integer which specifies the first index to be used for distinguishing
-	 * identifiers for vertices. Identifiers are defined either implicitly
-	 * or explicitly. For implicit indexing the identifiers are defined on the
-	 * interval [identifier_offset, identifier_offset+c-1].
-	 * For explicit indexing the identifier array has to be defined.
-	 * The identifier_offset field can for example be used to communicate if
-	 * identifiers are expected to start from 1 (referred to as Fortran-/Matlab-)
-	 * or from 0 (referred to as C-, Python-style index notation) respectively.
+	 * Integer offset whereby the identifier of the first member
+	 * of the vertices differs from zero.
+	 * Identifier can be defined explicitly or implicitly.
+	 * Inspect the definition of NXcg_primitive for further details.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
-	 * @param vertex_identifier_offsetDataset the vertex_identifier_offsetDataset
+	 * @param index_offset_vertexDataset the index_offset_vertexDataset
 	 */
-	public DataNode setVertex_identifier_offset(IDataset vertex_identifier_offsetDataset);
+	public DataNode setIndex_offset_vertex(IDataset index_offset_vertexDataset);
 
 	/**
-	 * Integer which specifies the first index to be used for distinguishing
-	 * identifiers for vertices. Identifiers are defined either implicitly
-	 * or explicitly. For implicit indexing the identifiers are defined on the
-	 * interval [identifier_offset, identifier_offset+c-1].
-	 * For explicit indexing the identifier array has to be defined.
-	 * The identifier_offset field can for example be used to communicate if
-	 * identifiers are expected to start from 1 (referred to as Fortran-/Matlab-)
-	 * or from 0 (referred to as C-, Python-style index notation) respectively.
+	 * Integer offset whereby the identifier of the first member
+	 * of the vertices differs from zero.
+	 * Identifier can be defined explicitly or implicitly.
+	 * Inspect the definition of NXcg_primitive for further details.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
@@ -310,35 +256,27 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public Long getVertex_identifier_offsetScalar();
+	public Long getIndex_offset_vertexScalar();
 
 	/**
-	 * Integer which specifies the first index to be used for distinguishing
-	 * identifiers for vertices. Identifiers are defined either implicitly
-	 * or explicitly. For implicit indexing the identifiers are defined on the
-	 * interval [identifier_offset, identifier_offset+c-1].
-	 * For explicit indexing the identifier array has to be defined.
-	 * The identifier_offset field can for example be used to communicate if
-	 * identifiers are expected to start from 1 (referred to as Fortran-/Matlab-)
-	 * or from 0 (referred to as C-, Python-style index notation) respectively.
+	 * Integer offset whereby the identifier of the first member
+	 * of the vertices differs from zero.
+	 * Identifier can be defined explicitly or implicitly.
+	 * Inspect the definition of NXcg_primitive for further details.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
-	 * @param vertex_identifier_offset the vertex_identifier_offset
+	 * @param index_offset_vertex the index_offset_vertex
 	 */
-	public DataNode setVertex_identifier_offsetScalar(Long vertex_identifier_offsetValue);
+	public DataNode setIndex_offset_vertexScalar(Long index_offset_vertexValue);
 
 	/**
-	 * Integer which specifies the first index to be used for distinguishing
-	 * identifiers for edges. Identifiers are defined either implicitly
-	 * or explicitly. For implicit indexing the identifiers are defined on the
-	 * interval [identifier_offset, identifier_offset+c-1].
-	 * For explicit indexing the identifier array has to be defined.
-	 * The identifier_offset field can for example be used to communicate if
-	 * identifiers are expected to start from 1 (referred to as Fortran-/Matlab-)
-	 * or from 0 (referred to as C-, Python-style index notation) respectively.
+	 * Integer offset whereby the identifier of the first member
+	 * of the edges differs from zero.
+	 * Identifier can be defined explicitly or implicitly.
+	 * Inspect the definition of NXcg_primitive for further details.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
@@ -346,35 +284,27 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getEdge_identifier_offset();
+	public Dataset getIndex_offset_edge();
 
 	/**
-	 * Integer which specifies the first index to be used for distinguishing
-	 * identifiers for edges. Identifiers are defined either implicitly
-	 * or explicitly. For implicit indexing the identifiers are defined on the
-	 * interval [identifier_offset, identifier_offset+c-1].
-	 * For explicit indexing the identifier array has to be defined.
-	 * The identifier_offset field can for example be used to communicate if
-	 * identifiers are expected to start from 1 (referred to as Fortran-/Matlab-)
-	 * or from 0 (referred to as C-, Python-style index notation) respectively.
+	 * Integer offset whereby the identifier of the first member
+	 * of the edges differs from zero.
+	 * Identifier can be defined explicitly or implicitly.
+	 * Inspect the definition of NXcg_primitive for further details.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
-	 * @param edge_identifier_offsetDataset the edge_identifier_offsetDataset
+	 * @param index_offset_edgeDataset the index_offset_edgeDataset
 	 */
-	public DataNode setEdge_identifier_offset(IDataset edge_identifier_offsetDataset);
+	public DataNode setIndex_offset_edge(IDataset index_offset_edgeDataset);
 
 	/**
-	 * Integer which specifies the first index to be used for distinguishing
-	 * identifiers for edges. Identifiers are defined either implicitly
-	 * or explicitly. For implicit indexing the identifiers are defined on the
-	 * interval [identifier_offset, identifier_offset+c-1].
-	 * For explicit indexing the identifier array has to be defined.
-	 * The identifier_offset field can for example be used to communicate if
-	 * identifiers are expected to start from 1 (referred to as Fortran-/Matlab-)
-	 * or from 0 (referred to as C-, Python-style index notation) respectively.
+	 * Integer offset whereby the identifier of the first member
+	 * of the edges differs from zero.
+	 * Identifier can be defined explicitly or implicitly.
+	 * Inspect the definition of NXcg_primitive for further details.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
@@ -382,35 +312,27 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public Long getEdge_identifier_offsetScalar();
+	public Long getIndex_offset_edgeScalar();
 
 	/**
-	 * Integer which specifies the first index to be used for distinguishing
-	 * identifiers for edges. Identifiers are defined either implicitly
-	 * or explicitly. For implicit indexing the identifiers are defined on the
-	 * interval [identifier_offset, identifier_offset+c-1].
-	 * For explicit indexing the identifier array has to be defined.
-	 * The identifier_offset field can for example be used to communicate if
-	 * identifiers are expected to start from 1 (referred to as Fortran-/Matlab-)
-	 * or from 0 (referred to as C-, Python-style index notation) respectively.
+	 * Integer offset whereby the identifier of the first member
+	 * of the edges differs from zero.
+	 * Identifier can be defined explicitly or implicitly.
+	 * Inspect the definition of NXcg_primitive for further details.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
-	 * @param edge_identifier_offset the edge_identifier_offset
+	 * @param index_offset_edge the index_offset_edge
 	 */
-	public DataNode setEdge_identifier_offsetScalar(Long edge_identifier_offsetValue);
+	public DataNode setIndex_offset_edgeScalar(Long index_offset_edgeValue);
 
 	/**
-	 * Integer which specifies the first index to be used for distinguishing
-	 * identifiers for faces. Identifiers are defined either implicitly
-	 * or explicitly. For implicit indexing the identifiers are defined on the
-	 * interval [identifier_offset, identifier_offset+c-1].
-	 * For explicit indexing the identifier array has to be defined.
-	 * The identifier_offset field can for example be used to communicate if
-	 * identifiers are expected to start from 1 (referred to as Fortran-/Matlab-)
-	 * or from 0 (referred to as C-, Python-style index notation) respectively.
+	 * Integer offset whereby the identifier of the first member
+	 * of the faces differs from zero.
+	 * Identifier can be defined explicitly or implicitly.
+	 * Inspect the definition of NXcg_primitive for further details.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
@@ -418,35 +340,27 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getFace_identifier_offset();
+	public Dataset getIndex_offset_face();
 
 	/**
-	 * Integer which specifies the first index to be used for distinguishing
-	 * identifiers for faces. Identifiers are defined either implicitly
-	 * or explicitly. For implicit indexing the identifiers are defined on the
-	 * interval [identifier_offset, identifier_offset+c-1].
-	 * For explicit indexing the identifier array has to be defined.
-	 * The identifier_offset field can for example be used to communicate if
-	 * identifiers are expected to start from 1 (referred to as Fortran-/Matlab-)
-	 * or from 0 (referred to as C-, Python-style index notation) respectively.
+	 * Integer offset whereby the identifier of the first member
+	 * of the faces differs from zero.
+	 * Identifier can be defined explicitly or implicitly.
+	 * Inspect the definition of NXcg_primitive for further details.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
-	 * @param face_identifier_offsetDataset the face_identifier_offsetDataset
+	 * @param index_offset_faceDataset the index_offset_faceDataset
 	 */
-	public DataNode setFace_identifier_offset(IDataset face_identifier_offsetDataset);
+	public DataNode setIndex_offset_face(IDataset index_offset_faceDataset);
 
 	/**
-	 * Integer which specifies the first index to be used for distinguishing
-	 * identifiers for faces. Identifiers are defined either implicitly
-	 * or explicitly. For implicit indexing the identifiers are defined on the
-	 * interval [identifier_offset, identifier_offset+c-1].
-	 * For explicit indexing the identifier array has to be defined.
-	 * The identifier_offset field can for example be used to communicate if
-	 * identifiers are expected to start from 1 (referred to as Fortran-/Matlab-)
-	 * or from 0 (referred to as C-, Python-style index notation) respectively.
+	 * Integer offset whereby the identifier of the first member
+	 * of the faces differs from zero.
+	 * Identifier can be defined explicitly or implicitly.
+	 * Inspect the definition of NXcg_primitive for further details.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
@@ -454,28 +368,24 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public Long getFace_identifier_offsetScalar();
+	public Long getIndex_offset_faceScalar();
 
 	/**
-	 * Integer which specifies the first index to be used for distinguishing
-	 * identifiers for faces. Identifiers are defined either implicitly
-	 * or explicitly. For implicit indexing the identifiers are defined on the
-	 * interval [identifier_offset, identifier_offset+c-1].
-	 * For explicit indexing the identifier array has to be defined.
-	 * The identifier_offset field can for example be used to communicate if
-	 * identifiers are expected to start from 1 (referred to as Fortran-/Matlab-)
-	 * or from 0 (referred to as C-, Python-style index notation) respectively.
+	 * Integer offset whereby the identifier of the first member
+	 * of the faces differs from zero.
+	 * Identifier can be defined explicitly or implicitly.
+	 * Inspect the definition of NXcg_primitive for further details.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * </p>
 	 *
-	 * @param face_identifier_offset the face_identifier_offset
+	 * @param index_offset_face the index_offset_face
 	 */
-	public DataNode setFace_identifier_offsetScalar(Long face_identifier_offsetValue);
+	public DataNode setIndex_offset_faceScalar(Long index_offset_faceValue);
 
 	/**
-	 * Integer used to distinguish vertices explicitly.
+	 * Integer identifier to distinguish all vertices explicitly.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
@@ -484,22 +394,22 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getVertex_identifier();
+	public Dataset getIndices_vertex();
 
 	/**
-	 * Integer used to distinguish vertices explicitly.
+	 * Integer identifier to distinguish all vertices explicitly.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_v;
 	 * </p>
 	 *
-	 * @param vertex_identifierDataset the vertex_identifierDataset
+	 * @param indices_vertexDataset the indices_vertexDataset
 	 */
-	public DataNode setVertex_identifier(IDataset vertex_identifierDataset);
+	public DataNode setIndices_vertex(IDataset indices_vertexDataset);
 
 	/**
-	 * Integer used to distinguish vertices explicitly.
+	 * Integer identifier to distinguish all vertices explicitly.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
@@ -508,22 +418,22 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public Long getVertex_identifierScalar();
+	public Long getIndices_vertexScalar();
 
 	/**
-	 * Integer used to distinguish vertices explicitly.
+	 * Integer identifier to distinguish all vertices explicitly.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_v;
 	 * </p>
 	 *
-	 * @param vertex_identifier the vertex_identifier
+	 * @param indices_vertex the indices_vertex
 	 */
-	public DataNode setVertex_identifierScalar(Long vertex_identifierValue);
+	public DataNode setIndices_vertexScalar(Long indices_vertexValue);
 
 	/**
-	 * Integer used to distinguish edges explicitly.
+	 * Integer used to distinguish all edges explicitly.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
@@ -532,22 +442,22 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getEdge_identifier();
+	public Dataset getIndices_edge();
 
 	/**
-	 * Integer used to distinguish edges explicitly.
+	 * Integer used to distinguish all edges explicitly.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_e;
 	 * </p>
 	 *
-	 * @param edge_identifierDataset the edge_identifierDataset
+	 * @param indices_edgeDataset the indices_edgeDataset
 	 */
-	public DataNode setEdge_identifier(IDataset edge_identifierDataset);
+	public DataNode setIndices_edge(IDataset indices_edgeDataset);
 
 	/**
-	 * Integer used to distinguish edges explicitly.
+	 * Integer used to distinguish all edges explicitly.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
@@ -556,22 +466,22 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public Long getEdge_identifierScalar();
+	public Long getIndices_edgeScalar();
 
 	/**
-	 * Integer used to distinguish edges explicitly.
+	 * Integer used to distinguish all edges explicitly.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_e;
 	 * </p>
 	 *
-	 * @param edge_identifier the edge_identifier
+	 * @param indices_edge the indices_edge
 	 */
-	public DataNode setEdge_identifierScalar(Long edge_identifierValue);
+	public DataNode setIndices_edgeScalar(Long indices_edgeValue);
 
 	/**
-	 * Integer used to distinguish faces explicitly.
+	 * Integer used to distinguish all faces explicitly.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
@@ -580,22 +490,22 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getFace_identifier();
+	public Dataset getIndices_face();
 
 	/**
-	 * Integer used to distinguish faces explicitly.
+	 * Integer used to distinguish all faces explicitly.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_f;
 	 * </p>
 	 *
-	 * @param face_identifierDataset the face_identifierDataset
+	 * @param indices_faceDataset the indices_faceDataset
 	 */
-	public DataNode setFace_identifier(IDataset face_identifierDataset);
+	public DataNode setIndices_face(IDataset indices_faceDataset);
 
 	/**
-	 * Integer used to distinguish faces explicitly.
+	 * Integer used to distinguish all faces explicitly.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
@@ -604,32 +514,30 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	 *
 	 * @return  the value.
 	 */
-	public Long getFace_identifierScalar();
+	public Long getIndices_faceScalar();
 
 	/**
-	 * Integer used to distinguish faces explicitly.
+	 * Integer used to distinguish all faces explicitly.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
 	 * <b>Dimensions:</b> 1: n_f;
 	 * </p>
 	 *
-	 * @param face_identifier the face_identifier
+	 * @param indices_face the indices_face
 	 */
-	public DataNode setFace_identifierScalar(Long face_identifierValue);
+	public DataNode setIndices_faceScalar(Long indices_faceValue);
 
 	/**
 	 * Positions of the vertices.
-	 * Users are encouraged to reduce the vertices to unique set of positions
-	 * and vertices as this supports a more efficient storage of the geometry data.
-	 * It is also possible though to store the vertex positions naively in which
-	 * case vertices_are_unique is likely False.
-	 * Naively here means that one for example stores each vertex of a triangle
-	 * mesh even though many vertices are shared between triangles and thus
-	 * the positions of these vertices do not have to be duplicated.
+	 * Users are encouraged to reduce the vertices to a unique set as this may
+	 * result in more efficient storage. Alternatively, storing vertex positions naively
+	 * should be indicated with setting vertices_are_unique to False.
+	 * Naively means that each vertex is stored even though many vertices may
+	 * share the same positions.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n_v; 2: d;
 	 * </p>
 	 *
@@ -639,16 +547,14 @@ public interface NXcg_face_list_data_structure extends NXobject {
 
 	/**
 	 * Positions of the vertices.
-	 * Users are encouraged to reduce the vertices to unique set of positions
-	 * and vertices as this supports a more efficient storage of the geometry data.
-	 * It is also possible though to store the vertex positions naively in which
-	 * case vertices_are_unique is likely False.
-	 * Naively here means that one for example stores each vertex of a triangle
-	 * mesh even though many vertices are shared between triangles and thus
-	 * the positions of these vertices do not have to be duplicated.
+	 * Users are encouraged to reduce the vertices to a unique set as this may
+	 * result in more efficient storage. Alternatively, storing vertex positions naively
+	 * should be indicated with setting vertices_are_unique to False.
+	 * Naively means that each vertex is stored even though many vertices may
+	 * share the same positions.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n_v; 2: d;
 	 * </p>
 	 *
@@ -658,16 +564,14 @@ public interface NXcg_face_list_data_structure extends NXobject {
 
 	/**
 	 * Positions of the vertices.
-	 * Users are encouraged to reduce the vertices to unique set of positions
-	 * and vertices as this supports a more efficient storage of the geometry data.
-	 * It is also possible though to store the vertex positions naively in which
-	 * case vertices_are_unique is likely False.
-	 * Naively here means that one for example stores each vertex of a triangle
-	 * mesh even though many vertices are shared between triangles and thus
-	 * the positions of these vertices do not have to be duplicated.
+	 * Users are encouraged to reduce the vertices to a unique set as this may
+	 * result in more efficient storage. Alternatively, storing vertex positions naively
+	 * should be indicated with setting vertices_are_unique to False.
+	 * Naively means that each vertex is stored even though many vertices may
+	 * share the same positions.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n_v; 2: d;
 	 * </p>
 	 *
@@ -677,16 +581,14 @@ public interface NXcg_face_list_data_structure extends NXobject {
 
 	/**
 	 * Positions of the vertices.
-	 * Users are encouraged to reduce the vertices to unique set of positions
-	 * and vertices as this supports a more efficient storage of the geometry data.
-	 * It is also possible though to store the vertex positions naively in which
-	 * case vertices_are_unique is likely False.
-	 * Naively here means that one for example stores each vertex of a triangle
-	 * mesh even though many vertices are shared between triangles and thus
-	 * the positions of these vertices do not have to be duplicated.
+	 * Users are encouraged to reduce the vertices to a unique set as this may
+	 * result in more efficient storage. Alternatively, storing vertex positions naively
+	 * should be indicated with setting vertices_are_unique to False.
+	 * Naively means that each vertex is stored even though many vertices may
+	 * share the same positions.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Units:</b> NX_ANY
 	 * <b>Dimensions:</b> 1: n_v; 2: d;
 	 * </p>
 	 *
@@ -695,7 +597,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public DataNode setVerticesScalar(Number verticesValue);
 
 	/**
-	 * The edges are stored as a pairs of vertex identifier values.
+	 * The edges are stored as pairs of vertex identifier.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
@@ -707,7 +609,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public Dataset getEdges();
 
 	/**
-	 * The edges are stored as a pairs of vertex identifier values.
+	 * The edges are stored as pairs of vertex identifier.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
@@ -719,7 +621,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public DataNode setEdges(IDataset edgesDataset);
 
 	/**
-	 * The edges are stored as a pairs of vertex identifier values.
+	 * The edges are stored as pairs of vertex identifier.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
@@ -731,7 +633,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public Long getEdgesScalar();
 
 	/**
-	 * The edges are stored as a pairs of vertex identifier values.
+	 * The edges are stored as pairs of vertex identifier.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
@@ -743,14 +645,14 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public DataNode setEdgesScalar(Long edgesValue);
 
 	/**
-	 * Array of identifiers from vertices which describe each face.
+	 * The faces are stored as a concatenated array of vertex identifier tuples.
 	 * The first entry is the identifier of the start vertex of the first face,
 	 * followed by the second vertex of the first face, until the last vertex
 	 * of the first face. Thereafter, the start vertex of the second face, the
 	 * second vertex of the second face, and so on and so forth.
 	 * Therefore, summating over the number_of_vertices, allows to extract
 	 * the vertex identifiers for the i-th face on the following index interval
-	 * of the faces array: [$\sum_i = 0}^{i = n-1}$, $\sum_{i=0}^{i = n}$].
+	 * of the faces array: :math:`[\sum_{i = 0}^{i = n-1}, \sum_{i=0}^{i = n}]`.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
@@ -762,14 +664,14 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public Dataset getFaces();
 
 	/**
-	 * Array of identifiers from vertices which describe each face.
+	 * The faces are stored as a concatenated array of vertex identifier tuples.
 	 * The first entry is the identifier of the start vertex of the first face,
 	 * followed by the second vertex of the first face, until the last vertex
 	 * of the first face. Thereafter, the start vertex of the second face, the
 	 * second vertex of the second face, and so on and so forth.
 	 * Therefore, summating over the number_of_vertices, allows to extract
 	 * the vertex identifiers for the i-th face on the following index interval
-	 * of the faces array: [$\sum_i = 0}^{i = n-1}$, $\sum_{i=0}^{i = n}$].
+	 * of the faces array: :math:`[\sum_{i = 0}^{i = n-1}, \sum_{i=0}^{i = n}]`.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
@@ -781,14 +683,14 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public DataNode setFaces(IDataset facesDataset);
 
 	/**
-	 * Array of identifiers from vertices which describe each face.
+	 * The faces are stored as a concatenated array of vertex identifier tuples.
 	 * The first entry is the identifier of the start vertex of the first face,
 	 * followed by the second vertex of the first face, until the last vertex
 	 * of the first face. Thereafter, the start vertex of the second face, the
 	 * second vertex of the second face, and so on and so forth.
 	 * Therefore, summating over the number_of_vertices, allows to extract
 	 * the vertex identifiers for the i-th face on the following index interval
-	 * of the faces array: [$\sum_i = 0}^{i = n-1}$, $\sum_{i=0}^{i = n}$].
+	 * of the faces array: :math:`[\sum_{i = 0}^{i = n-1}, \sum_{i=0}^{i = n}]`.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
@@ -800,14 +702,14 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public Long getFacesScalar();
 
 	/**
-	 * Array of identifiers from vertices which describe each face.
+	 * The faces are stored as a concatenated array of vertex identifier tuples.
 	 * The first entry is the identifier of the start vertex of the first face,
 	 * followed by the second vertex of the first face, until the last vertex
 	 * of the first face. Thereafter, the start vertex of the second face, the
 	 * second vertex of the second face, and so on and so forth.
 	 * Therefore, summating over the number_of_vertices, allows to extract
 	 * the vertex identifiers for the i-th face on the following index interval
-	 * of the faces array: [$\sum_i = 0}^{i = n-1}$, $\sum_{i=0}^{i = n}$].
+	 * of the faces array: :math:`[\sum_{i = 0}^{i = n-1}, \sum_{i=0}^{i = n}]`.
 	 * <p>
 	 * <b>Type:</b> NX_INT
 	 * <b>Units:</b> NX_UNITLESS
@@ -819,8 +721,9 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public DataNode setFacesScalar(Long facesValue);
 
 	/**
-	 * If true indicates that the vertices are all placed at different positions
-	 * and have different identifiers, i.e. no points overlap or are counted twice.
+	 * If true, indicates that the vertices are all placed at different positions
+	 * and have different identifiers, i.e. no points overlap or are counted more
+	 * than once.
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
@@ -830,8 +733,9 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public Dataset getVertices_are_unique();
 
 	/**
-	 * If true indicates that the vertices are all placed at different positions
-	 * and have different identifiers, i.e. no points overlap or are counted twice.
+	 * If true, indicates that the vertices are all placed at different positions
+	 * and have different identifiers, i.e. no points overlap or are counted more
+	 * than once.
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
@@ -841,8 +745,9 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public DataNode setVertices_are_unique(IDataset vertices_are_uniqueDataset);
 
 	/**
-	 * If true indicates that the vertices are all placed at different positions
-	 * and have different identifiers, i.e. no points overlap or are counted twice.
+	 * If true, indicates that the vertices are all placed at different positions
+	 * and have different identifiers, i.e. no points overlap or are counted more
+	 * than once.
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
@@ -852,8 +757,9 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public Boolean getVertices_are_uniqueScalar();
 
 	/**
-	 * If true indicates that the vertices are all placed at different positions
-	 * and have different identifiers, i.e. no points overlap or are counted twice.
+	 * If true, indicates that the vertices are all placed at different positions
+	 * and have different identifiers, i.e. no points overlap or are counted more
+	 * than once.
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
@@ -863,9 +769,8 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public DataNode setVertices_are_uniqueScalar(Boolean vertices_are_uniqueValue);
 
 	/**
-	 * If true indicates that no edge is stored twice. Users are encouraged to
-	 * consider and use the half_edge_data_structure instead as this will work
-	 * towards achieving a cleaner graph-based description if relevant and possible.
+	 * If true, indicates that no edge is stored more than once.
+	 * Users are encouraged to consider using a half_edge_data_structure instead.
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
@@ -875,9 +780,8 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public Dataset getEdges_are_unique();
 
 	/**
-	 * If true indicates that no edge is stored twice. Users are encouraged to
-	 * consider and use the half_edge_data_structure instead as this will work
-	 * towards achieving a cleaner graph-based description if relevant and possible.
+	 * If true, indicates that no edge is stored more than once.
+	 * Users are encouraged to consider using a half_edge_data_structure instead.
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
@@ -887,9 +791,8 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public DataNode setEdges_are_unique(IDataset edges_are_uniqueDataset);
 
 	/**
-	 * If true indicates that no edge is stored twice. Users are encouraged to
-	 * consider and use the half_edge_data_structure instead as this will work
-	 * towards achieving a cleaner graph-based description if relevant and possible.
+	 * If true, indicates that no edge is stored more than once.
+	 * Users are encouraged to consider using a half_edge_data_structure instead.
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
@@ -899,9 +802,8 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public Boolean getEdges_are_uniqueScalar();
 
 	/**
-	 * If true indicates that no edge is stored twice. Users are encouraged to
-	 * consider and use the half_edge_data_structure instead as this will work
-	 * towards achieving a cleaner graph-based description if relevant and possible.
+	 * If true, indicates that no edge is stored more than once.
+	 * Users are encouraged to consider using a half_edge_data_structure instead.
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
@@ -911,6 +813,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public DataNode setEdges_are_uniqueScalar(Boolean edges_are_uniqueValue);
 
 	/**
+	 * If true, indicates that no face is stored more than once.
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
@@ -920,6 +823,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public Dataset getFaces_are_unique();
 
 	/**
+	 * If true, indicates that no face is stored more than once.
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
@@ -929,6 +833,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public DataNode setFaces_are_unique(IDataset faces_are_uniqueDataset);
 
 	/**
+	 * If true, indicates that no face is stored more than once.
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
@@ -938,6 +843,7 @@ public interface NXcg_face_list_data_structure extends NXobject {
 	public Boolean getFaces_are_uniqueScalar();
 
 	/**
+	 * If true, indicates that no face is stored more than once.
 	 * <p>
 	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>

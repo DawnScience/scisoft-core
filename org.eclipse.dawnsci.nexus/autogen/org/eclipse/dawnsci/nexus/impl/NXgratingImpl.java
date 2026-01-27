@@ -26,7 +26,7 @@ import org.eclipse.dawnsci.nexus.*;
  * A diffraction grating, as could be used in a soft X-ray monochromator
 
  */
-public class NXgratingImpl extends NXobjectImpl implements NXgrating {
+public class NXgratingImpl extends NXcomponentImpl implements NXgrating {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
@@ -394,16 +394,6 @@ public class NXgratingImpl extends NXobjectImpl implements NXgrating {
 	@Override
 	public void setAllOff_geometry(Map<String, NXoff_geometry> off_geometry) {
 		setChildren(off_geometry);
-	}
-
-	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
-	}
-
-	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
 	}
 
 	@Override

@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.math3.complex.Complex;
 import org.eclipse.dawnsci.nexus.NexusException;
 import org.eclipse.january.DatasetException;
 import org.eclipse.january.dataset.IDataset;
@@ -119,12 +120,23 @@ public enum NexusDataType {
 	 * at the end of a scan, i.e. after all the data had been written.
 	 */
 	NX_POSINT(Byte.class, Short.class, Integer.class, Long.class),
+
 	/**
 	 * any representation of an unsigned integer number (includes zero)
 	 * Note: we don't currently check the values are all positive or zero. This could only be done
 	 * at the end of a scan, i.e. after all the data had been written.
 	 */
-	NX_UINT(Byte.class, Short.class, Integer.class, Long.class);
+	NX_UINT(Byte.class, Short.class, Integer.class, Long.class),
+
+	/**
+	 * any representation of a (floating point) complex number
+	 */
+	NX_COMPLEX(Complex.class),
+
+	/**
+	 * any representation of a number or a string
+	 */
+	NX_CHAR_OR_NUMBER(Number.class, String.class);
 
 	private List<Class<?>> javaClasses;
 

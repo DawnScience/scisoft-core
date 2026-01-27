@@ -26,7 +26,6 @@ import org.eclipse.january.dataset.Dataset;
 public interface NXorientation extends NXobject {
 
 	public static final String NX_VALUE = "value";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * Link to another object if we are using relative positioning, else absent
 	 *
@@ -168,31 +167,5 @@ public interface NXorientation extends NXobject {
 	 * @param value the value
 	 */
 	public DataNode setValueScalar(Double valueValue);
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
 
 }

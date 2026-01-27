@@ -17,24 +17,25 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * Settings of a filter to select or remove entries based on their value.
+ * Base class of a filter to select members of a set based on their identifier.
  * <p><b>Symbols:</b>
  * The symbols used in the schema to specify e.g. dimensions of arrays.<ul>
  * <li><b>n_values</b>
  * How many different match values does the filter specify.</li></ul></p>
  *
  */
-public interface NXmatch_filter extends NXobject {
+public interface NXmatch_filter extends NXparameters {
 
 	public static final String NX_METHOD = "method";
 	public static final String NX_MATCH = "match";
 	/**
-	 * Meaning of the filter:
-	 * Whitelist specifies which entries with said value to include.
-	 * Entries with all other values will be filtered out.
-	 * Blacklist specifies which entries with said value to exclude.
+	 * Definition of the logic what the filter yields:
+	 * * Whitelist specifies which entries with said value to include.
+	 * Entries with all other values will be excluded.
+	 * * Blacklist specifies which entries with said value to exclude.
 	 * Entries with all other values will be included.
 	 * <p>
+	 * <b>Type:</b> NX_CHAR
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>whitelist</b> </li>
 	 * <li><b>blacklist</b> </li></ul></p>
@@ -45,12 +46,13 @@ public interface NXmatch_filter extends NXobject {
 	public Dataset getMethod();
 
 	/**
-	 * Meaning of the filter:
-	 * Whitelist specifies which entries with said value to include.
-	 * Entries with all other values will be filtered out.
-	 * Blacklist specifies which entries with said value to exclude.
+	 * Definition of the logic what the filter yields:
+	 * * Whitelist specifies which entries with said value to include.
+	 * Entries with all other values will be excluded.
+	 * * Blacklist specifies which entries with said value to exclude.
 	 * Entries with all other values will be included.
 	 * <p>
+	 * <b>Type:</b> NX_CHAR
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>whitelist</b> </li>
 	 * <li><b>blacklist</b> </li></ul></p>
@@ -61,12 +63,13 @@ public interface NXmatch_filter extends NXobject {
 	public DataNode setMethod(IDataset methodDataset);
 
 	/**
-	 * Meaning of the filter:
-	 * Whitelist specifies which entries with said value to include.
-	 * Entries with all other values will be filtered out.
-	 * Blacklist specifies which entries with said value to exclude.
+	 * Definition of the logic what the filter yields:
+	 * * Whitelist specifies which entries with said value to include.
+	 * Entries with all other values will be excluded.
+	 * * Blacklist specifies which entries with said value to exclude.
 	 * Entries with all other values will be included.
 	 * <p>
+	 * <b>Type:</b> NX_CHAR
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>whitelist</b> </li>
 	 * <li><b>blacklist</b> </li></ul></p>
@@ -77,12 +80,13 @@ public interface NXmatch_filter extends NXobject {
 	public String getMethodScalar();
 
 	/**
-	 * Meaning of the filter:
-	 * Whitelist specifies which entries with said value to include.
-	 * Entries with all other values will be filtered out.
-	 * Blacklist specifies which entries with said value to exclude.
+	 * Definition of the logic what the filter yields:
+	 * * Whitelist specifies which entries with said value to include.
+	 * Entries with all other values will be excluded.
+	 * * Blacklist specifies which entries with said value to exclude.
 	 * Entries with all other values will be included.
 	 * <p>
+	 * <b>Type:</b> NX_CHAR
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>whitelist</b> </li>
 	 * <li><b>blacklist</b> </li></ul></p>
@@ -93,10 +97,9 @@ public interface NXmatch_filter extends NXobject {
 	public DataNode setMethodScalar(String methodValue);
 
 	/**
-	 * Array of values to filter according to method. For example if the filter
-	 * specifies [1, 5, 6] and method is whitelist, only entries with values
-	 * matching 1, 5 or 6 will be processed. All other entries will be filtered
-	 * out.
+	 * Array of values to filter according to method. If the match e.g. specifies
+	 * [1, 5, 6] and method is set to whitelist, only entries with values matching
+	 * 1, 5 or 6 will be processed. All other entries will be excluded.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_UNITLESS
@@ -108,10 +111,9 @@ public interface NXmatch_filter extends NXobject {
 	public Dataset getMatch();
 
 	/**
-	 * Array of values to filter according to method. For example if the filter
-	 * specifies [1, 5, 6] and method is whitelist, only entries with values
-	 * matching 1, 5 or 6 will be processed. All other entries will be filtered
-	 * out.
+	 * Array of values to filter according to method. If the match e.g. specifies
+	 * [1, 5, 6] and method is set to whitelist, only entries with values matching
+	 * 1, 5 or 6 will be processed. All other entries will be excluded.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_UNITLESS
@@ -123,10 +125,9 @@ public interface NXmatch_filter extends NXobject {
 	public DataNode setMatch(IDataset matchDataset);
 
 	/**
-	 * Array of values to filter according to method. For example if the filter
-	 * specifies [1, 5, 6] and method is whitelist, only entries with values
-	 * matching 1, 5 or 6 will be processed. All other entries will be filtered
-	 * out.
+	 * Array of values to filter according to method. If the match e.g. specifies
+	 * [1, 5, 6] and method is set to whitelist, only entries with values matching
+	 * 1, 5 or 6 will be processed. All other entries will be excluded.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_UNITLESS
@@ -138,10 +139,9 @@ public interface NXmatch_filter extends NXobject {
 	public Number getMatchScalar();
 
 	/**
-	 * Array of values to filter according to method. For example if the filter
-	 * specifies [1, 5, 6] and method is whitelist, only entries with values
-	 * matching 1, 5 or 6 will be processed. All other entries will be filtered
-	 * out.
+	 * Array of values to filter according to method. If the match e.g. specifies
+	 * [1, 5, 6] and method is set to whitelist, only entries with values matching
+	 * 1, 5 or 6 will be processed. All other entries will be excluded.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_UNITLESS

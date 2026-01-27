@@ -11,96 +11,40 @@
 
 package org.eclipse.dawnsci.nexus;
 
+import java.util.Map;
+
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
 
 import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * Computational geometry description of alpha shapes or wrappings to primitives.
+ * Computational geometry of alpha complexes (alpha shapes or alpha wrappings) about primitives.
  * For details see:
  * * https://dx.doi.org/10.1109/TIT.1983.1056714 for 2D,
  * * https://dx.doi.org/10.1145/174462.156635 for 3D,
  * * https://dl.acm.org/doi/10.5555/871114 for weighted, and
- * * https://doc.cgal.org/latest/Alpha_shapes_3 for 3D implementation
- * * https://doc.cgal.org/latest/Manual/packages.html#PkgAlphaWrap3 for 3D wrap
- * in CGAL, the Computational Geometry Algorithms Library.
+ * * https://doc.cgal.org/latest/Alpha_shapes_3 for 3D implementation of alpha shapes, and
+ * * https://doc.cgal.org/latest/Manual/packages.html#PkgAlphaWrap3 for 3D alpha wrappings
+ * in CGAL, the Computational Geometry Algorithms Library respectively.
  * As a starting point, we follow the conventions of the CGAL library.
- * <p><b>Symbols:</b>
- * The symbols used in the schema to specify e.g. dimensions of arrays.<ul>
- * <li><b>d</b>
- * The dimensionality of the alpha shape, for now 2 or 3.</li>
- * <li><b>n_e</b>
- * The number of edges.</li>
- * <li><b>n_f</b>
- * The number of faces.</li>
- * <li><b>n_c</b>
- * The number of cells.</li></ul></p>
+ * In general, an alpha complex is a not necessarily connected or not necessarily pure complex,
+ * i.e. singular faces may exist. The number of cells, faces, and edges depends on how a specific
+ * alpha complex is filtered for lower-dimensional simplices. The fields is_regularized and
+ * regularization can be used to provide details about regularization procedures.
  *
  */
-public interface NXcg_alpha_complex extends NXobject {
+public interface NXcg_alpha_complex extends NXcg_primitive {
 
-	public static final String NX_DIMENSIONALITY = "dimensionality";
 	public static final String NX_TYPE = "type";
-	public static final String NX_MODE = "mode";
+	public static final String NX_REGULARIZATION = "regularization";
+	public static final String NX_IS_REGULARIZED = "is_regularized";
 	public static final String NX_ALPHA = "alpha";
 	public static final String NX_OFFSET = "offset";
 	/**
-	 * <p>
-	 * <b>Type:</b> NX_UINT
-	 * <b>Units:</b> NX_UNITLESS
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>2</b> </li>
-	 * <li><b>3</b> </li></ul></p>
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Dataset getDimensionality();
-
-	/**
-	 * <p>
-	 * <b>Type:</b> NX_UINT
-	 * <b>Units:</b> NX_UNITLESS
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>2</b> </li>
-	 * <li><b>3</b> </li></ul></p>
-	 * </p>
-	 *
-	 * @param dimensionalityDataset the dimensionalityDataset
-	 */
-	public DataNode setDimensionality(IDataset dimensionalityDataset);
-
-	/**
-	 * <p>
-	 * <b>Type:</b> NX_UINT
-	 * <b>Units:</b> NX_UNITLESS
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>2</b> </li>
-	 * <li><b>3</b> </li></ul></p>
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Long getDimensionalityScalar();
-
-	/**
-	 * <p>
-	 * <b>Type:</b> NX_UINT
-	 * <b>Units:</b> NX_UNITLESS
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>2</b> </li>
-	 * <li><b>3</b> </li></ul></p>
-	 * </p>
-	 *
-	 * @param dimensionality the dimensionality
-	 */
-	public DataNode setDimensionalityScalar(Long dimensionalityValue);
-
-	/**
-	 * Specify which general type of alpha shape is computed.
-	 * Using for now the CGAL terminology. Basic means (unweighted) alpha shapes.
-	 * Alpha_wrapping means meshes created using alpha wrapping procedures.
+	 * Type of alpha complex following the terminology used by CGAL for now.
+	 * Alpha_shape means meshes created using one of the alpha_shape algorithm.
+	 * Alpha_wrapping means meshes created using the alpha_wrapping algorithm.
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>convex_hull</b> </li>
@@ -113,9 +57,9 @@ public interface NXcg_alpha_complex extends NXobject {
 	public Dataset getType();
 
 	/**
-	 * Specify which general type of alpha shape is computed.
-	 * Using for now the CGAL terminology. Basic means (unweighted) alpha shapes.
-	 * Alpha_wrapping means meshes created using alpha wrapping procedures.
+	 * Type of alpha complex following the terminology used by CGAL for now.
+	 * Alpha_shape means meshes created using one of the alpha_shape algorithm.
+	 * Alpha_wrapping means meshes created using the alpha_wrapping algorithm.
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>convex_hull</b> </li>
@@ -128,9 +72,9 @@ public interface NXcg_alpha_complex extends NXobject {
 	public DataNode setType(IDataset typeDataset);
 
 	/**
-	 * Specify which general type of alpha shape is computed.
-	 * Using for now the CGAL terminology. Basic means (unweighted) alpha shapes.
-	 * Alpha_wrapping means meshes created using alpha wrapping procedures.
+	 * Type of alpha complex following the terminology used by CGAL for now.
+	 * Alpha_shape means meshes created using one of the alpha_shape algorithm.
+	 * Alpha_wrapping means meshes created using the alpha_wrapping algorithm.
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>convex_hull</b> </li>
@@ -143,9 +87,9 @@ public interface NXcg_alpha_complex extends NXobject {
 	public String getTypeScalar();
 
 	/**
-	 * Specify which general type of alpha shape is computed.
-	 * Using for now the CGAL terminology. Basic means (unweighted) alpha shapes.
-	 * Alpha_wrapping means meshes created using alpha wrapping procedures.
+	 * Type of alpha complex following the terminology used by CGAL for now.
+	 * Alpha_shape means meshes created using one of the alpha_shape algorithm.
+	 * Alpha_wrapping means meshes created using the alpha_wrapping algorithm.
 	 * <p>
 	 * <p><b>Enumeration:</b><ul>
 	 * <li><b>convex_hull</b> </li>
@@ -158,63 +102,79 @@ public interface NXcg_alpha_complex extends NXobject {
 	public DataNode setTypeScalar(String typeValue);
 
 	/**
-	 * Specifically when computed with the CGAL, the mode specifies if singular
-	 * faces are removed (regularized) of the alpha complex.
+	 * Human-readable description about regularization procedures.
+	 *
+	 * @return  the value.
+	 */
+	public Dataset getRegularization();
+
+	/**
+	 * Human-readable description about regularization procedures.
+	 *
+	 * @param regularizationDataset the regularizationDataset
+	 */
+	public DataNode setRegularization(IDataset regularizationDataset);
+
+	/**
+	 * Human-readable description about regularization procedures.
+	 *
+	 * @return  the value.
+	 */
+	public String getRegularizationScalar();
+
+	/**
+	 * Human-readable description about regularization procedures.
+	 *
+	 * @param regularization the regularization
+	 */
+	public DataNode setRegularizationScalar(String regularizationValue);
+
+	/**
+	 * Was the alpha complex regularized, i.e. have singular faces been removed, or not.
 	 * <p>
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>general</b> </li>
-	 * <li><b>regularized</b> </li></ul></p>
+	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public Dataset getMode();
+	public Dataset getIs_regularized();
 
 	/**
-	 * Specifically when computed with the CGAL, the mode specifies if singular
-	 * faces are removed (regularized) of the alpha complex.
+	 * Was the alpha complex regularized, i.e. have singular faces been removed, or not.
 	 * <p>
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>general</b> </li>
-	 * <li><b>regularized</b> </li></ul></p>
+	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
 	 *
-	 * @param modeDataset the modeDataset
+	 * @param is_regularizedDataset the is_regularizedDataset
 	 */
-	public DataNode setMode(IDataset modeDataset);
+	public DataNode setIs_regularized(IDataset is_regularizedDataset);
 
 	/**
-	 * Specifically when computed with the CGAL, the mode specifies if singular
-	 * faces are removed (regularized) of the alpha complex.
+	 * Was the alpha complex regularized, i.e. have singular faces been removed, or not.
 	 * <p>
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>general</b> </li>
-	 * <li><b>regularized</b> </li></ul></p>
+	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
 	 *
 	 * @return  the value.
 	 */
-	public String getModeScalar();
+	public Boolean getIs_regularizedScalar();
 
 	/**
-	 * Specifically when computed with the CGAL, the mode specifies if singular
-	 * faces are removed (regularized) of the alpha complex.
+	 * Was the alpha complex regularized, i.e. have singular faces been removed, or not.
 	 * <p>
-	 * <p><b>Enumeration:</b><ul>
-	 * <li><b>general</b> </li>
-	 * <li><b>regularized</b> </li></ul></p>
+	 * <b>Type:</b> NX_BOOLEAN
 	 * </p>
 	 *
-	 * @param mode the mode
+	 * @param is_regularized the is_regularized
 	 */
-	public DataNode setModeScalar(String modeValue);
+	public DataNode setIs_regularizedScalar(Boolean is_regularizedValue);
 
 	/**
-	 * The alpha, (radius of the alpha-sphere) parameter to be used for alpha
-	 * shapes and alpha wrappings.
+	 * The alpha parameter, i.e. the squared radius of the alpha-sphere
+	 * that is used when computing the alpha complex.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 *
 	 * @return  the value.
@@ -222,11 +182,11 @@ public interface NXcg_alpha_complex extends NXobject {
 	public Dataset getAlpha();
 
 	/**
-	 * The alpha, (radius of the alpha-sphere) parameter to be used for alpha
-	 * shapes and alpha wrappings.
+	 * The alpha parameter, i.e. the squared radius of the alpha-sphere
+	 * that is used when computing the alpha complex.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 *
 	 * @param alphaDataset the alphaDataset
@@ -234,11 +194,11 @@ public interface NXcg_alpha_complex extends NXobject {
 	public DataNode setAlpha(IDataset alphaDataset);
 
 	/**
-	 * The alpha, (radius of the alpha-sphere) parameter to be used for alpha
-	 * shapes and alpha wrappings.
+	 * The alpha parameter, i.e. the squared radius of the alpha-sphere
+	 * that is used when computing the alpha complex.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 *
 	 * @return  the value.
@@ -246,11 +206,11 @@ public interface NXcg_alpha_complex extends NXobject {
 	public Number getAlphaScalar();
 
 	/**
-	 * The alpha, (radius of the alpha-sphere) parameter to be used for alpha
-	 * shapes and alpha wrappings.
+	 * The alpha parameter, i.e. the squared radius of the alpha-sphere
+	 * that is used when computing the alpha complex.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
-	 * <b>Units:</b> NX_LENGTH
+	 * <b>Units:</b> NX_ANY
 	 * </p>
 	 *
 	 * @param alpha the alpha
@@ -258,8 +218,7 @@ public interface NXcg_alpha_complex extends NXobject {
 	public DataNode setAlphaScalar(Number alphaValue);
 
 	/**
-	 * The offset distance parameter to be used in addition to alpha
-	 * in the case of alpha_wrapping.
+	 * The offset distance parameter used when computing alpha_wrappings.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_LENGTH
@@ -270,8 +229,7 @@ public interface NXcg_alpha_complex extends NXobject {
 	public Dataset getOffset();
 
 	/**
-	 * The offset distance parameter to be used in addition to alpha
-	 * in the case of alpha_wrapping.
+	 * The offset distance parameter used when computing alpha_wrappings.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_LENGTH
@@ -282,8 +240,7 @@ public interface NXcg_alpha_complex extends NXobject {
 	public DataNode setOffset(IDataset offsetDataset);
 
 	/**
-	 * The offset distance parameter to be used in addition to alpha
-	 * in the case of alpha_wrapping.
+	 * The offset distance parameter used when computing alpha_wrappings.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_LENGTH
@@ -294,8 +251,7 @@ public interface NXcg_alpha_complex extends NXobject {
 	public Number getOffsetScalar();
 
 	/**
-	 * The offset distance parameter to be used in addition to alpha
-	 * in the case of alpha_wrapping.
+	 * The offset distance parameter used when computing alpha_wrappings.
 	 * <p>
 	 * <b>Type:</b> NX_NUMBER
 	 * <b>Units:</b> NX_LENGTH
@@ -306,57 +262,107 @@ public interface NXcg_alpha_complex extends NXobject {
 	public DataNode setOffsetScalar(Number offsetValue);
 
 	/**
-	 * Point cloud for which the alpha shape or wrapping should be computed.
+	 * Point cloud serving as input for the computation of the alpha complex.
 	 *
 	 * @return  the value.
 	 */
-	public NXcg_point_set getPoint_set();
+	public NXcg_point getCg_point();
 
 	/**
-	 * Point cloud for which the alpha shape or wrapping should be computed.
+	 * Point cloud serving as input for the computation of the alpha complex.
 	 *
-	 * @param point_setGroup the point_setGroup
+	 * @param cg_pointGroup the cg_pointGroup
 	 */
-	public void setPoint_set(NXcg_point_set point_setGroup);
+	public void setCg_point(NXcg_point cg_pointGroup);
 
 	/**
-	 * Triangle soup for which the alpha wrapping should be computed.
+	 * Get a NXcg_point node by name:
+	 * <ul>
+	 * <li>
+	 * Point cloud serving as input for the computation of the alpha complex.</li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXcg_point for that node.
+	 */
+	public NXcg_point getCg_point(String name);
+
+	/**
+	 * Set a NXcg_point node by name:
+	 * <ul>
+	 * <li>
+	 * Point cloud serving as input for the computation of the alpha complex.</li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param cg_point the value to set
+	 */
+	public void setCg_point(String name, NXcg_point cg_point);
+
+	/**
+	 * Get all NXcg_point nodes:
+	 * <ul>
+	 * <li>
+	 * Point cloud serving as input for the computation of the alpha complex.</li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXcg_point for that node.
+	 */
+	public Map<String, NXcg_point> getAllCg_point();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li>
+	 * Point cloud serving as input for the computation of the alpha complex.</li>
+	 * </ul>
+	 *
+	 * @param cg_point the child nodes to add
+	 */
+
+	public void setAllCg_point(Map<String, NXcg_point> cg_point);
+
+
+	/**
+	 * Triangle soup serving as input for the computation of the alpha complex.
 	 *
 	 * @return  the value.
 	 */
-	public NXcg_triangle_set getTriangle_set();
+	public NXcg_triangle getTriangle_soup();
 
 	/**
-	 * Triangle soup for which the alpha wrapping should be computed.
+	 * Triangle soup serving as input for the computation of the alpha complex.
 	 *
-	 * @param triangle_setGroup the triangle_setGroup
+	 * @param triangle_soupGroup the triangle_soupGroup
 	 */
-	public void setTriangle_set(NXcg_triangle_set triangle_setGroup);
+	public void setTriangle_soup(NXcg_triangle triangle_soupGroup);
 
 	/**
-	 * A meshed representation of the resulting shape.
-	 *
-	 * @return  the value.
-	 */
-	public NXcg_triangle_set getTriangulation();
-
-	/**
-	 * A meshed representation of the resulting shape.
-	 *
-	 * @param triangulationGroup the triangulationGroup
-	 */
-	public void setTriangulation(NXcg_triangle_set triangulationGroup);
-
-	/**
+	 * Triangle mesh representing the output of the computation, i.e. the alpha complex.
 	 *
 	 * @return  the value.
 	 */
-	public NXcg_tetrahedron_set getInterior_cells();
+	public NXcg_triangle getAlpha_complex();
 
 	/**
+	 * Triangle mesh representing the output of the computation, i.e. the alpha complex.
 	 *
-	 * @param interior_cellsGroup the interior_cellsGroup
+	 * @param alpha_complexGroup the alpha_complexGroup
 	 */
-	public void setInterior_cells(NXcg_tetrahedron_set interior_cellsGroup);
+	public void setAlpha_complex(NXcg_triangle alpha_complexGroup);
+
+	/**
+	 * Tetrahedra representing an interior volume of the alpha complex (if such exists).
+	 *
+	 * @return  the value.
+	 */
+	public NXcg_tetrahedron getTetrahedralization();
+
+	/**
+	 * Tetrahedra representing an interior volume of the alpha complex (if such exists).
+	 *
+	 * @param tetrahedralizationGroup the tetrahedralizationGroup
+	 */
+	public void setTetrahedralization(NXcg_tetrahedron tetrahedralizationGroup);
 
 }

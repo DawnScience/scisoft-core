@@ -14,6 +14,8 @@ package org.eclipse.dawnsci.nexus.validation;
 import static org.eclipse.dawnsci.nexus.validation.NexusDataType.*;
 import static org.eclipse.dawnsci.nexus.validation.NexusUnitCategory.*;
 
+import java.util.Map;
+
 import org.eclipse.dawnsci.nexus.NexusApplicationDefinition;
 import org.eclipse.january.dataset.ILazyDataset;
 import org.eclipse.dawnsci.analysis.api.tree.DataNode;
@@ -39,33 +41,37 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 
 	@Override
 	public ValidationReport validate(NXroot root) {
-		// validate child group 'entry' of type NXentry
-		validateGroup_entry(root.getEntry());
+		// validate unnamed child group of type NXentry (possibly multiple)
+		validateUnnamedGroupOccurrences(root, NXentry.class, false, true);
+		final Map<String, NXentry> allEntry = root.getAllEntry();
+		for (final NXentry entry : allEntry.values()) {
+			validateGroup_NXentry(entry);
+		}
 		return validationReport;
 	}
 
 	@Override
 	public ValidationReport validate(NXentry entry) {
-		validateGroup_entry(entry);
+		validateGroup_NXentry(entry);
 		return validationReport;
 	}
 
 	@Override
 	public ValidationReport validate(NXsubentry subentry) {
-		validateGroup_entry(subentry);
+		validateGroup_NXentry(subentry);
 		return validationReport;
 	}
 
 
 	/**
-	 * Validate group 'entry' of type NXentry.
+	 * Validate unnamed group of type NXentry.
 	 */
-	private void validateGroup_entry(final NXsubentry group) {
+	private void validateGroup_NXentry(final NXsubentry group) {
 		// set the current entry, required for validating links
 		setEntry(group);
 
 		// validate that the group is not null
-		if (!(validateGroupNotNull("entry", NXentry.class, group))) return;
+		if (!(validateGroupNotNull(null, NXentry.class, group))) return;
 
 		// validate optional field 'title' of type NX_CHAR.
 		final ILazyDataset title = group.getLazyDataset("title");
@@ -99,24 +105,24 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 		}
 
 		// validate child group 'instrument' of type NXinstrument
-		validateGroup_entry_instrument(group.getInstrument());
+		validateGroup_NXentry_instrument(group.getInstrument());
 
 		// validate child group 'sample' of type NXsample
-		validateGroup_entry_sample(group.getSample());
+		validateGroup_NXentry_sample(group.getSample());
 
 		// validate optional child group 'control' of type NXmonitor
 		if (group.getMonitor("control") != null) {
-			validateGroup_entry_control(group.getMonitor("control"));
+			validateGroup_NXentry_control(group.getMonitor("control"));
 		}
 
 		// validate child group 'data' of type NXdata
-		validateGroup_entry_data(group.getData());
+		validateGroup_NXentry_data(group.getData());
 	}
 
 	/**
 	 * Validate group 'instrument' of type NXinstrument.
 	 */
-	private void validateGroup_entry_instrument(final NXinstrument group) {
+	private void validateGroup_NXentry_instrument(final NXinstrument group) {
 		// validate that the group is not null
 		if (!(validateGroupNotNull("instrument", NXinstrument.class, group))) return;
 
@@ -124,17 +130,17 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 		validateUnnamedGroupOccurrences(group, NXsource.class, true, false);
 		final NXsource source = getFirstGroupOrNull(group.getAllSource());
 		if (source != null) {
-			validateGroup_entry_instrument_NXsource(source);
+			validateGroup_NXentry_instrument_NXsource(source);
 		}
 
 		// validate child group 'detector' of type NXdetector
-		validateGroup_entry_instrument_detector(group.getDetector());
+		validateGroup_NXentry_instrument_detector(group.getDetector());
 	}
 
 	/**
 	 * Validate optional unnamed group of type NXsource.
 	 */
-	private void validateGroup_entry_instrument_NXsource(final NXsource group) {
+	private void validateGroup_NXentry_instrument_NXsource(final NXsource group) {
 		// validate that the group is not null
 		if (!(validateGroupNotNull(null, NXsource.class, group))) return;
 
@@ -156,7 +162,16 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 					"Optical Laser",
 					"Ion Source",
 					"UV Plasma Source",
-					"Metal Jet X-ray");
+					"Metal Jet X-ray",
+					"Laser",
+					"Dye Laser",
+					"Broadband Tunable Light Source",
+					"Halogen Lamp",
+					"LED",
+					"Mercury Cadmium Telluride Lamp",
+					"Deuterium Lamp",
+					"Xenon Lamp",
+					"Globar");
 		}
 
 		// validate optional field 'name' of type NX_CHAR.
@@ -181,7 +196,7 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 	/**
 	 * Validate group 'detector' of type NXdetector.
 	 */
-	private void validateGroup_entry_instrument_detector(final NXdetector group) {
+	private void validateGroup_NXentry_instrument_detector(final NXdetector group) {
 		// validate that the group is not null
 		if (!(validateGroupNotNull("detector", NXdetector.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
@@ -255,7 +270,7 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 	/**
 	 * Validate group 'sample' of type NXsample.
 	 */
-	private void validateGroup_entry_sample(final NXsample group) {
+	private void validateGroup_NXentry_sample(final NXsample group) {
 		// validate that the group is not null
 		if (!(validateGroupNotNull("sample", NXsample.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
@@ -313,7 +328,7 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 	/**
 	 * Validate optional group 'control' of type NXmonitor.
 	 */
-	private void validateGroup_entry_control(final NXmonitor group) {
+	private void validateGroup_NXentry_control(final NXmonitor group) {
 		// validate that the group is not null
 		if (!(validateGroupNotNull("control", NXmonitor.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();
@@ -333,7 +348,7 @@ public class NXtomoValidator extends AbstractNexusValidator implements NexusAppl
 	/**
 	 * Validate group 'data' of type NXdata.
 	 */
-	private void validateGroup_entry_data(final NXdata group) {
+	private void validateGroup_NXentry_data(final NXdata group) {
 		// validate that the group is not null
 		if (!(validateGroupNotNull("data", NXdata.class, group))) return;
 		clearLocalGroupDimensionPlaceholderValues();

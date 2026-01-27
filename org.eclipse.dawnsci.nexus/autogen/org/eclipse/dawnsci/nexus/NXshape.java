@@ -28,7 +28,6 @@ public interface NXshape extends NXobject {
 	public static final String NX_SHAPE = "shape";
 	public static final String NX_SIZE = "size";
 	public static final String NX_DIRECTION = "direction";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * general shape of a component
 	 * <p>
@@ -248,31 +247,5 @@ public interface NXshape extends NXobject {
 	 * @param direction the direction
 	 */
 	public DataNode setDirectionScalar(String directionValue);
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
 
 }

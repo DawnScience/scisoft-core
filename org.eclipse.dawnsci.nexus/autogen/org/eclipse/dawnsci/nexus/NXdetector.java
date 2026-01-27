@@ -35,11 +35,13 @@ import org.eclipse.january.dataset.Dataset;
  * number of detector pixels in the first (slowest) direction</li>
  * <li><b>j</b>
  * number of detector pixels in the second (faster) direction</li>
+ * <li><b>k</b>
+ * number of detector pixels in the third (if necessary, fastest) direction</li>
  * <li><b>tof</b>
  * number of bins in the time-of-flight histogram</li></ul></p>
  *
  */
-public interface NXdetector extends NXobject {
+public interface NXdetector extends NXcomponent {
 
 	public static final String NX_TIME_OF_FLIGHT = "time_of_flight";
 	public static final String NX_TIME_OF_FLIGHT_ATTRIBUTE_AXIS = "axis";
@@ -67,7 +69,6 @@ public interface NXdetector extends NXobject {
 	public static final String NX_DISTANCE = "distance";
 	public static final String NX_POLAR_ANGLE = "polar_angle";
 	public static final String NX_AZIMUTHAL_ANGLE = "azimuthal_angle";
-	public static final String NX_DESCRIPTION = "description";
 	public static final String NX_SERIAL_NUMBER = "serial_number";
 	public static final String NX_LOCAL_NAME = "local_name";
 	public static final String NX_SOLID_ANGLE = "solid_angle";
@@ -122,8 +123,6 @@ public interface NXdetector extends NXobject {
 	public static final String NX_SENSOR_MATERIAL = "sensor_material";
 	public static final String NX_SENSOR_THICKNESS = "sensor_thickness";
 	public static final String NX_THRESHOLD_ENERGY = "threshold_energy";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
-	public static final String NX_DEPENDS_ON = "depends_on";
 	/**
 	 * Total time of flight
 	 * <p>
@@ -2492,7 +2491,8 @@ public interface NXdetector extends NXobject {
 	 * <li><b>summed</b> </li>
 	 * <li><b>event</b> </li>
 	 * <li><b>histogrammed</b> </li>
-	 * <li><b>decimated</b> </li></ul></p>
+	 * <li><b>decimated</b> </li>
+	 * <li><b>pulse counting</b> </li></ul></p>
 	 * </p>
 	 *
 	 * @return  the value.
@@ -2509,7 +2509,8 @@ public interface NXdetector extends NXobject {
 	 * <li><b>summed</b> </li>
 	 * <li><b>event</b> </li>
 	 * <li><b>histogrammed</b> </li>
-	 * <li><b>decimated</b> </li></ul></p>
+	 * <li><b>decimated</b> </li>
+	 * <li><b>pulse counting</b> </li></ul></p>
 	 * </p>
 	 *
 	 * @param acquisition_modeDataset the acquisition_modeDataset
@@ -2526,7 +2527,8 @@ public interface NXdetector extends NXobject {
 	 * <li><b>summed</b> </li>
 	 * <li><b>event</b> </li>
 	 * <li><b>histogrammed</b> </li>
-	 * <li><b>decimated</b> </li></ul></p>
+	 * <li><b>decimated</b> </li>
+	 * <li><b>pulse counting</b> </li></ul></p>
 	 * </p>
 	 *
 	 * @return  the value.
@@ -2543,7 +2545,8 @@ public interface NXdetector extends NXobject {
 	 * <li><b>summed</b> </li>
 	 * <li><b>event</b> </li>
 	 * <li><b>histogrammed</b> </li>
-	 * <li><b>decimated</b> </li></ul></p>
+	 * <li><b>decimated</b> </li>
+	 * <li><b>pulse counting</b> </li></ul></p>
 	 * </p>
 	 *
 	 * @param acquisition_mode the acquisition_mode
@@ -3012,10 +3015,10 @@ public interface NXdetector extends NXobject {
 
 	/**
 	 * This field allow to distinguish different types of exposure to the same detector "data" field.
-	 * Some techniques require frequent (re-)calibration inbetween measuremnts and this way of
+	 * Some techniques require frequent (re-)calibration inbetween measurements and this way of
 	 * recording the different measurements preserves the chronological order with is important for
 	 * correct processing.
-	 * This is used for example in tomography (`:ref:`NXtomo`) sample projections,
+	 * This is used for example in tomography (:ref:`NXtomo`) sample projections,
 	 * dark and flat images, a magic number is recorded per frame.
 	 * The key is as follows:
 	 * * projection (sample) = 0
@@ -3035,10 +3038,10 @@ public interface NXdetector extends NXobject {
 
 	/**
 	 * This field allow to distinguish different types of exposure to the same detector "data" field.
-	 * Some techniques require frequent (re-)calibration inbetween measuremnts and this way of
+	 * Some techniques require frequent (re-)calibration inbetween measurements and this way of
 	 * recording the different measurements preserves the chronological order with is important for
 	 * correct processing.
-	 * This is used for example in tomography (`:ref:`NXtomo`) sample projections,
+	 * This is used for example in tomography (:ref:`NXtomo`) sample projections,
 	 * dark and flat images, a magic number is recorded per frame.
 	 * The key is as follows:
 	 * * projection (sample) = 0
@@ -3058,10 +3061,10 @@ public interface NXdetector extends NXobject {
 
 	/**
 	 * This field allow to distinguish different types of exposure to the same detector "data" field.
-	 * Some techniques require frequent (re-)calibration inbetween measuremnts and this way of
+	 * Some techniques require frequent (re-)calibration inbetween measurements and this way of
 	 * recording the different measurements preserves the chronological order with is important for
 	 * correct processing.
-	 * This is used for example in tomography (`:ref:`NXtomo`) sample projections,
+	 * This is used for example in tomography (:ref:`NXtomo`) sample projections,
 	 * dark and flat images, a magic number is recorded per frame.
 	 * The key is as follows:
 	 * * projection (sample) = 0
@@ -3081,10 +3084,10 @@ public interface NXdetector extends NXobject {
 
 	/**
 	 * This field allow to distinguish different types of exposure to the same detector "data" field.
-	 * Some techniques require frequent (re-)calibration inbetween measuremnts and this way of
+	 * Some techniques require frequent (re-)calibration inbetween measurements and this way of
 	 * recording the different measurements preserves the chronological order with is important for
 	 * correct processing.
-	 * This is used for example in tomography (`:ref:`NXtomo`) sample projections,
+	 * This is used for example in tomography (:ref:`NXtomo`) sample projections,
 	 * dark and flat images, a magic number is recorded per frame.
 	 * The key is as follows:
 	 * * projection (sample) = 0
@@ -4137,38 +4140,6 @@ public interface NXdetector extends NXobject {
 	// Unprocessed choice:detector_shape
 
 	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
-
-	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * The reference point of the detector is the center of the first pixel.
 	 * In complex geometries the NXoff_geometry groups can be used to provide an unambiguous reference.
 	 * <p>
@@ -4180,12 +4151,6 @@ public interface NXdetector extends NXobject {
 	public Dataset getDepends_on();
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * The reference point of the detector is the center of the first pixel.
 	 * In complex geometries the NXoff_geometry groups can be used to provide an unambiguous reference.
 	 * <p>
@@ -4197,12 +4162,6 @@ public interface NXdetector extends NXobject {
 	public DataNode setDepends_on(IDataset depends_onDataset);
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * The reference point of the detector is the center of the first pixel.
 	 * In complex geometries the NXoff_geometry groups can be used to provide an unambiguous reference.
 	 * <p>
@@ -4214,12 +4173,6 @@ public interface NXdetector extends NXobject {
 	public String getDepends_onScalar();
 
 	/**
-	 * NeXus positions components by applying a set of translations and rotations
-	 * to apply to the component starting from 0, 0, 0. The order of these operations
-	 * is critical and forms what NeXus calls a dependency chain. The depends_on
-	 * field defines the path to the top most operation of the dependency chain or the
-	 * string "." if located in the origin. Usually these operations are stored in a
-	 * NXtransformations group. But NeXus allows them to be stored anywhere.
 	 * The reference point of the detector is the center of the first pixel.
 	 * In complex geometries the NXoff_geometry groups can be used to provide an unambiguous reference.
 	 * <p>
@@ -4229,85 +4182,5 @@ public interface NXdetector extends NXobject {
 	 * @param depends_on the depends_on
 	 */
 	public DataNode setDepends_onScalar(String depends_onValue);
-
-	/**
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.
-	 *
-	 * @return  the value.
-	 */
-	public NXtransformations getTransformations();
-
-	/**
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.
-	 *
-	 * @param transformationsGroup the transformationsGroup
-	 */
-	public void setTransformations(NXtransformations transformationsGroup);
-
-	/**
-	 * Get a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @param name  the name of the node.
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public NXtransformations getTransformations(String name);
-
-	/**
-	 * Set a NXtransformations node by name:
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @param name the name of the node
-	 * @param transformations the value to set
-	 */
-	public void setTransformations(String name, NXtransformations transformations);
-
-	/**
-	 * Get all NXtransformations nodes:
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @return  a map from node names to the NXtransformations for that node.
-	 */
-	public Map<String, NXtransformations> getAllTransformations();
-
-	/**
-	 * Set multiple child nodes of a particular type.
-	 * <ul>
-	 * <li>
-	 * This is the group recommended for holding the chain of translation
-	 * and rotation operations necessary to position the component within
-	 * the instrument. The dependency chain may however traverse similar groups in
-	 * other component groups.</li>
-	 * </ul>
-	 *
-	 * @param transformations the child nodes to add
-	 */
-
-	public void setAllTransformations(Map<String, NXtransformations> transformations);
-
 
 }

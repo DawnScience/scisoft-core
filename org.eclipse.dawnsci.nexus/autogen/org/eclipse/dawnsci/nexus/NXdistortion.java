@@ -28,9 +28,8 @@ import org.eclipse.january.dataset.Dataset;
  * Number of points of the matrix distortion field (y direction)</li></ul></p>
  *
  */
-public interface NXdistortion extends NXobject {
+public interface NXdistortion extends NXprocess {
 
-	public static final String NX_LAST_PROCESS = "last_process";
 	public static final String NX_APPLIED = "applied";
 	public static final String NX_SYMMETRY = "symmetry";
 	public static final String NX_ORIGINAL_CENTRE = "original_centre";
@@ -38,46 +37,6 @@ public interface NXdistortion extends NXobject {
 	public static final String NX_CDEFORM_FIELD = "cdeform_field";
 	public static final String NX_RDEFORM_FIELD = "rdeform_field";
 	public static final String NX_DESCRIPTION = "description";
-	/**
-	 * Indicates the name of the last operation applied in the NXprocess sequence.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public Dataset getLast_process();
-
-	/**
-	 * Indicates the name of the last operation applied in the NXprocess sequence.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 *
-	 * @param last_processDataset the last_processDataset
-	 */
-	public DataNode setLast_process(IDataset last_processDataset);
-
-	/**
-	 * Indicates the name of the last operation applied in the NXprocess sequence.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 *
-	 * @return  the value.
-	 */
-	public String getLast_processScalar();
-
-	/**
-	 * Indicates the name of the last operation applied in the NXprocess sequence.
-	 * <p>
-	 * <b>Type:</b> NX_CHAR
-	 * </p>
-	 *
-	 * @param last_process the last_process
-	 */
-	public DataNode setLast_processScalar(String last_processValue);
-
 	/**
 	 * Has the distortion correction been applied?
 	 * <p>

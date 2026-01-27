@@ -17,7 +17,7 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * definition of a quadric surface.
+ * Definition of a quadric surface.
  *
  */
 public interface NXquadric extends NXobject {

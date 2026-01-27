@@ -138,63 +138,63 @@ public class NXcs_profiling_eventImpl extends NXobjectImpl implements NXcs_profi
 	}
 
 	@Override
-	public Dataset getNumber_of_processes() {
-		return getDataset(NX_NUMBER_OF_PROCESSES);
+	public Dataset getMax_processes() {
+		return getDataset(NX_MAX_PROCESSES);
 	}
 
 	@Override
-	public Long getNumber_of_processesScalar() {
-		return getLong(NX_NUMBER_OF_PROCESSES);
+	public Long getMax_processesScalar() {
+		return getLong(NX_MAX_PROCESSES);
 	}
 
 	@Override
-	public DataNode setNumber_of_processes(IDataset number_of_processesDataset) {
-		return setDataset(NX_NUMBER_OF_PROCESSES, number_of_processesDataset);
+	public DataNode setMax_processes(IDataset max_processesDataset) {
+		return setDataset(NX_MAX_PROCESSES, max_processesDataset);
 	}
 
 	@Override
-	public DataNode setNumber_of_processesScalar(Long number_of_processesValue) {
-		return setField(NX_NUMBER_OF_PROCESSES, number_of_processesValue);
+	public DataNode setMax_processesScalar(Long max_processesValue) {
+		return setField(NX_MAX_PROCESSES, max_processesValue);
 	}
 
 	@Override
-	public Dataset getNumber_of_threads() {
-		return getDataset(NX_NUMBER_OF_THREADS);
+	public Dataset getMax_threads() {
+		return getDataset(NX_MAX_THREADS);
 	}
 
 	@Override
-	public Long getNumber_of_threadsScalar() {
-		return getLong(NX_NUMBER_OF_THREADS);
+	public Long getMax_threadsScalar() {
+		return getLong(NX_MAX_THREADS);
 	}
 
 	@Override
-	public DataNode setNumber_of_threads(IDataset number_of_threadsDataset) {
-		return setDataset(NX_NUMBER_OF_THREADS, number_of_threadsDataset);
+	public DataNode setMax_threads(IDataset max_threadsDataset) {
+		return setDataset(NX_MAX_THREADS, max_threadsDataset);
 	}
 
 	@Override
-	public DataNode setNumber_of_threadsScalar(Long number_of_threadsValue) {
-		return setField(NX_NUMBER_OF_THREADS, number_of_threadsValue);
+	public DataNode setMax_threadsScalar(Long max_threadsValue) {
+		return setField(NX_MAX_THREADS, max_threadsValue);
 	}
 
 	@Override
-	public Dataset getNumber_of_gpus() {
-		return getDataset(NX_NUMBER_OF_GPUS);
+	public Dataset getMax_gpus() {
+		return getDataset(NX_MAX_GPUS);
 	}
 
 	@Override
-	public Long getNumber_of_gpusScalar() {
-		return getLong(NX_NUMBER_OF_GPUS);
+	public Long getMax_gpusScalar() {
+		return getLong(NX_MAX_GPUS);
 	}
 
 	@Override
-	public DataNode setNumber_of_gpus(IDataset number_of_gpusDataset) {
-		return setDataset(NX_NUMBER_OF_GPUS, number_of_gpusDataset);
+	public DataNode setMax_gpus(IDataset max_gpusDataset) {
+		return setDataset(NX_MAX_GPUS, max_gpusDataset);
 	}
 
 	@Override
-	public DataNode setNumber_of_gpusScalar(Long number_of_gpusValue) {
-		return setField(NX_NUMBER_OF_GPUS, number_of_gpusValue);
+	public DataNode setMax_gpusScalar(Long max_gpusValue) {
+		return setField(NX_MAX_GPUS, max_gpusValue);
 	}
 
 	@Override

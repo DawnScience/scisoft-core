@@ -330,14 +330,4 @@ public class NXdetector_moduleImpl extends NXobjectImpl implements NXdetector_mo
 		return setString(NX_DEPENDS_ON, depends_onValue);
 	}
 
-	@Override
-	public String getAttributeDefault() {
-		return getAttrString(null, NX_ATTRIBUTE_DEFAULT);
-	}
-
-	@Override
-	public void setAttributeDefault(String defaultValue) {
-		setAttribute(null, NX_ATTRIBUTE_DEFAULT, defaultValue);
-	}
-
 }

@@ -31,7 +31,6 @@ public interface NXcite extends NXobject {
 	public static final String NX_DOI = "doi";
 	public static final String NX_ENDNOTE = "endnote";
 	public static final String NX_BIBTEX = "bibtex";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * This should describe the reason for including this reference.
 	 * For example: The dataset in this group was normalised using the method
@@ -239,31 +238,5 @@ public interface NXcite extends NXobject {
 	 * @param bibtex the bibtex
 	 */
 	public DataNode setBibtexScalar(String bibtexValue);
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @return  the value.
-	 */
-	public String getAttributeDefault();
-
-	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
-	 *
-	 * @param defaultValue the defaultValue
-	 */
-	public void setAttributeDefault(String defaultValue);
 
 }

@@ -20,7 +20,10 @@ import org.eclipse.january.dataset.IDataset;
 import org.eclipse.january.dataset.Dataset;
 
 /**
- * Document an event of data processing, reconstruction, or analysis for this data.
+ * The :ref:`NXprocess` class describes an operation used to
+ * process data as part of an analysis workflow, providing
+ * information such as the software used, the date of the
+ * operation, the input parameters, and the resulting data.
  *
  */
 public interface NXprocess extends NXobject {
@@ -29,7 +32,6 @@ public interface NXprocess extends NXobject {
 	public static final String NX_SEQUENCE_INDEX = "sequence_index";
 	public static final String NX_VERSION = "version";
 	public static final String NX_DATE = "date";
-	public static final String NX_ATTRIBUTE_DEFAULT = "default";
 	/**
 	 * Name of the program used
 	 * <p>
@@ -71,9 +73,8 @@ public interface NXprocess extends NXobject {
 	public DataNode setProgramScalar(String programValue);
 
 	/**
-	 * Sequence index of processing,
-	 * for determining the order of multiple **NXprocess** steps.
-	 * Starts with 1.
+	 * Sequence index of processing, for determining the order of
+	 * multiple **NXprocess** steps. Starts with 1.
 	 * <p>
 	 * <b>Type:</b> NX_POSINT
 	 * </p>
@@ -83,9 +84,8 @@ public interface NXprocess extends NXobject {
 	public Dataset getSequence_index();
 
 	/**
-	 * Sequence index of processing,
-	 * for determining the order of multiple **NXprocess** steps.
-	 * Starts with 1.
+	 * Sequence index of processing, for determining the order of
+	 * multiple **NXprocess** steps. Starts with 1.
 	 * <p>
 	 * <b>Type:</b> NX_POSINT
 	 * </p>
@@ -95,9 +95,8 @@ public interface NXprocess extends NXobject {
 	public DataNode setSequence_index(IDataset sequence_indexDataset);
 
 	/**
-	 * Sequence index of processing,
-	 * for determining the order of multiple **NXprocess** steps.
-	 * Starts with 1.
+	 * Sequence index of processing, for determining the order of
+	 * multiple **NXprocess** steps. Starts with 1.
 	 * <p>
 	 * <b>Type:</b> NX_POSINT
 	 * </p>
@@ -107,9 +106,8 @@ public interface NXprocess extends NXobject {
 	public Long getSequence_indexScalar();
 
 	/**
-	 * Sequence index of processing,
-	 * for determining the order of multiple **NXprocess** steps.
-	 * Starts with 1.
+	 * Sequence index of processing, for determining the order of
+	 * multiple **NXprocess** steps. Starts with 1.
 	 * <p>
 	 * <b>Type:</b> NX_POSINT
 	 * </p>
@@ -199,10 +197,10 @@ public interface NXprocess extends NXobject {
 	public DataNode setDateScalar(Date dateValue);
 
 	/**
-	 * The note will contain information about how the data was processed
-	 * or anything about the data provenance.
-	 * The contents of the note can be anything that the processing code
-	 * can understand, or simple text.
+	 * The note will contain information about how the data was
+	 * processed or anything about the data provenance. The
+	 * contents of the note can be anything that the processing
+	 * code can understand, or simple text.
 	 * The name will be numbered to allow for ordering of steps.
 	 *
 	 * @return  the value.
@@ -210,10 +208,10 @@ public interface NXprocess extends NXobject {
 	public NXnote getNote();
 
 	/**
-	 * The note will contain information about how the data was processed
-	 * or anything about the data provenance.
-	 * The contents of the note can be anything that the processing code
-	 * can understand, or simple text.
+	 * The note will contain information about how the data was
+	 * processed or anything about the data provenance. The
+	 * contents of the note can be anything that the processing
+	 * code can understand, or simple text.
 	 * The name will be numbered to allow for ordering of steps.
 	 *
 	 * @param noteGroup the noteGroup
@@ -224,10 +222,10 @@ public interface NXprocess extends NXobject {
 	 * Get a NXnote node by name:
 	 * <ul>
 	 * <li>
-	 * The note will contain information about how the data was processed
-	 * or anything about the data provenance.
-	 * The contents of the note can be anything that the processing code
-	 * can understand, or simple text.
+	 * The note will contain information about how the data was
+	 * processed or anything about the data provenance. The
+	 * contents of the note can be anything that the processing
+	 * code can understand, or simple text.
 	 * The name will be numbered to allow for ordering of steps.</li>
 	 * </ul>
 	 *
@@ -240,10 +238,10 @@ public interface NXprocess extends NXobject {
 	 * Set a NXnote node by name:
 	 * <ul>
 	 * <li>
-	 * The note will contain information about how the data was processed
-	 * or anything about the data provenance.
-	 * The contents of the note can be anything that the processing code
-	 * can understand, or simple text.
+	 * The note will contain information about how the data was
+	 * processed or anything about the data provenance. The
+	 * contents of the note can be anything that the processing
+	 * code can understand, or simple text.
 	 * The name will be numbered to allow for ordering of steps.</li>
 	 * </ul>
 	 *
@@ -256,10 +254,10 @@ public interface NXprocess extends NXobject {
 	 * Get all NXnote nodes:
 	 * <ul>
 	 * <li>
-	 * The note will contain information about how the data was processed
-	 * or anything about the data provenance.
-	 * The contents of the note can be anything that the processing code
-	 * can understand, or simple text.
+	 * The note will contain information about how the data was
+	 * processed or anything about the data provenance. The
+	 * contents of the note can be anything that the processing
+	 * code can understand, or simple text.
 	 * The name will be numbered to allow for ordering of steps.</li>
 	 * </ul>
 	 *
@@ -271,10 +269,10 @@ public interface NXprocess extends NXobject {
 	 * Set multiple child nodes of a particular type.
 	 * <ul>
 	 * <li>
-	 * The note will contain information about how the data was processed
-	 * or anything about the data provenance.
-	 * The contents of the note can be anything that the processing code
-	 * can understand, or simple text.
+	 * The note will contain information about how the data was
+	 * processed or anything about the data provenance. The
+	 * contents of the note can be anything that the processing
+	 * code can understand, or simple text.
 	 * The name will be numbered to allow for ordering of steps.</li>
 	 * </ul>
 	 *
@@ -285,29 +283,127 @@ public interface NXprocess extends NXobject {
 
 
 	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
+	 * Parameters used in performing the data analysis.
 	 *
 	 * @return  the value.
 	 */
-	public String getAttributeDefault();
+	public NXparameters getParameters();
 
 	/**
-	 * .. index:: plotting
-	 * Declares which child group contains a path leading
-	 * to a :ref:`NXdata` group.
-	 * It is recommended (as of NIAC2014) to use this attribute
-	 * to help define the path to the default dataset to be plotted.
-	 * See https://www.nexusformat.org/2014_How_to_find_default_data.html
-	 * for a summary of the discussion.
+	 * Parameters used in performing the data analysis.
 	 *
-	 * @param defaultValue the defaultValue
+	 * @param parametersGroup the parametersGroup
 	 */
-	public void setAttributeDefault(String defaultValue);
+	public void setParameters(NXparameters parametersGroup);
+
+	/**
+	 * Get a NXparameters node by name:
+	 * <ul>
+	 * <li>
+	 * Parameters used in performing the data analysis.</li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXparameters for that node.
+	 */
+	public NXparameters getParameters(String name);
+
+	/**
+	 * Set a NXparameters node by name:
+	 * <ul>
+	 * <li>
+	 * Parameters used in performing the data analysis.</li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param parameters the value to set
+	 */
+	public void setParameters(String name, NXparameters parameters);
+
+	/**
+	 * Get all NXparameters nodes:
+	 * <ul>
+	 * <li>
+	 * Parameters used in performing the data analysis.</li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXparameters for that node.
+	 */
+	public Map<String, NXparameters> getAllParameters();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li>
+	 * Parameters used in performing the data analysis.</li>
+	 * </ul>
+	 *
+	 * @param parameters the child nodes to add
+	 */
+
+	public void setAllParameters(Map<String, NXparameters> parameters);
+
+
+	/**
+	 * The data resulting from the operation.
+	 *
+	 * @return  the value.
+	 */
+	public NXdata getData();
+
+	/**
+	 * The data resulting from the operation.
+	 *
+	 * @param dataGroup the dataGroup
+	 */
+	public void setData(NXdata dataGroup);
+
+	/**
+	 * Get a NXdata node by name:
+	 * <ul>
+	 * <li>
+	 * The data resulting from the operation.</li>
+	 * </ul>
+	 *
+	 * @param name  the name of the node.
+	 * @return  a map from node names to the NXdata for that node.
+	 */
+	public NXdata getData(String name);
+
+	/**
+	 * Set a NXdata node by name:
+	 * <ul>
+	 * <li>
+	 * The data resulting from the operation.</li>
+	 * </ul>
+	 *
+	 * @param name the name of the node
+	 * @param data the value to set
+	 */
+	public void setData(String name, NXdata data);
+
+	/**
+	 * Get all NXdata nodes:
+	 * <ul>
+	 * <li>
+	 * The data resulting from the operation.</li>
+	 * </ul>
+	 *
+	 * @return  a map from node names to the NXdata for that node.
+	 */
+	public Map<String, NXdata> getAllData();
+
+	/**
+	 * Set multiple child nodes of a particular type.
+	 * <ul>
+	 * <li>
+	 * The data resulting from the operation.</li>
+	 * </ul>
+	 *
+	 * @param data the child nodes to add
+	 */
+
+	public void setAllData(Map<String, NXdata> data);
+
 
 }

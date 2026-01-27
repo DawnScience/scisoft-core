@@ -23,23 +23,39 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Corrector for aberrations in an electron microscope.
- * Different technology partners use different naming schemes and models
- * for quantifying the aberration coefficients.
- * The corrector in an electron microscope is composed of multiple lenses and
- * multipole stigmators with vendor-specific details which are often undisclosed.
+ * Base class for a corrector reducing (spherical) aberrations of an electron optical setup.
+ * Different technology partners use different conventions and
+ * models for quantifying the aberration coefficients.
+ * Aberration correction components are especially important for (scanning)
+ * transmission electron microscopy. Composed of multiple lenses and multipole stigmators,
+ * their technical details are specific for the technology partner as well as
+ * the microscope and instrument. Most technical details are proprietary knowledge.
+ * If one component corrects for multiple types of aberrations (like it is the case
+ * reported here `CEOS <https://www.ceos-gmbh.de/en/research/electrostat>`_) follow this
+ * design when using corrector and monochromator in an application definition:
+ * * Use :ref:`NXcorrector_cs` for spherical aberration
+ * * Use :ref:`NXmonochromator` for energy filtering or chromatic aberration
+ * * Use the group corrector_ax in :ref:`NXem` for axial astigmatism aberration
+ * Although this base class currently provides concepts that are foremost used in
+ * the field of electron microscopy using this base class is not restricted to this
+ * research field. NXcorrector_cs can also serve as a container to detail, in
+ * combination with :ref:`NXaberration`, about measured aberrations in classical optics.
+ * In optics, though, the difference is that the design of the :ref:NXoptical_lens`
+ * itself (e.g., using aspheric lenses or combinations of lenses) enables to
+ * reduce spherical aberrations.
 
  */
-public class NXcorrector_csImpl extends NXobjectImpl implements NXcorrector_cs {
+public class NXcorrector_csImpl extends NXcomponentImpl implements NXcorrector_cs {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
 
 	public static final Set<NexusBaseClass> PERMITTED_CHILD_GROUP_CLASSES = EnumSet.of(
-		NexusBaseClass.NX_FABRICATION,
 		NexusBaseClass.NX_PROCESS,
-		NexusBaseClass.NX_LENS_EM,
-		NexusBaseClass.NX_TRANSFORMATIONS);
+		NexusBaseClass.NX_ELECTROMAGNETIC_LENS,
+		NexusBaseClass.NX_OPTICAL_LENS,
+		NexusBaseClass.NX_APERTURE,
+		NexusBaseClass.NX_DEFLECTOR);
 
 	public NXcorrector_csImpl() {
 		super();
@@ -86,148 +102,178 @@ public class NXcorrector_csImpl extends NXobjectImpl implements NXcorrector_cs {
 	}
 
 	@Override
-	public Dataset getName() {
-		return getDataset(NX_NAME);
+	public NXprocess getTableauid() {
+		// dataNodeName = NX_TABLEAUID
+		return getChild("tableauid", NXprocess.class);
 	}
 
 	@Override
-	public String getNameScalar() {
-		return getString(NX_NAME);
+	public void setTableauid(NXprocess tableauidGroup) {
+		putChild("tableauid", tableauidGroup);
+	}
+	// Unprocessed group: imageID
+	// Unprocessed group: c_1
+	// Unprocessed group: a_1
+	// Unprocessed group: b_2
+	// Unprocessed group: a_2
+	// Unprocessed group: c_3
+	// Unprocessed group: s_3
+	// Unprocessed group: a_3
+	// Unprocessed group: b_4
+	// Unprocessed group: d_4
+	// Unprocessed group: a_4
+	// Unprocessed group: c_5
+	// Unprocessed group: s_5
+	// Unprocessed group: r_5
+	// Unprocessed group: a_6
+	// Unprocessed group: c_1_0
+	// Unprocessed group: c_1_2_a
+	// Unprocessed group: c_1_2_b
+	// Unprocessed group: c_2_1_a
+	// Unprocessed group: c_2_1_b
+	// Unprocessed group: c_2_3_a
+	// Unprocessed group: c_2_3_b
+	// Unprocessed group: c_3_0
+	// Unprocessed group: c_3_2_a
+	// Unprocessed group: c_3_2_b
+	// Unprocessed group: c_3_4_a
+	// Unprocessed group: c_3_4_b
+	// Unprocessed group: c_4_1_a
+	// Unprocessed group: c_4_1_b
+	// Unprocessed group: c_4_3_a
+	// Unprocessed group: c_4_3_b
+	// Unprocessed group: c_4_5_a
+	// Unprocessed group: c_4_5_b
+	// Unprocessed group: c_5_0
+	// Unprocessed group: c_5_2_a
+	// Unprocessed group: c_5_2_b
+	// Unprocessed group: c_5_4_a
+	// Unprocessed group: c_5_4_b
+	// Unprocessed group: c_5_6_a
+	// Unprocessed group: c_5_6_b
+
+	@Override
+	public NXelectromagnetic_lens getElectromagnetic_lens() {
+		// dataNodeName = NX_ELECTROMAGNETIC_LENS
+		return getChild("electromagnetic_lens", NXelectromagnetic_lens.class);
 	}
 
 	@Override
-	public DataNode setName(IDataset nameDataset) {
-		return setDataset(NX_NAME, nameDataset);
+	public void setElectromagnetic_lens(NXelectromagnetic_lens electromagnetic_lensGroup) {
+		putChild("electromagnetic_lens", electromagnetic_lensGroup);
 	}
 
 	@Override
-	public DataNode setNameScalar(String nameValue) {
-		return setString(NX_NAME, nameValue);
+	public NXelectromagnetic_lens getElectromagnetic_lens(String name) {
+		return getChild(name, NXelectromagnetic_lens.class);
 	}
 
 	@Override
-	public NXfabrication getFabrication() {
-		// dataNodeName = NX_FABRICATION
-		return getChild("fabrication", NXfabrication.class);
+	public void setElectromagnetic_lens(String name, NXelectromagnetic_lens electromagnetic_lens) {
+		putChild(name, electromagnetic_lens);
 	}
 
 	@Override
-	public void setFabrication(NXfabrication fabricationGroup) {
-		putChild("fabrication", fabricationGroup);
+	public Map<String, NXelectromagnetic_lens> getAllElectromagnetic_lens() {
+		return getChildren(NXelectromagnetic_lens.class);
 	}
 
 	@Override
-	public NXfabrication getFabrication(String name) {
-		return getChild(name, NXfabrication.class);
+	public void setAllElectromagnetic_lens(Map<String, NXelectromagnetic_lens> electromagnetic_lens) {
+		setChildren(electromagnetic_lens);
 	}
 
 	@Override
-	public void setFabrication(String name, NXfabrication fabrication) {
-		putChild(name, fabrication);
+	public NXoptical_lens getOptical_lens() {
+		// dataNodeName = NX_OPTICAL_LENS
+		return getChild("optical_lens", NXoptical_lens.class);
 	}
 
 	@Override
-	public Map<String, NXfabrication> getAllFabrication() {
-		return getChildren(NXfabrication.class);
+	public void setOptical_lens(NXoptical_lens optical_lensGroup) {
+		putChild("optical_lens", optical_lensGroup);
 	}
 
 	@Override
-	public void setAllFabrication(Map<String, NXfabrication> fabrication) {
-		setChildren(fabrication);
+	public NXoptical_lens getOptical_lens(String name) {
+		return getChild(name, NXoptical_lens.class);
 	}
 
 	@Override
-	public Dataset getDescription() {
-		return getDataset(NX_DESCRIPTION);
+	public void setOptical_lens(String name, NXoptical_lens optical_lens) {
+		putChild(name, optical_lens);
 	}
 
 	@Override
-	public String getDescriptionScalar() {
-		return getString(NX_DESCRIPTION);
+	public Map<String, NXoptical_lens> getAllOptical_lens() {
+		return getChildren(NXoptical_lens.class);
 	}
 
 	@Override
-	public DataNode setDescription(IDataset descriptionDataset) {
-		return setDataset(NX_DESCRIPTION, descriptionDataset);
+	public void setAllOptical_lens(Map<String, NXoptical_lens> optical_lens) {
+		setChildren(optical_lens);
 	}
 
 	@Override
-	public DataNode setDescriptionScalar(String descriptionValue) {
-		return setString(NX_DESCRIPTION, descriptionValue);
+	public NXaperture getAperture() {
+		// dataNodeName = NX_APERTURE
+		return getChild("aperture", NXaperture.class);
 	}
 
 	@Override
-	public NXprocess getZemlin_tableau() {
-		// dataNodeName = NX_ZEMLIN_TABLEAU
-		return getChild("zemlin_tableau", NXprocess.class);
+	public void setAperture(NXaperture apertureGroup) {
+		putChild("aperture", apertureGroup);
 	}
 
 	@Override
-	public void setZemlin_tableau(NXprocess zemlin_tableauGroup) {
-		putChild("zemlin_tableau", zemlin_tableauGroup);
-	}
-	// Unprocessed group:
-
-	@Override
-	public NXlens_em getLens_em() {
-		// dataNodeName = NX_LENS_EM
-		return getChild("lens_em", NXlens_em.class);
+	public NXaperture getAperture(String name) {
+		return getChild(name, NXaperture.class);
 	}
 
 	@Override
-	public void setLens_em(NXlens_em lens_emGroup) {
-		putChild("lens_em", lens_emGroup);
+	public void setAperture(String name, NXaperture aperture) {
+		putChild(name, aperture);
 	}
 
 	@Override
-	public NXlens_em getLens_em(String name) {
-		return getChild(name, NXlens_em.class);
+	public Map<String, NXaperture> getAllAperture() {
+		return getChildren(NXaperture.class);
 	}
 
 	@Override
-	public void setLens_em(String name, NXlens_em lens_em) {
-		putChild(name, lens_em);
+	public void setAllAperture(Map<String, NXaperture> aperture) {
+		setChildren(aperture);
 	}
 
 	@Override
-	public Map<String, NXlens_em> getAllLens_em() {
-		return getChildren(NXlens_em.class);
+	public NXdeflector getDeflector() {
+		// dataNodeName = NX_DEFLECTOR
+		return getChild("deflector", NXdeflector.class);
 	}
 
 	@Override
-	public void setAllLens_em(Map<String, NXlens_em> lens_em) {
-		setChildren(lens_em);
+	public void setDeflector(NXdeflector deflectorGroup) {
+		putChild("deflector", deflectorGroup);
 	}
 
 	@Override
-	public NXtransformations getTransformations() {
-		// dataNodeName = NX_TRANSFORMATIONS
-		return getChild("transformations", NXtransformations.class);
+	public NXdeflector getDeflector(String name) {
+		return getChild(name, NXdeflector.class);
 	}
 
 	@Override
-	public void setTransformations(NXtransformations transformationsGroup) {
-		putChild("transformations", transformationsGroup);
+	public void setDeflector(String name, NXdeflector deflector) {
+		putChild(name, deflector);
 	}
 
 	@Override
-	public NXtransformations getTransformations(String name) {
-		return getChild(name, NXtransformations.class);
+	public Map<String, NXdeflector> getAllDeflector() {
+		return getChildren(NXdeflector.class);
 	}
 
 	@Override
-	public void setTransformations(String name, NXtransformations transformations) {
-		putChild(name, transformations);
-	}
-
-	@Override
-	public Map<String, NXtransformations> getAllTransformations() {
-		return getChildren(NXtransformations.class);
-	}
-
-	@Override
-	public void setAllTransformations(Map<String, NXtransformations> transformations) {
-		setChildren(transformations);
+	public void setAllDeflector(Map<String, NXdeflector> deflector) {
+		setChildren(deflector);
 	}
 
 }

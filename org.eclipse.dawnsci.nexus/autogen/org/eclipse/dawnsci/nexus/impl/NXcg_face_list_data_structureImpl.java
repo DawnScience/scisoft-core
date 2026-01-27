@@ -21,27 +21,20 @@ import org.eclipse.january.dataset.Dataset;
 import org.eclipse.dawnsci.nexus.*;
 
 /**
- * Computational geometry description of geometric primitives via a face and edge list.
- * Primitives must not be degenerated or self-intersect.
- * Such descriptions of primitives are frequently used for triangles and polyhedra
- * to store them on disk for visualization purposes. Although storage efficient,
- * such a description is not well suited for topological and neighborhood queries
- * of especially meshes that are built from primitives.
- * In this case, scientists may need a different view on the primitives which
- * is better represented for instance with a half_edge_data_structure instance.
- * The reason to split thus the geometric description of primitives, sets, and
- * specifically meshes of primitives is to keep the structure simple enough for
- * users without these computational geometry demands but also enable those more
- * computational geometry savy users the storing of the additionally relevant
- * data structure.
- * This is beneficial and superior over NXoff_geometry because for instance a
- * half_edge_data_structure instance can be immediately use to reinstantiate
- * the set without having to recompute the half_edge_structure from the vertex
- * and face-list based representation and thus offer a more efficient route
- * to serve applications where topological and graph-based operations are key.
+ * Computational geometry of primitives via a face-and-edge-list data structure.
+ * Primitives must neither be degenerated nor self-intersect but can have different
+ * properties. A face-and-edge-list-based description of primitives is
+ * frequently used for triangles and polyhedra to store them on disk for
+ * visualization purposes (see OFF, PLY, VTK, or STL file formats).
+ * Although this description is storage efficient, it is not well-suited for
+ * topological analyses. In this case using a half-edge data structure is
+ * an alternative.
+ * Having an own base class for the data structure how primitives are stored is
+ * useful to embrace both users with small or detailed specification demands.
+ * Indices can be used as identifier and thus names for individual instances.
 
  */
-public class NXcg_face_list_data_structureImpl extends NXobjectImpl implements NXcg_face_list_data_structure {
+public class NXcg_face_list_data_structureImpl extends NXcg_primitiveImpl implements NXcg_face_list_data_structure {
 
 	private static final long serialVersionUID = 1L;  // no state in this class, so always compatible
 
@@ -71,26 +64,6 @@ public class NXcg_face_list_data_structureImpl extends NXobjectImpl implements N
 		return PERMITTED_CHILD_GROUP_CLASSES;
 	}
 
-
-	@Override
-	public Dataset getDimensionality() {
-		return getDataset(NX_DIMENSIONALITY);
-	}
-
-	@Override
-	public Long getDimensionalityScalar() {
-		return getLong(NX_DIMENSIONALITY);
-	}
-
-	@Override
-	public DataNode setDimensionality(IDataset dimensionalityDataset) {
-		return setDataset(NX_DIMENSIONALITY, dimensionalityDataset);
-	}
-
-	@Override
-	public DataNode setDimensionalityScalar(Long dimensionalityValue) {
-		return setField(NX_DIMENSIONALITY, dimensionalityValue);
-	}
 
 	@Override
 	public Dataset getNumber_of_vertices() {
@@ -153,123 +126,123 @@ public class NXcg_face_list_data_structureImpl extends NXobjectImpl implements N
 	}
 
 	@Override
-	public Dataset getVertex_identifier_offset() {
-		return getDataset(NX_VERTEX_IDENTIFIER_OFFSET);
+	public Dataset getIndex_offset_vertex() {
+		return getDataset(NX_INDEX_OFFSET_VERTEX);
 	}
 
 	@Override
-	public Long getVertex_identifier_offsetScalar() {
-		return getLong(NX_VERTEX_IDENTIFIER_OFFSET);
+	public Long getIndex_offset_vertexScalar() {
+		return getLong(NX_INDEX_OFFSET_VERTEX);
 	}
 
 	@Override
-	public DataNode setVertex_identifier_offset(IDataset vertex_identifier_offsetDataset) {
-		return setDataset(NX_VERTEX_IDENTIFIER_OFFSET, vertex_identifier_offsetDataset);
+	public DataNode setIndex_offset_vertex(IDataset index_offset_vertexDataset) {
+		return setDataset(NX_INDEX_OFFSET_VERTEX, index_offset_vertexDataset);
 	}
 
 	@Override
-	public DataNode setVertex_identifier_offsetScalar(Long vertex_identifier_offsetValue) {
-		return setField(NX_VERTEX_IDENTIFIER_OFFSET, vertex_identifier_offsetValue);
+	public DataNode setIndex_offset_vertexScalar(Long index_offset_vertexValue) {
+		return setField(NX_INDEX_OFFSET_VERTEX, index_offset_vertexValue);
 	}
 
 	@Override
-	public Dataset getEdge_identifier_offset() {
-		return getDataset(NX_EDGE_IDENTIFIER_OFFSET);
+	public Dataset getIndex_offset_edge() {
+		return getDataset(NX_INDEX_OFFSET_EDGE);
 	}
 
 	@Override
-	public Long getEdge_identifier_offsetScalar() {
-		return getLong(NX_EDGE_IDENTIFIER_OFFSET);
+	public Long getIndex_offset_edgeScalar() {
+		return getLong(NX_INDEX_OFFSET_EDGE);
 	}
 
 	@Override
-	public DataNode setEdge_identifier_offset(IDataset edge_identifier_offsetDataset) {
-		return setDataset(NX_EDGE_IDENTIFIER_OFFSET, edge_identifier_offsetDataset);
+	public DataNode setIndex_offset_edge(IDataset index_offset_edgeDataset) {
+		return setDataset(NX_INDEX_OFFSET_EDGE, index_offset_edgeDataset);
 	}
 
 	@Override
-	public DataNode setEdge_identifier_offsetScalar(Long edge_identifier_offsetValue) {
-		return setField(NX_EDGE_IDENTIFIER_OFFSET, edge_identifier_offsetValue);
+	public DataNode setIndex_offset_edgeScalar(Long index_offset_edgeValue) {
+		return setField(NX_INDEX_OFFSET_EDGE, index_offset_edgeValue);
 	}
 
 	@Override
-	public Dataset getFace_identifier_offset() {
-		return getDataset(NX_FACE_IDENTIFIER_OFFSET);
+	public Dataset getIndex_offset_face() {
+		return getDataset(NX_INDEX_OFFSET_FACE);
 	}
 
 	@Override
-	public Long getFace_identifier_offsetScalar() {
-		return getLong(NX_FACE_IDENTIFIER_OFFSET);
+	public Long getIndex_offset_faceScalar() {
+		return getLong(NX_INDEX_OFFSET_FACE);
 	}
 
 	@Override
-	public DataNode setFace_identifier_offset(IDataset face_identifier_offsetDataset) {
-		return setDataset(NX_FACE_IDENTIFIER_OFFSET, face_identifier_offsetDataset);
+	public DataNode setIndex_offset_face(IDataset index_offset_faceDataset) {
+		return setDataset(NX_INDEX_OFFSET_FACE, index_offset_faceDataset);
 	}
 
 	@Override
-	public DataNode setFace_identifier_offsetScalar(Long face_identifier_offsetValue) {
-		return setField(NX_FACE_IDENTIFIER_OFFSET, face_identifier_offsetValue);
+	public DataNode setIndex_offset_faceScalar(Long index_offset_faceValue) {
+		return setField(NX_INDEX_OFFSET_FACE, index_offset_faceValue);
 	}
 
 	@Override
-	public Dataset getVertex_identifier() {
-		return getDataset(NX_VERTEX_IDENTIFIER);
+	public Dataset getIndices_vertex() {
+		return getDataset(NX_INDICES_VERTEX);
 	}
 
 	@Override
-	public Long getVertex_identifierScalar() {
-		return getLong(NX_VERTEX_IDENTIFIER);
+	public Long getIndices_vertexScalar() {
+		return getLong(NX_INDICES_VERTEX);
 	}
 
 	@Override
-	public DataNode setVertex_identifier(IDataset vertex_identifierDataset) {
-		return setDataset(NX_VERTEX_IDENTIFIER, vertex_identifierDataset);
+	public DataNode setIndices_vertex(IDataset indices_vertexDataset) {
+		return setDataset(NX_INDICES_VERTEX, indices_vertexDataset);
 	}
 
 	@Override
-	public DataNode setVertex_identifierScalar(Long vertex_identifierValue) {
-		return setField(NX_VERTEX_IDENTIFIER, vertex_identifierValue);
+	public DataNode setIndices_vertexScalar(Long indices_vertexValue) {
+		return setField(NX_INDICES_VERTEX, indices_vertexValue);
 	}
 
 	@Override
-	public Dataset getEdge_identifier() {
-		return getDataset(NX_EDGE_IDENTIFIER);
+	public Dataset getIndices_edge() {
+		return getDataset(NX_INDICES_EDGE);
 	}
 
 	@Override
-	public Long getEdge_identifierScalar() {
-		return getLong(NX_EDGE_IDENTIFIER);
+	public Long getIndices_edgeScalar() {
+		return getLong(NX_INDICES_EDGE);
 	}
 
 	@Override
-	public DataNode setEdge_identifier(IDataset edge_identifierDataset) {
-		return setDataset(NX_EDGE_IDENTIFIER, edge_identifierDataset);
+	public DataNode setIndices_edge(IDataset indices_edgeDataset) {
+		return setDataset(NX_INDICES_EDGE, indices_edgeDataset);
 	}
 
 	@Override
-	public DataNode setEdge_identifierScalar(Long edge_identifierValue) {
-		return setField(NX_EDGE_IDENTIFIER, edge_identifierValue);
+	public DataNode setIndices_edgeScalar(Long indices_edgeValue) {
+		return setField(NX_INDICES_EDGE, indices_edgeValue);
 	}
 
 	@Override
-	public Dataset getFace_identifier() {
-		return getDataset(NX_FACE_IDENTIFIER);
+	public Dataset getIndices_face() {
+		return getDataset(NX_INDICES_FACE);
 	}
 
 	@Override
-	public Long getFace_identifierScalar() {
-		return getLong(NX_FACE_IDENTIFIER);
+	public Long getIndices_faceScalar() {
+		return getLong(NX_INDICES_FACE);
 	}
 
 	@Override
-	public DataNode setFace_identifier(IDataset face_identifierDataset) {
-		return setDataset(NX_FACE_IDENTIFIER, face_identifierDataset);
+	public DataNode setIndices_face(IDataset indices_faceDataset) {
+		return setDataset(NX_INDICES_FACE, indices_faceDataset);
 	}
 
 	@Override
-	public DataNode setFace_identifierScalar(Long face_identifierValue) {
-		return setField(NX_FACE_IDENTIFIER, face_identifierValue);
+	public DataNode setIndices_faceScalar(Long indices_faceValue) {
+		return setField(NX_INDICES_FACE, indices_faceValue);
 	}
 
 	@Override

@@ -1020,7 +1020,7 @@ public class NexusTreeUtils {
 			Attribute attribute = gn.getAttribute(signalName+NexusConstants.DATA_UNCERTAINTY_SUFFIX);
 			
 			DataNode dn = gn.getDataNode(attribute.getFirstElement());
-			ILazyDataset sv = dn.getDataset().getSliceView();
+			ILazyDataset sv = dn.getDataset().clone();
 			lz.setErrors(sv);
 		}
 		
@@ -1039,7 +1039,7 @@ public class NexusTreeUtils {
 		if (name.endsWith(NexusConstants.DATA_AXESSET_SUFFIX)) {
 			if (allAnnotations.contains(name + NexusConstants.DATA_INDICES_SUFFIX)) {
 				int[] indices = parseIntArray(gn.getAttribute(name + NexusConstants.DATA_INDICES_SUFFIX));
-				ILazyDataset view = gn.getDataNode(name).getDataset().getSliceView();
+				ILazyDataset view = gn.getDataNode(name).getDataset().clone();
 				view.setName(name);
 				metadata.addAxis(primaryDimension, view, indices);
 				allAnnotations.remove(name + NexusConstants.DATA_INDICES_SUFFIX);
@@ -1049,7 +1049,7 @@ public class NexusTreeUtils {
 			
 			if (gn.containsDataNode(rb) && allAnnotations.contains(rb + NexusConstants.DATA_INDICES_SUFFIX)) {
 				int[] indices = parseIntArray(gn.getAttribute(rb + NexusConstants.DATA_INDICES_SUFFIX));
-				ILazyDataset view = gn.getDataNode(rb).getDataset().getSliceView();
+				ILazyDataset view = gn.getDataNode(rb).getDataset().clone();
 				view.setName(rb);
 				metadata.addAxis(primaryDimension, view,indices);
 				allAnnotations.remove(rb + NexusConstants.DATA_INDICES_SUFFIX);
@@ -1060,7 +1060,7 @@ public class NexusTreeUtils {
 				String notIndices = name.substring(0, name.length() - NexusConstants.DATA_INDICES_SUFFIX.length());
 				if (gn.containsDataNode(notIndices)) {
 					int[] indices = parseIntArray(gn.getAttribute(name));
-					ILazyDataset view = gn.getDataNode(notIndices).getDataset().getSliceView();
+					ILazyDataset view = gn.getDataNode(notIndices).getDataset().clone();
 					view.setName(notIndices);
 					metadata.addAxis(primaryDimension == -1 && indices != null ? indices[0] : primaryDimension, view, indices);
 					allAnnotations.remove(notIndices);
@@ -1081,7 +1081,7 @@ public class NexusTreeUtils {
 					if (dataNode == null) {
 						return;
 					}
-					ILazyDataset view = dataNode.getDataset().getSliceView();
+					ILazyDataset view = dataNode.getDataset().clone();
 					view.setName(name);
 					metadata.addAxis(primaryDimension == -1 && indices != null ? indices[0] : primaryDimension, view, indices);
 				}

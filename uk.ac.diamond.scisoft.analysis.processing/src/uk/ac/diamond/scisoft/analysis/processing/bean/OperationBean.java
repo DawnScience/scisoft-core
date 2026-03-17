@@ -63,6 +63,8 @@ public class OperationBean implements IOperationBean {
 	private String name;
 	
 	private String templatePath;
+
+	private boolean useRabbitMQ = false;
 	
 	public String getDataKey() {
 		return dataKey;
@@ -267,5 +269,13 @@ public class OperationBean implements IOperationBean {
 
 	public void setTemplatePath(String templatePath) {
 		this.templatePath = templatePath;
+	}
+	
+	public boolean isUseRabbitMQ() {
+		return useRabbitMQ;
+	}
+
+	public void setUseRabbitMQ(boolean useRabbitMQ) {
+		this.useRabbitMQ = useRabbitMQ;
 	}
 }

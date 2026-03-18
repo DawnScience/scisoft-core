@@ -1753,7 +1753,7 @@ public class NexusFileHDF5 implements NexusFile {
 				H5.H5Lget_value(fileId, path, name, HDF5Constants.H5P_DEFAULT);
 				return getLinkToken(name[0]);
 			} else if (linkInfo.type == HDF5Constants.H5L_TYPE_HARD) {
-				return new HDF5Token(linkInfo.token);
+				return testForExternalLink(path) ? IS_EXTERNAL_LINK : new HDF5Token(linkInfo.token);
 			} else if (linkInfo.type == HDF5Constants.H5L_TYPE_EXTERNAL) {
 				return IS_EXTERNAL_LINK;
 			}

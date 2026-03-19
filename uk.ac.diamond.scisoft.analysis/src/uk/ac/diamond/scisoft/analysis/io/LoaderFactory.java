@@ -133,6 +133,7 @@ public class LoaderFactory {
 		registerLoaderWithException("hd5", HDF5Loader.class);
 		registerLoaderWithException("mat", HDF5Loader.class);
 		registerLoaderWithException("nc", HDF5Loader.class);
+		registerLoaderWithException("hspy", HDF5Loader.class);
 
 		registerLoaderWithException("tif", PilatusTiffLoader.class);
 		registerLoaderWithException("png", PNGLoader.class);

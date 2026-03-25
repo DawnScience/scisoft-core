@@ -61,12 +61,16 @@ public class SlicingUtils {
 				if (axes == null) {
 					continue;
 				}
-				Slice slice = slices[i];
 				for (int j = 0; j < axes.length; j++) {
 					ILazyDataset a = axes[j];
-					SliceND aSlice = new SliceND(a.getShape());
-					aSlice.setSlice(i, slice);
-					axes[j] = axes[j].getSliceView(aSlice);
+					int[] aShape = a.getShape();
+					SliceND aSlice = new SliceND(aShape);
+					for (int k = 0; k < rank; k++) {
+						if (aShape[k] > 1) {
+							aSlice.setSlice(k, slices[k]);
+						}
+					}
+					axes[j] = a.getSliceView(aSlice);
 				}
 				newAM.setAxis(i, axes);
 			}

@@ -508,10 +508,21 @@ public interface IPlottingSystem<T> extends IAdaptable, ITraceSystem, IRegionSys
 	public boolean isDisposed();
 
 	/**
-	 * Sets the Colour option
+	 * Sets the Color option
 	 * @param colorOption
 	 */
 	public void setColorOption(ColorOption colorOption);
+
+	/**
+	 * Sets the color scheme
+	 * @param colorScheme
+	 */
+	public void setColorScheme(String colorScheme);
+
+	/**
+	 * @return color scheme (can be null for default from preference)
+	 */
+	public String getColorScheme();
 
 	/**
 	 * Returns whether the plot should rescale when replotted.

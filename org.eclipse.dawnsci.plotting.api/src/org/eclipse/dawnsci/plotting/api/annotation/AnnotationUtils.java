@@ -47,7 +47,7 @@ public class AnnotationUtils {
         if (system.getAnnotation(name)!=null) {
         	system.removeAnnotation(system.getAnnotation(name));
         }
-		return system.createAnnotation(name);
+		return system.createAnnotation(name).applyPreferences();
 	}
 
 }

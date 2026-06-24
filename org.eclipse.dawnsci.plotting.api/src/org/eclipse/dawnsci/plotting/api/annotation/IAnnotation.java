@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.dawnsci.plotting.api.annotation;
 
+import org.eclipse.dawnsci.plotting.api.preferences.BasePlottingConstants;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 
@@ -104,4 +105,9 @@ public interface IAnnotation {
 	 */
 	public void setVisible(boolean isVis);
 
+	/**
+	 * Apply preferences (see {@link BasePlottingConstants#ANNOTATION_COLOUR} and {@link BasePlottingConstants#ANNOTATION_FONT})
+	 * @return this
+	 */
+	public IAnnotation applyPreferences();
 }

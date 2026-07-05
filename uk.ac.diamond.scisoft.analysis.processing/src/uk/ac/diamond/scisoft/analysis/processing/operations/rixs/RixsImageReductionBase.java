@@ -802,6 +802,7 @@ public abstract class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			}
 
 			double el0 = getZeroEnergyOffset(r); // elastic line intercept
+			el0 -= getStraightLine(r).getParameterValue(STRAIGHT_LINE_C);
 			final Dataset energies = createEnergyScale(bmax, bin, xrayEnergy, el0, energyFitCoefficients[r]);
 
 			Dataset t = DatasetFactory.createFromObject(allSingle[r]);
@@ -878,6 +879,7 @@ public abstract class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 
 		for (int r = 0; r < roiMax; r++) { // add XIP to summary data
 			double el0 = getZeroEnergyOffset(r); // elastic line intercept
+			el0 -= getStraightLine(r).getParameterValue(STRAIGHT_LINE_C);
 			final Dataset energies = createEnergyScale(bmax, bin, xrayEnergy, el0, energyFitCoefficients[r]);
 
 			int xr = roiMax + 2 * r;
@@ -1260,8 +1262,8 @@ public abstract class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 	 * @return start position (in pixels) and spectrum datasets
 	 */
 	public static Dataset[] makeSpectrum(Dataset in, double[] rOffset, double slope, boolean clip, boolean average) {
-		Dataset start = DatasetFactory.createFromObject(-rOffset[0] * slope + rOffset[1]);
-	
+		// calculate intercept in region
+		Dataset start = DatasetFactory.createFromObject(rOffset[0] * slope - rOffset[1]);
 		Dataset spectrum = makeSpectrum(in, slope, clip, average);
 		AxesMetadata am = spectrum.getFirstMetadata(AxesMetadata.class);
 		if (am != null) {
@@ -1360,7 +1362,7 @@ public abstract class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 				e = quad.calculateValues(i).isubtract(cEnergy); // relative to elastic
 			}
 		} else {
-			i.iadd(regionStart - elasticIntercept);
+			i.iadd(-regionStart + elasticIntercept);
 			e = Maths.multiply(i, isIVE ? 1. / coeffs[0] : coeffs[0]);
 		}
 		e.imultiply(-1);
@@ -1396,7 +1398,7 @@ public abstract class RixsImageReductionBase<T extends RixsImageReductionBaseMod
 			offset = r == 0 ? model.getEnergyOffsetA() : model.getEnergyOffsetB();
 		}
 		if (!Double.isFinite(offset)) {
-			offset = getStraightLine(r).getParameterValue(STRAIGHT_LINE_C); // elastic line intercept
+			offset = 0;
 		}
 		return offset;
 	}

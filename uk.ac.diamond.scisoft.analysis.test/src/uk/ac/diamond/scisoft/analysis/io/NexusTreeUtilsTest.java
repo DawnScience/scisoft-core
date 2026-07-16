@@ -11,7 +11,6 @@ package uk.ac.diamond.scisoft.analysis.io;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -54,7 +53,7 @@ public class NexusTreeUtilsTest {
 		int[] indices;
 		public AxisDataset(int dim, Dataset axis, int... indices) {
 			this.axis = axis;
-			this.dim = dim;
+			this.dim = dim; // use for axes metadata if >= 0
 			this.indices = indices;
 		}
 	}
@@ -73,6 +72,10 @@ public class NexusTreeUtilsTest {
 		axes.add(new AxisDataset(0, axis, 0));
 
 		GroupNode group = createNXdata(signal, axes);
+		checkMetadata(group, signal, false);
+
+		signal.clearMetadata(AxesMetadata.class);
+		group = createOldNXdata(signal, axes, false);
 		checkMetadata(group, signal, false);
 	}
 
@@ -171,7 +174,7 @@ public class NexusTreeUtilsTest {
 		axes.add(new AxisDataset(-1, axis, 1, 0));
 
 		GroupNode group = createNXdata(signal, axes);
-		checkMetadata(group, signal, false);
+		checkMetadata(group, signal, true); // last dim has no axis dataset
 	}
 
 	private static GroupNode createNXdata(Dataset signal, List<AxisDataset> axes) {
@@ -203,7 +206,8 @@ public class NexusTreeUtilsTest {
 		return group;
 	}
 
-	private static GroupNode createOldNXdata(Dataset signal, List<AxisDataset> axes) {
+	@SuppressWarnings("deprecation")
+	private static GroupNode createOldNXdata(Dataset signal, List<AxisDataset> axes, boolean addAxisForMatchDim) {
 		long count = 0;
 		GroupNode group = TreeFactory.createGroupNode(count++);
 		addNXclass(group, NexusConstants.DATA);
@@ -214,17 +218,24 @@ public class NexusTreeUtilsTest {
 		dNode.addAttribute(TreeFactory.createAttribute(NexusConstants.DATA_SIGNAL, 1));
 		group.addDataNode(signal.getName(), dNode);
 
+		int[] shape = signal.getShapeRef();
 		for (AxisDataset axis : axes) {
 			dNode = TreeFactory.createDataNode(count++);
 			dNode.setDataset(axis.axis);
 			String n = axis.axis.getName();
+			int d = axis.dim;
+			if (axis.axis.getRank() == 1) {
+				if (d >= 0 && (addAxisForMatchDim || shape[d] == axis.axis.getSize())) {
+					dNode.addAttribute(TreeFactory.createAttribute(NexusConstants.DATA_AXIS, d+1));
+				}
+			}
 			group.addDataNode(n, dNode);
 		}
 
 		return group;
 	}
 
-	private static void checkMetadata(GroupNode group, Dataset signal, boolean noNulls) {
+	private static void checkMetadata(GroupNode group, Dataset signal, boolean nulls) {
 		NodeLink nl = TreeFactory.createNodeLink("", null, group);
 		NexusTreeUtils.augmentNodeLink("/whatever/file.h5", "my/data/", nl, false);
 
@@ -246,9 +257,8 @@ public class NexusTreeUtilsTest {
 				}
 			}
 		}
-		if (noNulls) {
-			assertFalse("Some axes were missing", anyNulls);
-		}
+
+		assertTrue("Some axes were missing", anyNulls == nulls);
 	}
 
 	@Test
@@ -381,19 +391,28 @@ public class NexusTreeUtilsTest {
 		axes.add(new AxisDataset(1, axis, 1));
 
 		GroupNode group = createNXdata(signal, axes);
+		checkMetadata(group, signal, false);
+		for (DataNode d: group.getDataNodes()) {
+			System.err.println(d.getDataset());
+		}
+		System.err.println(group.getDataNode("det1").getDataset().getFirstMetadata(AxesMetadata.class));
+
+		signal.clearMetadata(AxesMetadata.class);
+		group = createOldNXdata(signal, axes, false);
 		checkMetadata(group, signal, true);
 		for (DataNode d: group.getDataNodes()) {
 			System.err.println(d.getDataset());
 		}
 		System.err.println(group.getDataNode("det1").getDataset().getFirstMetadata(AxesMetadata.class));
 
-		group = createOldNXdata(signal, axes);
-		checkMetadata(group, signal, true);
+		signal.clearMetadata(AxesMetadata.class);
+		group = createOldNXdata(signal, axes, true);
+		checkMetadata(group, signal, false);
 		for (DataNode d: group.getDataNodes()) {
 			System.err.println(d.getDataset());
 		}
 		System.err.println(group.getDataNode("det1").getDataset().getFirstMetadata(AxesMetadata.class));
-	}
+}
 
 	@Test
 	public void testCroppingData() {
@@ -404,8 +423,12 @@ public class NexusTreeUtilsTest {
 		List<AxisDataset> axes = new ArrayList<>();
 		Dataset axis;
 
+		axis = DatasetFactory.createRange(ShortDataset.class, 102);
+		axis.setName("dummyA");
+		axes.add(new AxisDataset(0, axis, 0));
+
 		axis = DatasetFactory.createRange(ShortDataset.class, 101);
-		axis.setName("dummy");
+		axis.setName("dummyB");
 		axes.add(new AxisDataset(0, axis, 0));
 
 		axis = DatasetFactory.createRange(ShortDataset.class, 1);
@@ -429,13 +452,51 @@ public class NexusTreeUtilsTest {
 		axes.add(new AxisDataset(-1, axis, 0, 1));
 
 		GroupNode group = createNXdata(signal, axes);
-		checkMetadata(group, signal, true);
+		checkMetadata(group, signal, false);
 		for (DataNode d: group.getDataNodes()) {
 			System.err.println(d.getDataset());
 		}
 		System.err.println(group.getDataNode("image").getDataset().getFirstMetadata(AxesMetadata.class));
 
-		group = createOldNXdata(signal, axes);
+		signal.clearMetadata(AxesMetadata.class);
+		group = createOldNXdata(signal, axes, true);
+		checkMetadata(group, signal, false);
+		for (DataNode d: group.getDataNodes()) {
+			System.err.println(d.getDataset());
+		}
+		System.err.println(group.getDataNode("image").getDataset().getFirstMetadata(AxesMetadata.class));
+
+		signal.clearMetadata(AxesMetadata.class);
+		group = createOldNXdata(signal, axes, false);
+		checkMetadata(group, signal, false);
+		for (DataNode d: group.getDataNodes()) {
+			System.err.println(d.getDataset());
+		}
+		System.err.println(group.getDataNode("image").getDataset().getFirstMetadata(AxesMetadata.class));
+
+		axes.clear();
+		axis = DatasetFactory.createRange(ShortDataset.class, 101);
+		axis.setName("dummyD");
+		axes.add(new AxisDataset(0, axis, 0));
+
+		axis = DatasetFactory.createRange(ShortDataset.class, 1);
+		axis.setName("angles");
+		axes.add(new AxisDataset(1, axis, 1));
+
+		axis = DatasetFactory.createRange(ShortDataset.class, 100);
+		axis.setName("binding_energy");
+		axes.add(new AxisDataset(2, axis, 2));
+
+		signal.clearMetadata(AxesMetadata.class);
+		group = createOldNXdata(signal, axes, true);
+		checkMetadata(group, signal, false);
+		for (DataNode d: group.getDataNodes()) {
+			System.err.println(d.getDataset());
+		}
+		System.err.println(group.getDataNode("image").getDataset().getFirstMetadata(AxesMetadata.class));
+
+		signal.clearMetadata(AxesMetadata.class);
+		group = createOldNXdata(signal, axes, false);
 		checkMetadata(group, signal, true);
 		for (DataNode d: group.getDataNodes()) {
 			System.err.println(d.getDataset());

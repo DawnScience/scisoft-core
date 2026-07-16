@@ -196,8 +196,6 @@ public class NexusTreeUtils {
 		augmentNodeLink(tree instanceof TreeFile treeFile ? treeFile.getFilename() : null, Tree.ROOT, tree.getNodeLink(), true);
 	}
 
-	private static int MAX_DIM_DIFF = 1;
-
 	/**
 	 * Augment a node with metadata that is pointed by link
 	 * @param filePath
@@ -358,7 +356,7 @@ public class NexusTreeUtils {
 					continue;
 				}
 
-				AxisChoice choice = new AxisChoice(a);
+				AxisChoice choice = new AxisChoice(a, -1);
 				String n = getFirstString(dNode.getAttribute(NexusConstants.DATA_NAME));
 				if (n != null)
 					choice.setLongName(n);
@@ -431,6 +429,7 @@ public class NexusTreeUtils {
 											Arrays.toString(ashape), Arrays.toString(shape), Arrays.toString(intAxis));
 									intAxis = null;
 									dimensionsMismatch = true;
+									choice.setAxisNumber(j);
 									break;
 								}
 							}
@@ -441,41 +440,34 @@ public class NexusTreeUtils {
 						}
 					}
 
-					if (intAxis == null) {
+					if (intAxis == null && !dimensionsMismatch) {
 						// remedy bogus or missing @axis by simply pairing matching dimension
 						// lengths to the signal dataset shape (this may be wrong as transposes in
 						// common dimension lengths can occur)
-						intAxis = new int[aRank];
 						Map<Integer, Integer> dims = new LinkedHashMap<>();
 						for (int i = 0; i < rank; i++) {
 							dims.put(i, shape[i]);
 						}
 
-						for (int i = 0,  dimsFound = 0; i < intAxis.length && dimsFound < aRank; i++) {
+						intAxis = new int[aRank];
+						for (int i = 0; i < intAxis.length && !dims.isEmpty(); i++) {
 							int al = ashape[i];
-							intAxis[i] = -1;
+							boolean found = false;
 							for (int k = 0; k < rank; k++) {
 								if (!dims.containsKey(k)) {
 									continue;
 								}
 								int sl = dims.get(k);
-								int dl = Math.abs(al-sl);
-								if (dl <= MAX_DIM_DIFF) { // find first signal dimension length that matches (or off by MAX_DIM_DIFF)
-									if (dl != 0) {
-										if (!dims.containsValue(al)) { // don't crop if it matches another dimension
-											intAxis[i] = k;
-											dims.remove(k);
-											dimensionsMismatch = true;
-											dimsFound++;
-											break;
-										}
-										// else ignore
-									} else {
-										intAxis[i] = k;
-										dims.remove(k);
-										dimsFound++;
-									}
+								if (al == sl) {
+									found = true;
+									intAxis[i] = k;
+									dims.remove(k);
+									break;
 								}
+							}
+							if (!found) {
+								intAxis = null;
+								break; // this dimension has no match
 							}
 						}
 					}
@@ -486,7 +478,9 @@ public class NexusTreeUtils {
 							choice.setAxisNumber(intAxis[intAxis.length-1]);
 						}
 					}
-					choices.add(choice);
+					if (choice.getAxisNumber() >= 0) {
+						choices.add(choice);
+					}
 				}
 			} catch (Exception e) {
 				logger.debug("Axis attributes in {} are invalid - {}", a.getName(), e.getMessage());

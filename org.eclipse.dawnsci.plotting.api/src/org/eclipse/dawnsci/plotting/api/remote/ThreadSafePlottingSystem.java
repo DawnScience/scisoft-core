@@ -553,6 +553,16 @@ public class ThreadSafePlottingSystem<T> extends ThreadSafeObject implements IPl
 	}
 
 	@Override
+	public void setColorScheme(String colorScheme) {
+		call(getMethodName(Thread.currentThread().getStackTrace()), new Class[] { String.class }, colorScheme);
+	}
+
+	@Override
+	public String getColorScheme() {
+		return (String) call(getMethodName(Thread.currentThread().getStackTrace()));
+	}
+
+	@Override
 	public boolean isRescale() {
 		return (Boolean)call(getMethodName(Thread.currentThread().getStackTrace()));
 	}

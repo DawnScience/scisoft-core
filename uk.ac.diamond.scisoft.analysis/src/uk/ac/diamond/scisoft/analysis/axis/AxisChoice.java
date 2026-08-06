@@ -22,7 +22,7 @@ import org.eclipse.january.dataset.ILazyDataset;
  */
 public class AxisChoice {
 	private ILazyDataset values = null;
-	private int primary; // possible order in a list of choices (0 signifies leave to end of list)
+	private int primary = 0; // possible order in a list of choices (0 signifies leave to end of list)
 	private int number;  // which dimension does this axis represent for signal dataset
 	private int[] indexMapping = null; // array of dimensions of chosen dataset which map to the values dataset
 	private String name; // long name if available
@@ -36,11 +36,11 @@ public class AxisChoice {
 
 	/**
 	 * @param values
-	 * @param primary
+	 * @param axisNumber
 	 */
-	public AxisChoice(ILazyDataset values, int primary) {
+	public AxisChoice(ILazyDataset values, int axisNumber) {
 		setValues(values);
-		setPrimary(primary);
+		number = axisNumber;
 	}
 
 	/**

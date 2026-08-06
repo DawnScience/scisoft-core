@@ -167,4 +167,14 @@ public class BasePlottingConstants {
 	 * If true, interpolate cursor position within pixel
 	 */
 	public static final String INTERPOLATE_PIXEL_POSN = "org.dawnsci.plotting.system.interpolatePixelPosn";
+
+	/**
+	 * Used to store annotation colour preference as a string (comma-separated RGB triple of decimal integers)
+	 */
+	public static final String ANNOTATION_COLOUR = "org.dawnsci.plotting.system.annotationColour";
+
+	/**
+	 * Used to store annotation font preference as a string (e.g. "Times New Roman-italic-11")
+	 */
+	public static final String ANNOTATION_FONT = "org.dawnsci.plotting.system.annotationFont";
 }

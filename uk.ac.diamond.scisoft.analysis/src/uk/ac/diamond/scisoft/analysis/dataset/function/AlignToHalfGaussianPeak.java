@@ -51,6 +51,10 @@ public class AlignToHalfGaussianPeak implements DatasetToNumberFunction {
 		this.useRisingSide = useRisingSide;
 	}
 
+	public void setUseRisingSide(boolean useRisingSide) {
+		this.useRisingSide = useRisingSide;
+	}
+
 	/**
 	 * Set zone where peak is
 	 * @param lo lower x value
